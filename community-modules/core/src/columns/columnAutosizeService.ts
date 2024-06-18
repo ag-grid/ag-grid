@@ -100,7 +100,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             });
 
             if (!updatedColumns.length) {
-                return;
+                continue;
             }
 
             this.visibleColsService.refresh(source);

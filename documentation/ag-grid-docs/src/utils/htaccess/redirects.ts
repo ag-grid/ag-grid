@@ -2656,6 +2656,14 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/angular-compatibility/', to: '/angular-data-grid/compatibility/' },
     { from: '/react-data-grid/react-compatibility/', to: '/react-data-grid/compatibility/' },
 
+    { from: '/react-data-grid/component-filter-imperative-react/', to: '/react-data-grid/component-filter/' },
+    {
+        from: '/react-data-grid/component-floating-filter-imperative-react/',
+        to: '/react-data-grid/component-floating-filter/',
+    },
+    { from: '/react-data-grid/component-date-imperative-react/', to: '/react-data-grid/filter-date/' },
+    { from: '/react-data-grid/component-cell-editor-imperative-react/', to: '/react-data-grid/cell-editors/' },
+
     { from: '/cookies.php', to: '/cookies' },
     { from: '/privacy.php', to: '/privacy' },
     { from: '/about.php', to: '/about' },

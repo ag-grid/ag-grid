@@ -114,3 +114,16 @@ function getChartsUrl() {
     return 'https://charts.ag-grid.com';
 }
 export const CHARTS_SITE_URL = getChartsUrl();
+
+function calculateGridUrl() {
+    if (SITE_URL == null) return;
+
+    if (SITE_URL?.includes('localhost:4610')) {
+        return 'https://localhost:4610';
+    } else if (SITE_URL?.includes(STAGING_SITE_URL)) {
+        return 'https://grid-staging.ag-grid.com';
+    }
+    return 'https://ag-grid.com';
+}
+
+export const GRID_URL = calculateGridUrl();

@@ -2,8 +2,11 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { RowNode } from '../../entities/rowNode';
+import type { StickyTopOffsetChangedEvent } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IRowModel } from '../../interfaces/iRowModel';
+import type { PageBoundsService } from '../../pagination/pageBoundsService';
 import { _last } from '../../utils/array';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { RowCtrlByRowNodeIdMap, RowRenderer } from '../rowRenderer';
@@ -12,11 +15,13 @@ export class StickyRowFeature extends BeanStub {
     private rowModel: IRowModel;
     private rowRenderer: RowRenderer;
     private ctrlsService: CtrlsService;
+    private pageBoundsService: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
         this.ctrlsService = beans.ctrlsService;
+        this.pageBoundsService = beans.pageBoundsService;
     }
 
     private stickyTopRowCtrls: RowCtrl[] = [];
@@ -25,6 +30,10 @@ export class StickyRowFeature extends BeanStub {
     private topContainerHeight = 0;
     private bottomContainerHeight = 0;
     private isClientSide: boolean;
+
+    // sticky rows pulls in extra rows from other pages which impacts row position
+    private extraTopHeight = 0;
+    private extraBottomHeight = 0;
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
@@ -52,6 +61,38 @@ export class StickyRowFeature extends BeanStub {
         return this.stickyBottomRowCtrls;
     }
 
+    private setOffsetTop(offset: number): void {
+        if (this.extraTopHeight === offset) {
+            return;
+        }
+        this.extraTopHeight = offset;
+        const event: WithoutGridCommon<StickyTopOffsetChangedEvent> = {
+            type: 'stickyTopOffsetChanged',
+            offset,
+        };
+        this.eventService.dispatchEvent(event);
+    }
+
+    private setOffsetBottom(offset: number): void {
+        if (this.extraBottomHeight === offset) {
+            return;
+        }
+        this.extraBottomHeight = offset;
+    }
+
+    public resetOffsets() {
+        this.setOffsetBottom(0);
+        this.setOffsetTop(0);
+    }
+
+    public getExtraTopHeight(): number {
+        return this.extraTopHeight;
+    }
+
+    public getExtraBottomHeight(): number {
+        return this.extraBottomHeight;
+    }
+
     /**
      * Get the last pixel of the group, this pixel is used to push the sticky node up out of the viewport.
      */
@@ -74,6 +115,7 @@ export class StickyRowFeature extends BeanStub {
         // only footer nodes stick bottom, so shouldn't reach this.
         return 0;
     }
+
     private getServerSideLastPixelOfGroup(row: RowNode): number {
         if (this.isClientSide) {
             throw new Error('This func should only be called in server side row model.');
@@ -155,8 +197,8 @@ export class StickyRowFeature extends BeanStub {
         }
 
         const pixelAtContainerBoundary = isTop
-            ? this.rowRenderer.getFirstVisibleVerticalPixel()
-            : this.rowRenderer.getLastVisibleVerticalPixel();
+            ? this.rowRenderer.getFirstVisibleVerticalPixel() - this.extraTopHeight
+            : this.rowRenderer.getLastVisibleVerticalPixel() - this.extraTopHeight;
         const newStickyRows = new Set<RowNode>();
 
         const addStickyRow = (stickyRow: RowNode) => {
@@ -426,6 +468,29 @@ export class StickyRowFeature extends BeanStub {
             newCtrlsList.reverse();
         }
         newCtrlsList.forEach((ctrl) => ctrl.setRowTop(ctrl.getRowNode().stickyRowTop));
+
+        let extraHeight = 0;
+        if (isTop) {
+            newStickyNodes.forEach((node) => {
+                if (node.rowIndex! < this.pageBoundsService.getFirstRow()) {
+                    extraHeight += node.rowHeight!;
+                }
+            });
+            if (extraHeight > this.topContainerHeight) {
+                extraHeight = this.topContainerHeight;
+            }
+            this.setOffsetTop(extraHeight);
+        } else {
+            newStickyNodes.forEach((node) => {
+                if (node.rowIndex! > this.pageBoundsService.getLastRow()) {
+                    extraHeight += node.rowHeight!;
+                }
+            });
+            if (extraHeight > this.bottomContainerHeight) {
+                extraHeight = this.bottomContainerHeight;
+            }
+            this.setOffsetBottom(extraHeight);
+        }
 
         if (!hasSomethingChanged) {
             return false;

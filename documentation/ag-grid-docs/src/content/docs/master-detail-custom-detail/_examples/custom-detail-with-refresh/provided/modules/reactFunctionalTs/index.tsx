@@ -96,7 +96,6 @@ const GridExample = () => {
                     detailCellRenderer={detailCellRenderer}
                     detailRowHeight={70}
                     groupDefaultExpanded={1}
-                    reactiveCustomComponents
                     onGridReady={onGridReady}
                     onFirstDataRendered={onFirstDataRendered}
                 />

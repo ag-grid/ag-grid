@@ -33,10 +33,6 @@ function fillExact() {
     setWidthAndHeight('400px');
 }
 
-function noSize() {
-    setWidthAndHeight('');
-}
-
 function setWidthAndHeight(size: string) {
     var eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
     eGridDiv.style.setProperty('width', size);

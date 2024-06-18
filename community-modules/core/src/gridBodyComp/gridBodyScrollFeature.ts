@@ -4,18 +4,18 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import { Events } from '../eventKeys';
 import type { BodyScrollEndEvent, BodyScrollEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
-import type { PaginationProxy } from '../pagination/paginationProxy';
+import type { PageBoundsService } from '../pagination/pageBoundsService';
+import type { PaginationService } from '../pagination/paginationService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _getInnerHeight, _getScrollLeft, _isRtlNegativeScroll, _setScrollLeft } from '../utils/dom';
-import { _debounce } from '../utils/function';
+import { _debounce, _warnOnce } from '../utils/function';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
 enum ScrollDirection {
@@ -31,7 +31,8 @@ enum ScrollSource {
 export class GridBodyScrollFeature extends BeanStub {
     private ctrlsService: CtrlsService;
     private animationFrameService: AnimationFrameService;
-    private paginationProxy: PaginationProxy;
+    private paginationService?: PaginationService;
+    private pageBoundsService: PageBoundsService;
     private rowModel: IRowModel;
     private heightScaler: RowContainerHeightService;
     private rowRenderer: RowRenderer;
@@ -41,7 +42,8 @@ export class GridBodyScrollFeature extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
         this.animationFrameService = beans.animationFrameService;
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService;
+        this.pageBoundsService = beans.pageBoundsService;
         this.rowModel = beans.rowModel;
         this.heightScaler = beans.rowContainerHeightService;
         this.rowRenderer = beans.rowRenderer;
@@ -83,11 +85,9 @@ export class GridBodyScrollFeature extends BeanStub {
 
     public postConstruct(): void {
         this.enableRtl = this.gos.get('enableRtl');
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
-            this.onDisplayedColumnsWidthChanged.bind(this)
-        );
+        this.addManagedEventListeners({
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
+        });
 
         this.ctrlsService.whenReady((p) => {
             this.centerRowsCtrl = p.center;
@@ -99,7 +99,9 @@ export class GridBodyScrollFeature extends BeanStub {
     private addScrollListener() {
         const { fakeHScrollComp, fakeVScrollComp } = this.ctrlsService.getParams();
 
-        this.addManagedListener(this.centerRowsCtrl.getViewportElement(), 'scroll', this.onHScroll.bind(this));
+        this.addManagedElementListeners(this.centerRowsCtrl.getViewportElement(), {
+            scroll: this.onHScroll.bind(this),
+        });
         fakeHScrollComp.onScrollCallback(this.onFakeHScroll.bind(this));
 
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
@@ -109,7 +111,7 @@ export class GridBodyScrollFeature extends BeanStub {
             ? _debounce(this.onFakeVScroll.bind(this), 100)
             : this.onFakeVScroll.bind(this);
 
-        this.addManagedListener(this.eBodyViewport, 'scroll', onVScroll);
+        this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
         fakeVScrollComp.onScrollCallback(onFakeVScroll);
     }
 
@@ -270,7 +272,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private fireScrollEvent(direction: ScrollDirection): void {
         const bodyScrollEvent: WithoutGridCommon<BodyScrollEvent> = {
-            type: Events.EVENT_BODY_SCROLL,
+            type: 'bodyScroll',
             direction: direction === ScrollDirection.Horizontal ? 'horizontal' : 'vertical',
             left: this.scrollLeft,
             top: this.scrollTop,
@@ -284,7 +286,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.scrollTimer = window.setTimeout(() => {
             const bodyScrollEndEvent: WithoutGridCommon<BodyScrollEndEvent> = {
                 ...bodyScrollEvent,
-                type: Events.EVENT_BODY_SCROLL_END,
+                type: 'bodyScrollEnd',
             };
 
             this.eventService.dispatchEvent(bodyScrollEndEvent);
@@ -487,10 +489,10 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        const rowCount = this.paginationProxy.getRowCount();
+        const rowCount = this.rowModel.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
-            console.warn('AG Grid: Invalid row index for ensureIndexVisible: ' + index);
+            _warnOnce('Invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 
@@ -499,21 +501,21 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.getFrameworkOverrides().wrapIncoming(() => {
             if (!paginationPanelEnabled) {
-                this.paginationProxy.goToPageWithIndex(index);
+                this.paginationService?.goToPageWithIndex(index);
             }
 
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             const stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
             const stickyBottomHeight = gridBodyCtrl.getStickyBottomHeight();
 
-            const rowNode = this.paginationProxy.getRow(index);
+            const rowNode = this.rowModel.getRow(index);
             let rowGotShiftedDuringOperation: boolean;
 
             do {
                 const startingRowTop = rowNode!.rowTop;
                 const startingRowHeight = rowNode!.rowHeight;
 
-                const paginationOffset = this.paginationProxy.getPixelOffset();
+                const paginationOffset = this.pageBoundsService.getPixelOffset();
                 const rowTopPixel = rowNode!.rowTop! - paginationOffset;
                 const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 

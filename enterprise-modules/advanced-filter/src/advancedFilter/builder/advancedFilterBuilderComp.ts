@@ -4,9 +4,10 @@ import type {
     ColumnAdvancedFilterModel,
     FilterManager,
     JoinAdvancedFilterModel,
-    VirtualListDragItem,
 } from '@ag-grid-community/core';
-import { Component, RefPlaceholder, TooltipFeature, VirtualList, _exists, _setDisabled } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, TooltipFeature, _exists, _setDisabled } from '@ag-grid-community/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
+import type { VirtualListDragItem } from '@ag-grid-enterprise/core';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AdvancedFilterService } from '../advancedFilterService';
@@ -15,21 +16,21 @@ import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAdd
 import { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
 import type {
     AdvancedFilterBuilderAddEvent,
+    AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
-import { AdvancedFilterBuilderEvents } from './iAdvancedFilterBuilder';
 
-export class AdvancedFilterBuilderComp extends Component {
+export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEvents> {
     private filterManager?: FilterManager;
     private advancedFilterService: AdvancedFilterService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
-        this.advancedFilterService = beans.advancedFilterService;
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterService = beans.advancedFilterService as AdvancedFilterService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private readonly eList: HTMLElement = RefPlaceholder;
@@ -130,10 +131,12 @@ export class AdvancedFilterBuilderComp extends Component {
         this.eApplyFilterButton.innerText =
             this.advancedFilterExpressionService.translate('advancedFilterBuilderApply');
         this.activateTabIndex([this.eApplyFilterButton]);
-        this.addManagedListener(this.eApplyFilterButton, 'click', () => {
-            this.advancedFilterService.setModel(this.filterModel);
-            this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
-            this.close();
+        this.addManagedElementListeners(this.eApplyFilterButton, {
+            click: () => {
+                this.advancedFilterService.setModel(this.filterModel);
+                this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+                this.close();
+            },
         });
 
         this.validationTooltipFeature = this.createManagedBean(
@@ -146,17 +149,17 @@ export class AdvancedFilterBuilderComp extends Component {
         );
         this.validate();
 
-        this.addManagedListener(this.eApplyFilterButton, 'mouseenter', () =>
-            this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', true)
-        );
-        this.addManagedListener(this.eApplyFilterButton, 'mouseleave', () =>
-            this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', false)
-        );
+        const mouseListener = (isEnter: boolean) =>
+            this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', isEnter);
+        this.addManagedListeners(this.eApplyFilterButton, {
+            mouseenter: () => mouseListener(true),
+            mouseleave: () => mouseListener(false),
+        });
 
         this.eCancelFilterButton.innerText =
             this.advancedFilterExpressionService.translate('advancedFilterBuilderCancel');
         this.activateTabIndex([this.eCancelFilterButton]);
-        this.addManagedListener(this.eCancelFilterButton, 'click', () => this.close());
+        this.addManagedElementListeners(this.eCancelFilterButton, { click: () => this.close() });
     }
 
     private removeItemFromParent(item: AdvancedFilterBuilderItem): number {
@@ -304,29 +307,23 @@ export class AdvancedFilterBuilderComp extends Component {
         });
     }
 
-    private createItemComponent(item: AdvancedFilterBuilderItem, focusWrapper: HTMLElement): Component {
+    private createItemComponent(
+        item: AdvancedFilterBuilderItem,
+        focusWrapper: HTMLElement
+    ): Component<AdvancedFilterBuilderEvents> {
         const itemComp = this.createBean(
             item.filterModel
                 ? new AdvancedFilterBuilderItemComp(item, this.dragFeature, focusWrapper)
                 : new AdvancedFilterBuilderItemAddComp(item, focusWrapper)
         );
 
-        itemComp.addManagedListener(
-            itemComp,
-            AdvancedFilterBuilderEvents.EVENT_REMOVED,
-            ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item)
-        );
-        itemComp.addManagedListener(itemComp, AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED, () => this.validate());
-        itemComp.addManagedListener(
-            itemComp,
-            AdvancedFilterBuilderEvents.EVENT_ADDED,
-            ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin)
-        );
-        itemComp.addManagedListener(
-            itemComp,
-            AdvancedFilterBuilderEvents.EVENT_MOVED,
-            ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards)
-        );
+        itemComp.addManagedListeners(itemComp, {
+            advancedFilterBuilderRemoved: ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item),
+            advancedFilterBuilderValueChanged: () => this.validate(),
+            advancedFilterBuilderAdded: ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin),
+            advancedFilterBuilderMoved: ({ item, backwards }: AdvancedFilterBuilderMoveEvent) =>
+                this.moveItemUpDown(item, backwards),
+        });
 
         if (itemComp instanceof AdvancedFilterBuilderItemComp) {
             this.updateItemComponent(item, itemComp);

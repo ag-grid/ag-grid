@@ -1,0 +1,32 @@
+---
+import DemosLayout from '@components/demos/DemosLayout.astro';
+import DemoTabs from '@components/demos/DemosTabs.astro';
+import styles from '@pages-styles/example.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { HRManagementExample } from '@components/demos/examples/hr-management';
+import LogoMark from '@components/logo/LogoMark';
+---
+
+<DemosLayout title="Demo - HR Management">
+    <div class={styles.topHeader}>
+        <div>
+            <h1 class={styles.headerHeading}>HR</h1>
+            <p class={styles.headerDescription}>An example data grid that let’s you view employee data</p>
+            <button class="button-secondary">
+                <Icon alt={`GitHub logo`} name="github" svgClasses={styles.githubIcon} />
+                <span>See on Github</span>
+            </button>
+        </div>
+
+        <DemoTabs activeTab="crm" />
+    </div>
+
+    <div class={styles.layout}>
+        <div class={styles.layoutWrapper}>
+            <div class={styles.loadingLogoContainer}>
+                <LogoMark isSpinning />
+            </div>
+            <HRManagementExample client:only="react" />
+        </div>
+    </div>
+</DemosLayout>

@@ -10,26 +10,13 @@ import {
 } from '@ag-grid-community/core';
 import type { AgChartThemePalette } from 'ag-charts-community';
 
-import { ChartController } from '../../chartController';
+import type { ChartController } from '../../chartController';
 import { isStockTheme } from '../../chartProxies/chartTheme';
 import { MiniChartsContainer } from './miniChartsContainer';
 
 type AnimationDirection = 'left' | 'right';
 
 export class ChartSettingsPanel extends Component {
-    public static TEMPLATE /* html */ = `<div class="ag-chart-settings-wrapper">
-            <div data-ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
-            <div data-ref="eNavBar" class="ag-chart-settings-nav-bar">
-                <div data-ref="ePrevBtn" class="ag-chart-settings-prev">
-                    <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
-                </div>
-                <div data-ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
-                <div data-ref="eNextBtn" class="ag-chart-settings-next">
-                    <button type="button" class="ag-button ag-chart-settings-next-button"></button>
-                </div>
-            </div>
-        </div>`;
-
     private readonly eMiniChartsContainer: HTMLElement = RefPlaceholder;
     private readonly eNavBar: HTMLElement = RefPlaceholder;
     private readonly eCardSelector: HTMLElement = RefPlaceholder;
@@ -46,7 +33,18 @@ export class ChartSettingsPanel extends Component {
     private isAnimating: boolean;
 
     constructor(private readonly chartController: ChartController) {
-        super(ChartSettingsPanel.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-settings-wrapper">
+            <div data-ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
+            <div data-ref="eNavBar" class="ag-chart-settings-nav-bar">
+                <div data-ref="ePrevBtn" class="ag-chart-settings-prev">
+                    <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
+                </div>
+                <div data-ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
+                <div data-ref="eNextBtn" class="ag-chart-settings-next">
+                    <button type="button" class="ag-button ag-chart-settings-next-button"></button>
+                </div>
+            </div>
+        </div>`);
     }
 
     public postConstruct() {
@@ -55,16 +53,16 @@ export class ChartSettingsPanel extends Component {
         this.ePrevBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('previous', this.gos)!);
         this.eNextBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('next', this.gos)!);
 
-        this.addManagedListener(this.ePrevBtn, 'click', () => this.setActivePalette(this.getPrev(), 'left'));
-        this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
+        this.addManagedElementListeners(this.ePrevBtn, { click: () => this.setActivePalette(this.getPrev(), 'left') });
+        this.addManagedElementListeners(this.eNextBtn, { click: () => this.setActivePalette(this.getNext(), 'right') });
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () =>
-            this.resetPalettes(true)
-        );
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () =>
-            this.resetPalettes(true)
-        );
+        const reset = () => this.resetPalettes(true);
+        this.addManagedListeners(this.chartController, {
+            chartTypeChanged: reset,
+            chartApiUpdate: reset,
+        });
+
         this.scrollSelectedIntoView();
     }
 
@@ -142,8 +140,10 @@ export class ChartSettingsPanel extends Component {
         const link = document.createElement('div');
         link.classList.add('ag-chart-settings-card-item');
 
-        this.addManagedListener(link, 'click', () => {
-            this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
+        this.addManagedElementListeners(link, {
+            click: () => {
+                this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
+            },
         });
 
         this.eCardSelector.appendChild(link);

@@ -312,9 +312,7 @@ const gridOptions: GridOptions = {
     rowData: globalRowData,
     suppressAggFuncInHeader: true,
     suppressRowClickSelection: true,
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.trade;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.trade),
     onGridReady: (params) => {
         createRowData();
         params.api.setGridOption('rowData', globalRowData);

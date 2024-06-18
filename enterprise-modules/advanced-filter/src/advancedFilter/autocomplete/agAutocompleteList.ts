@@ -1,24 +1,14 @@
 import type { Component } from '@ag-grid-community/core';
-import {
-    KeyCode,
-    PopupComponent,
-    RefPlaceholder,
-    VirtualList,
-    _exists,
-    _fuzzySuggestions,
-} from '@ag-grid-community/core';
+import { KeyCode, PopupComponent, RefPlaceholder, _exists, _fuzzySuggestions } from '@ag-grid-community/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
 
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import type { AutocompleteEntry } from './autocompleteParams';
 
 export class AgAutocompleteList extends PopupComponent {
-    private static TEMPLATE /* html */ = `<div class="ag-autocomplete-list-popup">
-            <div data-ref="eList" class="ag-autocomplete-list"></div>
-        <div>`;
-
     private readonly eList: HTMLElement = RefPlaceholder;
 
-    private virtualList: VirtualList;
+    private virtualList: VirtualList<any>;
 
     private autocompleteEntries: AutocompleteEntry[];
 
@@ -35,7 +25,9 @@ export class AgAutocompleteList extends PopupComponent {
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
         }
     ) {
-        super(AgAutocompleteList.TEMPLATE);
+        super(/* html */ `<div class="ag-autocomplete-list-popup">
+            <div data-ref="eList" class="ag-autocomplete-list"></div>
+        <div>`);
     }
 
     public override destroy(): void {
@@ -55,9 +47,11 @@ export class AgAutocompleteList extends PopupComponent {
 
         const virtualListGui = this.virtualList.getGui();
 
-        this.addManagedListener(virtualListGui, 'click', () => this.params.onConfirmed());
-        this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
-        this.addManagedListener(virtualListGui, 'mousedown', (e) => e.preventDefault());
+        this.addManagedListeners(virtualListGui, {
+            click: () => this.params.onConfirmed(),
+            mousemove: this.onMouseMove.bind(this),
+            mousedown: (e) => e.preventDefault(),
+        });
 
         this.setSelectedValue(0);
     }

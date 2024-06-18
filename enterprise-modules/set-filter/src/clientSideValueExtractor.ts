@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    AgEventType,
     FuncColsService,
     GetDataPath,
     IClientSideRowModel,
@@ -7,7 +8,7 @@ import type {
     SetFilterParams,
     ValueService,
 } from '@ag-grid-community/core';
-import { Events, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
+import { _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
@@ -22,10 +23,9 @@ export class ClientSideValuesExtractor<V> {
         private readonly treeData: boolean,
         private readonly getDataPath: GetDataPath | undefined,
         private readonly groupAllowUnbalanced: boolean,
-        private readonly addManagedListener: (
-            event: string,
-            listener: (event?: any) => void
-        ) => (() => null) | undefined
+        private readonly addManagedEventListeners: (
+            handlers: Partial<Record<AgEventType, (event?: any) => void>>
+        ) => (() => null)[]
     ) {}
 
     public extractUniqueValuesAsync(
@@ -36,9 +36,11 @@ export class ClientSideValuesExtractor<V> {
             if (this.rowModel.isRowDataLoaded()) {
                 resolve(this.extractUniqueValues(predicate, existingValues));
             } else {
-                const destroyFunc = this.addManagedListener(Events.EVENT_ROW_COUNT_READY, () => {
-                    destroyFunc?.();
-                    resolve(this.extractUniqueValues(predicate, existingValues));
+                const [destroyFunc] = this.addManagedEventListeners({
+                    rowCountReady: () => {
+                        destroyFunc?.();
+                        resolve(this.extractUniqueValues(predicate, existingValues));
+                    },
                 });
             }
         });

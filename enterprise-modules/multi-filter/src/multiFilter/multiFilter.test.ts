@@ -1,4 +1,4 @@
-import type {
+/* import type {
     ColDef,
     Column,
     Context,
@@ -35,7 +35,7 @@ let rowModel: jest.Mocked<IRowModel>;
 let context: jest.Mocked<Context>;
 
 let filter1: jest.Mocked<IFilterComp>;
-let filter2: jest.Mocked<IFilterComp>;
+let filter2: jest.Mocked<IFilterComp>; */
 
 ///// Niall commented these out for now, not sure if we need these tests given we don't have same type of tests
 ///// in other parts of the app. I put in one empty test as otherwise jest would complain about an empty test suite.

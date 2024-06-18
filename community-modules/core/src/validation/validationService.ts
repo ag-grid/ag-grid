@@ -1,3 +1,4 @@
+import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -7,6 +8,7 @@ import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
+import { validateApiFunction, warnMissingApiFunction } from './apiFunctionValidator';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
@@ -14,9 +16,11 @@ import type { DependencyValidator, OptionsValidation, OptionsValidator } from '.
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validationService' as const;
 
+    private beans: BeanCollection;
     private gridOptions: GridOptions;
 
     public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
         this.gridOptions = beans.gridOptions;
     }
 
@@ -25,14 +29,25 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     public processGridOptions(options: GridOptions): void {
-        this.processOptions(options, GRID_OPTIONS_VALIDATORS);
+        this.processOptions(options, GRID_OPTIONS_VALIDATORS());
     }
 
     public processColumnDefs(options: ColDef | ColGroupDef): void {
         this.processOptions(options, COL_DEF_VALIDATORS);
     }
 
-    private processOptions<T extends {}>(options: T, validator: OptionsValidator<T>): void {
+    public warnMissingApiFunction(functionName: ApiFunctionName): void {
+        warnMissingApiFunction(functionName, this.gridId);
+    }
+
+    public validateApiFunction<TFunctionName extends ApiFunctionName>(
+        functionName: TFunctionName,
+        apiFunction: ApiFunction<TFunctionName>
+    ): ApiFunction<TFunctionName> {
+        return validateApiFunction(functionName, apiFunction, this.beans);
+    }
+
+    private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, propertyExceptions, objectName, docsUrl } = validator;
 
         if (allProperties && this.gridOptions.suppressPropertyNamesCheck !== true) {
@@ -137,7 +152,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    private checkForWarning<T extends {}>(key: keyof T, validator: DependencyValidator<T>, options: T): string | null {
+    private checkForWarning<T extends object>(
+        key: keyof T,
+        validator: DependencyValidator<T>,
+        options: T
+    ): string | null {
         if (typeof validator === 'function') {
             return validator(options, this.gridOptions);
         }
@@ -160,7 +179,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         return `'${String(key)}' requires '${failedKey}' to be ${possibleOptions[0]}.`;
     }
 
-    private checkProperties<T extends {}>(
+    private checkProperties<T extends object>(
         object: T,
         exceptions: string[], // deprecated properties generally
         validProperties: string[], // properties to recommend
@@ -177,9 +196,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         );
 
         _iterateObject(invalidProperties, (key, value) => {
-            _warnOnce(
-                `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}`
-            );
+            let message = `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
+            if (validProperties.includes('context')) {
+                message += `\nIf you are trying to annotate ${containerName} with application data, use the '${containerName}.context' property instead.`;
+            }
+            _warnOnce(message);
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {

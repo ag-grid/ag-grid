@@ -37,9 +37,7 @@ const gridOptions: GridOptions = {
     headerHeight: 30,
     domLayout: 'autoHeight',
     animateRows: false,
-    getRowId: ({ data }: GetRowIdParams) => {
-        return data.stock;
-    },
+    getRowId: ({ data }: GetRowIdParams) => String(data.stock),
     onGridSizeChanged(params: GridSizeChangedEvent) {
         const columnsToShow: string[] = [];
         const columnsToHide: string[] = [];

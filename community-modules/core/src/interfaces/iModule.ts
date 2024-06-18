@@ -1,5 +1,5 @@
-import type { ControllerMeta, SingletonBean } from '../context/context';
-import type { ComponentClass } from '../widgets/component';
+import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
+import type { ComponentMeta, ControllerMeta, SingletonBean } from '../context/context';
 import type { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
@@ -23,9 +23,9 @@ export interface Module {
     validate?: () => ModuleValidationResult;
     moduleName: string;
     beans?: SingletonBean[];
-    agStackComponents?: ComponentClass[];
     controllers?: ControllerMeta[];
-    userComponents?: { componentName: string; componentClass: any }[];
+    userComponents?: ComponentMeta[];
     rowModel?: RowModelType;
-    dependantModules?: Module[]; // Niall / Sean - my addition
+    dependantModules?: Module[];
+    apiFunctions?: { [T in ApiFunctionName]?: ApiFunction<T> };
 }

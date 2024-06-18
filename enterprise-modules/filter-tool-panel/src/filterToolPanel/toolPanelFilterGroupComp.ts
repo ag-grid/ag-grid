@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
     ColumnNameService,
@@ -7,16 +8,14 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    AgColumn,
     Component,
-    Events,
     RefPlaceholder,
     _clearElement,
     _createIconNoSpan,
     isProvidedColumnGroup,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
@@ -28,10 +27,6 @@ export class ToolPanelFilterGroupComp extends Component {
     public wireBeans(beans: BeanCollection) {
         this.columnNameService = beans.columnNameService;
     }
-
-    private static TEMPLATE /* html */ = `<div class="ag-filter-toolpanel-group-wrapper">
-            <ag-group-component data-ref="filterGroupComp"></ag-group-component>
-        </div>`;
 
     private filterGroupComp: AgGroupComponent = RefPlaceholder;
 
@@ -62,7 +57,13 @@ export class ToolPanelFilterGroupComp extends Component {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical',
         };
-        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, [AgGroupComponent], { filterGroupComp: groupParams });
+        this.setTemplate(
+            /* html */ `<div class="ag-filter-toolpanel-group-wrapper">
+            <ag-group-component data-ref="filterGroupComp"></ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector],
+            { filterGroupComp: groupParams }
+        );
 
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
@@ -115,7 +116,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
         refresh();
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+        this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
     public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -191,8 +192,10 @@ export class ToolPanelFilterGroupComp extends Component {
             ? () => this.expandedCallback()
             : () => this.forEachToolPanelFilterChild((filterComp) => filterComp.collapse());
 
-        this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_EXPANDED, expandListener);
-        this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
+        this.addManagedListeners(this.filterGroupComp, {
+            expanded: expandListener,
+            collapsed: collapseListener,
+        });
     }
 
     private getColumns(): AgColumn[] {
@@ -205,11 +208,11 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private addFilterChangedListeners() {
         this.getColumns().forEach((column) => {
-            this.addManagedListener(column, AgColumn.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
+            this.addManagedListeners(column, { filterChanged: () => this.refreshFilterClass() });
         });
 
         if (!isProvidedColumnGroup(this.columnGroup)) {
-            this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+            this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         }
     }
 

@@ -1,21 +1,18 @@
 import type { BeanCollection } from '../../context/context';
-import { Events } from '../../eventKeys';
 import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
-import type { PaginationProxy } from '../../pagination/paginationProxy';
 import { _clearElement } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { AgSelect } from '../../widgets/agSelect';
-import type { AgComponentSelector } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
+import type { PaginationService } from '../paginationService';
 
 export class PageSizeSelectorComp extends Component {
-    static readonly selector: AgComponentSelector = 'AG-PAGE-SIZE-SELECTOR';
-
-    private paginationProxy: PaginationProxy;
+    private paginationService: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.paginationProxy = beans.paginationProxy;
+        this.paginationService = beans.paginationService!;
     }
 
     private selectPageSizeComp: AgSelect | undefined;
@@ -30,9 +27,7 @@ export class PageSizeSelectorComp extends Component {
             this.onPageSizeSelectorValuesChange();
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event) =>
-            this.handlePaginationChanged(event)
-        );
+        this.addManagedEventListeners({ paginationChanged: (event) => this.handlePaginationChanged(event) });
     }
 
     private handlePageSizeItemSelected = (): void => {
@@ -51,12 +46,12 @@ export class PageSizeSelectorComp extends Component {
         if (
             isNaN(paginationPageSize) ||
             paginationPageSize < 1 ||
-            paginationPageSize === this.paginationProxy.getPageSize()
+            paginationPageSize === this.paginationService.getPageSize()
         ) {
             return;
         }
 
-        this.paginationProxy.setPageSize(paginationPageSize, 'pageSizeSelector');
+        this.paginationService.setPageSize(paginationPageSize, 'pageSizeSelector');
 
         if (this.hasEmptyOption) {
             // Toggle the selector to force a refresh of the options and hide the empty option,
@@ -72,7 +67,7 @@ export class PageSizeSelectorComp extends Component {
             return;
         }
 
-        const paginationPageSize = this.paginationProxy.getPageSize();
+        const paginationPageSize = this.paginationService.getPageSize();
         if (this.getPageSizeSelectorValues().includes(paginationPageSize)) {
             this.selectPageSizeComp.setValue(paginationPageSize.toString());
         } else {
@@ -133,7 +128,7 @@ export class PageSizeSelectorComp extends Component {
 
     private reloadPageSizesSelector(): void {
         const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
-        const paginationPageSizeOption: number = this.paginationProxy.getPageSize();
+        const paginationPageSizeOption: number = this.paginationService.getPageSize();
         const shouldAddAndSelectEmptyOption =
             !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption);
         if (shouldAddAndSelectEmptyOption) {
@@ -227,3 +222,8 @@ export class PageSizeSelectorComp extends Component {
         super.destroy();
     }
 }
+
+export const PageSizeSelectorSelector: ComponentSelector = {
+    selector: 'AG-PAGE-SIZE-SELECTOR',
+    component: PageSizeSelectorComp,
+};

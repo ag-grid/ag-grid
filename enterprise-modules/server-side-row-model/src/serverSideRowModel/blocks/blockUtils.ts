@@ -2,13 +2,13 @@ import type {
     AgColumn,
     BeanCollection,
     IRowNode,
+    IShowRowGroupColsService,
     NamedBean,
     NumberSequence,
     RowBounds,
-    ShowRowGroupColsService,
     ValueService,
 } from '@ag-grid-community/core';
-import { BeanStub, RowNode, _doOnce, _exists, _missing } from '@ag-grid-community/core';
+import { BeanStub, RowNode, _doOnce, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
 
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
@@ -19,7 +19,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
 
     private valueService: ValueService;
-    private showRowGroupColsService: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
     private nodeManager: NodeManager;
     private beans: BeanCollection;
     private expansionService: ServerSideExpansionService;
@@ -27,9 +27,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
-        this.nodeManager = beans.ssrmNodeManager;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.beans = beans;
-        this.expansionService = beans.expansionService;
+        this.expansionService = beans.expansionService as ServerSideExpansionService;
     }
 
     public createRowNode(params: {
@@ -110,11 +110,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
-                console.warn(`AG Grid: null and undefined values are not allowed for server side row model keys`);
+                _warnOnce(`null and undefined values are not allowed for server side row model keys`);
                 if (rowNode.rowGroupColumn) {
-                    console.warn(`column = ${rowNode.rowGroupColumn.getId()}`);
+                    _warnOnce(`column = ${rowNode.rowGroupColumn.getId()}`);
                 }
-                console.warn(`data is `, rowNode.data);
+                _warnOnce(`data is ` + rowNode.data);
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
 
@@ -215,7 +215,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
 
         const usingTreeData = this.gos.get('treeData');
 
@@ -288,7 +288,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         let topPointer = rowNodes.length - 1;
 
         if (_missing(topPointer) || _missing(bottomPointer)) {
-            console.warn(`AG Grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
+            _warnOnce(`error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
             return undefined;
         }
 
@@ -321,7 +321,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             } else if (currentRowNode.rowIndex! > displayRowIndex) {
                 topPointer = midPointer - 1;
             } else {
-                console.warn(`AG Grid: error: unable to locate rowIndex = ${displayRowIndex} in cache`);
+                _warnOnce(`error: unable to locate rowIndex = ${displayRowIndex} in cache`);
                 return undefined;
             }
         }

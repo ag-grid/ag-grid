@@ -27,6 +27,8 @@ Some Status Panels only show when a Range Selection is present.
 
 ## Provided Panels
 
+{% metaTag tags=["agTotalRowCountComponent"] /%}
+
 The Status Bar Panels provided by the grid are as follows:
 
 * `agTotalRowCountComponent`: Provides the total row count.
@@ -95,12 +97,6 @@ Applications that are using [Server-side Data](./row-models/) or which require b
 
 {% if isFramework("react") %}
 {% interfaceDocumentation interfaceName="CustomStatusPanelProps" /%}
-{% /if %}
-
-{% if isFramework("react") %}
-{% note %}
-If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom status bar panels. However your status bar panel will not update with prop changes, but will instead be destroyed/recreated..
-{% /note %}
 {% /if %}
 
 Custom Panels are configured alongside Provided Panels.

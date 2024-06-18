@@ -1,5 +1,11 @@
-import type { AgColumn, DraggingEvent, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
-import { DragAndDropService, Events, _createIconNoSpan } from '@ag-grid-community/core';
+import type {
+    AgColumn,
+    DragAndDropIcon,
+    DraggingEvent,
+    ITooltipParams,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { _createIconNoSpan } from '@ag-grid-community/core';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -19,13 +25,11 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             title: title,
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            this.checkVisibility.bind(this)
-        );
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.refresh.bind(this),
+            columnPivotChanged: this.refresh.bind(this),
+            columnPivotModeChanged: this.checkVisibility.bind(this),
+        });
 
         this.refresh();
     }
@@ -87,8 +91,8 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         this.funcColsService.setPivotColumns(columns, 'toolPanelUi');
     }
 
-    protected getIconName(): string {
-        return this.isPotentialDndItems() ? DragAndDropService.ICON_PIVOT : DragAndDropService.ICON_NOT_ALLOWED;
+    protected getIconName(): DragAndDropIcon {
+        return this.isPotentialDndItems() ? 'pivot' : 'notAllowed';
     }
 
     protected getExistingItems(): AgColumn[] {

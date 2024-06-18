@@ -1,18 +1,18 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
+import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { AgComponentSelector } from './component';
+import type { ComponentSelector } from './component';
 
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
 }
-
+export type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
 export class AgInputTextField<
     TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
-> extends AgAbstractInputField<HTMLInputElement, string, TConfig> {
-    static readonly selector: AgComponentSelector = 'AG-INPUT-TEXT-FIELD';
-
+    TEventType extends string = AgInputTextFieldEvent,
+> extends AgAbstractInputField<HTMLInputElement, string, TConfig, AgInputTextFieldEvent | TEventType> {
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
     }
@@ -52,14 +52,19 @@ export class AgInputTextField<
             }
         };
 
-        this.addManagedListener(this.eInput, 'keydown', preventCharacters);
+        this.addManagedListeners(this.eInput, {
+            keydown: preventCharacters,
+            paste: (e: ClipboardEvent) => {
+                const text = e.clipboardData?.getData('text');
 
-        this.addManagedListener(this.eInput, 'paste', (e: ClipboardEvent) => {
-            const text = e.clipboardData?.getData('text');
-
-            if (text && text.split('').some((c: string) => !pattern.test(c))) {
-                e.preventDefault();
-            }
+                if (text && text.split('').some((c: string) => !pattern.test(c))) {
+                    e.preventDefault();
+                }
+            },
         });
     }
 }
+export const AgInputTextFieldSelector: ComponentSelector = {
+    selector: 'AG-INPUT-TEXT-FIELD',
+    component: AgInputTextField,
+};

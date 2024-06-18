@@ -4,7 +4,6 @@ import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { AgColumn } from '../../../entities/agColumn';
-import { Events } from '../../../eventKeys';
 import type { ColumnMenuVisibleChangedEvent } from '../../../events';
 import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
 import type { FocusService } from '../../../focusService';
@@ -32,7 +31,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
     }
 
     private hidePopup: () => void;
-    private tabListener: () => null;
+    private tabListener: null | (() => null);
     private activeMenu?: FilterWrapperComp;
 
     public hideActiveMenu(): void {
@@ -120,7 +119,9 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
             eMenu.classList.add('ag-filter-menu');
         }
 
-        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
+        [this.tabListener] = this.addManagedElementListeners(eMenu, {
+            keydown: (e: KeyboardEvent) => this.trapFocusWithin(e, eMenu),
+        });
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         eMenu.appendChild(comp?.getGui()!);
@@ -137,7 +138,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
             if (this.tabListener) {
-                this.tabListener = this.tabListener()!;
+                this.tabListener = this.tabListener();
             }
 
             if (isKeyboardEvent && eventSource && _isVisible(eventSource)) {
@@ -202,7 +203,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
 
     private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
         const displayedEvent: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
-            type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            type: 'columnMenuVisibleChanged',
             visible,
             switchingTab: false,
             key: containerType as 'columnMenu' | 'columnFilter' | 'floatingFilter',

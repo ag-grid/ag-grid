@@ -93,7 +93,7 @@
                 "label": {
                     "name": "Doughnut",
                     "icon": "chartsDonut",
-                    "link": "https://charts.ag-grid.com/react/doughnut-series/"
+                    "link": "https://charts.ag-grid.com/react/donut-series/"
                 },
                 "community": true,
                 "enterprise": true,

@@ -70,7 +70,7 @@
         "esbuildConfig": "esbuild.config.cjs",
         "external": ["@ag-grid-community/core", "vue", "vue-property-decorator", "vue-class-component"],
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "format": ["cjs", "esm"],
         "sourcemap": true
       },
@@ -80,7 +80,8 @@
         },
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "test": {

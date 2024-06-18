@@ -9,6 +9,41 @@
       "options": {
         "cwd": "{projectRoot}"
       }
+    },
+    "test": {
+      "executor": "nx:noop",
+      "dependsOn": ["test:vitest"],
+      "inputs": [],
+      "outputs": [],
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "ci": {},
+        "watch": {},
+        "update": {}
+      }
+    },
+    "test:vitest": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/reports/ag-website-shared.xml"],
+      "dependsOn": [],
+      "options": {
+        "cwd": "{projectRoot}",
+        "config": "{projectRoot}/vitest.config.mjs"
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../../reports/ag-website-shared.xml",
+          "reporters": ["junit"]
+        },
+        "watch": {
+          "watch": true
+        },
+        "update": {
+          "update": true
+        }
+      }
     }
   },
   "tags": ["website"]

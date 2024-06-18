@@ -19,11 +19,9 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     template: `
         <div style="height: 100%; display: flex; flex-direction: column;">
             <div style="margin-bottom: 5px;">
-                Set width and height: &nbsp;
-                <button (click)="fillLarge()">100%</button>
-                <button (click)="fillMedium()">60%</button>
-                <button (click)="fillExact()">400px</button>
-                <button (click)="noSize()">None (default size)</button>
+                <button (click)="fillLarge()">Fill 100%</button>
+                <button (click)="fillMedium()">Fill 60%</button>
+                <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
             </div>
             <div [ngStyle]="style">
                 <ag-grid-angular
@@ -84,10 +82,6 @@ export class AppComponent implements OnInit {
 
     fillExact() {
         this.setWidthAndHeight('400px', '400px');
-    }
-
-    noSize() {
-        this.setWidthAndHeight('', '');
     }
 
     setWidthAndHeight(width: string, height: string) {

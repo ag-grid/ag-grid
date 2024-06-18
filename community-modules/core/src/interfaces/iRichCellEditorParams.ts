@@ -1,23 +1,33 @@
 import type { AgPickerFieldParams } from './agFieldParams';
 import type { ICellEditorParams } from './iCellEditor';
+import type { ICellEditorRendererParams } from './iCellEditorRenderer';
+
+export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {}
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
-    value?: TValue;
+    value?: TValue[] | TValue;
     valueList?: TValue[];
     allowTyping?: boolean;
     cellRenderer?: any;
+
     cellRowHeight?: number;
     searchDebounceDelay?: number;
 
     filterList?: boolean;
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
+
+    multiSelect?: boolean;
+    suppressDeselectAll?: boolean;
+    suppressMultiSelectPillRenderer?: boolean;
+
     placeholder?: string;
     initialInputValue?: string;
 
-    valueFormatter?: (value: TValue) => any;
+    valueFormatter?: (value: TValue[] | TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[];
 }
+
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
     (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
 }
@@ -51,9 +61,23 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
     /**
      * If `true`, each item on the list of values will highlight the part of the text that matches the input.
      * Note: It only makes sense to use this option when `filterList` is `true` and `searchType` is **not** `fuzzy`.
-     * @default false.
+     * @default false
      */
     highlightMatch?: boolean;
+    /**
+     * If `true` this component will allow multiple items from the list of values to be selected.
+     * Note: This feature does not work with `allowTyping=true`.
+     */
+    multiSelect?: boolean;
+    /**
+     * If `true` the option to remove all selected options will not be displayed.
+     * Note: This feature only works when `multiSelect=true`.
+     */
+    suppressDeselectAll?: boolean;
+    /**
+     * When `multiSelect=true` the editor will automatically show the selected items as "pills". Set this property to `true` suppress this behaviour.
+     */
+    suppressMultiSelectPillRenderer?: boolean;
     /**
      * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
      * @default 300

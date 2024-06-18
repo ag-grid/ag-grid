@@ -50,7 +50,7 @@ const gridOptions: GridOptions = {
         if (params.level === 0) {
             return params.data.portfolio;
         }
-        return params.data.tradeId;
+        return String(params.data.tradeId);
     },
     onGridReady: (params: GridReadyEvent) => {
         // setup the fake server

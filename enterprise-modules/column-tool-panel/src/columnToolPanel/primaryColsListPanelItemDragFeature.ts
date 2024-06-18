@@ -5,16 +5,10 @@ import type {
     ColumnModel,
     ColumnMoveService,
     ColumnPanelItemDragStartEvent,
-    VirtualList,
-    VirtualListDragItem,
 } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    DragSourceType,
-    Events,
-    VirtualListDragFeature,
-    isProvidedColumnGroup,
-} from '@ag-grid-community/core';
+import { BeanStub, DragSourceType, isProvidedColumnGroup } from '@ag-grid-community/core';
+import { VirtualListDragFeature } from '@ag-grid-enterprise/core';
+import type { VirtualList, VirtualListDragItem } from '@ag-grid-enterprise/core';
 
 import type { AgPrimaryColsList } from './agPrimaryColsList';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
@@ -45,8 +39,8 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                 ColumnPanelItemDragStartEvent
             >(this.comp, this.virtualList, {
                 dragSourceType: DragSourceType.ToolPanel,
-                listItemDragStartEvent: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
-                listItemDragEndEvent: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
+                listItemDragStartEvent: 'columnPanelItemDragStart',
+                listItemDragEndEvent: 'columnPanelItemDragEnd',
                 eventSource: this.eventService,
                 getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) =>
                     this.getCurrentDragValue(listItemDragStartEvent),

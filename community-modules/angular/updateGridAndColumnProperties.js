@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const replace = require('replace-in-file');
 const fs = require('fs');
 const { EOL } = require('os');
@@ -6,6 +7,8 @@ const ComponentUtil = require('@ag-grid-community/core').ComponentUtil;
 const { getFormatterForTS } = require('./../../scripts/formatAST');
 
 const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
+
+const AG_CHART_TYPES = ['AgChartTheme', 'AgChartThemeOverrides'];
 
 function writeSortedLines(toWrite, result) {
     toWrite.sort((a, b) => {
@@ -52,7 +55,7 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
 }
 
 function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, docLookup }) {
-    const skippableProperties = ['gridOptions', 'reactiveCustomComponents'];
+    const skippableProperties = ['gridOptions', 'reactiveCustomComponents', 'GridPreDestroyedEvent'];
     const skippableEvents = ['gridPreDestroyed'];
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
@@ -95,7 +98,7 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
 
     if (missingEventTypes.length > 0) {
         throw new Error(
-            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to ComponentUtil.EXCLUDED_INTERNAL_EVENTS.\n`
+            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to INTERNAL_EVENTS.\n`
         );
     }
 
@@ -160,8 +163,8 @@ function parseFile(sourceFile) {
 function extractTypes(context, propsToSkip = []) {
     let allTypes = [
         ...Object.entries(context.typeLookup)
-            .filter(([k, v]) => !propsToSkip.includes(k))
-            .map(([k, v]) => v),
+            .filter(([k]) => !propsToSkip.includes(k))
+            .map(([, v]) => v),
         ...Object.values(context.eventTypeLookup),
     ];
 
@@ -176,7 +179,9 @@ function extractTypes(context, propsToSkip = []) {
     let expandedTypes = propertyTypes.flatMap((m) => m);
 
     const nonAgTypes = ['Partial', 'Document', 'HTMLElement', 'Function', 'TData'];
-    expandedTypes = [...new Set(expandedTypes)].filter((t) => !nonAgTypes.includes(t)).sort();
+    expandedTypes = [...new Set(expandedTypes)]
+        .filter((t) => !nonAgTypes.includes(t) && !AG_CHART_TYPES.includes(t))
+        .sort();
     return expandedTypes;
 }
 
@@ -203,7 +208,7 @@ function getGridPropertiesAndEventsJs() {
 const updateGridProperties = (getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
     const { code: gridPropertiesAndEvents, types } = getGridPropertiesAndEvents();
-    const importsForProps = `import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";`;
+    const importsForProps = `import type {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";`;
     const optionsForGrid = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
         from: [/(\/\/ @START@)[^]*(\/\/ @END@)/, /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/],
@@ -221,7 +226,7 @@ const updateGridProperties = (getGridPropertiesAndEvents) => {
     });
 };
 
-updatePropertiesBuilt = () => {
+const updatePropertiesBuilt = () => {
     updateGridProperties(getGridPropertiesAndEventsJs);
 };
 

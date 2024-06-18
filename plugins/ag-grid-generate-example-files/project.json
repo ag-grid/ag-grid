@@ -58,12 +58,12 @@
       "cache": true,
       "inputs": [
         "{workspaceRoot}/community-modules/core/src/propertyKeys.ts",
-        "{workspaceRoot}/community-modules/core/src/eventKeys.ts",
+        "{workspaceRoot}/community-modules/core/src/eventTypes.ts",
         "{workspaceRoot}/documentation/ag-grid-docs/src/content/matrix-table/modules.json"
       ],
       "outputs": [
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts",
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventKeys.ts",
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts",
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/modules.ts"
       ]
     },

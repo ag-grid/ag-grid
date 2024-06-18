@@ -14,15 +14,16 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     RefPlaceholder,
     _exists,
     _formatNumberTwoDecimalPlacesAndCommas,
     _missing,
     _missingOrEmpty,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
-import { AgNameValue } from './agNameValue';
+import type { AgNameValue } from './agNameValue';
+import { AgNameValueSelector } from './agNameValue';
 
 export class AggregationComp extends Component implements IStatusPanelComp {
     private valueService: ValueService;
@@ -41,14 +42,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.rangeService = beans.rangeService;
     }
 
-    private static TEMPLATE /* html */ = `<div class="ag-status-panel ag-status-panel-aggregations">
-            <ag-name-value data-ref="avgAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="countAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="minAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
-        </div>`;
-
     private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
     private readonly countAggregationComp: AgNameValue = RefPlaceholder;
     private readonly minAggregationComp: AgNameValue = RefPlaceholder;
@@ -58,7 +51,16 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private params!: AggregationStatusPanelParams;
 
     constructor() {
-        super(AggregationComp.TEMPLATE, [AgNameValue]);
+        super(
+            /* html */ `<div class="ag-status-panel ag-status-panel-aggregations">
+            <ag-name-value data-ref="avgAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="countAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="minAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
+            <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
+        </div>`,
+            [AgNameValueSelector]
+        );
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
@@ -69,9 +71,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     public postConstruct(): void {
         if (!this.isValidRowModel()) {
-            console.warn(
-                `AG Grid: agAggregationComponent should only be used with the client and server side row model.`
-            );
+            _warnOnce(`agAggregationComponent should only be used with the client and server side row model.`);
             return;
         }
 
@@ -81,12 +81,10 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.maxAggregationComp.setLabel('max', 'Max');
         this.sumAggregationComp.setLabel('sum', 'Sum');
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_RANGE_SELECTION_CHANGED,
-            this.onRangeSelectionChanged.bind(this)
-        );
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
+        this.addManagedEventListeners({
+            rangeSelectionChanged: this.onRangeSelectionChanged.bind(this),
+            modelUpdated: this.onRangeSelectionChanged.bind(this),
+        });
     }
 
     private isValidRowModel() {

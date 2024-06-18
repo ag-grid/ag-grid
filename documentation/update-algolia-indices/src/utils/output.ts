@@ -53,7 +53,7 @@ export const updateAlgolia = async (indexName, records) => {
     const index = algoliaClient.initIndex(indexName);
 
     index.setSettings({
-        searchableAttributes: ['title', 'heading', 'subHeading'], // attributes used for searching
+        searchableAttributes: ['metaTag', 'title', 'heading', 'subHeading'], // attributes used for searching
         disableExactOnAttributes: ['text'], // don't allow "exact matches" in the text
         attributesToSnippet: ['text:40'], // configure snippet length shown in results
         distinct: 1, // only allow each page to appear in the results once

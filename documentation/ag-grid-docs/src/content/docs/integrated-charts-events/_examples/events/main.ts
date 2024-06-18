@@ -1,9 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    ChartCreated,
-    ChartDestroyed,
-    ChartOptionsChanged,
-    ChartRangeSelectionChanged,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
+    ChartOptionsChangedEvent,
+    ChartRangeSelectionChangedEvent,
     GridApi,
     GridOptions,
     createGrid,
@@ -35,19 +35,19 @@ const gridOptions: GridOptions = {
     onChartDestroyed: onChartDestroyed,
 };
 
-function onChartCreated(event: ChartCreated) {
+function onChartCreated(event: ChartCreatedEvent) {
     console.log('Created chart with ID ' + event.chartId, event);
 }
 
-function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
+function onChartRangeSelectionChanged(event: ChartRangeSelectionChangedEvent) {
     console.log('Changed range selection of chart with ID ' + event.chartId, event);
 }
 
-function onChartOptionsChanged(event: ChartOptionsChanged) {
+function onChartOptionsChanged(event: ChartOptionsChangedEvent) {
     console.log('Changed options of chart with ID ' + event.chartId, event);
 }
 
-function onChartDestroyed(event: ChartDestroyed) {
+function onChartDestroyed(event: ChartDestroyedEvent) {
     console.log('Destroyed chart with ID ' + event.chartId, event);
 }
 

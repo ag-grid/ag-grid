@@ -1,16 +1,16 @@
 import type {
     AgColumn,
+    AgInputTextField,
     BeanCollection,
     ColumnNameService,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
 } from '@ag-grid-community/core';
-import { AgInputTextField, Component, RefPlaceholder } from '@ag-grid-community/core';
+import { AgInputTextFieldSelector, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
-import { SetValueModel } from './setValueModel';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
     private columnNameService: ColumnNameService;
@@ -30,7 +30,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
             <div class="ag-floating-filter-input ag-set-floating-filter-input" role="presentation">
                 <ag-input-text-field data-ref="eFloatingFilterText"></ag-input-text-field>
             </div>`,
-            [AgInputTextField]
+            [AgInputTextFieldSelector]
         );
     }
 
@@ -91,9 +91,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            this.addManagedListener(setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, () =>
-                this.updateFloatingFilterText()
-            );
+            this.addManagedListeners(setValueModel, { availableValuesChanged: () => this.updateFloatingFilterText() });
         });
 
         this.availableValuesListenerAdded = true;

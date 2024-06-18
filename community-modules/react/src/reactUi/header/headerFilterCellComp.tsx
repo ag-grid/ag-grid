@@ -26,7 +26,7 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     );
     const [buttonWrapperAriaHidden, setButtonWrapperAriaHidden] = useState<'true' | 'false'>('false');
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails | null>();
-    const [renderKey, setRenderKey] = useState<number>(1);
+    const [, setRenderKey] = useState<number>(1);
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);

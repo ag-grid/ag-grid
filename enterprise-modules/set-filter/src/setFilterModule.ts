@@ -1,5 +1,5 @@
 import type { Module } from '@ag-grid-community/core';
-import { ColumnFilterModule, FloatingFilterModule, ModuleNames } from '@ag-grid-community/core';
+import { ModuleNames, _ColumnFilterModule, _FloatingFilterModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { SetFilter } from './setFilter/setFilter';
@@ -8,16 +8,16 @@ import { VERSION } from './version';
 
 export const SetFilterCoreModule: Module = {
     version: VERSION,
-    moduleName: '@ag-grid-enterprise/set-filter-core',
-    userComponents: [{ componentName: 'agSetColumnFilter', componentClass: SetFilter }],
-    dependantModules: [EnterpriseCoreModule, ColumnFilterModule],
+    moduleName: `${ModuleNames.SetFilterModule}-core`,
+    userComponents: [{ name: 'agSetColumnFilter', classImp: SetFilter }],
+    dependantModules: [EnterpriseCoreModule, _ColumnFilterModule],
 };
 
 const SetFloatingFilterModule: Module = {
     version: VERSION,
     moduleName: '@ag-grid-enterprise/set-floating-filter',
-    userComponents: [{ componentName: 'agSetColumnFloatingFilter', componentClass: SetFloatingFilterComp }],
-    dependantModules: [SetFilterCoreModule, FloatingFilterModule],
+    userComponents: [{ name: 'agSetColumnFloatingFilter', classImp: SetFloatingFilterComp }],
+    dependantModules: [SetFilterCoreModule, _FloatingFilterModule],
 };
 
 export const SetFilterModule: Module = {

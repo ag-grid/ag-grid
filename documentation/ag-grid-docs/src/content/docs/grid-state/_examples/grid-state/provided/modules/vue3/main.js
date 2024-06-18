@@ -7,7 +7,7 @@ import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { createApp, onBeforeMount, ref } from 'vue';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import './styles.css';
 
@@ -71,7 +71,7 @@ const VueExample = {
             { field: 'bronze' },
             { field: 'total' },
         ]);
-        const gridApi = ref();
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             flex: 1,
             minWidth: 100,

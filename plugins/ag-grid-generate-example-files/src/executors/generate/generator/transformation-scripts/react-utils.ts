@@ -1,6 +1,6 @@
 import * as JSON5 from 'json5';
 
-import { Events } from '../_copiedFromCore/eventKeys';
+import { ALL_EVENTS } from '../_copiedFromCore/eventTypes';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
 import { getFunctionName, recognizedDomEvents } from './parser-utils';
 
@@ -39,7 +39,7 @@ export function convertTemplate(template: string) {
         .replace(/<input (.*)value=/g, '<input $1defaultValue=')
         .replace(/ class=/g, ' className=')
         .replace(/ for=/g, ' htmlFor=')
-        .replace(/ \<option (.*)selected=\"\"/g, '<option $1selected={true}');
+        .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
 
     return convertStyles(template);
 }
@@ -79,7 +79,7 @@ export function convertFunctionalTemplate(template: string) {
         .replace(/<input (.*)value=/g, '<input $1defaultValue=')
         .replace(/ class=/g, ' className=')
         .replace(/ for=/g, ' htmlFor=')
-        .replace(/ \<option (.*)selected=\"\"/g, '<option $1selected={true}');
+        .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
 
     return convertStyles(template);
 }
@@ -98,15 +98,11 @@ export const getValueType = (value: string) => {
 
 export const convertFunctionToConstCallback = (code: string, callbackDependencies: {}) => {
     const functionName = getFunctionName(code);
-    return `${code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = useCallback(($2) =>')}, [${callbackDependencies[functionName] || ''}])`;
+    return `${code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)/, 'const $1 = useCallback(($2) =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
 export const convertFunctionToConstCallbackTs = (code: string, callbackDependencies: {}) => {
     const functionName = getFunctionName(code); //:(\s+[^\{]*)
-    return `${code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)(:?\s+[^\{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
+    return `${code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)(:?\s+[^{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
 
-export const EventAndCallbackNames = new Set([
-    ...PropertyKeys.CALLBACK_PROPERTIES,
-    ...PropertyKeys.FUNCTIONAL_PROPERTIES,
-    ...Object.values(Events),
-]);
+export const EventAndCallbackNames = new Set([...PropertyKeys.FUNCTION_PROPERTIES, ...ALL_EVENTS]);

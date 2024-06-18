@@ -1,18 +1,20 @@
-import type { AgEvent, VirtualList, VirtualListDragItem } from '@ag-grid-community/core';
-import { BeanStub, DragSourceType, VirtualListDragFeature } from '@ag-grid-community/core';
+import type { AgEvent } from '@ag-grid-community/core';
+import { BeanStub, DragSourceType } from '@ag-grid-community/core';
+import { VirtualListDragFeature } from '@ag-grid-enterprise/core';
+import type { VirtualList, VirtualListDragItem } from '@ag-grid-enterprise/core';
 
 import type { AdvancedFilterBuilderComp } from './advancedFilterBuilderComp';
 import type { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
 import type { AdvancedFilterBuilderItem } from './iAdvancedFilterBuilder';
 
-export interface AdvancedFilterBuilderDragStartedEvent extends AgEvent {
+export interface AdvancedFilterBuilderDragStartedEvent extends AgEvent<'advancedFilterBuilderDragStarted'> {
     item: AdvancedFilterBuilderItem;
 }
 
-export class AdvancedFilterBuilderDragFeature extends BeanStub {
-    public static readonly EVENT_DRAG_STARTED = 'advancedFilterBuilderDragStarted';
-    public static readonly EVENT_DRAG_ENDED = 'advancedFilterBuilderDragEnded';
-
+export type AdvancedFilterBuilderDragFeatureEvent =
+    | 'advancedFilterBuilderDragStarted'
+    | 'advancedFilterBuilderDragEnded';
+export class AdvancedFilterBuilderDragFeature extends BeanStub<AdvancedFilterBuilderDragFeatureEvent> {
     constructor(
         private readonly comp: AdvancedFilterBuilderComp,
         private readonly virtualList: VirtualList
@@ -29,8 +31,8 @@ export class AdvancedFilterBuilderDragFeature extends BeanStub {
                 AdvancedFilterBuilderDragStartedEvent
             >(this.comp, this.virtualList, {
                 dragSourceType: DragSourceType.AdvancedFilterBuilder,
-                listItemDragStartEvent: AdvancedFilterBuilderDragFeature.EVENT_DRAG_STARTED,
-                listItemDragEndEvent: AdvancedFilterBuilderDragFeature.EVENT_DRAG_ENDED,
+                listItemDragStartEvent: 'advancedFilterBuilderDragStarted',
+                listItemDragEndEvent: 'advancedFilterBuilderDragEnded',
                 eventSource: this,
                 getCurrentDragValue: (listItemDragStartEvent: AdvancedFilterBuilderDragStartedEvent) =>
                     this.getCurrentDragValue(listItemDragStartEvent),

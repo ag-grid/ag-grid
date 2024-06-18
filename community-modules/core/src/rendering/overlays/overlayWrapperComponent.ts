@@ -2,21 +2,11 @@ import type { BeanCollection } from '../../context/context';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
-import type { AgComponentSelector } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
-    static readonly selector: AgComponentSelector = 'AG-OVERLAY-WRAPPER';
-
-    // wrapping in outer div, and wrapper, is needed to center the loading icon
-    private static TEMPLATE = /* html */ `
-        <div class="ag-overlay" role="presentation">
-            <div class="ag-overlay-panel" role="presentation">
-                <div class="ag-overlay-wrapper" data-ref="eOverlayWrapper" role="presentation"></div>
-            </div>
-        </div>`;
-
     private overlayService: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -32,7 +22,13 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private updateListenerDestroyFunc?: () => null;
 
     constructor() {
-        super(OverlayWrapperComponent.TEMPLATE);
+        // wrapping in outer div, and wrapper, is needed to center the loading icon
+        super(/* html */ `
+            <div class="ag-overlay" role="presentation">
+                <div class="ag-overlay-panel" role="presentation">
+                    <div class="ag-overlay-wrapper" data-ref="eOverlayWrapper" role="presentation"></div>
+                </div>
+            </div>`);
     }
 
     public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
@@ -116,3 +112,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         super.destroy();
     }
 }
+export const OverlayWrapperSelector: ComponentSelector = {
+    selector: 'AG-OVERLAY-WRAPPER',
+    component: OverlayWrapperComponent,
+};

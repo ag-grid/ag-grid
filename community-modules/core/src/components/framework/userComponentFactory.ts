@@ -10,24 +10,25 @@ import type {
 } from '../../entities/colDef';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { IFloatingFilterParams } from '../../filter/floating/floatingFilter';
-import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
 import type { IHeaderParams } from '../../headerRendering/cells/column/headerComp';
 import type { IHeaderGroupParams } from '../../headerRendering/cells/columnGroup/headerGroupComp';
 import type { IDateParams } from '../../interfaces/dateComponent';
+import type { GroupCellRendererParams } from '../../interfaces/groupCellRenderer';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon, WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IFilterDef, IFilterParams } from '../../interfaces/iFilter';
+import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { RichSelectParams } from '../../interfaces/iRichCellEditorParams';
 import type { SetFilterParams } from '../../interfaces/iSetFilter';
 import type { ToolPanelDef } from '../../interfaces/iSideBar';
 import type { IStatusPanelParams, StatusPanelDef } from '../../interfaces/iStatusPanel';
 import type { IToolPanelParams } from '../../interfaces/iToolPanel';
 import type { IMenuItemParams, MenuItemDef } from '../../interfaces/menuItem';
-import type { GroupCellRendererParams } from '../../rendering/cellRenderers/groupCellRendererCtrl';
 import type { ICellRendererParams, ISetFilterCellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import type { ILoadingOverlayParams } from '../../rendering/overlays/loadingOverlayComponent';
 import type { INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComponent';
 import type { ITooltipParams } from '../../rendering/tooltipComponent';
+import { _errorOnce } from '../../utils/function';
 import { _mergeDeep } from '../../utils/object';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
@@ -36,6 +37,7 @@ import {
     CellEditorComponent,
     CellRendererComponent,
     DateComponent,
+    EditorRendererComponent,
     FilterComponent,
     FloatingFilterComponent,
     FullWidth,
@@ -136,14 +138,21 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
     }
 
     public getCellRendererDetails(
-        def: ColDef | RichSelectParams,
+        def: ColDef,
         params: WithoutGridCommon<ICellRendererParams>
     ): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 
+    public getEditorRendererDetails<TDefinition, TEditorParams extends AgGridCommon<any, any>>(
+        def: TDefinition,
+        params: WithoutGridCommon<TEditorParams>
+    ): UserCompDetails | undefined {
+        return this.getCompDetails<TDefinition>(def, EditorRendererComponent, null, params);
+    }
+
     public getLoadingCellRendererDetails(
-        def: ColDef | RichSelectParams,
+        def: ColDef,
         params: WithoutGridCommon<ICellRendererParams>
     ): UserCompDetails | undefined {
         return this.getCompDetails(def, LoadingCellRendererComponent, 'agSkeletonCellRenderer', params, true);
@@ -215,8 +224,8 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         return this.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true)!;
     }
 
-    private getCompDetails(
-        defObject: DefinitionObject,
+    private getCompDetails<TDefinition = DefinitionObject>(
+        defObject: TDefinition,
         type: ComponentType,
         defaultName: string | null | undefined,
         params: any,
@@ -224,8 +233,9 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
     ): UserCompDetails | undefined {
         const { propertyName, cellRenderer } = type;
 
+        // eslint-disable-next-line prefer-const
         let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } =
-            this.getCompKeys(defObject, type, params);
+            UserComponentFactory.getCompKeys(this.frameworkOverrides, defObject, type, params);
 
         const lookupFromRegistry = (key: string) => {
             const item = this.userComponentRegistry.retrieve(propertyName, key);
@@ -252,9 +262,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                console.error(
-                    `AG Grid: Could not find component ${compName}, did you forget to configure this component?`
-                );
+                _errorOnce(`Could not find component ${compName}, did you forget to configure this component?`);
             }
             return;
         }
@@ -276,8 +284,9 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         };
     }
 
-    private getCompKeys(
-        defObject: DefinitionObject,
+    public static getCompKeys<TDefinition = DefinitionObject>(
+        frameworkOverrides: IFrameworkOverrides,
+        defObject: TDefinition,
         type: ComponentType,
         params?: any
     ): {
@@ -316,7 +325,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
                 if (typeof providedJsComp === 'string') {
                     compName = providedJsComp as string;
                 } else if (providedJsComp != null && providedJsComp !== true) {
-                    const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(providedJsComp);
+                    const isFwkComp = frameworkOverrides.isFrameworkComponent(providedJsComp);
                     if (isFwkComp) {
                         fwComp = providedJsComp;
                     } else {
@@ -372,8 +381,8 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
     }
 
     // used by Floating Filter
-    public mergeParamsWithApplicationProvidedParams(
-        defObject: DefinitionObject,
+    public mergeParamsWithApplicationProvidedParams<TDefinition = DefinitionObject>(
+        defObject: TDefinition,
         type: ComponentType,
         paramsFromGrid: any,
         paramsFromSelector: any = null
@@ -405,27 +414,5 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
             return;
         }
         return component.init(params);
-    }
-
-    public getDefaultFloatingFilterType(def: IFilterDef, getFromDefault: () => string): string | null {
-        if (def == null) {
-            return null;
-        }
-
-        let defaultFloatingFilterType: string | null = null;
-
-        const { compName, jsComp, fwComp } = this.getCompKeys(def, FilterComponent);
-
-        if (compName) {
-            // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(compName);
-        } else {
-            const usingDefaultFilter = jsComp == null && fwComp == null && def.filter === true;
-            if (usingDefaultFilter) {
-                defaultFloatingFilterType = getFromDefault();
-            }
-        }
-
-        return defaultFloatingFilterType;
     }
 }

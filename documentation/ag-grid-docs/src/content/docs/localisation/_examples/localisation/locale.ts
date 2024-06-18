@@ -294,6 +294,12 @@ export const AG_GRID_LOCALE_EN: Record<string, string> = {
     labelRotation: 'Rotation',
     circle: 'Circle',
     polygon: 'Polygon',
+    square: 'Square',
+    cross: 'Cross',
+    diamond: 'Diamond',
+    plus: 'Plus',
+    triangle: 'Triangle',
+    heart: 'Heart',
     orientation: 'Orientation',
     fixed: 'Fixed',
     parallel: 'Parallel',
@@ -314,7 +320,7 @@ export const AG_GRID_LOCALE_EN: Record<string, string> = {
     horizontalAxisTitle: 'Horizontal Axis Title',
     verticalAxisTitle: 'Vertical Axis Title',
     polarAxisTitle: 'Polar Axis Title',
-    titlePlaceholder: 'Chart title - double click to edit',
+    titlePlaceholder: 'Chart Title',
     background: 'Background',
     font: 'Font',
     weight: 'Weight',
@@ -531,13 +537,20 @@ export const AG_GRID_LOCALE_EN: Record<string, string> = {
     ariaDropZoneColumnComponentSortAscending: 'ascending',
     ariaDropZoneColumnComponentSortDescending: 'descending',
 
-    // ARIA Labels for Dialogs
+    ariaLabelDialog: 'Dialog',
+
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',
+
     ariaLabelCellEditor: 'Cell Editor',
-    ariaLabelDialog: 'Dialog',
     ariaLabelSelectField: 'Select Field',
+
+    // aria labels for rich select
     ariaLabelRichSelectField: 'Rich Select Field',
+    ariaLabelRichSelectToggleSelection: 'Press SPACE to toggle selection',
+    ariaLabelRichSelectDeselectAllItems: 'Press DELETE to deselect all items',
+    ariaLabelRichSelectDeleteSelection: 'Press DELETE to deselect item',
+
     ariaLabelTooltip: 'Tooltip',
     ariaLabelContextMenu: 'Context Menu',
     ariaLabelSubMenu: 'SubMenu',

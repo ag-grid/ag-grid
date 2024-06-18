@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { AgGridReactUi } from './reactUi/agGridReactUi';
 import type { AgGridReactProps, AgReactUiProps } from './shared/interfaces';
 
-export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> | AgReactUiProps<TData>, {}> {
+export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> | AgReactUiProps<TData>, object> {
     /** Grid Api available after onGridReady event has fired. */
     public api!: GridApi<TData>;
     private apiListeners: Array<(params: any) => void> = [];

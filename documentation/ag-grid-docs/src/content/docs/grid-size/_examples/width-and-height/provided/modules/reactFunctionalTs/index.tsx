@@ -5,7 +5,7 @@ import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core'
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './styles.css';
@@ -55,10 +55,6 @@ const GridExample = () => {
         setWidthAndHeight('400px', '400px');
     };
 
-    const noSize = () => {
-        setWidthAndHeight('', '');
-    };
-
     const setWidthAndHeight = (width: string, height: string) => {
         setStyle({
             width,
@@ -69,11 +65,9 @@ const GridExample = () => {
     return (
         <div className="example-wrapper">
             <div style={{ marginBottom: '5px' }}>
-                Set width and height: &nbsp;
-                <button onClick={() => fillLarge()}>100%</button>
-                <button onClick={() => fillMedium()}>60%</button>
-                <button onClick={() => fillExact()}>400px</button>
-                <button onClick={() => noSize()}>None (default size)</button>
+                <button onClick={() => fillLarge()}>Fill 100%</button>
+                <button onClick={() => fillMedium()}>Fill 60%</button>
+                <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
             </div>
             <div
                 className={

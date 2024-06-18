@@ -6,8 +6,8 @@ import type { IRowModel } from '../../interfaces/iRowModel';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
-import { _debounce } from '../../utils/function';
-import type { ComponentClass } from '../../widgets/component';
+import { _debounce, _warnOnce } from '../../utils/function';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import type { PopupEventParams } from '../../widgets/popupService';
@@ -51,7 +51,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected readonly eFilterBody: HTMLElement = RefPlaceholder;
 
     private eButtonsPanel: HTMLElement;
-    private buttonListeners: ((() => null) | undefined)[] = [];
+    private buttonListeners: (() => null)[] = [];
 
     constructor(private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT) {
         super();
@@ -62,7 +62,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected abstract updateUiVisibility(): void;
 
     protected abstract createBodyTemplate(): string;
-    protected abstract getAgComponents(): ComponentClass[];
+    protected abstract getAgComponents(): ComponentSelector[];
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): Promise<void>;
 
@@ -166,7 +166,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         } else {
             // Always empty the buttons panel before adding new buttons
             _clearElement(this.eButtonsPanel);
-            this.buttonListeners.forEach((destroyFunc) => destroyFunc?.());
+            this.buttonListeners.forEach((destroyFunc) => destroyFunc());
             this.buttonListeners = [];
         }
 
@@ -209,7 +209,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     };
                     break;
                 default:
-                    console.warn('AG Grid: Unknown button type specified');
+                    _warnOnce('Unknown button type specified');
                     return;
             }
 
@@ -224,7 +224,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 </button>`
             );
 
-            this.buttonListeners.push(this.addManagedListener(button, 'click', clickListener));
+            this.buttonListeners.push(...this.addManagedElementListeners(button, { click: clickListener }));
             fragment.append(button);
         };
 

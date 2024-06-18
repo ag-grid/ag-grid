@@ -3,7 +3,8 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
-import { type AgColumnGroup, isColumnGroup } from '../../entities/agColumnGroup';
+import { isColumnGroup } from '../../entities/agColumnGroup';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { FocusService } from '../../focusService';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import { _last } from '../../utils/array';
@@ -38,7 +39,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         });
 
         const eDocument = this.gos.getDocument();
-        this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
+        this.addManagedElementListeners(eDocument, { mousedown: () => this.setCurrentHeaderRowWithoutSpan(-1) });
     }
 
     public getHeaderRowCount(): number {

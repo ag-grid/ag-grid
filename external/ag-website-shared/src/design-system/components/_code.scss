@@ -168,6 +168,14 @@ pre.code.line-numbers > code,
     text-align: right;
 }
 
+.copy-to-clipboard {
+    overflow: hidden;
+
+    > code {
+        max-width: 100%;
+    }
+}
+
 // Theme colors
 // ============
 .token.comment,
@@ -256,6 +264,13 @@ code[class*='language-css'] {
 
 .language-css .token.property {
     color: var(--tag-color);
+}
+
+.language-bash {
+    .token.function {
+        color: var(--default-text-color);
+        font-weight: 600;
+    }
 }
 
 .token.atrule,

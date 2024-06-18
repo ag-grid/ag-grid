@@ -6,8 +6,14 @@
   "targets": {
     "build": {
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
-      "dependsOn": ["generate-doc-references", "generate-examples"],
-      "inputs": ["^production", "production", "!{projectRoot}/vitest.config.mjs", { "env": "PUBLIC_PACKAGE_VERSION" }],
+      "dependsOn": ["generate-doc-references", "generate-examples", "^build"],
+      "inputs": [
+        "^production",
+        "production",
+        "!{projectRoot}/vitest.config.mjs",
+        "{workspaceRoot}/external/ag-website-shared/**",
+        { "env": "PUBLIC_PACKAGE_VERSION" }
+      ],
       "cache": true,
       "command": "astro build",
       "options": {

@@ -16,6 +16,7 @@ const orderedCoreBeans: BeanName[] = [
     'cellPositionUtils',
     'headerPositionUtils',
     'paginationAutoPageSizeService',
+    'apiFunctionService',
     'gridApi',
     'userComponentRegistry',
     'agComponentUtils',
@@ -34,10 +35,13 @@ const orderedCoreBeans: BeanName[] = [
     'popupService',
     'selectionService',
     'columnFilterService',
+    'quickFilterService',
     'filterManager',
     'columnModel',
     'headerNavigationService',
-    'paginationProxy',
+    'pageBoundsService',
+    'paginationService',
+    'pageBoundsListener',
     'rowRenderer',
     'expressionService',
     'columnFactory',
@@ -63,7 +67,6 @@ const orderedCoreBeans: BeanName[] = [
     'changeDetectionService',
     'animationFrameService',
     'undoRedoService',
-    'agStackComponentsRegistry',
     'columnDefFactory',
     'rowCssClassCalculator',
     'rowNodeBlockLoader',
@@ -73,7 +76,6 @@ const orderedCoreBeans: BeanName[] = [
     'rowNodeEventThrottle',
     'ctrlsFactory',
     'dataTypeService',
-    'quickFilterService',
     'syncService',
     'overlayService',
     'stateService',
@@ -99,7 +101,7 @@ const beanNamePosition: { [key in BeanName]?: number } = Object.fromEntries(
     orderedCoreBeans.map((beanName, index) => [beanName, index])
 );
 
-export function gridBeanComparator(
+export function gridBeanInitComparator(
     bean1: GenericBean<BeanName, BeanCollection>,
     bean2: GenericBean<BeanName, BeanCollection>
 ): number {
@@ -107,4 +109,12 @@ export function gridBeanComparator(
     const index1 = (bean1.beanName ? beanNamePosition[bean1.beanName] : undefined) ?? Number.MAX_SAFE_INTEGER;
     const index2 = (bean2.beanName ? beanNamePosition[bean2.beanName] : undefined) ?? Number.MAX_SAFE_INTEGER;
     return index1 - index2;
+}
+
+export function gridBeanDestroyComparator(
+    bean1: GenericBean<BeanName, BeanCollection>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    bean2: GenericBean<BeanName, BeanCollection>
+): number {
+    return bean1?.beanName === 'gridDestroyService' ? -1 : 0;
 }

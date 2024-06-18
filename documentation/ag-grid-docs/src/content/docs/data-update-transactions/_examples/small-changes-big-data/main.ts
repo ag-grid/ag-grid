@@ -98,7 +98,7 @@ function getMyFilter(): IFilterType {
 var myFilter = getMyFilter();
 
 function getRowId(params: GetRowIdParams) {
-    return params.data.id;
+    return String(params.data.id);
 }
 
 function onBtDuplicate() {

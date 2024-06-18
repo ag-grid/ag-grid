@@ -7,6 +7,7 @@ import type {
     IAggregationStage,
     IClientSideRowModel,
     IRowModel,
+    IRowNodeStage,
     PartialCellRange,
     PivotResultColsService,
     RowNode,
@@ -14,7 +15,7 @@ import type {
     SortController,
     ValueService,
 } from '@ag-grid-community/core';
-import { BeanStub, ModuleNames, ModuleRegistry, _includes, _last, _values } from '@ag-grid-community/core';
+import { BeanStub, ModuleNames, ModuleRegistry, _includes, _last, _values, _warnOnce } from '@ag-grid-community/core';
 
 import type { ColState } from '../model/chartDataModel';
 import { ChartDataModel } from '../model/chartDataModel';
@@ -45,7 +46,7 @@ export class ChartDatasource extends BeanStub {
     private columnModel: ColumnModel;
     private rowNodeSorter: RowNodeSorter;
     private sortController: SortController;
-    private aggregationStage?: IAggregationStage;
+    private aggregationStage?: IRowNodeStage & IAggregationStage;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortController = beans.sortController;
@@ -54,18 +55,18 @@ export class ChartDatasource extends BeanStub {
         this.valueService = beans.valueService;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.rowNodeSorter = beans.rowNodeSorter;
-        this.aggregationStage = beans.aggregationStage;
+        this.aggregationStage = beans.aggregationStage as (IRowNodeStage & IAggregationStage) | undefined;
     }
 
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
             if (params.grouping) {
-                console.warn('AG Grid: crossing filtering with row grouping is not supported.');
+                _warnOnce('crossing filtering with row grouping is not supported.');
                 return { chartData: [], columnNames: {} };
             }
 
             if (!this.gos.isRowModelType('clientSide')) {
-                console.warn('AG Grid: crossing filtering is only supported in the client side row model.');
+                _warnOnce('crossing filtering is only supported in the client side row model.');
                 return { chartData: [], columnNames: {} };
             }
         }
@@ -141,7 +142,7 @@ export class ChartDatasource extends BeanStub {
         for (let i = 0; i < numRows; i++) {
             const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
-            if (rowNode.footer) {
+            if (rowNode.footer || rowNode.detail) {
                 numRemovedNodes++;
                 continue;
             }

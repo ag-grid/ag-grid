@@ -1,21 +1,19 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import { FilterComponent } from '../components/framework/componentTypes';
+import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { Events, type EventsType } from '../eventKeys';
 import type {
     ColumnEventType,
-    FilterChangedEvent,
     FilterChangedEventSourceType,
     FilterDestroyedEvent,
     FilterModifiedEvent,
 } from '../events';
-import { unwrapUserComp } from '../gridApi';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -24,10 +22,11 @@ import { ModuleRegistry } from '../modules/moduleRegistry';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
 import { _exists, _jsonEquals } from '../utils/generic';
-import { _cloneObject, _mergeDeep } from '../utils/object';
+import { _cloneObject } from '../utils/object';
 import type { ValueService } from '../valueService/valueService';
 import type { FilterManager } from './filterManager';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
+import { getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
 export class ColumnFilterService extends BeanStub {
     beanName: BeanName = 'columnFilterService';
@@ -37,7 +36,7 @@ export class ColumnFilterService extends BeanStub {
     private rowModel: IRowModel;
     private userComponentFactory: UserComponentFactory;
     private rowRenderer: RowRenderer;
-    private dataTypeService: DataTypeService;
+    private dataTypeService?: DataTypeService;
     private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
@@ -69,10 +68,10 @@ export class ColumnFilterService extends BeanStub {
     private initialFilterModel: FilterModel;
 
     public postConstruct(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_GRID_COLUMNS_CHANGED]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_ROW_DATA_UPDATED]: () => this.onNewRowsLoaded('rowDataUpdated'),
-            [Events.EVENT_DATA_TYPES_INFERRED]: this.processFilterModelUpdateQueue.bind(this),
+        this.addManagedEventListeners({
+            gridColumnsChanged: this.onColumnsChanged.bind(this),
+            rowDataUpdated: () => this.onNewRowsLoaded('rowDataUpdated'),
+            dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
         this.initialFilterModel = {
@@ -81,7 +80,7 @@ export class ColumnFilterService extends BeanStub {
     }
 
     public setFilterModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {
-        if (this.dataTypeService.isPendingInference()) {
+        if (this.dataTypeService?.isPendingInference()) {
             this.filterModelUpdateQueue.push({ model, source });
             return;
         }
@@ -105,23 +104,19 @@ export class ColumnFilterService extends BeanStub {
                 const column = this.columnModel.getColDefCol(colId) || this.columnModel.getCol(colId);
 
                 if (!column) {
-                    console.warn('AG Grid: setFilterModel() - no column found for colId: ' + colId);
+                    _warnOnce('setFilterModel() - no column found for colId: ' + colId);
                     return;
                 }
 
                 if (!column.isFilterAllowed()) {
-                    console.warn(
-                        'AG Grid: setFilterModel() - unable to fully apply model, filtering disabled for colId: ' +
-                            colId
-                    );
+                    _warnOnce('setFilterModel() - unable to fully apply model, filtering disabled for colId: ' + colId);
                     return;
                 }
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column);
                 if (!filterWrapper) {
-                    console.warn(
-                        'AG-Grid: setFilterModel() - unable to fully apply model, unable to create filter for colId: ' +
-                            colId
+                    _warnOnce(
+                        'setFilterModel() - unable to fully apply model, unable to create filter for colId: ' + colId
                     );
                     return;
                 }
@@ -341,18 +336,16 @@ export class ColumnFilterService extends BeanStub {
         }
     }
 
-    public updateForFilterChanged(
+    public updateBeforeFilterChanged(
         params: {
-            source?: FilterChangedEventSourceType;
             filterInstance?: IFilterComp;
             additionalEventAttributes?: any;
-            columns?: AgColumn[];
         } = {}
-    ): void {
-        const { source, filterInstance, additionalEventAttributes, columns } = params;
+    ): Promise<void> {
+        const { filterInstance, additionalEventAttributes } = params;
 
         this.updateDependentFilters();
-        this.updateActiveFilters().then(() =>
+        return this.updateActiveFilters().then(() =>
             this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes).then(() => {
                 this.allColumnFilters.forEach((filterWrapper) => {
                     if (!filterWrapper.filterPromise) {
@@ -365,25 +358,15 @@ export class ColumnFilterService extends BeanStub {
                     });
                 });
 
-                const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
-                    source,
-                    type: Events.EVENT_FILTER_CHANGED,
-                    columns: columns || [],
-                };
-
-                if (additionalEventAttributes) {
-                    _mergeDeep(filterChangedEvent, additionalEventAttributes);
-                }
-
                 // because internal events are not async in ag-grid, when the dispatchEvent
                 // method comes back, we know all listeners have finished executing.
                 this.processingFilterChange = true;
-
-                this.eventService.dispatchEvent(filterChangedEvent);
-
-                this.processingFilterChange = false;
             })
         );
+    }
+
+    public updateAfterFilterChanged(): void {
+        this.processingFilterChange = false;
     }
 
     public isSuppressFlashingCellsBecauseFiltering(): boolean {
@@ -447,7 +430,7 @@ export class ColumnFilterService extends BeanStub {
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId)) {
             defaultFilter = 'agSetColumnFilter';
         } else {
-            const cellDataType = this.dataTypeService.getBaseDataType(column);
+            const cellDataType = this.dataTypeService?.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFilter = 'agNumberColumnFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -464,7 +447,7 @@ export class ColumnFilterService extends BeanStub {
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId)) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
-            const cellDataType = this.dataTypeService.getBaseDataType(column);
+            const cellDataType = this.dataTypeService?.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -613,7 +596,7 @@ export class ColumnFilterService extends BeanStub {
             }
 
             filterComponent.then((instance) => {
-                callback(unwrapUserComp(instance!));
+                callback(_unwrapUserComp(instance!));
             });
         };
 
@@ -631,7 +614,7 @@ export class ColumnFilterService extends BeanStub {
             filterParams
         );
 
-        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef, () =>
+        let defaultFloatingFilterType = getDefaultFloatingFilterType(this.frameworkOverrides, colDef, () =>
             this.getDefaultFloatingFilter(column)
         );
 
@@ -694,7 +677,7 @@ export class ColumnFilterService extends BeanStub {
             this.allColumnFilters.delete(filterWrapper.column.getColId());
 
             const event: WithoutGridCommon<FilterDestroyedEvent> = {
-                type: Events.EVENT_FILTER_DESTROYED,
+                type: 'filterDestroyed',
                 source,
                 column: filterWrapper.column,
             };
@@ -705,7 +688,7 @@ export class ColumnFilterService extends BeanStub {
     private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: AgColumn<any>) {
         return () => {
             const event: WithoutGridCommon<FilterModifiedEvent> = {
-                type: Events.EVENT_FILTER_MODIFIED,
+                type: 'filterModified',
                 column,
                 filterInstance: filter,
             };
@@ -776,7 +759,7 @@ export class ColumnFilterService extends BeanStub {
         this.allColumnFilters.set(colId, filterWrapper);
         this.allColumnListeners.set(
             colId,
-            this.addManagedListener(column, AgColumn.EVENT_COL_DEF_CHANGED, () => this.checkDestroyFilter(colId))
+            this.addManagedListeners(column, { colDefChanged: () => this.checkDestroyFilter(colId) })[0]
         );
     }
 
@@ -811,7 +794,7 @@ export class ColumnFilterService extends BeanStub {
             return undefined;
         }
         this.getFilterInstanceImpl(key).then((filter) => {
-            const unwrapped = unwrapUserComp(filter) as any;
+            const unwrapped = _unwrapUserComp(filter) as any;
             callback(unwrapped);
         });
         return undefined;
@@ -820,7 +803,7 @@ export class ColumnFilterService extends BeanStub {
     public getColumnFilterInstance<TFilter extends IFilter>(
         key: string | AgColumn
     ): Promise<TFilter | null | undefined> {
-        return this.getFilterInstanceImpl(key).then((filter) => unwrapUserComp(filter) as any);
+        return this.getFilterInstanceImpl(key).then((filter) => _unwrapUserComp(filter) as any);
     }
 
     private getFilterInstanceImpl(key: string | AgColumn): Promise<IFilter | null | undefined> {
@@ -849,7 +832,7 @@ export class ColumnFilterService extends BeanStub {
     }
 
     public setColumnFilterModel(key: string | AgColumn, model: any): Promise<void> {
-        if (this.dataTypeService.isPendingInference()) {
+        if (this.dataTypeService?.isPendingInference()) {
             let resolve: () => void = () => {};
             const promise = new Promise<void>((res) => {
                 resolve = res;

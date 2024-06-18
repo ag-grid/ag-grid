@@ -95,7 +95,6 @@ const GridExample = () => {
                     enableRangeSelection={true}
                     rowSelection={'multiple'}
                     statusBar={statusBar}
-                    reactiveCustomComponents
                 />
             </div>
         </div>

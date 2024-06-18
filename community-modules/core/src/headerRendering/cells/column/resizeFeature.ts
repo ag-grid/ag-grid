@@ -83,11 +83,11 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
                 this.eResize.addEventListener('dblclick', autoSizeColListener);
                 const touchListener: TouchListener = new TouchListener(this.eResize);
-                touchListener.addEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
+                touchListener.addEventListener('doubleTap', autoSizeColListener);
 
                 destroyResizeFuncs.push(() => {
                     this.eResize.removeEventListener('dblclick', autoSizeColListener);
-                    touchListener.removeEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
+                    touchListener.removeEventListener('doubleTap', autoSizeColListener);
                     touchListener.destroy();
                 });
             }

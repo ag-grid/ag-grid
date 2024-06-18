@@ -1,9 +1,8 @@
 import type { ToolPanelDef } from '@ag-grid-community/core';
 import { Component, RefPlaceholder, _createIconNoSpan, _setAriaExpanded } from '@ag-grid-community/core';
 
-export class SideBarButtonComp extends Component {
-    public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
-
+export type SideBarButtonCompEvent = 'toggleButtonClicked';
+export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
     private readonly eToggleButton: HTMLButtonElement = RefPlaceholder;
     private readonly eIconWrapper: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
@@ -24,7 +23,7 @@ export class SideBarButtonComp extends Component {
         this.setTemplate(template, []);
         this.setLabel();
         this.setIcon();
-        this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.addManagedElementListeners(this.eToggleButton, { click: this.onButtonPressed.bind(this) });
         this.eToggleButton.setAttribute('id', `ag-${this.getCompId()}-button`);
     }
 
@@ -53,7 +52,7 @@ export class SideBarButtonComp extends Component {
     }
 
     private onButtonPressed(): void {
-        this.dispatchEvent({ type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED });
+        this.dispatchLocalEvent({ type: 'toggleButtonClicked' });
     }
 
     public setSelected(selected: boolean): void {

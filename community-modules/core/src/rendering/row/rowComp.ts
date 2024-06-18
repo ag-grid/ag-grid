@@ -4,6 +4,7 @@ import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
+import { _errorOnce } from '../../utils/function';
 import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
@@ -149,7 +150,7 @@ export class RowComp extends Component {
 
     private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
         if (this.fullWidthCellRenderer) {
-            console.error('AG Grid - should not be setting fullWidthRowComponent twice');
+            _errorOnce('should not be setting fullWidthRowComponent twice');
         }
 
         this.fullWidthCellRenderer = fullWidthRowComponent;

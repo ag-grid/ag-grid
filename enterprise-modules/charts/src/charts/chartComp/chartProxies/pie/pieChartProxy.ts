@@ -15,6 +15,16 @@ interface DonutOffset {
     currentOffset: number;
 }
 
+function calculateOffsets(offset: DonutOffset) {
+    const outerRadiusOffset = offset.currentOffset;
+    offset.currentOffset -= offset.offsetAmount;
+
+    const innerRadiusOffset = offset.currentOffset;
+    offset.currentOffset -= offset.offsetAmount;
+
+    return { outerRadiusOffset, innerRadiusOffset };
+}
+
 export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donut'> {
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -50,7 +60,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                 };
 
                 if (this.chartType === 'donut' || this.chartType === 'doughnut') {
-                    const { outerRadiusOffset, innerRadiusOffset } = PieChartProxy.calculateOffsets(offset);
+                    const { outerRadiusOffset, innerRadiusOffset } = calculateOffsets(offset);
                     const title = f.displayName
                         ? {
                               title: { text: f.displayName, showInLegend: numFields > 1 },
@@ -127,16 +137,6 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         const primaryOpts = primaryOptions(primarySeries);
 
         return [filteredOutOptions(primarySeries, angleKey), primaryOpts];
-    }
-
-    private static calculateOffsets(offset: DonutOffset) {
-        const outerRadiusOffset = offset.currentOffset;
-        offset.currentOffset -= offset.offsetAmount;
-
-        const innerRadiusOffset = offset.currentOffset;
-        offset.currentOffset -= offset.offsetAmount;
-
-        return { outerRadiusOffset, innerRadiusOffset };
     }
 
     private getFields(params: UpdateParams): FieldDefinition[] {

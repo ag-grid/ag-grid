@@ -42,19 +42,15 @@ const GridExample = () => {
             enableCellChangeFlash: true,
         };
     }, []);
-    const getRowId = useMemo<GetRowIdFunc>(() => {
-        return (params: GetRowIdParams) => {
-            return params.data.account;
-        };
+    const getRowId = useMemo(() => {
+        return (params: GetRowIdParams) => String(params.data.account);
     }, []);
     const detailCellRendererParams = useMemo(() => {
         return {
             refreshStrategy: 'nothing',
             detailGridOptions: {
                 rowSelection: 'multiple',
-                getRowId: (params: GetRowIdParams) => {
-                    return params.data.callId;
-                },
+                getRowId: (params: GetRowIdParams) => String(params.data.callId),
                 columnDefs: [
                     { field: 'callId', checkboxSelection: true },
                     { field: 'direction' },

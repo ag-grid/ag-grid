@@ -150,7 +150,7 @@ export class AppComponent {
     }
 
     getRowId(params: GetRowIdParams) {
-        return params.data.id;
+        return String(params.data.id);
     }
 
     onGridReady(params: GridReadyEvent, side: string) {

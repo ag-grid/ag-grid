@@ -2,7 +2,7 @@
     "header": {
         "items": [
             {
-                "title": "Demo",
+                "title": "Demos",
                 "path": "/example"
             },
             {
@@ -149,6 +149,10 @@
                             {
                                 "title": "Licensing / AG Grid Enterprise",
                                 "path": "licensing"
+                            },
+                            {
+                                "title": "Installing Your Licence Key",
+                                "path": "license-install"
                             },
                             {
                                 "title": "React Best Practices",
@@ -1393,6 +1397,10 @@
                     {
                         "title": "Migration",
                         "items": [
+                            {
+                                "title": "Upgrading to AG Grid 32",
+                                "path": "upgrading-to-ag-grid-32"
+                            },
                             {
                                 "title": "Upgrading to AG Grid 31.3",
                                 "path": "upgrading-to-ag-grid-31-3"

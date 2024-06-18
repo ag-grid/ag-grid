@@ -44,9 +44,9 @@
         "script": "copySrcFilesForGeneration"
       },
       "cache": false,
-      "inputs": ["{workspaceRoot}/community-modules/core/src/eventKeys.ts"],
+      "inputs": ["{workspaceRoot}/community-modules/core/src/eventTypes.ts"],
       "outputs": [
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventKeys.ts"
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts"
       ]
     },
     "lint": {

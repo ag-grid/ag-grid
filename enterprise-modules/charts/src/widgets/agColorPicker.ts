@@ -1,4 +1,4 @@
-import type { AgComponentSelector, AgPickerFieldParams } from '@ag-grid-community/core';
+import type { AgPickerFieldParams, ComponentSelector } from '@ag-grid-community/core';
 import { AgPickerField } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 import { _Util } from 'ag-charts-community';
@@ -12,9 +12,7 @@ export interface AgColorPickerParams
     pickerAriaLabelValue?: string;
 }
 
-export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, AgDialog> {
-    static readonly selector: AgComponentSelector = 'AG-COLOR-PICKER';
-
+export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, string, AgDialog> {
     private isDestroyingPicker: boolean;
     private eDisplayFieldColor: HTMLElement;
     private eDisplayFieldText: HTMLElement;
@@ -48,6 +46,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
 
     protected createPickerComponent() {
         const eGuiRect = this.eWrapper.getBoundingClientRect();
+        const parentRect = this.popupService.getParentRect();
 
         const colorDialog = this.createBean(
             new AgDialog({
@@ -57,8 +56,8 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
                 minWidth: 190,
                 width: 190,
                 height: 250,
-                x: eGuiRect.right - 190,
-                y: eGuiRect.top - 250 - (this.config.pickerGap ?? 0),
+                x: eGuiRect.right - parentRect.left - 190,
+                y: eGuiRect.top - parentRect.top - 250 - (this.config.pickerGap ?? 0),
             })
         );
 
@@ -119,3 +118,8 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
         return this.value;
     }
 }
+
+export const AgColorPickerSelector: ComponentSelector = {
+    selector: 'AG-COLOR-PICKER',
+    component: AgColorPicker,
+};

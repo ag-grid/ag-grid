@@ -15,7 +15,7 @@ import type {
     StylingService,
     ValueService,
 } from '@ag-grid-community/core';
-import { CssClassApplier } from '@ag-grid-community/core';
+import { _getHeaderClassesFromColDef, _warnOnce } from '@ag-grid-community/core';
 import type { GridSerializer } from '@ag-grid-community/csv-export';
 import { BaseCreator, Downloader, RowType, ZipContainer } from '@ag-grid-community/csv-export';
 
@@ -154,9 +154,7 @@ const createExcelFileForExcel = (
     } = {}
 ): boolean => {
     if (!data || data.length === 0) {
-        console.warn(
-            'AG Grid: Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.'
-        );
+        _warnOnce('Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.');
         ExcelXlsxFactory.resetFactory();
         return false;
     }
@@ -237,7 +235,7 @@ export class ExcelCreator
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
         this.stylingService = beans.stylingService;
-        this.gridSerializer = beans.gridSerializer;
+        this.gridSerializer = beans.gridSerializer as GridSerializer;
         this.gos = beans.gos;
     }
 
@@ -255,7 +253,7 @@ export class ExcelCreator
 
     protected export(userParams?: ExcelExportParams): void {
         if (this.isExportSuppressed()) {
-            console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
+            _warnOnce(`Export cancelled. Export is not allowed as per your configuration.`);
             return;
         }
 
@@ -369,7 +367,7 @@ export class ExcelCreator
 
             if (col) {
                 headerClasses = headerClasses.concat(
-                    CssClassApplier.getHeaderClassesFromColDef(
+                    _getHeaderClassesFromColDef(
                         col.getDefinition(),
                         this.gos,
                         (column as AgColumn) || null,

@@ -1,7 +1,7 @@
 import type {
-    AgComponentSelector,
     AgEvent,
     BeanCollection,
+    ComponentSelector,
     FocusService,
     ToolPanelDef,
     VisibleColsService,
@@ -10,11 +10,12 @@ import { Component, KeyCode, _clearElement, _last } from '@ag-grid-community/cor
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 
-export interface SideBarButtonClickedEvent extends AgEvent {
+export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked'> {
     toolPanelId: string;
 }
 
-export class AgSideBarButtons extends Component {
+export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
+export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     private focusService: FocusService;
     private visibleColsService: VisibleColsService;
 
@@ -23,18 +24,14 @@ export class AgSideBarButtons extends Component {
         this.visibleColsService = beans.visibleColsService;
     }
 
-    static readonly selector: AgComponentSelector = 'AG-SIDE-BAR-BUTTONS';
-
-    public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
-    private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
 
     constructor() {
-        super(AgSideBarButtons.TEMPLATE);
+        super(/* html */ `<div class="ag-side-buttons" role="tablist"></div>`);
     }
 
     public postConstruct(): void {
-        this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
@@ -60,9 +57,9 @@ export class AgSideBarButtons extends Component {
         this.buttonComps.push(buttonComp);
         this.appendChild(buttonComp);
 
-        buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, () => {
-            this.dispatchEvent({
-                type: AgSideBarButtons.EVENT_SIDE_BAR_BUTTON_CLICKED,
+        buttonComp.addEventListener('toggleButtonClicked', () => {
+            this.dispatchLocalEvent({
+                type: 'sideBarButtonClicked',
                 toolPanelId: def.id,
             });
         });
@@ -81,3 +78,8 @@ export class AgSideBarButtons extends Component {
         super.destroy();
     }
 }
+
+export const AgSideBarButtonsSelector: ComponentSelector = {
+    selector: 'AG-SIDE-BAR-BUTTONS',
+    component: AgSideBarButtons,
+};

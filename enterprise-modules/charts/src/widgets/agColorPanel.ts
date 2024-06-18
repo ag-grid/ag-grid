@@ -1,7 +1,8 @@
 import { Component, KeyCode, RefPlaceholder, _exists, _setDisplayed } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
 
-import { AgColorInput } from './agColorInput';
+import type { AgColorInput } from './agColorInput';
+import { AgColorInputSelector } from './agColorInput';
 import type { AgColorPicker } from './agColorPicker';
 
 export class AgColorPanel extends Component {
@@ -26,7 +27,19 @@ export class AgColorPanel extends Component {
     private static recentColors: string[] = [];
     private tabIndex: string;
 
-    private static TEMPLATE /* html */ = `<div class="ag-color-panel" tabindex="-1">
+    private readonly spectrumColor: HTMLElement = RefPlaceholder;
+    private readonly spectrumVal: HTMLElement = RefPlaceholder;
+    private readonly spectrumDragger: HTMLElement = RefPlaceholder;
+    private readonly spectrumHue: HTMLElement = RefPlaceholder;
+    private readonly spectrumHueSlider: HTMLElement = RefPlaceholder;
+    private readonly spectrumAlpha: HTMLElement = RefPlaceholder;
+    private readonly spectrumAlphaSlider: HTMLElement = RefPlaceholder;
+    private readonly colorInput: AgColorInput = RefPlaceholder;
+    private readonly recentColors: HTMLElement = RefPlaceholder;
+
+    constructor(config: { picker: Component<any> }) {
+        super(
+            /* html */ `<div class="ag-color-panel" tabindex="-1">
             <div data-ref="spectrumColor" class="ag-spectrum-color">
                 <div class="ag-spectrum-sat ag-spectrum-fill">
                     <div data-ref="spectrumVal" class="ag-spectrum-val ag-spectrum-fill">
@@ -46,20 +59,9 @@ export class AgColorPanel extends Component {
                 <ag-color-input data-ref="colorInput"></ag-color-input>
                 <div data-ref="recentColors" class="ag-recent-colors"></div>
             </div>
-        </div>`;
-
-    private readonly spectrumColor: HTMLElement = RefPlaceholder;
-    private readonly spectrumVal: HTMLElement = RefPlaceholder;
-    private readonly spectrumDragger: HTMLElement = RefPlaceholder;
-    private readonly spectrumHue: HTMLElement = RefPlaceholder;
-    private readonly spectrumHueSlider: HTMLElement = RefPlaceholder;
-    private readonly spectrumAlpha: HTMLElement = RefPlaceholder;
-    private readonly spectrumAlphaSlider: HTMLElement = RefPlaceholder;
-    private readonly colorInput: AgColorInput = RefPlaceholder;
-    private readonly recentColors: HTMLElement = RefPlaceholder;
-
-    constructor(config: { picker: Component }) {
-        super(AgColorPanel.TEMPLATE, [AgColorInput]);
+        </div>`,
+            [AgColorInputSelector]
+        );
         this.picker = config.picker;
     }
 
@@ -74,13 +76,13 @@ export class AgColorPanel extends Component {
             }
         });
 
-        this.addManagedListener(this.spectrumColor, 'keydown', (e) => this.moveDragger(e));
-        this.addManagedListener(this.spectrumAlphaSlider, 'keydown', (e) => this.moveAlphaSlider(e));
-        this.addManagedListener(this.spectrumHueSlider, 'keydown', (e) => this.moveHueSlider(e));
+        this.addManagedListeners(this.spectrumColor, { keydown: (e) => this.moveDragger(e) });
+        this.addManagedListeners(this.spectrumAlphaSlider, { keydown: (e) => this.moveAlphaSlider(e) });
+        this.addManagedListeners(this.spectrumHueSlider, { keydown: (e) => this.moveHueSlider(e) });
 
-        this.addManagedListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
-        this.addManagedListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
-        this.addManagedListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown.bind(this));
+        this.addManagedListeners(this.spectrumVal, { mousedown: this.onSpectrumDraggerDown.bind(this) });
+        this.addManagedListeners(this.spectrumHue, { mousedown: this.onSpectrumHueDown.bind(this) });
+        this.addManagedListeners(this.spectrumAlpha, { mousedown: this.onSpectrumAlphaDown.bind(this) });
 
         this.addGuiEventListener('mousemove', (e: MouseEvent) => {
             this.onSpectrumDraggerMove(e);
@@ -91,16 +93,18 @@ export class AgColorPanel extends Component {
         // Listening to `mouseup` on the document on purpose. The user might release the mouse button
         // outside the UI control. When the mouse returns back to the control's area, the dragging
         // of the thumb is not expected and seen as a bug.
-        this.addManagedListener(document, 'mouseup', this.onMouseUp.bind(this));
+        this.addManagedListeners(document, { mouseup: this.onMouseUp.bind(this) });
 
         this.colorInput.onColorChanged(this.setColor.bind(this));
 
-        this.addManagedListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
-        this.addManagedListener(this.recentColors, 'keydown', (e: KeyboardEvent) => {
-            if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                e.preventDefault();
-                this.onRecentColorClick(e);
-            }
+        this.addManagedListeners(this.recentColors, {
+            click: this.onRecentColorClick.bind(this),
+            keydown: (e: KeyboardEvent) => {
+                if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                    e.preventDefault();
+                    this.onRecentColorClick(e);
+                }
+            },
         });
     }
 
@@ -249,9 +253,11 @@ export class AgColorPanel extends Component {
             return null;
         }
 
+        const offset = sliderRect.width / 2;
+
         let x: number;
         if (e instanceof MouseEvent) {
-            x = e.clientX - parentRect.left;
+            x = Math.floor(e.clientX - parentRect.left);
         } else {
             const isLeft = e.key === KeyCode.LEFT;
             const isRight = e.key === KeyCode.RIGHT;
@@ -260,21 +266,25 @@ export class AgColorPanel extends Component {
             }
             e.preventDefault();
             const diff = isLeft ? -5 : 5;
-            x = parseFloat(slider.style.left) - sliderRect.width / 2 + diff;
+            x = parseFloat(slider.style.left) + offset + diff;
         }
 
         x = Math.max(x, 0);
         x = Math.min(x, parentRect.width);
 
-        slider.style.left = x + sliderRect.width / 2 + 'px';
+        slider.style.left = x - offset + 'px';
 
         return x;
     }
 
     private update(suppressColorInputUpdate?: boolean) {
-        const color = _Util.Color.fromHSB(this.H * 360, this.S, this.B, this.A);
-        const spectrumColor = _Util.Color.fromHSB(this.H * 360, 1, 1);
+        const hue = this.H * 360;
+        const color = _Util.Color.fromHSB(hue, this.S, this.B, this.A);
         const rgbaColor = color.toRgbaString();
+        const colorWithoutAlpha = _Util.Color.fromHSB(hue, this.S, this.B);
+        const rgbaColorWithoutAlpha = colorWithoutAlpha.toRgbaString();
+        const spectrumColor = _Util.Color.fromHSB(hue, 1, 1);
+        const spectrumRgbaColor = spectrumColor.toRgbaString();
 
         // the recent color list needs to know color has actually changed
         const colorPicker = this.picker as AgColorPicker;
@@ -286,8 +296,17 @@ export class AgColorPanel extends Component {
 
         colorPicker.setValue(rgbaColor);
 
-        this.spectrumColor.style.backgroundColor = spectrumColor.toRgbaString();
-        this.spectrumDragger.style.backgroundColor = rgbaColor;
+        this.spectrumColor.style.backgroundColor = spectrumRgbaColor;
+        this.spectrumDragger.style.backgroundColor = rgbaColorWithoutAlpha;
+
+        this.spectrumHueSlider.style.backgroundColor = spectrumRgbaColor;
+
+        this.spectrumAlpha.style.setProperty(
+            '--ag-spectrum-alpha-color-from',
+            _Util.Color.fromHSB(hue, this.S, this.B, 0).toRgbaString()
+        );
+        this.spectrumAlpha.style.setProperty('--ag-spectrum-alpha-color-to', rgbaColorWithoutAlpha);
+        this.spectrumAlpha.style.setProperty('--ag-spectrum-alpha-color', rgbaColor);
 
         if (!suppressColorInputUpdate) {
             this.colorInput.setColor(color);
@@ -356,8 +375,8 @@ export class AgColorPanel extends Component {
         const spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
         const spectrumAlphaRect = this.spectrumAlphaRect || this.refreshAlphaRect();
 
-        this.spectrumHueSlider.style.left = `${(this.H - 1) * -spectrumHueRect.width}px`;
-        this.spectrumAlphaSlider.style.left = `${this.A * spectrumAlphaRect.width}px`;
+        this.spectrumHueSlider.style.left = `${(this.H - 1) * -spectrumHueRect.width - this.spectrumHueSlider.getBoundingClientRect().width / 2}px`;
+        this.spectrumAlphaSlider.style.left = `${this.A * spectrumAlphaRect.width - this.spectrumAlphaSlider.getBoundingClientRect().width / 2}px`;
 
         this.setSpectrumValue(s, b, !updateColorInput);
     }

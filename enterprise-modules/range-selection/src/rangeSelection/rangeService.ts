@@ -10,7 +10,6 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
-    EventsType,
     IRangeService,
     IRowModel,
     NamedBean,
@@ -30,7 +29,6 @@ import {
     AutoScrollService,
     BeanStub,
     CellCtrl,
-    Events,
     _areEqual,
     _exists,
     _existsAndNotEmpty,
@@ -40,6 +38,7 @@ import {
     _makeNull,
     _missing,
     _shallowCompare,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
@@ -89,16 +88,19 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public autoScrollService: AutoScrollService;
 
     public postConstruct(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_COLUMN_VISIBLE]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_COLUMN_VALUE_CHANGED]: this.onColumnsChanged.bind(this),
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: this.removeAllCellRanges.bind(this),
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: this.removeAllCellRanges.bind(this),
-            [Events.EVENT_COLUMN_PIVOT_CHANGED]: this.removeAllCellRanges.bind(this),
-            [Events.EVENT_COLUMN_GROUP_OPENED]: this.refreshLastRangeStart.bind(this),
-            [Events.EVENT_COLUMN_MOVED]: this.refreshLastRangeStart.bind(this),
-            [Events.EVENT_COLUMN_PINNED]: this.refreshLastRangeStart.bind(this),
+        const onColumnsChanged = this.onColumnsChanged.bind(this);
+        const removeAllCellRanges = () => this.removeAllCellRanges();
+        const refreshLastRangeStart = this.refreshLastRangeStart.bind(this);
+        this.addManagedEventListeners({
+            newColumnsLoaded: onColumnsChanged,
+            columnVisible: onColumnsChanged,
+            columnValueChanged: onColumnsChanged,
+            columnPivotModeChanged: removeAllCellRanges,
+            columnRowGroupChanged: removeAllCellRanges,
+            columnPivotChanged: removeAllCellRanges,
+            columnGroupOpened: refreshLastRangeStart,
+            columnMoved: refreshLastRangeStart,
+            columnPinned: refreshLastRangeStart,
         });
 
         this.ctrlsService.whenReady((p) => {
@@ -392,7 +394,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (dispatchWrapperEvents) {
             const startEvent: WithoutGridCommon<RangeDeleteStartEvent> = {
-                type: Events.EVENT_RANGE_DELETE_START,
+                type: 'rangeDeleteStart',
                 source: wrapperEventSource,
             };
             this.eventService.dispatchEvent(startEvent);
@@ -423,7 +425,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (dispatchWrapperEvents) {
             const endEvent: WithoutGridCommon<RangeDeleteEndEvent> = {
-                type: Events.EVENT_RANGE_DELETE_END,
+                type: 'rangeDeleteEnd',
                 source: wrapperEventSource,
             };
             this.eventService.dispatchEvent(endEvent);
@@ -657,10 +659,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return this.cellRanges.filter((cellRange) => this.isCellInSpecificRange(cell, cellRange)).length;
     }
 
-    private isRowInRange(rowIndex: number, floating: RowPinnedType, cellRange: CellRange): boolean {
+    private isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
-        const thisRow: RowPosition = { rowIndex, rowPinned: floating || null };
+        const thisRow: RowPosition = { rowIndex, rowPinned: rowPinned || null };
 
         // compare rowPinned with == instead of === because it can be `null` or `undefined`
         const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;
@@ -928,7 +930,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
         const event: WithoutGridCommon<RangeSelectionChangedEvent> = {
-            type: Events.EVENT_RANGE_SELECTION_CHANGED,
+            type: 'rangeSelectionChanged',
             started,
             finished,
             id,
@@ -942,15 +944,16 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom as AgColumn);
 
+        const logMissing = (column: AgColumn) => _warnOnce(`column ${column.getId()} is not visible`);
         if (fromIndex < 0) {
-            console.warn(`AG Grid: column ${columnFrom.getId()} is not visible`);
+            logMissing(columnFrom);
             return;
         }
 
         const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo as AgColumn);
 
         if (toIndex < 0) {
-            console.warn(`AG Grid: column ${columnTo.getId()} is not visible`);
+            logMissing(columnTo);
             return;
         }
 

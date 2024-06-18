@@ -6,6 +6,7 @@ import type {
     IRowNode,
     ISelectionService,
     IServerSideStore,
+    IServerSideTransactionManager,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
     PostSortRowsParams,
@@ -24,10 +25,10 @@ import type {
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
-    Events,
     NumberSequence,
     RowNodeBlock,
     ServerSideTransactionResultStatus,
+    _errorOnce,
     _getAllValuesInObject,
     _insertIntoArray,
     _missing,
@@ -38,7 +39,6 @@ import {
 import type { BlockUtils } from '../blocks/blockUtils';
 import type { NodeManager } from '../nodeManager';
 import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
-import type { TransactionManager } from '../transactionManager';
 import type { StoreUtils } from './storeUtils';
 
 export class FullStore extends RowNodeBlock implements IServerSideStore {
@@ -51,20 +51,20 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private selectionService: ISelectionService;
     private nodeManager: NodeManager;
     private filterManager?: FilterManager;
-    private transactionManager: TransactionManager;
+    private transactionManager: IServerSideTransactionManager;
     private serverSideRowModel: ServerSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.storeUtils = beans.ssrmStoreUtils;
-        this.blockUtils = beans.ssrmBlockUtils;
+        this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
+        this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.funcColsService = beans.funcColsService;
-        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
+        this.rowNodeBlockLoader = beans.rowNodeBlockLoader!;
         this.rowNodeSorter = beans.rowNodeSorter;
         this.sortController = beans.sortController;
         this.selectionService = beans.selectionService;
-        this.nodeManager = beans.ssrmNodeManager;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.filterManager = beans.filterManager;
-        this.transactionManager = beans.ssrmTransactionManager;
+        this.transactionManager = beans.ssrmTransactionManager!;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
     }
 
@@ -134,7 +134,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (userInitialRowCount != null) {
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY,
+                type: 'rowCountReady',
             });
         }
     }
@@ -276,7 +276,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (this.level === 0) {
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY,
+                type: 'rowCountReady',
             });
         }
 
@@ -295,7 +295,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return undefined;
             }
 
-            const getRowIdFunc = this.gos.getCallback('getRowId');
+            const getRowIdFunc = this.gos.getRowIdCallback();
             if (!getRowIdFunc) {
                 return undefined;
             }
@@ -592,11 +592,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
         // we only apply transactions to loaded state
         switch (this.getState()) {
-            case RowNodeBlock.STATE_FAILED:
+            case 'failed':
                 return { status: ServerSideTransactionResultStatus.StoreLoadingFailed };
-            case RowNodeBlock.STATE_LOADING:
+            case 'loading':
                 return { status: ServerSideTransactionResultStatus.StoreLoading };
-            case RowNodeBlock.STATE_WAITING_TO_LOAD:
+            case 'needsLoading':
                 return { status: ServerSideTransactionResultStatus.StoreWaitingToLoad };
         }
 
@@ -645,7 +645,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             });
 
             const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
+                type: 'selectionChanged',
                 source: 'rowDataChanged',
             };
             this.eventService.dispatchEvent(event);
@@ -743,33 +743,31 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getRowIdCallback();
 
-        let rowNode: RowNode;
         if (getRowIdFunc != null) {
             // find rowNode using id
-            const level = this.level;
             const parentKeys = this.parentRowNode.getGroupKeys();
-            const id: string = getRowIdFunc({
+            const id = getRowIdFunc({
                 data,
                 parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
-                level,
+                level: this.level,
             });
-            rowNode = this.allNodesMap[id];
+            const rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
+                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
+            return rowNode;
         } else {
             // find rowNode using object references
-            rowNode = this.allRowNodes.find((currentRowNode) => currentRowNode.data === data)!;
+            const rowNode = this.allRowNodes.find((currentRowNode) => currentRowNode.data === data)!;
             if (!rowNode) {
-                console.error(`AG Grid: could not find data item as object was not found`, data);
+                _errorOnce(`could not find data item as object was not found`, data);
                 return null;
             }
+            return rowNode;
         }
-
-        return rowNode;
     }
 
     public addStoreStates(result: ServerSideGroupLevelState[]): void {
@@ -792,7 +790,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public retryLoads(): void {
-        if (this.getState() === RowNodeBlock.STATE_FAILED) {
+        if (this.getState() === 'failed') {
             this.initialiseRowNodes(1);
             this.scheduleLoad();
         }
@@ -810,7 +808,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
         const event: WithoutGridCommon<StoreUpdatedEvent> = {
-            type: Events.EVENT_STORE_UPDATED,
+            type: 'storeUpdated',
         };
         this.eventService.dispatchEvent(event);
     }
@@ -825,7 +823,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public isLastRowIndexKnown(): boolean {
-        return this.getState() == RowNodeBlock.STATE_LOADED;
+        return this.getState() == 'loaded';
     }
 
     public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

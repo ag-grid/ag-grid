@@ -1,4 +1,4 @@
-export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible';
+export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible' | 'popupPositioning';
 
 export interface IFrameworkOverrides {
     setInterval(action: any, interval?: any): Promise<number>;

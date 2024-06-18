@@ -1,12 +1,12 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
+import type { AgEventType } from './eventTypes';
 import type { AgEvent, AgEventListener, AgGlobalEventListener } from './events';
-import type { AgGridCommon } from './interfaces/iCommon';
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
-export class EventService extends BeanStub implements NamedBean, IEventEmitter {
+export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventEmitter<AgEventType> {
     beanName = 'eventService' as const;
 
     private globalEventListener?: AgGlobalEventListener;
@@ -17,7 +17,7 @@ export class EventService extends BeanStub implements NamedBean, IEventEmitter {
         this.globalSyncEventListener = beans.globalSyncEventListener;
     }
 
-    private readonly globalEventService: LocalEventService = new LocalEventService();
+    private readonly globalEventService: LocalEventService<AgEventType> = new LocalEventService();
 
     public postConstruct(): void {
         if (this.globalEventListener) {
@@ -30,12 +30,20 @@ export class EventService extends BeanStub implements NamedBean, IEventEmitter {
         }
     }
 
-    public override addEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
-        this.globalEventService.addEventListener(eventType, listener, async);
+    public override addEventListener<TEventType extends AgEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<any, any, TEventType>,
+        async?: boolean
+    ): void {
+        this.globalEventService.addEventListener(eventType, listener as any, async);
     }
 
-    public override removeEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
-        this.globalEventService.removeEventListener(eventType, listener, async);
+    public override removeEventListener<TEventType extends AgEventType>(
+        eventType: TEventType,
+        listener: AgEventListener<any, any, TEventType>,
+        async?: boolean
+    ): void {
+        this.globalEventService.removeEventListener(eventType, listener as any, async);
     }
 
     public addGlobalListener(listener: AgGlobalEventListener, async = false): void {
@@ -46,11 +54,16 @@ export class EventService extends BeanStub implements NamedBean, IEventEmitter {
         this.globalEventService.removeGlobalListener(listener, async);
     }
 
-    public override dispatchEvent(event: AgEvent): void {
-        this.globalEventService.dispatchEvent(this.gos.addGridCommonParams<AgEvent & AgGridCommon<any, any>>(event));
+    /** @deprecated DO NOT FIRE LOCAL EVENTS OFF THE EVENT SERVICE */
+    public override dispatchLocalEvent(): void {
+        // only the destroy event from BeanStub should flow through here
     }
 
-    public dispatchEventOnce(event: AgEvent): void {
-        this.globalEventService.dispatchEventOnce(event);
+    public dispatchEvent(event: AgEvent<AgEventType>): void {
+        this.globalEventService.dispatchEvent(this.gos.addGridCommonParams<any>(event));
+    }
+
+    public dispatchEventOnce(event: AgEvent<AgEventType>): void {
+        this.globalEventService.dispatchEventOnce(this.gos.addGridCommonParams<any>(event));
     }
 }

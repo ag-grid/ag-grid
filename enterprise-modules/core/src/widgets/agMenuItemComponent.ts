@@ -25,12 +25,12 @@ import {
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
 
-export interface CloseMenuEvent extends AgEvent {
+export interface CloseMenuEvent extends AgEvent<'closeMenu'> {
     mouseEvent?: MouseEvent;
     keyboardEvent?: KeyboardEvent;
 }
 
-export interface MenuItemActivatedEvent extends AgEvent {
+export interface MenuItemActivatedEvent extends AgEvent<'menuItemActivated'> {
     menuItem: AgMenuItemComponent;
 }
 
@@ -42,7 +42,9 @@ interface AgMenuItemComponentParams {
     contextParams: WithoutGridCommon<IMenuActionParams>;
 }
 
-export class AgMenuItemComponent extends BeanStub {
+export type AgMenuItemComponentEvent = 'closeMenu' | 'menuItemActivated';
+
+export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private popupService: PopupService;
     private userComponentFactory: UserComponentFactory;
 
@@ -51,9 +53,7 @@ export class AgMenuItemComponent extends BeanStub {
         this.userComponentFactory = beans.userComponentFactory;
     }
 
-    public static EVENT_CLOSE_MENU = 'closeMenu';
-    public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
-    public static ACTIVATION_DELAY = 80;
+    private ACTIVATION_DELAY = 80;
 
     private eGui?: HTMLElement;
     private params: MenuItemDef;
@@ -68,7 +68,7 @@ export class AgMenuItemComponent extends BeanStub {
     private subMenuIsOpening = false;
     private activateTimeoutId: number;
     private deactivateTimeoutId: number;
-    private parentComponent?: Component;
+    private parentComponent?: Component<any>;
     private tooltip?: string;
     private tooltipFeature?: TooltipFeature;
     private suppressRootStyles: boolean = true;
@@ -107,27 +107,33 @@ export class AgMenuItemComponent extends BeanStub {
 
     private addListeners(eGui: HTMLElement, params?: IMenuConfigParams): void {
         if (!params?.suppressClick) {
-            this.addManagedListener(eGui, 'click', (e) => this.onItemSelected(e));
+            this.addManagedElementListeners(eGui, { click: (e) => this.onItemSelected(e!) });
         }
         if (!params?.suppressKeyboardSelect) {
-            this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-                if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                    e.preventDefault();
-                    this.onItemSelected(e);
-                }
+            this.addManagedElementListeners(eGui, {
+                keydown: (e: KeyboardEvent) => {
+                    if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                        e.preventDefault();
+                        this.onItemSelected(e);
+                    }
+                },
             });
         }
         if (!params?.suppressMouseDown) {
-            this.addManagedListener(eGui, 'mousedown', (e) => {
-                // Prevent event bubbling to other event handlers such as PopupService triggering
-                // premature closing of any open sub-menu popup.
-                e.stopPropagation();
-                e.preventDefault();
+            this.addManagedElementListeners(eGui, {
+                mousedown: (e: MouseEvent) => {
+                    // Prevent event bubbling to other event handlers such as PopupService triggering
+                    // premature closing of any open sub-menu popup.
+                    e.stopPropagation();
+                    e.preventDefault();
+                },
             });
         }
         if (!params?.suppressMouseOver) {
-            this.addManagedListener(eGui, 'mouseenter', () => this.onMouseEnter());
-            this.addManagedListener(eGui, 'mouseleave', () => this.onMouseLeave());
+            this.addManagedElementListeners(eGui, {
+                mouseenter: () => this.onMouseEnter(),
+                mouseleave: () => this.onMouseLeave(),
+            });
         }
     }
 
@@ -179,7 +185,7 @@ export class AgMenuItemComponent extends BeanStub {
             ePopup.appendChild(childMenu.getGui());
 
             // bubble menu item selected events
-            this.addManagedListener(childMenu, AgMenuItemComponent.EVENT_CLOSE_MENU, (e) => this.dispatchEvent(e));
+            this.addManagedListeners(childMenu, { closeMenu: (e) => this.dispatchLocalEvent(e) });
             childMenu.addGuiEventListener('mouseenter', () => this.cancelDeactivate());
 
             destroySubMenu = () => this.destroyBean(childMenu);
@@ -296,7 +302,7 @@ export class AgMenuItemComponent extends BeanStub {
         return this.parentComponent;
     }
 
-    public setParentComponent(component: Component): void {
+    public setParentComponent(component: Component<any>): void {
         this.parentComponent = component;
     }
 
@@ -327,7 +333,7 @@ export class AgMenuItemComponent extends BeanStub {
 
     private closeMenu(event?: MouseEvent | KeyboardEvent): void {
         const e: CloseMenuEvent = {
-            type: AgMenuItemComponent.EVENT_CLOSE_MENU,
+            type: 'closeMenu',
         };
 
         if (event) {
@@ -338,16 +344,16 @@ export class AgMenuItemComponent extends BeanStub {
             }
         }
 
-        this.dispatchEvent(e);
+        this.dispatchLocalEvent(e);
     }
 
     private onItemActivated(): void {
         const event: MenuItemActivatedEvent = {
-            type: AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED,
+            type: 'menuItemActivated',
             menuItem: this,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     private cancelActivate(): void {
@@ -369,7 +375,7 @@ export class AgMenuItemComponent extends BeanStub {
 
         if (this.isAnotherSubMenuOpen()) {
             // wait to see if the user enters the open sub-menu
-            this.activateTimeoutId = window.setTimeout(() => this.activate(true), AgMenuItemComponent.ACTIVATION_DELAY);
+            this.activateTimeoutId = window.setTimeout(() => this.activate(true), this.ACTIVATION_DELAY);
         } else {
             // activate immediately
             this.activate(true);
@@ -381,7 +387,7 @@ export class AgMenuItemComponent extends BeanStub {
 
         if (this.isSubMenuOpen()) {
             // wait to see if the user enters the sub-menu
-            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), AgMenuItemComponent.ACTIVATION_DELAY);
+            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), this.ACTIVATION_DELAY);
         } else {
             // de-activate immediately
             this.deactivate();

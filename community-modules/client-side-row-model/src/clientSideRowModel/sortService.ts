@@ -4,17 +4,17 @@ import type {
     ColumnModel,
     FuncColsService,
     IRowNode,
+    IShowRowGroupColsService,
     NamedBean,
     PostSortRowsParams,
     RowNode,
     RowNodeSorter,
     RowNodeTransaction,
-    ShowRowGroupColsService,
     SortOption,
     SortedRowNode,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, _missing, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _missing, _warnOnce } from '@ag-grid-community/core';
 
 export class SortService extends BeanStub implements NamedBean {
     beanName = 'sortService' as const;
@@ -22,7 +22,7 @@ export class SortService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private rowNodeSorter: RowNodeSorter;
-    private showRowGroupColsService: ShowRowGroupColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
@@ -249,12 +249,12 @@ export class SortService extends BeanStub implements NamedBean {
         }
 
         rowNodes.forEach((childRowNode) => {
-            const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
+            const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
             groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    console.error(
-                        'AG Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup'
+                    _errorOnce(
+                        'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup'
                     );
                     return;
                 }

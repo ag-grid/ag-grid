@@ -1,4 +1,5 @@
-import { FrameworkOverridesIncomingSource, VanillaFrameworkOverrides } from '@ag-grid-community/core';
+import type { FrameworkOverridesIncomingSource } from '@ag-grid-community/core';
+import { VanillaFrameworkOverrides } from '@ag-grid-community/core';
 import { Injectable, NgZone } from '@angular/core';
 
 @Injectable()
@@ -18,7 +19,7 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
             this.runOutside = (callback) => callback();
         } else if (this.isRunningWithinTestZone) {
             this.runOutside = (callback, source) => {
-                if (source === 'resize-observer') {
+                if (source === 'resize-observer' || source === 'popupPositioning') {
                     // ensure resize observer callbacks are run outside of Angular even under test due to Jest not supporting ResizeObserver
                     // which means it just loops continuously with a setTimeout with no way to flush the queue or have fixture.whenStable() resolve.
                     return this._ngZone.runOutsideAngular(callback);

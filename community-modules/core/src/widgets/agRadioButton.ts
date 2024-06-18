@@ -1,14 +1,10 @@
-import { Events } from '../eventKeys';
 import type { CheckboxChangedEvent } from '../events';
 import type { AgCheckboxParams } from '../interfaces/agFieldParams';
 import { AgCheckbox } from './agCheckbox';
-import type { AgComponentSelector } from './component';
 
 export interface AgRadioButtonParams extends AgCheckboxParams {}
 
 export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
-    static override selector: AgComponentSelector = 'AG-RADIO-BUTTON';
-
     constructor(config?: AgRadioButtonParams) {
         super(config, 'ag-radio-button', 'radio');
     }
@@ -31,7 +27,7 @@ export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
     protected override addInputListeners() {
         super.addInputListeners();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
+        this.addManagedEventListeners({ checkboxChanged: this.onChange.bind(this) });
     }
 
     /**

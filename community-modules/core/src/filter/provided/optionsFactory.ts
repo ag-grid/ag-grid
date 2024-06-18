@@ -1,4 +1,5 @@
 import type { IFilterOptionDef } from '../../interfaces/iFilter';
+import { _warnOnce } from '../../utils/function';
 import type { ScalarFilterParams } from './iScalarFilter';
 import type { SimpleFilterParams } from './iSimpleFilter';
 
@@ -31,7 +32,7 @@ export class OptionsFactory {
             const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
             const propertyCheck = (keys: [keyof IFilterOptionDef]) => {
                 if (!keys.some((key) => filterOption[key] != null)) {
-                    console.warn(`AG Grid: ignoring FilterOptionDef as it doesn't contain one of '${keys}'`);
+                    _warnOnce(`ignoring FilterOptionDef as it doesn't contain one of '${keys}'`);
                     return false;
                 }
 
@@ -58,10 +59,10 @@ export class OptionsFactory {
             } else if (firstFilterOption.displayKey) {
                 this.defaultOption = firstFilterOption.displayKey;
             } else {
-                console.warn(`AG Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'`);
+                _warnOnce(`invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'`);
             }
         } else {
-            console.warn('AG Grid: no filter options for filter');
+            _warnOnce('no filter options for filter');
         }
     }
 

@@ -1,5 +1,32 @@
 [
     {
+        "version": "32.0.0",
+        "date": "July 2nd 2024",
+        "highlights": [
+            {
+                "text": "Sticky Group Total and Grand Total Rows",
+                "path": "./total-rows"
+            },
+            {
+                "text": "Skeleton Content Displayed in Loading Grid Cells",
+                "path": "./component-loading-cell-renderer/#skeleton-loading"
+            },
+            {
+                "text": "Global Grid Options to Apply to All AG Grid Instances",
+                "path": "./grid-interface/#global-grid-options"
+            },
+            {
+                "text": "Add a Background Image in Excel Export Files",
+                "path": "./excel-export-extra-content/#adding-images-to-the-header-or-footer"
+            },
+            {
+                "text": "Accessibility Improvements",
+                "path": "./keyboard-navigation/"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-32"
+    },
+    {
         "version": "31.3.1",
         "date": "April 30th 2024",
         "highlights": [
@@ -24,6 +51,7 @@
                 "path": "./keyboard-navigation/"
             }
         ],
+        "versionType": "Minor",
         "notesPath": "./upgrading-to-ag-grid-31-3"
     },
     {

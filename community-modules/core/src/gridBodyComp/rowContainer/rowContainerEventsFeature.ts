@@ -5,13 +5,12 @@ import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellKeyDownEvent, FullWidthCellKeyDownEvent } from '../../events';
-import { Events } from '../../events';
 import type { FocusService } from '../../focusService';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
+import type { IRowModel } from '../../interfaces/iRowModel';
 import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { EventShowContextMenuParams, MenuService } from '../../misc/menuService';
-import type { PaginationProxy } from '../../pagination/paginationProxy';
 import type { PinnedRowModel } from '../../pinnedRowModel/pinnedRowModel';
 import { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -38,9 +37,9 @@ export class RowContainerEventsFeature extends BeanStub {
     private ctrlsService: CtrlsService;
     private navigationService: NavigationService;
     private focusService: FocusService;
-    private undoRedoService: UndoRedoService;
+    private undoRedoService?: UndoRedoService;
     private visibleColsService: VisibleColsService;
-    private paginationProxy: PaginationProxy;
+    private rowModel: IRowModel;
     private pinnedRowModel: PinnedRowModel;
     private rangeService?: IRangeService;
     private clipboardService?: IClipboardService;
@@ -54,7 +53,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.focusService = beans.focusService;
         this.undoRedoService = beans.undoRedoService;
         this.visibleColsService = beans.visibleColsService;
-        this.paginationProxy = beans.paginationProxy;
+        this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rangeService = beans.rangeService;
         this.clipboardService = beans.clipboardService;
@@ -76,7 +75,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private addKeyboardListeners(): void {
         const eventName = 'keydown';
         const listener = this.processKeyboardEvent.bind(this, eventName);
-        this.addManagedListener(this.element, eventName, listener);
+        this.addManagedElementListeners(this.element, { [eventName]: listener });
     }
 
     private addMouseListeners(): void {
@@ -85,7 +84,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         eventNames.forEach((eventName) => {
             const listener = this.processMouseEvent.bind(this, eventName);
-            this.addManagedListener(this.element, eventName, listener);
+            this.addManagedElementListeners(this.element, { [eventName]: listener });
         });
     }
 
@@ -123,7 +122,7 @@ export class RowContainerEventsFeature extends BeanStub {
             this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
 
-        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addManagedListeners(touchListener, { longTap: longTapListener });
         this.addDestroyFunc(() => touchListener.destroy());
     }
 
@@ -228,7 +227,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         if (eventName === 'keydown') {
-            const cellKeyDownEvent: CellKeyDownEvent = cellCtrl.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
+            const cellKeyDownEvent: CellKeyDownEvent = cellCtrl.createEvent(keyboardEvent, 'cellKeyDown');
             this.eventService.dispatchEvent(cellKeyDownEvent);
         }
     }
@@ -263,10 +262,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         if (eventName === 'keydown') {
-            const cellKeyDownEvent: FullWidthCellKeyDownEvent = rowComp.createRowEvent(
-                Events.EVENT_CELL_KEY_DOWN,
-                keyboardEvent
-            );
+            const cellKeyDownEvent: FullWidthCellKeyDownEvent = rowComp.createRowEvent('cellKeyDown', keyboardEvent);
             this.eventService.dispatchEvent(cellKeyDownEvent);
         }
     }
@@ -316,9 +312,9 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {
-        const { pinnedRowModel, paginationProxy, rangeService } = this;
+        const { pinnedRowModel, rowModel, rangeService } = this;
 
-        if (rangeService && paginationProxy.isRowsToRender()) {
+        if (rangeService && rowModel.isRowsToRender()) {
             const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
                 pinnedRowModel.isEmpty('top'),
                 pinnedRowModel.isEmpty('bottom'),
@@ -330,10 +326,10 @@ export class RowContainerEventsFeature extends BeanStub {
 
             if (isEmptyPinnedBottom) {
                 floatingEnd = null;
-                rowEnd = this.paginationProxy.getRowCount() - 1;
+                rowEnd = rowModel.getRowCount() - 1;
             } else {
                 floatingEnd = 'bottom';
-                rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
+                rowEnd = pinnedRowModel.getPinnedBottomRowNodes().length - 1;
             }
 
             const allDisplayedColumns = this.visibleColsService.getAllCols();
@@ -406,7 +402,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndZ(event: KeyboardEvent): void {
-        if (!this.gos.get('undoRedoCellEditing')) {
+        if (!this.gos.get('undoRedoCellEditing') || !this.undoRedoService) {
             return;
         }
         event.preventDefault();
@@ -419,6 +415,6 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndY(): void {
-        this.undoRedoService.redo('ui');
+        this.undoRedoService?.redo('ui');
     }
 }

@@ -2,12 +2,11 @@ import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
-import type { EventsType } from '../../../eventKeys';
 import type { SelectionEventSourceType } from '../../../events';
-import { Events } from '../../../events';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
+import { _warnOnce } from '../../../utils/function';
 import { AgCheckbox } from '../../../widgets/agCheckbox';
 import type { HeaderCellCtrl } from './headerCellCtrl';
 
@@ -52,15 +51,15 @@ export class SelectAllFeature extends BeanStub {
         _setAriaRole(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onNewColumnsLoaded.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_SELECTION_CHANGED]: this.onSelectionChanged.bind(this),
-            [Events.EVENT_PAGINATION_CHANGED]: this.onSelectionChanged.bind(this),
-            [Events.EVENT_MODEL_UPDATED]: this.onModelChanged.bind(this),
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.onNewColumnsLoaded.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            selectionChanged: this.onSelectionChanged.bind(this),
+            paginationChanged: this.onSelectionChanged.bind(this),
+            modelUpdated: this.onModelChanged.bind(this),
         });
 
-        this.addManagedListener(this.cbSelectAll, Events.EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
+        this.addManagedListeners(this.cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
         _setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
@@ -145,7 +144,7 @@ export class SelectAllFeature extends BeanStub {
         const isMultiSelect = this.gos.get('rowSelection') === 'multiple';
 
         if (!isMultiSelect) {
-            console.warn(`AG Grid: ${feature} is only available if using 'multiple' rowSelection.`);
+            _warnOnce(`${feature} is only available if using 'multiple' rowSelection.`);
             return false;
         }
         return true;
@@ -156,8 +155,8 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
 
         if (!rowModelMatches) {
-            console.warn(
-                `AG Grid: ${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
+            _warnOnce(
+                `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
             );
             return false;
         }

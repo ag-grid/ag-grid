@@ -1,10 +1,10 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import { Events } from './eventKeys';
 import type { CssVariablesChanged } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { ResizeObserverService } from './misc/resizeObserverService';
+import { _warnOnce } from './utils/function';
 
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
@@ -158,14 +158,10 @@ export class Environment extends BeanStub implements NamedBean {
         if (!container) {
             container = this.eMeasurementContainer = document.createElement('div');
             container.className = 'ag-measurement-container';
-            container.style.width = '0';
-            container.style.overflow = 'hidden';
-            container.style.visibility = 'hidden';
             this.eGridDiv.appendChild(container);
         }
 
         sizeEl = document.createElement('div');
-        sizeEl.style.position = 'absolute';
         sizeEl.style.width = `var(${variable.cssName}, ${NO_VALUE_SENTINEL}px)`;
         container.appendChild(sizeEl);
         this.sizeEls.set(variable, sizeEl);
@@ -173,8 +169,8 @@ export class Environment extends BeanStub implements NamedBean {
         let lastMeasurement = this.measureSizeEl(variable);
 
         if (lastMeasurement === 'no-styles') {
-            console.warn(
-                `AG Grid: no value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.`
+            _warnOnce(
+                `no value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.`
             );
         }
 
@@ -196,7 +192,7 @@ export class Environment extends BeanStub implements NamedBean {
 
     private fireGridStylesChangedEvent(change: ChangeKey): void {
         const event: WithoutGridCommon<CssVariablesChanged> = {
-            type: Events.EVENT_GRID_STYLES_CHANGED,
+            type: 'gridStylesChanged',
             [change]: true,
         };
         this.eventService.dispatchEvent(event);

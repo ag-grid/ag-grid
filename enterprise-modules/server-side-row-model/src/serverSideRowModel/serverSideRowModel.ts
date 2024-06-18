@@ -5,7 +5,6 @@ import type {
     ColumnModel,
     ColumnNameService,
     ColumnVO,
-    EventsType,
     FilterManager,
     FilterModel,
     FuncColsService,
@@ -29,13 +28,12 @@ import type {
 } from '@ag-grid-community/core';
 import {
     BeanStub,
-    Events,
     ModuleNames,
     ModuleRegistry,
     NumberSequence,
     RowNode,
     _debounce,
-    _exists,
+    _errorOnce,
     _jsonEquals,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -80,8 +78,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.filterManager = beans.filterManager;
         this.sortController = beans.sortController;
         this.rowRenderer = beans.rowRenderer;
-        this.nodeManager = beans.ssrmNodeManager;
-        this.storeFactory = beans.ssrmStoreFactory;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
         this.beans = beans;
         this.pivotColDefService = beans.pivotColDefService;
     }
@@ -124,13 +122,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public postConstruct(): void {
         const resetListener = this.resetRootStore.bind(this);
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverything.bind(this),
-            [Events.EVENT_STORE_UPDATED]: this.onStoreUpdated.bind(this),
-            [Events.EVENT_COLUMN_VALUE_CHANGED]: resetListener,
-            [Events.EVENT_COLUMN_PIVOT_CHANGED]: resetListener,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: resetListener,
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: resetListener,
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.onColumnEverything.bind(this),
+            storeUpdated: this.onStoreUpdated.bind(this),
+            columnValueChanged: resetListener,
+            columnPivotChanged: resetListener,
+            columnRowGroupChanged: resetListener,
+            columnPivotModeChanged: resetListener,
         });
 
         this.addManagedPropertyListeners(
@@ -421,7 +419,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private dispatchModelUpdated(reset = false): void {
         const modelUpdatedEvent: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             animate: !reset,
             keepRenderedRows: !reset,
             newPage: false,
@@ -659,19 +657,21 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         return res;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode | null): RowNode[] {
-        if (!_exists(firstInRange)) {
+    public getNodesInRangeForSelection(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
+        // if firstInRange is null, we begin from the first row
+        const startIndex = firstInRange ? firstInRange.rowIndex : 0;
+        const endIndex = lastInRange.rowIndex;
+
+        if (startIndex === null && endIndex === null) {
             return [];
         }
 
-        if (!lastInRange) {
-            return [firstInRange];
+        if (endIndex === null) {
+            return firstInRange ? [firstInRange] : [];
         }
 
-        const startIndex = firstInRange.rowIndex;
-        const endIndex = lastInRange.rowIndex;
-        if (startIndex === null || endIndex === null) {
-            return [firstInRange];
+        if (startIndex === null) {
+            return [lastInRange];
         }
 
         const nodeRange: RowNode[] = [];
@@ -689,7 +689,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         // don't allow range selection if we don't have the full range of rows
         if (nodeRange.length !== lastIndex - firstIndex + 1) {
-            return [firstInRange];
+            return firstInRange ? [firstInRange, lastInRange] : [];
         }
 
         return nodeRange;
@@ -720,7 +720,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 rootStore.setRowCount(rowCount, lastRowIndexKnown);
                 return;
             }
-            console.error('AG Grid: Infinite scrolling must be enabled in order to set the row count.');
+            _errorOnce('Infinite scrolling must be enabled in order to set the row count.');
         }
     }
 

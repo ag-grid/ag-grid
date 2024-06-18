@@ -102,7 +102,6 @@ const GridExample = () => {
                     autoGroupColumnDef={autoGroupColumnDef}
                     defaultColDef={defaultColDef}
                     groupDefaultExpanded={1}
-                    reactiveCustomComponents
                     onGridReady={onGridReady}
                     onCellDoubleClicked={onCellDoubleClicked}
                     onCellKeyDown={onCellKeyDown}

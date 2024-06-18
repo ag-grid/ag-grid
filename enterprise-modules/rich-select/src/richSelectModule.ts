@@ -1,5 +1,5 @@
 import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import { ModuleNames, _EditCoreModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { RichSelectCellEditor } from './richSelect/richSelectCellEditor';
@@ -10,8 +10,8 @@ export const RichSelectModule: Module = {
     moduleName: ModuleNames.RichSelectModule,
     beans: [],
     userComponents: [
-        { componentName: 'agRichSelect', componentClass: RichSelectCellEditor },
-        { componentName: 'agRichSelectCellEditor', componentClass: RichSelectCellEditor },
+        { name: 'agRichSelect', classImp: RichSelectCellEditor },
+        { name: 'agRichSelectCellEditor', classImp: RichSelectCellEditor },
     ],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [EnterpriseCoreModule, _EditCoreModule],
 };

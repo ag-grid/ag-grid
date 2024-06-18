@@ -1,9 +1,13 @@
 import type { Context } from '../context/context';
-import { type AgColumn, isColumn } from '../entities/agColumn';
-import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import { isColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { GROUP_AUTO_COLUMN_ID } from './autoColService';
+import { _warnOnce } from '../utils/function';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
+
+export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 
 // Possible candidate for reuse (alot of recursive traversal duplication)
 export function getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
@@ -60,4 +64,22 @@ export function destroyColumnTree(
 export function isColumnGroupAutoCol(col: AgColumn): boolean {
     const colId = col.getId();
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
+}
+
+export function convertColumnTypes(type: string | string[]): string[] {
+    let typeKeys: string[] = [];
+
+    if (type instanceof Array) {
+        const invalidArray = type.some((a) => typeof a !== 'string');
+        if (invalidArray) {
+            _warnOnce("if colDef.type is supplied an array it should be of type 'string[]'");
+        } else {
+            typeKeys = type;
+        }
+    } else if (typeof type === 'string') {
+        typeKeys = type.split(',');
+    } else {
+        _warnOnce("colDef.type should be of type 'string' | 'string[]'");
+    }
+    return typeKeys;
 }

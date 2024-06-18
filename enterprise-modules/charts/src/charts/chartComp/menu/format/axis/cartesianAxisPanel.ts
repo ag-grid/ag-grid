@@ -1,23 +1,21 @@
-import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
+import type { AgSelect, AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
 import {
     AgCheckbox,
-    AgSelect,
+    AgSelectSelector,
     Component,
-    Events,
     RefPlaceholder,
     _removeFromParent,
     _setDisplayed,
 } from '@ag-grid-community/core';
-import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent, AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
 import type { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../../widgets/agSlider';
-import { AgSlider } from '../../../../../widgets/agSlider';
-import { ChartController } from '../../../chartController';
+import { AgSlider, AgSliderSelector } from '../../../../../widgets/agSlider';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -30,16 +28,6 @@ import { GridLinePanel } from './gridLinePanel';
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 
 export class CartesianAxisPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
-            <ag-group-component data-ref="axisGroup">
-                <ag-select data-ref="axisTypeSelect"></ag-select>
-                <ag-select data-ref="axisTimeFormatSelect"></ag-select>
-                <ag-select data-ref="axisPositionSelect"></ag-select>
-                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
-                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
-            </ag-group-component>
-        </div>`;
-
     private readonly axisGroup: AgGroupComponent = RefPlaceholder;
     private readonly axisTypeSelect: AgSelect = RefPlaceholder;
     private readonly axisPositionSelect: AgSelect = RefPlaceholder;
@@ -48,7 +36,7 @@ export class CartesianAxisPanel extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
     private readonly chartOptionsSeriesProxy: ChartOptionsProxy;
 
@@ -98,14 +86,26 @@ export class CartesianAxisPanel extends Component {
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
 
-        this.setTemplate(CartesianAxisPanel.TEMPLATE, [AgGroupComponent, AgSelect, AgColorPicker, AgSlider], {
-            axisGroup: axisGroupParams,
-            axisTypeSelect: axisTypeSelectParams ?? undefined,
-            axisPositionSelect: axisPositionSelectParams ?? undefined,
-            axisTimeFormatSelect: axisTimeFormatSelectParams ?? undefined,
-            axisColorInput: axisColorInputParams,
-            axisLineWidthSlider: axisLineWidthSliderParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="axisGroup">
+                <ag-select data-ref="axisTypeSelect"></ag-select>
+                <ag-select data-ref="axisTimeFormatSelect"></ag-select>
+                <ag-select data-ref="axisPositionSelect"></ag-select>
+                <ag-color-picker data-ref="axisColorInput"></ag-color-picker>
+                <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector, AgSliderSelector],
+            {
+                axisGroup: axisGroupParams,
+                axisTypeSelect: axisTypeSelectParams ?? undefined,
+                axisPositionSelect: axisPositionSelectParams ?? undefined,
+                axisTimeFormatSelect: axisTimeFormatSelectParams ?? undefined,
+                axisColorInput: axisColorInputParams,
+                axisLineWidthSlider: axisLineWidthSliderParams,
+            }
+        );
         registerGroupComponent(this.axisGroup);
 
         this.axisTypeSelect.setDisplayed(!!axisTypeSelectParams.options?.length);
@@ -120,8 +120,10 @@ export class CartesianAxisPanel extends Component {
             // Conditionally hide the time format input based on the currently selected axis type
             updateTimeFormatVisibility();
             // Update the visibility whenever the axis type changes
-            this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, () => {
-                updateTimeFormatVisibility();
+            this.addManagedEventListeners({
+                chartOptionsChanged: () => {
+                    updateTimeFormatVisibility();
+                },
             });
         }
 
@@ -130,14 +132,15 @@ export class CartesianAxisPanel extends Component {
         this.initAxisLabels(chartAxisThemeOverrides);
 
         const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach((func) => func());
-        this.addManagedListener(chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
-        this.addManagedListener(chartController, ChartController.EVENT_CHART_MODEL_UPDATE, () =>
-            setTimeout(() => {
-                // make sure this runs after the actual chart update has happened
-                this.refreshAxisTypeSelect(chartAxisOptions);
-                updateTimeFormatVisibility();
-            })
-        );
+        this.addManagedListeners(chartController, {
+            chartUpdated: updateAxisLabelRotations,
+            chartModelUpdate: () =>
+                setTimeout(() => {
+                    // make sure this runs after the actual chart update has happened
+                    this.refreshAxisTypeSelect(chartAxisOptions);
+                    updateTimeFormatVisibility();
+                }),
+        });
     }
 
     private getAxisTypeSelectParams(
@@ -272,7 +275,7 @@ export class CartesianAxisPanel extends Component {
     }
 
     private getAxisColorInputParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgColorPickerParams {
-        return chartAxisThemeOverrides.getDefaultColorPickerParams('line.color');
+        return chartAxisThemeOverrides.getDefaultColorPickerParams('line.stroke');
     }
 
     private getAxisLineWidthSliderParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgSliderParams {
@@ -383,7 +386,7 @@ export class CartesianAxisPanel extends Component {
                 { expression: 'label.rotation', value: autoRotate ? undefined : this.prevRotation },
             ]);
 
-            rotationComp.setDisabled(autoRotate);
+            rotationComp.setDisplayed(!autoRotate);
         };
 
         const rotation = getLabelRotationValue();
@@ -398,7 +401,7 @@ export class CartesianAxisPanel extends Component {
         );
 
         // init rotation comp state
-        rotationComp.setDisabled(autoRotate);
+        rotationComp.setDisplayed(!autoRotate);
 
         return autoRotateCheckbox;
     }
@@ -443,7 +446,7 @@ export class CartesianAxisPanel extends Component {
         return this.chartTranslationService.translate(key);
     }
 
-    private removeTemplateComponent(component: Component): void {
+    private removeTemplateComponent(component: Component<any>): void {
         _removeFromParent(component.getGui());
         this.destroyBean(component);
     }

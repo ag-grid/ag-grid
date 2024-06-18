@@ -2,7 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type {
     ColDef,
     SuppressKeyboardEventParams,
@@ -18,11 +18,11 @@ import type {
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
-import { Events } from '../eventKeys';
-import type { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
+import type { AgGridEvent, DataTypesInferredEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { Column } from '../interfaces/iColumn';
+import type { Column, ColumnEventName } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { ModuleNames } from '../modules/moduleNames';
@@ -35,6 +35,7 @@ import type { ValueService } from '../valueService/valueService';
 import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
 import type { ColumnModel } from './columnModel';
 import { convertSourceType } from './columnModel';
+import { convertColumnTypes } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 
 interface GroupSafeValueFormatter {
@@ -186,8 +187,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
             (childDataTypeDefinition as any).appendColumnTypes
         ) {
             mergedDataTypeDefinition.columnTypes = [
-                ...this.convertColumnTypes(parentDataTypeDefinition.columnTypes),
-                ...this.convertColumnTypes(childDataTypeDefinition.columnTypes),
+                ...convertColumnTypes(parentDataTypeDefinition.columnTypes),
+                ...convertColumnTypes(childDataTypeDefinition.columnTypes),
             ];
         }
         return mergedDataTypeDefinition;
@@ -329,7 +330,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         };
     }
 
-    private updateColDefAndGetDataTypeDefinitionColumnType(
+    public updateColDefAndGetColumnType(
         colDef: ColDef,
         userColDef: ColDef,
         colId: string
@@ -364,17 +365,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return dataTypeDefinition.columnTypes;
     }
 
-    public updateColDefAndGetColumnType(colDef: ColDef, userColDef: ColDef, colId: string): string[] | undefined {
-        const dataTypeDefinitionColumnType = this.updateColDefAndGetDataTypeDefinitionColumnType(
-            colDef,
-            userColDef,
-            colId
-        );
-        const columnTypes = userColDef.type ?? dataTypeDefinitionColumnType ?? colDef.type;
-        colDef.type = columnTypes;
-        return columnTypes ? this.convertColumnTypes(columnTypes) : undefined;
-    }
-
     public addColumnListeners(column: AgColumn): void {
         if (!this.isWaitingForRowData) {
             return;
@@ -383,12 +373,14 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!columnStateUpdates) {
             return;
         }
-        const columnListener: AgEventListener = (event: AgGridEvent & { key: keyof ColumnStateParams }) => {
+        const columnListener: IEventListener<ColumnEventName> = (
+            event: AgGridEvent<any, any, ColumnEventName> & { key: keyof ColumnStateParams }
+        ) => {
             columnStateUpdates.add(event.key);
         };
-        column.addEventListener(AgColumn.EVENT_STATE_UPDATED, columnListener);
+        column.addEventListener('columnStateUpdated', columnListener);
         this.columnStateUpdateListenerDestroyFuncs.push(() =>
-            column.removeEventListener(AgColumn.EVENT_STATE_UPDATED, columnListener)
+            column.removeEventListener('columnStateUpdated', columnListener)
         );
     }
 
@@ -403,7 +395,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const columnTypes = userColDef.type === null ? colDef.type : userColDef.type;
         if (columnTypes) {
             const columnTypeDefs = this.gos.get('columnTypes') ?? {};
-            const hasPropsPreventingInference = this.convertColumnTypes(columnTypes).some((columnType) => {
+            const hasPropsPreventingInference = convertColumnTypes(columnTypes).some((columnType) => {
                 const columnTypeDef = columnTypeDefs[columnType.trim()];
                 return columnTypeDef && this.doColDefPropsPreventInference(columnTypeDef, propsToCheckForInference);
             });
@@ -493,10 +485,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (columnTypeOverridesExist) {
             this.columnModel.queueResizeOperations();
         }
-        const destroyFunc = this.addManagedListener(
-            this.eventService,
-            Events.EVENT_ROW_DATA_UPDATE_STARTED,
-            (event: RowDataUpdateStartedEvent) => {
+        const [destroyFunc] = this.addManagedEventListeners({
+            rowDataUpdateStarted: (event) => {
                 const { firstRowData } = event;
                 if (!firstRowData) {
                     return;
@@ -509,11 +499,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     this.columnModel.processResizeOperations();
                 }
                 const dataTypesInferredEvent: WithoutGridCommon<DataTypesInferredEvent> = {
-                    type: Events.EVENT_DATA_TYPES_INFERRED,
+                    type: 'dataTypesInferred',
                 };
                 this.eventService.dispatchEvent(dataTypesInferredEvent);
-            }
-        );
+            },
+        });
     }
 
     public isPendingInference(): boolean {
@@ -582,24 +572,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
             resolvedObjectDataTypeDefinition.valueParser !== defaultObjectDataTypeDefinition.valueParser;
         this.hasObjectValueFormatter =
             resolvedObjectDataTypeDefinition.valueFormatter !== defaultObjectDataTypeDefinition.valueFormatter;
-    }
-
-    public convertColumnTypes(type: string | string[]): string[] {
-        let typeKeys: string[] = [];
-
-        if (type instanceof Array) {
-            const invalidArray = type.some((a) => typeof a !== 'string');
-            if (invalidArray) {
-                console.warn("if colDef.type is supplied an array it should be of type 'string[]'");
-            } else {
-                typeKeys = type;
-            }
-        } else if (typeof type === 'string') {
-            typeKeys = type.split(',');
-        } else {
-            console.warn("colDef.type should be of type 'string' | 'string[]'");
-        }
-        return typeKeys;
     }
 
     private getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {

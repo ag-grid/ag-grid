@@ -10,7 +10,7 @@ import { COL_DEF_VALIDATORS } from './colDefValidations';
  *
  * If the property was simply renamed, use the `renamed` property. The value will be implicitly copied to the new property.
  */
-const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
+const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
     advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.' },
     suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.' },
 
@@ -28,7 +28,7 @@ const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
 
     groupIncludeFooter: { version: '31.3', message: 'Use `groupTotalRow` instead.' },
     groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
-};
+});
 
 // Leave untyped. so it can be inferred.
 export const GRID_OPTION_DEFAULTS = {
@@ -206,17 +206,19 @@ export const GRID_OPTION_DEFAULTS = {
     suppressServerSideFullWidthLoadingRow: false,
     pivotMaxGeneratedColumns: -1,
     columnMenu: 'new',
+    reactiveCustomComponents: true,
 } as const;
 /**
  * Used simply to type check the default grid options.
  * Done here to allow inference of the above type, for gridOptionsService.get to infer where defaults exist.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const GRID_OPTIONS_DEFAULT_ASSERTION: GridOptions = GRID_OPTION_DEFAULTS;
 
 /**
  * Validation rules for gridOptions
  */
-const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
+const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     sideBar: { module: ModuleNames.SideBarModule },
     statusBar: { module: ModuleNames.StatusBarModule },
     enableCharts: { module: ModuleNames.GridChartsModule },
@@ -230,12 +232,14 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
         dependencies: (options) => {
             const rowModel = options.rowModelType ?? 'clientSide';
             switch (rowModel) {
-                case 'clientSide':
+                case 'clientSide': {
                     const csrmWarning = `treeData requires 'getDataPath' in the ${rowModel} row model.`;
                     return options.getDataPath ? null : csrmWarning;
-                case 'serverSide':
+                }
+                case 'serverSide': {
                     const ssrmWarning = `treeData requires 'isServerSideGroup' and 'getServerSideGroupKey' in the ${rowModel} row model.`;
                     return options.isServerSideGroup && options.getServerSideGroupKey ? null : ssrmWarning;
+                }
             }
             return null;
         },
@@ -264,11 +268,18 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
             switch (rowModel) {
                 case 'clientSide':
                     return null;
-                case 'serverSide':
+                case 'serverSide': {
                     const warning = 'groupIncludeFooter is not supported alongside suppressServerSideInfiniteScroll';
                     return options.suppressServerSideInfiniteScroll ? warning : null;
+                }
             }
             return null;
+        },
+    },
+    groupHideOpenParents: {
+        supportedRowModels: ['clientSide'],
+        dependencies: {
+            groupTotalRow: [undefined, 'bottom'],
         },
     },
     groupIncludeTotalFooter: {
@@ -316,13 +327,13 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
     defaultColDef: () => COL_DEF_VALIDATORS,
     defaultColGroupDef: () => COL_DEF_VALIDATORS,
     autoGroupColumnDef: () => COL_DEF_VALIDATORS,
-};
+});
 
-export const GRID_OPTIONS_VALIDATORS: OptionsValidator<GridOptions> = {
+export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
     objectName: 'gridOptions',
     allProperties: [...PropertyKeys.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS],
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
-    deprecations: GRID_OPTION_DEPRECATIONS,
-    validations: GRID_OPTION_VALIDATIONS,
-};
+    deprecations: GRID_OPTION_DEPRECATIONS(),
+    validations: GRID_OPTION_VALIDATIONS(),
+});

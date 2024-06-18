@@ -1,12 +1,12 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { type AgColumn, isColumn } from '../entities/agColumn';
+import { isColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import { AgColumnGroup, createUniqueColumnGroupId, isColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent } from '../events';
-import { Events } from '../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _last, _removeAllFromUnorderedArray } from '../utils/array';
@@ -105,14 +105,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             // this event is fired to allow the grid viewport to resize before the
             // scrollbar tries to update its visibility.
             const evt: WithoutGridCommon<ColumnContainerWidthChanged> = {
-                type: Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED,
+                type: 'columnContainerWidthChanged',
             };
             this.eventService.dispatchEvent(evt);
 
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportPosition()
             const event: WithoutGridCommon<DisplayedColumnsWidthChangedEvent> = {
-                type: Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+                type: 'displayedColumnsWidthChanged',
             };
             this.eventService.dispatchEvent(event);
         }
@@ -151,9 +151,24 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         const idCreator = new GroupInstanceIdCreator();
 
-        this.treeLeft = this.createGroups(leftCols, idCreator, 'left', this.treeLeft);
-        this.treeRight = this.createGroups(rightCols, idCreator, 'right', this.treeRight);
-        this.treeCenter = this.createGroups(centerCols, idCreator, null, this.treeCenter);
+        this.treeLeft = this.createGroups({
+            columns: leftCols,
+            idCreator,
+            pinned: 'left',
+            oldDisplayedGroups: this.treeLeft,
+        });
+        this.treeRight = this.createGroups({
+            columns: rightCols,
+            idCreator,
+            pinned: 'right',
+            oldDisplayedGroups: this.treeRight,
+        });
+        this.treeCenter = this.createGroups({
+            columns: centerCols,
+            idCreator,
+            pinned: null,
+            oldDisplayedGroups: this.treeCenter,
+        });
 
         this.updateColsAndGroupsMap();
     }
@@ -611,16 +626,20 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return (isFirst ? allColumns[0] : _last(allColumns)) === columnToCompare;
     }
 
-    public createGroups(
+    public createGroups(params: {
         // all displayed columns sorted - this is the columns the grid should show
-        sortedVisibleColumns: AgColumn[],
+        columns: AgColumn[];
         // creates unique id's for the group
-        groupInstanceIdCreator: GroupInstanceIdCreator,
+        idCreator: GroupInstanceIdCreator;
         // whether it's left, right or center col
-        pinned: ColumnPinnedType,
+        pinned: ColumnPinnedType;
         // we try to reuse old groups if we can, to allow gui to do animation
-        oldDisplayedGroups?: (AgColumn | AgColumnGroup)[]
-    ): (AgColumn | AgColumnGroup)[] {
+        oldDisplayedGroups?: (AgColumn | AgColumnGroup)[];
+        // set `isStandaloneStructure` to true if this structure will not be used
+        // by the grid UI. This is useful for export modules (gridSerializer).
+        isStandaloneStructure?: boolean;
+    }): (AgColumn | AgColumnGroup)[] {
+        const { columns, idCreator, pinned, oldDisplayedGroups, isStandaloneStructure } = params;
         const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups!);
 
         /**
@@ -634,7 +653,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         const topLevelResultCols: (AgColumn | AgColumnGroup)[] = [];
 
         // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
-        let groupsOrColsAtCurrentLevel: (AgColumn | AgColumnGroup)[] = sortedVisibleColumns as AgColumn[];
+        let groupsOrColsAtCurrentLevel: (AgColumn | AgColumnGroup)[] = columns as AgColumn[];
         while (groupsOrColsAtCurrentLevel.length) {
             // store what's currently iterating so the function can build the next level of col groups
             const currentlyIterating = groupsOrColsAtCurrentLevel;
@@ -668,9 +687,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 // and add all to the result array, except the current node.
                 const newGroup = this.createColGroup(
                     previousNodeParent,
-                    groupInstanceIdCreator,
+                    idCreator,
                     oldColumnsMapped,
-                    pinned
+                    pinned,
+                    isStandaloneStructure
                 );
 
                 for (let i = from; i < to; i++) {
@@ -699,7 +719,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 createGroupToIndex(currentlyIterating.length);
             }
         }
-        this.setupParentsIntoCols(topLevelResultCols, null);
+
+        if (!isStandaloneStructure) {
+            this.setupParentsIntoCols(topLevelResultCols, null);
+        }
         return topLevelResultCols;
     }
 
@@ -707,7 +730,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         providedGroup: AgProvidedColumnGroup,
         groupInstanceIdCreator: GroupInstanceIdCreator,
         oldColumnsMapped: { [key: string]: AgColumnGroup },
-        pinned: ColumnPinnedType
+        pinned: ColumnPinnedType,
+        isStandaloneStructure?: boolean
     ): AgColumnGroup {
         const groupId = providedGroup.getGroupId();
         const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
@@ -727,7 +751,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             columnGroup.reset();
         } else {
             columnGroup = new AgColumnGroup(providedGroup, groupId, instanceId, pinned);
-            this.createBean(columnGroup);
+            if (!isStandaloneStructure) {
+                this.createBean(columnGroup);
+            }
         }
 
         return columnGroup;

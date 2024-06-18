@@ -1,5 +1,5 @@
 import type { BeanCollection, IClientSideRowModel, IRowModel, IStatusPanelComp } from '@ag-grid-community/core';
-import { Events, _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
+import { _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 
@@ -24,7 +24,7 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
 
         this.setDisplayed(true);
 
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
+        this.addManagedEventListeners({ modelUpdated: this.onDataChanged.bind(this) });
         this.onDataChanged();
     }
 
@@ -37,7 +37,7 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
 
     private getRowCountValue(): number {
         let totalRowCount = 0;
-        (this.rowModel as IClientSideRowModel).forEachLeafNode((node) => (totalRowCount += 1));
+        (this.rowModel as IClientSideRowModel).forEachLeafNode(() => (totalRowCount += 1));
         return totalRowCount;
     }
 

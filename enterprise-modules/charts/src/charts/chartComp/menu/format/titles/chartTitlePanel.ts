@@ -9,7 +9,7 @@ export class ChartTitlePanel extends TitlePanel {
 
     public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
-        this.chartMenuService = beans.chartMenuService;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
     }
 
     private titlePlaceholder: string;
@@ -18,8 +18,10 @@ export class ChartTitlePanel extends TitlePanel {
         this.titlePlaceholder = this.chartTranslationService.translate('titlePlaceholder');
         super.postConstruct();
         // edits to the title can disable it, so keep the checkbox in sync:
-        this.addManagedListener(this.eventService, 'chartTitleEdit', () => {
-            this.fontPanel.setEnabled(this.hasTitle());
+        this.addManagedEventListeners({
+            chartTitleEdit: () => {
+                this.fontPanel.setEnabled(this.hasTitle());
+            },
         });
     }
 

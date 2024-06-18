@@ -8,7 +8,7 @@ import type { AgInputTextField } from '../../widgets/agInputTextField';
 import type { ListOption } from '../../widgets/agList';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { AgSelect } from '../../widgets/agSelect';
-import type { ComponentClass } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import type {
@@ -245,7 +245,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<M>;
 
-            const numConditions = this.validateAndUpdateConditions(combinedModel.conditions);
+            let conditions = combinedModel.conditions;
+            if (conditions == null) {
+                conditions = [];
+                _warnOnce(`Filter model is missing 'conditions'`);
+            }
+
+            const numConditions = this.validateAndUpdateConditions(conditions);
             const numPrevConditions = this.getNumConditions();
             if (numConditions < numPrevConditions) {
                 this.removeConditionsAndOperators(numConditions);
@@ -260,7 +266,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd) => eJoinOperatorAnd.setValue(!orChecked, true));
             this.eJoinOperatorsOr.forEach((eJoinOperatorOr) => eJoinOperatorOr.setValue(orChecked, true));
 
-            combinedModel.conditions.forEach((condition, position) => {
+            conditions.forEach((condition, position) => {
                 this.eTypes[position].setValue(condition.type, true);
                 this.setConditionIntoUi(condition, position);
             });
@@ -452,7 +458,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         // created dynamically
         return '';
     }
-    protected getAgComponents(): ComponentClass[] {
+    protected getAgComponents(): ComponentSelector[] {
         // created dynamically
         return [];
     }
@@ -553,7 +559,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         removedElements.forEach((element) => _removeFromParent(element));
     }
 
-    protected removeComponents(components: Component[], startPosition: number, deleteCount?: number): void {
+    protected removeComponents<TEventType extends string>(
+        components: Component<TEventType>[],
+        startPosition: number,
+        deleteCount?: number
+    ): void {
         const removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach((comp) => {
             _removeFromParent(comp.getGui());

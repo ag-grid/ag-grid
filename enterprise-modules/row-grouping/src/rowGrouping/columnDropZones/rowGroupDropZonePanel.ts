@@ -1,5 +1,11 @@
-import type { AgColumn, DraggingEvent, ITooltipParams, WithoutGridCommon } from '@ag-grid-community/core';
-import { DragAndDropService, Events, _createIconNoSpan } from '@ag-grid-community/core';
+import type {
+    AgColumn,
+    DragAndDropIcon,
+    DraggingEvent,
+    ITooltipParams,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { _createIconNoSpan } from '@ag-grid-community/core';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
@@ -19,7 +25,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
             title,
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+        this.addManagedEventListeners({ columnRowGroupChanged: this.refreshGui.bind(this) });
     }
 
     protected getAriaLabel(): string {
@@ -49,8 +55,8 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         this.funcColsService.setRowGroupColumns(columns, 'toolPanelUi');
     }
 
-    protected getIconName(): string {
-        return this.isPotentialDndItems() ? DragAndDropService.ICON_GROUP : DragAndDropService.ICON_NOT_ALLOWED;
+    protected getIconName(): DragAndDropIcon {
+        return this.isPotentialDndItems() ? 'group' : 'notAllowed';
     }
 
     protected getExistingItems(): AgColumn[] {

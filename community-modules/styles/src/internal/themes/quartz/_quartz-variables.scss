@@ -51,6 +51,8 @@
     --ag-input-disabled-border-color: var(--ag-border-color);
     --ag-input-disabled-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 6%);
     --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
+    --ag-chart-menu-label-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
+    --ag-chart-menu-pill-select-button-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
 
     // BORDERS
     --ag-borders: solid 1px;

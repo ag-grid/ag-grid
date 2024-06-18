@@ -1,3 +1,4 @@
+import { _warnOnce } from '../../utils/function';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import type { Comparator, ScalarFilterParams } from './iScalarFilter';
 import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
@@ -91,8 +92,8 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 return !this.isBlank(cellValue);
 
             default:
-                console.warn(
-                    'AG Grid: Unexpected type of filter "' +
+                _warnOnce(
+                    'Unexpected type of filter "' +
                         filterModel.type +
                         '", it looks like the filter was configured with incorrect Filter Options'
                 );

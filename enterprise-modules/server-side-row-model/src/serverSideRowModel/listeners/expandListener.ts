@@ -5,7 +5,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, RowNode, _exists, _missing } from '@ag-grid-community/core';
+import { BeanStub, RowNode, _exists, _missing } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from '../stores/storeFactory';
@@ -19,7 +19,7 @@ export class ExpandListener extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
-        this.storeFactory = beans.ssrmStoreFactory;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
         this.beans = beans;
     }
 
@@ -29,7 +29,7 @@ export class ExpandListener extends BeanStub implements NamedBean {
             return;
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addManagedEventListeners({ rowGroupOpened: this.onRowGroupOpened.bind(this) });
     }
 
     private onRowGroupOpened(event: RowGroupOpenedEvent): void {
@@ -46,7 +46,7 @@ export class ExpandListener extends BeanStub implements NamedBean {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
-        const storeUpdatedEvent: WithoutGridCommon<StoreUpdatedEvent> = { type: Events.EVENT_STORE_UPDATED };
+        const storeUpdatedEvent: WithoutGridCommon<StoreUpdatedEvent> = { type: 'storeUpdated' };
         this.eventService.dispatchEvent(storeUpdatedEvent);
     }
 

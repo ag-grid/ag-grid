@@ -5,7 +5,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { createApp, onBeforeMount, ref } from 'vue';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import './styles.css';
 
@@ -115,7 +115,7 @@ const VueExample = {
             },
         ]);
 
-        const gridApi = ref();
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             filter: true,
             minWidth: 100,

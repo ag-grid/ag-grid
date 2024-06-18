@@ -33,7 +33,7 @@ async function generateFile(options: ExecutorOptions) {
     const gridOpsFile = workspaceRoot + '/community-modules/core/src/entities/gridOptions.ts';
     const colDefFile = workspaceRoot + '/community-modules/core/src/entities/colDef.ts';
     const filterFile = workspaceRoot + '/community-modules/core/src/interfaces/iFilter.ts';
-    const gridApiFile = workspaceRoot + '/community-modules/core/src/gridApi.ts';
+    const gridApiFile = workspaceRoot + '/community-modules/core/src/api/gridApi.ts';
     const columnFile = workspaceRoot + '/community-modules/core/src/interfaces/iColumn.ts';
     const rowNodeFile = workspaceRoot + '/community-modules/core/src/interfaces/iRowNode.ts';
 

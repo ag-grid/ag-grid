@@ -76,7 +76,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             },
         });
 
-        this.addManagedListener(this.getGui(), 'mousedown', this.preventRangeExtension.bind(this));
+        this.addManagedElementListeners(this.getGui(), { mousedown: this.preventRangeExtension.bind(this) });
     }
 
     protected abstract onDrag(e: MouseEvent | Touch): void;
@@ -127,11 +127,9 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     }
 
     protected onDragStart(e: MouseEvent) {
-        this.cellHoverListener = this.addManagedListener(
-            this.ctrlsService.get('gridCtrl').getGui(),
-            'mousemove',
-            this.updateValuesOnMove.bind(this)
-        );
+        [this.cellHoverListener] = this.addManagedElementListeners(this.ctrlsService.get('gridCtrl').getGui(), {
+            mousemove: this.updateValuesOnMove.bind(this),
+        });
 
         document.body.classList.add(this.getDraggingCssClass());
     }

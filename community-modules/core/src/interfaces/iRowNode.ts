@@ -1,5 +1,6 @@
 import type { AgEvent, SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
+import type { BuildEventTypeMap } from './iEventEmitter';
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -24,6 +25,37 @@ export type RowNodeEventType =
     | 'mouseLeave'
     | 'draggingChanged';
 
+export type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
+    RowNodeEventType,
+    {
+        rowSelected: RowSelectedEvent<TData>;
+        selectableChanged: SelectableChangedEvent<TData>;
+        displayedChanged: DisplayedChangedEvent<TData>;
+        dataChanged: DataChangedEvent<TData>;
+        cellChanged: CellChangedEvent<TData>;
+        masterChanged: MasterChangedEvent<TData>;
+        heightChanged: HeightChangedEvent<TData>;
+        topChanged: TopChangedEvent<TData>;
+        groupChanged: GroupChangedEvent<TData>;
+        allChildrenCountChanged: AllChildrenCountChangedEvent<TData>;
+        firstChildChanged: FirstChildChangedEvent<TData>;
+        lastChildChanged: LastChildChangedEvent<TData>;
+        childIndexChanged: ChildIndexChangedEvent<TData>;
+        rowIndexChanged: RowIndexChangedEvent<TData>;
+        expandedChanged: ExpandedChangedEvent<TData>;
+        hasChildrenChanged: HasChildrenChangedEvent<TData>;
+        uiLevelChanged: UiLevelChangedEvent<TData>;
+        rowHighlightChanged: RowHighlightChangedEvent<TData>;
+        mouseEnter: MouseEnterEvent<TData>;
+        mouseLeave: MouseLeaveEvent<TData>;
+        draggingChanged: DraggingChangedEvent<TData>;
+    }
+>;
+
+export type AgRowNodeEventListener<TEventType extends keyof RowNodeEventTypeMap<TData>, TData = any> = (
+    params: RowNodeEventTypeMap<TData>[TEventType]
+) => void;
+
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
     newValue: boolean;
@@ -39,23 +71,40 @@ export interface SetSelectedParams {
     source: SelectionEventSourceType;
 }
 
-export interface RowNodeEvent<TData = any> extends AgEvent {
-    /** Event identifier */
-    type: RowNodeEventType;
+export interface RowNodeEvent<T extends RowNodeEventType, TData = any> extends AgEvent<T> {
     node: IRowNode<TData>;
 }
 
-export interface DataChangedEvent<TData = any> extends RowNodeEvent<TData> {
+export interface RowSelectedEvent<TData = any> extends RowNodeEvent<'rowSelected', TData> {}
+export interface MouseEnterEvent<TData = any> extends RowNodeEvent<'mouseEnter', TData> {}
+export interface MouseLeaveEvent<TData = any> extends RowNodeEvent<'mouseLeave', TData> {}
+export interface HeightChangedEvent<TData = any> extends RowNodeEvent<'heightChanged', TData> {}
+export interface RowIndexChangedEvent<TData = any> extends RowNodeEvent<'rowIndexChanged', TData> {}
+export interface TopChangedEvent<TData = any> extends RowNodeEvent<'topChanged', TData> {}
+export interface ExpandedChangedEvent<TData = any> extends RowNodeEvent<'expandedChanged', TData> {}
+export interface FirstChildChangedEvent<TData = any> extends RowNodeEvent<'firstChildChanged', TData> {}
+export interface LastChildChangedEvent<TData = any> extends RowNodeEvent<'lastChildChanged', TData> {}
+export interface ChildIndexChangedEvent<TData = any> extends RowNodeEvent<'childIndexChanged', TData> {}
+export interface AllChildrenCountChangedEvent<TData = any> extends RowNodeEvent<'allChildrenCountChanged', TData> {}
+export interface UiLevelChangedEvent<TData = any> extends RowNodeEvent<'uiLevelChanged', TData> {}
+export interface DataChangedEvent<TData = any> extends RowNodeEvent<'dataChanged', TData> {
     oldData: TData | undefined;
     newData: TData | undefined;
     update: boolean;
 }
-
-export interface CellChangedEvent<TData = any> extends RowNodeEvent<TData> {
+export interface CellChangedEvent<TData = any> extends RowNodeEvent<'cellChanged', TData> {
     column: Column;
     newValue: TData | undefined;
     oldValue: TData | undefined;
 }
+
+export interface SelectableChangedEvent<TData = any> extends RowNodeEvent<'selectableChanged', TData> {}
+export interface DisplayedChangedEvent<TData = any> extends RowNodeEvent<'displayedChanged', TData> {}
+export interface MasterChangedEvent<TData = any> extends RowNodeEvent<'masterChanged', TData> {}
+export interface GroupChangedEvent<TData = any> extends RowNodeEvent<'groupChanged', TData> {}
+export interface HasChildrenChangedEvent<TData = any> extends RowNodeEvent<'hasChildrenChanged', TData> {}
+export interface RowHighlightChangedEvent<TData = any> extends RowNodeEvent<'rowHighlightChanged', TData> {}
+export interface DraggingChangedEvent<TData = any> extends RowNodeEvent<'draggingChanged', TData> {}
 
 export enum RowHighlightPosition {
     Above,
@@ -149,7 +198,7 @@ interface GroupRowNode<TData = any> {
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     leafGroup: boolean;
     /** All lowest level nodes beneath this node, no groups. */
-    allLeafChildren: IRowNode<TData>[];
+    allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
     allChildrenCount: number | null;
     /** Children of this group. If multi levels of grouping, shows only immediate children. */
@@ -216,9 +265,9 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     isHovered(): boolean;
 
     /** Add an event listener. */
-    addEventListener(eventType: RowNodeEventType, listener: (...args: any[]) => any): void;
+    addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void;
     /** Remove event listener. */
-    removeEventListener(eventType: RowNodeEventType, listener: (...args: any[]) => any): void;
+    removeEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void;
 
     /**
      * The first time `quickFilter` runs, the grid creates a one-off string representation of the row.

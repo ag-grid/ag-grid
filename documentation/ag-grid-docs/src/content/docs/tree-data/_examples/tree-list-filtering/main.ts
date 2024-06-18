@@ -60,7 +60,7 @@ const gridOptions: GridOptions = {
     treeData: true,
     groupDefaultExpanded: -1,
     getDataPath: (data: any) => data.dataPath,
-    getRowId: (params: GetRowIdParams<any>) => params.data.employeeId,
+    getRowId: (params: GetRowIdParams<any>) => String(params.data.employeeId),
 };
 
 function processData(data: any[]) {

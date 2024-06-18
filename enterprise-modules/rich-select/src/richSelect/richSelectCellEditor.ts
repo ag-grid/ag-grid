@@ -6,7 +6,7 @@ import type {
     RichCellEditorParams,
     RichSelectParams,
 } from '@ag-grid-community/core';
-import { Events, PopupComponent, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
+import { PopupComponent, _missing, _warnOnce } from '@ag-grid-community/core';
 import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
@@ -21,7 +21,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     public init(params: RichCellEditorParams<TData, TValue>): void {
         this.params = params;
 
-        const { cellStartedEdit, cellHeight, values } = params;
+        const { cellStartedEdit, values } = params;
 
         if (_missing(values)) {
             _warnOnce('agRichSelectCellEditor requires cellEditorParams.values to be set');
@@ -43,18 +43,11 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             });
         }
 
-        this.addManagedListener(
-            this.richSelect,
-            Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            this.onEditorPickerValueSelected.bind(this)
-        );
-        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
-
+        this.addManagedListeners(this.richSelect, {
+            fieldPickerValueSelected: this.onEditorPickerValueSelected.bind(this),
+        });
+        this.addManagedElementListeners(this.richSelect.getGui(), { focusout: this.onEditorFocusOut.bind(this) });
         this.focusAfterAttached = cellStartedEdit;
-
-        if (_exists(cellHeight)) {
-            this.richSelect.setRowHeight(cellHeight);
-        }
     }
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
@@ -71,6 +64,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
         const {
             cellRenderer,
+            cellHeight,
             value,
             values,
             formatValue,
@@ -84,11 +78,15 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             highlightMatch,
             valuePlaceholder,
             eventKey,
+            multiSelect,
+            suppressDeselectAll,
+            suppressMultiSelectPillRenderer,
         } = this.params;
 
         const ret: RichSelectParams = {
             value: value,
             cellRenderer,
+            cellRowHeight: cellHeight,
             searchDebounceDelay,
             valueFormatter: formatValue,
             pickerAriaLabelKey: 'ariaLabelRichSelectField',
@@ -103,6 +101,9 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             maxPickerWidth: valueListMaxWidth,
             placeholder: valuePlaceholder,
             initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
+            multiSelect,
+            suppressDeselectAll,
+            suppressMultiSelectPillRenderer,
         };
 
         let valuesResult;
@@ -119,6 +120,13 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             ret.searchStringCreator = this.getSearchStringCallback(valuesResult);
         } else {
             valuesPromise = valuesResult;
+        }
+
+        if (multiSelect && allowTyping) {
+            this.params.allowTyping = ret.allowTyping = false;
+            _warnOnce(
+                'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.'
+            );
         }
 
         return { params: ret, valuesPromise };
