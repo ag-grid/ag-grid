@@ -1,10 +1,10 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -55,7 +55,7 @@ const VueExample = {
         </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
     },
     data: function () {
         return {
@@ -69,8 +69,10 @@ const VueExample = {
             leftRowData: null,
             rightRowData: null,
             rowIdSequence: 100,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
     beforeMount() {
         const baseDefaultColDef = {
@@ -79,15 +81,17 @@ const VueExample = {
         };
 
         const baseGridOptions = {
-            getRowId: (params) => { return params.data.id; },
+            getRowId: (params) => {
+                return params.data.id;
+            },
             rowDragManaged: true,
-        }
+        };
 
         const baseColumnDefs = [
             { field: 'id', dndSource: true },
             { field: 'color' },
             { field: 'value1' },
-            { field: 'value2' }
+            { field: 'value2' },
         ];
 
         this.leftColumnDefs = [...baseColumnDefs];
@@ -99,22 +103,22 @@ const VueExample = {
         this.leftGridOptions = {
             ...baseGridOptions,
             defaultColDef: {
-                ...baseDefaultColDef
-            }
+                ...baseDefaultColDef,
+            },
         };
 
         this.rightGridOptions = {
             ...baseGridOptions,
             rowData: [],
             defaultColDef: {
-                ...baseDefaultColDef
-            }
+                ...baseDefaultColDef,
+            },
         };
 
         this.rowClassRules = {
             'red-row': 'data.color == "Red"',
             'green-row': 'data.color == "Green"',
-            'blue-row': 'data.color == "Blue"'
+            'blue-row': 'data.color == "Blue"',
         };
     },
 
@@ -133,7 +137,7 @@ const VueExample = {
                 id: this.rowIdSequence++,
                 color: color,
                 value1: Math.floor(Math.random() * 100),
-                value2: Math.floor(Math.random() * 100)
+                value2: Math.floor(Math.random() * 100),
             };
         },
 
@@ -148,10 +152,9 @@ const VueExample = {
             var dragSupported = event.dataTransfer.types.length;
 
             if (dragSupported) {
-                event.dataTransfer.dropEffect = "copy";
+                event.dataTransfer.dropEffect = 'copy';
                 event.preventDefault();
             }
-
         },
 
         gridDrop($event, grid) {
@@ -161,7 +164,9 @@ const VueExample = {
             var data = JSON.parse(jsonData);
 
             // if data missing or data has no it, do nothing
-            if (!data || data.id == null) { return; }
+            if (!data || data.id == null) {
+                return;
+            }
 
             var gridApi = grid == 'left' ? this.leftGridApi : this.rightGridApi;
 
@@ -173,7 +178,7 @@ const VueExample = {
             }
 
             var transaction = {
-                add: [data]
+                add: [data],
             };
             gridApi.applyTransaction(transaction);
         },
@@ -194,10 +199,12 @@ const VueExample = {
             var data = JSON.parse(jsonData);
 
             // if data missing or data has no id, do nothing
-            if (!data || data.id == null) { return; }
+            if (!data || data.id == null) {
+                return;
+            }
 
             var transaction = {
-                remove: [data]
+                remove: [data],
             };
 
             var rowIsInLeftGrid = !!this.leftGridApi.getRowNode(data.id);
@@ -209,8 +216,8 @@ const VueExample = {
             if (rowIsInRightGrid) {
                 this.rightGridApi.applyTransaction(transaction);
             }
-        }
-    }
-}
+        },
+    },
+};
 
 createApp(VueExample).mount('#app');
