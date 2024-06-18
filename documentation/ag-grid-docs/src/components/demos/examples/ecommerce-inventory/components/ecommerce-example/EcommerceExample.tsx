@@ -28,7 +28,6 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     const [colDefs] = useState<ColDef[]>([
         {
             field: 'product',
-            headerName: 'Product',
             cellRenderer: 'agGroupCellRenderer',
             headerClass: 'header-product',
             cellRendererParams: {
@@ -36,7 +35,8 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             },
             width: 600,
         },
-        { field: 'sku', headerName: 'SKU', width: 500, headerClass: 'header-sku' },
+        { field: 'artist' },
+        { field: 'year', width: 150, headerClass: 'header-sku' },
         {
             field: 'status',
             headerName: 'Status',
@@ -84,7 +84,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 );
             },
         },
-        { field: 'soldLastMonth', headerClass: 'header-calendar', width: 180 },
+        { field: 'sold', headerClass: 'header-calendar', width: 100 },
         {
             headerName: 'Est. Profit',
             headerClass: 'header-percentage',
@@ -122,7 +122,15 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     const detailCellRendererParams = useMemo(() => {
         return {
             detailGridOptions: {
-                columnDefs: [{ field: 'name', headerName: 'Type', width: 150 }],
+                columnDefs: [
+                    { field: 'title', width: 150 },
+                    { field: 'available' },
+                    { field: 'format' },
+                    { field: 'label' },
+                    { field: 'cat', headerName: 'Cat#' },
+                    { field: 'country' },
+                    { field: 'year' },
+                ],
                 defaultColDef: {
                     flex: 1,
                     minWidth: 100,
