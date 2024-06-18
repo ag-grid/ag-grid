@@ -57,10 +57,6 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     public showNoRowsOverlay(): void {
-        console.log('showNoRowsOverlay', {
-            suppressNoRowsOverlay: this.gos.get('suppressNoRowsOverlay'),
-            loading: this.gos.get('loading'),
-        });
         if (this.gos.get('suppressNoRowsOverlay')) {
             return;
         }
@@ -75,7 +71,6 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
-        console.log('showOverlay', { wrapperCssClass });
         const promise = compDetails.newAgStackInstance();
         const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
             promise.then((comp) => {
@@ -94,7 +89,6 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     public hideOverlay(): void {
-        console.log('hideOverlay', { loading: this.gos.get('loading') });
         if (this.gos.get('loading')) {
             return; // loading property is true, we cannot hide the overlay
         }
@@ -105,7 +99,6 @@ export class OverlayService extends BeanStub implements NamedBean {
     private showOrHideOverlay(): void {
         const isEmpty = this.rowModel.isEmpty();
         const isSuppressNoRowsOverlay = this.gos.get('suppressNoRowsOverlay');
-        console.log('showOrHideOverlay', { isEmpty, isSuppressNoRowsOverlay });
         if (isEmpty && !isSuppressNoRowsOverlay) {
             this.showNoRowsOverlay();
         } else {
@@ -115,7 +108,6 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private onLoadingChanged(): void {
         const loading = this.gos.get('loading');
-        console.log('onLoadingChanged', loading);
         if (loading === undefined) {
             if (!this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'))) {
                 if (this.gos.get('suppressLoadingOverlay')) {
@@ -137,12 +129,10 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private onRowDataUpdated(): void {
-        console.log('onRowDataUpdated');
         this.showOrHideOverlay();
     }
 
     private onNewColumnsLoaded(): void {
-        console.log('onNewColumnsLoaded');
         // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
         // this problem exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,

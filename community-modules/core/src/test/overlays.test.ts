@@ -150,7 +150,7 @@ describe('ag-grid overlays', () => {
         });
 
         test('if gridOptions.suppressLoadingOverlay = true, and loading=true, the loading property value is ignored and a console warning is shown', () => {
-            const consoleWarnSpy = jest.spyOn(console, 'warn');
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             createMyGrid({ columnDefs, loading: true, suppressLoadingOverlay: true });
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
@@ -208,7 +208,7 @@ describe('ag-grid overlays', () => {
         });
 
         test('Calls to api.showLoadingOverlay() will have no effect and produce a console warn', () => {
-            const consoleWarnSpy = jest.spyOn(console, 'warn');
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             const api = createMyGrid({ columnDefs, loading: false });
             expect(document.querySelector(NO_ROWS)).toBeTruthy();
             api.showLoadingOverlay();
