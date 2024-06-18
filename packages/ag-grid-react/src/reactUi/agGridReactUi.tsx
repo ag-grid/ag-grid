@@ -92,16 +92,20 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
         const mergedGridOps = _combineAttributesAndGridOptions(props.gridOptions, props);
 
+        const processQueuedUpdates = () => {
+            if (ready.current) {
+                const getFn = () =>
+                    frameworkOverridesRef.current?.shouldQueueUpdates() ? undefined : whenReadyFuncs.current.shift();
+                let fn = getFn();
+                while (fn) {
+                    fn();
+                    fn = getFn();
+                }
+            }
+        };
+
         const frameworkOverrides = isReact17Minus()
-            ? new React17MinusFrameworkOverrides(() => {
-                  if (ready.current) {
-                      let fn = whenReadyFuncs.current.shift();
-                      while (fn && !frameworkOverridesRef.current?.shouldQueueUpdates()) {
-                          fn();
-                          fn = whenReadyFuncs.current.shift();
-                      }
-                  }
-              })
+            ? new React17MinusFrameworkOverrides(processQueuedUpdates)
             : new ReactFrameworkOverrides();
         frameworkOverridesRef.current = frameworkOverrides;
 
