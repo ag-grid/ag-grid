@@ -335,8 +335,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             });
         }
 
+        this.doWhileBlockingAnnouncement(() => this.pillContainer?.refresh());
+    }
+
+    private doWhileBlockingAnnouncement(func: () => void): void {
         this.skipWrapperAnnouncement = true;
-        this.pillContainer.refresh();
+        func();
         this.skipWrapperAnnouncement = false;
     }
 
@@ -675,7 +679,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 if (!allowTyping || this.pillContainer) {
                     e.preventDefault();
                     if (this.pillContainer) {
-                        this.pillContainer.onKeyboardNavigateKey(e);
+                        this.listComponent?.highlightIndex(-1);
+                        this.pillContainer.onNavigationKeyDown(e);
                     }
                 }
                 break;
@@ -701,6 +706,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             case KeyCode.UP:
                 this.onNavigationKeyDown(e, key, () => {
                     if (multiSelect) {
+                        this.doWhileBlockingAnnouncement(() => this.eWrapper.focus());
                         this.ariaAnnouncementService.announceValue(this.ariaToggleSelection);
                     }
                 });

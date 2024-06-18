@@ -73,7 +73,7 @@ export class AgPillContainer<TValue> extends Component {
         }
     }
 
-    public onKeyboardNavigateKey(e: KeyboardEvent): void {
+    public onNavigationKeyDown(e: KeyboardEvent): void {
         const { key } = e;
 
         if (!this.pills.length || (key !== KeyCode.LEFT && key !== KeyCode.RIGHT)) {
