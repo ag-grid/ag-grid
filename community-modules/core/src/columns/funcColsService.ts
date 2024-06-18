@@ -198,7 +198,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             'columnValueChanged',
             false,
             false,
-            this.setValueActive.bind(this),
+            (added, column) => this.setValueActive(added, column, source),
             source
         );
     }
@@ -222,7 +222,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.valueCols,
             true,
             false,
-            this.setValueActive.bind(this, true),
+            (column) => this.setValueActive(true, column, source),
             'columnValueChanged',
             source
         );
@@ -234,7 +234,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.valueCols,
             false,
             false,
-            this.setValueActive.bind(this, false),
+            (column) => this.setValueActive(false, column, source),
             'columnValueChanged',
             source
         );
