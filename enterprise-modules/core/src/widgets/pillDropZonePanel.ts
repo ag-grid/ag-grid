@@ -18,6 +18,7 @@ import {
     _existsAndNotEmpty,
     _includes,
     _insertArrayIntoArray,
+    _last,
     _setAriaHidden,
     _setAriaLabel,
     _setAriaPosInSet,
@@ -122,7 +123,8 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {
-                handleKeyDown: this.handleKeyDown.bind(this),
+                onTabKeyDown: this.onTabKeyDown.bind(this),
+                handleKeyDown: this.onKeyDown.bind(this),
             })
         );
 
@@ -135,16 +137,37 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         _setAriaLabel(this.ePillDropList, this.getAriaLabel());
     }
 
-    private handleKeyDown(e: KeyboardEvent) {
+    private onTabKeyDown(e: KeyboardEvent): void {
+        const focusableElements = this.focusService.findFocusableElements(this.getFocusableElement(), null, true);
+        const len = focusableElements.length;
+
+        if (len === 0) {
+            return;
+        }
+
+        const { shiftKey } = e;
+        const activeEl = this.gos.getActiveDomElement();
+
+        const isFirstFocused = activeEl === focusableElements[0];
+        const isLastFocused = activeEl === _last(focusableElements);
+        const shouldAllowDefaultTab = len === 1 || (isFirstFocused && shiftKey) || (isLastFocused && !shiftKey);
+
+        if (!shouldAllowDefaultTab) {
+            focusableElements[shiftKey ? 0 : len - 1].focus();
+        }
+    }
+
+    private onKeyDown(e: KeyboardEvent) {
+        const { key } = e;
         const isVertical = !this.horizontal;
 
-        let isNext = e.key === KeyCode.DOWN;
-        let isPrevious = e.key === KeyCode.UP;
+        let isNext = key === KeyCode.DOWN;
+        let isPrevious = key === KeyCode.UP;
 
         if (!isVertical) {
             const isRtl = this.gos.get('enableRtl');
-            isNext = (!isRtl && e.key === KeyCode.RIGHT) || (isRtl && e.key === KeyCode.LEFT);
-            isPrevious = (!isRtl && e.key === KeyCode.LEFT) || (isRtl && e.key === KeyCode.RIGHT);
+            isNext = (!isRtl && key === KeyCode.RIGHT) || (isRtl && key === KeyCode.LEFT);
+            isPrevious = (!isRtl && key === KeyCode.LEFT) || (isRtl && key === KeyCode.RIGHT);
         }
 
         if (!isNext && !isPrevious) {
