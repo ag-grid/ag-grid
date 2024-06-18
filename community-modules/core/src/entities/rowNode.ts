@@ -126,7 +126,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public __needsRefreshWhenVisible: boolean;
 
     /** All lowest level nodes beneath this node, no groups. */
-    public allLeafChildren: RowNode<TData>[];
+    public allLeafChildren: RowNode<TData>[] | null;
 
     /** Children of this group. If multi levels of grouping, shows only immediate children. */
     public childrenAfterGroup: RowNode<TData>[] | null;

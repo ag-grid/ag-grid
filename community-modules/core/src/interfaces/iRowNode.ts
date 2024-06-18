@@ -198,7 +198,7 @@ interface GroupRowNode<TData = any> {
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     leafGroup: boolean;
     /** All lowest level nodes beneath this node, no groups. */
-    allLeafChildren: IRowNode<TData>[];
+    allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
     allChildrenCount: number | null;
     /** Children of this group. If multi levels of grouping, shows only immediate children. */

@@ -243,7 +243,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 properties.some((prop) => propSet.has(prop));
 
             if (arePropertiesImpacted(resetProps)) {
-                this.setRowData(this.rootNode.allLeafChildren.map((child) => child.data));
+                this.setRowData(this.rootNode.allLeafChildren!.map((child) => child.data));
                 return;
             }
 
@@ -420,11 +420,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         rowNodes.forEach((rowNode) => {
-            _removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            _removeFromArray(this.rootNode.allLeafChildren!, rowNode);
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _insertIntoArray(this.rootNode.allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+            _insertIntoArray(this.rootNode.allLeafChildren!, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
         });
 
         this.refreshModel({
@@ -766,7 +766,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
                     if (rowNode.group && groupsSelectChildren) {
-                        result.push(...rowNode.allLeafChildren);
+                        result.push(...rowNode.allLeafChildren!);
                         return;
                     }
                 }

@@ -206,11 +206,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private sortChildren(details: GroupingDetails): void {
         details.changedPath.forEachChangedNodeDepthFirst(
             (node) => {
-                if (!node.childrenAfterGroup) {
-                    return;
-                }
-
-                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup!, details.rowNodeOrder);
+                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
                 if (didSort) {
                     details.changedPath.addParentNode(node);
                 }
@@ -511,7 +507,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: rowNode.allLeafChildren[0],
+                    leafNode: rowNode.allLeafChildren?.[0],
                 };
                 this.setGroupData(rowNode, groupInfo, details);
                 recurse(rowNode.childrenAfterGroup);
@@ -547,7 +543,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             sibling.childrenMapped = rootNode.childrenMapped;
         }
 
-        this.insertNodes(rootNode.allLeafChildren, details, false);
+        this.insertNodes(rootNode.allLeafChildren!, details, false);
     }
 
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
@@ -646,7 +642,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
 
             if (!batchRemover?.isRemoveFromAllLeafChildren(nextNode, childNode)) {
-                nextNode.allLeafChildren.push(childNode);
+                nextNode.allLeafChildren!.push(childNode);
             } else {
                 // if this node is about to be removed, prevent that
                 batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);
