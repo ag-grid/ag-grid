@@ -55,6 +55,12 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         return this.rowSelection === 'multiple';
     }
 
+    /**
+     * We override the selection value for UI-triggered events because it's the
+     * current selection state that should determine the next selection state. This
+     * is a stepping stone towards removing selection logic from event listeners and
+     * other code external to the selection service(s).
+     */
     private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
         if (!isSelectionUIEvent(source)) {
             return newValue;
