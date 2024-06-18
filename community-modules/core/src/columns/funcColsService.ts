@@ -109,7 +109,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             'columnRowGroupChanged',
             true,
             true,
-            this.setRowGroupActive.bind(this),
+            (added, column) => this.setRowGroupActive(added, column, source),
             source
         );
     }
@@ -135,7 +135,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.rowGroupCols,
             true,
             true,
-            this.setRowGroupActive.bind(this, true),
+            (column) => this.setRowGroupActive(true, column, source),
             'columnRowGroupChanged',
             source
         );
@@ -147,7 +147,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.rowGroupCols,
             false,
             true,
-            this.setRowGroupActive.bind(this, false),
+            (column) => this.setRowGroupActive(false, column, source),
             'columnRowGroupChanged',
             source
         );
