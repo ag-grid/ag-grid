@@ -6,7 +6,7 @@ import DemosTabs from './DemosTabs';
 import styles from './DemosTabs.module.scss';
 
 const DemoTabsHeader = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
 
     const toggleIsOpen = () => {
         setIsOpen((prevIsOpen) => !prevIsOpen);
@@ -33,7 +33,7 @@ const DemoTabsHeader = () => {
                             </button>
                         </a>
                         <button class="button-secondary" onClick={toggleIsOpen} aria-expanded={isOpen}>
-                            <Icon name="chevronUp" svgClasses={styles.chevronUp} />
+                            Collapse <Icon name="chevronUp" svgClasses={styles.chevronUp} />
                         </button>
                     </div>
 
@@ -42,7 +42,7 @@ const DemoTabsHeader = () => {
             </Collapsible>
             <div className={`${styles.expandButton} ${isOpen ? styles.isExpanded : ''}`}>
                 <button className="button-secondary" onClick={toggleIsOpen} aria-expanded={isOpen}>
-                    <Icon name="chevronUp" svgClasses={styles.chevronUp} />
+                    Performance <Icon name="chevronUp" svgClasses={styles.chevronUp} />
                 </button>
             </div>
         </div>
