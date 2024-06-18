@@ -411,7 +411,12 @@ export class PopupService extends BeanStub implements NamedBean {
         return this.popupList;
     }
 
-    private getParentRect() {
+    public getParentRect(): {
+        top: number;
+        left: number;
+        right: number;
+        bottom: number;
+    } {
         // subtract the popup parent borders, because popupParent.getBoundingClientRect
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
         // positioning is inside the border, leading the popup to be off by the width
