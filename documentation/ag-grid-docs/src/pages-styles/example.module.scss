@@ -46,8 +46,6 @@ $nav-height: 340px;
 }
 
 .loadingLogoContainer {
-    --layout-grid-header-height: calc(var(--layout-site-header-height) + #{$nav-height});
-
     width: 100%;
     position: absolute;
     height: calc(100vh - var(--layout-grid-header-height));
@@ -65,8 +63,6 @@ $nav-height: 340px;
 }
 
 .layout {
-    --layout-grid-header-height: calc(var(--layout-site-header-height) + 300px);
-
     @media screen and (max-width: 1900px) {
         padding-left: 24px;
         padding-right: 24px;

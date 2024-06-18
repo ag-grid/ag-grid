@@ -2,28 +2,13 @@
 import Layout from '@layouts/Layout.astro';
 import Example from '@components/example-grid/Example';
 import styles from '@pages-styles/example.module.scss';
-import { Icon } from '@ag-website-shared/components/icon/Icon';
-import DemoTabs from '@components/demos/DemosTabs.astro';
 import LogoMark from '@components/logo/LogoMark';
+import DemosTabsHeader from '@components/demos/DemosTabsHeader';
 ---
 
 <Layout title="Demo - Performance Grid" hideFooter={true}>
-    <div class={styles.topHeader}>
-        <div>
-            <h1 class={styles.headerHeading}>Performance</h1>
-            <p class={styles.headerDescription}>
-                See the grid's performance by&nbsp;varying the number rows and&nbsp;columns.
-            </p>
-            <a className={styles.videoTour} href="https://youtu.be/bcMvTUVbMvI" target="_blank" rel="noreferrer">
-                <button class="button-secondary">
-                    <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
-                    <span>Take the video tour</span>
-                </button>
-            </a>
-        </div>
+    <DemosTabsHeader client:load />
 
-        <DemoTabs activeTab="complete" />
-    </div>
     <div class={styles.layout}>
         <div class={styles.layoutWrapper}>
             <div class={styles.loadingLogoContainer}>
