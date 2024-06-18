@@ -8,6 +8,6 @@ export default {
     methods: {
         onDragStart(event) {
             event.dataTransfer.setData('text/plain', 'Dragged item with ID: ' + this.params.node.data.id);
-        }
-    }
+        },
+    },
 };
