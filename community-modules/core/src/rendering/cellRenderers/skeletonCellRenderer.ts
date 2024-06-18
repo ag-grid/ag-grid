@@ -29,7 +29,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         const skeletonEffect = eDocument.createElement('div');
         skeletonEffect.classList.add('ag-skeleton-effect');
 
-        // AG-11444 Use the row index to derive a width value for the skeleton cell
+        // Use the row index to derive a width value for the skeleton cell
         // to avoid them having uniform width when rendering
         const rowIndex = params.node.rowIndex;
         if (rowIndex != null) {
