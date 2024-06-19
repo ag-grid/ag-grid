@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "noEmit": true,
     "emitDecoratorMetadata": false,
     "noImplicitAny": false,
     "module": "commonjs",
