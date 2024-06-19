@@ -405,6 +405,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                         </>
                     )}
 
+                    <h2 id="seed-repos">Seed Repositories</h2>
                     {selectedSeedRepos.length ? (
                         <>
                             <p>Here are some seed code repositories to get you started:</p>
@@ -447,7 +448,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                 </tbody>
                             </table>
                         </>
-                    ) : undefined}
+                    ) : (
+                        <p>Select your enterprise products above to view seed repositories.</p>
+                    )}
                 </div>
             </form>
         </>
