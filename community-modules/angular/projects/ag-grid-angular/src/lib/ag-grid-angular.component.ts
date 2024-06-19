@@ -781,6 +781,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public debug: boolean | undefined = undefined;
+    /** Forces the grid to show or hide the loading overlay. If unset, the loading overlay will be shown if rows are not set yet.
+     */
+    @Input() public loading: boolean | undefined = undefined;
     /** Provide a template for 'loading' overlay.
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
@@ -2130,5 +2133,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';
+    static ngAcceptInputType_loading: boolean | null | '';
     // @END@
 }

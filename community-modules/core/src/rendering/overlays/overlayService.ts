@@ -33,6 +33,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             newColumnsLoaded: () => this.onNewColumnsLoaded(),
         });
         this.addManagedPropertyListener('loading', () => this.onLoadingChanged());
+        this.addManagedPropertyListener('suppressNoRowsOverlay', () => this.showOrHideOverlay());
     }
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {

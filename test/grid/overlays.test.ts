@@ -396,4 +396,57 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
         });
     });
+
+    describe('suppressNoRowsOverlay reactivity', () => {
+        test('suppressNoRowsOverlay reactivity when initially false', () => {
+            const api = createMyGrid({ columnDefs, rowData: [] });
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
+
+            api.setGridOption('suppressNoRowsOverlay', true);
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('suppressNoRowsOverlay', false);
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
+
+            api.setGridOption('suppressNoRowsOverlay', true);
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('loading', true);
+            expect(document.querySelector(OVERLAY)).toBeTruthy();
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('suppressNoRowsOverlay', false);
+            expect(document.querySelector(OVERLAY)).toBeTruthy();
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('loading', false);
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
+        });
+
+        test('suppressNoRowsOverlay reactivity when initially true', () => {
+            const api = createMyGrid({ columnDefs, rowData: [], suppressNoRowsOverlay: true });
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('suppressNoRowsOverlay', false);
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
+
+            api.setGridOption('suppressNoRowsOverlay', true);
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('suppressNoRowsOverlay', false);
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
+
+            api.setGridOption('loading', true);
+            expect(document.querySelector(OVERLAY)).toBeTruthy();
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('suppressNoRowsOverlay', true);
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('loading', false);
+            api.setGridOption('suppressNoRowsOverlay', false);
+            expect(document.querySelector(OVERLAY)).toBeFalsy();
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
+        });
+    });
 });
