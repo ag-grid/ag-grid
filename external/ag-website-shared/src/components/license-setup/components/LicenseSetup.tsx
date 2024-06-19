@@ -88,7 +88,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
             getBootstrapSnippet({
                 framework,
                 importType,
-                license: license || 'your license key',
+                license: license || 'your License Key',
                 userProducts,
                 noProducts: noUserProducts,
             }),
@@ -115,7 +115,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
     return (
         <>
             <form>
-                <p>Fill in the following form to get instructions on how to set up your license:</p>
+                <p>Do you already an AG Grid or AG Charts License Key:</p>
                 <div className={styles.inputList}>
                     <label>
                         <input
@@ -125,7 +125,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                             checked={hasValue(hasLicense) && hasLicense}
                             onChange={() => setHasLicense(true)}
                         />{' '}
-                        Existing license key
+                        I have an existing License Key
                     </label>
 
                     <label>
@@ -136,7 +136,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                             checked={hasValue(hasLicense) && !hasLicense}
                             onChange={() => setHasLicense(false)}
                         />{' '}
-                        No license key yet
+                        I don't have a License Key yet
                     </label>
                 </div>
 
@@ -146,7 +146,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                             className={classnames(styles.license, {
                                 [styles.error]: errors.userLicenseError,
                             })}
-                            placeholder="Paste your license key here."
+                            placeholder="Paste your License Key here."
                             value={userLicense}
                             onChange={(e) => {
                                 setUserLicense(e.target.value);
@@ -155,7 +155,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                         {userLicense === '' && (
                             <span className={styles.licencePlaceholder}>
-                                <b>Paste your license key here, e.g., </b>
+                                <b>Paste your License Key here, e.g., </b>
                                 <span>{DUMMY_LICENSE_KEY}</span>
                             </span>
                         )}
@@ -190,11 +190,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 {/* TODO change "AG Grid" to grid/charts based on site */}
                 {!hasLicense && (
                     <Note>
-                        Don't have an AG Grid licence key yet? Visit the{' '}
-                        <a href={urlWithBaseUrl('/license-pricing')}>Pricing Page</a> to discover the power of AG Grid
-                        Enterprise and purchase a licence key. Alternatively, email{' '}
-                        <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to start a conversation or request a
-                        trial licence key.
+                        Visit the <a href={urlWithBaseUrl('/license-pricing')}>Pricing Page</a> to discover the power of
+                        AG Grid Enterprise and <b>buy</b> a licence key.
+                        <br />
+                        Alternatively, email <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to start a
+                        conversation or <b>request a trial licence key</b>.
                     </Note>
                 )}
 
@@ -386,7 +386,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                     {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
                         <>
-                            {!noUserProducts && <p>An example of how to set up your AG Grid Enterprise license key:</p>}
+                            {!noUserProducts && <p>An example of how to set up your AG Grid Enterprise License Key:</p>}
                             {bootstrapSnippet.grid && (
                                 <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
                             )}
@@ -395,7 +395,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                     {userProducts.chartsEnterprise && (
                         <>
-                            <p>An example of how to set up your Charts Enterprise license key:</p>
+                            <p>An example of how to set up your Charts Enterprise License Key:</p>
                             {bootstrapSnippet.charts && (
                                 <Snippet framework={framework} content={bootstrapSnippet.charts} copyToClipboard />
                             )}

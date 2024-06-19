@@ -19,7 +19,6 @@ interface Props {
     isDarkMode?: boolean;
 }
 
-const whenSoldOut = ['Discontinued', 'Back order', 'Email when available'];
 const paginationPageSizeSelector = [5, 10, 20];
 
 export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
@@ -28,12 +27,12 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     const [colDefs] = useState<ColDef[]>([
         {
             field: 'product',
+            headerName: 'Album Name',
             cellRenderer: 'agGroupCellRenderer',
             headerClass: 'header-product',
             cellRendererParams: {
                 innerRenderer: ProductCellRenderer,
             },
-            width: 600,
         },
         { field: 'artist' },
         { field: 'year', width: 150, headerClass: 'header-sku' },
@@ -58,6 +57,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             },
             headerClass: 'header-inventory',
             width: 600,
+            sortable: false,
         },
         {
             field: 'incoming',
@@ -88,18 +88,8 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         {
             headerName: 'Est. Profit',
             headerClass: 'header-percentage',
-            valueGetter: (p) => '£' + (p.data.price * p.data.soldLastMonth) / 10,
+            valueGetter: (p) => '£' + (p.data.price * p.data.sold) / 10,
             width: 150,
-        },
-
-        {
-            field: 'whenSoldOut',
-            cellEditor: 'agSelectCellEditor',
-            cellEditorParams: {
-                values: whenSoldOut,
-            },
-            editable: true,
-            width: 130,
         },
         { field: 'actions', cellRenderer: ActionsCellRenderer },
     ]);

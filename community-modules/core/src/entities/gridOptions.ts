@@ -2058,7 +2058,7 @@ export interface GridOptions<TData = any> {
      */
     onChartRangeSelectionChanged?(event: ChartRangeSelectionChangedEvent<TData>): void;
     /**
-     * Formatting changes have been made by users through the Format Panel.
+     * Formatting changes have been made by users through the Customize Panel.
      */
     onChartOptionsChanged?(event: ChartOptionsChangedEvent<TData>): void;
     /**

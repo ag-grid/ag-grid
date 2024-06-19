@@ -1809,7 +1809,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChangedEvent<TData>> =
         new EventEmitter<ChartRangeSelectionChangedEvent<TData>>();
-    /** Formatting changes have been made by users through the Format Panel.
+    /** Formatting changes have been made by users through the Customize Panel.
      */
     @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChangedEvent<TData>> = new EventEmitter<
         ChartOptionsChangedEvent<TData>
