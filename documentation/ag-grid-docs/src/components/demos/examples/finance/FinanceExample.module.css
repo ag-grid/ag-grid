@@ -32,6 +32,6 @@
     letter-spacing: -0.01em;
 }
 
-:global(.custom-name) {
+:global(.ticker-name) {
     opacity: 0.8;
 }

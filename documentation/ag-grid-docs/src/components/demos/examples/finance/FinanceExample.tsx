@@ -60,7 +60,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                                         }}
                                     />
                                     <b className="custom-ticker">{params.data.ticker}</b>
-                                    <span className="custom-name"> {params.data.name}</span>
+                                    <span className="ticker-name"> {params.data.name}</span>
                                 </div>
                             </>
                         )
