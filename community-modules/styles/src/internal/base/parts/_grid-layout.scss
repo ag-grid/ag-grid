@@ -185,7 +185,11 @@
     }
 
     .ag-right-aligned-cell .ag-skeleton-effect {
-        margin-left: auto;
+        @include ag.unthemed-rtl(
+            (
+                margin-left: auto,
+            )
+        );
     }
 
     .ag-cell,
