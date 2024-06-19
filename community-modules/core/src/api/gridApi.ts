@@ -408,11 +408,12 @@ export interface GridApi<TData = any> {
     /**
      * @deprecated v31.1 To get/set individual filter models, use `getColumnFilterModel` or `setColumnFilterModel` instead.
      * To get hold of the filter instance, use `getColumnFilterInstance` which returns the instance asynchronously.
+     * This method now only works asynchronously via the callback. The return value will always be `undefined`.
      */
     getFilterInstance<TFilter extends IFilter>(
         key: string | Column,
         callback?: (filter: TFilter | null) => void
-    ): TFilter | null | undefined;
+    ): undefined;
 
     /**
      * Returns the filter component instance for a column.

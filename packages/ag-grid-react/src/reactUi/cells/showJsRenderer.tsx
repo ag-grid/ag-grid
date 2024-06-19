@@ -68,20 +68,21 @@ const useJsCellRenderer = (
             return;
         }
 
-        const comp = promise.resolveNow(null, (x) => x); // js comps are never async
-        if (!comp) {
-            return;
-        }
+        promise.then((comp) => {
+            if (!comp) {
+                return;
+            }
 
-        const compGui = comp.getGui();
-        if (!compGui) {
-            return;
-        }
+            const compGui = comp.getGui();
+            if (!compGui) {
+                return;
+            }
 
-        const parent = showTools ? eCellValue! : eGui.current!;
-        parent.appendChild(compGui);
+            const parent = showTools ? eCellValue! : eGui.current!;
+            parent.appendChild(compGui);
 
-        jsCellRendererRef.current = comp;
+            jsCellRendererRef.current = comp;
+        });
         // We do not return the destroy here as we want to keep the comp alive for our custom refresh approach above
     }, [showDetails, showTools, cellValueVersion]);
 
