@@ -1,5 +1,6 @@
 import { type ColDef, type GetRowIdFunc, type GetRowIdParams, type ValueFormatterFunc } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import styles from './FinanceExample.module.css';
@@ -51,7 +52,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                             <>
                                 <div>
                                     <img
-                                        src={`https://storage.googleapis.com/iex/api/logos/${params.data.ticker}.png`}
+                                        src={urlWithBaseUrl(`/example/finance/logos/${params.data.ticker}.png`)}
                                         style={{
                                             width: '20px',
                                             height: '20px',
