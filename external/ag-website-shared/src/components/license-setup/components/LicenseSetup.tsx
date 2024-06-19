@@ -66,21 +66,21 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         () =>
             getDependenciesSnippet({
                 framework,
-                products: userProducts,
+                products: { ...userProducts, chartsEnterprise: false },
                 noProducts: noUserProducts,
                 importType,
             }),
-        [framework, userProducts, importType]
+        [framework, { ...userProducts, chartsEnterprise: false }, importType]
     );
     const npmInstallSnippet = useMemo(
         () =>
             getNpmInstallSnippet({
                 framework,
-                products: userProducts,
+                products: { ...userProducts, chartsEnterprise: false },
                 noProducts: noUserProducts,
                 importType,
             }),
-        [framework, userProducts, importType]
+        [framework, { ...userProducts, chartsEnterprise: false }, importType]
     );
     const bootstrapSnippet = useMemo(
         () =>
