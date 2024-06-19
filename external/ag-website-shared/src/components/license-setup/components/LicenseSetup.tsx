@@ -260,7 +260,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                             type="checkbox"
                                             name="products"
                                             value="integratedEnterprise"
-                                            checked={userProducts.integratedEnterprise}
+                                            checked={userProducts.gridEnterprise && userProducts.integratedEnterprise}
+                                            disabled={!userProducts.gridEnterprise}
                                             onChange={() => {
                                                 updateUserProductsWithUrlUpdate({
                                                     ...userProducts,
