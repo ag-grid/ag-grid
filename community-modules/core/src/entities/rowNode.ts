@@ -69,7 +69,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public master: boolean;
 
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
-    public detail: boolean;
+    public detail: boolean | undefined;
 
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     public detailNode: RowNode;
@@ -78,7 +78,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public detailGridInfo: DetailGridInfo | null;
 
     /** `true` if this node is a group and the group is the bottom level in the tree. */
-    public leafGroup: boolean;
+    public leafGroup: boolean | undefined;
 
     /** `true` if this is the first child in this group. Changes when data is sorted. */
     public firstChild: boolean;
@@ -105,7 +105,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public quickFilterAggregateText: string | null;
 
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
-    public footer: boolean;
+    public footer: boolean | undefined;
 
     /** The field we are grouping on eg 'country'. */
     public field: string | null;
@@ -117,10 +117,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public key: string | null = null;
 
     /** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */
-    public stub: boolean;
+    public stub: boolean | undefined;
 
     /** Used by server side row model, true if this row node failed a load */
-    public failedLoad: boolean;
+    public failedLoad: boolean | undefined;
 
     /** Used by server side row model, true if this node needs refreshed by the server when in viewport */
     public __needsRefreshWhenVisible: boolean;
