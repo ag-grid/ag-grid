@@ -64,6 +64,35 @@
     margin-top: 0;
 }
 
+.licenseOutput {
+    margin-top: $spacing-size-1;
+    margin-bottom: $spacing-size-3;
+
+    span {
+        margin-right: $spacing-size-5;
+    }
+
+    .valid {
+        color: var(--color-positive);
+
+        svg {
+            --color-icon: var(--color-positive);
+        }
+    }
+
+    .invalid {
+        color: var(--color-negative);
+
+        svg {
+            --color-icon: var(--color-negative);
+        }
+    }
+
+    :global('.icon') {
+        --icon-size: 0.75em;
+    }
+}
+
 .licenseData {
     margin-top: $spacing-size-2;
 
@@ -181,6 +210,22 @@
 
 .integratedProduct {
     margin-top: $spacing-size-5;
+}
+
+.icQuestion {
+    display: flex;
+    align-items: center;
+
+    label {
+        margin-top: 0;
+        margin-left: $spacing-size-2;
+    }
+
+    input {
+        position: relative;
+        margin-right: $spacing-size-1;
+        top: 4px;
+    }
 }
 
 .error {

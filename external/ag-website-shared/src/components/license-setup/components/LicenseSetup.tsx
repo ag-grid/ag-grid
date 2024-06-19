@@ -114,7 +114,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
     return (
         <>
             <form>
-                <p>Do you already an AG Grid or AG Charts License Key:</p>
+                <h2>Validate your licence</h2>
+
                 <div className={styles.inputList}>
                     <label>
                         <input
@@ -161,7 +162,25 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     </div>
                 )}
 
-                {validLicenseText && <Success>{validLicenseText}</Success>}
+                {/* {validLicenseText && <Success>{validLicenseText}</Success>} */}
+
+                {validLicenseText && (
+                    <div className={styles.licenseOutput}>
+                        <span className={licensedProducts.grid ? styles.valid : styles.invalid}>
+                            <Icon name={licensedProducts.grid ? 'tick' : 'cross'} /> AG Grid Enterprise
+                        </span>
+                        <span
+                            className={licensedProducts.grid && licensedProducts.charts ? styles.valid : styles.invalid}
+                        >
+                            <Icon name={licensedProducts.grid && licensedProducts.charts ? 'tick' : 'cross'} />
+                            Integrated Charts
+                        </span>
+                        <span className={licensedProducts.charts ? styles.valid : styles.invalid}>
+                            <Icon name={licensedProducts.charts ? 'tick' : 'cross'} />
+                            AG Charts Enterprise
+                        </span>
+                    </div>
+                )}
 
                 {errors.expired && (
                     <Warning>
@@ -209,11 +228,42 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     )}
 
                     <div>
-                        <div>
-                            <span>Which enterprise products are you using:</span>
+                        <h2>Configure your application</h2>
+
+                        <div className={styles.icQuestion}>
+                            <span>Are you using Integrated Charts:</span>
+                            <label
+                                className={classnames(styles.licensedProduct, styles.integratedProduct, {
+                                    [styles.valid]: hasLicense && licensedProducts.grid && licensedProducts.charts,
+                                    [styles.trial]:
+                                        hasLicense &&
+                                        userLicenseIsTrial &&
+                                        licensedProducts.grid &&
+                                        licensedProducts.charts,
+                                    [styles.expired]:
+                                        hasLicense &&
+                                        (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                        licensedProducts.grid &&
+                                        licensedProducts.charts,
+                                })}
+                            >
+                                <input
+                                    type="checkbox"
+                                    name="products"
+                                    value="integratedEnterprise"
+                                    checked={userProducts.integratedEnterprise}
+                                    onChange={() => {
+                                        updateUserProductsWithUrlUpdate({
+                                            ...userProducts,
+                                            integratedEnterprise: !userProducts.integratedEnterprise,
+                                        });
+                                    }}
+                                />
+                                <span>Integrated Charts</span>
+                            </label>
                         </div>
 
-                        <div>
+                        {/* <div>
                             <div className={styles.productsList}>
                                 <div className={styles.productWrapper}>
                                     <label
@@ -312,7 +362,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                     {errors.gridNoCharts}. <EmailSales />
                                 </Warning>
                             )}
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className={styles.frameworkImportContainer}>
@@ -387,14 +437,14 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                         </>
                     )}
 
-                    {userProducts.chartsEnterprise && (
+                    {/* {userProducts.chartsEnterprise && (
                         <>
                             <p>An example of how to set up your AG Charts Enterprise License Key:</p>
                             {bootstrapSnippet.charts && (
                                 <Snippet framework={framework} content={bootstrapSnippet.charts} copyToClipboard />
                             )}
                         </>
-                    )}
+                    )} */}
 
                     <h2 id="seed-repos">Seed Repositories</h2>
 
