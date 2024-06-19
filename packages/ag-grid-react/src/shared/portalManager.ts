@@ -78,13 +78,6 @@ export class PortalManager {
             resolve(reactComponent);
         } else {
             if (Date.now() - startTime >= this.maxComponentCreationTimeMs! && !this.hasPendingPortalUpdate) {
-                // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
-                // can mess up contexts
-                if (reactComponent.isNullValue()) {
-                    resolve(reactComponent);
-                    return;
-                }
-
                 _errorOnce(
                     `React Component '${reactComponent.getReactComponentName()}' not created within ${this.maxComponentCreationTimeMs}ms.`
                 );

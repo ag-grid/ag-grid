@@ -34,6 +34,7 @@ import React, {
 } from 'react';
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
+import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererComponentWrapper';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
@@ -222,6 +223,8 @@ class ReactFrameworkComponentWrapper
                         return ToolPanelComponentWrapper;
                     case 'menuItem':
                         return MenuItemComponentWrapper;
+                    case 'cellRenderer':
+                        return CellRendererComponentWrapper;
                 }
             };
             const ComponentClass = getComponentClass(componentType.propertyName);
@@ -238,6 +241,7 @@ class ReactFrameworkComponentWrapper
                 case 'statusPanel':
                 case 'toolPanel':
                 case 'menuItem':
+                case 'cellRenderer':
                     warnReactiveCustomComponents();
                     break;
             }
