@@ -5,7 +5,6 @@ import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
 import { Snippet } from '@components/snippet/Snippet';
-import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
@@ -211,92 +210,94 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     <div>
                         <div>
                             <span>Which enterprise products are you using:</span>
-                            <span className={styles.tooltipWrapper}>
-                                <InfoTooltip title="Integrated Enterprise: Use AG Charts Enterprise features within AG Grid Enterprise through integrated charts" />
-                            </span>
                         </div>
 
                         <div>
-                            <div className={styles.inputList}>
-                                <label
-                                    className={classnames(styles.licensedProduct, {
-                                        [styles.valid]: hasLicense && licensedProducts.grid,
-                                        [styles.trial]: hasLicense && userLicenseIsTrial && licensedProducts.grid,
-                                        [styles.expired]:
-                                            hasLicense &&
-                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
-                                            licensedProducts.grid,
-                                    })}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="products"
-                                        value="gridEnterprise"
-                                        checked={userProducts.gridEnterprise}
-                                        onChange={() => {
-                                            updateUserProductsWithUrlUpdate({
-                                                ...userProducts,
-                                                gridEnterprise: !userProducts.gridEnterprise,
-                                            });
-                                        }}
-                                    />
-                                    <strong>AG Grid Enterprise</strong>
-                                </label>
+                            <div className={styles.productsList}>
+                                <div className={styles.productWrapper}>
+                                    <label
+                                        className={classnames(styles.licensedProduct, {
+                                            [styles.valid]: hasLicense && licensedProducts.grid,
+                                            [styles.trial]: hasLicense && userLicenseIsTrial && licensedProducts.grid,
+                                            [styles.expired]:
+                                                hasLicense &&
+                                                (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                                licensedProducts.grid,
+                                        })}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            name="products"
+                                            value="gridEnterprise"
+                                            checked={userProducts.gridEnterprise}
+                                            onChange={() => {
+                                                updateUserProductsWithUrlUpdate({
+                                                    ...userProducts,
+                                                    gridEnterprise: !userProducts.gridEnterprise,
+                                                });
+                                            }}
+                                        />
+                                        <strong>AG Grid Enterprise</strong>
+                                    </label>
 
-                                <label
-                                    className={classnames(styles.licensedProduct, {
-                                        [styles.valid]: hasLicense && licensedProducts.charts,
-                                        [styles.trial]: hasLicense && userLicenseIsTrial && licensedProducts.charts,
-                                        [styles.expired]:
-                                            hasLicense &&
-                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
-                                            licensedProducts.charts,
-                                    })}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="products"
-                                        value="chartsEnterprise"
-                                        checked={userProducts.chartsEnterprise}
-                                        onChange={() => {
-                                            updateUserProductsWithUrlUpdate({
-                                                ...userProducts,
-                                                chartsEnterprise: !userProducts.chartsEnterprise,
-                                            });
-                                        }}
-                                    />
-                                    <strong>AG Charts Enterprise</strong>
-                                </label>
+                                    <label
+                                        className={classnames(styles.licensedProduct, styles.integratedProduct, {
+                                            [styles.valid]:
+                                                hasLicense && licensedProducts.grid && licensedProducts.charts,
+                                            [styles.trial]:
+                                                hasLicense &&
+                                                userLicenseIsTrial &&
+                                                licensedProducts.grid &&
+                                                licensedProducts.charts,
+                                            [styles.expired]:
+                                                hasLicense &&
+                                                (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                                licensedProducts.grid &&
+                                                licensedProducts.charts,
+                                        })}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            name="products"
+                                            value="integratedEnterprise"
+                                            checked={userProducts.integratedEnterprise}
+                                            onChange={() => {
+                                                updateUserProductsWithUrlUpdate({
+                                                    ...userProducts,
+                                                    integratedEnterprise: !userProducts.integratedEnterprise,
+                                                });
+                                            }}
+                                        />
+                                        <span>Integrated Charts</span>
+                                    </label>
+                                </div>
 
-                                <label
-                                    className={classnames(styles.licensedProduct, {
-                                        [styles.valid]: hasLicense && licensedProducts.grid && licensedProducts.charts,
-                                        [styles.trial]:
-                                            hasLicense &&
-                                            userLicenseIsTrial &&
-                                            licensedProducts.grid &&
-                                            licensedProducts.charts,
-                                        [styles.expired]:
-                                            hasLicense &&
-                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
-                                            licensedProducts.grid &&
-                                            licensedProducts.charts,
-                                    })}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="products"
-                                        value="integratedEnterprise"
-                                        checked={userProducts.integratedEnterprise}
-                                        onChange={() => {
-                                            updateUserProductsWithUrlUpdate({
-                                                ...userProducts,
-                                                integratedEnterprise: !userProducts.integratedEnterprise,
-                                            });
-                                        }}
-                                    />
-                                    <strong>Integrated Enterprise</strong>
-                                </label>
+                                <div className={styles.productWrapper}>
+                                    <label
+                                        className={classnames(styles.licensedProduct, {
+                                            [styles.valid]: hasLicense && licensedProducts.charts,
+                                            [styles.trial]: hasLicense && userLicenseIsTrial && licensedProducts.charts,
+                                            [styles.expired]:
+                                                hasLicense &&
+                                                (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                                licensedProducts.charts,
+                                        })}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            name="products"
+                                            value="chartsEnterprise"
+                                            checked={userProducts.chartsEnterprise}
+                                            onChange={() => {
+                                                updateUserProductsWithUrlUpdate({
+                                                    ...userProducts,
+                                                    chartsEnterprise: !userProducts.chartsEnterprise,
+                                                });
+                                            }}
+                                        />
+                                        <strong>AG Charts Enterprise</strong>
+                                    </label>
+                                </div>
                             </div>
 
                             {errors.chartsNoGridEnterprise && (
