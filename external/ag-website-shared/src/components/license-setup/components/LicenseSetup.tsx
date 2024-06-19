@@ -395,7 +395,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                     {userProducts.chartsEnterprise && (
                         <>
-                            <p>An example of how to set up your Charts Enterprise License Key:</p>
+                            <p>An example of how to set up your AG Charts Enterprise License Key:</p>
                             {bootstrapSnippet.charts && (
                                 <Snippet framework={framework} content={bootstrapSnippet.charts} copyToClipboard />
                             )}
