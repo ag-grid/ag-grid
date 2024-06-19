@@ -8,6 +8,10 @@
     --ag-value-change-delta-up-color: rgb(53, 182, 90);
 }
 
+:global(.ag-theme-quartz-dark) {
+    --ag-row-hover-color: #323a46;
+}
+
 :global(.ag-theme-quartz .ag-row-group),
 .container {
     width: 100%;
@@ -26,4 +30,8 @@
 :global(.ag-right-aligned-cell) {
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
+}
+
+:global(.custom-name) {
+    opacity: 0.8;
 }

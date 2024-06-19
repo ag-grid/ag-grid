@@ -45,8 +45,27 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         () => [
             {
                 field: 'ticker',
-                cellDataType: 'text',
-                maxWidth: 140,
+                cellRenderer: (params) => {
+                    return (
+                        params.data && (
+                            <>
+                                <div>
+                                    <img
+                                        src={`https://storage.googleapis.com/iex/api/logos/${params.data.ticker}.png`}
+                                        style={{
+                                            width: '20px',
+                                            height: '20px',
+                                            marginRight: '5px',
+                                            borderRadius: '32px',
+                                        }}
+                                    />
+                                    <b className="custom-ticker">{params.data.ticker}</b>
+                                    <span className="custom-name"> {params.data.name}</span>
+                                </div>
+                            </>
+                        )
+                    );
+                },
             },
             {
                 field: 'name',
@@ -57,6 +76,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                 field: 'instrument',
                 cellDataType: 'text',
                 rowGroup: true,
+                sort: 'desc',
                 hide: true,
             },
             {
