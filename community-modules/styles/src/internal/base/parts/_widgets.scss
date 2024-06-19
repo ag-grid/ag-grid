@@ -597,7 +597,7 @@
     // PILL
     ////////////////////////////////////////
     .ag-pill {
-        border: 1px solid transparent;
+        border: 1px solid var(--ag-chip-border-color);
         border-radius: var(--ag-border-radius);
         background-color: var(--ag-chip-background-color);
     }
