@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "emitDecoratorMetadata": false,
+    "noImplicitAny": false,
+    "module": "commonjs",
+    "types": ["jest", "node"]
+  }
+}

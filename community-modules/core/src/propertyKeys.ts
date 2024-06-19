@@ -386,9 +386,8 @@ export class PropertyKeys {
         'applyQuickFilterBeforePivotOrAgg',
         'suppressServerSideFullWidthLoadingRow',
         'suppressAdvancedFilterEval',
+        'loading',
     ];
-
-    public static BOOLEAN_OR_UNDEFINED_PROPERTIES: KeysOfType<boolean | undefined>[] = ['loading'];
 
     // If property does not fit above, i.e union that should not be coerced.
     public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow'];
@@ -471,7 +470,6 @@ export class PropertyKeys {
         ...PropertyKeys.NUMBER_PROPERTIES,
         ...PropertyKeys.FUNCTION_PROPERTIES,
         ...PropertyKeys.BOOLEAN_PROPERTIES,
-        ...PropertyKeys.BOOLEAN_OR_UNDEFINED_PROPERTIES,
         ...PropertyKeys.OTHER_PROPERTIES,
     ];
 }

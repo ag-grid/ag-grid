@@ -1,8 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-
-import type { GridOptions } from '../entities/gridOptions';
-import { createGrid } from '../grid';
-import { ModuleRegistry } from '../modules/moduleRegistry';
+import type { GridOptions } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 const OVERLAY = '.ag-overlay-loading-center';
 const NO_ROWS = '.ag-overlay-no-rows-center';

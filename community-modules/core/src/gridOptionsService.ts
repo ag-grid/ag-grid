@@ -86,8 +86,8 @@ export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: 
  */
 const PROPERTY_COERCIONS: Map<keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]> = new Map([
     ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, toBoolean]),
-    ...PropertyKeys.BOOLEAN_OR_UNDEFINED_PROPERTIES.map((key) => [key as keyof GridOptions, toBooleanOrUndefined]),
     ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, toNumber]),
+    ['loading', toBooleanOrUndefined],
     ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : toBoolean(val))],
     ['pageSize', toConstrainedNum(1)],
     ['autoSizePadding', toConstrainedNum(0)],
