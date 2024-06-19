@@ -101,7 +101,10 @@
 .importsLink {
     width: 100%;
     margin-top: -$spacing-size-2;
-    font-weight: var(--text-regular);
+
+    a {
+        font-weight: var(--text-regular);
+    }
 }
 
 .frameworkContainer {

@@ -354,15 +354,16 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                 <option value="modules">Modules</option>
                             </select>
                         </div>
-                        <a
-                            className={classnames(styles.importsLink, 'text-sm')}
-                            href={urlWithPrefix({
-                                framework,
-                                url: './modules/#packages-vs-modules',
-                            })}
-                        >
-                            Learn more about import types
-                        </a>
+                        <p className={classnames(styles.importsLink, 'text-sm')}>
+                            <a
+                                href={urlWithPrefix({
+                                    framework,
+                                    url: './modules/#packages-vs-modules',
+                                })}
+                            >
+                                Learn more about import types
+                            </a>
+                        </p>
                     </div>
                 </div>
 
