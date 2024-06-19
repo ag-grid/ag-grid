@@ -1,6 +1,10 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { ColDef, SizeColumnsToContentStrategy } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
@@ -12,7 +16,13 @@ import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
 import styles from './EcommerceExample.module.css';
 import { getData } from './data';
 
-ModuleRegistry.registerModules([SetFilterModule, MultiFilterModule, MasterDetailModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ExcelExportModule,
+    SetFilterModule,
+    MultiFilterModule,
+    MasterDetailModule,
+]);
 
 interface Props {
     gridTheme?: string;
