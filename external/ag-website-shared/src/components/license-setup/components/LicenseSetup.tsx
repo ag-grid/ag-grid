@@ -307,30 +307,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                 </Warning>
                             )}
 
-                            {errors.chartsNoIntegratedEnterprise && (
-                                <Warning>
-                                    {errors.chartsNoIntegratedEnterprise}. <EmailSales />
-                                </Warning>
-                            )}
-
                             {errors.gridNoCharts && (
                                 <Warning>
                                     {errors.gridNoCharts}. <EmailSales />
                                 </Warning>
                             )}
-
-                            {errors.gridNoIntegratedEnterprise && (
-                                <Warning>
-                                    {errors.gridNoIntegratedEnterprise}. <EmailSales />
-                                </Warning>
-                            )}
-
-                            {(!userProducts.chartsEnterprise || !userProducts.gridEnterprise) &&
-                                userProducts.integratedEnterprise && (
-                                    <Warning>
-                                        {errors.noIntegratedEnterprise}. <EmailSales />
-                                    </Warning>
-                                )}
                         </div>
                     </div>
 
@@ -382,16 +363,19 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     <p>
                         Copy the following dependencies into your <code>package.json</code>:
                     </p>
+
                     {dependenciesSnippet && (
                         <Snippet framework={framework} content={dependenciesSnippet} copyToClipboard />
                     )}
 
                     <p>Or install using npm:</p>
+
                     {npmInstallSnippet && (
                         <Snippet framework={framework} content={npmInstallSnippet} language="bash" copyToClipboard />
                     )}
 
                     <h3 id="set-up-your-application">Set Up Your Application</h3>
+
                     {errors.noProducts && <Note>{errors.noProducts}</Note>}
 
                     {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
@@ -413,6 +397,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     )}
 
                     <h2 id="seed-repos">Seed Repositories</h2>
+
                     {selectedSeedRepos.length ? (
                         <>
                             <p>Here are some seed code repositories to get you started:</p>

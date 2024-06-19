@@ -41,11 +41,6 @@ const errorConditions = {
             licensedProducts.charts && !licensedProducts.grid && userProducts.gridEnterprise,
         message: `Your license key does not include "AG Grid Enterprise"`,
     },
-    chartsNoIntegratedEnterprise: {
-        getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
-            licensedProducts.charts && !licensedProducts.grid && userProducts.integratedEnterprise,
-        message: `Both AG Grid Enterprise and AG Charts Enterprise are required to use Integrated Charts`,
-    },
     noProducts: {
         getIsError: ({ noUserProducts }: ErrorData) => noUserProducts,
         message: `A license key is not required to use AG Grid Community or AG Charts Community`,
@@ -66,11 +61,6 @@ const errorConditions = {
             !licensedProducts.charts && licensedProducts.grid && userProducts.chartsEnterprise,
         message: 'Your license key does not include "AG Charts Enterprise"',
     },
-    gridNoIntegratedEnterprise: {
-        getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
-            !licensedProducts.charts && licensedProducts.grid && userProducts.integratedEnterprise,
-        message: `Both AG Grid Enterprise and AG Charts Enterprise are required to use Integrated Charts`,
-    },
     expired: {
         getIsError: ({ license, userLicenseIsExpired }: ErrorData) => {
             return hasValue(license) && userLicenseIsExpired;
@@ -82,12 +72,6 @@ const errorConditions = {
             return hasValue(license) && userLicenseTrialIsExpired;
         },
         message: 'This trial license key is expired',
-    },
-    noIntegratedEnterprise: {
-        getIsError: ({ userProducts, licensedProducts }: ErrorData) => {
-            return (!licensedProducts.charts || !licensedProducts.grid) && userProducts.integratedEnterprise;
-        },
-        message: `Both AG Grid Enterprise and AG Charts Enterprise are required to use Integrated Charts`,
     },
 };
 
