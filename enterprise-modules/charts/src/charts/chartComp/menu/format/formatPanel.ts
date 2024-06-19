@@ -102,10 +102,11 @@ export class FormatPanel extends Component {
                     break;
                 case 'navigator':
                     _warnOnce(
-                        `'navigator' is now displayed in the charts advanced settings instead of the format panel, and this setting will be ignored.`
+                        `'navigator' is now displayed in the charts advanced settings instead of the customize panel, and this setting will be ignored.`
                     );
+                    break;
                 default:
-                    _warnOnce(`Invalid charts format panel group name supplied: '${group}'`);
+                    _warnOnce(`Invalid charts customize panel group name supplied: '${group}'`);
             }
         });
     }
