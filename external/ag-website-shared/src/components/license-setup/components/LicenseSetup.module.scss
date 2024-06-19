@@ -140,7 +140,7 @@
     width: calc(50% - #{$spacing-size-3} / 2);
     min-width: 260px;
     border: 1px solid var(--color-border-secondary);
-    background-color: var(--color-util-brand-50);
+    background-color: color-mix(in srgb, var(--color-util-brand-50), var(--color-bg-primary));
     border-radius: var(--radius-sm);
 
     #{$selector-darkmode} & {

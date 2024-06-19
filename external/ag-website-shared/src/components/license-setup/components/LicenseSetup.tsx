@@ -168,6 +168,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                         {errors.expired}. <EmailSales />
                     </Warning>
                 )}
+
                 {errors.expiredTrial && (
                     <Warning>
                         {errors.expiredTrial}. <EmailSales />
@@ -323,6 +324,13 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                     {errors.gridNoIntegratedEnterprise}. <EmailSales />
                                 </Warning>
                             )}
+
+                            {(!userProducts.chartsEnterprise || !userProducts.gridEnterprise) &&
+                                userProducts.integratedEnterprise && (
+                                    <Warning>
+                                        {errors.noIntegratedEnterprise}. <EmailSales />
+                                    </Warning>
+                                )}
                         </div>
                     </div>
 

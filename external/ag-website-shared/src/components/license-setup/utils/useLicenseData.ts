@@ -31,7 +31,7 @@ const validLicenseMessages = {
     valid: 'Valid license key',
     validTrialLicense: 'Valid trial license key',
     gridEnterprise: 'Includes "AG Grid Enterprise"',
-    integratedEnterprise: 'Includes "AG Grid Enterprise", "AG Chart Enterprise", and "Integrated Enterprise"',
+    integratedEnterprise: 'Includes "AG Grid Enterprise", "AG Chart Enterprise", and "Integrated Charts"',
     chartsEnterprise: 'Includes "AG Charts Enterprise"',
 };
 
@@ -44,7 +44,7 @@ const errorConditions = {
     chartsNoIntegratedEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
             licensedProducts.charts && !licensedProducts.grid && userProducts.integratedEnterprise,
-        message: `Your license key does not include "Integrated Enterprise"`,
+        message: `Both AG Grid Enterprise and AG Charts Enterprise are required to use Integrated Charts`,
     },
     noProducts: {
         getIsError: ({ noUserProducts }: ErrorData) => noUserProducts,
@@ -69,7 +69,7 @@ const errorConditions = {
     gridNoIntegratedEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
             !licensedProducts.charts && licensedProducts.grid && userProducts.integratedEnterprise,
-        message: `Your license key does not include "Integrated Enterprise"`,
+        message: `Both AG Grid Enterprise and AG Charts Enterprise are required to use Integrated Charts`,
     },
     expired: {
         getIsError: ({ license, userLicenseIsExpired }: ErrorData) => {
@@ -82,6 +82,12 @@ const errorConditions = {
             return hasValue(license) && userLicenseTrialIsExpired;
         },
         message: 'This trial license key is expired',
+    },
+    noIntegratedEnterprise: {
+        getIsError: ({ userProducts, licensedProducts }: ErrorData) => {
+            return (!licensedProducts.charts || !licensedProducts.grid) && userProducts.integratedEnterprise;
+        },
+        message: `Both AG Grid Enterprise and AG Charts Enterprise are required to use Integrated Charts`,
     },
 };
 
