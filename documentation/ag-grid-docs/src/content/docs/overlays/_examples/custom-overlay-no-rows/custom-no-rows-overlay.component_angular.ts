@@ -1,5 +1,5 @@
-import { INoRowsOverlayAngularComp } from '@ag-grid-community/angular';
-import { INoRowsOverlayParams } from '@ag-grid-community/core';
+import type { INoRowsOverlayAngularComp } from '@ag-grid-community/angular';
+import type { INoRowsOverlayParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
 
 @Component({

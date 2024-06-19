@@ -1,0 +1,16 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    height: 100%;
+}
+
+label.checkbox {
+    user-select: none;
+    margin-left: 20px;
+    margin-right: 20px;
+}

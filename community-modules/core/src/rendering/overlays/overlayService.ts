@@ -28,17 +28,21 @@ export class OverlayService extends BeanStub implements NamedBean {
     private manuallyDisplayed: boolean = false;
 
     public postConstruct(): void {
+        const updateOverlayVisibility = () => this.updateOverlayVisibility();
+
         this.addManagedEventListeners({
-            rowDataUpdated: () => this.onRowDataUpdated(),
             newColumnsLoaded: () => this.onNewColumnsLoaded(),
+            rowDataUpdated: updateOverlayVisibility,
         });
-        this.addManagedPropertyListener('loading', () => this.onLoadingChanged());
-        this.addManagedPropertyListener('suppressNoRowsOverlay', () => this.showOrHideOverlay());
+        this.addManagedPropertyListeners(
+            ['loading', 'suppressNoRowsOverlay', 'suppressLoadingOverlay'],
+            updateOverlayVisibility
+        );
     }
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
-        this.onLoadingChanged();
+        this.updateOverlayVisibility();
     }
 
     public showLoadingOverlay(): void {
@@ -61,7 +65,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (this.gos.get('suppressNoRowsOverlay')) {
             return;
         }
-        if (this.gos.get('loading')) {
+        if (this.gos.get('loading') && !this.gos.get('suppressLoadingOverlay')) {
             return; // loading property is true, we cannot show the no-rows overlay
         }
 
@@ -90,47 +94,35 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     public hideOverlay(): void {
-        if (this.gos.get('loading')) {
+        if (this.gos.get('loading') && !this.gos.get('suppressLoadingOverlay')) {
             return; // loading property is true, we cannot hide the overlay
         }
         this.manuallyDisplayed = false;
         this.overlayWrapperComp.hideOverlay();
     }
 
-    private showOrHideOverlay(): void {
-        const isEmpty = this.rowModel.isEmpty();
-        const isSuppressNoRowsOverlay = this.gos.get('suppressNoRowsOverlay');
-        if (isEmpty && !isSuppressNoRowsOverlay) {
+    private updateOverlayVisibility(): void {
+        let loadingVisible = false;
+
+        const loading = this.gos.get('loading');
+        if (this.gos.get('suppressLoadingOverlay')) {
+            if (loading) {
+                _warnOnce('setting loading=true has no effect when suppressLoadingOverlay=true');
+            }
+        } else if (loading) {
+            loadingVisible = true;
+        } else if (loading === undefined) {
+            loadingVisible =
+                !this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'));
+        }
+
+        if (loadingVisible) {
+            this.showLoadingOverlay();
+        } else if (this.rowModel.isEmpty() && !this.gos.get('suppressNoRowsOverlay')) {
             this.showNoRowsOverlay();
         } else {
             this.hideOverlay();
         }
-    }
-
-    private onLoadingChanged(): void {
-        const loading = this.gos.get('loading');
-        if (loading === undefined) {
-            if (!this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'))) {
-                if (this.gos.get('suppressLoadingOverlay')) {
-                    this.hideOverlay();
-                } else {
-                    this.showLoadingOverlay();
-                }
-            } else {
-                this.showOrHideOverlay();
-            }
-        } else if (loading) {
-            this.showLoadingOverlay();
-            if (this.gos.get('suppressLoadingOverlay')) {
-                _warnOnce('setting loading to true has no effect when suppressLoadingOverlay is true');
-            }
-        } else {
-            this.showOrHideOverlay();
-        }
-    }
-
-    private onRowDataUpdated(): void {
-        this.showOrHideOverlay();
     }
 
     private onNewColumnsLoaded(): void {
@@ -139,7 +131,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
         if (this.columnModel.isReady() && !this.rowModel.isEmpty() && !this.manuallyDisplayed) {
-            this.hideOverlay();
+            this.updateOverlayVisibility();
         }
     }
 }

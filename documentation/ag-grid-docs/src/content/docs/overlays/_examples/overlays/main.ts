@@ -1,12 +1,13 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import type { GridApi, GridOptions } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    loading: true,
     columnDefs: [
         { field: 'athlete', minWidth: 200 },
         { field: 'age' },
@@ -27,19 +28,15 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function onBtShowLoading() {
-    gridApi!.showLoadingOverlay();
+    gridApi!.setGridOption('loading', true);
 }
 
-function onBtShowNoRows() {
-    gridApi!.showNoRowsOverlay();
-}
-
-function onBtHide() {
-    gridApi!.hideOverlay();
+function onBtnHideLoading() {
+    gridApi!.setGridOption('loading', false);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

@@ -781,7 +781,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public debug: boolean | undefined = undefined;
-    /** Forces the grid to show or hide the loading overlay. If unset, the loading overlay will be shown if rows are not set yet.
+    /** Shows or hides the loading overlay.
      */
     @Input() public loading: boolean | undefined = undefined;
     /** Provide a template for 'loading' overlay.
@@ -796,10 +796,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use `loading=false` instead.
      * @default false
      * @initial
      */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
+    /** Disables the 'no rows' overlay, that is normally shown when no rows are in the grid.
+     * @default false
+     */
+    @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Provide a template for 'no rows' overlay.
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
@@ -811,10 +816,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Customise the parameters provided to the no rows overlay component.
      */
     @Input() public noRowsOverlayComponentParams: any = undefined;
-    /** Disables the 'no rows' overlay.
-     * @default false
-     */
-    @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Set whether pagination is enabled.
      * @default false
      */

@@ -4,20 +4,30 @@ title: "Overlays"
 
 Overlays are for displaying messages over the grid.
 
-When using the Client-side Data the grid uses two overlays:
+## Loading overlay
 
-1. **Loading Overlay**: Displayed if `rowData` or `columnDefs` are initially set to `null` or `undefined`.
-1. **No Rows Overlay**: Displayed if `rowData` is an empty list.
+Is possible to show or hide the loading overlay by setting the property 'loading' to `true` or `false`.
 
-{% gridExampleRunner title="Overlays" name="overlays"  exampleHeight=350 /%}
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
 
-The example above demonstrates the default loading and no rows overlays.
+{% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=350 /%}
 
-## Overlay API
+## No rows overlay
 
-You can manually show the overlays using the grid API.
+By default, the grid shows a 'no rows' overlay when there are no rows to show and the grid is not in the 'loading' state.
 
-{% apiDocumentation source="grid-api/api.json" section="overlays" /%}
+To not show thee `no rows` overlay when `rowData` is empty, set the property `suppressNoRowsOverlay` to `true`.
+
+{% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=350 /%}
+
+## Default behaviour
+
+When `loading` is unset and `suppressNoRowsOverlay` is unset, the following behaviour is observed:
+
+- The **Loading Overlay** is displayed if `rowData` or `columnDefs` are initially set to `null` or `undefined`.
+- The **No Rows Overlay** is displayed if `rowData` is an empty list.
+
+{% gridExampleRunner title="Overlays Default Behaviour" name="overlays-default-behaviour"  exampleHeight=350 /%}
 
 ## Customisation
 
@@ -25,13 +35,7 @@ HTML templates can be provided to the overlays using grid properties.
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayLoadingTemplate", "overlayNoRowsTemplate"] /%}
 
-## Custom Overlays
-
-This example demonstrates Custom Overlay Components.
-
-{% gridExampleRunner title="Custom Overlay Components" name="custom-overlay-components" /%}
-
-### Loading Overlays
+### Custom Loading Overlay
 
 Loading Overlay Component is configured via the grid properties `loadingOverlayComponent` and `loadingOverlayComponentParams`.
 
@@ -112,6 +116,10 @@ When a custom loading overlay is instantiated, the following will be made availa
 {% interfaceDocumentation interfaceName="CustomLoadingOverlayProps" /%}
 {% /if %}
 
+This example demonstrates how to provide a custom loading overlay component.
+
+{% gridExampleRunner title="Custom Loading Overlay Components" name="custom-overlay-loading" /%}
+
 ### No Rows Overlays
 
 No Rows Overlay Component is configured via the grid properties `noRowsOverlayComponent` and `noRowsOverlayComponentParams`.
@@ -191,3 +199,7 @@ When a custom no rows overlay is instantiated, the following will be made availa
 {% if isFramework("react") %}
 {% interfaceDocumentation interfaceName="CustomNoRowsOverlayProps" /%}
 {% /if %}
+
+This example demonstrates how to provide a custom no-rows overlay component.
+
+{% gridExampleRunner title="Custom No Rows Overlay Components" name="custom-overlay-no-rows" /%}

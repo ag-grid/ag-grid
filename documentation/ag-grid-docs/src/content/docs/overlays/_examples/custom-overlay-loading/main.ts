@@ -1,9 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import type { ColDef, GridApi, GridOptions } from '@ag-grid-community/core';
 
 import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
-import { CustomNoRowsOverlay } from './customNoRowsOverlay_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -30,28 +29,18 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
 
+    loading: true,
+
     columnDefs: columnDefs,
 
     loadingOverlayComponent: CustomLoadingOverlay,
     loadingOverlayComponentParams: {
         loadingMessage: 'One moment please...',
     },
-    noRowsOverlayComponent: CustomNoRowsOverlay,
-    noRowsOverlayComponentParams: {
-        noRowsMessageFunc: () => 'No rows found at: ' + new Date().toLocaleTimeString(),
-    },
 };
 
-function onBtShowLoading() {
-    gridApi!.showLoadingOverlay();
-}
-
-function onBtShowNoRows() {
-    gridApi!.showNoRowsOverlay();
-}
-
-function onBtHide() {
-    gridApi!.hideOverlay();
+function setLoading(value: boolean) {
+    gridApi!.setGridOption('loading', value);
 }
 
 // setup the grid after the page has finished loading

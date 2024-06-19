@@ -1,6 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -8,18 +9,19 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import CustomLoadingOverlay from './customLoadingOverlay.jsx';
-import CustomNoRowsOverlay from './customNoRowsOverlay.jsx';
+import CustomLoadingOverlay from './customLoadingOverlay';
+import CustomNoRowsOverlay from './customNoRowsOverlay';
+import { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
-    const gridRef = useRef();
+    const gridRef = useRef<AgGridReact<IOlympicData>>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [rowData, setRowData] = useState();
-    const [columnDefs, setColumnDefs] = useState([
+    const [rowData, setRowData] = useState<IOlympicData[]>();
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'athlete', width: 150 },
         { field: 'age', width: 90 },
         { field: 'country', width: 120 },
@@ -31,7 +33,7 @@ const GridExample = () => {
         { field: 'bronze', width: 100 },
         { field: 'total', width: 100 },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             editable: true,
             flex: 1,
@@ -57,15 +59,15 @@ const GridExample = () => {
     }, []);
 
     const onBtShowLoading = useCallback(() => {
-        gridRef.current.api.showLoadingOverlay();
+        gridRef.current!.api.showLoadingOverlay();
     }, []);
 
     const onBtShowNoRows = useCallback(() => {
-        gridRef.current.api.showNoRowsOverlay();
+        gridRef.current!.api.showNoRowsOverlay();
     }, []);
 
     const onBtHide = useCallback(() => {
-        gridRef.current.api.hideOverlay();
+        gridRef.current!.api.hideOverlay();
     }, []);
 
     return (
@@ -80,11 +82,11 @@ const GridExample = () => {
                 <div
                     style={gridStyle}
                     className={
-                        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
                         'ag-theme-quartz' /** DARK MODE END **/
                     }
                 >
-                    <AgGridReact
+                    <AgGridReact<IOlympicData>
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
@@ -100,7 +102,7 @@ const GridExample = () => {
     );
 };
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(
     <StrictMode>
         <GridExample />

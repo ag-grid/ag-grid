@@ -85,9 +85,9 @@ describe('ag-grid overlays', () => {
                 expect(document.querySelector(OVERLAY)).toBeFalsy();
             });
 
-            test('should not show no-rows overlay', () => {
+            test('should show no-rows overlay', () => {
                 const api = createMyGrid({ columnDefs, suppressLoadingOverlay: true });
-                expect(document.querySelector(NO_ROWS)).toBeFalsy();
+                expect(document.querySelector(NO_ROWS)).toBeTruthy();
                 expect(document.querySelector(OVERLAY)).toBeFalsy();
 
                 api.setGridOption('rowData', []);
@@ -97,20 +97,6 @@ describe('ag-grid overlays', () => {
                 api.setGridOption('rowData', [{}]);
                 expect(document.querySelector(NO_ROWS)).toBeFalsy();
                 expect(document.querySelector(OVERLAY)).toBeFalsy();
-            });
-
-            test('should not show loading overlay when empty rows are loaded', () => {
-                const api = createMyGrid({ columnDefs, suppressLoadingOverlay: true });
-                expect(document.querySelector(OVERLAY)).toBeFalsy();
-                expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-                api.setGridOption('rowData', []);
-                expect(document.querySelector(OVERLAY)).toBeFalsy();
-                expect(document.querySelector(NO_ROWS)).toBeTruthy();
-
-                api.setGridOption('rowData', [{}]);
-                expect(document.querySelector(OVERLAY)).toBeFalsy();
-                expect(document.querySelector(NO_ROWS)).toBeFalsy();
             });
         });
     });
@@ -149,10 +135,13 @@ describe('ag-grid overlays', () => {
 
         test('if gridOptions.suppressLoadingOverlay = true, and loading=true, the loading property value is ignored and a console warning is shown', () => {
             const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-            createMyGrid({ columnDefs, loading: true, suppressLoadingOverlay: true });
+            const api = createMyGrid({ columnDefs, loading: true, suppressLoadingOverlay: true });
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
             consoleWarnSpy.mockRestore();
+
+            api.showNoRowsOverlay();
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
         });
 
         test('Calls to api.showLoadingOverlay() will have no effect', () => {
@@ -304,16 +293,16 @@ describe('ag-grid overlays', () => {
         test('suppressLoadingOverlay has priority', () => {
             const api = createMyGrid({ columnDefs, loading: true, suppressLoadingOverlay: true });
             expect(document.querySelector(OVERLAY)).toBeFalsy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
 
             api.setGridOption('loading', undefined);
             expect(document.querySelector(OVERLAY)).toBeFalsy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
 
             api.setGridOption('loading', true);
             api.setGridOption('rowData', []);
             expect(document.querySelector(OVERLAY)).toBeFalsy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
 
             api.setGridOption('rowData', [{}]);
             expect(document.querySelector(OVERLAY)).toBeFalsy();
@@ -447,6 +436,26 @@ describe('ag-grid overlays', () => {
             api.setGridOption('suppressNoRowsOverlay', false);
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(document.querySelector(NO_ROWS)).toBeTruthy();
+        });
+
+        test('it has less priority than loading=true', () => {
+            const api = createMyGrid({ columnDefs, loading: true });
+            expect(document.querySelector(OVERLAY)).toBeTruthy();
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('suppressNoRowsOverlay', true);
+            expect(document.querySelector(OVERLAY)).toBeTruthy();
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+        });
+
+        test('it has less priority than initial loading=undefined', () => {
+            const api = createMyGrid({ columnDefs });
+            expect(document.querySelector(OVERLAY)).toBeTruthy();
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('suppressNoRowsOverlay', true);
+            expect(document.querySelector(OVERLAY)).toBeTruthy();
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
         });
     });
 });

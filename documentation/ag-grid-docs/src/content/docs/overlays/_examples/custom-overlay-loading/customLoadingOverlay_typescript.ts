@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class CustomLoadingOverlay implements ICellRendererComp {
     eGui!: HTMLElement;
