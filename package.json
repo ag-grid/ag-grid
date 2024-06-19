@@ -63,6 +63,7 @@
       "community-modules/core",
       "community-modules/client-side-row-model",
       "community-modules/styles",
+      "community-modules/locale",
       "community-modules/theming",
       "community-modules/csv-export",
       "community-modules/infinite-row-model",
