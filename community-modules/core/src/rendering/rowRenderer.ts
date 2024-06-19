@@ -683,20 +683,24 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private getLockOnRefresh(): void {
         if (this.refreshInProgress) {
+            const frameworkMessage = this.frameworkOverrides.getLockOnRefreshError?.() ?? '';
             throw new Error(
                 'AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows. ' +
                     'Your code probably called a grid API method while the grid was in the render stage. To overcome ' +
                     'this, put the API call into a timeout, e.g. instead of api.redrawRows(), ' +
                     'call setTimeout(function() { api.redrawRows(); }, 0). To see what part of your code ' +
-                    'that caused the refresh check this stacktrace.'
+                    'that caused the refresh check this stacktrace.' +
+                    frameworkMessage
             );
         }
 
         this.refreshInProgress = true;
+        this.frameworkOverrides.getLockOnRefresh?.();
     }
 
     private releaseLockOnRefresh(): void {
         this.refreshInProgress = false;
+        this.frameworkOverrides.releaseLockOnRefresh?.();
     }
 
     public isRefreshInProgress(): boolean {
