@@ -72,7 +72,6 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         {
             field: 'incoming',
             cellEditor: 'agNumberCellEditor',
-
             cellEditorParams: {
                 precision: 0,
                 step: 1,
@@ -222,9 +221,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         rowData={rowData}
                         defaultColDef={defaultColDef}
                         rowHeight={80}
-                        rowSelection="multiple"
                         autoSizeStrategy={autoSizeStrategy}
-                        columnMenu="new"
                         pagination={true}
                         paginationPageSize={10}
                         paginationPageSizeSelector={paginationPageSizeSelector}
