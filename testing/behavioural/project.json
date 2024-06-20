@@ -19,5 +19,5 @@
       }
     }
   },
-  "tags": ["test"]
+  "tags": ["test", "module"]
 }
