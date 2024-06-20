@@ -14,7 +14,7 @@ import { render } from "react-dom";
 import App from "./App";${
                 hideLicense
                     ? ''
-                    : `import { LicenseManager } from "ag-grid-enterprise";
+                    : `\nimport { LicenseManager } from "ag-grid-enterprise";
 
 LicenseManager.setLicenseKey("${license}");`
             }
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `${
                 hideLicense
                     ? ''
-                    : `import { LicenseManager } from "ag-grid-enterprise";
+                    : `\nimport { LicenseManager } from "ag-grid-enterprise";
 
 LicenseManager.setLicenseKey("${license}");`
             }
@@ -106,7 +106,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule${userProducts?.chartsEn
         packages: ({ license, hideLicense }) => `${
             hideLicense
                 ? ''
-                : `import { LicenseManager } from "ag-grid-enterprise";
+                : `\nimport { LicenseManager } from "ag-grid-enterprise";
 
 LicenseManager.setLicenseKey("${license}");`
         }
@@ -146,7 +146,7 @@ import { AgGridVue } from "ag-grid-vue3";
 ${
     hideLicense
         ? ''
-        : `import { LicenseManager } from "ag-grid-enterprise";
+        : `\nimport { LicenseManager } from "ag-grid-enterprise";
 
 LicenseManager.setLicenseKey("${license}");`
 }

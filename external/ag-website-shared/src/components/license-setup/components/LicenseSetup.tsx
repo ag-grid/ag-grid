@@ -35,7 +35,7 @@ const DUMMY_LICENSE_KEY =
 const EmailSales = () => {
     return (
         <>
-            Please contact <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> for more assistance
+            Please contact <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> for assistance
         </>
     );
 };

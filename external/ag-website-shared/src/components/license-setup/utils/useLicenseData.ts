@@ -29,16 +29,16 @@ interface ErrorData {
 const validLicenseMessages = {
     valid: 'Valid license key',
     validTrialLicense: 'Valid trial license key',
-    gridEnterprise: 'Includes "AG Grid Enterprise"',
-    integratedEnterprise: 'Includes "AG Grid Enterprise", "AG Chart Enterprise", and "Integrated Charts"',
-    chartsEnterprise: 'Includes "AG Charts Enterprise"',
+    gridEnterprise: 'Includes AG Grid Enterprise',
+    integratedEnterprise: 'Includes AG Grid Enterprise, AG Chart Enterprise, and Integrated Charts',
+    chartsEnterprise: 'Includes AG Charts Enterprise',
 };
 
 const errorConditions = {
     chartsNoGridEnterprise: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
             licensedProducts.charts && !licensedProducts.grid && userProducts.gridEnterprise,
-        message: `Your license key does not include "AG Grid Enterprise"`,
+        message: `Your license key does not include AG Grid Enterprise`,
     },
     noProducts: {
         getIsError: ({ noUserProducts }: ErrorData) => noUserProducts,
@@ -53,24 +53,24 @@ const errorConditions = {
     },
     v2License: {
         getIsError: ({ userLicenseVersion }: ErrorData) => userLicenseVersion === '2',
-        message: 'This license key is not valid for v30+',
+        message: 'This license key is not valid for AG Grid v30 and later',
     },
     gridNoCharts: {
         getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
             !licensedProducts.charts && licensedProducts.grid && userProducts.chartsEnterprise,
-        message: 'Your license key does not include "AG Charts Enterprise"',
+        message: 'Your license key does not include AG Charts Enterprise',
     },
     expired: {
         getIsError: ({ userLicense, userLicenseIsExpired }: ErrorData) => {
             return hasValue(userLicense) && userLicenseIsExpired;
         },
-        message: 'This license key is expired',
+        message: 'This license key is expired and cannot be used with the latest version',
     },
     expiredTrial: {
         getIsError: ({ userLicense, userLicenseTrialIsExpired }: ErrorData) => {
             return hasValue(userLicense) && userLicenseTrialIsExpired;
         },
-        message: 'This trial license key is expired',
+        message: 'This trial license key is expired and can no longer be used',
     },
 };
 
