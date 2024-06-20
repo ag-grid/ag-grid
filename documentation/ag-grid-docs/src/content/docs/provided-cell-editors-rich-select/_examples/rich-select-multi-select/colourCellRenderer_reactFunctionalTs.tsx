@@ -1,10 +1,14 @@
 import type { CustomCellRendererProps } from '@ag-grid-community/react';
 import React from 'react';
 
-import { getLuma } from './color-component-helper';
-
 const createPill = (color: string) => (
-    <span style={{ backgroundColor: color }} className={getLuma(color) < 150 ? 'dark' : 'light'}>
+    <span
+        style={{
+            backgroundColor: `color-mix(in srgb, transparent, ${color} 20%)`,
+            boxShadow: `0 0 0 1px color-mix(in srgb, transparent, ${color} 50%)`,
+            borderColor: color,
+        }}
+    >
         {color}
     </span>
 );
