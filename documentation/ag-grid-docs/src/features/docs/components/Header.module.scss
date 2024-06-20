@@ -30,12 +30,23 @@
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         flex-direction: row;
     }
+
+    // Prevent framework selector dropdown from appearing off screen
+    @media screen and (min-width: $breakpoint-docs-search-medium) and (max-width: $breakpoint-docs-nav-large) {
+        button {
+            min-width: 140px;
+        }
+    }
 }
 
 .pageTitleGroup {
     display: flex;
     flex-direction: column;
     color: var(--color-fg-primary);
+
+    @media screen and (max-width: $breakpoint-docs-search-medium) {
+        margin-top: $spacing-size-4;
+    }
 }
 
 .headerFramework {
