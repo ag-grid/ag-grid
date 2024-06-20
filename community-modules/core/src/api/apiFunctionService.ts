@@ -73,7 +73,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         }
         _warnOnce(
             `Grid API function ${functionName}() cannot be called as the grid has been destroyed.\n` +
-                `It is recommended to remove local references to the grid api. Alternatively, check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.\n` +
+                `Either clear local references to the grid api, when it is destroyed, or check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.\n` +
                 `To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${this.preDestroyLink}`
         );
         return;

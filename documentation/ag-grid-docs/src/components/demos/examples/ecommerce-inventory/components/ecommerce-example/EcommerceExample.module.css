@@ -33,16 +33,16 @@
 }
 
 :global(.ag-theme-quartz .ag-header) {
-    background-color: #f6f7f7;
+    background-color: #f9fafb;
     color: #39485d;
     border-radius: 8px;
-    border: none;
+    border: 1px solid #eff0f1;
 }
 
-:global(.ag-theme-quartz .ag-header-cell-text) {
+:global(.ag-theme-quartz .ag-header-cell-text),
+:global(.ag-theme-quart-dark .ag-header-cell-text) {
     color: #1f383c;
     display: flex;
-
     align-items: center;
 }
 
@@ -55,29 +55,9 @@
     border: none;
 }
 
-.icon {
-    margin-right: 8px;
-}
-
 .grid {
     height: calc(100vh - var(--layout-grid-header-height));
     --ag-header-background-color: transparent !important;
-}
-
-.container {
-    width: 100%;
-}
-
-.wrapper {
-    display: flex;
-    background: var(--color-bg-primary);
-}
-
-.buttonIcon {
-    width: 16px;
-    height: 16px;
-    opacity: 0.7;
-    margin-right: 8px;
 }
 
 .exampleHeader {
@@ -135,6 +115,7 @@
     overflow: hidden;
     background-color: var(--color-bg-secondary);
     padding: 4px;
+    border: 1px solid var(--color-border-secondary);
 }
 
 .tabButton {
@@ -165,53 +146,59 @@
 :global(.header-status .ag-header-cell-text:before) {
     content: url('/example/inventory/icons/product.svg');
     padding-right: 8px;
-    opacity: 0.5;
-
-    filter: invert(1);
+    opacity: 0.3;
 }
 
 :global(.header-price .ag-header-cell-text:before) {
     content: url('/example/inventory/icons/price.svg');
     padding-right: 8px;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 :global(.header-sku .ag-header-cell-text:before) {
     content: url('/example/inventory/icons/sku.svg');
     padding-right: 8px;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 :global(.header-inventory .ag-header-cell-text:before) {
     content: url('/example/inventory/icons/inventory.svg');
     padding-right: 8px;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 :global(.header-product .ag-header-cell-text:before) {
     content: url('/example/inventory/icons/product.svg');
     padding-right: 8px;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 :global(.header-status .ag-header-cell-text:before) {
     content: url('/example/inventory/icons/status.svg');
     padding-right: 8px;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 :global(.header-calendar .ag-header-cell-text:before) {
     content: url('/example/inventory/icons/calendar.svg');
     padding-right: 8px;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 :global(.header-percentage .ag-header-cell-text:before) {
     content: url('/example/inventory/icons/percentage.svg');
     padding-right: 8px;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 :global(.ag-theme-quartz-dark .ag-header-cell-text:before) {
     filter: invert(1);
+}
+
+.stockText {
+    opacity: 0.7;
+}
+
+.variantsText {
+    opacity: 0.7;
 }

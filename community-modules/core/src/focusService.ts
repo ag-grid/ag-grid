@@ -483,21 +483,23 @@ export class FocusService extends BeanStub implements NamedBean {
         rowWithoutSpanValue?: number;
     }): boolean {
         const { headerPosition, direction, fromCell, rowWithoutSpanValue, event } = params;
-        if (headerPosition.headerRowIndex === -1) {
+        const { column, headerRowIndex } = headerPosition;
+
+        if (headerRowIndex === -1) {
             if (this.filterManager?.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             }
-            return this.focusGridView(headerPosition.column as AgColumn);
+            return this.focusGridView(column as AgColumn);
         }
 
-        this.headerNavigationService.scrollToColumn(headerPosition.column as AgColumn, direction);
+        this.headerNavigationService.scrollToColumn(column as AgColumn, direction);
 
-        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
+        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
         const focusSuccess = headerRowContainerCtrl.focusHeader(
             headerPosition.headerRowIndex,
-            headerPosition.column as AgColumn,
+            column as AgColumn,
             event
         );
 

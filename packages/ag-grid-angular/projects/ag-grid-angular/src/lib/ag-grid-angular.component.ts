@@ -1,19 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // @START_IMPORTS@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    ViewContainerRef,
-    ViewEncapsulation,
-} from '@angular/core';
-import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
-
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
@@ -95,6 +81,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     GridState,
+    HeaderFocusedEvent,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
     IAggFunc,
@@ -186,6 +173,19 @@ import type {
 // @END_IMPORTS@
 import type { GridApi, GridOptions, GridParams, Module } from 'ag-grid-community';
 import { AgPromise, _combineAttributesAndGridOptions, _processOnChange, createGrid } from 'ag-grid-community';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    ViewContainerRef,
+    ViewEncapsulation,
+} from '@angular/core';
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
@@ -210,7 +210,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     private gridParams: GridParams;
 
     // in order to ensure firing of gridReady is deterministic
-    private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
+    private _resolveFullyReady: () => void;
+    private _fullyReady: Promise<void> = new Promise((resolve) => {
+        this._resolveFullyReady = resolve;
+    });
 
     /** Grid Api available after onGridReady event has fired. */
     public api: GridApi<TData>;
@@ -249,7 +252,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
             // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
             // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
-            this._fullyReady.resolveNow(null, (resolve) => resolve);
+            this._resolveFullyReady();
         });
     }
 
@@ -1811,7 +1814,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChangedEvent<TData>> =
         new EventEmitter<ChartRangeSelectionChangedEvent<TData>>();
-    /** Formatting changes have been made by users through the Format Panel.
+    /** Formatting changes have been made by users through the Customize Panel.
      */
     @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChangedEvent<TData>> = new EventEmitter<
         ChartOptionsChangedEvent<TData>
@@ -1934,6 +1937,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public storeRefreshed: EventEmitter<StoreRefreshedEvent<TData>> = new EventEmitter<
         StoreRefreshedEvent<TData>
+    >();
+    /** Header is focused.
+     */
+    @Output() public headerFocused: EventEmitter<HeaderFocusedEvent<TData>> = new EventEmitter<
+        HeaderFocusedEvent<TData>
     >();
     /** Cell is clicked.
      */

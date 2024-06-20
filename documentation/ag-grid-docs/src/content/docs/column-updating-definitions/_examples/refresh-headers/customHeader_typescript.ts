@@ -3,9 +3,9 @@ import { IHeaderComp, IHeaderParams } from '@ag-grid-community/core';
 export class CustomHeader implements IHeaderComp {
     params!: IHeaderParams;
     eGui!: HTMLDivElement;
-    eMenu: any;
+    eFilterMenu: any;
     eText: any;
-    menuPresent!: boolean;
+    filterMenuPresent!: boolean;
     onMenuClickListener: any;
 
     init(params: IHeaderParams) {
@@ -15,22 +15,22 @@ export class CustomHeader implements IHeaderComp {
         this.eGui.innerHTML =
             '' +
             '<div style="display: flex;">' +
-            '<span data-ref="eMenu" class="ag-icon ag-icon-menu" style="margin-right: 4px;"></span>' +
+            '<span data-ref="eFilterMenu" class="ag-icon ag-icon-menu" style="margin-right: 4px;"></span>' +
             '<div style="flex-grow: 1;">' +
             '<span data-ref="eText" style=""></span>' +
             '</div>' +
             '</div>';
 
-        this.eMenu = this.eGui.querySelector('[data-ref="eMenu"]');
+        this.eFilterMenu = this.eGui.querySelector('[data-ref="eFilterMenu"]');
         this.eText = this.eGui.querySelector('[data-ref="eText"]');
 
-        this.menuPresent = this.params.enableMenu;
+        this.filterMenuPresent = this.params.enableFilterButton;
 
-        if (this.menuPresent) {
+        if (this.filterMenuPresent) {
             this.onMenuClickListener = this.onMenuClick.bind(this);
-            this.eMenu.addEventListener('click', this.onMenuClickListener);
+            this.eFilterMenu.addEventListener('click', this.onMenuClickListener);
         } else {
-            this.eMenu.parentNode.removeChild(this.eMenu);
+            this.eFilterMenu.parentNode.removeChild(this.eFilterMenu);
         }
 
         this.updateHeaderNameText();
@@ -43,7 +43,7 @@ export class CustomHeader implements IHeaderComp {
     refresh(params: IHeaderParams) {
         this.params = params;
 
-        const res = this.params.enableMenu === this.menuPresent;
+        const res = this.params.enableFilterButton === this.filterMenuPresent;
 
         console.log('CustomHeader.refresh() -> ' + this.params.column.getId() + ' returning ' + res);
 
@@ -57,13 +57,13 @@ export class CustomHeader implements IHeaderComp {
     }
 
     onMenuClick() {
-        this.params.showColumnMenu(this.eMenu);
+        this.params.showColumnMenu(this.eFilterMenu);
     }
 
     destroy() {
         console.log('CustomHeader.destroy() -> ' + this.params.column.getId());
         if (this.onMenuClickListener) {
-            this.eMenu.removeEventListener('click', this.onMenuClickListener);
+            this.eFilterMenu.removeEventListener('click', this.onMenuClickListener);
         }
     }
 }

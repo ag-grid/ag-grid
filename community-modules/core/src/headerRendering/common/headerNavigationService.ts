@@ -1,12 +1,15 @@
+import type { ColumnModel } from '../../columns/columnModel';
+import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
-import { isColumnGroup } from '../../entities/agColumnGroup';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import { isColumnGroup } from '../../entities/agColumnGroup';
 import type { FocusService } from '../../focusService';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { Column, ColumnGroup } from '../../interfaces/iColumn';
 import { _last } from '../../utils/array';
 import type { HeaderPosition, HeaderPositionUtils } from './headerPosition';
 
@@ -23,11 +26,15 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     private focusService: FocusService;
     private headerPositionUtils: HeaderPositionUtils;
     private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private visibleColService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
         this.headerPositionUtils = beans.headerPositionUtils;
         this.ctrlsService = beans.ctrlsService;
+        this.columnModel = beans.columnModel;
+        this.visibleColService = beans.visibleColsService;
     }
 
     private gridBodyCon: GridBodyCtrl;
@@ -45,6 +52,48 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     public getHeaderRowCount(): number {
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
         return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
+    }
+
+    public getHeaderPositionForColumn(colKey: string | Column | ColumnGroup): HeaderPosition | null {
+        const headerRowContainerCtrls = this.ctrlsService.getHeaderRowContainerCtrls();
+        let column: AgColumn | AgColumnGroup | null;
+
+        if (typeof colKey === 'string') {
+            column = this.columnModel.getCol(colKey);
+            if (!column) {
+                column = this.visibleColService.getColumnGroup(colKey);
+            }
+        } else {
+            column = colKey as AgColumn | AgColumnGroup;
+        }
+
+        if (!column) {
+            return null;
+        }
+
+        let headerRowIndex = -1;
+
+        for (const rowContainerCtrl of headerRowContainerCtrls) {
+            const allCtrls = rowContainerCtrl.getAllCtrls();
+            if (headerRowIndex !== -1) {
+                break;
+            }
+
+            for (let i = 0; i < allCtrls.length; i++) {
+                const headerRowCtrl = allCtrls[i];
+                if (headerRowCtrl.findHeaderCellCtrl(column as AgColumn | AgColumnGroup)) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
+        }
+
+        return headerRowIndex === -1
+            ? null
+            : {
+                  headerRowIndex,
+                  column,
+              };
     }
 
     /*

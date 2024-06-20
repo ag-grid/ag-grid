@@ -12,9 +12,9 @@ export class AgPill extends Component {
 
     constructor(private readonly config: PillConfig) {
         super(/* html */ `
-            <div class="ag-pill">
+            <div class="ag-pill" role="option">
                 <span class="ag-pill-text" data-ref="eText"></span>
-                <span class="ag-button ag-pill-button" data-ref="eButton"></span>
+                <span class="ag-button ag-pill-button" data-ref="eButton" role="presentation"></span>
             </div>
         `);
     }

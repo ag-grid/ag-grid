@@ -121,7 +121,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
             }
             const node = nodes[0];
-            if (newValue) {
+            if (newValue && node.selectable) {
                 this.selectedNodes = { [node.id!]: node };
                 this.selectedState = {
                     selectAll: false,
@@ -134,24 +134,25 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                     toggledNodes: new Set(),
                 };
             }
-            this.selectionCtx.reset(node.id!);
+            if (node.selectable) {
+                this.selectionCtx.reset(node.id!);
+            }
             return 1;
         }
 
         const updateNodeState = (node: RowNode, value = newValue) => {
-            if (value) {
+            if (value && node.selectable) {
                 this.selectedNodes[node.id!] = node;
             } else {
                 delete this.selectedNodes[node.id!];
             }
 
-            const isNodeSelectable = node.selectable;
             const doesNodeConform = value === this.selectedState.selectAll;
-            if (doesNodeConform || !isNodeSelectable) {
+            if (doesNodeConform || !node.selectable) {
                 this.selectedState.toggledNodes.delete(node.id!);
-                return;
+            } else {
+                this.selectedState.toggledNodes.add(node.id!);
             }
-            this.selectedState.toggledNodes.add(node.id!);
         };
 
         if (rangeSelect) {

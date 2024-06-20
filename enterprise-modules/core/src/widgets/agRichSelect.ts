@@ -1,6 +1,7 @@
 import type {
     AgInputTextField,
     AgPromise,
+    AriaAnnouncementService,
     BeanCollection,
     FieldPickerValueSelectedEvent,
     IRichCellEditorRendererParams,
@@ -28,7 +29,7 @@ import {
     _stopPropagationForAgGrid,
 } from '@ag-grid-community/core';
 
-import { PillContainer } from './AgPillContainer';
+import { AgPillContainer } from './AgPillContainer';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
@@ -40,20 +41,27 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     AgRichSelectList<TValue, AgRichSelectEvent>
 > {
     private userComponentFactory: UserComponentFactory;
+    private ariaAnnouncementService: AriaAnnouncementService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.userComponentFactory = beans.userComponentFactory;
+        this.ariaAnnouncementService = beans.ariaAnnouncementService;
     }
 
     private searchString = '';
     private listComponent: AgRichSelectList<TValue> | undefined;
-    private pillContainer: PillContainer<TValue> | null;
+    private pillContainer: AgPillContainer<TValue> | null;
     protected values: TValue[];
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private readonly eInput: AgInputTextField = RefPlaceholder;
     private readonly eDeselect: HTMLSpanElement = RefPlaceholder;
+
+    private ariaToggleSelection: string;
+    private ariaDeselectAllItems: string;
+    private ariaDeleteSelection: string;
+    private skipWrapperAnnouncement?: boolean = false;
 
     constructor(config?: RichSelectParams<TValue>) {
         super({
@@ -113,7 +121,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             this.eInput.setDisplayed(false);
         }
 
-        this.eWrapper.tabIndex = this.gos.get('tabIndex');
+        this.setupAriaProperties();
 
         const { searchDebounceDelay = 300 } = this.config;
         this.clearSearchString = _debounce(this.clearSearchString, searchDebounceDelay);
@@ -122,8 +130,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (allowTyping) {
             this.eInput.onValueChange((value) => this.searchTextFromString(value));
-            this.addManagedElementListeners(this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
         }
+
+        this.addManagedElementListeners(this.eWrapper, { focus: this.onWrapperFocus.bind(this) });
         this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
 
         if (!suppressDeselectAll) {
@@ -132,6 +141,20 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 click: this.onDeselectAllClick.bind(this),
             });
         }
+    }
+
+    private setupAriaProperties(): void {
+        const { eWrapper, gos, localeService } = this;
+
+        eWrapper.tabIndex = gos.get('tabIndex');
+
+        const translate = localeService.getLocaleTextFunc();
+        this.ariaDeleteSelection = translate('ariaLabelRichSelectDeleteSelection', 'Press DELETE to deselect item');
+        this.ariaDeselectAllItems = translate(
+            'ariaLabelRichSelectDeselectAllItems',
+            'Press DELETE to deselect all items'
+        );
+        this.ariaToggleSelection = translate('ariaLabelRichSelectToggleSelection', 'Press SPACE to toggle selection');
     }
 
     private createListComponent(): void {
@@ -153,7 +176,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             initialInputValue,
             multiSelect,
             suppressDeselectAll,
-            showSelectedItemsAsPills,
+            suppressMultiSelectPillRenderer,
         } = config;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
@@ -169,7 +192,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         let userCompDetails: UserCompDetails | undefined;
 
-        if (multiSelect && showSelectedItemsAsPills) {
+        if (multiSelect && !suppressMultiSelectPillRenderer) {
             this.createOrUpdatePillContainer(eDisplayField);
             return;
         }
@@ -290,7 +313,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private createOrUpdatePillContainer(container: HTMLElement): void {
         if (!this.pillContainer) {
-            const pillContainer = (this.pillContainer = this.createBean(new PillContainer<TValue>()));
+            const pillContainer = (this.pillContainer = this.createBean(new AgPillContainer<TValue>()));
             this.addDestroyFunc(() => {
                 this.destroyBean(this.pillContainer);
                 this.pillContainer = null;
@@ -304,22 +327,34 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 onPillMouseDown: (e: MouseEvent) => {
                     e.stopImmediatePropagation();
                 },
+                announceItemFocus: () => {
+                    this.ariaAnnouncementService.announceValue(this.ariaDeleteSelection);
+                },
                 getValue: () => this.getValue() as TValue[] | null,
                 setValue: (value: TValue[] | null) => this.setValue(value, true),
             });
         }
 
-        this.pillContainer.refresh();
+        this.doWhileBlockingAnnouncement(() => this.pillContainer?.refresh());
+    }
+
+    private doWhileBlockingAnnouncement(func: () => void): void {
+        this.skipWrapperAnnouncement = true;
+        func();
+        this.skipWrapperAnnouncement = false;
     }
 
     private onWrapperFocus(): void {
-        if (!this.eInput) {
-            return;
-        }
+        const { eInput, config } = this;
+        const { allowTyping, multiSelect, suppressDeselectAll } = config;
 
-        const focusableEl = this.eInput.getFocusableElement() as HTMLInputElement;
-        focusableEl.focus();
-        focusableEl.select();
+        if (allowTyping) {
+            const focusableEl = eInput.getFocusableElement() as HTMLInputElement;
+            focusableEl.focus();
+            focusableEl.select();
+        } else if (multiSelect && !suppressDeselectAll && !this.skipWrapperAnnouncement) {
+            this.ariaAnnouncementService.announceValue(this.ariaDeselectAllItems);
+        }
     }
 
     private onWrapperFocusOut(e: FocusEvent): void {
@@ -493,7 +528,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchString = '';
     }
 
-    public override setValue(value: TValue[] | TValue | null, silent?: boolean, fromPicker?: boolean): this {
+    public override setValue(
+        value: TValue[] | TValue | null,
+        silent?: boolean,
+        fromPicker?: boolean,
+        skipRendering?: boolean
+    ): this {
         if (this.value === value) {
             return this;
         }
@@ -516,12 +556,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         super.setValue(value, silent);
-        this.renderSelectedValue();
+
+        if (!skipRendering) {
+            this.renderSelectedValue();
+        }
 
         return this;
     }
 
-    private onNavigationKeyDown(event: any, key: string): void {
+    private onNavigationKeyDown(event: any, key: string, announceItem: () => void): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
 
@@ -532,7 +575,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
-        this.listComponent?.onNavigationKeyDown(key);
+        this.listComponent?.onNavigationKeyDown(key, announceItem);
     }
 
     protected onEnterKeyDown(e: KeyboardEvent): void {
@@ -551,6 +594,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
+    private onDeleteKeyDown(e: KeyboardEvent): void {
+        const { eWrapper, gos } = this;
+        const activeEl = gos.getActiveDomElement();
+
+        if (activeEl === eWrapper) {
+            e.preventDefault();
+            this.setValue([], true);
+        }
+    }
+
     private onTabKeyDown(): void {
         const { config, isPickerDisplayed, listComponent } = this;
         const { multiSelect } = config;
@@ -561,8 +614,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (multiSelect) {
             const values = this.getValueFromSet(listComponent.getSelectedItems());
+
             if (values) {
-                this.setValue(values, false, true);
+                this.setValue(values, false, true, true);
             }
         } else {
             this.setValue(listComponent.getLastItemHovered(), false, true);
@@ -622,26 +676,27 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         return super.getFocusableElement();
     }
 
-    protected override onKeyDown(event: KeyboardEvent): void {
-        const key = event.key;
+    protected override onKeyDown(e: KeyboardEvent): void {
+        const { key } = e;
 
         const { isPickerDisplayed, config, listComponent, pickerComponent } = this;
-        const { allowTyping, multiSelect } = config;
+        const { allowTyping, multiSelect, suppressDeselectAll } = config;
 
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
                 if (!allowTyping || this.pillContainer) {
-                    event.preventDefault();
+                    e.preventDefault();
                     if (this.pillContainer) {
-                        this.pillContainer.onKeyboardNavigateKey(event);
+                        this.listComponent?.highlightIndex(-1);
+                        this.pillContainer.onNavigationKeyDown(e);
                     }
                 }
                 break;
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
                 if (allowTyping) {
-                    event.preventDefault();
+                    e.preventDefault();
                     const inputEl = this.eInput.getInputElement();
                     const target = key === KeyCode.PAGE_HOME ? 0 : inputEl.value.length;
                     inputEl.setSelectionRange(target, target);
@@ -651,30 +706,35 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             // eslint-disable-next-line
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
-                event.preventDefault();
+                e.preventDefault();
                 if (pickerComponent) {
                     listComponent?.navigateToPage(key);
                 }
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
-                this.onNavigationKeyDown(event, key);
+                this.onNavigationKeyDown(e, key, () => {
+                    if (multiSelect) {
+                        this.doWhileBlockingAnnouncement(() => this.eWrapper.focus());
+                        this.ariaAnnouncementService.announceValue(this.ariaToggleSelection);
+                    }
+                });
                 break;
             case KeyCode.ESCAPE:
                 if (isPickerDisplayed) {
                     if (_isVisible(this.listComponent!.getGui())) {
-                        event.preventDefault();
-                        _stopPropagationForAgGrid(event);
+                        e.preventDefault();
+                        _stopPropagationForAgGrid(e);
                     }
                     this.hidePicker();
                 }
                 break;
             case KeyCode.ENTER:
-                this.onEnterKeyDown(event);
+                this.onEnterKeyDown(e);
                 break;
             case KeyCode.SPACE:
                 if (isPickerDisplayed && multiSelect && listComponent) {
-                    event.preventDefault();
+                    e.preventDefault();
                     const lastItemHovered = listComponent.getLastItemHovered();
 
                     if (lastItemHovered) {
@@ -685,9 +745,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             case KeyCode.TAB:
                 this.onTabKeyDown();
                 break;
+            case KeyCode.DELETE:
+                if (multiSelect && !suppressDeselectAll) {
+                    this.onDeleteKeyDown(e);
+                }
+                break;
             default:
                 if (!allowTyping) {
-                    this.buildSearchStringFromKeyboardEvent(event);
+                    this.buildSearchStringFromKeyboardEvent(e);
                 }
         }
     }

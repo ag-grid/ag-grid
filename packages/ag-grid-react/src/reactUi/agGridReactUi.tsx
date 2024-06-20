@@ -1,14 +1,3 @@
-import React, {
-    forwardRef,
-    useCallback,
-    useContext,
-    useEffect,
-    useImperativeHandle,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
-
 import type {
     ComponentType,
     Context,
@@ -33,8 +22,19 @@ import {
     _processOnChange,
     _warnOnce,
 } from 'ag-grid-community';
+import React, {
+    forwardRef,
+    useCallback,
+    useContext,
+    useEffect,
+    useImperativeHandle,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
+import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererComponentWrapper';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
@@ -49,7 +49,7 @@ import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
 import GridComp from './gridComp';
-import { CssClasses, runWithoutFlushSync } from './utils';
+import { CssClasses, isReact17Minus, runWithoutFlushSync } from './utils';
 
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -58,6 +58,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
     const prevProps = useRef<AgGridReactProps<any>>(props);
+    const frameworkOverridesRef = useRef<ReactFrameworkOverrides>();
 
     const ready = useRef<boolean>(false);
 
@@ -91,6 +92,23 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
         const mergedGridOps = _combineAttributesAndGridOptions(props.gridOptions, props);
 
+        const processQueuedUpdates = () => {
+            if (ready.current) {
+                const getFn = () =>
+                    frameworkOverridesRef.current?.shouldQueueUpdates() ? undefined : whenReadyFuncs.current.shift();
+                let fn = getFn();
+                while (fn) {
+                    fn();
+                    fn = getFn();
+                }
+            }
+        };
+
+        const frameworkOverrides = isReact17Minus()
+            ? new React17MinusFrameworkOverrides(processQueuedUpdates)
+            : new ReactFrameworkOverrides();
+        frameworkOverridesRef.current = frameworkOverrides;
+
         const gridParams: GridParams = {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
@@ -99,7 +117,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
                 ),
             },
             modules,
-            frameworkOverrides: new ReactFrameworkOverrides(),
+            frameworkOverrides,
         };
 
         const createUiCallback = (context: Context) => {
@@ -155,7 +173,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     }, [props.containerStyle]);
 
     const processWhenReady = useCallback((func: () => void) => {
-        if (ready.current) {
+        if (ready.current && !frameworkOverridesRef.current?.shouldQueueUpdates()) {
             func();
         } else {
             whenReadyFuncs.current.push(func);
@@ -223,6 +241,8 @@ class ReactFrameworkComponentWrapper
                         return ToolPanelComponentWrapper;
                     case 'menuItem':
                         return MenuItemComponentWrapper;
+                    case 'cellRenderer':
+                        return CellRendererComponentWrapper;
                 }
             };
             const ComponentClass = getComponentClass(componentType.propertyName);
@@ -239,6 +259,7 @@ class ReactFrameworkComponentWrapper
                 case 'statusPanel':
                 case 'toolPanel':
                 case 'menuItem':
+                case 'cellRenderer':
                     warnReactiveCustomComponents();
                     break;
             }
@@ -402,4 +423,37 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         }
         return callback();
     };
+
+    shouldQueueUpdates(): boolean {
+        return false;
+    }
+
+    getLockOnRefreshError(): string {
+        return ` This error can also occur if using 'ReactDOM.render' instead of 'createRoot'. If so, please upgrade to 'createRoot'.`;
+    }
+}
+
+class React17MinusFrameworkOverrides extends ReactFrameworkOverrides {
+    private queueUpdates = false;
+
+    constructor(private readonly processQueuedUpdates: () => void) {
+        super();
+    }
+
+    getLockOnRefresh(): void {
+        this.queueUpdates = true;
+    }
+
+    releaseLockOnRefresh(): void {
+        this.queueUpdates = false;
+        this.processQueuedUpdates();
+    }
+
+    override shouldQueueUpdates(): boolean {
+        return this.queueUpdates;
+    }
+
+    override getLockOnRefreshError(): string {
+        return '';
+    }
 }

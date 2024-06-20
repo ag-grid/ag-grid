@@ -109,6 +109,7 @@ on top of any custom colour that the application has given this cell */
 .ag-header-cell-text {
     overflow: hidden;
     text-overflow: ellipsis;
+    word-break: break-word;
 }
 
 .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {

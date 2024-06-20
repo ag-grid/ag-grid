@@ -46,6 +46,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
 
     protected createPickerComponent() {
         const eGuiRect = this.eWrapper.getBoundingClientRect();
+        const parentRect = this.popupService.getParentRect();
 
         const colorDialog = this.createBean(
             new AgDialog({
@@ -55,8 +56,8 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
                 minWidth: 190,
                 width: 190,
                 height: 250,
-                x: eGuiRect.right - 190,
-                y: eGuiRect.top - 250 - (this.config.pickerGap ?? 0),
+                x: eGuiRect.right - parentRect.left - 190,
+                y: eGuiRect.top - parentRect.top - 250 - (this.config.pickerGap ?? 0),
             })
         );
 

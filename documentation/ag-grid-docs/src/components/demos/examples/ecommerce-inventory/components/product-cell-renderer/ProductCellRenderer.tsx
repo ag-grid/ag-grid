@@ -6,7 +6,8 @@ import type { CustomCellRendererProps } from 'ag-grid-react';
 import styles from './ProductCellRenderer.module.css';
 
 export const ProductCellRenderer: FunctionComponent<CustomCellRendererProps> = ({ data }) => {
-    const { product, available, image } = data;
+    const { product, image, category } = data;
+    const productName = data.product;
     const imgSrc = getResourceUrl(`/example/inventory/${image}.png`);
 
     return (
@@ -16,7 +17,7 @@ export const ProductCellRenderer: FunctionComponent<CustomCellRendererProps> = (
             </div>
             <div>
                 <div>{product}</div>
-                <div className={styles.stockCell}>Technology</div>
+                <div className={styles.stockCell}>{category}</div>
             </div>
         </div>
     );

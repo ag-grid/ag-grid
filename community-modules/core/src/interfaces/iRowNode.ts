@@ -158,9 +158,9 @@ interface BaseRowNode<TData = any> {
     parent: IRowNode<TData> | null;
 
     /** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */
-    stub: boolean;
+    stub: boolean | undefined;
     /** Used by server side row model, `true` if this row node failed a load. */
-    failedLoad: boolean;
+    failedLoad: boolean | undefined;
 
     /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
     rowIndex: number | null;
@@ -171,7 +171,7 @@ interface BaseRowNode<TData = any> {
     /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail). */
     master: boolean;
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row). */
-    detail: boolean;
+    detail: boolean | undefined;
 }
 
 interface GroupRowNode<TData = any> {
@@ -196,9 +196,9 @@ interface GroupRowNode<TData = any> {
     expanded: boolean;
 
     /** `true` if this node is a group and the group is the bottom level in the tree. */
-    leafGroup: boolean;
+    leafGroup: boolean | undefined;
     /** All lowest level nodes beneath this node, no groups. */
-    allLeafChildren: IRowNode<TData>[];
+    allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
     allChildrenCount: number | null;
     /** Children of this group. If multi levels of grouping, shows only immediate children. */
@@ -209,7 +209,7 @@ interface GroupRowNode<TData = any> {
     childrenAfterFilter: IRowNode<TData>[] | null;
 
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
-    footer: boolean;
+    footer: boolean | undefined;
     /** If using footers, reference to the footer node for this group. */
     sibling: IRowNode<TData>;
 }

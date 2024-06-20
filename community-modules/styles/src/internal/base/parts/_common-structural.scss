@@ -490,6 +490,7 @@
     .ag-header-cell-text {
         overflow: hidden;
         text-overflow: ellipsis;
+        word-break: break-word;
     }
 
     .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
@@ -801,6 +802,7 @@
 
     .ag-cell-wrap-text {
         white-space: normal;
+        word-break: break-word;
     }
 
     .ag-cell-wrapper {

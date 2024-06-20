@@ -411,11 +411,12 @@ export interface GridApi<TData = any> {
     /**
      * @deprecated v31.1 To get/set individual filter models, use `getColumnFilterModel` or `setColumnFilterModel` instead.
      * To get hold of the filter instance, use `getColumnFilterInstance` which returns the instance asynchronously.
+     * This method now only works asynchronously via the callback. The return value will always be `undefined`.
      */
     getFilterInstance<TFilter extends IFilter>(
         key: string | Column,
         callback?: (filter: TFilter | null) => void
-    ): TFilter | null | undefined;
+    ): undefined;
 
     /**
      * Returns the filter component instance for a column.
@@ -482,6 +483,9 @@ export interface GridApi<TData = any> {
 
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
     setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType): void;
+
+    /** Sets the focus to the specified header. */
+    setFocusedHeader(colKey: string | Column | ColumnGroup): void;
 
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     addRowDropZone(params: RowDropZoneParams): void;

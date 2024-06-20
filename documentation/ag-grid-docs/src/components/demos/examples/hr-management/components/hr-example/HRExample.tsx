@@ -1,6 +1,11 @@
-import type { ColDef, GetDataPath, ICellRendererParams, StatusPanelDef } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type { ColDef, GetDataPath, ICellRendererParams } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
@@ -15,7 +20,15 @@ import { TagCellRenderer } from '../tag-cell-renderer/TagCellRenderer';
 import styles from './HRExample.module.css';
 import { getData } from './data';
 
-ModuleRegistry.registerModules([RowGroupingModule, RichSelectModule, SetFilterModule, StatusBarModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ExcelExportModule,
+    MasterDetailModule,
+    RowGroupingModule,
+    RichSelectModule,
+    SetFilterModule,
+    StatusBarModule,
+]);
 
 interface Props {
     gridTheme?: string;

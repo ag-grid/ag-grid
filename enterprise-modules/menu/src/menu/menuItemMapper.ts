@@ -177,7 +177,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         localeTextFunc('groupBy', 'Group by') +
                         ' ' +
                         _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
-                    disabled: column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
+                    disabled:
+                        this.gos.get('functionsReadOnly') ||
+                        column?.isRowGroupActive() ||
+                        !column?.getColDef().enableRowGroup,
                     action: () => this.funcColsService.addRowGroupColumns([column], 'contextMenu'),
                     icon: _createIconNoSpan('menuAddRowGroup', this.gos, null),
                 };
@@ -190,7 +193,9 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
                         disabled:
-                            lockedGroups === -1 || lockedGroups >= this.funcColsService.getRowGroupColumns().length,
+                            this.gos.get('functionsReadOnly') ||
+                            lockedGroups === -1 ||
+                            lockedGroups >= this.funcColsService.getRowGroupColumns().length,
                         action: () =>
                             this.funcColsService.setRowGroupColumns(
                                 this.funcColsService.getRowGroupColumns().slice(0, lockedGroups),
@@ -208,7 +213,9 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             : showRowGroup;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
-                        disabled: underlyingColumn != null && this.columnModel.isColGroupLocked(underlyingColumn),
+                        disabled:
+                            this.gos.get('functionsReadOnly') ||
+                            (underlyingColumn != null && this.columnModel.isColGroupLocked(underlyingColumn)),
                         action: () => this.funcColsService.removeRowGroupColumns([showRowGroup], 'contextMenu'),
                         icon: icon,
                     };
@@ -220,6 +227,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ' ' +
                         _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
                     disabled:
+                        this.gos.get('functionsReadOnly') ||
                         !column?.isRowGroupActive() ||
                         !column?.getColDef().enableRowGroup ||
                         this.columnModel.isColGroupLocked(column),

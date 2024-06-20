@@ -45,11 +45,19 @@ export abstract class AgAbstractField<
         this.refreshAriaLabelledBy();
     }
 
+    public override setLabel(label: string | HTMLElement): this {
+        super.setLabel(label);
+        this.refreshAriaLabelledBy();
+
+        return this;
+    }
+
     protected refreshAriaLabelledBy() {
         const ariaEl = this.getAriaElement();
         const labelId = this.getLabelId();
+        const label = this.getLabel();
 
-        if (_getAriaLabel(ariaEl) !== null) {
+        if (label == null || label == '' || _getAriaLabel(ariaEl) !== null) {
             _setAriaLabelledBy(ariaEl, '');
         } else {
             _setAriaLabelledBy(ariaEl, labelId ?? '');

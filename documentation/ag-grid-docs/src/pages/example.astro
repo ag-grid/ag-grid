@@ -14,10 +14,12 @@ import LogoMark from '@components/logo/LogoMark';
             <p class={styles.headerDescription}>
                 See the grid's performance by&nbsp;varying the number rows and&nbsp;columns.
             </p>
-            <button class="button-secondary">
-                <Icon alt={`GitHub logo`} name="github" svgClasses={styles.githubIcon} />
-                <span>See on Github</span>
-            </button>
+            <a className={styles.videoTour} href="https://youtu.be/bcMvTUVbMvI" target="_blank" rel="noreferrer">
+                <button class="button-secondary">
+                    <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
+                    <span>Take the video tour</span>
+                </button>
+            </a>
         </div>
 
         <DemoTabs activeTab="complete" />

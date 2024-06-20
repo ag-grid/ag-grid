@@ -63,7 +63,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     onFirstDataRendered: (params: FirstDataRenderedEvent) => {
         params.api.setServerSideSelectionState({
             selectAll: true,
-            toggledNodes: ['United States', 'United States2004'],
+            toggledNodes: ['group-country-year-United States', 'group-country-year-United States2004'],
         });
     },
     rowGroupPanelShow: 'always',

@@ -13,7 +13,7 @@ export function getFilterInstance<TFilter extends IFilter>(
     beans: BeanCollection,
     key: string | Column,
     callback?: (filter: TFilter | null) => void
-): TFilter | null | undefined {
+): undefined {
     return beans.filterManager?.getFilterInstance(key as string | AgColumn, callback);
 }
 

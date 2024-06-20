@@ -392,8 +392,7 @@ export class PropertyKeys {
     // If property does not fit above, i.e union that should not be coerced.
     public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow'];
 
-    /** You do not need to include event callbacks in this list, as they are generated automatically. */
-    public static FUNCTIONAL_PROPERTIES: FunctionKeys[] = [
+    public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [
         'doesExternalFilterPass',
         'processPivotResultColDef',
         'processPivotResultColGroupDef',
@@ -408,10 +407,6 @@ export class PropertyKeys {
         'detailCellRenderer',
         'quickFilterParser',
         'quickFilterMatcher',
-    ];
-
-    /** These callbacks extend AgGridCommon interface */
-    public static CALLBACK_PROPERTIES: CallbackKeys[] = [
         'getLocaleText',
         'isExternalFilterPresent',
         'getRowHeight',
@@ -456,11 +451,6 @@ export class PropertyKeys {
         'groupAggFiltering',
         'chartMenuItems',
         'groupTotalRow',
-    ];
-
-    public static FUNCTION_PROPERTIES: GridOptionKey[] = [
-        ...PropertyKeys.FUNCTIONAL_PROPERTIES,
-        ...PropertyKeys.CALLBACK_PROPERTIES,
     ];
 
     public static ALL_PROPERTIES: GridOptionKey[] = [

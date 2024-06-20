@@ -648,7 +648,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.comp.addOrRemoveCssClass('ag-row-group', addExpandableCss);
 
         if (pivotMode) {
-            this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
+            this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', !!pivotModeAndLeafGroup);
         } else if (!isTotalFooterNode) {
             this.comp.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
         }

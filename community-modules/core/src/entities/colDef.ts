@@ -55,6 +55,11 @@ export interface AbstractColDef<TData = any, TValue = any> {
      * @default 'gridcell'
      */
     cellAriaRole?: string;
+
+    /**
+     * Context property that can be used to associate arbitrary application data with this column definition.
+     */
+    context?: any;
 }
 
 /** Configuration options for column groups in AG Grid.  */

@@ -356,7 +356,7 @@ export class VirtualList<
         this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
     }
 
-    private drawVirtualRows(softRefresh?: boolean) {
+    protected drawVirtualRows(softRefresh?: boolean) {
         if (!this.isAlive() || !this.model) {
             return;
         }

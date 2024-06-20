@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { CellPosition } from '../entities/cellPositionUtils';
-import type { Column } from '../interfaces/iColumn';
+import type { Column, ColumnGroup } from '../interfaces/iColumn';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 
 export function getFocusedCell(beans: BeanCollection): CellPosition | null {
@@ -26,4 +26,14 @@ export function tabToNextCell(beans: BeanCollection, event?: KeyboardEvent): boo
 
 export function tabToPreviousCell(beans: BeanCollection, event?: KeyboardEvent): boolean {
     return beans.navigationService.tabToNextCell(true, event);
+}
+
+export function setFocusedHeader(beans: BeanCollection, colKey: string | Column | ColumnGroup) {
+    const headerPosition = beans.headerNavigationService.getHeaderPositionForColumn(colKey);
+
+    if (!headerPosition) {
+        return;
+    }
+
+    beans.focusService.focusHeaderPosition({ headerPosition });
 }

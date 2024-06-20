@@ -868,8 +868,7 @@
             "more": {
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
-            },
-            "description": "Allows overriding the default behaviour for when user hits <kbd>⇥ Tab</kbd> key when a header is focused."
+            }
         },
         "navigateToNextCell": {
             "more": {
@@ -881,8 +880,7 @@
             "more": {
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
-            },
-            "description": "Allows overriding the default behaviour for when user hits <kbd>⇥ Tab</kbd> key when a cell is focused."
+            }
         }
     },
     "pagination": {

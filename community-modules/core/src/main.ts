@@ -800,6 +800,8 @@ export {
 } from './interfaces/menuItem';
 export { IWatermark } from './interfaces/iWatermark';
 
+export { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
+
 // utils
 export {
     ColumnSortState,

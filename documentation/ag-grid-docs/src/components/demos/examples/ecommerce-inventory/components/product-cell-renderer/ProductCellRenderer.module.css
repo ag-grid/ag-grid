@@ -28,16 +28,19 @@
     line-height: 1.5;
 }
 
+.productCell img {
+    border-radius: 8px;
+}
+
 .stockCell {
     background-color: var(--color-bg-secondary);
     color: var(--color-text-secondary);
     width: fit-content;
-    padding: 4px;
     border: 1px solid #c0c0c057;
     border-radius: 6px;
     padding-top: 2px;
     margin-top: 4px;
-    padding-left: 4px;
     padding-right: 4px;
+    padding-left: 4px;
     font-size: 12px;
 }

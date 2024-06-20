@@ -537,13 +537,20 @@ export const AG_GRID_LOCALE_EN: Record<string, string> = {
     ariaDropZoneColumnComponentSortAscending: 'ascending',
     ariaDropZoneColumnComponentSortDescending: 'descending',
 
-    // ARIA Labels for Dialogs
+    ariaLabelDialog: 'Dialog',
+
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',
+
     ariaLabelCellEditor: 'Cell Editor',
-    ariaLabelDialog: 'Dialog',
     ariaLabelSelectField: 'Select Field',
+
+    // aria labels for rich select
     ariaLabelRichSelectField: 'Rich Select Field',
+    ariaLabelRichSelectToggleSelection: 'Press SPACE to toggle selection',
+    ariaLabelRichSelectDeselectAllItems: 'Press DELETE to deselect all items',
+    ariaLabelRichSelectDeleteSelection: 'Press DELETE to deselect item',
+
     ariaLabelTooltip: 'Tooltip',
     ariaLabelContextMenu: 'Context Menu',
     ariaLabelSubMenu: 'SubMenu',

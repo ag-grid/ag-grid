@@ -2,9 +2,10 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
-import type { VirtualColumnsChangedEvent } from '../../events';
+import type { HeaderFocusedEvent } from '../../events';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _values } from '../../utils/generic';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
@@ -353,19 +354,35 @@ export class HeaderRowCtrl extends BeanStub {
         return this.beans.columnViewportService.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
+    public findHeaderCellCtrl(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
         if (!this.headerCellCtrls) {
-            return false;
+            return;
         }
 
         const allCtrls = Array.from(this.headerCellCtrls.values());
         const ctrl: AbstractHeaderCellCtrl | undefined = allCtrls.find((ctrl) => ctrl.getColumnGroupChild() == column);
 
+        return ctrl;
+    }
+
+    public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
+        const ctrl = this.findHeaderCellCtrl(column);
+
         if (!ctrl) {
             return false;
         }
 
-        return ctrl.focus(event);
+        const focused = ctrl.focus(event);
+
+        if (focused) {
+            const event: WithoutGridCommon<HeaderFocusedEvent> = {
+                type: 'headerFocused',
+                column: column,
+            };
+            this.eventService.dispatchEvent(event);
+        }
+
+        return focused;
     }
 
     public override destroy(): void {

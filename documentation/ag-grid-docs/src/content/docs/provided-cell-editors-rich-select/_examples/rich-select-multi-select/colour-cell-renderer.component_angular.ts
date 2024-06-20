@@ -51,6 +51,10 @@ import { getLuma } from './color-component-helper';
             .custom-color-cell-renderer.color-pill span.dark {
                 color: white;
             }
+
+            [class^='ag-theme'][class$='dark'] .custom-color-cell-renderer.color-pill span:not(.dark) {
+                color: black;
+            }
         `,
     ],
 })

@@ -46,19 +46,11 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.addManagedListeners(this.richSelect, {
             fieldPickerValueSelected: this.onEditorPickerValueSelected.bind(this),
         });
-        this.addManagedElementListeners(this.richSelect.getGui(), { focusout: this.onEditorFocusOut.bind(this) });
         this.focusAfterAttached = cellStartedEdit;
     }
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         this.params.stopEditing(!e.fromEnterKey);
-    }
-
-    private onEditorFocusOut(e: FocusEvent): void {
-        if (this.richSelect.getGui().contains(e.relatedTarget as Element)) {
-            return;
-        }
-        this.params.stopEditing(true);
     }
 
     private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
@@ -80,7 +72,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             eventKey,
             multiSelect,
             suppressDeselectAll,
-            showSelectedItemsAsPills,
+            suppressMultiSelectPillRenderer,
         } = this.params;
 
         const ret: RichSelectParams = {
@@ -103,7 +95,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
             multiSelect,
             suppressDeselectAll,
-            showSelectedItemsAsPills,
+            suppressMultiSelectPillRenderer,
         };
 
         let valuesResult;
@@ -123,7 +115,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         }
 
         if (multiSelect && allowTyping) {
-            ret.allowTyping = false;
+            this.params.allowTyping = ret.allowTyping = false;
             _warnOnce(
                 'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.'
             );
@@ -180,6 +172,10 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
                 }
             }
         });
+    }
+
+    public focusIn(): void {
+        this.richSelect.getFocusableElement().focus();
     }
 
     public getValue(): any {
