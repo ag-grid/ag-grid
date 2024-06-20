@@ -1,6 +1,16 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type {
+    CellFocusedParams,
+    ColDef,
+    Column,
+    ColumnGroup,
+    FocusGridInnerElementParams,
+    GridApi,
+    GridReadyEvent,
+    HeaderFocusedParams,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -13,8 +23,13 @@ import './styles.css';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
-    const [rowData, setRowData] = useState(null);
-    const columnDefs = useMemo(
+    const [gridApi, setGridApi] = useState<GridApi | null>(null);
+    const [rowData, setRowData] = useState<any[]>();
+    const [lastFocused, setLastFocused] = useState<
+        { column: string | Column | ColumnGroup | null; rowIndex?: number | null } | undefined
+    >();
+
+    const columnDefs = useMemo<ColDef[]>(
         () => [
             {
                 headerName: '#',
@@ -38,14 +53,38 @@ const GridExample = () => {
         []
     );
 
-    const onGridReady = (params) => {
-        const updateData = (data) => {
+    const onGridReady = (params: GridReadyEvent) => {
+        setGridApi(params.api);
+
+        const updateData = (data: any[]) => {
             setRowData(data);
         };
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then((resp) => resp.json())
             .then((data) => updateData(data));
+    };
+
+    const onCellFocused = (params: CellFocusedParams) => {
+        setLastFocused({ column: params.column, rowIndex: params.rowIndex });
+    };
+
+    const onHeaderFocused = (params: HeaderFocusedParams) => {
+        setLastFocused({ column: params.column, rowIndex: null });
+    };
+
+    const focusGridInnerElement = (params: FocusGridInnerElementParams) => {
+        if (!lastFocused || !lastFocused.column) {
+            return false;
+        }
+
+        if (lastFocused.rowIndex != null) {
+            gridApi!.setFocusedCell(lastFocused.rowIndex, lastFocused.column as Column | string);
+        } else {
+            gridApi!.setFocusedHeader(lastFocused.column);
+        }
+
+        return true;
     };
 
     const defaultColDef = useMemo(
@@ -71,7 +110,7 @@ const GridExample = () => {
                     id="myGrid"
                     style={{ height: '100%', width: '100%' }}
                     className={
-                        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
                         'ag-theme-quartz' /** DARK MODE END **/
                     }
                 >
@@ -80,6 +119,9 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         onGridReady={onGridReady}
+                        onCellFocused={onCellFocused}
+                        onHeaderFocused={onHeaderFocused}
+                        focusGridInnerElement={focusGridInnerElement}
                     />
                 </div>
                 <div className="form-container">
@@ -91,5 +133,5 @@ const GridExample = () => {
     );
 };
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

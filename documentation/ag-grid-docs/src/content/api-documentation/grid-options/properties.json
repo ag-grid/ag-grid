@@ -848,6 +848,12 @@
                 "url": "./keyboard-navigation/"
             }
         },
+        "focusGridInnerElement": {
+            "more": {
+                "name": "Custom Navigation",
+                "url": "./keyboard-navigation/#custom-navigation"
+            }
+        },
         "navigateToNextHeader": {
             "more": {
                 "name": "Custom Navigation",

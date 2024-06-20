@@ -608,6 +608,12 @@
       "SendToClipboardParams"
     ]
   },
+  "focusGridInnerElement": {
+    "typeName": "(params: FocusGridInnerElementParams<TData>) => boolean",
+    "typesToInclude": [
+      "FocusGridInnerElementParams"
+    ]
+  },
   "navigateToNextHeader": {
     "typeName": "(params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null",
     "typesToInclude": [

@@ -138,6 +138,12 @@ export class GridCtrl extends BeanStub {
         const focusableContainers = this.view.getFocusableContainers();
         const allColumns = this.visibleColsService.getAllCols();
 
+        const userCallbackFunction = this.gos.getCallback('focusGridInnerElement');
+
+        if (userCallbackFunction && userCallbackFunction({ fromBottom: !!fromBottom })) {
+            return true;
+        }
+
         if (fromBottom) {
             if (focusableContainers.length > 1) {
                 return this.focusService.focusInto(_last(focusableContainers), true);

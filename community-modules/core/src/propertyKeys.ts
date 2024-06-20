@@ -418,6 +418,7 @@ export class PropertyKeys {
         'getGroupRowAgg',
         'isFullWidthRow',
         'sendToClipboard',
+        'focusGridInnerElement',
         'navigateToNextHeader',
         'tabToNextHeader',
         'navigateToNextCell',
