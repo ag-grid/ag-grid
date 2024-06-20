@@ -1,5 +1,6 @@
 import type { Framework, ImportType, MenuItem } from '@ag-grid-types';
 import Note from '@ag-website-shared/components/alert/Note';
+import Success from '@ag-website-shared/components/alert/Success';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
@@ -10,7 +11,7 @@ import { type FunctionComponent, useMemo } from 'react';
 
 import { getBootstrapSnippet, getDependenciesSnippet, getNpmInstallSnippet } from '../utils/getSnippets';
 import { hasValue } from '../utils/hasValue';
-import { useLicenseData } from '../utils/useLicenseData';
+import { type LicenseStateKey, useLicenseData } from '../utils/useLicenseData';
 import styles from './LicenseSetup.module.scss';
 
 interface SeedRepo {
@@ -95,6 +96,25 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         [seedRepos, isIntegratedCharts, framework, importType]
     );
 
+    const licenseValidKeys: LicenseStateKey[] = [
+        'validGridLicense',
+        'validChartsLicense',
+        'validIntegratedChartsLicense',
+    ];
+    const licenseInvalidKeys: LicenseStateKey[] = [
+        'expiredError',
+        'expiredTrialError',
+        'userLicenseError',
+        'v2LicenseError',
+        'chartsNoGridEnterpriseError',
+    ];
+    const licenseInvalidErrors = Object.entries(licenseState)
+        .filter(([key, value]) => hasValue(value) && licenseInvalidKeys.includes(key as LicenseStateKey))
+        .map(([_, message]) => message);
+    const licenseValidMessage = Object.entries(licenseState)
+        .filter(([key, value]) => hasValue(value) && licenseValidKeys.includes(key as LicenseStateKey))
+        .map(([_, message]) => message);
+
     return (
         <>
             <form>
@@ -120,47 +140,14 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     )}
                 </div>
 
-                {hasValue(userLicense) && (
-                    <div className={styles.licenseOutput}>
-                        <span className={licensedProducts.grid ? styles.valid : styles.invalid}>
-                            <Icon name={licensedProducts.grid ? 'tick' : 'cross'} /> AG Grid Enterprise
-                        </span>
-                        <span className={licensedProducts.charts ? styles.valid : styles.invalid}>
-                            <Icon name={licensedProducts.charts ? 'tick' : 'cross'} />
-                            AG Charts Enterprise
-                        </span>
-                    </div>
-                )}
-
-                {licenseState.expiredError && (
+                {licenseValidMessage.map((message) => (
+                    <Success>{message}</Success>
+                ))}
+                {licenseInvalidErrors.map((message) => (
                     <Warning>
-                        {licenseState.expiredError}. <EmailSales />
+                        {message}. <EmailSales />
                     </Warning>
-                )}
-
-                {licenseState.expiredTrialError && (
-                    <Warning>
-                        {licenseState.expiredTrialError}. <EmailSales />
-                    </Warning>
-                )}
-
-                {licenseState.userLicenseError && (
-                    <Warning>
-                        {licenseState.userLicenseError}. <EmailSales />
-                    </Warning>
-                )}
-
-                {licenseState.v2LicenseError && (
-                    <Warning>
-                        {licenseState.v2LicenseError}. <EmailSales />
-                    </Warning>
-                )}
-
-                {licenseState.chartsNoGridEnterpriseError && (
-                    <Warning>
-                        {licenseState.chartsNoGridEnterpriseError}. <EmailSales />
-                    </Warning>
-                )}
+                ))}
 
                 {/* TODO change "AG Grid" to grid/charts based on site */}
 

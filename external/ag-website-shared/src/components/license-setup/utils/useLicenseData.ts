@@ -9,8 +9,8 @@ import { updateSearchParams } from './updateSearchParams';
 import { useLicenseDebug } from './useLicenseDebug';
 import { useUpdateDataFromUrl } from './useUpdateDataFromUrl';
 
-type StateKey = keyof typeof licenseDataState;
-type LicenseState = Record<StateKey, string | undefined>;
+export type LicenseStateKey = keyof typeof licenseDataState;
+type LicenseState = Record<LicenseStateKey, string | undefined>;
 interface DataState {
     userLicense: string;
     licensedProducts: LicensedProducts;
@@ -24,6 +24,18 @@ interface DataState {
 }
 
 const licenseDataState = {
+    validGridLicense: {
+        getIsState: ({ licensedProducts }: DataState) => !licensedProducts.charts && licensedProducts.grid,
+        message: `Valid license key. Includes AG Grid Enterprise`,
+    },
+    validChartsLicense: {
+        getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && !licensedProducts.grid,
+        message: `Valid license key. Includes AG Charts Enterprise`,
+    },
+    validIntegratedChartsLicense: {
+        getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && licensedProducts.grid,
+        message: `Valid Enterprise Bundle license key. Includes AG Grid Enterprise and AG Chart Enterprise`,
+    },
     chartsNoGridEnterpriseError: {
         getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && !licensedProducts.grid,
         message: `Your license key does not include AG Grid Enterprise`,
@@ -73,7 +85,7 @@ const useLicenseState = ({
 
     useEffect(() => {
         const newLicenseState = {} as LicenseState;
-        (Object.keys(licenseDataState) as StateKey[]).forEach((key) => {
+        (Object.keys(licenseDataState) as LicenseStateKey[]).forEach((key) => {
             const { getIsState, message } = licenseDataState[key];
             const isError = getIsState({
                 userLicense,
