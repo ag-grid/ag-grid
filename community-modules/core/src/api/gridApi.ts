@@ -481,6 +481,9 @@ export interface GridApi<TData = any> {
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
     setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType): void;
 
+    /** Sets the focus to the specified header. */
+    setFocusedHeader(colKey: string | Column | ColumnGroup): void;
+
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     addRowDropZone(params: RowDropZoneParams): void;
 

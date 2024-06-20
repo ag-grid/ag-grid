@@ -12,6 +12,7 @@ import {
     clearFocusedCell,
     getFocusedCell,
     setFocusedCell,
+    setFocusedHeader,
     tabToNextCell,
     tabToPreviousCell,
 } from './keyboardNavigationApi';
@@ -124,6 +125,7 @@ export const KeyboardNavigationApiModule: Module = {
         getFocusedCell,
         clearFocusedCell,
         setFocusedCell,
+        setFocusedHeader,
         tabToNextCell,
         tabToPreviousCell,
     },

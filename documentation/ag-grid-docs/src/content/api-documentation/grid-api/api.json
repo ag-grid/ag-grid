@@ -478,7 +478,8 @@
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
             }
-        }
+        },
+        "setFocusedHeader": {}
     },
     "editing": {
         "meta": {
