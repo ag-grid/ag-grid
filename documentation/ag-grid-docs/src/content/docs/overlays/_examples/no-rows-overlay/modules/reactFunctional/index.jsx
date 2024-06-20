@@ -16,20 +16,10 @@ const columnDefs = [{ field: 'athlete' }, { field: 'country' }];
 
 const GridExample = () => {
     const [rowData, setRowData] = useState([]);
-    const [suppressNoRowsOverlay, setSuppressNoRowsOverlay] = useState(false);
 
     return (
         <div className="example-wrapper">
             <div>
-                <label className="checkbox">
-                    <input
-                        type="checkbox"
-                        checked={suppressNoRowsOverlay}
-                        onChange={(e) => setSuppressNoRowsOverlay(e.target.checked)}
-                    />
-                    suppressNoRowsOverlay
-                </label>
-
                 <button onClick={() => setRowData([])}>Clear rowData</button>
                 <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>Set rowData</button>
             </div>
@@ -41,7 +31,7 @@ const GridExample = () => {
                     'ag-theme-quartz' /** DARK MODE END **/
                 }
             >
-                <AgGridReact suppressNoRowsOverlay={suppressNoRowsOverlay} rowData={rowData} columnDefs={columnDefs} />
+                <AgGridReact rowData={rowData} columnDefs={columnDefs} />
             </div>
         </div>
     );

@@ -16,10 +16,6 @@ const gridOptions: GridOptions<IAthlete> = {
     columnDefs: [{ field: 'athlete' }, { field: 'country' }],
 };
 
-function setSuppressNoRowsOverlay(value: boolean) {
-    gridApi!.setGridOption('suppressNoRowsOverlay', value);
-}
-
 function onBtnClearRowData() {
     gridApi!.setGridOption('rowData', []);
 }
