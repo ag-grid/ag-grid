@@ -1,7 +1,6 @@
 ## ag-grid behavioural unit testing
 
-In this project ag-grid is tested as a black box, we test the behaviour at the edges.
-We use emulated DOM and we instantiate the full grid as it is to test complex behaviours.
+In this project ag-grid is tested as a black box, we test the grid at the edges, instantiating the full grid to test complex behaviours and features.
 
 The unit under test here is a behaviour, not a function, a class, a method, or a file.
 
@@ -15,7 +14,9 @@ To execute test, run in the root folder:
 npx jest -c ./test/jest.config.js
 ```
 
-## More about behavioural unit testing - classicist vs mockist
+## References:
 
 -   https://www.youtube.com/watch?v=EZ05e7EMOLM
+-   https://docs.google.com/presentation/d/1bEK7sOindHAMIyzFK59VMdjuSzC-NFG3hlUZkwLeGT8
 -   https://martinfowler.com/articles/mocksArentStubs.html
+-   https://agilewarrior.wordpress.com/2015/04/18/classical-vs-mockist-testing/
