@@ -9,9 +9,9 @@ import { updateSearchParams } from './updateSearchParams';
 import { useLicenseDebug } from './useLicenseDebug';
 import { useUpdateDataFromUrl } from './useUpdateDataFromUrl';
 
-type ErrorKey = keyof typeof errorConditions;
-type Errors = Record<ErrorKey, string | undefined>;
-interface ErrorData {
+type StateKey = keyof typeof licenseDataState;
+type LicenseState = Record<StateKey, string | undefined>;
+interface DataState {
     userLicense: string;
     licensedProducts: LicensedProducts;
     isIntegratedCharts: boolean;
@@ -23,42 +23,42 @@ interface ErrorData {
     userLicenseTrialIsExpired: boolean;
 }
 
-const errorConditions = {
-    chartsNoGridEnterprise: {
-        getIsError: ({ licensedProducts }: ErrorData) => licensedProducts.charts && !licensedProducts.grid,
+const licenseDataState = {
+    chartsNoGridEnterpriseError: {
+        getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && !licensedProducts.grid,
         message: `Your license key does not include AG Grid Enterprise`,
     },
-    gridNoCharts: {
-        getIsError: ({ licensedProducts, isIntegratedCharts }: ErrorData) =>
+    gridNoChartsError: {
+        getIsState: ({ licensedProducts, isIntegratedCharts }: DataState) =>
             !licensedProducts.charts && licensedProducts.grid && isIntegratedCharts,
         message: `Your license key does not include Integrated Charts`,
     },
     userLicenseError: {
-        getIsError: ({ userLicense, userLicenseIsValid }: ErrorData) => {
+        getIsState: ({ userLicense, userLicenseIsValid }: DataState) => {
             return hasValue(userLicense) && !userLicenseIsValid;
         },
         message:
             'License key is not valid. Make sure you are copying the whole license key which was originally provided',
     },
-    v2License: {
-        getIsError: ({ userLicenseVersion }: ErrorData) => userLicenseVersion === '2',
+    v2LicenseError: {
+        getIsState: ({ userLicenseVersion }: DataState) => userLicenseVersion === '2',
         message: 'This license key is not valid for AG Grid v30 and later',
     },
-    expired: {
-        getIsError: ({ userLicense, userLicenseIsExpired }: ErrorData) => {
+    expiredError: {
+        getIsState: ({ userLicense, userLicenseIsExpired }: DataState) => {
             return hasValue(userLicense) && userLicenseIsExpired;
         },
         message: 'This license key is expired and cannot be used with the latest version',
     },
-    expiredTrial: {
-        getIsError: ({ userLicense, userLicenseTrialIsExpired }: ErrorData) => {
+    expiredTrialError: {
+        getIsState: ({ userLicense, userLicenseTrialIsExpired }: DataState) => {
             return hasValue(userLicense) && userLicenseTrialIsExpired;
         },
         message: 'This trial license key is expired and can no longer be used',
     },
 };
 
-const useErrors = ({
+const useLicenseState = ({
     userLicense,
     licensedProducts,
     isIntegratedCharts,
@@ -68,14 +68,14 @@ const useErrors = ({
     userLicenseIsTrial,
     userLicenseIsExpired,
     userLicenseTrialIsExpired,
-}: ErrorData) => {
-    const [errors, setErrors] = useState<Errors>({} as Errors);
+}: DataState) => {
+    const [licenseState, setLicenseState] = useState<LicenseState>({} as LicenseState);
 
     useEffect(() => {
-        const newErrors = {} as Errors;
-        (Object.keys(errorConditions) as ErrorKey[]).forEach((key) => {
-            const { getIsError, message } = errorConditions[key];
-            const isError = getIsError({
+        const newLicenseState = {} as LicenseState;
+        (Object.keys(licenseDataState) as StateKey[]).forEach((key) => {
+            const { getIsState, message } = licenseDataState[key];
+            const isError = getIsState({
                 userLicense,
                 licensedProducts,
                 isIntegratedCharts,
@@ -88,16 +88,16 @@ const useErrors = ({
             });
 
             if (isError) {
-                newErrors[key] = message;
+                newLicenseState[key] = message;
             } else {
-                newErrors[key] = undefined;
+                newLicenseState[key] = undefined;
             }
         });
 
-        setErrors((prevErrors: Errors) => {
+        setLicenseState((prevLicenseState: LicenseState) => {
             return {
-                ...prevErrors,
-                ...newErrors,
+                ...prevLicenseState,
+                ...newLicenseState,
             };
         });
     }, [
@@ -113,8 +113,7 @@ const useErrors = ({
     ]);
 
     return {
-        errors,
-        hasError: Boolean(Object.keys(errors).length),
+        licenseState,
     };
 };
 
@@ -176,7 +175,7 @@ export const useLicenseData = () => {
         };
     }, [licenseDetails, chartsLicenseDetails]);
 
-    const { errors } = useErrors({
+    const { licenseState } = useLicenseState({
         userLicense,
         licensedProducts,
         isIntegratedCharts,
@@ -192,7 +191,7 @@ export const useLicenseData = () => {
     useLicenseDebug({
         licenseDetails,
         chartsLicenseDetails,
-        errors,
+        licenseState,
         userLicenseVersion,
         userLicenseExpiry,
         userLicenseIsValid,
@@ -234,6 +233,6 @@ export const useLicenseData = () => {
         userLicenseIsTrial,
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
-        errors,
+        licenseState,
     };
 };

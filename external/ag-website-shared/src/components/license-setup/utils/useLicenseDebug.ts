@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
-import type { LicenseDetails, ValidLicenseType } from '../types';
+import type { LicenseDetails } from '../types';
 
 interface Params {
     licenseDetails: LicenseDetails;
     chartsLicenseDetails: LicenseDetails;
-    errors: any;
+    licenseState: any;
     userLicenseVersion?: string;
     userLicenseExpiry?: string;
     userLicenseIsValid: boolean;
@@ -17,7 +17,7 @@ interface Params {
 export const useLicenseDebug = ({
     licenseDetails,
     chartsLicenseDetails,
-    errors,
+    licenseState,
     userLicenseVersion,
     userLicenseExpiry,
     userLicenseIsValid,
@@ -33,7 +33,7 @@ export const useLicenseDebug = ({
             console.log({
                 licenseDetails,
                 chartsLicenseDetails,
-                errors,
+                licenseState,
                 userLicenseVersion,
                 userLicenseExpiry,
                 userLicenseIsValid,
@@ -45,7 +45,7 @@ export const useLicenseDebug = ({
     }, [
         licenseDetails,
         chartsLicenseDetails,
-        errors,
+        licenseState,
         userLicenseVersion,
         userLicenseExpiry,
         userLicenseIsValid,

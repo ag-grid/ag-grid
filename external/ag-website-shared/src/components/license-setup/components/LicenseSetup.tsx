@@ -53,7 +53,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         userLicenseIsTrial,
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
-        errors,
+        licenseState,
     } = useLicenseData();
     const dependenciesSnippet = useMemo(
         () =>
@@ -103,7 +103,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 <div className={styles.licenceWrapper}>
                     <textarea
                         className={classnames(styles.license, {
-                            [styles.error]: errors.userLicenseError,
+                            [styles.error]: licenseState.userLicenseError,
                         })}
                         placeholder="Paste your License Key here."
                         value={userLicense}
@@ -132,33 +132,33 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     </div>
                 )}
 
-                {errors.expired && (
+                {licenseState.expiredError && (
                     <Warning>
-                        {errors.expired}. <EmailSales />
+                        {licenseState.expiredError}. <EmailSales />
                     </Warning>
                 )}
 
-                {errors.expiredTrial && (
+                {licenseState.expiredTrialError && (
                     <Warning>
-                        {errors.expiredTrial}. <EmailSales />
+                        {licenseState.expiredTrialError}. <EmailSales />
                     </Warning>
                 )}
 
-                {errors.userLicenseError && (
+                {licenseState.userLicenseError && (
                     <Warning>
-                        {errors.userLicenseError}. <EmailSales />
+                        {licenseState.userLicenseError}. <EmailSales />
                     </Warning>
                 )}
 
-                {errors.v2License && (
+                {licenseState.v2LicenseError && (
                     <Warning>
-                        {errors.v2License}. <EmailSales />
+                        {licenseState.v2LicenseError}. <EmailSales />
                     </Warning>
                 )}
 
-                {errors.chartsNoGridEnterprise && (
+                {licenseState.chartsNoGridEnterpriseError && (
                     <Warning>
-                        {errors.chartsNoGridEnterprise}. <EmailSales />
+                        {licenseState.chartsNoGridEnterpriseError}. <EmailSales />
                     </Warning>
                 )}
 
@@ -177,7 +177,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 <div className={styles.licenseData}>
                     <div>
                         <label>Licence key expires: </label>
-                        <b className={(errors.expired || errors.expiredTrial) && styles.expired}>
+                        <b className={(licenseState.expiredError || licenseState.expiredTrialError) && styles.expired}>
                             {userLicenseExpiry ? userLicenseExpiry : '--'}
                         </b>
                     </div>
@@ -210,9 +210,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                             </label>
                         </div>
                     </div>
-                    {errors.gridNoCharts && (
+                    {licenseState.gridNoChartsError && (
                         <Warning>
-                            {errors.gridNoCharts}. <EmailSales />
+                            {licenseState.gridNoChartsError}. <EmailSales />
                         </Warning>
                     )}
 
