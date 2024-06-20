@@ -97,7 +97,7 @@ export class AppComponent {
             'blue-row': 'data.color == "Blue"',
         },
         getRowId: (params) => {
-            return params.data.id;
+            return String(params.data.id);
         },
         rowData: this.createLeftRowData(),
         rowDragManaged: true,
@@ -114,7 +114,7 @@ export class AppComponent {
             'blue-row': 'data.color == "Blue"',
         },
         getRowId: (params) => {
-            return params.data.id;
+            return String(params.data.id);
         },
         rowData: [],
         rowDragManaged: true,
