@@ -1,6 +1,5 @@
-import type { MutableRefObject } from 'react';
-
 import type { Context, UserCompDetails } from 'ag-grid-community';
+import type { MutableRefObject } from 'react';
 
 /**
  * Show a JS Component
