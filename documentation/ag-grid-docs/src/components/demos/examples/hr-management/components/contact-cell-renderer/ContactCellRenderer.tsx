@@ -14,7 +14,7 @@ export const ContactCellRenderer: FunctionComponent<CustomCellRendererProps> = (
             <div className={styles.iconContainer}>
                 <button className="button-secondary">
                     <a
-                        href={`https://www.linkedin.com/in/${data.employeeId}`}
+                        href={`https://www.linkedin.com/company/ag-grid/`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={styles.iconLink}
@@ -23,7 +23,7 @@ export const ContactCellRenderer: FunctionComponent<CustomCellRendererProps> = (
                     </a>
                 </button>
                 <button className="button-secondary">
-                    <a href={`mailto:${data.employeeId}@company.com`} className={styles.iconLink}>
+                    <a href={`mailto:${data.name}@company.com`} className={styles.iconLink}>
                         <img className={styles.icon} src={emailIcon} alt="Email" />
                     </a>
                 </button>

@@ -1,7 +1,7 @@
 export default {
     template: `
       <div>
-      <div v-if="params.enableMenu" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
+      <div v-if="params.enableFilterButton" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
         <i class="fa" :class="params.menuIcon"></i>
       </div>
       <div class="customHeaderLabel">{{ params.displayName }}</div>

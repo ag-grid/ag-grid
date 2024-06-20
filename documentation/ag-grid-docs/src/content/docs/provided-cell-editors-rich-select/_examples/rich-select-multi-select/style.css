@@ -9,19 +9,16 @@
     padding-left: 5px;
 }
 
+.ag-picker-field-display .custom-color-cell-renderer.color-pill {
+    display: flex;
+}
+
 .custom-color-cell-renderer.color-pill span {
     padding: 0 5px;
     border-radius: 5px;
+    border: 1px solid transparent;
 }
 
 .custom-color-cell-renderer.color-pill span:not(:first-child) {
     margin-left: 5px;
-}
-
-.custom-color-cell-renderer.color-pill span.dark {
-    color: white;
-}
-
-[class^='ag-theme'][class$='dark'] .custom-color-cell-renderer.color-pill span:not(.dark) {
-    color: black;
 }

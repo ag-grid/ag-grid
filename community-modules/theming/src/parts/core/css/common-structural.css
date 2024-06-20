@@ -447,6 +447,7 @@ ag-grid-aurelia {
 
 .ag-cell-wrap-text {
     white-space: normal;
+    word-break: break-word;
 }
 
 .ag-sparkline-wrapper {

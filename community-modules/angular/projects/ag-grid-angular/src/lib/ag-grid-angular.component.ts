@@ -81,6 +81,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     GridState,
+    HeaderFocusedEvent,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
     IAggFunc,
@@ -209,7 +210,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     private gridParams: GridParams;
 
     // in order to ensure firing of gridReady is deterministic
-    private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
+    private _resolveFullyReady: () => void;
+    private _fullyReady: Promise<void> = new Promise((resolve) => {
+        this._resolveFullyReady = resolve;
+    });
 
     /** Grid Api available after onGridReady event has fired. */
     public api: GridApi<TData>;
@@ -248,7 +252,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
             // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
             // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
-            this._fullyReady.resolveNow(null, (resolve) => resolve);
+            this._resolveFullyReady();
         });
     }
 
@@ -1805,7 +1809,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public chartRangeSelectionChanged: EventEmitter<ChartRangeSelectionChangedEvent<TData>> =
         new EventEmitter<ChartRangeSelectionChangedEvent<TData>>();
-    /** Formatting changes have been made by users through the Format Panel.
+    /** Formatting changes have been made by users through the Customize Panel.
      */
     @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChangedEvent<TData>> = new EventEmitter<
         ChartOptionsChangedEvent<TData>
@@ -1928,6 +1932,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public storeRefreshed: EventEmitter<StoreRefreshedEvent<TData>> = new EventEmitter<
         StoreRefreshedEvent<TData>
+    >();
+    /** Header is focused.
+     */
+    @Output() public headerFocused: EventEmitter<HeaderFocusedEvent<TData>> = new EventEmitter<
+        HeaderFocusedEvent<TData>
     >();
     /** Cell is clicked.
      */

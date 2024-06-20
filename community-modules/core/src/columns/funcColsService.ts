@@ -109,7 +109,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             'columnRowGroupChanged',
             true,
             true,
-            this.setRowGroupActive.bind(this),
+            (added, column) => this.setRowGroupActive(added, column, source),
             source
         );
     }
@@ -135,7 +135,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.rowGroupCols,
             true,
             true,
-            this.setRowGroupActive.bind(this, true),
+            (column) => this.setRowGroupActive(true, column, source),
             'columnRowGroupChanged',
             source
         );
@@ -147,7 +147,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.rowGroupCols,
             false,
             true,
-            this.setRowGroupActive.bind(this, false),
+            (column) => this.setRowGroupActive(false, column, source),
             'columnRowGroupChanged',
             source
         );
@@ -198,7 +198,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             'columnValueChanged',
             false,
             false,
-            this.setValueActive.bind(this),
+            (added, column) => this.setValueActive(added, column, source),
             source
         );
     }
@@ -222,7 +222,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.valueCols,
             true,
             false,
-            this.setValueActive.bind(this, true),
+            (column) => this.setValueActive(true, column, source),
             'columnValueChanged',
             source
         );
@@ -234,7 +234,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.valueCols,
             false,
             false,
-            this.setValueActive.bind(this, false),
+            (column) => this.setValueActive(false, column, source),
             'columnValueChanged',
             source
         );

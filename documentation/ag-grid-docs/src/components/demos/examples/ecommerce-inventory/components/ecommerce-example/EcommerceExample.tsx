@@ -1,6 +1,10 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { ColDef, SizeColumnsToContentStrategy } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
@@ -12,14 +16,19 @@ import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
 import styles from './EcommerceExample.module.css';
 import { getData } from './data';
 
-ModuleRegistry.registerModules([SetFilterModule, MultiFilterModule, MasterDetailModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ExcelExportModule,
+    SetFilterModule,
+    MultiFilterModule,
+    MasterDetailModule,
+]);
 
 interface Props {
     gridTheme?: string;
     isDarkMode?: boolean;
 }
 
-const whenSoldOut = ['Discontinued', 'Back order', 'Email when available'];
 const paginationPageSizeSelector = [5, 10, 20];
 
 export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
@@ -28,15 +37,15 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     const [colDefs] = useState<ColDef[]>([
         {
             field: 'product',
-            headerName: 'Product',
+            headerName: 'Album Name',
             cellRenderer: 'agGroupCellRenderer',
             headerClass: 'header-product',
             cellRendererParams: {
                 innerRenderer: ProductCellRenderer,
             },
-            width: 600,
         },
-        { field: 'sku', headerName: 'SKU', width: 500, headerClass: 'header-sku' },
+        { field: 'artist' },
+        { field: 'year', width: 150, headerClass: 'header-sku' },
         {
             field: 'status',
             headerName: 'Status',
@@ -58,11 +67,11 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             },
             headerClass: 'header-inventory',
             width: 600,
+            sortable: false,
         },
         {
             field: 'incoming',
             cellEditor: 'agNumberCellEditor',
-
             cellEditorParams: {
                 precision: 0,
                 step: 1,
@@ -84,22 +93,12 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 );
             },
         },
-        { field: 'soldLastMonth', headerClass: 'header-calendar', width: 180 },
+        { field: 'sold', headerClass: 'header-calendar', width: 100 },
         {
             headerName: 'Est. Profit',
             headerClass: 'header-percentage',
-            valueGetter: (p) => '£' + (p.data.price * p.data.soldLastMonth) / 10,
+            valueGetter: (p) => '£' + (p.data.price * p.data.sold) / 10,
             width: 150,
-        },
-
-        {
-            field: 'whenSoldOut',
-            cellEditor: 'agSelectCellEditor',
-            cellEditorParams: {
-                values: whenSoldOut,
-            },
-            editable: true,
-            width: 130,
         },
         { field: 'actions', cellRenderer: ActionsCellRenderer },
     ]);
@@ -122,7 +121,15 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     const detailCellRendererParams = useMemo(() => {
         return {
             detailGridOptions: {
-                columnDefs: [{ field: 'name', headerName: 'Type', width: 150 }],
+                columnDefs: [
+                    { field: 'title', width: 150 },
+                    { field: 'available' },
+                    { field: 'format' },
+                    { field: 'label' },
+                    { field: 'cat', headerName: 'Cat#' },
+                    { field: 'country' },
+                    { field: 'year' },
+                ],
                 defaultColDef: {
                     flex: 1,
                     minWidth: 100,
@@ -214,9 +221,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         rowData={rowData}
                         defaultColDef={defaultColDef}
                         rowHeight={80}
-                        rowSelection="multiple"
                         autoSizeStrategy={autoSizeStrategy}
-                        columnMenu="new"
                         pagination={true}
                         paginationPageSize={10}
                         paginationPageSizeSelector={paginationPageSizeSelector}

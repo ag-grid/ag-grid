@@ -129,9 +129,9 @@ const gridOptions = {
 
 Note that specifying your own templates is compatible with other configurations:
 
-* `suppressHeaderMenuButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
+* `suppressHeaderFilterButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
 * `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
-* **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderMenuButton`
+* **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderFilterButton`
 
 {% gridExampleRunner title="Header template" name="header-template" /%}
 
@@ -141,7 +141,7 @@ Note that specifying your own templates is compatible with other configurations:
 Column Headers by default use the Provided Header Component. The default can be overridden with Custom Header Component. This example shows a Custom Header Component. Note the following:
 
 * Column moving and resizing works without custom logic.
-* Use of `suppressHeaderMenuButton=true` to suppress the menu.
+* Use of `suppressHeaderFilterButton=true` to suppress the menu.
 * Use of `sortable=false` to suppress sorting.
 * Configurable menu icon.
 

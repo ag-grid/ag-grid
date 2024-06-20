@@ -52,6 +52,7 @@ export const PUBLIC_EVENTS = [
     'cellValueChanged',
     'cellEditRequest',
     'rowValueChanged',
+    'headerFocused',
     'cellFocused',
     'rowSelected',
     'selectionChanged',

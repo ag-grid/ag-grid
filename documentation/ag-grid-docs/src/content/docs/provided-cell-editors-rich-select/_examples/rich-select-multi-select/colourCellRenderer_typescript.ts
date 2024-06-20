@@ -1,17 +1,13 @@
 import type { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
-import { getLuma } from './color-component-helper';
-
 const createPill = (color: string) => {
     const colorSpan = document.createElement('span');
     const text = document.createTextNode(color);
 
-    colorSpan.style.backgroundColor = color;
+    colorSpan.style.backgroundColor = `color-mix(in srgb, transparent, ${color} 20%)`;
+    colorSpan.style.boxShadow = `0 0 0 1px color-mix(in srgb, transparent, ${color} 50%)`;
+    colorSpan.style.borderColor = color;
     colorSpan.append(text);
-
-    if (getLuma(color) < 150) {
-        colorSpan.classList.add('dark');
-    }
 
     return colorSpan;
 };

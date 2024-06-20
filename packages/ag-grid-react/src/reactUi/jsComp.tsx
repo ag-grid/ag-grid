@@ -1,6 +1,5 @@
-import type { MutableRefObject } from 'react';
-
 import type { Context, UserCompDetails } from 'ag-grid-community';
+import type { MutableRefObject } from 'react';
 
 /**
  * Show a JS Component
@@ -71,12 +70,4 @@ const setRef = (ref: MutableRefObject<any> | ((ref: any) => void) | undefined, v
         const refObj = ref as MutableRefObject<any>;
         refObj.current = value;
     }
-};
-
-export const createSyncJsComp = (compDetails: UserCompDetails): any => {
-    const promise = compDetails.newAgStackInstance();
-    if (!promise) {
-        return;
-    }
-    return promise.resolveNow(null, (x) => x); // js comps are never async
 };

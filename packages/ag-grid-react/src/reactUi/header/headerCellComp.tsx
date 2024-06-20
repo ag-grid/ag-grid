@@ -1,7 +1,12 @@
-import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-
-import type { ColumnSortState, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails } from 'ag-grid-community';
+import type {
+    ColumnSortState,
+    HeaderCellCtrl,
+    IHeader,
+    IHeaderCellComp,
+    UserCompDetails,
+} from 'ag-grid-community';
 import { CssClassManager, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';

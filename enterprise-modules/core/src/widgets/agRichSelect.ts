@@ -335,8 +335,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             });
         }
 
+        this.doWhileBlockingAnnouncement(() => this.pillContainer?.refresh());
+    }
+
+    private doWhileBlockingAnnouncement(func: () => void): void {
         this.skipWrapperAnnouncement = true;
-        this.pillContainer.refresh();
+        func();
         this.skipWrapperAnnouncement = false;
     }
 
@@ -524,7 +528,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchString = '';
     }
 
-    public override setValue(value: TValue[] | TValue | null, silent?: boolean, fromPicker?: boolean): this {
+    public override setValue(
+        value: TValue[] | TValue | null,
+        silent?: boolean,
+        fromPicker?: boolean,
+        skipRendering?: boolean
+    ): this {
         if (this.value === value) {
             return this;
         }
@@ -547,7 +556,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         super.setValue(value, silent);
-        this.renderSelectedValue();
+
+        if (!skipRendering) {
+            this.renderSelectedValue();
+        }
 
         return this;
     }
@@ -602,8 +614,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (multiSelect) {
             const values = this.getValueFromSet(listComponent.getSelectedItems());
+
             if (values) {
-                this.setValue(values, false, true);
+                this.setValue(values, false, true, true);
             }
         } else {
             this.setValue(listComponent.getLastItemHovered(), false, true);
@@ -675,7 +688,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 if (!allowTyping || this.pillContainer) {
                     e.preventDefault();
                     if (this.pillContainer) {
-                        this.pillContainer.onKeyboardNavigateKey(e);
+                        this.listComponent?.highlightIndex(-1);
+                        this.pillContainer.onNavigationKeyDown(e);
                     }
                 }
                 break;
@@ -701,6 +715,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             case KeyCode.UP:
                 this.onNavigationKeyDown(e, key, () => {
                     if (multiSelect) {
+                        this.doWhileBlockingAnnouncement(() => this.eWrapper.focus());
                         this.ariaAnnouncementService.announceValue(this.ariaToggleSelection);
                     }
                 });

@@ -63,6 +63,7 @@ const functionModules: { [name in ApiFunctionName]: ModuleNames } = {
     setFocusedCell: coreModule,
     tabToNextCell: coreModule,
     tabToPreviousCell: coreModule,
+    setFocusedHeader: coreModule,
     addEventListener: coreModule,
     addGlobalListener: coreModule,
     removeEventListener: coreModule,

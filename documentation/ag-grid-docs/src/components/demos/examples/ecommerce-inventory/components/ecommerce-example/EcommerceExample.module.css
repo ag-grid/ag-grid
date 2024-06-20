@@ -39,10 +39,10 @@
     border: 1px solid #eff0f1;
 }
 
-:global(.ag-theme-quartz .ag-header-cell-text) {
+:global(.ag-theme-quartz .ag-header-cell-text),
+:global(.ag-theme-quart-dark .ag-header-cell-text) {
     color: #1f383c;
     display: flex;
-
     align-items: center;
 }
 
@@ -55,29 +55,9 @@
     border: none;
 }
 
-.icon {
-    margin-right: 8px;
-}
-
 .grid {
     height: calc(100vh - var(--layout-grid-header-height));
     --ag-header-background-color: transparent !important;
-}
-
-.container {
-    width: 100%;
-}
-
-.wrapper {
-    display: flex;
-    background: var(--color-bg-primary);
-}
-
-.buttonIcon {
-    width: 16px;
-    height: 16px;
-    opacity: 0.7;
-    margin-right: 8px;
 }
 
 .exampleHeader {
@@ -135,7 +115,7 @@
     overflow: hidden;
     background-color: var(--color-bg-secondary);
     padding: 4px;
-    border: 1px solid #eff0f1;
+    border: 1px solid var(--color-border-secondary);
 }
 
 .tabButton {

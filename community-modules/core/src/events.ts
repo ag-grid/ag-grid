@@ -7,7 +7,7 @@ import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { ChartType } from './interfaces/iChartOptions';
-import type { Column, ColumnEventName, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
+import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon } from './interfaces/iCommon';
 import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
 import type { IFilterComp } from './interfaces/iFilter';
@@ -71,6 +71,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         cellValueChanged: CellValueChangedEvent<TData, TContext>;
         cellEditRequest: CellEditRequestEvent<TData, TContext>;
         rowValueChanged: RowValueChangedEvent<TData, TContext>;
+        headerFocused: HeaderFocusedEvent<TData, TContext>;
         cellFocused: CellFocusedEvent<TData, TContext>;
         rowSelected: RowSelectedEvent<TData, TContext>;
         selectionChanged: SelectionChangedEvent<TData, TContext>;
@@ -661,6 +662,14 @@ export interface CellFocusedParams extends CommonCellFocusParams {
     /** When `forceBrowserFocus` is `true`, should scroll be prevented */
     preventScrollOnBrowserFocus?: boolean;
 }
+
+export interface HeaderFocusedParams {
+    column: Column | ColumnGroup;
+}
+
+export interface HeaderFocusedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'headerFocused', TData, TContext>,
+        HeaderFocusedParams {}
 
 export interface CellFocusClearedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'cellFocusCleared', TData, TContext>,

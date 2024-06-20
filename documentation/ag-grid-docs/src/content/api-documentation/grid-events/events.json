@@ -82,6 +82,7 @@
                 "url": "./selection-overview/"
             }
         },
+        "headerFocused": {},
         "cellClicked": {},
         "cellDoubleClicked": {},
         "cellFocused": {},

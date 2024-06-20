@@ -17,6 +17,7 @@ export interface ChartGroupsDef {
 
 export type ChartToolPanelName = 'settings' | 'data' | 'format';
 
+/** Configuration for the `Chart` panel */
 export interface ChartSettingsPanel {
     /** Chart groups customisations for which charts are displayed in the chart panel */
     chartGroupsDef?: ChartGroupsDef;
@@ -41,22 +42,24 @@ export interface ChartPanelGroupDef<GroupType> {
     isOpen?: boolean;
 }
 
+/** Configuration for the `Customize` panel */
 export interface ChartFormatPanel {
-    /** The format panel group configurations, their order and whether they are shown. If not specified shows all groups */
+    /** The customize panel group configurations, their order and whether they are shown. If not specified shows all groups */
     groups?: ChartPanelGroupDef<ChartFormatPanelGroup>[];
 }
 
+/** Configuration for the `Set Up` panel */
 export interface ChartDataPanel {
-    /** The data panel group configurations, their order and whether they are shown. If not specified shows all groups */
+    /** The set up panel group configurations, their order and whether they are shown. If not specified shows all groups */
     groups?: ChartPanelGroupDef<ChartDataPanelGroup>[];
 }
 
 export interface ChartToolPanelsDef {
     /** Customisations for the chart panel and chart menu items in the Context Menu. */
     settingsPanel?: ChartSettingsPanel;
-    /** Customisations for the format panel */
+    /** Customisations for the customize panel */
     formatPanel?: ChartFormatPanel;
-    /** Customisations for the data panel */
+    /** Customisations for the set up panel */
     dataPanel?: ChartDataPanel;
     /** The ordered list of panels to show in the chart tool panels. If none specified, all panels are shown */
     panels?: ChartToolPanelName[];

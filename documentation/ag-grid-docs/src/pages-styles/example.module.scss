@@ -16,8 +16,8 @@ $nav-height: 340px;
     padding-top: $spacing-size-8;
     display: flex;
     gap: $spacing-size-12;
-    margin-bottom: $spacing-size-4;
-    padding-bottom: $spacing-size-12;
+    margin-bottom: $spacing-size-2;
+    padding-bottom: $spacing-size-8;
     width: 100%;
     justify-content: space-between;
 
@@ -75,5 +75,13 @@ $nav-height: 340px;
     @media screen and (min-width: (1800px + 48px * 2)) {
         width: var(--layout-max-width);
         margin: 0 auto;
+    }
+}
+
+.youtubeIcon {
+    fill: red !important;
+
+    #{$selector-darkmode} & {
+        fill: white !important;
     }
 }

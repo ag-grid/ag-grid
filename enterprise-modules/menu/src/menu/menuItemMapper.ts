@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     ColumnApplyStateService,
     ColumnAutosizeService,
+    ColumnEventType,
     ColumnModel,
     ColumnNameService,
     FocusService,
@@ -70,7 +71,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     public mapWithStockItems(
         originalList: (MenuItemDef | string)[],
         column: AgColumn | null,
-        sourceElement: () => HTMLElement
+        sourceElement: () => HTMLElement,
+        source: ColumnEventType
     ): (MenuItemDef | string)[] {
         if (!originalList) {
             return [];
@@ -82,7 +84,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             let result: MenuItemDef | string | null;
 
             if (typeof menuItemOrString === 'string') {
-                result = this.getStockMenuItem(menuItemOrString, column, sourceElement);
+                result = this.getStockMenuItem(menuItemOrString, column, sourceElement, source);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
                 result = { ...menuItemOrString };
@@ -96,7 +98,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             const { subMenu } = resultDef;
 
             if (subMenu && subMenu instanceof Array) {
-                resultDef.subMenu = this.mapWithStockItems(subMenu as (MenuItemDef | string)[], column, sourceElement);
+                resultDef.subMenu = this.mapWithStockItems(subMenu, column, sourceElement, source);
             }
 
             if (result != null) {
@@ -110,7 +112,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private getStockMenuItem(
         key: string,
         column: AgColumn | null,
-        sourceElement: () => HTMLElement
+        sourceElement: () => HTMLElement,
+        source: ColumnEventType
     ): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
@@ -125,19 +128,19 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnModel.setColsPinned([column], 'left', 'contextMenu'),
+                    action: () => this.columnModel.setColsPinned([column], 'left', source),
                     checked: !!column && column.isPinnedLeft(),
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnModel.setColsPinned([column], 'right', 'contextMenu'),
+                    action: () => this.columnModel.setColsPinned([column], 'right', source),
                     checked: !!column && column.isPinnedRight(),
                 };
             case 'clearPinned':
                 return {
                     name: localeTextFunc('noPin', 'No Pin'),
-                    action: () => this.columnModel.setColsPinned([column], null, 'contextMenu'),
+                    action: () => this.columnModel.setColsPinned([column], null, source),
                     checked: !!column && !column.isPinned(),
                 };
             case 'valueAggSubMenu':
@@ -163,13 +166,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
-                    action: () =>
-                        this.columnAutosizeService.autoSizeColumn(column, 'contextMenu', skipHeaderOnAutoSize),
+                    action: () => this.columnAutosizeService.autoSizeColumn(column, source, skipHeaderOnAutoSize),
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: () => this.columnAutosizeService.autoSizeAllColumns('contextMenu', skipHeaderOnAutoSize),
+                    action: () => this.columnAutosizeService.autoSizeAllColumns(source, skipHeaderOnAutoSize),
                 };
             case 'rowGroup':
                 return {
@@ -177,8 +179,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         localeTextFunc('groupBy', 'Group by') +
                         ' ' +
                         _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
-                    disabled: column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
-                    action: () => this.funcColsService.addRowGroupColumns([column], 'contextMenu'),
+                    disabled:
+                        this.gos.get('functionsReadOnly') ||
+                        column?.isRowGroupActive() ||
+                        !column?.getColDef().enableRowGroup,
+                    action: () => this.funcColsService.addRowGroupColumns([column], source),
                     icon: _createIconNoSpan('menuAddRowGroup', this.gos, null),
                 };
             case 'rowUnGroup': {
@@ -190,11 +195,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
                         disabled:
-                            lockedGroups === -1 || lockedGroups >= this.funcColsService.getRowGroupColumns().length,
+                            this.gos.get('functionsReadOnly') ||
+                            lockedGroups === -1 ||
+                            lockedGroups >= this.funcColsService.getRowGroupColumns().length,
                         action: () =>
                             this.funcColsService.setRowGroupColumns(
                                 this.funcColsService.getRowGroupColumns().slice(0, lockedGroups),
-                                'contextMenu'
+                                source
                             ),
                         icon: icon,
                     };
@@ -208,8 +215,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             : showRowGroup;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
-                        disabled: underlyingColumn != null && this.columnModel.isColGroupLocked(underlyingColumn),
-                        action: () => this.funcColsService.removeRowGroupColumns([showRowGroup], 'contextMenu'),
+                        disabled:
+                            this.gos.get('functionsReadOnly') ||
+                            (underlyingColumn != null && this.columnModel.isColGroupLocked(underlyingColumn)),
+                        action: () => this.funcColsService.removeRowGroupColumns([showRowGroup], source),
                         icon: icon,
                     };
                 }
@@ -220,17 +229,18 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ' ' +
                         _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
                     disabled:
+                        this.gos.get('functionsReadOnly') ||
                         !column?.isRowGroupActive() ||
                         !column?.getColDef().enableRowGroup ||
                         this.columnModel.isColGroupLocked(column),
-                    action: () => this.funcColsService.removeRowGroupColumns([column], 'contextMenu'),
+                    action: () => this.funcColsService.removeRowGroupColumns([column], source),
                     icon: icon,
                 };
             }
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnApplyStateService.resetColumnState('contextMenu'),
+                    action: () => this.columnApplyStateService.resetColumnState(source),
                 };
             case 'expandAll':
                 return {
@@ -382,19 +392,19 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 return {
                     name: localeTextFunc('sortAscending', 'Sort Ascending'),
                     icon: _createIconNoSpan('sortAscending', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, 'asc', false, 'columnMenu'),
+                    action: () => this.sortController.setSortForColumn(column!, 'asc', false, source),
                 };
             case 'sortDescending':
                 return {
                     name: localeTextFunc('sortDescending', 'Sort Descending'),
                     icon: _createIconNoSpan('sortDescending', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, 'desc', false, 'columnMenu'),
+                    action: () => this.sortController.setSortForColumn(column!, 'desc', false, source),
                 };
             case 'sortUnSort':
                 return {
                     name: localeTextFunc('sortUnSort', 'Clear Sort'),
                     icon: _createIconNoSpan('sortUnSort', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, null, false, 'columnMenu'),
+                    action: () => this.sortController.setSortForColumn(column!, null, false, source),
                 };
             default: {
                 _warnOnce(`unknown menu item type ${key}`);

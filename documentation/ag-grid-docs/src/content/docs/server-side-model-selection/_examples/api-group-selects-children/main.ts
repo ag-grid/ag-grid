@@ -55,11 +55,11 @@ const gridOptions: GridOptions<IOlympicData> = {
             selectAllChildren: true,
             toggledNodes: [
                 {
-                    nodeId: 'United States',
+                    nodeId: 'group-country-year-United States',
                     selectAllChildren: false,
                     toggledNodes: [
                         {
-                            nodeId: 'United States2004',
+                            nodeId: 'group-country-year-United States2004',
                             selectAllChildren: true,
                         },
                     ],

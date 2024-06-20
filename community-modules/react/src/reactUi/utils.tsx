@@ -50,6 +50,10 @@ export const isComponentStateless = (Component: any) => {
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
 const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && (ReactDOM as any).flushSync != null;
 
+export function isReact17Minus(): boolean {
+    return !createRootAndFlushSyncAvailable;
+}
+
 let disableFlushSync = false;
 /** Enable flushSync to be disabled for the callback and the next frame (via setTimeout 0) to prevent flushSync during an existing render.
  * Provides an alternative to the more fine grained useFlushSync boolean param to agFlushSync.

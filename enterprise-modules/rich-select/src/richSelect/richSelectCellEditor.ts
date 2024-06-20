@@ -46,19 +46,11 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.addManagedListeners(this.richSelect, {
             fieldPickerValueSelected: this.onEditorPickerValueSelected.bind(this),
         });
-        this.addManagedElementListeners(this.richSelect.getGui(), { focusout: this.onEditorFocusOut.bind(this) });
         this.focusAfterAttached = cellStartedEdit;
     }
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         this.params.stopEditing(!e.fromEnterKey);
-    }
-
-    private onEditorFocusOut(e: FocusEvent): void {
-        if (this.richSelect.getGui().contains(e.relatedTarget as Element)) {
-            return;
-        }
-        this.params.stopEditing(true);
     }
 
     private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
@@ -180,6 +172,10 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
                 }
             }
         });
+    }
+
+    public focusIn(): void {
+        this.richSelect.getFocusableElement().focus();
     }
 
     public getValue(): any {

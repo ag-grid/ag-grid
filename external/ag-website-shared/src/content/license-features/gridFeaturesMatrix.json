@@ -274,6 +274,15 @@
                 "community": false,
                 "enterprise": true,
                 "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Drag & Drop",
+                    "link": "https://ag-grid.com/react-data-grid/react-data-grid/drag-and-drop/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
             }
         ]
     },

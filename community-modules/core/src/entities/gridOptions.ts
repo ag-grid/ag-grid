@@ -58,6 +58,7 @@ import type {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
+    HeaderFocusedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -2058,7 +2059,7 @@ export interface GridOptions<TData = any> {
      */
     onChartRangeSelectionChanged?(event: ChartRangeSelectionChangedEvent<TData>): void;
     /**
-     * Formatting changes have been made by users through the Format Panel.
+     * Formatting changes have been made by users through the Customize Panel.
      */
     onChartOptionsChanged?(event: ChartOptionsChangedEvent<TData>): void;
     /**
@@ -2189,6 +2190,10 @@ export interface GridOptions<TData = any> {
     onStoreRefreshed?(event: StoreRefreshedEvent<TData>): void;
 
     // *** Selection *** //
+    /**
+     * Header is focused.
+     */
+    onHeaderFocused?(event: HeaderFocusedEvent<TData>): void;
     /**
      * Cell is clicked.
      */
