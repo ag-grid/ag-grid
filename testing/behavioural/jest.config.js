@@ -1,10 +1,10 @@
 module.exports = {
-    roots: ['<rootDir>'],
+    roots: ['<rootDir>/src'],
     transform: {
         '^.+\\.tsx?$': [
             'ts-jest',
             {
-                tsconfig: '<rootDir>/tsconfig.json',
+                tsconfig: '<rootDir>/tsconfig.spec.json',
             },
         ],
     },
