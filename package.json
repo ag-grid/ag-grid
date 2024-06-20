@@ -107,9 +107,6 @@
       "**/vue",
       "**/vue-template-compiler",
       "**/vue-class-component"
-    ],
-    "resolutions": {
-        "astro/sharp": "0.32.6"
-    }
+    ]
   }
 }
