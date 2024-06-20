@@ -12,7 +12,7 @@ export interface ICustomHeaderParams {
     imports: [NgClass],
     template: `
         <div>
-            @if (params.enableMenu) {
+            @if (params.enableFilterButton) {
                 <div #menuButton class="customHeaderMenuButton" (click)="onMenuClicked($event)">
                     <i class="fa {{ params.menuIcon }}"></i>
                 </div>
