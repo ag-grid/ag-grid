@@ -167,6 +167,7 @@ export class ChartDatasource extends BeanStub {
 
                         data[colId] = {
                             labels,
+                            // this is needed so that standalone can handle animations properly when data updates
                             id: id++,
                             toString: function () {
                                 return this.labels
