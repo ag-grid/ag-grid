@@ -46,7 +46,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         );
 
         const menuItems = this.getMenuItems(column);
-        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, column ?? null, sourceElement);
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(
+            menuItems,
+            column ?? null,
+            sourceElement,
+            'columnMenu'
+        );
 
         menuList.addMenuItems(menuItemsMapped);
 

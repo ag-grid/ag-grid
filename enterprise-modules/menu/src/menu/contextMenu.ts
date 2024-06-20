@@ -274,7 +274,12 @@ class ContextMenu extends Component<ContextMenuEvent> {
                 value: this.value,
             })
         );
-        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null, () => this.getGui());
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(
+            this.menuItems,
+            null,
+            () => this.getGui(),
+            'contextMenu'
+        );
 
         menuList.addMenuItems(menuItemsMapped);
 
