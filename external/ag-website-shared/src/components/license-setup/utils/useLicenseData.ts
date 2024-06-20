@@ -13,8 +13,7 @@ import { useUpdateDataFromUrl } from './useUpdateDataFromUrl';
 type ErrorKey = keyof typeof errorConditions;
 type Errors = Record<ErrorKey, string | undefined>;
 interface ErrorData {
-    hasLicense: boolean;
-    license: string;
+    userLicense: string;
     licensedProducts: LicensedProducts;
     userProducts: Products;
     noUserProducts: boolean;
@@ -46,8 +45,8 @@ const errorConditions = {
         message: `A license key is not required to use AG Grid Community or AG Charts Community`,
     },
     userLicenseError: {
-        getIsError: ({ license, userLicenseIsValid }: ErrorData) => {
-            return hasValue(license) && !userLicenseIsValid;
+        getIsError: ({ userLicense, userLicenseIsValid }: ErrorData) => {
+            return hasValue(userLicense) && !userLicenseIsValid;
         },
         message:
             'License key is not valid. Make sure you are copying the whole license key which was originally provided',
@@ -62,22 +61,21 @@ const errorConditions = {
         message: 'Your license key does not include "AG Charts Enterprise"',
     },
     expired: {
-        getIsError: ({ license, userLicenseIsExpired }: ErrorData) => {
-            return hasValue(license) && userLicenseIsExpired;
+        getIsError: ({ userLicense, userLicenseIsExpired }: ErrorData) => {
+            return hasValue(userLicense) && userLicenseIsExpired;
         },
         message: 'This license key is expired',
     },
     expiredTrial: {
-        getIsError: ({ license, userLicenseTrialIsExpired }: ErrorData) => {
-            return hasValue(license) && userLicenseTrialIsExpired;
+        getIsError: ({ userLicense, userLicenseTrialIsExpired }: ErrorData) => {
+            return hasValue(userLicense) && userLicenseTrialIsExpired;
         },
         message: 'This trial license key is expired',
     },
 };
 
 const useErrors = ({
-    hasLicense,
-    license,
+    userLicense,
     licensedProducts,
     userProducts,
     noUserProducts,
@@ -94,22 +92,19 @@ const useErrors = ({
         const newErrors = {} as Errors;
         (Object.keys(errorConditions) as ErrorKey[]).forEach((key) => {
             const { getIsError, message } = errorConditions[key];
-            const isError =
-                hasLicense &&
-                getIsError({
-                    hasLicense,
-                    license,
-                    licensedProducts,
-                    userProducts,
-                    noUserProducts,
-                    userLicenseVersion,
-                    userLicenseExpiry,
-                    userLicenseIsValid,
-                    userLicenseIsTrial,
+            const isError = getIsError({
+                userLicense,
+                licensedProducts,
+                userProducts,
+                noUserProducts,
+                userLicenseVersion,
+                userLicenseExpiry,
+                userLicenseIsValid,
+                userLicenseIsTrial,
 
-                    userLicenseIsExpired,
-                    userLicenseTrialIsExpired,
-                });
+                userLicenseIsExpired,
+                userLicenseTrialIsExpired,
+            });
 
             if (isError) {
                 newErrors[key] = message;
@@ -125,8 +120,7 @@ const useErrors = ({
             };
         });
     }, [
-        hasLicense,
-        license,
+        userLicense,
         licensedProducts,
         userProducts,
         noUserProducts,
@@ -145,15 +139,10 @@ const useErrors = ({
 };
 
 export const useLicenseData = () => {
-    const [hasLicense, setHasLicense] = useState<boolean>(true);
     /**
      * User input license
      */
     const [userLicense, setUserLicense] = useState<string>('');
-    /**
-     * License if `hasLicense` is true
-     */
-    const [license, setLicense] = useState<string>('');
     const [importType, setImportType] = useState<ImportType>('packages');
 
     /**
@@ -189,10 +178,10 @@ export const useLicenseData = () => {
     const noUserProducts = useMemo(() => {
         return !userProducts.gridEnterprise && !userProducts.integratedEnterprise && !userProducts.chartsEnterprise;
     }, [userProducts]);
-    const licenseDetails = useMemo<LicenseDetails>(() => LicenseManager.getLicenseDetails(license), [license]);
+    const licenseDetails = useMemo<LicenseDetails>(() => LicenseManager.getLicenseDetails(userLicense), [userLicense]);
     const chartsLicenseDetails = useMemo<LicenseDetails>(
-        () => (AgCharts.getLicenseDetails(license) as LicenseDetails) || {},
-        [license]
+        () => (AgCharts.getLicenseDetails(userLicense) as LicenseDetails) || {},
+        [userLicense]
     );
 
     const validLicenseType = useMemo<ValidLicenseType>(() => {
@@ -246,8 +235,7 @@ export const useLicenseData = () => {
     }, [validLicenseType, userLicenseIsTrial]);
 
     const { errors } = useErrors({
-        hasLicense,
-        license,
+        userLicense,
         licensedProducts,
         userProducts,
         noUserProducts,
@@ -274,7 +262,7 @@ export const useLicenseData = () => {
     });
 
     useEffect(() => {
-        if (!hasValue(license)) {
+        if (!hasValue(userLicense)) {
             return;
         }
 
@@ -295,18 +283,7 @@ export const useLicenseData = () => {
         });
     }, [licenseDetails]);
 
-    useEffect(() => {
-        if (hasLicense) {
-            setLicense(userLicense);
-        } else {
-            setLicense('');
-        }
-    }, [hasLicense, userLicense]);
-
     return {
-        hasLicense,
-        setHasLicense,
-        license,
         userLicense,
         setUserLicense,
         importType,
