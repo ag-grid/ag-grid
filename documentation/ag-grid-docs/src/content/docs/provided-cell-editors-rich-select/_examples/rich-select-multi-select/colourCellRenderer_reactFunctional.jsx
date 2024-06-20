@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { getLuma } from './color-component-helper';
-
 const createPill = (color) => (
     <span
         style={{
