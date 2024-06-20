@@ -48,7 +48,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     public override destroy(): void {
         super.destroy();
         this.resetNodes();
-        this.selectionCtx.destroy();
+        this.selectionCtx.reset();
     }
 
     private isMultiselect() {
@@ -125,7 +125,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         // call is not a result of a user action, but rather a follow-on call (e.g
         // in this.clearOtherNodes).
         if (!suppressFinishActions) {
-            this.selectionCtx.reset(filteredNodes[0]);
+            this.selectionCtx.setRoot(filteredNodes[0]);
         }
 
         let updatedCount = 0;
@@ -457,7 +457,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             this.reset(source);
         }
 
-        this.selectionCtx.reset(null);
+        this.selectionCtx.reset();
 
         // the above does not clean up the parent rows if they are selected
         if (rowModelClientSide && this.groupSelectsChildren) {
@@ -600,7 +600,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         this.getNodesToSelect(justFiltered, justCurrentPage).forEach((rowNode) =>
             rowNode.selectThisNode(true, undefined, source)
         );
-        this.selectionCtx.reset(null);
+        this.selectionCtx.reset();
 
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType() === 'clientSide' && this.groupSelectsChildren) {

@@ -19,13 +19,13 @@ export class ServerSideRowRangeSelectionContext implements ISelectionContext<str
         this.rowModel = rowModel;
     }
 
-    public destroy(): void {
+    public reset(): void {
         this.root = null;
         this.end = null;
         this.cachedRange.length = 0;
     }
 
-    public reset(node: string): void {
+    public setRoot(node: string): void {
         this.root = node;
         this.end = null;
         this.cachedRange.length = 0;

@@ -3,8 +3,8 @@ import type { IRowModel } from '../interfaces/iRowModel';
 
 export interface ISelectionContext<TNode> {
     init(rowModel: IRowModel): void;
-    destroy(): void;
-    reset(node: TNode | null): void;
+    reset(): void;
+    setRoot(node: TNode): void;
     setEndRange(node: TNode): void;
     getRange(): RowNode[];
     getRoot(): TNode | null;
@@ -36,13 +36,13 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
         this.rowModel = rowModel;
     }
 
-    public destroy(): void {
+    public reset(): void {
         this.root = null;
         this.end = null;
         this.cachedRange.length = 0;
     }
 
-    public reset(node: RowNode | null): void {
+    public setRoot(node: RowNode): void {
         this.root = node;
         this.end = null;
         this.cachedRange.length = 0;

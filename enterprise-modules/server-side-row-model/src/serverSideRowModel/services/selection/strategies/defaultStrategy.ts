@@ -135,7 +135,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 };
             }
             if (node.selectable) {
-                this.selectionCtx.reset(node.id!);
+                this.selectionCtx.setRoot(node.id!);
             }
             return 1;
         }
@@ -188,7 +188,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         }
 
         nodes.forEach((node) => updateNodeState(node));
-        this.selectionCtx.reset(_last(nodes).id!);
+        this.selectionCtx.setRoot(_last(nodes).id!);
         return 1;
     }
 
