@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": []
   },
-  "include": ["src/**/*.ts", "../../test/core-grid/overlays.test.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/test/**", "src/**/test-utils/**"]
 }

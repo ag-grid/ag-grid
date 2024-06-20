@@ -20,6 +20,11 @@ To not show thee `no rows` overlay when `rowData` is empty, set the property `su
 
 {% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=350 /%}
 
+Is also possible to programmatically show or hide the no-rows overlay using the grid APIs:
+
+{% apiDocumentation source="grid-api/api.json" section="overlays" names=["showNoRowsOverlay", "hideOverlay"] /%}
+
+
 ## Initial loading
 
 When `loading` is unset and `suppressNoRowsOverlay` is unset, the following behaviour is observed:
@@ -120,7 +125,7 @@ This example demonstrates how to provide a custom loading overlay component.
 
 {% gridExampleRunner title="Custom Loading Overlay Components" name="custom-overlay-loading" /%}
 
-### No Rows Overlays
+### Custom No Rows Overlay
 
 No Rows Overlay Component is configured via the grid properties `noRowsOverlayComponent` and `noRowsOverlayComponentParams`.
 

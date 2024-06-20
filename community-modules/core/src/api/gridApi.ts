@@ -329,7 +329,7 @@ export interface GridApi<TData = any> {
      */
     showLoadingOverlay(): void;
 
-    /** Show the 'no rows' overlay. */
+    /** Show the 'no rows' overlay. If `suppressNoRowsOverlay` is set, or if `loading` is true, this will not do anything. */
     showNoRowsOverlay(): void;
 
     /** Hides the 'no rows' overlay if showing. */

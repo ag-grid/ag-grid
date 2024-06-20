@@ -41,7 +41,7 @@ const GridExample = () => {
             </div>
 
             <div
-                style={{ height: '100%', width: '100%' }}
+                style={{ height: '100%' }}
                 className={
                     /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
                     'ag-theme-quartz' /** DARK MODE END **/

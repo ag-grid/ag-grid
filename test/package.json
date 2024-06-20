@@ -15,6 +15,9 @@
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
+  "scripts": {
+    "test": "jest"
+  },
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "bugs": {
