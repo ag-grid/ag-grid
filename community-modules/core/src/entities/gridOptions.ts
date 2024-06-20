@@ -796,6 +796,7 @@ export interface GridOptions<TData = any> {
     /**
      * Disables the 'no rows' overlay, that is normally shown when no rows are in the grid.
      * @default false
+     * @initial
      */
     suppressNoRowsOverlay?: boolean;
 

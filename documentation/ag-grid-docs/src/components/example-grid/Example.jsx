@@ -884,10 +884,6 @@ const ExampleInner = ({ darkMode }) => {
         loadInstance.current = loadInstance.current + 1;
         const loadInstanceCopy = loadInstance.current;
 
-        if (gridRef.current && gridRef.current.api) {
-            gridRef.current.api.showLoadingOverlay();
-        }
-
         const colDefs = createCols();
 
         const rowCount = getRowCount();

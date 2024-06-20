@@ -225,9 +225,9 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+            api.setGridOption('loading', undefined); // undefined is coerced to false
+            expect(document.querySelector(OVERLAY)).toBeFalsy();
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
 
             api.setGridOption('rowData', [{}, {}]);
             expect(document.querySelector(OVERLAY)).toBeFalsy();
@@ -236,7 +236,7 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
+            api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(document.querySelector(OVERLAY)).toBeFalsy();
 
             api.setGridOption('loading', false);
@@ -248,7 +248,7 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
+            api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(document.querySelector(NO_ROWS)).toBeTruthy();
 
             api.setGridOption('rowData', [{}, {}]);
@@ -258,7 +258,7 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
+            api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
@@ -271,7 +271,7 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
+            api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
@@ -283,7 +283,7 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
+            api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(document.querySelector(OVERLAY)).toBeFalsy();
 
             api.setGridOption('loading', false);
@@ -295,7 +295,7 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(document.querySelector(NO_ROWS)).toBeTruthy();
 
-            api.setGridOption('loading', undefined);
+            api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(document.querySelector(NO_ROWS)).toBeTruthy();
 
@@ -324,9 +324,9 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+            api.setGridOption('loading', undefined); // undefined is coerced to false
+            expect(document.querySelector(OVERLAY)).toBeFalsy();
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
         });
 
         test('initial empty rows, loading false', () => {
@@ -338,7 +338,7 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
+            api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(document.querySelector(NO_ROWS)).toBeTruthy();
         });
@@ -352,7 +352,7 @@ describe('ag-grid overlays', () => {
             expect(document.querySelector(OVERLAY)).toBeTruthy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
-            api.setGridOption('loading', undefined);
+            api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(document.querySelector(OVERLAY)).toBeFalsy();
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
         });
@@ -386,76 +386,22 @@ describe('ag-grid overlays', () => {
         });
     });
 
-    describe('suppressNoRowsOverlay reactivity', () => {
-        test('suppressNoRowsOverlay reactivity when initially false', () => {
+    describe('changing suppressNoRowsOverlay option', () => {
+        test('it gets applied next time the no-rows is shown and cannot be used to hide the current no-rows overlay (partially reactive)', () => {
             const api = createMyGrid({ columnDefs, rowData: [] });
             expect(document.querySelector(NO_ROWS)).toBeTruthy();
 
             api.setGridOption('suppressNoRowsOverlay', true);
+            expect(document.querySelector(NO_ROWS)).toBeTruthy();
+
+            api.setGridOption('rowData', []);
             expect(document.querySelector(NO_ROWS)).toBeFalsy();
 
             api.setGridOption('suppressNoRowsOverlay', false);
+            expect(document.querySelector(NO_ROWS)).toBeFalsy();
+
+            api.setGridOption('rowData', []);
             expect(document.querySelector(NO_ROWS)).toBeTruthy();
-
-            api.setGridOption('suppressNoRowsOverlay', true);
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('loading', true);
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('suppressNoRowsOverlay', false);
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('loading', false);
-            expect(document.querySelector(NO_ROWS)).toBeTruthy();
-        });
-
-        test('suppressNoRowsOverlay reactivity when initially true', () => {
-            const api = createMyGrid({ columnDefs, rowData: [], suppressNoRowsOverlay: true });
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('suppressNoRowsOverlay', false);
-            expect(document.querySelector(NO_ROWS)).toBeTruthy();
-
-            api.setGridOption('suppressNoRowsOverlay', true);
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('suppressNoRowsOverlay', false);
-            expect(document.querySelector(NO_ROWS)).toBeTruthy();
-
-            api.setGridOption('loading', true);
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('suppressNoRowsOverlay', true);
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('loading', false);
-            api.setGridOption('suppressNoRowsOverlay', false);
-            expect(document.querySelector(OVERLAY)).toBeFalsy();
-            expect(document.querySelector(NO_ROWS)).toBeTruthy();
-        });
-
-        test('it has less priority than loading=true', () => {
-            const api = createMyGrid({ columnDefs, loading: true });
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('suppressNoRowsOverlay', true);
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-        });
-
-        test('it has less priority than initial loading=undefined', () => {
-            const api = createMyGrid({ columnDefs });
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
-
-            api.setGridOption('suppressNoRowsOverlay', true);
-            expect(document.querySelector(OVERLAY)).toBeTruthy();
-            expect(document.querySelector(NO_ROWS)).toBeFalsy();
         });
     });
 });

@@ -803,6 +803,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Disables the 'no rows' overlay, that is normally shown when no rows are in the grid.
      * @default false
+     * @initial
      */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Provide a template for 'no rows' overlay.

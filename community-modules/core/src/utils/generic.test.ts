@@ -1,4 +1,4 @@
-import { _exists, _makeNull, toBooleanOrUndefined } from './generic';
+import { _exists, _makeNull } from './generic';
 
 describe('_makeNull', () => {
     it.each([4, 'string', new Date()])('returns value if not null: %s', (value) => {
@@ -33,23 +33,5 @@ describe('exists', () => {
 
     it.each(['string', 123, true])('returns true if value is present: %s', (value) => {
         expect(_exists(value)).toBe(true);
-    });
-});
-
-describe('toBooleanOrUndefined', () => {
-    it('returns undefined for undefined', () => {
-        expect(toBooleanOrUndefined(undefined)).toBeUndefined();
-    });
-
-    it('returns false for falsy', () => {
-        expect(toBooleanOrUndefined(false)).toBe(false);
-        expect(toBooleanOrUndefined(0)).toBe(false);
-    });
-
-    it('returns true for truthy', () => {
-        expect(toBooleanOrUndefined(true)).toBe(true);
-        expect(toBooleanOrUndefined('')).toBe(true);
-        expect(toBooleanOrUndefined('true')).toBe(true);
-        expect(toBooleanOrUndefined('True')).toBe(true);
     });
 });

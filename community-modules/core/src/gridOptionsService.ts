@@ -6,7 +6,7 @@ import type { BeanCollection } from './context/context';
 import type { DomLayoutType, GetRowIdFunc, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEventType } from './eventTypes';
-import type { AgEvent, GridOptionsChangedEvent } from './events';
+import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type {
     GetGroupAggFilteringParams,
@@ -21,7 +21,7 @@ import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
 import { _log, _warnOnce } from './utils/function';
-import { _exists, _missing, toBoolean, toBooleanOrUndefined } from './utils/generic';
+import { _exists, _missing, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
@@ -87,7 +87,6 @@ export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: 
 const PROPERTY_COERCIONS: Map<keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]> = new Map([
     ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, toBoolean]),
     ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, toNumber]),
-    ['loading', toBooleanOrUndefined],
     ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : toBoolean(val))],
     ['pageSize', toConstrainedNum(1)],
     ['autoSizePadding', toConstrainedNum(0)],

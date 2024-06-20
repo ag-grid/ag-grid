@@ -325,7 +325,7 @@ export interface GridApi<TData = any> {
 
     /**
      * Show the 'loading' overlay.
-     * @deprecated v32 - Deprecated. Use gridOptions `loading` property instead.
+     * @deprecated v32 - Deprecated. Use gridOptions reactive `loading` property instead.
      */
     showLoadingOverlay(): void;
 

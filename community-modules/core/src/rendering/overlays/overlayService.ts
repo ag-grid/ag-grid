@@ -34,10 +34,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             newColumnsLoaded: () => this.onNewColumnsLoaded(),
             rowDataUpdated: updateOverlayVisibility,
         });
-        this.addManagedPropertyListeners(
-            ['loading', 'suppressNoRowsOverlay', 'suppressLoadingOverlay'],
-            updateOverlayVisibility
-        );
+        this.addManagedPropertyListener('loading', updateOverlayVisibility);
     }
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
