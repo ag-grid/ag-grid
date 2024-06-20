@@ -11,8 +11,7 @@
 }
 
 .activeTag {
-    background-color: #ddeedc;
-    color: #001203;
+    background-color: #84ca8130;
     border: 1.5px solid rgb(70, 227, 114, 0.2);
 }
 
@@ -23,8 +22,7 @@
 }
 
 .pausedTag {
-    background-color: #ffe7b9;
-    color: #5c3f1f;
+    background-color: #caab7036;
 }
 
 .circle {
@@ -44,5 +42,5 @@
 }
 
 .pausedCircle {
-    background-color: #5c3f1f;
+    background-color: #a06d37;
 }

@@ -69,24 +69,3 @@
 .grid {
     height: calc(100vh - var(--layout-grid-header-height));
 }
-
-.icon {
-    margin-right: 8px;
-}
-
-.container {
-    width: 100%;
-}
-
-.wrapper {
-    display: flex;
-    background: var(--color-bg-primary);
-    overflow: hidden;
-}
-
-.buttonIcon {
-    width: 16px;
-    height: 16px;
-    opacity: 0.7;
-    margin-right: 8px;
-}
