@@ -21,6 +21,7 @@ interface DataState {
     userLicenseIsTrial: boolean;
     userLicenseIsExpired: boolean;
     userLicenseTrialIsExpired: boolean;
+    importType: ImportType;
 }
 
 const licenseDataState = {
@@ -35,6 +36,11 @@ const licenseDataState = {
     validIntegratedChartsLicense: {
         getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && licensedProducts.grid,
         message: `Valid Enterprise Bundle license key. Includes AG Grid Enterprise and AG Chart Enterprise`,
+    },
+    minimalModulesInfo: {
+        getIsState: ({ licensedProducts, importType }: DataState) => licensedProducts.grid && importType === 'modules',
+        message:
+            "This is the minimal set of modules needed to render AG Grid Enterprise. You may need to include additional modules to this list of dependencies according to the AG Grid Enterprise feature you're using",
     },
     chartsNoGridEnterpriseError: {
         getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && !licensedProducts.grid,
@@ -80,6 +86,7 @@ const useLicenseState = ({
     userLicenseIsTrial,
     userLicenseIsExpired,
     userLicenseTrialIsExpired,
+    importType,
 }: DataState) => {
     const [licenseState, setLicenseState] = useState<LicenseState>({} as LicenseState);
 
@@ -97,6 +104,7 @@ const useLicenseState = ({
                 userLicenseIsTrial,
                 userLicenseIsExpired,
                 userLicenseTrialIsExpired,
+                importType,
             });
 
             if (isError) {
@@ -122,6 +130,7 @@ const useLicenseState = ({
         userLicenseIsTrial,
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
+        importType,
     ]);
 
     return {
@@ -197,6 +206,7 @@ export const useLicenseData = () => {
         userLicenseIsTrial,
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
+        importType,
     });
 
     useUpdateDataFromUrl({ setIsIntegratedCharts, setImportType });

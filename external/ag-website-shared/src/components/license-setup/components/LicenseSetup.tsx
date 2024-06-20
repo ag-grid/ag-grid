@@ -242,6 +242,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                         </Warning>
                     )}
 
+                    {licenseState.minimalModulesInfo && <Note>{licenseState.minimalModulesInfo}</Note>}
+
                     <p>
                         Copy the following dependencies into your <code>package.json</code>:
                     </p>
