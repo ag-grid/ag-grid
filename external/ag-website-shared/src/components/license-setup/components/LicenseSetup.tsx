@@ -5,11 +5,11 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
 import { Snippet } from '@components/snippet/Snippet';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type FunctionComponent, useMemo } from 'react';
 
 import { getBootstrapSnippet, getDependenciesSnippet, getNpmInstallSnippet } from '../utils/getSnippets';
+import { hasValue } from '../utils/hasValue';
 import { useLicenseData } from '../utils/useLicenseData';
 import styles from './LicenseSetup.module.scss';
 
@@ -47,35 +47,31 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         importType,
         updateImportTypeWithUrlUpdate,
         licensedProducts,
-        userProducts,
-        updateUserProductsWithUrlUpdate,
-        noUserProducts,
+        isIntegratedCharts,
+        updateIsIntegratedChartsWithUrlUpdate,
         userLicenseExpiry,
         userLicenseIsTrial,
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
-        validLicenseText,
         errors,
     } = useLicenseData();
     const dependenciesSnippet = useMemo(
         () =>
             getDependenciesSnippet({
                 framework,
-                products: { ...userProducts, chartsEnterprise: false },
-                noProducts: noUserProducts,
+                isIntegratedCharts,
                 importType,
             }),
-        [framework, { ...userProducts, chartsEnterprise: false }, importType]
+        [framework, isIntegratedCharts, importType]
     );
     const npmInstallSnippet = useMemo(
         () =>
             getNpmInstallSnippet({
                 framework,
-                products: { ...userProducts, chartsEnterprise: false },
-                noProducts: noUserProducts,
+                isIntegratedCharts,
                 importType,
             }),
-        [framework, { ...userProducts, chartsEnterprise: false }, importType]
+        [framework, isIntegratedCharts, importType]
     );
     const bootstrapSnippet = useMemo(
         () =>
@@ -83,27 +79,20 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 framework,
                 importType,
                 license: userLicense || 'your License Key',
-                userProducts,
-                noProducts: noUserProducts,
+                isIntegratedCharts,
             }),
-        [framework, importType, userLicense, userProducts]
+        [framework, importType, userLicense, isIntegratedCharts]
     );
     const selectedSeedRepos = useMemo(
         () =>
             seedRepos
                 .filter(({ licenseType }) => {
-                    if (userProducts.integratedEnterprise) {
-                        return licenseType === 'enterprise-bundle';
-                    } else if (userProducts.chartsEnterprise || userProducts.gridEnterprise) {
-                        return licenseType === 'enterprise';
-                    }
-
-                    return false;
+                    return isIntegratedCharts ? licenseType === 'enterprise-bundle' : licenseType === 'enterprise';
                 })
                 .filter((seedRepo) => {
                     return seedRepo.framework === framework && seedRepo.importType === importType;
                 }),
-        [seedRepos, userProducts, framework, importType]
+        [seedRepos, isIntegratedCharts, framework, importType]
     );
 
     return (
@@ -131,16 +120,10 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     )}
                 </div>
 
-                {validLicenseText && (
+                {hasValue(userLicense) && (
                     <div className={styles.licenseOutput}>
                         <span className={licensedProducts.grid ? styles.valid : styles.invalid}>
                             <Icon name={licensedProducts.grid ? 'tick' : 'cross'} /> AG Grid Enterprise
-                        </span>
-                        <span
-                            className={licensedProducts.grid && licensedProducts.charts ? styles.valid : styles.invalid}
-                        >
-                            <Icon name={licensedProducts.grid && licensedProducts.charts ? 'tick' : 'cross'} />
-                            Integrated Charts
                         </span>
                         <span className={licensedProducts.charts ? styles.valid : styles.invalid}>
                             <Icon name={licensedProducts.charts ? 'tick' : 'cross'} />
@@ -173,15 +156,23 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     </Warning>
                 )}
 
+                {errors.chartsNoGridEnterprise && (
+                    <Warning>
+                        {errors.chartsNoGridEnterprise}. <EmailSales />
+                    </Warning>
+                )}
+
                 {/* TODO change "AG Grid" to grid/charts based on site */}
 
-                <Note>
-                    Visit the <a href={urlWithBaseUrl('/license-pricing')}>Pricing Page</a> to discover the power of AG
-                    Grid Enterprise and <b>buy</b> a licence key.
-                    <br />
-                    Alternatively, email <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to start a conversation
-                    or <b>request a trial licence key</b>.
-                </Note>
+                {!hasValue(userLicense) && (
+                    <Note>
+                        Visit the <a href={urlWithBaseUrl('/license-pricing')}>Pricing Page</a> to discover the power of
+                        AG Grid Enterprise and <b>buy</b> a licence key.
+                        <br />
+                        Alternatively, email <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to start a
+                        conversation or <b>request a trial licence key</b>.
+                    </Note>
+                )}
 
                 <div className={styles.licenseData}>
                     <div>
@@ -211,17 +202,19 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                     type="checkbox"
                                     name="products"
                                     value="integratedEnterprise"
-                                    checked={userProducts.integratedEnterprise}
+                                    checked={isIntegratedCharts}
                                     onChange={() => {
-                                        updateUserProductsWithUrlUpdate({
-                                            ...userProducts,
-                                            integratedEnterprise: !userProducts.integratedEnterprise,
-                                        });
+                                        updateIsIntegratedChartsWithUrlUpdate(!isIntegratedCharts);
                                     }}
                                 />
                             </label>
                         </div>
                     </div>
+                    {errors.gridNoCharts && (
+                        <Warning>
+                            {errors.gridNoCharts}. <EmailSales />
+                        </Warning>
+                    )}
 
                     <div className={styles.frameworkImportContainer}>
                         <div className={styles.frameworkContainer}>
@@ -251,22 +244,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                 <option value="modules">Modules</option>
                             </select>
                         </div>
-                        <p className={classnames(styles.importsLink, 'text-sm')}>
-                            <a
-                                href={urlWithPrefix({
-                                    framework,
-                                    url: './modules/#packages-vs-modules',
-                                })}
-                            >
-                                Learn more about import types
-                            </a>
-                        </p>
                     </div>
                 </div>
 
                 <div className={styles.results}>
                     <h3 id="add-your-dependencies">Add Your Dependencies</h3>
-                    {errors.noProducts && <Note>{errors.noProducts}</Note>}
 
                     <p>
                         Copy the following dependencies into your <code>package.json</code>:
@@ -284,15 +266,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                     <h3 id="set-up-your-application">Set Up Your Application</h3>
 
-                    {errors.noProducts && <Note>{errors.noProducts}</Note>}
-
-                    {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
-                        <>
-                            {!noUserProducts && <p>An example of how to set up your AG Grid Enterprise License Key:</p>}
-                            {bootstrapSnippet.grid && (
-                                <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
-                            )}
-                        </>
+                    <p>An example of how to set up your AG Grid Enterprise License Key:</p>
+                    {bootstrapSnippet.grid && (
+                        <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
                     )}
 
                     <h2 id="seed-repos">Seed Repositories</h2>

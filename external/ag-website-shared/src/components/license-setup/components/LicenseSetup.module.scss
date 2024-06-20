@@ -193,19 +193,6 @@
             min-width: 160px;
         }
     }
-
-    &.valid strong::after {
-        content: 'Valid license key';
-    }
-
-    &.valid.trial strong::after {
-        content: 'Valid trial license key';
-    }
-
-    &.valid.expired strong::after {
-        content: 'License key is expired';
-        color: var(--color-negative);
-    }
 }
 
 .integratedProduct {

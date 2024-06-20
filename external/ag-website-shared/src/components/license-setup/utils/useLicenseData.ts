@@ -3,8 +3,7 @@ import type { ImportType } from '@ag-grid-types';
 import { AgCharts } from 'ag-charts-enterprise';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DEFAULT_USER_PRODUCTS } from '../constants';
-import type { LicenseDetails, LicensedProducts, Products, ValidLicenseType } from '../types';
+import type { LicenseDetails, LicensedProducts } from '../types';
 import { hasValue } from './hasValue';
 import { updateSearchParams } from './updateSearchParams';
 import { useLicenseDebug } from './useLicenseDebug';
@@ -15,9 +14,7 @@ type Errors = Record<ErrorKey, string | undefined>;
 interface ErrorData {
     userLicense: string;
     licensedProducts: LicensedProducts;
-    userProducts: Products;
-    noUserProducts: boolean;
-
+    isIntegratedCharts: boolean;
     userLicenseVersion?: string;
     userLicenseExpiry?: string;
     userLicenseIsValid: boolean;
@@ -26,23 +23,15 @@ interface ErrorData {
     userLicenseTrialIsExpired: boolean;
 }
 
-const validLicenseMessages = {
-    valid: 'Valid license key',
-    validTrialLicense: 'Valid trial license key',
-    gridEnterprise: 'Includes AG Grid Enterprise',
-    integratedEnterprise: 'Includes AG Grid Enterprise, AG Chart Enterprise, and Integrated Charts',
-    chartsEnterprise: 'Includes AG Charts Enterprise',
-};
-
 const errorConditions = {
     chartsNoGridEnterprise: {
-        getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
-            licensedProducts.charts && !licensedProducts.grid && userProducts.gridEnterprise,
+        getIsError: ({ licensedProducts }: ErrorData) => licensedProducts.charts && !licensedProducts.grid,
         message: `Your license key does not include AG Grid Enterprise`,
     },
-    noProducts: {
-        getIsError: ({ noUserProducts }: ErrorData) => noUserProducts,
-        message: `A license key is not required to use AG Grid Community or AG Charts Community`,
+    gridNoCharts: {
+        getIsError: ({ licensedProducts, isIntegratedCharts }: ErrorData) =>
+            !licensedProducts.charts && licensedProducts.grid && isIntegratedCharts,
+        message: `Your license key does not include Integrated Charts`,
     },
     userLicenseError: {
         getIsError: ({ userLicense, userLicenseIsValid }: ErrorData) => {
@@ -54,11 +43,6 @@ const errorConditions = {
     v2License: {
         getIsError: ({ userLicenseVersion }: ErrorData) => userLicenseVersion === '2',
         message: 'This license key is not valid for AG Grid v30 and later',
-    },
-    gridNoCharts: {
-        getIsError: ({ userProducts, licensedProducts }: ErrorData) =>
-            !licensedProducts.charts && licensedProducts.grid && userProducts.chartsEnterprise,
-        message: 'Your license key does not include AG Charts Enterprise',
     },
     expired: {
         getIsError: ({ userLicense, userLicenseIsExpired }: ErrorData) => {
@@ -77,8 +61,7 @@ const errorConditions = {
 const useErrors = ({
     userLicense,
     licensedProducts,
-    userProducts,
-    noUserProducts,
+    isIntegratedCharts,
     userLicenseVersion,
     userLicenseExpiry,
     userLicenseIsValid,
@@ -95,13 +78,11 @@ const useErrors = ({
             const isError = getIsError({
                 userLicense,
                 licensedProducts,
-                userProducts,
-                noUserProducts,
+                isIntegratedCharts,
                 userLicenseVersion,
                 userLicenseExpiry,
                 userLicenseIsValid,
                 userLicenseIsTrial,
-
                 userLicenseIsExpired,
                 userLicenseTrialIsExpired,
             });
@@ -122,8 +103,7 @@ const useErrors = ({
     }, [
         userLicense,
         licensedProducts,
-        userProducts,
-        noUserProducts,
+        isIntegratedCharts,
         userLicenseVersion,
         userLicenseExpiry,
         userLicenseIsValid,
@@ -143,18 +123,13 @@ export const useLicenseData = () => {
      * User input license
      */
     const [userLicense, setUserLicense] = useState<string>('');
+    const [isIntegratedCharts, setIsIntegratedCharts] = useState<boolean>(false);
     const [importType, setImportType] = useState<ImportType>('packages');
 
-    /**
-     * User selected products
-     */
-    const [userProducts, setUserProducts] = useState<Products>(DEFAULT_USER_PRODUCTS);
-
-    const updateUserProductsWithUrlUpdate = useCallback(
-        (products: Products) => {
-            setUserProducts(products);
-
-            updateSearchParams({ products, importType });
+    const updateIsIntegratedChartsWithUrlUpdate = useCallback(
+        (isIntegrated: boolean) => {
+            setIsIntegratedCharts(isIntegrated);
+            updateSearchParams({ integratedCharts: isIntegrated, importType });
         },
         [importType]
     );
@@ -162,9 +137,9 @@ export const useLicenseData = () => {
         (type: ImportType) => {
             setImportType(type);
 
-            updateSearchParams({ products: userProducts, importType: type });
+            updateSearchParams({ integratedCharts: isIntegratedCharts, importType: type });
         },
-        [userProducts]
+        [isIntegratedCharts]
     );
 
     /**
@@ -175,38 +150,11 @@ export const useLicenseData = () => {
         charts: false,
     });
 
-    const noUserProducts = useMemo(() => {
-        return !userProducts.gridEnterprise && !userProducts.integratedEnterprise && !userProducts.chartsEnterprise;
-    }, [userProducts]);
     const licenseDetails = useMemo<LicenseDetails>(() => LicenseManager.getLicenseDetails(userLicense), [userLicense]);
     const chartsLicenseDetails = useMemo<LicenseDetails>(
         () => (AgCharts.getLicenseDetails(userLicense) as LicenseDetails) || {},
         [userLicense]
     );
-
-    const validLicenseType = useMemo<ValidLicenseType>(() => {
-        let type: ValidLicenseType = 'none';
-        if (
-            licenseDetails.suppliedLicenseType !== 'CHARTS' &&
-            licenseDetails.valid &&
-            !licenseDetails.expired &&
-            !licenseDetails.trialExpired
-        ) {
-            if (licenseDetails.suppliedLicenseType === 'GRID') {
-                type = 'gridEnterprise';
-            } else if (licenseDetails.suppliedLicenseType === 'BOTH') {
-                type = 'integratedEnterprise';
-            }
-        } else if (
-            licenseDetails.suppliedLicenseType === 'CHARTS' &&
-            chartsLicenseDetails.valid &&
-            !chartsLicenseDetails.expired &&
-            !chartsLicenseDetails.trialExpired
-        ) {
-            type = 'chartsEnterprise';
-        }
-        return type;
-    }, [licenseDetails, chartsLicenseDetails]);
 
     const {
         userLicenseVersion,
@@ -228,17 +176,10 @@ export const useLicenseData = () => {
         };
     }, [licenseDetails, chartsLicenseDetails]);
 
-    const validLicenseText = useMemo<string>(() => {
-        const validPrefix = userLicenseIsTrial ? validLicenseMessages.validTrialLicense : validLicenseMessages.valid;
-
-        return validLicenseType === 'none' ? '' : `${validPrefix}. ${validLicenseMessages[validLicenseType]}`;
-    }, [validLicenseType, userLicenseIsTrial]);
-
     const { errors } = useErrors({
         userLicense,
         licensedProducts,
-        userProducts,
-        noUserProducts,
+        isIntegratedCharts,
         userLicenseVersion,
         userLicenseExpiry,
         userLicenseIsValid,
@@ -247,9 +188,8 @@ export const useLicenseData = () => {
         userLicenseTrialIsExpired,
     });
 
-    useUpdateDataFromUrl({ setUserProducts, setImportType });
+    useUpdateDataFromUrl({ setIsIntegratedCharts, setImportType });
     useLicenseDebug({
-        validLicenseType,
         licenseDetails,
         chartsLicenseDetails,
         errors,
@@ -268,7 +208,7 @@ export const useLicenseData = () => {
 
         const { suppliedLicenseType } = licenseDetails;
         const gridEnterprise = suppliedLicenseType === 'GRID' || suppliedLicenseType === 'BOTH';
-        const integratedEnterprise = suppliedLicenseType === 'BOTH';
+        const isIntegrated = suppliedLicenseType === 'BOTH';
         const chartsEnterprise = suppliedLicenseType === 'CHARTS' || suppliedLicenseType === 'BOTH';
 
         setLicensedProducts({
@@ -276,11 +216,7 @@ export const useLicenseData = () => {
             charts: chartsEnterprise,
         });
 
-        updateUserProductsWithUrlUpdate({
-            gridEnterprise,
-            integratedEnterprise,
-            chartsEnterprise,
-        });
+        updateIsIntegratedChartsWithUrlUpdate(isIntegrated);
     }, [licenseDetails]);
 
     return {
@@ -289,11 +225,9 @@ export const useLicenseData = () => {
         importType,
         updateImportTypeWithUrlUpdate,
         licensedProducts,
-        userProducts,
-        updateUserProductsWithUrlUpdate,
-        noUserProducts,
+        isIntegratedCharts,
+        updateIsIntegratedChartsWithUrlUpdate,
 
-        validLicenseText,
         userLicenseVersion,
         userLicenseExpiry,
         userLicenseIsValid,

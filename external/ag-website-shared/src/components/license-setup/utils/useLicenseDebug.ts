@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import type { LicenseDetails, ValidLicenseType } from '../types';
 
 interface Params {
-    validLicenseType: ValidLicenseType;
     licenseDetails: LicenseDetails;
     chartsLicenseDetails: LicenseDetails;
     errors: any;
@@ -16,7 +15,6 @@ interface Params {
 }
 
 export const useLicenseDebug = ({
-    validLicenseType,
     licenseDetails,
     chartsLicenseDetails,
     errors,
@@ -33,7 +31,6 @@ export const useLicenseDebug = ({
 
         if (isDebug) {
             console.log({
-                validLicenseType,
                 licenseDetails,
                 chartsLicenseDetails,
                 errors,
@@ -46,7 +43,6 @@ export const useLicenseDebug = ({
             });
         }
     }, [
-        validLicenseType,
         licenseDetails,
         chartsLicenseDetails,
         errors,
