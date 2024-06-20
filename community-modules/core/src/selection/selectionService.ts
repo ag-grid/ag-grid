@@ -10,6 +10,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
+import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
@@ -597,10 +598,11 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         const { source, justFiltered, justCurrentPage } = params;
 
-        this.getNodesToSelect(justFiltered, justCurrentPage).forEach((rowNode) =>
-            rowNode.selectThisNode(true, undefined, source)
-        );
+        const nodes = this.getNodesToSelect(justFiltered, justCurrentPage);
+        nodes.forEach((rowNode) => rowNode.selectThisNode(true, undefined, source));
+
         this.selectionCtx.reset();
+        this.selectionCtx.setEndRange(_last(nodes) ?? null);
 
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType() === 'clientSide' && this.groupSelectsChildren) {
