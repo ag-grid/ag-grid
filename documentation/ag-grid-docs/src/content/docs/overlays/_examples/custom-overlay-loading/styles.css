@@ -6,21 +6,15 @@
 
 #myGrid {
     flex: 1 1 0px;
-    width: 100%;
 }
 
 label.checkbox {
+    display: inline-block;
     user-select: none;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 20px;
 }
 
 .fa-hourglass-half {
-    color: navy;
-    font-size: 18px;
-}
-
-.fa-frown {
     color: navy;
     font-size: 18px;
 }

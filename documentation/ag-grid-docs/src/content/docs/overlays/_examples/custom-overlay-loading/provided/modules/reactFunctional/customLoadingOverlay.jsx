@@ -5,6 +5,7 @@ export default (props) => {
         <div className="ag-overlay-loading-center" role="presentation">
             <div
                 role="presentation"
+                className="custom-loading-overlay"
                 style={{
                     height: 100,
                     width: 100,

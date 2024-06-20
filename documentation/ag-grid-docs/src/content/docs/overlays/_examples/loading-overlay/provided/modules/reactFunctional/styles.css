@@ -6,11 +6,10 @@
 
 #myGrid {
     flex: 1 1 0px;
-    height: 100%;
 }
 
 label.checkbox {
+    display: inline-block;
     user-select: none;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 20px;
 }

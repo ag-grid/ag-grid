@@ -723,7 +723,6 @@
                 "url": "./overlays/"
             }
         },
-        "showLoadingOverlay": {},
         "showNoRowsOverlay": {},
         "hideOverlay": {}
     },

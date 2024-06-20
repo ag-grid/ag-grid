@@ -5,104 +5,64 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import CustomLoadingOverlay from './customLoadingOverlay.jsx';
-import CustomNoRowsOverlay from './customNoRowsOverlay.jsx';
+import CustomLoadingOverlay from './customLoadingOverlay';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+const columnDefs = [
+    { field: 'athlete', width: 150 },
+    { field: 'country', width: 120 },
+];
+
+const rowData = [
+    { athlete: 'Michael Phelps', country: 'United States' },
+    { athlete: 'Natalie Coughlin', country: 'United States' },
+    { athlete: 'Aleksey Nemov', country: 'Russia' },
+    { athlete: 'Alicia Coutts', country: 'Australia' },
+];
+
+const defaultColDef = {
+    editable: true,
+    flex: 1,
+    minWidth: 100,
+    filter: true,
+};
+
 const GridExample = () => {
-    const gridRef = useRef();
-    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
-    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [rowData, setRowData] = useState();
-    const [columnDefs, setColumnDefs] = useState([
-        { field: 'athlete', width: 150 },
-        { field: 'age', width: 90 },
-        { field: 'country', width: 120 },
-        { field: 'year', width: 90 },
-        { field: 'date', width: 110 },
-        { field: 'sport', width: 110 },
-        { field: 'gold', width: 100 },
-        { field: 'silver', width: 100 },
-        { field: 'bronze', width: 100 },
-        { field: 'total', width: 100 },
-    ]);
-    const defaultColDef = useMemo(() => {
-        return {
-            editable: true,
-            flex: 1,
-            minWidth: 100,
-            filter: true,
-        };
-    }, []);
-    const loadingOverlayComponent = useMemo(() => {
-        return CustomLoadingOverlay;
-    }, []);
+    const [loading, setLoading] = useState(true);
+
     const loadingOverlayComponentParams = useMemo(() => {
-        return {
-            loadingMessage: 'One moment please...',
-        };
+        return { loadingMessage: 'One moment please...' };
     }, []);
-    const noRowsOverlayComponent = useMemo(() => {
-        return CustomNoRowsOverlay;
-    }, []);
-    const noRowsOverlayComponentParams = useMemo(() => {
-        return {
-            noRowsMessageFunc: () => 'No rows found at: ' + new Date().toLocaleTimeString(),
-        };
-    }, []);
-
-    const [loading, setLoading] = useState(undefined);
-    const [suppressNoRowsOverlay, setSuppressNoRowsOverlay] = useState(false);
-
-    // const onBtShowLoading = useCallback(() => {
-    //     gridRef.current.api.showLoadingOverlay();
-    // }, []);
-
-    // const onBtShowNoRows = useCallback(() => {
-    //     gridRef.current.api.showNoRowsOverlay();
-    // }, []);
-
-    // const onBtHide = useCallback(() => {
-    //     gridRef.current.api.hideOverlay();
-    // }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div style={{ marginBottom: '5px' }}>
-                    <button onClick={() => setLoading(true)}>Show Loading Overlay</button>
-                    <button onClick={() => setLoading(false)}>Hide Loading Overlay</button>
-                    <input
-                        type="checkbox"
-                        checked={suppressNoRowsOverlay}
-                        onChange={(e) => setSuppressNoRowsOverlay(e.target.checked)}
-                    />{' '}
-                    Loading
-                </div>
+        <div className="example-wrapper">
+            <div>
+                <label className="checkbox">
+                    <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} checked={loading} />
+                    loading
+                </label>
+            </div>
 
-                <div
-                    style={gridStyle}
-                    className={
-                        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                        'ag-theme-quartz' /** DARK MODE END **/
-                    }
-                >
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        loadingOverlayComponent={loadingOverlayComponent}
-                        loadingOverlayComponentParams={loadingOverlayComponentParams}
-                        noRowsOverlayComponent={noRowsOverlayComponent}
-                        noRowsOverlayComponentParams={noRowsOverlayComponentParams}
-                    />
-                </div>
+            <div
+                style={{ height: '100%', width: '100%' }}
+                className={
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
+                <AgGridReact
+                    loading={loading}
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    defaultColDef={defaultColDef}
+                    loadingOverlayComponent={CustomLoadingOverlay}
+                    loadingOverlayComponentParams={loadingOverlayComponentParams}
+                />
             </div>
         </div>
     );

@@ -1,28 +1,25 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { createGrid } from '@ag-grid-community/core';
+import type { ColDef, GridApi, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
-import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
 import { CustomNoRowsOverlay } from './customNoRowsOverlay_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+interface IAthlete {
+    athlete: string;
+    country: string;
+}
+
 const columnDefs: ColDef[] = [
     { field: 'athlete', width: 150 },
-    { field: 'age', width: 90 },
     { field: 'country', width: 120 },
-    { field: 'year', width: 90 },
-    { field: 'date', width: 110 },
-    { field: 'sport', width: 110 },
-    { field: 'gold', width: 100 },
-    { field: 'silver', width: 100 },
-    { field: 'bronze', width: 100 },
-    { field: 'total', width: 100 },
 ];
 
-let gridApi: GridApi<IOlympicData>;
+let gridApi: GridApi<IAthlete>;
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions<IAthlete> = {
     defaultColDef: {
         editable: true,
         flex: 1,
@@ -31,27 +28,20 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 
     columnDefs: columnDefs,
+    rowData: [],
 
-    loadingOverlayComponent: CustomLoadingOverlay,
-    loadingOverlayComponentParams: {
-        loadingMessage: 'One moment please...',
-    },
     noRowsOverlayComponent: CustomNoRowsOverlay,
     noRowsOverlayComponentParams: {
         noRowsMessageFunc: () => 'No rows found at: ' + new Date().toLocaleTimeString(),
     },
 };
 
-function onBtShowLoading() {
-    gridApi!.setGridOption('loading', true);
+function onBtnClearRowData() {
+    gridApi!.setGridOption('rowData', []);
 }
 
-function onBtnHideLoading() {
-    gridApi!.setGridOption('loading', false);
-}
-
-function setSuppressNoRowsOverlay(value: boolean) {
-    gridApi!.setGridOption('suppressNoRowsOverlay', value);
+function onBtnSetRowData() {
+    gridApi!.setGridOption('rowData', [{ athlete: 'Michael Phelps', country: 'US' }]);
 }
 
 // setup the grid after the page has finished loading

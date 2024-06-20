@@ -6,22 +6,26 @@ import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+interface IAthlete {
+    athlete: string;
+    country: string;
+}
+
 const columnDefs: ColDef[] = [
     { field: 'athlete', width: 150 },
-    { field: 'age', width: 90 },
     { field: 'country', width: 120 },
-    { field: 'year', width: 90 },
-    { field: 'date', width: 110 },
-    { field: 'sport', width: 110 },
-    { field: 'gold', width: 100 },
-    { field: 'silver', width: 100 },
-    { field: 'bronze', width: 100 },
-    { field: 'total', width: 100 },
 ];
 
-let gridApi: GridApi<IOlympicData>;
+const rowData: IAthlete[] = [
+    { athlete: 'Michael Phelps', country: 'United States' },
+    { athlete: 'Natalie Coughlin', country: 'United States' },
+    { athlete: 'Aleksey Nemov', country: 'Russia' },
+    { athlete: 'Alicia Coutts', country: 'Australia' },
+];
 
-const gridOptions: GridOptions<IOlympicData> = {
+let gridApi: GridApi<IAthlete>;
+
+const gridOptions: GridOptions<IAthlete> = {
     defaultColDef: {
         editable: true,
         flex: 1,
@@ -32,6 +36,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     loading: true,
 
     columnDefs: columnDefs,
+    rowData,
 
     loadingOverlayComponent: CustomLoadingOverlay,
     loadingOverlayComponentParams: {

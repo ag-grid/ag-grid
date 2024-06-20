@@ -1,4 +1,4 @@
-import { CustomNoRowsOverlayProps } from '@ag-grid-community/react';
+import type { CustomNoRowsOverlayProps } from '@ag-grid-community/react';
 import React from 'react';
 
 export default (props: CustomNoRowsOverlayProps & { noRowsMessageFunc: () => string }) => {

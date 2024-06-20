@@ -323,13 +323,16 @@ export interface GridApi<TData = any> {
      */
     deselectAllOnCurrentPage(source?: SelectionEventSourceType): void;
 
-    /** Show the 'loading' overlay. */
+    /**
+     * Show the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use gridOptions `loading` property instead.
+     */
     showLoadingOverlay(): void;
 
     /** Show the 'no rows' overlay. */
     showNoRowsOverlay(): void;
 
-    /** Hides the overlay if showing. */
+    /** Hides the 'no rows' overlay if showing. */
     hideOverlay(): void;
 
     /**
