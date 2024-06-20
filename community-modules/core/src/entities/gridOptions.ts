@@ -58,6 +58,7 @@ import type {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
+    HeaderFocusedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -2189,6 +2190,10 @@ export interface GridOptions<TData = any> {
     onStoreRefreshed?(event: StoreRefreshedEvent<TData>): void;
 
     // *** Selection *** //
+    /**
+     * Header is focused.
+     */
+    onHeaderFocused?(event: HeaderFocusedEvent<TData>): void;
     /**
      * Cell is clicked.
      */

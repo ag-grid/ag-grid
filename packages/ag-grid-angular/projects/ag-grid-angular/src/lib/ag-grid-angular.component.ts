@@ -81,6 +81,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     GridState,
+    HeaderFocusedEvent,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
     IAggFunc,
@@ -1931,6 +1932,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public storeRefreshed: EventEmitter<StoreRefreshedEvent<TData>> = new EventEmitter<
         StoreRefreshedEvent<TData>
+    >();
+    /** Header is focused.
+     */
+    @Output() public headerFocused: EventEmitter<HeaderFocusedEvent<TData>> = new EventEmitter<
+        HeaderFocusedEvent<TData>
     >();
     /** Cell is clicked.
      */
