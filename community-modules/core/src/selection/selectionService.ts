@@ -601,7 +601,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         const nodes = this.getNodesToSelect(justFiltered, justCurrentPage);
         nodes.forEach((rowNode) => rowNode.selectThisNode(true, undefined, source));
 
-        this.selectionCtx.reset();
+        this.selectionCtx.setRoot(nodes[0] ?? null);
         this.selectionCtx.setEndRange(_last(nodes) ?? null);
 
         // the above does not clean up the parent rows if they are selected

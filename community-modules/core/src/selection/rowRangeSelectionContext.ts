@@ -58,7 +58,7 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
             const root = this.getRoot();
             const end = this.getEnd();
 
-            if (end == null) {
+            if (root == null || end == null) {
                 return this.cachedRange;
             }
 
@@ -129,7 +129,15 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
      * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
      */
     public extend(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
-        const newRange = this.rowModel.getNodesInRangeForSelection(this.getRoot(), node);
+        const root = this.getRoot();
+
+        // If the root node is no longer retrievable, we cannot iterate from the root
+        // to the given `node`. So we keep the existing selection, plus the given `node`
+        if (root == null) {
+            return { keep: this.getRange().concat(node), discard: [] };
+        }
+
+        const newRange = this.rowModel.getNodesInRangeForSelection(root, node);
 
         if (newRange.find((newRangeNode) => newRangeNode.id === this.end?.id)) {
             // Range between root and given node contains the current "end"
