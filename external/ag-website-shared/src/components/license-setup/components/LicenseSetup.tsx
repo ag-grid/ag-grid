@@ -79,10 +79,10 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
             getBootstrapSnippet({
                 framework,
                 importType,
-                license: userLicense || 'your License Key',
+                license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'your License Key',
                 isIntegratedCharts,
             }),
-        [framework, importType, userLicense, isIntegratedCharts]
+        [framework, licenseState, importType, userLicense, isIntegratedCharts]
     );
     const selectedSeedRepos = useMemo(
         () =>
@@ -106,7 +106,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         'expiredTrialError',
         'userLicenseError',
         'v2LicenseError',
-        'chartsNoGridEnterpriseError',
     ];
     const licenseInvalidErrors = Object.entries(licenseState)
         .filter(([key, value]) => hasValue(value) && licenseInvalidKeys.includes(key as LicenseStateKey))
@@ -237,6 +236,12 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 <div className={styles.results}>
                     <h3 id="add-your-dependencies">Add Your Dependencies</h3>
 
+                    {licenseState.chartsNoGridEnterpriseError && (
+                        <Warning>
+                            {licenseState.chartsNoGridEnterpriseError}. <EmailSales />
+                        </Warning>
+                    )}
+
                     <p>
                         Copy the following dependencies into your <code>package.json</code>:
                     </p>
@@ -252,6 +257,12 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     )}
 
                     <h3 id="set-up-your-application">Set Up Your Application</h3>
+
+                    {licenseState.chartsNoGridEnterpriseError && (
+                        <Warning>
+                            {licenseState.chartsNoGridEnterpriseError}. <EmailSales />
+                        </Warning>
+                    )}
 
                     <p>An example of how to set up your AG Grid Enterprise License Key:</p>
                     {bootstrapSnippet.grid && (
