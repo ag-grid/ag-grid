@@ -133,6 +133,9 @@ export interface Column<TValue = any>
     /** Returns `true` if paste is suppress for this column and row node. */
     isSuppressPaste(rowNode: IRowNode): boolean;
 
+    /** Returns `true` if a menu is visible for this column. */
+    isMenuVisible(): boolean;
+
     /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
     getSort(): SortDirection | undefined;
 
