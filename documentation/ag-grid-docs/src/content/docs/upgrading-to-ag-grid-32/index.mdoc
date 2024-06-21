@@ -105,17 +105,24 @@ Skeleton loaders of different widths are shown across rows.
 
 Pressing the {% kbd "⇥ Tab" /%} key when focusing on a set filter list item or a column's tool panel list item takes focus out of the list. Navigating inside the list is possible with {% kbd "↑" /%}/{% kbd "↓" /%} Arrow keys.
 
+{% if isFramework("vue") %}
 ### Vue
-
+{% /if %}
+{% if isFramework("vue") %}
 - Vue 2 is no longer supported. Please upgrade to Vue 3.
 
 - Storing the grid API in a `ref` is no longer supported. It must instead be stored in a `shallowRef`.
 
 - `auto-params-refresh` / `autoParamsRefresh` removed.
+{% /if %}
 
+{% if isFramework("react") %}
 ### React
+{% /if %}
 
+{% if isFramework("react") %}
 `reactiveCustomComponents` now defaults to true. If custom components have been declared imperatively, they should be migrated as the imperative behaviour was deprecated in v31.1. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
+{% /if %}
 
 ### Localisation
 
