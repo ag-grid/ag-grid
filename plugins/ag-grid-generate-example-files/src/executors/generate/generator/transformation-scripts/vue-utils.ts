@@ -55,7 +55,7 @@ export function convertTemplate(template: string) {
         template = template.replace(new RegExp(`on${event}=`, 'g'), `v-on:${event}=`);
     });
 
-    template = template.replace(/\(event\)/g, '($event)');
+    template = template.replace(/\(event\)/g, '($event)').replace(/\(event\./g, '($event.');
 
     return indentTemplate(template, 2, 2);
 }

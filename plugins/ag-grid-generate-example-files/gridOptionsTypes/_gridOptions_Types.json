@@ -1371,6 +1371,10 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
+  "loading": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []

@@ -213,6 +213,7 @@
     "documentation/ag-grid-docs",
     "external/ag-website-shared",
     "external/ag-shared",
+    "testing/behavioural",
     "ag-grid-generate-example-files"
   ],
   "tags": []

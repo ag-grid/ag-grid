@@ -768,12 +768,16 @@ export interface GridOptions<TData = any> {
 
     // *** Overlays *** //
     /**
-     * Provide a template for 'loading' overlay.
+     * Show or hide the loading overlay.
+     */
+    loading?: boolean;
+
+    /**
+     * Provide a HTML string to override the default loading overlay.
      */
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
-     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
      * @initial
      */
     loadingOverlayComponent?: any;
@@ -781,33 +785,31 @@ export interface GridOptions<TData = any> {
      * Customise the parameters provided to the loading overlay component.
      */
     loadingOverlayComponentParams?: any;
-
     /**
      * Disables the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use `loading=false` instead.
      * @default false
      * @initial
      */
     suppressLoadingOverlay?: boolean;
 
     /**
-     * Provide a template for 'no rows' overlay.
+     * Provide a HTML string to override the default no-rows overlay.
      */
     overlayNoRowsTemplate?: string;
-
     /**
-     * Provide a custom no rows overlay component.
-     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
+     * Provide a custom no-rows overlay component.
      * @initial
      */
     noRowsOverlayComponent?: any;
     /**
-     * Customise the parameters provided to the no rows overlay component.
+     * Customise the parameters provided to the no-rows overlay component.
      */
     noRowsOverlayComponentParams?: any;
-
     /**
-     * Disables the 'no rows' overlay.
+     * Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      * @default false
+     * @initial
      */
     suppressNoRowsOverlay?: boolean;
 

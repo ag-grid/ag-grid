@@ -799,6 +799,12 @@
                 "url": "./overlays/"
             }
         },
+        "loading": {
+            "more": {
+                "name": "Loading Overlay",
+                "url": "./overlays/#loading-overlay"
+            }
+        },
         "overlayLoadingTemplate": {
             "more": {
                 "name": "Custom Overlays",
@@ -818,7 +824,12 @@
                 "url": "./overlays/"
             }
         },
-        "suppressLoadingOverlay": {},
+        "suppressNoRowsOverlay": {
+            "more": {
+                "name": "No rows overlay",
+                "url": "./overlays/#no-rows-overlay"
+            }
+        },
         "overlayNoRowsTemplate": {
             "more": {
                 "name": "Custom Overlays",
@@ -837,8 +848,7 @@
                 "name": "Overlay Component",
                 "url": "./overlays/"
             }
-        },
-        "suppressNoRowsOverlay": {}
+        }
     },
     "nav": {
         "meta": {

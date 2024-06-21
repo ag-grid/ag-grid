@@ -100,7 +100,8 @@
       "documentation/update-algolia-indices",
       "plugins/ag-grid-generate-code-reference-files",
       "plugins/ag-grid-generate-example-files",
-      "plugins/ag-grid-task-autogen"
+      "plugins/ag-grid-task-autogen",
+      "testing/behavioural"
     ],
     "nohoist": [
       "**/@vue/**",

@@ -786,11 +786,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public debug: boolean | undefined = undefined;
-    /** Provide a template for 'loading' overlay.
+    /** Show or hide the loading overlay.
+     */
+    @Input() public loading: boolean | undefined = undefined;
+    /** Provide a HTML string to override the default loading overlay.
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
-     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
      * @initial
      */
     @Input() public loadingOverlayComponent: any = undefined;
@@ -798,23 +800,24 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use `loading=false` instead.
      * @default false
      * @initial
      */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
-    /** Provide a template for 'no rows' overlay.
+    /** Provide a HTML string to override the default no-rows overlay.
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
-    /** Provide a custom no rows overlay component.
-     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
+    /** Provide a custom no-rows overlay component.
      * @initial
      */
     @Input() public noRowsOverlayComponent: any = undefined;
-    /** Customise the parameters provided to the no rows overlay component.
+    /** Customise the parameters provided to the no-rows overlay component.
      */
     @Input() public noRowsOverlayComponentParams: any = undefined;
-    /** Disables the 'no rows' overlay.
+    /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      * @default false
+     * @initial
      */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Set whether pagination is enabled.
@@ -2145,5 +2148,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';
+    static ngAcceptInputType_loading: boolean | null | '';
     // @END@
 }

@@ -95,8 +95,8 @@ const GridPreview = () => {
                                                 ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
                                         }, 1);
                                     }
-                                    if (config.loadingOverlay) {
-                                        api.showLoadingOverlay();
+                                    if (config.loadingOverlay !== undefined) {
+                                        api.setGridOption('loading', config.loadingOverlay);
                                     }
                                 }}
                                 initialState={{
