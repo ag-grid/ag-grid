@@ -71,6 +71,8 @@ The following props are passed to the custom filter components (`CustomFilterPro
 ### Filter Callbacks
 
 The following callbacks can be passed to the `useGridFilter` hook (`CustomFilterCallbacks` interface). The hook must be used for filters to work. The `doesFilterPass` callback is mandatory, but all others are optional.
+
+Note that `doesFilterPass` is only called with the [Client-Side Row Model](./row-models/). If being used exclusively with other row models, it can just return `true` as the filtering logic is performed on the server.
 {% /if %}
 
 {% if isFramework("react") %}
