@@ -27,11 +27,11 @@ interface DataState {
 const licenseDataState = {
     validGridLicense: {
         getIsState: ({ licensedProducts }: DataState) => !licensedProducts.charts && licensedProducts.grid,
-        message: `Valid license key. Includes AG Grid Enterprise`,
+        message: `Valid AG Grid Enterprise license key`,
     },
     validChartsLicense: {
         getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && !licensedProducts.grid,
-        message: `Valid license key. Includes AG Charts Enterprise`,
+        message: `Valid AG Charts Enterprise license key`,
     },
     validIntegratedChartsLicense: {
         getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && licensedProducts.grid,
@@ -66,13 +66,13 @@ const licenseDataState = {
         getIsState: ({ userLicense, userLicenseIsExpired }: DataState) => {
             return hasValue(userLicense) && userLicenseIsExpired;
         },
-        message: 'This license key is expired and cannot be used with the latest version',
+        message: 'This license key has expired and cannot be used with the latest version',
     },
     expiredTrialError: {
         getIsState: ({ userLicense, userLicenseTrialIsExpired }: DataState) => {
             return hasValue(userLicense) && userLicenseTrialIsExpired;
         },
-        message: 'This trial license key is expired and can no longer be used',
+        message: 'This trial license key has expired and can no longer be used',
     },
 };
 
