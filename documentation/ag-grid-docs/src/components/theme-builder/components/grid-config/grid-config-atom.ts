@@ -2,13 +2,12 @@ import { useAtom, useAtomValue } from 'jotai';
 import { useMemo, useRef } from 'react';
 
 import { atomWithJSONStorage } from '../../model/JSONStorage';
-import { type GridConfig, buildGridOptions } from './grid-options';
+import { type GridConfig, buildGridOptions, defaultConfigFields } from './grid-options';
 
-const gridConfigAtom = atomWithJSONStorage<GridConfig>('grid-config', {
-    columnResizing: true,
-    pagination: true,
-    rowSelection: true,
-});
+export const gridConfigAtom = atomWithJSONStorage<GridConfig>(
+    'grid-config',
+    Object.fromEntries(defaultConfigFields.map((field) => [field, true]))
+);
 
 export const useGridConfigAtom = () => useAtom(gridConfigAtom);
 
