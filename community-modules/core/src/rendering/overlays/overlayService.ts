@@ -48,7 +48,6 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
         const loading = this.gos.get('loading');
         if (loading !== undefined && !loading) {
-            _warnOnce('showLoadingOverlay has no effect when loading=false');
             return;
         }
 
@@ -102,15 +101,13 @@ export class OverlayService extends BeanStub implements NamedBean {
         let loadingVisible = false;
 
         const loading = this.gos.get('loading');
-        if (this.gos.get('suppressLoadingOverlay')) {
+        if (!this.gos.get('suppressLoadingOverlay')) {
             if (loading) {
-                _warnOnce('setting loading=true has no effect when suppressLoadingOverlay=true');
+                loadingVisible = true;
+            } else if (loading === undefined) {
+                loadingVisible =
+                    !this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'));
             }
-        } else if (loading) {
-            loadingVisible = true;
-        } else if (loading === undefined) {
-            loadingVisible =
-                !this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'));
         }
 
         if (loadingVisible) {
