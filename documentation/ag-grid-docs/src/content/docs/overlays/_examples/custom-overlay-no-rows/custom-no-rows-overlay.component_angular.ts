@@ -2,6 +2,8 @@ import type { INoRowsOverlayAngularComp } from '@ag-grid-community/angular';
 import type { INoRowsOverlayParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
 
+type CustomNoRowsOverlayParams = INoRowsOverlayParams & { noRowsMessageFunc: () => string };
+
 @Component({
     standalone: true,
     template: ` <div class="ag-overlay-loading-center" style="background-color: #b4bebe;" role="presentation">
@@ -9,9 +11,13 @@ import { Component } from '@angular/core';
     </div>`,
 })
 export class CustomNoRowsOverlay implements INoRowsOverlayAngularComp {
-    public params!: INoRowsOverlayParams & { noRowsMessageFunc: () => string };
+    public params!: CustomNoRowsOverlayParams;
 
-    agInit(params: INoRowsOverlayParams & { noRowsMessageFunc: () => string }): void {
+    agInit(params: CustomNoRowsOverlayParams): void {
+        this.refresh(params);
+    }
+
+    refresh(params: CustomNoRowsOverlayParams): void {
         this.params = params;
     }
 }
