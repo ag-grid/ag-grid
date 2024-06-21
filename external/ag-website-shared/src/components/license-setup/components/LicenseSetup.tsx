@@ -55,6 +55,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
         licenseState,
+        licenseInvalidErrors,
+        licenseValidMessage,
     } = useLicenseData();
     const dependenciesSnippet = useMemo(
         () =>
@@ -96,24 +98,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         [seedRepos, isIntegratedCharts, framework, importType]
     );
 
-    const licenseValidKeys: LicenseStateKey[] = [
-        'validGridLicense',
-        'validChartsLicense',
-        'validIntegratedChartsLicense',
-    ];
-    const licenseInvalidKeys: LicenseStateKey[] = [
-        'expiredError',
-        'expiredTrialError',
-        'userLicenseError',
-        'v2LicenseError',
-    ];
-    const licenseInvalidErrors = Object.entries(licenseState)
-        .filter(([key, value]) => hasValue(value) && licenseInvalidKeys.includes(key as LicenseStateKey))
-        .map(([_, message]) => message);
-    const licenseValidMessage = Object.entries(licenseState)
-        .filter(([key, value]) => hasValue(value) && licenseValidKeys.includes(key as LicenseStateKey))
-        .map(([_, message]) => message);
-
     return (
         <>
             <form>
@@ -140,10 +124,10 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 </div>
 
                 {licenseValidMessage.map((message) => (
-                    <Success>{message}</Success>
+                    <Success key={message}>{message}</Success>
                 ))}
                 {licenseInvalidErrors.map((message) => (
-                    <Warning>
+                    <Warning key={message}>
                         {message}. <EmailSales />
                     </Warning>
                 ))}

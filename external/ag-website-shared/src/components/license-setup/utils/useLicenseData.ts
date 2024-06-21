@@ -26,15 +26,18 @@ interface DataState {
 
 const licenseDataState = {
     validGridLicense: {
-        getIsState: ({ licensedProducts }: DataState) => !licensedProducts.charts && licensedProducts.grid,
+        getIsState: ({ userLicense, licensedProducts }: DataState) =>
+            hasValue(userLicense) && !licensedProducts.charts && licensedProducts.grid,
         message: `Valid AG Grid Enterprise license key`,
     },
     validChartsLicense: {
-        getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && !licensedProducts.grid,
+        getIsState: ({ userLicense, licensedProducts }: DataState) =>
+            hasValue(userLicense) && licensedProducts.charts && !licensedProducts.grid,
         message: `Valid AG Charts Enterprise license key`,
     },
     validIntegratedChartsLicense: {
-        getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && licensedProducts.grid,
+        getIsState: ({ userLicense, licensedProducts }: DataState) =>
+            hasValue(userLicense) && licensedProducts.charts && licensedProducts.grid,
         message: `Valid Enterprise Bundle license key. Includes AG Grid Enterprise and AG Chart Enterprise`,
     },
     minimalModulesInfo: {
@@ -75,6 +78,14 @@ const licenseDataState = {
         message: 'This trial license key has expired and can no longer be used',
     },
 };
+
+const licenseValidKeys: LicenseStateKey[] = ['validGridLicense', 'validChartsLicense', 'validIntegratedChartsLicense'];
+const licenseInvalidKeys: LicenseStateKey[] = [
+    'expiredError',
+    'expiredTrialError',
+    'userLicenseError',
+    'v2LicenseError',
+];
 
 const useLicenseState = ({
     userLicense,
@@ -240,6 +251,17 @@ export const useLicenseData = () => {
         updateIsIntegratedChartsWithUrlUpdate(isIntegrated);
     }, [licenseDetails]);
 
+    const licenseInvalidErrors = useMemo(() => {
+        return Object.entries(licenseState)
+            .filter(([key, value]) => hasValue(value) && licenseInvalidKeys.includes(key as LicenseStateKey))
+            .map(([_, message]) => message);
+    }, [licenseState]);
+    const licenseValidMessage = useMemo(() => {
+        return Object.entries(licenseState)
+            .filter(([key, value]) => hasValue(value) && licenseValidKeys.includes(key as LicenseStateKey))
+            .map(([_, message]) => message);
+    }, [licenseState]);
+
     return {
         userLicense,
         setUserLicense,
@@ -256,5 +278,7 @@ export const useLicenseData = () => {
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
         licenseState,
+        licenseInvalidErrors,
+        licenseValidMessage,
     };
 };
