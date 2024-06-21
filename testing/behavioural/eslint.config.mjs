@@ -1,3 +1,3 @@
-import rootESLint from '../eslint.config.mjs';
+import rootESLint from '../../eslint.config.mjs';
 
 export default [...rootESLint];
