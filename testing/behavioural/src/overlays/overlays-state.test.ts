@@ -67,7 +67,7 @@ describe('ag-grid overlays state', () => {
             expect(hasNoRowsOverlay()).toBeFalsy();
         });
 
-        test('should hide the overlaloadingOverlayComponenty when rows are added', () => {
+        test('should hide the loading overlay when rows are added', () => {
             const api = createMyGrid({ columnDefs });
             expect(hasLoadingOverlay()).toBeTruthy();
 
