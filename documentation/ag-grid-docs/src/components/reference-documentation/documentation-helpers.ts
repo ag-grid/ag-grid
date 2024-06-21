@@ -73,7 +73,11 @@ export function getTypeUrl(type, framework) {
 
 export function getLinkedType(type, framework) {
     if (!Array.isArray(type)) {
-        type = [...type.split('|')];
+        if (typeof type === 'string') {
+            type = [...type.split('|')];
+        } else {
+            type = [type];
+        }
     }
 
     // Extract all the words to enable support for Union types
