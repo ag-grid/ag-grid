@@ -11,7 +11,7 @@ import { type FunctionComponent, useMemo } from 'react';
 
 import { getBootstrapSnippet, getDependenciesSnippet, getNpmInstallSnippet } from '../utils/getSnippets';
 import { hasValue } from '../utils/hasValue';
-import { type LicenseStateKey, useLicenseData } from '../utils/useLicenseData';
+import { useLicenseData } from '../utils/useLicenseData';
 import styles from './LicenseSetup.module.scss';
 
 interface SeedRepo {

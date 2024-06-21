@@ -254,12 +254,12 @@ export const useLicenseData = () => {
     const licenseInvalidErrors = useMemo(() => {
         return Object.entries(licenseState)
             .filter(([key, value]) => hasValue(value) && licenseInvalidKeys.includes(key as LicenseStateKey))
-            .map(([_, message]) => message);
+            .map(([, message]) => message);
     }, [licenseState]);
     const licenseValidMessage = useMemo(() => {
         return Object.entries(licenseState)
             .filter(([key, value]) => hasValue(value) && licenseValidKeys.includes(key as LicenseStateKey))
-            .map(([_, message]) => message);
+            .map(([, message]) => message);
     }, [licenseState]);
 
     return {
