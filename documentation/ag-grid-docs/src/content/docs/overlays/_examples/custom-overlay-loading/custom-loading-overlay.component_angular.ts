@@ -2,6 +2,7 @@ import type { ILoadingOverlayAngularComp } from '@ag-grid-community/angular';
 import type { ILoadingOverlayParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
 
+type CustomLoadingOverlayParams = ILoadingOverlayParams & { loadingMessage: string };
 @Component({
     standalone: true,
     template: `
@@ -15,9 +16,13 @@ import { Component } from '@angular/core';
     `,
 })
 export class CustomLoadingOverlay implements ILoadingOverlayAngularComp {
-    public params!: ILoadingOverlayParams & { loadingMessage: string };
+    public params!: CustomLoadingOverlayParams;
 
-    agInit(params: ILoadingOverlayParams & { loadingMessage: string }): void {
+    agInit(params: CustomLoadingOverlayParams): void {
+        this.refresh(params);
+    }
+
+    refresh(params: CustomLoadingOverlayParams): void {
         this.params = params;
     }
 }
