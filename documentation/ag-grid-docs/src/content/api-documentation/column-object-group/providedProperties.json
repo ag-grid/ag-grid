@@ -1,0 +1,26 @@
+{
+    "_config_": {
+        "codeSrc": "providedColumnGroup.AUTO.json"
+    },
+    "providedMethods": {
+        "meta": {
+            "displayName": "ProvidedColumnGroup Methods"
+        },
+        "getOriginalParent": {},
+        "getLevel": {},
+        "isPadding": {},
+        "isExpandable": {},
+        "isExpanded": {},
+
+        "getGroupId": {},
+        "getChildren": {},
+        "getColGroupDef": {},
+        "getLeafColumns": {}
+    },
+    "providedProperties": {
+        "meta": {
+            "displayName": "ProvidedColumnGroup Properties"
+        },
+        "isColumn": {}
+    }
+}

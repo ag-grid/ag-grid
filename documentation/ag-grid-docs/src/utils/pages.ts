@@ -44,6 +44,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     'reference/column-options.AUTO.json': 'dist/documentation/reference/column-options.AUTO.json',
     'reference/column.AUTO.json': 'dist/documentation/reference/column.AUTO.json',
     'reference/columnGroup.AUTO.json': 'dist/documentation/reference/columnGroup.AUTO.json',
+    'reference/providedColumnGroup.AUTO.json': 'dist/documentation/reference/providedColumnGroup.AUTO.json',
     'reference/doc-interfaces.AUTO.json': 'dist/documentation/reference/doc-interfaces.AUTO.json',
     'reference/grid-api.AUTO.json': 'dist/documentation/reference/grid-api.AUTO.json',
     'reference/grid-options.AUTO.json': 'dist/documentation/reference/grid-options.AUTO.json',
