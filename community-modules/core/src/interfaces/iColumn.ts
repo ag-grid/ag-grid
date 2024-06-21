@@ -124,6 +124,9 @@ export interface Column<TValue = any>
     /** Returns `true` if this column and row node can be dragged. */
     isRowDrag(rowNode: IRowNode): boolean;
 
+    /** Returns `true` if this column and row node allows dragging for native drag and drop. */
+    isDndSource(rowNode: IRowNode): boolean;
+
     /** Returns `true` if this column and row node has checkbox selection. */
     isCellCheckboxSelection(rowNode: IRowNode): boolean;
 
