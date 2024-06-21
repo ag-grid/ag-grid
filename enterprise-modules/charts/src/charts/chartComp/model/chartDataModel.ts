@@ -177,7 +177,7 @@ export class ChartDataModel extends BeanStub {
         this.setValueCellRange(valueCols, allColsFromRanges, setColsFromRange);
 
         if (!updatedColState && !maintainColState) {
-            this.resetColumnState(fromModelUpdate);
+            this.resetColumnState(fromModelUpdate || setColsFromRange);
             // dimension / category cell range could be out of sync after resetting column state when row grouping
             this.syncDimensionCellRange();
         }
