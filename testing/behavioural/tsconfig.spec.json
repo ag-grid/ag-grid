@@ -5,8 +5,7 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "module": "commonjs",
-    "types": ["jest", "node"],
-    "composite": true
+    "types": ["jest", "node"]
   },
   "include": ["jest.config.ts", "jest.setup.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
 }
