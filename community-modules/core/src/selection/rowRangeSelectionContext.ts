@@ -131,10 +131,17 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
     public extend(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
         const root = this.getRoot();
 
-        // If the root node is no longer retrievable, we cannot iterate from the root
-        // to the given `node`. So we keep the existing selection, plus the given `node`
+        // If the root node is null, we cannot iterate from the root to the given `node`.
+        // So we keep the existing selection, plus the given `node`, plus any leaf children.
         if (root == null) {
-            return { keep: this.getRange().concat(node), discard: [] };
+            const keep = this.getRange().slice();
+            node.depthFirstSearch((node) => !node.group && keep.push(node));
+            keep.push(node);
+
+            // We now have a node we can use as the root of the selection
+            this.setRoot(node);
+
+            return { keep, discard: [] };
         }
 
         const newRange = this.rowModel.getNodesInRangeForSelection(root, node);

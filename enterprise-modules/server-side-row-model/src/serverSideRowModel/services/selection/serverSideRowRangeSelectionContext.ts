@@ -100,8 +100,24 @@ export class ServerSideRowRangeSelectionContext implements ISelectionContext<str
      * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
      */
     public extend(node: string): { keep: RowNode[]; discard: RowNode[] } {
+        // If the root ID is null, this is the first selection.
+        // That means we add the given `node` plus any leaf children to the selection
+        if (this.root == null) {
+            const keep = this.getRange().slice(); // current range should be empty but include it anyway
+            const rowNode = this.rowModel.getRowNode(node);
+            if (rowNode) {
+                rowNode?.depthFirstSearch((node) => !node.group && keep.push(node));
+                keep.push(rowNode);
+            }
+
+            // We now have a node we can use as the root of the selection
+            this.setRoot(node);
+
+            return { keep, discard: [] };
+        }
+
         const rowNode = this.rowModel.getRowNode(node);
-        const rootNode = this.rowModel.getRowNode(this.root!);
+        const rootNode = this.rowModel.getRowNode(this.root);
 
         if (rowNode == null) {
             return { keep: this.getRange(), discard: [] };
