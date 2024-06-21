@@ -113,7 +113,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode) {
-                    const partition = this.selectionCtx.extend(node);
+                    const partition = this.selectionCtx.extend(node, this.groupSelectsChildren);
                     if (newSelectionValue) {
                         this.selectRange(partition.discard, false, source);
                     }
