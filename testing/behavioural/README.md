@@ -11,7 +11,13 @@ Mocking is to be avoided as much as possible here, and the use of fakes is prefe
 To execute test, run in the root folder:
 
 ```sh
-npx jest -c ./test/jest.config.js
+nx test ag-behavioural-testing
+```
+
+To pass arguments to jest, for example to execute only a specific test, use:
+
+```sh
+npx jest -c ./testing/behavioural/jest.config.js <additional arguments>
 ```
 
 ## References:
