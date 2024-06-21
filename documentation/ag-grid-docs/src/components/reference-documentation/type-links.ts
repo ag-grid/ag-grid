@@ -26,6 +26,7 @@ const TYPE_LINKS: Record<string, string> = {
     ColDef: './column-properties/',
     ColGroupDef: './column-properties/',
     AbstractColDef: './column-properties/',
+    ColumnGroup: './column-object-group/',
     Column: './column-object/',
     ColumnEventType: './column-object/#reference-events',
     CreatePivotChartParams: './integrated-charts-api-pivot-chart/#pivot-chart-api',

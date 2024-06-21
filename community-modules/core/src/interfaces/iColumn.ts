@@ -74,6 +74,7 @@ export interface Column<TValue = any>
      */
     getUserProvidedColDef(): ColDef<any, TValue> | null;
 
+    /** Returns `true` if this column group is being used to display a row group value. */
     isRowGroupDisplayed(colId: string): boolean;
 
     /** Returns `true` if column is a primary column, `false` if secondary. Secondary columns are used for pivoting. */
@@ -82,11 +83,8 @@ export interface Column<TValue = any>
     /** Returns `true` if column filtering is allowed. */
     isFilterAllowed(): boolean;
 
-    isFieldContainsDots(): boolean;
-
+    /** Returns `true` if a tooltip is enabled for this column. */
     isTooltipEnabled(): boolean;
-
-    isTooltipFieldContainsDots(): boolean;
 
     /** Add an event listener to the column. */
     addEventListener<T extends ColumnEventName>(eventType: T, userListener: (params: ColumnEvent<T>) => void): void;
@@ -94,6 +92,7 @@ export interface Column<TValue = any>
     /** Remove event listener from the column. */
     removeEventListener<T extends ColumnEventName>(eventType: T, userListener: (params: ColumnEvent<T>) => void): void;
 
+    /** Returns `true` if navigation is suppressed for the given column and rowNode. */
     isSuppressNavigable(rowNode: IRowNode): boolean;
 
     /**
@@ -101,15 +100,17 @@ export interface Column<TValue = any>
      */
     isCellEditable(rowNode: IRowNode): boolean;
 
+    /** Returns `true` if the fill handle is suppressed. */
     isSuppressFillHandle(): boolean;
 
+    /** Returns `true` if the column has autoHeight enabled. */
     isAutoHeight(): boolean;
 
+    /** Returns `true` if the column header has autoHeight enabled. */
     isAutoHeaderHeight(): boolean;
 
+    /** Returns `true` if this column and row node can be dragged. */
     isRowDrag(rowNode: IRowNode): boolean;
-
-    isDndSource(rowNode: IRowNode): boolean;
 
     isCellCheckboxSelection(rowNode: IRowNode): boolean;
 
@@ -118,17 +119,8 @@ export interface Column<TValue = any>
     /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
     getSort(): SortDirection | undefined;
 
-    isMenuVisible(): boolean;
-
+    /** Returns `true` if sorting is enabled for this column via the `sortable` property. */
     isSortable(): boolean;
-
-    isSortAscending(): boolean;
-
-    isSortDescending(): boolean;
-
-    isSortNone(): boolean;
-
-    isSorting(): boolean;
 
     getSortIndex(): number | null | undefined;
 

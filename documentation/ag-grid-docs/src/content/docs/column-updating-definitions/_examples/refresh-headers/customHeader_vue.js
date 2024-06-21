@@ -42,9 +42,10 @@ export default {
 
         onSortChanged() {
             this.ascSort = this.descSort = this.noSort = 'inactive';
-            if (this.params.column.isSortAscending()) {
+            const sort = this.params.column.getSort();
+            if (sort === 'asc') {
                 this.ascSort = 'active';
-            } else if (this.params.column.isSortDescending()) {
+            } else if (sort === 'desc') {
                 this.descSort = 'active';
             } else {
                 this.noSort = 'active';

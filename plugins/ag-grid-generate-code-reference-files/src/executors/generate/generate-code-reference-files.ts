@@ -482,3 +482,21 @@ export function getColumn(columnFile: string) {
 
     return members;
 }
+
+export function getColumnGroup(columnFile: string) {
+    const srcFile = parseFile(columnFile);
+    const columnNode = findNode('ColumnGroup', srcFile);
+    const iHeaderColumnNode = findNode('IHeaderColumn', srcFile);
+
+    let members = {};
+    const addToMembers = (node) => {
+        ts.forEachChild(node, (n) => {
+            members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
+        });
+    };
+
+    addToMembers(columnNode);
+    addToMembers(iHeaderColumnNode);
+
+    return members;
+}

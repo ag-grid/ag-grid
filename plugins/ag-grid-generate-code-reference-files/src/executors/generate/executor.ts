@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
 import { inputGlob, writeJSONFile } from '../../executors-utils';
-import { getGridOptions, getInterfaces } from './generate-code-reference-files';
+import { getColumnGroup, getGridOptions, getInterfaces } from './generate-code-reference-files';
 import { getGridApi } from './generate-code-reference-files';
 import { getRowNode } from './generate-code-reference-files';
 import { getColumnOptions } from './generate-code-reference-files';
@@ -55,6 +55,7 @@ async function generateFile(options: ExecutorOptions) {
         await writeJSONFile(distFolder + '/row-node.AUTO.json', getRowNode(rowNodeFile));
         await writeJSONFile(distFolder + '/column-options.AUTO.json', getColumnOptions(colDefFile, filterFile));
         await writeJSONFile(distFolder + '/column.AUTO.json', getColumn(columnFile));
+        await writeJSONFile(distFolder + '/columnGroup.AUTO.json', getColumnGroup(columnFile));
         await writeJSONFile(distFolder + '/interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
         await writeJSONFile(distFolder + '/doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
     };

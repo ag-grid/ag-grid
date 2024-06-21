@@ -472,22 +472,6 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         return !!this.getColDefValue('sortable');
     }
 
-    public isSortAscending(): boolean {
-        return this.sort === 'asc';
-    }
-
-    public isSortDescending(): boolean {
-        return this.sort === 'desc';
-    }
-
-    public isSortNone(): boolean {
-        return _missing(this.sort);
-    }
-
-    public isSorting(): boolean {
-        return _exists(this.sort);
-    }
-
     public getSortIndex(): number | null | undefined {
         return this.sortIndex;
     }
