@@ -2,10 +2,7 @@
     "_config_": {
         "codeSrc": "columnGroup.AUTO.json"
     },
-    "methods": {
-        "meta": {
-            "displayName": "Column Group Methods"
-        },
+    "ColumnGroup": {
         "getColGroupDef": {},
         "getGroupId": {},
         "getProvidedColumnGroup": {},
@@ -17,12 +14,7 @@
         "isExpandable": {},
         "isExpanded": {},
         "isPadding": {},
-        "getPaddingLevel": {}
-    },
-    "Properties": {
-        "meta": {
-            "displayName": "Column Group Properties"
-        },
+        "getPaddingLevel": {},
         "isColumn": {}
     }
 }

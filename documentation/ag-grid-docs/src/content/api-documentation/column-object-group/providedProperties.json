@@ -2,10 +2,7 @@
     "_config_": {
         "codeSrc": "providedColumnGroup.AUTO.json"
     },
-    "providedMethods": {
-        "meta": {
-            "displayName": "ProvidedColumnGroup Methods"
-        },
+    "ProvidedColumnGroup": {
         "getOriginalParent": {},
         "getLevel": {},
         "isPadding": {},
@@ -15,12 +12,7 @@
         "getGroupId": {},
         "getChildren": {},
         "getColGroupDef": {},
-        "getLeafColumns": {}
-    },
-    "providedProperties": {
-        "meta": {
-            "displayName": "ProvidedColumnGroup Properties"
-        },
+        "getLeafColumns": {},
         "isColumn": {}
     }
 }
