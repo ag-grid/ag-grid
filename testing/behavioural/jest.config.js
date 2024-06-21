@@ -1,4 +1,7 @@
-module.exports = {
+const path = require('path');
+
+/** @type {import('jest').Config} */
+const config = {
     roots: ['<rootDir>/src'],
     transform: {
         '^.+\\.tsx?$': [
@@ -12,4 +15,12 @@ module.exports = {
     moduleFileExtensions: ['js', 'json', 'jsx', 'node', 'ts', 'tsx'],
     testEnvironment: 'jsdom',
     preset: 'ts-jest',
+
+    moduleNameMapper: {
+        // remap react to version 18 as @ag-grid-community/react by default loads an older version
+        '^react$': path.dirname(require.resolve('react/package.json')),
+        '^react-dom$': path.dirname(require.resolve('react-dom/package.json')),
+    },
 };
+
+module.exports = config;
