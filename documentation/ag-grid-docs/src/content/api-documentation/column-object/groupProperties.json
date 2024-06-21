@@ -6,18 +6,17 @@
         "meta": {
             "displayName": "Column Group Methods"
         },
+        "getColGroupDef": {},
         "getGroupId": {},
-        "getPartId": {},
-        "isResizable": {},
+        "getProvidedColumnGroup": {},
+        "getChildren": {},
         "getDisplayedChildren": {},
         "getLeafColumns": {},
         "getDisplayedLeafColumns": {},
-        "getColGroupDef": {},
-        "isPadding": {},
+        "isResizable": {},
         "isExpandable": {},
         "isExpanded": {},
-        "getChildren": {},
-        "getProvidedColumnGroup": {},
+        "isPadding": {},
         "getPaddingLevel": {}
     },
     "properties": {
