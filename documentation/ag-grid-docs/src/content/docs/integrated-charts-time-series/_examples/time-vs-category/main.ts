@@ -38,7 +38,7 @@ const gridOptions: GridOptions = {
             navigator: {
                 enabled: true,
                 height: 20,
-                margin: 25,
+                spacing: 25,
             },
             axes: {
                 time: {
