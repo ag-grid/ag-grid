@@ -457,19 +457,27 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         this.dispatchStateUpdatedEvent('sort');
     }
 
-    public setMenuVisible(visible: boolean, source: ColumnEventType): void {
-        if (this.menuVisible !== visible) {
-            this.menuVisible = visible;
-            this.columnEventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
-        }
-    }
-
-    public isMenuVisible(): boolean {
-        return this.menuVisible;
-    }
-
     public isSortable(): boolean {
         return !!this.getColDefValue('sortable');
+    }
+
+    /** @deprecated v32 use col.getSort() === 'asc */
+    public isSortAscending(): boolean {
+        return this.sort === 'asc';
+    }
+
+    /** @deprecated v32 use col.getSort() === 'desc */
+    public isSortDescending(): boolean {
+        return this.sort === 'desc';
+    }
+    /** @deprecated v32 use col.getSort() === undefined */
+    public isSortNone(): boolean {
+        return _missing(this.sort);
+    }
+
+    /** @deprecated v32 use col.getSort() !== undefined */
+    public isSorting(): boolean {
+        return _exists(this.sort);
     }
 
     public getSortIndex(): number | null | undefined {
@@ -479,6 +487,16 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     public setSortIndex(sortOrder?: number | null): void {
         this.sortIndex = sortOrder;
         this.dispatchStateUpdatedEvent('sortIndex');
+    }
+    public setMenuVisible(visible: boolean, source: ColumnEventType): void {
+        if (this.menuVisible !== visible) {
+            this.menuVisible = visible;
+            this.columnEventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
+        }
+    }
+
+    public isMenuVisible(): boolean {
+        return this.menuVisible;
     }
 
     public setAggFunc(aggFunc: string | IAggFunc | null | undefined): void {

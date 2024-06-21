@@ -124,8 +124,10 @@ export interface Column<TValue = any>
     /** Returns `true` if this column and row node can be dragged. */
     isRowDrag(rowNode: IRowNode): boolean;
 
+    /** Returns `true` if this column and row node has checkbox selection. */
     isCellCheckboxSelection(rowNode: IRowNode): boolean;
 
+    /** Returns `true` if paste is suppress for this column and row node. */
     isSuppressPaste(rowNode: IRowNode): boolean;
 
     /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
@@ -134,6 +136,7 @@ export interface Column<TValue = any>
     /** Returns `true` if sorting is enabled for this column via the `sortable` property. */
     isSortable(): boolean;
 
+    /** Returns the sort index for this column. */
     getSortIndex(): number | null | undefined;
 
     /** If aggregation is set for the column, returns the aggregation function. */
@@ -205,6 +208,7 @@ export interface Column<TValue = any>
 
     isAllowRowGroup(): boolean;
 
+    /** isColumn is always `true`. Used to distinguish between columns and column groups.  */
     isColumn: true;
 }
 
@@ -251,7 +255,7 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColum
     /** Returns the provided column group */
     getProvidedColumnGroup(): ProvidedColumnGroup;
 
-    /** isColumn is always `false` as this is a group column */
+    /** isColumn is always `false`. Used to distinguish between columns and column groups.  */
     isColumn: false;
 }
 
@@ -290,6 +294,6 @@ export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter<AgPr
     /** Returns the leaf columns of this group. */
     getLeafColumns(): Column[];
 
-    /** isColumn is always `false` as this is a group column */
+    /** isColumn is always `false`. Used to distinguish between columns and column groups.  */
     isColumn: false;
 }
