@@ -18,28 +18,40 @@ interface IHeaderColumn<TValue, TEventType extends string> extends IEventEmitter
 
     /** Returns the current width of the column. If the column is resized, the actual width is the new size. */
     getActualWidth(): number;
+    /** Returns the minWidth of the column or the default min width. */
     getMinWidth(): number | null | undefined;
+    /** Returns the left position of the column. */
     getLeft(): number | null;
+    /** Returns the underlying definition. */
     getDefinition(): AbstractColDef<any, TValue> | null;
+    /** Returns whether this column should be shown when the group is open / closed or undefined if its always shown. */
     getColumnGroupShow(): ColumnGroupShowType | undefined;
 
     /** Returns the parent column group, if column grouping is active. */
     getParent(): ColumnGroup | null;
+
+    /** Returns `true` if this group is resizable. */
     isResizable(): boolean;
+
+    /** Returns `true` if this is an empty group. */
     isEmptyGroup(): boolean;
+
+    /** Returns `true` while the column is being moved. */
     isMoving(): boolean;
+
+    /** Returns the pinned state of the column. */
     getPinned(): ColumnPinnedType;
 }
 
 interface IProvidedColumn {
+    /** Returns `true` if the column is visible. */
     isVisible(): boolean;
+    /** Returns the instance id of the column. */
     getInstanceId(): ColumnInstanceId;
+    /** Returns whether this column should be shown when the group is open / closed or undefined if its always shown. */
     getColumnGroupShow(): ColumnGroupShowType | undefined;
 
-    /**
-     * Returns the unique ID for the column.
-     *
-     */
+    /** Returns the unique ID for the column. */
     getId(): string;
 }
 
@@ -200,32 +212,46 @@ export type ColumnGroupShowType = 'open' | 'closed';
 
 export type AgColumnGroupEvent = 'leftChanged' | 'displayedChildrenChanged';
 export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColumnGroupEvent> {
+    /** Returns the group column id. */
     getGroupId(): string;
 
-    getPartId(): number;
-
+    /** Returns `true` if this group is resizable. */
     isResizable(): boolean;
 
+    /** Returns the displayed children of this group. */
     getDisplayedChildren(): (Column | ColumnGroup)[] | null;
 
+    /** Returns the leaf columns of this group. */
     getLeafColumns(): Column[];
 
+    /** Returns the displayed leaf columns of this group. */
     getDisplayedLeafColumns(): Column[];
 
+    /** Returns the column group definition for this column.
+     * The column group definition will be the result of merging the application provided column group definition with any provided defaults
+     * (e.g. `defaultColGroupDef` grid option.
+     */
     getColGroupDef(): ColGroupDef | null;
 
+    /** Returns `true` if this column group is a padding group that is used to correctly align column groups / children. */
     isPadding(): boolean;
 
-    isExpandable(): boolean;
-
-    isExpanded(): boolean;
-
-    getChildren(): (Column | ColumnGroup)[] | null;
-
-    getProvidedColumnGroup(): ProvidedColumnGroup;
-
+    /** Returns the padding level of this padding group. */
     getPaddingLevel(): number;
 
+    /** Returns `true` if this column group is expandable. */
+    isExpandable(): boolean;
+
+    /** Returns `true` if this column group is expanded. */
+    isExpanded(): boolean;
+
+    /** Returns the children of this group if they exist or `null` */
+    getChildren(): (Column | ColumnGroup)[] | null;
+
+    /** Returns the provided column group */
+    getProvidedColumnGroup(): ProvidedColumnGroup;
+
+    /** isColumn is always `false` as this is a group column */
     isColumn: false;
 }
 
@@ -237,21 +263,33 @@ export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter<AgPr
      */
     getOriginalParent(): ProvidedColumnGroup | null;
 
+    /** Returns the level of this group. */
     getLevel(): number;
 
+    /** Returns `true` if this column group is a padding group that is used to correctly align column groups / children. */
     isPadding(): boolean;
 
+    /** Returns `true` if this column group is expandable. */
     isExpandable(): boolean;
 
+    /** Returns `true` if this column group is expanded. */
     isExpanded(): boolean;
 
+    /** Returns the group column id. */
     getGroupId(): string;
 
+    /** Returns the children of this group. */
     getChildren(): (Column | ProvidedColumnGroup)[];
 
+    /** Returns the column group definition for this column.
+     * The column group definition will be the result of merging the application provided column group definition with any provided defaults
+     * (e.g. `defaultColGroupDef` grid option.
+     */
     getColGroupDef(): ColGroupDef | null;
 
+    /** Returns the leaf columns of this group. */
     getLeafColumns(): Column[];
 
+    /** isColumn is always `false` as this is a group column */
     isColumn: false;
 }

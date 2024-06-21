@@ -622,6 +622,9 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     public getColDef(): ColDef<any, TValue> {
         return this.colDef;
     }
+    public getDefinition(): AbstractColDef<any, TValue> {
+        return this.colDef;
+    }
 
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
         return this.colDef.columnGroupShow;
@@ -637,10 +640,6 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
 
     public getUniqueId(): HeaderColumnId {
         return this.colId;
-    }
-
-    public getDefinition(): AbstractColDef<any, TValue> {
-        return this.colDef;
     }
 
     public getActualWidth(): number {
