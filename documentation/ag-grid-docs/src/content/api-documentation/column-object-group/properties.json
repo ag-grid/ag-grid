@@ -19,7 +19,10 @@
         "isPadding": {},
         "getPaddingLevel": {}
     },
-    "properties": {
+    "Properties": {
+        "meta": {
+            "displayName": "Column Group Properties"
+        },
         "isColumn": {}
     }
 }
