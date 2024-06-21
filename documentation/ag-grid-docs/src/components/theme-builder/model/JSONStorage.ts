@@ -20,14 +20,12 @@ class JSONStorage<T> {
             logErrorMessage(`Failed to parse stored JSON for ${key}: ${storedString}`);
             return initialValue;
         }
-        // TODO validation / deserialization
         return storedValue as T;
     }
     setItem(key: string, newValue: T): void {
         if (newValue === undefined) {
             return this.removeItem(key);
         }
-        // TODO serialisation
         localStorage.setItem(storageKey(key), JSON.stringify(newValue));
     }
     removeItem(key: string): void {

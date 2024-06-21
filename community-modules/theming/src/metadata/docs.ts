@@ -1,5 +1,3 @@
-import { ParamType } from '../theme-types';
-
 const docs: Record<string, string | undefined> = {
     backgroundColor:
         'Background colour of the grid. Many UI elements are semi-transparent, so their colour blends with the background colour.',
@@ -9,17 +7,20 @@ const docs: Record<string, string | undefined> = {
     accentColor:
         "The 'brand colour' for the grid, used wherever a non-neutral colour is required. Selections, focus outlines and checkboxes use the accent colour by default.",
     invalidColor: 'The colour for inputs and UI controls in an invalid state.',
+    colorScheme: 'The colour scheme to apply to browser scrollbars within the grid',
     borderColor: 'Default colour for borders.',
     wrapperBorder: 'Borders around the outside of the grid',
-    headerBorder: 'Borders between and below header rows.',
-    rowBorder: 'Borders between rows.',
-    footerBorder: 'Horizontal borders above footer components like the pagination and status bars',
-    columnBorder: 'Vertical borders separating columns.',
-    columnHeaderBorder: 'Vertical borders separating column headers.',
-    columnHeaderBorderHeight:
-        'Height of the border between column headers. Percentage values are relative to the header height.',
-    pinnedColumnBorder: 'Borders between the grid and columns that are pinned to the left or right',
-    pinnedRowBorder: 'Borders between the grid and rows that are pinned to the top or bottom',
+    headerRowBorder: 'Borders between and below header rows.',
+    rowBorder: 'Horizontal borders between rows.',
+    footerRowBorder: 'Horizontal borders above footer components like the pagination and status bars',
+    columnBorder: 'Vertical borders between columns.',
+    headerColumnBorder: 'Vertical borders between column headers.',
+    headerColumnBorderHeight:
+        'Height of the vertical border between column headers. Percentage values are relative to the header height.',
+    pinnedColumnBorder:
+        'Vertical borders between columns that are pinned to the left or right and the rest of the grid',
+    pinnedRowBorder:
+        'Horizontal borders between the grid and rows that are pinned to the top or bottom and the rest of the grid',
     sidePanelBorder:
         'Borders between the grid and side panels including the column and filter tool bars, and chart settings',
     sideButtonSelectedBorder: 'Border around the selected sidebar button on the side panel',
@@ -61,7 +62,6 @@ const docs: Record<string, string | undefined> = {
     wrapperBorderRadius: 'Rounding of the outermost container around the grid.',
     cellWidgetSpacing:
         'Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes).',
-    labelWidgetSpacing: 'Horizontal spacing between icons and text inside labels, e.g. in the header and sidebar tabs',
     rowGroupIndentSize:
         'The indentation applied to each level of row grouping - deep rows are indented by a multiple of this value.',
     valueChangeDeltaUpColor:

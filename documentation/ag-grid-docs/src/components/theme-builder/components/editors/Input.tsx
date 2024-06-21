@@ -32,14 +32,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
     />
 ));
 
-export type StyledInputProps = {
-    additionalPaddingLeft: number;
+type StyledInputProps = {
+    additionalPaddingLeft?: number;
 };
 
 export const StyledInput = styled('input')`
     width: 100%;
     font-size: 14px;
-    padding-left: ${(props: StyledInputProps) => 8 + props.additionalPaddingLeft}px !important;
+    padding-left: ${(props: StyledInputProps) => 8 + (props.additionalPaddingLeft ?? 0)}px !important;
     &.is-error {
         border-color: var(--color-input-error) !important;
 

@@ -8,6 +8,7 @@ export type Part<T extends string = string> = {
     dependencies: () => Part[];
     // TODO make this Partial<ParamTypes>
     defaults: { [K in T]: K extends Param ? ParamTypes[K] : any };
+    additionalParamNames?: string[];
     css: Array<string | (() => string)>;
 };
 
@@ -30,6 +31,7 @@ export type ParamDefaults<T extends string> = {
 // TODO use valueToCss(param, value) that both validates and converts values in one step
 export type ParamType =
     | 'color'
+    | 'colorScheme'
     | 'length'
     | 'scale'
     | 'border'
@@ -54,6 +56,7 @@ export const getParamType = (param: string): ParamType => {
     if (/[fF]ontWeight$/.test(param)) return 'fontWeight';
     if (/Duration$/.test(param)) return 'duration';
     if (/Display$/.test(param)) return 'display';
+    if (/ColorScheme$|^colorScheme$/.test(param)) return 'colorScheme';
     throw new Error(`Param "${param}" does not have a recognised suffix.`);
 };
 
@@ -69,6 +72,8 @@ const stringOrNumberDirectToCss = (value: unknown): string | Error => {
 
 export type ColorValue = string;
 
+export type ColorSchemeValue = 'inherit' | 'light' | 'dark' | (string & {});
+
 export type LengthValue = string | number;
 
 const lengthValueToCss = (value: unknown): string | Error => {
@@ -83,14 +88,14 @@ export type BorderValue = string | boolean;
 
 const borderValueToCss = (value: BorderValue, param: string) => {
     if (value === true) return 'solid 1px var(--ag-border-color)';
-    if (value === false) return param === 'columnBorder' ? 'solid 1px transparent' : 'false';
+    if (value === false) return param === 'columnBorder' ? 'solid 1px transparent' : 'none';
     if (typeof value === 'string') return value;
     return Error(`Expected a string or boolean`);
 };
 
 export type ShadowValue = string; // TODO object shorthand for common shadows? Or maybe just allow var(accentColor) in value
 
-export type BorderStyleValue = string;
+export type BorderStyleValue = 'none' | 'solid' | 'dotted' | 'dashed' | (string & {});
 
 export type DisplayValue = string | boolean;
 
@@ -119,6 +124,7 @@ export type DurationValue = string;
 
 const paramValidators: Record<ParamType, (value: unknown, param: string) => string | Error> = {
     color: stringDirectToCss,
+    colorScheme: stringDirectToCss,
     length: lengthValueToCss,
     scale: stringOrNumberDirectToCss,
     border: borderValueToCss,

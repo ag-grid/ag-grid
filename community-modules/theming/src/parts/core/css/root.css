@@ -9,6 +9,7 @@
     -webkit-font-smoothing: antialiased;
     font-family: var(--ag-font-family);
     font-size: var(--ag-font-size);
+    color-scheme: var(--ag-color-scheme);
 
     &.ag-layout-normal {
         height: 100%;

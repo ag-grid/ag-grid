@@ -100,6 +100,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.setupExpandContract();
 
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
+        this.getGui().style.setProperty('--ag-indentation-level', String(this.columnDept));
 
         this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
 
