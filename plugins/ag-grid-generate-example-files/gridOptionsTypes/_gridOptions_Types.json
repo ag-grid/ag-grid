@@ -608,6 +608,12 @@
       "SendToClipboardParams"
     ]
   },
+  "focusGridInnerElement": {
+    "typeName": "(params: FocusGridInnerElementParams<TData>) => boolean",
+    "typesToInclude": [
+      "FocusGridInnerElementParams"
+    ]
+  },
   "navigateToNextHeader": {
     "typeName": "(params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null",
     "typesToInclude": [
@@ -1362,6 +1368,10 @@
     "typesToInclude": []
   },
   "suppressAdvancedFilterEval": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "loading": {
     "typeName": "boolean",
     "typesToInclude": []
   },

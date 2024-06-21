@@ -5,7 +5,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './styles.css';
@@ -13,7 +13,6 @@ import './styles.css';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
-    const [gridApi, setGridApi] = useState(null);
     const [rowData, setRowData] = useState(null);
     const columnDefs = useMemo(
         () => [
@@ -38,11 +37,8 @@ const GridExample = () => {
         ],
         []
     );
-    const myInput = useRef(null);
 
     const onGridReady = (params) => {
-        setGridApi(params.api);
-
         const updateData = (data) => {
             setRowData(data);
         };
@@ -51,30 +47,6 @@ const GridExample = () => {
             .then((resp) => resp.json())
             .then((data) => updateData(data));
     };
-
-    useEffect(() => {
-        if (!myInput.current || !gridApi || !gridApi) {
-            return;
-        }
-
-        myInput.current.addEventListener(
-            'keydown',
-            function (event) {
-                if (event.key !== 'Tab') {
-                    return;
-                }
-
-                event.preventDefault();
-                gridApi.ensureIndexVisible(0);
-
-                const firstCol = gridApi.getAllDisplayedColumns()[0];
-
-                gridApi.ensureColumnVisible(firstCol);
-                gridApi.setFocusedCell(0, firstCol);
-            },
-            true
-        );
-    }, [myInput, gridApi, gridApi]);
 
     const defaultColDef = useMemo(
         () => ({
@@ -91,11 +63,7 @@ const GridExample = () => {
             <div className="test-container">
                 <div>
                     <div className="form-container">
-                        <label>Tab into Grid (Focus the First Cell)</label>
-                        <input ref={myInput} />
-                    </div>
-                    <div className="form-container">
-                        <label>Tab into the Grid (Default Behavior)</label>
+                        <label>Input Above</label>
                         <input type="text" />
                     </div>
                 </div>
@@ -115,7 +83,7 @@ const GridExample = () => {
                     />
                 </div>
                 <div className="form-container">
-                    <label>Tab into the grid with Shift-Tab (Default Behavior)</label>
+                    <label>Input Below</label>
                     <input type="text" />
                 </div>
             </div>

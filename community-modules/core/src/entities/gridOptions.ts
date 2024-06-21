@@ -115,6 +115,7 @@ import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilter
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,
+    FocusGridInnerElementParams,
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetContextMenuItemsParams,
@@ -767,12 +768,16 @@ export interface GridOptions<TData = any> {
 
     // *** Overlays *** //
     /**
-     * Provide a template for 'loading' overlay.
+     * Show or hide the loading overlay.
+     */
+    loading?: boolean;
+
+    /**
+     * Provide a HTML string to override the default loading overlay.
      */
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
-     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
      * @initial
      */
     loadingOverlayComponent?: any;
@@ -780,33 +785,31 @@ export interface GridOptions<TData = any> {
      * Customise the parameters provided to the loading overlay component.
      */
     loadingOverlayComponentParams?: any;
-
     /**
      * Disables the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use `loading=false` instead.
      * @default false
      * @initial
      */
     suppressLoadingOverlay?: boolean;
 
     /**
-     * Provide a template for 'no rows' overlay.
+     * Provide a HTML string to override the default no-rows overlay.
      */
     overlayNoRowsTemplate?: string;
-
     /**
-     * Provide a custom no rows overlay component.
-     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
+     * Provide a custom no-rows overlay component.
      * @initial
      */
     noRowsOverlayComponent?: any;
     /**
-     * Customise the parameters provided to the no rows overlay component.
+     * Customise the parameters provided to the no-rows overlay component.
      */
     noRowsOverlayComponentParams?: any;
-
     /**
-     * Disables the 'no rows' overlay.
+     * Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      * @default false
+     * @initial
      */
     suppressNoRowsOverlay?: boolean;
 
@@ -1686,6 +1689,11 @@ export interface GridOptions<TData = any> {
     createChartContainer?: (params: ChartRefParams<TData>) => void;
 
     // *** Keyboard Navigation *** //
+    /**
+     * Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
+     * @returns `True` if this function should override the grid's default behavior, `False` to allow the grid's default behavior.
+     */
+    focusGridInnerElement?: (params: FocusGridInnerElementParams<TData>) => boolean;
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */

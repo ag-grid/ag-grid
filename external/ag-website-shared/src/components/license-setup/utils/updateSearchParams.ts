@@ -1,29 +1,21 @@
 import type { ImportType } from '@ag-grid-types';
 
-import type { Products } from '../types';
-
 export const updateSearchParams = ({
-    products = {} as Products,
+    integratedCharts,
     importType,
 }: {
-    products: Products;
+    integratedCharts: boolean;
     importType: ImportType;
 }) => {
     const url = new URL(window.location);
-    const productsParam = url.searchParams.get('products');
-    const productsStr = Object.entries(products)
-        .map(([key, selectedProduct]) => {
-            return selectedProduct ? key : undefined;
-        })
-        .filter(Boolean)
-        .toString();
+    const integratedChartsParamValue = url.searchParams.get('integratedCharts') === 'true';
     const importTypeParam = url.searchParams.get('importType');
 
-    if (productsParam !== productsStr) {
-        if (productsStr) {
-            url.searchParams.set('products', productsStr);
+    if (integratedChartsParamValue !== integratedCharts) {
+        if (integratedCharts) {
+            url.searchParams.set('integratedCharts', 'true');
         } else {
-            url.searchParams.delete('products');
+            url.searchParams.delete('integratedCharts');
         }
     }
 

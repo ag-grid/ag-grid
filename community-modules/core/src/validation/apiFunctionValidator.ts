@@ -415,6 +415,11 @@ const deprecatedFunctions: {
         version: 'v31.1',
         message: `'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`,
     },
+    showLoadingOverlay: {
+        version: 'v32',
+        message:
+            '`showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).',
+    },
 };
 
 export function warnMissingApiFunction(functionName: ApiFunctionName, gridId: string): void {

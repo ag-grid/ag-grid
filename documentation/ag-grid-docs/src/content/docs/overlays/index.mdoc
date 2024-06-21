@@ -2,38 +2,44 @@
 title: "Overlays"
 ---
 
-Overlays are for displaying messages over the grid.
+Overlays are used for displaying messages over the top of the grid. There are two built-in overlays: loading and no-rows.
 
-When using the Client-side Data the grid uses two overlays:
+## Loading overlay
 
-1. **Loading Overlay**: Displayed if `rowData` or `columnDefs` are initially set to `null` or `undefined`.
-1. **No Rows Overlay**: Displayed if `rowData` is an empty list.
+Show or hide the loading overlay by setting the `loading` property to `true` or `false`.
 
-{% gridExampleRunner title="Overlays" name="overlays"  exampleHeight=350 /%}
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
 
-The example above demonstrates the default loading and no rows overlays.
+The loading overlay takes precedence over the no-rows overlay and is not dependent of the state of `rowData`.
 
-## Overlay API
+{% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=350 /%}
 
-You can manually show the overlays using the grid API.
+## No rows overlay
 
-{% apiDocumentation source="grid-api/api.json" section="overlays" /%}
+When `rowData` is empty / undefined the grid automatically displays the no-rows overlay. The no-rows overlay can also be programmatically shown / hidden via the grid API.
+
+{% apiDocumentation source="grid-api/api.json" section="overlays" names=["showNoRowsOverlay", "hideOverlay"] /%}
+
+The automatic displaying of the no-rows overlay can be suppressed by setting `suppressNoRowsOverlay` to `true`.
+
+{% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=350 /%}
+
+
+
+## Initial loading overlay
+
+If `loading` is not explicitly defined, the grid will automatically show the loading overlay until both `rowData` and `columnDefs` are provided with a non-null value for the first time. This behaviour can be suppressed by initialising the grid with an appropriate `loading` state.
 
 ## Customisation
 
-HTML templates can be provided to the overlays using grid properties.
+Overlays can be customised by providing either a HTML string or custom component via grid properties.
 
-{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayLoadingTemplate", "overlayNoRowsTemplate"] /%}
 
-## Custom Overlays
+### Custom Loading Overlay
 
-This example demonstrates Custom Overlay Components.
+The loading overlay can be customised via the grid properties `overlayLoadingTemplate` or `loadingOverlayComponent` and `loadingOverlayComponentParams`.
 
-{% gridExampleRunner title="Custom Overlay Components" name="custom-overlay-components" /%}
-
-### Loading Overlays
-
-Loading Overlay Component is configured via the grid properties `loadingOverlayComponent` and `loadingOverlayComponentParams`.
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayLoadingTemplate", "loadingOverlayComponent", "loadingOverlayComponentParams"] /%}
 
 {% if isFramework("javascript", "angular") %}
 Implement this interface to provide a custom overlay when data is being loaded.
@@ -44,150 +50,47 @@ Any valid Vue component can be a loading overlay component, however it is also p
 {% /if %}
 
 {% if isFramework("angular") %}
-```ts
-interface extends ILoadingOverlayAngularComp {
-   // mandatory methods
-
-   // The agInit(params) method is called on the overlay once.
-   agInit(params: ILoadingOverlayParams);
-
-   // optional methods
-
-   // Gets called when the `loadingOverlayComponentParams` grid option is updated
-   refresh(params: ILoadingOverlayParams): void;
-
-}
-```
+{% interfaceDocumentation interfaceName="ILoadingOverlayAngularComp" config={"asCode":true } /%}
 {% /if %}
 
 {% if isFramework("javascript") %}
-```ts
-interface ILoadingOverlayComp {
-   // mandatory methods
-
-   // Returns the DOM element for this overlay
-   getGui(): HTMLElement;
-
-   // optional methods
-
-   // The init(params) method is called on the overlay once. See below for details on the parameters.
-   init(params: ILoadingOverlayParams): void;
-
-   // Gets called when the `loadingOverlayComponentParams` grid option is updated
-   refresh(params: ILoadingOverlayParams): void;
-}
-```
+{% interfaceDocumentation interfaceName="ILoadingOverlayComp" config={"asCode":true } /%}
 {% /if %}
 
 {% if isFramework("vue") %}
-```ts
-interface ILoadingOverlay {
-   // Gets called when the `loadingOverlayComponentParams` grid option is updated
-   refresh(params: ILoadingOverlayParams): void;
-}
-```
+{% interfaceDocumentation interfaceName="ILoadingOverlay" config={"asCode":true } /%}
 {% /if %}
 
-{% if isFramework("angular") %}
-The `agInit(params)` method takes a params object with the items listed below:
-{% /if %}
+This example demonstrates how to provide a custom loading overlay component customised via parameters.
 
-{% if isFramework("javascript") %}
-The interface for the overlay parameters is as follows:
-{% /if %}
+{% gridExampleRunner title="Custom Loading Overlay Components" name="custom-overlay-loading" /%}
 
-{% if isFramework("react") %}
-When a loading overlay component is instantiated within the grid, the following will be made available on  `props`:
-{% /if %}
+### Custom No Rows Overlay
 
-{% if isFramework("vue") %}
-When a custom loading overlay is instantiated, the following will be made available on `this.params`:
-{% /if %}
+The no-rows overlay can be customised via the grid properties `overlayNoRowsTemplate` or `noRowsOverlayComponent` and `noRowsOverlayComponentParams`.
 
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="ILoadingOverlayParams" /%}
-{% /if %}
-
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomLoadingOverlayProps" /%}
-{% /if %}
-
-### No Rows Overlays
-
-No Rows Overlay Component is configured via the grid properties `noRowsOverlayComponent` and `noRowsOverlayComponentParams`.
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayNoRowsTemplate", "noRowsOverlayComponent", "noRowsOverlayComponentParams"] /%}
 
 {% if isFramework("javascript", "angular") %}
-Implement this interface to provide a custom overlay when no rows loaded.
+Implement this interface to provide a custom overlay when no-rows loaded.
 {% /if %}
 
 {% if isFramework("vue") %}
-Any valid Vue component can be a no rows overlay component, however it is also possible to implement the following optional methods:
+Any valid Vue component can be a no-rows overlay component, however it is also possible to implement the following optional methods:
 {% /if %}
 
 {% if isFramework("angular") %}
-```ts
-interface extends INowRowsOverlayAngularComp {
-   // mandatory methods
-
-   // The agInit(params) method is called on the overlay once.
-   agInit(params: INoRowsOverlayParams);
-
-   // optional methods
-
-   // Gets called when the `noRowsOverlayComponentParams` grid option is updated
-   refresh(params: INoRowsOverlayParams): void;
-}
-```
+{% interfaceDocumentation interfaceName="INoRowsOverlayAngularComp" config={"asCode":true } /%}
 {% /if %}
 
 {% if isFramework("javascript") %}
-```ts
-interface INoRowsOverlayComp {
-   // mandatory methods
-
-   // Returns the DOM element for this overlay
-   getGui(): HTMLElement;
-
-   // optional methods
-
-   // The init(params) method is called on the overlay once. See below for details on the parameters.
-   init(params: INoRowsOverlayParams): void;
-
-   // Gets called when the `noRowsOverlayComponentParams` grid option is updated
-   refresh(params: INoRowsOverlayParams): void;
-}
-```
+{% interfaceDocumentation interfaceName="INoRowsOverlayComp" config={"asCode":true } /%}
 {% /if %}
 
 {% if isFramework("vue") %}
-```ts
-interface INoRowsOverlay {
-   // Gets called when the `noRowsOverlayComponentParams` grid option is updated
-   refresh(params: INoRowsOverlayParams): void;
-}
-```
+{% interfaceDocumentation interfaceName="INoRowsOverlay" config={"asCode":true } /%}
 {% /if %}
 
-{% if isFramework("angular") %}
-The `agInit(params)` method takes a params object with the items listed below:
-{% /if %}
+This example demonstrates how to provide a custom no-rows overlay component customised via parameters.
 
-{% if isFramework("javascript") %}
-The interface for the overlay parameters is as follows:
-{% /if %}
-
-{% if isFramework("react") %}
-When a no rows overlay component is instantiated within the grid, the following will be made available on  `props`:
-{% /if %}
-
-{% if isFramework("vue") %}
-When a custom no rows overlay is instantiated, the following will be made available on `this.params`:
-{% /if %}
-
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="INoRowsOverlayParams" /%}
-{% /if %}
-
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomNoRowsOverlayProps" /%}
-{% /if %}
+{% gridExampleRunner title="Custom No Rows Overlay Components" name="custom-overlay-no-rows" /%}

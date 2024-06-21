@@ -3,14 +3,14 @@ import type { IRowModel } from '../interfaces/iRowModel';
 
 export interface ISelectionContext<TNode> {
     init(rowModel: IRowModel): void;
-    destroy(): void;
-    reset(node: TNode): void;
+    reset(): void;
+    setRoot(node: TNode): void;
     setEndRange(node: TNode): void;
     getRange(): RowNode[];
     getRoot(): TNode | null;
     isInRange(node: TNode): boolean;
     truncate(node: TNode): { keep: RowNode[]; discard: RowNode[] };
-    extend(node: TNode): { keep: RowNode[]; discard: RowNode[] };
+    extend(node: TNode, groupSelectsChildren?: boolean): { keep: RowNode[]; discard: RowNode[] };
 }
 
 /**
@@ -36,13 +36,13 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
         this.rowModel = rowModel;
     }
 
-    public destroy(): void {
+    public reset(): void {
         this.root = null;
         this.end = null;
         this.cachedRange.length = 0;
     }
 
-    public reset(node: RowNode): void {
+    public setRoot(node: RowNode): void {
         this.root = node;
         this.end = null;
         this.cachedRange.length = 0;
@@ -58,7 +58,7 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
             const root = this.getRoot();
             const end = this.getEnd();
 
-            if (end == null) {
+            if (root == null || end == null) {
                 return this.cachedRange;
             }
 
@@ -128,8 +128,25 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
      * @param node - Node marking the new end of the range
      * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
      */
-    public extend(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
-        const newRange = this.rowModel.getNodesInRangeForSelection(this.getRoot(), node);
+    public extend(node: RowNode, groupSelectsChildren = false): { keep: RowNode[]; discard: RowNode[] } {
+        const root = this.getRoot();
+
+        // If the root node is null, we cannot iterate from the root to the given `node`.
+        // So we keep the existing selection, plus the given `node`, plus any leaf children.
+        if (root == null) {
+            const keep = this.getRange().slice();
+            if (groupSelectsChildren) {
+                node.depthFirstSearch((node) => !node.group && keep.push(node));
+            }
+            keep.push(node);
+
+            // We now have a node we can use as the root of the selection
+            this.setRoot(node);
+
+            return { keep, discard: [] };
+        }
+
+        const newRange = this.rowModel.getNodesInRangeForSelection(root, node);
 
         if (newRange.find((newRangeNode) => newRangeNode.id === this.end?.id)) {
             // Range between root and given node contains the current "end"

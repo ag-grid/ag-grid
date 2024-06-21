@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "emitDecoratorMetadata": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "module": "commonjs",
+    "types": ["jest", "node"]
+  },
+  "include": ["jest.config.ts", "jest.setup.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
+}
