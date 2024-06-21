@@ -768,17 +768,16 @@ export interface GridOptions<TData = any> {
 
     // *** Overlays *** //
     /**
-     * Shows or hides the loading overlay.
+     * Show or hide the loading overlay.
      */
     loading?: boolean;
 
     /**
-     * Provide a template for 'loading' overlay.
+     * Provide a HTML string to override the default loading overlay.
      */
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
-     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
      * @initial
      */
     loadingOverlayComponent?: any;
@@ -795,21 +794,20 @@ export interface GridOptions<TData = any> {
     suppressLoadingOverlay?: boolean;
 
     /**
-     * Provide a template for 'no rows' overlay.
+     * Provide a HTML string to override the default no-rows overlay.
      */
     overlayNoRowsTemplate?: string;
     /**
-     * Provide a custom no rows overlay component.
-     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
+     * Provide a custom no-rows overlay component.
      * @initial
      */
     noRowsOverlayComponent?: any;
     /**
-     * Customise the parameters provided to the no rows overlay component.
+     * Customise the parameters provided to the no-rows overlay component.
      */
     noRowsOverlayComponentParams?: any;
     /**
-     * Disables the 'no rows' overlay, that is normally shown when no rows are in the grid.
+     * Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      * @default false
      * @initial
      */
