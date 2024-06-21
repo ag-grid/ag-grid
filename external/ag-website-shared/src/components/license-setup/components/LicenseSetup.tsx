@@ -134,23 +134,19 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
 
                 {/* TODO change "AG Grid" to grid/charts based on site */}
 
-                {!hasValue(userLicense) && (
-                    <Note>
-                        Visit the <a href={urlWithBaseUrl('/license-pricing')}>Pricing Page</a> to discover the power of
-                        AG Grid Enterprise and <b>buy</b> a licence key.
-                        <br />
-                        Alternatively, email <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to start a
-                        conversation or <b>request a trial licence key</b>.
-                    </Note>
-                )}
-
                 <div className={styles.licenseData}>
-                    <div>
-                        <label>Licence key expires: </label>
-                        <b className={(licenseState.expiredError || licenseState.expiredTrialError) && styles.expired}>
-                            {userLicenseExpiry ? userLicenseExpiry : '--'}
-                        </b>
-                    </div>
+                    {hasValue(userLicense) && (
+                        <div>
+                            <label>Licence key expires: </label>
+                            <b
+                                className={
+                                    (licenseState.expiredError || licenseState.expiredTrialError) && styles.expired
+                                }
+                            >
+                                {userLicenseExpiry ? userLicenseExpiry : '--'}
+                            </b>
+                        </div>
+                    )}
 
                     <div>
                         <h2>Configure your application</h2>
