@@ -46,8 +46,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (this.gos.get('suppressLoadingOverlay')) {
             return;
         }
-        const loading = this.gos.get('loading');
-        if (loading !== undefined && !loading) {
+        if (this.gos.get('loading') === false) {
             return;
         }
 
