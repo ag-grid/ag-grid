@@ -115,6 +115,7 @@ import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilter
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,
+    FocusGridInnerElementParams,
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetContextMenuItemsParams,
@@ -1690,6 +1691,11 @@ export interface GridOptions<TData = any> {
     createChartContainer?: (params: ChartRefParams<TData>) => void;
 
     // *** Keyboard Navigation *** //
+    /**
+     * Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
+     * @returns `True` if this function should override the grid's default behavior, `False` to allow the grid's default behavior.
+     */
+    focusGridInnerElement?: (params: FocusGridInnerElementParams<TData>) => boolean;
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */

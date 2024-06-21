@@ -65,6 +65,7 @@ import type {
     FilterModifiedEvent,
     FilterOpenedEvent,
     FirstDataRenderedEvent,
+    FocusGridInnerElementParams,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -172,7 +173,7 @@ import type {
 } from '@ag-grid-community/core';
 // @END_IMPORTS@
 import type { GridApi, GridOptions, GridParams, Module } from '@ag-grid-community/core';
-import { AgPromise, _combineAttributesAndGridOptions, _processOnChange, createGrid } from '@ag-grid-community/core';
+import { _combineAttributesAndGridOptions, _processOnChange, createGrid } from '@ag-grid-community/core';
 import {
     AfterViewInit,
     Component,
@@ -1475,6 +1476,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
+    /** Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
+     * @returns `True` if this function should override the grid's default behavior, `False` to allow the grid's default behavior.
+     */
+    @Input() public focusGridInnerElement: ((params: FocusGridInnerElementParams<TData>) => boolean) | undefined =
+        undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */
     @Input() public navigateToNextHeader:

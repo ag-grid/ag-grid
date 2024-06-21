@@ -1,5 +1,14 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, GridApi, GridOptions } from '@ag-grid-community/core';
+import type {
+    CellFocusedParams,
+    ColDef,
+    Column,
+    ColumnGroup,
+    FocusGridInnerElementParams,
+    GridApi,
+    GridOptions,
+    HeaderFocusedParams,
+} from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -19,6 +28,29 @@ const columnDefs: ColDef[] = [
 ];
 
 let gridApi: GridApi<IOlympicData>;
+let lastFocused: { column: string | Column | ColumnGroup | null; rowIndex?: number | null } | undefined;
+
+const onCellFocused = (params: CellFocusedParams) => {
+    lastFocused = { column: params.column, rowIndex: params.rowIndex };
+};
+
+const onHeaderFocused = (params: HeaderFocusedParams) => {
+    lastFocused = { column: params.column, rowIndex: null };
+};
+
+const focusGridInnerElement = (params: FocusGridInnerElementParams) => {
+    if (!lastFocused || !lastFocused.column) {
+        return false;
+    }
+
+    if (lastFocused.rowIndex != null) {
+        params.api.setFocusedCell(lastFocused.rowIndex, lastFocused.column as Column | string);
+    } else {
+        params.api.setFocusedHeader(lastFocused.column);
+    }
+
+    return true;
+};
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
@@ -29,6 +61,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
     },
+    onCellFocused: onCellFocused,
+    onHeaderFocused: onHeaderFocused,
+    focusGridInnerElement: focusGridInnerElement,
 };
 
 // setup the grid after the page has finished loading

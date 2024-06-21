@@ -35,11 +35,11 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     private rowSelection?: 'single' | 'multiple';
 
     public postConstruct(): void {
+        this.selectionCtx.init(this.rowModel);
         this.rowSelection = this.gos.get('rowSelection');
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;
         });
-        this.selectionCtx.init(this.rowModel);
     }
 
     public getSelectedState(): IServerSideSelectionState {
@@ -135,7 +135,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 };
             }
             if (node.selectable) {
-                this.selectionCtx.reset(node.id!);
+                this.selectionCtx.setRoot(node.id!);
             }
             return 1;
         }
@@ -188,7 +188,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         }
 
         nodes.forEach((node) => updateNodeState(node));
-        this.selectionCtx.reset(_last(nodes).id!);
+        this.selectionCtx.setRoot(_last(nodes).id!);
         return 1;
     }
 
@@ -254,11 +254,13 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         this.selectedState = { selectAll: true, toggledNodes: new Set() };
         this.selectedNodes = {};
         this.selectAllUsed = true;
+        this.selectionCtx.reset();
     }
 
     public deselectAllRowNodes(): void {
         this.selectedState = { selectAll: false, toggledNodes: new Set() };
         this.selectedNodes = {};
+        this.selectionCtx.reset();
     }
 
     public getSelectAllState(): boolean | null {

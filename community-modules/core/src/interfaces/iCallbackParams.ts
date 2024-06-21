@@ -64,6 +64,11 @@ export interface GetChartToolbarItemsParams<TData = any, TContext = any> extends
     defaultItems?: ChartToolbarMenuItemOptions[];
 }
 
+export interface FocusGridInnerElementParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** This will be true if the focus is coming from and element below the grid in the DOM structure. */
+    fromBottom: boolean;
+}
+
 export interface NavigateToNextHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The key for the arrow key pressed,
      *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */

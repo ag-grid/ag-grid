@@ -19,13 +19,13 @@ export class ServerSideRowRangeSelectionContext implements ISelectionContext<str
         this.rowModel = rowModel;
     }
 
-    public destroy(): void {
+    public reset(): void {
         this.root = null;
         this.end = null;
         this.cachedRange.length = 0;
     }
 
-    public reset(node: string): void {
+    public setRoot(node: string): void {
         this.root = node;
         this.end = null;
         this.cachedRange.length = 0;
@@ -45,11 +45,11 @@ export class ServerSideRowRangeSelectionContext implements ISelectionContext<str
             const root = this.root ? this.rowModel.getRowNode(this.root) : undefined;
             const end = this.end ? this.rowModel.getRowNode(this.end) : undefined;
 
-            if (end == null) {
+            if (root == null || end == null) {
                 return this.cachedRange;
             }
 
-            this.cachedRange = this.rowModel.getNodesInRangeForSelection(root ?? null, end);
+            this.cachedRange = this.rowModel.getNodesInRangeForSelection(root, end);
         }
 
         return this.cachedRange;

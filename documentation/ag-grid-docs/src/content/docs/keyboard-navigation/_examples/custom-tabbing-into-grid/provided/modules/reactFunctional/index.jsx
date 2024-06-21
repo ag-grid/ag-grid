@@ -13,6 +13,7 @@ import './styles.css';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
+    const [gridApi, setGridApi] = useState(null);
     const [rowData, setRowData] = useState(null);
     const columnDefs = useMemo(
         () => [
@@ -39,6 +40,8 @@ const GridExample = () => {
     );
 
     const onGridReady = (params) => {
+        setGridApi(params.api);
+
         const updateData = (data) => {
             setRowData(data);
         };
@@ -46,6 +49,28 @@ const GridExample = () => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then((resp) => resp.json())
             .then((data) => updateData(data));
+    };
+
+    const onCellFocused = (params) => {
+        setLastFocused({ column: params.column, rowIndex: params.rowIndex });
+    };
+
+    const onHeaderFocused = (params) => {
+        setLastFocused({ column: params.column, rowIndex: null });
+    };
+
+    const focusGridInnerElement = (params) => {
+        if (!lastFocused || !lastFocused.column) {
+            return false;
+        }
+
+        if (lastFocused.rowIndex != null) {
+            gridApi.setFocusedCell(lastFocused.rowIndex, lastFocused.column);
+        } else {
+            gridApi.setFocusedHeader(lastFocused.column);
+        }
+
+        return true;
     };
 
     const defaultColDef = useMemo(
@@ -80,6 +105,9 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         onGridReady={onGridReady}
+                        onCellFocused={onCellFocused}
+                        onHeaderFocused={onHeaderFocused}
+                        focusGridInnerElement={focusGridInnerElement}
                     />
                 </div>
                 <div className="form-container">
