@@ -463,58 +463,21 @@ export function getRowNode(rowNodeFile: string) {
 
     return rowNodeMembers;
 }
-export function getColumn(columnFile: string) {
-    const srcFile = parseFile(columnFile);
-    const columnNode = findNode('Column', srcFile);
-    const iHeaderColumnNode = findNode('IHeaderColumn', srcFile);
-    const iProvidedColumnNode = findNode('IProvidedColumn', srcFile);
 
+export function getColumnTypes(columnFile: string, interfaces: string[]) {
+    const srcFile = parseFile(columnFile);
     let members = {};
+
     const addToMembers = (node) => {
         ts.forEachChild(node, (n) => {
             members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
         });
     };
 
-    addToMembers(columnNode);
-    addToMembers(iHeaderColumnNode);
-    addToMembers(iProvidedColumnNode);
-
-    return members;
-}
-
-export function getColumnGroup(columnFile: string) {
-    const srcFile = parseFile(columnFile);
-    const columnNode = findNode('ColumnGroup', srcFile);
-    const iHeaderColumnNode = findNode('IHeaderColumn', srcFile);
-
-    let members = {};
-    const addToMembers = (node) => {
-        ts.forEachChild(node, (n) => {
-            members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
-        });
-    };
-
-    addToMembers(columnNode);
-    addToMembers(iHeaderColumnNode);
-
-    return members;
-}
-
-export function getProvidedColumnGroup(columnFile: string) {
-    const srcFile = parseFile(columnFile);
-    const columnNode = findNode('ProvidedColumnGroup', srcFile);
-    const iProvidedColumnNode = findNode('IProvidedColumn', srcFile);
-
-    let members = {};
-    const addToMembers = (node) => {
-        ts.forEachChild(node, (n) => {
-            members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
-        });
-    };
-
-    addToMembers(columnNode);
-    addToMembers(iProvidedColumnNode);
+    interfaces.forEach((interfaceName) => {
+        const node = findNode(interfaceName, srcFile);
+        addToMembers(node);
+    });
 
     return members;
 }
