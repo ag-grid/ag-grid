@@ -10,7 +10,7 @@ export interface ISelectionContext<TNode> {
     getRoot(): TNode | null;
     isInRange(node: TNode): boolean;
     truncate(node: TNode): { keep: RowNode[]; discard: RowNode[] };
-    extend(node: TNode): { keep: RowNode[]; discard: RowNode[] };
+    extend(node: TNode, groupSelectsChildren?: boolean): { keep: RowNode[]; discard: RowNode[] };
 }
 
 /**
@@ -128,14 +128,16 @@ export class RowRangeSelectionContext implements ISelectionContext<RowNode> {
      * @param node - Node marking the new end of the range
      * @returns Object of nodes to either keep or discard (i.e. deselect) from the range
      */
-    public extend(node: RowNode): { keep: RowNode[]; discard: RowNode[] } {
+    public extend(node: RowNode, groupSelectsChildren = false): { keep: RowNode[]; discard: RowNode[] } {
         const root = this.getRoot();
 
         // If the root node is null, we cannot iterate from the root to the given `node`.
         // So we keep the existing selection, plus the given `node`, plus any leaf children.
         if (root == null) {
             const keep = this.getRange().slice();
-            node.depthFirstSearch((node) => !node.group && keep.push(node));
+            if (groupSelectsChildren) {
+                node.depthFirstSearch((node) => !node.group && keep.push(node));
+            }
             keep.push(node);
 
             // We now have a node we can use as the root of the selection

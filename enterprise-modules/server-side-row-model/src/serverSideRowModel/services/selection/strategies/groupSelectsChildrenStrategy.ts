@@ -188,7 +188,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode.id) {
-                    const partition = this.selectionCtx.extend(node.id!);
+                    const partition = this.selectionCtx.extend(node.id!, true);
                     if (newSelectionValue) {
                         this.selectRange(partition.discard, false);
                     }
