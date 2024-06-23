@@ -5,9 +5,7 @@ import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
 import { Snippet } from '@components/snippet/Snippet';
-import { InfoTooltip } from '@components/theme-builder/components/general/Tooltip';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type FunctionComponent, useMemo } from 'react';
 
@@ -38,292 +36,151 @@ const DUMMY_LICENSE_KEY =
 const EmailSales = () => {
     return (
         <>
-            Please contact <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> for more assistance
+            Please contact <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> for assistance
         </>
     );
 };
 
 export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuItems, seedRepos }) => {
     const {
-        hasLicense,
-        setHasLicense,
-        license,
         userLicense,
         setUserLicense,
         importType,
         updateImportTypeWithUrlUpdate,
         licensedProducts,
-        userProducts,
-        updateUserProductsWithUrlUpdate,
-        noUserProducts,
+        isIntegratedCharts,
+        updateIsIntegratedChartsWithUrlUpdate,
         userLicenseExpiry,
         userLicenseIsTrial,
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
-        validLicenseText,
-        errors,
+        licenseState,
+        licenseInvalidErrors,
+        licenseValidMessage,
     } = useLicenseData();
     const dependenciesSnippet = useMemo(
         () =>
             getDependenciesSnippet({
                 framework,
-                products: userProducts,
-                noProducts: noUserProducts,
+                isIntegratedCharts,
                 importType,
             }),
-        [framework, userProducts, importType]
+        [framework, isIntegratedCharts, importType]
     );
     const npmInstallSnippet = useMemo(
         () =>
             getNpmInstallSnippet({
                 framework,
-                products: userProducts,
-                noProducts: noUserProducts,
+                isIntegratedCharts,
                 importType,
             }),
-        [framework, userProducts, importType]
+        [framework, isIntegratedCharts, importType]
     );
     const bootstrapSnippet = useMemo(
         () =>
             getBootstrapSnippet({
                 framework,
                 importType,
-                license: license || 'your License Key',
-                userProducts,
-                noProducts: noUserProducts,
+                license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'your License Key',
+                isIntegratedCharts,
             }),
-        [framework, importType, license, userProducts]
+        [framework, licenseState, importType, userLicense, isIntegratedCharts]
     );
     const selectedSeedRepos = useMemo(
         () =>
             seedRepos
                 .filter(({ licenseType }) => {
-                    if (userProducts.integratedEnterprise) {
-                        return licenseType === 'enterprise-bundle';
-                    } else if (userProducts.chartsEnterprise || userProducts.gridEnterprise) {
-                        return licenseType === 'enterprise';
-                    }
-
-                    return false;
+                    return isIntegratedCharts ? licenseType === 'enterprise-bundle' : licenseType === 'enterprise';
                 })
                 .filter((seedRepo) => {
                     return seedRepo.framework === framework && seedRepo.importType === importType;
                 }),
-        [seedRepos, userProducts, framework, importType]
+        [seedRepos, isIntegratedCharts, framework, importType]
     );
 
     return (
         <>
             <form>
-                <p>Do you already an AG Grid or AG Charts License Key:</p>
-                <div className={styles.inputList}>
-                    <label>
-                        <input
-                            type="radio"
-                            name="hasLicense"
-                            value="true"
-                            checked={hasValue(hasLicense) && hasLicense}
-                            onChange={() => setHasLicense(true)}
-                        />{' '}
-                        I have an existing License Key
-                    </label>
+                <h2>Validate your licence</h2>
 
-                    <label>
-                        <input
-                            type="radio"
-                            name="hasLicense"
-                            value="false"
-                            checked={hasValue(hasLicense) && !hasLicense}
-                            onChange={() => setHasLicense(false)}
-                        />{' '}
-                        I don't have a License Key yet
-                    </label>
+                <div className={styles.licenceWrapper}>
+                    <textarea
+                        className={classnames(styles.license, {
+                            [styles.error]: licenseState.userLicenseError,
+                        })}
+                        placeholder="Paste your License Key here."
+                        value={userLicense}
+                        onChange={(e) => {
+                            setUserLicense(e.target.value);
+                        }}
+                    ></textarea>
+
+                    {userLicense === '' && (
+                        <span className={styles.licencePlaceholder}>
+                            <b>Paste your License Key here, e.g., </b>
+                            <span>{DUMMY_LICENSE_KEY}</span>
+                        </span>
+                    )}
                 </div>
 
-                {hasLicense && (
-                    <div className={styles.licenceWrapper}>
-                        <textarea
-                            className={classnames(styles.license, {
-                                [styles.error]: errors.userLicenseError,
-                            })}
-                            placeholder="Paste your License Key here."
-                            value={userLicense}
-                            onChange={(e) => {
-                                setUserLicense(e.target.value);
-                            }}
-                        ></textarea>
-
-                        {userLicense === '' && (
-                            <span className={styles.licencePlaceholder}>
-                                <b>Paste your License Key here, e.g., </b>
-                                <span>{DUMMY_LICENSE_KEY}</span>
-                            </span>
-                        )}
-                    </div>
-                )}
-
-                {validLicenseText && <Success>{validLicenseText}</Success>}
-
-                {errors.expired && (
-                    <Warning>
-                        {errors.expired}. <EmailSales />
+                {licenseValidMessage.map((message) => (
+                    <Success key={message}>{message}</Success>
+                ))}
+                {licenseInvalidErrors.map((message) => (
+                    <Warning key={message}>
+                        {message}. <EmailSales />
                     </Warning>
-                )}
-                {errors.expiredTrial && (
-                    <Warning>
-                        {errors.expiredTrial}. <EmailSales />
-                    </Warning>
-                )}
-
-                {errors.userLicenseError && (
-                    <Warning>
-                        {errors.userLicenseError}. <EmailSales />
-                    </Warning>
-                )}
-
-                {errors.v2License && (
-                    <Warning>
-                        {errors.v2License}. <EmailSales />
-                    </Warning>
-                )}
+                ))}
 
                 {/* TODO change "AG Grid" to grid/charts based on site */}
-                {!hasLicense && (
-                    <Note>
-                        Visit the <a href={urlWithBaseUrl('/license-pricing')}>Pricing Page</a> to discover the power of
-                        AG Grid Enterprise and <b>buy</b> a licence key.
-                        <br />
-                        Alternatively, email <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to start a
-                        conversation or <b>request a trial licence key</b>.
-                    </Note>
-                )}
 
                 <div className={styles.licenseData}>
-                    {hasLicense && (
+                    {hasValue(userLicense) && (
                         <div>
                             <label>Licence key expires: </label>
-                            <b className={(errors.expired || errors.expiredTrial) && styles.expired}>
+                            <b
+                                className={
+                                    (licenseState.expiredError || licenseState.expiredTrialError) && styles.expired
+                                }
+                            >
                                 {userLicenseExpiry ? userLicenseExpiry : '--'}
                             </b>
                         </div>
                     )}
 
                     <div>
-                        <div>
-                            <span>Which enterprise products are you using:</span>
-                            <span className={styles.tooltipWrapper}>
-                                <InfoTooltip title="Integrated Enterprise: Use AG Charts Enterprise features within AG Grid Enterprise through integrated charts" />
-                            </span>
-                        </div>
+                        <h2>Configure your application</h2>
 
-                        <div>
-                            <div className={styles.inputList}>
-                                <label
-                                    className={classnames(styles.licensedProduct, {
-                                        [styles.valid]: hasLicense && licensedProducts.grid,
-                                        [styles.trial]: hasLicense && userLicenseIsTrial && licensedProducts.grid,
-                                        [styles.expired]:
-                                            hasLicense &&
-                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
-                                            licensedProducts.grid,
-                                    })}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="products"
-                                        value="gridEnterprise"
-                                        checked={userProducts.gridEnterprise}
-                                        onChange={() => {
-                                            updateUserProductsWithUrlUpdate({
-                                                ...userProducts,
-                                                gridEnterprise: !userProducts.gridEnterprise,
-                                            });
-                                        }}
-                                    />
-                                    <strong>AG Grid Enterprise</strong>
-                                </label>
-
-                                <label
-                                    className={classnames(styles.licensedProduct, {
-                                        [styles.valid]: hasLicense && licensedProducts.charts,
-                                        [styles.trial]: hasLicense && userLicenseIsTrial && licensedProducts.charts,
-                                        [styles.expired]:
-                                            hasLicense &&
-                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
-                                            licensedProducts.charts,
-                                    })}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="products"
-                                        value="chartsEnterprise"
-                                        checked={userProducts.chartsEnterprise}
-                                        onChange={() => {
-                                            updateUserProductsWithUrlUpdate({
-                                                ...userProducts,
-                                                chartsEnterprise: !userProducts.chartsEnterprise,
-                                            });
-                                        }}
-                                    />
-                                    <strong>AG Charts Enterprise</strong>
-                                </label>
-
-                                <label
-                                    className={classnames(styles.licensedProduct, {
-                                        [styles.valid]: hasLicense && licensedProducts.grid && licensedProducts.charts,
-                                        [styles.trial]:
-                                            hasLicense &&
-                                            userLicenseIsTrial &&
-                                            licensedProducts.grid &&
-                                            licensedProducts.charts,
-                                        [styles.expired]:
-                                            hasLicense &&
-                                            (userLicenseIsExpired || userLicenseTrialIsExpired) &&
-                                            licensedProducts.grid &&
-                                            licensedProducts.charts,
-                                    })}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="products"
-                                        value="integratedEnterprise"
-                                        checked={userProducts.integratedEnterprise}
-                                        onChange={() => {
-                                            updateUserProductsWithUrlUpdate({
-                                                ...userProducts,
-                                                integratedEnterprise: !userProducts.integratedEnterprise,
-                                            });
-                                        }}
-                                    />
-                                    <strong>Integrated Enterprise</strong>
-                                </label>
-                            </div>
-
-                            {errors.chartsNoGridEnterprise && (
-                                <Warning>
-                                    {errors.chartsNoGridEnterprise}. <EmailSales />
-                                </Warning>
-                            )}
-
-                            {errors.chartsNoIntegratedEnterprise && (
-                                <Warning>
-                                    {errors.chartsNoIntegratedEnterprise}. <EmailSales />
-                                </Warning>
-                            )}
-
-                            {errors.gridNoCharts && (
-                                <Warning>
-                                    {errors.gridNoCharts}. <EmailSales />
-                                </Warning>
-                            )}
-
-                            {errors.gridNoIntegratedEnterprise && (
-                                <Warning>
-                                    {errors.gridNoIntegratedEnterprise}. <EmailSales />
-                                </Warning>
-                            )}
+                        <div className={styles.icQuestion}>
+                            <label
+                                className={classnames(styles.licensedProduct, styles.integratedProduct, {
+                                    [styles.valid]: licensedProducts.grid && licensedProducts.charts,
+                                    [styles.trial]:
+                                        userLicenseIsTrial && licensedProducts.grid && licensedProducts.charts,
+                                    [styles.expired]:
+                                        (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                        licensedProducts.grid &&
+                                        licensedProducts.charts,
+                                })}
+                            >
+                                Are you using Integrated Charts?{' '}
+                                <input
+                                    type="checkbox"
+                                    name="products"
+                                    value="integratedEnterprise"
+                                    checked={isIntegratedCharts}
+                                    onChange={() => {
+                                        updateIsIntegratedChartsWithUrlUpdate(!isIntegratedCharts);
+                                    }}
+                                />
+                            </label>
                         </div>
                     </div>
+                    {licenseState.gridNoChartsError && (
+                        <Warning>
+                            {licenseState.gridNoChartsError}. <EmailSales />
+                        </Warning>
+                    )}
 
                     <div className={styles.frameworkImportContainer}>
                         <div className={styles.frameworkContainer}>
@@ -353,54 +210,48 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                 <option value="modules">Modules</option>
                             </select>
                         </div>
-                        <a
-                            className={classnames(styles.importsLink, 'text-sm')}
-                            href={urlWithPrefix({
-                                framework,
-                                url: './modules/#packages-vs-modules',
-                            })}
-                        >
-                            Learn more about import types
-                        </a>
                     </div>
                 </div>
 
                 <div className={styles.results}>
                     <h3 id="add-your-dependencies">Add Your Dependencies</h3>
-                    {errors.noProducts && <Note>{errors.noProducts}</Note>}
+
+                    {licenseState.chartsNoGridEnterpriseError && (
+                        <Warning>
+                            {licenseState.chartsNoGridEnterpriseError}. <EmailSales />
+                        </Warning>
+                    )}
+
+                    {licenseState.minimalModulesInfo && <Note>{licenseState.minimalModulesInfo}</Note>}
 
                     <p>
                         Copy the following dependencies into your <code>package.json</code>:
                     </p>
+
                     {dependenciesSnippet && (
                         <Snippet framework={framework} content={dependenciesSnippet} copyToClipboard />
                     )}
 
                     <p>Or install using npm:</p>
+
                     {npmInstallSnippet && (
                         <Snippet framework={framework} content={npmInstallSnippet} language="bash" copyToClipboard />
                     )}
 
                     <h3 id="set-up-your-application">Set Up Your Application</h3>
-                    {errors.noProducts && <Note>{errors.noProducts}</Note>}
 
-                    {(userProducts.gridEnterprise || userProducts.integratedEnterprise || noUserProducts) && (
-                        <>
-                            {!noUserProducts && <p>An example of how to set up your AG Grid Enterprise License Key:</p>}
-                            {bootstrapSnippet.grid && (
-                                <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
-                            )}
-                        </>
+                    {licenseState.chartsNoGridEnterpriseError && (
+                        <Warning>
+                            {licenseState.chartsNoGridEnterpriseError}. <EmailSales />
+                        </Warning>
                     )}
 
-                    {userProducts.chartsEnterprise && (
-                        <>
-                            <p>An example of how to set up your Charts Enterprise License Key:</p>
-                            {bootstrapSnippet.charts && (
-                                <Snippet framework={framework} content={bootstrapSnippet.charts} copyToClipboard />
-                            )}
-                        </>
+                    <p>An example of how to set up your AG Grid Enterprise License Key:</p>
+                    {bootstrapSnippet.grid && (
+                        <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
                     )}
+
+                    <h2 id="seed-repos">Seed Repositories</h2>
 
                     {selectedSeedRepos.length ? (
                         <>
@@ -444,7 +295,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                                 </tbody>
                             </table>
                         </>
-                    ) : undefined}
+                    ) : (
+                        <p>Select your enterprise products above to view seed repositories.</p>
+                    )}
                 </div>
             </form>
         </>

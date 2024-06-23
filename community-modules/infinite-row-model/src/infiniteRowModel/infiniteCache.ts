@@ -307,17 +307,12 @@ export class InfiniteCache extends BeanStub {
         this.onCacheUpdated();
     }
 
-    public getRowNodesInRange(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
+    public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
         const result: RowNode[] = [];
 
         let lastBlockId = -1;
         let inActiveRange = false;
         const numberSequence: NumberSequence = new NumberSequence();
-
-        // if only one node passed, we start the selection at the top
-        if (_missing(firstInRange)) {
-            inActiveRange = true;
-        }
 
         let foundGapInSelection = false;
 

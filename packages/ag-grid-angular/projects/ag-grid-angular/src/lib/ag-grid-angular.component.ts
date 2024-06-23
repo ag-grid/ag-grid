@@ -65,6 +65,7 @@ import type {
     FilterModifiedEvent,
     FilterOpenedEvent,
     FirstDataRenderedEvent,
+    FocusGridInnerElementParams,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -172,7 +173,7 @@ import type {
 } from 'ag-grid-community';
 // @END_IMPORTS@
 import type { GridApi, GridOptions, GridParams, Module } from 'ag-grid-community';
-import { AgPromise, _combineAttributesAndGridOptions, _processOnChange, createGrid } from 'ag-grid-community';
+import { _combineAttributesAndGridOptions, _processOnChange, createGrid } from 'ag-grid-community';
 import {
     AfterViewInit,
     Component,
@@ -785,11 +786,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public debug: boolean | undefined = undefined;
-    /** Provide a template for 'loading' overlay.
+    /** Show or hide the loading overlay.
+     */
+    @Input() public loading: boolean | undefined = undefined;
+    /** Provide a HTML string to override the default loading overlay.
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
-     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
      * @initial
      */
     @Input() public loadingOverlayComponent: any = undefined;
@@ -797,23 +800,24 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use `loading=false` instead.
      * @default false
      * @initial
      */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
-    /** Provide a template for 'no rows' overlay.
+    /** Provide a HTML string to override the default no-rows overlay.
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
-    /** Provide a custom no rows overlay component.
-     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
+    /** Provide a custom no-rows overlay component.
      * @initial
      */
     @Input() public noRowsOverlayComponent: any = undefined;
-    /** Customise the parameters provided to the no rows overlay component.
+    /** Customise the parameters provided to the no-rows overlay component.
      */
     @Input() public noRowsOverlayComponentParams: any = undefined;
-    /** Disables the 'no rows' overlay.
+    /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      * @default false
+     * @initial
      */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Set whether pagination is enabled.
@@ -1470,6 +1474,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
+    /** Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
+     * @returns `True` if this function should override the grid's default behavior, `False` to allow the grid's default behavior.
+     */
+    @Input() public focusGridInnerElement: ((params: FocusGridInnerElementParams<TData>) => boolean) | undefined =
+        undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */
     @Input() public navigateToNextHeader:
@@ -2139,5 +2148,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';
+    static ngAcceptInputType_loading: boolean | null | '';
     // @END@
 }

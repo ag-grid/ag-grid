@@ -10,6 +10,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
+import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
@@ -48,13 +49,19 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     public override destroy(): void {
         super.destroy();
         this.resetNodes();
-        this.selectionCtx.destroy();
+        this.selectionCtx.reset();
     }
 
     private isMultiselect() {
         return this.rowSelection === 'multiple';
     }
 
+    /**
+     * We override the selection value for UI-triggered events because it's the
+     * current selection state that should determine the next selection state. This
+     * is a stepping stone towards removing selection logic from event listeners and
+     * other code external to the selection service(s).
+     */
     private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
         if (!isSelectionUIEvent(source)) {
             return newValue;
@@ -106,7 +113,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode) {
-                    const partition = this.selectionCtx.extend(node);
+                    const partition = this.selectionCtx.extend(node, this.groupSelectsChildren);
                     if (newSelectionValue) {
                         this.selectRange(partition.discard, false, source);
                     }
@@ -119,7 +126,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         // call is not a result of a user action, but rather a follow-on call (e.g
         // in this.clearOtherNodes).
         if (!suppressFinishActions) {
-            this.selectionCtx.reset(filteredNodes[0]);
+            this.selectionCtx.setRoot(filteredNodes[0]);
         }
 
         let updatedCount = 0;
@@ -451,6 +458,8 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             this.reset(source);
         }
 
+        this.selectionCtx.reset();
+
         // the above does not clean up the parent rows if they are selected
         if (rowModelClientSide && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections(source);
@@ -589,9 +598,11 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         const { source, justFiltered, justCurrentPage } = params;
 
-        const callback = (rowNode: RowNode) => rowNode.selectThisNode(true, undefined, source);
+        const nodes = this.getNodesToSelect(justFiltered, justCurrentPage);
+        nodes.forEach((rowNode) => rowNode.selectThisNode(true, undefined, source));
 
-        this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
+        this.selectionCtx.setRoot(nodes[0] ?? null);
+        this.selectionCtx.setEndRange(_last(nodes) ?? null);
 
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType() === 'clientSide' && this.groupSelectsChildren) {

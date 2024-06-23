@@ -5,11 +5,4 @@ export interface LicensedProducts {
     charts: boolean;
 }
 
-export interface Products {
-    gridEnterprise: boolean;
-    integratedEnterprise: boolean;
-    chartsEnterprise: boolean;
-}
-
-export type ValidLicenseType = 'gridEnterprise' | 'chartsEnterprise' | 'integratedEnterprise' | 'none';
 export type LicenseDetails = ReturnType<typeof LicenseManager.getLicenseDetails>;

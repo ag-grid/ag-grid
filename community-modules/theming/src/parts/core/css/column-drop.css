@@ -15,7 +15,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: var(--ag-label-widget-spacing);
+    gap: var(--ag-grid-size);
 }
 
 .ag-column-drop-cell-text {
@@ -173,7 +173,7 @@
 
 .ag-column-drop-horizontal {
     background-color: var(--ag-header-background-color);
-    border-bottom: var(--ag-header-border);
+    border-bottom: var(--ag-header-row-border);
 }
 
 .ag-column-drop-horizontal-half-width:not(:last-child) {

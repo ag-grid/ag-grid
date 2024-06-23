@@ -754,6 +754,7 @@ export {
     GetGroupRowAggParams,
     IsFullWidthRowParams,
     PostSortRowsParams,
+    FocusGridInnerElementParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,

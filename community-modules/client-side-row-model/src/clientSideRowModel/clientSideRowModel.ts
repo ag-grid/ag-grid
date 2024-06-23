@@ -743,9 +743,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return _exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode | null, lastInRange: RowNode): RowNode[] {
-        // if firstInRange is null, we start at the first row
-        let started = !firstInRange;
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        let started = false;
         let finished = false;
 
         const result: RowNode[] = [];

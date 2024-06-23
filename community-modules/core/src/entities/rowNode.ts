@@ -278,7 +278,14 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         };
     }
 
-    public getRowIndexString(): string {
+    public getRowIndexString(): string | null {
+        if (this.rowIndex == null) {
+            _errorOnce(
+                'Could not find rowIndex, this means tasks are being executed on a rowNode that has been removed from the grid.'
+            );
+            return null;
+        }
+
         if (this.rowPinned === 'top') {
             return 't-' + this.rowIndex;
         }
@@ -287,7 +294,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return 'b-' + this.rowIndex;
         }
 
-        return this.rowIndex!.toString();
+        return this.rowIndex.toString();
     }
 
     private createDaemonNode(): RowNode {
@@ -393,6 +400,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public getGroupKeys(excludeSelf = false): string[] {
         const keys: string[] = [];
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode | null = this;
         if (excludeSelf) {
             pointer = pointer.parent;
@@ -1089,6 +1097,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public getFirstChildOfFirstChild(rowGroupColumn: AgColumn | null): RowNode | null {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let currentRowNode: RowNode = this;
         let isCandidate = true;
         let foundFirstChildPath = false;
@@ -1140,11 +1149,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         const res: string[] = [];
 
-        let pointer: RowNode = this;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let pointer: RowNode | null = this;
 
-        while (pointer.key != null) {
+        while (pointer && pointer.key != null) {
             res.push(pointer.key);
-            pointer = pointer.parent!;
+            pointer = pointer.parent;
         }
 
         return res.reverse();

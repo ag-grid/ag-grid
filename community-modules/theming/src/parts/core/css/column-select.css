@@ -57,7 +57,8 @@
     overflow: hidden;
 }
 
-.ag-column-select-column {
+.ag-column-select-column,
+.ag-column-select-column-group {
     padding-left: calc(var(--ag-indentation-level) * var(--ag-column-select-indent-size));
 }
 

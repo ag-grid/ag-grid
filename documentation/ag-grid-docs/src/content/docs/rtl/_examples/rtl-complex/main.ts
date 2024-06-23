@@ -576,7 +576,7 @@ function createData() {
     loadInstance++;
 
     const loadInstanceCopy = loadInstance;
-    gridApi!.showLoadingOverlay();
+    gridApi!.setGridOption('loading', true);
 
     const colDefs = createCols();
 
@@ -605,6 +605,7 @@ function createData() {
             setTimeout(() => {
                 gridApi!.setGridOption('columnDefs', colDefs);
                 gridApi!.setGridOption('rowData', data);
+                gridApi!.setGridOption('loading', false);
             }, 0);
         }
     }, 0);

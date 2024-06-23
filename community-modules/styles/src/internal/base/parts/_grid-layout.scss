@@ -184,6 +184,14 @@
         );
     }
 
+    .ag-right-aligned-cell .ag-skeleton-effect {
+        @include ag.unthemed-rtl(
+            (
+                margin-left: auto,
+            )
+        );
+    }
+
     .ag-cell,
     .ag-full-width-row .ag-cell-wrapper.ag-row-group {
         // assign internal variables to simplify the `line-height` value

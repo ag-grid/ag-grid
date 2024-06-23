@@ -1,6 +1,6 @@
 .ag-advanced-filter-header {
     background-color: var(--ag-header-background-color);
-    border-bottom: var(--ag-header-border);
+    border-bottom: var(--ag-header-row-border);
 }
 
 .ag-advanced-filter-header {

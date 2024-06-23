@@ -188,7 +188,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 const fromNode = this.selectionCtx.getRoot();
                 const toNode = node;
                 if (fromNode !== toNode.id) {
-                    const partition = this.selectionCtx.extend(node.id!);
+                    const partition = this.selectionCtx.extend(node.id!, true);
                     if (newSelectionValue) {
                         this.selectRange(partition.discard, false);
                     }
@@ -212,7 +212,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
         });
         this.removeRedundantState();
-        this.selectionCtx.reset(_last(nodes).id!);
+        this.selectionCtx.setRoot(_last(nodes).id!);
         return 1;
     }
 
@@ -406,10 +406,12 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     public selectAllRowNodes(): void {
         this.selectedState = { selectAllChildren: true, toggledNodes: new Map() };
+        this.selectionCtx.reset();
     }
 
     public deselectAllRowNodes(): void {
         this.selectedState = { selectAllChildren: false, toggledNodes: new Map() };
+        this.selectionCtx.reset();
     }
 
     public getSelectAllState(): boolean | null {

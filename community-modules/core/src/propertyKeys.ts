@@ -386,6 +386,7 @@ export class PropertyKeys {
         'applyQuickFilterBeforePivotOrAgg',
         'suppressServerSideFullWidthLoadingRow',
         'suppressAdvancedFilterEval',
+        'loading',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.
@@ -418,6 +419,7 @@ export class PropertyKeys {
         'getGroupRowAgg',
         'isFullWidthRow',
         'sendToClipboard',
+        'focusGridInnerElement',
         'navigateToNextHeader',
         'tabToNextHeader',
         'navigateToNextCell',

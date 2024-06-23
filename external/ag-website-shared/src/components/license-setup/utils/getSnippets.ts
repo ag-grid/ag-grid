@@ -1,25 +1,21 @@
 import type { Framework, ImportType } from '@ag-grid-types';
 import { agGridVersion } from '@constants';
 
-import type { Products } from '../types';
-import { getDependencies } from './getDependencies';
+import { getGridDependencies } from './getDependencies';
 import { GRID_LICENSE_TEMPLATES, getChartsTemplate } from './templates';
 
 export const getDependenciesSnippet = ({
     framework,
-    products,
-    noProducts,
+    isIntegratedCharts,
     importType,
 }: {
     framework: Framework;
-    products: Products;
-    noProducts: boolean;
+    isIntegratedCharts: boolean;
     importType?: ImportType;
 }) => {
-    const dependencies = getDependencies({
+    const dependencies = getGridDependencies({
         framework,
-        products,
-        noProducts,
+        isIntegratedCharts,
         importType,
     });
 
@@ -33,19 +29,16 @@ export const getDependenciesSnippet = ({
 
 export const getNpmInstallSnippet = ({
     framework,
-    products,
-    noProducts,
+    isIntegratedCharts,
     importType,
 }: {
     framework: Framework;
-    products: Products;
-    noProducts: boolean;
+    isIntegratedCharts: boolean;
     importType?: ImportType;
 }) => {
-    const dependencies = getDependencies({
+    const dependencies = getGridDependencies({
         framework,
-        products,
-        noProducts,
+        isIntegratedCharts,
         importType,
     });
     const dependenciesStr = dependencies.join(' ');
@@ -57,14 +50,12 @@ export const getBootstrapSnippet = ({
     framework,
     importType,
     license: rawLicense,
-    userProducts = {} as Products,
-    noProducts,
+    isIntegratedCharts,
 }: {
     framework: Framework;
     license?: string;
     importType?: ImportType;
-    userProducts?: Products;
-    noProducts?: boolean;
+    isIntegratedCharts?: boolean;
 }): {
     grid: string;
     charts: string;
@@ -72,10 +63,9 @@ export const getBootstrapSnippet = ({
     const license = rawLicense?.trim();
     const frameworkTemplate = GRID_LICENSE_TEMPLATES[framework];
     const gridTemplate = frameworkTemplate[importType];
-    const hideLicense = noProducts;
 
     return {
-        grid: (gridTemplate && gridTemplate({ license, userProducts, hideLicense })).trim() || '',
+        grid: (gridTemplate && gridTemplate({ license, isIntegratedCharts })).trim() || '',
         charts: getChartsTemplate({ license }),
     };
 };

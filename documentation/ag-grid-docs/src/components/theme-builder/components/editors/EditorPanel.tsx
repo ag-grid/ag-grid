@@ -4,6 +4,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDown } from 'lucide-react';
 import { type ReactNode } from 'react';
 
+import { AdvancedParamSelector } from './AdvancedParamSelector';
 import { BordersEditor } from './BordersEditor';
 import { ParamEditor } from './ParamEditor';
 import { PartEditor } from './PartEditor';
@@ -77,6 +78,9 @@ export const EditorPanel = () => {
                 <PartEditor part="iconSet" />
                 <ParamEditor param="iconSize" label="Size" />
             </Section>
+            <Section heading="Advanced">
+                <AdvancedParamSelector />
+            </Section>
         </AccordionRoot>
     );
 };
@@ -99,7 +103,9 @@ const SectionContent = styled('div')`
     flex-direction: column;
     gap: 12px;
     width: 100%;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 `;
 
 const AccordionRoot = styled(Accordion.Root)`
@@ -151,7 +157,8 @@ const AccordionItem = styled(Accordion.Item)`
 `;
 
 const AccordionHeader = styled(Accordion.Header)`
-    margin-bottom: 16px;
+    margin-bottom: 10px;
+    margin-top: 6px;
     padding-left: 6px;
     padding-right: 10px;
 `;
@@ -163,11 +170,11 @@ const AccordionContent = styled(Accordion.Content)`
     padding-right: 10px;
 
     &[data-state='open'] {
-        animation: slideDown 300ms cubic-bezier(0.87, 0, 0.13, 1) forwards;
+        animation: slideDown 300ms cubic-bezier(0.87, 0, 0.13, 1);
     }
 
     &[data-state='closed'] {
-        animation: slideUp 300ms cubic-bezier(0.87, 0, 0.13, 1) forwards;
+        animation: slideUp 300ms cubic-bezier(0.87, 0, 0.13, 1);
     }
 
     @keyframes slideDown {

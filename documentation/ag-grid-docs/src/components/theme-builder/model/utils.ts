@@ -1,3 +1,5 @@
+import type { ParamType } from '@ag-grid-community/theming';
+
 export const mapObjectValues = <T, U>(input: Record<string, T>, mapper: (value: T) => U): Record<string, U> =>
     Object.fromEntries(Object.entries(input).map(([key, value]) => [key, mapper(value)]));
 
@@ -51,3 +53,46 @@ export const convertProductionUrlsForStaging = (url: string) => {
 };
 
 export const stripFloatingPointErrors = (value: number) => value.toFixed(10).replace(/\.?0+$/, '');
+
+export const paramToVariableName = (param: string) => `--ag-${kebabCase(param)}`;
+const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();
+
+let reinterpretationElement: HTMLElement | null = null;
+
+export const cssValueIsValid = (value: string, type: ParamType): boolean => reinterpretCSSValue(value, type) != null;
+
+export const reinterpretCSSValue = (value: string, type: ParamType): string | null => {
+    value = value.trim();
+    if (value === '') return '';
+    if (!reinterpretationElement) {
+        reinterpretationElement = document.createElement('span');
+        reinterpretationElement.className = 'ag-apply-theme-variables';
+        document.body.appendChild(reinterpretationElement);
+    }
+    const cssProperty = cssPropertyForParamType[type];
+    try {
+        reinterpretationElement.style[cssProperty] = ''; // clear first otherwise setting an invalid value fails and keeps old value
+        reinterpretationElement.style[cssProperty] = value;
+        if (reinterpretationElement.style[cssProperty] === '') {
+            return null; // invalid CSS
+        }
+        return getComputedStyle(reinterpretationElement)[cssProperty];
+    } finally {
+        reinterpretationElement.style[cssProperty as any] = '';
+    }
+};
+
+const cssPropertyForParamType = {
+    color: 'backgroundColor',
+    colorScheme: 'colorScheme',
+    length: 'paddingLeft',
+    scale: 'lineHeight',
+    border: 'borderLeft',
+    borderStyle: 'borderTopStyle',
+    shadow: 'boxShadow',
+    image: 'backgroundImage',
+    fontFamily: 'fontFamily',
+    fontWeight: 'fontWeight',
+    display: 'display',
+    duration: 'transitionDuration',
+} satisfies Record<ParamType, keyof CSSStyleDeclaration>;

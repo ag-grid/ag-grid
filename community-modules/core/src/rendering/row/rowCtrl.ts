@@ -1740,6 +1740,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private updateRowIndexes(gui?: RowGui): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
+
+        if (rowIndexStr === null) {
+            return;
+        }
+
         const headerRowCount =
             this.beans.headerNavigationService.getHeaderRowCount() +
             (this.beans.filterManager?.getHeaderRowCount() ?? 0);

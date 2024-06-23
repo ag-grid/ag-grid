@@ -28,6 +28,8 @@ const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
 
     groupIncludeFooter: { version: '31.3', message: 'Use `groupTotalRow` instead.' },
     groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
+
+    suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 });
 
 // Leave untyped. so it can be inferred.

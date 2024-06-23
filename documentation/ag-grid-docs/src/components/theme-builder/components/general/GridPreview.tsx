@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { type GridState, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
@@ -17,7 +17,6 @@ import styled from '@emotion/styled';
 import { memo, useRef, useState } from 'react';
 import root from 'react-shadow';
 
-import type { GridState } from '../../../../../../../packages/ag-grid-community/dist/types/core/main';
 import { useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
@@ -95,8 +94,8 @@ const GridPreview = () => {
                                                 ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
                                         }, 1);
                                     }
-                                    if (config.loadingOverlay) {
-                                        api.showLoadingOverlay();
+                                    if (config.loadingOverlay !== undefined) {
+                                        api.setGridOption('loading', config.loadingOverlay);
                                     }
                                 }}
                                 initialState={{

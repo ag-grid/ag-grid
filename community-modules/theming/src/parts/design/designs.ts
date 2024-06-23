@@ -19,8 +19,8 @@ export const designBalham = definePart({
         borderRadius: '2px',
         wrapperBorderRadius: '2px',
         headerColumnResizeHandleDisplay: 'none',
-        columnHeaderBorder: true,
-        columnHeaderBorderHeight: '50%',
+        headerColumnBorder: true,
+        headerColumnBorderHeight: '50%',
         oddRowBackgroundColor: transparentRef('chromeBackgroundColor', 0.5),
         headerTextColor: transparentRef('foregroundColor', 0.5),
         fontFamily:

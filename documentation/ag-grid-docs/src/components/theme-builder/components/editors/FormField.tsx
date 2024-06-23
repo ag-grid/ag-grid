@@ -1,3 +1,4 @@
+import { Close } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import type { ReactNode } from 'react';
 
@@ -7,14 +8,16 @@ export type FormFieldProps = {
     label?: string | null;
     docs?: string | null;
     children?: ReactNode;
+    onCloseClick?: () => void;
 };
 
-export const FormField = ({ label, children, docs }: FormFieldProps) => (
+export const FormField = ({ label, children, docs, onCloseClick }: FormFieldProps) => (
     <StyledFormField>
-        {(label || docs) && (
+        {(label || docs || onCloseClick) && (
             <Label>
                 {label}
                 {docs && <InfoTooltip title={docs} />}
+                {onCloseClick && <CloseButton onClick={onCloseClick} />}
             </Label>
         )}
         {children}
@@ -33,11 +36,15 @@ const Label = styled('span')`
     font-size: 12px;
     font-weight: 400;
     transition: all 0.3s;
+    display: flex;
+    align-items: center;
 
-    &:hover {
-        svg path {
-            fill: var(--color-fg-primary);
-            transition: all 0.3s;
-        }
+    svg:hover path {
+        fill: var(--color-fg-primary);
     }
+`;
+
+const CloseButton = styled(Close)`
+    cursor: pointer;
+    margin-left: auto;
 `;

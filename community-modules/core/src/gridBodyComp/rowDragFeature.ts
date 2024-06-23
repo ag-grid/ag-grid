@@ -222,7 +222,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private getRowIndexNumber(rowNode: RowNode): number {
-        return parseInt(_last(rowNode.getRowIndexString().split('-')), 10);
+        const rowIndexStr = rowNode.getRowIndexString()!;
+
+        return parseInt(_last(rowIndexStr.split('-')), 10);
     }
 
     private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
