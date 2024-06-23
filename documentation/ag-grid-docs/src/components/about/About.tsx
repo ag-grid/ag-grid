@@ -148,6 +148,29 @@ export const About = () => {
                             </p>
                         </div>
                         <div>
+                            <img height={250} width={250} src={'/images/team/elias.jpg'} alt="Elias Malik, Developer" />
+                            <h3>Elias Malik</h3>
+                            <p>
+                                Developer,
+                                <br />
+                                Grid Core
+                            </p>
+                        </div>
+                        <div>
+                            <img
+                                height={250}
+                                width={250}
+                                src={'/images/team/salvatore.jpg'}
+                                alt="Salvatore Previti, Developer"
+                            />
+                            <h3>Salvatore Previti</h3>
+                            <p>
+                                Developer,
+                                <br />
+                                Grid Core
+                            </p>
+                        </div>
+                        <div>
                             <img
                                 height={250}
                                 width={250}
@@ -365,6 +388,16 @@ export const About = () => {
                             <img
                                 height={250}
                                 width={250}
+                                src={'/images/team/levi.jpg'}
+                                alt="Levi Lopez, Contract Specialist"
+                            />
+                            <h3>Levi Lopez</h3>
+                            <p>General Counsel</p>
+                        </div>
+                        <div>
+                            <img
+                                height={250}
+                                width={250}
                                 src={'/images/team/victoria.jpeg'}
                                 alt="Victoria Tennant, Head of Renewals Department"
                             />
@@ -399,6 +432,16 @@ export const About = () => {
                                 alt="Alison Bunworth, Business Development Manager"
                             />
                             <h3>Alison Bunworth</h3>
+                            <p>Business Development Manager</p>
+                        </div>
+                        <div>
+                            <img
+                                height={250}
+                                width={250}
+                                src={'/images/team/kristian.jpg'}
+                                alt="Kristian Gornik, Business Development Manager"
+                            />
+                            <h3>Kristian Gornik</h3>
                             <p>Business Development Manager</p>
                         </div>
                         <div>
