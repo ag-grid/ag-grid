@@ -154,7 +154,7 @@ export class AgStatusBar extends Component {
                 const compDetails = this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
                 promise = compDetails.newAgStackInstance();
 
-                if (!promise) {
+                if (promise == null) {
                     return;
                 }
             }
