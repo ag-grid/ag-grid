@@ -8,7 +8,6 @@ import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
-import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
