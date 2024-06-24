@@ -144,7 +144,9 @@ export const AdvancedParamSelector = memoWithSameType(() => {
                     </Popup>
                     {filteredParams.length === 0 && (
                         <NoSearchResultContainer>
-                            <NoSearchResultMessage>No results for "{inputValue}"</NoSearchResultMessage>
+                            <NoSearchResultMessage>
+                                No results for "<b>{inputValue}</b>"
+                            </NoSearchResultMessage>
                         </NoSearchResultContainer>
                     )}
                 </DropdownArea>
@@ -202,11 +204,8 @@ const NoSearchResultContainer = styled('div')`
     justify-content: space-around;
 `;
 
-const NoSearchResultMessage = styled(Card)`
+const NoSearchResultMessage = styled('div')`
     width: 50%;
-    border: 1px solid var(--color-border-primary);
-    padding: 16px;
-    background-color: var(--color-bg-primary);
     text-align: center;
 `;
 
