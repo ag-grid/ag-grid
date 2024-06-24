@@ -392,7 +392,7 @@ export const About = () => {
                                 alt="Levi Lopez, Contract Specialist"
                             />
                             <h3>Levi Lopez</h3>
-                            <p>General Counsel</p>
+                            <p>Contract Specialist</p>
                         </div>
                         <div>
                             <img

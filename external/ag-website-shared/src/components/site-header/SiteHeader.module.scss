@@ -18,7 +18,8 @@
     }
 }
 
-.headerInner {
+// `.header` required for charts specificity bug
+.header .headerInner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;

@@ -9,30 +9,22 @@ import { _warnOnce } from './utils/function';
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
     changeKey: 'rowHeightChanged',
-    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-    defaultValue: 20,
-    // defaultValue: 42,
+    defaultValue: 42,
 };
 const HEADER_HEIGHT: Variable = {
     cssName: '--ag-header-height',
     changeKey: 'headerHeightChanged',
-    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-    defaultValue: 30,
-    // defaultValue: 48,
+    defaultValue: 48,
 };
 const LIST_ITEM_HEIGHT: Variable = {
     cssName: '--ag-list-item-height',
     changeKey: 'listItemHeightChanged',
-    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-    defaultValue: 10,
-    // defaultValue: 24,
+    defaultValue: 24,
 };
 const CHART_MENU_PANEL_WIDTH: Variable = {
     cssName: '--ag-chart-menu-panel-width',
     changeKey: 'chartMenuPanelWidthChanged',
-    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-    defaultValue: 100,
-    // defaultValue: 260,
+    defaultValue: 260,
 };
 
 export class Environment extends BeanStub implements NamedBean {

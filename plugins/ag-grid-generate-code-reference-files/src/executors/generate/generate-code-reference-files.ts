@@ -139,10 +139,18 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
     const mergedProps = props;
     // If the parent has a generic params lets apply the child's specific types
     if (parent.params && parent.params.length > 0) {
+        let globalEventType = undefined;
+        if (parent.extends === 'AgGlobalEvent') {
+            // Special handling for global event types. This should be generic but this is a lot quicker for now.
+            globalEventType = parent.params[0];
+        }
+
         if (child.meta && child.meta.typeParams) {
             child.meta.typeParams.forEach((t, i) => {
                 Object.entries(props).forEach(([k, v]: [string, any]) => {
-                    //.filter(([k, v]) => k !== 'meta')
+                    if (globalEventType && k === 'type' && v === 'TEventType') {
+                        v = globalEventType;
+                    }
                     delete mergedProps[k];
                     // Replace the generic params. Regex to make sure you are not just replacing
                     // random letters in variable names.
