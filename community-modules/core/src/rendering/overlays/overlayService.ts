@@ -6,7 +6,6 @@ import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IRowModel } from '../../interfaces/iRowModel';
-import { _warnOnce } from '../../utils/function';
 import type { ILoadingOverlayParams } from './loadingOverlayComponent';
 import type { INoRowsOverlayParams } from './noRowsOverlayComponent';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
@@ -43,10 +42,8 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     public showLoadingOverlay(): void {
-        if (this.gos.get('suppressLoadingOverlay')) {
-            return;
-        }
-        if (this.gos.get('loading') === false) {
+        const loading = this.gos.get('loading');
+        if (!loading && (loading !== undefined || this.gos.get('suppressLoadingOverlay'))) {
             return;
         }
 
@@ -60,7 +57,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (this.gos.get('suppressNoRowsOverlay')) {
             return;
         }
-        if (this.gos.get('loading') && !this.gos.get('suppressLoadingOverlay')) {
+        if (this.gos.get('loading')) {
             return; // loading property is true, we cannot show the no-rows overlay
         }
 
@@ -89,7 +86,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     public hideOverlay(): void {
-        if (this.gos.get('loading') && !this.gos.get('suppressLoadingOverlay')) {
+        if (this.gos.get('loading')) {
             return; // loading property is true, we cannot hide the overlay
         }
         this.manuallyDisplayed = false;
@@ -97,16 +94,14 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private updateOverlayVisibility(): void {
-        let loadingVisible = false;
-
         const loading = this.gos.get('loading');
-        if (!this.gos.get('suppressLoadingOverlay')) {
-            if (loading) {
-                loadingVisible = true;
-            } else if (loading === undefined) {
-                loadingVisible =
-                    !this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'));
-            }
+
+        let loadingVisible = false;
+        if (loading) {
+            loadingVisible = true;
+        } else if (loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
+            loadingVisible =
+                !this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'));
         }
 
         if (loadingVisible) {

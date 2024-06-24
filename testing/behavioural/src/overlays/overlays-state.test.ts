@@ -158,11 +158,13 @@ describe('ag-grid overlays state', () => {
             expect(hasNoRowsOverlay()).toBeFalsy();
         });
 
-        test('if gridOptions.suppressLoadingOverlay = true, and loading=true, the loading property value is ignored', () => {
+        test('loading=true has higher priority than suppressLoadingOverlay', () => {
             const api = createMyGrid({ columnDefs, loading: true, suppressLoadingOverlay: true });
-            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
             api.showNoRowsOverlay();
-            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
         });
 
         test('Calls to api.showLoadingOverlay() will have no effect', () => {
@@ -308,10 +310,10 @@ describe('ag-grid overlays state', () => {
             expect(hasLoadingOverlay()).toBeFalsy();
         });
 
-        test('suppressLoadingOverlay has priority', () => {
+        test('suppressLoadingOverlay has less priority', () => {
             const api = createMyGrid({ columnDefs, loading: true, suppressLoadingOverlay: true });
-            expect(hasLoadingOverlay()).toBeFalsy();
-            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
 
             api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(hasLoadingOverlay()).toBeFalsy();
@@ -319,11 +321,11 @@ describe('ag-grid overlays state', () => {
 
             api.setGridOption('loading', true);
             api.setGridOption('rowData', []);
-            expect(hasLoadingOverlay()).toBeFalsy();
-            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
 
             api.setGridOption('rowData', [{}]);
-            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
             api.setGridOption('loading', false);
@@ -375,14 +377,14 @@ describe('ag-grid overlays state', () => {
             expect(hasNoRowsOverlay()).toBeFalsy();
         });
 
-        test('suppressLoadingOverlay has priority', () => {
+        test('suppressLoadingOverlay has no effect', () => {
             const api = createMyGrid({ columnDefs, loading: false, suppressLoadingOverlay: true });
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeTruthy();
 
             api.setGridOption('loading', true);
-            expect(hasLoadingOverlay()).toBeFalsy();
-            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
 
             api.setGridOption('loading', false);
             expect(hasLoadingOverlay()).toBeFalsy();
