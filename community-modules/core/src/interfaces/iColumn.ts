@@ -46,7 +46,7 @@ interface IHeaderColumn<TValue, TEventType extends string> extends IEventEmitter
 interface IProvidedColumn {
     /** Returns `true` if the column is visible. */
     isVisible(): boolean;
-    /** Returns the instance id of the column. */
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     getInstanceId(): ColumnInstanceId;
     /** Returns whether this column should be shown when the group is open / closed or undefined if its always shown. */
     getColumnGroupShow(): ColumnGroupShowType | undefined;
@@ -95,8 +95,14 @@ export interface Column<TValue = any>
     /** Returns `true` if column filtering is allowed. */
     isFilterAllowed(): boolean;
 
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
+    isFieldContainsDots(): boolean;
+
     /** Returns `true` if a tooltip is enabled for this column. */
     isTooltipEnabled(): boolean;
+
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
+    isTooltipFieldContainsDots(): boolean;
 
     /** Add an event listener to the column. */
     addEventListener<T extends ColumnEventName>(eventType: T, userListener: (params: ColumnEvent<T>) => void): void;
@@ -160,6 +166,7 @@ export interface Column<TValue = any>
     /** If aggregation is set for the column, returns the aggregation function. */
     getAggFunc(): string | IAggFunc | null | undefined;
 
+    /** @deprecated v32 Use col.getLeft() + col.getActualWidth() instead. */
     getRight(): number;
 
     /** Returns `true` if filter is active on the column. */
@@ -237,6 +244,9 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColum
     /** Returns the group column id. */
     getGroupId(): string;
 
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
+    getPartId(): number;
+
     /** Returns `true` if this group is resizable. */
     isResizable(): boolean;
 
@@ -272,6 +282,9 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColum
 
     /** Returns the provided column group */
     getProvidedColumnGroup(): ProvidedColumnGroup;
+
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
+    getPaddingLevel(): number;
 
     /** isColumn is always `false`. Used to distinguish between columns and column groups.  */
     isColumn: false;
