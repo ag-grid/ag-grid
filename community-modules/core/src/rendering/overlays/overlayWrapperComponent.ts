@@ -1,4 +1,5 @@
 import type { BeanCollection } from '../../context/context';
+import type { GridOptions } from '../../entities/gridOptions';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
@@ -16,9 +17,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
 
-    private activeOverlay: Component;
-    private inProgress = false;
-    private destroyRequested = false;
+    private activePromise: AgPromise<Component> | null = null;
+
+    private activeOverlay: Component | null = null;
     private activeOverlayWrapperCssClass: string;
     private updateListenerDestroyFunc?: () => null;
 
@@ -56,48 +57,57 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public showOverlay(
-        overlayComp: AgPromise<Component> | null,
+        overlayComponentPromise: AgPromise<Component> | null,
         overlayWrapperCssClass: string,
-        updateListenerDestroyFunc: () => null
+        gridOption?: keyof GridOptions
     ): void {
-        if (this.inProgress) {
-            return;
-        }
-
         this.setWrapperTypeClass(overlayWrapperCssClass);
         this.destroyActiveOverlay();
 
-        if (overlayComp) {
-            this.inProgress = true;
-            overlayComp.then((comp) => {
-                this.inProgress = false;
+        this.activePromise = overlayComponentPromise;
 
-                this.eOverlayWrapper.appendChild(comp!.getGui());
-                this.activeOverlay = comp!;
-                this.updateListenerDestroyFunc = updateListenerDestroyFunc;
+        overlayComponentPromise?.then((comp) => {
+            if (this.activePromise !== overlayComponentPromise) {
+                // Another promise was started, we need to cancel this old operation
+                this.destroyBean(comp);
+                return;
+            }
 
-                if (this.destroyRequested) {
-                    this.destroyRequested = false;
-                    this.destroyActiveOverlay();
-                }
-            });
-        }
+            this.activePromise = null; // Promise completed, so we can reset this
+
+            if (!comp) {
+                return; // Error handling
+            }
+
+            this.eOverlayWrapper.appendChild(comp.getGui());
+            this.activeOverlay = comp;
+
+            if (gridOption) {
+                this.updateListenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
+                    (comp as any)?.refresh(this.gos.addGridCommonParams({ ...(currentValue ?? {}) }));
+                });
+            }
+        });
 
         this.setDisplayed(true, { skipAriaHidden: true });
     }
 
     private destroyActiveOverlay(): void {
-        if (this.inProgress) {
-            this.destroyRequested = true;
-            return;
+        this.activePromise = null;
+
+        const activeOverlay = this.activeOverlay;
+        if (!activeOverlay) {
+            return; // Nothing to destroy
         }
 
-        if (!this.activeOverlay) {
-            return;
+        const updateListenerDestroyFunc = this.updateListenerDestroyFunc;
+        if (updateListenerDestroyFunc) {
+            updateListenerDestroyFunc();
+            this.updateListenerDestroyFunc = undefined;
         }
 
-        this.activeOverlay = this.destroyBean(this.activeOverlay)!;
-        this.updateListenerDestroyFunc?.();
+        this.activeOverlay = null;
+        this.destroyBean(activeOverlay);
 
         _clearElement(this.eOverlayWrapper);
     }
