@@ -69,7 +69,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayComponentPromise?.then((comp) => {
             if (this.activePromise !== overlayComponentPromise) {
                 // Another promise was started, we need to cancel this old operation
-                this.destroyBean(comp);
+                if (this.activeOverlay !== comp) {
+                    this.destroyBean(comp);
+                }
                 return;
             }
 
