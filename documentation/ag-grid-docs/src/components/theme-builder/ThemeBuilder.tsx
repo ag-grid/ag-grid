@@ -1,4 +1,4 @@
-import { Provider, createStore } from 'jotai';
+import { Provider } from 'jotai';
 import { useLayoutEffect, useMemo, useState } from 'react';
 
 import { PreloadFontSelection } from './components/editors/FontFamilyValueEditor';
@@ -9,9 +9,10 @@ import { allParamModels } from './model/ParamModel';
 import { allPartModels } from './model/PartModel';
 import { addChangedModelItem, getChangedModelItemCount } from './model/changed-model-items';
 import { rerenderTheme } from './model/rendered-theme';
+import { initialiseStore } from './model/store';
 
 export const ThemeBuilder = () => {
-    const store = useMemo(createStore, []);
+    const store = useMemo(initialiseStore, []);
 
     (window as any).handlePartsCssChange = () => {
         rerenderTheme(store);

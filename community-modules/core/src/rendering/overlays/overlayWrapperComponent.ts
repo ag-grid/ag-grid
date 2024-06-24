@@ -67,9 +67,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setWrapperTypeClass(overlayWrapperCssClass);
         this.destroyActiveOverlay();
 
-        this.inProgress = true;
-
         if (overlayComp) {
+            this.inProgress = true;
             overlayComp.then((comp) => {
                 this.inProgress = false;
 

@@ -94,8 +94,8 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;
 
-    private minWidth: number | null | undefined;
-    private maxWidth: number | null | undefined;
+    private minWidth: number;
+    private maxWidth: number;
 
     private filterActive = false;
 
@@ -259,9 +259,6 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
-        const minColWidth = colDef.minWidth ?? DEFAULT_COLUMN_MIN_WIDTH;
-        const maxColWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
-
         let width: number;
         const colDefWidth = _attrToNumber(colDef.width);
         const colDefInitialWidth = _attrToNumber(colDef.initialWidth);
@@ -274,7 +271,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
             width = 200;
         }
 
-        return Math.max(Math.min(width, maxColWidth), minColWidth);
+        return Math.max(Math.min(width, this.maxWidth), this.minWidth);
     }
 
     public isEmptyGroup(): boolean {
@@ -457,33 +454,25 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         this.dispatchStateUpdatedEvent('sort');
     }
 
-    public setMenuVisible(visible: boolean, source: ColumnEventType): void {
-        if (this.menuVisible !== visible) {
-            this.menuVisible = visible;
-            this.columnEventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
-        }
-    }
-
-    public isMenuVisible(): boolean {
-        return this.menuVisible;
-    }
-
     public isSortable(): boolean {
         return !!this.getColDefValue('sortable');
     }
 
+    /** @deprecated v32 use col.getSort() === 'asc */
     public isSortAscending(): boolean {
         return this.sort === 'asc';
     }
 
+    /** @deprecated v32 use col.getSort() === 'desc */
     public isSortDescending(): boolean {
         return this.sort === 'desc';
     }
-
+    /** @deprecated v32 use col.getSort() === undefined */
     public isSortNone(): boolean {
         return _missing(this.sort);
     }
 
+    /** @deprecated v32 use col.getSort() !== undefined */
     public isSorting(): boolean {
         return _exists(this.sort);
     }
@@ -495,6 +484,16 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     public setSortIndex(sortOrder?: number | null): void {
         this.sortIndex = sortOrder;
         this.dispatchStateUpdatedEvent('sortIndex');
+    }
+    public setMenuVisible(visible: boolean, source: ColumnEventType): void {
+        if (this.menuVisible !== visible) {
+            this.menuVisible = visible;
+            this.columnEventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
+        }
+    }
+
+    public isMenuVisible(): boolean {
+        return this.menuVisible;
     }
 
     public setAggFunc(aggFunc: string | IAggFunc | null | undefined): void {
@@ -638,6 +637,9 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     public getColDef(): ColDef<any, TValue> {
         return this.colDef;
     }
+    public getDefinition(): AbstractColDef<any, TValue> {
+        return this.colDef;
+    }
 
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
         return this.colDef.columnGroupShow;
@@ -653,10 +655,6 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
 
     public getUniqueId(): HeaderColumnId {
         return this.colId;
-    }
-
-    public getDefinition(): AbstractColDef<any, TValue> {
-        return this.colDef;
     }
 
     public getActualWidth(): number {
@@ -707,12 +705,8 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
-        if (this.minWidth != null) {
-            actualWidth = Math.max(actualWidth, this.minWidth);
-        }
-        if (this.maxWidth != null) {
-            actualWidth = Math.min(actualWidth, this.maxWidth);
-        }
+        actualWidth = Math.max(actualWidth, this.minWidth);
+        actualWidth = Math.min(actualWidth, this.maxWidth);
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             this.actualWidth = actualWidth;
@@ -732,17 +726,14 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public isGreaterThanMax(width: number): boolean {
-        if (this.maxWidth != null) {
-            return width > this.maxWidth;
-        }
-        return false;
+        return width > this.maxWidth;
     }
 
-    public getMinWidth(): number | null | undefined {
+    public getMinWidth(): number {
         return this.minWidth;
     }
 
-    public getMaxWidth(): number | null | undefined {
+    public getMaxWidth(): number {
         return this.maxWidth;
     }
 
@@ -760,9 +751,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public setMinimum(source: ColumnEventType): void {
-        if (_exists(this.minWidth)) {
-            this.setActualWidth(this.minWidth, source);
-        }
+        this.setActualWidth(this.minWidth, source);
     }
 
     public setRowGroupActive(rowGroup: boolean, source: ColumnEventType): void {

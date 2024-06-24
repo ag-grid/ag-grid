@@ -8,7 +8,6 @@ import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
-import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
@@ -170,12 +169,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private normaliseColumnWidth(column: AgColumn, newWidth: number): number {
         const minWidth = column.getMinWidth();
 
-        if (_exists(minWidth) && newWidth < minWidth) {
+        if (newWidth < minWidth) {
             newWidth = minWidth;
         }
 
         const maxWidth = column.getMaxWidth();
-        if (_exists(maxWidth) && column.isGreaterThanMax(newWidth)) {
+        if (column.isGreaterThanMax(newWidth)) {
             newWidth = maxWidth;
         }
 

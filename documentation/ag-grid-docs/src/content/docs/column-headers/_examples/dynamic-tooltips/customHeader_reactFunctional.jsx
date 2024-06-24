@@ -12,9 +12,10 @@ export default (props) => {
     };
 
     const onSortChanged = () => {
-        setAscSort(props.column.isSortAscending() ? 'active' : 'inactive');
-        setDescSort(props.column.isSortDescending() ? 'active' : 'inactive');
-        setNoSort(!props.column.isSortAscending() && !props.column.isSortDescending() ? 'active' : 'inactive');
+        const sort = props.column.getSort();
+        setAscSort(sort === 'asc' ? 'active' : 'inactive');
+        setDescSort(sort === 'desc' ? 'active' : 'inactive');
+        setNoSort(!sort ? 'active' : 'inactive');
     };
 
     const onSortRequested = (order, event) => {

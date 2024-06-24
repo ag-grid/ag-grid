@@ -12,7 +12,6 @@ export abstract class MiniChartWithAxes extends MiniChart {
     }
 
     public override postConstruct() {
-        super.postConstruct();
         const size = this.size;
         const padding = this.padding;
 
@@ -34,5 +33,6 @@ export abstract class MiniChartWithAxes extends MiniChart {
 
         root.append(leftAxis);
         root.append(bottomAxis);
+        super.postConstruct();
     }
 }

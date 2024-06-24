@@ -163,7 +163,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     public getMinWidth(): number {
         let result = 0;
         this.displayedChildren!.forEach((groupChild) => {
-            result += groupChild.getMinWidth() || 0;
+            result += groupChild.getMinWidth();
         });
         return result;
     }

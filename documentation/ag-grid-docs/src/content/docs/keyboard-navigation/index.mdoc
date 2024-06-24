@@ -156,8 +156,8 @@ In the following example there are two input box provided to test tabbing into t
 
 The `focusGridInnerElement` callback can be used to change the element focused by the grid when receiving focus from outside . Notice the following:
 
-* Tabbing out of the input above the grid will focus the last cell or header focused if the grid had the focus previously and if the element is still in the DOM.
-* Shift Tabbing out of the input below the grid will focus the last cell or header focused if the grid had the focus previously and if the element is still in the DOM.
+* Tabbing out of the input above the grid will focus the last focused cell if the grid was previously focused and the element is still in the DOM or otherwise the header.
+* Shift Tabbing out of the input below the grid will focus the last focused cell if the grid was previously focused and the element is still in the DOM or otherwise the last cell in the bottom row.
 
 {% gridExampleRunner title="Custom tabbing into the Grid" name="custom-tabbing-into-grid" /%}
 
