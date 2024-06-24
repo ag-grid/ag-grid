@@ -301,7 +301,7 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColum
     /** Returns the provided column group */
     getProvidedColumnGroup(): ProvidedColumnGroup;
 
-    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
+    /** Returns the padding level of this padding group. */
     getPaddingLevel(): number;
 
     /** isColumn is always `false`. Used to distinguish between columns and column groups.  */
