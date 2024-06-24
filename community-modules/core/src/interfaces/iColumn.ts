@@ -233,17 +233,22 @@ export interface Column<TValue = any>
     /** Returns `true` if pivot is currently active for this column. */
     isPivotActive(): boolean;
 
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     isAnyFunctionActive(): boolean;
 
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     isAnyFunctionAllowed(): boolean;
 
     /** Returns `true` if value (aggregation) is currently active for this column. */
     isValueActive(): boolean;
 
+    /** Returns `true` if pivoting is allowed for this column */
     isAllowPivot(): boolean;
 
+    /** Returns `true` if this column can be used as a value column. */
     isAllowValue(): boolean;
 
+    /** Returns `true` if this column can be used as a row group column. */
     isAllowRowGroup(): boolean;
 
     /** isColumn is always `true`. Used to distinguish between columns and column groups.  */
