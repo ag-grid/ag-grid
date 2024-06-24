@@ -16,6 +16,8 @@ const config = {
     testEnvironment: 'jsdom',
     preset: 'ts-jest',
 
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+
     moduleNameMapper: {
         // remap react to version 18 as @ag-grid-community/react by default loads an older version
         '^react$': path.dirname(require.resolve('react/package.json')),
