@@ -1,5 +1,11 @@
-import type { BeanCollection, PopupService, ResizableStructure } from '@ag-grid-community/core';
-import { Component, _createIconNoSpan, _setDisplayed } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    FocusService,
+    FocusableComponent,
+    PopupService,
+    ResizableStructure,
+} from '@ag-grid-community/core';
+import { Component, TabGuardFeature, _createIconNoSpan, _setDisplayed } from '@ag-grid-community/core';
 
 import type { PanelOptions } from './agPanel';
 import { AgPanel } from './agPanel';
@@ -24,13 +30,16 @@ export interface DialogOptions extends PanelOptions {
     closedCallback?: (event?: MouseEvent | TouchEvent | KeyboardEvent) => void;
 }
 
-export class AgDialog extends AgPanel<DialogOptions> {
+export class AgDialog extends AgPanel<DialogOptions> implements FocusableComponent {
     private popupService: PopupService;
+    private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.popupService = beans.popupService;
+        this.focusService = beans.focusService;
     }
 
+    private tabGuardFeature: TabGuardFeature;
     private isMaximizable: boolean = false;
     private isMaximized: boolean = false;
     private maximizeListeners: (() => void)[] = [];
@@ -52,14 +61,36 @@ export class AgDialog extends AgPanel<DialogOptions> {
 
     public override postConstruct() {
         const eGui = this.getGui();
-        const { movable, resizable, maximizable } = this.config;
+        const { movable, resizable, maximizable, modal } = this.config;
 
         this.addCssClass('ag-dialog');
 
         super.postConstruct();
 
-        this.addManagedElementListeners(eGui, {
-            focusin: () => this.popupService.bringPopupToFront(eGui),
+        this.tabGuardFeature = this.createManagedBean(new TabGuardFeature(this));
+        this.tabGuardFeature.initialiseTabGuard({
+            isFocusableContainer: true,
+            onFocusIn: () => {
+                const eDocument = this.gos.getDocument();
+                const { activeElement } = eDocument;
+                const restoreFocus = this.popupService.bringPopupToFront(eGui);
+                // if popup is brought to front, need to put focus back
+                if (restoreFocus && activeElement !== eDocument.body) {
+                    (activeElement as HTMLElement)?.focus?.();
+                }
+            },
+            onTabKeyDown: (e) => {
+                if (modal) {
+                    return;
+                }
+                const backwards = e.shiftKey;
+                const nextFocusableElement = this.focusService.findNextFocusableElement(eGui, false, backwards);
+                if (!nextFocusableElement || this.tabGuardFeature.getTabGuardCtrl().isTabGuard(nextFocusableElement)) {
+                    if (this.focusService.focusNextGridCoreContainer(backwards)) {
+                        e.preventDefault();
+                    }
+                }
+            },
         });
 
         if (movable) {
@@ -71,6 +102,16 @@ export class AgDialog extends AgPanel<DialogOptions> {
         if (resizable) {
             this.setResizable(resizable);
         }
+
+        if (!this.config.modal) {
+            const { focusService } = this;
+            focusService.addFocusableContainer(this);
+            this.addDestroyFunc(() => focusService.removeFocusableContainer(this));
+        }
+    }
+
+    public setAllowFocus(allowFocus: boolean): void {
+        this.tabGuardFeature.getTabGuardCtrl().setAllowFocus(allowFocus);
     }
 
     protected override renderComponent() {

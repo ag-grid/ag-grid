@@ -108,7 +108,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             return AgPromise.resolve();
         }
 
-        this.removeAllChildrenExceptTabGuards();
+        this.tabGuardFeature.removeAllChildrenExceptTabGuards();
         this.destroyChildren();
 
         return AgPromise.all(

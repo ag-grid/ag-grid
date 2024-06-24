@@ -21,6 +21,7 @@ import type { IRangeService } from './interfaces/IRangeService';
 import type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
 import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { FocusableComponent } from './interfaces/iFocusableComponent';
 import type { RowPinnedType } from './interfaces/iRowNode';
 import { RowCtrl } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
@@ -769,5 +770,13 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public clearAdvancedFilterColumn(): void {
         this.advancedFilterFocusColumn = undefined;
+    }
+
+    public addFocusableContainer(container: FocusableComponent): void {
+        this.gridCtrl.addFocusableContainer(container);
+    }
+
+    public removeFocusableContainer(container: FocusableComponent): void {
+        this.gridCtrl.removeFocusableContainer(container);
     }
 }

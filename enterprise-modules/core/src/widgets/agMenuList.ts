@@ -75,7 +75,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
         // if focus is coming from outside the menu list, then re-activate an item
         const oldFocusedElement = e.relatedTarget as HTMLElement;
         if (
-            !this.tabGuardCtrl.isTabGuard(oldFocusedElement) &&
+            !this.tabGuardFeature.getTabGuardCtrl().isTabGuard(oldFocusedElement) &&
             (this.getGui().contains(oldFocusedElement) ||
                 this.activeMenuItem?.getSubMenuGui()?.contains(oldFocusedElement))
         ) {

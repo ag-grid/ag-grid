@@ -829,7 +829,8 @@ export class PopupService extends BeanStub implements NamedBean {
         }
     }
 
-    public bringPopupToFront(ePopup: HTMLElement) {
+    /** @return true if moved */
+    public bringPopupToFront(ePopup: HTMLElement): boolean {
         const parent = this.getPopupParent();
         const popupList: HTMLElement[] = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
         const popupLen = popupList.length;
@@ -840,7 +841,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const eWrapper = this.getWrapper(ePopup);
 
         if (!eWrapper || popupLen <= 1 || !parent.contains(ePopup)) {
-            return;
+            return false;
         }
 
         const pos = popupList.indexOf(eWrapper);
@@ -854,23 +855,28 @@ export class PopupService extends BeanStub implements NamedBean {
             }
         });
 
+        let result = false;
         if (onTopLength) {
             const isPopupAlwaysOnTop = eWrapper.classList.contains('ag-always-on-top');
 
             if (isPopupAlwaysOnTop) {
                 if (pos !== popupLen - 1) {
                     _last(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
+                    result = true;
                 }
             } else if (pos !== popupLen - onTopLength - 1) {
                 alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
+                result = true;
             }
         } else if (pos !== popupLen - 1) {
             _last(popupList).insertAdjacentElement('afterend', eWrapper);
+            result = true;
         }
 
         while (innerElsScrollMap.length) {
             const currentEl = innerElsScrollMap.pop();
             currentEl![0].scrollTop = currentEl![1];
         }
+        return result;
     }
 }

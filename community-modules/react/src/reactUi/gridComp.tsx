@@ -70,14 +70,13 @@ const GridComp = ({ context }: GridCompProps) => {
 
                 const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
                 const sideBarEl = eRootWrapperRef.current?.querySelector('.ag-side-bar:not(.ag-hidden)');
+                const paginationEl = eRootWrapperRef.current?.querySelector('.ag-paging-panel:not(.ag-hidden)');
 
-                if (gridBodyCompEl) {
-                    els.push(gridBodyCompEl as HTMLElement);
-                }
-
-                if (sideBarEl) {
-                    els.push(sideBarEl as HTMLElement);
-                }
+                [gridBodyCompEl, sideBarEl, paginationEl].forEach((comp) => {
+                    if (comp) {
+                        els.push(comp as HTMLElement);
+                    }
+                });
 
                 return els;
             },

@@ -113,8 +113,8 @@ export class GridChartComp extends Component {
     private onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
-        super(/* html */ `<div class="ag-chart" tabindex="-1">
-            <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
+        super(/* html */ `<div class="ag-chart">
+            <div data-ref="eChartContainer" class="ag-chart-components-wrapper ag-chart-menu-hidden">
                 <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
                 <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>

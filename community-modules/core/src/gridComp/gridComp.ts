@@ -15,6 +15,7 @@ import { GridCtrl } from './gridCtrl';
 export class GridComp extends TabGuardComp {
     private readonly gridBody: GridBodyComp = RefPlaceholder;
     private readonly sideBar: ISideBar & Component = RefPlaceholder;
+    private readonly pagination: Component = RefPlaceholder;
     private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
 
     private eGridDiv: HTMLElement;
@@ -87,7 +88,7 @@ export class GridComp extends TabGuardComp {
         const sideBar = params.sideBarSelector ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
         const statusBar = params.statusBarSelector ? '<ag-status-bar></ag-status-bar>' : '';
         const watermark = params.watermarkSelector ? '<ag-watermark></ag-watermark>' : '';
-        const pagination = params.paginationSelector ? '<ag-pagination></ag-pagination>' : '';
+        const pagination = params.paginationSelector ? '<ag-pagination data-ref="pagination"></ag-pagination>' : '';
 
         const template =
             /* html */
@@ -112,9 +113,11 @@ export class GridComp extends TabGuardComp {
     protected getFocusableContainers(): HTMLElement[] {
         const focusableContainers = [this.gridBody.getGui()];
 
-        if (this.sideBar) {
-            focusableContainers.push(this.sideBar.getGui());
-        }
+        [this.sideBar, this.pagination].forEach((comp) => {
+            if (comp) {
+                focusableContainers.push(comp.getGui());
+            }
+        });
 
         return focusableContainers.filter((el) => _isVisible(el));
     }

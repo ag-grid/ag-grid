@@ -5,6 +5,7 @@ import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { GridSizeChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { FocusableComponent } from '../interfaces/iFocusableComponent';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
@@ -42,6 +43,8 @@ export class GridCtrl extends BeanStub {
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
+
+    private additionalFocusableContainers: Map<HTMLElement, FocusableComponent> = new Map();
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;
@@ -122,20 +125,31 @@ export class GridCtrl extends BeanStub {
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {
-        const focusableContainers = this.view.getFocusableContainers();
+        const focusableContainers = this.getFocusableContainers();
         const activeEl = this.gos.getActiveDomElement();
         const idxWithFocus = focusableContainers.findIndex((container) => container.contains(activeEl));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
-        if (nextIdx <= 0 || nextIdx >= focusableContainers.length) {
+        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
             return false;
         }
 
-        return this.focusService.focusInto(focusableContainers[nextIdx]);
+        if (nextIdx === 0) {
+            if (idxWithFocus > 0) {
+                const allColumns = this.visibleColsService.getAllCols();
+                const lastColumn = _last(allColumns);
+                if (this.focusService.focusGridView(lastColumn, true)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return this.focusContainer(focusableContainers[nextIdx], backwards);
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
-        const focusableContainers = this.view.getFocusableContainers();
+        const focusableContainers = this.getFocusableContainers();
         const allColumns = this.visibleColsService.getAllCols();
 
         const userCallbackFunction = this.gos.getCallback('focusGridInnerElement');
@@ -146,7 +160,7 @@ export class GridCtrl extends BeanStub {
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {
-                return this.focusService.focusInto(_last(focusableContainers), true);
+                return this.focusContainer(_last(focusableContainers), true);
             }
 
             const lastColumn = _last(allColumns);
@@ -161,7 +175,7 @@ export class GridCtrl extends BeanStub {
             }
 
             for (let i = 1; i < focusableContainers.length; i++) {
-                if (this.focusService.focusInto(focusableContainers[i])) {
+                if (this.focusContainer(focusableContainers[i])) {
                     return true;
                 }
             }
@@ -173,5 +187,30 @@ export class GridCtrl extends BeanStub {
 
     public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
+    }
+
+    public addFocusableContainer(container: FocusableComponent): void {
+        this.additionalFocusableContainers.set(container.getGui(), container);
+    }
+
+    public removeFocusableContainer(container: FocusableComponent): void {
+        this.additionalFocusableContainers.delete(container.getGui());
+    }
+
+    private focusContainer(container: HTMLElement, up?: boolean): boolean {
+        const comp = this.additionalFocusableContainers.get(container);
+        comp?.setAllowFocus(true);
+        const result = this.focusService.focusInto(container, up);
+        comp?.setAllowFocus(false);
+        return result;
+    }
+
+    private getFocusableContainers(): HTMLElement[] {
+        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers.keys()];
+    }
+
+    public override destroy(): void {
+        this.additionalFocusableContainers.clear();
+        super.destroy();
     }
 }
