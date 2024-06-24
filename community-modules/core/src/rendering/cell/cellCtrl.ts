@@ -951,7 +951,15 @@ export class CellCtrl extends BeanStub {
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
-            const focusEl = this.cellComp.getFocusableElement();
+            let focusEl = this.cellComp.getFocusableElement();
+
+            if (this.editing) {
+                const focusableEls = this.beans.focusService.findFocusableElements(focusEl, null, true);
+                if (focusableEls.length) {
+                    focusEl = focusableEls[0];
+                }
+            }
+
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
         }
 
