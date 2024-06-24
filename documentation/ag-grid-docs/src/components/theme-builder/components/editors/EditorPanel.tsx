@@ -112,6 +112,7 @@ const AccordionRoot = styled(Accordion.Root)`
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding-bottom: 32px;
 
     .iconDoc {
         margin-left: 8px;
