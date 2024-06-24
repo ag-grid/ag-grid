@@ -48,30 +48,33 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     public showLoadingOverlay(): void {
+        this.showInitialOverlay = false;
+
         const loading = this.gos.get('loading');
         if (!loading && (loading !== undefined || this.gos.get('suppressLoadingOverlay'))) {
             return;
         }
 
-        this.showInitialOverlay = false;
         this.doShowLoadingOverlay();
     }
 
     public showNoRowsOverlay(): void {
+        this.showInitialOverlay = false;
+
         if (this.gos.get('loading') || this.gos.get('suppressNoRowsOverlay')) {
             return;
         }
 
-        this.showInitialOverlay = false;
         this.doShowNoRowsOverlay();
     }
 
     public hideOverlay(): void {
+        this.showInitialOverlay = false;
+
         if (this.gos.get('loading')) {
             return;
         }
 
-        this.showInitialOverlay = false;
         this.doHideOverlay();
     }
 
