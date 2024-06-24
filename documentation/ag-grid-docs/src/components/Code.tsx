@@ -54,10 +54,14 @@ function CopyToClipboardButton({ code }: { code: string | string[] }) {
             }}
         >
             <span className={styles.clipboardButtonCopiedOuter}>
-                <span className={styles.clipboardButtonCopied}>Copied</span>
+                {hasCopied ? (
+                    <span className={styles.clipboardButtonCopied}>Copied</span>
+                ) : (
+                    <span className={styles.clipboardButtonCopied}>Copy</span>
+                )}
             </span>
             <span className={styles.clipboardButton}>
-                {hasCopied ? <Icon className={styles.check} name={'check'} /> : <Icon name={'feature-clipboard'} />}
+                {hasCopied ? <Icon className={styles.check} name={'check'} /> : <Icon name={'copy'} />}
             </span>
         </span>
     );
@@ -72,7 +76,7 @@ function Code({
     className,
     keepMarkup = false,
     lineNumbers = false,
-    copyToClipboard = false,
+    copyToClipboard = true,
     ...props
 }: {
     code: string | string[];
