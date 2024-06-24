@@ -19,7 +19,7 @@ interface IHeaderColumn<TValue, TEventType extends string> extends IEventEmitter
     /** Returns the current width of the column. If the column is resized, the actual width is the new size. */
     getActualWidth(): number;
     /** Returns the minWidth of the column or the default min width. */
-    getMinWidth(): number | null | undefined;
+    getMinWidth(): number;
     /** Returns the left position of the column. */
     getLeft(): number | null;
     /** Returns the underlying definition. */
@@ -175,18 +175,25 @@ export interface Column<TValue = any>
     /** Returns `true` when this `Column` is hovered, otherwise `false` */
     isHovered(): boolean;
 
+    /** Returns `true` if this column is the first right pinned column. */
     isFirstRightPinned(): boolean;
 
+    /** Returns `true` if this column is the first left pinned column. */
     isLastLeftPinned(): boolean;
 
+    /** Returns `true` if this column is pinned either left of right. */
     isPinned(): boolean;
 
+    /** Returns `true` if this column is pinned left. */
     isPinnedLeft(): boolean;
 
+    /** Returns `true` if this column is pinned right. */
     isPinnedRight(): boolean;
 
+    /** Returns `true` if this column spans the header height. */
     isSpanHeaderHeight(): boolean;
 
+    /** Returns column group padding info. */
     getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean };
 
     /** Returns the column definition for this column.
@@ -202,16 +209,22 @@ export interface Column<TValue = any>
      * Equivalent: `getId`, `getUniqueId` */
     getColId(): string;
 
+    /** Returns the auto header height. */
     getAutoHeaderHeight(): number | null;
 
+    /** Returns the column span for this column and row node. */
     getColSpan(rowNode: IRowNode): number;
 
+    /** Returns the row span for this column and row node. */
     getRowSpan(rowNode: IRowNode): number;
 
+    /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     isGreaterThanMax(width: number): boolean;
 
-    getMaxWidth(): number | null | undefined;
+    /** Returns the max width for the column. */
+    getMaxWidth(): number;
 
+    /** Returns the `flex` value of the column or 0 if not set.  */
     getFlex(): number;
 
     /** Returns `true` if row group is currently active for this column. */

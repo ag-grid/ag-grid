@@ -170,12 +170,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private normaliseColumnWidth(column: AgColumn, newWidth: number): number {
         const minWidth = column.getMinWidth();
 
-        if (_exists(minWidth) && newWidth < minWidth) {
+        if (newWidth < minWidth) {
             newWidth = minWidth;
         }
 
         const maxWidth = column.getMaxWidth();
-        if (_exists(maxWidth) && column.isGreaterThanMax(newWidth)) {
+        if (column.isGreaterThanMax(newWidth)) {
             newWidth = maxWidth;
         }
 
