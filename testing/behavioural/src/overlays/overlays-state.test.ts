@@ -149,6 +149,17 @@ describe('ag-grid overlays state', () => {
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
         });
+
+        test('it behaves correctly also when columns are set after rows', () => {
+            const api = createMyGrid({ rowData: [{ athlete: 'Michael Phelps', country: 'US' }] });
+            expect(hasLoadingOverlay()).toBeTruthy();
+
+            api.setGridOption('columnDefs', columnDefs);
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.setGridOption('columnDefs', undefined);
+            expect(hasLoadingOverlay()).toBeFalsy();
+        });
     });
 
     describe('When loading=true:', () => {
