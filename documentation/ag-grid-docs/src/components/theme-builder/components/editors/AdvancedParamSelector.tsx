@@ -84,7 +84,7 @@ export const AdvancedParamSelector = memoWithSameType(() => {
         open: isOpen,
         whileElementsMounted: autoUpdate,
         placement: 'right',
-        middleware: [shift({ padding: 8 }), offset({ mainAxis: 6 })],
+        middleware: [shift({ padding: 8 }), offset({ mainAxis: 8, crossAxis: -8 })],
     });
 
     const filterWordHighlighter = makeFilterWordMatcher(inputValue);
@@ -163,7 +163,7 @@ const DropdownArea = styled(Card)`
     z-index: 1000;
     position: absolute;
     pointer-events: all;
-    height: calc(100vh - 16px);
+    height: calc(100vh - 32px - 64px);
     overflow: auto;
 
     .param-menu-content {
@@ -192,8 +192,7 @@ const DropdownArea = styled(Card)`
 const Popup = styled('div')`
     display: flex;
     flex-direction: column;
-    width: calc(100vw - 350px);
-    max-width: 550px;
+    width: 380px;
 `;
 
 const NoSearchResultContainer = styled('div')`
@@ -212,7 +211,7 @@ const NoSearchResultMessage = styled('div')`
 const Param = styled('div')`
     --hover-color: var(--color-util-brand-100);
 
-    padding: 6px 8px;
+    padding: 8px;
     display: flex;
     gap: 8px;
     color: color-mix(in srgb, transparent, var(--color-fg-primary) 90%);
@@ -237,7 +236,7 @@ const Param = styled('div')`
 `;
 
 const EnabledMark = styled('input')`
-    margin-top: 4px;
+    margin-top: 1px;
 `;
 
 const ParamContent = styled('div')`
@@ -252,11 +251,14 @@ const ParamContent = styled('div')`
 `;
 
 const ParamLabel = styled('div')`
-    font-weight: 500;
+    font-weight: var(--text-semibold);
+    line-height: var(--text-lh-tight);
 `;
 
 const ParamDocs = styled('div')`
-    font-size: 0.8em;
+    font-size: var(--text-fs-xs);
+    line-height: var(--text-lh-tight);
+    color: var(--color-fg-secondary);
 `;
 
 const getParamsMatchingFilter = (filter: string) => {
