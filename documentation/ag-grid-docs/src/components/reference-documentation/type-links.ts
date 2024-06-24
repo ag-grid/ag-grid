@@ -29,7 +29,7 @@ const TYPE_LINKS: Record<string, string> = {
     ColumnGroup: './column-object-group/',
     ProvidedColumnGroup: './column-object-group#reference-ProvidedColumnGroup',
     Column: './column-object/',
-    ColumnEventType: './column-object/#reference-events',
+    ColumnEventType: './column-events/',
     CreatePivotChartParams: './integrated-charts-api-pivot-chart/#pivot-chart-api',
     CreateRangeChartParams: './integrated-charts-api-range-chart/#range-chart-api',
     GetChartImageDataUrlParams: './integrated-charts-api-downloading-image',
