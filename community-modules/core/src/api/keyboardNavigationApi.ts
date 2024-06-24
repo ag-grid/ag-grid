@@ -28,8 +28,12 @@ export function tabToPreviousCell(beans: BeanCollection, event?: KeyboardEvent):
     return beans.navigationService.tabToNextCell(true, event);
 }
 
-export function setFocusedHeader(beans: BeanCollection, colKey: string | Column | ColumnGroup) {
-    const headerPosition = beans.headerNavigationService.getHeaderPositionForColumn(colKey);
+export function setFocusedHeader(
+    beans: BeanCollection,
+    colKey: string | Column | ColumnGroup,
+    floatingFilter: boolean = false
+) {
+    const headerPosition = beans.headerNavigationService.getHeaderPositionForColumn(colKey, floatingFilter);
 
     if (!headerPosition) {
         return;
