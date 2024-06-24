@@ -94,17 +94,14 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private updateOverlayVisibility(): void {
-        const loading = this.gos.get('loading');
+        let loading = this.gos.get('loading');
 
-        let loadingVisible = false;
-        if (loading) {
-            loadingVisible = true;
-        } else if (loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
-            loadingVisible =
+        if (loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
+            loading =
                 !this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'));
         }
 
-        if (loadingVisible) {
+        if (loading) {
             this.showLoadingOverlay();
         } else if (this.rowModel.isEmpty() && !this.gos.get('suppressNoRowsOverlay')) {
             this.showNoRowsOverlay();
