@@ -14,7 +14,6 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
     }
 
     public override postConstruct() {
-        super.postConstruct();
         const size = this.size;
         const padding = this.padding;
         const combinedPadding = padding * 2;
@@ -51,5 +50,6 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
 
         root.append(radiusAxisLine);
         if (this.gridLines.length > 0) root.append(this.gridLines);
+        super.postConstruct();
     }
 }
