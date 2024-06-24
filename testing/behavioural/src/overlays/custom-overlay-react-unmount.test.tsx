@@ -17,7 +17,7 @@ describe('ag-grid custom overlay react unmount', () => {
         cleanup();
     });
 
-    test('react render of loading and no-rows', async () => {
+    test('react component unmount', async () => {
         let mounts = 0;
         let unmounts = 0;
 

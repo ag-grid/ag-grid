@@ -1,9 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
   "compilerOptions": {
-    "types": ["node", "jest", "@testing-library/jest-dom"]
+    "jsx": "react",
+    "emitDecoratorMetadata": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "module": "commonjs",
+    "types": ["jest", "node"]
   },
   "references": [
     {
