@@ -10,12 +10,20 @@ import type { ILoadingOverlayParams } from './loadingOverlayComponent';
 import type { INoRowsOverlayParams } from './noRowsOverlayComponent';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
+const enum OverlayServiceState {
+    Hidden = 0,
+    Loading = 1,
+    NoRows = 2,
+}
+
 export class OverlayService extends BeanStub implements NamedBean {
     beanName = 'overlayService' as const;
 
     private userComponentFactory: UserComponentFactory;
     private rowModel: IRowModel;
     private columnModel: ColumnModel;
+    private initialOverlay: boolean = true;
+    private currentState: OverlayServiceState = OverlayServiceState.Hidden;
 
     public wireBeans(beans: BeanCollection): void {
         this.userComponentFactory = beans.userComponentFactory;
@@ -47,6 +55,8 @@ export class OverlayService extends BeanStub implements NamedBean {
             return;
         }
 
+        this.currentState = OverlayServiceState.Loading;
+
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
         const compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
@@ -57,12 +67,16 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (this.gos.get('suppressNoRowsOverlay')) {
             return;
         }
+
+        this.initialOverlay = false;
+
         if (this.gos.get('loading')) {
             return; // loading property is true, we cannot show the no-rows overlay
         }
 
-        const params: WithoutGridCommon<INoRowsOverlayParams> = {};
+        this.currentState = OverlayServiceState.NoRows;
 
+        const params: WithoutGridCommon<INoRowsOverlayParams> = {};
         const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);
         this.showOverlay(compDetails, 'ag-overlay-no-rows-wrapper', 'noRowsOverlayComponentParams');
     }
@@ -86,26 +100,37 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     public hideOverlay(): void {
+        this.initialOverlay = false;
+
         if (this.gos.get('loading')) {
             return; // loading property is true, we cannot hide the overlay
         }
         this.manuallyDisplayed = false;
+
+        this.currentState = OverlayServiceState.Hidden;
+
         this.overlayWrapperComp.hideOverlay();
     }
 
     private updateOverlayVisibility(): void {
         let loading = this.gos.get('loading');
 
-        if (loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
-            loading =
-                !this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'));
+        if (this.initialOverlay) {
+            if (loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
+                loading =
+                    !this.gos.get('columnDefs') || (this.gos.isRowModelType('clientSide') && !this.gos.get('rowData'));
+            }
         }
 
         if (loading) {
-            this.showLoadingOverlay();
+            if (this.currentState !== OverlayServiceState.Loading) {
+                this.showLoadingOverlay();
+            }
         } else if (this.rowModel.isEmpty() && !this.gos.get('suppressNoRowsOverlay')) {
-            this.showNoRowsOverlay();
-        } else {
+            if (this.currentState !== OverlayServiceState.NoRows) {
+                this.showNoRowsOverlay();
+            }
+        } else if (this.currentState !== OverlayServiceState.Hidden) {
             this.hideOverlay();
         }
     }

@@ -124,6 +124,31 @@ describe('ag-grid overlays state', () => {
                 expect(hasLoadingOverlay()).toBeFalsy();
             });
         });
+
+        test('setting the rowdata and coldefs to undefined does not cause loading to reappear', () => {
+            const api = createMyGrid({ columnDefs });
+            expect(hasLoadingOverlay()).toBeTruthy();
+
+            api.setGridOption('rowData', [{ athlete: 'Michael Phelps', country: 'US' }]);
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.setGridOption('columnDefs', undefined);
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.setGridOption('rowData', undefined);
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.setGridOption('columnDefs', columnDefs);
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.setGridOption('rowData', []);
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.setGridOption('rowData', [{ athlete: 'Michael Phelps', country: 'US' }]);
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+        });
     });
 
     describe('When loading=true:', () => {
