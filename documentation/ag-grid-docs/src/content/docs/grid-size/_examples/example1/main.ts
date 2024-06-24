@@ -44,7 +44,7 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
     if (allColumns && allColumns.length > 0) {
         for (var i = 0; i < allColumns.length; i++) {
             var column = allColumns[i];
-            totalColsWidth += column.getMinWidth() || 0;
+            totalColsWidth += column.getMinWidth();
             if (totalColsWidth > gridWidth) {
                 columnsToHide.push(column.getColId());
             } else {

@@ -88,6 +88,10 @@
                         "path": "column-object"
                     },
                     {
+                        "title": "Column Group Reference",
+                        "path": "column-object-group"
+                    },
+                    {
                         "title": "Events Reference",
                         "path": "column-events"
                     }
