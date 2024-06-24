@@ -472,20 +472,22 @@ export function getRowNode(rowNodeFile: string) {
     return rowNodeMembers;
 }
 
-export function getColumnTypes(columnFile: string, interfaces: string[]) {
+export function getColumn(columnFile: string) {
     const srcFile = parseFile(columnFile);
-    let members = {};
+    const columnNode = findNode('Column', srcFile);
+    const iHeaderColumnNode = findNode('IHeaderColumn', srcFile);
+    const iProvidedColumnNode = findNode('IProvidedColumn', srcFile);
 
+    let members = {};
     const addToMembers = (node) => {
         ts.forEachChild(node, (n) => {
             members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
         });
     };
 
-    interfaces.forEach((interfaceName) => {
-        const node = findNode(interfaceName, srcFile);
-        addToMembers(node);
-    });
+    addToMembers(columnNode);
+    addToMembers(iHeaderColumnNode);
+    addToMembers(iProvidedColumnNode);
 
     return members;
 }
