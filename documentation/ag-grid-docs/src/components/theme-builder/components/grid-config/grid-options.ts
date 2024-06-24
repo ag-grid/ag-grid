@@ -28,6 +28,9 @@ const debugConfigFields = [
 
 export const allConfigFields = [...productionConfigFields, ...debugConfigFields] as const;
 
+export const defaultConfigFields = ['columnResizing', 'pagination', 'rowSelection'];
+
+export type ProductionGridConfigField = (typeof productionConfigFields)[number];
 export type GridConfigField = (typeof allConfigFields)[number];
 
 export type GridConfig = {
@@ -67,10 +70,10 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         columnHoverHighlight: config.columnHover,
         enableRangeSelection: true,
         rowData: defaultRowData(),
-        columnDefs: config.columnGroups
-            ? buildGroupColumnDefs(columnDefs)
-            : config.columnGroupsDeep
-              ? buildDeepGroupColumnDefs(columnDefs)
+        columnDefs: config.columnGroupsDeep
+            ? buildDeepGroupColumnDefs(columnDefs)
+            : config.columnGroups
+              ? buildGroupColumnDefs(columnDefs)
               : columnDefs,
         enableRtl: config.rightToLeft,
         domLayout: config.printLayout ? 'print' : undefined,

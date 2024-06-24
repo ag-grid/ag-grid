@@ -24,7 +24,7 @@ export function Select<O>({
     onChange,
     renderItem,
     getKey = defaultGetKey,
-    getLabel = defaultGetLabel,
+    getLabel,
     getGroupLabel = defaultGetGroupLabel,
     isPopper,
     isLarge,
@@ -34,7 +34,13 @@ export function Select<O>({
     for (const option of options) {
         const group = getGroupLabel(option) || '';
         const key = getKey(option) || '';
-        const label = getLabel(option) || '';
+        let label: string | undefined = getLabel?.(option);
+        if (label == null) {
+            label = defaultGetLabel(option);
+        }
+        if (label == null) {
+            label = key;
+        }
         content[group] ||= [];
         content[group].push(
             <SelectItem key={key} value={key} isLarge={isLarge}>
@@ -91,6 +97,7 @@ export function Select<O>({
 }
 
 const defaultGetKey = (option: any) => {
+    if (typeof option === 'string') return option;
     const valueProperty = option?.value;
     if (typeof valueProperty !== 'string') {
         throw new Error('option.value must be a string or getOptionValue must be provided');
@@ -98,7 +105,10 @@ const defaultGetKey = (option: any) => {
     return valueProperty;
 };
 
-const defaultGetLabel = (option: any) => option?.label || 'undefined';
+const defaultGetLabel = (option: any): string | undefined => {
+    const label = option?.label;
+    return typeof label === 'string' ? label : undefined;
+};
 
 const defaultGetGroupLabel = (option: any) => option?.groupLabel;
 

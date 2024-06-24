@@ -1,7 +1,7 @@
+import { paramValueToCss } from '@ag-grid-community/theming';
 import { Select } from '@ag-website-shared/components/select/Select';
 import styled from '@emotion/styled';
 
-import { paramValueToCss } from '../../../../../../../community-modules/theming/src/theme-types';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorProps) => {

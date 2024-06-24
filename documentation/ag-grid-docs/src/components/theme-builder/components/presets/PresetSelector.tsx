@@ -1,5 +1,6 @@
 import { corePart, paramValueToCss } from '@ag-grid-community/theming';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
+import { paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
 import { type RefObject, memo, useCallback, useEffect, useRef, useState } from 'react';
@@ -142,6 +143,3 @@ const Scroller = styled('div')`
         );
     }
 `;
-
-const paramToVariableName = (param: string) => `--ag-${kebabCase(param)}`;
-const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();

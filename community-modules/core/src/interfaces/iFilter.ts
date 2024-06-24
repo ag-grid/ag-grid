@@ -36,7 +36,8 @@ export interface BaseFilter {
      * The grid will ask each active filter, in turn, whether each row in the grid passes. If any
      * filter fails, then the row will be excluded from the final set. The method is provided a
      * params object with attributes node (the rodNode the grid creates that wraps the data) and data
-     * (the data object that you provided to the grid for that row).
+     * (the data object that you provided to the grid for that row). Note that this is only called for the
+     * Client-Side Row Model, and can just return `true` if being used exclusively with other row models.
      */
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 

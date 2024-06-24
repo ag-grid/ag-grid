@@ -6,7 +6,7 @@
     background-color: var(--ag-panel-background-color);
 }
 
-/* A dialog is  panel that is also a popup */
+/* A dialog is panel that is also a popup */
 .ag-dialog {
     position: absolute;
     border-radius: var(--ag-border-radius);

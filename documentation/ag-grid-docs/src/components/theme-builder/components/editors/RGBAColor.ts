@@ -1,4 +1,4 @@
-import { logErrorMessageOnce } from '../../model/utils';
+import { logErrorMessageOnce, reinterpretCSSValue } from '../../model/utils';
 import { int, proportionToHex2 } from './color-editor-utils';
 
 export class RGBAColor {
@@ -77,23 +77,13 @@ export class RGBAColor {
      * transform it to a RGBA colour.
      */
     static reinterpretCss(value: string): RGBAColor | null {
-        if (!reinterpretationElement) {
-            reinterpretationElement = document.createElement('span');
-            reinterpretationElement.className = 'ag-measurement-container';
-            document.body.appendChild(reinterpretationElement);
-        }
-        reinterpretationElement.style.backgroundColor = '';
-        reinterpretationElement.style.backgroundColor = `color-mix(in srgb, transparent, ${value} 100%)`;
-        if (!reinterpretationElement.style.backgroundColor) return null;
-        const srgbColor = getComputedStyle(reinterpretationElement).backgroundColor;
+        const srgbColor = reinterpretCSSValue(`color-mix(in srgb, transparent, ${value} 100%)`, 'color');
+        if (!srgbColor) return null;
         const parsed = RGBAColor.parseCss(srgbColor);
         if (parsed) return parsed;
-        const valueJSON = JSON.stringify(value);
         logErrorMessageOnce(
-            `The color ${valueJSON} is valid CSS but converts to "${srgbColor}" which isn't an rgb color expression`
+            `The color ${JSON.stringify(value)} is valid CSS but converts to "${srgbColor}" which isn't an rgb color expression`
         );
         return null;
     }
 }
-
-let reinterpretationElement: HTMLElement | null = null;
