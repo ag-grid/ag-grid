@@ -211,14 +211,27 @@ const NoSearchResultMessage = styled(Card)`
 `;
 
 const Param = styled('div')`
+    --hover-color: var(--color-util-brand-100);
+
     padding: 6px 8px;
     display: flex;
     gap: 8px;
     color: color-mix(in srgb, transparent, var(--color-fg-primary) 90%);
+    transition: background-color 0.25s ease-in-out;
+    cursor: pointer;
 
     &[aria-selected='true'] {
-        background-color: color-mix(in srgb, transparent, var(--color-bg-brand-solid) 35%);
+        background-color: var(--hover-color);
     }
+
+    &[aria-selected='true'] input {
+        border-color: var(--color-util-gray-400);
+    }
+
+    [data-dark-mode='true'] & {
+        --hover-color: color-mix(in srgb, var(--color-util-gray-300) 40%, transparent);
+    }
+
     &.param-enabled {
         color: var(--color-fg-primary);
     }
@@ -232,7 +245,7 @@ const ParamContent = styled('div')`
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
 
     .filter-match {
         text-decoration: underline;
