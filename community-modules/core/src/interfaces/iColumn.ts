@@ -178,7 +178,7 @@ export interface Column<TValue = any>
     /** Returns `true` if this column is the first right pinned column. */
     isFirstRightPinned(): boolean;
 
-    /** Returns `true` if this column is the first left pinned column. */
+    /** Returns `true` if this column is the last left pinned column. */
     isLastLeftPinned(): boolean;
 
     /** Returns `true` if this column is pinned either left of right. */

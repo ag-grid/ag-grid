@@ -2,32 +2,153 @@
     "_config_": {
         "codeSrc": "column.AUTO.json"
     },
-    "methods": {
+    "definitions": {
         "meta": {
-            "displayName": "Methods"
+            "displayName": "Definitions"
         },
         "getColId": {},
         "getColDef": {},
         "getUserProvidedColDef": {},
-        "getParent": {},
-        "isFilterAllowed": {},
-        "isFilterActive": {},
-        "isCellEditable": {},
         "isHovered": {},
-        "getSort": {},
-        "getAggFunc": {},
-        "getActualWidth": {},
-        "isRowGroupActive": {},
-        "isPivotActive": {},
+        "isColumn": {}
+    },
+    "editing": {
+        "meta": {
+            "displayName": "Editing"
+        },
+        "isCellEditable": {},
+        "isSuppressFillHandle": {}
+    },
+    "tooltip": {
+        "meta": {
+            "displayName": "Tooltip"
+        },
+        "isTooltipEnabled": {}
+    },
+    "filtering": {
+        "meta": {
+            "displayName": "Filtering"
+        },
+        "isFilterAllowed": {},
+        "isFilterActive": {}
+    },
+    "rowGrouping": {
+        "meta": {
+            "displayName": "Row Grouping"
+        },
+        "isAllowValue": {},
         "isValueActive": {},
-        "isPrimary": {},
+        "isAllowRowGroup": {},
+        "isRowGroupActive": {},
+        "getAggFunc": {},
+        "isRowGroupDisplayed": {}
+    },
+    "columnGroups": {
+        "meta": {
+            "displayName": "Column Groups"
+        },
+        "getParent": {},
+        "getColumnGroupShow": {},
+        "getColumnGroupPaddingInfo": {},
+        "isEmptyGroup": {}
+    },
+    "display": {
+        "meta": {
+            "displayName": "Display"
+        },
+        "getLeft": {},
+        "isVisible": {}
+    },
+    "sizing": {
+        "meta": {
+            "displayName": "Sizing"
+        },
+        "getActualWidth": {},
+        "getMinWidth": {},
+        "getMaxWidth": {},
+        "getFlex": {},
+        "isResizable": {},
+        "isAutoHeight": {},
+        "isAutoHeaderHeight": {},
+        "getAutoHeaderHeight": {},
+        "isSpanHeaderHeight": {}
+    },
+    "rowDragging": {
+        "meta": {
+            "displayName": "Row Dragging"
+        },
+        "isRowDrag": {},
+        "isDndSource": {}
+    },
+    "menu": {
+        "meta": {
+            "displayName": "Menu"
+        },
+        "isMenuVisible": {}
+    },
+    "spanning": {
+        "meta": {
+            "displayName": "Spanning"
+        },
+        "getColSpan": {},
+        "getRowSpan": {}
+    },
+    "selection": {
+        "meta": {
+            "displayName": "Selection"
+        },
+        "isCellCheckboxSelection": {}
+    },
+    "clipboard": {
+        "meta": {
+            "displayName": "Clipboard"
+        },
+        "isSuppressPaste": {}
+    },
+    "pivoting": {
+        "meta": {
+            "displayName": "Pivoting"
+        },
+        "isAllowPivot": {},
+        "isPivotActive": {},
+        "isPrimary": {}
+    },
+    "pinning": {
+        "meta": {
+            "displayName": "Pinning"
+        },
+        "getPinned": {},
+        "isPinned": {},
+        "isPinnedLeft": {},
+        "isPinnedRight": {},
+        "isFirstRightPinned": {},
+        "isLastLeftPinned": {}
+    },
+    "moving": {
+        "meta": {
+            "displayName": "Moving"
+        },
+        "isMoving": {}
+    },
+    "sorting": {
+        "meta": {
+            "displayName": "Sorting"
+        },
+        "getSort": {},
+        "isSortable": {},
+        "getSortIndex": {}
+    },
+    "events": {
+        "meta": {
+            "displayName": "Events"
+        },
         "addEventListener": {},
         "removeEventListener": {}
     },
-    "Properties": {
+    "keyboard": {
         "meta": {
-            "displayName": "Properties"
+            "displayName": "Keyboard"
         },
-        "isColumn": {}
+        "isSuppressNavigable": {}
     }
 }
