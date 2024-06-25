@@ -1,5 +1,5 @@
 ---
-title: "Licensing, Community and Enterprise"
+title: "Community and Enterprise"
 enterprise: true
 ---
 
@@ -22,6 +22,37 @@ See [Pricing](/license-pricing) for a full feature comparison and details on pur
 ## Trial AG Grid Enterprise for Free
 
 It is free to try out AG Grid Enterprise. Please take AG Grid Enterprise for a test run - you do not need to contact us in order to do so. All that we ask when trialing is that you don't use AG Grid Enterprise in a project intended for production.
+
+When you do not have a license key installed then AG Grid Enterprise will display a invalid key watermark. If you would like to remove this watermark so it's not in the way, please send us an e-mail {% link isExternal=true href="mailto: info@ag-grid.com" %}info@ag-grid.com{% /link %} and get a trial license key.
+
+## Support While Trialing
+
+You can access {% link isExternal=true href="https://ag-grid.zendesk.com/" %}Support via Zendesk{% /link %} for help while trialing. Email {% link isExternal=true href="mailto: info@ag-grid.com" %}info@ag-grid.com{% /link %} to get set up with access.
+
+## Setting the License Key
+
+AG Grid checks the license key without making any network calls. The license key is set once for the grid library -
+you do not need to set the license key for each instance of AG Grid that you create as it is set once statically into the AG Grid library.
+You must set the license key before you create an instance of AG Grid or AG Grid will complain upon creation that no license key has been set.
+
+Note that you must pass the key exactly as provided by AG Grid - do not modify the key in any way.
+
+[Setting the License Key](./license-install)
+
+### Invalid License
+
+If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
+
+{% gridExampleRunner title="Invalid License" name="forceWatermark" /%}
+
+## Seed / Example Projects
+
+We have a number of seed projects that illustrate how to get up and running with AG Grid Enterprise and how to set the license key.
+You can clone the relevant seed project and use it as a basis for your project, or just to validate your license key.
+
+You can find the seed projects on [GitHub](https://github.com/ag-grid/ag-grid-seed)
+
+{% seedProjectsTable /%}
 
 ## Installing AG Grid Enterprise
 
@@ -123,153 +154,4 @@ public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
 The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enterprise/**` should match. They are released in tandem and expect to be on the same version.
 {% /note %}
 
-## Trial License Key
 
-When you do not have a license key installed then AG Grid Enterprise will display a invalid key watermark. If you would like to remove this watermark so it's not in the way, please send us an e-mail {% link isExternal=true href="mailto: info@ag-grid.com" %}info@ag-grid.com{% /link %} and get a trial license key.
-
-## Support While Trialing
-
-You can access {% link isExternal=true href="https://ag-grid.zendesk.com/" %}Support via Zendesk{% /link %} for help while trialing. Email {% link isExternal=true href="mailto: info@ag-grid.com" %}info@ag-grid.com{% /link %} to get set up with access.
-
-## Setting the License Key
-
-Set the license key via the method described below. AG Grid checks the license key without making any network calls. The license key is set once for the grid library -
-you do not need to set the license key for each instance of AG Grid that you create as it is set once statically into the AG Grid library.
-You must set the license key before you create an instance of AG Grid or AG Grid will complain upon creation that no license key has been set.
-
-Note that you must pass the key exactly as provided by AG Grid - do not modify the key in any way.
-
-{% note %}
-If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
-visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
-product is JavaScript, there is little we can do to prevent this.
-{% /note %}
-
-{% if isFramework("javascript") %}
-### Grid Bundled/UMD Script
-
-If you are using the bundled version of AG Grid (e.g. you are using `ag-grid-enterprise/dist/ag-grid-enterprise.js` directly in an HTML file) set the license like this.
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js"></script>
-<script>
-    agGrid.LicenseManager.setLicenseKey("your license key");
-</script>
-```
-{% /if %}
-
-### Grid Packages
-
-If you are using grid packages (e.g. you are using `import ag-grid-enterprise`) set the license like this.
-
-```js
-import { LicenseManager } from  'ag-grid-enterprise'
-
-LicenseManager.setLicenseKey("your license key")
-```
-
-### Grid Modules
-
-If you are using grid modules (e.g. you are using `import { RowGroupingModule } from @ag-grid-enterprise/row-grouping`) set the license like this.
-
-```js
-import { LicenseManager } from '@ag-grid-enterprise/core'
-
-LicenseManager.setLicenseKey("your license key")
-```
-
-{% note %}
-If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be available - you do not need to specify it as a dependency.
-{% /note %}
-
-### Do Not Mix Loading Mechanisms
-
-If you mix the methods above (eg if you are using CommonJS in your application, but use the JavaScript approach above to set license key) then it will not work. This is because the AG Grid library will be loaded twice, one will have the license key and the other will be used in your application without the license key.
-
-{% if isFramework("angular") %}
-We recommend setting the license key in your main boot files (typically named either `main.ts` or `boot.ts`, before you
-bootstrap your application.
-
-For example:
-
-{% /if %}
-
-{% if isFramework("angular") %}
-```js
-// other imports...
-
-import {LicenseManager} from "@ag-grid-enterprise/core";
-LicenseManager.setLicenseKey("your license key");
-
-// bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
-```
-{% /if %}
-
-{% if isFramework("react") %}
-We recommend setting the license key in your main bootstrap file (typically named `index.js`), before you bootstrap your application.
-
-For example:
-
-{% /if %}
-
-{% if isFramework("react") %}
-```jsx
-import React from "react";
-import {render} from "react-dom";
-
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-
-import {LicenseManager} from "@ag-grid-enterprise/core";
-LicenseManager.setLicenseKey("your license key");
-
-import App from "./App";
-
-document.addEventListener('DOMContentLoaded', () => {
-   render(
-       <App/>,
-       document.querySelector('#app')
-   );
-});
-```
-{% /if %}
-
-{% if isFramework("vue") %}
-We recommend setting the license key in your main bootstrap file (typically named `main.js`), before you bootstrap your application.
-
-For example:
-
-{% /if %}
-
-{% if isFramework("vue") %}
-```js
-import Vue from "vue";
-
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-
-import { LicenseManager } from "@ag-grid-enterprise/core";
-
-LicenseManager.setLicenseKey("your license key");
-
-new Vue({
-   el: "#el",
-   ...
-});
-```
-{% /if %}
-
-### Invalid License
-
-If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
-
-{% gridExampleRunner title="Invalid License" name="forceWatermark" /%}
-
-## Seed / Example Projects
-
-We have a number of seed projects that illustrate how to get up and running with AG Grid Enterprise and how to set the license key.
-You can clone the relevant seed project and use it as a basis for your project, or just to validate your license key.
-
-You can find the seed projects on [GitHub](https://github.com/ag-grid/ag-grid-seed)
-
-{% seedProjectsTable /%}
