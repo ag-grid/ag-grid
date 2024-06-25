@@ -125,8 +125,8 @@ describe('ag-grid custom overlay react unmount', () => {
         const defaultProps: AgGridReactProps<any> = {
             columnDefs,
             rowData: [{}],
-            loadingOverlayComponent: CustomLoadingOverlay,
-            noRowsOverlayComponent: CustomLoadingOverlay,
+            loadingOverlayComponent: () => <CustomLoadingOverlay />,
+            noRowsOverlayComponent: () => <CustomLoadingOverlay />,
         };
 
         const { rerender } = render(<AgGridReact {...defaultProps} ref={setRef} />);
