@@ -148,6 +148,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                     flex: 1,
                     minWidth: 100,
                 },
+                headerHeight: 38,
             },
             getDetailRowData: ({ successCallback, data: { variantDetails } }: GetDetailRowDataParams) =>
                 successCallback(variantDetails),
@@ -208,6 +209,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         rowData={rowData}
                         defaultColDef={defaultColDef}
                         rowHeight={80}
+                        getRowHeight={getRowHeight}
                         autoSizeStrategy={autoSizeStrategy}
                         pagination
                         paginationPageSize={10}

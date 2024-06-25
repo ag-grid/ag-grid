@@ -89,17 +89,28 @@
     border: none;
 }
 
+:global(.ag-theme-quartz .ag-full-width-container .ag-row),
+:global(.ag-theme-quartz-dark .ag-full-width-container .ag-row),
+:global(.ag-theme-quartz .ag-full-width-container .ag-details-row),
+:global(.ag-theme-quartz-dark .ag-full-width-container .ag-details-row) {
+    background-color: transparent;
+}
+
 :global(.ag-theme-quartz .ag-details-row),
 :global(.ag-theme-quartz-dark .ag-details-row) {
     padding: 16px;
 }
 
-:global(.ag-theme-quartz .ag-details-row .ag-header),
-:global(.ag-theme-quartz-dark .ag-details-row .ag-header) {
+:global(.ag-theme-quartz .ag-paging-panel) {
+    height: 40px;
+
+    > span:last-child {
+        margin-right: 0;
+    }
 }
 
 .grid {
-    height: calc(96vh - var(--layout-grid-header-height));
+    height: calc(100vh - var(--layout-grid-header-height) - 50px);
     --ag-header-background-color: transparent !important;
 }
 
