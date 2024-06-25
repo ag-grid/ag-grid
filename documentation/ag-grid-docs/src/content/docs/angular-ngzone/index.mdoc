@@ -1,0 +1,64 @@
+---
+title: "AG Grid and NgZone"
+frameworks: ["angular"]
+---
+
+AG Grid implements performance optimisations to avoid [Zone Pollution](https://angular.dev/best-practices/zone-pollution) as recommended by the Angular team.
+
+## NgZone and Change Detection
+
+Angular uses Zone.js to manage change detection by capturing all asynchronous operations and scheduling change detection to run when they complete. However, if an application / library uses asynchronous operations that do not require change detection to run, it can be beneficial to run these operations outside of NgZone.
+
+The official term for this is [Zone Pollution](https://angular.dev/best-practices/zone-pollution) as documented by Angular.
+
+## AG Grid Features Run In / Out of NgZone
+
+AG Grid minimises unnecessary change detection by running all internal operations outside of NgZone while ensuring that wherever AG Grid may trigger a change in the Angular application that this code will be executed inside NgZone. This behaviour should be invisible to the vast majority of developers.
+
+### Operations Run Inside NgZone
+
+The majority of application code run by AG Grid will be executed inside NgZone including:
+
+ - Event handlers, grid, row, column, etc
+ - Menu actions triggers 
+ - Custom components
+    - Angular lifecycle methods
+    - agInit, refresh, etc
+
+```html
+onCellClicked(event: CellClickedEvent) {
+  // This code will run inside NgZone
+  console.log("Inside NgZone", NgZone.isInAngularZone())   
+}
+
+<ag-grid-angular (cellClicked)="onCellClicked($event)">
+```
+
+### Operations Run Outside NgZone
+
+For performance gains the following operations are run outside of NgZone:
+
+- grid callbacks
+
+```html
+getRowId(params: GetRowIdParams) {
+  // This code will run outside NgZone
+  console.log("Outside NgZone", NgZone.isInAngularZone());
+  return String(params.data.id);
+}
+
+<ag-grid-angular [getRowId]="getRowId">
+```
+
+Grid callbacks should only be used to provide configuration to the grid and should not be used to update application state. However, if you need to work around this restriction you can use `NgZone.run` to force code to execute inside NgZone.
+
+```ts
+gridCallback(params: GridCallbackParams) {
+  this.ngZone.run(() => {
+    // This code will run inside NgZone
+    console.log("Inside NgZone", NgZone.isInAngularZone());
+  });
+}
+```
+
+The majority of developers will not need to worry about this as the grid is designed to work seamlessly with Angular applications. However, if you are experiencing issues with change detection or performance you may need to consider the above information.

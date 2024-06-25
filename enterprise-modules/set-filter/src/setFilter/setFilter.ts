@@ -2,7 +2,6 @@ import type {
     AgColumn,
     AgInputTextField,
     BeanCollection,
-    CellValueChangedEvent,
     ComponentSelector,
     DataTypeService,
     FuncColsService,

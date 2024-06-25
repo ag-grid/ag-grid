@@ -16,6 +16,14 @@ Each column in the grid is represented by a `Column` instance, which has a refer
 
 See [Column](./column-object/)  for a complete list of attributes / methods associated with columns.
 
+## Column Group
+
+If using column groups then each group is represented by a `ColumnGroup` or `ProvidedColumnGroup` instance. Both have methods for interacting with the column group e.g. `column.isExpanded()`.
+
+There are many overlapping methods between `ColumnGroup` and `ProvidedColumnGroup` as they are similar objects. The key difference is that `ColumnGroups` align with the columns that are visible in the grid whereas `ProvidedColumnGroups` align with the columns that are provided to the grid. For example, a group could be split apart by moving a column and this would result in a new `ColumnGroup` but the `ProvidedColumnGroup` would remain the same.
+
+See [Column Group](./column-object-group/)  for a complete list of methods associated with column groups.
+
 ## Column Events
 
 Columns fire events as they are updated which makes it possible to trigger logic in your application.

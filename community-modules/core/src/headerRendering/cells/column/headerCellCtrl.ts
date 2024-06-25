@@ -120,8 +120,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
 
         const actualWidth = this.column.getActualWidth();
-        const minWidth = this.column.getMinWidth() ?? 0;
-        const maxWidth = this.column.getMaxWidth() ?? Number.MAX_SAFE_INTEGER;
+        const minWidth = this.column.getMinWidth();
+        const maxWidth = this.column.getMaxWidth();
 
         const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
 

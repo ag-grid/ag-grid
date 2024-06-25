@@ -6,14 +6,35 @@
     position: absolute;
     top: $spacing-size-1;
     right: $spacing-size-1;
-    height: $spacing-size-8;
     opacity: 0;
     z-index: 2;
-    overflow: hidden;
     transition: opacity 0.33s ease-in-out;
 
     pre:hover & {
         opacity: 1;
+    }
+
+    &:hover {
+        .clipboardButtonCopied {
+            color: var(--color-util-brand-400);
+
+            #{$selector-darkmode} & {
+                color: var(--color-link-hover);
+            }
+        }
+
+        svg {
+            --color-icon: var(--color-util-brand-400);
+
+            #{$selector-darkmode} & {
+                --color-icon: var(--color-link-hover);
+            }
+        }
+    }
+
+    // Account for likely scrollbar in example runners
+    :global(.example-runner-outer) & {
+        right: $spacing-size-5;
     }
 }
 
@@ -40,19 +61,10 @@
     transition: background-color $transition-default-timing;
 
     svg {
+        --icon-size: 22px;
         --color-icon: var(--color-util-gray-500);
 
-        position: relative;
-        left: -2px;
         transition: fill $transition-default-timing;
-    }
-
-    &:hover svg {
-        --color-icon: var(--color-util-brand-400);
-
-        #{$selector-darkmode} & {
-            --color-icon: var(--color-link-hover);
-        }
     }
 }
 
@@ -68,8 +80,8 @@
     border-top-left-radius: var(--radius-sm);
     border-bottom-left-radius: var(--radius-sm);
     border-left: 1px solid var(--color-border-primary);
-    color: var(--color-fg-white);
-    transform: translateX(calc(100% - var(--radius-sm)));
+    font-weight: var(--text-regular);
+    color: var(--color-fg-tertiary);
     transition:
         transform $transition-default-timing,
         background-color $transition-default-timing,
@@ -104,7 +116,9 @@
         }
     }
 
-    .clipboardButtonCopied {
+    .clipboardButtonCopied,
+    &:hover .clipboardButtonCopied {
+        color: var(--color-fg-white);
         transform: translateX(0);
         background-color: var(--color-util-gray-700);
     }

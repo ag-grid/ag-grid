@@ -38,7 +38,7 @@ const licenseDataState = {
     validIntegratedChartsLicense: {
         getIsState: ({ userLicense, licensedProducts }: DataState) =>
             hasValue(userLicense) && licensedProducts.charts && licensedProducts.grid,
-        message: `Valid Enterprise Bundle license key. Includes AG Grid Enterprise and AG Chart Enterprise`,
+        message: `Valid Enterprise Bundle license key. Includes AG Grid Enterprise and AG Charts Enterprise`,
     },
     minimalModulesInfo: {
         getIsState: ({ licensedProducts, importType }: DataState) => licensedProducts.grid && importType === 'modules',
@@ -61,10 +61,6 @@ const licenseDataState = {
         message:
             'License key is not valid. Make sure you are copying the whole license key which was originally provided',
     },
-    v2LicenseError: {
-        getIsState: ({ userLicenseVersion }: DataState) => userLicenseVersion === '2',
-        message: 'This license key is not valid for AG Grid v30 and later',
-    },
     expiredError: {
         getIsState: ({ userLicense, userLicenseIsExpired }: DataState) => {
             return hasValue(userLicense) && userLicenseIsExpired;
@@ -80,12 +76,7 @@ const licenseDataState = {
 };
 
 const licenseValidKeys: LicenseStateKey[] = ['validGridLicense', 'validChartsLicense', 'validIntegratedChartsLicense'];
-const licenseInvalidKeys: LicenseStateKey[] = [
-    'expiredError',
-    'expiredTrialError',
-    'userLicenseError',
-    'v2LicenseError',
-];
+const licenseInvalidKeys: LicenseStateKey[] = ['expiredError', 'expiredTrialError', 'userLicenseError'];
 
 const useLicenseState = ({
     userLicense,
@@ -238,8 +229,8 @@ export const useLicenseData = () => {
             return;
         }
 
-        const { suppliedLicenseType } = licenseDetails;
-        const gridEnterprise = suppliedLicenseType === 'GRID' || suppliedLicenseType === 'BOTH';
+        const { suppliedLicenseType, version } = licenseDetails;
+        const gridEnterprise = version === '2' || suppliedLicenseType === 'GRID' || suppliedLicenseType === 'BOTH';
         const isIntegrated = suppliedLicenseType === 'BOTH';
         const chartsEnterprise = suppliedLicenseType === 'CHARTS' || suppliedLicenseType === 'BOTH';
 

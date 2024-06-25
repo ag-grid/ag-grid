@@ -17,7 +17,7 @@ const minHeight = exampleHeight + FRAME_WRAPPER_HEIGHT;
 const loadingLogoId = getLoadingLogoId({ pageName, exampleName });
 ---
 
-<div class="container" style={{ minHeight: `${minHeight}px` }}>
+<div class="container example-runner-outer" style={{ minHeight: `${minHeight}px` }}>
     <LoadingLogo id={loadingLogoId} />
     <slot />
 </div>

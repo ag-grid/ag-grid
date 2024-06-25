@@ -17,7 +17,6 @@ export const EditorPanel = () => {
             <div className="pageHeading">
                 <h1 className="pageTitle">Theme Builder </h1>
             </div>
-            {/* <p className="pageDescription">Prototype & customise your data grid theme</p> */}
             <Section heading="General">
                 <LeftBiasRow>
                     <ParamEditor param="fontFamily" />
@@ -26,6 +25,8 @@ export const EditorPanel = () => {
                 <ParamEditor param="backgroundColor" />
                 <ParamEditor param="foregroundColor" />
                 <ParamEditor param="accentColor" showDocs />
+            </Section>
+            <Section heading="Borders & spacing">
                 <ParamEditor param="borderColor" />
                 <BordersEditor />
                 <ParamEditor param="gridSize" label="Spacing" showDocs icon={verticalSpacingIcon} />

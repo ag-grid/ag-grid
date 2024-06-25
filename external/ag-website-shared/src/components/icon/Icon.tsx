@@ -178,6 +178,7 @@ export const ICON_MAP = {
     headingResult: HeadingResult,
     listBoxes: CarbonIcon.List,
     figmaCommunity: FigmaIcon,
+    copy: CarbonIcon.Copy,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,

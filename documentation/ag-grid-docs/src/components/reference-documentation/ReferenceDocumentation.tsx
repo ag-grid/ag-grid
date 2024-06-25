@@ -554,7 +554,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         );
     }
 
-    let propDescription = definition.description || (gridParams && gridParams.meta.comment) || undefined;
+    let propDescription = definition.description || (gridParams && gridParams.meta?.comment) || undefined;
     if (propDescription) {
         propDescription = formatJsDocString(propDescription);
         // process property object

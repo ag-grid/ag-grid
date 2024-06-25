@@ -370,9 +370,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         const onSortingChanged = () => {
-            this.addOrRemoveCssClass('ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-            this.addOrRemoveCssClass('ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-            this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
+            const sort = this.params.column.getSort();
+            this.addOrRemoveCssClass('ag-header-cell-sorted-asc', sort === 'asc');
+            this.addOrRemoveCssClass('ag-header-cell-sorted-desc', sort === 'desc');
+            this.addOrRemoveCssClass('ag-header-cell-sorted-none', !sort);
 
             if (this.params.column.getColDef().showRowGroup) {
                 const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(
