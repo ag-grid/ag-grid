@@ -2,11 +2,11 @@ import { isFramework } from '@ag-website-shared/markdoc/functions/isFramework';
 import { isNotJavascriptFramework } from '@ag-website-shared/markdoc/functions/isNotJavascriptFramework';
 import { heading } from '@ag-website-shared/markdoc/nodes/heading';
 import { br } from '@ag-website-shared/markdoc/tags/br';
+import { embedSnippet } from '@ag-website-shared/markdoc/tags/embedSnippet';
 import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
 import { idea } from '@ag-website-shared/markdoc/tags/idea';
 import { image } from '@ag-website-shared/markdoc/tags/image';
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
-import { licenseSetup } from '@ag-website-shared/markdoc/tags/licenseSetup';
 import { note } from '@ag-website-shared/markdoc/tags/note';
 import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
 import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
@@ -61,7 +61,9 @@ export default defineMarkdocConfig({
         idea,
         openInCTA,
         enterpriseIcon,
-        licenseSetup,
+        licenseSetup: {
+            render: component('./src/components/license-setup/LicenseSetup.astro'),
+        },
         gridExampleRunner: {
             render: component('./src/features/docs/components/DocsExampleRunner.astro'),
             attributes: {
@@ -130,21 +132,7 @@ export default defineMarkdocConfig({
                 wrapped: { type: Boolean },
             },
         },
-        embedSnippet: {
-            render: component('./src/components/snippet/EmbedSnippet.astro'),
-            attributes: {
-                /**
-                 * Source file relative to example folder
-                 */
-                src: { type: String },
-                /**
-                 * Source file url
-                 */
-                url: { type: String },
-                language: { type: String },
-                lineNumbers: { type: Boolean },
-            },
-        },
+        embedSnippet,
         iframe: {
             render: 'iframe',
             attributes: {
