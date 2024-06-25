@@ -4,7 +4,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import type { AgGridReactProps } from '@ag-grid-community/react';
 import '@testing-library/jest-dom';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 describe('ag-grid custom overlay react unmount', () => {
@@ -23,16 +23,22 @@ describe('ag-grid custom overlay react unmount', () => {
         unmounts = 0;
     });
 
+    afterEach(() => {
+        jest.resetAllMocks();
+    });
+
     class CustomLoadingOverlay extends React.Component {
         override render() {
             return <div>Custom Overlay</div>;
         }
 
         override componentDidMount() {
+            // console.log('mounts');
             ++mounts;
         }
 
         override componentWillUnmount() {
+            // console.log('unmounts');
             ++unmounts;
         }
     }
@@ -111,5 +117,62 @@ describe('ag-grid custom overlay react unmount', () => {
             expect(mounts).toBe(1);
             expect(unmounts).toBe(1);
         });
+    });
+
+    test('quick toggle with race conditions disposes all beans (fuzz test for AG-9318)', async () => {
+        let ref!: AgGridReact;
+        const setRef = (r: AgGridReact) => (ref = r);
+        const defaultProps: AgGridReactProps<any> = {
+            columnDefs,
+            rowData: [{}],
+            loadingOverlayComponent: () => <CustomLoadingOverlay />,
+            noRowsOverlayComponent: () => <CustomLoadingOverlay />,
+        };
+
+        const { rerender } = render(<AgGridReact {...defaultProps} ref={setRef} />);
+
+        let randomTimeoutsIndex = 0;
+        const randomTimeouts = [
+            2, 4, 3, 2, 1, 4, 0, 3, 3, 2, 0, 3, 3, 1, 0, 3, 2, 1, 0, 1, 2, 4, 2, 0, 3, 4, 2, 1, 4, 3,
+        ];
+
+        for (let i = 0; i < 20; ++i) {
+            // We need to randomize timer resolution to simulate potential race conditions
+            const originalSetTimeout = global.setTimeout;
+            const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation((cb, ms, ...args) => {
+                ms = randomTimeouts[randomTimeoutsIndex++ % randomTimeouts.length];
+                if (typeof cb === 'function') {
+                    const originalCb = cb;
+                    cb = (...args: any[]) => act(() => originalCb(...args));
+                }
+                return originalSetTimeout(cb, ms, ...args);
+            });
+
+            const loading = i % 2 === 0;
+
+            rerender(<AgGridReact {...defaultProps} ref={setRef} loading={loading} />);
+            if (!loading) {
+                ref.api.showNoRowsOverlay();
+                ref.api.showNoRowsOverlay();
+                ref.api.hideOverlay();
+                ref.api.showNoRowsOverlay();
+                ref.api.showNoRowsOverlay();
+            }
+
+            setTimeoutSpy.mockRestore();
+
+            await waitFor(() => expect(screen.queryByText('Custom Overlay')).toBeInTheDocument());
+        }
+
+        rerender(<AgGridReact {...defaultProps} ref={setRef} loading={false} />);
+        ref.api.hideOverlay();
+
+        await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
+
+        await new Promise((resolve) => setTimeout(resolve)); // unmount will be called on the next tick
+
+        expect(mounts - unmounts).toBe(0);
+
+        expect(randomTimeoutsIndex).toBeGreaterThan(0); // Ensure our fake timer was called
     });
 });

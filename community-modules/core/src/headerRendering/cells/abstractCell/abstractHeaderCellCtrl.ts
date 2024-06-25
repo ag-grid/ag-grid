@@ -8,7 +8,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import { isColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
-import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from '../../../events';
+import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent, HeaderFocusedEvent } from '../../../events';
 import type { FocusService } from '../../../focusService';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import type { BrandedType } from '../../../interfaces/brandedType';
@@ -111,8 +111,22 @@ export abstract class AbstractHeaderCellCtrl<
         this.addManagedListeners(this.beans.eventService, {
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
+
+        this.addManagedElementListeners(this.eGui, {
+            focus: this.onGuiFocus.bind(this),
+        });
+
         this.onDisplayedColumnsChanged();
         this.refreshTabIndex();
+    }
+
+    private onGuiFocus(): void {
+        const event: WithoutGridCommon<HeaderFocusedEvent> = {
+            type: 'headerFocused',
+            column: this.column,
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     protected onDisplayedColumnsChanged(): void {

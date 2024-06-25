@@ -63,7 +63,10 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         if (this.componentInstance && typeof this.componentInstance.destroy == 'function') {
             this.componentInstance.destroy();
         }
-        return this.portalManager.destroyPortal(this.portal as ReactPortal);
+        const portal = this.portal;
+        if (portal) {
+            this.portalManager.destroyPortal(portal);
+        }
     }
 
     protected createParentElement(params: any) {
@@ -200,9 +203,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     }
 
     private createReactComponent(resolve: (value: any) => void) {
-        this.portalManager.mountReactPortal(this.portal!, this, (value: any) => {
-            resolve(value);
-        });
+        this.portalManager.mountReactPortal(this.portal!, this, resolve);
     }
 
     public rendered(): boolean {

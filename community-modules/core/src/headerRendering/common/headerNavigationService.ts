@@ -11,6 +11,7 @@ import type { FocusService } from '../../focusService';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { Column, ColumnGroup } from '../../interfaces/iColumn';
 import { _last } from '../../utils/array';
+import { HeaderRowType } from '../row/headerRowComp';
 import type { HeaderPosition, HeaderPositionUtils } from './headerPosition';
 
 export enum HeaderNavigationDirection {
@@ -54,8 +55,10 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
     }
 
-    public getHeaderPositionForColumn(colKey: string | Column | ColumnGroup): HeaderPosition | null {
-        const headerRowContainerCtrls = this.ctrlsService.getHeaderRowContainerCtrls();
+    public getHeaderPositionForColumn(
+        colKey: string | Column | ColumnGroup,
+        floatingFilter: boolean
+    ): HeaderPosition | null {
         let column: AgColumn | AgColumnGroup | null;
 
         if (typeof colKey === 'string') {
@@ -71,21 +74,23 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
-        let headerRowIndex = -1;
+        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        const allCtrls = centerHeaderContainer.getAllCtrls();
+        const isFloatingFilterVisible = _last(allCtrls).getType() === HeaderRowType.FLOATING_FILTER;
+        const headerRowCount = this.getHeaderRowCount() - 1;
 
-        for (const rowContainerCtrl of headerRowContainerCtrls) {
-            const allCtrls = rowContainerCtrl.getAllCtrls();
-            if (headerRowIndex !== -1) {
-                break;
-            }
+        let row = -1;
+        let col: AgColumn | AgColumnGroup | null = column;
 
-            for (let i = 0; i < allCtrls.length; i++) {
-                const headerRowCtrl = allCtrls[i];
-                if (headerRowCtrl.findHeaderCellCtrl(column as AgColumn | AgColumnGroup)) {
-                    headerRowIndex = i;
-                    break;
-                }
-            }
+        while (col) {
+            row++;
+            col = col.getParent();
+        }
+
+        let headerRowIndex = row;
+
+        if (floatingFilter && isFloatingFilterVisible && headerRowIndex === headerRowCount - 1) {
+            headerRowIndex++;
         }
 
         return headerRowIndex === -1

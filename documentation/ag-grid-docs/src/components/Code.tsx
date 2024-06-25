@@ -76,7 +76,7 @@ function Code({
     className,
     keepMarkup = false,
     lineNumbers = false,
-    copyToClipboard = true,
+    copyToClipboard = false,
     ...props
 }: {
     code: string | string[];

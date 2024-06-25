@@ -1394,6 +1394,11 @@
                             {
                                 "title": "Scrolling Performance",
                                 "path": "scrolling-performance"
+                            },
+                            {
+                                "title": "NgZone",
+                                "path": "angular-ngzone",
+                                "frameworks": ["angular"]
                             }
                         ]
                     }

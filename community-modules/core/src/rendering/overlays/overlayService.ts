@@ -129,18 +129,6 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
-        const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
-            promise.then((comp) => {
-                if (comp!.refresh) {
-                    comp.refresh(
-                        this.gos.addGridCommonParams({
-                            ...(currentValue ?? {}),
-                        })
-                    );
-                }
-            });
-        });
-
-        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, listenerDestroyFunc);
+        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, gridOption);
     }
 }

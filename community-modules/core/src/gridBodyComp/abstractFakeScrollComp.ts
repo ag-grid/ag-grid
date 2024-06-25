@@ -1,5 +1,4 @@
 import type { BeanCollection } from '../context/context';
-import type { BodyScrollEvent } from '../events';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import { _isVisible } from '../utils/dom';
