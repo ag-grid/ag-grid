@@ -1,29 +1,18 @@
-import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { IComponent } from '../../interfaces/iComponent';
-import { Component } from '../../widgets/component';
+import { OverlayComponent } from './overlayComponent';
+import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
 
-export interface ILoadingOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+export interface ILoadingOverlayParams<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
 
-export interface ILoadingOverlay<TData = any, TContext = any> {
-    // Gets called when the `loadingOverlayComponentParams` grid option is updated
-    refresh?(params: ILoadingOverlayParams<TData, TContext>): void;
-}
+export interface ILoadingOverlay<TData = any, TContext = any>
+    extends IOverlay<TData, TContext, ILoadingOverlayParams> {}
 
 export interface ILoadingOverlayComp<TData = any, TContext = any>
-    extends IComponent<ILoadingOverlayParams<TData, TContext>>,
-        ILoadingOverlay<TData, TContext> {}
+    extends IOverlayComp<TData, TContext, ILoadingOverlayParams<TData, TContext>> {}
 
-export class LoadingOverlayComponent extends Component implements ILoadingOverlayComp {
-    constructor() {
-        super();
-    }
-
-    // this is a user component, and IComponent has "public destroy()" as part of the interface.
-    // so we need to override destroy() just to make the method public.
-    public override destroy(): void {
-        super.destroy();
-    }
-
+export class LoadingOverlayComponent
+    extends OverlayComponent<any, any, ILoadingOverlayParams>
+    implements ILoadingOverlayComp<any, any>
+{
     public init(): void {
         const customTemplate = this.gos.get('overlayLoadingTemplate');
 

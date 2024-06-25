@@ -6,6 +6,7 @@ import { _clearElement } from '../../utils/dom';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
+import type { IOverlayComp } from './overlayComponent';
 import type { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
@@ -17,8 +18,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
 
-    private activePromise: AgPromise<Component> | null = null;
-    private activeOverlay: Component | null = null;
+    private activePromise: AgPromise<IOverlayComp> | null = null;
+    private activeOverlay: IOverlayComp | null = null;
     private updateListenerDestroyFunc: (() => null) | null = null;
     private activeOverlayWrapperCssClass: string | null = null;
 
@@ -56,7 +57,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public showOverlay(
-        overlayComponentPromise: AgPromise<Component> | null,
+        overlayComponentPromise: AgPromise<IOverlayComp> | null,
         overlayWrapperCssClass: string,
         gridOption?: keyof GridOptions
     ): void {
@@ -90,8 +91,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             this.activeOverlay = comp;
 
             if (gridOption) {
+                const component = comp;
                 this.updateListenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
-                    (comp as any)?.refresh(this.gos.addGridCommonParams({ ...(currentValue ?? {}) }));
+                    component.refresh?.(this.gos.addGridCommonParams({ ...(currentValue ?? {}) }));
                 });
             }
         });

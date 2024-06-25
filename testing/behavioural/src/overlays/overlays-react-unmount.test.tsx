@@ -124,6 +124,7 @@ describe('ag-grid custom overlay react unmount', () => {
         const setRef = (r: AgGridReact) => (ref = r);
         const defaultProps: AgGridReactProps<any> = {
             columnDefs,
+            rowData: [{}],
             loadingOverlayComponent: CustomLoadingOverlay,
             noRowsOverlayComponent: CustomLoadingOverlay,
         };
@@ -147,32 +148,27 @@ describe('ag-grid custom overlay react unmount', () => {
                 return originalSetTimeout(cb, ms, ...args);
             });
 
-            ref.api.showNoRowsOverlay();
-            ref.api.showNoRowsOverlay();
-            ref.api.hideOverlay();
-            ref.api.showNoRowsOverlay();
-            ref.api.showNoRowsOverlay();
+            const loading = i % 2 === 0;
 
-            rerender(<AgGridReact {...defaultProps} ref={setRef} loading={false} />);
-
-            if (i % 3 === 0) {
-                rerender(<AgGridReact {...defaultProps} ref={setRef} loading={true} />);
+            rerender(<AgGridReact {...defaultProps} ref={setRef} loading={loading} />);
+            if (!loading) {
+                ref.api.showNoRowsOverlay();
+                ref.api.showNoRowsOverlay();
+                ref.api.hideOverlay();
+                ref.api.showNoRowsOverlay();
+                ref.api.showNoRowsOverlay();
             }
 
             setTimeoutSpy.mockRestore();
 
-            if (i % 5 === 3) {
-                await waitFor(() => expect(screen.queryByText('Custom Overlay')).toBeInTheDocument());
-            }
+            await waitFor(() => expect(screen.queryByText('Custom Overlay')).toBeInTheDocument());
         }
 
-        await waitFor(() => expect(screen.queryByText('Custom Overlay')).toBeInTheDocument());
-
-        await new Promise((resolve) => setTimeout(resolve)); // unmount will be called on the next tick
-
-        rerender(<AgGridReact {...defaultProps} ref={setRef} loading={false} rowData={[{}]} />);
+        rerender(<AgGridReact {...defaultProps} ref={setRef} loading={false} />);
+        ref.api.hideOverlay();
 
         await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
+
         await new Promise((resolve) => setTimeout(resolve)); // unmount will be called on the next tick
 
         expect(mounts - unmounts).toBe(0);
