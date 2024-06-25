@@ -1,10 +1,12 @@
 import type { BeanCollection } from '../../context/context';
+import type { GridOptions } from '../../entities/gridOptions';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _clearElement } from '../../utils/dom';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
+import type { IOverlayComp } from './overlayComponent';
 import type { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
@@ -16,11 +18,10 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
 
-    private activeOverlay: Component;
-    private inProgress = false;
-    private destroyRequested = false;
-    private activeOverlayWrapperCssClass: string;
-    private updateListenerDestroyFunc?: () => null;
+    private activePromise: AgPromise<IOverlayComp> | null = null;
+    private activeOverlay: IOverlayComp | null = null;
+    private updateListenerDestroyFunc: (() => null) | null = null;
+    private activeOverlayWrapperCssClass: string | null = null;
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
@@ -56,48 +57,67 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public showOverlay(
-        overlayComp: AgPromise<Component> | null,
+        overlayComponentPromise: AgPromise<IOverlayComp> | null,
         overlayWrapperCssClass: string,
-        updateListenerDestroyFunc: () => null
+        gridOption?: keyof GridOptions
     ): void {
-        if (this.inProgress) {
-            return;
-        }
-
         this.setWrapperTypeClass(overlayWrapperCssClass);
         this.destroyActiveOverlay();
 
-        if (overlayComp) {
-            this.inProgress = true;
-            overlayComp.then((comp) => {
-                this.inProgress = false;
+        this.activePromise = overlayComponentPromise;
 
-                this.eOverlayWrapper.appendChild(comp!.getGui());
-                this.activeOverlay = comp!;
-                this.updateListenerDestroyFunc = updateListenerDestroyFunc;
-
-                if (this.destroyRequested) {
-                    this.destroyRequested = false;
-                    this.destroyActiveOverlay();
+        overlayComponentPromise?.then((comp) => {
+            if (this.activePromise !== overlayComponentPromise) {
+                // Another promise was started, we need to cancel this old operation
+                if (this.activeOverlay !== comp) {
+                    // We can destroy the component as it will not be used
+                    this.destroyBean(comp);
+                    comp = null;
                 }
-            });
-        }
+                return;
+            }
+
+            this.activePromise = null; // Promise completed, so we can reset this
+
+            if (!comp) {
+                return; // Error handling
+            }
+
+            if (this.activeOverlay == comp) {
+                return; // same component, already active
+            }
+
+            this.eOverlayWrapper.appendChild(comp.getGui());
+            this.activeOverlay = comp;
+
+            if (gridOption) {
+                const component = comp;
+                this.updateListenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
+                    component.refresh?.(this.gos.addGridCommonParams({ ...(currentValue ?? {}) }));
+                });
+            }
+        });
 
         this.setDisplayed(true, { skipAriaHidden: true });
     }
 
     private destroyActiveOverlay(): void {
-        if (this.inProgress) {
-            this.destroyRequested = true;
-            return;
+        this.activePromise = null;
+
+        const activeOverlay = this.activeOverlay;
+        if (!activeOverlay) {
+            return; // Nothing to destroy
         }
 
-        if (!this.activeOverlay) {
-            return;
+        this.activeOverlay = null;
+
+        const updateListenerDestroyFunc = this.updateListenerDestroyFunc;
+        if (updateListenerDestroyFunc) {
+            updateListenerDestroyFunc();
+            this.updateListenerDestroyFunc = null;
         }
 
-        this.activeOverlay = this.destroyBean(this.activeOverlay)!;
-        this.updateListenerDestroyFunc?.();
+        this.destroyBean(activeOverlay);
 
         _clearElement(this.eOverlayWrapper);
     }
