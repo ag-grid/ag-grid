@@ -65,13 +65,6 @@ export function _utf8_encode(s: string | null): string {
     }
 
     function encodeCodePoint(point: number): string {
-        if (point >= 0 && point <= 31 && point !== 10) {
-            const convertedCode = point.toString(16).toUpperCase();
-            const paddedCode = convertedCode.padStart(4, '0');
-
-            return `_x${paddedCode}_`;
-        }
-
         if ((point & 0xffffff80) == 0) {
             // 1-byte sequence
             return stringFromCharCode(point);
@@ -115,7 +108,11 @@ export function _capitalise(str: string): string {
     return str[0].toUpperCase() + str.substring(1).toLowerCase();
 }
 
-export function _escapeString(toEscape?: string | null, skipEscapingHtmlChars?: boolean): string | null {
+export function _escapeString(
+    toEscape?: string | null,
+    skipEscapingHtmlChars?: boolean,
+    forExcel?: boolean
+): string | null {
     if (toEscape == null) {
         return null;
     }
@@ -123,7 +120,27 @@ export function _escapeString(toEscape?: string | null, skipEscapingHtmlChars?: 
     // we call toString() twice, in case value is an object, where user provides
     // a toString() method, and first call to toString() returns back something other
     // than a string (eg a number to render)
-    const stringResult = toEscape.toString().toString();
+    let stringResult = toEscape.toString().toString();
+
+    // Excel breaks when characters with code below 30 are exported
+    // we use the loop below to wrap these characters between _x(code)_
+    if (forExcel) {
+        let newString = '';
+        for (let i = 0; i < toEscape.length; i++) {
+            const point = toEscape.charCodeAt(i);
+
+            if (point >= 0 && point <= 31 && point !== 10) {
+                const convertedCode = point.toString(16).toUpperCase();
+                const paddedCode = convertedCode.padStart(4, '0');
+                const newValue = `_x${paddedCode}_`;
+
+                newString += newValue;
+            } else {
+                newString += toEscape[i];
+            }
+        }
+        stringResult = newString;
+    }
 
     if (skipEscapingHtmlChars) {
         return stringResult;
