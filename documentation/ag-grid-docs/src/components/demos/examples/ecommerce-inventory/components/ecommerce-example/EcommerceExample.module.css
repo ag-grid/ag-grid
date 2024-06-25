@@ -60,6 +60,11 @@
     }
 }
 
+:global(.ag-theme-quartz .ag-right-aligned-cell),
+:global(.ag-theme-quartz-dark .ag-right-aligned-cell) {
+    justify-content: flex-end;
+}
+
 :global(.ag-theme-quartz-dark .ag-header) {
     background-color: #28313e;
     border-radius: 8px;

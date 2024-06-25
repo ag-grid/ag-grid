@@ -137,16 +137,15 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             detailGridOptions: {
                 columnDefs: [
                     { field: 'title', width: 150 },
-                    { field: 'available' },
-                    { field: 'format' },
-                    { field: 'label' },
-                    { field: 'cat', headerName: 'Cat#' },
-                    { field: 'country' },
-                    { field: 'year' },
+                    { field: 'available', maxWidth: 120 },
+                    { field: 'format', flex: 2 },
+                    { field: 'label', flex: 1 },
+                    { field: 'cat', headerName: 'Cat#', flex: 1 },
+                    { field: 'country', flex: 1 },
+                    { field: 'year', type: 'rightAligned', maxWidth: 80 },
                 ],
                 defaultColDef: {
                     flex: 1,
-                    minWidth: 100,
                 },
                 headerHeight: 38,
             },
