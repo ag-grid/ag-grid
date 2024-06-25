@@ -84,7 +84,7 @@ export const AdvancedParamSelector = memoWithSameType(() => {
         open: isOpen,
         whileElementsMounted: autoUpdate,
         placement: 'right',
-        middleware: [shift({ padding: 8 }), offset({ mainAxis: 6 })],
+        middleware: [shift(), offset({ mainAxis: 6 })],
     });
 
     const filterWordHighlighter = makeFilterWordMatcher(inputValue);
@@ -103,51 +103,57 @@ export const AdvancedParamSelector = memoWithSameType(() => {
         <>
             <StyledInput type="text" placeholder="Search theme params..." {...inputProps} ref={inputRef} />
             <FloatingPortal>
-                <DropdownArea
-                    ref={refs.setFloating}
-                    style={floatingStyles}
-                    className={isOpen ? 'popup-open' : 'popup-closed'}
-                >
-                    <Popup
-                        className="param-menu-content"
-                        style={{ display: isOpen ? undefined : 'none' }}
-                        {...getMenuProps(
-                            {},
-                            {
-                                // work around a bug in downshift that produces false
-                                // positive error messages when rendering in a portal
-                                suppressRefError: true,
-                            }
+                <FullHeightDropdown ref={refs.setFloating} style={floatingStyles}>
+                    <DropdownArea className={isOpen ? 'popup-open' : 'popup-closed'}>
+                        <Popup
+                            className="param-menu-content"
+                            style={{ display: isOpen ? undefined : 'none' }}
+                            {...getMenuProps(
+                                {},
+                                {
+                                    // work around a bug in downshift that produces false
+                                    // positive error messages when rendering in a portal
+                                    suppressRefError: true,
+                                }
+                            )}
+                        >
+                            {isOpen &&
+                                filteredParams.map((param, index) => {
+                                    const enabled = advancedParamIsEnabled(param);
+                                    return (
+                                        <Param
+                                            key={param.property}
+                                            className={enabled ? 'param-enabled' : undefined}
+                                            {...getItemProps({ item: param, index })}
+                                        >
+                                            <EnabledMark type="checkbox" checked={enabled} readOnly />
+                                            <ParamContent data-param-index={index}>
+                                                <ParamLabel>
+                                                    <EmphasiseMatches
+                                                        matcher={filterWordHighlighter}
+                                                        text={param.label}
+                                                    />
+                                                </ParamLabel>
+                                                <ParamDocs>
+                                                    <EmphasiseMatches
+                                                        matcher={filterWordHighlighter}
+                                                        text={param.docs}
+                                                    />
+                                                </ParamDocs>
+                                            </ParamContent>
+                                        </Param>
+                                    );
+                                })}
+                        </Popup>
+                        {filteredParams.length === 0 && (
+                            <NoSearchResultContainer>
+                                <NoSearchResultMessage>
+                                    No results for "<b>{inputValue}</b>"
+                                </NoSearchResultMessage>
+                            </NoSearchResultContainer>
                         )}
-                    >
-                        {isOpen &&
-                            filteredParams.map((param, index) => {
-                                const enabled = advancedParamIsEnabled(param);
-                                return (
-                                    <Param
-                                        key={param.property}
-                                        className={enabled ? 'param-enabled' : undefined}
-                                        {...getItemProps({ item: param, index })}
-                                    >
-                                        <EnabledMark type="checkbox" checked={enabled} readOnly />
-                                        <ParamContent data-param-index={index}>
-                                            <ParamLabel>
-                                                <EmphasiseMatches matcher={filterWordHighlighter} text={param.label} />
-                                            </ParamLabel>
-                                            <ParamDocs>
-                                                <EmphasiseMatches matcher={filterWordHighlighter} text={param.docs} />
-                                            </ParamDocs>
-                                        </ParamContent>
-                                    </Param>
-                                );
-                            })}
-                    </Popup>
-                    {filteredParams.length === 0 && (
-                        <NoSearchResultContainer>
-                            <NoSearchResultMessage>No results for "{inputValue}"</NoSearchResultMessage>
-                        </NoSearchResultContainer>
-                    )}
-                </DropdownArea>
+                    </DropdownArea>
+                </FullHeightDropdown>
             </FloatingPortal>
 
             {enabledParams.map((param) => (
@@ -157,11 +163,18 @@ export const AdvancedParamSelector = memoWithSameType(() => {
     );
 });
 
-const DropdownArea = styled(Card)`
+const FullHeightDropdown = styled('div')`
     z-index: 1000;
     position: absolute;
     pointer-events: all;
-    height: calc(100vh - 16px);
+    height: calc(100vh);
+    position: relative;
+`;
+
+const DropdownArea = styled(Card)`
+    position: absolute;
+    top: 80px;
+    bottom: 14px;
     overflow: auto;
 
     .param-menu-content {
@@ -190,8 +203,7 @@ const DropdownArea = styled(Card)`
 const Popup = styled('div')`
     display: flex;
     flex-direction: column;
-    width: calc(100vw - 350px);
-    max-width: 550px;
+    width: 380px;
 `;
 
 const NoSearchResultContainer = styled('div')`
@@ -202,37 +214,47 @@ const NoSearchResultContainer = styled('div')`
     justify-content: space-around;
 `;
 
-const NoSearchResultMessage = styled(Card)`
+const NoSearchResultMessage = styled('div')`
     width: 50%;
-    border: 1px solid var(--color-border-primary);
-    padding: 16px;
-    background-color: var(--color-bg-primary);
     text-align: center;
 `;
 
 const Param = styled('div')`
-    padding: 6px 8px;
+    --hover-color: var(--color-util-brand-100);
+
+    padding: 8px;
     display: flex;
     gap: 8px;
     color: color-mix(in srgb, transparent, var(--color-fg-primary) 90%);
+    transition: background-color 0.25s ease-in-out;
+    cursor: pointer;
 
     &[aria-selected='true'] {
-        background-color: color-mix(in srgb, transparent, var(--color-bg-brand-solid) 35%);
+        background-color: var(--hover-color);
     }
+
+    &[aria-selected='true'] input {
+        border-color: var(--color-util-gray-400);
+    }
+
+    [data-dark-mode='true'] & {
+        --hover-color: color-mix(in srgb, var(--color-util-gray-300) 40%, transparent);
+    }
+
     &.param-enabled {
         color: var(--color-fg-primary);
     }
 `;
 
 const EnabledMark = styled('input')`
-    margin-top: 4px;
+    margin-top: 1px;
 `;
 
 const ParamContent = styled('div')`
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
 
     .filter-match {
         text-decoration: underline;
@@ -240,11 +262,14 @@ const ParamContent = styled('div')`
 `;
 
 const ParamLabel = styled('div')`
-    font-weight: 500;
+    font-weight: var(--text-semibold);
+    line-height: var(--text-lh-tight);
 `;
 
 const ParamDocs = styled('div')`
-    font-size: 0.8em;
+    font-size: var(--text-fs-xs);
+    line-height: var(--text-lh-tight);
+    color: var(--color-fg-secondary);
 `;
 
 const getParamsMatchingFilter = (filter: string) => {

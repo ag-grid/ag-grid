@@ -42,7 +42,7 @@ const cellFactory: ExcelOOXMLTemplate = {
             children = [
                 {
                     name: 'f',
-                    textNode: _escapeString(value),
+                    textNode: _escapeString(value, false, true),
                 },
             ];
         } else if (convertedType === 'inlineStr') {
@@ -52,7 +52,7 @@ const cellFactory: ExcelOOXMLTemplate = {
                     children: [
                         {
                             name: 't',
-                            textNode: _escapeString(value),
+                            textNode: _escapeString(value, false, true),
                         },
                     ],
                 },

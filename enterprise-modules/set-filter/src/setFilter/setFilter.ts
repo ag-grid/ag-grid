@@ -2,7 +2,6 @@ import type {
     AgColumn,
     AgInputTextField,
     BeanCollection,
-    CellValueChangedEvent,
     ComponentSelector,
     DataTypeService,
     FuncColsService,
@@ -201,6 +200,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     override refresh(params: SetFilterParams<any, V>): boolean {
+        this.applyExcelModeOptions(params);
+
         if (!super.refresh(params)) {
             return false;
         }
