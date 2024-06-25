@@ -1,4 +1,4 @@
-import type { ComponentSelector, Context, IGridComp } from '@ag-grid-community/core';
+import type { Component, ComponentSelector, Context, FocusableComponent, IGridComp } from '@ag-grid-community/core';
 import { GridCtrl } from '@ag-grid-community/core';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -28,6 +28,7 @@ const GridComp = ({ context }: GridCompProps) => {
     const [eGridBodyParent, setGridBodyParent] = useState<HTMLDivElement | null>(null);
 
     const focusInnerElementRef = useRef<(fromBottom?: boolean) => void>(() => undefined);
+    const focusableContainers = useRef<Component[]>([]);
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
@@ -66,22 +67,22 @@ const GridComp = ({ context }: GridCompProps) => {
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
-                const els: HTMLElement[] = [];
-
+                const comps: FocusableComponent[] = [];
                 const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
-                const sideBarEl = eRootWrapperRef.current?.querySelector('.ag-side-bar:not(.ag-hidden)');
-                const paginationEl = eRootWrapperRef.current?.querySelector('.ag-paging-panel:not(.ag-hidden)');
-
-                [gridBodyCompEl, sideBarEl, paginationEl].forEach((comp) => {
-                    if (comp) {
-                        els.push(comp as HTMLElement);
+                if (gridBodyCompEl) {
+                    comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
+                }
+                focusableContainers.current.forEach((comp) => {
+                    if (comp.isDisplayed()) {
+                        comps.push(comp);
                     }
                 });
-
-                return els;
+                return comps;
             },
             setCursor,
             setUserSelect,
+            getPaginationElement: () =>
+                eRootWrapperRef.current?.querySelector('.ag-paging-panel:not(.ag-hidden)') ?? undefined,
         };
 
         gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
@@ -127,6 +128,7 @@ const GridComp = ({ context }: GridCompProps) => {
             }
 
             beansToDestroy.push(sideBarComp);
+            focusableContainers.current.push(sideBarComp);
         }
 
         const addComponentToDom = (component: ComponentSelector['component']) => {
@@ -135,6 +137,7 @@ const GridComp = ({ context }: GridCompProps) => {
             eRootWrapper.insertAdjacentElement('beforeend', eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(comp);
+            return comp;
         };
 
         if (statusBarSelector) {
@@ -142,7 +145,8 @@ const GridComp = ({ context }: GridCompProps) => {
         }
 
         if (paginationSelector) {
-            addComponentToDom(paginationSelector.component);
+            const paginationComp = addComponentToDom(paginationSelector.component);
+            focusableContainers.current.push(paginationComp);
         }
 
         if (watermarkSelector) {

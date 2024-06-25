@@ -741,7 +741,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         if (forceOut || (!backwards && !this.gridCtrl.isDetailGrid())) {
-            this.gridCtrl.forceFocusOutOfContainer(backwards);
+            return this.gridCtrl.forceFocusOutOfContainer(backwards);
         }
 
         return false;
@@ -778,5 +778,9 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public removeFocusableContainer(container: FocusableComponent): void {
         this.gridCtrl.removeFocusableContainer(container);
+    }
+
+    public focusGridInnerElement(fromBottom?: boolean): boolean {
+        return this.gridCtrl.focusInnerElement(fromBottom);
     }
 }

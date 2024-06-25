@@ -10,15 +10,17 @@ import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
+import { _findNextElementOutsideAndFocus } from '../utils/focus';
 import type { ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
-    getFocusableContainers(): HTMLElement[];
+    getFocusableContainers(): FocusableComponent[];
     setCursor(value: string | null): void;
     setUserSelect(value: string | null): void;
+    getPaginationElement(): HTMLElement | undefined;
 }
 
 export interface OptionalGridComponents {
@@ -44,7 +46,7 @@ export class GridCtrl extends BeanStub {
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
 
-    private additionalFocusableContainers: Map<HTMLElement, FocusableComponent> = new Map();
+    private additionalFocusableContainers: Set<FocusableComponent> = new Set();
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;
@@ -127,7 +129,7 @@ export class GridCtrl extends BeanStub {
     public focusNextInnerContainer(backwards: boolean): boolean {
         const focusableContainers = this.getFocusableContainers();
         const activeEl = this.gos.getActiveDomElement();
-        const idxWithFocus = focusableContainers.findIndex((container) => container.contains(activeEl));
+        const idxWithFocus = focusableContainers.findIndex((container) => container.getGui().contains(activeEl));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
         if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
@@ -175,7 +177,7 @@ export class GridCtrl extends BeanStub {
             }
 
             for (let i = 1; i < focusableContainers.length; i++) {
-                if (this.focusContainer(focusableContainers[i])) {
+                if (this.focusService.focusInto(focusableContainers[i].getGui())) {
                     return true;
                 }
             }
@@ -185,28 +187,36 @@ export class GridCtrl extends BeanStub {
         return this.focusService.focusFirstHeader();
     }
 
-    public forceFocusOutOfContainer(up = false): void {
+    public forceFocusOutOfContainer(up = false): boolean {
+        if (!up) {
+            const ePagination = this.view.getPaginationElement();
+            if (ePagination) {
+                const lastFocusableElement = _last(this.focusService.findFocusableElements(ePagination, null));
+                _findNextElementOutsideAndFocus(up, this.gos, this.focusService, lastFocusableElement);
+                return true;
+            }
+        }
         this.view.forceFocusOutOfContainer(up);
+        return false;
     }
 
     public addFocusableContainer(container: FocusableComponent): void {
-        this.additionalFocusableContainers.set(container.getGui(), container);
+        this.additionalFocusableContainers.add(container);
     }
 
     public removeFocusableContainer(container: FocusableComponent): void {
-        this.additionalFocusableContainers.delete(container.getGui());
+        this.additionalFocusableContainers.delete(container);
     }
 
-    private focusContainer(container: HTMLElement, up?: boolean): boolean {
-        const comp = this.additionalFocusableContainers.get(container);
-        comp?.setAllowFocus(true);
-        const result = this.focusService.focusInto(container, up);
-        comp?.setAllowFocus(false);
+    private focusContainer(comp: FocusableComponent, up?: boolean): boolean {
+        comp?.setAllowFocus?.(true);
+        const result = this.focusService.focusInto(comp.getGui(), up);
+        comp?.setAllowFocus?.(false);
         return result;
     }
 
-    private getFocusableContainers(): HTMLElement[] {
-        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers.keys()];
+    private getFocusableContainers(): FocusableComponent[] {
+        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers.values()];
     }
 
     public override destroy(): void {

@@ -10,12 +10,13 @@ import { _addFocusableContainerListener } from '../utils/focus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
 import type { ComponentSelector } from '../widgets/component';
-import { Component, RefPlaceholder } from '../widgets/component';
+import { RefPlaceholder } from '../widgets/component';
+import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
 import type { PaginationService } from './paginationService';
 
-export class PaginationComp extends Component {
+export class PaginationComp extends TabGuardComp {
     private rowNodeBlockLoader?: RowNodeBlockLoader;
     private rowModel: IRowModel;
     private paginationService: PaginationService;
@@ -71,7 +72,20 @@ export class PaginationComp extends Component {
 
         this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
 
+        this.initialiseTabGuard({
+            // prevent tab guard default logic
+            onTabKeyDown: () => {},
+            focusInnerElement: (fromBottom) => this.focusService.focusGridInnerElement(fromBottom),
+            forceFocusOutWhenTabGuardsAreEmpty: true,
+        });
+
         this.onPaginationChanged();
+    }
+
+    public setAllowFocus(allowFocus: boolean): void {
+        if (allowFocus) {
+            this.tabGuardFeature.getTabGuardCtrl().setSkipTabGuardFocus(allowFocus);
+        }
     }
 
     private onPaginationChanged(): void {
