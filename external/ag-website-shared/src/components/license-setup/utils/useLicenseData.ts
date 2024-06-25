@@ -38,7 +38,7 @@ const licenseDataState = {
     validIntegratedChartsLicense: {
         getIsState: ({ userLicense, licensedProducts }: DataState) =>
             hasValue(userLicense) && licensedProducts.charts && licensedProducts.grid,
-        message: `Valid Enterprise Bundle license key. Includes AG Grid Enterprise and AG Chart Enterprise`,
+        message: `Valid Enterprise Bundle license key. Includes AG Grid Enterprise and AG Charts Enterprise`,
     },
     minimalModulesInfo: {
         getIsState: ({ licensedProducts, importType }: DataState) => licensedProducts.grid && importType === 'modules',
