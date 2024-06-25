@@ -94,7 +94,7 @@ export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heat
     }
 }
 
-function renderHeatmapTooltip(params: AgHeatmapSeriesTooltipRendererParams): string | AgTooltipRendererResult {
+function renderHeatmapTooltip(params: AgHeatmapSeriesTooltipRendererParams<any>): string | AgTooltipRendererResult {
     const { xKey, yKey, colorKey, yName, datum } = params;
     const table: Array<{ label: string; value: string | undefined }> = [
         { label: yName, value: datum[yKey] },
