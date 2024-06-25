@@ -1,4 +1,5 @@
 import type { AgColumn, RowHeightCallbackParams, XmlElement } from '@ag-grid-community/core';
+import { _escapeString } from '@ag-grid-community/core';
 import { XmlFactory } from '@ag-grid-community/csv-export';
 
 import { INCH_TO_EMU } from './excelConstants';
@@ -136,4 +137,57 @@ export const getExcelColumnName = (colIdx: number): string => {
     }
 
     return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
+};
+
+export const replaceInvisibleCharacters = (str: string | null): string | null => {
+    if (str == null) {
+        return null;
+    }
+    // Excel breaks when characters with code below 30 are exported
+    // we use the loop below to wrap these characters between _x(code)_
+    let newString = '';
+    for (let i = 0; i < str.length; i++) {
+        const point = str.charCodeAt(i);
+
+        if (point >= 0 && point <= 31 && point !== 10) {
+            const convertedCode = point.toString(16).toUpperCase();
+            const paddedCode = convertedCode.padStart(4, '0');
+            const newValue = `_x${paddedCode}_`;
+
+            newString += newValue;
+        } else {
+            newString += str[i];
+        }
+    }
+    return newString;
+};
+
+export const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
+    const ret: XmlElement[] = [];
+
+    for (const key of strMap.keys()) {
+        const textNode = key.toString();
+
+        const child: XmlElement = {
+            name: 't',
+            textNode: _escapeString(replaceInvisibleCharacters(textNode), false),
+        };
+
+        // if we have leading or trailing spaces, instruct Excel not to trim them
+        const preserveSpaces = textNode.trim().length !== textNode.length;
+
+        if (preserveSpaces) {
+            child.properties = {
+                rawMap: {
+                    'xml:space': 'preserve',
+                },
+            };
+        }
+        ret.push({
+            name: 'si',
+            children: [child],
+        });
+    }
+
+    return ret;
 };
