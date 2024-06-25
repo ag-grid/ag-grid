@@ -5,22 +5,20 @@ import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { GridSizeChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { FocusableComponent } from '../interfaces/iFocusableComponent';
+import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
-import { _findNextElementOutsideAndFocus } from '../utils/focus';
 import type { ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
-    getFocusableContainers(): FocusableComponent[];
+    getFocusableContainers(): FocusableContainer[];
     setCursor(value: string | null): void;
     setUserSelect(value: string | null): void;
-    getPaginationElement(): HTMLElement | undefined;
 }
 
 export interface OptionalGridComponents {
@@ -46,7 +44,7 @@ export class GridCtrl extends BeanStub {
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
 
-    private additionalFocusableContainers: Set<FocusableComponent> = new Set();
+    private additionalFocusableContainers: Set<FocusableContainer> = new Set();
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;
@@ -187,35 +185,26 @@ export class GridCtrl extends BeanStub {
         return this.focusService.focusFirstHeader();
     }
 
-    public forceFocusOutOfContainer(up = false): boolean {
-        if (!up) {
-            const ePagination = this.view.getPaginationElement();
-            if (ePagination) {
-                const lastFocusableElement = _last(this.focusService.findFocusableElements(ePagination, null));
-                _findNextElementOutsideAndFocus(up, this.gos, this.focusService, lastFocusableElement);
-                return true;
-            }
-        }
+    public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
-        return false;
     }
 
-    public addFocusableContainer(container: FocusableComponent): void {
+    public addFocusableContainer(container: FocusableContainer): void {
         this.additionalFocusableContainers.add(container);
     }
 
-    public removeFocusableContainer(container: FocusableComponent): void {
+    public removeFocusableContainer(container: FocusableContainer): void {
         this.additionalFocusableContainers.delete(container);
     }
 
-    private focusContainer(comp: FocusableComponent, up?: boolean): boolean {
+    private focusContainer(comp: FocusableContainer, up?: boolean): boolean {
         comp?.setAllowFocus?.(true);
         const result = this.focusService.focusInto(comp.getGui(), up);
         comp?.setAllowFocus?.(false);
         return result;
     }
 
-    private getFocusableContainers(): FocusableComponent[] {
+    private getFocusableContainers(): FocusableContainer[] {
         return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers.values()];
     }
 

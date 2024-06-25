@@ -1,4 +1,11 @@
-import type { Component, ComponentSelector, Context, FocusableComponent, IGridComp } from '@ag-grid-community/core';
+import type {
+    Component,
+    ComponentSelector,
+    Context,
+    FocusableContainer,
+    IGridComp,
+    TabGuardComp as JsTabGuardComp,
+} from '@ag-grid-community/core';
 import { GridCtrl } from '@ag-grid-community/core';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -28,7 +35,8 @@ const GridComp = ({ context }: GridCompProps) => {
     const [eGridBodyParent, setGridBodyParent] = useState<HTMLDivElement | null>(null);
 
     const focusInnerElementRef = useRef<(fromBottom?: boolean) => void>(() => undefined);
-    const focusableContainers = useRef<Component[]>([]);
+    const paginationCompRef = useRef<JsTabGuardComp | undefined>();
+    const focusableContainersRef = useRef<Component[]>([]);
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
@@ -63,16 +71,20 @@ const GridComp = ({ context }: GridCompProps) => {
             destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass: setRtlClass,
             forceFocusOutOfContainer: (up?: boolean) => {
+                if (paginationCompRef.current?.isDisplayed()) {
+                    paginationCompRef.current.forceFocusOutOfContainer(up);
+                    return;
+                }
                 tabGuardRef.current?.forceFocusOutOfContainer(up);
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
-                const comps: FocusableComponent[] = [];
+                const comps: FocusableContainer[] = [];
                 const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
                 if (gridBodyCompEl) {
                     comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
                 }
-                focusableContainers.current.forEach((comp) => {
+                focusableContainersRef.current.forEach((comp) => {
                     if (comp.isDisplayed()) {
                         comps.push(comp);
                     }
@@ -81,8 +93,6 @@ const GridComp = ({ context }: GridCompProps) => {
             },
             setCursor,
             setUserSelect,
-            getPaginationElement: () =>
-                eRootWrapperRef.current?.querySelector('.ag-paging-panel:not(.ag-hidden)') ?? undefined,
         };
 
         gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
@@ -128,7 +138,7 @@ const GridComp = ({ context }: GridCompProps) => {
             }
 
             beansToDestroy.push(sideBarComp);
-            focusableContainers.current.push(sideBarComp);
+            focusableContainersRef.current.push(sideBarComp);
         }
 
         const addComponentToDom = (component: ComponentSelector['component']) => {
@@ -146,7 +156,8 @@ const GridComp = ({ context }: GridCompProps) => {
 
         if (paginationSelector) {
             const paginationComp = addComponentToDom(paginationSelector.component);
-            focusableContainers.current.push(paginationComp);
+            paginationCompRef.current = paginationComp as JsTabGuardComp;
+            focusableContainersRef.current.push(paginationComp);
         }
 
         if (watermarkSelector) {

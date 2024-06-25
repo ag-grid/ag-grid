@@ -1,6 +1,6 @@
 import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { GridBodySelector } from '../gridBodyComp/gridBodyComp';
-import type { FocusableComponent } from '../interfaces/iFocusableComponent';
+import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { ISideBar } from '../interfaces/iSideBar';
 import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
@@ -16,7 +16,7 @@ import { GridCtrl } from './gridCtrl';
 export class GridComp extends TabGuardComp {
     private readonly gridBody: GridBodyComp = RefPlaceholder;
     private readonly sideBar: ISideBar & Component = RefPlaceholder;
-    private readonly pagination: Component = RefPlaceholder;
+    private readonly pagination: TabGuardComp = RefPlaceholder;
     private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
 
     private eGridDiv: HTMLElement;
@@ -39,10 +39,6 @@ export class GridComp extends TabGuardComp {
             },
             setCursor: (value) => {
                 this.getGui().style.cursor = value != null ? value : '';
-            },
-            getPaginationElement: () => {
-                const ePagination = this.pagination?.getGui();
-                return _isVisible(ePagination) ? ePagination : undefined;
             },
         };
 
@@ -115,8 +111,16 @@ export class GridComp extends TabGuardComp {
         return this.rootWrapperBody;
     }
 
-    protected getFocusableContainers(): FocusableComponent[] {
-        const focusableContainers: FocusableComponent[] = [this.gridBody];
+    public override forceFocusOutOfContainer(up: boolean = false): void {
+        if (this.pagination?.isDisplayed()) {
+            this.pagination.forceFocusOutOfContainer(up);
+            return;
+        }
+        super.forceFocusOutOfContainer(up);
+    }
+
+    protected getFocusableContainers(): FocusableContainer[] {
+        const focusableContainers: FocusableContainer[] = [this.gridBody];
 
         [this.sideBar, this.pagination].forEach((comp) => {
             if (comp) {

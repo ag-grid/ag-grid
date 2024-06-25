@@ -3,6 +3,7 @@ import type { BeanCollection } from '../context/context';
 import type { FocusService } from '../focusService';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
@@ -16,7 +17,7 @@ import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorCo
 import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
 import type { PaginationService } from './paginationService';
 
-export class PaginationComp extends TabGuardComp {
+export class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowNodeBlockLoader?: RowNodeBlockLoader;
     private rowModel: IRowModel;
     private paginationService: PaginationService;
@@ -46,6 +47,7 @@ export class PaginationComp extends TabGuardComp {
     private nextButtonDisabled = false;
     private lastButtonDisabled = false;
     private areListenersSetup = false;
+    private allowFocusInnerElement = false;
 
     constructor() {
         super();
@@ -75,7 +77,13 @@ export class PaginationComp extends TabGuardComp {
         this.initialiseTabGuard({
             // prevent tab guard default logic
             onTabKeyDown: () => {},
-            focusInnerElement: (fromBottom) => this.focusService.focusGridInnerElement(fromBottom),
+            focusInnerElement: (fromBottom) => {
+                if (this.allowFocusInnerElement) {
+                    this.tabGuardFeature.getTabGuardCtrl().focusInnerElement(fromBottom);
+                } else {
+                    this.focusService.focusGridInnerElement(fromBottom);
+                }
+            },
             forceFocusOutWhenTabGuardsAreEmpty: true,
         });
 
@@ -83,9 +91,7 @@ export class PaginationComp extends TabGuardComp {
     }
 
     public setAllowFocus(allowFocus: boolean): void {
-        if (allowFocus) {
-            this.tabGuardFeature.getTabGuardCtrl().setSkipTabGuardFocus(allowFocus);
-        }
+        this.allowFocusInnerElement = allowFocus;
     }
 
     private onPaginationChanged(): void {

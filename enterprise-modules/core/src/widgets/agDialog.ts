@@ -1,7 +1,7 @@
 import type {
     BeanCollection,
     FocusService,
-    FocusableComponent,
+    FocusableContainer,
     PopupService,
     ResizableStructure,
 } from '@ag-grid-community/core';
@@ -30,7 +30,7 @@ export interface DialogOptions extends PanelOptions {
     closedCallback?: (event?: MouseEvent | TouchEvent | KeyboardEvent) => void;
 }
 
-export class AgDialog extends AgPanel<DialogOptions> implements FocusableComponent {
+export class AgDialog extends AgPanel<DialogOptions> implements FocusableContainer {
     private popupService: PopupService;
     private focusService: FocusService;
 

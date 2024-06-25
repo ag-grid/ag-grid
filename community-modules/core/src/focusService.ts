@@ -21,7 +21,7 @@ import type { IRangeService } from './interfaces/IRangeService';
 import type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
 import type { WithoutGridCommon } from './interfaces/iCommon';
-import type { FocusableComponent } from './interfaces/iFocusableComponent';
+import type { FocusableContainer } from './interfaces/iFocusableContainer';
 import type { RowPinnedType } from './interfaces/iRowNode';
 import { RowCtrl } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
@@ -741,7 +741,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         if (forceOut || (!backwards && !this.gridCtrl.isDetailGrid())) {
-            return this.gridCtrl.forceFocusOutOfContainer(backwards);
+            this.gridCtrl.forceFocusOutOfContainer(backwards);
         }
 
         return false;
@@ -772,11 +772,11 @@ export class FocusService extends BeanStub implements NamedBean {
         this.advancedFilterFocusColumn = undefined;
     }
 
-    public addFocusableContainer(container: FocusableComponent): void {
+    public addFocusableContainer(container: FocusableContainer): void {
         this.gridCtrl.addFocusableContainer(container);
     }
 
-    public removeFocusableContainer(container: FocusableComponent): void {
+    public removeFocusableContainer(container: FocusableContainer): void {
         this.gridCtrl.removeFocusableContainer(container);
     }
 

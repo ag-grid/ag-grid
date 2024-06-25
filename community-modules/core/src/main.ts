@@ -487,7 +487,7 @@ export { TabGuardFeature } from './widgets/tabGuardFeature';
 export { PopupComponent } from './widgets/popupComponent';
 export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
-export { FocusableComponent } from './interfaces/iFocusableComponent';
+export { FocusableContainer } from './interfaces/iFocusableContainer';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';

@@ -1,7 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { FocusService } from '../focusService';
-import { _findNextElementOutsideAndFocus } from '../utils/focus';
 import { ManagedFocusFeature } from './managedFocusFeature';
 
 export enum TabGuardClassNames {
@@ -182,7 +181,47 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private findNextElementOutsideAndFocus(up: boolean) {
-        _findNextElementOutsideAndFocus(up, this.gos, this.focusService, up ? this.eTopGuard : this.eBottomGuard);
+        const eDocument = this.gos.getDocument();
+        const focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
+        const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
+
+        if (index === -1) {
+            return;
+        }
+
+        let start: number;
+        let end: number;
+        if (up) {
+            start = 0;
+            end = index;
+        } else {
+            start = index + 1;
+            end = focusableEls.length;
+        }
+        const focusableRange = focusableEls.slice(start, end);
+        const targetTabIndex = this.gos.get('tabIndex');
+        focusableRange.sort((a: HTMLElement, b: HTMLElement) => {
+            const indexA = parseInt(a.getAttribute('tabindex') || '0');
+            const indexB = parseInt(b.getAttribute('tabindex') || '0');
+
+            if (indexB === targetTabIndex) {
+                return 1;
+            }
+            if (indexA === targetTabIndex) {
+                return -1;
+            }
+
+            if (indexA === 0) {
+                return 1;
+            }
+            if (indexB === 0) {
+                return -1;
+            }
+
+            return indexA - indexB;
+        });
+
+        focusableRange[up ? focusableRange.length - 1 : 0].focus();
     }
 
     private onFocusIn(e: FocusEvent): void {
@@ -295,9 +334,5 @@ export class TabGuardCtrl extends BeanStub {
 
     public setAllowFocus(allowFocus: boolean): void {
         this.allowFocus = allowFocus;
-    }
-
-    public setSkipTabGuardFocus(skipTabGuardFocus: boolean): void {
-        this.skipTabGuardFocus = skipTabGuardFocus;
     }
 }
