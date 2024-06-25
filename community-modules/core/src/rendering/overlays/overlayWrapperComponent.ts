@@ -18,10 +18,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
 
     private activePromise: AgPromise<Component> | null = null;
-
     private activeOverlay: Component | null = null;
-    private activeOverlayWrapperCssClass: string;
-    private updateListenerDestroyFunc?: () => null;
+    private updateListenerDestroyFunc: (() => null) | null = null;
+    private activeOverlayWrapperCssClass: string | null = null;
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
@@ -83,6 +82,10 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 return; // Error handling
             }
 
+            if (this.activeOverlay == comp) {
+                return; // same component, already active
+            }
+
             this.eOverlayWrapper.appendChild(comp.getGui());
             this.activeOverlay = comp;
 
@@ -104,13 +107,14 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             return; // Nothing to destroy
         }
 
+        this.activeOverlay = null;
+
         const updateListenerDestroyFunc = this.updateListenerDestroyFunc;
         if (updateListenerDestroyFunc) {
             updateListenerDestroyFunc();
-            this.updateListenerDestroyFunc = undefined;
+            this.updateListenerDestroyFunc = null;
         }
 
-        this.activeOverlay = null;
         this.destroyBean(activeOverlay);
 
         _clearElement(this.eOverlayWrapper);
