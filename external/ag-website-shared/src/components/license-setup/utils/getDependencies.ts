@@ -1,6 +1,6 @@
-import type { Framework, ImportType } from '@ag-grid-types';
+import type { Framework, ImportType, Library } from '@ag-grid-types';
 
-export const getGridDependencies = ({
+const getGridDependencies = ({
     framework,
     isIntegratedCharts,
     importType,
@@ -44,4 +44,46 @@ export const getGridDependencies = ({
     }
 
     return dependencies;
+};
+
+const getChartsDependencies = ({ framework, importType }: { framework: Framework; importType?: ImportType }) => {
+    const dependencies: string[] = [];
+
+    if (importType === 'packages') {
+        dependencies.push('ag-charts-enterprise');
+        if (framework === 'react') {
+            dependencies.push('ag-charts-react');
+        } else if (framework === 'angular') {
+            dependencies.push('ag-charts-angular');
+        } else if (framework === 'vue') {
+            dependencies.push('ag-charts-vue3');
+        }
+    } else if (importType === 'modules') {
+        throw new Error('Charts does not have modules');
+    }
+
+    return dependencies;
+};
+
+export const getDependencies = ({
+    library,
+    framework,
+    isIntegratedCharts,
+    importType,
+}: {
+    library: Library;
+    framework: Framework;
+    isIntegratedCharts?: boolean;
+    importType?: ImportType;
+}) => {
+    return library === 'grid'
+        ? getGridDependencies({
+              framework,
+              isIntegratedCharts: isIntegratedCharts!,
+              importType,
+          })
+        : getChartsDependencies({
+              framework,
+              importType,
+          });
 };

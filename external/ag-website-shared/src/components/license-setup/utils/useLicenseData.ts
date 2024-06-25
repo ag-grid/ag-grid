@@ -1,5 +1,5 @@
 import { LicenseManager } from '@ag-grid-enterprise/core';
-import type { ImportType } from '@ag-grid-types';
+import type { ImportType, Library } from '@ag-grid-types';
 import { AgCharts } from 'ag-charts-enterprise';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -12,6 +12,7 @@ import { useUpdateDataFromUrl } from './useUpdateDataFromUrl';
 export type LicenseStateKey = keyof typeof licenseDataState;
 type LicenseState = Record<LicenseStateKey, string | undefined>;
 interface DataState {
+    library: Library;
     userLicense: string;
     licensedProducts: LicensedProducts;
     isIntegratedCharts: boolean;
@@ -45,15 +46,25 @@ const licenseDataState = {
         message:
             "This is the minimal set of modules needed to render AG Grid Enterprise. You may need to include additional modules to this list of dependencies according to the AG Grid Enterprise feature you're using",
     },
+
+    // On Grid website, error if only have AG Charts Enterprise
     chartsNoGridEnterpriseError: {
-        getIsState: ({ licensedProducts }: DataState) => licensedProducts.charts && !licensedProducts.grid,
+        getIsState: ({ library, licensedProducts }: DataState) =>
+            library === 'grid' && licensedProducts.charts && !licensedProducts.grid,
         message: `Your license key does not include AG Grid Enterprise`,
     },
-    gridNoChartsError: {
+    // On Charts website, error if only have AG Grid Enterprise
+    gridNoChartsEnterpriseError: {
+        getIsState: ({ library, licensedProducts }: DataState) =>
+            library === 'charts' && !licensedProducts.charts && licensedProducts.grid,
+        message: `Your license key does not include AG Charts Enterprise`,
+    },
+    integratedChartsNoChartsError: {
         getIsState: ({ licensedProducts, isIntegratedCharts }: DataState) =>
             !licensedProducts.charts && licensedProducts.grid && isIntegratedCharts,
         message: `Your license key does not include Integrated Charts`,
     },
+
     userLicenseError: {
         getIsState: ({ userLicense, userLicenseIsValid }: DataState) => {
             return hasValue(userLicense) && !userLicenseIsValid;
@@ -79,6 +90,7 @@ const licenseValidKeys: LicenseStateKey[] = ['validGridLicense', 'validChartsLic
 const licenseInvalidKeys: LicenseStateKey[] = ['expiredError', 'expiredTrialError', 'userLicenseError'];
 
 const useLicenseState = ({
+    library,
     userLicense,
     licensedProducts,
     isIntegratedCharts,
@@ -97,6 +109,7 @@ const useLicenseState = ({
         (Object.keys(licenseDataState) as LicenseStateKey[]).forEach((key) => {
             const { getIsState, message } = licenseDataState[key];
             const isError = getIsState({
+                library,
                 userLicense,
                 licensedProducts,
                 isIntegratedCharts,
@@ -140,7 +153,7 @@ const useLicenseState = ({
     };
 };
 
-export const useLicenseData = () => {
+export const useLicenseData = ({ library }: { library: Library }) => {
     /**
      * User input license
      */
@@ -186,7 +199,12 @@ export const useLicenseData = () => {
         userLicenseIsExpired,
         userLicenseTrialIsExpired,
     } = useMemo(() => {
-        const details = licenseDetails.suppliedLicenseType === 'CHARTS' ? chartsLicenseDetails : licenseDetails;
+        let details;
+        if (library === 'grid') {
+            details = licenseDetails.suppliedLicenseType === 'CHARTS' ? chartsLicenseDetails : licenseDetails;
+        } else {
+            details = chartsLicenseDetails.suppliedLicenseType === 'GRID' ? licenseDetails : chartsLicenseDetails;
+        }
 
         return {
             userLicenseVersion: details.version || undefined,
@@ -196,9 +214,10 @@ export const useLicenseData = () => {
             userLicenseIsExpired: Boolean(details.expired),
             userLicenseTrialIsExpired: Boolean(details.trialExpired),
         };
-    }, [licenseDetails, chartsLicenseDetails]);
+    }, [library, licenseDetails, chartsLicenseDetails]);
 
     const { licenseState } = useLicenseState({
+        library,
         userLicense,
         licensedProducts,
         isIntegratedCharts,
@@ -211,7 +230,7 @@ export const useLicenseData = () => {
         importType,
     });
 
-    useUpdateDataFromUrl({ setIsIntegratedCharts, setImportType });
+    useUpdateDataFromUrl({ library, setIsIntegratedCharts, setImportType });
     useLicenseDebug({
         licenseDetails,
         chartsLicenseDetails,
@@ -229,7 +248,7 @@ export const useLicenseData = () => {
             return;
         }
 
-        const { suppliedLicenseType, version } = licenseDetails;
+        const { suppliedLicenseType, version } = library === 'grid' ? licenseDetails : chartsLicenseDetails;
         const gridEnterprise = version === '2' || suppliedLicenseType === 'GRID' || suppliedLicenseType === 'BOTH';
         const isIntegrated = suppliedLicenseType === 'BOTH';
         const chartsEnterprise = suppliedLicenseType === 'CHARTS' || suppliedLicenseType === 'BOTH';
@@ -240,7 +259,7 @@ export const useLicenseData = () => {
         });
 
         updateIsIntegratedChartsWithUrlUpdate(isIntegrated);
-    }, [licenseDetails]);
+    }, [library, licenseDetails, chartsLicenseDetails]);
 
     const licenseInvalidErrors = useMemo(() => {
         return Object.entries(licenseState)

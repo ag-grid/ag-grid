@@ -1,11 +1,11 @@
-import type { Framework, ImportType, MenuItem } from '@ag-grid-types';
+import type { Framework, ImportType, Library, MenuItem } from '@ag-grid-types';
 import Note from '@ag-website-shared/components/alert/Note';
 import Success from '@ag-website-shared/components/alert/Success';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
+import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
-import { Snippet } from '@components/snippet/Snippet';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { type FunctionComponent, useMemo } from 'react';
 
@@ -24,6 +24,7 @@ interface SeedRepo {
 }
 
 interface Props {
+    library: Library;
     framework: Framework;
     path: string;
     menuItems: MenuItem[];
@@ -41,7 +42,7 @@ const EmailSales = () => {
     );
 };
 
-export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuItems, seedRepos }) => {
+export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, path, menuItems, seedRepos }) => {
     const {
         userLicense,
         setUserLicense,
@@ -57,19 +58,21 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
         licenseState,
         licenseInvalidErrors,
         licenseValidMessage,
-    } = useLicenseData();
+    } = useLicenseData({ library });
     const dependenciesSnippet = useMemo(
         () =>
             getDependenciesSnippet({
+                library,
                 framework,
                 isIntegratedCharts,
                 importType,
             }),
-        [framework, isIntegratedCharts, importType]
+        [library, framework, isIntegratedCharts, importType]
     );
     const npmInstallSnippet = useMemo(
         () =>
             getNpmInstallSnippet({
+                library,
                 framework,
                 isIntegratedCharts,
                 importType,
@@ -97,11 +100,13 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                 }),
         [seedRepos, isIntegratedCharts, framework, importType]
     );
+    const isGrid = library === 'grid';
+    const productName = isGrid ? 'AG Grid' : 'AG Charts';
 
     return (
         <>
             <form>
-                <h2>Validate your licence</h2>
+                <h2 id="validate-your-license">Validate Your Licence</h2>
 
                 <div className={styles.licenceWrapper}>
                     <textarea
@@ -132,8 +137,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     </Warning>
                 ))}
 
-                {/* TODO change "AG Grid" to grid/charts based on site */}
-
                 <div className={styles.licenseData}>
                     {hasValue(userLicense) && (
                         <div>
@@ -148,69 +151,73 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                         </div>
                     )}
 
-                    <div>
-                        <h2>Configure your application</h2>
+                    {isGrid && (
+                        <>
+                            <div>
+                                <h2>Configure Your Application</h2>
 
-                        <div className={styles.icQuestion}>
-                            <label
-                                className={classnames(styles.licensedProduct, styles.integratedProduct, {
-                                    [styles.valid]: licensedProducts.grid && licensedProducts.charts,
-                                    [styles.trial]:
-                                        userLicenseIsTrial && licensedProducts.grid && licensedProducts.charts,
-                                    [styles.expired]:
-                                        (userLicenseIsExpired || userLicenseTrialIsExpired) &&
-                                        licensedProducts.grid &&
-                                        licensedProducts.charts,
-                                })}
-                            >
-                                Are you using Integrated Charts?{' '}
-                                <input
-                                    type="checkbox"
-                                    name="products"
-                                    value="integratedEnterprise"
-                                    checked={isIntegratedCharts}
-                                    onChange={() => {
-                                        updateIsIntegratedChartsWithUrlUpdate(!isIntegratedCharts);
-                                    }}
-                                />
-                            </label>
-                        </div>
-                    </div>
-                    {licenseState.gridNoChartsError && (
-                        <Warning>
-                            {licenseState.gridNoChartsError}. <EmailSales />
-                        </Warning>
+                                <div className={styles.icQuestion}>
+                                    <label
+                                        className={classnames(styles.licensedProduct, styles.integratedProduct, {
+                                            [styles.valid]: licensedProducts.grid && licensedProducts.charts,
+                                            [styles.trial]:
+                                                userLicenseIsTrial && licensedProducts.grid && licensedProducts.charts,
+                                            [styles.expired]:
+                                                (userLicenseIsExpired || userLicenseTrialIsExpired) &&
+                                                licensedProducts.grid &&
+                                                licensedProducts.charts,
+                                        })}
+                                    >
+                                        Are you using Integrated Charts?{' '}
+                                        <input
+                                            type="checkbox"
+                                            name="products"
+                                            value="integratedEnterprise"
+                                            checked={isIntegratedCharts}
+                                            onChange={() => {
+                                                updateIsIntegratedChartsWithUrlUpdate(!isIntegratedCharts);
+                                            }}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+                            {licenseState.integratedChartsNoChartsError && (
+                                <Warning>
+                                    {licenseState.integratedChartsNoChartsError}. <EmailSales />
+                                </Warning>
+                            )}
+
+                            <div className={styles.frameworkImportContainer}>
+                                <div className={styles.frameworkContainer}>
+                                    <label>Framework</label>
+                                    <FrameworkSelectorInsideDocs
+                                        path={path}
+                                        currentFramework={framework}
+                                        menuItems={menuItems}
+                                    />
+                                </div>
+
+                                <span className={styles.divider}></span>
+
+                                <div className={styles.importContainer}>
+                                    <label>
+                                        <span>Import type:</span>
+                                    </label>
+
+                                    <select
+                                        name="importType"
+                                        value={importType}
+                                        onChange={(e) => {
+                                            updateImportTypeWithUrlUpdate(e.target.value as ImportType);
+                                        }}
+                                    >
+                                        <option value="packages">Packages</option>
+                                        <option value="modules">Modules</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </>
                     )}
-
-                    <div className={styles.frameworkImportContainer}>
-                        <div className={styles.frameworkContainer}>
-                            <label>Framework</label>
-                            <FrameworkSelectorInsideDocs
-                                path={path}
-                                currentFramework={framework}
-                                menuItems={menuItems}
-                            />
-                        </div>
-
-                        <span className={styles.divider}></span>
-
-                        <div className={styles.importContainer}>
-                            <label>
-                                <span>Import type:</span>
-                            </label>
-
-                            <select
-                                name="importType"
-                                value={importType}
-                                onChange={(e) => {
-                                    updateImportTypeWithUrlUpdate(e.target.value as ImportType);
-                                }}
-                            >
-                                <option value="packages">Packages</option>
-                                <option value="modules">Modules</option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
 
                 <div className={styles.results}>
@@ -219,6 +226,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                     {licenseState.chartsNoGridEnterpriseError && (
                         <Warning>
                             {licenseState.chartsNoGridEnterpriseError}. <EmailSales />
+                        </Warning>
+                    )}
+                    {licenseState.gridNoChartsEnterpriseError && (
+                        <Warning>
+                            {licenseState.gridNoChartsEnterpriseError}. <EmailSales />
                         </Warning>
                     )}
 
@@ -245,58 +257,75 @@ export const LicenseSetup: FunctionComponent<Props> = ({ framework, path, menuIt
                             {licenseState.chartsNoGridEnterpriseError}. <EmailSales />
                         </Warning>
                     )}
-
-                    <p>An example of how to set up your AG Grid Enterprise License Key:</p>
-                    {bootstrapSnippet.grid && (
-                        <Snippet framework={framework} content={bootstrapSnippet.grid} copyToClipboard />
+                    {licenseState.gridNoChartsEnterpriseError && (
+                        <Warning>
+                            {licenseState.gridNoChartsEnterpriseError}. <EmailSales />
+                        </Warning>
                     )}
 
-                    <h2 id="seed-repos">Seed Repositories</h2>
+                    <p>An example of how to set up your {productName} Enterprise License Key:</p>
 
-                    {selectedSeedRepos.length ? (
+                    <Snippet
+                        framework={framework}
+                        content={bootstrapSnippet[library as keyof typeof bootstrapSnippet]}
+                        copyToClipboard
+                    />
+
+                    {isGrid && (
                         <>
-                            <p>Here are some seed code repositories to get you started:</p>
+                            <h2 id="seed-repos">Seed Repositories</h2>
 
-                            <table className={styles.reposTable} role="grid">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Github Repo</th>
-                                        <th scope="col">Framework</th>
-                                        <th scope="col">Development Environment</th>
-                                        <th scope="col">Import Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {selectedSeedRepos.map(({ name, url, framework, devEnvironment, importType }) => {
-                                        return (
-                                            <tr key={url}>
-                                                <td>
-                                                    <a
-                                                        className={classnames(styles.repoButton, 'button-secondary')}
-                                                        href={url}
-                                                    >
-                                                        <Icon name="github" />
-                                                        {name}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <img
-                                                        className={styles.frameworkLogo}
-                                                        src={urlWithBaseUrl(`/images/fw-logos/${framework}.svg`)}
-                                                        alt={framework}
-                                                    />{' '}
-                                                    {framework}
-                                                </td>
-                                                <td>{devEnvironment}</td>
-                                                <td>{importType}</td>
+                            {selectedSeedRepos.length ? (
+                                <>
+                                    <p>Here are some seed code repositories to get you started:</p>
+
+                                    <table className={styles.reposTable} role="grid">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Github Repo</th>
+                                                <th scope="col">Framework</th>
+                                                <th scope="col">Development Environment</th>
+                                                <th scope="col">Import Type</th>
                                             </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                                        </thead>
+                                        <tbody>
+                                            {selectedSeedRepos.map(
+                                                ({ name, url, framework, devEnvironment, importType }) => {
+                                                    return (
+                                                        <tr key={url}>
+                                                            <td>
+                                                                <a
+                                                                    className={classnames(
+                                                                        styles.repoButton,
+                                                                        'button-secondary'
+                                                                    )}
+                                                                    href={url}
+                                                                >
+                                                                    <Icon name="github" />
+                                                                    {name}
+                                                                </a>
+                                                            </td>
+                                                            <td>
+                                                                <img
+                                                                    className={styles.frameworkLogo}
+                                                                    src={fwLogos[framework]}
+                                                                    alt={framework}
+                                                                />{' '}
+                                                                {framework}
+                                                            </td>
+                                                            <td>{devEnvironment}</td>
+                                                            <td>{importType}</td>
+                                                        </tr>
+                                                    );
+                                                }
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </>
+                            ) : (
+                                <p>Select your enterprise products above to view seed repositories.</p>
+                            )}
                         </>
-                    ) : (
-                        <p>Select your enterprise products above to view seed repositories.</p>
                     )}
                 </div>
             </form>

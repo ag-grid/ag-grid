@@ -94,11 +94,10 @@
 }
 
 .licenseData {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-8;
     margin-top: $spacing-size-2;
-
-    > div {
-        margin-bottom: $spacing-size-8;
-    }
 
     .inputList {
         margin-bottom: $spacing-size-10;
@@ -220,6 +219,8 @@
 }
 
 .results {
+    margin-top: $spacing-size-8;
+
     h2 {
         margin-top: $spacing-size-12;
     }
