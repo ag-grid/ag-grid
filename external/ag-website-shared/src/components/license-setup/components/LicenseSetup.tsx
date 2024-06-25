@@ -154,7 +154,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     {isGrid && (
                         <>
                             <div>
-                                <h2>Configure Your Application</h2>
+                                <h3 id="configure-your-application">Configure Your Application</h3>
 
                                 <div className={styles.icQuestion}>
                                     <label
