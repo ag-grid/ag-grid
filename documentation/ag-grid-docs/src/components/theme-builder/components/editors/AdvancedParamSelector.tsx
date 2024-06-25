@@ -84,7 +84,7 @@ export const AdvancedParamSelector = memoWithSameType(() => {
         open: isOpen,
         whileElementsMounted: autoUpdate,
         placement: 'right',
-        middleware: [shift({ padding: 8 }), offset({ mainAxis: 8, crossAxis: -8 })],
+        middleware: [shift(), offset({ mainAxis: 6 })],
     });
 
     const filterWordHighlighter = makeFilterWordMatcher(inputValue);
@@ -103,53 +103,57 @@ export const AdvancedParamSelector = memoWithSameType(() => {
         <>
             <StyledInput type="text" placeholder="Search theme params..." {...inputProps} ref={inputRef} />
             <FloatingPortal>
-                <DropdownArea
-                    ref={refs.setFloating}
-                    style={floatingStyles}
-                    className={isOpen ? 'popup-open' : 'popup-closed'}
-                >
-                    <Popup
-                        className="param-menu-content"
-                        style={{ display: isOpen ? undefined : 'none' }}
-                        {...getMenuProps(
-                            {},
-                            {
-                                // work around a bug in downshift that produces false
-                                // positive error messages when rendering in a portal
-                                suppressRefError: true,
-                            }
+                <FullHeightDropdown ref={refs.setFloating} style={floatingStyles}>
+                    <DropdownArea className={isOpen ? 'popup-open' : 'popup-closed'}>
+                        <Popup
+                            className="param-menu-content"
+                            style={{ display: isOpen ? undefined : 'none' }}
+                            {...getMenuProps(
+                                {},
+                                {
+                                    // work around a bug in downshift that produces false
+                                    // positive error messages when rendering in a portal
+                                    suppressRefError: true,
+                                }
+                            )}
+                        >
+                            {isOpen &&
+                                filteredParams.map((param, index) => {
+                                    const enabled = advancedParamIsEnabled(param);
+                                    return (
+                                        <Param
+                                            key={param.property}
+                                            className={enabled ? 'param-enabled' : undefined}
+                                            {...getItemProps({ item: param, index })}
+                                        >
+                                            <EnabledMark type="checkbox" checked={enabled} readOnly />
+                                            <ParamContent data-param-index={index}>
+                                                <ParamLabel>
+                                                    <EmphasiseMatches
+                                                        matcher={filterWordHighlighter}
+                                                        text={param.label}
+                                                    />
+                                                </ParamLabel>
+                                                <ParamDocs>
+                                                    <EmphasiseMatches
+                                                        matcher={filterWordHighlighter}
+                                                        text={param.docs}
+                                                    />
+                                                </ParamDocs>
+                                            </ParamContent>
+                                        </Param>
+                                    );
+                                })}
+                        </Popup>
+                        {filteredParams.length === 0 && (
+                            <NoSearchResultContainer>
+                                <NoSearchResultMessage>
+                                    No results for "<b>{inputValue}</b>"
+                                </NoSearchResultMessage>
+                            </NoSearchResultContainer>
                         )}
-                    >
-                        {isOpen &&
-                            filteredParams.map((param, index) => {
-                                const enabled = advancedParamIsEnabled(param);
-                                return (
-                                    <Param
-                                        key={param.property}
-                                        className={enabled ? 'param-enabled' : undefined}
-                                        {...getItemProps({ item: param, index })}
-                                    >
-                                        <EnabledMark type="checkbox" checked={enabled} readOnly />
-                                        <ParamContent data-param-index={index}>
-                                            <ParamLabel>
-                                                <EmphasiseMatches matcher={filterWordHighlighter} text={param.label} />
-                                            </ParamLabel>
-                                            <ParamDocs>
-                                                <EmphasiseMatches matcher={filterWordHighlighter} text={param.docs} />
-                                            </ParamDocs>
-                                        </ParamContent>
-                                    </Param>
-                                );
-                            })}
-                    </Popup>
-                    {filteredParams.length === 0 && (
-                        <NoSearchResultContainer>
-                            <NoSearchResultMessage>
-                                No results for "<b>{inputValue}</b>"
-                            </NoSearchResultMessage>
-                        </NoSearchResultContainer>
-                    )}
-                </DropdownArea>
+                    </DropdownArea>
+                </FullHeightDropdown>
             </FloatingPortal>
 
             {enabledParams.map((param) => (
@@ -159,11 +163,18 @@ export const AdvancedParamSelector = memoWithSameType(() => {
     );
 });
 
-const DropdownArea = styled(Card)`
+const FullHeightDropdown = styled('div')`
     z-index: 1000;
     position: absolute;
     pointer-events: all;
-    height: calc(100vh - 32px - 64px);
+    height: calc(100vh);
+    position: relative;
+`;
+
+const DropdownArea = styled(Card)`
+    position: absolute;
+    top: 80px;
+    bottom: 14px;
     overflow: auto;
 
     .param-menu-content {
