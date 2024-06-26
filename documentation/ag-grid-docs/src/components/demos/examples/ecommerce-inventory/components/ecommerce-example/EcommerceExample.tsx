@@ -110,7 +110,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             valueFormatter: ({ value }: ValueFormatterParams) => `£${value}`,
             width: 150,
         },
-        { field: 'actions', cellRenderer: ActionsCellRenderer, minWidth: 186 },
+        { field: 'actions', cellRenderer: ActionsCellRenderer, minWidth: 194 },
     ]);
     const [rowData] = useState(getData());
     const defaultColDef = useMemo<ColDef>(
@@ -121,7 +121,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
     );
     const autoSizeStrategy = useMemo<SizeColumnsToContentStrategy>(
         () => ({
-            type: 'fitCellContents',
+            type: 'fitGridWidth',
         }),
         []
     );
@@ -136,17 +136,14 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         () => ({
             detailGridOptions: {
                 columnDefs: [
-                    { field: 'title', width: 150 },
+                    { field: 'title', flex: 1.5 },
                     { field: 'available', maxWidth: 120 },
                     { field: 'format', flex: 2 },
                     { field: 'label', flex: 1 },
-                    { field: 'cat', headerName: 'Cat#', flex: 1 },
-                    { field: 'country', flex: 1 },
+                    { field: 'country', flex: 0.66 },
+                    { field: 'cat', headerName: 'Cat#', type: 'rightAligned', flex: 0.66 },
                     { field: 'year', type: 'rightAligned', maxWidth: 80 },
                 ],
-                defaultColDef: {
-                    flex: 1,
-                },
                 headerHeight: 38,
             },
             getDetailRowData: ({ successCallback, data: { variantDetails } }: GetDetailRowDataParams) =>
@@ -171,6 +168,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                             <button
                                 className={`${styles.tabButton} ${activeTab === key ? styles.active : ''}`}
                                 onClick={() => handleTabClick(key)}
+                                key={key}
                             >
                                 {displayValue}
                             </button>

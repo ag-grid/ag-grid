@@ -9,11 +9,15 @@ export const ActionsCellRenderer: FunctionComponent<CustomCellRendererProps> = (
         const rowData = node.data;
         api.applyTransaction({ remove: [rowData] });
     }, [node, api]);
+
     const onStopSellingClick = useCallback(() => {
         const rowData = node.data;
 
-        // Modify the status property to 'paused'
-        rowData.status = 'paused';
+        const isPaused = rowData.status === 'paused';
+        const isOutOfStock = rowData.available <= 0;
+
+        // Modify the status property
+        rowData.status = !isPaused ? 'paused' : !isOutOfStock ? 'active' : 'outOfStock';
 
         // Refresh the row to reflect the changes
         api.applyTransaction({ update: [rowData] });
@@ -25,7 +29,7 @@ export const ActionsCellRenderer: FunctionComponent<CustomCellRendererProps> = (
                 <img src={getResourceUrl(`/example/inventory/delete.svg`)} alt="delete" />
             </button>
             <button className={`button-secondary ${styles.buttonStopSelling}`} onClick={onStopSellingClick}>
-                Stop Selling
+                Hold Selling
             </button>
         </div>
     );
