@@ -65,7 +65,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // This is needed for React, as it doesn't render the headers synchronously all the time.
             // Added a defensive check to avoid infinite loop in case headers are never rendered.
             this.timesDelayed++;
-            setTimeout(() => this.autoSizeCols(params), 0);
+            setTimeout(() => this.autoSizeCols(params));
             return;
         }
         this.timesDelayed = 0;
