@@ -38,7 +38,7 @@ const coreDefaults = {
     headerTextColor: ref('textColor'),
     headerCellHoverBackgroundColor: 'transparent',
     headerCellHoverBackgroundTransitionDuration: '0.2s',
-    dataColor: ref('textColor'),
+    cellTextColor: ref('textColor'),
     subtleTextColor: transparentRef('textColor', 0.5),
     rangeSelectionBorderStyle: 'solid',
     rangeSelectionBorderColor: ref('accentColor'),

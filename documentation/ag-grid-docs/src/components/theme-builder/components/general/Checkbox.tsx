@@ -10,20 +10,21 @@ export type CheckboxProps = {
     children?: ReactNode;
     disabled?: boolean;
     className?: string;
+    useSwitch?: boolean;
 };
 
 export const Checkbox = forwardRef<HTMLLabelElement, CheckboxProps>(
-    ({ checked, onChange, children, disabled, className }, ref) => (
+    ({ checked, onChange, children, disabled, className, useSwitch }, ref) => (
         <Container ref={ref} className={combineClassNames(className, disabled && 'is-disabled')}>
-            <span className="text-tertiary">off</span>
+            {useSwitch && <span className="text-tertiary">off</span>}
             <input
                 type="checkbox"
-                className="switch"
+                className={useSwitch ? 'switch' : undefined}
                 checked={checked}
                 onChange={(e) => onChange(e.target.checked)}
                 disabled={disabled}
             />
-            <span className="text-tertiary">on</span>
+            {useSwitch && <span className="text-tertiary">on</span>}
             {children}
         </Container>
     )

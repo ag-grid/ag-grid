@@ -62,7 +62,7 @@ export const EditorPanel = () => {
                 />
             </Section>
             <Section heading="Cells">
-                <ParamEditor param="dataColor" label="Text color" />
+                <ParamEditor param="cellTextColor" label="Text color" />
                 <ParamEditor param="oddRowBackgroundColor" label="Odd row background" />
                 <ParamEditor
                     param="rowVerticalPaddingScale"

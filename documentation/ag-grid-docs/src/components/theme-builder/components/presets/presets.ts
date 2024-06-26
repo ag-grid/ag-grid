@@ -57,7 +57,7 @@ export const allPresets: Preset[] = [
             headerFontSize: '14px',
             headerFontWeight: '700',
             headerVerticalPaddingScale: '1.5',
-            dataColor: '#50F178',
+            cellTextColor: '#50F178',
             oddRowBackgroundColor: '#21222C',
             rowVerticalPaddingScale: '1.5',
             cellHorizontalPaddingScale: '0.8',
