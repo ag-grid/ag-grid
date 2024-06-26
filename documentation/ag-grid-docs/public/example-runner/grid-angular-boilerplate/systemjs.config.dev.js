@@ -85,6 +85,11 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
+            'ag-grid-locale': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
             '@ag-grid-enterprise/advanced-filter': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',

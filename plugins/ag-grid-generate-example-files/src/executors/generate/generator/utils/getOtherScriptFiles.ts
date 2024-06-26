@@ -26,7 +26,7 @@ const getOtherTsGeneratedFiles = async ({
             // Exclude angular and react functional ts files as they will be handled separately
             const toExclude: InternalFramework[] = ['angular', 'reactFunctionalTs'];
             // We do let _typescript files through for vanilla as they are used for vanilla and need to be readAsJsFile
-            // but excluded for vue3 so that they are not accidently included
+            // but excluded for vue3 so that they are not accidentally included
             if (internalFramework === 'vue3') {
                 toExclude.push('typescript');
             }

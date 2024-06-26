@@ -12,6 +12,7 @@ import {
     getBoilerPlateFiles,
     getEntryFileName,
     getIsEnterprise,
+    getIsLocale,
     getMainFileName,
     getProvidedExampleFiles,
     getProvidedExampleFolder,
@@ -102,6 +103,7 @@ export async function generateFiles(options: ExecutorOptions) {
     ]);
 
     const isEnterprise = getIsEnterprise({ entryFile });
+    const isLocale = getIsLocale({ entryFile });
     const frameworkProvidedExamples = sourceFileList.includes('provided') ? await getProvidedFiles(folderPath) : {};
 
     const { bindings, typedBindings } = gridVanillaSrcParser(
@@ -149,6 +151,7 @@ export async function generateFiles(options: ExecutorOptions) {
         for (const importType of importTypes) {
             const packageJson = getPackageJson({
                 isEnterprise,
+                isLocale,
                 internalFramework,
                 importType,
             });
@@ -216,6 +219,7 @@ export async function generateFiles(options: ExecutorOptions) {
             // Replace files with provided examples
             const result: GeneratedContents = {
                 isEnterprise,
+                isLocale,
                 isIntegratedCharts,
                 entryFileName,
                 mainFileName,

@@ -5,6 +5,7 @@ import {
     addBindingImports,
     addGenericInterfaceImport,
     addLicenseManager,
+    findLocaleImport,
     getActiveTheme,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
@@ -145,6 +146,11 @@ function getImports(
 
     if (bindings.data) {
         imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
+    }
+
+    const localeImport = findLocaleImport(bindings.imports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from 'ag-grid-locale';`);
     }
 
     if (importType === 'packages') {
