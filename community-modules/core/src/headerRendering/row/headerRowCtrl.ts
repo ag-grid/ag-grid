@@ -65,8 +65,19 @@ export class HeaderRowCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public isRendered(): boolean {
-        return !!this.comp;
+    /** Checks that every header cell that is currently visible has been rendered.
+     * Can only be false under some circumstances when using React
+     */
+    public areCellsRendered(): boolean {
+        if (!this.comp) {
+            return false;
+        }
+        for (const ctrl of this.getHeaderCellCtrls()) {
+            if (!ctrl.getGui()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -260,8 +271,11 @@ export class HeaderRowCtrl extends BeanStub {
             }
         }
 
-        const ctrlsToDisplay = Array.from(this.headerCellCtrls.values());
-        return ctrlsToDisplay;
+        return this.getHeaderCellCtrls();
+    }
+
+    private getHeaderCellCtrls(): AbstractHeaderCellCtrl[] {
+        return Array.from(this.headerCellCtrls?.values() ?? []);
     }
 
     private recycleAndCreateHeaderCtrls(
@@ -361,7 +375,7 @@ export class HeaderRowCtrl extends BeanStub {
             return;
         }
 
-        const allCtrls = Array.from(this.headerCellCtrls.values());
+        const allCtrls = this.getHeaderCellCtrls();
         const ctrl: AbstractHeaderCellCtrl | undefined = allCtrls.find((ctrl) => ctrl.getColumnGroupChild() == column);
 
         return ctrl;

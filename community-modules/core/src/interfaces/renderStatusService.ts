@@ -1,5 +1,6 @@
-import type { ColKey } from '../columns/columnModel';
-
 export interface IRenderStatusService {
-    areHeadersRendered(colKeys: ColKey[]): boolean;
+    /** Checks that every header cell that is currently visible has been rendered.
+     * Can only be false under some circumstances when using React.
+     */
+    areHeaderCellsRendered(): boolean;
 }

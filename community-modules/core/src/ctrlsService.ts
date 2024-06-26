@@ -101,15 +101,16 @@ export class CtrlsService extends BeanStub implements NamedBean {
     }
 
     public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {
+        const params = this.params;
         switch (pinned) {
             case 'left':
-                this.params.leftHeader = ctrl;
+                params.leftHeader = ctrl;
                 break;
             case 'right':
-                this.params.rightHeader = ctrl;
+                params.rightHeader = ctrl;
                 break;
             default:
-                this.params.centerHeader = ctrl;
+                params.centerHeader = ctrl;
                 break;
         }
         this.checkReady();
@@ -127,17 +128,19 @@ export class CtrlsService extends BeanStub implements NamedBean {
     }
 
     public getHeaderRowContainerCtrls(): HeaderRowContainerCtrl[] {
-        return [this.params.leftHeader, this.params.rightHeader, this.params.centerHeader];
+        const { leftHeader, centerHeader, rightHeader } = this.params;
+        return [leftHeader, rightHeader, centerHeader];
     }
 
     public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl {
+        const params = this.params;
         switch (pinned) {
             case 'left':
-                return this.params.leftHeader;
+                return params.leftHeader;
             case 'right':
-                return this.params.rightHeader;
+                return params.rightHeader;
             default:
-                return this.params.centerHeader;
+                return params.centerHeader;
         }
     }
 }

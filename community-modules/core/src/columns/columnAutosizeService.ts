@@ -61,7 +61,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // hasn't fully drawn out all the cells yet (due to cell renderers in animation frames).
         this.animationFrameService.flushAllFrames();
 
-        if (this.timesDelayed < 5 && !this.renderStatusService?.areHeadersRendered(colKeys)) {
+        if (this.timesDelayed < 5 && this.renderStatusService && !this.renderStatusService.areHeaderCellsRendered()) {
             // This is needed for React, as it doesn't render the headers synchronously all the time.
             // Added a defensive check to avoid infinite loop in case headers are never rendered.
             this.timesDelayed++;
