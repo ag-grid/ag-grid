@@ -1,8 +1,7 @@
 import type { Framework } from '@ag-grid-types';
-import { throwDevWarning } from '@utils/throwDevWarning';
-
-import Code, { type Language } from '../Code';
-import * as snippetTransformer from './snippetTransformer';
+import Code, { type Language } from '@ag-website-shared/components/code/Code';
+import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
+import * as snippetTransformer from '@components/snippet/snippetTransformer';
 
 const languages = {
     react: 'jsx',

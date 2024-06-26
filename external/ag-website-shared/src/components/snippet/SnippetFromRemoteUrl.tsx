@@ -1,4 +1,4 @@
-import Code, { type Language } from '@components/Code';
+import Code, { type Language } from '@ag-website-shared/components/code/Code';
 import type { FunctionComponent } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 

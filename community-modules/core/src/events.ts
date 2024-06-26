@@ -1031,7 +1031,6 @@ export interface CssVariablesChanged<TData = any, TContext = any>
     headerHeightChanged?: boolean;
     rowHeightChanged?: boolean;
     listItemHeightChanged?: boolean;
-    chartMenuPanelWidthChanged?: boolean;
 } // not documented
 
 export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any>

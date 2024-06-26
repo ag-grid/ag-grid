@@ -31,6 +31,8 @@ export const agGridAngularVersion = agGridVersion;
 export const agGridVueVersion = agGridVersion;
 export const agGridVue3Version = agGridVersion;
 
+export const agLibraryVersion = agGridVersion;
+
 export const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
 export const PUBLISHED_URLS = {
     '@ag-grid-community/styles': `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}`,

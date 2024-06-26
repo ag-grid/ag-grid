@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, GetDataPath, ICellRendererParams } from '@ag-grid-community/core';
+import type { ColDef, GetDataPath, ValueFormatterFunc, ValueFormatterParams } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -38,15 +38,15 @@ interface Props {
 const employmentType = ['Permanent', 'Contract'];
 const paymentMethod = ['Cash', 'Check', 'Bank Transfer'];
 const paymentStatus = ['Paid', 'Pending'];
-
-const currencyFormatter = (params) => {
-    const value = params.value;
-    if (value == null) {
-        return '';
-    }
-    const roundedValue = Math.round(value);
-    return `$${roundedValue.toLocaleString()}`;
+const departments = {
+    executiveManagement: 'Executive Management',
+    legal: 'Legal',
+    design: 'Design',
+    engineering: 'Engineering',
+    product: 'Product',
+    customerSupport: 'Customer Support',
 };
+const departmentFormatter: ValueFormatterFunc = ({ value }) => departments[value as keyof typeof departments] ?? '';
 
 export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -55,20 +55,13 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             headerName: 'ID',
             field: 'employeeId',
-            cellDataType: 'text',
             width: 120,
         },
         {
             field: 'department',
-            cellDataType: 'text',
             width: 250,
-            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
-                const tagCell = {
-                    component: TagCellRenderer,
-                };
-                if (params.node.footer) return undefined;
-                return tagCell;
-            },
+            valueFormatter: departmentFormatter,
+            cellRenderer: TagCellRenderer,
         },
         {
             field: 'employmentType',
@@ -80,17 +73,9 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             },
         },
         {
-            headerName: 'Location',
             field: 'location',
-            cellDataType: 'text',
             width: 200,
-            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
-                const flatIcon = {
-                    component: FlagRenderer,
-                };
-                if (params.node.footer) return undefined;
-                return flatIcon;
-            },
+            cellRenderer: FlagRenderer,
             editable: true,
         },
         {
@@ -101,13 +86,11 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             headerName: 'Salary',
             field: 'basicMonthlySalary',
-            cellDataType: 'number',
-            valueFormatter: currencyFormatter,
+            valueFormatter: ({ value }: ValueFormatterParams) =>
+                value == null ? '' : `$${Math.round(value).toLocaleString()}`,
         },
         {
-            headerName: 'Method',
             field: 'paymentMethod',
-            cellDataType: 'text',
             editable: true,
             width: 180,
             cellEditor: 'agRichSelectCellEditor',
@@ -118,57 +101,34 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             headerName: 'Status',
             field: 'paymentStatus',
-            cellDataType: 'text',
             editable: true,
             width: 100,
-            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
-                const statusCell = {
-                    component: StatusCellRenderer,
-                };
-                if (params.node.footer) return undefined;
-                return statusCell;
-            },
+            cellRenderer: StatusCellRenderer,
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: paymentStatus,
             },
         },
         {
-            headerName: 'Contact',
             field: 'contact',
             pinned: 'right',
-            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
-                const contactDetails = {
-                    component: ContactCellRenderer,
-                };
-                if (params.node.footer) return undefined;
-                return contactDetails;
-            },
+            cellRenderer: ContactCellRenderer,
             width: 120,
         },
     ]);
     const [rowData] = useState(getData());
-    const getDataPath = useCallback<GetDataPath>((data) => {
-        return data.orgHierarchy;
-    }, []);
-
+    const getDataPath = useCallback<GetDataPath>((data) => data.orgHierarchy, []);
     const themeClass = isDarkMode ? `${gridTheme}-dark` : gridTheme;
-    const treeData = true;
-    const autoGroupColumnDef = useMemo(() => {
+    const autoGroupColumnDef = useMemo<ColDef>(() => {
         return {
             headerName: 'Employee',
             width: 330,
             pinned: 'left',
             sort: 'asc',
-            cellRendererSelector: (params: ICellRendererParams<IRow>) => {
-                const groupCell = {
-                    suppressCount: true,
-                    innerRenderer: EmployeeCellRenderer,
-                };
-                if (params.node.footer) {
-                    return 'Total';
-                }
-                return { component: 'agGroupCellRenderer', params: groupCell };
+            cellRenderer: 'agGroupCellRenderer',
+            cellRendererParams: {
+                suppressCount: true,
+                innerRenderer: EmployeeCellRenderer,
             },
         };
     }, []);
@@ -183,8 +143,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                         rowData={rowData}
                         groupDefaultExpanded={-1}
                         getDataPath={getDataPath}
-                        columnMenu="new"
-                        treeData={treeData}
+                        treeData
                         autoGroupColumnDef={autoGroupColumnDef}
                     />
                 </div>

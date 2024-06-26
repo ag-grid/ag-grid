@@ -1,10 +1,10 @@
 ---
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
-import Code, { type Language } from '../Code';
+import Code, { type Language } from '@ag-website-shared/components/code/Code';
 import { getExamplesPath } from '@features/docs/utils/filesData';
 import path from 'path';
 import { readFileSync } from 'node:fs';
-import { SnippetFromRemoteUrl } from './SnippetFromRemoteUrl';
+import { SnippetFromRemoteUrl } from '@ag-website-shared/components/snippet/SnippetFromRemoteUrl';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 interface Props {
