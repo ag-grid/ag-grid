@@ -63,6 +63,7 @@ export interface GridChartParams {
     chartType: ChartType;
     chartThemeName?: string;
     insideDialog: boolean;
+    focusOnOpen?: boolean;
     suppressChartRanges?: boolean;
     switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
@@ -305,6 +306,10 @@ export class GridChartComp extends Component {
 
         const { width, height } = this.getBestDialogSize();
 
+        const afterGuiAttached = this.params.focusOnOpen
+            ? () => setTimeout(() => this.focusService.focusInto(this.getGui()))
+            : undefined;
+
         this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
@@ -315,7 +320,7 @@ export class GridChartComp extends Component {
             component: this,
             centered: true,
             closable: true,
-            afterGuiAttached: () => setTimeout(() => this.focusService.focusInto(this.getGui())),
+            afterGuiAttached,
         });
 
         this.createBean(this.chartDialog);

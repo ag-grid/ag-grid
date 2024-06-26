@@ -104,6 +104,8 @@ export interface BaseCreateChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
     unlinkChart?: boolean;
+    /** If `true`, will focus the chart dialog when opened. Only applies when not providing a chart container. */
+    focusOnOpen?: boolean;
 }
 
 export type ChartParamsCellRange = Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>;
