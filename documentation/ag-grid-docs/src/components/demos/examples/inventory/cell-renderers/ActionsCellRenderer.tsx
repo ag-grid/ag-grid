@@ -1,5 +1,5 @@
 import type { CustomCellRendererProps } from '@ag-grid-community/react';
-import { getResourceUrl } from '@components/demos/examples/finance/utils/getResourceUrl';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { type FunctionComponent, useCallback } from 'react';
 
 import styles from './ActionsCellRenderer.module.css';
@@ -26,7 +26,7 @@ export const ActionsCellRenderer: FunctionComponent<CustomCellRendererProps> = (
     return (
         <div className={styles.buttonCell}>
             <button className={`button-secondary ${styles.removeButton}`} onClick={onRemoveClick}>
-                <img src={getResourceUrl(`/example/inventory/delete.svg`)} alt="delete" />
+                <img src={urlWithBaseUrl(`/example/inventory/delete.svg`)} alt="delete" />
             </button>
             <button className={`button-secondary ${styles.buttonStopSelling}`} onClick={onStopSellingClick}>
                 Hold Selling

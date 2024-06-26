@@ -1,5 +1,5 @@
 import type { CustomCellRendererProps } from '@ag-grid-community/react';
-import { getResourceUrl } from '@components/demos/examples/finance/utils/getResourceUrl';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { type FunctionComponent } from 'react';
 
 import styles from './ContactCellRenderer.module.css';
@@ -17,12 +17,12 @@ export const ContactCellRenderer: FunctionComponent<CustomCellRendererProps> = (
                         rel="noopener noreferrer"
                         className={styles.iconLink}
                     >
-                        <img className={styles.icon} src={getResourceUrl(`/example/hr/linkedin.svg`)} alt="linkedin" />
+                        <img className={styles.icon} src={urlWithBaseUrl(`/example/hr/linkedin.svg`)} alt="linkedin" />
                     </a>
                 </button>
                 <button className="button-secondary">
                     <a href={`mailto:${emailName}@company.com`} className={styles.iconLink}>
-                        <img className={styles.icon} src={getResourceUrl(`/example/hr/email.svg`)} alt="email" />
+                        <img className={styles.icon} src={urlWithBaseUrl(`/example/hr/email.svg`)} alt="email" />
                     </a>
                 </button>
             </div>
