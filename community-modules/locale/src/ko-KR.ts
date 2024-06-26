@@ -469,8 +469,8 @@ export const AG_GRID_LOCALE_KR = {
     customCombo: '사용자 정의 조합',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. 레벨 ${variable}. 편집하려면 ENTER를 누르세요.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. 레벨 ${variable}. ${variable} 편집하려면 ENTER를 누르세요.',
+    ariaAdvancedFilterBuilderItem: '${variable}. 레벨 ${variable}. 편집하려면 ENTER를 누르세요',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. 레벨 ${variable}. ${variable} 편집하려면 ENTER를 누르세요',
     ariaAdvancedFilterBuilderList: '고급 필터 빌더 목록',
     ariaAdvancedFilterBuilderFilterItem: '필터 조건',
     ariaAdvancedFilterBuilderGroupItem: '필터 그룹',

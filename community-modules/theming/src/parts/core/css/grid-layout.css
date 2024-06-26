@@ -51,7 +51,7 @@
 
 .ag-row {
     background-color: var(--ag-background-color);
-    color: var(--ag-data-color);
+    color: var(--ag-cell-text-color);
     white-space: nowrap;
     width: 100%;
     height: var(--ag-row-height);

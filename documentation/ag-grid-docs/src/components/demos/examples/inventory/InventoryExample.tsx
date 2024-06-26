@@ -213,6 +213,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         masterDetail
                         detailCellRendererParams={detailCellRendererParams}
                         quickFilterText={quickFilterText}
+                        detailRowAutoHeight
                     />
                 </div>
             </div>

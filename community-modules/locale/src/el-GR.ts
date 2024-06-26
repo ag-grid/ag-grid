@@ -469,9 +469,9 @@ export const AG_GRID_LOCALE_GR = {
     customCombo: 'Προσαρμοσμένος Συνδυασμός',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Επίπεδο ${variable}. Πατήστε ENTER για επεξεργασία.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Επίπεδο ${variable}. Πατήστε ENTER για επεξεργασία',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Επίπεδο ${variable}. ${variable} Πατήστε ENTER για επεξεργασία.',
+        '${variable}. Επίπεδο ${variable}. ${variable} Πατήστε ENTER για επεξεργασία',
     ariaAdvancedFilterBuilderList: 'Λίστα Κατασκευαστή Προηγμένου Φίλτρου',
     ariaAdvancedFilterBuilderFilterItem: 'Συνθήκη Φίλτρου',
     ariaAdvancedFilterBuilderGroupItem: 'Ομάδα Φίλτρου',

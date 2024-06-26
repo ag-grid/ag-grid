@@ -1,6 +1,7 @@
 :global(:root) {
     --layout-grid-header-height: 32px;
 }
+
 .grid {
     height: calc(100vh - var(--layout-grid-header-height));
     --ag-value-change-value-highlight-background-color: #44ad4961;
@@ -10,6 +11,14 @@
 
 :global(.ag-theme-quartz-dark) {
     --ag-row-hover-color: #323a46;
+}
+
+:global(div.ag-theme-quartz),
+:global(div.ag-theme-quartz-dark) {
+    @media screen and (max-width: 720px) {
+        --ag-font-size: 12px;
+        --ag-grid-size: 6px;
+    }
 }
 
 :global(.ag-theme-quartz .ag-row-group),

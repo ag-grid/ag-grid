@@ -3,6 +3,14 @@
     --ag-row-border: 1px solid #c41717;
 }
 
+:global(div.ag-theme-quartz),
+:global(div.ag-theme-quartz-dark) {
+    @media screen and (max-width: 720px) {
+        --ag-font-size: 12px;
+        --ag-grid-size: 6px;
+    }
+}
+
 :global(.ag-theme-quartz .ag-body-viewport),
 :global(.ag-theme-quartz-dark .ag-body-viewport) {
     padding-top: 8px;
@@ -112,6 +120,10 @@
     > span:last-child {
         margin-right: 0;
     }
+}
+
+:global(.ag-center-cols-viewport) {
+    min-height: unset !important;
 }
 
 .grid {

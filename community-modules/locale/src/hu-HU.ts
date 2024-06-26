@@ -469,9 +469,9 @@ export const AG_GRID_LOCALE_HU = {
     customCombo: 'Egyéni kombináció',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Szint ${variable}. Szerkesztéshez nyomja meg az ENTER-t.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Szint ${variable}. Szerkesztéshez nyomja meg az ENTER-t',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Szint ${variable}. ${variable} Szerkesztéshez nyomja meg az ENTER-t.',
+        '${variable}. Szint ${variable}. ${variable} Szerkesztéshez nyomja meg az ENTER-t',
     ariaAdvancedFilterBuilderList: 'Haladó szűrő építő lista',
     ariaAdvancedFilterBuilderFilterItem: 'Szűrő feltétel',
     ariaAdvancedFilterBuilderGroupItem: 'Szűrő csoport',

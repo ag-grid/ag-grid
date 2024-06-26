@@ -469,9 +469,9 @@ export const AG_GRID_LOCALE_TR = {
     customCombo: 'Özel Kombinasyon',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Seviye ${variable}. Düzenlemek için ENTER tuşuna basın.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Seviye ${variable}. Düzenlemek için ENTER tuşuna basın',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
+        '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın',
     ariaAdvancedFilterBuilderList: 'Gelişmiş Filtre Yapıcı Listesi',
     ariaAdvancedFilterBuilderFilterItem: 'Filtre Koşulu',
     ariaAdvancedFilterBuilderGroupItem: 'Filtre Grubu',

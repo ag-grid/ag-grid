@@ -469,8 +469,8 @@ export const AG_GRID_LOCALE_EG = {
     customCombo: 'مركب مخصص',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. المستوى ${variable}. اضغط على ENTER لتحرير.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. المستوى ${variable}. ${variable} اضغط على ENTER لتحرير.',
+    ariaAdvancedFilterBuilderItem: '${variable}. المستوى ${variable}. اضغط على ENTER لتحرير',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. المستوى ${variable}. ${variable} اضغط على ENTER لتحرير',
     ariaAdvancedFilterBuilderList: 'قائمة باني التصفية المتقدمة',
     ariaAdvancedFilterBuilderFilterItem: 'شرط التصفية',
     ariaAdvancedFilterBuilderGroupItem: 'مجموعة التصفية',

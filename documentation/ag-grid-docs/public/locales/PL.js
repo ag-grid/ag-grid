@@ -469,9 +469,9 @@ const AG_GRID_LOCALE_PL = {
     customCombo: 'Niestandardowa kombinacja',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Poziom ${variable}. Naciśnij ENTER, aby edytować.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Poziom ${variable}. Naciśnij ENTER, aby edytować',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Poziom ${variable}. ${variable} Naciśnij ENTER, aby edytować.',
+        '${variable}. Poziom ${variable}. ${variable} Naciśnij ENTER, aby edytować',
     ariaAdvancedFilterBuilderList: 'Lista kreatora zaawansowanego filtra',
     ariaAdvancedFilterBuilderFilterItem: 'Warunek filtra',
     ariaAdvancedFilterBuilderGroupItem: 'Grupa filtra',

@@ -469,8 +469,8 @@ export const AG_GRID_LOCALE_SK = {
     customCombo: 'Vlastná kombinácia',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Úroveň ${variable}. Stlačte ENTER pre úpravu.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. Úroveň ${variable}. ${variable} Stlačte ENTER pre úpravu.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Úroveň ${variable}. Stlačte ENTER pre úpravu',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. Úroveň ${variable}. ${variable} Stlačte ENTER pre úpravu',
     ariaAdvancedFilterBuilderList: 'Zoznam staviteľa pokročilého filtra',
     ariaAdvancedFilterBuilderFilterItem: 'Podmienka filtra',
     ariaAdvancedFilterBuilderGroupItem: 'Skupina filtra',

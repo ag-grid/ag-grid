@@ -49,7 +49,7 @@ export class ChartToolbar extends Component {
 
             this.buttonListenersDestroyFuncs.push(
                 ...this.addManagedElementListeners(buttonEl, {
-                    click: (event: MouseEvent) => callback(event.target as HTMLElement),
+                    click: (event: MouseEvent) => callback(event.currentTarget as HTMLElement),
                 })
             );
 

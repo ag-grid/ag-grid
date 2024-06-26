@@ -1,4 +1,11 @@
-import type { ComponentSelector, Context, IGridComp } from 'ag-grid-community';
+import type {
+    Component,
+    ComponentSelector,
+    Context,
+    FocusableContainer,
+    IGridComp,
+    TabGuardComp as JsTabGuardComp,
+} from 'ag-grid-community';
 import { GridCtrl } from 'ag-grid-community';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -28,6 +35,8 @@ const GridComp = ({ context }: GridCompProps) => {
     const [eGridBodyParent, setGridBodyParent] = useState<HTMLDivElement | null>(null);
 
     const focusInnerElementRef = useRef<(fromBottom?: boolean) => void>(() => undefined);
+    const paginationCompRef = useRef<JsTabGuardComp | undefined>();
+    const focusableContainersRef = useRef<Component[]>([]);
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
@@ -62,24 +71,25 @@ const GridComp = ({ context }: GridCompProps) => {
             destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass: setRtlClass,
             forceFocusOutOfContainer: (up?: boolean) => {
+                if (paginationCompRef.current?.isDisplayed()) {
+                    paginationCompRef.current.forceFocusOutOfContainer(up);
+                    return;
+                }
                 tabGuardRef.current?.forceFocusOutOfContainer(up);
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
-                const els: HTMLElement[] = [];
-
+                const comps: FocusableContainer[] = [];
                 const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
-                const sideBarEl = eRootWrapperRef.current?.querySelector('.ag-side-bar:not(.ag-hidden)');
-
                 if (gridBodyCompEl) {
-                    els.push(gridBodyCompEl as HTMLElement);
+                    comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
                 }
-
-                if (sideBarEl) {
-                    els.push(sideBarEl as HTMLElement);
-                }
-
-                return els;
+                focusableContainersRef.current.forEach((comp) => {
+                    if (comp.isDisplayed()) {
+                        comps.push(comp);
+                    }
+                });
+                return comps;
             },
             setCursor,
             setUserSelect,
@@ -128,6 +138,7 @@ const GridComp = ({ context }: GridCompProps) => {
             }
 
             beansToDestroy.push(sideBarComp);
+            focusableContainersRef.current.push(sideBarComp);
         }
 
         const addComponentToDom = (component: ComponentSelector['component']) => {
@@ -136,6 +147,7 @@ const GridComp = ({ context }: GridCompProps) => {
             eRootWrapper.insertAdjacentElement('beforeend', eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(comp);
+            return comp;
         };
 
         if (statusBarSelector) {
@@ -143,7 +155,9 @@ const GridComp = ({ context }: GridCompProps) => {
         }
 
         if (paginationSelector) {
-            addComponentToDom(paginationSelector.component);
+            const paginationComp = addComponentToDom(paginationSelector.component);
+            paginationCompRef.current = paginationComp as JsTabGuardComp;
+            focusableContainersRef.current.push(paginationComp);
         }
 
         if (watermarkSelector) {

@@ -469,9 +469,9 @@ export const AG_GRID_LOCALE_BG = {
     customCombo: 'Персонализирана комбинация',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Ниво ${variable}. Натиснете ENTER за редактиране.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Ниво ${variable}. Натиснете ENTER за редактиране',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Ниво ${variable}. ${variable} Натиснете ENTER за редактиране.',
+        '${variable}. Ниво ${variable}. ${variable} Натиснете ENTER за редактиране',
     ariaAdvancedFilterBuilderList: 'Списък на разширения филтър',
     ariaAdvancedFilterBuilderFilterItem: 'Условие на филтъра',
     ariaAdvancedFilterBuilderGroupItem: 'Група на филтъра',

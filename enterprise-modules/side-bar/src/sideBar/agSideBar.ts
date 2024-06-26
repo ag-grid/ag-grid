@@ -19,6 +19,7 @@ import {
     ModuleNames,
     ModuleRegistry,
     RefPlaceholder,
+    _addFocusableContainerListener,
     _removeFromParent,
     _setAriaControls,
     _warnOnce,
@@ -68,12 +69,15 @@ export class AgSideBar extends Component implements ISideBar {
         this.addManagedPropertyListener('sideBar', this.onSideBarUpdated.bind(this));
 
         this.sideBarService.registerSideBarComp(this);
+        const eGui = this.getFocusableElement();
         this.createManagedBean(
-            new ManagedFocusFeature(this.getFocusableElement(), {
+            new ManagedFocusFeature(eGui, {
                 onTabKeyDown: this.onTabKeyDown.bind(this),
                 handleKeyDown: this.handleKeyDown.bind(this),
             })
         );
+
+        _addFocusableContainerListener(this, eGui, this.focusService);
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {

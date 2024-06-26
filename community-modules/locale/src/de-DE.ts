@@ -469,9 +469,9 @@ export const AG_GRID_LOCALE_DE = {
     customCombo: 'Benutzerdefinierte Kombination',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Ebene ${variable}. Drücken Sie ENTER zum Bearbeiten.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Ebene ${variable}. Drücken Sie ENTER zum Bearbeiten',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER zum Bearbeiten.',
+        '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER zum Bearbeiten',
     ariaAdvancedFilterBuilderList: 'Erweiterte Filter-Ersteller-Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbedingung',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',

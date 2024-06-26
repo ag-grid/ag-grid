@@ -469,9 +469,9 @@ export const AG_GRID_LOCALE_HR = {
     customCombo: 'Prilagođena kombinacija',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Razina ${variable}. Pritisni ENTER za uređivanje.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Razina ${variable}. Pritisni ENTER za uređivanje',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Razina ${variable}. ${variable} Pritisni ENTER za uređivanje.',
+        '${variable}. Razina ${variable}. ${variable} Pritisni ENTER za uređivanje',
     ariaAdvancedFilterBuilderList: 'Popis naprednog graditelja filtara',
     ariaAdvancedFilterBuilderFilterItem: 'Uvjet filtra',
     ariaAdvancedFilterBuilderGroupItem: 'Grupa filtara',
