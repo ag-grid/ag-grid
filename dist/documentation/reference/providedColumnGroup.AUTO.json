@@ -1,0 +1,146 @@
+{
+  "getOriginalParent": {
+    "meta": {
+      "all": "/** Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.\n     *\n     * Parent may contain a duplicate but not identical group when the group is split.\n     */",
+      "comment": "Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.\n\nParent may contain a duplicate but not identical group when the group is split."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ProvidedColumnGroup | null"
+    }
+  },
+  "getLevel": {
+    "meta": {
+      "all": "/** Returns the level of this group. */",
+      "comment": "Returns the level of this group."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "isPadding": {
+    "meta": {
+      "all": "/** Returns `true` if this column group is a padding group that is used to correctly align column groups / children. */",
+      "comment": "Returns `true` if this column group is a padding group that is used to correctly align column groups / children."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isExpandable": {
+    "meta": {
+      "all": "/** Returns `true` if this column group is expandable. */",
+      "comment": "Returns `true` if this column group is expandable."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isExpanded": {
+    "meta": {
+      "all": "/** Returns `true` if this column group is expanded. */",
+      "comment": "Returns `true` if this column group is expanded."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getGroupId": {
+    "meta": {
+      "all": "/** Returns the group column id. */",
+      "comment": "Returns the group column id."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "string"
+    }
+  },
+  "getChildren": {
+    "meta": {
+      "all": "/** Returns the children of this group. */",
+      "comment": "Returns the children of this group."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "(Column | ProvidedColumnGroup)[]"
+    }
+  },
+  "getColGroupDef": {
+    "meta": {
+      "all": "/** Returns the column group definition for this column.\n     * The column group definition will be the result of merging the application provided column group definition with any provided defaults\n     * (e.g. `defaultColGroupDef` grid option.\n     */",
+      "comment": "Returns the column group definition for this column.\nThe column group definition will be the result of merging the application provided column group definition with any provided defaults\n(e.g. `defaultColGroupDef` grid option."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColGroupDef | null"
+    }
+  },
+  "getLeafColumns": {
+    "meta": {
+      "all": "/** Returns the leaf columns of this group. */",
+      "comment": "Returns the leaf columns of this group."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "Column[]"
+    }
+  },
+  "isColumn": {
+    "meta": {
+      "all": "/** isColumn is always `false`. Used to distinguish between columns and column groups.  */",
+      "comment": "isColumn is always `false`. Used to distinguish between columns and column groups."
+    },
+    "type": {
+      "returnType": "false"
+    }
+  },
+  "isVisible": {
+    "meta": {
+      "all": "/** Returns `true` if the column is visible. */",
+      "comment": "Returns `true` if the column is visible."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getInstanceId": {
+    "meta": {
+      "all": "/** @deprecated v32 Internal method no longer to be exposed on Column interface. */",
+      "tags": [
+        {
+          "name": "deprecated",
+          "comment": "v32 Internal method no longer to be exposed on Column interface."
+        }
+      ]
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColumnInstanceId"
+    }
+  },
+  "getColumnGroupShow": {
+    "meta": {
+      "all": "/** Returns whether this column should be shown when the group is open / closed or undefined if its always shown. */",
+      "comment": "Returns whether this column should be shown when the group is open / closed or undefined if its always shown."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColumnGroupShowType | undefined"
+    }
+  },
+  "getId": {
+    "meta": {
+      "all": "/** Returns the unique ID for the column. */",
+      "comment": "Returns the unique ID for the column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "string"
+    }
+  }
+}
