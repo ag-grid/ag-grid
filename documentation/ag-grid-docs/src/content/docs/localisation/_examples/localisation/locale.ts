@@ -477,8 +477,8 @@ export const AG_GRID_LOCALE_EN: Record<string, string> = {
     customCombo: 'Custom Combination',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. Level ${variable}. ${variable} Press ENTER to edit.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. Level ${variable}. ${variable} Press ENTER to edit',
     ariaAdvancedFilterBuilderList: 'Advanced Filter Builder List',
     ariaAdvancedFilterBuilderFilterItem: 'Filter Condition',
     ariaAdvancedFilterBuilderGroupItem: 'Filter Group',
