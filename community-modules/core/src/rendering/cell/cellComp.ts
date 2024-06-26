@@ -270,7 +270,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const versionCopy = this.editorVersion;
 
         const cellEditorPromise = compDetails.newAgStackInstance();
-        if (!cellEditorPromise) {
+        if (cellEditorPromise == null) {
             return;
         } // if empty, userComponentFactory already did a console message
 
