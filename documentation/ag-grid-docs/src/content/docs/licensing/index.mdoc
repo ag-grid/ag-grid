@@ -37,121 +37,18 @@ You must set the license key before you create an instance of AG Grid or AG Grid
 
 Note that you must pass the key exactly as provided by AG Grid - do not modify the key in any way.
 
-[Setting the License Key](./license-install)
-
-### Invalid License
-
-If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
-
-{% gridExampleRunner title="Invalid License" name="forceWatermark" /%}
-
-## Seed / Example Projects
-
-We have a number of seed projects that illustrate how to get up and running with AG Grid Enterprise and how to set the license key.
-You can clone the relevant seed project and use it as a basis for your project, or just to validate your license key.
-
-You can find the seed projects on [GitHub](https://github.com/ag-grid/ag-grid-seed)
-
-{% seedProjectsTable /%}
-
-## Installing AG Grid Enterprise
-
-To install AG Grid Enterprise you would typically do one of the following:
-
-### Grid Bundled/UMD Script
-
-If including the bundled AG Grid script directly into your webpage then reference `ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js` in your HTML file instead of `ag-grid-community/dist/ag-grid-community.js`.
-
-For example:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js"></script>
-```
-
-You use AG Grid in the same way as when using the Community edition but including the enterprise script will enable all AG Grid enterprise features.
-
-### Grid Packages
-
-If using node modules and grid [packages](./modules/#packages-vs-modules) include the enterprise package `ag-grid-charts-enterprise`.
-
-```js
-"dependencies": {
-    "ag-grid-community": "~{% $agGridVersion %}",
-    "ag-grid-charts-enterprise": "~{% $agGridVersion %}"
-    ...
-}
-```
-
-Then import the AG Grid Enterprise package in your application before any grid instance is created.
-
-```js
-import 'ag-grid-enterprise';
-```
+Please refer to [Setting the License Key](./license-install) on how to set the license key, as well as a list of seed projects we provide to help you get started.
 
 {% note %}
-The versions of `ag-grid-community` and `ag-grid-charts-enterprise` should match. They are released in tandem and expect to be on the same version.
+If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
+visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
+product is JavaScript, there is little we can do to prevent this.
 {% /note %}
 
-### Grid Modules
+## License Key for Grid and Charts
 
-If using node modules and grid [modules](./modules/#packages-vs-modules) then you'll need to include the enterprise feature modules for the features that you require.
-For example to add the enterprise Row Grouping feature along with Server Side row model add the following packages to your `package.json` file:
+If you have purchased the Enterprise Bundle (licenses for both AG Grid Enterprise and AG Charts Enterprise) then you will have ONE license key.
+This license key will work for both AG Grid Enterprise and AG Charts Enterprise.
 
-```js
-"dependencies": {    
-    "@ag-grid-enterprise/row-grouping": "~{% $agGridVersion %}",
-    "@ag-grid-enterprise/server-side-row-model": "~{% $agGridVersion %}",
-    ...
-}
-```
-
-Then reference and import the AG Grid Enterprise modules:
-
-```js
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
-```
-
-Then depending on your choice of framework you'll need to provide the modules to the grid or register them globally (see [Installing Grid Modules](./modules/#installing-ag-grid-modules) for full details.). Please refer to the [Modules](./modules/) documentation for all the enterprise modules.
-
-{% if isFramework("javascript") %}
-```js
-createGrid(<dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
-```
-{% /if %}
-
-{% if isFramework("angular") %}
-```ts
-public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
-<ag-grid-angular
-   [rowData]="rowData"
-   [columnDefs]="columnDefs"
-   [modules]="modules" />
-```
-{% /if %}
-
-{% if isFramework("react") %}
-```jsx
-<AgGridReact
-   rowData={rowData}
-   columnDefs={columnDefs}
-   modules={[ServerSideRowModelModule, RowGroupingModule]}>
-</AgGridReact>
-```
-{% /if %}
-
-{% if isFramework("vue") %}
-```html
-<ag-grid-vue
-   :rowData="rowData"
-   :columnDefs="columnDefs"
-   :modules="[ServerSideRowModelModule, RowGroupingModule]">
-</ag-grid-vue>
-```
-{% /if %}
-
-{% note %}
-The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enterprise/**` should match. They are released in tandem and expect to be on the same version.
-{% /note %}
-
+Conversely if you already have a license key for AG Grid Enterprise and want to get a license for AG Charts Enterprise (or vice versa), then you will a replacement license ky to cover both.
 
