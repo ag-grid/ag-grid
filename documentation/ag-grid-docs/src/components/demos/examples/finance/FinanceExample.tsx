@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { type ColDef, type GetRowIdFunc, type GetRowIdParams, type ValueFormatterFunc } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, type CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
@@ -78,27 +78,24 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         () => [
             {
                 field: 'ticker',
-                cellRenderer: (params) => {
-                    return (
-                        params.data && (
-                            <>
-                                <div>
-                                    <img
-                                        src={urlWithBaseUrl(`/example/finance/logos/${params.data.ticker}.png`)}
-                                        style={{
-                                            width: '20px',
-                                            height: '20px',
-                                            marginRight: '5px',
-                                            borderRadius: '32px',
-                                        }}
-                                    />
-                                    <b className="custom-ticker">{params.data.ticker}</b>
-                                    <span className="ticker-name"> {params.data.name}</span>
-                                </div>
-                            </>
-                        )
-                    );
-                },
+                cellRenderer: (params: CustomCellRendererProps) =>
+                    params.data && (
+                        <>
+                            <div>
+                                <img
+                                    src={urlWithBaseUrl(`/example/finance/logos/${params.data.ticker}.png`)}
+                                    style={{
+                                        width: '20px',
+                                        height: '20px',
+                                        marginRight: '5px',
+                                        borderRadius: '32px',
+                                    }}
+                                />
+                                <b className="custom-ticker">{params.data.ticker}</b>
+                                <span className="ticker-name"> {params.data.name}</span>
+                            </div>
+                        </>
+                    ),
             },
             {
                 field: 'name',
@@ -200,11 +197,11 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                         rowData={rowData}
                         columnDefs={colDefs}
                         defaultColDef={defaultColDef}
-                        enableRangeSelection={true}
-                        enableCharts={true}
+                        enableRangeSelection
+                        enableCharts
                         rowSelection={'multiple'}
                         rowGroupPanelShow={'always'}
-                        suppressAggFuncInHeader={true}
+                        suppressAggFuncInHeader
                         groupDefaultExpanded={-1}
                         statusBar={statusBar}
                     />

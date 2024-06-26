@@ -1,7 +1,6 @@
+import type { CustomCellRendererProps } from '@ag-grid-community/react';
 import { getResourceUrl } from '@components/demos/examples/finance/utils/getResourceUrl';
 import { type FunctionComponent } from 'react';
-
-import type { CustomCellRendererProps } from 'ag-grid-react';
 
 import styles from './ImageCellRenderer.module.css';
 

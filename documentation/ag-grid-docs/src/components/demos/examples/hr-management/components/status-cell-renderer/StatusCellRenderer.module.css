@@ -8,6 +8,7 @@
     align-items: center;
     height: 24px;
     font-size: 13px;
+    text-transform: capitalize;
 }
 
 .paidTag {
@@ -16,52 +17,12 @@
     padding-right: 8px;
 }
 
+.pendingTag {
+    border: 1px solid #cccccc;
+}
+
 .tick {
     height: 16px;
     width: 16px;
     margin-right: 8px;
-}
-
-.engineeringTag {
-    border: 1px solid #f3a33a53;
-}
-
-.executiveManagementTag {
-    border: 1px solid #47a8f86c;
-}
-
-.productTag {
-    border: 1px solid #88cf2b55;
-}
-
-.defaultTag {
-    border: 1px solid #cccccc;
-}
-
-.circle {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-right: 8px;
-    margin-left: 6px;
-}
-
-.designCircle {
-    background-color: #7e80e7;
-}
-
-.engineeringCircle {
-    background-color: #f3a23a;
-}
-
-.executiveManagementCircle {
-    background-color: #47a8f8;
-}
-
-.productCircle {
-    background-color: #87cf2b;
-}
-
-.defaultCircle {
-    background-color: #cccccc;
 }
