@@ -208,7 +208,6 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         rowData={rowData}
                         defaultColDef={defaultColDef}
                         rowHeight={80}
-                        getRowHeight={getRowHeight}
                         autoSizeStrategy={autoSizeStrategy}
                         pagination
                         paginationPageSize={10}
