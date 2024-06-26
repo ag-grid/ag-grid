@@ -37,18 +37,18 @@ export function closeChartToolPanel(beans: BeanCollection, params: CloseChartToo
 }
 
 export function createRangeChart(beans: BeanCollection, params: CreateRangeChartParams): ChartRef | undefined {
-    return beans.frameworkOverrides.wrapIncoming(() => beans.chartService?.createRangeChart(params));
+    return beans.frameworkOverrides.wrapIncoming(() => beans.chartService?.createRangeChart(params, true));
 }
 
 export function createPivotChart(beans: BeanCollection, params: CreatePivotChartParams): ChartRef | undefined {
-    return beans.frameworkOverrides.wrapIncoming(() => beans.chartService?.createPivotChart(params));
+    return beans.frameworkOverrides.wrapIncoming(() => beans.chartService?.createPivotChart(params, true));
 }
 
 export function createCrossFilterChart(
     beans: BeanCollection,
     params: CreateCrossFilterChartParams
 ): ChartRef | undefined {
-    return beans.frameworkOverrides.wrapIncoming(() => beans.chartService?.createCrossFilterChart(params));
+    return beans.frameworkOverrides.wrapIncoming(() => beans.chartService?.createCrossFilterChart(params, true));
 }
 
 export function updateChart(beans: BeanCollection, params: UpdateChartParams): void {

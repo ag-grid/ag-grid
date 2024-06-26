@@ -11,6 +11,7 @@ import type {
     CreatePivotChartParams,
     CreateRangeChartParams,
     Environment,
+    FocusService,
     GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
@@ -49,6 +50,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
+    focusDialogOnOpen?: boolean;
 }
 
 export class ChartService extends BeanStub implements NamedBean, IChartService {
@@ -57,11 +59,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     private visibleColsService: VisibleColsService;
     private rangeService?: IRangeService;
     private environment: Environment;
+    private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
         this.rangeService = beans.rangeService;
         this.environment = beans.environment;
+        this.focusService = beans.focusService;
     }
 
     public static CHARTS_VERSION = CHARTS_VERSION;
@@ -149,9 +153,12 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         chartComp?.closeChartToolPanel();
     }
 
-    public createChartFromCurrentRange(chartType: ChartType = 'groupedColumn'): ChartRef | undefined {
+    public createChartFromCurrentRange(
+        chartType: ChartType = 'groupedColumn',
+        fromApi?: boolean
+    ): ChartRef | undefined {
         const cellRange: PartialCellRange = this.getSelectedRange();
-        return this.createChart({ cellRange, chartType });
+        return this.createChart({ cellRange, chartType, focusDialogOnOpen: !fromApi });
     }
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
@@ -197,7 +204,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         });
     }
 
-    public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
+    public createRangeChart(params: CreateRangeChartParams, fromApi?: boolean): ChartRef | undefined {
         const cellRange = this.createCellRange(params.cellRange);
 
         if (!cellRange) {
@@ -207,10 +214,11 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         return this.createChart({
             ...params,
             cellRange,
+            focusDialogOnOpen: !fromApi,
         });
     }
 
-    public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
+    public createPivotChart(params: CreatePivotChartParams, fromApi?: boolean): ChartRef | undefined {
         // if required enter pivot mode
         this.gos.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' as any });
 
@@ -225,10 +233,11 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             cellRange,
             pivotChart: true,
             suppressChartRanges: true,
+            focusDialogOnOpen: !fromApi,
         });
     }
 
-    public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
+    public createCrossFilterChart(params: CreateCrossFilterChartParams, fromApi?: boolean): ChartRef | undefined {
         const cellRange = this.createCellRange(params.cellRange);
 
         if (!cellRange) {
@@ -244,6 +253,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             cellRange,
             suppressChartRanges,
             crossFiltering: true,
+            focusDialogOnOpen: !fromApi,
         });
     }
 
@@ -307,6 +317,9 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }
+            },
+            focusChart: () => {
+                this.focusService.focusInto(chartComp.getGui());
             },
             chartElement: chartComp.getGui(),
             chart: chartComp.getUnderlyingChart(),

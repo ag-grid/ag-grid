@@ -81,10 +81,10 @@ export interface IChartService {
     isEnterprise(): boolean;
     getChartModels(): ChartModel[];
     getChartRef(chartId: string): ChartRef | undefined;
-    createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
-    createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
-    createChartFromCurrentRange(chartType: ChartType): ChartRef | undefined;
-    createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
+    createRangeChart(params: CreateRangeChartParams, fromApi?: boolean): ChartRef | undefined;
+    createCrossFilterChart(params: CreateCrossFilterChartParams, fromApi?: boolean): ChartRef | undefined;
+    createChartFromCurrentRange(chartType: ChartType, fromApi?: boolean): ChartRef | undefined;
+    createPivotChart(params: CreatePivotChartParams, fromApi?: boolean): ChartRef | undefined;
     restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
     downloadChart(params: ChartDownloadParams): void;
@@ -104,8 +104,6 @@ export interface BaseCreateChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
     unlinkChart?: boolean;
-    /** If `true`, will focus the chart dialog when opened. Only applies when not providing a chart container. */
-    focusOnOpen?: boolean;
 }
 
 export type ChartParamsCellRange = Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>;

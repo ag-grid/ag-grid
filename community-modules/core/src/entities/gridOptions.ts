@@ -2369,6 +2369,11 @@ export interface ChartRef {
      * The application is responsible for calling this when the chart is no longer needed.
      */
     destroyChart: () => void;
+    /**
+     * Focuses the chart.
+     * If opening the dialog via the API, the chart is not focused by default, and this method can be used.
+     */
+    focusChart: () => void;
 }
 
 export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef {}

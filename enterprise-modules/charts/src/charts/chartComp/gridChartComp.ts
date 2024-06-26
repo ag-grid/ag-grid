@@ -63,7 +63,7 @@ export interface GridChartParams {
     chartType: ChartType;
     chartThemeName?: string;
     insideDialog: boolean;
-    focusOnOpen?: boolean;
+    focusDialogOnOpen?: boolean;
     suppressChartRanges?: boolean;
     switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
@@ -306,7 +306,7 @@ export class GridChartComp extends Component {
 
         const { width, height } = this.getBestDialogSize();
 
-        const afterGuiAttached = this.params.focusOnOpen
+        const afterGuiAttached = this.params.focusDialogOnOpen
             ? () => setTimeout(() => this.focusService.focusInto(this.getGui()))
             : undefined;
 
