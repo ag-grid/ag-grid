@@ -34,11 +34,11 @@ export interface Module {
 
 export function _defineModule(definition: Omit<Module, 'apiFunctions'>): Module;
 
-export function _defineModule<TApiFunctions extends Readonly<Partial<GridApi>>>(
+export function _defineModule<TGridApi extends Readonly<Partial<GridApi>>>(
     definition: Omit<Module, 'apiFunctions'> &
-        (object extends TApiFunctions
+        (object extends TGridApi
             ? { apiFunctions: never }
-            : { apiFunctions: { [K in ApiFunctionName & keyof TApiFunctions]: ApiFunction<K> } })
+            : { apiFunctions: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> } })
 ): Module;
 
 export function _defineModule(definition: any): Module {
