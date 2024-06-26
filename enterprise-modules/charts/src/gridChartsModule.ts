@@ -1,5 +1,5 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import type { GridChartsGridApi } from '@ag-grid-community/core';
+import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
@@ -25,7 +25,7 @@ import {
 import { validGridChartsVersion } from './utils/validGridChartsVersion';
 import { VERSION as GRID_VERSION } from './version';
 
-export const GridChartsCoreModule: Module = {
+export const GridChartsCoreModule = _defineModule({
     version: GRID_VERSION,
     validate: () => {
         return validGridChartsVersion({
@@ -49,9 +49,9 @@ export const GridChartsCoreModule: Module = {
         },
     ],
     dependantModules: [RangeSelectionModule, EnterpriseCoreModule],
-};
+});
 
-export const GridChartsApiModule: Module = {
+export const GridChartsApiModule = _defineModule<GridChartsGridApi>({
     version: GRID_VERSION,
     moduleName: `${ModuleNames.GridChartsModule}-api`,
     apiFunctions: {
@@ -68,10 +68,10 @@ export const GridChartsApiModule: Module = {
         restoreChart,
     },
     dependantModules: [GridChartsCoreModule],
-};
+});
 
-export const GridChartsModule: Module = {
+export const GridChartsModule = _defineModule({
     version: GRID_VERSION,
     moduleName: ModuleNames.GridChartsModule,
     dependantModules: [GridChartsCoreModule, GridChartsApiModule],
-};
+});

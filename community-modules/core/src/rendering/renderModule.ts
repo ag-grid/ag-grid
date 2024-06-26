@@ -1,4 +1,5 @@
-import type { Module } from '../interfaces/iModule';
+import type { RenderGridApi } from '../api/gridApi';
+import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
     flashCells,
@@ -11,7 +12,7 @@ import {
     setGridAriaProperty,
 } from './renderApi';
 
-export const RenderApiModule: Module = {
+export const RenderApiModule = _defineModule<RenderGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/render-api',
     apiFunctions: {
@@ -24,4 +25,4 @@ export const RenderApiModule: Module = {
         getSizesForCurrentTheme,
         getCellRendererInstances,
     },
-};
+});

@@ -1,5 +1,5 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames, _ColumnFilterModule, _FloatingFilterModule } from '@ag-grid-community/core';
+import type { RowGroupingGridApi } from '@ag-grid-community/core';
+import { ModuleNames, _ColumnFilterModule, _FloatingFilterModule, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule, GroupCellRenderer, GroupCellRendererCtrl } from '@ag-grid-enterprise/core';
 
 import { AggFuncService } from './rowGrouping/aggFuncService';
@@ -44,7 +44,7 @@ import {
 import { ShowRowGroupColsService } from './rowGrouping/showRowGroupColsService';
 import { VERSION } from './version';
 
-export const RowGroupingCoreModule: Module = {
+export const RowGroupingCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.RowGroupingModule}-core`,
     beans: [
@@ -70,9 +70,9 @@ export const RowGroupingCoreModule: Module = {
     ],
     controllers: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
     dependantModules: [EnterpriseCoreModule],
-};
+});
 
-export const RowGroupingApiModule: Module = {
+export const RowGroupingApiModule = _defineModule<RowGroupingGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.RowGroupingModule}-api`,
     apiFunctions: {
@@ -105,24 +105,24 @@ export const RowGroupingApiModule: Module = {
         getPivotResultColumns,
     },
     dependantModules: [RowGroupingCoreModule],
-};
+});
 
-export const GroupFilterModule: Module = {
+export const GroupFilterModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-enterprise/group-filter',
     userComponents: [{ name: 'agGroupColumnFilter', classImp: GroupFilter }],
     dependantModules: [RowGroupingCoreModule, _ColumnFilterModule],
-};
+});
 
-export const GroupFloatingFilterModule: Module = {
+export const GroupFloatingFilterModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-enterprise/group-floating-filter',
     userComponents: [{ name: 'agGroupColumnFloatingFilter', classImp: GroupFloatingFilterComp }],
     dependantModules: [GroupFilterModule, _FloatingFilterModule],
-};
+});
 
-export const RowGroupingModule: Module = {
+export const RowGroupingModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.RowGroupingModule,
     dependantModules: [RowGroupingCoreModule, RowGroupingApiModule, GroupFilterModule, GroupFloatingFilterModule],
-};
+});

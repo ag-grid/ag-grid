@@ -1,4 +1,5 @@
-import type { Module } from '../interfaces/iModule';
+import type { ColumnGridApi } from '../api/gridApi';
+import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
     applyColumnState,
@@ -47,13 +48,13 @@ import {
 } from './columnApi';
 import { DataTypeService } from './dataTypeService';
 
-export const DataTypeModule: Module = {
+export const DataTypeModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/data-type',
     beans: [DataTypeService],
-};
+});
 
-export const ColumnApiModule: Module = {
+export const ColumnApiModule = _defineModule<ColumnGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/column-api',
     apiFunctions: {
@@ -101,4 +102,4 @@ export const ColumnApiModule: Module = {
         autoSizeColumns,
         autoSizeAllColumns,
     },
-};
+});
