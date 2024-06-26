@@ -12,7 +12,7 @@
     --ag-row-border-color: var(--ag-border-color);
 }
 
-:global(.ag-theme-quartz-dark) {
+:global(div.ag-theme-quartz-dark) {
     --ag-odd-row-background-color: #252f3f;
 }
 
