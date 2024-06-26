@@ -8,6 +8,11 @@
     padding: 0;
   }
 
+  .ag-menu.ag-tabs {
+    // legacy column menu
+    min-width: var(--ag-tab-min-width);
+  }
+
   .ag-menu-list {
     cursor: default;
     padding: var(--ag-grid-size) 0;
@@ -76,9 +81,6 @@
   ////////////////////////////////////////
   // Column Filter
   ////////////////////////////////////////
-  .ag-tabs {
-    min-width: var(--ag-tab-min-width);
-  }
 
   .ag-tabs-header {
     display: flex;
@@ -178,21 +180,20 @@
       var(--ag-widget-container-horizontal-padding);
   }
 
-  .ag-set-filter-item {
-    padding: 0px var(--ag-widget-container-horizontal-padding);
+  .ag-set-filter {
+    --ag-indentation-level: 0;
   }
 
-  @for $i from 1 to 10 {
-    .ag-set-filter-indent-#{$i} {
-      @include ag.unthemed-rtl(
-        (
-          padding-left:
-            calc(
-              var(--ag-widget-container-horizontal-padding) + #{$i} * var(--ag-set-filter-indent-size)
-            ),
-        )
-      );
-    }
+  .ag-set-filter-item {
+    @include ag.unthemed-rtl(
+      (
+        padding-left:
+          calc(
+            var(--ag-widget-container-horizontal-padding) + var(--ag-indentation-level) *
+              var(--ag-set-filter-indent-size)
+          ),
+      )
+    );
   }
 
   .ag-set-filter-add-group-indent {
@@ -244,7 +245,7 @@
     }
   }
 
-  .ag-menu:not(.ag-tabs) .ag-filter .ag-simple-filter-body-wrapper,
+  .ag-menu:not(.ag-tabs) .ag-filter .ag-filter-body-wrapper,
     // for custom filters without `ag-filter-wrapper`
     .ag-menu:not(.ag-tabs) .ag-filter > *:not(.ag-filter-wrapper) {
     min-width: calc(var(--ag-menu-min-width) - 2px);

@@ -72,7 +72,7 @@
     --ag-value-change-delta-up-color: #43a047;
     --ag-value-change-delta-down-color: #e53935;
 
-    --ag-row-loading-skeleton-effect-colour: rgba(66, 66, 66, 0.2);
+    --ag-row-loading-skeleton-effect-color: rgba(66, 66, 66, 0.2);
 
     --ag-chip-background-color: transparent;
     --ag-chip-border-color: var(--ag-chip-background-color);
@@ -177,6 +177,7 @@
     --ag-filter-tool-panel-group-indent: 16px;
 
     --ag-tab-min-width: 220px;
+    --ag-chart-menu-panel-width: var(--ag-tab-min-width);
 
     --ag-menu-min-width: 181px;
 

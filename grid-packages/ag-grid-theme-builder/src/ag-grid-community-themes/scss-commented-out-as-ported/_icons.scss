@@ -16,6 +16,7 @@
     // .ag-icon-iconname::before styles below
     &::before {
       content: '';
+      font-family: inherit;
     }
 
     // ::after used for icon images

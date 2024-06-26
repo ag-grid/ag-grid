@@ -37,10 +37,6 @@
     visibility: hidden !important;
   }
 
-  .ag-no-transition {
-    transition: none !important;
-  }
-
   .ag-drag-handle {
     cursor: grab;
   }
@@ -71,6 +67,23 @@
     width: 0;
     height: 0;
     display: block;
+  }
+
+  // special setting for lists to prevent scroll
+  // while tabbing out of the container
+  .ag-virtual-list-viewport .ag-tab-guard {
+    // this keeps the tabguard within "visible" range
+    // while scrolling so focusing the tabguard doesn't
+    // scroll the list viewport.
+    position: sticky;
+  }
+
+  .ag-tab-guard-top {
+    top: 1px;
+  }
+
+  .ag-tab-guard-bottom {
+    bottom: 1px;
   }
 
   .ag-select-agg-func-popup {
@@ -477,6 +490,7 @@
   .ag-header-cell-text {
     overflow: hidden;
     text-overflow: ellipsis;
+    word-break: break-word;
   }
 
   .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
@@ -703,7 +717,8 @@
   .ag-row-animation .ag-row {
     transition:
       transform 0.4s,
-      top 0.4s;
+      top 0.4s,
+      opacity 0.2s;
   }
   // for rows older than one second, we also animate the height. we don't include the height
   // initially so we are not animating auto-height rows on initial render.
@@ -711,7 +726,8 @@
     transition:
       transform 0.4s,
       top 0.4s,
-      height 0.4s;
+      height 0.4s,
+      opacity 0.2s;
   }
 
   .ag-row-no-animation .ag-row {
@@ -786,6 +802,7 @@
 
   .ag-cell-wrap-text {
     white-space: normal;
+    word-break: break-word;
   }
 
   .ag-cell-wrapper {
@@ -1287,6 +1304,29 @@
 
   // /**
   //  ****************************
+  //  * Pill
+  //  ****************************
+  // */
+  .ag-pill-container {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+  }
+
+  .ag-pill {
+    display: flex;
+    white-space: nowrap;
+    padding: 0 0.25rem;
+    align-items: center;
+  }
+
+  .ag-pill .ag-pill-button {
+    border: none;
+    padding: 0;
+  }
+
+  // /**
+  //  ****************************
   //  * Rich Select
   //  ****************************
   // */
@@ -1756,7 +1796,7 @@
   .ag-spectrum-color {
     flex: 1 1 auto;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     cursor: default;
   }
 
@@ -1778,8 +1818,12 @@
     cursor: pointer;
   }
 
-  .ag-spectrum-hue {
+  .ag-spectrum-hue,
+  .ag-spectrum-alpha {
     cursor: default;
+  }
+
+  .ag-spectrum-hue-background {
     background: linear-gradient(
       to left,
       #ff0000 3%,
@@ -1790,30 +1834,43 @@
       #ff00ff 83%,
       #ff0000 100%
     );
-  }
-
-  .ag-spectrum-alpha {
-    cursor: default;
-  }
-
-  .ag-spectrum-hue-background {
     width: 100%;
     height: 100%;
   }
 
+  .ag-spectrum-alpha {
+    --ag-spectrum-alpha-background-checked: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect x="0" y="0" width="4" height="4" fill="%23fff"/><path d="M0 0H2V4H4V2H0Z" fill="%23b2b2b2"/></svg>');
+  }
+
   .ag-spectrum-alpha-background {
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
+    background:
+      linear-gradient(
+        to right,
+        var(--ag-spectrum-alpha-color-from),
+        var(--ag-spectrum-alpha-color-to)
+      ),
+      var(--ag-spectrum-alpha-background-checked) top left / 4px 4px;
     width: 100%;
     height: 100%;
   }
 
   .ag-spectrum-tool {
     cursor: pointer;
+    position: relative;
   }
 
   .ag-spectrum-slider {
     position: absolute;
     pointer-events: none;
+  }
+
+  .ag-spectrum-alpha .ag-spectrum-slider {
+    background: linear-gradient(
+        to bottom,
+        var(--ag-spectrum-alpha-color),
+        var(--ag-spectrum-alpha-color)
+      )
+      white;
   }
 
   .ag-recent-colors {
@@ -1822,33 +1879,6 @@
 
   .ag-recent-color {
     cursor: pointer;
-  }
-
-  // Default values for themes that do not use the mixins
-  @for $i from 1 to 10 {
-    .ag-column-select-indent-#{$i} {
-      @include ag.unthemed-rtl(
-        (
-          padding-left: $i * 20px,
-        )
-      );
-    }
-
-    .ag-set-filter-indent-#{$i} {
-      @include ag.unthemed-rtl(
-        (
-          padding-left: $i * 20px,
-        )
-      );
-    }
-
-    .ag-row-group-indent-#{$i} {
-      @include ag.unthemed-rtl(
-        (
-          padding-left: $i * 20px,
-        )
-      );
-    }
   }
 
   .ag-pill-select {
@@ -1897,5 +1927,15 @@
 
   .ag-body .ag-body-viewport {
     -webkit-overflow-scrolling: touch;
+  }
+
+  .ag-measurement-container {
+    width: 0;
+    overflow: hidden;
+    visibility: hidden;
+
+    div {
+      position: absolute;
+    }
   }
 }

@@ -96,6 +96,12 @@
     transparent,
     var(--ag-background-color) 66%
   );
+  --ag-chart-menu-label-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
+  --ag-chart-menu-pill-select-button-color: color-mix(
+    in srgb,
+    transparent,
+    var(--ag-foreground-color) 70%
+  );
 
   // BORDERS
   --ag-borders: solid 1px;
@@ -121,6 +127,7 @@
   ); // if changed, update environment.ts
   --ag-column-select-indent-size: var(--ag-icon-size);
   --ag-set-filter-indent-size: var(--ag-icon-size);
+  --ag-filter-tool-panel-group-indent: var(--ag-grid-size);
   --ag-advanced-filter-builder-indent-size: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
   --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 2);
   --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 1.5);
@@ -141,7 +148,8 @@
   --ag-icon-font-family: agGridQuartz;
 
   // MISC
-  --ag-tab-min-width: 0;
+  --ag-tab-min-width: 290px;
+  --ag-chart-menu-panel-width: 260px;
 
   --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
   --ag-popup-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.15);
@@ -188,7 +196,7 @@
 
   --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.3);
 
-  --ag-row-loading-skeleton-effect-colour: #{color.change(#cacbcc, $alpha: 0.4)};
+  --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 
   color-scheme: dark;
 }
