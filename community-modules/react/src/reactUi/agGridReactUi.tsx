@@ -49,6 +49,7 @@ import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
 import GridComp from './gridComp';
+import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact17Minus, runWithoutFlushSync } from './utils';
 
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
@@ -108,13 +109,14 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             ? new React17MinusFrameworkOverrides(processQueuedUpdates)
             : new ReactFrameworkOverrides();
         frameworkOverridesRef.current = frameworkOverrides;
-
+        const renderStatusService = new RenderStatusService();
         const gridParams: GridParams = {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
                     portalManager.current,
                     mergedGridOps.reactiveCustomComponents ?? true
                 ),
+                renderStatusService,
             },
             modules,
             frameworkOverrides,
@@ -122,6 +124,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
         const createUiCallback = (context: Context) => {
             setContext(context);
+            context.createBean(renderStatusService);
 
             destroyFuncs.current.push(() => {
                 context.destroy();

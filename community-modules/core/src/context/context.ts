@@ -434,6 +434,7 @@ export type BeanName =
     | 'resizeObserverService'
     | 'pageBoundsListener'
     | 'pageBoundsService'
+    | 'renderStatusService'
     | 'rowContainerHeightService'
     | 'rowCssClassCalculator'
     | 'rowEditService'

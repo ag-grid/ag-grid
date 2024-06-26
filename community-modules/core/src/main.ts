@@ -35,6 +35,7 @@ export {
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
 } from './interfaces/autoSizeStrategy';
+export { IRenderStatusService } from './interfaces/renderStatusService';
 
 // components
 export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } from './components/componentUtil';
