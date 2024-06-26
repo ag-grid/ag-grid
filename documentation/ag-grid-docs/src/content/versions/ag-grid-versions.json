@@ -15,11 +15,11 @@
                 "path": "./localisation"
             },
             {
-                "text": "Updated Chart Tool Panel Design",
+                "text": "Improved Chart Tool Panel UI",
                 "path": "./integrated-charts-chart-tool-panels"
             },
             {
-                "text": "Accessibility",
+                "text": "Accessibility Updates",
                 "path": "./accessibility"
             }
         ],
