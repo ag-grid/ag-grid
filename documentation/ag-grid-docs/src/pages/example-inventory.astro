@@ -3,7 +3,7 @@ import styles from '@pages-styles/example.module.scss';
 import DemosLayout from '@components/demos/DemosLayout.astro';
 import DemoTabs from '@components/demos/DemosTabs.astro';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { EcommerceInventoryExample } from '@components/demos/examples/ecommerce-inventory';
+import { Inventory } from '@components/demos/examples/inventory';
 import LogoMark from '@components/logo/LogoMark';
 ---
 
@@ -27,7 +27,7 @@ import LogoMark from '@components/logo/LogoMark';
             <div class={styles.loadingLogoContainer}>
                 <LogoMark isSpinning />
             </div>
-            <EcommerceInventoryExample client:only="react" />
+            <Inventory client:only="react" />
         </div>
     </div>
 </DemosLayout>

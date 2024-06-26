@@ -17,10 +17,10 @@ import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { type ChangeEvent, type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
-import { ActionsCellRenderer } from '../actions-cell-renderer/ActionsCellRenderer';
-import { ProductCellRenderer } from '../product-cell-renderer/ProductCellRenderer';
-import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
-import styles from './EcommerceExample.module.css';
+import styles from './InventoryExample.module.css';
+import { ActionsCellRenderer } from './cell-renderers/ActionsCellRenderer';
+import { ProductCellRenderer } from './cell-renderers/ProductCellRenderer';
+import { StatusCellRenderer } from './cell-renderers/StatusCellRenderer';
 import { getData } from './data';
 
 ModuleRegistry.registerModules([
@@ -42,7 +42,7 @@ const statuses = { all: 'All', active: 'Active', paused: 'On  Hold', outOfStock:
 
 const statusFormatter: ValueFormatterFunc = ({ value }) => statuses[value as keyof typeof statuses] ?? '';
 
-export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
+export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
 
     const [colDefs] = useState<ColDef[]>([
