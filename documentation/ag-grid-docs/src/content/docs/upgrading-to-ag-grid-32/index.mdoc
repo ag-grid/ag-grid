@@ -103,6 +103,21 @@ The new (flat) format column menu is now enabled by default. The legacy tabbed c
 
 The floating property has been removed from `CellFocusedEvent`. Use `rowPinned` instead.
 
+### GridOptions
+
+- `suppressParentsInRowNode` removed without replacement.
+- `enterMovesDown` removed, use `enterNavigatesVertically` instead.
+- `enterMovesDownAfterEdit` removed, use `enterNavigatesVerticallyAfterEdit` instead.
+- `excludeHiddenColumnsFromQuickFilter` removed, use `includeHiddenColumnsInQuickFilter` instead.
+- `suppressAggAtRootLevel` removed, use `alwaysAggregateAtRootLevel` instead.
+- `serverSideFilterAllLevels` removed, use `serverSideOnlyRefreshFilteredGroups` instead.
+- `enableChartToolPanelsButton` removed, use `suppressChartToolPanelsButton` instead.
+- `functionsPassive` removed without replacement.
+- `onColumnRowGroupChangeRequest` removed without replacement.
+- `onColumnPivotChangeRequest` removed without replacement.
+- `onColumnValueChangeRequest` removed without replacement.
+- `onColumnAggFuncChangeRequest` removed without replacement.
+
 ### Grid API 
 
 The Grid API methods listed below have been removed. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead.
@@ -194,21 +209,6 @@ The Grid API methods listed below have been removed. Please use Grid API methods
 - `setGetServerSideGroupKey`
 - `setGetRowStyle`
 - `setGetRowHeight`
-
-### Grid Options
-
-- `suppressParentsInRowNode` removed without replacement.
-- `enterMovesDown` removed, use `enterNavigatesVertically` instead.
-- `enterMovesDownAfterEdit` removed, use `enterNavigatesVerticallyAfterEdit` instead.
-- `excludeHiddenColumnsFromQuickFilter` removed, use `includeHiddenColumnsInQuickFilter` instead.
-- `suppressAggAtRootLevel` removed, use `alwaysAggregateAtRootLevel` instead.
-- `serverSideFilterAllLevels` removed, use `serverSideOnlyRefreshFilteredGroups` instead.
-- `enableChartToolPanelsButton` removed, use `suppressChartToolPanelsButton` instead.
-- `functionsPassive` removed without replacement.
-- `onColumnRowGroupChangeRequest` removed without replacement.
-- `onColumnPivotChangeRequest` removed without replacement.
-- `onColumnValueChangeRequest` removed without replacement.
-- `onColumnAggFuncChangeRequest` removed without replacement.
 
 ### Integrated Charts
 
