@@ -9,13 +9,8 @@ export class RenderStatusService extends BeanStub implements IRenderStatusServic
     }
 
     public areHeaderCellsRendered(): boolean {
-        for (const container of this.ctrlsService.getHeaderRowContainerCtrls()) {
-            for (const ctrl of container.getAllCtrls()) {
-                if (!ctrl.areCellsRendered()) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return this.ctrlsService
+            .getHeaderRowContainerCtrls()
+            .every((container) => container.getAllCtrls().every((ctrl) => ctrl.areCellsRendered()));
     }
 }

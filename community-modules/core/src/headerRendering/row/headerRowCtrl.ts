@@ -72,12 +72,7 @@ export class HeaderRowCtrl extends BeanStub {
         if (!this.comp) {
             return false;
         }
-        for (const ctrl of this.getHeaderCellCtrls()) {
-            if (!ctrl.getGui()) {
-                return false;
-            }
-        }
-        return true;
+        return this.getHeaderCellCtrls().every((ctrl) => ctrl.getGui() != null);
     }
 
     /**
