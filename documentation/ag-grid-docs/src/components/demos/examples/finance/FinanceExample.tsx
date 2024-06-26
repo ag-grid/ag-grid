@@ -7,7 +7,7 @@ import {
     type ValueGetterParams,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact, type CustomCellRendererProps } from '@ag-grid-community/react';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
@@ -22,10 +22,10 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import styles from './FinanceExample.module.css';
+import { TickerCellRenderer } from './cell-renderers/TickerCellRenderer';
 import { getData } from './data';
 
 interface Props {
@@ -84,24 +84,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         () => [
             {
                 field: 'ticker',
-                cellRenderer: ({ data }: CustomCellRendererProps) =>
-                    data && (
-                        <>
-                            <div>
-                                <img
-                                    src={urlWithBaseUrl(`/example/finance/logos/${data.ticker}.png`)}
-                                    style={{
-                                        width: '20px',
-                                        height: '20px',
-                                        marginRight: '5px',
-                                        borderRadius: '32px',
-                                    }}
-                                />
-                                <b className="custom-ticker">{data.ticker}</b>
-                                <span className="ticker-name"> {data.name}</span>
-                            </div>
-                        </>
-                    ),
+                cellRenderer: TickerCellRenderer,
             },
             {
                 field: 'name',
