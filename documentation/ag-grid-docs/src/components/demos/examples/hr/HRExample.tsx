@@ -12,12 +12,12 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
-import { ContactCellRenderer } from '../contact-cell-renderer/ContactCellRenderer';
-import { EmployeeCellRenderer } from '../employee-cell-renderer/EmployeeCellRenderer';
-import { FlagRenderer } from '../flag-renderer/FlagRenderer';
-import { StatusCellRenderer } from '../status-cell-renderer/StatusCellRenderer';
-import { TagCellRenderer } from '../tag-cell-renderer/TagCellRenderer';
 import styles from './HRExample.module.css';
+import { ContactCellRenderer } from './cell-renderers/ContactCellRenderer';
+import { EmployeeCellRenderer } from './cell-renderers/EmployeeCellRenderer';
+import { FlagRenderer } from './cell-renderers/FlagRenderer';
+import { StatusCellRenderer } from './cell-renderers/StatusCellRenderer';
+import { TagCellRenderer } from './cell-renderers/TagCellRenderer';
 import { getData } from './data';
 
 ModuleRegistry.registerModules([

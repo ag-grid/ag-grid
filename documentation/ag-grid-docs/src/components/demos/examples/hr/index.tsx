@@ -1,9 +1,9 @@
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { type FunctionComponent } from 'react';
 
-import { HRExample } from './components/hr-example/HRExample';
+import { HRExample } from './HRExample';
 
-export const HRManagementExample: FunctionComponent = () => {
+export const HR: FunctionComponent = () => {
     const [isDarkMode] = useDarkmode();
 
     return <HRExample isDarkMode={isDarkMode} />;
