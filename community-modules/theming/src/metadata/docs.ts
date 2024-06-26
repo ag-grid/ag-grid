@@ -128,9 +128,8 @@ const docs: Record<string, string | undefined> = {
     menuSeparatorColor:
         'Colour of the dividing line between sections of menus e.g. column menu and right-click context menu',
     setFilterIndentSize: 'How much to indent child items in the Set Filter list when filtering tree data.',
-    chartMenuButtonBorder:
-        'Border around the button that shows and hides the expanding chart editing panel for integrated charts',
-    chartMenuPanelWidth: 'Width of the expanding chart editing panel for integrated charts',
+    chartMenuPanelWidth: 'Width of the chart editing panel for integrated charts',
+    chartMenuLabelColor: 'Color of form field labels within the chart editing panel for integrated charts',
     iconButtonHoverColor: 'Hover color for clickable icons',
     dialogShadow: 'Shadow for popup dialogs such as the integrated charts and the advanced filter builder.',
     dialogBorder: 'Border colour popup dialogs such as the integrated charts and the advanced filter builder.',

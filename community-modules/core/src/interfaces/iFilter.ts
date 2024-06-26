@@ -197,6 +197,11 @@ export interface IFilterParams<TData = any, TContext = any> extends BaseFilterPa
     valueGetter: ValueGetterFunc<TData>;
 }
 
+/**
+ * FilterModel represents the filter state for all columns in the grid keyed by the column id.
+ * If using inbuilt AG Grid filters then the type of the column filter model could be one of:
+ *      `TextFilterModel`, `NumberFilterModel`, `DateFilterModel`, `SetFilterModel`, `IMultiFilterModel`, `AdvancedFilterModel`
+ */
 export interface FilterModel {
     [colId: string]: any;
 }

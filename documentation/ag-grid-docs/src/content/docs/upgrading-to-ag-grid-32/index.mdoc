@@ -37,7 +37,7 @@ The codemod only transforms source files that make use of deprecated features, s
 See the [Codemods](./codemods/) documentation for more details.
 
 {% if isFramework("react") %}
-## Upgrading React Class-based Components
+## Upgrading React Class-Based Components
 {% /if %}
 
 {% if isFramework("react") %}
@@ -65,10 +65,6 @@ This release includes the following deprecations:
 
 `dndSource` and `dndSourceOnRowDrag` are reinstated (no longer deprecated).
 
-### GridOptions
-
-### Grid API
-
 ### Events
 
 The following interfaces are deprecated and replaced with the equivalent interface suffixed with Event:
@@ -83,58 +79,44 @@ The following interfaces are deprecated and replaced with the equivalent interfa
 
 - `AsyncTransactionsFlushed` deprecated, use `AsyncTransactionsFlushedEvent` instead.
 
+### GridOptions
+
+`suppressLoadingOverlay` is deprecated, setting `loading=false` to disable overlay.
+
+### Grid API
+
+`showLoadingOverlay` is deprecated, setting `loading=true` to enable overlay.
+
+
 ## Breaking Changes
 
-### Text Wrapping
 
-Header and grid cells text wrapping uses `word-break:'break-word'` mode instead of `'normal'`. This can be overridden via CSS.
+### Column API
 
-### Row IDs
-
-`getRowId` callback is now called to set row ids for pinned rows.
+Column API is now removed. API methods previously available via Column API are now available in Grid API instead.
 
 ### Column Menu
 
 The new (flat) format column menu is now enabled by default. The legacy tabbed column menu can be enabled via `columnMenu = 'legacy'`.
 
-### Skeleton Loaders
-
-Skeleton loaders of different widths are shown across rows.
-
-### Keyboard Navigation
-
-Pressing the {% kbd "⇥ Tab" /%} key when focusing on a set filter list item or a column's tool panel list item takes focus out of the list. Navigating inside the list is possible with {% kbd "↑" /%}/{% kbd "↓" /%} Arrow keys.
-
-{% if isFramework("vue") %}
-### Vue
-{% /if %}
-{% if isFramework("vue") %}
-- Vue 2 is no longer supported. Please upgrade to Vue 3.
-
-- Storing the grid API in a `ref` is no longer supported. It must instead be stored in a `shallowRef`.
-
-- `auto-params-refresh` / `autoParamsRefresh` removed.
-{% /if %}
-
-{% if isFramework("react") %}
-### React
-{% /if %}
-
-{% if isFramework("react") %}
-`reactiveCustomComponents` now defaults to true. If custom components have been declared imperatively, they should be migrated as the imperative behaviour was deprecated in v31.1. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
-{% /if %}
-
-### Localisation
-
-Localisation key `autosizeThiscolumn` has been renamed to `autosizeThisColumn`
-
 ### Events
 
 The floating property has been removed from `CellFocusedEvent`. Use `rowPinned` instead.
 
-### Column API
+### GridOptions
 
-Column API is now removed. API methods previously available via Column API are now available in Grid API instead.
+- `suppressParentsInRowNode` removed without replacement.
+- `enterMovesDown` removed, use `enterNavigatesVertically` instead.
+- `enterMovesDownAfterEdit` removed, use `enterNavigatesVerticallyAfterEdit` instead.
+- `excludeHiddenColumnsFromQuickFilter` removed, use `includeHiddenColumnsInQuickFilter` instead.
+- `suppressAggAtRootLevel` removed, use `alwaysAggregateAtRootLevel` instead.
+- `serverSideFilterAllLevels` removed, use `serverSideOnlyRefreshFilteredGroups` instead.
+- `enableChartToolPanelsButton` removed, use `suppressChartToolPanelsButton` instead.
+- `functionsPassive` removed without replacement.
+- `onColumnRowGroupChangeRequest` removed without replacement.
+- `onColumnPivotChangeRequest` removed without replacement.
+- `onColumnValueChangeRequest` removed without replacement.
+- `onColumnAggFuncChangeRequest` removed without replacement.
 
 ### Grid API 
 
@@ -228,20 +210,15 @@ The Grid API methods listed below have been removed. Please use Grid API methods
 - `setGetRowStyle`
 - `setGetRowHeight`
 
-### Grid Options
+### Integrated Charts
 
-- `suppressParentsInRowNode` removed without replacement.
-- `enterMovesDown` removed, use `enterNavigatesVertically` instead.
-- `enterMovesDownAfterEdit` removed, use `enterNavigatesVerticallyAfterEdit` instead.
-- `excludeHiddenColumnsFromQuickFilter` removed, use `includeHiddenColumnsInQuickFilter` instead.
-- `suppressAggAtRootLevel` removed, use `alwaysAggregateAtRootLevel` instead.
-- `serverSideFilterAllLevels` removed, use `serverSideOnlyRefreshFilteredGroups` instead.
-- `enableChartToolPanelsButton` removed, use `suppressChartToolPanelsButton` instead.
-- `functionsPassive` removed without replacement.
-- `onColumnRowGroupChangeRequest` removed without replacement.
-- `onColumnPivotChangeRequest` removed without replacement.
-- `onColumnValueChangeRequest` removed without replacement.
-- `onColumnAggFuncChangeRequest` removed without replacement.
+- Refer to [Upgrade to AG Charts 10](https://charts.ag-grid.com/javascript/upgrade-to-ag-charts-10/) for behaviour and breaking changes. 
+
+- The Integrated Charts Tool Panels button has been replaced with the new Chart Menu, from which the Chart Tool Panels can be launched (via the "Edit Chart" menu item).
+
+- The grid option `suppressChartToolPanelsButton` and the legacy hamburger menu for Integrated Charts have been removed and replaced with the new Chart Menu. As a result, the `getChartToolbarItems` grid option now uses the type `ChartToolbarMenuItemOptions` instead of `ChartMenuOptions`. The `ChartMenuOptions` type has been removed.
+
+- Double click to edit has been removed for Integrated Chart titles. Titles can now be edited via the Chart Tool Panels.
 
 ### Interfaces
 
@@ -250,10 +227,48 @@ The Grid API methods listed below have been removed. Please use Grid API methods
 - `Column`, `ColumnGroup` and `ProvidedColumnGroup` are now interfaces instead of classes. Some public methods that were part of the internal grid API were previously exposed on the classes, but are not exposed on the interfaces.
 - The `IProvidedColumn` interface has been removed in favour of `Column | ProvidedColumnGroup`. The `IHeaderColumn` interfaces has been removed in favour of `Column | ColumnGroup`. If previously using `instanceof` to differentiate, it is now possible to check the `isColumn` property, which can be used as a type differentiator.
 
-### Integrated Charts
+### Keyboard Navigation
 
-The Integrated Charts Tool Panels button has been replaced with the new Chart Menu, from which the Chart Tool Panels can be launched (via the "Edit Chart" menu item).
+Pressing the {% kbd "⇥ Tab" /%} key when focusing on a set filter list item or a column's tool panel list item takes focus out of the list. Navigating inside the list is possible with {% kbd "↑" /%}/{% kbd "↓" /%} Arrow keys.
 
-The grid option `suppressChartToolPanelsButton` and the legacy hamburger menu for Integrated Charts have been removed and replaced with the new Chart Menu. As a result, the `getChartToolbarItems` grid option now uses the type `ChartToolbarMenuItemOptions` instead of `ChartMenuOptions`. The `ChartMenuOptions` type has been removed.
+### Localisation
 
-Double click to edit has been removed for Integrated Chart titles. Titles can now be edited via the Chart Tool Panels.
+Localisation key `autosizeThiscolumn` has been renamed to `autosizeThisColumn`
+
+{% if isFramework("react") %}
+### React
+{% /if %}
+
+{% if isFramework("react") %}
+`reactiveCustomComponents` now defaults to true. If custom components have been declared imperatively, they should be migrated as the imperative behaviour was deprecated in v31.1. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
+{% /if %}
+
+### Row IDs
+
+`getRowId` callback is now called to set row ids for pinned rows.
+
+### Skeleton Loaders
+
+Skeleton loaders of different widths are shown across rows.
+
+### Text Wrapping
+
+Header and grid cells text wrapping uses `word-break:'break-word'` mode instead of `'normal'`. This can be overridden via CSS.
+
+{% if isFramework("vue") %}
+### Vue
+{% /if %}
+{% if isFramework("vue") %}
+- Vue 2 is no longer supported. Please upgrade to Vue 3.
+
+- Storing the grid API in a `ref` is no longer supported. It must instead be stored in a `shallowRef`.
+
+- `auto-params-refresh` / `autoParamsRefresh` removed.
+{% /if %}
+
+
+
+
+
+
+

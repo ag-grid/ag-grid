@@ -51,7 +51,7 @@ const isDev = getIsDev();
 
 const library = 'grid';
 
-const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, extras } = generatedContents || {};
+const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, isLocale, extras } = generatedContents || {};
 const indexFragment = files && files['index.html'];
 const appLocation = relativePath ? '' : exampleUrl;
 const boilerPlateUrl = relativePath
@@ -96,6 +96,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             title={title}
             modifiedTimeMs={timeNow}
             isEnterprise={isEnterprise}
+            isLocale={isLocale}
             scriptFiles={scriptFiles}
             styleFiles={styleFiles}
             indexFragment={indexFragment!}

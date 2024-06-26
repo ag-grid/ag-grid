@@ -30,7 +30,6 @@ export const RootContainer = () => {
             <Main>
                 <PresetSelector />
                 <GridPreview />
-                <GridConfigDropdownButton />
             </Main>
         </Container>
     );

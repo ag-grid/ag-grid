@@ -21,11 +21,6 @@ const LIST_ITEM_HEIGHT: Variable = {
     changeKey: 'listItemHeightChanged',
     defaultValue: 24,
 };
-const CHART_MENU_PANEL_WIDTH: Variable = {
-    cssName: '--ag-chart-menu-panel-width',
-    changeKey: 'chartMenuPanelWidthChanged',
-    defaultValue: 260,
-};
 
 export class Environment extends BeanStub implements NamedBean {
     beanName = 'environment' as const;
@@ -52,7 +47,6 @@ export class Environment extends BeanStub implements NamedBean {
         this.getSizeEl(ROW_HEIGHT);
         this.getSizeEl(HEADER_HEIGHT);
         this.getSizeEl(LIST_ITEM_HEIGHT);
-        this.getSizeEl(CHART_MENU_PANEL_WIDTH);
     }
 
     public getDefaultRowHeight(): number {
@@ -65,10 +59,6 @@ export class Environment extends BeanStub implements NamedBean {
 
     public getDefaultListItemHeight() {
         return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
-    }
-
-    public getDefaultChartMenuPanelWidth(): number {
-        return this.getCSSVariablePixelValue(CHART_MENU_PANEL_WIDTH);
     }
 
     public hasMeasuredSizes(): boolean {
@@ -236,11 +226,6 @@ type Variable = {
     defaultValue: number;
 };
 
-type ChangeKey =
-    | 'themeChanged'
-    | 'headerHeightChanged'
-    | 'rowHeightChanged'
-    | 'listItemHeightChanged'
-    | 'chartMenuPanelWidthChanged';
+type ChangeKey = 'themeChanged' | 'headerHeightChanged' | 'rowHeightChanged' | 'listItemHeightChanged';
 
 const NO_VALUE_SENTINEL = 15538;

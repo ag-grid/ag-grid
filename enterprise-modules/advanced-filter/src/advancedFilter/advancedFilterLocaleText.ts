@@ -1,8 +1,8 @@
 export const ADVANCED_FILTER_LOCALE_TEXT = {
     ariaAdvancedFilterBuilderItem: (variableValues: string[]) =>
-        `${variableValues[0]}. Level ${variableValues[1]}. Press ENTER to edit.`,
+        `${variableValues[0]}. Level ${variableValues[1]}. Press ENTER to edit`,
     ariaAdvancedFilterBuilderItemValidation: (variableValues: string[]) =>
-        `${variableValues[0]}. Level ${variableValues[1]}. ${variableValues[2]} Press ENTER to edit.`,
+        `${variableValues[0]}. Level ${variableValues[1]}. ${variableValues[2]} Press ENTER to edit`,
     ariaAdvancedFilterBuilderList: 'Advanced Filter Builder List',
     ariaAdvancedFilterBuilderFilterItem: 'Filter Condition',
     ariaAdvancedFilterBuilderGroupItem: 'Filter Group',

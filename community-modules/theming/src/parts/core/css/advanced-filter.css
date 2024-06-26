@@ -56,8 +56,6 @@
 }
 
 .ag-advanced-filter-builder-list {
-    /* TODO Check that this works now that list item styles are global */
-    /* @include ag.list-item-hovered(); */
     flex: 1;
     overflow: auto;
 }
@@ -85,6 +83,10 @@
     overflow: hidden;
     padding-left: calc(var(--ag-icon-size) / 2);
     padding-right: var(--ag-icon-size);
+}
+
+.ag-virtual-list-viewport .ag-advanced-filter-builder-item-wrapper .ag-tab-guard {
+    position: absolute;
 }
 
 .ag-advanced-filter-builder-item-tree-lines > * {
