@@ -6,6 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
@@ -21,6 +22,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private autoWidthCalculator: AutoWidthCalculator;
     private eventDispatcher: ColumnEventDispatcher;
     private ctrlsService: CtrlsService;
+    private renderStatusService?: IRenderStatusService;
+    private timesDelayed = 0;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
@@ -29,6 +32,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.autoWidthCalculator = beans.autoWidthCalculator;
         this.eventDispatcher = beans.columnEventDispatcher;
         this.ctrlsService = beans.ctrlsService;
+        this.renderStatusService = beans.renderStatusService as IRenderStatusService;
     }
 
     public autoSizeCols(params: {
@@ -56,6 +60,15 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // happen eg if client code is calling api.autoSizeAllColumns() straight after grid is initialised, but grid
         // hasn't fully drawn out all the cells yet (due to cell renderers in animation frames).
         this.animationFrameService.flushAllFrames();
+
+        if (this.timesDelayed < 5 && !this.renderStatusService?.areHeadersRendered(colKeys)) {
+            // This is needed for React, as it doesn't render the headers synchronously all the time.
+            // Added a defensive check to avoid infinite loop in case headers are never rendered.
+            this.timesDelayed++;
+            setTimeout(() => this.autoSizeCols(params), 0);
+            return;
+        }
+        this.timesDelayed = 0;
 
         // keep track of which cols we have resized in here
         const columnsAutosized: AgColumn[] = [];

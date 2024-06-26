@@ -65,6 +65,10 @@ export class HeaderRowCtrl extends BeanStub {
         return this.instanceId;
     }
 
+    public isRendered(): boolean {
+        return !!this.comp;
+    }
+
     /**
      *
      * @param comp Proxy to the actual component
