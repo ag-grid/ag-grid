@@ -38,6 +38,10 @@ $nav-height: 340px;
     p {
         color: var(--color-text-tertiary);
     }
+
+    button {
+        padding-left: $spacing-size-3;
+    }
 }
 
 .layoutWrapper {
