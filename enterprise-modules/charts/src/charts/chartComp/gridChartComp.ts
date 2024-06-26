@@ -328,7 +328,7 @@ export class GridChartComp extends Component {
                 if (lastFocusedCell) {
                     this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
                 } else {
-                    this.focusService.focusGridView();
+                    this.focusService.focusGridInnerElement();
                 }
             });
         });
