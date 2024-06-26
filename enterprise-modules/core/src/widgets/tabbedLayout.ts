@@ -177,12 +177,13 @@ export class TabbedLayout extends TabGuardComp {
             nextEl = focusService.findNextFocusableElement(eBody, false, backwards);
 
             if (!nextEl) {
-                e.preventDefault();
                 if (suppressTrapFocus && !backwards) {
                     this.forceFocusOutOfContainer(backwards);
                 } else if (enableCloseButton && !backwards) {
+                    e.preventDefault();
                     this.eCloseButton?.focus();
                 } else {
+                    e.preventDefault();
                     this.focusHeader();
                 }
                 return;
@@ -197,9 +198,9 @@ export class TabbedLayout extends TabGuardComp {
 
     private focusInnerElement(fromBottom?: boolean): void {
         if (fromBottom) {
-            this.focusHeader();
-        } else {
             this.focusBody(true);
+        } else {
+            this.focusHeader();
         }
     }
 

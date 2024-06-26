@@ -1,27 +1,33 @@
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
+import type { FocusService } from '../focusService';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
+import { _addFocusableContainerListener } from '../utils/focus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
 import type { ComponentSelector } from '../widgets/component';
-import { Component, RefPlaceholder } from '../widgets/component';
+import { RefPlaceholder } from '../widgets/component';
+import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
 import type { PaginationService } from './paginationService';
 
-export class PaginationComp extends Component {
+export class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowNodeBlockLoader?: RowNodeBlockLoader;
     private rowModel: IRowModel;
     private paginationService: PaginationService;
+    private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
         this.rowModel = beans.rowModel;
         this.paginationService = beans.paginationService!;
+        this.focusService = beans.focusService;
     }
 
     private readonly btFirst: HTMLElement = RefPlaceholder;
@@ -41,6 +47,7 @@ export class PaginationComp extends Component {
     private nextButtonDisabled = false;
     private lastButtonDisabled = false;
     private areListenersSetup = false;
+    private allowFocusInnerElement = false;
 
     constructor() {
         super();
@@ -67,7 +74,24 @@ export class PaginationComp extends Component {
 
         this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
 
+        this.initialiseTabGuard({
+            // prevent tab guard default logic
+            onTabKeyDown: () => {},
+            focusInnerElement: (fromBottom) => {
+                if (this.allowFocusInnerElement) {
+                    this.tabGuardFeature.getTabGuardCtrl().focusInnerElement(fromBottom);
+                } else {
+                    this.focusService.focusGridInnerElement(fromBottom);
+                }
+            },
+            forceFocusOutWhenTabGuardsAreEmpty: true,
+        });
+
         this.onPaginationChanged();
+    }
+
+    public setAllowFocus(allowFocus: boolean): void {
+        this.allowFocusInnerElement = allowFocus;
     }
 
     private onPaginationChanged(): void {
@@ -113,6 +137,9 @@ export class PaginationComp extends Component {
                     },
                 });
             });
+
+            _addFocusableContainerListener(this, this.getGui(), this.focusService);
+
             this.areListenersSetup = true;
         }
     }

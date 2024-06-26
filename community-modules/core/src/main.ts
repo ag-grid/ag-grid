@@ -484,9 +484,11 @@ export { Component, VisibleChangedEvent } from './widgets/component';
 export { ManagedFocusFeature, ManagedFocusCallbacks } from './widgets/managedFocusFeature';
 export { TabGuardComp } from './widgets/tabGuardComp';
 export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardCtrl';
+export { TabGuardFeature } from './widgets/tabGuardFeature';
 export { PopupComponent } from './widgets/popupComponent';
 export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
+export { FocusableContainer } from './interfaces/iFocusableContainer';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';
@@ -890,6 +892,7 @@ export { _iterateObject, _cloneObject, _getAllValuesInObject, _mergeDeep } from 
 export { _sortRowNodesByOrder } from './utils/rowNode';
 export { _capitalise, _escapeString, _utf8_encode } from './utils/string';
 export { AgPromise } from './utils/promise';
+export { _addFocusableContainerListener } from './utils/focus';
 
 // charts
 export * from './interfaces/iChartOptions';
