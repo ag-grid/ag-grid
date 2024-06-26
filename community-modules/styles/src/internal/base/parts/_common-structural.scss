@@ -1844,7 +1844,11 @@
 
     .ag-spectrum-alpha-background {
         background:
-            linear-gradient(to right, var(--ag-spectrum-alpha-color-from), var(--ag-spectrum-alpha-color-to)),
+            linear-gradient(
+                to right,
+                var(--ag-internal-spectrum-alpha-color-from),
+                var(--ag-internal-spectrum-alpha-color-to)
+            ),
             var(--ag-spectrum-alpha-background-checked) top left / 4px 4px;
         width: 100%;
         height: 100%;
@@ -1861,7 +1865,12 @@
     }
 
     .ag-spectrum-alpha .ag-spectrum-slider {
-        background: linear-gradient(to bottom, var(--ag-spectrum-alpha-color), var(--ag-spectrum-alpha-color)) white;
+        background: linear-gradient(
+                to bottom,
+                var(--ag-internal-spectrum-alpha-color),
+                var(--ag-internal-spectrum-alpha-color)
+            )
+            white;
     }
 
     .ag-recent-colors {

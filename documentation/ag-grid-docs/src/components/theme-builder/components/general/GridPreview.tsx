@@ -20,6 +20,7 @@ import root from 'react-shadow';
 import { useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
+import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { useGridOptions } from '../grid-config/grid-config-atom';
 import { allPresets } from '../presets/presets';
 import { withErrorBoundary } from './ErrorBoundary';
@@ -53,6 +54,7 @@ const GridPreview = () => {
 
     return (
         <Wrapper style={{ backgroundColor }}>
+            <GridConfigDropdownButton />
             <ColorPickerWrapper>
                 <ColorEditor value={backgroundColor} onChange={setBackground} preventTransparency />
                 <StyledInfoTooltip title="Page background color - this is not part of your theme" />
@@ -161,6 +163,9 @@ const Wrapper = styled('div')`
 `;
 
 const GridSizer = styled('div')`
-    width: min(80%, 1020px);
-    height: min(80%, 654px);
+    position: absolute;
+    top: 68px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
 `;

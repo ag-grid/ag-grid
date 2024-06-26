@@ -125,12 +125,8 @@ export class ChartMenu extends Component {
     }
 
     private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
-        const width = this.environment.getDefaultChartMenuPanelWidth();
-
         const menuPanel = (this.menuPanel = this.createBean(
             new AgPanel({
-                minWidth: width,
-                width,
                 height: '100%',
                 closable: true,
                 hideTitleBar: true,

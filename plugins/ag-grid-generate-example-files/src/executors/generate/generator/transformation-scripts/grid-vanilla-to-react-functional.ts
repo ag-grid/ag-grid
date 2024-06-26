@@ -8,6 +8,7 @@ import {
     addLicenseManager,
     addRelativeImports,
     convertFunctionToConstProperty,
+    findLocaleImport,
     getActiveTheme,
     getFunctionName,
     getIntegratedDarkModeCode,
@@ -110,11 +111,19 @@ function getImports(
     importType: ImportType,
     allStylesheets: string[]
 ): string[] {
-    if (importType === 'packages') {
-        return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
-    } else {
-        return getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets);
+    const imports = [];
+    const localeImport = findLocaleImport(bindings.imports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from 'ag-grid-locale';`);
     }
+
+    if (importType === 'packages') {
+        imports.push(...getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets));
+    } else {
+        imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
+    }
+
+    return imports;
 }
 
 function getTemplate(bindings: ParsedBindings, componentAttributes: string[], exampleConfig: ExampleConfig): string {

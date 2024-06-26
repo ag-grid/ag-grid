@@ -1,6 +1,6 @@
-import { getGridDependencies } from './getDependencies';
+import { getDependencies } from './getDependencies';
 
-describe('getGridDependencies', () => {
+describe('grid getDependencies', () => {
     test.each`
         framework       | isIntegratedCharts | importType    | expected
         ${'react'}      | ${false}           | ${'packages'} | ${['ag-grid-react', 'ag-grid-enterprise']}
@@ -23,7 +23,8 @@ describe('getGridDependencies', () => {
         '$framework { isIntegratedCharts: $isIntegratedCharts, importType: $importType } is $expected',
         ({ framework, isIntegratedCharts, importType, expected }) => {
             expect(
-                getGridDependencies({
+                getDependencies({
+                    library: 'grid',
                     framework,
                     isIntegratedCharts,
                     importType,
@@ -31,4 +32,64 @@ describe('getGridDependencies', () => {
             ).toEqual(expected.sort());
         }
     );
+});
+
+describe('charts getDependencies', () => {
+    test.each`
+        framework       | isIntegratedCharts | importType    | expected
+        ${'react'}      | ${false}           | ${'packages'} | ${['ag-charts-react', 'ag-charts-enterprise']}
+        ${'react'}      | ${true}            | ${'packages'} | ${['ag-charts-react', 'ag-charts-enterprise']}
+        ${'angular'}    | ${false}           | ${'packages'} | ${['ag-charts-angular', 'ag-charts-enterprise']}
+        ${'angular'}    | ${true}            | ${'packages'} | ${['ag-charts-angular', 'ag-charts-enterprise']}
+        ${'vue'}        | ${false}           | ${'packages'} | ${['ag-charts-vue3', 'ag-charts-enterprise']}
+        ${'vue'}        | ${true}            | ${'packages'} | ${['ag-charts-vue3', 'ag-charts-enterprise']}
+        ${'javascript'} | ${false}           | ${'packages'} | ${['ag-charts-enterprise']}
+        ${'javascript'} | ${true}            | ${'packages'} | ${['ag-charts-enterprise']}
+    `(
+        '$framework { isIntegratedCharts: $isIntegratedCharts, importType: $importType } is $expected',
+        ({ framework, isIntegratedCharts, importType, expected }) => {
+            expect(
+                getDependencies({
+                    library: 'charts',
+                    framework,
+                    isIntegratedCharts,
+                    importType,
+                }).sort()
+            ).toEqual(expected.sort());
+        }
+    );
+
+    test('Throws error if getting charts modules', () => {
+        expect(() =>
+            getDependencies({
+                library: 'charts',
+                framework: 'react',
+                importType: 'modules',
+            }).sort()
+        ).toThrow();
+
+        expect(() =>
+            getDependencies({
+                library: 'charts',
+                framework: 'angular',
+                importType: 'modules',
+            }).sort()
+        ).toThrow();
+
+        expect(() =>
+            getDependencies({
+                library: 'charts',
+                framework: 'vue',
+                importType: 'modules',
+            }).sort()
+        ).toThrow();
+
+        expect(() =>
+            getDependencies({
+                library: 'charts',
+                framework: 'javascript',
+                importType: 'modules',
+            }).sort()
+        ).toThrow();
+    });
 });

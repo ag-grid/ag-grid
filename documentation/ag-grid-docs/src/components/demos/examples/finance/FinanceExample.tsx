@@ -1,5 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { type ColDef, type GetRowIdFunc, type GetRowIdParams, type ValueFormatterFunc } from '@ag-grid-community/core';
+import {
+    type ColDef,
+    type GetRowIdFunc,
+    type GetRowIdParams,
+    type ValueFormatterFunc,
+    type ValueGetterParams,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -16,10 +22,10 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import styles from './FinanceExample.module.css';
+import { TickerCellRenderer } from './cell-renderers/TickerCellRenderer';
 import { getData } from './data';
 
 interface Props {
@@ -43,12 +49,12 @@ ModuleRegistry.registerModules([
     SparklinesModule,
 ]);
 
-const numberFormatter: ValueFormatterFunc = (params) => {
+const numberFormatter: ValueFormatterFunc = ({ value }) => {
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'decimal',
         maximumFractionDigits: 2,
     });
-    return params.value == null ? '' : formatter.format(params.value);
+    return value == null ? '' : formatter.format(value);
 };
 
 const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode = false }) => {
@@ -78,27 +84,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         () => [
             {
                 field: 'ticker',
-                cellRenderer: (params) => {
-                    return (
-                        params.data && (
-                            <>
-                                <div>
-                                    <img
-                                        src={urlWithBaseUrl(`/example/finance/logos/${params.data.ticker}.png`)}
-                                        style={{
-                                            width: '20px',
-                                            height: '20px',
-                                            marginRight: '5px',
-                                            borderRadius: '32px',
-                                        }}
-                                    />
-                                    <b className="custom-ticker">{params.data.ticker}</b>
-                                    <span className="ticker-name"> {params.data.name}</span>
-                                </div>
-                            </>
-                        )
-                    );
-                },
+                cellRenderer: TickerCellRenderer,
             },
             {
                 field: 'name',
@@ -117,8 +103,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                 cellDataType: 'number',
                 type: 'rightAligned',
                 cellRenderer: 'agAnimateShowChangeCellRenderer',
-                valueGetter: (params) =>
-                    params.data && params.data.quantity * (params.data.price / params.data.purchasePrice),
+                valueGetter: ({ data }: ValueGetterParams) => data && data.quantity * (data.price / data.purchasePrice),
                 valueFormatter: numberFormatter,
                 aggFunc: 'sum',
             },
@@ -126,7 +111,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                 headerName: 'Total Value',
                 type: 'rightAligned',
                 cellDataType: 'number',
-                valueGetter: (params) => params.data && params.data.quantity * params.data.price,
+                valueGetter: ({ data }: ValueGetterParams) => data && data.quantity * data.price,
                 cellRenderer: 'agAnimateShowChangeCellRenderer',
                 valueFormatter: numberFormatter,
                 aggFunc: 'sum',
@@ -173,7 +158,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         []
     );
 
-    const getRowId = useCallback<GetRowIdFunc>((params: GetRowIdParams) => params.data.ticker, []);
+    const getRowId = useCallback<GetRowIdFunc>(({ data: { ticker } }: GetRowIdParams) => ticker, []);
 
     const statusBar = useMemo(
         () => ({
@@ -200,11 +185,11 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                         rowData={rowData}
                         columnDefs={colDefs}
                         defaultColDef={defaultColDef}
-                        enableRangeSelection={true}
-                        enableCharts={true}
+                        enableRangeSelection
+                        enableCharts
                         rowSelection={'multiple'}
                         rowGroupPanelShow={'always'}
-                        suppressAggFuncInHeader={true}
+                        suppressAggFuncInHeader
                         groupDefaultExpanded={-1}
                         statusBar={statusBar}
                     />

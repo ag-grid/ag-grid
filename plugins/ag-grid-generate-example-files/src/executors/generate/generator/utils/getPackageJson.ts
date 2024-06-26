@@ -11,6 +11,7 @@ const modules = moduleConfig.filter((m) => m.module && !m.framework);
 
 interface Params {
     isEnterprise: boolean;
+    isLocale: boolean;
     internalFramework: InternalFramework;
     importType: 'modules' | 'packages';
 }
@@ -22,12 +23,12 @@ function getPackageJsonVersion(packageName: string, isEnterprise: boolean) {
     return '^' + packageJson.version;
 }
 
-export function getPackageJson({ isEnterprise, internalFramework, importType }: Params) {
-    return addPackageJson(isEnterprise, internalFramework, importType);
+export function getPackageJson({ isEnterprise, isLocale, internalFramework, importType }: Params) {
+    return addPackageJson(isEnterprise, isLocale, internalFramework, importType);
 }
 
 /** Used for type checking in plunker, and type checking & dep installation with codesandbox */
-function addPackageJson(isEnterprise, framework, importType) {
+function addPackageJson(isEnterprise, isLocale, framework, importType) {
     const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'vanilla']);
     if (!supportedFrameworks.has(framework)) {
         return;
@@ -65,6 +66,11 @@ function addPackageJson(isEnterprise, framework, importType) {
     const agGridEnterpriseVersion = getPackageJsonVersion('core', true);
     const agGridReactVersion = getPackageJsonVersion('react', false);
     const agGridAngularVersion = getPackageJsonVersion('angular', false);
+    const agGridLocaleVersion = getPackageJsonVersion('locale', false);
+
+    if (isLocale) {
+        addDependency('ag-grid-locale', agGridLocaleVersion);
+    }
 
     if (importType === 'modules' && framework !== 'vanilla') {
         if (framework === 'angular') {

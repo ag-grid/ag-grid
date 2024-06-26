@@ -31,6 +31,8 @@ export const agGridAngularVersion = agGridVersion;
 export const agGridVueVersion = agGridVersion;
 export const agGridVue3Version = agGridVersion;
 
+export const agLibraryVersion = agGridVersion;
+
 export const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
 export const PUBLISHED_URLS = {
     '@ag-grid-community/styles': `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}`,
@@ -51,6 +53,7 @@ export const integratedChartsUsesChartsEnterprise = true;
 export const PUBLISHED_UMD_URLS = {
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/ag-grid-community.js`,
     'ag-grid-enterprise': `${NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`,
+    'ag-grid-locale': `${NPM_CDN}/ag-grid-locale@${agGridVersion}/dist/umd/ag-grid-locale.js`,
 };
 
 export const getEnterprisePackageName = () =>

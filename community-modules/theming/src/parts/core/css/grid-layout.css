@@ -258,6 +258,10 @@
     animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
 }
 
+.ag-right-aligned-cell .ag-skeleton-effect {
+    margin-left: auto;
+}
+
 @keyframes ag-skeleton-loading {
     0% {
         opacity: 1;

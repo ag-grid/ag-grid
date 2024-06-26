@@ -1,6 +1,6 @@
 import type { Framework } from '@ag-grid-types';
+import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import Code from '@components/Code';
 import { trackApiDocumentation } from '@utils/analytics';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';

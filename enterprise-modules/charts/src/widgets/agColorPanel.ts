@@ -302,11 +302,11 @@ export class AgColorPanel extends Component {
         this.spectrumHueSlider.style.backgroundColor = spectrumRgbaColor;
 
         this.spectrumAlpha.style.setProperty(
-            '--ag-spectrum-alpha-color-from',
+            '--ag-internal-spectrum-alpha-color-from',
             _Util.Color.fromHSB(hue, this.S, this.B, 0).toRgbaString()
         );
-        this.spectrumAlpha.style.setProperty('--ag-spectrum-alpha-color-to', rgbaColorWithoutAlpha);
-        this.spectrumAlpha.style.setProperty('--ag-spectrum-alpha-color', rgbaColor);
+        this.spectrumAlpha.style.setProperty('--ag-internal-spectrum-alpha-color-to', rgbaColorWithoutAlpha);
+        this.spectrumAlpha.style.setProperty('--ag-internal-spectrum-alpha-color', rgbaColor);
 
         if (!suppressColorInputUpdate) {
             this.colorInput.setColor(color);

@@ -22,7 +22,12 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 
-import { AG_GRID_LOCALE_ZZZ } from './locale';
+import { AG_GRID_LOCALE_EN } from 'ag-grid-locale';
+
+import { zzzLocale } from './locale';
+
+// Create a dummy locale based on english but prefix everything with zzz
+const AG_GRID_LOCALE_ZZZ: Record<string, string> = zzzLocale(AG_GRID_LOCALE_EN);
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

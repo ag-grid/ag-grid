@@ -15,7 +15,15 @@ export type CheckboxProps = {
 export const Checkbox = forwardRef<HTMLLabelElement, CheckboxProps>(
     ({ checked, onChange, children, disabled, className }, ref) => (
         <Container ref={ref} className={combineClassNames(className, disabled && 'is-disabled')}>
-            <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} disabled={disabled} />
+            <span className="text-tertiary">off</span>
+            <input
+                type="checkbox"
+                className="switch"
+                checked={checked}
+                onChange={(e) => onChange(e.target.checked)}
+                disabled={disabled}
+            />
+            <span className="text-tertiary">on</span>
             {children}
         </Container>
     )
