@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["<stdin>"],
+  "sourcesContent": ["// enterprise-modules/charts-enterprise/src/main.ts\nimport { LicenseManager } from \"@ag-grid-enterprise/core\";\nimport { AgCharts } from \"ag-charts-enterprise\";\nimport \"ag-charts-enterprise\";\nexport * from \"@ag-grid-enterprise/charts\";\nAgCharts.setGridContext(true);\nLicenseManager.setChartsLicenseManager(AgCharts);\n"],
+  "mappings": "AACA,OAAS,kBAAAA,MAAsB,2BAC/B,OAAS,YAAAC,MAAgB,uBACzB,MAAO,uBACP,WAAc,6BACdA,EAAS,eAAe,EAAI,EAC5BD,EAAe,wBAAwBC,CAAQ",
+  "names": ["LicenseManager", "AgCharts"]
+}

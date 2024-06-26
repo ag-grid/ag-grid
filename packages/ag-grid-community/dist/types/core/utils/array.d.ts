@@ -1,0 +1,18 @@
+export declare function _existsAndNotEmpty<T>(value?: T[]): boolean;
+export declare function _last<T>(arr: T[]): T;
+export declare function _last<T extends Node>(arr: NodeListOf<T>): T;
+export declare function _areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?: (a: T, b: T) => boolean): boolean;
+export declare function _shallowCompare(arr1: any[], arr2: any[]): boolean;
+export declare function _sortNumerically(array: number[]): number[];
+export declare function _removeRepeatsFromArray<T>(array: T[], object: T): void;
+export declare function _removeFromUnorderedArray<T>(array: T[], object: T): void;
+export declare function _removeFromArray<T>(array: T[], object: T): void;
+export declare function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]): void;
+export declare function _removeAllFromArray<T>(array: T[], toRemove: T[]): void;
+export declare function _insertIntoArray<T>(array: T[], object: T, toIndex: number): void;
+export declare function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number): void;
+export declare function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
+export declare function _includes<T>(array: T[], value: T): boolean;
+export declare function _flatten<T>(arrayOfArrays: (T | T[])[]): T[];
+export declare function _pushAll<T>(target: T[], source: T[]): void;
+export declare function _forEachReverse<T>(list: T[], action: (value: T, index: number) => void): void;

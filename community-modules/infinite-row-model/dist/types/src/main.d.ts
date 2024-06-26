@@ -1,0 +1,1 @@
+export { InfiniteRowModelModule } from './infiniteRowModelModule';

@@ -13,7 +13,7 @@ export interface ILicenseManager {
 }
 
 export class LicenseManager {
-    private static RELEASE_INFORMATION: string = 'MTcxMzkwNjIwOTM2OA==';
+    private static RELEASE_INFORMATION: string = 'MTcxOTQzMTYzMDEwNw==';
     private static licenseKey: string;
     private static chartsLicenseManager?: ILicenseManager;
     private watermarkMessage: string | undefined = undefined;

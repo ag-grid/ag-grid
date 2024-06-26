@@ -1,0 +1,21 @@
+type ColorKeyType = 'None' | 'Solid' | 'Gray50' | 'Gray75' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross';
+type ColorValueType = 'none' | 'solid' | 'mediumGray' | 'darkGray' | 'lightGray' | 'gray125' | 'gray0625' | 'darkHorizontal' | 'darkVertical' | 'darkDown' | 'darkUp' | 'darkGrid' | 'darkTrellis' | 'lightHorizontal' | 'lightVertical' | 'lightDown' | 'lightUp' | 'lightGrid' | 'lightTrellis';
+type BorderKeyType = 'Dot' | 'Dash';
+type BorderFixedNames = 'None' | 'Double' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Continuous';
+type LegacyBorderType = BorderKeyType | BorderFixedNames;
+type BorderType = 'none' | 'thin' | 'medium' | 'dashed' | 'dotted' | 'thick' | 'double' | 'hair' | 'mediumDashed' | 'dashDot' | 'mediumDashDot' | 'dashDotDot' | 'mediumDashDotDot' | 'slantDashDot';
+type BaseAlignmentKeyType = 'Automatic' | 'Center' | 'Justify' | 'Distributed' | 'JustifyDistributed';
+type HorizontalAlignmentKeyType = BaseAlignmentKeyType | 'Left' | 'Right' | 'Fill' | 'CenterAcrossSelection';
+type VerticalAlignmentKeyType = BaseAlignmentKeyType | 'Top' | 'Bottom';
+type BaseAlignmentType = 'center' | 'justify' | 'distributed';
+type HorizontalAlignmentType = BaseAlignmentType | 'general' | 'left' | 'right' | 'fill' | 'centerContinuous';
+type VerticalAlignmentType = BaseAlignmentType | 'top' | 'bottom' | undefined;
+declare const colorMap: {
+    [key in ColorKeyType]: ColorValueType;
+};
+export declare const convertLegacyPattern: (name: ColorKeyType | undefined) => (typeof colorMap)[keyof typeof colorMap];
+export declare const convertLegacyColor: (color?: string) => string | undefined;
+export declare const convertLegacyBorder: (type?: LegacyBorderType, weight?: number) => BorderType;
+export declare const convertLegacyHorizontalAlignment: (alignment: HorizontalAlignmentKeyType) => HorizontalAlignmentType;
+export declare const convertLegacyVerticalAlignment: (alignment: VerticalAlignmentKeyType) => VerticalAlignmentType;
+export {};

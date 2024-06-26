@@ -1,0 +1,38 @@
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { RowNode } from '../entities/rowNode';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
+export declare class ColumnViewportService extends BeanStub implements NamedBean {
+    beanName: "columnViewportService";
+    private visibleColsService;
+    private columnModel;
+    private eventDispatcher;
+    wireBeans(beans: BeanCollection): void;
+    private colsWithinViewport;
+    private headerColsWithinViewport;
+    private colsWithinViewportHash;
+    private rowsOfHeadersToRenderLeft;
+    private rowsOfHeadersToRenderRight;
+    private rowsOfHeadersToRenderCenter;
+    private scrollWidth;
+    private scrollPosition;
+    private viewportLeft;
+    private viewportRight;
+    private suppressColumnVirtualisation;
+    postConstruct(): void;
+    setScrollPosition(scrollWidth: number, scrollPosition: number, afterScroll?: boolean): void;
+    getHeadersToRender(type: ColumnPinnedType, dept: number): (AgColumn | AgColumnGroup)[];
+    private extractViewportColumns;
+    private isColumnVirtualisationSuppressed;
+    clear(): void;
+    private isColumnInHeaderViewport;
+    private isColumnInRowViewport;
+    getViewportColumns(): AgColumn[];
+    getColsWithinViewport(rowNode: RowNode): AgColumn[];
+    checkViewportColumns(afterScroll?: boolean): void;
+    private calculateHeaderRows;
+    private extractViewport;
+}
