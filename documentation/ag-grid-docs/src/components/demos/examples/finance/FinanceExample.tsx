@@ -1,5 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { type ColDef, type GetRowIdFunc, type GetRowIdParams, type ValueFormatterFunc } from '@ag-grid-community/core';
+import {
+    type ColDef,
+    type GetRowIdFunc,
+    type GetRowIdParams,
+    type ValueFormatterFunc,
+    type ValueGetterParams,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact, type CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -43,12 +49,12 @@ ModuleRegistry.registerModules([
     SparklinesModule,
 ]);
 
-const numberFormatter: ValueFormatterFunc = (params) => {
+const numberFormatter: ValueFormatterFunc = ({ value }) => {
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'decimal',
         maximumFractionDigits: 2,
     });
-    return params.value == null ? '' : formatter.format(params.value);
+    return value == null ? '' : formatter.format(value);
 };
 
 const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode = false }) => {
@@ -78,12 +84,12 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         () => [
             {
                 field: 'ticker',
-                cellRenderer: (params: CustomCellRendererProps) =>
-                    params.data && (
+                cellRenderer: ({ data }: CustomCellRendererProps) =>
+                    data && (
                         <>
                             <div>
                                 <img
-                                    src={urlWithBaseUrl(`/example/finance/logos/${params.data.ticker}.png`)}
+                                    src={urlWithBaseUrl(`/example/finance/logos/${data.ticker}.png`)}
                                     style={{
                                         width: '20px',
                                         height: '20px',
@@ -91,8 +97,8 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                                         borderRadius: '32px',
                                     }}
                                 />
-                                <b className="custom-ticker">{params.data.ticker}</b>
-                                <span className="ticker-name"> {params.data.name}</span>
+                                <b className="custom-ticker">{data.ticker}</b>
+                                <span className="ticker-name"> {data.name}</span>
                             </div>
                         </>
                     ),
@@ -114,8 +120,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                 cellDataType: 'number',
                 type: 'rightAligned',
                 cellRenderer: 'agAnimateShowChangeCellRenderer',
-                valueGetter: (params) =>
-                    params.data && params.data.quantity * (params.data.price / params.data.purchasePrice),
+                valueGetter: ({ data }: ValueGetterParams) => data && data.quantity * (data.price / data.purchasePrice),
                 valueFormatter: numberFormatter,
                 aggFunc: 'sum',
             },
@@ -123,7 +128,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
                 headerName: 'Total Value',
                 type: 'rightAligned',
                 cellDataType: 'number',
-                valueGetter: (params) => params.data && params.data.quantity * params.data.price,
+                valueGetter: ({ data }: ValueGetterParams) => data && data.quantity * data.price,
                 cellRenderer: 'agAnimateShowChangeCellRenderer',
                 valueFormatter: numberFormatter,
                 aggFunc: 'sum',
@@ -170,7 +175,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         []
     );
 
-    const getRowId = useCallback<GetRowIdFunc>((params: GetRowIdParams) => params.data.ticker, []);
+    const getRowId = useCallback<GetRowIdFunc>(({ data: { ticker } }: GetRowIdParams) => ticker, []);
 
     const statusBar = useMemo(
         () => ({

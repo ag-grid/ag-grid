@@ -1,14 +1,21 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, SizeColumnsToContentStrategy } from '@ag-grid-community/core';
+import type {
+    ColDef,
+    GetDetailRowDataParams,
+    SizeColumnsToContentStrategy,
+    ValueFormatterFunc,
+    ValueFormatterParams,
+    ValueGetterParams,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, type CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
+import { type ChangeEvent, type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
 
 import { ActionsCellRenderer } from '../actions-cell-renderer/ActionsCellRenderer';
 import { ProductCellRenderer } from '../product-cell-renderer/ProductCellRenderer';
@@ -31,6 +38,10 @@ interface Props {
 
 const paginationPageSizeSelector = [5, 10, 20];
 
+const statuses = { all: 'All', active: 'Active', paused: 'On  Hold', outOfStock: 'Out of Stock' };
+
+const statusFormatter: ValueFormatterFunc = ({ value }) => statuses[value as keyof typeof statuses] ?? '';
+
 export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
 
@@ -48,30 +59,29 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
         { field: 'year', width: 150, headerClass: 'header-sku' },
         {
             field: 'status',
-            headerName: 'Status',
+            valueFormatter: statusFormatter,
             cellRenderer: StatusCellRenderer,
-            filter: 'agSetColumnFilter',
+            filter: true,
+            filterParams: {
+                valueFormatter: statusFormatter,
+            },
             headerClass: 'header-status',
         },
 
         {
             field: 'inventory',
-            headerName: 'Inventory',
-            cellRenderer: function (params) {
-                return (
-                    <div className={styles.stock}>
-                        <span>{params.data.available}</span> <span className={styles.stockText}>Stock /</span>{' '}
-                        <span className={styles.variantsText}>{params.data.variants + ' Variants'}</span>
-                    </div>
-                );
-            },
+            cellRenderer: ({ data: { available, variants } }: CustomCellRendererProps) => (
+                <div className={styles.stock}>
+                    <span>{available}</span> <span className={styles.stockText}>Stock /</span>{' '}
+                    <span className={styles.variantsText}>{`${variants} Variants`}</span>
+                </div>
+            ),
             headerClass: 'header-inventory',
             width: 600,
             sortable: false,
         },
         {
             field: 'incoming',
-            cellEditor: 'agNumberCellEditor',
             cellEditorParams: {
                 precision: 0,
                 step: 1,
@@ -81,45 +91,50 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             width: 100,
         },
         {
-            headerName: 'Price',
+            field: 'price',
             width: 120,
             headerClass: 'header-price',
-            cellRenderer: function (params) {
-                return (
-                    <div className={styles.price}>
-                        <span className={styles.priceAmount}>{'£' + params.data.price}</span>
-                        <span className={styles.increase}>{params.data.priceIncrease + '% incease'}</span>
-                    </div>
-                );
-            },
+            cellRenderer: ({ value, data: { priceIncrease } }: CustomCellRendererProps) => (
+                <div className={styles.price}>
+                    <span className={styles.priceAmount}>{'£' + value}</span>
+                    <span className={styles.increase}>{priceIncrease + '% increase'}</span>
+                </div>
+            ),
         },
         { field: 'sold', headerClass: 'header-calendar', width: 100 },
         {
             headerName: 'Est. Profit',
+            colId: 'profit',
             headerClass: 'header-percentage',
-            valueGetter: (p) => '£' + (p.data.price * p.data.sold) / 10,
+            cellDataType: 'number',
+            valueGetter: ({ data: { price, sold } }: ValueGetterParams) => (price * sold) / 10,
+            valueFormatter: ({ value }: ValueFormatterParams) => `£${value}`,
             width: 150,
         },
         { field: 'actions', cellRenderer: ActionsCellRenderer },
     ]);
     const [rowData] = useState(getData());
-    const [defaultColDef] = useState({
-        resizable: false,
-    });
-    const [autoSizeStrategy] = useState<SizeColumnsToContentStrategy>({
-        type: 'fitCellContents',
-    });
+    const defaultColDef = useMemo<ColDef>(
+        () => ({
+            resizable: false,
+        }),
+        []
+    );
+    const autoSizeStrategy = useMemo<SizeColumnsToContentStrategy>(
+        () => ({
+            type: 'fitCellContents',
+        }),
+        []
+    );
     const themeClass = isDarkMode ? `${gridTheme}-dark` : gridTheme;
+    const [quickFilterText, setQuickFilterText] = useState<string>();
+    const onFilterTextBoxChanged = useCallback(
+        ({ target: { value } }: ChangeEvent<HTMLInputElement>) => setQuickFilterText(value),
+        []
+    );
 
-    const onFilterTextBoxChanged = useCallback(() => {
-        gridRef.current!.api.setGridOption(
-            'quickFilterText',
-            (document.getElementById('filter-text-box') as HTMLInputElement).value
-        );
-    }, []);
-
-    const detailCellRendererParams = useMemo(() => {
-        return {
+    const detailCellRendererParams = useMemo(
+        () => ({
             detailGridOptions: {
                 columnDefs: [
                     { field: 'title', width: 150 },
@@ -135,59 +150,32 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                     minWidth: 100,
                 },
             },
-            getDetailRowData: (params) => {
-                params.successCallback(params.data.variantDetails);
-            },
-        };
-    }, []);
-
-    const setStatusFilter = (status: string) => {
-        gridRef.current!.api.getFilterInstance('status', (filterInstance) => {
-            if (status === 'all') {
-                filterInstance.setModel(null); // Reset the filter
-            } else {
-                filterInstance.setModel({ values: [status] });
-            }
-            gridRef.current!.api.onFilterChanged();
-        });
-    };
-
+            getDetailRowData: ({ successCallback, data: { variantDetails } }: GetDetailRowDataParams) =>
+                successCallback(variantDetails),
+        }),
+        []
+    );
     const [activeTab, setActiveTab] = useState('all');
-
-    const handleTabClick = (status: string) => {
+    const handleTabClick = useCallback((status: string) => {
         setActiveTab(status);
-        setStatusFilter(status);
-    };
+        gridRef
+            .current!.api.setColumnFilterModel('status', status === 'all' ? null : { values: [status] })
+            .then(() => gridRef.current!.api.onFilterChanged());
+    }, []);
 
     return (
         <div className={styles.wrapper}>
             <div className={styles.container}>
                 <div className={styles.exampleHeader}>
                     <div className={styles.tabs}>
-                        <button
-                            className={`${styles.tabButton} ${activeTab === 'all' ? styles.active : ''}`}
-                            onClick={() => handleTabClick('all')}
-                        >
-                            All
-                        </button>
-                        <button
-                            className={`${styles.tabButton} ${activeTab === 'active' ? styles.active : ''}`}
-                            onClick={() => handleTabClick('active')}
-                        >
-                            Active
-                        </button>
-                        <button
-                            className={`${styles.tabButton} ${activeTab === 'paused' ? styles.active : ''}`}
-                            onClick={() => handleTabClick('paused')}
-                        >
-                            Paused
-                        </button>
-                        <button
-                            className={`${styles.tabButton} ${activeTab === 'out of stock' ? styles.active : ''}`}
-                            onClick={() => handleTabClick('out of stock')}
-                        >
-                            Out of Stock
-                        </button>
+                        {Object.entries(statuses).map(([key, displayValue]) => (
+                            <button
+                                className={`${styles.tabButton} ${activeTab === key ? styles.active : ''}`}
+                                onClick={() => handleTabClick(key)}
+                            >
+                                {displayValue}
+                            </button>
+                        ))}
                     </div>
                     <div className={styles.inputWrapper}>
                         <svg
@@ -222,11 +210,12 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         defaultColDef={defaultColDef}
                         rowHeight={80}
                         autoSizeStrategy={autoSizeStrategy}
-                        pagination={true}
+                        pagination
                         paginationPageSize={10}
                         paginationPageSizeSelector={paginationPageSizeSelector}
-                        masterDetail={true}
+                        masterDetail
                         detailCellRendererParams={detailCellRendererParams}
+                        quickFilterText={quickFilterText}
                     />
                 </div>
             </div>

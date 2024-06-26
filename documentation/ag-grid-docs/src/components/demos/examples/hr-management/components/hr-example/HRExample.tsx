@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, GetDataPath } from '@ag-grid-community/core';
+import type { ColDef, GetDataPath, ValueFormatterFunc, ValueFormatterParams } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -46,7 +46,7 @@ const departments = {
     product: 'Product',
     customerSupport: 'Customer Support',
 };
-const getFormattedDepartment = (department: string) => departments[department as keyof typeof departments] ?? '';
+const departmentFormatter: ValueFormatterFunc = ({ value }) => departments[value as keyof typeof departments] ?? '';
 
 export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -60,7 +60,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             field: 'department',
             width: 250,
-            valueFormatter: (params) => getFormattedDepartment(params.value),
+            valueFormatter: departmentFormatter,
             cellRenderer: TagCellRenderer,
         },
         {
@@ -86,7 +86,8 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             headerName: 'Salary',
             field: 'basicMonthlySalary',
-            valueFormatter: ({ value }) => (value == null ? '' : `$${Math.round(value).toLocaleString()}`),
+            valueFormatter: ({ value }: ValueFormatterParams) =>
+                value == null ? '' : `$${Math.round(value).toLocaleString()}`,
         },
         {
             field: 'paymentMethod',
