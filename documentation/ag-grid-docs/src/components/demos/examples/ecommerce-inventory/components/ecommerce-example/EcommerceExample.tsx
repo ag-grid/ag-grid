@@ -54,6 +54,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             cellRendererParams: {
                 innerRenderer: ProductCellRenderer,
             },
+            minWidth: 300,
         },
         { field: 'artist' },
         { field: 'year', width: 150, headerClass: 'header-sku' },
@@ -77,7 +78,6 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 </div>
             ),
             headerClass: 'header-inventory',
-            width: 600,
             sortable: false,
         },
         {
@@ -88,7 +88,6 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 showStepperButtons: true,
             },
             editable: true,
-            width: 100,
         },
         {
             field: 'price',
@@ -101,7 +100,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 </div>
             ),
         },
-        { field: 'sold', headerClass: 'header-calendar', width: 100 },
+        { field: 'sold', headerClass: 'header-calendar' },
         {
             headerName: 'Est. Profit',
             colId: 'profit',
@@ -111,7 +110,7 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             valueFormatter: ({ value }: ValueFormatterParams) => `£${value}`,
             width: 150,
         },
-        { field: 'actions', cellRenderer: ActionsCellRenderer },
+        { field: 'actions', cellRenderer: ActionsCellRenderer, minWidth: 186 },
     ]);
     const [rowData] = useState(getData());
     const defaultColDef = useMemo<ColDef>(
@@ -138,17 +137,17 @@ export const EcommerceExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             detailGridOptions: {
                 columnDefs: [
                     { field: 'title', width: 150 },
-                    { field: 'available' },
-                    { field: 'format' },
-                    { field: 'label' },
-                    { field: 'cat', headerName: 'Cat#' },
-                    { field: 'country' },
-                    { field: 'year' },
+                    { field: 'available', maxWidth: 120 },
+                    { field: 'format', flex: 2 },
+                    { field: 'label', flex: 1 },
+                    { field: 'cat', headerName: 'Cat#', flex: 1 },
+                    { field: 'country', flex: 1 },
+                    { field: 'year', type: 'rightAligned', maxWidth: 80 },
                 ],
                 defaultColDef: {
                     flex: 1,
-                    minWidth: 100,
                 },
+                headerHeight: 38,
             },
             getDetailRowData: ({ successCallback, data: { variantDetails } }: GetDetailRowDataParams) =>
                 successCallback(variantDetails),

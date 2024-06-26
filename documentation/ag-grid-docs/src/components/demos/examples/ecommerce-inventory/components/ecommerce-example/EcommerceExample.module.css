@@ -3,6 +3,11 @@
     --ag-row-border: 1px solid #c41717;
 }
 
+:global(.ag-theme-quartz .ag-body-viewport),
+:global(.ag-theme-quartz-dark .ag-body-viewport) {
+    padding-top: 8px;
+}
+
 :global(.ag-theme-quartz .ag-row-group .ag-icon),
 :global(.ag-theme-quartz-dark .ag-row-group .ag-icon) {
     opacity: 0.5;
@@ -11,6 +16,25 @@
 :global(.ag-theme-quartz .ag-row),
 :global(.ag-theme-quartz-dark .ag-row) {
     border-bottom: none;
+}
+
+:global(.ag-theme-quartz .ag-row:not(.ag-row-level-1)),
+:global(.ag-theme-quartz-dark .ag-row:not(.ag-row-level-1)) {
+    border-radius: 8px;
+    overflow: hidden;
+
+    /* Required to transition background color for row hover */
+    &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        transition: background-color 0.33s ease-in-out;
+    }
 }
 
 :global(.ag-theme-quartz .ag-cell-expandable),
@@ -24,6 +48,21 @@
 :global(.ag-theme-quartz-dark .ag-cell) {
     display: flex;
     align-items: center;
+
+    &:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    &:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+}
+
+:global(.ag-theme-quartz .ag-right-aligned-cell),
+:global(.ag-theme-quartz-dark .ag-right-aligned-cell) {
+    justify-content: flex-end;
 }
 
 :global(.ag-theme-quartz-dark .ag-header) {
@@ -55,8 +94,28 @@
     border: none;
 }
 
+:global(.ag-theme-quartz .ag-full-width-container .ag-row),
+:global(.ag-theme-quartz-dark .ag-full-width-container .ag-row),
+:global(.ag-theme-quartz .ag-full-width-container .ag-details-row),
+:global(.ag-theme-quartz-dark .ag-full-width-container .ag-details-row) {
+    background-color: transparent;
+}
+
+:global(.ag-theme-quartz .ag-details-row),
+:global(.ag-theme-quartz-dark .ag-details-row) {
+    padding: 16px;
+}
+
+:global(.ag-theme-quartz .ag-paging-panel) {
+    height: 40px;
+
+    > span:last-child {
+        margin-right: 0;
+    }
+}
+
 .grid {
-    height: calc(96vh - var(--layout-grid-header-height));
+    height: calc(100vh - var(--layout-grid-header-height) - 50px);
     --ag-header-background-color: transparent !important;
 }
 

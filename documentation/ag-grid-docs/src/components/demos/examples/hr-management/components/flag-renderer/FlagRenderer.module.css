@@ -16,6 +16,8 @@
 }
 
 .image {
-    width: 24px;
-    height: 24px;
+    position: relative;
+    width: 33px;
+    height: 27px;
+    top: 4px;
 }
