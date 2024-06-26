@@ -315,6 +315,7 @@ export class GridChartComp extends Component {
             component: this,
             centered: true,
             closable: true,
+            afterGuiAttached: () => setTimeout(() => this.focusService.focusInto(this.getGui())),
         });
 
         this.createBean(this.chartDialog);
@@ -322,6 +323,14 @@ export class GridChartComp extends Component {
         this.chartDialog.addEventListener('destroyed', () => {
             this.destroy();
             this.chartMenuService.hideAdvancedSettings();
+            const lastFocusedCell = this.focusService.getFocusedCell();
+            setTimeout(() => {
+                if (lastFocusedCell) {
+                    this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
+                } else {
+                    this.focusService.focusGridView();
+                }
+            });
         });
     }
 

@@ -112,7 +112,7 @@ export class GridComp extends TabGuardComp {
     }
 
     public override forceFocusOutOfContainer(up: boolean = false): void {
-        if (this.pagination?.isDisplayed()) {
+        if (!up && this.pagination?.isDisplayed()) {
             this.pagination.forceFocusOutOfContainer(up);
             return;
         }

@@ -71,7 +71,7 @@ const GridComp = ({ context }: GridCompProps) => {
             destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass: setRtlClass,
             forceFocusOutOfContainer: (up?: boolean) => {
-                if (paginationCompRef.current?.isDisplayed()) {
+                if (!up && paginationCompRef.current?.isDisplayed()) {
                     paginationCompRef.current.forceFocusOutOfContainer(up);
                     return;
                 }
