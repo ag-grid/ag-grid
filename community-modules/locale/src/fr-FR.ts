@@ -470,9 +470,9 @@ export const AG_GRID_LOCALE_FR = {
     customCombo: 'Combinaison personnalisée',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Appuyez sur ENTRER pour éditer.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Appuyez sur ENTRER pour éditer',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Niveau ${variable}. ${variable} Appuyez sur ENTRER pour éditer.',
+        '${variable}. Niveau ${variable}. ${variable} Appuyez sur ENTRER pour éditer',
     ariaAdvancedFilterBuilderList: 'Liste de constructeur de filtre avancé',
     ariaAdvancedFilterBuilderFilterItem: 'Condition de filtre',
     ariaAdvancedFilterBuilderGroupItem: 'Groupe de filtre',

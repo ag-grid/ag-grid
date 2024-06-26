@@ -469,8 +469,8 @@ export const AG_GRID_LOCALE_IL = {
     customCombo: 'שילוב מותאם אישית',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. רמה ${variable}. לחץ ENTER לעריכה.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. רמה ${variable}. ${variable} לחץ ENTER לעריכה.',
+    ariaAdvancedFilterBuilderItem: '${variable}. רמה ${variable}. לחץ ENTER לעריכה',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. רמה ${variable}. ${variable} לחץ ENTER לעריכה',
     ariaAdvancedFilterBuilderList: 'רשימת בונה סינון מתקדם',
     ariaAdvancedFilterBuilderFilterItem: 'תנאי סינון',
     ariaAdvancedFilterBuilderGroupItem: 'קבוצת סינון',

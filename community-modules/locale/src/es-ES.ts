@@ -469,8 +469,8 @@ export const AG_GRID_LOCALE_ES = {
     customCombo: 'Combinación personalizada',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Presione ENTER para editar.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. Nivel ${variable}. ${variable} Presione ENTER para editar.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Presione ENTER para editar',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. Nivel ${variable}. ${variable} Presione ENTER para editar',
     ariaAdvancedFilterBuilderList: 'Lista de constructor de filtro avanzado',
     ariaAdvancedFilterBuilderFilterItem: 'Condición de filtro',
     ariaAdvancedFilterBuilderGroupItem: 'Grupo de filtro',

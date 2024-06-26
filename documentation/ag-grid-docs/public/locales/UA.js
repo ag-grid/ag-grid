@@ -469,9 +469,9 @@ const AG_GRID_LOCALE_UA = {
     customCombo: 'Індивідуальна комбінація',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Рівень ${variable}. Натисніть ENTER, щоб редагувати.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Рівень ${variable}. Натисніть ENTER, щоб редагувати',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Рівень ${variable}. ${variable} Натисніть ENTER, щоб редагувати.',
+        '${variable}. Рівень ${variable}. ${variable} Натисніть ENTER, щоб редагувати',
     ariaAdvancedFilterBuilderList: 'Список розширеного конструктора фільтрів',
     ariaAdvancedFilterBuilderFilterItem: 'Умова фільтру',
     ariaAdvancedFilterBuilderGroupItem: 'Група фільтрів',

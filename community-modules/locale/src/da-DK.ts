@@ -469,8 +469,8 @@ export const AG_GRID_LOCALE_DK = {
     customCombo: 'Tilpasset kombination',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Tryk ENTER for at redigere.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. Niveau ${variable}. ${variable} Tryk ENTER for at redigere.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Tryk ENTER for at redigere',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. Niveau ${variable}. ${variable} Tryk ENTER for at redigere',
     ariaAdvancedFilterBuilderList: 'Avanceret filter byggeri liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filter betingelse',
     ariaAdvancedFilterBuilderGroupItem: 'Filter gruppe',
