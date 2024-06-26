@@ -114,6 +114,10 @@
     }
 }
 
+:global(.ag-center-cols-viewport) {
+    min-height: unset !important;
+}
+
 .grid {
     height: calc(100vh - var(--layout-grid-header-height) - 50px);
     --ag-header-background-color: transparent !important;
