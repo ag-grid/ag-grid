@@ -4,7 +4,7 @@ import { type FunctionComponent } from 'react';
 
 import styles from './ContactCellRenderer.module.css';
 
-export const ContactCellRenderer: FunctionComponent<CustomCellRendererProps> = ({ data }) => (
+export const ContactCellRenderer: FunctionComponent<CustomCellRendererProps> = ({ value }) => (
     <div className={styles.contactCell}>
         <div className={styles.iconContainer}>
             <button className="button-secondary">
@@ -18,7 +18,7 @@ export const ContactCellRenderer: FunctionComponent<CustomCellRendererProps> = (
                 </a>
             </button>
             <button className="button-secondary">
-                <a href={`mailto:${data.name}@company.com`} className={styles.iconLink}>
+                <a href={`mailto:${value}@company.com`} className={styles.iconLink}>
                     <img className={styles.icon} src={getResourceUrl(`/example/hr/email.svg`)} alt="email" />
                 </a>
             </button>

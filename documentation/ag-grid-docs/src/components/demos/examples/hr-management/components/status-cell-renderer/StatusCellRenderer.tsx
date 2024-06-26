@@ -4,11 +4,9 @@ import { type FunctionComponent } from 'react';
 
 import styles from './StatusCellRenderer.module.css';
 
-export const StatusCellRenderer: FunctionComponent<CustomCellRendererProps> = ({ data: { paymentStatus } }) => (
-    <div className={`${styles.tag} ${styles[paymentStatus + 'Tag']}`}>
-        {paymentStatus === 'paid' && (
-            <img className={styles.tick} src={getResourceUrl(`/example/hr/tick.svg`)} alt="tick" />
-        )}
-        <span>{paymentStatus}</span>
+export const StatusCellRenderer: FunctionComponent<CustomCellRendererProps> = ({ value }) => (
+    <div className={`${styles.tag} ${styles[value + 'Tag']}`}>
+        {value === 'paid' && <img className={styles.tick} src={getResourceUrl(`/example/hr/tick.svg`)} alt="tick" />}
+        <span>{value}</span>
     </div>
 );

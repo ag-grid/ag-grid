@@ -26,7 +26,8 @@
     border: 1px solid #88cf2b55;
 }
 
-.customerSupportTag {
+.customerSupportTag,
+.legalTag {
     border: 1px solid #cccccc;
 }
 
@@ -54,6 +55,7 @@
     background-color: #87cf2b;
 }
 
-.customerSupportCircle {
+.customerSupportCircle,
+.legalCircle {
     background-color: #cccccc;
 }

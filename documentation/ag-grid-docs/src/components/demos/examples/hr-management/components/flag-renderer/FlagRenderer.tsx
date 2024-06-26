@@ -4,11 +4,11 @@ import { type FunctionComponent } from 'react';
 
 import styles from './FlagRenderer.module.css';
 
-export const FlagRenderer: FunctionComponent<CustomCellRendererProps> = ({ data: { flag, location } }) => (
+export const FlagRenderer: FunctionComponent<CustomCellRendererProps> = ({ value, data: { flag } }) => (
     <div className={styles.flagCell}>
         <div className={styles.employeeData}>
-            <span>{location}</span>
+            <span>{value}</span>
         </div>
-        <img className={styles.image} src={getResourceUrl(`/example/hr/${flag}.svg`)} alt={location.toLowerCase()} />
+        <img className={styles.image} src={getResourceUrl(`/example/hr/${flag}.svg`)} alt={value.toLowerCase()} />
     </div>
 );

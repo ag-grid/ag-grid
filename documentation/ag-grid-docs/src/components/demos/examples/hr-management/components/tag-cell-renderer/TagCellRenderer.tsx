@@ -3,9 +3,9 @@ import { type FunctionComponent } from 'react';
 
 import styles from './TagCellRenderer.module.css';
 
-export const TagCellRenderer: FunctionComponent<CustomCellRendererProps> = ({ data: { department, departmentId } }) => (
-    <div className={`${styles.tag} ${styles[departmentId + 'Tag']}`}>
-        <div className={`${styles.circle} ${styles[departmentId + 'Circle']}`}></div>
-        <span>{department}</span>
+export const TagCellRenderer: FunctionComponent<CustomCellRendererProps> = ({ value, valueFormatted }) => (
+    <div className={`${styles.tag} ${styles[value + 'Tag']}`}>
+        <div className={`${styles.circle} ${styles[value + 'Circle']}`}></div>
+        <span>{valueFormatted}</span>
     </div>
 );

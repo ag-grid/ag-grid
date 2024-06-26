@@ -38,6 +38,15 @@ interface Props {
 const employmentType = ['Permanent', 'Contract'];
 const paymentMethod = ['Cash', 'Check', 'Bank Transfer'];
 const paymentStatus = ['Paid', 'Pending'];
+const departments = {
+    executiveManagement: 'Executive Management',
+    legal: 'Legal',
+    design: 'Design',
+    engineering: 'Engineering',
+    product: 'Product',
+    customerSupport: 'Customer Support',
+};
+const getFormattedDepartment = (department: string) => departments[department as keyof typeof departments] ?? '';
 
 export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode }) => {
     const gridRef = useRef<AgGridReact>(null);
@@ -51,6 +60,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             field: 'department',
             width: 250,
+            valueFormatter: (params) => getFormattedDepartment(params.value),
             cellRenderer: TagCellRenderer,
         },
         {
