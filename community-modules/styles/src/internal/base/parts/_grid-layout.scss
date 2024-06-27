@@ -209,7 +209,9 @@
         // adjust for transparent border
         // Needed to capitalize min, because it clashes with old versions of Sass
         line-height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
-        padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
+        padding-left: calc(
+            var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+        );
         padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
         -webkit-font-smoothing: subpixel-antialiased;
     }

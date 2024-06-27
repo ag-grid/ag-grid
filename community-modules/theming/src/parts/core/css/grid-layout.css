@@ -207,7 +207,9 @@
 
 .ag-cell,
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
-    padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+    );
     padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
     -webkit-font-smoothing: subpixel-antialiased;
 }
