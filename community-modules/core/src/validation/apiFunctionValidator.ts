@@ -426,7 +426,9 @@ export function warnMissingApiFunction(functionName: ApiFunctionName, gridId: st
     const module = functionModules[functionName];
 
     if (module) {
-        ModuleRegistry.__assertRegistered(module, `api.${functionName}`, gridId);
+        if (ModuleRegistry.__assertRegistered(module, `api.${functionName}`, gridId)) {
+            _warnOnce(`API function '${functionName}' not registered to module '${module}'`);
+        }
     } else {
         // this shouldn't happen unless user has a typo in the api call
         _errorOnce(`Unknown API function: '${functionName}' on GridApi.`);
