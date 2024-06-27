@@ -17,12 +17,16 @@
     }
 
     .ag-cell-wrapper.ag-row-group,
-    .ag-cell-wrapper.ag-row-group-leaf-indent {
+    .ag-cell-wrapper.ag-row-group-leaf-indent,
+    .ag-cell-wrapper.ag-pivot-leaf-group {
         padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
     }
 
     .ag-pivot-leaf-group {
-        margin-left: var(--ag-row-group-indent-size);
+        margin-left: min(
+            var(--ag-row-group-indent-size),
+            calc(var(--ag-row-group-indent-size) * var(--ag-indentation-level))
+        );
     }
 
     .ag-row-group-leaf-indent {

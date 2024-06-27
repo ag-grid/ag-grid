@@ -3,7 +3,10 @@
 }
 
 .ag-pivot-leaf-group {
-    margin-left: var(--ag-row-group-indent-size);
+    margin-left: min(
+        var(--ag-row-group-indent-size),
+        calc(var(--ag-row-group-indent-size) * var(--ag-indentation-level))
+    );
 }
 
 .ag-row-group-leaf-indent {
