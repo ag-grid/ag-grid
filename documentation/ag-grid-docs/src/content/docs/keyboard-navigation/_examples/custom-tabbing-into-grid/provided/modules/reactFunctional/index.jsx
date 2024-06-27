@@ -15,6 +15,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 const GridExample = () => {
     const [gridApi, setGridApi] = useState(null);
     const [rowData, setRowData] = useState(null);
+    const [lastFocused, setLastFocused] = useState();
     const columnDefs = useMemo(
         () => [
             {
