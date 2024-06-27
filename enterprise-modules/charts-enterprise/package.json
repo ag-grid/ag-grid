@@ -13,11 +13,11 @@
   },
   "sideEffects": true,
   "dependencies": {
-    "@ag-grid-community/core": "32.0.0",
-    "@ag-grid-enterprise/core": "32.0.0",
-    "@ag-grid-enterprise/charts": "32.0.0",
-    "ag-charts-community": "10.0.0",
-    "ag-charts-enterprise": "10.0.0"
+    "@ag-grid-community/core": "31.3.1",
+    "@ag-grid-enterprise/core": "31.3.1",
+    "@ag-grid-enterprise/charts": "31.3.1",
+    "ag-charts-community": "10.0.0-beta.20240627",
+    "ag-charts-enterprise": "10.0.0-beta.20240627"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
