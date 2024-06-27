@@ -3778,8 +3778,13 @@ button[class^=ag-]:focus {
   border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
 }
 
-.ag-sticky-bottom .ag-row {
-  border-bottom: none;
+.ag-sticky-bottom::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
   border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
 }
 
