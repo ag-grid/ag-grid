@@ -4,7 +4,7 @@ import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 
 describe('ag-grid overlays infinite scrolling state', () => {
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
-    let consoleWarnSpy: jest.SpyInstance;
+    let consoleWarnSpy: jest.SpyInstance | undefined;
 
     function createMyGrid(gridOptions: GridOptions) {
         return createGrid(document.getElementById('myGrid')!, gridOptions);
@@ -31,13 +31,13 @@ describe('ag-grid overlays infinite scrolling state', () => {
     });
 
     afterEach(() => {
-        consoleWarnSpy.mockRestore();
+        consoleWarnSpy?.mockRestore();
     });
 
     test('does not shows no-rows when using InfiniteRowModelModule', () => {
         const pendingGetRows: (() => void)[] = [];
 
-        createMyGrid({
+        const api = createMyGrid({
             columnDefs,
             rowModelType: 'infinite',
             datasource: { getRows: (params) => pendingGetRows.push(() => params.successCallback([], 0)) },
@@ -49,6 +49,15 @@ describe('ag-grid overlays infinite scrolling state', () => {
         for (const pending of pendingGetRows) {
             pending();
         }
+
+        expect(hasLoadingOverlay()).toBe(false);
+        expect(hasNoRowsOverlay()).toBe(false);
+
+        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        api.setGridOption('rowData', []);
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith("AG Grid: rowData is not supported with the 'infinite' row model.");
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
