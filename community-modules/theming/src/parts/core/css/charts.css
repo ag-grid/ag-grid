@@ -395,7 +395,7 @@
         left: 0;
         right: 0;
         height: 16px;
-        background: linear-gradient(var(--ag-chrome-background-color), transparent);
+        background: linear-gradient(var(--ag-background-color), transparent);
     }
 }
 
