@@ -47,7 +47,7 @@
 }
 
 /* Implement header cell hover background as a pseudoelement so that it overlays
-on top of any custom colour that the application has given this cell */
+on top of any custom color that the application has given this cell */
 .ag-header-cell:not(.ag-floating-filter),
 .ag-header-group-cell {
     &::before {
