@@ -340,3 +340,4 @@ var MasterDetailModule = {
 export {
   MasterDetailModule
 };
+//# sourceMappingURL=main.esm.mjs.map

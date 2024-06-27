@@ -901,3 +901,4 @@ var ClipboardModule = {
   moduleName: import_core2.ModuleNames.ClipboardModule,
   dependantModules: [ClipboardCoreModule, ClipboardApiModule]
 };
+//# sourceMappingURL=main.cjs.js.map

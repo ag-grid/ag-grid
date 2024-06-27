@@ -2536,3 +2536,4 @@ var SetFilterModule = {
   moduleName: import_core8.ModuleNames.SetFilterModule,
   dependantModules: [SetFilterCoreModule, SetFloatingFilterModule]
 };
+//# sourceMappingURL=main.cjs.js.map

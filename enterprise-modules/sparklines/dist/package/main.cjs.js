@@ -2145,3 +2145,4 @@ var SparklinesModule = {
   userComponents: [{ name: "agSparklineCellRenderer", classImp: SparklineCellRenderer }],
   dependantModules: [import_core7.EnterpriseCoreModule]
 };
+//# sourceMappingURL=main.cjs.js.map

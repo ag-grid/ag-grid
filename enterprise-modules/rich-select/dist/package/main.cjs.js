@@ -194,3 +194,4 @@ var RichSelectModule = {
   ],
   dependantModules: [import_core4.EnterpriseCoreModule, import_core3._EditCoreModule]
 };
+//# sourceMappingURL=main.cjs.js.map

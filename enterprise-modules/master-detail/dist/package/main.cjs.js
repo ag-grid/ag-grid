@@ -354,3 +354,4 @@ var MasterDetailModule = {
   moduleName: import_core4.ModuleNames.MasterDetailModule,
   dependantModules: [MasterDetailCoreModule]
 };
+//# sourceMappingURL=main.cjs.js.map

@@ -22,3 +22,4 @@ var import_ag_charts_enterprise2 = require("ag-charts-enterprise");
 __reExport(main_exports, require("@ag-grid-enterprise/charts"), module.exports);
 import_ag_charts_enterprise.AgCharts.setGridContext(true);
 import_core.LicenseManager.setChartsLicenseManager(import_ag_charts_enterprise.AgCharts);
+//# sourceMappingURL=main.cjs.js.map

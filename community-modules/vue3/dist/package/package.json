@@ -35,7 +35,7 @@
     "test:e2ex": "vue-cli-service test:e2e"
   },
   "dependencies": {
-    "@ag-grid-community/core": "~32.0.0",
+    "@ag-grid-community/core": "32.0.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {

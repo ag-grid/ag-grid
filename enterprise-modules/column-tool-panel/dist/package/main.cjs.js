@@ -1960,3 +1960,4 @@ var ColumnsToolPanelModule = {
   ],
   dependantModules: [import_core16.EnterpriseCoreModule, import_row_grouping2.RowGroupingModule, import_side_bar.SideBarModule]
 };
+//# sourceMappingURL=main.cjs.js.map

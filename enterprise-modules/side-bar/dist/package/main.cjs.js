@@ -959,3 +959,4 @@ var SideBarModule = {
   moduleName: import_core10.ModuleNames.SideBarModule,
   dependantModules: [SideBarCoreModule, SideBarApiModule]
 };
+//# sourceMappingURL=main.cjs.js.map

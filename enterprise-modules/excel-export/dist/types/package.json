@@ -13,9 +13,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@ag-grid-community/core": "~32.0.0",
-    "@ag-grid-community/csv-export": "~32.0.0",
-    "@ag-grid-enterprise/core": "~32.0.0"
+    "@ag-grid-community/core": "32.0.0",
+    "@ag-grid-community/csv-export": "32.0.0",
+    "@ag-grid-enterprise/core": "32.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",

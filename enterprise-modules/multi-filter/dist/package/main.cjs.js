@@ -598,3 +598,4 @@ var MultiFilterModule = {
   moduleName: import_core4.ModuleNames.MultiFilterModule,
   dependantModules: [MultiFilterCoreModule, MultiFloatingFilterModule]
 };
+//# sourceMappingURL=main.cjs.js.map

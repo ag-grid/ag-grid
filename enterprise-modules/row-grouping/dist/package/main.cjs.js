@@ -3059,3 +3059,4 @@ var ValuesDropZonePanel = class extends BaseDropZonePanel {
     return this.funcColsService.getValueColumns();
   }
 };
+//# sourceMappingURL=main.cjs.js.map

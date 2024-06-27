@@ -2906,3 +2906,4 @@ function useGridFloatingFilter(callbacks) {
 function useGridMenuItem(callbacks) {
   useGridCustomComponent(callbacks);
 }
+//# sourceMappingURL=index.cjs.js.map

@@ -1510,3 +1510,4 @@ var RangeSelectionModule = {
   moduleName: import_core6.ModuleNames.RangeSelectionModule,
   dependantModules: [RangeSelectionCoreModule, RangeSelectionApiModule]
 };
+//# sourceMappingURL=main.cjs.js.map

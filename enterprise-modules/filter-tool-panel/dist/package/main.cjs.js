@@ -992,3 +992,4 @@ var FiltersToolPanelModule = {
   userComponents: [{ name: "agFiltersToolPanel", classImp: FiltersToolPanel }],
   dependantModules: [import_side_bar.SideBarModule, import_core8.EnterpriseCoreModule, import_core7._ColumnFilterModule]
 };
+//# sourceMappingURL=main.cjs.js.map

@@ -1,0 +1,246 @@
+{
+  "getGroupId": {
+    "meta": {
+      "all": "/** Returns the group column id. */",
+      "comment": "Returns the group column id."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "string"
+    }
+  },
+  "getPartId": {
+    "meta": {
+      "all": "/** @deprecated v32 Internal method no longer to be exposed on Column interface. */",
+      "tags": [
+        {
+          "name": "deprecated",
+          "comment": "v32 Internal method no longer to be exposed on Column interface."
+        }
+      ]
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "isResizable": {
+    "meta": {
+      "all": "/** Returns `true` if this group is resizable. */",
+      "comment": "Returns `true` if this group is resizable."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getDisplayedChildren": {
+    "meta": {
+      "all": "/** Returns the displayed children of this group. */",
+      "comment": "Returns the displayed children of this group."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "(Column | ColumnGroup)[] | null"
+    }
+  },
+  "getLeafColumns": {
+    "meta": {
+      "all": "/** Returns the leaf columns of this group. */",
+      "comment": "Returns the leaf columns of this group."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "Column[]"
+    }
+  },
+  "getDisplayedLeafColumns": {
+    "meta": {
+      "all": "/** Returns the displayed leaf columns of this group. */",
+      "comment": "Returns the displayed leaf columns of this group."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "Column[]"
+    }
+  },
+  "getColGroupDef": {
+    "meta": {
+      "all": "/** Returns the column group definition for this column.\n     * The column group definition will be the result of merging the application provided column group definition with any provided defaults\n     * (e.g. `defaultColGroupDef` grid option.\n     */",
+      "comment": "Returns the column group definition for this column.\nThe column group definition will be the result of merging the application provided column group definition with any provided defaults\n(e.g. `defaultColGroupDef` grid option."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColGroupDef | null"
+    }
+  },
+  "isPadding": {
+    "meta": {
+      "all": "/** Returns `true` if this column group is a padding group that is used to correctly align column groups / children. */",
+      "comment": "Returns `true` if this column group is a padding group that is used to correctly align column groups / children."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getPaddingLevel": {
+    "meta": {
+      "all": "/** Returns the padding level of this padding group. */",
+      "comment": "Returns the padding level of this padding group."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "isExpandable": {
+    "meta": {
+      "all": "/** Returns `true` if this column group is expandable. */",
+      "comment": "Returns `true` if this column group is expandable."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isExpanded": {
+    "meta": {
+      "all": "/** Returns `true` if this column group is expanded. */",
+      "comment": "Returns `true` if this column group is expanded."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getChildren": {
+    "meta": {
+      "all": "/** Returns the children of this group if they exist or `null` */",
+      "comment": "Returns the children of this group if they exist or `null`"
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "(Column | ColumnGroup)[] | null"
+    }
+  },
+  "getProvidedColumnGroup": {
+    "meta": {
+      "all": "/** Returns the provided column group */",
+      "comment": "Returns the provided column group"
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ProvidedColumnGroup"
+    }
+  },
+  "isColumn": {
+    "meta": {
+      "all": "/** isColumn is always `false`. Used to distinguish between columns and column groups.  */",
+      "comment": "isColumn is always `false`. Used to distinguish between columns and column groups."
+    },
+    "type": {
+      "returnType": "false"
+    }
+  },
+  "getUniqueId": {
+    "meta": {
+      "all": "/** Returns the unique ID for the column.\n     *\n     */",
+      "comment": "Returns the unique ID for the column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "HeaderColumnId"
+    }
+  },
+  "getActualWidth": {
+    "meta": {
+      "all": "/** Returns the current width of the column. If the column is resized, the actual width is the new size. */",
+      "comment": "Returns the current width of the column. If the column is resized, the actual width is the new size."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "getMinWidth": {
+    "meta": {
+      "all": "/** Returns the minWidth of the column or the default min width. */",
+      "comment": "Returns the minWidth of the column or the default min width."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "number"
+    }
+  },
+  "getLeft": {
+    "meta": {
+      "all": "/** Returns the left position of the column. */",
+      "comment": "Returns the left position of the column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "number | null"
+    }
+  },
+  "getDefinition": {
+    "meta": {
+      "all": "/** Returns the underlying definition. */",
+      "comment": "Returns the underlying definition."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "AbstractColDef<any, TValue> | null"
+    }
+  },
+  "getColumnGroupShow": {
+    "meta": {
+      "all": "/** Returns whether this column should be shown when the group is open / closed or undefined if its always shown. */",
+      "comment": "Returns whether this column should be shown when the group is open / closed or undefined if its always shown."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColumnGroupShowType | undefined"
+    }
+  },
+  "getParent": {
+    "meta": {
+      "all": "/** Returns the parent column group, if column grouping is active. */",
+      "comment": "Returns the parent column group, if column grouping is active."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColumnGroup | null"
+    }
+  },
+  "isEmptyGroup": {
+    "meta": {
+      "all": "/** Returns `true` if this is an empty group. */",
+      "comment": "Returns `true` if this is an empty group."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "isMoving": {
+    "meta": {
+      "all": "/** Returns `true` while the column is being moved. */",
+      "comment": "Returns `true` while the column is being moved."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "boolean"
+    }
+  },
+  "getPinned": {
+    "meta": {
+      "all": "/** Returns the pinned state of the column. */",
+      "comment": "Returns the pinned state of the column."
+    },
+    "type": {
+      "arguments": {},
+      "returnType": "ColumnPinnedType"
+    }
+  }
+}

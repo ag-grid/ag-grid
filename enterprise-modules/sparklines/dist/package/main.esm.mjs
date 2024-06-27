@@ -2123,3 +2123,4 @@ var SparklinesModule = {
 export {
   SparklinesModule
 };
+//# sourceMappingURL=main.esm.mjs.map

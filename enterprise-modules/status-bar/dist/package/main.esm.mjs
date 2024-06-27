@@ -630,3 +630,4 @@ var StatusBarModule = {
 export {
   StatusBarModule
 };
+//# sourceMappingURL=main.esm.mjs.map

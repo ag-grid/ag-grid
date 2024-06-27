@@ -5,3 +5,4 @@ import "ag-charts-enterprise";
 export * from "@ag-grid-enterprise/charts";
 AgCharts.setGridContext(true);
 LicenseManager.setChartsLicenseManager(AgCharts);
+//# sourceMappingURL=main.esm.mjs.map

@@ -644,3 +644,4 @@ var StatusBarModule = {
   moduleName: import_core10.ModuleNames.StatusBarModule,
   dependantModules: [StatusBarCoreModule, StatusBarApiModule]
 };
+//# sourceMappingURL=main.cjs.js.map

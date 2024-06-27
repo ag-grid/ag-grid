@@ -1872,3 +1872,4 @@ var MenuModule = {
   moduleName: import_core12.ModuleNames.MenuModule,
   dependantModules: [MenuCoreModule, MenuApiModule]
 };
+//# sourceMappingURL=main.cjs.js.map

@@ -1832,3 +1832,4 @@ var ClientSideRowModelModule = {
   moduleName: import_core9.ModuleNames.ClientSideRowModelModule,
   dependantModules: [ClientSideRowModelCoreModule, ClientSideRowModelApiModule]
 };
+//# sourceMappingURL=main.cjs.js.map

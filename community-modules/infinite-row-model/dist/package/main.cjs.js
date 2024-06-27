@@ -661,3 +661,4 @@ var InfiniteRowModelModule = {
   moduleName: import_core4.ModuleNames.InfiniteRowModelModule,
   dependantModules: [InfiniteRowModelCoreModule, InfiniteRowModelApiModule]
 };
+//# sourceMappingURL=main.cjs.js.map
