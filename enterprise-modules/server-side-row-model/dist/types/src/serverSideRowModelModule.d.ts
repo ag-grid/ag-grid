@@ -1,4 +1,0 @@
-import type { Module } from '@ag-grid-community/core';
-export declare const ServerSideRowModelCoreModule: Module;
-export declare const ServerSideRowModelApiModule: Module;
-export declare const ServerSideRowModelModule: Module;

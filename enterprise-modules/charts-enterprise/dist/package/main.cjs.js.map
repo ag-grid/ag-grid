@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/main.ts"],
-  "sourcesContent": ["import type { ILicenseManager } from '@ag-grid-enterprise/core';\nimport { LicenseManager } from '@ag-grid-enterprise/core';\nimport { AgCharts } from 'ag-charts-enterprise';\nimport 'ag-charts-enterprise';\n\nAgCharts.setGridContext(true);\n\nLicenseManager.setChartsLicenseManager(AgCharts as ILicenseManager);\n\nexport * from '@ag-grid-enterprise/charts';\n"],
-  "mappings": ";;;;;;;;;;;;;;;;AAAA;AAAA;AACA,kBAA+B;AAC/B,kCAAyB;AACzB,IAAAA,+BAAO;AAMP,yBAAc,uCATd;AAKA,qCAAS,eAAe,IAAI;AAE5B,2BAAe,wBAAwB,oCAA2B;",
-  "names": ["import_ag_charts_enterprise"]
-}
