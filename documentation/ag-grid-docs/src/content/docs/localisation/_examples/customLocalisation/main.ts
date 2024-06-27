@@ -24,6 +24,11 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 
 import { AG_GRID_LOCALE_DE } from 'ag-grid-locale';
 
+import { zzzLocale } from './locale';
+
+// Create a dummy locale based on english but prefix everything with zzz
+const AG_GRID_LOCALE_ZZZ: Record<string, string> = zzzLocale(AG_GRID_LOCALE_DE);
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ClipboardModule,
@@ -120,7 +125,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationPageSizeSelector: [100, 500, 1000],
     enableRangeSelection: true,
     enableCharts: true,
-    localeText: AG_GRID_LOCALE_DE,
+    localeText: AG_GRID_LOCALE_ZZZ,
     rowSelection: 'multiple',
 };
 
