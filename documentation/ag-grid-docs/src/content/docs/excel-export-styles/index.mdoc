@@ -110,7 +110,7 @@ You can define custom styles to apply to specific column headers when exported t
 
 ## Example: Styling Row Groups
 
-By default, row groups are exported with the names of each node in the hierarchy combined together, like "-⁠> Parent -⁠> Child". If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining `autoGroupColumnDef.cellClass` and `processRowGroupCallback`:
+By default, row groups are exported with the names of each node in the hierarchy combined, like "-⁠> Parent -⁠> Child". If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining `autoGroupColumnDef.cellClass` and `processRowGroupCallback`:
 
 ```ts
 processRowGroupCallback(params: ProcessRowGroupForExportParams): string {
@@ -160,7 +160,7 @@ If you get an error when opening the Excel file, the most likely reason is that 
 
 Some of the most likely errors you can encounter when exporting to Excel are:
 
-* Not specifying all the attributes of an Excel Style property. If you specify the interior for an Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet
+* Not specifying all the attributes of an Excel Style property. If you specify the interior for a Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet
 
 * Using invalid characters in attributes, we recommend you not to use special characters.
 
