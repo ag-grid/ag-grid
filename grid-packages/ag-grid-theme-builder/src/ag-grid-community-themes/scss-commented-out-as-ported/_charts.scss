@@ -131,6 +131,11 @@
   .ag-chart-settings-next {
     position: relative;
     flex: none;
+
+    &:focus-within {
+      box-shadow: var(--ag-input-focus-box-shadow);
+      border-radius: 1px;
+    }
   }
 
   .ag-chart-settings-prev-button,
