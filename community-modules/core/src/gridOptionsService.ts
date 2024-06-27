@@ -1,25 +1,33 @@
-import { ColumnApi } from "./columns/columnApi";
-import { ComponentUtil } from "./components/componentUtil";
-import { Autowired, Bean, PostConstruct, PreDestroy } from "./context/context";
-import { DomLayoutType, GridOptions } from "./entities/gridOptions";
-import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from "./interfaces/iCallbackParams";
-import { Environment } from "./environment";
-import { AgEvent, ALWAYS_SYNC_GLOBAL_EVENTS, Events } from "./events";
-import { EventService } from "./eventService";
-import { GridApi } from "./gridApi";
-import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
-import { RowModelType } from "./interfaces/iRowModel";
-import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from "./propertyKeys";
-import { warnOnce } from "./utils/function";
-import { exists, missing } from "./utils/generic";
-import { getScrollbarWidth } from './utils/browser';
-import { IRowNode } from "./interfaces/iRowNode";
-import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
-import { ValidationService } from "./validation/validationService";
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import type { GridApi } from './api/gridApi';
+import { ComponentUtil } from './components/componentUtil';
+import type { NamedBean } from './context/bean';
+import { BeanStub } from './context/beanStub';
+import type { BeanCollection } from './context/context';
+import type { DomLayoutType, GetRowIdFunc, GridOptions } from './entities/gridOptions';
+import type { Environment } from './environment';
+import type { AgEventType } from './eventTypes';
+import type { AgEvent } from './events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
+import type {
+    GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams,
+    RowHeightParams,
+} from './interfaces/iCallbackParams';
+import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
+import type { RowModelType } from './interfaces/iRowModel';
+import type { IRowNode } from './interfaces/iRowNode';
+import { LocalEventService } from './localEventService';
+import type { AnyGridOptions } from './propertyKeys';
+import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
+import { _getScrollbarWidth } from './utils/browser';
+import { _log, _warnOnce } from './utils/function';
+import { _exists, _missing, toBoolean } from './utils/generic';
+import { toConstrainedNum, toNumber } from './utils/number';
+import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
+import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
-    [K in keyof T]: T[K] extends U | undefined ? K : never
+    [K in keyof T]: T[K] extends U | undefined ? K : never;
 }[keyof T];
 
 /**
@@ -33,10 +41,15 @@ type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
 
-
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
-type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT ? RT : never;
-type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> = undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>)
+type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT
+    ? RT
+    : never;
+type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> =
+    | undefined
+    | ((
+          params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>
+      ) => ExtractReturnTypeFromCallback<OriginalCallback>);
 export interface PropertyChangeSet {
     /** Unique id which can be used to link changes of multiple properties that were updated together.
      * i.e a user updated multiple properties at the same time.
@@ -47,9 +60,9 @@ export interface PropertyChangeSet {
 }
 export type PropertyChangedSource = 'api' | 'gridOptionsUpdated';
 export interface PropertyChangedEvent extends AgEvent {
-    type: 'gridPropertyChanged',
+    type: 'gridPropertyChanged';
     changeSet: PropertyChangeSet | undefined;
-    source: PropertyChangedSource
+    source: PropertyChangedSource;
 }
 
 /**
@@ -62,42 +75,79 @@ export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends 
     changeSet: PropertyChangeSet | undefined;
     currentValue: GridOptionsOrBooleanCoercedValue<K>;
     previousValue: GridOptionsOrBooleanCoercedValue<K>;
-    source: PropertyChangedSource
+    source: PropertyChangedSource;
 }
 
-export type PropertyChangedListener = (event: PropertyChangedEvent) => void
-export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void
+export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
+export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
 
-@Bean('gridOptionsService')
-export class GridOptionsService {
+/**
+ * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
+ */
+const PROPERTY_COERCIONS: Map<keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]> = new Map([
+    ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, toBoolean]),
+    ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, toNumber]),
+    ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : toBoolean(val))],
+    ['pageSize', toConstrainedNum(1)],
+    ['autoSizePadding', toConstrainedNum(0)],
+    ['keepDetailRowsCount', toConstrainedNum(1)],
+    ['rowBuffer', toConstrainedNum(0)],
+    ['infiniteInitialRowCount', toConstrainedNum(1)],
+    ['cacheOverflowSize', toConstrainedNum(1)],
+    ['cacheBlockSize', toConstrainedNum(1)],
+    ['serverSideInitialRowCount', toConstrainedNum(1)],
+    ['viewportRowModelPageSize', toConstrainedNum(1)],
+    ['viewportRowModelBufferSize', toConstrainedNum(0)],
+] as [keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]][]);
 
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-    @Autowired('eventService') private readonly eventService: EventService;
-    @Autowired('environment') private readonly environment: Environment;
-    @Autowired('frameworkOverrides') frameworkOverrides: IFrameworkOverrides;
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('validationService') private validationService: ValidationService;
+function getCoercedValue<K extends keyof GridOptions>(key: K, value: GridOptions[K]): GridOptions[K] {
+    const coerceFunc = PROPERTY_COERCIONS.get(key);
 
-    private destroyed = false;
+    if (!coerceFunc) {
+        return value;
+    }
+
+    return coerceFunc(value);
+}
+
+export function getCoercedGridOptions(gridOptions: GridOptions): GridOptions {
+    const newGo: GridOptions = {};
+    Object.entries(gridOptions).forEach(([key, value]: [keyof GridOptions, any]) => {
+        const coercedValue = getCoercedValue(key, value);
+        newGo[key] = coercedValue;
+    });
+    return newGo;
+}
+
+export class GridOptionsService extends BeanStub implements NamedBean {
+    beanName = 'gos' as const;
+
+    private gridOptions: GridOptions;
+    private eGridDiv: HTMLElement;
+    private validationService?: ValidationService;
+    private environment: Environment;
+    private api: GridApi;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.gridOptions = beans.gridOptions;
+        this.eGridDiv = beans.eGridDiv;
+        this.validationService = beans.validationService;
+        this.environment = beans.environment;
+        this.api = beans.gridApi;
+    }
+
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
 
-    // Store locally to avoid retrieving many times as these are requested for every callback
-    @Autowired('gridApi') private readonly api: GridApi;
-    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
-    private columnApi: ColumnApi;
     // This is quicker then having code call gridOptionsService.get('context')
-    private get context() {
+    private get gridOptionsContext() {
         return this.gridOptions['context'];
     }
 
-    private propertyEventService: EventService = new EventService();
+    private propertyEventService: LocalEventService<keyof GridOptions> = new LocalEventService();
 
-
-    @PostConstruct
-    public init(): void {
-        this.columnApi = new ColumnApi(this.api);
+    public postConstruct(): void {
         const async = !this.get('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
@@ -107,23 +157,28 @@ export class GridOptionsService {
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
-    }
-    @PreDestroy
-    private destroy(): void {
-        this.destroyed = true;
-        this.columnApi = undefined as any;
+        this.addManagedEventListeners({
+            gridOptionsChanged: ({ options }) => {
+                this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
+            },
+        });
     }
 
     /**
      * Get the raw value of the GridOptions property provided.
      * @param property
      */
-    public get<K extends keyof GridOptions>(property: K): K extends keyof typeof GRID_OPTION_DEFAULTS ? NonNullable<GridOptions[K]> : GridOptions[K] {
-        return this.gridOptions[property] ?? (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptions[K]);
+    public get<K extends keyof GridOptions>(
+        property: K
+    ): K extends keyof typeof GRID_OPTION_DEFAULTS ? NonNullable<GridOptions[K]> : GridOptions[K] {
+        return (
+            this.gridOptions[property] ??
+            (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptions[K])
+        );
     }
 
     /**
-     * Get the GridOption callback but wrapped so that the common params of api,columnApi and context are automatically applied to the params.
+     * Get the GridOption callback but wrapped so that the common params of api and context are automatically applied to the params.
      * @param property GridOption callback properties based on the fact that this property has a callback with params extending AgGridCommon
      */
     public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
@@ -135,22 +190,22 @@ export class GridOptionsService {
      * @param property GridOption property
      */
     public exists(property: keyof GridOptions): boolean {
-        return exists(this.gridOptions[property]);
+        return _exists(this.gridOptions[property]);
     }
 
     /**
-    * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
-    * @param callback User provided callback
-    * @returns Wrapped callback where the params object not require api, columnApi and context
-    */
-    private mergeGridCommonParams<P extends AgGridCommon<any, any>, T>(callback: ((params: P) => T) | undefined):
-        ((params: WithoutGridCommon<P>) => T) | undefined {
+     * Wrap the user callback and attach the api and context to the params object on the way through.
+     * @param callback User provided callback
+     * @returns Wrapped callback where the params object not require api and context
+     */
+    private mergeGridCommonParams<P extends AgGridCommon<any, any>, T>(
+        callback: ((params: P) => T) | undefined
+    ): ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = callbackParams as P;
                 mergedParams.api = this.api;
-                mergedParams.columnApi = this.columnApi;
-                mergedParams.context = this.context;
+                mergedParams.context = this.gridOptionsContext;
 
                 return callback(mergedParams);
             };
@@ -158,95 +213,26 @@ export class GridOptionsService {
         }
         return callback;
     }
-    
-    /**
-     * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
-     */
-    private static PROPERTY_COERCIONS: Map<keyof GridOptions, ((value: any) => GridOptions[keyof GridOptions])> = new Map([
-        ...PropertyKeys.BOOLEAN_PROPERTIES.map(key => [key as keyof GridOptions, GridOptionsService.toBoolean]),
-        ...PropertyKeys.NUMBER_PROPERTIES.map(key => [key as keyof GridOptions, GridOptionsService.toNumber]),
-        ['groupAggFiltering', (val: any) => typeof val === 'function' ? val : GridOptionsService.toBoolean(val)],
-        ['pageSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-        ['autoSizePadding', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
-        ['keepDetailRowsCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-        ['rowBuffer', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
-        ['infiniteInitialRowCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-        ['cacheOverflowSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-        ['cacheBlockSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-        ['serverSideInitialRowCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-        ['viewportRowModelPageSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
-        ['viewportRowModelBufferSize', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
-    ] as [keyof GridOptions, ((value: any) => GridOptions[keyof GridOptions])][]);
-
-    private static toBoolean(value: any): boolean {
-        if (typeof value === 'boolean') {
-            return value;
-        }
-
-        if (typeof value === 'string') {
-            // for boolean, compare to empty String to allow attributes appearing with
-            // no value to be treated as 'true'
-            return value.toUpperCase() === 'TRUE' || value == '';
-        }
-
-        return false;
-    }
-
-    private static toNumber(value: any): number | undefined {
-        if (typeof value === 'number') {
-            return value;
-        }
-
-        if (typeof value === 'string') {
-            const parsed = parseInt(value);
-            if (isNaN(parsed)) {
-                return undefined;
-            }
-            return parsed;
-        }
-        return undefined;
-    }
-
-    private static toConstrainedNum(min: number, max: number): (value: any) => number | undefined {
-        return (value: any) => {
-            const num = GridOptionsService.toNumber(value);
-            if (num == null || num < min || num > max) {
-                return undefined; // return undefined if outside bounds, this will then be coerced to the default value.
-            }
-            return num;
-        }
-    }
-
-    private static getCoercedValue<K extends keyof GridOptions>(key: K, value: GridOptions[K]): GridOptions[K] {
-        const coerceFunc = GridOptionsService.PROPERTY_COERCIONS.get(key);
-
-        if (!coerceFunc) {
-            return value;
-        }
-        
-        return coerceFunc(value);
-    }
-
-    public static getCoercedGridOptions(gridOptions: GridOptions): GridOptions {
-        const newGo: GridOptions = {};
-        Object.entries(gridOptions).forEach(([key, value]: [keyof GridOptions, any]) => {
-            const coercedValue = GridOptionsService.getCoercedValue(key, value);
-            newGo[key] = coercedValue;
-        });
-        return newGo;
-    }
 
     private static changeSetId = 0;
-    public updateGridOptions({ options, source = 'api' }: { options: Partial<GridOptions>, source?: PropertyChangedSource }): void {
+    public updateGridOptions({
+        options,
+        force,
+        source = 'api',
+    }: {
+        options: Partial<GridOptions>;
+        force?: boolean;
+        source?: PropertyChangedSource;
+    }): void {
         const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-                warnOnce(`${key} is an initial property and cannot be updated.`)
+                _warnOnce(`${key} is an initial property and cannot be updated.`);
             }
-            const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
-            const shouldForce = (typeof coercedValue) === 'object' && source === 'api'; // force objects as they could have been mutated.
+            const coercedValue = getCoercedValue(key as keyof GridOptions, value);
+            const shouldForce = force || (typeof coercedValue === 'object' && source === 'api'); // force objects as they could have been mutated.
 
             const previousValue = this.gridOptions[key as keyof GridOptions];
             if (shouldForce || previousValue !== coercedValue) {
@@ -256,29 +242,29 @@ export class GridOptionsService {
                     currentValue: coercedValue,
                     previousValue,
                     changeSet,
-                    source
+                    source,
                 };
                 events.push(event);
             }
         });
 
-        this.validationService.processGridOptions(this.gridOptions);
+        this.validationService?.processGridOptions(this.gridOptions);
 
         // changeSet should just include the properties that have changed.
-        changeSet.properties = events.map(event => event.type);
+        changeSet.properties = events.map((event) => event.type);
 
-        events.forEach(event => {
+        events.forEach((event) => {
             if (this.gridOptions.debug) {
-                console.log(`AG Grid: Updated property ${event.type} from `, event.previousValue, ' to  ', event.currentValue);
+                _log(`Updated property ${event.type} from ${event.previousValue} to ${event.currentValue}`);
             }
             this.propertyEventService.dispatchEvent(event);
         });
     }
 
-    addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+    addPropertyEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.addEventListener(key, listener as any);
     }
-    removeEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+    removePropertyEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.removeEventListener(key, listener as any);
     }
 
@@ -287,9 +273,9 @@ export class GridOptionsService {
     // This is required for events such as GridPreDestroyed.
     // Other events can be fired asynchronously or synchronously depending on config.
     globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
-        return (eventName: string, event?: any) => {
+        return (eventName: AgEventType, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
-            if (this.destroyed) {
+            if (!this.isAlive()) {
                 return;
             }
 
@@ -303,28 +289,28 @@ export class GridOptionsService {
             if (typeof eventHandler === 'function') {
                 this.frameworkOverrides.wrapOutgoing(() => {
                     eventHandler(event);
-                })
+                });
             }
-        }
+        };
     };
 
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
-
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
         if (this.scrollbarWidth == null) {
-            const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+            const useGridOptions =
+                typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
+            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _getScrollbarWidth();
 
             if (scrollbarWidth != null) {
                 this.scrollbarWidth = scrollbarWidth;
 
                 this.eventService.dispatchEvent({
-                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
+                    type: 'scrollbarWidthChanged',
                 });
             }
         }
@@ -333,8 +319,10 @@ export class GridOptionsService {
     }
 
     public isRowModelType(rowModelType: RowModelType): boolean {
-        return this.gridOptions.rowModelType === rowModelType ||
-            (rowModelType === 'clientSide' && missing(this.gridOptions.rowModelType));
+        return (
+            this.gridOptions.rowModelType === rowModelType ||
+            (rowModelType === 'clientSide' && _missing(this.gridOptions.rowModelType))
+        );
     }
 
     public isDomLayout(domLayout: DomLayoutType) {
@@ -354,7 +342,11 @@ export class GridOptionsService {
         return typeof this.gridOptions.getRowHeight === 'function';
     }
 
-    public getRowHeightForNode(rowNode: IRowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
+    public getRowHeightForNode(
+        rowNode: IRowNode,
+        allowEstimate = false,
+        defaultRowHeight?: number
+    ): { height: number; estimated: boolean } {
         if (defaultRowHeight == null) {
             defaultRowHeight = this.environment.getDefaultRowHeight();
         }
@@ -370,14 +362,16 @@ export class GridOptionsService {
 
             const params: WithoutGridCommon<RowHeightParams> = {
                 node: rowNode,
-                data: rowNode.data
+                data: rowNode.data,
             };
 
             const height = this.getCallback('getRowHeight')!(params);
 
             if (this.isNumeric(height)) {
                 if (height === 0) {
-                    warnOnce('The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.');
+                    _warnOnce(
+                        'The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'
+                    );
                 }
                 return { height: Math.max(1, height), estimated: false };
             }
@@ -387,12 +381,15 @@ export class GridOptionsService {
             return this.getMasterDetailRowHeight();
         }
 
-        const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
+        const rowHeight =
+            this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)
+                ? this.gridOptions.rowHeight
+                : defaultRowHeight;
 
         return { height: rowHeight, estimated: false };
     }
 
-    private getMasterDetailRowHeight(): { height: number, estimated: boolean } {
+    private getMasterDetailRowHeight(): { height: number; estimated: boolean } {
         // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
         // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
         // (due to auto height) which looks bad, especially if doing row animation.
@@ -409,7 +406,7 @@ export class GridOptionsService {
 
     // we don't allow dynamic row height for virtual paging
     public getRowHeightAsNumber(): number {
-        if (!this.gridOptions.rowHeight || missing(this.gridOptions.rowHeight)) {
+        if (!this.gridOptions.rowHeight || _missing(this.gridOptions.rowHeight)) {
             return this.environment.getDefaultRowHeight();
         }
 
@@ -419,7 +416,7 @@ export class GridOptionsService {
             return rowHeight;
         }
 
-        console.warn('AG Grid row height must be a number if not using standard row model');
+        _warnOnce('row height must be a number if not using standard row model');
         return this.environment.getDefaultRowHeight();
     }
 
@@ -442,7 +439,7 @@ export class GridOptionsService {
         const domDataKey = this.getDomDataKey();
         let domData = (element as any)[domDataKey];
 
-        if (missing(domData)) {
+        if (_missing(domData)) {
             domData = {};
             (element as any)[domDataKey] = domData;
         }
@@ -453,13 +450,13 @@ export class GridOptionsService {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
         let result: Document | null = null;
-        if (this.gridOptions.getDocument && exists(this.gridOptions.getDocument)) {
+        if (this.gridOptions.getDocument && _exists(this.gridOptions.getDocument)) {
             result = this.gridOptions.getDocument();
         } else if (this.eGridDiv) {
             result = this.eGridDiv.ownerDocument;
         }
 
-        if (result && exists(result)) {
+        if (result && _exists(result)) {
             return result;
         }
 
@@ -475,24 +472,27 @@ export class GridOptionsService {
         return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }
 
+    public getActiveDomElement(): Element | null {
+        return this.getRootNode().activeElement;
+    }
+
     public getAsyncTransactionWaitMillis(): number | undefined {
-        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
+        return _exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
     }
 
     public isAnimateRows() {
         // never allow animating if enforcing the row order
-        if (this.get('ensureDomOrder')) { return false; }
+        if (this.get('ensureDomOrder')) {
+            return false;
+        }
 
         return this.get('animateRows');
     }
 
     public isGroupRowsSticky(): boolean {
-        if (
-            this.get('suppressGroupRowsSticky') ||
-            this.get('paginateChildRows') ||
-            this.get('groupHideOpenParents') ||
-            this.isDomLayout('print')
-        ) { return false; }
+        if (this.get('paginateChildRows') || this.get('groupHideOpenParents') || this.isDomLayout('print')) {
+            return false;
+        }
 
         return true;
     }
@@ -516,23 +516,40 @@ export class GridOptionsService {
         return undefined;
     }
 
-    public isGroupIncludeFooterTrueOrCallback(): boolean{
-        const userValue = this.gridOptions.groupIncludeFooter;
-        return userValue === true || typeof userValue === 'function';
+    public getGrandTotalRow(): 'top' | 'bottom' | undefined {
+        const userValue = this.gridOptions.grandTotalRow;
+        if (userValue) {
+            return userValue;
+        }
+
+        const legacyValue = this.gridOptions.groupIncludeTotalFooter;
+        if (legacyValue) {
+            return 'bottom';
+        }
+        return undefined;
     }
 
-    public getGroupIncludeFooter(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => boolean{
-        const userValue = this.gridOptions.groupIncludeFooter;
+    public getGroupTotalRowCallback(): (
+        params: WithoutGridCommon<GetGroupIncludeFooterParams>
+    ) => 'top' | 'bottom' | undefined {
+        const userValue = this.get('groupTotalRow');
 
         if (typeof userValue === 'function') {
-            return this.getCallback('groupIncludeFooter' as any) as any;
+            return this.getCallback('groupTotalRow' as any) as any;
         }
 
-        if (userValue === true) {
-            return () => true; 
+        if (userValue) {
+            return () => userValue;
         }
 
-        return () => false;
+        const legacyValue = this.get('groupIncludeFooter');
+        if (typeof legacyValue === 'function') {
+            const legacyCallback = this.getCallback('groupIncludeFooter' as any) as any;
+            return (p: GetGroupIncludeFooterParams) => {
+                return legacyCallback(p) ? 'bottom' : undefined;
+            };
+        }
+        return () => (legacyValue ? 'bottom' : undefined);
     }
 
     public isGroupMultiAutoColumn() {
@@ -545,7 +562,9 @@ export class GridOptionsService {
 
     public isGroupUseEntireRow(pivotMode: boolean): boolean {
         // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
-        if (pivotMode) { return false; }
+        if (pivotMode) {
+            return false;
+        }
 
         return this.gridOptions.groupDisplayType === 'groupRows';
     }
@@ -553,16 +572,40 @@ export class GridOptionsService {
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
         return {
             api: this.api,
-            columnApi: this.columnApi,
-            context: this.context
+            context: this.gridOptionsContext,
         };
     }
 
-    public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(params: WithoutGridCommon<T>): T {
+    public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(
+        params: WithoutGridCommon<T>
+    ): T {
         const updatedParams = params as T;
         updatedParams.api = this.api;
-        updatedParams.columnApi = this.columnApi;
-        updatedParams.context = this.context;
+        updatedParams.context = this.gridOptionsContext;
         return updatedParams;
+    }
+
+    // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
+    public getRowIdCallback<TData = any>():
+        | ((
+              params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
+          ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
+        | undefined {
+        const getRowId = this.getCallback('getRowId');
+
+        if (getRowId === undefined) {
+            return getRowId;
+        }
+
+        return (params) => {
+            let id = getRowId(params);
+
+            if (typeof id !== 'string') {
+                _warnOnce(`The getRowId callback must return a string. The ID ${id} is being cast to a string.`);
+                id = String(id);
+            }
+
+            return id;
+        };
     }
 }

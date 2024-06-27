@@ -1,13 +1,11 @@
 import { getGifStillImageFiles } from '@features/docs/utils/pageData';
-import type { APIContext, ImageMetadata } from 'astro';
+import { getDocsGifs } from '@utils/pages';
+import type { APIContext } from 'astro';
 import gifFrames from 'gif-frames';
 import type { Stream } from 'stream';
 
 export function getStaticPaths() {
-    const gifsGlob = import.meta.glob<{ default: ImageMetadata }>('../../../content/docs/**/*.gif');
-    const allDocsGifs = Object.keys(gifsGlob).map((fullPath) => {
-        return fullPath.replace('../../../content/docs/', '');
-    });
+    const allDocsGifs = getDocsGifs();
 
     return getGifStillImageFiles({ allDocsGifs });
 }

@@ -1,8 +1,7 @@
-import { Component } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-
-import { IFloatingFilter, IFloatingFilterParams, NumberFilter, NumberFilterModel } from "@ag-grid-community/core";
-import { AgFrameworkComponent } from "@ag-grid-community/angular";
+import { AgFrameworkComponent } from '@ag-grid-community/angular';
+import { IFloatingFilter, IFloatingFilterParams, NumberFilterModel } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 export interface SliderFloatingFilterParams extends IFloatingFilterParams {
     value: number;
@@ -12,15 +11,17 @@ export interface SliderFloatingFilterParams extends IFloatingFilterParams {
 @Component({
     standalone: true,
     imports: [FormsModule],
-    template: `
-        <input type="range"
-               min="0" [max]="maxValue"
-               data-show-value="true" data-popup-enabled="true"
-               [(ngModel)]="currentValue"
-               (ngModelChange)="valueChanged()"/>`
+    template: ` <input
+        type="range"
+        min="0"
+        [max]="maxValue"
+        data-show-value="true"
+        data-popup-enabled="true"
+        [(ngModel)]="currentValue"
+        (ngModelChange)="valueChanged()"
+    />`,
 })
 export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkComponent<SliderFloatingFilterParams> {
-
     private params!: SliderFloatingFilterParams;
 
     public maxValue!: number;
@@ -33,7 +34,7 @@ export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkCompone
     }
 
     valueChanged() {
-        const valueToUse = (this.currentValue === 0) ? null : this.currentValue;
+        const valueToUse = this.currentValue === 0 ? null : this.currentValue;
         this.params.parentFilterInstance(function (instance) {
             instance.onFloatingFilterChanged('greaterThan', valueToUse);
         });
@@ -48,5 +49,4 @@ export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkCompone
             this.currentValue = parentModel.filter!;
         }
     }
-
 }

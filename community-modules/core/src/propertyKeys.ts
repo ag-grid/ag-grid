@@ -1,11 +1,10 @@
-import { GridOptions } from "./entities/gridOptions";
-import { AgGridCommon } from "./interfaces/iCommon";
+import type { GridOptions } from './entities/gridOptions';
+import type { AgGridCommon } from './interfaces/iCommon';
 
 type GridOptionKey = keyof GridOptions;
 
 type GetKeys<T, U> = {
-    [K in keyof T]: U extends T[K] ? K :
-    (T[K] extends U | null | undefined ? K : never) //Reverse match for string literal types
+    [K in keyof T]: U extends T[K] ? K : T[K] extends U | null | undefined ? K : never; //Reverse match for string literal types
 }[keyof T];
 
 /**
@@ -14,12 +13,12 @@ type GetKeys<T, U> = {
  *  This will only be the properties of type `any`.
  */
 export type AnyGridOptions = {
-    [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never
+    [K in keyof GridOptions]: GridOptions[K] extends 'NO_MATCH' ? K : never;
 }[keyof GridOptions];
 
 /**
  * Get all the GridOptions properties of the provided type.
- * Will also include `any` properties. 
+ * Will also include `any` properties.
  */
 type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 /**
@@ -29,6 +28,7 @@ type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 type CallbackKeys = KeysOfType<(any: AgGridCommon<any, any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
+// eslint-disable-next-line @typescript-eslint/ban-types
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
 
 export const INITIAL_GRID_OPTION_KEYS = {
@@ -47,12 +47,9 @@ export const INITIAL_GRID_OPTION_KEYS = {
     undoRedoCellEditingLimit: true,
     excelStyles: true,
     cacheQuickFilter: true,
-    excludeHiddenColumnsFromQuickFilter: true,
     advancedFilterModel: true,
     customChartThemes: true,
     chartThemeOverrides: true,
-    enableChartToolPanelsButton: true,
-    suppressChartToolPanelsButton: true,
     chartToolPanelsDef: true,
     loadingCellRendererSelector: true,
     localeText: true,
@@ -64,7 +61,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     valueCache: true,
     valueCacheNeverExpires: true,
     enableCellExpressions: true,
-    suppressParentsInRowNodes: true,
     suppressTouch: true,
     suppressAsyncEvents: true,
     suppressBrowserResizeObserver: true,
@@ -80,7 +76,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressExpandablePivotGroups: true,
     aggFuncs: true,
     suppressAggFuncInHeader: true,
-    suppressAggAtRootLevel: true,
     removePivotHeaderRowWhenSingleValueColumn: true,
     allowShowChangeAfterFilter: true,
     ensureDomOrder: true,
@@ -112,7 +107,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     icons: true,
     suppressRowTransform: true,
     gridId: true,
-    functionsPassive: true,
     enableGroupEdit: true,
     initialState: true,
     processUnpinnedColumns: true,
@@ -121,7 +115,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getRowId: true,
     reactiveCustomComponents: true,
     columnMenu: true,
-    legacyChartsMenu: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
@@ -129,7 +122,7 @@ type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
 export type ManagedGridOptionKey = Exclude<GridOptionKey, InitialGridOptionKey>;
 
 export type ManagedGridOptions<TData = any> = {
-    [K in (ManagedGridOptionKey)]?: GridOptions<TData>[K]
+    [K in ManagedGridOptionKey]?: GridOptions<TData>[K];
 };
 
 /**
@@ -138,85 +131,327 @@ export type ManagedGridOptions<TData = any> = {
  */
 export class PropertyKeys {
     public static STRING_PROPERTIES: KeysOfType<string>[] = [
-        'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId', 'quickFilterText', 'rowModelType', 'editType', 'domLayout', 
-        'clipboardDelimiter', 'rowGroupPanelShow', 'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu', 'tooltipShowMode'
+        'rowSelection',
+        'overlayLoadingTemplate',
+        'overlayNoRowsTemplate',
+        'gridId',
+        'quickFilterText',
+        'rowModelType',
+        'editType',
+        'domLayout',
+        'clipboardDelimiter',
+        'rowGroupPanelShow',
+        'multiSortKey',
+        'pivotColumnGroupTotals',
+        'pivotRowTotals',
+        'pivotPanelShow',
+        'fillHandleDirection',
+        'groupDisplayType',
+        'treeDataDisplayType',
+        'colResizeDefault',
+        'tooltipTrigger',
+        'serverSidePivotResultFieldSeparator',
+        'columnMenu',
+        'tooltipShowMode',
+        'grandTotalRow',
     ];
 
     public static OBJECT_PROPERTIES: KeysLike<object | HTMLElement>[] = [
-        'components', 'rowStyle', 'context', 'autoGroupColumnDef', 'localeText', 'icons', 'datasource', 'serverSideDatasource', 'viewportDatasource',
-        'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultCsvExportParams',
-        'defaultExcelExportParams', 'columnTypes', 'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
-        'noRowsOverlayComponentParams', 'popupParent', 'statusBar', 'sideBar', 'chartThemeOverrides', 'customChartThemes', 'chartToolPanelsDef',
-        'dataTypeDefinitions', 'advancedFilterModel', 'advancedFilterParent', 'advancedFilterBuilderParams', 'initialState', 'autoSizeStrategy',
+        'components',
+        'rowStyle',
+        'context',
+        'autoGroupColumnDef',
+        'localeText',
+        'icons',
+        'datasource',
+        'serverSideDatasource',
+        'viewportDatasource',
+        'groupRowRendererParams',
+        'aggFuncs',
+        'fullWidthCellRendererParams',
+        'defaultColGroupDef',
+        'defaultColDef',
+        'defaultCsvExportParams',
+        'defaultExcelExportParams',
+        'columnTypes',
+        'rowClassRules',
+        'detailCellRendererParams',
+        'loadingCellRendererParams',
+        'loadingOverlayComponentParams',
+        'noRowsOverlayComponentParams',
+        'popupParent',
+        'statusBar',
+        'sideBar',
+        'chartThemeOverrides',
+        'customChartThemes',
+        'chartToolPanelsDef',
+        'dataTypeDefinitions',
+        'advancedFilterModel',
+        'advancedFilterParent',
+        'advancedFilterBuilderParams',
+        'initialState',
+        'autoSizeStrategy',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
-        'sortingOrder', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData', 'chartThemes',
-        'rowClass', 'paginationPageSizeSelector',
+        'sortingOrder',
+        'alignedGrids',
+        'rowData',
+        'columnDefs',
+        'excelStyles',
+        'pinnedTopRowData',
+        'pinnedBottomRowData',
+        'chartThemes',
+        'rowClass',
+        'paginationPageSizeSelector',
     ];
 
+    // These properties are coerced at runtime, do not do union types
     public static NUMBER_PROPERTIES: KeysOfType<number>[] = [
-        'rowHeight', 'detailRowHeight', 'rowBuffer', 'headerHeight', 'groupHeaderHeight', 'groupLockGroupColumns', 'floatingFiltersHeight',
-        'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded', 'pivotDefaultExpanded', 'viewportRowModelPageSize',
-        'viewportRowModelBufferSize', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests', 'tooltipShowDelay',
-        'tooltipHideDelay', 'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount', 'serverSideInitialRowCount',
-        'scrollbarWidth', 'asyncTransactionWaitMillis', 'blockLoadDebounceMillis', 'keepDetailRowsCount', 'undoRedoCellEditingLimit',
-        'cellFlashDelay', 'cellFadeDelay', 'cellFlashDuration', 'cellFadeDuration', 'tabIndex', 'pivotMaxGeneratedColumns',
+        'rowHeight',
+        'detailRowHeight',
+        'rowBuffer',
+        'headerHeight',
+        'groupHeaderHeight',
+        'groupLockGroupColumns',
+        'floatingFiltersHeight',
+        'pivotHeaderHeight',
+        'pivotGroupHeaderHeight',
+        'groupDefaultExpanded',
+        'pivotDefaultExpanded',
+        'viewportRowModelPageSize',
+        'viewportRowModelBufferSize',
+        'autoSizePadding',
+        'maxBlocksInCache',
+        'maxConcurrentDatasourceRequests',
+        'tooltipShowDelay',
+        'tooltipHideDelay',
+        'cacheOverflowSize',
+        'paginationPageSize',
+        'cacheBlockSize',
+        'infiniteInitialRowCount',
+        'serverSideInitialRowCount',
+        'scrollbarWidth',
+        'asyncTransactionWaitMillis',
+        'blockLoadDebounceMillis',
+        'keepDetailRowsCount',
+        'undoRedoCellEditingLimit',
+        'cellFlashDelay',
+        'cellFadeDelay',
+        'cellFlashDuration',
+        'cellFadeDuration',
+        'tabIndex',
+        'pivotMaxGeneratedColumns',
     ];
 
+    // These properties are coerced at runtime, do not do union types
     public static BOOLEAN_PROPERTIES: KeysOfType<boolean>[] = [
-        'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellFocus', 'suppressHeaderFocus', 'suppressHorizontalScroll', 'groupSelectsChildren',
-        'alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableCellExpressions', 'groupIncludeTotalFooter',
-        'groupSuppressBlankHeader', 'suppressMenuHide', 'suppressRowDeselection', 'unSortIcon', 'suppressMultiSort', 'alwaysMultiSort', 'singleClickEdit',
-        'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize', 'skipHeaderOnAutoSize', 'suppressParentsInRowNodes', 'suppressColumnMoveAnimation',
-        'suppressMovableColumns', 'suppressFieldDotNotation', 'enableRangeSelection', 'enableRangeHandle', 'enableFillHandle', 'suppressClearOnFillReduction',
-        'deltaSort', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey', 'suppressContextMenu', 'enableCellChangeFlash', 
-        'suppressDragLeaveHidesColumns', 'suppressRowGroupHidesColumns', 'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel',
-        'suppressCopyRowsToClipboard',  'copyHeadersToClipboard', 'copyGroupHeadersToClipboard', 'pivotMode', 'suppressAggFuncInHeader',
-        'suppressColumnVirtualisation', 'alwaysAggregateAtRootLevel', 'suppressAggAtRootLevel', 'suppressFocusAfterRefresh', 'functionsPassive',
-        'functionsReadOnly', 'animateRows',  'groupSelectsFiltered', 'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'enableRtl',
-        'suppressClickEdit', 'rowDragEntireRow', 'rowDragManaged', 'suppressRowDrag', 'suppressMoveWhenRowDragging', 'rowDragMultiRow', 'enableGroupEdit',
-        'embedFullWidthRows', 'suppressPaginationPanel', 'groupHideOpenParents', 'groupAllowUnbalanced', 'pagination', 'paginationAutoPageSize',
-        'suppressScrollOnNewData', 'suppressScrollWhenPopupsAreOpen', 'purgeClosedRowNodes', 'cacheQuickFilter', 'includeHiddenColumnsInQuickFilter',
-        'excludeHiddenColumnsFromQuickFilter', 'ensureDomOrder', 'accentedSort', 'suppressChangeDetection', 'valueCache', 'valueCacheNeverExpires',
-        'aggregateOnlyChangedColumns', 'suppressAnimationFrame', 'suppressExcelExport', 'suppressCsvExport', 'includeHiddenColumnsInAdvancedFilter',
-        'suppressMultiRangeSelection', 'enterMovesDown', 'enterMovesDownAfterEdit', 'enterNavigatesVerticallyAfterEdit', 'enterNavigatesVertically',
-        'suppressPropertyNamesCheck', 'rowMultiSelectWithClick', 'suppressRowHoverHighlight', 'suppressRowTransform', 'suppressClipboardPaste',
-        'suppressLastEmptyLineOnPaste', 'enableCharts', 'enableChartToolPanelsButton', 'suppressChartToolPanelsButton', 'suppressMaintainUnsortedOrder',
-        'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',  'excludeChildrenWhenTreeDataFiltering',
-        'tooltipMouseTrack', 'tooltipInteraction', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu', 'undoRedoCellEditing',
-        'allowDragFromColumnsToolPanel', 'pivotSuppressAutoColumn', 'suppressExpandablePivotGroups', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
-        'serverSideFilterAllLevels', 'serverSideSortAllLevels', 'serverSideEnableClientSideSort', 'serverSideOnlyRefreshFilteredGroups', 'serverSideSortOnServer', 'serverSideFilterOnServer',
-        'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi', 'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus',
-        'maintainColumnOrder', 'groupMaintainOrder', 'columnHoverHighlight', 'readOnlyEdit', 'suppressRowVirtualisation', 'enableCellEditingOnBackspace',
-        'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressCutToClipboard',
-        'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter','enableAdvancedFilter', 'masterDetail', 'treeData',
-        'suppressGroupMaintainValueType', 'reactiveCustomComponents', 'legacyChartsMenu',
+        'suppressMakeColumnVisibleAfterUnGroup',
+        'suppressRowClickSelection',
+        'suppressCellFocus',
+        'suppressHeaderFocus',
+        'suppressHorizontalScroll',
+        'groupSelectsChildren',
+        'alwaysShowHorizontalScroll',
+        'alwaysShowVerticalScroll',
+        'debug',
+        'enableBrowserTooltips',
+        'enableCellExpressions',
+        'groupIncludeTotalFooter',
+        'groupSuppressBlankHeader',
+        'suppressMenuHide',
+        'suppressRowDeselection',
+        'unSortIcon',
+        'suppressMultiSort',
+        'alwaysMultiSort',
+        'singleClickEdit',
+        'suppressLoadingOverlay',
+        'suppressNoRowsOverlay',
+        'suppressAutoSize',
+        'skipHeaderOnAutoSize',
+        'suppressColumnMoveAnimation',
+        'suppressMovableColumns',
+        'suppressFieldDotNotation',
+        'enableRangeSelection',
+        'enableRangeHandle',
+        'enableFillHandle',
+        'suppressClearOnFillReduction',
+        'deltaSort',
+        'suppressTouch',
+        'suppressAsyncEvents',
+        'allowContextMenuWithControlKey',
+        'suppressContextMenu',
+        'enableCellChangeFlash',
+        'suppressDragLeaveHidesColumns',
+        'suppressRowGroupHidesColumns',
+        'suppressMiddleClickScrolls',
+        'suppressPreventDefaultOnMouseWheel',
+        'suppressCopyRowsToClipboard',
+        'copyHeadersToClipboard',
+        'copyGroupHeadersToClipboard',
+        'pivotMode',
+        'suppressAggFuncInHeader',
+        'suppressColumnVirtualisation',
+        'alwaysAggregateAtRootLevel',
+        'suppressFocusAfterRefresh',
+        'functionsReadOnly',
+        'animateRows',
+        'groupSelectsFiltered',
+        'groupRemoveSingleChildren',
+        'groupRemoveLowestSingleChildren',
+        'enableRtl',
+        'suppressClickEdit',
+        'rowDragEntireRow',
+        'rowDragManaged',
+        'suppressRowDrag',
+        'suppressMoveWhenRowDragging',
+        'rowDragMultiRow',
+        'enableGroupEdit',
+        'embedFullWidthRows',
+        'suppressPaginationPanel',
+        'groupHideOpenParents',
+        'groupAllowUnbalanced',
+        'pagination',
+        'paginationAutoPageSize',
+        'suppressScrollOnNewData',
+        'suppressScrollWhenPopupsAreOpen',
+        'purgeClosedRowNodes',
+        'cacheQuickFilter',
+        'includeHiddenColumnsInQuickFilter',
+        'ensureDomOrder',
+        'accentedSort',
+        'suppressChangeDetection',
+        'valueCache',
+        'valueCacheNeverExpires',
+        'aggregateOnlyChangedColumns',
+        'suppressAnimationFrame',
+        'suppressExcelExport',
+        'suppressCsvExport',
+        'includeHiddenColumnsInAdvancedFilter',
+        'suppressMultiRangeSelection',
+        'enterNavigatesVerticallyAfterEdit',
+        'enterNavigatesVertically',
+        'suppressPropertyNamesCheck',
+        'rowMultiSelectWithClick',
+        'suppressRowHoverHighlight',
+        'suppressRowTransform',
+        'suppressClipboardPaste',
+        'suppressLastEmptyLineOnPaste',
+        'enableCharts',
+        'suppressMaintainUnsortedOrder',
+        'enableCellTextSelection',
+        'suppressBrowserResizeObserver',
+        'suppressMaxRenderedRowRestriction',
+        'excludeChildrenWhenTreeDataFiltering',
+        'tooltipMouseTrack',
+        'tooltipInteraction',
+        'keepDetailRows',
+        'paginateChildRows',
+        'preventDefaultOnContextMenu',
+        'undoRedoCellEditing',
+        'allowDragFromColumnsToolPanel',
+        'pivotSuppressAutoColumn',
+        'suppressExpandablePivotGroups',
+        'debounceVerticalScrollbar',
+        'detailRowAutoHeight',
+        'serverSideSortAllLevels',
+        'serverSideEnableClientSideSort',
+        'serverSideOnlyRefreshFilteredGroups',
+        'serverSideSortOnServer',
+        'serverSideFilterOnServer',
+        'suppressAggFilteredOnly',
+        'showOpenedGroup',
+        'suppressClipboardApi',
+        'suppressModelUpdateAfterUpdateTransaction',
+        'stopEditingWhenCellsLoseFocus',
+        'maintainColumnOrder',
+        'groupMaintainOrder',
+        'columnHoverHighlight',
+        'readOnlyEdit',
+        'suppressRowVirtualisation',
+        'enableCellEditingOnBackspace',
+        'resetRowDataOnUpdate',
+        'removePivotHeaderRowWhenSingleValueColumn',
+        'suppressCopySingleCellRanges',
+        'suppressGroupRowsSticky',
+        'suppressCutToClipboard',
+        'suppressServerSideInfiniteScroll',
+        'rowGroupPanelSuppressSort',
+        'allowShowChangeAfterFilter',
+        'enableAdvancedFilter',
+        'masterDetail',
+        'treeData',
+        'suppressGroupMaintainValueType',
+        'reactiveCustomComponents',
+        'applyQuickFilterBeforePivotOrAgg',
+        'suppressServerSideFullWidthLoadingRow',
+        'suppressAdvancedFilterEval',
+        'loading',
     ];
 
-    /** You do not need to include event callbacks in this list, as they are generated automatically. */
-    public static FUNCTIONAL_PROPERTIES: FunctionKeys[] = [
-        'doesExternalFilterPass', 'processPivotResultColDef', 'processPivotResultColGroupDef', 'getBusinessKeyForNode',  'isRowSelectable', 'rowDragText',
-        'groupRowRenderer', 'fullWidthCellRenderer', 'loadingCellRenderer',  'loadingOverlayComponent', 'noRowsOverlayComponent', 'detailCellRenderer',
-        'quickFilterParser', 'quickFilterMatcher'
-    ];
+    // If property does not fit above, i.e union that should not be coerced.
+    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow'];
 
-    /** These callbacks extend AgGridCommon interface */
-    public static CALLBACK_PROPERTIES: CallbackKeys[] = [
-        'getLocaleText', 'isExternalFilterPresent', 'getRowHeight', 'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems',
-        'processRowPostCreate', 'processCellForClipboard', 'getGroupRowAgg', 'isFullWidthRow', 'sendToClipboard', 'navigateToNextHeader',
-        'tabToNextHeader', 'navigateToNextCell', 'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount',
-        'getDataPath', 'isRowMaster', 'postSortRows', 'processHeaderForClipboard', 'processUnpinnedColumns', 'processGroupHeaderForClipboard',
-        'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'createChartContainer',
-        'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction','getServerSideGroupLevelParams', 'isServerSideGroupOpenByDefault',
-        'isGroupOpenByDefault', 'initialGroupOrderComparator', 'groupIncludeFooter', 'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering',
-        'chartMenuItems'
-    ];
-
-    public static FUNCTION_PROPERTIES: GridOptionKey[] = [
-        ...PropertyKeys.FUNCTIONAL_PROPERTIES,
-        ...PropertyKeys.CALLBACK_PROPERTIES
+    public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [
+        'doesExternalFilterPass',
+        'processPivotResultColDef',
+        'processPivotResultColGroupDef',
+        'getBusinessKeyForNode',
+        'isRowSelectable',
+        'rowDragText',
+        'groupRowRenderer',
+        'fullWidthCellRenderer',
+        'loadingCellRenderer',
+        'loadingOverlayComponent',
+        'noRowsOverlayComponent',
+        'detailCellRenderer',
+        'quickFilterParser',
+        'quickFilterMatcher',
+        'getLocaleText',
+        'isExternalFilterPresent',
+        'getRowHeight',
+        'getRowClass',
+        'getRowStyle',
+        'getContextMenuItems',
+        'getMainMenuItems',
+        'processRowPostCreate',
+        'processCellForClipboard',
+        'getGroupRowAgg',
+        'isFullWidthRow',
+        'sendToClipboard',
+        'focusGridInnerElement',
+        'navigateToNextHeader',
+        'tabToNextHeader',
+        'navigateToNextCell',
+        'tabToNextCell',
+        'processCellFromClipboard',
+        'getDocument',
+        'postProcessPopup',
+        'getChildCount',
+        'getDataPath',
+        'isRowMaster',
+        'postSortRows',
+        'processHeaderForClipboard',
+        'processUnpinnedColumns',
+        'processGroupHeaderForClipboard',
+        'paginationNumberFormatter',
+        'processDataFromClipboard',
+        'getServerSideGroupKey',
+        'isServerSideGroup',
+        'createChartContainer',
+        'getChartToolbarItems',
+        'fillOperation',
+        'isApplyServerSideTransaction',
+        'getServerSideGroupLevelParams',
+        'isServerSideGroupOpenByDefault',
+        'isGroupOpenByDefault',
+        'initialGroupOrderComparator',
+        'groupIncludeFooter',
+        'loadingCellRendererSelector',
+        'getRowId',
+        'groupAggFiltering',
+        'chartMenuItems',
+        'groupTotalRow',
     ];
 
     public static ALL_PROPERTIES: GridOptionKey[] = [
@@ -225,6 +460,7 @@ export class PropertyKeys {
         ...PropertyKeys.STRING_PROPERTIES,
         ...PropertyKeys.NUMBER_PROPERTIES,
         ...PropertyKeys.FUNCTION_PROPERTIES,
-        ...PropertyKeys.BOOLEAN_PROPERTIES
+        ...PropertyKeys.BOOLEAN_PROPERTIES,
+        ...PropertyKeys.OTHER_PROPERTIES,
     ];
 }

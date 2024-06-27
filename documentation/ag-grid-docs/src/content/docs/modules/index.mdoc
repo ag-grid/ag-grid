@@ -2,13 +2,13 @@
 title: "AG Grid Modules"
 ---
 
-AG Grid modules allow you to cherry pick grid features resulting in a smaller application bundle size overall.
+Reduce your application bundle size by cherry picking grid features using AG Grid modules.
 
-{% if isFramework("vue") %}
-{% note %}
-Note that the following describes the setup for Vue 3. For Vue 2, use `@ag-grid-community/vue` instead of `@ag-grid-community/vue3`.
-{% /note %}
-{% /if %}
+## Packages vs Modules
+
+Importing AG Grid with packages ensures every grid feature is implicitly available but this can bloat your application bundle size with features that aren't required. Packages default to **CommonJS ES5** format which makes integration into other build & testing tools (specifically Jest) easier.
+
+If you want to minimise your application bundle size, use modules to include only the functionality you need. You will need to [Register Modules](./modules/#registering-ag-grid-modules) in your application. Modules default to **ES6 ES Modules** but not all tooling supports ESM out of the box yet (specifically testing tools such as Jest). These tools can be accommodated with extra configuration (see [Testing](./testing)).
 
 ## Modules
 
@@ -60,7 +60,7 @@ The table below summarises the modules provided in AG Grid Community and AG Grid
     }
     filter="enterprise" /%}
 
-## Mixing **packages** and **modules**
+## Mixing Packages and Modules
 
 {% warning %}
 Do **not** mix `packages` and `modules`! This will result in a large bundle size!
@@ -77,8 +77,8 @@ be mixed with the standalone packages of `ag-grid-community` and `ag-grid-enterp
 
 ```js
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@" // a package dependency
-    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@"  // a module dependency
+    "ag-grid-community": "~{% $agGridVersion %}" // a package dependency
+    "@ag-grid-enterprise/row-grouping": "~{% $agGridVersion %}"  // a module dependency
     //...other dependencies...
 }
 ```
@@ -132,10 +132,10 @@ Additionally we're writing a Vue application, so we need to specify the `@ag-gri
 {% if isFramework("javascript") %}
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
-   "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
+   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+   "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
    //...other dependencies...
 }
 ```
@@ -144,11 +144,11 @@ Additionally we're writing a Vue application, so we need to specify the `@ag-gri
 {% if isFramework("angular") %}
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
-   "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
-   "@ag-grid-community/angular": "~@AG_GRID_VERSION@",
+   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+   "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
+   "@ag-grid-community/angular": "~{% $agGridVersion %}",
    //...other dependencies...
 }
 ```
@@ -157,11 +157,11 @@ Additionally we're writing a Vue application, so we need to specify the `@ag-gri
 {% if isFramework("react") %}
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
-   "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
-   "@ag-grid-community/react": "~@AG_GRID_VERSION@",
+   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+   "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
+   "@ag-grid-community/react": "~{% $agGridVersion %}",
    //...other dependencies...
 }
 ```
@@ -170,11 +170,11 @@ Additionally we're writing a Vue application, so we need to specify the `@ag-gri
 {% if isFramework("vue") %}
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
-   "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
-   "@ag-grid-community/vue3": "~@AG_GRID_VERSION@",
+   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+   "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
+   "@ag-grid-community/vue3": "~{% $agGridVersion %}",
    //...other dependencies...
 }
 ```
@@ -273,8 +273,7 @@ public modules: Module[] = [
 <ag-grid-angular>
    [rowData]="rowData"
    [columnDefs]="columnDefs"
-   [modules]="modules"
-</ag-grid-angular>
+   [modules]="modules" />
 ```
 {% /if %}
 
@@ -358,7 +357,7 @@ To see the difference in features open the ContextMenu and open the column filte
 * The Right grid has options for charting and CSV and Excel export.
 * The Left grid uses the Set Filter  while the Right grid uses the Text Filter or Number Filter depending on the cell data type.
 
-{% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" /%}
+{% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" overrideImportType="modules" /%}
 
 ## Core Modules
 
@@ -370,8 +369,8 @@ If we have the following modules specified:
 
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
-   "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
+   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
    //...other dependencies...
 }
 ```
@@ -418,4 +417,4 @@ Our Example Runner enables you to view the `modules` version of an example via t
 When 'Modules' is selected, the source code includes the required modules along with the module import paths. This means
 you can copy and paste code from our examples without further tweaks.
 
-{% imageCaption imagePath="resources/module-example-runner.png" alt="Module Examples" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/module-example-runner.png" alt="Module Examples" centered=true constrained=true maxWidth="90%" /%}

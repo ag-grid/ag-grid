@@ -1,17 +1,18 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import { createApp } from 'vue';
+
+import { getData } from './data.js';
 import MoodEditor from './moodEditorVue.js';
 import NumericCellEditor from './numericCellEditorVue.js';
-import { getData } from './data.js';
+import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule]);
 
 const VueExample = {
@@ -35,16 +36,16 @@ const VueExample = {
     components: {
         'ag-grid-vue': AgGridVue,
         MoodEditor,
-        NumericCellEditor
+        NumericCellEditor,
     },
     data: function () {
         return {
             columnDefs: [
                 {
-                    field: "type"
+                    field: 'type',
                 },
                 {
-                    field: "value",
+                    field: 'value',
                     editable: true,
                     cellEditorSelector: (params) => {
                         if (params.data.type === 'age') {
@@ -58,19 +59,18 @@ const VueExample = {
                                 params: {
                                     values: ['Male', 'Female'],
                                 },
-                                popup: true
                             };
                         }
                         if (params.data.type === 'mood') {
                             return {
                                 component: 'MoodEditor',
                                 popup: true,
-                                popupPosition: 'under'
+                                popupPosition: 'under',
                             };
                         }
                         return undefined;
-                    }
-                }
+                    },
+                },
             ],
             gridApi: null,
             defaultColDef: {
@@ -78,11 +78,13 @@ const VueExample = {
                 cellDataType: false,
             },
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
     created() {
-        this.rowData = getData()
+        this.rowData = getData();
     },
     methods: {
         onRowEditingStarted(event) {
@@ -99,11 +101,8 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-
         },
-    }
-}
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

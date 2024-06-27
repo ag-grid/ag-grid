@@ -1,14 +1,30 @@
 export async function getData(delay: number = 100): Promise<any[]> {
     // Simulate a server delay using setTimeout wrapped in a Promise
-    return await new Promise<any[]>(resolve => setTimeout(() => resolve(generateData()), delay));
+    return await new Promise<any[]>((resolve) => setTimeout(() => resolve(generateData()), delay));
 }
 
 function generateData(): any[] {
     const countries = [
-        'Ireland', 'Spain', 'United Kingdom', 'France', 'Germany',
-        'Luxembourg', 'Sweden', 'Norway', 'Italy', 'Greece',
-        'Iceland', 'Portugal', 'Malta', 'Brazil', 'Argentina',
-        'Colombia', 'Peru', 'Venezuela', 'Uruguay', 'Belgium'
+        'Ireland',
+        'Spain',
+        'United Kingdom',
+        'France',
+        'Germany',
+        'Luxembourg',
+        'Sweden',
+        'Norway',
+        'Italy',
+        'Greece',
+        'Iceland',
+        'Portugal',
+        'Malta',
+        'Brazil',
+        'Argentina',
+        'Colombia',
+        'Peru',
+        'Venezuela',
+        'Uruguay',
+        'Belgium',
     ];
 
     return countries.map((country, index) => ({

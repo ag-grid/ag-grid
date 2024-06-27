@@ -1,18 +1,18 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
-import { PagesNavigation } from '@features/pages-navigation/components/PagesNavigation';
+import { PagesNavigation } from '@components/pages-navigation/components/PagesNavigation';
 import { Header } from '@features/docs/components/Header';
 import { getFrameworkDisplayText } from '@utils/framework';
-import type { Framework, MenuSection } from '@ag-grid-types';
+import type { Framework, MenuItem, MenuSection } from '@ag-grid-types';
 import { getDocsPages } from '@features/docs/utils/pageData';
-import { SideNavigation } from '@features/pages-navigation/components/SideNavigation';
+import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
-import { DOCS_TAB_ITEM_ID_PREFIX } from '@constants';
-import { getFilteredMenuSections } from '@features/pages-navigation/utils/getFilteredMenuSections';
+import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
+import { getFilteredMenuSections } from '@components/pages-navigation/utils/getFilteredMenuSections';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
-import styles from '@design-system/modules/docs.module.scss';
+import styles from '@pages-styles/docs.module.scss';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -23,15 +23,7 @@ const { page } = Astro.props;
 const currentFramework = Astro.params.framework as Framework;
 const pageName = Astro.params.pageName as Framework;
 const path = Astro.url.pathname;
-const { title, enterprise, hideSideMenu, hidePageMenu } = page.data;
-
-const { Content } = await page.render();
-const headings = await getHeadings({
-    title,
-    markdocContent: page.body,
-    framework: currentFramework,
-    getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
-});
+const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings } = page.data;
 
 const { data: menu } = await getEntry('menu', 'data');
 const frameworkMenuSections: MenuSection[] = getFilteredMenuSections({
@@ -43,16 +35,36 @@ const apiMenuSections: MenuSection[] = getFilteredMenuSections({
     framework: currentFramework,
 });
 
-const description = page.data.description || getFirstParagraphText(page.body);
+const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
+const version = versionsData[0]?.version;
+const frameworkDisplayText = getFrameworkDisplayText(currentFramework);
+const seoTagline = `Download AG Grid v${version} today: The best ${frameworkDisplayText} Table & ${frameworkDisplayText} Data Grid in the world.`;
+const description = page.data.description
+    ? page.data.description.replaceAll('$framework', frameworkDisplayText) // Use front-matter description
+    : getFirstParagraphText(page.body, currentFramework); // Default to 1st paragraph text
+const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
+
 const isApiPage = isApiMenuPath({
     pageName,
     menuData: menu,
 });
+const menuSections = isApiPage ? apiMenuSections : frameworkMenuSections;
+
+const { Content } = await page.render();
+const headings =
+    pageHeadings ||
+    (await getHeadings({
+        title,
+        pageName,
+        markdocContent: page.body,
+        framework: currentFramework,
+        getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
+    }));
 ---
 
 <Layout
     title={`${getFrameworkDisplayText(currentFramework)} Grid: ${title} | AG Grid`}
-    description={description}
+    description={descriptionWithSeoTagline}
     showSearchBar={true}
     showDocsNav={true}
 >
@@ -61,7 +73,7 @@ const isApiPage = isApiMenuPath({
             !hidePageMenu && (
                 <PagesNavigation
                     client:load
-                    menuSections={isApiPage ? apiMenuSections : frameworkMenuSections}
+                    menuSections={menuSections}
                     framework={currentFramework}
                     pageName={pageName}
                 />
@@ -76,7 +88,14 @@ const isApiPage = isApiMenuPath({
                 },
             ]}
         >
-            <Header client:load title={title} framework={currentFramework} isEnterprise={enterprise} path={path} />
+            <Header
+                client:load
+                title={title}
+                framework={currentFramework}
+                isEnterprise={enterprise}
+                path={path}
+                menuItems={menuSections as MenuItem[]}
+            />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
             <div class={styles.pageSections}>
@@ -84,14 +103,14 @@ const isApiPage = isApiMenuPath({
             </div>
         </div>
 
-        {!hideSideMenu && <SideNavigation client:load headings={headings} />}
+        {!hideSideMenu && <SideNavigation client:load headings={headings} delayedScrollSpy={Boolean(pageHeadings)} />}
     </div>
 </Layout>
 
 <script>
     /**
      * Retain scroll position between page changes
-     * 
+     *
      * Use session storage to store the scroll position and get it on page load
      */
     const SCROLL_POSITION_LOCALSTORAGE_KEY = 'docs-scroll-position';

@@ -1,8 +1,7 @@
-import { GetRowIdParams, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -11,12 +10,12 @@ const generateItem = (id = lastGen++) => {
     return {
         id,
         sort: Math.floor(Math.random() * 3 + 2000),
-        sort1: Math.floor(Math.random() *  3 + 2000),
+        sort1: Math.floor(Math.random() * 3 + 2000),
         sort2: Math.floor(Math.random() * 100000 + 2000),
     };
 };
 
-const getRowData = (rows = 10) => new Array(rows).fill(undefined).map(_ => generateItem());
+const getRowData = (rows = 10) => new Array(rows).fill(undefined).map((_) => generateItem());
 
 let gridApi: GridApi;
 
@@ -33,30 +32,29 @@ const gridOptions: GridOptions = {
     },
     rowData: getRowData(100000),
     deltaSort: true,
-    getRowId: ({ data }: GetRowIdParams) => data.id,
+    getRowId: ({ data }: GetRowIdParams) => String(data.id),
 };
 
 function addDelta() {
     const transaction = {
-        add: getRowData(1).map(row => ({ ...row, updatedBy: 'delta' })),
+        add: getRowData(1).map((row) => ({ ...row, updatedBy: 'delta' })),
         update: [{ id: 1, make: 'Delta', updatedBy: 'delta' }],
     };
     gridApi!.setGridOption('deltaSort', true);
     const startTime = new Date().getTime();
     gridApi!.applyTransaction(transaction);
-    document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
+    document.getElementById('transactionDuration')!.textContent = `${new Date().getTime() - startTime} ms`;
 }
 
 function addDefault() {
     const transaction = {
-        add: getRowData(1).map(row => ({ ...row, updatedBy: 'default' })),
+        add: getRowData(1).map((row) => ({ ...row, updatedBy: 'default' })),
         update: [{ id: 2, make: 'Default', updatedBy: 'default' }],
     };
     gridApi!.setGridOption('deltaSort', false);
     const startTime = new Date().getTime();
     gridApi!.applyTransaction(transaction);
-    document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
-
+    document.getElementById('transactionDuration')!.textContent = `${new Date().getTime() - startTime} ms`;
 }
 
 document.addEventListener('DOMContentLoaded', function () {

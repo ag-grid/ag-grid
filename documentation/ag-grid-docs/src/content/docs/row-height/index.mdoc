@@ -2,7 +2,7 @@
 title: "Row Height"
 ---
 
-By default, the grid will display rows with a height of `25px`. You can change this for each row
+By default, the row height in the grid is based on the theme (`42px` for Quartz). You can change this for each row
 individually to give each row a different height.
 
 {% note %}
@@ -15,7 +15,7 @@ This is because this row model needs to work out the position of rows that are n
 To change the row height for the whole grid, set the property `rowHeight` to a positive number.
 For example, to set the height to 50px, do the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowHeight: 50,
 }
@@ -29,9 +29,9 @@ Changing the property will set a new row height for all rows, including pinned r
 
 To change the row height so that each row can have a different height,
 implement the `getRowHeight(params)` callback. For example, to set the height
-to 50px for all group rows and 25px for all other rows, do the following:
+to 50px for all group rows and 20px for all other rows, do the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     getRowHeight: params => params.node.group ? 50 : 20,
 }
@@ -131,7 +131,7 @@ The example below shows Auto Height. Column A has Auto Height enabled by setting
 {% gridExampleRunner title="Auto Row Height" name="auto-row-height" /%}
 
 {% warning %}
-Columns with Auto Height will always be rendered because the grid needs to set the height of the row. Setting `autoHeight=true` adds size listeners to cells and stops Column Virtualisation for these columns which can negatively impact rendering performance. This is why only set Auto Height for columns which require it. For example, if you have many columns that do not require variable height, do not set them to Auto Height.
+Columns with Auto Height will always be rendered because the grid needs to set the height of the row. Setting `autoHeight=true` adds size listeners to cells and stops Column Virtualisation for these columns which can negatively impact rendering performance. This is why you should only set Auto Height for columns which require it. For example, if you have many columns that do not require variable height, do not set them to Auto Height.
 {% /warning %}
 
 ### Lazy Height Calculation

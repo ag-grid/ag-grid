@@ -1,9 +1,9 @@
-import { IRowModel } from "./iRowModel";
-import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
-import { ServerSideGroupLevelState } from "./IServerSideStore";
-import { IServerSideDatasource } from "./iServerSideDatasource";
-import { IRowNode } from "./iRowNode";
-import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
+import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
+import type { ServerSideGroupLevelState } from './IServerSideStore';
+import type { IRowModel } from './iRowModel';
+import type { IRowNode } from './iRowNode';
+import type { IServerSideDatasource } from './iServerSideDatasource';
+import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
 export interface IServerSideRowModel extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
@@ -13,7 +13,10 @@ export interface IServerSideRowModel extends IRowModel {
     retryLoads(): void;
     expandAll(value: boolean): void;
     setDatasource(datasource: IServerSideDatasource): void;
-    forEachNodeAfterFilterAndSort(callback: (node: IRowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    forEachNodeAfterFilterAndSort(
+        callback: (node: IRowNode, index: number) => void,
+        includeFooterNodes?: boolean
+    ): void;
     resetRootStore(): void;
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
@@ -22,7 +25,10 @@ export interface IServerSideRowModel extends IRowModel {
 
 export interface IServerSideTransactionManager {
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
-    applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void;
+    applyTransactionAsync(
+        transaction: ServerSideTransaction,
+        callback?: (res: ServerSideTransactionResult) => void
+    ): void;
     flushAsyncTransactions(): void;
 }
 

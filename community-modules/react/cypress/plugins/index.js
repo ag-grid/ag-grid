@@ -11,19 +11,18 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-const preprocessor = require('cypress-react-unit-test/plugins/babelrc')
+const preprocessor = require('cypress-react-unit-test/plugins/babelrc');
 module.exports = (on, config) => {
     preprocessor(on, config);
 
     on(`task`, {
         // bubble up errors...so we can fail tests on console.errors
-        error ( message ) {
-            console.error( 'CONSOLE ERROR: ', message );
+        error(message) {
+            console.error('CONSOLE ERROR: ', message);
             return null;
-        }
+        },
     });
 
     // IMPORTANT to return the config object
-    return config
-}
-
+    return config;
+};

@@ -2,19 +2,21 @@ const replace = require('replace-in-file');
 const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');
-const ComponentUtil = require("@ag-grid-community/core").ComponentUtil;
+const ComponentUtil = require('@ag-grid-community/core').ComponentUtil;
 const { getFormatterForTS } = require('./../../scripts/formatAST');
 
 const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
+
+const AG_CHART_TYPES = ['AgChartTheme', 'AgChartThemeOverrides'];
 
 function writeSortedLines(toWrite, result) {
     toWrite.sort((a, b) => {
         if (a.order < b.order) return -1;
         if (a.order > b.order) return 1;
-        return 0
+        return 0;
     });
 
-    toWrite.forEach(p => {
+    toWrite.forEach((p) => {
         result += p.line;
     });
     // for readability
@@ -31,45 +33,46 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
         typeLookup[name] = returnType;
     } else if (kind == 'MethodSignature') {
         if (node.parameters && node.parameters.length > 0) {
-            const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${formatNode(p.type, srcFile)}`);
+            const methodParams = node.parameters.map((p) => `${p.name.escapedText}: ${formatNode(p.type, srcFile)}`);
             typeLookup[name] = `(${methodParams.join(', ')}) => ${returnType}`;
         } else {
-            typeLookup[name] = `() => ${returnType}`
+            typeLookup[name] = `() => ${returnType}`;
         }
 
         if (publicEventLookup[name]) {
             // Events are assumed to have a single parameter
             if (node.parameters.length > 1) {
-                throw new Error("Events with more than one parameter will cause issues to the frameworks!");
+                throw new Error('Events with more than one parameter will cause issues to the frameworks!');
             }
             const typeName = formatNode(node.parameters[0].type, srcFile);
             eventTypeLookup[name] = typeName;
         }
-    };
-    ts.forEachChild(node, n => extractTypesFromNode(srcFile, n, { typeLookup, eventTypeLookup, publicEventLookup, docLookup }));
+    }
+    ts.forEachChild(node, (n) =>
+        extractTypesFromNode(srcFile, n, { typeLookup, eventTypeLookup, publicEventLookup, docLookup })
+    );
 }
 
-
 function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, docLookup }) {
-    const skippableProperties = ['gridOptions', 'reactiveCustomComponents'];
-
+    const skippableProperties = ['gridOptions', 'reactiveCustomComponents', 'GridPreDestroyedEvent'];
+    const skippableEvents = ['gridPreDestroyed'];
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
 
     compUtils.ALL_PROPERTIES.forEach((property) => {
-        if (skippableProperties.indexOf(property) === -1) {
-            const typeName = typeLookup[property];
-            const inputType = getSafeType(typeName);
-            let line = addDocLine(docLookup, property, '');
-            let inputTypeWithGenerics = inputType;
-            if (property == 'columnDefs') {
-                // Use the Generic hint types for improved type checking by updating the columnDefs property
-                inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
-            }
-            line += `    @Input() public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
-            const order = typeKeysOrder.findIndex(p => p === property);
-            propsToWrite.push({ order, line });
+        if (skippableProperties.includes(property)) return;
+
+        const typeName = typeLookup[property];
+        const inputType = getSafeType(typeName);
+        let line = addDocLine(docLookup, property, '');
+        let inputTypeWithGenerics = inputType;
+        if (property == 'columnDefs') {
+            // Use the Generic hint types for improved type checking by updating the columnDefs property
+            inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
         }
+        line += `    @Input() public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
+        const order = typeKeysOrder.findIndex((p) => p === property);
+        propsToWrite.push({ order, line });
     });
 
     let result = writeSortedLines(propsToWrite, '');
@@ -77,13 +80,15 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     let eventsToWrite = [];
     const missingEventTypes = [];
     compUtils.PUBLIC_EVENTS.forEach((event) => {
+        if (skippableEvents.includes(event)) return;
+
         const onEvent = compUtils.getCallbackForEvent(event);
         const eventType = eventTypeLookup[onEvent];
         if (eventType) {
-            const callbackName = ComponentUtil.getCallbackForEvent(event)
+            const callbackName = ComponentUtil.getCallbackForEvent(event);
             let line = addDocLine(docLookup, callbackName, '');
             line += `    @Output() public ${event}: EventEmitter<${eventType}> = new EventEmitter<${eventType}>();${EOL}`;
-            const order = typeKeysOrder.findIndex(p => p === callbackName);
+            const order = typeKeysOrder.findIndex((p) => p === callbackName);
             eventsToWrite.push({ order, line });
         } else {
             missingEventTypes.push(event);
@@ -91,7 +96,9 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     });
 
     if (missingEventTypes.length > 0) {
-        throw new Error(`The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to ComponentUtil.EXCLUDED_INTERNAL_EVENTS.\n`)
+        throw new Error(
+            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to INTERNAL_EVENTS.\n`
+        );
     }
 
     result = writeSortedLines(eventsToWrite, result);
@@ -133,8 +140,7 @@ function applyUndefinedUnionType(typeName) {
     }
     if (trimmed.includes('=>')) {
         return `(${trimmed}) | undefined`;
-    }
-    else {
+    } else {
         return `${trimmed} | undefined`;
     }
 }
@@ -154,38 +160,45 @@ function parseFile(sourceFile) {
 }
 
 function extractTypes(context, propsToSkip = []) {
-    let allTypes = [...Object.entries(context.typeLookup).filter(([k, v]) => !propsToSkip.includes(k)).map(([k, v]) => v), ...Object.values(context.eventTypeLookup)];
+    let allTypes = [
+        ...Object.entries(context.typeLookup)
+            .filter(([k, v]) => !propsToSkip.includes(k))
+            .map(([k, v]) => v),
+        ...Object.values(context.eventTypeLookup),
+    ];
 
     let propertyTypes = [];
-    const regex = new RegExp(/(?<!\w)(?:[A-Z]\w+)/, 'g')
-    allTypes.forEach(tt => {
+    const regex = new RegExp(/(?<!\w)(?:[A-Z]\w+)/, 'g');
+    allTypes.forEach((tt) => {
         const matches = tt.matchAll(regex);
         for (const match of matches) {
-            propertyTypes.push(Array.from(match, m => m))
+            propertyTypes.push(Array.from(match, (m) => m));
         }
-    })
-    let expandedTypes = propertyTypes.flatMap(m => m)
+    });
+    let expandedTypes = propertyTypes.flatMap((m) => m);
 
-    const nonAgTypes = ['Partial', 'Document', 'HTMLElement', 'Function', 'TData']
-    expandedTypes = [...new Set(expandedTypes)].filter(t => !nonAgTypes.includes(t)).sort();
+    const nonAgTypes = ['Partial', 'Document', 'HTMLElement', 'Function', 'TData'];
+    expandedTypes = [...new Set(expandedTypes)]
+        .filter((t) => !nonAgTypes.includes(t) && !AG_CHART_TYPES.includes(t))
+        .sort();
     return expandedTypes;
 }
 
 function getGridPropertiesAndEventsJs() {
-    const gridOpsFile = "../../community-modules/core/src/entities/gridOptions.ts";
+    const gridOpsFile = '../../community-modules/core/src/entities/gridOptions.ts';
     const srcFile = parseFile(gridOpsFile);
     const gridOptionsNode = findNode('GridOptions', srcFile);
 
     // Apply @Output formatting to public events that are present in this lookup
     const publicEventLookup = {};
-    ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
+    ComponentUtil.PUBLIC_EVENTS.forEach((e) => (publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true));
 
     let context = {
         typeLookup: {},
         eventTypeLookup: {},
         docLookup: {},
-        publicEventLookup
-    }
+        publicEventLookup,
+    };
     extractTypesFromNode(srcFile, gridOptionsNode, context);
 
     return generateAngularInputOutputs(ComponentUtil, context);
@@ -194,28 +207,32 @@ function getGridPropertiesAndEventsJs() {
 const updateGridProperties = (getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
     const { code: gridPropertiesAndEvents, types } = getGridPropertiesAndEvents();
-    const importsForProps = `import {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";`
+    const importsForProps = `import type {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";`;
     const optionsForGrid = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
         from: [/(\/\/ @START@)[^]*(\/\/ @END@)/, /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/],
-        to: [`// @START@${EOL}${gridPropertiesAndEvents}    // @END@`, `// @START_IMPORTS@${EOL}${importsForProps}${EOL}// @END_IMPORTS@`],
+        to: [
+            `// @START@${EOL}${gridPropertiesAndEvents}    // @END@`,
+            `// @START_IMPORTS@${EOL}${importsForProps}${EOL}// @END_IMPORTS@`,
+        ],
     };
 
-    replace(optionsForGrid)
-        .then(filesChecked => {
-            const changes = filesChecked.filter(change => change.hasChanged);
-            console.log(`Grid Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(change => change.file).join(', ')}`);
-        });
+    replace(optionsForGrid).then((filesChecked) => {
+        const changes = filesChecked.filter((change) => change.hasChanged);
+        console.log(
+            `Grid Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map((change) => change.file).join(', ')}`
+        );
+    });
 };
 
 updatePropertiesBuilt = () => {
     updateGridProperties(getGridPropertiesAndEventsJs);
-}
+};
 
 console.log(`--------------------------------------------------------------------------------`);
 console.log(`Generate Angular Component Input / Outputs...`);
-console.log('Using Typescript version: ', ts.version)
+console.log('Using Typescript version: ', ts.version);
 
-updatePropertiesBuilt()
+updatePropertiesBuilt();
 
 console.log(`--------------------------------------------------------------------------------`);

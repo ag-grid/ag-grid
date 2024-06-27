@@ -14,7 +14,7 @@ These are enabled by default, with the data type being inferred from the row dat
 
 Specific cell data types can also be defined by setting the `cellDataType` property on the column definition.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
    columnDefs: [
        {
@@ -132,7 +132,7 @@ The following properties are set:
 
 * `cellEditorParams.useFormatter = true` so that the cell editor uses the Value Formatter.
 * A `comparator` is defined to allow [Custom Sorting](./row-sorting/#custom-sorting) using the Value Formatter.
-* For AG Grid Community, a [Filter Value Getter](./value-getters/#filter-value-getters) is used to convert the value with the Value Formatter.
+* For AG Grid Community, a [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) is used to convert the value with the Value Formatter.
 * For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter.
 
 ### Pre-Defined Cell Data Type Example
@@ -155,7 +155,7 @@ Custom cell data types can be added by setting the grid option `dataTypeDefiniti
 
 {% apiDocumentation source="grid-options/properties.json" section="columns" names=["dataTypeDefinitions"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
    dataTypeDefinitions: {
        percentage: {
@@ -193,7 +193,7 @@ For example, this is required if a different date format is desired.
 
 This works in the same way as when [Providing Custom Cell Data Types](#providing-custom-cell-data-types).
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
    dataTypeDefinitions: {
        // override `date` to handle custom date format `dd/mm/yyyy`

@@ -2,15 +2,18 @@
 const fs = require('fs');
 const path = require('path');
 
-const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
+const pipe =
+    (...fns) =>
+    (x) =>
+        fns.reduce((v, f) => f(v), x);
 
-const ROOT_PACKAGE_JSON = '../../package.json'
+const ROOT_PACKAGE_JSON = '../../package.json';
 const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages;
 
 if (process.argv.length < 5) {
-    console.log("Usage: node scripts/release/versionModules.js [New Version] [Dependency Version] [charts version]");
-    console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0 1.0.0");
-    console.log("Note: This script should be run from the root of the monorepo");
+    console.log('Usage: node scripts/release/versionModules.js [New Version] [Dependency Version] [charts version]');
+    console.log('For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0 1.0.0');
+    console.log('Note: This script should be run from the root of the monorepo');
     process.exit(1);
 }
 
@@ -29,27 +32,27 @@ function updateAngularProject(CWD, packageDirectory) {
 function updatePackageJsonFiles() {
     const CWD = process.cwd();
 
-    packageDirectories.forEach(packageDirectory => {
+    packageDirectories.forEach((packageDirectory) => {
         // update all package.json files
         const packageJsonFile = `${CWD}/${packageDirectory}/package.json`;
         updateFileWithNewVersions(packageJsonFile);
 
         // angular projects have "sub" projects which we need to update
-        if (packageDirectory.includes("angular")) {
+        if (packageDirectory.includes('angular')) {
             updateAngularProject(CWD, packageDirectory);
         }
 
         // update version.ts file
         const currentVersionFile = `${CWD}/${packageDirectory}/src/version.ts`;
         updateVersionFile(currentVersionFile);
-    })
+    });
 }
 
 function updateRootPackageJson() {
     const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, ROOT_PACKAGE_JSON), 'utf8'));
     packageJson.version = gridNewVersion;
 
-    fs.writeFileSync(ROOT_PACKAGE_JSON, JSON.stringify(packageJson, null, 2), "utf8");
+    fs.writeFileSync(ROOT_PACKAGE_JSON, JSON.stringify(packageJson, null, 2), 'utf8');
 }
 
 function updateFileWithNewVersions(currentFile) {
@@ -62,7 +65,7 @@ function updateFileWithNewVersions(currentFile) {
         updatePeerDependencies
     )(packageJson);
 
-    fs.writeFileSync(currentFile, JSON.stringify(updatedPackageJson, null, 2), "utf8");
+    fs.writeFileSync(currentFile, JSON.stringify(updatedPackageJson, null, 2), 'utf8');
 }
 
 /**
@@ -76,13 +79,10 @@ function updateVersionFile(currentFile) {
     fs.readFile(currentFile, 'utf8', (err, contents) => {
         const regex = /(export const VERSION =)(.*)$/m;
         const substitute = `$1 '${gridNewVersion}';`;
-        const replacement = contents.replace(regex, substitute)
+        const replacement = contents.replace(regex, substitute);
 
-        fs.writeFileSync(currentFile,
-            replacement,
-            "utf8");
+        fs.writeFileSync(currentFile, replacement, 'utf8');
     });
-
 }
 
 function updateVersion(packageJson) {
@@ -129,4 +129,3 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
 }
 
 main();
-

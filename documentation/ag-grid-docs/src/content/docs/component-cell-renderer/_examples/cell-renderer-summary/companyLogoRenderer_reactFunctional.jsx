@@ -1,15 +1,13 @@
-import React from "react";
+import React from 'react';
 
 export default (params) => (
-  <span
-    className="imgSpan"
-  >
-    {params.value && (
-      <img
-        alt={`${params.value} Flag`}
-        src={`https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`}
-        className="logo"
-      />
-    )}
-  </span>
-)
+    <span className="imgSpanLogo">
+        {params.value && (
+            <img
+                alt={`${params.value} Flag`}
+                src={`https://www.ag-grid.com/example-assets/software-company-logos/${params.value.toLowerCase()}.svg`}
+                className="logo"
+            />
+        )}
+    </span>
+);

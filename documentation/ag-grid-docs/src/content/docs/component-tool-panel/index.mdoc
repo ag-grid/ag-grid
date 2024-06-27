@@ -11,10 +11,10 @@ The example below provides a 'Custom Stats' Tool Panel to demonstrates how to cr
 
 ## Implementing a Tool Panel Component
 
-{% includeMarkdoc file="component-tool-panel/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IToolPanelParams" /%}
@@ -26,7 +26,7 @@ The example below provides a 'Custom Stats' Tool Panel to demonstrates how to cr
 
 {% if isFramework("react") %}
 {% note %}
-Enabling `reactiveCustomComponents` affects all custom components. If you have custom components built in an imperative way instead of setting the `reactiveCustomComponents` option, they may need to be rebuilt to take advantage of the new features that `reactiveCustomComponents` offers. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
+In previous versions of the grid, custom components were declared in an imperative way. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option) for details on how to migrate to the current format.
 {% /note %}
 {% /if %}
 
@@ -36,9 +36,9 @@ Registering a Tool Panel component follows the same approach as any other custom
 
 Once the Tool Panel Component is registered with the grid it needs to be included into the Side Bar. The following snippet illustrates this:
 
-{% includeMarkdoc file="component-tool-panel/_configure-javascript.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_configure-angular.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_configure-react.mdoc" /%}
-{% includeMarkdoc file="component-tool-panel/_configure-vue.mdoc" /%}
+{% partial file="./_configure-javascript.mdoc" /%}
+{% partial file="./_configure-angular.mdoc" /%}
+{% partial file="./_configure-react.mdoc" /%}
+{% partial file="./_configure-vue.mdoc" /%}
 
 For more details on the configuration properties above, refer to the [Side Bar Configuration](./side-bar/#sidebardef-configuration) section.

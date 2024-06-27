@@ -51,7 +51,7 @@ const isDev = getIsDev();
 
 const library = 'grid';
 
-const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, extras } = generatedContents || {};
+const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, isLocale, extras } = generatedContents || {};
 const indexFragment = files && files['index.html'];
 const appLocation = relativePath ? '' : exampleUrl;
 const boilerPlateUrl = relativePath
@@ -66,13 +66,20 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 
 const shouldShowTemplate = (framework: InternalFramework) => {
     return internalFramework === framework;
-}
-
-
+};
 ---
-{generatedContents.excluded && (
-    <h3 data-testid='excluded-framework'>PLACEHODER</h3><p>Example not generated as exampleConfig.json has supportedFrameworks specified but not including this one.</p>
-)}
+
+{
+    generatedContents.excluded && (
+        <>
+            <h3 data-testid="excluded-framework">PLACEHODER</h3>
+            <p>
+                Example not generated as exampleConfig.json has supportedFrameworks specified but not including this
+                one.
+            </p>
+        </>
+    )
+}
 
 {
     !generatedContents && (
@@ -89,6 +96,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             title={title}
             modifiedTimeMs={timeNow}
             isEnterprise={isEnterprise}
+            isLocale={isLocale}
             scriptFiles={scriptFiles}
             styleFiles={styleFiles}
             indexFragment={indexFragment!}
@@ -164,7 +172,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
 }
 
 {
-    (shouldShowTemplate('vue') || shouldShowTemplate('vue3')) && (
+    shouldShowTemplate('vue3') && (
         <VueTemplate
             isDev={isDev}
             title={title}

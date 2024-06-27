@@ -1,8 +1,7 @@
-import { SortModelItem } from "../sortController";
+import type { SortModelItem } from '../sortController';
 
 /** Datasource used by both PaginationController and InfiniteRowModel */
 export interface IDatasource {
-
     /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank. */
     rowCount?: number;
     // only used in old server side pagination service, we can remove this, infinite
@@ -17,7 +16,6 @@ export interface IDatasource {
 
 /** Params for the above IDatasource.getRows() */
 export interface IGetRowsParams {
-
     /** The first row index to get. */
     startRow: number;
 

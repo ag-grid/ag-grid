@@ -1,37 +1,35 @@
-import {
-    AgGroupComponentParams,
-    Autowired,
-    Component,
-    PostConstruct
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgCheckboxSelector, Component } from '@ag-grid-community/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CrosshairPanel extends Component {
-    public static TEMPLATE = /* html */ `<div>
-            <ag-group-component ref="crosshairGroup">
-                <ag-checkbox ref="crosshairLabelCheckbox"></ag-checkbox>
-                <ag-checkbox ref="crosshairSnapCheckbox"></ag-checkbox>
-                <ag-color-picker ref="crosshairStrokeColorPicker"></ag-color-picker>
-            </ag-group-component>
-        </div>`;
+    private chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+    }
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
-        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('crosshair.enabled', {
-            cssIdentifier: 'charts-advanced-settings-top-level',
-            direction: 'vertical',
-            suppressOpenCloseIcons: true,
-            title: this.chartTranslationService.translate('crosshair'),
-            suppressEnabledCheckbox: true,
-            useToggle: true
-        });
+    public postConstruct() {
+        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
+            'crosshair.enabled',
+            {
+                cssIdentifier: 'charts-advanced-settings-top-level',
+                direction: 'vertical',
+                suppressOpenCloseIcons: true,
+                title: this.chartTranslationService.translate('crosshair'),
+                suppressEnabledCheckbox: true,
+                useToggle: true,
+            }
+        );
         const crosshairLabelCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'crosshair.label.enabled',
             'crosshairLabel'
@@ -44,11 +42,21 @@ export class CrosshairPanel extends Component {
             'crosshair.stroke',
             'color'
         );
-        this.setTemplate(CrosshairPanel.TEMPLATE, {
-            crosshairGroup: crosshairGroupParams,
-            crosshairLabelCheckbox: crosshairLabelCheckboxParams,
-            crosshairSnapCheckbox: crosshairSnapCheckboxParams,
-            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="crosshairGroup">
+                <ag-checkbox data-ref="crosshairLabelCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="crosshairSnapCheckbox"></ag-checkbox>
+                <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgCheckboxSelector, AgColorPickerSelector],
+            {
+                crosshairGroup: crosshairGroupParams,
+                crosshairLabelCheckbox: crosshairLabelCheckboxParams,
+                crosshairSnapCheckbox: crosshairSnapCheckboxParams,
+                crosshairStrokeColorPicker: crosshairStrokeColorPickerParams,
+            }
+        );
     }
 }

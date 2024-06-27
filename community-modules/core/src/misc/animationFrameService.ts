@@ -1,7 +1,9 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { CtrlsService } from "../ctrlsService";
-import { PaginationProxy } from "../pagination/paginationProxy";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { PaginationService } from '../pagination/paginationService';
+import { _warnOnce } from '../utils/function';
 
 interface TaskItem {
     task: () => void;
@@ -14,17 +16,22 @@ interface TaskList {
     sorted: boolean;
 }
 
-@Bean('animationFrameService')
-export class AnimationFrameService extends BeanStub {
+export class AnimationFrameService extends BeanStub implements NamedBean {
+    beanName = 'animationFrameService' as const;
 
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    private ctrlsService: CtrlsService;
+    private paginationService?: PaginationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+        this.paginationService = beans.paginationService;
+    }
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private createTasksP1: TaskList = {list: [], sorted: false}; // eg drawing back-ground of rows
-    private createTasksP2: TaskList = {list: [], sorted: false}; // eg cell renderers, adding hover functionality
+    private createTasksP1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
+    private createTasksP2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
 
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
@@ -43,11 +50,11 @@ export class AnimationFrameService extends BeanStub {
     private cancelledTasks = new Set();
 
     public setScrollTop(scrollTop: number): void {
-        const isPaginationActive = this.gridOptionsService.get('pagination');
+        const isPaginationActive = this.gos.get('pagination');
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
 
         if (isPaginationActive && scrollTop === 0) {
-            const currentPage = this.paginationProxy.getCurrentPage();
+            const currentPage = this.paginationService?.getCurrentPage() ?? 0;
             if (currentPage !== this.lastPage) {
                 this.lastPage = currentPage;
                 this.scrollGoingDown = true;
@@ -57,9 +64,8 @@ export class AnimationFrameService extends BeanStub {
         this.lastScrollTop = scrollTop;
     }
 
-    @PostConstruct
-    private init(): void {
-        this.useAnimationFrame = !this.gridOptionsService.get('suppressAnimationFrame');
+    public postConstruct(): void {
+        this.useAnimationFrame = !this.gos.get('suppressAnimationFrame');
     }
 
     public isOn(): boolean {
@@ -72,13 +78,13 @@ export class AnimationFrameService extends BeanStub {
     // when it should not.
     private verifyAnimationFrameOn(methodName: string): void {
         if (this.useAnimationFrame === false) {
-            console.warn(`AG Grid: AnimationFrameService.${methodName} called but animation frames are off`);
+            _warnOnce(`AnimationFrameService.${methodName} called but animation frames are off`);
         }
     }
 
     public createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2') {
         this.verifyAnimationFrameOn(list);
-        const taskItem: TaskItem = {task, index, createOrder: ++this.taskCount};
+        const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
         this.addTaskToList(this[list], taskItem);
         this.schedule();
     }
@@ -101,7 +107,9 @@ export class AnimationFrameService extends BeanStub {
 
         // sort first by row index (taking into account scroll direction), then by
         // order of task creation (always ascending, so cells will render left-to-right)
-        taskList.list.sort((a, b) => a.index !== b.index ? sortDirection * (b.index - a.index) : b.createOrder - a.createOrder);
+        taskList.list.sort((a, b) =>
+            a.index !== b.index ? sortDirection * (b.index - a.index) : b.createOrder - a.createOrder
+        );
         taskList.sorted = true;
     }
 
@@ -123,7 +131,7 @@ export class AnimationFrameService extends BeanStub {
         const destroyTasks = this.destroyTasks;
 
         const frameStart = new Date().getTime();
-        let duration = (new Date().getTime()) - frameStart;
+        let duration = new Date().getTime() - frameStart;
 
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
@@ -153,7 +161,7 @@ export class AnimationFrameService extends BeanStub {
                 }
             }
 
-            duration = (new Date().getTime()) - frameStart;
+            duration = new Date().getTime() - frameStart;
         }
 
         if (p1Tasks.length || p2Tasks.length || destroyTasks.length) {
@@ -192,7 +200,7 @@ export class AnimationFrameService extends BeanStub {
     }
 
     public requestAnimationFrame(callback: any) {
-        const win = this.gridOptionsService.getWindow();
+        const win = this.gos.getWindow();
 
         if (win.requestAnimationFrame) {
             win.requestAnimationFrame(callback);

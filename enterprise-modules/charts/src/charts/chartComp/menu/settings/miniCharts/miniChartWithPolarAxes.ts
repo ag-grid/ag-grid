@@ -1,7 +1,7 @@
-import { PostConstruct } from '@ag-grid-community/core';
-import { MiniChart } from './miniChart';
 import { _Scene } from 'ag-charts-community';
-import { ChartTranslationKey } from '../../../services/chartTranslationService';
+
+import type { ChartTranslationKey } from '../../../services/chartTranslationService';
+import { MiniChart } from './miniChart';
 
 export abstract class MiniChartWithPolarAxes extends MiniChart {
     private readonly stroke = 'gray';
@@ -13,19 +13,15 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
         super(container, tooltipName);
     }
 
-    @PostConstruct
-    private addAxes() {
+    public override postConstruct() {
         const size = this.size;
         const padding = this.padding;
         const combinedPadding = padding * 2;
 
         const axisLineRadius = (size - combinedPadding) / 2;
-        const gridRadii = this.showAngleAxisLines ? [
-            axisLineRadius,
-            axisLineRadius * 0.8,
-            axisLineRadius * 0.6,
-            axisLineRadius * 0.4,
-        ] : [];
+        const gridRadii = this.showAngleAxisLines
+            ? [axisLineRadius, axisLineRadius * 0.8, axisLineRadius * 0.6, axisLineRadius * 0.4]
+            : [];
 
         const radiusAxisLine = new _Scene.Line();
         radiusAxisLine.x1 = size / 2;
@@ -54,5 +50,6 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
 
         root.append(radiusAxisLine);
         if (this.gridLines.length > 0) root.append(this.gridLines);
+        super.postConstruct();
     }
 }

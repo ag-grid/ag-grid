@@ -1,28 +1,30 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     IImmutableService,
     IRowModel,
     ISelectionService,
-    PostConstruct,
+    NamedBean,
     RowDataTransaction,
-    RowNode, RowRenderer, _
-} from "@ag-grid-community/core";
-import { ClientSideRowModel } from "./clientSideRowModel";
+    RowNode,
+} from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _exists, _iterateObject, _missing } from '@ag-grid-community/core';
 
+import type { ClientSideRowModel } from './clientSideRowModel';
 
-@Bean('immutableService')
-export class ImmutableService extends BeanStub implements IImmutableService {
+export class ImmutableService extends BeanStub implements NamedBean, IImmutableService {
+    beanName = 'immutableService' as const;
 
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
 
     private clientSideRowModel: ClientSideRowModel;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 
@@ -31,33 +33,39 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     public isActive(): boolean {
-        const getRowIdProvided = this.gridOptionsService.exists('getRowId');        
+        const getRowIdProvided = this.gos.exists('getRowId');
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
-        const resetRowDataOnUpdate = this.gridOptionsService.get('resetRowDataOnUpdate');
+        const resetRowDataOnUpdate = this.gos.get('resetRowDataOnUpdate');
 
-        if (resetRowDataOnUpdate) { return false; }
+        if (resetRowDataOnUpdate) {
+            return false;
+        }
         return getRowIdProvided;
     }
 
     public setRowData(rowData: any[]): void {
         const transactionAndMap = this.createTransactionForRowData(rowData);
-        if (!transactionAndMap) { return; }
+        if (!transactionAndMap) {
+            return;
+        }
 
         const [transaction, orderIdMap] = transactionAndMap;
         this.clientSideRowModel.updateRowData(transaction, orderIdMap);
     }
 
     // converts the setRowData() command to a transaction
-    private createTransactionForRowData(rowData: any[]): ([RowDataTransaction, { [id: string]: number } | undefined]) | undefined {
-        if (_.missing(this.clientSideRowModel)) {
-            console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
+    private createTransactionForRowData(
+        rowData: any[]
+    ): [RowDataTransaction, { [id: string]: number } | undefined] | undefined {
+        if (_missing(this.clientSideRowModel)) {
+            _errorOnce('ImmutableService only works with ClientSideRowModel');
             return;
         }
 
-        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getRowIdCallback();
         if (getRowIdFunc == null) {
-            console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
+            _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;
         }
 
@@ -65,15 +73,15 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         const transaction: RowDataTransaction = {
             remove: [],
             update: [],
-            add: []
+            add: [],
         };
 
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
-        const suppressSortOrder = this.gridOptionsService.get('suppressMaintainUnsortedOrder');
+        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
         const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
 
-        if (_.exists(rowData)) {
+        if (_exists(rowData)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
@@ -102,7 +110,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         }
 
         // at this point, all rows that are left, should be removed
-        _.iterateObject(existingNodesMap, (id: string, rowNode: RowNode) => {
+        _iterateObject(existingNodesMap, (id: string, rowNode: RowNode) => {
             if (rowNode) {
                 transaction.remove!.push(rowNode.data);
             }
@@ -112,8 +120,10 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     private onRowDataUpdated(): void {
-        const rowData = this.gridOptionsService.get('rowData');
-        if (!rowData) { return; }
+        const rowData = this.gos.get('rowData');
+        if (!rowData) {
+            return;
+        }
 
         if (this.isActive()) {
             this.setRowData(rowData);

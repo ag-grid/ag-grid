@@ -1,34 +1,44 @@
-import {
-    _,
+import type {
     AbstractColDef,
-    Autowired,
-    Bean,
-    BeanStub,
+    AgColumn,
+    BeanCollection,
     ColDef,
     ColGroupDef,
-    Column,
     ColumnModel,
-    ProvidedColumnGroup,
-    IProvidedColumn
-} from "@ag-grid-community/core";
+    NamedBean,
+} from '@ag-grid-community/core';
+import {
+    AgProvidedColumnGroup,
+    BeanStub,
+    _includes,
+    _last,
+    _warnOnce,
+    isProvidedColumnGroup,
+} from '@ag-grid-community/core';
 
-@Bean('toolPanelColDefService')
-export class ToolPanelColDefService extends BeanStub {
+export class ToolPanelColDefService extends BeanStub implements NamedBean {
+    beanName = 'toolPanelColDefService' as const;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    private columnModel: ColumnModel;
 
-    public createColumnTree(colDefs: AbstractColDef[]): IProvidedColumn[] {
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+    }
+
+    public createColumnTree(colDefs: AbstractColDef[]): (AgColumn | AgProvidedColumnGroup)[] {
         const invalidColIds: AbstractColDef[] = [];
 
-        const createDummyColGroup = (abstractColDef: AbstractColDef, depth: number): IProvidedColumn => {
+        const createDummyColGroup = (
+            abstractColDef: AbstractColDef,
+            depth: number
+        ): AgColumn | AgProvidedColumnGroup => {
             if (this.isColGroupDef(abstractColDef)) {
-
                 // creating 'dummy' group which is not associated with grid column group
                 const groupDef = abstractColDef as ColGroupDef;
-                const groupId = (typeof groupDef.groupId !== 'undefined') ? groupDef.groupId : groupDef.headerName;
-                const group = new ProvidedColumnGroup(groupDef, groupId!, false, depth);
-                const children: IProvidedColumn[] = [];
-                groupDef.children.forEach(def => {
+                const groupId = typeof groupDef.groupId !== 'undefined' ? groupDef.groupId : groupDef.headerName;
+                const group = new AgProvidedColumnGroup(groupDef, groupId!, false, depth);
+                const children: (AgColumn | AgProvidedColumnGroup)[] = [];
+                groupDef.children.forEach((def) => {
                     const child = createDummyColGroup(def, depth + 1);
                     // check column exists in case invalid colDef is supplied for primary column
                     if (child) {
@@ -41,7 +51,7 @@ export class ToolPanelColDefService extends BeanStub {
             } else {
                 const colDef = abstractColDef as ColDef;
                 const key = colDef.colId ? colDef.colId : colDef.field;
-                const column = this.columnModel.getPrimaryColumn(key!) as IProvidedColumn;
+                const column = this.columnModel.getColDefCol(key!)!;
 
                 if (!column) {
                     invalidColIds.push(colDef);
@@ -51,8 +61,8 @@ export class ToolPanelColDefService extends BeanStub {
             }
         };
 
-        const mappedResults: IProvidedColumn[] = [];
-        colDefs.forEach(colDef => {
+        const mappedResults: (AgColumn | AgProvidedColumnGroup)[] = [];
+        colDefs.forEach((colDef) => {
             const result = createDummyColGroup(colDef, 0);
             if (result) {
                 // only return correctly mapped colDef results
@@ -61,7 +71,7 @@ export class ToolPanelColDefService extends BeanStub {
         });
 
         if (invalidColIds.length > 0) {
-            console.warn('AG Grid: unable to find grid columns for the supplied colDef(s):', invalidColIds);
+            _warnOnce('unable to find grid columns for the supplied colDef(s):', invalidColIds);
         }
 
         return mappedResults;
@@ -79,13 +89,12 @@ export class ToolPanelColDefService extends BeanStub {
     }
 
     private getLeafPathTrees(): AbstractColDef[] {
-
         // leaf tree paths are obtained by walking up the tree starting at a column until we reach the top level group.
-        const getLeafPathTree = (node: Column | ProvidedColumnGroup, childDef: AbstractColDef): AbstractColDef => {
+        const getLeafPathTree = (node: AgColumn | AgProvidedColumnGroup, childDef: AbstractColDef): AbstractColDef => {
             let leafPathTree: AbstractColDef;
 
             // build up tree in reverse order
-            if (node instanceof ProvidedColumnGroup) {
+            if (isProvidedColumnGroup(node)) {
                 if (node.isPadding()) {
                     // skip over padding groups
                     leafPathTree = childDef;
@@ -115,16 +124,16 @@ export class ToolPanelColDefService extends BeanStub {
         };
 
         // obtain a sorted list of all grid columns
-        const allGridColumns = this.columnModel.getAllGridColumns();
+        const allGridColumns = this.columnModel.getCols();
 
         // only primary columns and non row group columns should appear in the tool panel
-        const allPrimaryGridColumns = allGridColumns.filter(column => {
+        const allPrimaryGridColumns = allGridColumns.filter((column) => {
             const colDef = column.getColDef();
             return column.isPrimary() && !colDef.showRowGroup;
         });
 
         // construct a leaf path tree for each column
-        return allPrimaryGridColumns.map(col => getLeafPathTree(col, col.getColDef()));
+        return allPrimaryGridColumns.map((col) => getLeafPathTree(col, col.getColDef()));
     }
 
     private mergeLeafPathTrees(leafPathTrees: AbstractColDef[]) {
@@ -134,17 +143,21 @@ export class ToolPanelColDefService extends BeanStub {
         };
 
         const mergeTrees = (treeA: AbstractColDef, treeB: AbstractColDef): AbstractColDef => {
-            if (!this.isColGroupDef(treeB)) { return treeA; }
+            if (!this.isColGroupDef(treeB)) {
+                return treeA;
+            }
 
             const mergeResult = treeA;
             const groupToMerge = treeB as ColGroupDef;
 
             if (groupToMerge.children && groupToMerge.groupId) {
                 const added = this.addChildrenToGroup(mergeResult, groupToMerge.groupId, groupToMerge.children[0]);
-                if (added) { return mergeResult; }
+                if (added) {
+                    return mergeResult;
+                }
             }
 
-            groupToMerge.children.forEach(child => mergeTrees(mergeResult, child));
+            groupToMerge.children.forEach((child) => mergeTrees(mergeResult, child));
 
             return mergeResult;
         };
@@ -169,13 +182,15 @@ export class ToolPanelColDefService extends BeanStub {
     private addChildrenToGroup(tree: AbstractColDef, groupId: string, colDef: AbstractColDef): boolean {
         const subGroupIsSplit = (currentSubGroup: ColGroupDef, currentSubGroupToAdd: ColGroupDef) => {
             const existingChildIds = currentSubGroup.children.map(this.getId);
-            const childGroupAlreadyExists = _.includes(existingChildIds, this.getId(currentSubGroupToAdd));
-            const lastChild = _.last(currentSubGroup.children);
+            const childGroupAlreadyExists = _includes(existingChildIds, this.getId(currentSubGroupToAdd));
+            const lastChild = _last(currentSubGroup.children);
             const lastChildIsDifferent = lastChild && this.getId(lastChild) !== this.getId(currentSubGroupToAdd);
             return childGroupAlreadyExists && lastChildIsDifferent;
         };
 
-        if (!this.isColGroupDef(tree)) { return true; }
+        if (!this.isColGroupDef(tree)) {
+            return true;
+        }
 
         const currentGroup = tree as ColGroupDef;
         const groupToAdd = colDef as ColGroupDef;
@@ -188,7 +203,7 @@ export class ToolPanelColDefService extends BeanStub {
         if (currentGroup.groupId === groupId) {
             // add children that don't already exist to group
             const existingChildIds = currentGroup.children.map(this.getId);
-            const colDefAlreadyPresent = _.includes(existingChildIds, this.getId(groupToAdd));
+            const colDefAlreadyPresent = _includes(existingChildIds, this.getId(groupToAdd));
             if (!colDefAlreadyPresent) {
                 currentGroup.children.push(groupToAdd);
                 return true;
@@ -196,13 +211,14 @@ export class ToolPanelColDefService extends BeanStub {
         }
 
         // recurse until correct group is found to add children
-        currentGroup.children.forEach(subGroup => this.addChildrenToGroup(subGroup, groupId, colDef));
+        currentGroup.children.forEach((subGroup) => this.addChildrenToGroup(subGroup, groupId, colDef));
         return false;
     }
 
-    private isColGroupDef = (colDef: AbstractColDef) => colDef && typeof (colDef as ColGroupDef).children !== 'undefined';
+    private isColGroupDef = (colDef: AbstractColDef) =>
+        colDef && typeof (colDef as ColGroupDef).children !== 'undefined';
 
     private getId = (colDef: AbstractColDef): string | undefined => {
         return this.isColGroupDef(colDef) ? (colDef as ColGroupDef).groupId : (colDef as ColDef).colId;
-    }
+    };
 }

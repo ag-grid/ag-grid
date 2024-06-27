@@ -1,19 +1,5 @@
-import { RowPinnedType } from "../interfaces/iRowNode";
-import { CellRange } from "../interfaces/IRangeService";
-
-export interface CellValueChange {
-    rowPinned: RowPinnedType;
-    rowIndex: number;
-    columnId: string;
-    oldValue: any;
-    newValue: any;
-}
-
-export interface LastFocusedCell {
-    rowPinned: RowPinnedType;
-    rowIndex: number;
-    columnId: string;
-}
+import type { CellRange } from '../interfaces/IRangeService';
+import type { CellValueChange } from './iUndoRedo';
 
 export class UndoRedoAction {
     cellValueChanges: CellValueChange[];
@@ -24,7 +10,6 @@ export class UndoRedoAction {
 }
 
 export class RangeUndoRedoAction extends UndoRedoAction {
-
     constructor(
         cellValueChanges: CellValueChange[],
         public readonly initialRange?: CellRange,
@@ -35,15 +20,14 @@ export class RangeUndoRedoAction extends UndoRedoAction {
     }
 }
 
+const DEFAULT_STACK_SIZE = 10;
 export class UndoRedoStack {
-    private static DEFAULT_STACK_SIZE = 10;
-
     private readonly maxStackSize: number;
 
     private actionStack: UndoRedoAction[] = [];
 
     constructor(maxStackSize?: number) {
-        this.maxStackSize = maxStackSize ? maxStackSize : UndoRedoStack.DEFAULT_STACK_SIZE;
+        this.maxStackSize = maxStackSize ? maxStackSize : DEFAULT_STACK_SIZE;
         this.actionStack = new Array<UndoRedoAction>(this.maxStackSize);
     }
 
@@ -54,7 +38,9 @@ export class UndoRedoStack {
     public push(item: UndoRedoAction): void {
         const shouldAddActions = item.cellValueChanges && item.cellValueChanges.length > 0;
 
-        if (!shouldAddActions) { return; }
+        if (!shouldAddActions) {
+            return;
+        }
 
         if (this.actionStack.length === this.maxStackSize) {
             this.actionStack.shift();

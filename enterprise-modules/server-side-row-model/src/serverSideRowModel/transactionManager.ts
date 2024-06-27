@@ -1,47 +1,50 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
+import type {
+    AsyncTransactionsFlushed,
+    BeanCollection,
     IServerSideTransactionManager,
-    PostConstruct,
-    RowNodeBlockLoader,
+    NamedBean,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
     ValueCache,
-    AsyncTransactionsFlushed,
-    RowRenderer,
     WithoutGridCommon,
-    RowNode
-} from "@ag-grid-community/core";
-import { ServerSideRowModel } from "./serverSideRowModel";
-import { ServerSideSelectionService } from "./services/serverSideSelectionService";
+} from '@ag-grid-community/core';
+import { BeanStub, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
+
+import type { ServerSideRowModel } from './serverSideRowModel';
+import type { ServerSideSelectionService } from './services/serverSideSelectionService';
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
     callback?: (result: ServerSideTransactionResult) => void;
 }
 
-@Bean('ssrmTransactionManager')
-export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
+export class TransactionManager extends BeanStub implements NamedBean, IServerSideTransactionManager {
+    beanName = 'ssrmTransactionManager' as const;
 
-    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('selectionService') private selectionService: ServerSideSelectionService;
+    private valueCache: ValueCache;
+    private serverSideRowModel: ServerSideRowModel;
+    private selectionService: ServerSideSelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.valueCache = beans.valueCache;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.selectionService = beans.selectionService as ServerSideSelectionService;
+    }
 
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] = [];
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gridOptionsService.isRowModelType('serverSide')) { return; }
+        if (!this.gos.isRowModelType('serverSide')) {
+            return;
+        }
     }
 
-    public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
+    public applyTransactionAsync(
+        transaction: ServerSideTransaction,
+        callback?: (res: ServerSideTransactionResult) => void
+    ): void {
         if (this.asyncTransactionsTimeout == null) {
             this.scheduleExecuteAsync();
         }
@@ -49,14 +52,16 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     private scheduleExecuteAsync(): void {
-        const waitMillis = this.gridOptionsService.getAsyncTransactionWaitMillis();
+        const waitMillis = this.gos.getAsyncTransactionWaitMillis();
         this.asyncTransactionsTimeout = window.setTimeout(() => {
             this.executeAsyncTransactions();
         }, waitMillis);
     }
 
     private executeAsyncTransactions(): void {
-        if (!this.asyncTransactions) { return; }
+        if (!this.asyncTransactions) {
+            return;
+        }
 
         const resultFuncs: (() => void)[] = [];
         const resultsForEvent: ServerSideTransactionResult[] = [];
@@ -64,16 +69,16 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         const transactionsToRetry: AsyncTransactionWrapper[] = [];
         let atLeastOneTransactionApplied = false;
 
-        this.asyncTransactions.forEach(txWrapper => {
+        this.asyncTransactions.forEach((txWrapper) => {
             let result: ServerSideTransactionResult | undefined;
-            const hasStarted = this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, cache => {
+            const hasStarted = this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, (cache) => {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
 
             if (!hasStarted) {
-                result = {status: ServerSideTransactionResultStatus.StoreNotStarted};
+                result = { status: ServerSideTransactionResultStatus.StoreNotStarted };
             } else if (result == undefined) {
-                result = {status: ServerSideTransactionResultStatus.StoreNotFound};
+                result = { status: ServerSideTransactionResultStatus.StoreNotFound };
             }
 
             resultsForEvent.push(result);
@@ -96,7 +101,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         // do callbacks in next VM turn so it's async
         if (resultFuncs.length > 0) {
             window.setTimeout(() => {
-                resultFuncs.forEach(func => func());
+                resultFuncs.forEach((func) => func());
             }, 0);
         }
 
@@ -107,13 +112,13 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
         if (atLeastOneTransactionApplied) {
             this.valueCache.onDataChanged();
-            this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+            this.eventService.dispatchEvent({ type: 'storeUpdated' });
         }
 
         if (resultsForEvent.length > 0) {
-            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {                
-                type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
-                results: resultsForEvent
+            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {
+                type: 'asyncTransactionsFlushed',
+                results: resultsForEvent,
             };
             this.eventService.dispatchEvent(event);
         }
@@ -130,7 +135,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         let res: ServerSideTransactionResult | undefined;
 
-        const hasStarted = this.serverSideRowModel.executeOnStore(transaction.route!, store => {
+        const hasStarted = this.serverSideRowModel.executeOnStore(transaction.route!, (store) => {
             res = store.applyTransaction(transaction);
         });
 
@@ -139,11 +144,11 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         } else if (res) {
             this.valueCache.onDataChanged();
             if (res.remove) {
-                const removedRowIds = res.remove.map(row => row.id!);
+                const removedRowIds = res.remove.map((row) => row.id!);
                 this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
             }
 
-            this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+            this.eventService.dispatchEvent({ type: 'storeUpdated' });
             return res;
         } else {
             return { status: ServerSideTransactionResultStatus.StoreNotFound };

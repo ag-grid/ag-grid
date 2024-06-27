@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
 const mergeCellFactory: ExcelOOXMLTemplate = {
     getTemplate(ref: string) {
@@ -6,11 +6,11 @@ const mergeCellFactory: ExcelOOXMLTemplate = {
             name: 'mergeCell',
             properties: {
                 rawMap: {
-                    ref: ref
-                }
-            }
+                    ref: ref,
+                },
+            },
         };
-    }
+    },
 };
 
 export default mergeCellFactory;

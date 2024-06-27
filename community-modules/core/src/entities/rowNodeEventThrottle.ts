@@ -1,15 +1,21 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { RowGroupOpenedEvent } from "../events";
-import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { IRowModel } from "../interfaces/iRowModel";
-import { AnimationFrameService } from "../misc/animationFrameService";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowGroupOpenedEvent } from '../events';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 
-@Bean('rowNodeEventThrottle')
-export class RowNodeEventThrottle extends BeanStub {
+export class RowNodeEventThrottle extends BeanStub implements NamedBean {
+    beanName = 'rowNodeEventThrottle' as const;
 
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    private animationFrameService: AnimationFrameService;
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.animationFrameService = beans.animationFrameService;
+        this.rowModel = beans.rowModel;
+    }
 
     private clientSideRowModel: IClientSideRowModel;
 
@@ -17,8 +23,7 @@ export class RowNodeEventThrottle extends BeanStub {
 
     private dispatchExpandedDebounced: () => void;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         if (this.rowModel.getType() == 'clientSide') {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
@@ -33,10 +38,9 @@ export class RowNodeEventThrottle extends BeanStub {
     // to re-render 100+ times, which would be a performance lag.
     //
     // we use animationFrameService
-    // rather than _.debounce() so this will get done if anyone flushes the animationFrameService
+    // rather than debounce() so this will get done if anyone flushes the animationFrameService
     // (eg user calls api.ensureRowVisible(), which in turn flushes ).
-    public dispatchExpanded(event: RowGroupOpenedEvent): void {
-
+    public dispatchExpanded(event: RowGroupOpenedEvent, forceSync?: boolean): void {
         // if not using CSRM, we don't debounce. otherwise this breaks the SSRM.
         if (this.clientSideRowModel == null) {
             this.eventService.dispatchEvent(event);
@@ -49,14 +53,17 @@ export class RowNodeEventThrottle extends BeanStub {
             if (this.clientSideRowModel) {
                 this.clientSideRowModel.onRowGroupOpened();
             }
-            this.events.forEach(e => this.eventService.dispatchEvent(e));
+            this.events.forEach((e) => this.eventService.dispatchEvent(e));
             this.events = [];
         };
 
-        if (this.dispatchExpandedDebounced == null) {
-            this.dispatchExpandedDebounced = this.animationFrameService.debounce(func);
+        if (forceSync) {
+            func();
+        } else {
+            if (this.dispatchExpandedDebounced == null) {
+                this.dispatchExpandedDebounced = this.animationFrameService.debounce(func);
+            }
+            this.dispatchExpandedDebounced();
         }
-
-        this.dispatchExpandedDebounced();
     }
 }

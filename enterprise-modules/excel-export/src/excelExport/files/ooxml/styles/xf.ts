@@ -1,4 +1,5 @@
-import { ExcelOOXMLTemplate, XmlElement, ExcelAlignment, ExcelProtection } from '@ag-grid-community/core';
+import type { ExcelAlignment, ExcelOOXMLTemplate, ExcelProtection, XmlElement } from '@ag-grid-community/core';
+
 import alignmentFactory from './alignment';
 import protectionFactory from './protection';
 
@@ -15,7 +16,7 @@ const xfFactory: ExcelOOXMLTemplate = {
         }
 
         return {
-            name: "xf",
+            name: 'xf',
             properties: {
                 rawMap: {
                     applyAlignment: alignment ? 1 : undefined,
@@ -29,12 +30,12 @@ const xfFactory: ExcelOOXMLTemplate = {
                     applyNumberFormat: numFmtId ? 1 : undefined,
                     numFmtId,
                     quotePrefix: quotePrefix ? 1 : undefined,
-                    xfId
-                }
+                    xfId,
+                },
             },
-            children: children.length ? children : undefined
+            children: children.length ? children : undefined,
         };
-    }
+    },
 };
 
 export default xfFactory;

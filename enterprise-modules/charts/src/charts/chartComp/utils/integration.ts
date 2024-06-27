@@ -1,4 +1,4 @@
-import { _Scene, AgCartesianAxisType, AgChartInstance, AgPolarAxisOptions } from "ag-charts-community";
+import type { AgCartesianAxisType, AgChartInstance, AgPolarAxisOptions, _Scene } from 'ag-charts-community';
 
 export function deproxy(chartOrProxy: AgChartInstance): AgChartActual {
     if ((chartOrProxy as any).chart != null) {
@@ -28,12 +28,8 @@ export interface AgChartActual extends AgChartInstance {
         type: AgCartesianAxisType | AgPolarAxisOptions['type'];
         direction: 'x' | 'y';
     }[];
-    scene: {
-        canvas: {
-            element: HTMLCanvasElement;
-        };
-        getDataURL(type?: string): string;
-    };
+    canvasElement: HTMLCanvasElement;
+    getCanvasDataURL(type?: string): string;
     addEventListener(type: 'click', cb: (even: any) => void): void;
     waitForUpdate(): Promise<void>;
 }

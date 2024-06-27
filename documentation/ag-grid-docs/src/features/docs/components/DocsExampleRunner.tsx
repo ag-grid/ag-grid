@@ -27,6 +27,7 @@ interface Props {
     importType: ImportType;
     isDev: boolean;
     typescriptOnly?: boolean;
+    overrideImportType?: ImportType;
 }
 
 // NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
@@ -42,64 +43,78 @@ const queryOptions = {
 
 const getInternalFramework = (
     docsInternalFramework: InternalFramework,
-    supportedFrameworks: InternalFramework[] | undefined
+    supportedFrameworks: InternalFramework[] | undefined,
+    importType: ImportType
 ): InternalFramework => {
+    let internalFramework = docsInternalFramework;
     if (supportedFrameworks && supportedFrameworks.length > 0) {
-        if (supportedFrameworks.includes(docsInternalFramework)) {
-            return docsInternalFramework;
-        }
-        const bestAlternative: Record<InternalFramework, InternalFramework[]> = {
-            vanilla: ['typescript'],
-            typescript: ['vanilla'],
-            reactFunctional: ['reactFunctionalTs', 'typescript', 'vanilla'],
-            reactFunctionalTs: ['reactFunctional', 'typescript', 'vanilla'],
-            angular: ['typescript', 'vanilla'],
-            vue: ['typescript', 'vanilla'],
-            vue3: ['typescript', 'vanilla'],
-        };
-        const alternatives = bestAlternative[docsInternalFramework];
-        const alternative = alternatives.find((alternative) => supportedFrameworks.includes(alternative));
-        if (alternative) {
-            return alternative;
+        if (!supportedFrameworks.includes(docsInternalFramework)) {
+            const bestAlternative: Record<InternalFramework, InternalFramework[]> = {
+                vanilla: ['typescript'],
+                typescript: ['vanilla'],
+                reactFunctional: ['reactFunctionalTs', 'typescript', 'vanilla'],
+                reactFunctionalTs: ['reactFunctional', 'typescript', 'vanilla'],
+                angular: ['typescript', 'vanilla'],
+                vue3: ['typescript', 'vanilla'],
+            };
+            const alternatives = bestAlternative[docsInternalFramework];
+            const alternative = alternatives.find((alternative) => supportedFrameworks.includes(alternative));
+            if (alternative) {
+                internalFramework = alternative;
+            }
         }
     }
 
-    return docsInternalFramework;
+    if (internalFramework === 'vanilla' && importType === 'modules') {
+        internalFramework = 'typescript';
+    }
+    return internalFramework;
 };
 
-const getImportType = (docsImportType: ImportType, supportedImportTypes: ImportType[] | undefined): ImportType => {
-    if (supportedImportTypes === undefined || supportedImportTypes.length === 0) {
-        return docsImportType;
-    }
-    if (supportedImportTypes.includes(docsImportType)) {
-        return docsImportType;
-    }
-    return supportedImportTypes[0];
-};
-
-const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pageName, isDev }: Props) => {
+const DocsExampleRunnerInner = ({
+    name,
+    title,
+    exampleHeight,
+    typescriptOnly,
+    overrideImportType,
+    pageName,
+    isDev,
+}: Props) => {
     const exampleName = name;
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
 
     const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
-    const [supportedImportTypes, setSupportedImportTypes] = useState<ImportType[] | undefined>(undefined);
 
+    const importType = overrideImportType ?? useImportType();
     const internalFramework = typescriptOnly
         ? 'typescript'
-        : getInternalFramework(useStore($internalFramework), supportedFrameworks);
-    const importType = getImportType(useImportType(), supportedImportTypes);
+        : getInternalFramework(useStore($internalFramework), supportedFrameworks, importType);
     const urlConfig: UrlParams = useMemo(
         () => ({ internalFramework, pageName, exampleName, importType }),
         [internalFramework, pageName, exampleName, importType]
     );
 
-    const { data: [contents] = [undefined, undefined] } = useQuery(
+    const { data: [contents] = [undefined, undefined], isError } = useQuery(
         ['docsExampleContents', pageName, exampleName, internalFramework, importType],
         () =>
-            Promise.all([fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json())]) as Promise<
-                [GeneratedContents]
-            >,
+            Promise.all([
+                fetch(getExampleContentsUrl(urlConfig))
+                    .then((res) => res.json())
+                    .then((json) => {
+                        const isTs =
+                            internalFramework === 'reactFunctionalTs' ||
+                            internalFramework === 'typescript' ||
+                            internalFramework === 'angular';
+                        if (!isTs) {
+                            delete json.files['interfaces.ts'];
+                        }
+                        if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
+                            delete json.files['index.html'];
+                        }
+                        return json;
+                    }),
+            ]) as Promise<[GeneratedContents]>,
         queryOptions
     );
     const urls = {
@@ -110,14 +125,17 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
     };
 
     useEffect(() => {
+        if (isError) {
+            setSupportedFrameworks(['typescript']);
+        }
+
         if (!contents) {
             return;
         }
 
         // If not provided we set to an empty array to finish rendering
         setSupportedFrameworks(contents.supportedFrameworks ?? []);
-        setSupportedImportTypes(contents.supportedImportTypes ?? []);
-    }, [contents]);
+    }, [contents, isError]);
 
     const externalLinks = contents ? (
         <ExternalLinks
@@ -137,13 +155,10 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
         supportedFrameworks &&
         (supportedFrameworks.length == 0 ||
             (supportedFrameworks?.length > 0 && supportedFrameworks?.includes(internalFramework)));
-    const validImportType =
-        supportedImportTypes &&
-        (supportedImportTypes.length == 0 ||
-            (supportedImportTypes?.length > 0 && supportedImportTypes?.includes(importType)));
-    return validFramework && validImportType ? (
+    return validFramework ? (
         <ExampleRunner
             id={id}
+            title={title}
             exampleUrl={urls.exampleUrl}
             exampleRunnerExampleUrl={urls.exampleRunnerExampleUrl}
             exampleHeight={exampleHeight}
@@ -153,7 +168,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
             externalLinks={externalLinks}
             loadingIFrameId={loadingIFrameId}
             supportedFrameworks={supportedFrameworks}
-            supportedImportTypes={supportedImportTypes}
+            supportedImportTypes={overrideImportType ? [overrideImportType] : []}
         />
     ) : null;
 };

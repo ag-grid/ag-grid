@@ -5,30 +5,30 @@ interface MissionCellRendererParams extends ICellRendererParams {
 }
 
 export class MissionResultRenderer implements ICellRendererComp {
-  eGui!: HTMLSpanElement
+    eGui!: HTMLSpanElement;
 
-  init (params: MissionCellRendererParams) {
-    let icon: HTMLImageElement = document.createElement("img");
-    if (params.src) {
-      icon.src = params.src(params.value);
-    } else {
-      icon.src = `https://www.ag-grid.com/example-assets/icons/${
-        params.value ? "tick-in-circle" : "cross-in-circle"
-      }.png`;
+    init(params: MissionCellRendererParams) {
+        let icon: HTMLImageElement = document.createElement('img');
+        if (params.src) {
+            icon.src = params.src(params.value);
+        } else {
+            icon.src = `https://www.ag-grid.com/example-assets/icons/${
+                params.value ? 'tick-in-circle' : 'cross-in-circle'
+            }.png`;
+        }
+        icon.setAttribute('class', 'missionIcon');
+
+        this.eGui = document.createElement('span');
+        this.eGui.setAttribute('class', 'missionSpan');
+        this.eGui.appendChild(icon);
     }
-    icon.setAttribute("class", "missionIcon");
 
-    this.eGui = document.createElement("span");
-    this.eGui.setAttribute("class", "missionSpan");
-    this.eGui.appendChild(icon);
-  };
+    getGui() {
+        return this.eGui;
+    }
 
-  getGui() {
-    return this.eGui;
-  }
-
-  // Required: Get the cell to refresh.
-  refresh(params: ICellRendererParams): boolean {
-    return false
-  }
+    // Required: Get the cell to refresh.
+    refresh(params: ICellRendererParams): boolean {
+        return false;
+    }
 }

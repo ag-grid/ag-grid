@@ -1,22 +1,40 @@
-import { Module, ModuleNames } from "@ag-grid-community/core";
-import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
-import { ExcelCreator } from "./excelExport/excelCreator";
-import { CsvCreator, GridSerializer } from "@ag-grid-community/csv-export";
-import { CsvExportModule } from "@ag-grid-community/csv-export";
-import { VERSION } from "./version";
+import type { Module } from '@ag-grid-community/core';
+import { ModuleNames } from '@ag-grid-community/core';
+import { _CsvExportCoreModule } from '@ag-grid-community/csv-export';
+import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
+
+import { ExcelCreator } from './excelExport/excelCreator';
+import {
+    exportDataAsExcel,
+    exportMultipleSheetsAsExcel,
+    getDataAsExcel,
+    getMultipleSheetsAsExcel,
+    getSheetDataForExcel,
+} from './excelExport/excelExportApi';
+import { VERSION } from './version';
+
+export const _ExcelExportCoreModule: Module = {
+    version: VERSION,
+    moduleName: `${ModuleNames.ExcelExportModule}-core`,
+    beans: [ExcelCreator],
+    dependantModules: [_CsvExportCoreModule, EnterpriseCoreModule],
+};
+
+export const _ExcelExportApiModule: Module = {
+    version: VERSION,
+    moduleName: `${ModuleNames.ExcelExportModule}-api`,
+    apiFunctions: {
+        getDataAsExcel,
+        exportDataAsExcel,
+        getSheetDataForExcel,
+        getMultipleSheetsAsExcel,
+        exportMultipleSheetsAsExcel,
+    },
+    dependantModules: [_ExcelExportCoreModule],
+};
 
 export const ExcelExportModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.ExcelExportModule,
-    beans: [
-        // beans in this module
-        ExcelCreator,
-
-        // these beans are part of CSV Export module
-        GridSerializer, CsvCreator
-    ],
-    dependantModules: [
-        CsvExportModule,
-        EnterpriseCoreModule
-    ]
+    dependantModules: [_ExcelExportCoreModule, _ExcelExportApiModule],
 };

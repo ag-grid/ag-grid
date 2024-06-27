@@ -17,71 +17,32 @@ archive*.zip
 *.tgz
 .nx
 .angular
+tmp
+
+plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/modules.ts
+plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts
+plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts
+plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore/eventTypes.ts
+plugins/ag-grid-generate-code-reference-files/dist/
+plugins/ag-grid-task-autogen/dist/
+plugins/ag-grid-generate-code-reference-files/dist
+plugins/ag-grid-generate-example-files/dist
+plugins/ag-grid-task-autogen/dist
 
 # latest only
 dist
 
-grid-community-modules/all-modules/styles/**
-grid-enterprise-modules/all-modules/styles/**
 packages/ag-grid-community/styles/**
 packages/ag-grid-enterprise/styles/**
-grid-packages/ag-grid-community/styles/**
-grid-packages/ag-grid-enterprise/styles/**
-grid-packages/ag-grid-charts-enterprise/styles/**
 packages/ag-grid-charts-enterprise/styles/**
-grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json
 
 # compiled CSS files
-grid-community-modules/styles/*.css
 community-modules/styles/*.css
+packages/ag-grid-community/styles
+packages/ag-grid-enterprise/styles
+packages/ag-grid-charts-enterprise/styles
 # compiled css files as SCSS
-grid-community-modules/styles/_css-content.scss
 community-modules/styles/_css-content.scss
-
-charts-community-modules/**/dist
-grid-community-modules/**/dist
-grid-enterprise-modules/**/dist
-grid-packages/**/dist
-
-grid-packages/ag-grid-angular/aot/**
-grid-packages/ag-grid-angular/dist/**
-grid-packages/ag-grid-angular/main.js.map
-grid-packages/ag-grid-angular/main.js
-grid-packages/ag-grid-angular/main.d.ts
-grid-packages/ag-grid-angular/main.metadata.json
-grid-community-modules/angular/aot/**
-grid-community-modules/angular/dist/**
-grid-community-modules/angular/main.js.map
-grid-community-modules/angular/main.js
-grid-community-modules/angular/main.d.ts
-grid-community-modules/angular/main.metadata.json
-
-grid-packages/ag-grid-react/lib/**
-grid-packages/ag-grid-react/bundles/**
-grid-community-modules/react/lib/**
-grid-community-modules/react/bundles/**
-
-grid-packages/ag-grid-community/main.d.ts
-grid-packages/ag-grid-community/main.js
-grid-packages/ag-grid-enterprise/main.d.ts
-grid-packages/ag-grid-enterprise/main.js
-grid-packages/ag-grid-charts-enterprise/main.d.ts
-grid-packages/ag-grid-charts-enterprise/main.js
-
-grid-packages/ag-grid-vue/lib/**
-grid-packages/ag-grid-vue/dist/**
-grid-packages/ag-grid-vue/main.js
-grid-packages/ag-grid-vue/main.d.ts
-grid-packages/ag-grid-vue3/dist/**
-grid-packages/ag-grid-vue3/lib/**
-grid-packages/ag-grid-vue3/main.js
-grid-packages/ag-grid-vue3/main.d.ts
-grid-community-modules/vue/lib/**
-grid-community-modules/vue/dist/**
-grid-community-modules/vue/main.js
-grid-community-modules/vue3/lib/**
-grid-community-modules/vue3/dist/**
-grid-community-modules/vue3/main.js
 
 community-modules/vue/lib/**
 community-modules/vue/dist/**
@@ -89,22 +50,7 @@ community-modules/vue3/lib/**
 community-modules/vue3/dist/**
 community-modules/vue3/main.js
 
-grid-packages/ag-grid-angular/exports.d.ts
-grid-packages/ag-grid-angular/exports.js
-grid-packages/ag-grid-angular/exports.js.map
-grid-packages/ag-grid-angular/exports.metadata.json
+packages/ag-grid-vue/lib
 
-grid-packages/ag-grid-community/src/styles
-
-grid-community-modules/core/typings
-grid-community-modules/csv-export/typings
-grid-enterprise-modules/core/typings
-grid-enterprise-modules/set-filter/typings
-grid-enterprise-modules/excel-export/typings
-
-charts-community-modules/ag-charts-react/lib
-charts-community-modules/ag-charts-react/umd
-charts-community-modules/ag-charts-vue/lib/**
-charts-community-modules/ag-charts-vue3/lib/**
-charts-community-modules/ag-charts-angular/dist
-
+# Astro generated file
+src/env.d.ts

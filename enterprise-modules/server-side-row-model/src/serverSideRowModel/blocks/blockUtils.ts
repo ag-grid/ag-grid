@@ -1,40 +1,49 @@
-import {
-    _,
-    RowBounds,
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
-    ColumnModel,
-    PostConstruct,
-    RowNode,
-    ValueService,
+import type {
+    AgColumn,
+    BeanCollection,
+    IRowNode,
+    IShowRowGroupColsService,
+    NamedBean,
     NumberSequence,
-    Beans,
-    IRowNode
-} from "@ag-grid-community/core";
-import { NodeManager } from "../nodeManager";
-import { ServerSideExpansionService } from "../services/serverSideExpansionService";
+    RowBounds,
+    ValueService,
+} from '@ag-grid-community/core';
+import { BeanStub, RowNode, _doOnce, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
 
-export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
+import type { NodeManager } from '../nodeManager';
+import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
 
-@Bean('ssrmBlockUtils')
-export class BlockUtils extends BeanStub {
+export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
 
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('beans') private beans: Beans;
-    @Autowired('expansionService') private readonly expansionService: ServerSideExpansionService;
+export class BlockUtils extends BeanStub implements NamedBean {
+    beanName = 'ssrmBlockUtils' as const;
+
+    private valueService: ValueService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
+    private nodeManager: NodeManager;
+    private beans: BeanCollection;
+    private expansionService: ServerSideExpansionService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.valueService = beans.valueService;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
+        this.beans = beans;
+        this.expansionService = beans.expansionService as ServerSideExpansionService;
+    }
 
     public createRowNode(params: {
-        group: boolean, leafGroup: boolean, level: number,
-        parent: RowNode, field: string, rowGroupColumn: Column, rowHeight?: number
+        group: boolean;
+        leafGroup: boolean;
+        level: number;
+        parent: RowNode;
+        field: string;
+        rowGroupColumn: AgColumn;
+        rowHeight?: number;
     }): RowNode {
-
         const rowNode = new RowNode(this.beans);
 
-        const rowHeight = params.rowHeight != null ? params.rowHeight : this.gridOptionsService.getRowHeightAsNumber();
+        const rowHeight = params.rowHeight != null ? params.rowHeight : this.gos.getRowHeightAsNumber();
         rowNode.setRowHeight(rowHeight);
 
         rowNode.group = params.group;
@@ -72,7 +81,7 @@ export class BlockUtils extends BeanStub {
         if (rowNode.sibling && !rowNode.footer) {
             this.destroyRowNode(rowNode.sibling, false);
         }
-    
+
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
@@ -85,7 +94,7 @@ export class BlockUtils extends BeanStub {
     private setTreeGroupInfo(rowNode: RowNode): void {
         rowNode.updateHasChildren();
 
-        const getKeyFunc = this.gridOptionsService.get('getServerSideGroupKey');
+        const getKeyFunc = this.gos.get('getServerSideGroupKey');
         if (rowNode.hasChildren() && getKeyFunc != null) {
             rowNode.key = getKeyFunc(rowNode.data);
         }
@@ -100,16 +109,16 @@ export class BlockUtils extends BeanStub {
     private setRowGroupInfo(rowNode: RowNode): void {
         rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
         if (rowNode.key === null || rowNode.key === undefined) {
-            _.doOnce(() => {
-                console.warn(`AG Grid: null and undefined values are not allowed for server side row model keys`);
+            _doOnce(() => {
+                _warnOnce(`null and undefined values are not allowed for server side row model keys`);
                 if (rowNode.rowGroupColumn) {
-                    console.warn(`column = ${rowNode.rowGroupColumn.getId()}`);
+                    _warnOnce(`column = ${rowNode.rowGroupColumn.getId()}`);
                 }
-                console.warn(`data is `, rowNode.data);
+                _warnOnce(`data is ` + rowNode.data);
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
 
-        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        const getGroupIncludeFooter = this.beans.gos.getGroupTotalRowCallback();
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
             rowNode.createFooter();
@@ -120,7 +129,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setMasterDetailInfo(rowNode: RowNode): void {
-        const isMasterFunc = this.gridOptionsService.get('isRowMaster');
+        const isMasterFunc = this.gos.get('isRowMaster');
         if (isMasterFunc != null) {
             rowNode.master = isMasterFunc(rowNode.data);
         } else {
@@ -131,14 +140,14 @@ export class BlockUtils extends BeanStub {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (this.gridOptionsService.get('treeData')) {
+        if (this.gos.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         } else if (rowNode.group) {
             this.setChildCountIntoRowNode(rowNode);
 
             if (!rowNode.footer) {
-                const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+                const getGroupIncludeFooter = this.beans.gos.getGroupTotalRowCallback();
                 const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
                 if (doesRowShowFooter) {
                     if (rowNode.sibling) {
@@ -154,28 +163,32 @@ export class BlockUtils extends BeanStub {
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
-        } else if (this.gridOptionsService.get('masterDetail')) {
+        } else if (this.gos.get('masterDetail')) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
         }
     }
 
-    public setDataIntoRowNode(rowNode: RowNode, data: any, defaultId: string, cachedRowHeight: number | undefined): void {
+    public setDataIntoRowNode(
+        rowNode: RowNode,
+        data: any,
+        defaultId: string,
+        cachedRowHeight: number | undefined
+    ): void {
         rowNode.stub = false;
-        const treeData = this.gridOptionsService.get('treeData');
+        const treeData = this.gos.get('treeData');
 
-        if (_.exists(data)) {
+        if (_exists(data)) {
             rowNode.setDataAndId(data, defaultId);
 
             if (treeData) {
                 this.setTreeGroupInfo(rowNode);
             } else if (rowNode.group) {
                 this.setRowGroupInfo(rowNode);
-            } else if (this.gridOptionsService.get('masterDetail')) {
+            } else if (this.gos.get('masterDetail')) {
                 this.setMasterDetailInfo(rowNode);
             }
-
         } else {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
@@ -188,25 +201,25 @@ export class BlockUtils extends BeanStub {
 
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
-        if (_.exists(data)) {
-            rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
-            rowNode.sibling?.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
+        if (_exists(data)) {
+            rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
+            rowNode.sibling?.setRowHeight(this.gos.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
         }
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {
-        const getChildCount = this.gridOptionsService.get('getChildCount');
+        const getChildCount = this.gos.get('getChildCount');
         if (getChildCount) {
             rowNode.setAllChildrenCount(getChildCount(rowNode.data));
         }
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
+        const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
 
-        const usingTreeData = this.gridOptionsService.get('treeData');
+        const usingTreeData = this.gos.get('treeData');
 
-        groupDisplayCols.forEach(col => {
+        groupDisplayCols.forEach((col) => {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};
             }
@@ -222,7 +235,7 @@ export class BlockUtils extends BeanStub {
     public clearDisplayIndex(rowNode: RowNode): void {
         rowNode.clearRowTopAndRowIndex();
 
-        const hasChildStore = rowNode.hasChildren() && _.exists(rowNode.childStore);
+        const hasChildStore = rowNode.hasChildren() && _exists(rowNode.childStore);
         if (hasChildStore) {
             const childStore = rowNode.childStore;
             childStore!.clearDisplayIndexes();
@@ -257,7 +270,7 @@ export class BlockUtils extends BeanStub {
         }
 
         // set children for SSRM child rows
-        const hasChildStore = rowNode.hasChildren() && _.exists(rowNode.childStore);
+        const hasChildStore = rowNode.hasChildren() && _exists(rowNode.childStore);
         if (hasChildStore) {
             const childStore = rowNode.childStore;
             if (rowNode.expanded) {
@@ -271,12 +284,11 @@ export class BlockUtils extends BeanStub {
     }
 
     public binarySearchForDisplayIndex(displayRowIndex: number, rowNodes: RowNode[]): IRowNode | undefined {
-
         let bottomPointer = 0;
         let topPointer = rowNodes.length - 1;
 
-        if (_.missing(topPointer) || _.missing(bottomPointer)) {
-            console.warn(`AG Grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
+        if (_missing(topPointer) || _missing(bottomPointer)) {
+            _warnOnce(`error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
             return undefined;
         }
 
@@ -309,7 +321,7 @@ export class BlockUtils extends BeanStub {
             } else if (currentRowNode.rowIndex! > displayRowIndex) {
                 topPointer = midPointer - 1;
             } else {
-                console.warn(`AG Grid: error: unable to locate rowIndex = ${displayRowIndex} in cache`);
+                _warnOnce(`error: unable to locate rowIndex = ${displayRowIndex} in cache`);
                 return undefined;
             }
         }
@@ -318,19 +330,19 @@ export class BlockUtils extends BeanStub {
     public extractRowBounds(rowNode: RowNode, index: number): RowBounds | undefined {
         const extractRowBounds = (currentRowNode: RowNode): RowBounds => ({
             rowHeight: currentRowNode.rowHeight!,
-            rowTop: currentRowNode.rowTop!
+            rowTop: currentRowNode.rowTop!,
         });
 
         if (rowNode.rowIndex === index) {
             return extractRowBounds(rowNode);
         }
 
-        if (rowNode.hasChildren() && rowNode.expanded && _.exists(rowNode.childStore)) {
+        if (rowNode.hasChildren() && rowNode.expanded && _exists(rowNode.childStore)) {
             const childStore = rowNode.childStore;
             if (childStore.isDisplayIndexInStore(index)) {
                 return childStore.getRowBounds(index)!;
             }
-        } else if (rowNode.master && rowNode.expanded && _.exists(rowNode.detailNode)) {
+        } else if (rowNode.master && rowNode.expanded && _exists(rowNode.detailNode)) {
             if (rowNode.detailNode.rowIndex === index) {
                 return extractRowBounds(rowNode.detailNode);
             }
@@ -352,7 +364,7 @@ export class BlockUtils extends BeanStub {
         }
 
         // then check if it's a group row with a child cache with pixel in range
-        if (rowNode.hasChildren() && rowNode.expanded && _.exists(rowNode.childStore)) {
+        if (rowNode.hasChildren() && rowNode.expanded && _exists(rowNode.childStore)) {
             const childStore = rowNode.childStore;
             if (childStore.isPixelInRange(pixel)) {
                 return childStore.getRowIndexAtPixel(pixel);

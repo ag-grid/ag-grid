@@ -1,35 +1,30 @@
-import {
-    AgRichSelect,
-    Events,
+import type {
+    FieldPickerValueSelectedEvent,
     ICellEditor,
     ICellEditorParams,
     KeyCreatorParams,
-    RichSelectParams,
-    PopupComponent,
-    FieldPickerValueSelectedEvent,
     RichCellEditorParams,
-    _
-} from "@ag-grid-community/core";
+    RichSelectParams,
+} from '@ag-grid-community/core';
+import { PopupComponent, _missing, _warnOnce } from '@ag-grid-community/core';
+import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
-
     private params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     private richSelect: AgRichSelect<TValue>;
 
     constructor() {
-        super(/* html */ 
-            `<div class="ag-cell-edit-wrapper"></div>`
-        );
+        super(/* html */ `<div class="ag-cell-edit-wrapper"></div>`);
     }
 
     public init(params: RichCellEditorParams<TData, TValue>): void {
         this.params = params;
 
-        const  { cellStartedEdit, cellHeight, values } = params;
+        const { cellStartedEdit, values } = params;
 
-        if (_.missing(values)) {
-            console.warn('AG Grid: agRichSelectCellEditor requires cellEditorParams.values to be set');
+        if (_missing(values)) {
+            _warnOnce('agRichSelectCellEditor requires cellEditorParams.values to be set');
         }
 
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
@@ -48,35 +43,42 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             });
         }
 
-        this.addManagedListener(this.richSelect, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
-        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
-
+        this.addManagedListeners(this.richSelect, {
+            fieldPickerValueSelected: this.onEditorPickerValueSelected.bind(this),
+        });
         this.focusAfterAttached = cellStartedEdit;
-
-        if (_.exists(cellHeight)) {
-            this.richSelect.setRowHeight(cellHeight);
-        }
     }
 
-    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent<TData>): void {
+    private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         this.params.stopEditing(!e.fromEnterKey);
     }
 
-    private onEditorFocusOut(e: FocusEvent): void {
-        if (this.richSelect.getGui().contains(e.relatedTarget as Element)) { return; }
-        this.params.stopEditing(true);
-    }
-
-    private buildRichSelectParams(): { params: RichSelectParams<TValue>, valuesPromise?: Promise<TValue[]> } {
-        const { 
-            cellRenderer, value, values, formatValue, searchDebounceDelay, 
-            valueListGap, valueListMaxHeight, valueListMaxWidth, allowTyping,
-            filterList, searchType, highlightMatch, valuePlaceholder, eventKey
+    private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
+        const {
+            cellRenderer,
+            cellHeight,
+            value,
+            values,
+            formatValue,
+            searchDebounceDelay,
+            valueListGap,
+            valueListMaxHeight,
+            valueListMaxWidth,
+            allowTyping,
+            filterList,
+            searchType,
+            highlightMatch,
+            valuePlaceholder,
+            eventKey,
+            multiSelect,
+            suppressDeselectAll,
+            suppressMultiSelectPillRenderer,
         } = this.params;
 
         const ret: RichSelectParams = {
             value: value,
             cellRenderer,
+            cellRowHeight: cellHeight,
             searchDebounceDelay,
             valueFormatter: formatValue,
             pickerAriaLabelKey: 'ariaLabelRichSelectField',
@@ -90,8 +92,11 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             maxPickerHeight: valueListMaxHeight,
             maxPickerWidth: valueListMaxWidth,
             placeholder: valuePlaceholder,
-            initialInputValue: eventKey?.length === 1 ? eventKey : undefined
-        }
+            initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
+            multiSelect,
+            suppressDeselectAll,
+            suppressMultiSelectPillRenderer,
+        };
 
         let valuesResult;
         let valuesPromise;
@@ -109,6 +114,13 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             valuesPromise = valuesResult;
         }
 
+        if (multiSelect && allowTyping) {
+            this.params.allowTyping = ret.allowTyping = false;
+            _warnOnce(
+                'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.'
+            );
+        }
+
         return { params: ret, valuesPromise };
     }
 
@@ -119,16 +131,17 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             return;
         }
 
-        return (values: TValue[]) => values.map((value: TValue) => {
-            const keyParams: KeyCreatorParams = this.gridOptionsService.addGridCommonParams({
-                value: value,
-                colDef: this.params.colDef,
-                column: this.params.column,
-                node: this.params.node,
-                data: this.params.data
+        return (values: TValue[]) =>
+            values.map((value: TValue) => {
+                const keyParams: KeyCreatorParams = this.gos.addGridCommonParams({
+                    value: value,
+                    colDef: this.params.colDef,
+                    column: this.params.column,
+                    node: this.params.node,
+                    data: this.params.data,
+                });
+                return colDef.keyCreator!(keyParams);
             });
-            return colDef.keyCreator!(keyParams);
-        });
     }
 
     // we need to have the gui attached before we can draw the virtual rows, as the
@@ -137,7 +150,9 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         const { focusAfterAttached, params } = this;
 
         setTimeout(() => {
-            if (!this.isAlive()) { return; }
+            if (!this.isAlive()) {
+                return;
+            }
 
             if (focusAfterAttached) {
                 const focusableEl = this.richSelect.getFocusableElement() as HTMLInputElement;
@@ -156,16 +171,18 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
                     this.richSelect.searchTextFromString(eventKey);
                 }
             }
-
         });
+    }
+
+    public focusIn(): void {
+        this.richSelect.getFocusableElement().focus();
     }
 
     public getValue(): any {
         return this.richSelect.getValue();
     }
 
-    public isPopup(): boolean {
+    public override isPopup(): boolean {
         return false;
     }
-
 }

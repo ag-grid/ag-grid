@@ -1,13 +1,21 @@
-import { _, Autowired, Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
-import {ILicenseManager, LicenseManager} from "./shared/licenseManager";
+import type { ComponentSelector, IWatermark, NamedBean } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('licenseManager')
-export class GridLicenseManager extends BeanStub {
+import type { ILicenseManager } from './shared/licenseManager';
+import { LicenseManager } from './shared/licenseManager';
+import { AgWatermarkSelector } from './watermark';
+
+export class GridLicenseManager extends BeanStub implements NamedBean, IWatermark {
+    beanName = 'licenseManager' as const;
+
     private licenseManager: LicenseManager;
 
-    @PreConstruct
+    public postConstruct(): void {
+        this.validateLicense();
+    }
+
     public validateLicense(): void {
-        this.licenseManager = new LicenseManager(this.gridOptionsService.getDocument())
+        this.licenseManager = new LicenseManager(this.gos.getDocument());
         this.licenseManager.validateLicense();
     }
 
@@ -15,11 +23,15 @@ export class GridLicenseManager extends BeanStub {
         return new LicenseManager(null as any).getLicenseDetails(licenseKey);
     }
 
+    public getWatermarkSelector(): ComponentSelector {
+        return AgWatermarkSelector;
+    }
+
     public isDisplayWatermark(): boolean {
         return this.licenseManager.isDisplayWatermark();
     }
 
-    public getWatermarkMessage() : string {
+    public getWatermarkMessage(): string {
         return this.licenseManager.getWatermarkMessage();
     }
 

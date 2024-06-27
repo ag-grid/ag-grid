@@ -1,12 +1,12 @@
-import { ColDef } from "./colDef";
+import type { ColDef } from './colDef';
 
 export const DefaultColumnTypes: { [key: string]: ColDef } = {
     numericColumn: {
         headerClass: 'ag-right-aligned-header',
-        cellClass: 'ag-right-aligned-cell'
+        cellClass: 'ag-right-aligned-cell',
     },
     rightAligned: {
         headerClass: 'ag-right-aligned-header',
-        cellClass: 'ag-right-aligned-cell'
-    }
+        cellClass: 'ag-right-aligned-cell',
+    },
 };

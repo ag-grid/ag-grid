@@ -6,7 +6,7 @@ function delayAssert(done: (error?: Error) => void, ...assertions: (() => void)[
 
 function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[]) {
     try {
-        assertions.forEach(a => a());
+        assertions.forEach((a) => a());
         done();
     } catch (error) {
         done(error);
@@ -16,14 +16,14 @@ function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[
 describe('AgPromise', () => {
     it('executes initial function by default', () => {
         const initial = jest.fn();
-        const promise = new AgPromise(resolve => initial());
+        const promise = new AgPromise((resolve) => initial());
 
         expect(initial).toBeCalledTimes(1);
     });
 });
 
 describe('then', () => {
-    it('waits for initial function to finish before executing', done => {
+    it('waits for initial function to finish before executing', (done) => {
         let canResolve = false;
 
         const initial = (resolve: (x: boolean) => void) => {
@@ -62,7 +62,7 @@ describe('then', () => {
 
         let receivedValue = 0;
 
-        const then = (value: number) => receivedValue = value;
+        const then = (value: number) => (receivedValue = value);
 
         const promise = new AgPromise(initial);
         promise.then(then);
@@ -70,18 +70,18 @@ describe('then', () => {
         expect(receivedValue).toBe(value);
     });
 
-    it('returns a promise that can be chained', done => {
-        new AgPromise<number>(resolve => setTimeout(() => resolve(3), 0))
-            .then(value => value! * 3)
-            .then(value => value! + 20)
-            .then(value => {
+    it('returns a promise that can be chained', (done) => {
+        new AgPromise<number>((resolve) => setTimeout(() => resolve(3), 0))
+            .then((value) => value! * 3)
+            .then((value) => value! + 20)
+            .then((value) => {
                 asyncAssert(done, () => expect(value).toBe(29));
             });
     });
 });
 
 describe('all', () => {
-    it('waits for all promises to resolve', done => {
+    it('waits for all promises to resolve', (done) => {
         let promise1canResolve = false;
         let promise2canResolve = false;
 
@@ -128,21 +128,5 @@ describe('all', () => {
                 done(error);
             }
         }, 0);
-    });
-});
-
-describe('resolveNow', () => {
-    it('returns default if promise has not yet resolved', () => {
-        const promise = new AgPromise<number>(resolve => { });
-        const value = 123;
-
-        expect(promise.resolveNow(value, x => x)).toBe(value);
-    });
-
-    it('returns value from promise if promise has resolved', () => {
-        const value = 456;
-        const promise = AgPromise.resolve(value);
-
-        expect(promise.resolveNow(123, x => x)).toBe(value);
     });
 });

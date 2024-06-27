@@ -1,10 +1,10 @@
-import { GridApi, createGrid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
-import { getData,TAthlete } from './data';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { GridApi, GridOptions, GridReadyEvent, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { TAthlete, getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
 
 let gridApi: GridApi;
 
@@ -24,24 +24,22 @@ const gridOptions: GridOptions = {
         const shouldPinFirstColumn = checkbox && checkbox.checked;
         if (shouldPinFirstColumn) {
             params.api.applyColumnState({
-                state: [
-                    { colId: 'name', pinned: 'left' },
-                ],
+                state: [{ colId: 'name', pinned: 'left' }],
             });
         }
     },
 };
 
 function reloadGrid() {
-  if (gridApi) {
-    gridApi.destroy()
-  }
+    if (gridApi) {
+        gridApi.destroy();
+    }
 
-  setTimeout(() => {
-    // Artificial delay to show grid being destroyed and re-created
-    const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
-    gridApi = createGrid(gridDiv, gridOptions);
-  }, 500)
+    setTimeout(() => {
+        // Artificial delay to show grid being destroyed and re-created
+        const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+        gridApi = createGrid(gridDiv, gridOptions);
+    }, 500);
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

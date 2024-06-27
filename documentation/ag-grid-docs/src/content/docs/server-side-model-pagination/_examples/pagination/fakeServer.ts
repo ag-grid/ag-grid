@@ -5,20 +5,22 @@ export function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function(request) {
+        getData: function (request) {
             var results = executeQuery(request);
 
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request)
+                lastRow: getLastRowIndex(request),
             };
         },
-        getCountries: function() {
+        getCountries: function () {
             var SQL = 'SELECT DISTINCT country FROM ? ORDER BY country ASC';
 
-            return alasql(SQL, [allData]).map(function(x) { return x.country; });
-        }
+            return alasql(SQL, [allData]).map(function (x) {
+                return x.country;
+            });
+        },
     };
 
     function executeQuery(request) {
@@ -38,11 +40,11 @@ export function FakeServer(allData) {
         var filterModel = request.filterModel;
 
         if (filterModel) {
-            Object.keys(filterModel).forEach(function(columnKey) {
+            Object.keys(filterModel).forEach(function (columnKey) {
                 var filter = filterModel[columnKey];
 
                 if (filter.filterType === 'set') {
-                    whereParts.push(columnKey + ' IN (\'' + filter.values.join("', '") + '\')');
+                    whereParts.push(columnKey + " IN ('" + filter.values.join("', '") + "')");
                     return;
                 }
 
@@ -62,7 +64,7 @@ export function FakeServer(allData) {
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function(s) {
+        var sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -70,7 +72,9 @@ export function FakeServer(allData) {
     }
 
     function limitSql(request) {
-        if (request.endRow == undefined || request.startRow == undefined) { return ''; }
+        if (request.endRow == undefined || request.startRow == undefined) {
+            return '';
+        }
         var blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
@@ -80,4 +84,3 @@ export function FakeServer(allData) {
         return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }
-

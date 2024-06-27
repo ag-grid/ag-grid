@@ -1,16 +1,17 @@
 ---
 title: "Row Data"
+description: "Provide an array of row data to your $framework Data Table via the rowData property. Explore updating row data, providing a row ID, and the row node."
 ---
 
 Provide an array of data to the grid via the `rowData` property to render a row for each item in the array. 
 
 ## Row Data
 
-When using the default row model - [Client Side](./client-side-model) data is provided to the grid via the `rowData` property.
+When using the default row model - [Client Side](./row-models/#client-side) data is provided to the grid via the `rowData` property.
 
 {% gridExampleRunner title="Row Data" name="row-data" exampleHeight=275 /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowData: [
         { make: "Toyota", model: "Celica", price: 35000 },

@@ -1,13 +1,16 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columns/columnModel";
-import { Events } from "../eventKeys";
-import { ScrollVisibleService } from "./scrollVisibleService";
+import type { VisibleColsService } from '../columns/visibleColsService';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class CenterWidthFeature extends BeanStub {
+    private visibleColsService: VisibleColsService;
+    private scrollVisibleService: ScrollVisibleService;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+    public wireBeans(beans: BeanCollection): void {
+        this.visibleColsService = beans.visibleColsService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+    }
 
     constructor(
         private readonly callback: (width: number) => void,
@@ -16,32 +19,33 @@ export class CenterWidthFeature extends BeanStub {
         super();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const listener = this.setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
+        this.addManagedEventListeners({
+            columnContainerWidthChanged: listener,
+            displayedColumnsChanged: listener,
+            leftPinnedWidthChanged: listener,
+        });
 
         if (this.addSpacer) {
-            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
-            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
-            this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
+            this.addManagedEventListeners({
+                rightPinnedWidthChanged: listener,
+                scrollVisibilityChanged: listener,
+                scrollbarWidthChanged: listener,
+            });
         }
 
         this.setWidth();
     }
 
     private setWidth(): void {
-        const {columnModel} = this;
+        const printLayout = this.gos.isDomLayout('print');
 
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-
-        const centerWidth = columnModel.getBodyContainerWidth();
-        const leftWidth = columnModel.getDisplayedColumnsLeftWidth();
-        const rightWidth = columnModel.getDisplayedColumnsRightWidth();
+        const centerWidth = this.visibleColsService.getBodyContainerWidth();
+        const leftWidth = this.visibleColsService.getColsLeftWidth();
+        const rightWidth = this.visibleColsService.getDisplayedColumnsRightWidth();
 
         let totalWidth: number;
 
@@ -51,9 +55,9 @@ export class CenterWidthFeature extends BeanStub {
             totalWidth = centerWidth;
 
             if (this.addSpacer) {
-                const relevantWidth = this.gridOptionsService.get('enableRtl') ? leftWidth : rightWidth;
+                const relevantWidth = this.gos.get('enableRtl') ? leftWidth : rightWidth;
                 if (relevantWidth === 0 && this.scrollVisibleService.isVerticalScrollShowing()) {
-                    totalWidth += this.gridOptionsService.getScrollbarWidth();
+                    totalWidth += this.gos.getScrollbarWidth();
                 }
             }
         }

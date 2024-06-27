@@ -1,5 +1,4 @@
-import type { TargetConfiguration } from '@nx/devkit';
-import type { CreateDependencies, CreateNodes } from 'nx/src/utils/nx-plugin';
+import type { CreateDependencies, CreateNodes, TargetConfiguration } from '@nx/devkit';
 import { dirname } from 'path';
 
 import * as generateExampleFiles from './generate-example-files';
@@ -8,7 +7,7 @@ const PROJECTS = ['ag-grid-docs'];
 const NON_UNIQUE_PATH_ELEMENTS = new Set(['src', 'content', 'docs', '_examples']);
 export const createNodes: CreateNodes = [
     'documentation/*/src/**/_examples/*/main.ts',
-    (configFilePath, options, context) => {
+    (configFilePath) => {
         const parentProject = PROJECTS.find((p) => configFilePath.startsWith(`documentation/${p}`));
 
         if (!parentProject) {
@@ -20,7 +19,6 @@ export const createNodes: CreateNodes = [
             .slice(2)
             .filter((p) => !NON_UNIQUE_PATH_ELEMENTS.has[p])
             .join('_');
-        const parentPath = `documentation/${parentProject}`;
         const examplePath = dirname(configFilePath).replace(`documentation/${parentProject}/`, '{projectRoot}/');
         const projectRelativeInputPath = examplePath.split('/').slice(2).join('/');
         const srcRelativeInputPath = projectRelativeInputPath.split('/').slice(1).join('/');

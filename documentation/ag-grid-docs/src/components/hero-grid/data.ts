@@ -156,7 +156,7 @@ export const columnDefs: ColDef[] = [
         type: 'numericColumn',
         valueGetter: ({ data }) => {
             const last = getLastValue(data);
-            return Boolean(data.current) ? ((data.current - last) / data.current) * 100 : 0;
+            return data.current ? ((data.current - last) / data.current) * 100 : 0;
         },
         cellRenderer: ChangeCellRenderer,
         initialWidth: 150,

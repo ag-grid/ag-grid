@@ -2,21 +2,22 @@
   "name": "ag-grid-docs",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "documentation/ag-grid-docs/src",
+  "sourceRoot": "{projectRoot}/src",
   "targets": {
     "build": {
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
-      "dependsOn": ["^build", "generate-doc-references", "generate-examples"],
+      "dependsOn": ["generate-doc-references", "generate-examples", "^build"],
       "inputs": [
         "^production",
         "production",
         "!{projectRoot}/vitest.config.mjs",
+        "{workspaceRoot}/external/ag-website-shared/**",
         { "env": "PUBLIC_PACKAGE_VERSION" }
       ],
       "cache": true,
       "command": "astro build",
       "options": {
-        "cwd": "documentation/ag-grid-docs",
+        "cwd": "{projectRoot}",
         "silent": true
       },
       "configurations": {
@@ -28,14 +29,18 @@
     "build-tsc": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --project documentation/ag-grid-docs/tsconfig.json"
+        "command": "tsc --project {projectRoot}/tsconfig.json"
       }
     },
-    "dev": {
+    "elapsedBuildTime": {
       "dependsOn": ["^build", "^docs-resolved-interfaces"],
+      "command": "node scripts/buildTime.mjs stop && node scripts/buildTime.mjs elapsed"
+    },
+    "dev": {
+      "dependsOn": ["^build", "^docs-resolved-interfaces", "elapsedBuildTime"],
       "command": "astro dev --port=${PORT} --host",
       "options": {
-        "cwd": "documentation/ag-grid-docs"
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "watch": {}
@@ -49,12 +54,53 @@
       ],
       "command": "astro preview --port=${PORT}",
       "options": {
-        "cwd": "documentation/ag-grid-docs"
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "staging": {},
         "archive": {},
         "production": {}
+      }
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:noop",
+      "dependsOn": ["test:vitest"],
+      "inputs": [],
+      "outputs": [],
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "ci": {},
+        "watch": {},
+        "update": {}
+      }
+    },
+    "test:vitest": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
+      "dependsOn": [],
+      "options": {
+        "cwd": "{projectRoot}",
+        "config": "{projectRoot}/vitest.config.mjs"
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../../reports/ag-grid-website.xml",
+          "reporters": ["junit"]
+        },
+        "watch": {
+          "watch": true
+        },
+        "update": {
+          "update": true
+        }
       }
     },
     "generate-examples": {
@@ -96,7 +142,7 @@
       "dependsOn": ["^build:types"],
       "inputs": [
         "{projectRoot}/tsconfig.examples.json",
-        "{workspaceRoot}/documentation/ag-grid-docs/src/**/_examples/**/*.ts",
+        "{workspaceRoot}/{projectRoot}/src/**/_examples/**/*.ts",
         "tsDeclarations",
         {
           "externalDependencies": ["npm:typescript"]
@@ -116,7 +162,6 @@
     "community-modules/infinite-row-model",
     "community-modules/angular",
     "community-modules/react",
-    "community-modules/vue",
     "community-modules/vue3",
     "enterprise-modules/core",
     "enterprise-modules/advanced-filter",
@@ -140,5 +185,5 @@
     "enterprise-modules/status-bar",
     "packages/ag-grid-community"
   ],
-  "tags": []
+  "tags": ["website"]
 }

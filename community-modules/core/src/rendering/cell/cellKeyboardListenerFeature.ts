@@ -1,23 +1,21 @@
-import { BeanStub } from "../../context/beanStub";
-import { CellCtrl } from "./cellCtrl";
-import { Beans } from "../beans";
-import { Column } from "../../entities/column";
-import { RowNode } from "../../entities/rowNode";
-import { KeyCode } from "../../constants/keyCode";
-import { RowCtrl } from "../row/rowCtrl";
-import { isDeleteKey } from "../../utils/keyboard";
-import { Events } from "../../eventKeys";
+import { KeyCode } from '../../constants/keyCode';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
+import { _isDeleteKey } from '../../utils/keyboard';
+import type { RowCtrl } from '../row/rowCtrl';
+import type { CellCtrl } from './cellCtrl';
 
 export class CellKeyboardListenerFeature extends BeanStub {
-
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: Beans;
+    private readonly beans: BeanCollection;
     private readonly rowNode: RowNode;
     private readonly rowCtrl: RowCtrl;
 
     private eGui: HTMLElement;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, rowCtrl: RowCtrl) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, column: AgColumn, rowNode: RowNode, rowCtrl: RowCtrl) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;
@@ -59,7 +57,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onNavigationKeyDown(event: KeyboardEvent, key: string): void {
-        if (this.cellCtrl.isEditing()) { return; }
+        if (this.cellCtrl.isEditing()) {
+            return;
+        }
 
         if (event.shiftKey && this.cellCtrl.isRangeSelectionEnabled()) {
             this.onShiftRangeSelect(event);
@@ -72,7 +72,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onShiftRangeSelect(event: KeyboardEvent): void {
-        if (!this.beans.rangeService) { return; }
+        if (!this.beans.rangeService) {
+            return;
+        }
 
         const endCell = this.beans.rangeService.extendLatestRangeInDirection(event);
 
@@ -87,30 +89,36 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onBackspaceOrDeleteKeyDown(key: string, event: KeyboardEvent): void {
         const { cellCtrl, beans, rowNode } = this;
-        const { gridOptionsService, rangeService, eventService } = beans;
+        const { gos, rangeService, eventService } = beans;
 
-        if (cellCtrl.isEditing()) { return; }
+        if (cellCtrl.isEditing()) {
+            return;
+        }
 
-        eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
+        eventService.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
-        if (isDeleteKey(key, gridOptionsService.get('enableCellEditingOnBackspace'))) {
-            if (rangeService && gridOptionsService.get('enableRangeSelection')) {
+        if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
+            if (rangeService && gos.get('enableRangeSelection')) {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
-                rowNode.setDataValue(cellCtrl.getColumn(), null, 'cellClear');
+                const column = cellCtrl.getColumn();
+                const emptyValue =
+                    this.beans.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ??
+                    null;
+                rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {
             cellCtrl.startRowOrCellEdit(key, event);
         }
 
-        eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
+        eventService.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
         if (this.cellCtrl.isEditing() || this.rowCtrl.isEditing()) {
             this.cellCtrl.stopEditingAndFocus(false, e.shiftKey);
         } else {
-            if (this.beans.gridOptionsService.get('enterNavigatesVertically')) {
+            if (this.beans.gos.get('enterNavigatesVertically')) {
                 const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
                 this.beans.navigationService.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
             } else {
@@ -132,6 +140,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private onEscapeKeyDown(event: KeyboardEvent): void {
         if (this.cellCtrl.isEditing()) {
             this.cellCtrl.stopRowOrCellEdit(true);
@@ -145,7 +154,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const eventTarget = event.target;
         const eventOnChildComponent = eventTarget !== this.eGui;
 
-        if (eventOnChildComponent || this.cellCtrl.isEditing()) { return; }
+        if (eventOnChildComponent || this.cellCtrl.isEditing()) {
+            return;
+        }
 
         const key = event.key;
         if (key === ' ') {
@@ -162,13 +173,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onSpaceKeyDown(event: KeyboardEvent): void {
-        const { gridOptionsService } = this.beans;
+        const { gos } = this.beans;
 
-        if (!this.cellCtrl.isEditing() && gridOptionsService.isRowSelection()) {
+        if (!this.cellCtrl.isEditing() && gos.isRowSelection()) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
-            if (newSelection || !gridOptionsService.get('suppressRowDeselection')) {
-                const groupSelectsFiltered = this.beans.gridOptionsService.get('groupSelectsFiltered');
+            if (newSelection || !gos.get('suppressRowDeselection')) {
+                const groupSelectsFiltered = this.beans.gos.get('groupSelectsFiltered');
                 const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,
@@ -192,8 +203,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         event.preventDefault();
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
-
 }

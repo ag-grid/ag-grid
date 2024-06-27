@@ -1,9 +1,9 @@
+import type { ChartModel } from '@ag-grid-community/core';
 import { describe, expect, it } from '@jest/globals';
 import * as fs from 'fs';
-import { heuristicVersionDetection, upgradeChartModel } from './chartModelMigration';
-import { VERSION } from '../version';
 
-import { ChartModel } from '@ag-grid-community/core';
+import { VERSION } from '../version';
+import { heuristicVersionDetection, upgradeChartModel } from './chartModelMigration';
 
 function loadChartModel(name: string): ChartModel {
     return JSON.parse(

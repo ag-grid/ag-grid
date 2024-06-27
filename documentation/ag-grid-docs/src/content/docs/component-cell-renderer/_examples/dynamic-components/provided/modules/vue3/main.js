@@ -1,16 +1,17 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+
 import ChildMessageRenderer from './childMessageRendererVue.js';
 import CubeRenderer from './cubeRendererVue.js';
 import CurrencyRenderer from './currencyRendererVue.js';
 import ParamsRenderer from './paramsRendererVue.js';
 import SquareRenderer from './squareRendererVue.js';
+import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -38,54 +39,54 @@ const VueExample = {
         cubeRenderer: CubeRenderer,
         paramsRenderer: ParamsRenderer,
         currencyRenderer: CurrencyRenderer,
-        childMessageRenderer: ChildMessageRenderer
+        childMessageRenderer: ChildMessageRenderer,
     },
     data: function () {
         return {
             gridApi: null,
             columnDefs: [
                 {
-                    headerName: "Row",
-                    field: "row",
-                    width: 150
+                    headerName: 'Row',
+                    field: 'row',
+                    width: 150,
                 },
                 {
-                    headerName: "Square",
-                    field: "value",
-                    cellRenderer: "squareRenderer",
+                    headerName: 'Square',
+                    field: 'value',
+                    cellRenderer: 'squareRenderer',
                     editable: true,
-                    colId: "square",
-                    width: 150
+                    colId: 'square',
+                    width: 150,
                 },
                 {
-                    headerName: "Cube",
-                    field: "value",
-                    cellRenderer: "cubeRenderer",
-                    colId: "cube",
-                    width: 150
+                    headerName: 'Cube',
+                    field: 'value',
+                    cellRenderer: 'cubeRenderer',
+                    colId: 'cube',
+                    width: 150,
                 },
                 {
-                    headerName: "Row Params",
-                    field: "row",
-                    cellRenderer: "paramsRenderer",
-                    colId: "params",
-                    width: 150
+                    headerName: 'Row Params',
+                    field: 'row',
+                    cellRenderer: 'paramsRenderer',
+                    colId: 'params',
+                    width: 150,
                 },
                 {
-                    headerName: "Currency",
-                    field: "currency",
-                    cellRenderer: "currencyRenderer",
-                    colId: "currency",
-                    width: 120
+                    headerName: 'Currency',
+                    field: 'currency',
+                    cellRenderer: 'currencyRenderer',
+                    colId: 'currency',
+                    width: 120,
                 },
                 {
-                    headerName: "Child/Parent",
-                    field: "value",
-                    cellRenderer: "childMessageRenderer",
-                    colId: "params",
+                    headerName: 'Child/Parent',
+                    field: 'value',
+                    cellRenderer: 'childMessageRenderer',
+                    colId: 'params',
                     editable: false,
-                    minWidth: 150
-                }
+                    minWidth: 150,
+                },
             ],
             rowData: null,
             context: null,
@@ -95,8 +96,10 @@ const VueExample = {
                 minWidth: 100,
                 filter: true,
             },
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
     },
     beforeMount() {
         this.rowData = this.createRowData();
@@ -109,13 +112,13 @@ const VueExample = {
                 rowData.push({
                     row: 'Row ' + i,
                     value: i,
-                    currency: i + Number(Math.random().toFixed(2))
+                    currency: i + Number(Math.random().toFixed(2)),
                 });
             }
             return rowData;
         },
         refreshEvenRowsCurrencyData() {
-            this.gridApi.forEachNode(rowNode => {
+            this.gridApi.forEachNode((rowNode) => {
                 if (rowNode.data.value % 2 === 0) {
                     rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
                 }
@@ -126,11 +129,9 @@ const VueExample = {
             this.gridApi = params.api;
         },
         methodFromParent(cell) {
-            alert("Parent Component Method from " + cell + "!");
+            alert('Parent Component Method from ' + cell + '!');
         },
-    }
-}
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
-
+createApp(VueExample).mount('#app');

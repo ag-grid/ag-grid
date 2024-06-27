@@ -1,21 +1,13 @@
-import {
-    AreaSparklineOptions,
-    GridApi,
-    createGrid,
-    GridOptions,
-    TooltipRendererParams,
-} from '@ag-grid-community/core';
-import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { AreaSparklineOptions, GridApi, GridOptions, TooltipRendererParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
-import { ModuleRegistry } from "@ag-grid-community/core";
+
+import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, SparklinesModule]);
 
-
-
 let gridApi: GridApi;
-
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -98,8 +90,8 @@ function renderer(params: TooltipRendererParams) {
     return {
         backgroundColor: 'black',
         opacity: 0.9,
-        color: 'white'
-    }
+        color: 'white',
+    };
 }
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

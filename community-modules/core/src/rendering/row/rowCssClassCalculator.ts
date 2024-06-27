@@ -1,12 +1,14 @@
-import { exists } from "../../utils/generic";
-import { RowNode } from "../../entities/rowNode";
-import { pushAll } from "../../utils/array";
-import { GridOptionsService } from "../../gridOptionsService";
-import { Autowired, Bean } from "../../context/context";
-import { StylingService } from "../../styling/stylingService";
-import { RowClassParams } from "../../entities/gridOptions";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { ColumnPinnedType } from "../../entities/column";
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { RowClassParams } from '../../entities/gridOptions';
+import type { RowNode } from '../../entities/rowNode';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { StylingService } from '../../styling/stylingService';
+import { _pushAll } from '../../utils/array';
+import { _warnOnce } from '../../utils/function';
+import { _exists } from '../../utils/generic';
 
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;
@@ -24,17 +26,19 @@ export interface RowCssClassCalculatorParams {
     fadeRowIn?: boolean;
 }
 
-@Bean('rowCssClassCalculator')
-export class RowCssClassCalculator {
+export class RowCssClassCalculator extends BeanStub implements NamedBean {
+    beanName = 'rowCssClassCalculator' as const;
 
-    @Autowired('stylingService') public stylingService: StylingService;
-    @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
+    private stylingService: StylingService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.stylingService = beans.stylingService;
+    }
 
     public getInitialRowClasses(params: RowCssClassCalculatorParams): string[] {
-
         const classes: string[] = [];
 
-        if (exists(params.extraCssClass)) {
+        if (_exists(params.extraCssClass)) {
             classes.push(params.extraCssClass);
         }
 
@@ -78,8 +82,8 @@ export class RowCssClassCalculator {
             classes.push('ag-row-dragging');
         }
 
-        pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
-        pushAll(classes, this.preProcessRowClassRules(params.rowNode));
+        _pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
+        _pushAll(classes, this.preProcessRowClassRules(params.rowNode));
 
         // we use absolute position unless we are doing print layout
         classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
@@ -111,28 +115,28 @@ export class RowCssClassCalculator {
             if (typeof rowCls === 'string') {
                 res.push(rowCls);
             } else if (Array.isArray(rowCls)) {
-                rowCls.forEach(e => res.push(e));
+                rowCls.forEach((e) => res.push(e));
             }
         };
 
         // part 1 - rowClass
-        const rowClass = this.gridOptionsService.get('rowClass');
+        const rowClass = this.gos.get('rowClass');
         if (rowClass) {
             if (typeof rowClass === 'function') {
-                console.warn('AG Grid: rowClass should not be a function, please use getRowClass instead');
+                _warnOnce('rowClass should not be a function, please use getRowClass instead');
                 return [];
             }
             process(rowClass);
         }
 
         // part 2 - rowClassFunc
-        const rowClassFunc = this.gridOptionsService.getCallback('getRowClass');
+        const rowClassFunc = this.gos.getCallback('getRowClass');
 
         if (rowClassFunc) {
             const params: WithoutGridCommon<RowClassParams> = {
                 data: rowNode.data,
                 node: rowNode,
-                rowIndex: rowNode.rowIndex!
+                rowIndex: rowNode.rowIndex!,
             };
             const rowClassFuncResult = rowClassFunc(params);
             process(rowClassFuncResult);
@@ -144,10 +148,12 @@ export class RowCssClassCalculator {
     private preProcessRowClassRules(rowNode: RowNode): string[] {
         const res: string[] = [];
 
-        this.processRowClassRules(rowNode, (className: string) => {
+        this.processRowClassRules(
+            rowNode,
+            (className: string) => {
                 res.push(className);
             },
-            (className: string) => {
+            () => {
                 // not catered for, if creating, no need
                 // to remove class as it was never there
             }
@@ -156,16 +162,20 @@ export class RowCssClassCalculator {
         return res;
     }
 
-    public processRowClassRules(rowNode: RowNode, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
-        const rowClassParams: RowClassParams = this.gridOptionsService.addGridCommonParams({
+    public processRowClassRules(
+        rowNode: RowNode,
+        onApplicableClass: (className: string) => void,
+        onNotApplicableClass?: (className: string) => void
+    ): void {
+        const rowClassParams: RowClassParams = this.gos.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
-            rowIndex: rowNode.rowIndex!
+            rowIndex: rowNode.rowIndex!,
         });
 
         this.stylingService.processClassRules(
             undefined,
-            this.gridOptionsService.get('rowClassRules'),
+            this.gos.get('rowClassRules'),
             rowClassParams,
             onApplicableClass,
             onNotApplicableClass
@@ -178,7 +188,6 @@ export class RowCssClassCalculator {
         }
 
         // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-        return rowNode.parent ? (rowNode.parent.level + 1) : 0;
+        return rowNode.parent ? rowNode.parent.level + 1 : 0;
     }
-
 }

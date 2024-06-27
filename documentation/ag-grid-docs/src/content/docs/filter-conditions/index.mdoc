@@ -18,7 +18,7 @@ Each filter's default filter options can be found on their respective pages:
 
 * [Text Filter Options](./filter-text/#text-filter-options)
 * [Number Filter Options](./filter-number/#number-filter-options)
-* [Date Filter Options](./filter-date/#date-filter-options)
+* [Date Filter Options](./filter-date/#filter-options)
 
 Information on defining [Custom Filter Options](#custom-filter-options) can be found below.
 
@@ -72,7 +72,7 @@ The number of `filterValues` and corresponding inputs is controlled by the optio
 
 Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `string` keys as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -136,7 +136,7 @@ The following example demonstrates several custom filter options:
 
 Filter placeholder text can be customised on a per column basis using `filterParams.filterPlaceholder` within the grid option `columnDefs`. The placeholder can be either a string or a function as shown in the snippet below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {

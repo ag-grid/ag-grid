@@ -1,23 +1,17 @@
-import {
-    Autowired,
-    BeanStub,
-    StoreUpdatedEvent,
-    Events,
+import type {
+    BeanCollection,
+    FocusService,
     IDatasource,
-    Logger,
-    LoggerFactory,
-    NumberSequence,
-    PreDestroy,
-    Qualifier,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    _,
-    FocusService,
     SortModelItem,
-    WithoutGridCommon
-} from "@ag-grid-community/core";
-import { InfiniteBlock } from "./infiniteBlock";
+    StoreUpdatedEvent,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, _exists, _getAllValuesInObject, _log, _missing } from '@ag-grid-community/core';
+
+import { InfiniteBlock } from './infiniteBlock';
 
 export interface InfiniteCacheParams {
     datasource: IDatasource;
@@ -33,34 +27,32 @@ export interface InfiniteCacheParams {
     dynamicRowHeight: boolean;
 }
 
+// this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
+// blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
+// scrolled over are not needed to be loaded.
+const MAX_EMPTY_BLOCKS_TO_KEEP = 2;
+
 export class InfiniteCache extends BeanStub {
+    protected rowRenderer: RowRenderer;
+    private focusService: FocusService;
 
-    // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
-    // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
-    // scrolled over are not needed to be loaded.
-    private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
-
-    @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
-    @Autowired("focusService") private focusService: FocusService;
+    public wireBeans(beans: BeanCollection): void {
+        this.rowRenderer = beans.rowRenderer;
+        this.focusService = beans.focusService;
+    }
 
     private readonly params: InfiniteCacheParams;
 
     private rowCount: number;
     private lastRowIndexKnown = false;
 
-    private blocks: { [blockNumber: string]: InfiniteBlock; } = {};
+    private blocks: { [blockNumber: string]: InfiniteBlock } = {};
     private blockCount = 0;
-
-    private logger: Logger;
 
     constructor(params: InfiniteCacheParams) {
         super();
         this.rowCount = params.initialRowCount;
         this.params = params;
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('InfiniteCache');
     }
 
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
@@ -104,13 +96,13 @@ export class InfiniteCache extends BeanStub {
             return;
         }
 
-        this.getBlocksInOrder().forEach(block => block.setStateWaitingToLoad());
+        this.getBlocksInOrder().forEach((block) => block.setStateWaitingToLoad());
         this.params.rowNodeBlockLoader!.checkBlockToLoad();
     }
 
-    @PreDestroy
-    private destroyAllBlocks(): void {
-        this.getBlocksInOrder().forEach(block => this.destroyBlock(block));
+    public override destroy(): void {
+        this.getBlocksInOrder().forEach((block) => this.destroyBlock(block));
+        super.destroy();
     }
 
     public getRowCount(): number {
@@ -129,7 +121,9 @@ export class InfiniteCache extends BeanStub {
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
+        if (this.gos.get('debug')) {
+            _log(`InfiniteCache - onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
+        }
 
         this.checkRowCount(block, lastRow);
         // we fire cacheUpdated even if the row count has not changed, as some items need updating even
@@ -141,8 +135,9 @@ export class InfiniteCache extends BeanStub {
     private purgeBlocksIfNeeded(blockToExclude: InfiniteBlock): void {
         // we exclude checking for the page just created, as this has yet to be accessed and hence
         // the lastAccessed stamp will not be updated for the first time yet
-        const blocksForPurging = this.getBlocksInOrder().filter(b => b != blockToExclude);
-        const lastAccessedComparator = (a: InfiniteBlock, b: InfiniteBlock) => b.getLastAccessed() - a.getLastAccessed();
+        const blocksForPurging = this.getBlocksInOrder().filter((b) => b != blockToExclude);
+        const lastAccessedComparator = (a: InfiniteBlock, b: InfiniteBlock) =>
+            b.getLastAccessed() - a.getLastAccessed();
         blocksForPurging.sort(lastAccessedComparator);
 
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
@@ -150,34 +145,40 @@ export class InfiniteCache extends BeanStub {
         // we want to keep, which means we are left with blocks that we can potentially purge
         const maxBlocksProvided = this.params.maxBlocksInCache! > 0;
         const blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache! - 1 : null;
-        const emptyBlocksToKeep = InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        const emptyBlocksToKeep = MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: InfiniteBlock, index: number) => {
-            const purgeBecauseBlockEmpty = block.getState() === InfiniteBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
+            const purgeBecauseBlockEmpty = block.getState() === 'needsLoading' && index >= emptyBlocksToKeep;
 
             const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep! : false;
 
             if (purgeBecauseBlockEmpty || purgeBecauseCacheFull) {
-
                 // if the block currently has rows been displayed, then don't remove it either.
                 // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
                 // but the screen is showing 20 rows, so at least 4 blocks are needed.
-                if (this.isBlockCurrentlyDisplayed(block)) { return; }
+                if (this.isBlockCurrentlyDisplayed(block)) {
+                    return;
+                }
 
                 // don't want to loose keyboard focus, so keyboard navigation can continue. so keep focused blocks.
-                if (this.isBlockFocused(block)) { return; }
+                if (this.isBlockFocused(block)) {
+                    return;
+                }
 
                 // at this point, block is not needed, so burn baby burn
                 this.removeBlockFromCache(block);
             }
-
         });
     }
 
     private isBlockFocused(block: InfiniteBlock): boolean {
         const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
-        if (!focusedCell) { return false; }
-        if (focusedCell.rowPinned != null) { return false; }
+        if (!focusedCell) {
+            return false;
+        }
+        if (focusedCell.rowPinned != null) {
+            return false;
+        }
 
         const blockIndexStart = block.getStartRow();
         const blockIndexEnd = block.getEndRow();
@@ -193,7 +194,9 @@ export class InfiniteCache extends BeanStub {
     }
 
     private removeBlockFromCache(blockToRemove: InfiniteBlock): void {
-        if (!blockToRemove) { return; }
+        if (!blockToRemove) {
+            return;
+        }
 
         this.destroyBlock(blockToRemove);
 
@@ -224,7 +227,7 @@ export class InfiniteCache extends BeanStub {
 
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
-        if (_.exists(lastRowIndexKnown)) {
+        if (_exists(lastRowIndexKnown)) {
             this.lastRowIndexKnown = lastRowIndexKnown;
         }
 
@@ -242,13 +245,13 @@ export class InfiniteCache extends BeanStub {
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void): void {
         const sequence = new NumberSequence();
-        this.getBlocksInOrder().forEach(block => block.forEachNode(callback, sequence, this.rowCount));
+        this.getBlocksInOrder().forEach((block) => block.forEachNode(callback, sequence, this.rowCount));
     }
 
     public getBlocksInOrder(): InfiniteBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         const blockComparator = (a: InfiniteBlock, b: InfiniteBlock) => a.getId() - b.getId();
-        const blocks = _.getAllValuesInObject(this.blocks).sort(blockComparator);
+        const blocks = _getAllValuesInObject(this.blocks).sort(blockComparator);
         return blocks;
     }
 
@@ -262,7 +265,6 @@ export class InfiniteCache extends BeanStub {
     // gets called 1) row count changed 2) cache purged 3) items inserted
     private onCacheUpdated(): void {
         if (this.isAlive()) {
-
             // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
             // in the valid range. so we must remove these. this can happen if user explicitly sets
             // the virtual row count, or the datasource returns a result and sets lastRow to something
@@ -272,7 +274,7 @@ export class InfiniteCache extends BeanStub {
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
             const event: WithoutGridCommon<StoreUpdatedEvent> = {
-                type: Events.EVENT_STORE_UPDATED
+                type: 'storeUpdated',
             };
             this.eventService.dispatchEvent(event);
         }
@@ -280,19 +282,19 @@ export class InfiniteCache extends BeanStub {
 
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: InfiniteBlock[] = [];
-        this.getBlocksInOrder().forEach(block => {
+        this.getBlocksInOrder().forEach((block) => {
             const startRow = block.getId() * this.params.blockSize!;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
             }
         });
         if (blocksToDestroy.length > 0) {
-            blocksToDestroy.forEach(block => this.destroyBlock(block));
+            blocksToDestroy.forEach((block) => this.destroyBlock(block));
         }
     }
 
     public purgeCache(): void {
-        this.getBlocksInOrder().forEach(block => this.removeBlockFromCache(block));
+        this.getBlocksInOrder().forEach((block) => this.removeBlockFromCache(block));
         this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
@@ -312,34 +314,34 @@ export class InfiniteCache extends BeanStub {
         let inActiveRange = false;
         const numberSequence: NumberSequence = new NumberSequence();
 
-        // if only one node passed, we start the selection at the top
-        if (_.missing(firstInRange)) {
-            inActiveRange = true;
-        }
-
         let foundGapInSelection = false;
 
-        this.getBlocksInOrder().forEach(block => {
-            if (foundGapInSelection) { return; }
+        this.getBlocksInOrder().forEach((block) => {
+            if (foundGapInSelection) {
+                return;
+            }
 
-            if (inActiveRange && (lastBlockId + 1 !== block.getId())) {
+            if (inActiveRange && lastBlockId + 1 !== block.getId()) {
                 foundGapInSelection = true;
                 return;
             }
 
             lastBlockId = block.getId();
 
-            block.forEachNode(rowNode => {
-                const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
-                if (inActiveRange || hitFirstOrLast) {
-                    result.push(rowNode);
-                }
+            block.forEachNode(
+                (rowNode) => {
+                    const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                    if (inActiveRange || hitFirstOrLast) {
+                        result.push(rowNode);
+                    }
 
-                if (hitFirstOrLast) {
-                    inActiveRange = !inActiveRange;
-                }
-
-            }, numberSequence, this.rowCount);
+                    if (hitFirstOrLast) {
+                        inActiveRange = !inActiveRange;
+                    }
+                },
+                numberSequence,
+                this.rowCount
+            );
         });
 
         // inActiveRange will be still true if we never hit the second rowNode

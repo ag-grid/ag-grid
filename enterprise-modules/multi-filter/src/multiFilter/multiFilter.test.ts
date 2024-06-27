@@ -1,29 +1,32 @@
-import { MultiFilter, } from './multiFilter';
-import {
+/* import type {
     ColDef,
-    MultiFilterParams,
-    IMultiFilterModel,
-    IClientSideRowModel,
-    FilterManager,
-    ProvidedFilterParams,
     Column,
-    UserComponentFactory,
-    IRowModel,
-    AgPromise,
-    IFilterComp,
-    IAfterGuiAttachedParams,
-    IDoesFilterPassParams,
-    ProvidedFilter,
     Context,
+    FilterManager,
     FocusService,
-    ProvidedFilterModel,
+    IFilterComp,
+    IRowModel,
     TabGuardCtrl,
+    UserComponentFactory,
 } from '@ag-grid-community/core';
+import {
+    AgPromise,
+    IAfterGuiAttachedParams,
+    IClientSideRowModel,
+    IDoesFilterPassParams,
+    IMultiFilterModel,
+    MultiFilterParams,
+    ProvidedFilter,
+    ProvidedFilterModel,
+    ProvidedFilterParams,
+} from '@ag-grid-community/core';
+
 import { mock } from '../test-utils/mock';
+import { MultiFilter } from './multiFilter';
 
 let eGui: jest.Mocked<HTMLElement>;
 let filterManager: jest.Mocked<FilterManager>;
-let tabGuardCtrl: jest.Mocked<TabGuardCtrl>
+let tabGuardCtrl: jest.Mocked<TabGuardCtrl>;
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
 let focusService: jest.Mocked<FocusService>;
 
@@ -33,7 +36,7 @@ let rowModel: jest.Mocked<IRowModel>;
 let context: jest.Mocked<Context>;
 
 let filter1: jest.Mocked<IFilterComp>;
-let filter2: jest.Mocked<IFilterComp>;
+let filter2: jest.Mocked<IFilterComp>; */
 
 ///// Niall commented these out for now, not sure if we need these tests given we don't have same type of tests
 ///// in other parts of the app. I put in one empty test as otherwise jest would complain about an empty test suite.
@@ -48,7 +51,6 @@ function createFilter(filterParams: any = {}): MultiFilter {
     const baseFilterParams: ProvidedFilterParams = {
         // @ts-ignore
         api: null,
-        columnApi: null,
         column,
         colDef,
         rowModel,

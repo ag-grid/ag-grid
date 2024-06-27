@@ -1,18 +1,19 @@
-import styles from '@design-system/modules/ExampleIFrame.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
+import styles from './ExampleIFrame.module.scss';
 import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles';
 
 interface Props {
+    title: string;
     isHidden?: boolean;
     url?: string;
     loadingIFrameId: string;
 }
 
-export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loadingIFrameId }) => {
+export const ExampleIFrame: FunctionComponent<Props> = ({ title, isHidden, url, loadingIFrameId }) => {
     const [isIntersecting, setIsIntersecting] = useState(false);
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
@@ -23,17 +24,19 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
             setIsScrolling(true);
             // Ensure a slow user scroll still loads the example
             // Main idea is to prevent loading examples during smooth scroll behavior of right menu links
-            setTimeout(() => { setIsScrolling(false) }, 500);
+            setTimeout(() => {
+                setIsScrolling(false);
+            }, 500);
         };
         const scrollEndListener = () => setIsScrolling(false);
-        
+
         addEventListener('scrollend', scrollEndListener);
         addEventListener('scroll', scrollListener);
 
         return () => {
             removeEventListener('scroll', scrollListener);
             removeEventListener('scrollend', scrollEndListener);
-        }
+        };
     }, []);
 
     // Only show example iFrame if it is visible on the screen
@@ -73,6 +76,7 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
             {/*`exampleRunner` class is used by the dark mode toggle to post a message to this iFrame*/}
             <iframe
                 id={loadingIFrameId}
+                title={title}
                 ref={iFrameRef}
                 className={classnames('exampleRunner', styles.iframe)}
                 style={{ visibility: 'hidden' }}

@@ -1,40 +1,34 @@
-import {
-    AgGroupComponentParams,
-    AgSlider,
-    Autowired,
-    Component,
-    PostConstruct,
-    RefSelector,
-} from '@ag-grid-community/core';
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgCheckboxSelector, Component, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
+
+import type { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ZoomPanel extends Component {
-    public static TEMPLATE = /* html */ `<div>
-            <ag-group-component ref="zoomGroup">
-                <ag-checkbox ref="zoomSelectingCheckbox"></ag-checkbox>
-                <ag-checkbox ref="zoomScrollingCheckbox"></ag-checkbox>
-                <ag-slider ref="zoomScrollingStepInput"></ag-slider>
-            </ag-group-component>
-        </div>`;
+    private chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+    }
 
-    @RefSelector('zoomScrollingStepInput') private readonly zoomScrollingStepInput: AgSlider;
+    private readonly zoomScrollingStepInput: AgSlider = RefPlaceholder;
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const zoomGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('zoom.enabled', {
             cssIdentifier: 'charts-advanced-settings-top-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('zoom'),
             suppressEnabledCheckbox: true,
-            useToggle: true
+            useToggle: true,
         });
         const zoomScrollingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableScrolling',
@@ -43,7 +37,7 @@ export class ZoomPanel extends Component {
         const zoomScrollingStepSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'zoom.scrollingStep',
             'scrollingStep',
-            1,
+            1
         );
         zoomScrollingStepSliderParams.step = 0.01;
         zoomScrollingStepSliderParams.minValue = zoomScrollingStepSliderParams.step;
@@ -59,12 +53,22 @@ export class ZoomPanel extends Component {
             this.zoomScrollingStepInput.setDisabled(!value);
         })(zoomScrollingCheckboxParams.onValueChange);
 
-        this.setTemplate(ZoomPanel.TEMPLATE, {
-            zoomGroup: zoomGroupParams,
-            zoomScrollingCheckbox: zoomScrollingCheckboxParams,
-            zoomScrollingStepInput: zoomScrollingStepSliderParams,
-            zoomSelectingCheckbox: zoomSelectingCheckboxParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="zoomGroup">
+                <ag-checkbox data-ref="zoomSelectingCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="zoomScrollingCheckbox"></ag-checkbox>
+                <ag-slider data-ref="zoomScrollingStepInput"></ag-slider>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgCheckboxSelector, AgSliderSelector],
+            {
+                zoomGroup: zoomGroupParams,
+                zoomScrollingCheckbox: zoomScrollingCheckboxParams,
+                zoomScrollingStepInput: zoomScrollingStepSliderParams,
+                zoomSelectingCheckbox: zoomSelectingCheckboxParams,
+            }
+        );
 
         // Set the initial state of the scrolling step input according to whether the scrolling checkbox is checked
         this.zoomScrollingStepInput.setDisabled(!zoomScrollingCheckboxParams.value);

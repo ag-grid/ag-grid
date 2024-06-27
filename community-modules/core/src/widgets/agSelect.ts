@@ -1,20 +1,27 @@
-import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
-import { ListOption, AgList } from "./agList";
-import { Events } from "../eventKeys";
-import { KeyCode } from "../constants/keyCode";
-import { setAriaControls } from "../utils/aria";
+import { KeyCode } from '../constants/keyCode';
+import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
+import { _setAriaControls } from '../utils/aria';
+import type { ListOption } from './agList';
+import { AgList } from './agList';
+import { AgPickerField } from './agPickerField';
+import type { ComponentSelector } from './component';
 
-export interface AgSelectParams<TValue = string> extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+export interface AgSelectParams<TValue = string>
+    extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     options?: ListOption<TValue>[];
     pickerType?: string;
     pickerAriaLabelKey?: string;
     pickerAriaLabelValue?: string;
     placeholder?: string;
 }
-
-export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSelectParams<TValue> & AgPickerFieldParams, AgList<TValue>> {
-    public static EVENT_ITEM_SELECTED = 'selectedItem';
-    protected listComponent: AgList<TValue> | undefined;
+export type AgSelectEvent = 'selectedItem';
+export class AgSelect<TValue = string | null> extends AgPickerField<
+    TValue,
+    AgSelectParams<TValue> & AgPickerFieldParams,
+    AgSelectEvent,
+    AgList<AgSelectEvent, TValue>
+> {
+    protected listComponent: AgList<AgSelectEvent, TValue> | undefined;
 
     constructor(config?: AgSelectParams<TValue>) {
         super({
@@ -24,14 +31,14 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
             className: 'ag-select',
             pickerIcon: 'smallDown',
             ariaRole: 'combobox',
-            ...config
+            ...config,
         });
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
         this.createListComponent();
-        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
+        this.eWrapper.tabIndex = this.gos.get('tabIndex');
 
         const { options, value, placeholder } = this.config;
         if (options != null) {
@@ -45,7 +52,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
             this.eDisplayField.textContent = placeholder;
         }
 
-        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+        this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
     }
 
     private onWrapperFocusOut(e: FocusEvent): void {
@@ -55,33 +62,31 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createBean(new AgList('select', true));
+        this.listComponent = this.createBean(new AgList<AgSelectEvent, TValue>('select', true));
         this.listComponent.setParentComponent(this);
 
         const eListAriaEl = this.listComponent.getAriaElement();
         const listId = `ag-select-list-${this.listComponent.getCompId()}`;
 
         eListAriaEl.setAttribute('id', listId);
-        setAriaControls(this.getAriaElement(), eListAriaEl);
+        _setAriaControls(this.getAriaElement(), eListAriaEl);
 
-        this.listComponent.addManagedListener(
-            this.listComponent,
-            AgList.EVENT_ITEM_SELECTED,
-            () => {
+        this.listComponent.addManagedListeners(this.listComponent, {
+            selectedItem: () => {
                 this.hidePicker();
-                this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
-            }
-        );
+                this.dispatchLocalEvent({ type: 'selectedItem' });
+            },
+        });
 
-        this.listComponent.addManagedListener(
-            this.listComponent,
-            Events.EVENT_FIELD_VALUE_CHANGED,
-            () => {
-                if (!this.listComponent) { return; }
+        this.listComponent.addManagedListeners(this.listComponent, {
+            fieldValueChanged: () => {
+                if (!this.listComponent) {
+                    return;
+                }
                 this.setValue(this.listComponent.getValue()!, false, true);
                 this.hidePicker();
-            }
-        );
+            },
+        });
     }
 
     protected createPickerComponent() {
@@ -89,19 +94,38 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
         return this.listComponent!;
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         const { key } = e;
+
         if (key === KeyCode.TAB) {
             this.hidePicker();
-        } else if (!this.isPickerDisplayed || (key !== KeyCode.ENTER && key !== KeyCode.UP && key !== KeyCode.DOWN)) {
-            super.onKeyDown(e);
-        } else {
-            this.listComponent?.handleKeyDown(e);
+        }
+
+        switch (key) {
+            case KeyCode.ENTER:
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_DOWN:
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+                e.preventDefault();
+                if (this.isPickerDisplayed) {
+                    this.listComponent?.handleKeyDown(e);
+                } else {
+                    super.onKeyDown(e);
+                }
+                break;
+            case KeyCode.ESCAPE:
+                super.onKeyDown(e);
+                break;
         }
     }
 
-    public showPicker() {
-        if (!this.listComponent) { return; }
+    public override showPicker() {
+        if (!this.listComponent) {
+            return;
+        }
 
         super.showPicker();
 
@@ -109,7 +133,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
     }
 
     public addOptions(options: ListOption<TValue>[]): this {
-        options.forEach(option => this.addOption(option));
+        options.forEach((option) => this.addOption(option));
 
         return this;
     }
@@ -126,8 +150,10 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
         return this;
     }
 
-    public setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
-        if (this.value === value || !this.listComponent) { return this; }
+    public override setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
+        if (this.value === value || !this.listComponent) {
+            return this;
+        }
 
         if (!fromPicker) {
             this.listComponent.setValue(value, true);
@@ -135,29 +161,35 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
         const newValue = this.listComponent.getValue();
 
-        if (newValue === this.getValue()) { return this; }
+        if (newValue === this.getValue()) {
+            return this;
+        }
 
         let displayValue = this.listComponent.getDisplayValue();
         if (displayValue == null && this.config.placeholder) {
             displayValue = this.config.placeholder;
         }
 
-        this.eDisplayField.innerHTML = displayValue!;
+        this.eDisplayField.textContent = displayValue!;
 
         this.setTooltip({
             newTooltipText: displayValue ?? null,
-            shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth
+            shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth,
         });
 
         return super.setValue(value, silent);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.listComponent) {
-            this.destroyBean(this.listComponent);
-            this.listComponent = undefined;
+            this.listComponent = this.destroyBean(this.listComponent);
         }
 
         super.destroy();
     }
 }
+
+export const AgSelectSelector: ComponentSelector = {
+    selector: 'AG-SELECT',
+    component: AgSelect,
+};

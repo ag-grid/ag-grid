@@ -35,7 +35,7 @@ If you are only interested in restoring Column State on grid initialisation, you
 There are two API methods provided for getting and setting Column State. `api.getColumnState()` gets the current
 column state and `api.applyColumnState(params)` sets the column state.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // save the column's state
 const savedState = api.getColumnState();
 
@@ -78,7 +78,7 @@ the following rules apply:
 Combining these rules together leaves for flexible fine grained state control. Take the following code snippets as
 examples:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // Sort Athlete column ascending
 api.applyColumnState({
     state: [

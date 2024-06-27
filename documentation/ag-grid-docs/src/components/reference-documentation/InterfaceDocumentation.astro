@@ -1,5 +1,5 @@
 ---
-import { InterfaceDocumentation } from './ReferenceDocumentation';
+import { InterfaceDocumentationWithQuery } from './InterfaceDocumentationWithQuery';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import { getJsonFile } from '@utils/pages';
 import { getEntry } from 'astro:content';
@@ -25,14 +25,9 @@ if (overrideSrc) {
         overrides = overridesEntry.data;
     }
 }
-
-const interfaceLookup = getJsonFile('reference/interfaces.AUTO.json');
-const codeLookup = getJsonFile('reference/doc-interfaces.AUTO.json');
-// TODO: Remove?
-const htmlLookup = getJsonFile('reference/doc-interfaces.HTML.json');
 ---
 
-<InterfaceDocumentation
+<InterfaceDocumentationWithQuery
     client:load
     interfaceName={interfaceName}
     framework={framework}
@@ -41,7 +36,4 @@ const htmlLookup = getJsonFile('reference/doc-interfaces.HTML.json');
     exclude={exclude}
     wrapNamesAt={wrapNamesAt}
     config={config}
-    interfaceLookup={interfaceLookup}
-    codeLookup={codeLookup}
-    htmlLookup={htmlLookup}
 />

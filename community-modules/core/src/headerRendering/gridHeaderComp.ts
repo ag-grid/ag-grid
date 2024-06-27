@@ -1,26 +1,21 @@
-import { PostConstruct } from '../context/context';
+import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
-import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
+import type { IGridHeaderComp } from './gridHeaderCtrl';
+import { GridHeaderCtrl } from './gridHeaderCtrl';
 import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-header" role="presentation"/>`;
-
     constructor() {
-        super(GridHeaderComp.TEMPLATE);
+        super(/* html */ `<div class="ag-header" role="presentation"/>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-
+    public postConstruct(): void {
         const compProxy: IGridHeaderComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setHeightAndMinHeight: height => {
+            setHeightAndMinHeight: (height) => {
                 this.getGui().style.height = height;
                 this.getGui().style.minHeight = height;
-            }
+            },
         };
 
         const ctrl = this.createManagedBean(new GridHeaderCtrl());
@@ -36,3 +31,7 @@ export class GridHeaderComp extends Component {
         addContainer(new HeaderRowContainerComp('right'));
     }
 }
+export const GridHeaderSelector: ComponentSelector = {
+    selector: 'AG-HEADER-ROOT',
+    component: GridHeaderComp,
+};

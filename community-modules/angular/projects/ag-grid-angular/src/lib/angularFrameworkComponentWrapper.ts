@@ -1,22 +1,34 @@
-import {ComponentRef, Injectable, NgZone, ViewContainerRef} from "@angular/core";
-import {BaseComponentWrapper, FrameworkComponentWrapper, GridApi, WrappableInterface} from '@ag-grid-community/core';
-import {AgFrameworkComponent} from "./interfaces";
-import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
+import type { FrameworkComponentWrapper, WrappableInterface } from '@ag-grid-community/core';
+import { BaseComponentWrapper, _removeFromParent } from '@ag-grid-community/core';
+import type { ComponentRef, ViewContainerRef } from '@angular/core';
+import { Injectable } from '@angular/core';
+
+import type { AngularFrameworkOverrides } from './angularFrameworkOverrides';
+import type { AgFrameworkComponent } from './interfaces';
 
 @Injectable()
-export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
+export class AngularFrameworkComponentWrapper
+    extends BaseComponentWrapper<WrappableInterface>
+    implements FrameworkComponentWrapper
+{
     private viewContainerRef: ViewContainerRef;
     private angularFrameworkOverrides: AngularFrameworkOverrides;
 
-    public setViewContainerRef(viewContainerRef: ViewContainerRef, angularFrameworkOverrides: AngularFrameworkOverrides) {
+    public setViewContainerRef(
+        viewContainerRef: ViewContainerRef,
+        angularFrameworkOverrides: AngularFrameworkOverrides
+    ) {
         this.viewContainerRef = viewContainerRef;
         this.angularFrameworkOverrides = angularFrameworkOverrides;
     }
 
-    createWrapper(OriginalConstructor: { new(): any }, compType: any): WrappableInterface {
-        let angularFrameworkOverrides = this.angularFrameworkOverrides;
-        let that = this;
-        class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrappableInterface {
+    createWrapper(OriginalConstructor: { new (): any }): WrappableInterface {
+        const angularFrameworkOverrides = this.angularFrameworkOverrides;
+        const that = this;
+        class DynamicAgNg2Component
+            extends BaseGuiComponent<any, AgFrameworkComponent<any>>
+            implements WrappableInterface
+        {
             init(params: any): void {
                 angularFrameworkOverrides.runInsideAngular(() => {
                     super.init(params);
@@ -34,18 +46,20 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
 
             callMethod(name: string, args: IArguments): void {
                 const componentRef = this.getFrameworkComponentInstance();
-                return angularFrameworkOverrides.runInsideAngular(() => wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args));
+                return angularFrameworkOverrides.runInsideAngular(() =>
+                    wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args)
+                );
             }
 
-            addMethod(name: string, callback: Function): void {
-                (wrapper as any)[name] = callback
+            addMethod(name: string, callback: (...args: any[]) => any): void {
+                (wrapper as any)[name] = callback;
             }
         }
-        let wrapper = new DynamicAgNg2Component();
+        const wrapper = new DynamicAgNg2Component();
         return wrapper;
     }
 
-    public createComponent<T>(componentType: { new(...args: any[]): T; }): ComponentRef<T> {
+    public createComponent<T>(componentType: { new (...args: any[]): T }): ComponentRef<T> {
         return this.viewContainerRef.createComponent(componentType);
     }
 }
@@ -55,7 +69,7 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
     protected _eGui: HTMLElement;
     protected _componentRef: ComponentRef<T>;
     protected _agAwareComponent: T;
-    protected _frameworkComponentInstance: any;  // the users component - for accessing methods they create
+    protected _frameworkComponentInstance: any; // the users component - for accessing methods they create
 
     protected init(params: P): void {
         this._params = params;
@@ -64,6 +78,8 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
         this._agAwareComponent = this._componentRef.instance;
         this._frameworkComponentInstance = this._componentRef.instance;
         this._eGui = this._componentRef.location.nativeElement;
+        // Angular appends the component to the DOM, so remove it
+        _removeFromParent(this._eGui);
 
         this._agAwareComponent.agInit(this._params);
     }

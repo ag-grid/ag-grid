@@ -1,42 +1,62 @@
-import { GridOptions } from "../entities/gridOptions";
-import { fuzzyCheckStrings } from "../utils/fuzzyMatch";
-import { iterateObject } from "../utils/object";
-import { warnOnce } from "../utils/function";
-import { DependencyValidator, OptionsValidation, OptionsValidator } from "./validationTypes";
-import { GRID_OPTIONS_VALIDATORS, GRID_OPTION_DEFAULTS } from "./rules/gridOptionsValidations";
-import { COL_DEF_VALIDATORS } from "./rules/colDefValidations";
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { ModuleRegistry } from "../modules/moduleRegistry";
+import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { GridOptions } from '../entities/gridOptions';
+import { ModuleRegistry } from '../modules/moduleRegistry';
+import { _warnOnce } from '../utils/function';
+import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
+import { _iterateObject } from '../utils/object';
+import { validateApiFunction, warnMissingApiFunction } from './apiFunctionValidator';
+import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
+import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
+import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
 
-@Bean('validationService')
-export class ValidationService extends BeanStub {
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+export class ValidationService extends BeanStub implements NamedBean {
+    beanName = 'validationService' as const;
 
-    @PostConstruct
-    public init(): void {
+    private beans: BeanCollection;
+    private gridOptions: GridOptions;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+        this.gridOptions = beans.gridOptions;
+    }
+
+    public postConstruct(): void {
         this.processGridOptions(this.gridOptions);
     }
 
     public processGridOptions(options: GridOptions): void {
-        this.processOptions(options, GRID_OPTIONS_VALIDATORS);
+        this.processOptions(options, GRID_OPTIONS_VALIDATORS());
     }
 
     public processColumnDefs(options: ColDef | ColGroupDef): void {
         this.processOptions(options, COL_DEF_VALIDATORS);
     }
 
-    private processOptions<T extends {}>(options: T, validator: OptionsValidator<T>): void {
+    public warnMissingApiFunction(functionName: ApiFunctionName): void {
+        warnMissingApiFunction(functionName, this.gridId);
+    }
+
+    public validateApiFunction<TFunctionName extends ApiFunctionName>(
+        functionName: TFunctionName,
+        apiFunction: ApiFunction<TFunctionName>
+    ): ApiFunction<TFunctionName> {
+        return validateApiFunction(functionName, apiFunction, this.beans);
+    }
+
+    private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, propertyExceptions, objectName, docsUrl } = validator;
-        
+
         if (allProperties && this.gridOptions.suppressPropertyNamesCheck !== true) {
             this.checkProperties(
                 options,
-                [...propertyExceptions ?? [], ...Object.keys(deprecations)],
+                [...(propertyExceptions ?? []), ...Object.keys(deprecations)],
                 allProperties,
                 objectName,
-                docsUrl,
+                docsUrl
             );
         }
 
@@ -48,7 +68,9 @@ export class ValidationService extends BeanStub {
             if (deprecation) {
                 if ('renamed' in deprecation) {
                     const { renamed, version } = deprecation;
-                    warnings.add(`As of v${version}, ${String(key)} is deprecated. Please use ${String(renamed)} instead.`);
+                    warnings.add(
+                        `As of v${version}, ${String(key)} is deprecated. Please use ${String(renamed)} instead.`
+                    );
                     (options as any)[renamed] = options[key];
                 } else {
                     const { message, version } = deprecation;
@@ -76,7 +98,7 @@ export class ValidationService extends BeanStub {
                 if ('objectName' in fromGetter) {
                     const value = options[key];
                     if (Array.isArray(value)) {
-                        value.forEach(item => {
+                        value.forEach((item) => {
                             this.processOptions(item, fromGetter);
                         });
                         return;
@@ -89,7 +111,7 @@ export class ValidationService extends BeanStub {
             } else {
                 rules = rulesOrGetter;
             }
-            
+
             const { module, dependencies, supportedRowModels } = rules;
             if (supportedRowModels) {
                 const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
@@ -103,8 +125,8 @@ export class ValidationService extends BeanStub {
                 const modules = Array.isArray(module) ? module : [module];
 
                 let allRegistered = true;
-                modules.forEach(m => {
-                    if (!ModuleRegistry.__assertRegistered(m, String(key), this.context.getGridId())) {
+                modules.forEach((m) => {
+                    if (!ModuleRegistry.__assertRegistered(m, String(key), this.gridId)) {
                         allRegistered = false;
                         warnings.add(`${String(key)} is only available when ${m} is loaded.`);
                     }
@@ -115,7 +137,7 @@ export class ValidationService extends BeanStub {
                 }
             }
 
-            if (dependencies) {                
+            if (dependencies) {
                 const warning = this.checkForWarning(key, dependencies, options);
                 if (warning) {
                     warnings.add(warning);
@@ -124,15 +146,19 @@ export class ValidationService extends BeanStub {
             }
         });
         if (warnings.size > 0) {
-            warnings.forEach(warning => {
-                warnOnce(warning);
+            warnings.forEach((warning) => {
+                _warnOnce(warning);
             });
         }
-    };
+    }
 
-    private checkForWarning<T extends {}>(key: keyof T, validator: DependencyValidator<T>, options: T): string | null {
+    private checkForWarning<T extends object>(
+        key: keyof T,
+        validator: DependencyValidator<T>,
+        options: T
+    ): string | null {
         if (typeof validator === 'function') {
-            return validator(options, this.gridOptions);    
+            return validator(options, this.gridOptions);
         }
 
         const optionEntries = Object.entries(validator) as [string, any][];
@@ -140,7 +166,7 @@ export class ValidationService extends BeanStub {
             const gridOptionValue = options[key as keyof T];
             return !value.includes(gridOptionValue);
         });
-    
+
         if (!failed) {
             return null;
         }
@@ -153,7 +179,7 @@ export class ValidationService extends BeanStub {
         return `'${String(key)}' requires '${failedKey}' to be ${possibleOptions[0]}.`;
     }
 
-    private checkProperties<T extends {}>(
+    private checkProperties<T extends object>(
         object: T,
         exceptions: string[], // deprecated properties generally
         validProperties: string[], // properties to recommend
@@ -163,19 +189,23 @@ export class ValidationService extends BeanStub {
         // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
         const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
 
-        const invalidProperties: { [p: string]: string[]; } = fuzzyCheckStrings(
+        const invalidProperties: { [p: string]: string[] } = _fuzzyCheckStrings(
             Object.getOwnPropertyNames(object),
             [...VUE_FRAMEWORK_PROPS, ...exceptions, ...validProperties],
             validProperties
         );
 
-        iterateObject<any>(invalidProperties, (key, value) => {
-            warnOnce(`invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}`);
+        _iterateObject(invalidProperties, (key, value) => {
+            let message = `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
+            if (validProperties.includes('context')) {
+                message += `\nIf you are trying to annotate ${containerName} with application data, use the '${containerName}.context' property instead.`;
+            }
+            _warnOnce(message);
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {
-            const url = this.getFrameworkOverrides().getDocLink(docsUrl);            
-            warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
+            const url = this.getFrameworkOverrides().getDocLink(docsUrl);
+            _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
     }
 }

@@ -1,4 +1,4 @@
-import { _Util } from "ag-charts-community";
+import { _Util } from 'ag-charts-community';
 
 export function hexToRGBA(hex: string, alpha: string) {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -8,7 +8,7 @@ export function hexToRGBA(hex: string, alpha: string) {
 }
 
 export function changeOpacity(fills: string[], alpha: number) {
-    return fills.map(fill => {
+    return fills.map((fill) => {
         const c = _Util.Color.fromString(fill);
         return new _Util.Color(c.r, c.g, c.b, alpha).toHexString();
     });

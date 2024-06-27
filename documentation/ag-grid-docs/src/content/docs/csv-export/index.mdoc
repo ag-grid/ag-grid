@@ -11,7 +11,7 @@ The same data that is in the grid gets exported, with some of the GUI representa
 * The raw values, and not the result of cell renderer will get used, meaning:
   * Value Getters will be used.
   * Cell Renderers will **NOT** be used.
-  * Cell Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formating-for-export) feature.
+  * Cell Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
 
 * Cell styles are not exported.
 
@@ -19,7 +19,6 @@ The same data that is in the grid gets exported, with some of the GUI representa
 
   * All data will be exported regardless of whether groups are open in the UI.
   * By default, group names will be in the format "-> Parent Name -> Child Name" (use `processRowGroupCallback` to change this).
-  * Row group footers (`groupIncludeFooter=true`) will **NOT** be exported - this is a GUI addition only.
 
 {% note %}
 The CSV export will be enabled by default. If you want to disable it, you can set the property `suppressCsvExport = true` in your gridOptions.

@@ -147,7 +147,7 @@
         "viewport": true
     },
     {
-        "feature": "[Cell Editors](./component-cell-editor)",
+        "feature": "[Cell Editors](./cell-editors)",
         "clientSide": true,
         "infinite": true,
         "serverSide": true,

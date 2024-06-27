@@ -6,9 +6,7 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": [
-        "build:styles"
-      ],
+      "dependsOn": ["build:styles"],
       "inputs": [],
       "outputs": []
     },
@@ -60,6 +58,12 @@
       },
       "cache": true
     },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "test": {
       "executor": "nx:run-commands",
       "inputs": [],
@@ -74,10 +78,5 @@
       }
     }
   },
-  "tags": [
-    "module:community",
-    "module",
-    "community",
-    "styles"
-  ]
+  "tags": ["module:community", "module", "community", "styles"]
 }

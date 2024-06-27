@@ -1,9 +1,10 @@
-import { HighlightStyleOptions } from '@ag-grid-community/core';
+import { _errorOnce } from '@ag-grid-community/core';
+import type { HighlightStyleOptions } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
-import { SparklineFactoryOptions } from './agSparkline';
+import type { SparklineFactoryOptions } from './agSparkline';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
-import { SparklineTooltip, SparklineTooltipMeta } from './tooltip/sparklineTooltip';
+import type { SparklineTooltip, SparklineTooltipMeta } from './tooltip/sparklineTooltip';
 
 const { extent, isNumber, isString, isStringObject, isDate, createId, Padding } = _Util;
 const { LinearScale, BandScale, TimeScale } = _Scale;
@@ -178,8 +179,6 @@ export abstract class Sparkline {
         Sparkline.tooltipDocuments.push(document);
     }
 
-
-
     private _width: number = 100;
     set width(value: number) {
         if (this._width !== value) {
@@ -333,6 +332,10 @@ export abstract class Sparkline {
         this.updateHitPoint(event);
     }
 
+    private renderScene() {
+        this.scene.render().catch((e) => _errorOnce(`chart rendering failed`, e));
+    }
+
     private updateHitPoint(event: MouseEvent) {
         const closestDatum: SeriesNodeDatum | undefined = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
 
@@ -349,7 +352,7 @@ export abstract class Sparkline {
         ) {
             this.highlightDatum(closestDatum);
             this.updateCrosshairs();
-            this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
+            this.renderScene();
         }
 
         const tooltipEnabled = this.processedOptions?.tooltip?.enabled ?? true;
@@ -365,7 +368,7 @@ export abstract class Sparkline {
     private onMouseOut(event: MouseEvent) {
         this.dehighlightDatum();
         this.tooltip.toggle(false);
-        this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
+        this.renderScene();
     }
 
     protected smallestInterval?: { x: number; y: number } = undefined;
@@ -557,7 +560,7 @@ export abstract class Sparkline {
         // produce data joins and update selection's nodes
         this.update();
 
-        this.scene.render().catch((e) => console.error(`AG Grid - chart rendering failed`, e));
+        this.renderScene();
     }
 
     private setSparklineDimensions() {

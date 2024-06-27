@@ -1,29 +1,31 @@
-import {ChartProxyParams, UpdateParams} from '../chartProxy';
-import {CartesianChartProxy} from "../cartesian/cartesianChartProxy";
-import {AgCartesianAxisOptions} from 'ag-charts-community';
-import {isHorizontal} from "../../utils/seriesTypeMapper";
-import {ChartDataModel} from "../../model/chartDataModel";
+import type { AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-community';
 
-export abstract class StatisticalChartProxy extends CartesianChartProxy {
+import { ChartDataModel } from '../../model/chartDataModel';
+import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+
+export abstract class StatisticalChartProxy<
+    TSeries extends 'box-plot' | 'range-area' | 'range-bar',
+> extends CartesianChartProxy<TSeries> {
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[] {
         return [
             {
                 type: this.getXAxisType(params),
-                position: isHorizontal(this.chartType) ? 'left' : 'bottom',
+                position: this.isHorizontal(commonChartOptions) ? 'left' : 'bottom',
             },
             {
                 type: 'number',
-                position: isHorizontal(this.chartType) ? 'bottom' : 'left',
+                position: this.isHorizontal(commonChartOptions) ? 'bottom' : 'left',
             },
         ];
     }
 
     protected computeSeriesStatistics(params: UpdateParams, computeStatsFn: (values: number[]) => any): any[] {
-        const {data, fields} = params;
+        const { data, fields } = params;
         const [category] = params.categories;
         const categoryKey = category.id || ChartDataModel.DEFAULT_CATEGORY;
         const groupedData = this.groupDataByCategory(categoryKey, data);
@@ -34,8 +36,8 @@ export abstract class StatisticalChartProxy extends CartesianChartProxy {
             fields.forEach((field, seriesIndex) => {
                 // `null` & `NaN` values are omitted from calculations
                 const seriesValues = categoryData
-                    .map(datum => datum[field.colId])
-                    .filter(value => typeof value === 'number' && !isNaN(value));
+                    .map((datum) => datum[field.colId])
+                    .filter((value) => typeof value === 'number' && !isNaN(value));
 
                 Object.entries(computeStatsFn(seriesValues)).forEach(([statKey, value]) => {
                     const propertyKey = `${statKey}:${seriesIndex}`;
@@ -58,10 +60,10 @@ export abstract class StatisticalChartProxy extends CartesianChartProxy {
                 return ''; // use a blank category for `null` or `undefined` values
             }
             return categoryValue instanceof Date ? categoryValue.getTime() : categoryValue;
-        }
+        };
 
         return data.reduce((acc, datum) => {
-            let category = getCategory(datum);
+            const category = getCategory(datum);
             const existingCategoryData = acc.get(category);
             if (existingCategoryData) {
                 existingCategoryData.push(datum);
@@ -71,5 +73,4 @@ export abstract class StatisticalChartProxy extends CartesianChartProxy {
             return acc;
         }, new Map<string | null, any[]>());
     }
-
 }

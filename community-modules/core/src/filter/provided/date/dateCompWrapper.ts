@@ -1,10 +1,10 @@
-import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { Context } from '../../../context/context';
-import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { setDisplayed } from '../../../utils/dom';
-import { WithoutGridCommon } from '../../../interfaces/iCommon';
-import { warnOnce } from '../../../utils/function';
+import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import type { Context } from '../../../context/context';
+import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
+import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import type { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { _setDisplayed } from '../../../utils/dom';
+import { _warnOnce } from '../../../utils/function';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
@@ -16,14 +16,20 @@ export class DateCompWrapper {
     private context: Context;
     private eParent: HTMLElement;
 
-    constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: WithoutGridCommon<IDateParams>, eParent: HTMLElement) {
+    constructor(
+        context: Context,
+        userComponentFactory: UserComponentFactory,
+        dateComponentParams: WithoutGridCommon<IDateParams>,
+        eParent: HTMLElement,
+        onReady?: (comp: DateCompWrapper) => void
+    ) {
         this.context = context;
         this.eParent = eParent;
 
         const compDetails = userComponentFactory.getDateCompDetails(dateComponentParams);
         const promise = compDetails.newAgStackInstance();
 
-        promise!.then(dateComp => {
+        promise!.then((dateComp) => {
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
                 context.destroyBean(dateComp);
@@ -32,7 +38,9 @@ export class DateCompWrapper {
 
             this.dateComp = dateComp;
 
-            if (!dateComp) { return; }
+            if (!dateComp) {
+                return;
+            }
 
             eParent.appendChild(dateComp.getGui());
 
@@ -46,6 +54,8 @@ export class DateCompWrapper {
             if (this.disabled != null) {
                 this.setDateCompDisabled(this.disabled);
             }
+
+            onReady?.(this);
         });
     }
 
@@ -75,7 +85,7 @@ export class DateCompWrapper {
     }
 
     public setDisplayed(displayed: boolean) {
-        setDisplayed(this.eParent, displayed);
+        _setDisplayed(this.eParent, displayed);
     }
 
     public setInputPlaceholder(placeholder: string): void {
@@ -108,16 +118,19 @@ export class DateCompWrapper {
         if (!hasRefreshed && this.dateComp?.onParamsUpdated && typeof this.dateComp.onParamsUpdated === 'function') {
             const result = this.dateComp.onParamsUpdated(params);
             if (result !== null) {
-                warnOnce(`Custom date component method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
+                _warnOnce(`Custom date component method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
             }
         }
     }
 
     private setDateCompDisabled(disabled: boolean): void {
-        if (this.dateComp == null) { return; }
-        if (this.dateComp.setDisabled == null) { return; }
+        if (this.dateComp == null) {
+            return;
+        }
+        if (this.dateComp.setDisabled == null) {
+            return;
+        }
 
         this.dateComp.setDisabled(disabled);
     }
-
 }

@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class FullWidthCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -14,8 +14,7 @@ export class FullWidthCellRenderer implements ICellRendererComp {
         // the flower row shares the same data as the parent row
         const data = params.node.data;
 
-        const template =
-            `<div class="full-width-panel">  
+        const template = `<div class="full-width-panel">  
                 <div class="full-width-flag">    
                     <img border="0" src="https://www.ag-grid.com/example-assets/large-flags/${data.code}.png">  
                 </div>  

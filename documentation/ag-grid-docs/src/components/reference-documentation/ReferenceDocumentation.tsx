@@ -1,12 +1,12 @@
 import type { Framework } from '@ag-grid-types';
-import Code from '@components/Code';
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/ApiReference.module.scss';
+import Code from '@ag-website-shared/components/code/Code';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { trackApiDocumentation } from '@utils/analytics';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, type ReactElement, useEffect, useRef, useState } from 'react';
 
+import styles from './ApiReference.module.scss';
 import {
     convertMarkdown,
     escapeGenericCode,
@@ -44,7 +44,7 @@ import type {
     SectionProps,
 } from './types';
 
-interface InterfaceDocumentationProps {
+export interface InterfaceDocumentationProps {
     interfaceName: string;
     framework: Framework;
     overrides: Overrides;
@@ -54,11 +54,9 @@ interface InterfaceDocumentationProps {
     config: any;
     interfaceLookup: Record<string, any>;
     codeLookup: Record<string, any>;
-    htmlLookup: Record<string, any>;
 }
 
-interface ApiDocumentationProps {
-    pageName: string;
+export interface ApiDocumentationProps {
     framework: Framework;
     sources: string[];
     section: string;
@@ -83,9 +81,8 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
     config = {},
     interfaceLookup,
     codeLookup,
-    htmlLookup,
 }): any => {
-    let codeSrcProvided = [interfaceName];
+    const codeSrcProvided = [interfaceName];
 
     if (names && names.length) {
         config = { overrideBottomMargin: '1rem', ...config };
@@ -104,7 +101,6 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
     const lookups = {
         codeLookup: codeLookup[interfaceName],
         interfaces: interfaceLookup,
-        htmlLookup: htmlLookup[interfaceName],
     };
     let hideHeader = true;
     if (config.hideHeader !== undefined) {
@@ -139,7 +135,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         return <Code code={escapedLines} keepMarkup={true} />;
     }
 
-    let props = {};
+    const props: any = {};
     let interfaceOverrides: Overrides = {};
     if (Object.keys(overrides).length) {
         interfaceOverrides = overrides[interfaceName];
@@ -148,7 +144,16 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         }
     }
 
-    const typeProps = Object.entries(li.type);
+    let typeProps: any[] = [];
+    if (typeof li.type === 'string') {
+        if (interfaceOverrides) {
+            typeProps = Object.entries(interfaceOverrides);
+        } else {
+            console.error(`Please provide an override for type alias: ${interfaceName}`);
+        }
+    } else {
+        typeProps = Object.entries(li.type);
+    }
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
         // interfaces include the ? as part of the name. We want to remove this for the <interface-documentation> component
         // Instead the type will be unioned with undefined as part of the propertyType
@@ -167,7 +172,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         }
     });
 
-    let orderedProps = {};
+    const orderedProps = {};
     const ordered = Object.entries(props).sort(([, v1], [, v2]) => {
         // Put required props at the top as likely to be the most important
         if ((v1 as ChildDocEntry).isRequired == (v2 as ChildDocEntry).isRequired) {
@@ -183,7 +188,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         config.description != null
             ? config.description
             : `Properties available on the \`${interfaceDeclaration}\` interface.`;
-    let properties: DocEntryMap = {
+    const properties: DocEntryMap = {
         [interfaceName]: {
             ...orderedProps,
             meta: {
@@ -338,7 +343,7 @@ const Section: React.FC<SectionProps> = ({
     const objectProperties: DocEntryMap = {};
 
     let leftColumnWidth = 25;
-    let processed = new Set();
+    const processed = new Set();
     Object.entries(properties)
         .sort((a, b) => {
             return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0;
@@ -528,7 +533,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     const idName = `reference-${id}-${name}`;
     let description = '';
     let isObject = false;
-    let gridParams = config.gridOpProp;
+    const gridParams = config.gridOpProp;
 
     useEffect(() => {
         const hashId = location.hash.slice(1); // Remove the '#' symbol
@@ -545,11 +550,11 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         !(config.suppressMissingPropCheck || definition.overrideMissingPropCheck)
     ) {
         throw new Error(
-            `We could not find a type for "${id}" -> "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo?`
+            `We could not find a type for "${id}" -> "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo? Alternatively, if this type has an override you can suppress this error by setting meta.suppressMissingPropCheck to true in the override config.`
         );
     }
 
-    let propDescription = definition.description || (gridParams && gridParams.meta.comment) || undefined;
+    let propDescription = definition.description || (gridParams && gridParams.meta?.comment) || undefined;
     if (propDescription) {
         propDescription = formatJsDocString(propDescription);
         // process property object
@@ -570,11 +575,11 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
 
     let displayName = name;
-    if (!!definition.isRequired) {
+    if (definition.isRequired) {
         displayName += `&nbsp;<span class="${styles.required}" title="Required">&ast;</span>`;
     }
 
-    if (!!definition.strikeThrough) {
+    if (definition.strikeThrough) {
         displayName = `<span style='text-decoration: line-through'>${displayName}</span>`;
     }
 
@@ -611,12 +616,8 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             type = inferType(definition.default);
         }
     }
-    if (config.lookups.htmlLookup) {
-        // Force open if we have custom html content to display for the property
-        showAdditionalDetails = showAdditionalDetails || !!config.lookups.htmlLookup[name];
-    }
 
-    let propertyType = getPropertyType(type, config);
+    const propertyType = getPropertyType(type, config);
     const typeUrl = isObject
         ? `#reference-${id}.${name}`
         : propertyType !== 'Function'
@@ -827,7 +828,7 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
             };
         } else if (type.arguments) {
             args = type.arguments;
-        } else if (!!isCallSig) {
+        } else if (isCallSig) {
             // Required to handle call signature interfaces so we can flatten out the interface to make it clearer
             const callSigInterface = returnTypeInterface as ICallSignature;
             args = callSigInterface.type.arguments;
@@ -866,7 +867,7 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
             ? `function ${functionName}(${functionArguments}):`
             : `${functionName} = (${functionArguments}) =>`;
 
-    let lines = [];
+    const lines = [];
     if (typeof type != 'string' && (type.parameters || type.arguments || isCallSig)) {
         lines.push(
             `${functionPrefix} ${returnTypeIsObject ? returnTypeName : getLinkedType(returnType || 'void', framework)};`
@@ -904,15 +905,6 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
     lines.push(...writeAllInterfaces(interfacesToWrite, framework));
 
     const escapedLines = escapeGenericCode(lines);
-    let customHTML = undefined;
-    if (config.lookups.htmlLookup && config.lookups.htmlLookup[name]) {
-        customHTML = <p dangerouslySetInnerHTML={{ __html: config.lookups.htmlLookup[name] }}></p>;
-    }
 
-    return (
-        <>
-            <Code code={escapedLines} keepMarkup={true} />
-            {customHTML ?? customHTML}
-        </>
-    );
+    return <Code code={escapedLines} keepMarkup={true} />;
 };

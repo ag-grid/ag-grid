@@ -1,20 +1,27 @@
+import type { BeanCollection, ColumnModel, FocusService, HeaderNavigationService } from '@ag-grid-community/core';
 import {
-    Autowired,
-    ColumnModel,
     Component,
-    Events,
-    FocusService,
-    HeaderNavigationService,
     KeyCode,
-    PostConstruct,
-    _
-} from "@ag-grid-community/core";
-import { AdvancedFilterComp } from "./advancedFilterComp";
+    _clearElement,
+    _setAriaColIndex,
+    _setAriaColSpan,
+    _setAriaRole,
+    _setAriaRowIndex,
+    _setDisplayed,
+} from '@ag-grid-community/core';
+
+import { AdvancedFilterComp } from './advancedFilterComp';
 
 export class AdvancedFilterHeaderComp extends Component {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    private columnModel: ColumnModel;
+    private focusService: FocusService;
+    private headerNavigationService: HeaderNavigationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.focusService = beans.focusService;
+        this.headerNavigationService = beans.headerNavigationService;
+    }
 
     private eAdvancedFilter: AdvancedFilterComp | undefined;
     private height: number;
@@ -25,13 +32,25 @@ export class AdvancedFilterHeaderComp extends Component {
             </div>`);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.setupAdvancedFilter(this.enabled);
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onGridColumnsChanged());
+        const heightListener = () => {
+            if (this.enabled) {
+                this.setEnabledHeight();
+            }
+        };
+
+        this.addManagedEventListeners({
+            gridColumnsChanged: () => this.onGridColumnsChanged(),
+            columnHeaderHeightChanged: heightListener,
+            gridStylesChanged: heightListener,
+        });
+
+        this.addManagedPropertyListener('headerHeight', heightListener);
+        this.addManagedPropertyListener('floatingFiltersHeight', heightListener);
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
 
@@ -42,12 +61,14 @@ export class AdvancedFilterHeaderComp extends Component {
         });
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eAdvancedFilter?.getGui() ?? this.getGui();
     }
 
     public setEnabled(enabled: boolean): void {
-        if (enabled === this.enabled) { return; }
+        if (enabled === this.enabled) {
+            return;
+        }
         this.setupAdvancedFilter(enabled);
     }
 
@@ -70,37 +91,44 @@ export class AdvancedFilterHeaderComp extends Component {
             this.eAdvancedFilter = this.createBean(new AdvancedFilterComp());
             const eAdvancedFilterGui = this.eAdvancedFilter.getGui();
             this.eAdvancedFilter.addCssClass('ag-advanced-filter-header-cell');
-            
-            this.height = this.columnModel.getFloatingFiltersHeight();
-            const height = `${this.height}px`;
-            eGui.style.height = height;
-            eGui.style.minHeight = height;
+
+            this.setEnabledHeight();
 
             this.setAriaRowIndex();
-            _.setAriaRole(eAdvancedFilterGui, 'gridcell');
-            _.setAriaColIndex(eAdvancedFilterGui, 1);
+            _setAriaRole(eAdvancedFilterGui, 'gridcell');
+            _setAriaColIndex(eAdvancedFilterGui, 1);
             this.setAriaColumnCount(eAdvancedFilterGui);
 
             eGui.appendChild(eAdvancedFilterGui);
         } else {
-            _.clearElement(eGui);
+            _clearElement(eGui);
             this.destroyBean(this.eAdvancedFilter);
             this.height = 0;
         }
-        _.setDisplayed(eGui, enabled);
+        _setDisplayed(eGui, enabled);
         this.enabled = enabled;
     }
-    
+
+    private setEnabledHeight(): void {
+        const eGui = this.getGui();
+        this.height = this.columnModel.getFloatingFiltersHeight();
+        const height = `${this.height}px`;
+        eGui.style.height = height;
+        eGui.style.minHeight = height;
+    }
+
     private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {
-        _.setAriaColSpan(eAdvancedFilterGui, this.columnModel.getAllGridColumns().length);
+        _setAriaColSpan(eAdvancedFilterGui, this.columnModel.getCols().length);
     }
 
     private setAriaRowIndex(): void {
-        _.setAriaRowIndex(this.getGui(), this.headerNavigationService.getHeaderRowCount());
+        _setAriaRowIndex(this.getGui(), this.headerNavigationService.getHeaderRowCount());
     }
 
     private onGridColumnsChanged(): void {
-        if (!this.eAdvancedFilter) { return; }
+        if (!this.eAdvancedFilter) {
+            return;
+        }
         this.setAriaColumnCount(this.eAdvancedFilter.getGui());
         this.setAriaRowIndex();
     }
@@ -130,7 +158,11 @@ export class AdvancedFilterHeaderComp extends Component {
                 if (this.hasFocus()) {
                     this.navigateLeftRight(event);
                 } else {
-                    const nextFocusableEl = this.focusService.findNextFocusableElement(this.getFocusableElement(), null, event.shiftKey);
+                    const nextFocusableEl = this.focusService.findNextFocusableElement(
+                        this.getFocusableElement(),
+                        null,
+                        event.shiftKey
+                    );
                     if (nextFocusableEl) {
                         event.preventDefault();
                         nextFocusableEl.focus();
@@ -146,20 +178,21 @@ export class AdvancedFilterHeaderComp extends Component {
         if (this.hasFocus()) {
             if (this.focusService.focusNextFromAdvancedFilter(backwards)) {
                 event.preventDefault();
-            };
+            }
         }
     }
 
     private navigateLeftRight(event: KeyboardEvent): void {
-        if (event.shiftKey
-            ? this.focusService.focusLastHeader()
-            : this.focusService.focusNextFromAdvancedFilter(false, true)) {
+        if (
+            event.shiftKey
+                ? this.focusService.focusLastHeader()
+                : this.focusService.focusNextFromAdvancedFilter(false, true)
+        ) {
             event.preventDefault();
         }
     }
 
     private hasFocus(): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
-        return eDocument.activeElement === this.getFocusableElement();
+        return this.gos.getActiveDomElement() === this.getFocusableElement();
     }
 }

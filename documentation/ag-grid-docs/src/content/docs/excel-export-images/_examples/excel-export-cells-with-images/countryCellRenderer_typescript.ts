@@ -1,4 +1,5 @@
-import { ICellRendererParams, ICellRendererComp } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+
 import { FlagContext, IOlympicData } from './interfaces';
 
 export class CountryCellRenderer implements ICellRendererComp {
@@ -17,7 +18,6 @@ export class CountryCellRenderer implements ICellRendererComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 }
-

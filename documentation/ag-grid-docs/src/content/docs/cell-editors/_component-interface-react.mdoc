@@ -1,6 +1,4 @@
 {% if isFramework("react") %}
-To configure Custom Cell Editors, first enable the grid option `reactiveCustomComponents`.
-
 Custom Cell Editor Components are Controlled Components, which receive a value as part of the props, and pass value updates back to the grid via the `onValueChange` callback. The value is not set until editing stops.
 {% /if %}
 
@@ -20,13 +18,13 @@ export default ({ value, onValueChange }) => {
 
 {% if isFramework("react") %}
 {% note %}
-Enabling `reactiveCustomComponents` affects all custom components. If you have custom components built in an imperative way instead of setting the `reactiveCustomComponents` option, they may need to be rebuilt to take advantage of the new features that `reactiveCustomComponents` offers. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option). For the legacy imperative documentation, see [Imperative Cell Editor Component](./component-cell-editor-imperative-react/).
+In previous versions of the grid, custom components were declared in an imperative way. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option) for details on how to migrate to the current format.
 {% /note %}
 {% /if %}
 
 {% if isFramework("react") %}
 
-The provided props (interface CustomCellRendererProps) are:
+The provided props (interface CustomCellEditorProps) are:
 {% /if %}
 
 {% if isFramework("react") %}
@@ -39,4 +37,9 @@ The following callbacks can be passed to the `useGridCellEditor` hook (`CustomCe
 
 {% if isFramework("react") %}
 {% interfaceDocumentation interfaceName="CustomCellEditorCallbacks" config={ "description": "" } /%}
+{% /if %}
+
+{% if isFramework("react") %}
+The custom numeric editor in the example below demonstrates the `useGridCellEditor` hook:
+{% gridExampleRunner title="useGridCellEditor Example" name="component-editor"  exampleHeight=370 /%}
 {% /if %}

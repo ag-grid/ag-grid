@@ -3,29 +3,11 @@ title: "Columns Tool Panel"
 enterprise: true
 ---
 
-The Columns Tool Panel provides functions for managing the grid's columns.
+The Columns Tool Panel provides controls for managing the grid's columns.
 
 ## Example
 
-Below shows an example of the Columns Tool Panel. The following can be noted:
-
-* Grid property `sideBar='columns'` which shows only the Columns Tool Panel.
-* Grid property `defaultColDef` has `enableValue`, `enableRowGroup` and `enablePivot` set. This means all columns can be dragged to any of the Row Groups, Values and Column sections. Although each column can be dragged to these sections, it does not make sense to do so. For example, it does not make sense to aggregate the country column, but it does make sense to group rows by country.
-
-Things to try:
-
-* Checking / unchecking columns will show / hide the columns.
-* Drag and Drop a column inside the columns sections to reorder columns in the grid.
-* Drag a column (e.g. Country) to Row Groups to group rows.
-* Drag a column (e.g. Gold) to Values to aggregate.
-* Reset (refresh) the demo and do the following:
-
-  * Click 'Pivot Mode'.
-  * Drag 'Country' to 'Row Groups'.
-  * Drag 'Year' to 'Column Labels'.
-  * Drag 'Gold' to 'Values'.
-
-  You will now have a pivot grid showing total gold medals for each country (rows showing countries) by year (columns showing years).
+In the example below the Columns Tool Panel can be used to show / hide / reorder columns, group rows and aggregate data and perform pivot operations.
 
 {% gridExampleRunner title="Tool Panel Simple" name="simple"  exampleHeight=630 /%}
 
@@ -72,7 +54,7 @@ The Columns Tool Panel is split into different sections as described from the to
 
 It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `toolPanelParams` to `true` whenever you are using the `agColumnsToolPanel` component properties:
 
-{% interfaceDocumentation interfaceName="ToolPanelColumnCompParams" exclude="["api", "columnApi"] config={"overrideBottomMargin":"1rem"} /%}
+{% interfaceDocumentation interfaceName="IToolPanelColumnCompParams" config={"overrideBottomMargin":"1rem"} /%}
 
 To remove a particular column from the tool panel, set the column property `suppressColumnsToolPanel` to `true`. This is useful when you have a column working in the background, e.g. a column you want to group by, but not visible to the user.
 
@@ -110,7 +92,7 @@ Similarly, the reordering of columns from inside the Columns Section of the Colu
 
 The configuration of these properties are shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     sideBar: {
           toolPanels: [
@@ -147,7 +129,7 @@ The following example demonstrates the results of enabling both of these propert
 
 You can add a CSS class to the columns in the tool panel by specifying `toolPanelClass` in the column definition as follows:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // set as string
@@ -198,7 +180,7 @@ interface IColumnToolPanel {
 
 The code snippet below shows how to expand and collapse column groups using the Columns Tool Panel instance:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
 const columnsToolPanel = api.getToolPanelInstance('columns');
 
@@ -242,7 +224,7 @@ Notice that the same [Column Definitions](./column-definitions/) that are suppli
 
 The code snippets below show how to set custom column layouts using the Columns Tool Panel instance:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // original column definitions supplied to the grid
     columnDefs: [
@@ -253,7 +235,7 @@ const gridOptions = {
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
 const columnsToolPanel = api.getToolPanelInstance('columns');
 

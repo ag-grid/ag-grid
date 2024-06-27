@@ -1,7 +1,9 @@
-@use "ag";
-@use "./material-variables";
+@use 'ag';
+@use './material-variables';
 
-.ag-theme-material, .ag-theme-material-dark, .ag-theme-material-auto-dark  {
+.ag-theme-material,
+.ag-theme-material-dark,
+.ag-theme-material-auto-dark {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
@@ -32,7 +34,8 @@
         padding-bottom: 0;
     }
 
-    .ag-header-cell, .ag-header-group-cell {
+    .ag-header-cell,
+    .ag-header-group-cell {
         transition: background-color 0.5s;
     }
 
@@ -71,10 +74,12 @@
         font-weight: 600;
         color: var(--ag-disabled-foreground-color);
 
-        @include ag.theme-rtl((
-            padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
-            padding-right: var(--ag-grid-size)
-        ));
+        @include ag.theme-rtl(
+            (
+                padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
+                padding-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-status-bar {
@@ -87,7 +92,8 @@
         border-top-color: var(--ag-border-color);
     }
 
-    .ag-column-select, .ag-column-select-header {
+    .ag-column-select,
+    .ag-column-select-header {
         border-bottom: solid 1px;
         border-bottom-color: var(--ag-border-color);
     }
@@ -108,14 +114,6 @@
     .ag-chart-format-section,
     .ag-chart-advanced-settings-section {
         padding-bottom: calc(var(--ag-grid-size) * 0.5);
-    }
-
-    .ag-chart-menu-close {
-        background: var(--ag-background-color);
-    }
-
-    .ag-chart-menu-close .ag-icon {
-        background: var(--ag-subheader-background-color);
     }
 
     @include ag.text-input {
@@ -186,14 +184,20 @@
         height: calc(var(--ag-grid-size) * 7);
     }
 
-    .ag-filter-apply-panel-button, .ag-advanced-filter-apply-button, .ag-advanced-filter-builder-button {
-        @include ag.theme-rtl((
-            margin-left: var(--ag-grid-size)
-        ));
+    .ag-filter-apply-panel-button,
+    .ag-advanced-filter-apply-button,
+    .ag-advanced-filter-builder-button {
+        @include ag.theme-rtl(
+            (
+                margin-left: var(--ag-grid-size),
+            )
+        );
     }
 
-    .ag-layout-auto-height, .ag-layout-print {
-        .ag-center-cols-viewport, .ag-center-cols-container {
+    .ag-layout-auto-height,
+    .ag-layout-print {
+        .ag-center-cols-viewport,
+        .ag-center-cols-container {
             min-height: 150px;
         }
     }
@@ -205,9 +209,12 @@
     .ag-picker-field-wrapper:focus-within {
         box-shadow: 0 0 0 1px var(--ag-material-primary-color);
     }
-    
+
     .ag-rich-select-list {
-        box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
+        box-shadow:
+            rgba(0, 0, 0, 0.2) 0px 5px 5px -3px,
+            rgba(0, 0, 0, 0.14) 0px 8px 10px 1px,
+            rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
     }
 
     .ag-advanced-filter-builder-button-label {
@@ -216,9 +223,5 @@
 
     .ag-filter-active .ag-icon-filter {
         color: var(--ag-material-accent-color);
-    }
-
-    textarea[class^='ag-chart-title-edit'] {
-        background-color: var(--ag-background-color);
     }
 }

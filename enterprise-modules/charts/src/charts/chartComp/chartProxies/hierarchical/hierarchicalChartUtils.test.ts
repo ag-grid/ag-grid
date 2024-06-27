@@ -1,4 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
+
 import { createAutoGroupHierarchy, createCategoryHierarchy } from './hierarchicalChartUtils';
 
 describe(createCategoryHierarchy as any, () => {
@@ -337,6 +338,8 @@ describe(createAutoGroupHierarchy as any, () => {
                                 y: 7,
                             },
                         ],
+                        'ag-Grid-AutoColumn': { labels: ['foo', 'x'] },
+                        z: 9,
                     },
                     {
                         'AG-GRID-DEFAULT-LABEL-KEY': 'baz',

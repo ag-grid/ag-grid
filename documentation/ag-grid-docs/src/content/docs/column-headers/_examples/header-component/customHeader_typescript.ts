@@ -1,4 +1,4 @@
-import { IHeaderParams } from '@ag-grid-community/core'
+import { IHeaderParams } from '@ag-grid-community/core';
 
 export interface ICustomHeaderParams {
     menuIcon: string;
@@ -7,7 +7,7 @@ export interface ICustomHeaderParams {
 export class CustomHeader {
     private agParams!: ICustomHeaderParams & IHeaderParams;
     private eGui!: HTMLDivElement;
-    eMenuButton: any;
+    eFilterMenuButton: any;
     eSortDownButton: any;
     eSortUpButton: any;
     eSortRemoveButton: any;
@@ -36,16 +36,16 @@ export class CustomHeader {
             </div>
         `;
 
-        this.eMenuButton = this.eGui.querySelector(".customHeaderMenuButton");
-        this.eSortDownButton = this.eGui.querySelector(".customSortDownLabel");
-        this.eSortUpButton = this.eGui.querySelector(".customSortUpLabel");
-        this.eSortRemoveButton = this.eGui.querySelector(".customSortRemoveLabel");
+        this.eFilterMenuButton = this.eGui.querySelector('.customHeaderMenuButton');
+        this.eSortDownButton = this.eGui.querySelector('.customSortDownLabel');
+        this.eSortUpButton = this.eGui.querySelector('.customSortUpLabel');
+        this.eSortRemoveButton = this.eGui.querySelector('.customSortRemoveLabel');
 
-        if (this.agParams.enableMenu) {
+        if (this.agParams.enableFilterButton) {
             this.onMenuClickListener = this.onMenuClick.bind(this);
-            this.eMenuButton.addEventListener('click', this.onMenuClickListener);
+            this.eFilterMenuButton.addEventListener('click', this.onMenuClickListener);
         } else {
-            this.eGui.removeChild(this.eMenuButton);
+            this.eGui.removeChild(this.eFilterMenuButton);
         }
 
         if (this.agParams.enableSorting) {
@@ -55,7 +55,6 @@ export class CustomHeader {
             this.eSortUpButton.addEventListener('click', this.onSortDescRequestedListener);
             this.onRemoveSortListener = this.onSortRequested.bind(this, null);
             this.eSortRemoveButton.addEventListener('click', this.onRemoveSortListener);
-
 
             this.onSortChangedListener = this.onSortChanged.bind(this);
             this.agParams.column.addEventListener('sortChanged', this.onSortChangedListener);
@@ -69,24 +68,25 @@ export class CustomHeader {
 
     onSortChanged() {
         const deactivate = (toDeactivateItems: any[]) => {
-            toDeactivateItems.forEach(toDeactivate => {
-                toDeactivate.className = toDeactivate.className.split(' ')[0]
+            toDeactivateItems.forEach((toDeactivate) => {
+                toDeactivate.className = toDeactivate.className.split(' ')[0];
             });
-        }
+        };
 
         const activate = (toActivate: any) => {
-            toActivate.className = toActivate.className + " active";
-        }
+            toActivate.className = toActivate.className + ' active';
+        };
 
-        if (this.agParams.column.isSortAscending()) {
+        const sort = this.agParams.column.getSort();
+        if (sort === 'asc') {
             deactivate([this.eSortUpButton, this.eSortRemoveButton]);
-            activate(this.eSortDownButton)
-        } else if (this.agParams.column.isSortDescending()) {
+            activate(this.eSortDownButton);
+        } else if (sort === 'desc') {
             deactivate([this.eSortDownButton, this.eSortRemoveButton]);
-            activate(this.eSortUpButton)
+            activate(this.eSortUpButton);
         } else {
             deactivate([this.eSortUpButton, this.eSortDownButton]);
-            activate(this.eSortRemoveButton)
+            activate(this.eSortRemoveButton);
         }
     }
 
@@ -95,7 +95,7 @@ export class CustomHeader {
     }
 
     onMenuClick() {
-        this.agParams.showColumnMenu(this.eMenuButton);
+        this.agParams.showColumnMenu(this.eFilterMenuButton);
     }
 
     onSortRequested(order: 'asc' | 'desc' | null, event: any) {
@@ -104,7 +104,7 @@ export class CustomHeader {
 
     destroy() {
         if (this.onMenuClickListener) {
-            this.eMenuButton.removeEventListener('click', this.onMenuClickListener)
+            this.eFilterMenuButton.removeEventListener('click', this.onMenuClickListener);
         }
         this.eSortDownButton.removeEventListener('click', this.onSortAscRequestedListener);
         this.eSortUpButton.removeEventListener('click', this.onSortDescRequestedListener);
@@ -112,4 +112,3 @@ export class CustomHeader {
         this.agParams.column.removeEventListener('sortChanged', this.onSortChangedListener);
     }
 }
-

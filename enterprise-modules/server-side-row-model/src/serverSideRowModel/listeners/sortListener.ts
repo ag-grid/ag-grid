@@ -1,38 +1,42 @@
-import {
-    _,
-    Autowired,
-    Bean,
-    BeanStub,
-    ColumnModel,
-    GROUP_AUTO_COLUMN_ID,
-    Events,
-    PostConstruct,
+import type {
+    BeanCollection,
+    NamedBean,
     SortController,
-    Column,
     SortModelItem,
-    StoreRefreshAfterParams
-} from "@ag-grid-community/core";
-import { ServerSideRowModel } from "../serverSideRowModel";
-import { ListenerUtils } from "./listenerUtils";
+    StoreRefreshAfterParams,
+} from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('ssrmSortService')
-export class SortListener extends BeanStub {
+import type { ServerSideRowModel } from '../serverSideRowModel';
+import type { ListenerUtils } from './listenerUtils';
 
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
+export class SortListener extends BeanStub implements NamedBean {
+    beanName = 'ssrmSortService' as const;
 
-    @PostConstruct
-    private postConstruct(): void {
+    private sortController: SortController;
+    private serverSideRowModel: ServerSideRowModel;
+    private listenerUtils: ListenerUtils;
+
+    public wireBeans(beans: BeanCollection) {
+        this.sortController = beans.sortController;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.listenerUtils = beans.ssrmListenerUtils as ListenerUtils;
+    }
+
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gridOptionsService.isRowModelType('serverSide')) { return; }
+        if (!this.gos.isRowModelType('serverSide')) {
+            return;
+        }
 
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedEventListeners({ sortChanged: this.onSortChanged.bind(this) });
     }
 
     private onSortChanged(): void {
         const storeParams = this.serverSideRowModel.getParams();
-        if (!storeParams) { return; } // params is undefined if no datasource set
+        if (!storeParams) {
+            return;
+        } // params is undefined if no datasource set
 
         const newSortModel = this.sortController.getSortModel();
         const oldSortModel = storeParams.sortModel;
@@ -44,7 +48,7 @@ export class SortListener extends BeanStub {
         const params: StoreRefreshAfterParams = {
             valueColChanged,
             secondaryColChanged,
-            changedColumns
+            changedColumns,
         };
 
         this.serverSideRowModel.refreshAfterSort(newSortModel, params);
@@ -54,15 +58,12 @@ export class SortListener extends BeanStub {
     // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
     // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
     // was previously sorted by A and then the A sort now needs to be cleared.
-    private findChangedColumnsInSort(
-        newSortModel: SortModelItem[],
-        oldSortModel: SortModelItem[]): string[] {
-
+    private findChangedColumnsInSort(newSortModel: SortModelItem[], oldSortModel: SortModelItem[]): string[] {
         let allColsInBothSorts: string[] = [];
 
-        [newSortModel, oldSortModel].forEach(sortModel => {
+        [newSortModel, oldSortModel].forEach((sortModel) => {
             if (sortModel) {
-                const ids = sortModel.map(sm => sm.colId);
+                const ids = sortModel.map((sm) => sm.colId);
                 allColsInBothSorts = allColsInBothSorts.concat(ids);
             }
         });
@@ -79,11 +80,10 @@ export class SortListener extends BeanStub {
             return oldIndex !== newIndex;
         };
 
-        return allColsInBothSorts.filter(colId => {
-            const oldSortItem = oldSortModel.find(sm => sm.colId === colId);
-            const newSortItem = newSortModel.find(sm => sm.colId === colId);
+        return allColsInBothSorts.filter((colId) => {
+            const oldSortItem = oldSortModel.find((sm) => sm.colId === colId);
+            const newSortItem = newSortModel.find((sm) => sm.colId === colId);
             return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
         });
     }
-
 }

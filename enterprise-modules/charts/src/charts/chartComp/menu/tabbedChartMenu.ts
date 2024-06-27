@@ -1,21 +1,22 @@
-import {
-    AgPromise,
-    Autowired,
-    ChartMenuOptions,
-    Component,
-    PostConstruct,
-    TabbedItem,
-    TabbedLayout
-} from "@ag-grid-community/core";
-import { ChartDataPanel } from "./data/chartDataPanel";
-import { FormatPanel } from "./format/formatPanel";
-import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
-import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
-import { ChartMenuContext } from "./chartMenuContext";
-import { ChartMenuService } from "../services/chartMenuService";
+import type { BeanCollection, ChartToolPanelMenuOptions } from '@ag-grid-community/core';
+import { AgPromise, Component } from '@ag-grid-community/core';
+import type { TabbedItem } from '@ag-grid-enterprise/core';
+import { TabbedLayout } from '@ag-grid-enterprise/core';
 
-export class TabbedChartMenu extends Component {
-    public static EVENT_CLOSED = 'closed';
+import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartMenuContext } from './chartMenuContext';
+import { ChartDataPanel } from './data/chartDataPanel';
+import { FormatPanel } from './format/formatPanel';
+import { ChartSettingsPanel } from './settings/chartSettingsPanel';
+
+export type TabbedChartMenuEvent = 'closed';
+export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+    }
+
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
 
@@ -23,19 +24,15 @@ export class TabbedChartMenu extends Component {
     private tabs: TabbedItem[] = [];
     private eventSource?: HTMLElement;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
-
     constructor(
-        private readonly panels: ChartMenuOptions[],
+        private readonly panels: ChartToolPanelMenuOptions[],
         private readonly chartMenuContext: ChartMenuContext
     ) {
         super();
     }
 
-    @PostConstruct
-    public init(): void {
-        this.panels.forEach(panel => {
+    public postConstruct(): void {
+        this.panels.forEach((panel) => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
             const panelComp = this.createPanel(panelType);
             const tabItem = this.createTab(panel, panelType, panelComp);
@@ -50,25 +47,21 @@ export class TabbedChartMenu extends Component {
             keepScrollPosition: true,
             suppressFocusBodyOnOpen: true,
             suppressTrapFocus: true,
-            enableCloseButton: !this.chartMenuService.isLegacyFormat(),
+            enableCloseButton: true,
             closeButtonAriaLabel: this.chartTranslationService.translate('ariaChartMenuClose'),
             onCloseClicked: () => {
                 this.eventSource?.focus({ preventScroll: true });
-                this.dispatchEvent({ type: TabbedChartMenu.EVENT_CLOSED });
-            }
+                this.dispatchLocalEvent({ type: 'closed' });
+            },
         });
-        this.getContext().createBean(this.tabbedLayout);
+        this.createBean(this.tabbedLayout);
     }
 
-    private createTab(
-        name: ChartMenuOptions,
-        title: ChartTranslationKey,
-        panelComp: Component,
-    ): TabbedItem {
+    private createTab(name: ChartToolPanelMenuOptions, title: ChartTranslationKey, panelComp: Component): TabbedItem {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
 
-        this.getContext().createBean(panelComp);
+        this.createBean(panelComp);
 
         eWrapperDiv.appendChild(panelComp.getGui());
 
@@ -84,7 +77,7 @@ export class TabbedChartMenu extends Component {
                 const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
                 return (scrollableContainer || eWrapperDiv) as HTMLElement;
             },
-            name
+            name,
         };
     }
 
@@ -93,7 +86,7 @@ export class TabbedChartMenu extends Component {
         this.tabbedLayout.showItem(tabItem);
     }
 
-    public getGui(): HTMLElement {
+    public override getGui(): HTMLElement {
         return this.tabbedLayout && this.tabbedLayout.getGui();
     }
 
@@ -104,7 +97,7 @@ export class TabbedChartMenu extends Component {
         }
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         if (this.parentComponent && this.parentComponent.isAlive()) {
             this.destroyBean(this.parentComponent);
         }
@@ -112,14 +105,13 @@ export class TabbedChartMenu extends Component {
     }
 
     private createPanel(panelType: string): Component {
-        const { chartController, chartOptionsService } = this.chartMenuContext;
         switch (panelType) {
             case TabbedChartMenu.TAB_DATA:
-                return new ChartDataPanel(chartController, chartOptionsService);
+                return new ChartDataPanel(this.chartMenuContext);
             case TabbedChartMenu.TAB_FORMAT:
                 return new FormatPanel(this.chartMenuContext);
             default:
-                return new ChartSettingsPanel(chartController);
+                return new ChartSettingsPanel(this.chartMenuContext.chartController);
         }
     }
 }

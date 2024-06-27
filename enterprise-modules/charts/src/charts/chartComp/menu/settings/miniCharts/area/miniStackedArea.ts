@@ -1,22 +1,30 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { ICoordinate } from "./miniArea";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
-import { ThemeTemplateParameters } from "../../miniChartsContainer";
-import { ChartTranslationKey } from "../../../../services/chartTranslationService";
+import type { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
+import type { ICoordinate } from './miniArea';
 
 export class MiniStackedArea extends MiniChartWithAxes {
-
     static chartType: ChartType = 'stackedArea';
     static readonly data = [
         [2, 3, 2],
         [3, 6, 5],
-        [6, 2, 2]
+        [6, 2, 2],
     ];
 
     private readonly areas: _Scene.Path[];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, _isCustomTheme: boolean, data: number[][] = MiniStackedArea.data, tooltipName: ChartTranslationKey = "stackedAreaTooltip") {
+    constructor(
+        container: HTMLElement,
+        fills: string[],
+        strokes: string[],
+        _themeTemplateParameters: ThemeTemplateParameters,
+        _isCustomTheme: boolean,
+        data: number[][] = MiniStackedArea.data,
+        tooltipName: ChartTranslationKey = 'stackedAreaTooltip'
+    ) {
         super(container, tooltipName);
 
         const size = this.size;
@@ -46,25 +54,25 @@ export class MiniStackedArea extends MiniChartWithAxes {
 
                 points[i] = {
                     x,
-                    y
+                    y,
                 };
 
                 points[last - i] = {
                     x,
-                    y: yScale.convert(total) // bottom y
+                    y: yScale.convert(total), // bottom y
                 };
 
                 total += yDatum;
             });
         });
 
-        this.areas = pathData.map(points => {
+        this.areas = pathData.map((points) => {
             const area = new _Scene.Path();
             area.strokeWidth = 0;
 
             const path = area.path;
             path.clear();
-            points.forEach((point, i) => path[i > 0 ? "lineTo" : "moveTo"](point.x, point.y));
+            points.forEach((point, i) => path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y));
             path.closePath();
 
             return area;

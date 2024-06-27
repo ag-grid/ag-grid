@@ -1,7 +1,6 @@
-import { camelCaseToHumanText, camelCaseToHyphenated } from './string'
+import { _camelCaseToHumanText, _camelCaseToHyphenated } from './string';
 
-
-describe('camelCaseToHumanText', () => {
+describe('_camelCaseToHumanText', () => {
     it.each([
         ['thisIsMe', 'This Is Me'],
         ['FTssRRsDSEd', 'F Tss R Rs DS Ed'],
@@ -11,10 +10,8 @@ describe('camelCaseToHumanText', () => {
         ['HEREToThere', 'HERE To There'],
         ['person.address.town', 'Person Address Town'],
         ['person_address.town', 'Person_address Town'],
-
-
     ])('Value: %s', (field, expected) => {
-        expect(camelCaseToHumanText(field)).toBe(expected);
+        expect(_camelCaseToHumanText(field)).toBe(expected);
     });
 });
 
@@ -22,8 +19,8 @@ describe('camelCaseToHyphenated', () => {
     it.each([
         ['backgroundColor', 'background-color'],
         ['marginLeft', 'margin-left'],
-        ['thisIsARandomTest', 'this-is-a-random-test']
+        ['thisIsARandomTest', 'this-is-a-random-test'],
     ])('Value %s', (field, expected) => {
-        expect(camelCaseToHyphenated(field)).toBe(expected);
+        expect(_camelCaseToHyphenated(field)).toBe(expected);
     });
 });

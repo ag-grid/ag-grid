@@ -1,16 +1,23 @@
-import { createApp, onBeforeMount, ref } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import MenuItem from './menuItemVue.js';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule, RangeSelectionModule, ClipboardModule]);
+import MenuItem from './menuItemVue.js';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    MenuModule,
+    ExcelExportModule,
+    RangeSelectionModule,
+    ClipboardModule,
+]);
 
 const VueExample = {
     template: `
@@ -31,18 +38,26 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-        MenuItem
+        MenuItem,
     },
     setup(props) {
-        const columnDefs = ref([{ field: "athlete" }, { field: "country" }, { field: "sport" }, { field: "year" }, { field: "gold" }, { field: "silver" }, { field: "bronze" }]);
-        const gridApi = ref();
+        const columnDefs = ref([
+            { field: 'athlete' },
+            { field: 'country' },
+            { field: 'sport' },
+            { field: 'year' },
+            { field: 'gold' },
+            { field: 'silver' },
+            { field: 'bronze' },
+        ]);
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             flex: 1,
             minWidth: 100,
         });
         const getMainMenuItems = ref(null);
         const getContextMenuItems = ref(null);
-        const rowData = ref(null)
+        const rowData = ref(null);
 
         onBeforeMount(() => {
             getMainMenuItems.value = (params) => {
@@ -53,19 +68,19 @@ const VueExample = {
                         name: 'Click Alert Button and Close Menu',
                         menuItem: 'MenuItem',
                         menuItemParams: {
-                            buttonValue: 'Alert'
-                        }
+                            buttonValue: 'Alert',
+                        },
                     },
                     {
                         name: 'Click Alert Button and Keep Menu Open',
                         suppressCloseOnSelect: true,
                         menuItem: 'MenuItem',
                         menuItemParams: {
-                            buttonValue: 'Alert'
-                        }
-                    }
+                            buttonValue: 'Alert',
+                        },
+                    },
                 ];
-            }
+            };
             getContextMenuItems.value = (params) => {
                 return [
                     ...(params.defaultItems || []),
@@ -74,19 +89,19 @@ const VueExample = {
                         name: 'Click Alert Button and Close Menu',
                         menuItem: 'MenuItem',
                         menuItemParams: {
-                            buttonValue: 'Alert'
-                        }
+                            buttonValue: 'Alert',
+                        },
                     },
                     {
                         name: 'Click Alert Button and Keep Menu Open',
                         suppressCloseOnSelect: true,
                         menuItem: 'MenuItem',
                         menuItemParams: {
-                            buttonValue: 'Alert'
-                        }
-                    }
+                            buttonValue: 'Alert',
+                        },
+                    },
                 ];
-            }
+            };
         });
 
         const onGridReady = (params) => {
@@ -97,8 +112,8 @@ const VueExample = {
             };
 
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-                .then(resp => resp.json())
-                .then(data => updateData(data));
+                .then((resp) => resp.json())
+                .then((data) => updateData(data));
         };
 
         return {
@@ -109,10 +124,11 @@ const VueExample = {
             getMainMenuItems,
             getContextMenuItems,
             onGridReady,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
-    }
-}
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
+    },
+};
 
-createApp(VueExample)
-    .mount("#app")
+createApp(VueExample).mount('#app');

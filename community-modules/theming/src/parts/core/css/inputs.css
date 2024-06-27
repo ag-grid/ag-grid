@@ -1,0 +1,92 @@
+.ag-input-wrapper,
+.ag-picker-field-wrapper {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    line-height: normal;
+    position: relative;
+}
+
+.ag-label-align-right {
+    .ag-label {
+        order: 1;
+    }
+    > * {
+        flex: none;
+    }
+}
+
+.ag-label-align-top {
+    flex-direction: column;
+    align-items: flex-start;
+    > * {
+        align-self: stretch;
+    }
+}
+
+.ag-label-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.ag-input-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.ag-input-field-input {
+    flex: 1 1 auto;
+}
+
+.ag-floating-filter-input .ag-input-field-input[type='date'] {
+    /* Fix a bug in Blink rendering engine where date input will not shrink from its default size in a
+        flex container, but it will grow. So we give it a very small width and it will grow to the right size */
+    width: 1px;
+}
+
+.ag-input-field-input {
+    width: 100%;
+    min-width: 0;
+}
+
+.ag-label {
+    white-space: nowrap;
+    margin-right: var(--ag-grid-size);
+}
+
+.ag-label-align-top .ag-label {
+    margin-bottom: calc(var(--ag-grid-size) * 0.5);
+}
+
+.ag-label-align-right .ag-label {
+    margin-left: var(--ag-grid-size);
+}
+
+/* icon for search inputs */
+/* TODO can this be integrated into the icon system so that it can be swapped out using the icons grid option? */
+.ag-column-select-header-filter-wrapper,
+.ag-filter-toolpanel-search,
+.ag-mini-filter,
+.ag-filter-filter {
+    .ag-input-wrapper::before {
+        position: absolute;
+        display: block;
+        margin-left: var(--ag-grid-size);
+        width: 12px;
+        height: 12px;
+        background-color: currentColor;
+        mask-image: url('data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ij48cGF0aCBkPSJNNS4zIDlhMy43IDMuNyAwIDEgMCAwLTcuNSAzLjcgMy43IDAgMCAwIDAgNy41Wk0xMC41IDEwLjUgOC4zIDguMiIvPjwvc3ZnPg==');
+        mask-position: center;
+        mask-repeat: no-repeat;
+        opacity: 50%;
+        content: '';
+    }
+
+    input.ag-text-field-input,
+    input.ag-number-field-input {
+        padding-left: 26px;
+    }
+}

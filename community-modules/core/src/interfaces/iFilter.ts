@@ -1,15 +1,15 @@
-import { ColDef, ValueGetterFunc } from '../entities/colDef';
-import { Column } from '../entities/column';
-import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
-import { AgPromise } from '../utils';
-import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
-import { IComponent } from './iComponent';
-import { AgGridCommon } from './iCommon';
-import { IRowModel } from './iRowModel';
-import { IRowNode } from './iRowNode';
+import type { ColDef, ValueGetterFunc } from '../entities/colDef';
+import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
+import type { Column } from '../interfaces/iColumn';
+import type { AgPromise } from '../utils/promise';
+import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
+import type { AgGridCommon } from './iCommon';
+import type { IComponent } from './iComponent';
+import type { IRowModel } from './iRowModel';
+import type { IRowNode } from './iRowNode';
 
-export type IFilterType = string | { new(): IFilterComp; } | boolean;
-export type IFloatingFilterType = string | { new(): IFloatingFilterComp; };
+export type IFilterType = string | { new (): IFilterComp } | boolean;
+export type IFloatingFilterType = string | { new (): IFloatingFilterComp };
 
 export interface IFilterDef {
     /**
@@ -36,7 +36,8 @@ export interface BaseFilter {
      * The grid will ask each active filter, in turn, whether each row in the grid passes. If any
      * filter fails, then the row will be excluded from the final set. The method is provided a
      * params object with attributes node (the rodNode the grid creates that wraps the data) and data
-     * (the data object that you provided to the grid for that row).
+     * (the data object that you provided to the grid for that row). Note that this is only called for the
+     * Client-Side Row Model, and can just return `true` if being used exclusively with other row models.
      */
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 
@@ -47,40 +48,39 @@ export interface BaseFilter {
      * Country filter). To get the list of available values from within this method from the
      * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.
      */
-     onNewRowsLoaded?(): void;
- 
-     /** Optional: Called whenever any filter is changed. */
-     onAnyFilterChanged?(): void;
- 
-     /**
-      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
-      * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
-      * filter.
-      */
-     getModelAsString?(model: any): string;
- 
-     /**
-      * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
-      * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
-      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
-      */
-     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
- 
-     /**
-      * Optional: A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.
-      * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.
-      * This is useful for any logic to reset the UI state back to the model before the component is reopened.
-      */
-     afterGuiDetached?(): void;
+    onNewRowsLoaded?(): void;
+
+    /** Optional: Called whenever any filter is changed. */
+    onAnyFilterChanged?(): void;
+
+    /**
+     * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
+     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
+     * filter.
+     */
+    getModelAsString?(model: any): string;
+
+    /**
+     * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
+     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
+     */
+    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+
+    /**
+     * Optional: A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.
+     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.
+     * This is useful for any logic to reset the UI state back to the model before the component is reopened.
+     */
+    afterGuiDetached?(): void;
 }
 
 export interface IFilter extends BaseFilter {
-
     /**
-     * Returns `true` if the filter is currently active, otherwise `false`. 
-     * If active then 1) the grid will show the filter icon in the column header 
+     * Returns `true` if the filter is currently active, otherwise `false`.
+     * If active then 1) the grid will show the filter icon in the column header
      * and 2) the filter will be included in the filtering of the data.
-    */
+     */
     isFilterActive(): boolean;
 
     /**
@@ -118,8 +118,7 @@ export interface ProvidedFilterModel {
     filterType?: string;
 }
 
-export interface IFilterComp<TData = any> extends IComponent<IFilterParams<TData>>, IFilter {
-}
+export interface IFilterComp<TData = any> extends IComponent<IFilterParams<TData>>, IFilter {}
 
 export interface IDoesFilterPassParams<TData = any> {
     /** The row node in question. */
@@ -158,7 +157,10 @@ export interface BaseFilterParams<TData = any, TContext = any> extends AgGridCom
      * Get the cell value for the given row node and column, which can be the column ID, definition, or `Column` object.
      * If no column is provided, the column this filter is on will be used.
      */
-    getValue: <TValue = any>(node: IRowNode<TData>, column?: string | ColDef<TData, TValue> | Column<TValue>) => TValue | null | undefined;
+    getValue: <TValue = any>(
+        node: IRowNode<TData>,
+        column?: string | ColDef<TData, TValue> | Column<TValue>
+    ) => TValue | null | undefined;
 
     /**
      * A function callback, call with a node to be told whether the node passes all filters except the current filter.
@@ -195,4 +197,11 @@ export interface IFilterParams<TData = any, TContext = any> extends BaseFilterPa
     valueGetter: ValueGetterFunc<TData>;
 }
 
-export interface FilterModel { [colId: string]: any; };
+/**
+ * FilterModel represents the filter state for all columns in the grid keyed by the column id.
+ * If using inbuilt AG Grid filters then the type of the column filter model could be one of:
+ *      `TextFilterModel`, `NumberFilterModel`, `DateFilterModel`, `SetFilterModel`, `IMultiFilterModel`, `AdvancedFilterModel`
+ */
+export interface FilterModel {
+    [colId: string]: any;
+}

@@ -23,6 +23,12 @@
                 "name": "Column Menu API / Events",
                 "url": "./column-menu/#column-menu-api--events"
             }
+        },
+        "contextMenuVisibleChanged": {
+            "more": {
+                "name": "Context Menu API / Events",
+                "url": "./context-menu/#context-menu-api--events"
+            }
         }
     },
     "clipboard": {
@@ -76,6 +82,7 @@
                 "url": "./selection-overview/"
             }
         },
+        "headerFocused": {},
         "cellClicked": {},
         "cellDoubleClicked": {},
         "cellFocused": {},
@@ -101,6 +108,18 @@
             "more": {
                 "name": "Range Selection Changed Event",
                 "url": "./range-selection/#range-selection-changed-event"
+            }
+        },
+        "fillStart": {
+            "more": {
+                "name": "Fill Range Event",
+                "url": "./range-selection-fill-handle/#fill-handle-events"
+            }
+        },
+        "fillEnd": {
+            "more": {
+                "name": "Fill Range Event",
+                "url": "./range-selection-fill-handle/#fill-handle-events"
             }
         }
     },
@@ -363,7 +382,7 @@
         },
         "gridSizeChanged": {
             "more": {
-                "name": "Grid Size",
+                "name": "Grid Layout",
                 "url": "./grid-size/"
             }
         },
@@ -383,11 +402,7 @@
     },
     "clientRowModel": {
         "meta": {
-            "displayName": "RowModel: Client-Side",
-            "page": {
-                "name": "Client-Side Row Model",
-                "url": "./client-side-model/"
-            }
+            "displayName": "RowModel: Client-Side"
         },
         "rowDataUpdated": {
             "more": {

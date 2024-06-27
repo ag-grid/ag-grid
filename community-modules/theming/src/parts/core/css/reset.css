@@ -1,0 +1,32 @@
+:where([class^='ag-']) {
+    &*,
+    &:focus,
+    &::after,
+    &::before,
+    &:focus-within {
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    &:where(button),
+    &:where(input),
+    &:where(textarea) {
+        border: none;
+        padding: 0;
+        margin: 0;
+        background: none;
+        color: inherit;
+        font-size: inherit;
+        font-family: inherit;
+        line-height: inherit;
+        cursor: pointer;
+    }
+
+    &:where(button) {
+        font-weight: inherit;
+    }
+
+    &::-ms-clear {
+        display: none;
+    }
+}

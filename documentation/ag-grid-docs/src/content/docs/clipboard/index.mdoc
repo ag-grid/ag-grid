@@ -104,7 +104,7 @@ The cut operations will work exactly the same as the copy operations, with the a
 
 Since `Cut` is a destructive process, the `suppressCutToClipboard` property was added to the Grid Options.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     suppressCutToClipboard: true
 }
@@ -146,7 +146,7 @@ Or you can disable pasting for a specific column or cell by setting the property
 
 ## Processing Pasted Data
 
-The clipboard data will be processed by default [Using the Value Formatter for Export](./value-formatters/#formating-for-export) to format the cells when copied, and [Using the Value Parser for Import](./value-parsers/#use-value-parser-for-import) to format the cells when pasted.
+The clipboard data will be processed by default [Using the Value Formatter for Export](./value-formatters/#formatting-for-export) to format the cells when copied, and [Using the Value Parser for Import](./value-parsers/#use-value-parser-for-import) to format the cells when pasted.
 
 It is possible to override this behaviour specifically for the clipboard. This can be done either on individual cells or the whole paste operation.
 

@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import DebugLayout from '@layouts/DebugLayout.astro';
 import { getDocsExamplePages } from '@features/docs/utils/pageData';
 import { getExampleContentsUrl, getExampleUrl } from '@features/docs/utils/urlPaths';
-import { getIsImplemented } from '@constants';
 import { ENABLE_GENERATE_DEBUG_PAGES } from '@constants';
 
 let examples: Awaited<ReturnType<typeof getDocsExamplePages>> = [];
@@ -31,7 +30,6 @@ if (ENABLE_GENERATE_DEBUG_PAGES) {
             {
                 examples.map((example, index) => {
                     const { internalFramework, pageName, exampleName, importType } = example.params;
-                    const isImplemented = getIsImplemented(example.params);
                     const url = getExampleUrl({
                         internalFramework,
                         pageName,
@@ -47,7 +45,9 @@ if (ENABLE_GENERATE_DEBUG_PAGES) {
                     return (
                         <tr>
                             <td>{index + 1}</td>
-                            <td>{isImplemented ? <a href={url}>{url}</a> : `TODO: ${url}`}</td>
+                            <td>
+                                <a href={url}>{url}</a>
+                            </td>
                             <td>
                                 <a href={contentsUrl}>contents.json</a>
                             </td>

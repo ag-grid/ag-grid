@@ -11,16 +11,16 @@ let isIOS: boolean;
 let invisibleScrollbar: boolean;
 let browserScrollbarWidth: number;
 
-export function isBrowserSafari(): boolean {
+export function _isBrowserSafari(): boolean {
     if (isSafari === undefined) {
         isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     }
     return isSafari;
 }
 
-export function getSafariVersion(): number {
+export function _getSafariVersion(): number {
     if (safariVersion === undefined) {
-        if (isBrowserSafari()) {
+        if (_isBrowserSafari()) {
             const versionMatch = navigator.userAgent.match(/version\/(\d+)/i);
             if (versionMatch) {
                 safariVersion = versionMatch[1] != null ? parseFloat(versionMatch[1]) : 0;
@@ -33,21 +33,21 @@ export function getSafariVersion(): number {
     return safariVersion;
 }
 
-
 /**
  * Returns true for Chrome and also for Edge (Chromium)
  */
-export function isBrowserChrome(): boolean {
+export function _isBrowserChrome(): boolean {
     if (isChrome === undefined) {
         const win = window as any;
-        isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
+        isChrome =
+            (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
             (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
     }
 
     return isChrome;
 }
 
-export function isBrowserFirefox(): boolean {
+export function _isBrowserFirefox(): boolean {
     if (isFirefox === undefined) {
         isFirefox = /(firefox)/i.test(navigator.userAgent);
     }
@@ -55,7 +55,7 @@ export function isBrowserFirefox(): boolean {
     return isFirefox;
 }
 
-export function isMacOsUserAgent(): boolean {
+export function _isMacOsUserAgent(): boolean {
     if (isMacOs === undefined) {
         isMacOs = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
     }
@@ -63,37 +63,41 @@ export function isMacOsUserAgent(): boolean {
     return isMacOs;
 }
 
-export function isIOSUserAgent(): boolean {
+export function _isIOSUserAgent(): boolean {
     if (isIOS === undefined) {
-        isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
-            // eslint-disable-next-line
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+        isIOS =
+            /iPad|iPhone|iPod/.test(navigator.platform) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     }
 
     return isIOS;
 }
 
-export function browserSupportsPreventScroll(): boolean {
+export function _browserSupportsPreventScroll(): boolean {
     // all browsers except safari support focus({ preventScroll: true }).
     // this feature was added on Safari 15+
-    return !isBrowserSafari() || getSafariVersion() >= 15;
+    return !_isBrowserSafari() || _getSafariVersion() >= 15;
 }
 
-export function getTabIndex(el: HTMLElement | null): string | null {
-    if (!el) { return null; }
+export function _getTabIndex(el: HTMLElement | null): string | null {
+    if (!el) {
+        return null;
+    }
 
     const numberTabIndex = el.tabIndex;
     const tabIndex = el.getAttribute('tabIndex');
 
-    if (numberTabIndex === -1 && (tabIndex === null || (tabIndex === '' && !isBrowserFirefox()))) {
+    if (numberTabIndex === -1 && (tabIndex === null || (tabIndex === '' && !_isBrowserFirefox()))) {
         return null;
     }
 
     return numberTabIndex.toString();
 }
 
-export function getMaxDivHeight(): number {
-    if (!document.body) { return -1; }
+export function _getMaxDivHeight(): number {
+    if (!document.body) {
+        return -1;
+    }
 
     let res = 1000000;
     // FF reports the height back but still renders blank after ~6M px
@@ -117,15 +121,15 @@ export function getMaxDivHeight(): number {
     return res;
 }
 
-export function getBodyWidth(): number {
+export function _getBodyWidth(): number {
     return document.body?.clientWidth ?? (window.innerHeight || document.documentElement?.clientWidth || -1);
 }
 
-export function getBodyHeight(): number {
+export function _getBodyHeight(): number {
     return document.body?.clientHeight ?? (window.innerHeight || document.documentElement?.clientHeight || -1);
 }
 
-export function getScrollbarWidth(): number | null {
+export function _getScrollbarWidth(): number | null {
     if (browserScrollbarWidth == null) {
         initScrollbarWidthAndVisibility();
     }
@@ -133,7 +137,6 @@ export function getScrollbarWidth(): number | null {
 }
 
 function initScrollbarWidthAndVisibility(): void {
-
     const body = document.body;
     const div = document.createElement('div');
 
@@ -148,7 +151,9 @@ function initScrollbarWidthAndVisibility(): void {
     let width: number | null = div.offsetWidth - div.clientWidth;
 
     // if width is 0 and client width is 0, means the DOM isn't ready
-    if (width === 0 && div.clientWidth === 0) { width = null; }
+    if (width === 0 && div.clientWidth === 0) {
+        width = null;
+    }
 
     // remove div
     if (div.parentNode) {
@@ -161,7 +166,7 @@ function initScrollbarWidthAndVisibility(): void {
     }
 }
 
-export function isInvisibleScrollbar(): boolean {
+export function _isInvisibleScrollbar(): boolean {
     if (invisibleScrollbar == null) {
         initScrollbarWidthAndVisibility();
     }

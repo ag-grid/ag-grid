@@ -62,7 +62,7 @@ export function getTypeUrl(type, framework) {
     }
 
     const typeLink = getTypeLink(type);
-    if(typeLink) {
+    if (typeLink) {
         return urlWithPrefix({
             url: typeLink,
             framework,
@@ -73,7 +73,11 @@ export function getTypeUrl(type, framework) {
 
 export function getLinkedType(type, framework) {
     if (!Array.isArray(type)) {
-        type = [type];
+        if (typeof type === 'string') {
+            type = [...type.split('|')];
+        } else {
+            type = [type];
+        }
     }
 
     // Extract all the words to enable support for Union types
@@ -215,10 +219,10 @@ export function formatJsDocString(docString) {
     const newLineReg = /\n\s+\*(?!\*)/g;
 
     // Turn option list, new line starting with - into bullet points
-    // eslint-disable-next-line
+
     const optionReg = /\n[\s]*[*]*[\s]*- (.*)/g;
 
-    let formatted = docString
+    const formatted = docString
         .replace('/**', '')
         .replace('*/', '')
         .replace(paramReg, '<br> `$1` $2 \n')
@@ -269,8 +273,8 @@ export function appendTypeAlias(name, interfaceType, allLines) {
     // | ((params: HeaderClassParams) => string | string[])
     while (split.length > 0) {
         const next = split.pop();
-        var countOpen = (next.match(/\(/g) || []).length;
-        var countClosed = (next.match(/\)/g) || []).length;
+        const countOpen = (next.match(/\(/g) || []).length;
+        const countClosed = (next.match(/\)/g) || []).length;
 
         if (countOpen === countClosed) {
             smartSplit.push(next);
@@ -285,7 +289,7 @@ export function appendTypeAlias(name, interfaceType, allLines) {
 }
 
 export function writeAllInterfaces(interfacesToWrite, framework, printConfig) {
-    let allLines = [];
+    const allLines = [];
     const alreadyWritten = {};
     interfacesToWrite.forEach(({ name, interfaceType }) => {
         if (!alreadyWritten[name]) {
@@ -390,12 +394,12 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
 
                 // Now if this is a top level interface see if we should include any interfaces for its properties
                 if (interfaceType.type) {
-                    let interfacesToInclude = {};
+                    const interfacesToInclude = {};
 
                     if (typeof interfaceType.type === 'string') {
                         interfacesToInclude[interfaceType.type] = true;
                     } else {
-                        let propertyTypes = Object.entries(interfaceType.type);
+                        const propertyTypes = Object.entries(interfaceType.type);
                         propertyTypes
                             .filter(([k, v]) => !!v && typeof v == 'string')
                             .filter(([k, v]) => {

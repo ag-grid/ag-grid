@@ -1,7 +1,8 @@
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 import { _Scene, _Theme, _Util } from 'ag-charts-community';
+
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
 
 export class MiniBoxPlot extends MiniChartWithAxes {
     static chartType: ChartType = 'boxPlot';
@@ -44,7 +45,7 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         const halfBandWidth = Math.round(xScale.bandwidth / 2);
 
         this.boxPlotGroups = data.map((datum, i) => {
-            let [minValue, q1Value, q3Value, maxValue] = [
+            const [minValue, q1Value, q3Value, maxValue] = [
                 datum * minRatio,
                 datum * q1Ratio,
                 datum * q3Ratio,
@@ -97,14 +98,14 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         themeTemplateParameters?: ThemeTemplateParameters,
         isCustomTheme?: boolean
     ) {
-        const themeBackgroundColor = themeTemplateParameters?.properties.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
+        const themeBackgroundColor = themeTemplateParameters?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(themeBackgroundColor) ? themeBackgroundColor[0] : themeBackgroundColor) ?? 'white';
 
         this.boxPlotGroups.forEach((group, i) => {
             group.children?.forEach((node: _Scene.Rect | _Scene.Line) => {
                 const fill = fills[i % fills.length];
-                node.fill = isCustomTheme ? fill : _Util.Color.interpolate(fill, backgroundFill)(0.7);
+                node.fill = isCustomTheme ? fill : _Util.interpolateColor(fill, backgroundFill)(0.7);
                 node.stroke = strokes[i % strokes.length];
             });
         });

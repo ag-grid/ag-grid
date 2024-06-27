@@ -1,9 +1,9 @@
-import styles from '@design-system/modules/ImageCaption.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 
 import { Gif } from './Gif';
+import styles from './ImageCaption.module.scss';
 
 interface Props {
     imageSrc: string;

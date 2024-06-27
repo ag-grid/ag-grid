@@ -1,9 +1,9 @@
-import { AgCartesianAxisOptions, AgHistogramSeriesOptions } from "ag-charts-community";
-import { ChartProxyParams, UpdateParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
+import type { AgCartesianAxisOptions, AgHistogramSeriesOptions } from 'ag-charts-community';
 
-export class HistogramChartProxy extends CartesianChartProxy {
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { CartesianChartProxy } from './cartesianChartProxy';
 
+export class HistogramChartProxy extends CartesianChartProxy<'histogram'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -15,9 +15,9 @@ export class HistogramChartProxy extends CartesianChartProxy {
                 type: this.standaloneChartType,
                 xKey: firstField.colId,
                 xName: firstField.displayName,
-                yName: this.chartProxyParams.translate("histogramFrequency"),
+                yName: this.chartProxyParams.translate('histogramFrequency'),
                 areaPlot: false, // only constant width is supported via integrated charts
-            } as AgHistogramSeriesOptions
+            } as AgHistogramSeriesOptions,
         ];
     }
 
@@ -33,5 +33,4 @@ export class HistogramChartProxy extends CartesianChartProxy {
             },
         ];
     }
-
 }

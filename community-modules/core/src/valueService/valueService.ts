@@ -1,25 +1,39 @@
-import { ExpressionService } from "./expressionService";
-import { ColumnModel } from "../columns/columnModel";
-import { ValueGetterParams, KeyCreatorParams, ValueSetterParams } from "../entities/colDef";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { Column } from "../entities/column";
-import { CellValueChangedEvent, Events } from "../events";
-import { ValueCache } from "./valueCache";
-import { BeanStub } from "../context/beanStub";
-import { getValueUsingField } from "../utils/object";
-import { missing, exists } from "../utils/generic";
-import { warnOnce } from "../utils/function";
-import { IRowNode } from "../interfaces/iRowNode";
-import { RowNode } from "../entities/rowNode";
-import { DataTypeService } from "../columns/dataTypeService";
+import type { ColumnModel } from '../columns/columnModel';
+import type { DataTypeService } from '../columns/dataTypeService';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type {
+    KeyCreatorParams,
+    ValueFormatterParams,
+    ValueGetterParams,
+    ValueParserParams,
+    ValueSetterParams,
+} from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
+import type { CellValueChangedEvent } from '../events';
+import type { IRowNode } from '../interfaces/iRowNode';
+import { _warnOnce } from '../utils/function';
+import { _exists, _missing } from '../utils/generic';
+import { _getValueUsingField } from '../utils/object';
+import type { ExpressionService } from './expressionService';
+import type { ValueCache } from './valueCache';
 
-@Bean('valueService')
-export class ValueService extends BeanStub {
+export class ValueService extends BeanStub implements NamedBean {
+    beanName = 'valueService' as const;
 
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
+    private expressionService: ExpressionService;
+    private columnModel: ColumnModel;
+    private valueCache: ValueCache;
+    private dataTypeService?: DataTypeService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.expressionService = beans.expressionService;
+        this.columnModel = beans.columnModel;
+        this.valueCache = beans.valueCache;
+        this.dataTypeService = beans.dataTypeService;
+    }
 
     private cellExpressions: boolean;
     // Store locally for performance reasons and keep updated via property listener
@@ -29,28 +43,29 @@ export class ValueService extends BeanStub {
 
     private isSsrm = false;
 
-    @PostConstruct
-    public init(): void {
-        this.isSsrm = this.gridOptionsService.isRowModelType('serverSide');
-        this.cellExpressions = this.gridOptionsService.get('enableCellExpressions');
-        this.isTreeData = this.gridOptionsService.get('treeData');
+    public postConstruct(): void {
+        if (!this.initialised) {
+            this.init();
+        }
+    }
+
+    private init(): void {
+        this.isSsrm = this.gos.isRowModelType('serverSide');
+        this.cellExpressions = this.gos.get('enableCellExpressions');
+        this.isTreeData = this.gos.get('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        const async = this.gridOptionsService.useAsyncEvents();
-        this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
-        this.addDestroyFunc(() => this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async));
+        const async = this.gos.useAsyncEvents();
+        this.eventService.addEventListener('cellValueChanged', listener, async);
+        this.addDestroyFunc(() => this.eventService.removeEventListener('cellValueChanged', listener, async));
 
-        this.addManagedPropertyListener('treeData', (propChange) => this.isTreeData = propChange.currentValue);
+        this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }
 
-    public getValue(column: Column,
-        rowNode?: IRowNode | null,
-        forFilter = false,
-        ignoreAggData = false): any {
-
+    public getValue(column: AgColumn, rowNode?: IRowNode | null, forFilter = false, ignoreAggData = false): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) {
@@ -75,7 +90,11 @@ export class ValueService extends BeanStub {
 
         // SSRM agg data comes from the data attribute, so ignore that instead
         const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
-        const ssrmFooterGroupCol = this.isSsrm && rowNode.footer && rowNode.field && (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
+        const ssrmFooterGroupCol =
+            this.isSsrm &&
+            rowNode.footer &&
+            rowNode.field &&
+            (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
 
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
@@ -83,8 +102,8 @@ export class ValueService extends BeanStub {
             result = rowNode.aggData[colId];
         } else if (this.isTreeData && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.isTreeData && (field && data)) {
-            result = getValueUsingField(data, field, column.isFieldContainsDots());
+        } else if (this.isTreeData && field && data) {
+            result = _getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData![colId];
         } else if (aggDataExists) {
@@ -94,13 +113,13 @@ export class ValueService extends BeanStub {
         } else if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
             // the group value from the data using the row field
-            result = getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
+            result = _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
         } else if (field && data && !ignoreSsrmAggData) {
-            result = getValueUsingField(data, field, column.isFieldContainsDots());
+            result = _getValueUsingField(data, field, column.isFieldContainsDots());
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
+        if (this.cellExpressions && typeof result === 'string' && result.indexOf('=') === 0) {
             const cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
@@ -115,19 +134,91 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getOpenedGroup(rowNode: IRowNode, column: Column): any {
+    public parseValue(column: AgColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
+        const colDef = column.getColDef();
+        const params: ValueParserParams = this.gos.addGridCommonParams({
+            node: rowNode,
+            data: rowNode?.data,
+            oldValue,
+            newValue,
+            colDef,
+            column,
+        });
 
-        if (!this.gridOptionsService.get('showOpenedGroup')) { return; }
+        const valueParser = colDef.valueParser;
+
+        if (_exists(valueParser)) {
+            if (typeof valueParser === 'function') {
+                return valueParser(params);
+            }
+            return this.expressionService.evaluate(valueParser, params);
+        }
+        return newValue;
+    }
+
+    public formatValue(
+        column: AgColumn,
+        node: IRowNode | null,
+        value: any,
+        suppliedFormatter?: (value: any) => string,
+        useFormatterFromColumn = true
+    ): string | null {
+        let result: string | null = null;
+        let formatter: ((value: any) => string) | string | undefined;
 
         const colDef = column.getColDef();
-        if (!colDef.showRowGroup) { return; }
+
+        if (suppliedFormatter) {
+            // use supplied formatter if provided, e.g. set filter items can have their own value formatters
+            formatter = suppliedFormatter;
+        } else if (useFormatterFromColumn) {
+            formatter = colDef.valueFormatter;
+        }
+
+        if (formatter) {
+            const params: ValueFormatterParams = this.gos.addGridCommonParams({
+                value,
+                node,
+                data: node ? node.data : null,
+                colDef,
+                column,
+            });
+            if (typeof formatter === 'function') {
+                result = formatter(params);
+            } else {
+                result = this.expressionService.evaluate(formatter, params);
+            }
+        } else if (colDef.refData) {
+            return colDef.refData[value] || '';
+        }
+
+        // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (i.e. with spaces)
+        if (result == null && Array.isArray(value)) {
+            result = value.join(', ');
+        }
+
+        return result;
+    }
+
+    private getOpenedGroup(rowNode: IRowNode, column: AgColumn): any {
+        if (!this.gos.get('showOpenedGroup')) {
+            return;
+        }
+
+        const colDef = column.getColDef();
+        if (!colDef.showRowGroup) {
+            return;
+        }
 
         const showRowGroup = column.getColDef().showRowGroup;
 
         let pointer = rowNode.parent;
 
         while (pointer != null) {
-            if (pointer.rowGroupColumn && (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getColId())) {
+            if (
+                pointer.rowGroupColumn &&
+                (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getColId())
+            ) {
                 return pointer.key;
             }
             pointer = pointer.parent;
@@ -144,46 +235,46 @@ export class ValueService extends BeanStub {
      * @param eventSource The event source
      * @returns `True` if the value has been updated, otherwise`False`.
      */
-    public setValue(rowNode: IRowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
-        const column = this.columnModel.getPrimaryColumn(colKey);
+    public setValue(rowNode: IRowNode, colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
+        const column = this.columnModel.getColDefCol(colKey);
 
         if (!rowNode || !column) {
             return false;
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
-        if (missing(rowNode.data)) {
+        if (_missing(rowNode.data)) {
             rowNode.data = {};
         }
 
         const { field, valueSetter } = column.getColDef();
 
-        if (missing(field) && missing(valueSetter)) {
-            console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
+        if (_missing(field) && _missing(valueSetter)) {
+            _warnOnce(`you need either field or valueSetter set on colDef for editing to work`);
             return false;
         }
 
-        if (!this.dataTypeService.checkType(column, newValue)) {
-            console.warn(`AG Grid: Data type of the new value does not match the cell data type of the column`);
+        if (this.dataTypeService && !this.dataTypeService.checkType(column, newValue)) {
+            _warnOnce(`Data type of the new value does not match the cell data type of the column`);
             return false;
         }
 
-        const params: ValueSetterParams = this.gridOptionsService.addGridCommonParams({
+        const params: ValueSetterParams = this.gos.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
             newValue: newValue,
             colDef: column.getColDef(),
-            column: column
+            column: column,
         });
 
         params.newValue = newValue;
 
         let valueWasDifferent: boolean;
 
-        if (exists(valueSetter)) {
+        if (_exists(valueSetter)) {
             if (typeof valueSetter === 'function') {
-                valueWasDifferent = valueSetter(params)
+                valueWasDifferent = valueSetter(params);
             } else {
                 valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
             }
@@ -212,13 +303,12 @@ export class ValueService extends BeanStub {
         params.newValue = this.getValue(column, rowNode);
 
         const event: CellValueChangedEvent = {
-            type: Events.EVENT_CELL_VALUE_CHANGED,
+            type: 'cellValueChanged',
             event: null,
             rowIndex: rowNode.rowIndex!,
             rowPinned: rowNode.rowPinned,
             column: params.column,
             api: params.api!,
-            columnApi: params.columnApi!,
             colDef: params.colDef,
             context: params.context,
             data: rowNode.data,
@@ -226,7 +316,7 @@ export class ValueService extends BeanStub {
             oldValue: params.oldValue,
             newValue: params.newValue,
             value: params.newValue,
-            source: eventSource
+            source: eventSource,
         };
 
         this.eventService.dispatchEvent(event);
@@ -246,14 +336,18 @@ export class ValueService extends BeanStub {
                     colDef: event.colDef,
                     column: event.column,
                     api: event.api,
-                    columnApi: event.columnApi,
-                    context: event.context
+                    context: event.context,
                 });
             });
         }
     }
 
-    private setValueUsingField(data: any, field: string | undefined, newValue: any, isFieldContainsDots: boolean): boolean {
+    private setValueUsingField(
+        data: any,
+        field: string | undefined,
+        newValue: any,
+        isFieldContainsDots: boolean
+    ): boolean {
         if (!field) {
             return false;
         }
@@ -284,13 +378,19 @@ export class ValueService extends BeanStub {
         return !valuesAreSame;
     }
 
-    private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
-        const params: ValueGetterParams = this.gridOptionsService.addGridCommonParams({
+    private executeFilterValueGetter(
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        valueGetter: string | Function,
+        data: any,
+        column: AgColumn,
+        rowNode: IRowNode
+    ): any {
+        const params: ValueGetterParams = this.gos.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            getValue: this.getValueCallback.bind(this, rowNode)
+            getValue: this.getValueCallback.bind(this, rowNode),
         });
 
         if (typeof valueGetter === 'function') {
@@ -299,8 +399,13 @@ export class ValueService extends BeanStub {
         return this.expressionService.evaluate(valueGetter, params);
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
-
+    private executeValueGetter(
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        valueGetter: string | Function,
+        data: any,
+        column: AgColumn,
+        rowNode: IRowNode
+    ): any {
         const colId = column.getColId();
 
         // if inside the same turn, just return back the value we got last time
@@ -310,17 +415,17 @@ export class ValueService extends BeanStub {
             return valueFromCache;
         }
 
-        const params: ValueGetterParams = this.gridOptionsService.addGridCommonParams({
+        const params: ValueGetterParams = this.gos.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            getValue: this.getValueCallback.bind(this, rowNode)
+            getValue: this.getValueCallback.bind(this, rowNode),
         });
 
         let result;
         if (typeof valueGetter === 'function') {
-            result = valueGetter(params)
+            result = valueGetter(params);
         } else {
             result = this.expressionService.evaluate(valueGetter, params);
         }
@@ -331,8 +436,8 @@ export class ValueService extends BeanStub {
         return result;
     }
 
-    private getValueCallback(node: IRowNode, field: string | Column): any {
-        const otherColumn = this.columnModel.getPrimaryColumn(field);
+    private getValueCallback(node: IRowNode, field: string | AgColumn): any {
+        const otherColumn = this.columnModel.getColDefCol(field);
 
         if (otherColumn) {
             return this.getValue(otherColumn, node);
@@ -342,18 +447,18 @@ export class ValueService extends BeanStub {
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
-    public getKeyForNode(col: Column, rowNode: IRowNode): any {
+    public getKeyForNode(col: AgColumn, rowNode: IRowNode): any {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 
         let result = value;
         if (keyCreator) {
-            const keyParams: KeyCreatorParams = this.gridOptionsService.addGridCommonParams({
+            const keyParams: KeyCreatorParams = this.gos.addGridCommonParams({
                 value: value,
                 colDef: col.getColDef(),
                 column: col,
                 node: rowNode,
-                data: rowNode.data
+                data: rowNode.data,
             });
             result = keyCreator(keyParams);
         }
@@ -366,7 +471,9 @@ export class ValueService extends BeanStub {
         result = String(result);
 
         if (result === '[object Object]') {
-            warnOnce('a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
+            _warnOnce(
+                'a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key'
+            );
         }
 
         return result;

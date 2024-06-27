@@ -1,8 +1,9 @@
-import { getFunctionName, isInstanceMethod, removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
-import { convertTemplate, toAssignment, toConst, toInput, toMember } from './vue-utils';
-import { templatePlaceholder } from './grid-vanilla-src-parser';
 import * as JSON5 from 'json5';
-import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+
+import type { ExampleConfig, ParsedBindings } from '../types';
+import { templatePlaceholder } from './grid-vanilla-src-parser';
+import { getFunctionName, removeFunctionKeyword } from './parser-utils';
+import { convertTemplate } from './vue-utils';
 
 export const GRID_WIDE_COMPONENTS = [
     'loadingCellRenderer',
@@ -40,6 +41,7 @@ export const OVERRIDABLE_AG_COMPONENTS = [
     'agColumnHeader',
     'agColumnGroupHeader',
     'agLoadingCellRenderer',
+    'agSkeletonCellRenderer',
     'agLoadingOverlay',
     'agNoRowsOverlay',
     'agTextCellEditor',
@@ -60,6 +62,7 @@ export function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConf
         : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
     const agGridTag = `<ag-grid-vue
+    ${exampleConfig.myGridReference ? 'id="myGrid"' : ''}
     ${style}
     :class="themeClass"
     :columnDefs="columnDefs"
@@ -161,6 +164,18 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                             addToVueComponents(componentFileNames, vueComponents, 'cellRenderer', value.cellRenderer);
                         }
                     }
+                    if (value.loadingCellRenderer) {
+                        const component = `${value.loadingCellRenderer.replace('AG_LITERAL_', '')}`;
+                        if (isExternalVueFile(componentFileNames, component)) {
+                            value.loadingCellRenderer = component;
+                            addToVueComponents(
+                                componentFileNames,
+                                vueComponents,
+                                'loadingCellRenderer',
+                                value.loadingCellRenderer
+                            );
+                        }
+                    }
                     if (value.filters) {
                         value.filters.forEach((filter) => {
                             if (filter.floatingFilterComponent) {
@@ -218,6 +233,21 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                             }
                         }
 
+                        if (columnProperty === 'loadingCellRendererSelector') {
+                            const component = parsedValue.match(/.*component:\s*(.*),/)
+                                ? parsedValue.match(/.*:\s*(.*),/)[1]
+                                : parsedValue.match(/.*:\s*(.*)$/)[1];
+                            if (component) {
+                                parsedValue = parsedValue.replace(component, `'${component}'`);
+                                if (
+                                    isExternalVueFile(componentFileNames, component) &&
+                                    !vueComponents.includes(component)
+                                ) {
+                                    vueComponents.push(component);
+                                }
+                            }
+                        }
+
                         // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
                         // turn into lambda functions here
                         columnProperties.push(`${columnProperty}:${parsedValue}`);
@@ -250,6 +280,7 @@ export function convertDefaultColDef(defaultColDef, vueComponents, componentFile
         if (
             line.includes('tooltipComponent') ||
             (line.includes('cellRenderer') && !line.includes("'ag")) ||
+            (line.includes('loadingCellRenderer') && !line.includes("'ag")) ||
             (line.includes('headerComponent') && !line.includes('headerComponentParams')) ||
             (line.includes('filter') &&
                 line.includes(':') &&

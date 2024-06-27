@@ -1,125 +1,141 @@
-import {
-    _,
-    Autowired,
-    Column,
-    ColumnModel,
-    Component,
-    Events,
+import type {
+    AgColumn,
+    BeanCollection,
+    ColumnNameService,
     FilterManager,
     FilterOpenedEvent,
     IFilterComp,
+} from '@ag-grid-community/core';
+import {
+    Component,
+    FilterWrapperComp,
     KeyCode,
-    PostConstruct,
-    RefSelector,
-    FilterDestroyedEvent
-} from "@ag-grid-community/core";
+    RefPlaceholder,
+    _clearElement,
+    _createIconNoSpan,
+    _loadTemplate,
+    _setAriaExpanded,
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
-export class ToolPanelFilterComp extends Component {
-    private static TEMPLATE = /* html */`
-        <div class="ag-filter-toolpanel-instance">
-            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
-                <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-                <span ref="eFilterName" class="ag-header-cell-text"></span>
-                <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
-            </div>
-            <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody"></div>
-        </div>`;
+export type ToolPanelFilterCompEvent = 'filterChanged';
+export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
+    private filterManager?: FilterManager;
+    private columnNameService: ColumnNameService;
 
-    @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
-    @RefSelector('eFilterName') private eFilterName: HTMLElement;
-    @RefSelector('agFilterToolPanelBody') private agFilterToolPanelBody: HTMLElement;
-    @RefSelector('eFilterIcon') private eFilterIcon: Element;
-    @RefSelector('eExpand') private eExpand: Element;
+    public wireBeans(beans: BeanCollection) {
+        this.filterManager = beans.filterManager;
+        this.columnNameService = beans.columnNameService;
+    }
 
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    private readonly eFilterToolPanelHeader: HTMLElement = RefPlaceholder;
+    private readonly eFilterName: HTMLElement = RefPlaceholder;
+    private readonly agFilterToolPanelBody: HTMLElement = RefPlaceholder;
+    private readonly eFilterIcon: Element = RefPlaceholder;
+    private readonly eExpand: Element = RefPlaceholder;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;
     private hideHeader: boolean;
-    private column: Column;
+    private column: AgColumn;
     private expanded: boolean = false;
     private underlyingFilter: IFilterComp | null;
+    private filterWrapperComp?: FilterWrapperComp;
 
-    constructor(hideHeader: boolean, private readonly expandedCallback: () => void) {
-        super(ToolPanelFilterComp.TEMPLATE);
+    constructor(
+        hideHeader: boolean,
+        private readonly expandedCallback: () => void
+    ) {
+        super(/* html */ `
+            <div class="ag-filter-toolpanel-instance">
+                <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" data-ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
+                    <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+                    <span data-ref="eFilterName" class="ag-header-cell-text"></span>
+                    <span data-ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
+                </div>
+                <div class="ag-filter-toolpanel-instance-body ag-filter" data-ref="agFilterToolPanelBody"></div>
+            </div>`);
         this.hideHeader = hideHeader;
     }
 
-    @PostConstruct
-    private postConstruct() {
-        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsService)!;
-        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsService)!;
+    public postConstruct() {
+        this.eExpandChecked = _createIconNoSpan('columnSelectOpen', this.gos)!;
+        this.eExpandUnchecked = _createIconNoSpan('columnSelectClosed', this.gos)!;
         this.eExpand.appendChild(this.eExpandChecked);
         this.eExpand.appendChild(this.eExpandUnchecked);
     }
 
-    public setColumn(column: Column): void {
+    public setColumn(column: AgColumn): void {
         this.column = column;
-        this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
-        this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
-        this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
-            if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                e.preventDefault();
-                this.toggleExpanded();
-            }
+        this.eFilterName.innerText =
+            this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
+        this.addManagedListeners(this.eFilterToolPanelHeader, {
+            click: this.toggleExpanded.bind(this),
+            keydown: this.onKeyDown.bind(this),
         });
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+        this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
-        _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
-        _.setDisplayed(this.eExpandChecked, false);
+        _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        _setDisplayed(this.eExpandChecked, false);
 
         if (this.hideHeader) {
-            _.setDisplayed(this.eFilterToolPanelHeader, false);
+            _setDisplayed(this.eFilterToolPanelHeader, false);
             this.eFilterToolPanelHeader.removeAttribute('tabindex');
         } else {
             this.eFilterToolPanelHeader.setAttribute('tabindex', '0');
         }
 
-        this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_DESTROYED, this.onFilterDestroyed.bind(this));
+        this.addManagedListeners(this.column, { filterChanged: this.onFilterChanged.bind(this) });
     }
 
-    public getColumn(): Column {
+    private onKeyDown(e: KeyboardEvent): void {
+        const { key } = e;
+        const { ENTER, SPACE, LEFT, RIGHT } = KeyCode;
+
+        if (key !== ENTER && key !== SPACE && key !== LEFT && key !== RIGHT) {
+            return;
+        }
+
+        e.preventDefault();
+
+        if (key === ENTER || key === SPACE) {
+            this.toggleExpanded();
+        } else if (key === KeyCode.LEFT) {
+            this.collapse();
+        } else {
+            this.expand();
+        }
+    }
+
+    public getColumn(): AgColumn {
         return this.column;
     }
 
     public getColumnFilterName(): string | null {
-        return this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
+        return this.columnNameService.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
     }
 
     public addCssClassToTitleBar(cssClass: string) {
         this.eFilterToolPanelHeader.classList.add(cssClass);
     }
 
-    private addInIcon(iconName: string, eParent: Element, column: Column): void {
-        if (eParent == null) { return; }
+    private addInIcon(iconName: string, eParent: Element, column: AgColumn): void {
+        if (eParent == null) {
+            return;
+        }
 
-        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsService, column)!;
+        const eIcon = _createIconNoSpan(iconName, this.gos, column)!;
         eParent.appendChild(eIcon);
     }
 
     public isFilterActive(): boolean {
-        return this.filterManager.isFilterActive(this.column);
+        return !!this.filterManager?.isFilterActive(this.column);
     }
 
     private onFilterChanged(): void {
-        _.setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
-        this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
-    }
-
-    private onFilterDestroyed(event: FilterDestroyedEvent): void {
-        if (
-            this.expanded &&
-            (event.source === 'api' || event.source === 'paramsUpdated') &&
-            event.column.getId() === this.column.getId() &&
-            this.columnModel.getPrimaryColumn(this.column)
-        ) {
-            // filter was visible and has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
-            this.removeFilterElement();
-            this.addFilterElement(true);
-        }
+        _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        this.dispatchLocalEvent({ type: 'filterChanged' });
     }
 
     public toggleExpanded(): void {
@@ -127,13 +143,15 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public expand(): void {
-        if (this.expanded) { return; }
+        if (this.expanded) {
+            return;
+        }
 
         this.expanded = true;
-        _.setAriaExpanded(this.eFilterToolPanelHeader, true);
+        _setAriaExpanded(this.eFilterToolPanelHeader, true);
 
-        _.setDisplayed(this.eExpandChecked, true);
-        _.setDisplayed(this.eExpandUnchecked, false);
+        _setDisplayed(this.eExpandChecked, true);
+        _setDisplayed(this.eExpandUnchecked, false);
 
         this.addFilterElement();
 
@@ -141,62 +159,64 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private addFilterElement(suppressFocus?: boolean): void {
-        const filterPanelWrapper = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
-        const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
+        const filterPanelWrapper = _loadTemplate(/* html */ `<div class="ag-filter-toolpanel-instance-filter"></div>`);
+        const comp = this.createManagedBean(new FilterWrapperComp(this.column, 'TOOLBAR'));
+        this.filterWrapperComp = comp;
 
-        if (!filterWrapper) { return; }
+        if (!comp.hasFilter()) {
+            return;
+        }
 
-        const { filterPromise, guiPromise } = filterWrapper;
-
-        filterPromise?.then(filter => {
+        comp.getFilter()?.then((filter) => {
             this.underlyingFilter = filter;
 
-            if (!filter) { return; }
-            guiPromise.then(filterContainerEl => {
-                if (filterContainerEl) {
-                    filterPanelWrapper.appendChild(filterContainerEl);
-                }
+            if (!filter) {
+                return;
+            }
+            filterPanelWrapper.appendChild(comp.getGui());
 
-                this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
+            this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
 
-                if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({ container: 'toolPanel', suppressFocus });
-                }
-            });
+            comp.afterGuiAttached({ container: 'toolPanel', suppressFocus });
         });
-        
     }
 
     public collapse(): void {
-        if (!this.expanded) { return; }
+        if (!this.expanded) {
+            return;
+        }
 
         this.expanded = false;
-        _.setAriaExpanded(this.eFilterToolPanelHeader, false);
+        _setAriaExpanded(this.eFilterToolPanelHeader, false);
         this.removeFilterElement();
 
-        _.setDisplayed(this.eExpandChecked, false);
-        _.setDisplayed(this.eExpandUnchecked, true);
+        _setDisplayed(this.eExpandChecked, false);
+        _setDisplayed(this.eExpandUnchecked, true);
 
-        this.underlyingFilter?.afterGuiDetached?.();
+        this.filterWrapperComp?.afterGuiDetached();
+        this.destroyBean(this.filterWrapperComp);
 
         this.expandedCallback();
     }
 
     private removeFilterElement(): void {
-        _.clearElement(this.agFilterToolPanelBody);
+        _clearElement(this.agFilterToolPanelBody);
     }
-
 
     public isExpanded(): boolean {
         return this.expanded;
     }
 
     public refreshFilter(isDisplayed: boolean): void {
-        if (!this.expanded) { return; }
+        if (!this.expanded) {
+            return;
+        }
 
         const filter = this.underlyingFilter as any;
 
-        if (!filter) { return; }
+        if (!filter) {
+            return;
+        }
 
         if (isDisplayed) {
             // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
@@ -211,9 +231,15 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {
-        if (event.source !== 'COLUMN_MENU') { return; }
-        if (event.column !== this.column) { return; }
-        if (!this.expanded) { return; }
+        if (event.source !== 'COLUMN_MENU') {
+            return;
+        }
+        if (event.column !== this.column) {
+            return;
+        }
+        if (!this.expanded) {
+            return;
+        }
 
         this.collapse();
     }

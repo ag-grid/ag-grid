@@ -1,0 +1,27 @@
+---
+import { type CtaType, OpenInCTA } from './OpenInCTA';
+
+interface Props {
+    type: CtaType;
+    href: string;
+    text?: string;
+}
+
+const { type, href, text } = Astro.props as Props;
+---
+
+<div class="container">
+    {text && <label>{text}</label>}
+    <OpenInCTA client:load type={type} href={href} />
+</div>
+
+<style lang="scss">
+    @use 'design-system' as *;
+
+    .container {
+        display: flex;
+        gap: $spacing-size-2;
+        align-items: center;
+        margin-bottom: $spacing-size-2;
+    }
+</style>

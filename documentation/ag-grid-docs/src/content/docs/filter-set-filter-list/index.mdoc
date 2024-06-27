@@ -11,7 +11,7 @@ Values inside a Set Filter will be sorted by default, where the values are conve
 
 When a different sort order is required, a Comparator can be supplied to the set filter as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -54,7 +54,7 @@ Formatting Filter List values will not change the underlying value or Filter Mod
 A [Value Formatter](./value-formatters/) is a good choice when the string value displayed in the Filter List needs to
 be modified, for example adding country codes in parentheses after a country name, as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const countryValueFormatter = params => {
     const country = params.value;
     return country + ' (' + COUNTRY_CODES[country].toUpperCase() + ')';
@@ -63,7 +63,7 @@ const countryValueFormatter = params => {
 
 The following snippet shows how to provide the `countryValueFormatter` to the Set Filter:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // column definition using the same value formatter to format cell and filter values
@@ -100,7 +100,7 @@ cells have row details that are not present for values inside a Filter List).
 
 Assuming you have a custom Country Cell Component, the following snippet shows how to provide the `countryCellRenderer` to the Set Filter:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // column definition using the same cell renderer to format cell and filter values
@@ -140,7 +140,7 @@ It is also possible to provide values for the Filter List. This is necessary whe
 
 The simplest approach is to supply a list of values to `filterParams.values` as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -174,7 +174,7 @@ The following example demonstrates providing filter values using `filterParams.v
 
 It is also possible to supply values asynchronously to the set filter. This is done by providing a callback function instead of a list of values as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -221,7 +221,7 @@ When values are initially passed to the set filter, they are only loaded once wh
 
 It may be desirable to refresh the values at a later point, for example to reflect other filtering that has occurred in the grid. To achieve this, you can call `refreshFilterValues` on the relevant filter that you would like to refresh. This will cause the values used in the filter to be refreshed from the original source, whether that is by looking at the provided `values` array again, or by re-executing the `values` callback. For example, you might use something like the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     onFilterChanged: params => {
         params.api.getColumnFilterInstance('columnName').then(setFilter => {
@@ -235,7 +235,7 @@ If you are using the grid as a source of values (i.e. you are not providing valu
 
 If instead you want to refresh the values every time the Set Filter is opened, you can configure that using `refreshValuesOnOpen`:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -267,7 +267,7 @@ By default the Set Filter treats values as case-insensitive. Practically this me
 
 Case-sensitivity can be enabled by using the `caseSensitive` filter parameter:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -304,7 +304,7 @@ If there are missing / empty values in the row data of the grid, or missing valu
 
 ## Filter Value Types
 
-The Set Filter internally maintains the original type of the cell values, but always uses strings for the keys. E.g. if the cell contains a number, the Filter Model will contain those numbers converted to strings, but if you specified a value formatter, that would use the values with type number. Note that in AG Grid versions prior to 29.0, the Filter Model values were converted to strings for everything. This behaviour can be replicated by setting `filterParams.convertValuesToStrings = true`, but the setting is deprecated.
+The Set Filter internally maintains the original type of the cell values, but always uses strings for the keys. E.g. if the cell contains a number, the Filter Model will contain those numbers converted to strings, but if you specified a value formatter, that would use the values with type number.
 
 ### Complex Objects
 
@@ -314,7 +314,7 @@ The Key Creator generates a unique string key from the complex object (note that
 
 The Value Formatter is used to generate the label that is displayed to the user within the Filter List. You can provide the Value Formatter in the filter params.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -333,19 +333,13 @@ The snippet above shows a Key Creator function that returns the country code fro
 
 If [Supplied Values](#supplying-filter-values) are used for the Filter List, these must be the full complex objects.
 
-In AG Grid versions prior to 29.0, the value generated by the Key Creator was used as both the key and display value. This behaviour can still be replicated by setting `filterParams.convertValuesToStrings = true`. This will use the Key Creator to generate a string value that is used for both. Values provided to the Filter List should be the string values when this setting is on. Note that this behaviour is deprecated.
-
 The following example shows the Key Creator handling complex objects for the Set Filter. Note the following:
 
-* **Country (Complex Object as Value)** column is supplied a complex object through `colDef.field`.
+* **Country** column is supplied a complex object through `colDef.field`.
   * A Key Creator is supplied to the filter using `colDef.filterParams.keyCreator = countryCodeKeyCreator` which extracts the `code` property for the Set Filter.
   * A value formatter is supplied to the filter using `colDef.filterParams.valueFormatter = countryValueFormatter` which extracts the `name` property for the Filter List.
   * A value formatter is supplied to the column using `colDef.valueFormatter = countryValueFormatter` which extracts the `name` property for the cell values.
-* **Country (Complex Object as String)** column is supplied the same complex object through `colDef.field`.
-  * `colDef.filterParams.convertValuesToStrings = true` is set, which means the complex object will be converted to a string, and the same value used for both key and display purposes.
-  * A Key Creator is supplied to the filter using `colDef.filterParams.keyCreator = countryNameKeyCreator` which extracts the `name` property for the Set Filter.
-* Click **Print Filter Model** with a filter active on **Country (Complex Object as Value)** and note the logged Filter Model (dev console) uses the `code` property from the complex object.
-* Click **Print Filter Model** with a filter active on **Country (Complex Object as String)** and note the logged Filter Model (dev console) uses the `name` property from the complex object.
+* Click **Print Filter Model** with a filter active on **Country** and note the logged Filter Model (dev console) uses the `code` property from the complex object.
 
 {% gridExampleRunner title="Complex Objects" name="complex-objects"  exampleHeight=720 /%}
 
@@ -357,7 +351,7 @@ The example below demonstrates this in action. Note the following:
 
 * The **Animals (array)** column uses an array in the data containing multiple values.
 * The **Animals (string)** column uses a single string in the data to represent multiple values, with a [Value Getter](./value-getters/) used to extract an array of values from the data.
-* The **Animals (objects)** column retrieves values from an array of objects, using a [Key Creator](#complex-objects). The Key Creator is applied to the elements within the array (as is the Value Formatter). Note that if `convertValuesToStrings` is set in the filter params, the Key Creator will be applied to the raw value in the cell, and is expected to return an array of strings.
+* The **Animals (objects)** column retrieves values from an array of objects, using a [Key Creator](#complex-objects). The Key Creator is applied to the elements within the array (as is the Value Formatter).
 * For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
 * Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
 * The first row contains empty arrays for the **Animals (array)** and **Animals (objects)** columns, and an empty string for the **Animals (string)** column which is converted to an empty array. These all appear in the Filter List as `(Blanks)`.
@@ -368,7 +362,7 @@ The example below demonstrates this in action. Note the following:
 
 By default, when the Set Filter is created all values are selected. If you would prefer to invert this behaviour and have everything de-selected by default, you can use the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -398,7 +392,7 @@ The following example demonstrates different default states. Note the following:
 
 Set filter values that are too long to be displayed are truncated by default with ellipses. To allow users to see the full filter value, tooltips can be enabled as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {

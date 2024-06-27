@@ -44,9 +44,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -58,9 +56,7 @@
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "enterprise-modules/sparklines/dist/package",
         "main": "enterprise-modules/sparklines/src/main.ts",
@@ -68,11 +64,8 @@
         "esbuildConfig": "esbuild.config.cjs",
         "external": ["@ag-grid-community/core", "@ag-grid-enterprise/core"],
         "platform": "browser",
-        "target": "es6",
-        "format": [
-          "cjs",
-          "esm"
-        ],
+        "target": "es2020",
+        "format": ["cjs", "esm"],
         "sourcemap": true
       },
       "configurations": {
@@ -81,20 +74,19 @@
         },
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "enterprise-modules/sparklines/jest.config.js"
       }

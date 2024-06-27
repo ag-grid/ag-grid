@@ -1,5 +1,6 @@
 ---
 title: "Column Headers"
+description: "Column Headers provide a header name and basic functionality for each column in the $framework table. Use the provided component or create a custom Column Header."
 ---
 
 Each Column has a Column Header providing a Header Name and typically functions such as Column Resize, Row Sorting and Row Filtering.
@@ -8,7 +9,7 @@ Each Column has a Column Header providing a Header Name and typically functions 
 
 When no header name is provided, the grid will derive the header name from the provided `field`. The grid expects the field value to use Camel Case and will insert spaces between word breaks to build a readable header name.
 
-```js {% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // header name will be 'Athlete'
@@ -44,7 +45,7 @@ The example below demonstrates using the `autoHeaderHeight` property in conjunct
 * Try making a column smaller by dragging the resize handle on the column header, observe that the header will expand so the full header content is still visible.
 
 {% note %}
-When `autoHeaderHeight=true` the Grid automatically disables Span Header Height, see: [Suppress Span Header Height](./column-groups/#suppress-span-header-height).
+When `autoHeaderHeight=true` the Grid automatically disables Span Header Height, see: [Suppress Span Header Height](./column-groups/#column-height).
 {% /note %}
 
 {% gridExampleRunner title="Auto Header Height" name="auto-height" /%}
@@ -54,8 +55,8 @@ When `autoHeaderHeight=true` the Grid automatically disables Span Header Height,
 
 By default the grid uses the provided Header Component. To use a Custom Header Component set `headerComponent` on the Column Definition.
 
-{% includeMarkdoc file="column-headers/_column-def-javascript.mdoc" /%}
-{% includeMarkdoc file="column-headers/_column-def-vue.mdoc" /%}
+{% partial file="./_column-def-javascript.mdoc" /%}
+{% partial file="./_column-def-vue.mdoc" /%}
 
 See [Registering Components](./components/) for an overview of registering componnets.
 
@@ -68,34 +69,34 @@ You can provide an HTML template to the Default Header Component for simple layo
 
 ```html
 <div class="ag-cell-label-container" role="presentation">
-    <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
-    <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
-    <div ref="eLabel" class="ag-header-cell-label" role="presentation">
-        <span ref="eText" class="ag-header-cell-text"></span>
-        <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
-        <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
-        <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
-        <span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
-        <span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
+    <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+    <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
+    <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
+        <span data-ref="eText" class="ag-header-cell-text"></span>
+        <span data-ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
+        <span data-ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
+        <span data-ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
+        <span data-ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
+        <span data-ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
     </div>
 </div>
 ```
 
-When you provide your own template, everything should work as expected as long as you re-use the same `refs`.
+When you provide your own template, everything should work as expected as long as you re-use the same `data-ref` attribute names.
 
 | Ref | Description |
 |-|-|
-| `eMenu` | The container where the column menu icon will appear to enable opening the column menu. |
-| `eFilterButton` | The container where the column filter icon will appear to enable opening the filter (when using `columnMenu = 'new'`). |
+| `eMenu` | The container where the column menu icon will appear to enable opening the column menu (in AG Grid Community, this is only used when `columnMenu = 'legacy'`). |
+| `eFilterButton` | The container where the column filter icon will appear to enable opening the filter (not used when `columnMenu = 'legacy'`). |
 | `eLabel` | The container where there is going to be an onClick mouse listener to trigger the sort. |
 | `eText` | The text displayed on the column. |
-| `eFilter` | The container with the icon that will appear if the user filters this column. |
+| `eFilter` | The container with the icon that will appear if the user filters this column (only used when `columnMenu = 'legacy'` or `suppressHeaderFilterButton = true`). |
 | `eSortOrder` | In case of sorting on multiple columns, this shows the index that represents the position of this column in the order. |
 | `eSortAsc` | In case of sorting ascending the data in the column, this shows the associated icon. |
 | `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
 | `eSortNone` | In case of no sort being applied, this shows the associated icon. Note this icon by default is empty. |
 
-The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
+The `data-ref` parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
 {% note %}
 Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](./custom-icons/).
@@ -103,22 +104,22 @@ Templates are not meant to let you configure icons. If you are looking to change
 
 Set the template using `colDef.headerComponentParams`. Set on the grid options `defaultColDef` to set for all Columns.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     defaultColDef: {
         width: 100,
         headerComponentParams: {
             template:
                 `<div class="ag-cell-label-container" role="presentation">
-                  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
-                  <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>
-                  <div ref="eLabel" class="ag-header-cell-label" role="presentation">
-                    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>
-                    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>
-                    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>
-                    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>
-                    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>
-                    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>
+                  <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
+                  <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>
+                  <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
+                    <span data-ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>
+                    <span data-ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>
+                    <span data-ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>
+                    <span data-ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>
+                    ** <span data-ref="eText" class="ag-header-cell-text" role="columnheader"></span>
+                    <span data-ref="eFilter" class="ag-header-icon ag-filter-icon"></span>
                   </div>
                 </div>`
         }
@@ -128,9 +129,9 @@ const gridOptions = {
 
 Note that specifying your own templates is compatible with other configurations:
 
-* `suppressHeaderMenuButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
+* `suppressHeaderFilterButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
 * `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
-* **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderMenuButton`
+* **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderFilterButton`
 
 {% gridExampleRunner title="Header template" name="header-template" /%}
 
@@ -140,7 +141,7 @@ Note that specifying your own templates is compatible with other configurations:
 Column Headers by default use the Provided Header Component. The default can be overridden with Custom Header Component. This example shows a Custom Header Component. Note the following:
 
 * Column moving and resizing works without custom logic.
-* Use of `suppressHeaderMenuButton=true` to suppress the menu.
+* Use of `suppressHeaderFilterButton=true` to suppress the menu.
 * Use of `sortable=false` to suppress sorting.
 * Configurable menu icon.
 
@@ -150,9 +151,9 @@ Column Headers by default use the Provided Header Component. The default can be 
 The interface for a custom header component is:
 {% /if %}
 
-{% includeMarkdoc file="column-headers/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="column-headers/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="column-headers/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript") %}
 The `init(params)` method takes a params object with the items listed below.
@@ -431,7 +432,7 @@ The following example shows how you can provide a unique look and feel to the he
 
 * The header heights have all been changed via grid options:
 
-```js {% frameworkTransform=true  %}
+```{% frameworkTransform=true  %}
     const gridOptions = {
         // Group columns
         groupHeaderHeight: 75,

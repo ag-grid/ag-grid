@@ -1,7 +1,7 @@
-import styles from '@design-system/modules/Quotes.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 
+import styles from './Quotes.module.scss';
 import type { QuotesData, QuotesDataItem } from './quotesData';
 
 function filterAndSortByKey(data: QuotesData, sortKey: keyof QuotesDataItem) {
@@ -41,7 +41,7 @@ const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
                                     src={urlWithBaseUrl(avatarUrl)}
                                     alt={name}
                                 />
-                                <span className={classNames(styles.name, 'text-xl', 'bold-text')}>{name}</span>
+                                <span className={classNames(styles.name, 'text-xl', 'text-bold')}>{name}</span>
                                 <div className={styles.orgContainer}>
                                     <span className="text-xs text-secondary">{orgRole}</span>
                                     <img

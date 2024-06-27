@@ -1,44 +1,82 @@
+import type { Framework, MenuItem } from '@ag-grid-types';
+import { Select } from '@ag-website-shared/components/select/Select';
+import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FRAMEWORKS } from '@constants';
-import styles from '@design-system/modules/FrameworkSelectorInsideDocs.module.scss';
-import fwLogos from '@images/fw-logos';
+import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
+import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { getNewFrameworkPath } from '@utils/framework';
-import classnames from 'classnames';
+import { getMenuItemFromPageName } from '@utils/getMenuItemFromPageName';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { useMemo } from 'react';
 
-export const FrameworkSelectorInsideDocs = ({ path, currentFramework }) => {
-    const handleFrameworkChange = (selectedFramework) => {
-        const newUrl = getNewFrameworkPath({
+import styles from './FrameworkSelectorInsideDocs.module.scss';
+
+interface Props {
+    path: string;
+    currentFramework: Framework;
+    menuItems: MenuItem[];
+}
+
+export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems }: Props) => {
+    const frameworkOptions = useMemo(() => {
+        return FRAMEWORKS.map((framework) => ({
+            label: getFrameworkDisplayText(framework),
+            value: framework,
+        }));
+    }, [FRAMEWORKS]);
+
+    const frameworkOption = useMemo(
+        () => frameworkOptions.find((o: { value: string }) => o.value === currentFramework) || frameworkOptions[0],
+        [frameworkOptions, currentFramework]
+    );
+
+    const handleFrameworkChange = (selectedFramework: Framework) => {
+        const pageName = getPageNameFromPath(path);
+        const menuItem = getMenuItemFromPageName({ menuItems: menuItems, pageName });
+        let newUrl = getNewFrameworkPath({
             path,
             currentFramework,
             newFramework: selectedFramework,
         });
 
+        // Redirect to default page if page does not exist in framework
+        if (menuItem?.frameworks) {
+            const withinFrameworks = menuItem?.frameworks?.includes(selectedFramework);
+
+            if (!withinFrameworks) {
+                const relativeUrl = DOCS_FRAMEWORK_REDIRECT_PAGE.startsWith('./')
+                    ? DOCS_FRAMEWORK_REDIRECT_PAGE
+                    : `./${DOCS_FRAMEWORK_REDIRECT_PAGE}`;
+                newUrl = urlWithPrefix({
+                    framework: selectedFramework,
+                    url: relativeUrl,
+                });
+            }
+        }
+
         window.location.href = newUrl;
     };
 
-    const currentFrameworkLogo = currentFramework ? fwLogos[currentFramework] : null;
-
     return (
-        <div className={classnames(styles.frameworkSelector)}>
-            <div className={styles.selectFrameworkContainer}>
-                {currentFrameworkLogo && (
-                    <img src={currentFrameworkLogo} alt={`${currentFramework} logo`} className={styles.frameworkLogo} />
-                )}
-                <span classnames={styles.divider}></span>
-                <select
-                    value={currentFramework}
-                    onChange={(event) => handleFrameworkChange(event.target.value)}
-                    onClick={(event) => event.stopPropagation()} // Prevent event propagation
-                    className={styles.select}
-                    aria-label="Framework selector"
-                >
-                    {FRAMEWORKS.map((framework) => (
-                        <option value={framework} key={framework}>
-                            {getFrameworkDisplayText(framework)}
-                        </option>
-                    ))}
-                </select>
+        currentFramework && (
+            <div className={styles.frameworkSelector}>
+                <Select
+                    isLarge
+                    isPopper
+                    options={frameworkOptions}
+                    value={frameworkOption}
+                    onChange={(newValue) => handleFrameworkChange(newValue.value as Framework)}
+                    renderItem={(o) => {
+                        return (
+                            <span className={styles.frameworkItem}>
+                                <img src={fwLogos[o.value]} alt={`${o.value} logo`} className={styles.frameworkLogo} />
+                                {o.label}
+                            </span>
+                        );
+                    }}
+                />
             </div>
-        </div>
+        )
     );
 };

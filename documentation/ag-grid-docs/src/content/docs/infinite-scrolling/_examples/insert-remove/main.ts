@@ -1,28 +1,27 @@
 import {
     ColDef,
+    GetRowIdParams,
     GridApi,
-    createGrid,
     GridOptions,
+    GridReadyEvent,
     ICellRendererParams,
     IDatasource,
     IGetRowsParams,
     RowClassParams,
     RowStyle,
     ValueFormatterParams,
-    GetRowIdParams,
-    GridReadyEvent,
+    createGrid,
 } from '@ag-grid-community/core';
-
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
 const valueFormatter = function (params: ValueFormatterParams) {
     if (typeof params.value === 'number') {
-        return '£' + params.value.toLocaleString()
+        return '£' + params.value.toLocaleString();
     } else {
-        return params.value
+        return params.value;
     }
 };
 const columnDefs: ColDef[] = [
@@ -32,9 +31,9 @@ const columnDefs: ColDef[] = [
         valueGetter: 'node.id',
         cellRenderer: (params: ICellRendererParams) => {
             if (params.value !== undefined) {
-                return params.value
+                return params.value;
             } else {
-                return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
+                return '<img src="https://www.ag-grid.com/example-assets/loading.gif">';
             }
         },
     },
@@ -44,12 +43,12 @@ const columnDefs: ColDef[] = [
         field: 'price',
         valueFormatter: valueFormatter,
     },
-]
+];
 
 const datasource: IDatasource = {
     rowCount: undefined, // behave as infinite scroll
     getRows: (params: IGetRowsParams) => {
-        console.log('asking for ' + params.startRow + ' to ' + params.endRow)
+        console.log('asking for ' + params.startRow + ' to ' + params.endRow);
         // At this point in your code, you would call the server.
         // To make the demo look real, wait for 500ms before returning
         setTimeout(() => {
@@ -60,16 +59,16 @@ const datasource: IDatasource = {
                 const item = rowsThisPage[i];
                 // this is a trick to copy an object
                 const itemCopy = JSON.parse(JSON.stringify(item));
-                rowsThisPage[i] = itemCopy
+                rowsThisPage[i] = itemCopy;
             }
             // if on or after the last page, work out the last row.
             let lastRow = -1;
             if (allOfTheData.length <= params.endRow) {
-                lastRow = allOfTheData.length
+                lastRow = allOfTheData.length;
             }
             // call the success callback
-            params.successCallback(rowsThisPage, lastRow)
-        }, 500)
+            params.successCallback(rowsThisPage, lastRow);
+        }, 500);
     },
 };
 
@@ -90,14 +89,14 @@ const gridOptions: GridOptions = {
     maxConcurrentDatasourceRequests: 2,
 
     getRowId: (params: GetRowIdParams) => {
-        return params.data.id.toString()
+        return params.data.id.toString();
     },
 
     onGridReady: (params: GridReadyEvent) => {
-        sequenceId = 1
-        allOfTheData = []
+        sequenceId = 1;
+        allOfTheData = [];
         for (let i = 0; i < 1000; i++) {
-            allOfTheData.push(createRowData(sequenceId++))
+            allOfTheData.push(createRowData(sequenceId++));
         }
     },
 
@@ -105,39 +104,31 @@ const gridOptions: GridOptions = {
         if (params.data && params.data.make === 'Honda') {
             return {
                 fontWeight: 'bold',
-            }
+            };
         }
         return {
-            fontWeight: 'normal'
+            fontWeight: 'normal',
         };
     },
-}
+};
 
 // this counter is used to give id's to the rows
-var sequenceId = 0
-var allOfTheData: any[] = []
+var sequenceId = 0;
+var allOfTheData: any[] = [];
 
 function createRowData(id: number) {
     const makes = ['Toyota', 'Ford', 'Porsche', 'Chevy', 'Honda', 'Nissan'];
-    const models = [
-        'Cruze',
-        'Celica',
-        'Mondeo',
-        'Boxster',
-        'Genesis',
-        'Accord',
-        'Taurus',
-    ];
+    const models = ['Cruze', 'Celica', 'Mondeo', 'Boxster', 'Genesis', 'Accord', 'Taurus'];
     return {
         id: id,
         make: makes[id % makes.length],
         model: models[id % models.length],
         price: 72000,
-    }
+    };
 }
 
 function insertItemsAt2AndRefresh(count: number) {
-    insertItemsAt2(count)
+    insertItemsAt2(count);
 
     // if the data has stopped looking for the last row, then we need to adjust the
     // row count to allow for the extra data, otherwise the grid will not allow scrolling
@@ -149,74 +140,69 @@ function insertItemsAt2AndRefresh(count: number) {
     const maxRowFound = gridApi!.isLastRowIndexKnown();
     if (maxRowFound) {
         const rowCount = gridApi!.getInfiniteRowCount() || 0;
-        gridApi!.setRowCount(rowCount + count)
+        gridApi!.setRowCount(rowCount + count);
     }
 
     // get grid to refresh the data
-    gridApi!.refreshInfiniteCache()
+    gridApi!.refreshInfiniteCache();
 }
 
 function insertItemsAt2(count: number) {
     const newDataItems = [];
     for (let i = 0; i < count; i++) {
         const newItem = createRowData(sequenceId++);
-        allOfTheData.splice(2, 0, newItem)
-        newDataItems.push(newItem)
+        allOfTheData.splice(2, 0, newItem);
+        newDataItems.push(newItem);
     }
-    return newDataItems
+    return newDataItems;
 }
 
 function removeItem(start: number, limit: number) {
-    allOfTheData.splice(start, limit)
-    gridApi!.refreshInfiniteCache()
+    allOfTheData.splice(start, limit);
+    gridApi!.refreshInfiniteCache();
 }
 
 function refreshCache() {
-    gridApi!.refreshInfiniteCache()
+    gridApi!.refreshInfiniteCache();
 }
 
 function purgeCache() {
-    gridApi!.purgeInfiniteCache()
+    gridApi!.purgeInfiniteCache();
 }
 
 function setRowCountTo200() {
-    gridApi!.setRowCount(200, false)
+    gridApi!.setRowCount(200, false);
 }
 
 function rowsAndMaxFound() {
-    console.log(
-        'getInfiniteRowCount() => ' + gridApi!.getInfiniteRowCount()
-    )
-    console.log(
-        'isLastRowIndexKnown() => ' + gridApi!.isLastRowIndexKnown()
-    )
+    console.log('getInfiniteRowCount() => ' + gridApi!.getInfiniteRowCount());
+    console.log('isLastRowIndexKnown() => ' + gridApi!.isLastRowIndexKnown());
 }
 
 // function just gives new prices to the row data, it does not update the grid
 function setPricesHigh() {
     allOfTheData.forEach((dataItem) => {
-        dataItem.price = Math.round(55500 + 400 * (0.5 + Math.random()))
-    })
+        dataItem.price = Math.round(55500 + 400 * (0.5 + Math.random()));
+    });
 }
 
 function setPricesLow() {
     allOfTheData.forEach((dataItem) => {
-        dataItem.price = Math.round(1000 + 100 * (0.5 + Math.random()))
-    })
+        dataItem.price = Math.round(1000 + 100 * (0.5 + Math.random()));
+    });
 }
 
 function jumpTo500() {
     // first up, need to make sure the grid is actually showing 500 or more rows
     if ((gridApi!.getInfiniteRowCount() || 0) < 501) {
-        gridApi!.setRowCount(501, false)
+        gridApi!.setRowCount(501, false);
     }
     // next, we can jump to the row
-    gridApi!.ensureIndexVisible(500)
+    gridApi!.ensureIndexVisible(500);
 }
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-})
+});

@@ -1,8 +1,12 @@
-import { IToolPanel, IToolPanelParams } from "ag-grid-community";
-import { CustomComponentWrapper } from "./customComponentWrapper";
-import { CustomToolPanelProps } from "./interfaces";
+import type { IToolPanel, IToolPanelParams } from 'ag-grid-community';
 
-export class ToolPanelComponentWrapper extends CustomComponentWrapper<IToolPanelParams, CustomToolPanelProps, {}> implements IToolPanel {
+import { CustomComponentWrapper } from './customComponentWrapper';
+import type { CustomToolPanelProps } from './interfaces';
+
+export class ToolPanelComponentWrapper
+    extends CustomComponentWrapper<IToolPanelParams, CustomToolPanelProps, object>
+    implements IToolPanel
+{
     private state: any;
     private readonly onStateChange = (state: any) => this.updateState(state);
 
@@ -23,7 +27,7 @@ export class ToolPanelComponentWrapper extends CustomComponentWrapper<IToolPanel
         this.sourceParams.onStateUpdated();
     }
 
-    protected getProps(): CustomToolPanelProps {
+    protected override getProps(): CustomToolPanelProps {
         const props = super.getProps();
         props.state = this.state;
         props.onStateChange = this.onStateChange;

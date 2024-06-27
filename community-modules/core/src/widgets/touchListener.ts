@@ -1,28 +1,27 @@
-import { AgEvent, AgEventListener } from "../events";
-import { EventService } from "../eventService";
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { areEventsNear } from "../utils/mouse";
+import type { AgEvent } from '../events';
+import type { IEventEmitter, IEventListener } from '../interfaces/iEventEmitter';
+import { LocalEventService } from '../localEventService';
+import { _areEventsNear } from '../utils/mouse';
 
-export interface TapEvent extends AgEvent {
+export interface TapEvent extends AgEvent<'tap'> {
+    touchStart: Touch;
+}
+export interface DoubleTapEvent extends AgEvent<'doubleTap'> {
     touchStart: Touch;
 }
 
-export interface LongTapEvent extends AgEvent {
+export interface LongTapEvent extends AgEvent<'longTap'> {
     touchStart: Touch;
     touchEvent: TouchEvent;
 }
 
-export class TouchListener implements IEventEmitter {
-
-    public static EVENT_TAP = "tap";
-    public static EVENT_DOUBLE_TAP = "doubleTap";
-    public static EVENT_LONG_TAP = "longTap";
-
-    private static DOUBLE_TAP_MILLIS = 500;
+export type TouchListenerEvent = 'tap' | 'doubleTap' | 'longTap';
+export class TouchListener implements IEventEmitter<TouchListenerEvent> {
+    private DOUBLE_TAP_MILLIS = 500;
 
     private eElement: Element;
 
-    private destroyFuncs: Function[] = [];
+    private destroyFuncs: ((...args: any[]) => any)[] = [];
 
     private moved: boolean;
 
@@ -31,7 +30,7 @@ export class TouchListener implements IEventEmitter {
 
     private lastTapTime: number | null;
 
-    private eventService: EventService = new EventService();
+    private localEventService: LocalEventService<TouchListenerEvent> = new LocalEventService();
 
     // private mostRecentTouch: Touch;
 
@@ -45,15 +44,15 @@ export class TouchListener implements IEventEmitter {
         const moveListener = this.onTouchMove.bind(this);
         const endListener = this.onTouchEnd.bind(this);
 
-        this.eElement.addEventListener("touchstart", startListener, { passive: true } as any);
-        this.eElement.addEventListener("touchmove", moveListener, { passive: true } as any);
+        this.eElement.addEventListener('touchstart', startListener, { passive: true } as any);
+        this.eElement.addEventListener('touchmove', moveListener, { passive: true } as any);
         // we set passive=false, as we want to prevent default on this event
-        this.eElement.addEventListener("touchend", endListener, { passive: false } as any);
+        this.eElement.addEventListener('touchend', endListener, { passive: false } as any);
 
         this.destroyFuncs.push(() => {
-            this.eElement.removeEventListener("touchstart", startListener, { passive: true } as any);
-            this.eElement.removeEventListener("touchmove", moveListener, { passive: true } as any);
-            this.eElement.removeEventListener("touchend", endListener, { passive: false } as any);
+            this.eElement.removeEventListener('touchstart', startListener, { passive: true } as any);
+            this.eElement.removeEventListener('touchmove', moveListener, { passive: true } as any);
+            this.eElement.removeEventListener('touchend', endListener, { passive: false } as any);
         });
     }
 
@@ -68,12 +67,12 @@ export class TouchListener implements IEventEmitter {
         return null;
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.addEventListener(eventType, listener);
+    public addEventListener<T extends TouchListenerEvent>(eventType: T, listener: IEventListener<T>): void {
+        this.localEventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.removeEventListener(eventType, listener);
+    public removeEventListener<T extends TouchListenerEvent>(eventType: T, listener: IEventListener<T>): void {
+        this.localEventService.removeEventListener(eventType, listener);
     }
 
     private onTouchStart(touchEvent: TouchEvent): void {
@@ -95,11 +94,11 @@ export class TouchListener implements IEventEmitter {
             if (this.touching && touchesMatch && !this.moved) {
                 this.moved = true;
                 const event: LongTapEvent = {
-                    type: TouchListener.EVENT_LONG_TAP,
+                    type: 'longTap',
                     touchStart: this.touchStart,
-                    touchEvent: touchEvent
+                    touchEvent: touchEvent,
                 };
-                this.eventService.dispatchEvent(event);
+                this.localEventService.dispatchEvent(event);
             }
         }, 500);
     }
@@ -114,7 +113,7 @@ export class TouchListener implements IEventEmitter {
             return;
         }
 
-        const eventIsFarAway = !areEventsNear(touch, this.touchStart, 4);
+        const eventIsFarAway = !_areEventsNear(touch, this.touchStart, 4);
         if (eventIsFarAway) {
             this.moved = true;
         }
@@ -127,10 +126,10 @@ export class TouchListener implements IEventEmitter {
 
         if (!this.moved) {
             const event: TapEvent = {
-                type: TouchListener.EVENT_TAP,
-                touchStart: this.touchStart
+                type: 'tap',
+                touchStart: this.touchStart,
             };
-            this.eventService.dispatchEvent(event);
+            this.localEventService.dispatchEvent(event);
             this.checkForDoubleTap();
         }
 
@@ -148,13 +147,13 @@ export class TouchListener implements IEventEmitter {
         if (this.lastTapTime && this.lastTapTime > 0) {
             // if previous tap, see if duration is short enough to be considered double tap
             const interval = now - this.lastTapTime;
-            if (interval > TouchListener.DOUBLE_TAP_MILLIS) {
+            if (interval > this.DOUBLE_TAP_MILLIS) {
                 // dispatch double tap event
-                const event: TapEvent = {
-                    type: TouchListener.EVENT_DOUBLE_TAP,
-                    touchStart: this.touchStart
+                const event: DoubleTapEvent = {
+                    type: 'doubleTap',
+                    touchStart: this.touchStart,
                 };
-                this.eventService.dispatchEvent(event);
+                this.localEventService.dispatchEvent(event);
 
                 // this stops a tripple tap ending up as two double taps
                 this.lastTapTime = null;
@@ -167,6 +166,6 @@ export class TouchListener implements IEventEmitter {
     }
 
     public destroy(): void {
-        this.destroyFuncs.forEach(func => func());
+        this.destroyFuncs.forEach((func) => func());
     }
 }

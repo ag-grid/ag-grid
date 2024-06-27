@@ -86,7 +86,7 @@ export function getPropertyType(type: string | PropertyType, config: Config) {
     }
     // We hide generics from this part of the display for simplicity
     // Could be done with a Regex...
-    propertyType = propertyType.replace(
+    propertyType = propertyType?.replace(
         /<(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?(, )?(TData|TValue|TContext|any)?>/g,
         ''
     );

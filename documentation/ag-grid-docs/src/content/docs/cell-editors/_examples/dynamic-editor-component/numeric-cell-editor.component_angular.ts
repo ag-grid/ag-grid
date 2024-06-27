@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-
-import { ICellEditorAngularComp } from "@ag-grid-community/angular";
-import { ICellEditorParams } from "@ag-grid-community/core";
+import { ICellEditorAngularComp } from '@ag-grid-community/angular';
+import { ICellEditorParams } from '@ag-grid-community/core';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -12,7 +11,7 @@ const KEY_TAB = 'Tab';
 @Component({
     standalone: true,
     imports: [FormsModule],
-    template: `<input #input class="simple-input-editor" (keydown)="onKeyDown($event)" [(ngModel)]="value">`
+    template: `<input #input class="simple-input-editor" (keydown)="onKeyDown($event)" [(ngModel)]="value" />`,
 })
 export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
@@ -21,13 +20,12 @@ export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit 
 
     @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
-
     agInit(params: ICellEditorParams): void {
         this.params = params;
         this.setInitialState(this.params);
 
         // only start edit if key pressed is a number, not a letter
-        this.cancelBeforeStart = !!(params.eventKey?.length === 1 && ('1234567890'.indexOf(params.eventKey) < 0));
+        this.cancelBeforeStart = !!(params.eventKey?.length === 1 && '1234567890'.indexOf(params.eventKey) < 0);
     }
 
     setInitialState(params: ICellEditorParams) {
@@ -64,7 +62,9 @@ export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit 
     }
 
     onKeyDown(event: any): void {
-        if (event.key === 'Escape') { return; }
+        if (event.key === 'Escape') {
+            return;
+        }
         if (this.isLeftOrRight(event) || this.isBackspace(event)) {
             event.stopPropagation();
             return;
@@ -83,7 +83,7 @@ export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit 
     }
 
     private isCharNumeric(charStr: string): boolean {
-        return !!/\d/.test(charStr);
+        return !!/^\d+$/.test(charStr);
     }
 
     private isNumericKey(event: any): boolean {

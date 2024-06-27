@@ -9,7 +9,7 @@ The Advanced Filter allows for complex filter conditions to be entered across co
 
 The Advanced Filter is enabled by setting the property `enableAdvancedFilter = true`. By default, the Advanced Filter is displayed between the column headers and the grid rows, where the [Floating Filters](./floating-filters/) would be displayed if they were enabled.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     enableAdvancedFilter: true,
 }
@@ -83,7 +83,7 @@ The name by which columns appear in the Advanced Filter can be configured by usi
 
 Certain properties can be set by using `colDef.filterParams`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -199,7 +199,7 @@ The [Popup Parent](https://localhost:8000/javascript-data-grid/context-menu/#pop
 The following example demonstrates displaying the Advanced Filter outside of the grid:
 
 * The Advanced Filter parent is set using an element directly above the grid.
-* Popup Parent is set to an element containing both the grid and the Advanced Filter parent.
+* Popup Parent is set to the document body.
 
 {% gridExampleRunner title="External Parent" name="external-parent" /%}
 
@@ -213,9 +213,9 @@ The params can be set via the grid option `advancedFilterBuilderParams`:
 
 {% apiDocumentation source="grid-options/properties.json" section="filter" names=["advancedFilterBuilderParams"] /%}
 
-As well as using the button in the Advanced Filter, it's possible to launch the Advanced Filter Builder via the `showAdvancedFilterBuilder` grid API method:
+As well as using the button in the Advanced Filter, it's possible to launch the Advanced Filter Builder via the `showAdvancedFilterBuilder` grid API method, and hide it via `hideAdvancedFilterBuilder`:
 
-{% apiDocumentation source="grid-api/api.json" section="filter" names=["showAdvancedFilterBuilder"] /%}
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["showAdvancedFilterBuilder", "hideAdvancedFilterBuilder"] /%}
 
 When the Advanced Filter Builder is shown or hidden, the `advancedFilterBuilderVisibleChanged` event is fired:
 
@@ -233,12 +233,12 @@ The following example demonstrates configuring the Advanced Filter Builder:
 
 All of the [Cell Data Types](./cell-data-types) are supported in the Advanced Filter. The behaviour of each is described below.
 
-* **Text** - The value in the input is compared against the cell value before any [Value Formatters](./value-formatters/) are applied (similar to the [Text Filter](./filter-text/)). To change the value being compared against, a [Filter Value Getter](./value-getters/#filter-value-getters) can be used.
+* **Text** - The value in the input is compared against the cell value before any [Value Formatters](./value-formatters/) are applied (similar to the [Text Filter](./filter-text/)). To change the value being compared against, a [Filter Value Getter](./filter-text/#text-filter-values) can be used.
 * **Number** - The value in the input is compared against the cell value (like in the [Number Filter](./filter-number/)).
 * **Boolean** - No values are displayed for booleans as the filter option is used instead.
 * **Date** - The value in the input is converted to a `Date` via the [Value Parser](./value-parsers/#value-parser).
 * **Date String** - The value in the input is converted to a `Date` using the [Value Parser](./value-parsers/#value-parser) and the [Date Parser](./cell-data-types/#date-as-string-data-type-definition). This is compared against the cell values, which are also converted using the Date Parser.
-* **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](./value-getters/#filter-value-getters) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](./value-formatters/).
+* **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](./value-formatters/).
 
 ## Aggregation / Pivoting
 
@@ -249,3 +249,9 @@ When [Pivoting](./pivoting/), Pivot Result Columns will not appear in the Advanc
 ## Server-Side Row Model
 
 In addition to the Client-Side Row Model, the Advanced Filter can be used with the [Server-Side Row Model](./row-models/). See the [SSRM Advanced Filter Example](./server-side-model-filtering/#advanced-filter) for more information.
+
+## Suppress Advanced Filter Function Evaluation
+
+To provide the best performance, Advanced Filter sanitises the filter input and passes it to `new Function()`. This requires the `unsafe-eval` policy in order to work.
+
+If this policy cannot be enabled, it is still possible to use Advanced Filter by setting the grid option `suppressAdvancedFilterEval = true`. This will use defined functions instead, and will result in the same functional behaviour, but filtering will be slightly slower.

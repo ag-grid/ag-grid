@@ -1,11 +1,10 @@
-import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
-import { exists } from './generic';
-import { setAriaHidden } from './aria';
-import { RowStyle } from '../entities/gridOptions';
-import { CellStyle } from '../entities/colDef';
-import { camelCaseToHyphenated } from './string';
-import { AgPromise } from './promise';
-import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
+import type { CellStyle } from '../entities/colDef';
+import type { RowStyle } from '../entities/gridOptions';
+import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
+import { _setAriaHidden } from './aria';
+import { _isBrowserChrome, _isBrowserSafari } from './browser';
+import type { AgPromise } from './promise';
+import { _camelCaseToHyphenated } from './string';
 
 let rtlNegativeScroll: boolean;
 
@@ -16,9 +15,9 @@ let rtlNegativeScroll: boolean;
  * @param {string} elementClass The class to be assigned to the element
  * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
  */
-export function radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
+export function _radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
     const parent = element.parentElement;
-    let sibling = parent && parent.firstChild as HTMLElement;
+    let sibling = parent && (parent.firstChild as HTMLElement);
 
     while (sibling) {
         if (elementClass) {
@@ -34,48 +33,47 @@ export function radioCssClass(element: HTMLElement, elementClass: string | null,
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
 export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
-export function isFocusableFormField(element: HTMLElement): boolean {
-    const matches: (str: string) => boolean =
-        Element.prototype.matches || (Element as any).prototype.msMatchesSelector;
+export function _isFocusableFormField(element: HTMLElement): boolean {
+    const matches: (str: string) => boolean = Element.prototype.matches || (Element as any).prototype.msMatchesSelector;
 
     const inputSelector = 'input, select, button, textarea';
     const isFocusable = matches.call(element, inputSelector);
     const isNotFocusable = matches.call(element, FOCUSABLE_EXCLUDE);
-    const isElementVisible = isVisible(element);
+    const isElementVisible = _isVisible(element);
 
     const focusable = isFocusable && !isNotFocusable && isElementVisible;
 
     return focusable;
 }
 
-export function setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
-    const  { skipAriaHidden } = options;
+export function _setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
+    const { skipAriaHidden } = options;
     element.classList.toggle('ag-hidden', !displayed);
     if (!skipAriaHidden) {
-        setAriaHidden(element, !displayed);
+        _setAriaHidden(element, !displayed);
     }
 }
 
-export function setVisible(element: HTMLElement, visible: boolean, options: { skipAriaHidden?: boolean } = {}) {
-    const  { skipAriaHidden } = options;
+export function _setVisible(element: HTMLElement, visible: boolean, options: { skipAriaHidden?: boolean } = {}) {
+    const { skipAriaHidden } = options;
     element.classList.toggle('ag-invisible', !visible);
     if (!skipAriaHidden) {
-        setAriaHidden(element, !visible);
+        _setAriaHidden(element, !visible);
     }
 }
 
-export function setDisabled(element: HTMLElement, disabled: boolean) {
+export function _setDisabled(element: HTMLElement, disabled: boolean) {
     const attributeName = 'disabled';
-    const addOrRemoveDisabledAttribute = disabled ?
-        (e: HTMLElement) => e.setAttribute(attributeName, '') :
-        (e: HTMLElement) => e.removeAttribute(attributeName);
+    const addOrRemoveDisabledAttribute = disabled
+        ? (e: HTMLElement) => e.setAttribute(attributeName, '')
+        : (e: HTMLElement) => e.removeAttribute(attributeName);
 
     addOrRemoveDisabledAttribute(element);
 
-    nodeListForEach(element.querySelectorAll('input'), input => addOrRemoveDisabledAttribute(input));
+    _nodeListForEach(element.querySelectorAll('input'), (input) => addOrRemoveDisabledAttribute(input));
 }
 
-export function isElementChildOfClass(
+export function _isElementChildOfClass(
     element: HTMLElement | null,
     cls: string,
     maxNest?: HTMLElement | number
@@ -90,8 +88,12 @@ export function isElementChildOfClass(
         element = element.parentElement;
 
         if (typeof maxNest == 'number') {
-            if (++counter > maxNest) { break; }
-        } else if (element === maxNest) { break; }
+            if (++counter > maxNest) {
+                break;
+            }
+        } else if (element === maxNest) {
+            break;
+        }
     }
 
     return false;
@@ -101,21 +103,21 @@ export function isElementChildOfClass(
 // getBoundingClientRect, however getBoundingClientRect does not:
 // a) work with fractions (eg browser is zooming)
 // b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
-export function getElementSize(el: HTMLElement): {
-    height: number,
-    width: number,
-    borderTopWidth: number,
-    borderRightWidth: number,
-    borderBottomWidth: number,
-    borderLeftWidth: number,
-    paddingTop: number,
-    paddingRight: number,
-    paddingBottom: number,
-    paddingLeft: number,
-    marginTop: number,
-    marginRight: number,
-    marginBottom: number,
-    marginLeft: number,
+export function _getElementSize(el: HTMLElement): {
+    height: number;
+    width: number;
+    borderTopWidth: number;
+    borderRightWidth: number;
+    borderBottomWidth: number;
+    borderLeftWidth: number;
+    paddingTop: number;
+    paddingRight: number;
+    paddingBottom: number;
+    paddingLeft: number;
+    marginTop: number;
+    marginRight: number;
+    marginBottom: number;
+    marginLeft: number;
     boxSizing: string;
 } {
     const {
@@ -133,7 +135,7 @@ export function getElementSize(el: HTMLElement): {
         marginRight,
         marginBottom,
         marginLeft,
-        boxSizing
+        boxSizing,
     } = window.getComputedStyle(el);
 
     return {
@@ -151,12 +153,12 @@ export function getElementSize(el: HTMLElement): {
         marginRight: parseFloat(marginRight || '0'),
         marginBottom: parseFloat(marginBottom || '0'),
         marginLeft: parseFloat(marginLeft || '0'),
-        boxSizing
+        boxSizing,
     };
 }
 
-export function getInnerHeight(el: HTMLElement): number {
-    const size = getElementSize(el);
+export function _getInnerHeight(el: HTMLElement): number {
+    const size = _getElementSize(el);
 
     if (size.boxSizing === 'border-box') {
         return size.height - size.paddingTop - size.paddingBottom;
@@ -165,8 +167,8 @@ export function getInnerHeight(el: HTMLElement): number {
     return size.height;
 }
 
-export function getInnerWidth(el: HTMLElement): number {
-    const size = getElementSize(el);
+export function _getInnerWidth(el: HTMLElement): number {
+    const size = _getElementSize(el);
 
     if (size.boxSizing === 'border-box') {
         return size.width - size.paddingLeft - size.paddingRight;
@@ -175,39 +177,37 @@ export function getInnerWidth(el: HTMLElement): number {
     return size.width;
 }
 
-export function getAbsoluteHeight(el: HTMLElement): number {
-    const size = getElementSize(el);
-    const marginRight = size.marginBottom + size.marginTop;
+export function _getAbsoluteHeight(el: HTMLElement): number {
+    const { height, marginBottom, marginTop } = _getElementSize(el);
 
-    return Math.ceil(el.offsetHeight + marginRight);
+    return Math.floor(height + marginBottom + marginTop);
 }
 
-export function getAbsoluteWidth(el: HTMLElement): number {
-    const size = getElementSize(el);
-    const marginWidth = size.marginLeft + size.marginRight;
+export function _getAbsoluteWidth(el: HTMLElement): number {
+    const { width, marginLeft, marginRight } = _getElementSize(el);
 
-    return Math.ceil(el.offsetWidth + marginWidth);
+    return Math.floor(width + marginLeft + marginRight);
 }
 
-export function getElementRectWithOffset(el: HTMLElement): {
+export function _getElementRectWithOffset(el: HTMLElement): {
     top: number;
     left: number;
     right: number;
     bottom: number;
 } {
     const offsetElementRect = el.getBoundingClientRect();
-    const { borderTopWidth, borderLeftWidth, borderRightWidth, borderBottomWidth } = getElementSize(el);
+    const { borderTopWidth, borderLeftWidth, borderRightWidth, borderBottomWidth } = _getElementSize(el);
 
     return {
         top: offsetElementRect.top + (borderTopWidth || 0),
         left: offsetElementRect.left + (borderLeftWidth || 0),
         right: offsetElementRect.right + (borderRightWidth || 0),
         bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
-    }
+    };
 }
 
-export function isRtlNegativeScroll(): boolean {
-    if (typeof rtlNegativeScroll === "boolean") {
+export function _isRtlNegativeScroll(): boolean {
+    if (typeof rtlNegativeScroll === 'boolean') {
         return rtlNegativeScroll;
     }
 
@@ -219,7 +219,8 @@ export function isRtlNegativeScroll(): boolean {
     template.style.top = '0px';
     template.style.overflow = 'hidden';
     template.dir = 'rtl';
-    template.innerHTML = /* html */
+    template.innerHTML =
+        /* html */
         `<div style="width: 2px">
             <span style="display: inline-block; width: 1px"></span>
             <span style="display: inline-block; width: 1px"></span>
@@ -234,14 +235,14 @@ export function isRtlNegativeScroll(): boolean {
     return rtlNegativeScroll;
 }
 
-export function getScrollLeft(element: HTMLElement, rtl: boolean): number {
+export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
     let scrollLeft = element.scrollLeft;
 
     if (rtl) {
         // Absolute value - for FF that reports RTL scrolls in negative numbers
         scrollLeft = Math.abs(scrollLeft);
 
-        if (isBrowserChrome() && !isRtlNegativeScroll()) {
+        if (_isBrowserChrome() && !_isRtlNegativeScroll()) {
             scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
         }
     }
@@ -249,39 +250,41 @@ export function getScrollLeft(element: HTMLElement, rtl: boolean): number {
     return scrollLeft;
 }
 
-export function setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
+export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
     if (rtl) {
         // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
-        if (isRtlNegativeScroll()) {
+        if (_isRtlNegativeScroll()) {
             value *= -1;
-        } else if (isBrowserSafari() || isBrowserChrome()) {
+        } else if (_isBrowserSafari() || _isBrowserChrome()) {
             value = element.scrollWidth - element.clientWidth - value;
         }
     }
     element.scrollLeft = value;
 }
 
-export function clearElement(el: HTMLElement): void {
-    while (el && el.firstChild) { el.removeChild(el.firstChild); }
+export function _clearElement(el: HTMLElement): void {
+    while (el && el.firstChild) {
+        el.removeChild(el.firstChild);
+    }
 }
 
-export function removeFromParent(node: Element | null) {
+export function _removeFromParent(node: Element | null) {
     if (node && node.parentNode) {
         node.parentNode.removeChild(node);
     }
 }
 
-export function isInDOM(element: HTMLElement): boolean {
+export function _isInDOM(element: HTMLElement): boolean {
     return !!element.offsetParent;
 }
 
-export function isVisible(element: HTMLElement) {
+export function _isVisible(element: HTMLElement) {
     const el = element as any;
     if (el.checkVisibility) {
-        return el.checkVisibility({ checkVisibilityCSS: true })
+        return el.checkVisibility({ checkVisibilityCSS: true });
     }
 
-    const isHidden = !isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
+    const isHidden = !_isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
     return !isHidden;
 }
 
@@ -291,14 +294,14 @@ export function isVisible(element: HTMLElement) {
  * @param {string} template
  * @returns {HTMLElement}
  */
-export function loadTemplate(template: string): HTMLElement {
+export function _loadTemplate(template: string): HTMLElement {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = (template || '').trim();
 
     return tempDiv.firstChild as HTMLElement;
 }
 
-export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
+export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
     // if already in right order, do nothing
     if (eChildBefore && eChildBefore.nextSibling === eChild) {
         return;
@@ -321,7 +324,7 @@ export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eCh
     }
 }
 
-export function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void {
+export function _setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void {
     for (let i = 0; i < orderedChildren.length; i++) {
         const correctCellAtIndex = orderedChildren[i];
         const actualCellAtIndex = eContainer.children[i];
@@ -332,7 +335,7 @@ export function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTML
     }
 }
 
-export function insertWithDomOrder(
+export function _insertWithDomOrder(
     eContainer: HTMLElement,
     eToInsert: HTMLElement,
     eChildBefore: HTMLElement | null
@@ -351,14 +354,18 @@ export function insertWithDomOrder(
     }
 }
 
-export function addStylesToElement(eElement: any, styles: RowStyle | CellStyle | null | undefined) {
-    if (!styles) { return; }
+export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle | null | undefined) {
+    if (!styles) {
+        return;
+    }
 
     for (const [key, value] of Object.entries(styles)) {
-        if (!key || !key.length || value == null) { continue; }
+        if (!key || !key.length || value == null) {
+            continue;
+        }
 
         // changes the key from camelCase into a hyphenated-string
-        const parsedKey = camelCaseToHyphenated(key);
+        const parsedKey = _camelCaseToHyphenated(key);
         const valueAsString = value.toString();
         const parsedValue = valueAsString.replace(/\s*!important/g, '');
         const priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
@@ -367,51 +374,51 @@ export function addStylesToElement(eElement: any, styles: RowStyle | CellStyle |
     }
 }
 
-export function isHorizontalScrollShowing(element: HTMLElement): boolean {
+export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
     return element.clientWidth < element.scrollWidth;
 }
 
-export function isVerticalScrollShowing(element: HTMLElement): boolean {
+export function _isVerticalScrollShowing(element: HTMLElement): boolean {
     return element.clientHeight < element.scrollHeight;
 }
 
-export function setElementWidth(element: HTMLElement, width: string | number) {
+export function _setElementWidth(element: HTMLElement, width: string | number) {
     if (width === 'flex') {
         element.style.removeProperty('width');
         element.style.removeProperty('minWidth');
         element.style.removeProperty('maxWidth');
         element.style.flex = '1 1 auto';
     } else {
-        setFixedWidth(element, width);
+        _setFixedWidth(element, width);
     }
 }
 
-export function setFixedWidth(element: HTMLElement, width: string | number) {
-    width = formatSize(width);
+export function _setFixedWidth(element: HTMLElement, width: string | number) {
+    width = _formatSize(width);
     element.style.width = width.toString();
     element.style.maxWidth = width.toString();
     element.style.minWidth = width.toString();
 }
 
-export function setElementHeight(element: HTMLElement, height: string | number) {
+export function _setElementHeight(element: HTMLElement, height: string | number) {
     if (height === 'flex') {
         element.style.removeProperty('height');
         element.style.removeProperty('minHeight');
         element.style.removeProperty('maxHeight');
         element.style.flex = '1 1 auto';
     } else {
-        setFixedHeight(element, height);
+        _setFixedHeight(element, height);
     }
 }
 
-export function setFixedHeight(element: HTMLElement, height: string | number) {
-    height = formatSize(height);
+export function _setFixedHeight(element: HTMLElement, height: string | number) {
+    height = _formatSize(height);
     element.style.height = height.toString();
     element.style.maxHeight = height.toString();
     element.style.minHeight = height.toString();
 }
 
-export function formatSize(size: number | string) {
+export function _formatSize(size: number | string) {
     if (typeof size === 'number') {
         return `${size}px`;
     }
@@ -419,7 +426,7 @@ export function formatSize(size: number | string) {
     return size;
 }
 
-export function isNodeOrElement(o: any) {
+export function _isNodeOrElement(o: any): o is Node | Element {
     return o instanceof Node || o instanceof HTMLElement;
 }
 
@@ -428,18 +435,22 @@ export function isNodeOrElement(o: any) {
  * @param {NodeList} nodeList
  * @returns {Node[]}
  */
-export function copyNodeList(nodeList: NodeListOf<Node> | null): Node[] {
-    if (nodeList == null) { return []; }
+export function _copyNodeList(nodeList: NodeListOf<Node> | null): Node[] {
+    if (nodeList == null) {
+        return [];
+    }
 
     const result: Node[] = [];
 
-    nodeListForEach(nodeList, node => result.push(node));
+    _nodeListForEach(nodeList, (node) => result.push(node));
 
     return result;
 }
 
-export function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
-    if (!map) { return; }
+export function _iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
+    if (!map) {
+        return;
+    }
 
     for (let i = 0; i < map.length; i++) {
         const attr = map[i];
@@ -447,7 +458,7 @@ export function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, v
     }
 }
 
-export function addOrRemoveAttribute(element: HTMLElement, name: string, value: any) {
+export function _addOrRemoveAttribute(element: HTMLElement, name: string, value: any) {
     if (value == null) {
         element.removeAttribute(name);
     } else {
@@ -455,8 +466,10 @@ export function addOrRemoveAttribute(element: HTMLElement, name: string, value: 
     }
 }
 
-export function nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void {
-    if (nodeList == null) { return; }
+export function _nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void {
+    if (nodeList == null) {
+        return;
+    }
 
     for (let i = 0; i < nodeList.length; i++) {
         action(nodeList[i]);
@@ -469,8 +482,11 @@ export function nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, 
  * @param {AgPromise<ICellRendererComp>} cellRendererPromise
  * @param {HTMLElement} eTarget
  */
-export function bindCellRendererToHtmlElement(cellRendererPromise: AgPromise<ICellRendererComp>, eTarget: HTMLElement) {
-    cellRendererPromise.then(cellRenderer => {
+export function _bindCellRendererToHtmlElement(
+    cellRendererPromise: AgPromise<ICellRendererComp>,
+    eTarget: HTMLElement
+) {
+    cellRendererPromise.then((cellRenderer) => {
         const gui: HTMLElement | string = cellRenderer!.getGui();
 
         if (gui != null) {

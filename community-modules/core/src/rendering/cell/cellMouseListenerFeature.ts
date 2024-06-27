@@ -1,20 +1,20 @@
-import { Column } from "../../entities/column";
-import { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent, Events } from "../../events";
-import { isBrowserSafari, isIOSUserAgent } from "../../utils/browser";
-import { isElementChildOfClass, isFocusableFormField } from "../../utils/dom";
-import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
-import { Beans } from "../beans";
-import { CellCtrl } from "./cellCtrl";
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent } from '../../events';
+import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
+import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
+import { _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
+import type { CellCtrl } from './cellCtrl';
 
-export class CellMouseListenerFeature extends Beans {
-
+export class CellMouseListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: Beans;
-    private readonly column: Column;
+    private readonly beans: BeanCollection;
+    private readonly column: AgColumn;
 
     private lastIPadMouseClickEvent: number;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, column: AgColumn) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;
@@ -22,7 +22,9 @@ export class CellMouseListenerFeature extends Beans {
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (_isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
 
         switch (eventName) {
             case 'click':
@@ -53,7 +55,7 @@ export class CellMouseListenerFeature extends Beans {
             return;
         }
 
-        const { eventService, rangeService, gridOptionsService } = this.beans;
+        const { eventService, rangeService, gos } = this.beans;
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
         if (rangeService && isMultiKey) {
@@ -64,7 +66,7 @@ export class CellMouseListenerFeature extends Beans {
             }
         }
 
-        const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
+        const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(mouseEvent, 'cellClicked');
         eventService.dispatchEvent(cellClickedEvent);
 
         const colDef = this.column.getColDef();
@@ -78,8 +80,8 @@ export class CellMouseListenerFeature extends Beans {
             }, 0);
         }
 
-        const editOnSingleClick = (gridOptionsService.get('singleClickEdit') || colDef.singleClickEdit)
-            && !gridOptionsService.get('suppressClickEdit');
+        const editOnSingleClick =
+            (gos.get('singleClickEdit') || colDef.singleClickEdit) && !gos.get('suppressClickEdit');
 
         // edit on single click, but not if extending a range
         if (editOnSingleClick && !(mouseEvent.shiftKey && rangeService?.getCellRanges().length != 0)) {
@@ -89,7 +91,9 @@ export class CellMouseListenerFeature extends Beans {
 
     // returns true if on iPad and this is second 'click' event in 200ms
     private isDoubleClickOnIPad(): boolean {
-        if (!isIOSUserAgent() || isEventSupported('dblclick')) { return false; }
+        if (!_isIOSUserAgent() || _isEventSupported('dblclick')) {
+            return false;
+        }
 
         const nowMillis = new Date().getTime();
         const res = nowMillis - this.lastIPadMouseClickEvent < 200;
@@ -101,21 +105,23 @@ export class CellMouseListenerFeature extends Beans {
     private onCellDoubleClicked(mouseEvent: MouseEvent) {
         const colDef = this.column.getColDef();
         // always dispatch event to eventService
-        const cellDoubleClickedEvent: CellDoubleClickedEvent = this.cellCtrl.createEvent(mouseEvent, Events.EVENT_CELL_DOUBLE_CLICKED);
+        const cellDoubleClickedEvent: CellDoubleClickedEvent = this.cellCtrl.createEvent(
+            mouseEvent,
+            'cellDoubleClicked'
+        );
         this.beans.eventService.dispatchEvent(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
             // to make the callback async, do in a timeout
-            window.setTimeout(() =>  {
+            window.setTimeout(() => {
                 this.beans.frameworkOverrides.wrapOutgoing(() => {
                     (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent);
                 });
             }, 0);
         }
 
-        const editOnDoubleClick = !this.beans.gridOptionsService.get('singleClickEdit')
-            && !this.beans.gridOptionsService.get('suppressClickEdit');
+        const editOnDoubleClick = !this.beans.gos.get('singleClickEdit') && !this.beans.gos.get('suppressClickEdit');
         if (editOnDoubleClick) {
             this.cellCtrl.startRowOrCellEdit(null, mouseEvent);
         }
@@ -138,7 +144,7 @@ export class CellMouseListenerFeature extends Beans {
             // We only need to pass true to focusCell when the browser is Safari and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            const forceBrowserFocus = (isBrowserSafari()) && !cellCtrl.isEditing() && !isFocusableFormField(target);
+            const forceBrowserFocus = _isBrowserSafari() && !cellCtrl.isEditing() && !_isFocusableFormField(target);
 
             cellCtrl.focusCell(forceBrowserFocus);
         }
@@ -153,7 +159,7 @@ export class CellMouseListenerFeature extends Beans {
             if (focusedCellPosition) {
                 const { column, rowIndex, rowPinned } = focusedCellPosition;
                 const focusedRowCtrl = beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
-                const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column);
+                const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column as AgColumn);
 
                 // if the focused cell is editing, need to stop editing first
                 if (focusedCellCtrl?.isEditing()) {
@@ -173,7 +179,9 @@ export class CellMouseListenerFeature extends Beans {
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (this.containsWidget(target)) { return; }
+        if (this.containsWidget(target)) {
+            return;
+        }
 
         if (rangeService) {
             const thisCell = this.cellCtrl.getCellPosition();
@@ -186,7 +194,7 @@ export class CellMouseListenerFeature extends Beans {
             }
         }
 
-        eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_DOWN));
+        eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
     }
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
@@ -194,7 +202,8 @@ export class CellMouseListenerFeature extends Beans {
 
         if (rangeService) {
             const cellInRange = rangeService.isCellInAnyRange(this.cellCtrl.getCellPosition());
-            const isRightClick = mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gridOptionsService.get('allowContextMenuWithControlKey'));
+            const isRightClick =
+                mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gos.get('allowContextMenuWithControlKey'));
 
             if (cellInRange && isRightClick) {
                 return true;
@@ -205,31 +214,38 @@ export class CellMouseListenerFeature extends Beans {
     }
 
     private containsWidget(target: HTMLElement): boolean {
-        return isElementChildOfClass(target, 'ag-selection-checkbox', 3);
+        return _isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     }
 
     private onMouseOut(mouseEvent: MouseEvent): void {
-        if (this.mouseStayingInsideCell(mouseEvent)) { return; }
-        const cellMouseOutEvent: CellMouseOutEvent = this.cellCtrl.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OUT);
+        if (this.mouseStayingInsideCell(mouseEvent)) {
+            return;
+        }
+        const cellMouseOutEvent: CellMouseOutEvent = this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut');
         this.beans.eventService.dispatchEvent(cellMouseOutEvent);
         this.beans.columnHoverService.clearMouseOver();
     }
 
     private onMouseOver(mouseEvent: MouseEvent): void {
-        if (this.mouseStayingInsideCell(mouseEvent)) { return; }
-        const cellMouseOverEvent: CellMouseOverEvent = this.cellCtrl.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
+        if (this.mouseStayingInsideCell(mouseEvent)) {
+            return;
+        }
+        const cellMouseOverEvent: CellMouseOverEvent = this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver');
         this.beans.eventService.dispatchEvent(cellMouseOverEvent);
         this.beans.columnHoverService.setMouseOver([this.column]);
     }
 
     private mouseStayingInsideCell(e: MouseEvent): boolean {
-        if (!e.target || !e.relatedTarget) { return false; }
+        if (!e.target || !e.relatedTarget) {
+            return false;
+        }
         const eGui = this.cellCtrl.getGui();
         const cellContainsTarget = eGui.contains(e.target as Node);
         const cellContainsRelatedTarget = eGui.contains(e.relatedTarget as Node);
         return cellContainsTarget && cellContainsRelatedTarget;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
+        super.destroy();
     }
 }

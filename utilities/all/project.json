@@ -57,18 +57,14 @@
     "build:core:modules": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run-many -t build --projects=tag:module --exclude=tag:framework"
-        ]
+        "commands": ["nx run-many -t build --projects=tag:module --exclude=tag:framework"]
       },
       "cache": true
     },
     "build:core:packages": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run-many -t build --projects=tag:package --exclude=tag:framework"
-        ]
+        "commands": ["nx run-many -t build --projects=tag:package --exclude=tag:framework"]
       },
       "cache": true
     },
@@ -81,9 +77,7 @@
     "test:modules": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run-many -t test --projects=tag:module --exclude=tag:framework"
-        ]
+        "commands": ["nx run-many -t test --projects=tag:module --exclude=tag:framework"]
       },
       "cache": true
     },
@@ -92,9 +86,10 @@
       "options": {
         "parallel": false,
         "commands": [
+          "node scripts/buildTime.mjs start",
           "nx run-many -t build --projects=tag:module --exclude=tag:framework",
           "nx run all:generate-doc-references",
-          "if (test \"${BUILD_FWS}\" != \"0\") ; then nx run-many -t build -p @ag-grid-community/angular,@ag-grid-community/react,@ag-grid-community/vue,@ag-grid-community/vue3 --parallel=5; fi",
+          "if (test \"${BUILD_FWS}\" != \"0\") ; then nx run-many -t build -p @ag-grid-community/angular,@ag-grid-community/react,@ag-grid-community/vue3 --parallel=5; fi",
           "if (test \"${BUILD_PACKAGES}\" != \"0\") ; then nx run-many -t build --projects=tag:package --exclude=tag:framework; fi",
           "if (test \"${BUILD_PACKAGES}\" != \"0\" && test \"${BUILD_FWS}\" != \"0\") ; then nx run-many -t build --projects=tag:package:framework; fi",
           "if (test \"${BUILD_BATCH}\" != \"0\") ; then nx generate-examples --batch; fi"
@@ -109,10 +104,10 @@
         "parallel": true,
         "commands": [
           "while true ; do nx watch -p @ag-grid-community/client-side-row-model,@ag-grid-community/core,@ag-grid-community/csv-export,@ag-grid-community/infinite-row-model,@ag-grid-enterprise/advanced-filter,@ag-grid-enterprise/charts,@ag-grid-enterprise/charts-enterprise,@ag-grid-enterprise/clipboard,@ag-grid-enterprise/column-tool-panel,@ag-grid-enterprise/core,@ag-grid-enterprise/excel-export,@ag-grid-enterprise/filter-tool-panel,@ag-grid-enterprise/master-detail,@ag-grid-enterprise/menu,@ag-grid-enterprise/multi-filter,@ag-grid-enterprise/range-selection,@ag-grid-enterprise/rich-select,@ag-grid-enterprise/row-grouping,@ag-grid-enterprise/server-side-row-model,@ag-grid-enterprise/set-filter,@ag-grid-enterprise/side-bar,@ag-grid-enterprise/sparklines,@ag-grid-enterprise/status-bar,@ag-grid-enterprise/viewport-row-model,@ag-grid-community/styles -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME} ; done",
-          "while (test \"${BUILD_FWS}\" == \"1\") ; do nx watch -p @ag-grid-community/angular,@ag-grid-community/react,@ag-grid-community/vue,@ag-grid-community/vue3 -- nx run \\${NX_PROJECT_NAME}:build ; done",
+          "while (test \"${BUILD_FWS}\" == \"1\") ; do nx watch -p @ag-grid-community/angular,@ag-grid-community/react,@ag-grid-community/vue3 -- nx run \\${NX_PROJECT_NAME}:build ; done",
           "while (test \"${BUILD_PACKAGES}\" == \"1\") ; do nx watch -p ag-grid-community,ag-grid-enterprise,ag-grid-charts-enterprise -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME} ; done",
-          "while (test \"${BUILD_PACKAGES}\" != \"0\" && test \"${BUILD_FWS}\" != \"0\") ; do nx watch -p ag-grid-angular,ag-grid-react,ag-grid-vue,ag-grid-vue3 -- nx run \\${NX_PROJECT_NAME}:build ; done",
-          "while true ; do nx watch -p ag-grid-docs-* -- nx build \\${NX_PROJECT_NAME}:generate; done",
+          "while (test \"${BUILD_PACKAGES}\" != \"0\" && test \"${BUILD_FWS}\" != \"0\") ; do nx watch -p ag-grid-angular,ag-grid-react,ag-grid-vue3 -- nx run \\${NX_PROJECT_NAME}:build ; done",
+          "while true ; do nx watch -p ag-grid-docs-* -- nx run \\${NX_PROJECT_NAME}:generate; done",
           "while true ; do nx watch -p ag-grid-docs -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME}; done",
           "nx run ag-grid-docs:dev"
         ]
@@ -144,14 +139,13 @@
         "commands": ["nx run-many -t test --parallel 1"]
       }
     },
-    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'packages/*/dist/' 'documentation/*/dist/'",
+    "clean": {
+      "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'packages/*/dist/' 'documentation/*/dist/' 'community-modules/locale/umd/'"
     },
     "generate-examples": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-example"],
-      "inputs": [
-        { "externalDependencies": ["npm:typescript"] }
-      ],
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
       "outputs": [],
       "batch": true,
       "cache": true,
@@ -165,7 +159,7 @@
       "options": {
         "commands": [
           "nx run ag-grid-docs-src_content_docs_{args.page}__examples_{args.example}_main.ts:generate-example --skip-nx-cache"
-        ]        
+        ]
       }
     },
     "generate-doc-references": {
@@ -184,11 +178,11 @@
     "community-modules/core",
     "community-modules/client-side-row-model",
     "community-modules/styles",
+    "community-modules/locale",
     "community-modules/csv-export",
     "community-modules/infinite-row-model",
     "community-modules/angular",
     "community-modules/react",
-    "community-modules/vue",
     "community-modules/vue3",
     "enterprise-modules/core",
     "enterprise-modules/advanced-filter",
@@ -215,9 +209,11 @@
     "packages/ag-grid-charts-enterprise",
     "packages/ag-grid-react",
     "packages/ag-grid-angular",
-    "packages/ag-grid-vue",
     "packages/ag-grid-vue3",
     "documentation/ag-grid-docs",
+    "external/ag-website-shared",
+    "external/ag-shared",
+    "testing/behavioural",
     "ag-grid-generate-example-files"
   ],
   "tags": []

@@ -1,6 +1,6 @@
-import { RowNode, SelectionEventSourceType, ISetNodesSelectedParams } from "@ag-grid-community/core";
+import type { Bean, ISetNodesSelectedParams, RowNode, SelectionEventSourceType } from '@ag-grid-community/core';
 
-export interface ISelectionStrategy {
+export interface ISelectionStrategy extends Bean {
     getSelectedState(): any;
     setSelectedState(state: any): void;
     setNodesSelected(params: ISetNodesSelectedParams): number;
@@ -10,8 +10,16 @@ export interface ISelectionStrategy {
     getSelectedRows(): any[];
     getSelectionCount(): number;
     isEmpty(): boolean;
-    selectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void;
-    deselectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void;
+    selectAllRowNodes(params: {
+        source: SelectionEventSourceType;
+        justFiltered?: boolean | undefined;
+        justCurrentPage?: boolean | undefined;
+    }): void;
+    deselectAllRowNodes(params: {
+        source: SelectionEventSourceType;
+        justFiltered?: boolean | undefined;
+        justCurrentPage?: boolean | undefined;
+    }): void;
     getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null;
     deleteSelectionStateFromParent(parentRoute: string[], removedNodeIds: string[]): boolean;
 }

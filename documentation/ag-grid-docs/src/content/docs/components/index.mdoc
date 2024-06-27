@@ -34,18 +34,18 @@ The full list of component types you can provide in the grid are as follows:
 
 The remainder of this page gives information that is common across all the component types.
 
-{% includeMarkdoc file="components/_declare-vue.mdoc" /%}
+{% partial file="./_declare-vue.mdoc" /%}
 
 ## Registering Custom Components
 
-{% includeMarkdoc file="components/_register-javascript.mdoc" /%}
-{% includeMarkdoc file="components/_register-angular.mdoc" /%}
-{% includeMarkdoc file="components/_register-react.mdoc" /%}
-{% includeMarkdoc file="components/_register-vue.mdoc" /%}
+{% partial file="./_register-javascript.mdoc" /%}
+{% partial file="./_register-angular.mdoc" /%}
+{% partial file="./_register-react.mdoc" /%}
+{% partial file="./_register-vue.mdoc" /%}
 
 {% gridExampleRunner title="Registering Components" name="register"  exampleHeight=580 /%}
 
-{% includeMarkdoc file="components/_advantages-vue.mdoc" /%}
+{% partial file="./_advantages-vue.mdoc" /%}
 
 ## Providing Additional Parameters
 
@@ -53,7 +53,7 @@ Each Custom Component gets a set of parameters from the grid. For example, for C
 
 To provide additional parameters, use the property `[prop-name]Params`, e.g. `cellRendererParams`.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         { 
@@ -67,10 +67,10 @@ const gridOptions = {
 }
 ```
 
-{% includeMarkdoc file="components/_js-fw-angular.mdoc" /%}
-{% includeMarkdoc file="components/_js-fw-react.mdoc" /%}
-{% includeMarkdoc file="components/_js-fw-vue.mdoc" /%}
-{% includeMarkdoc file="components/_js-fw-common-end.mdoc" /%}
+{% partial file="./_js-fw-angular.mdoc" /%}
+{% partial file="./_js-fw-react.mdoc" /%}
+{% partial file="./_js-fw-vue.mdoc" /%}
+{% partial file="./_js-fw-common-end.mdoc" /%}
 
 {% if isFramework("react") %}
 ## Higher Order Components
@@ -114,8 +114,7 @@ import {CubeComponent} from './cube.component';
 @Component({
   selector: 'app-root',
   template: `
-      <ag-grid-angular [context]="context" /* ...other properties */>
-      </ag-grid-angular>
+      <ag-grid-angular [context]="context" /* ...other properties */ />
   `
 })
 export class AppComponent {
@@ -156,7 +155,6 @@ export class CellRendererComponent implements ICellRendererAngularComp {
 Note that although we've used `componentParent` as the property name here it can
 be anything - the main point is that you can use the `context` mechanism to share
 information between the components.
-A working example of this can be found in the [Cell Renderer](./component-cell-renderer/#example-dynamic-components) docs.
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -229,8 +227,6 @@ export default {
 Note that although we've used `componentParent` as the property name here it can
 be anything - the main point is that you can use the `context` mechanism to share
 information between the components.
-
-A working example of this can be found in the [Cell Renderer](./component-cell-renderer/#example-dynamic-components) docs.
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -296,7 +292,7 @@ The below table gives a summary of the components, where they are configured and
 | Group Row Inner Cell Component | Grid Option               | innerRenderer{% br /%}innerRendererParams            |
 | Detail Cell Component          | Grid Option               | detailCellRenderer{% br /%}detailCellRendererParams        |
 | Full Width Cell Component      | Grid Option               | fullWidthCellRenderer{% br /%}fullWidthCellRendererParams        |
-| Loading Cell Component         | Grid Option               | loadingCellRenderer{% br /%}loadingCellRendererParams       |
+| Loading Cell Component         | Grid Option{%br /%}Column Definition               | loadingCellRenderer{% br /%}loadingCellRendererParams       |
 | Loading Overlay               | Grid Option               | loadingOverlayComponent{% br /%}loadingOverlayComponentParams       |
 | No Rows Overlay               | Grid Option               | noRowsOverlayComponent{% br /%}noRowsOverlayComponentParams        |
 | Date Component                | Grid Option               | dateComponent{% br /%}dateComponentParams                  |
@@ -341,6 +337,7 @@ The grid comes with pre-registered components that can be used. Each component p
 | agAnimateSlideCellRenderer | Cell Component that animates value changes | 
 | agGroupCellRenderer | Cell Component for displaying group information | 
 | agLoadingCellRenderer {% enterpriseIcon /%} | Cell Component for loading row when using Enterprise row model | 
+| agSkeletonCellRenderer {% enterpriseIcon /%} | Cell Component for displaying skeleton cells |
 | agCheckboxCellRenderer | Cell Component that displays a checkbox for boolean values | 
 
 | Overlays | |
@@ -375,6 +372,7 @@ It is also possible to override components. Where the grid uses a default value,
 * **agColumnHeader**: To change the default column header across all columns.
 * **agColumnGroupHeader**: To change the default column group header across all columns.
 * **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
+* **agSkeletonCellRenderer**: To change the default skeleton loading cell renderer for Enterprise Row Model.
 * **agLoadingOverlay**: To change the default 'loading' overlay.
 * **agNoRowsOverlay**: To change the default loading 'no rows' overlay.
 * **agCellEditor**: To change the default cell editor.
@@ -404,7 +402,7 @@ const gridOptions = {
          class="ag-theme-quartz"
          [components]="components"
          ...other properties...  
-     ></ag-grid-angular>
+      />
    `
 })
 export class AppComponent {
@@ -447,6 +445,6 @@ const MyApp = {
 Overridable grid components are the only components you need to additionally specify with `components` in order to tie their usage to the
 actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
 
-For an example of this please refer to the [Date Component](./filter-date/#registering-date-components) documentation.
+For an example of this please refer to the [Date Component](./filter-date/#custom-selection-component) documentation.
 {% /note %}
 {% /if %}

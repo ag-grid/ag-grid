@@ -17,7 +17,7 @@ The SSRM Transaction API allows rows to be added, removed or updated in the grid
 
 These operations are shown in the snippet below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.applyServerSideTransaction({ 
     add: [ 
         { tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }
@@ -46,7 +46,7 @@ To use transactions while using row grouping, transactions need to be applied to
 
 The snippet below demonstrates creating a group row transaction for rows which are the first of their group, as the leaf rows will be requested via `getRows` when the group is expanded.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // create the group row at the root level (only if it's the first row for this group)
 api.applyServerSideTransaction({
 	route: [],
@@ -79,7 +79,7 @@ When using asynchronous transactions, the grid delays any transactions received 
 
 The snippet below demonstrates three asynchronous transactions applied sequentially, however because these transactions are asynchronously batched, the grid would only update the DOM once.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // due to asynchronous batching, the following transactions are applied together preventing unnecessary DOM updates
 api.applyServerSideTransactionAsync({ 
     add: [{ tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }],

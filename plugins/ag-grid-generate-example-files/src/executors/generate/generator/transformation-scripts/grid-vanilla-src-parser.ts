@@ -1,8 +1,9 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
-import { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
-import { Events } from '../_copiedFromCore/eventKeys';
+
+import { ALL_EVENTS } from '../_copiedFromCore/eventTypes';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
+import type { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
 import {
     extractClassDeclarations,
     extractEventHandlers,
@@ -28,7 +29,7 @@ import {
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
-const EVENTS = (<any>Object).values(Events);
+const EVENTS = ALL_EVENTS;
 const PROPERTIES: any = PropertyKeys.ALL_PROPERTIES;
 const FUNCTION_PROPERTIES: any = PropertyKeys.FUNCTION_PROPERTIES;
 
@@ -63,7 +64,7 @@ function tsNodeIsSimpleFetchRequest(node) {
 
 function processColDefsForFunctionalReactOrVue(propertyName: string, providedExamples) {
     if (propertyName === 'columnDefs') {
-        return !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']);
+        return !(providedExamples['reactFunctional'] && providedExamples['vue3']);
     }
 
     return false;
@@ -71,7 +72,7 @@ function processColDefsForFunctionalReactOrVue(propertyName: string, providedExa
 
 function processComponentsForVue(propertyName: string, providedExamples) {
     if (propertyName === 'components') {
-        return !(providedExamples['vue'] && providedExamples['vue3']);
+        return !providedExamples['vue3'];
     }
 
     return false;
@@ -79,7 +80,7 @@ function processComponentsForVue(propertyName: string, providedExamples) {
 
 function processVueProperties(propertyName: string, providedExamples) {
     if (propertyName === 'statusBar' || propertyName === 'sideBar') {
-        return !(providedExamples['vue'] && providedExamples['vue3']);
+        return !providedExamples['vue3'];
     }
 
     return false;
@@ -87,7 +88,7 @@ function processVueProperties(propertyName: string, providedExamples) {
 
 function processDefaultColumnDefForVue(propertyName: string, providedExamples) {
     if (propertyName === 'defaultColDef') {
-        return !(providedExamples['vue'] && providedExamples['vue3']);
+        return !providedExamples['vue3'];
     }
 
     return false;
@@ -97,7 +98,7 @@ const GLOBAL_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverl
 
 function processGlobalComponentsForVue(propertyName: string, providedExamples) {
     if (GLOBAL_COMPONENTS.indexOf(propertyName) !== -1) {
-        return !(providedExamples['vue'] && providedExamples['vue3']);
+        return !providedExamples['vue3'];
     }
 
     return false;
@@ -173,7 +174,7 @@ function internalParser(
         apply: (bindings, node: ts.SignatureDeclaration) => {
             const body = (node as any).body;
 
-            let allVariables = new Set(body ? findAllVariables(body) : []);
+            const allVariables = new Set(body ? findAllVariables(body) : []);
             if (node.parameters && node.parameters.length > 0) {
                 node.parameters.forEach((p) => {
                     allVariables.add(p.name.getText());
@@ -278,7 +279,7 @@ function internalParser(
     });
 
     const tsExtractColDefsStr = (node: any): string => {
-        let copyOfColDefs = [];
+        const copyOfColDefs = [];
 
         // for each column def
         for (let columnDefIndex = 0; columnDefIndex < node.elements.length; columnDefIndex++) {
@@ -290,7 +291,7 @@ function internalParser(
             }
 
             // for each col def property
-            let props = [];
+            const props = [];
             for (
                 let colDefPropertyIndex = 0;
                 colDefPropertyIndex < columnDef.properties.length;
@@ -306,7 +307,7 @@ function internalParser(
                 }
             }
             if (props.length > 0) {
-                let propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                const propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
                 copyOfColDefs.push(propStr);
             }
         }
@@ -314,7 +315,7 @@ function internalParser(
     };
 
     const tsArrayStr = (node: any): string => {
-        let copyOfArray = [];
+        const copyOfArray = [];
 
         // for each item in the array
         for (let index = 0; index < node.elements.length; index++) {
@@ -324,13 +325,14 @@ function internalParser(
                 copyOfArray.push(tsGenerate(item, tsTree));
             } else {
                 // for each property
-                let props = [];
+                const props = [];
                 for (let colDefPropertyIndex = 0; colDefPropertyIndex < item.properties.length; colDefPropertyIndex++) {
                     const columnDefProperty: any = item.properties[colDefPropertyIndex];
                     props.push(`${tsConvertFunctionsIntoStringsStr(columnDefProperty)}`);
                 }
                 if (props.length > 0) {
-                    let propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                    const propStr =
+                        props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
                     copyOfArray.push(propStr);
                 }
             }
@@ -346,7 +348,7 @@ function internalParser(
             const escaped = func.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
             return `${property.name.text}: "AG_FUNCTION_${escaped}"`;
         } else if (ts.isObjectLiteralExpression(property.initializer)) {
-            let objProps = [];
+            const objProps = [];
             property.initializer.properties.forEach((p) => {
                 objProps.push(tsConvertFunctionsIntoStringsStr(p));
             });
@@ -443,10 +445,7 @@ function internalParser(
                     bindings.defaultColDef = tsGenerate(node.initializer, tsTree);
                 }
 
-                if (
-                    processGlobalComponentsForVue(propertyName, providedExamples) &&
-                    ts.isIdentifier(node)
-                ) {
+                if (processGlobalComponentsForVue(propertyName, providedExamples) && ts.isIdentifier(node)) {
                     bindings.globalComponents.push(tsGenerate(node, tsTree));
                 }
 
@@ -524,7 +523,7 @@ function internalParser(
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
 
-    let inlineGridStyles: InlineGridStyles = {
+    const inlineGridStyles: InlineGridStyles = {
         theme: 'ag-theme-quartz',
         width: '100%',
         height: '100%',
@@ -555,14 +554,7 @@ export function parser(
     providedExamples,
     gridOptionsTypes: Record<string, GridOptionsType>
 ) {
-    const typedBindings = internalParser(
-        examplePath,
-        srcFile,
-        true,
-        gridOptionsTypes,
-        html,
-        providedExamples
-    );
+    const typedBindings = internalParser(examplePath, srcFile, true, gridOptionsTypes, html, providedExamples);
     const bindings = internalParser(examplePath, srcFile, false, gridOptionsTypes, html, providedExamples);
     // We need to copy the imports from the typed bindings to the non-typed bindings
     bindings.imports = typedBindings.imports;

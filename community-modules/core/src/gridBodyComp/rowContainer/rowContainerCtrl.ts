@@ -1,149 +1,242 @@
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
-import { Events } from "../../eventKeys";
-import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
-import { DragService } from "../../dragAndDrop/dragService";
-import { CtrlsService } from "../../ctrlsService";
-import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom";
-import { ColumnModel } from "../../columns/columnModel";
-import { ResizeObserverService } from "../../misc/resizeObserverService";
-import { ViewportSizeFeature } from "../viewportSizeFeature";
-import { convertToMap } from "../../utils/map";
-import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
-import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
-import { SetHeightFeature } from "./setHeightFeature";
-import { DragListenerFeature } from "./dragListenerFeature";
-import { CenterWidthFeature } from "../centerWidthFeature";
-import { RowCtrl } from "../../rendering/row/rowCtrl";
-import { RowRenderer } from "../../rendering/rowRenderer";
-import { ColumnPinnedType } from "../../entities/column";
-import { DisplayedRowsChangedEvent } from "../../events";
+import type { ColumnViewportService } from '../../columns/columnViewportService';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { DragService } from '../../dragAndDrop/dragService';
+import type { DisplayedRowsChangedEvent, StickyTopOffsetChangedEvent } from '../../events';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { ResizeObserverService } from '../../misc/resizeObserverService';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import type { RowRenderer } from '../../rendering/rowRenderer';
+import { _getInnerWidth, _getScrollLeft, _isHorizontalScrollShowing, _isInDOM, _setScrollLeft } from '../../utils/dom';
+import { CenterWidthFeature } from '../centerWidthFeature';
+import { ViewportSizeFeature } from '../viewportSizeFeature';
+import { DragListenerFeature } from './dragListenerFeature';
+import { RowContainerEventsFeature } from './rowContainerEventsFeature';
+import { SetHeightFeature } from './setHeightFeature';
+import { SetPinnedLeftWidthFeature } from './setPinnedLeftWidthFeature';
+import { SetPinnedRightWidthFeature } from './setPinnedRightWidthFeature';
 
-export enum RowContainerName {
-    LEFT = 'left',
-    RIGHT = 'right',
-    CENTER = 'center',
-    FULL_WIDTH = 'fullWidth',
+export type RowContainerName =
+    | 'left'
+    | 'right'
+    | 'center'
+    | 'fullWidth'
+    | 'topLeft'
+    | 'topRight'
+    | 'topCenter'
+    | 'topFullWidth'
+    | 'stickyTopLeft'
+    | 'stickyTopRight'
+    | 'stickyTopCenter'
+    | 'stickyTopFullWidth'
+    | 'stickyBottomLeft'
+    | 'stickyBottomRight'
+    | 'stickyBottomCenter'
+    | 'stickyBottomFullWidth'
+    | 'bottomLeft'
+    | 'bottomRight'
+    | 'bottomCenter'
+    | 'bottomFullWidth';
 
-    TOP_LEFT = 'topLeft',
-    TOP_RIGHT = 'topRight',
-    TOP_CENTER = 'topCenter',
-    TOP_FULL_WIDTH = 'topFullWidth',
+export type RowContainerType = 'left' | 'right' | 'center' | 'fullWidth';
 
-    STICKY_TOP_LEFT = 'stickyTopLeft',
-    STICKY_TOP_RIGHT = 'stickyTopRight',
-    STICKY_TOP_CENTER = 'stickyTopCenter',
-    STICKY_TOP_FULL_WIDTH = 'stickyTopFullWidth',
+type GetRowCtrls = (renderer: RowRenderer) => RowCtrl[];
+export type RowContainerOptions = {
+    type: RowContainerType;
+    container: string;
+    viewport?: string;
+    pinnedType?: ColumnPinnedType;
+    fullWidth?: boolean;
+    getRowCtrls: GetRowCtrls;
+};
+const getTopRowCtrls: GetRowCtrls = (r) => r.getTopRowCtrls();
+const getStickyTopRowCtrls: GetRowCtrls = (r) => r.getStickyTopRowCtrls();
+const getStickyBottomRowCtrls: GetRowCtrls = (r) => r.getStickyBottomRowCtrls();
+const getBottomRowCtrls: GetRowCtrls = (r) => r.getBottomRowCtrls();
+const getCentreRowCtrls: GetRowCtrls = (r) => r.getCentreRowCtrls();
 
-    BOTTOM_LEFT = 'bottomLeft',
-    BOTTOM_RIGHT = 'bottomRight',
-    BOTTOM_CENTER = 'bottomCenter',
-    BOTTOM_FULL_WIDTH = 'bottomFullWidth'
+const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
+    center: {
+        type: 'center',
+        container: 'ag-center-cols-container',
+        viewport: 'ag-center-cols-viewport',
+        getRowCtrls: getCentreRowCtrls,
+    },
+    left: {
+        type: 'left',
+        container: 'ag-pinned-left-cols-container',
+        pinnedType: 'left',
+        getRowCtrls: getCentreRowCtrls,
+    },
+    right: {
+        type: 'right',
+        container: 'ag-pinned-right-cols-container',
+        pinnedType: 'right',
+        getRowCtrls: getCentreRowCtrls,
+    },
+    fullWidth: {
+        type: 'fullWidth',
+        container: 'ag-full-width-container',
+        fullWidth: true,
+        getRowCtrls: getCentreRowCtrls,
+    },
+
+    topCenter: {
+        type: 'center',
+        container: 'ag-floating-top-container',
+        viewport: 'ag-floating-top-viewport',
+        getRowCtrls: getTopRowCtrls,
+    },
+    topLeft: {
+        type: 'left',
+        container: 'ag-pinned-left-floating-top',
+        pinnedType: 'left',
+        getRowCtrls: getTopRowCtrls,
+    },
+    topRight: {
+        type: 'right',
+        container: 'ag-pinned-right-floating-top',
+        pinnedType: 'right',
+        getRowCtrls: getTopRowCtrls,
+    },
+    topFullWidth: {
+        type: 'fullWidth',
+        container: 'ag-floating-top-full-width-container',
+        fullWidth: true,
+        getRowCtrls: getTopRowCtrls,
+    },
+
+    stickyTopCenter: {
+        type: 'center',
+        container: 'ag-sticky-top-container',
+        viewport: 'ag-sticky-top-viewport',
+        getRowCtrls: getStickyTopRowCtrls,
+    },
+    stickyTopLeft: {
+        type: 'left',
+        container: 'ag-pinned-left-sticky-top',
+        pinnedType: 'left',
+        getRowCtrls: getStickyTopRowCtrls,
+    },
+    stickyTopRight: {
+        type: 'right',
+        container: 'ag-pinned-right-sticky-top',
+        pinnedType: 'right',
+        getRowCtrls: getStickyTopRowCtrls,
+    },
+    stickyTopFullWidth: {
+        type: 'fullWidth',
+        container: 'ag-sticky-top-full-width-container',
+        fullWidth: true,
+        getRowCtrls: getStickyTopRowCtrls,
+    },
+
+    stickyBottomCenter: {
+        type: 'center',
+        container: 'ag-sticky-bottom-container',
+        viewport: 'ag-sticky-bottom-viewport',
+        getRowCtrls: getStickyBottomRowCtrls,
+    },
+    stickyBottomLeft: {
+        type: 'left',
+        container: 'ag-pinned-left-sticky-bottom',
+        pinnedType: 'left',
+        getRowCtrls: getStickyBottomRowCtrls,
+    },
+    stickyBottomRight: {
+        type: 'right',
+        container: 'ag-pinned-right-sticky-bottom',
+        pinnedType: 'right',
+        getRowCtrls: getStickyBottomRowCtrls,
+    },
+    stickyBottomFullWidth: {
+        type: 'fullWidth',
+        container: 'ag-sticky-bottom-full-width-container',
+        fullWidth: true,
+        getRowCtrls: getStickyBottomRowCtrls,
+    },
+
+    bottomCenter: {
+        type: 'center',
+        container: 'ag-floating-bottom-container',
+        viewport: 'ag-floating-bottom-viewport',
+        getRowCtrls: getBottomRowCtrls,
+    },
+    bottomLeft: {
+        type: 'left',
+        container: 'ag-pinned-left-floating-bottom',
+        pinnedType: 'left',
+        getRowCtrls: getBottomRowCtrls,
+    },
+    bottomRight: {
+        type: 'right',
+        container: 'ag-pinned-right-floating-bottom',
+        pinnedType: 'right',
+        getRowCtrls: getBottomRowCtrls,
+    },
+    bottomFullWidth: {
+        type: 'fullWidth',
+        container: 'ag-floating-bottom-full-width-container',
+        fullWidth: true,
+        getRowCtrls: getBottomRowCtrls,
+    },
+};
+export function _getRowContainerOptions(name: RowContainerName): RowContainerOptions {
+    return ContainerCssClasses[name];
 }
 
-export enum RowContainerType {
-    LEFT = 'left',
-    RIGHT = 'right',
-    CENTER = 'center',
-    FULL_WIDTH = 'fullWidth'
-}
+const allTopNoFW: RowContainerName[] = ['topCenter', 'topLeft', 'topRight'];
+const allBottomNoFW: RowContainerName[] = ['bottomCenter', 'bottomLeft', 'bottomRight'];
+const allMiddleNoFW: RowContainerName[] = ['center', 'left', 'right'];
 
-export function getRowContainerTypeForName(name: RowContainerName): RowContainerType {
-    switch (name) {
-        case RowContainerName.CENTER:
-        case RowContainerName.TOP_CENTER:
-        case RowContainerName.STICKY_TOP_CENTER:
-        case RowContainerName.BOTTOM_CENTER:
-            return RowContainerType.CENTER;
-        case RowContainerName.LEFT:
-        case RowContainerName.TOP_LEFT:
-        case RowContainerName.STICKY_TOP_LEFT:
-        case RowContainerName.BOTTOM_LEFT:
-            return RowContainerType.LEFT;
-        case RowContainerName.RIGHT:
-        case RowContainerName.TOP_RIGHT:
-        case RowContainerName.STICKY_TOP_RIGHT:
-        case RowContainerName.BOTTOM_RIGHT:
-            return RowContainerType.RIGHT;
-        case RowContainerName.FULL_WIDTH:
-        case RowContainerName.TOP_FULL_WIDTH:
-        case RowContainerName.STICKY_TOP_FULL_WIDTH:
-        case RowContainerName.BOTTOM_FULL_WIDTH:
-            return RowContainerType.FULL_WIDTH;
-        default :
-            throw Error('Invalid Row Container Type');
-    }
-}
+const allMiddle: RowContainerName[] = ['center', 'left', 'right', 'fullWidth'];
+const allCenter: RowContainerName[] = ['stickyTopCenter', 'stickyBottomCenter', 'center', 'topCenter', 'bottomCenter'];
+const allLeft: RowContainerName[] = ['left', 'bottomLeft', 'topLeft', 'stickyTopLeft', 'stickyBottomLeft'];
+const allRight: RowContainerName[] = ['right', 'bottomRight', 'topRight', 'stickyTopRight', 'stickyBottomRight'];
 
-const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
-    [RowContainerName.CENTER, 'ag-center-cols-container'],
-    [RowContainerName.LEFT, 'ag-pinned-left-cols-container'],
-    [RowContainerName.RIGHT, 'ag-pinned-right-cols-container'],
-    [RowContainerName.FULL_WIDTH, 'ag-full-width-container'],
-
-    [RowContainerName.TOP_CENTER, 'ag-floating-top-container'],
-    [RowContainerName.TOP_LEFT, 'ag-pinned-left-floating-top'],
-    [RowContainerName.TOP_RIGHT, 'ag-pinned-right-floating-top'],
-    [RowContainerName.TOP_FULL_WIDTH, 'ag-floating-top-full-width-container'],
-
-    [RowContainerName.STICKY_TOP_CENTER, 'ag-sticky-top-container'],
-    [RowContainerName.STICKY_TOP_LEFT, 'ag-pinned-left-sticky-top'],
-    [RowContainerName.STICKY_TOP_RIGHT, 'ag-pinned-right-sticky-top'],
-    [RowContainerName.STICKY_TOP_FULL_WIDTH, 'ag-sticky-top-full-width-container'],
-
-    [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-container'],
-    [RowContainerName.BOTTOM_LEFT, 'ag-pinned-left-floating-bottom'],
-    [RowContainerName.BOTTOM_RIGHT, 'ag-pinned-right-floating-bottom'],
-    [RowContainerName.BOTTOM_FULL_WIDTH, 'ag-floating-bottom-full-width-container'],
-]);
-
-const ViewportCssClasses: Map<RowContainerName, string> = convertToMap([
-    [RowContainerName.CENTER, 'ag-center-cols-viewport'],
-    [RowContainerName.TOP_CENTER, 'ag-floating-top-viewport'],
-    [RowContainerName.STICKY_TOP_CENTER, 'ag-sticky-top-viewport'],
-    [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
-]);
+// sticky section must show rows in set order
+const allStickyTopNoFW: RowContainerName[] = ['stickyTopCenter', 'stickyTopLeft', 'stickyTopRight'];
+const allStickyBottomNoFW: RowContainerName[] = ['stickyBottomCenter', 'stickyBottomLeft', 'stickyBottomRight'];
+const allStickyContainers: RowContainerName[] = [
+    ...allStickyTopNoFW,
+    'stickyTopFullWidth',
+    ...allStickyBottomNoFW,
+    'stickyBottomFullWidth',
+];
+const allNoFW: RowContainerName[] = [
+    ...allTopNoFW,
+    ...allBottomNoFW,
+    ...allMiddleNoFW,
+    ...allStickyTopNoFW,
+    ...allStickyBottomNoFW,
+];
 
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
-    setRowCtrls(params: { rowCtrls: RowCtrl[], useFlushSync?: boolean }): void;
+    setRowCtrls(params: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }): void;
     setDomOrder(domOrder: boolean): void;
     setContainerWidth(width: string): void;
+    setOffsetTop(offset: string): void;
 }
 
 export class RowContainerCtrl extends BeanStub {
+    private dragService: DragService;
+    private ctrlsService: CtrlsService;
+    private columnViewportService: ColumnViewportService;
+    private resizeObserverService: ResizeObserverService;
+    private rowRenderer: RowRenderer;
 
-    public static getRowContainerCssClasses(name: RowContainerName): { container?: string, viewport?: string } {
-        const containerClass = ContainerCssClasses.get(name);
-        const viewportClass = ViewportCssClasses.get(name);
-        return { container: containerClass, viewport: viewportClass };
+    public wireBeans(beans: BeanCollection) {
+        this.dragService = beans.dragService;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnViewportService = beans.columnViewportService;
+        this.resizeObserverService = beans.resizeObserverService;
+        this.rowRenderer = beans.rowRenderer;
     }
 
-    public static getPinned(name: RowContainerName): ColumnPinnedType {
-        switch (name) {
-            case RowContainerName.BOTTOM_LEFT:
-            case RowContainerName.TOP_LEFT:
-            case RowContainerName.STICKY_TOP_LEFT:
-            case RowContainerName.LEFT:
-                return 'left';
-            case RowContainerName.BOTTOM_RIGHT:
-            case RowContainerName.TOP_RIGHT:
-            case RowContainerName.STICKY_TOP_RIGHT:
-            case RowContainerName.RIGHT:
-                return 'right';
-            default:
-                return null;
-        }
-    }
-
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-
+    private readonly options: RowContainerOptions;
     private readonly name: RowContainerName;
-    private readonly isFullWithContainer: boolean;
 
     private comp: IRowContainerComp;
     private eContainer: HTMLElement;
@@ -159,39 +252,31 @@ export class RowContainerCtrl extends BeanStub {
     constructor(name: RowContainerName) {
         super();
         this.name = name;
-        this.isFullWithContainer =
-            this.name === RowContainerName.TOP_FULL_WIDTH
-            || this.name === RowContainerName.STICKY_TOP_FULL_WIDTH
-            || this.name === RowContainerName.BOTTOM_FULL_WIDTH
-            || this.name === RowContainerName.FULL_WIDTH;
+        this.options = _getRowContainerOptions(name);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.enableRtl = this.gridOptionsService.get('enableRtl');
+    public postConstruct(): void {
+        this.enableRtl = this.gos.get('enableRtl');
 
-        this.forContainers([RowContainerName.CENTER],
-            () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
+        this.forContainers(['center'], () => {
+            this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this));
+            this.addManagedEventListeners({
+                stickyTopOffsetChanged: this.onStickyTopOffsetChanged.bind(this),
+            });
+        });
+    }
+
+    private onStickyTopOffsetChanged(event: StickyTopOffsetChangedEvent): void {
+        this.comp.setOffsetTop(`${event.offset}px`);
     }
 
     private registerWithCtrlsService(): void {
-        switch (this.name) {
-            case RowContainerName.CENTER: this.ctrlsService.registerCenterRowContainerCtrl(this); break;
-            case RowContainerName.LEFT: this.ctrlsService.registerLeftRowContainerCtrl(this); break;
-            case RowContainerName.RIGHT: this.ctrlsService.registerRightRowContainerCtrl(this); break;
-            case RowContainerName.TOP_CENTER: this.ctrlsService.registerTopCenterRowContainerCtrl(this); break;
-            case RowContainerName.TOP_LEFT: this.ctrlsService.registerTopLeftRowContainerCon(this); break;
-            case RowContainerName.TOP_RIGHT: this.ctrlsService.registerTopRightRowContainerCtrl(this); break;
-            case RowContainerName.STICKY_TOP_CENTER: this.ctrlsService.registerStickyTopCenterRowContainerCtrl(this); break;
-            case RowContainerName.STICKY_TOP_LEFT: this.ctrlsService.registerStickyTopLeftRowContainerCon(this); break;
-            case RowContainerName.STICKY_TOP_RIGHT: this.ctrlsService.registerStickyTopRightRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_CENTER: this.ctrlsService.registerBottomCenterRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_LEFT: this.ctrlsService.registerBottomLeftRowContainerCtrl(this); break;
-            case RowContainerName.BOTTOM_RIGHT: this.ctrlsService.registerBottomRightRowContainerCtrl(this); break;
-        }
+        // we don't register full width containers
+        if (this.options.fullWidth) return;
+        this.ctrlsService.register(this.name as any, this);
     }
 
-    private forContainers(names: RowContainerName[], callback: (() => void)): void {
+    private forContainers(names: RowContainerName[], callback: () => void): void {
         if (names.indexOf(this.name) >= 0) {
             callback();
         }
@@ -215,41 +300,35 @@ export class RowContainerCtrl extends BeanStub {
         this.listenOnDomOrder();
         this.stopHScrollOnPinnedRows();
 
-        const allTopNoFW = [RowContainerName.TOP_CENTER, RowContainerName.TOP_LEFT, RowContainerName.TOP_RIGHT];
-        const allStickyTopNoFW = [RowContainerName.STICKY_TOP_CENTER, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_TOP_RIGHT];
-        const allBottomNoFW = [RowContainerName.BOTTOM_CENTER, RowContainerName.BOTTOM_LEFT, RowContainerName.BOTTOM_RIGHT];
-        const allMiddleNoFW = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT];
-        const allNoFW = [...allTopNoFW, ...allBottomNoFW, ...allMiddleNoFW, ...allStickyTopNoFW];
-
-        const allMiddle = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT, RowContainerName.FULL_WIDTH];
-
-        const allCenter = [RowContainerName.CENTER, RowContainerName.TOP_CENTER, RowContainerName.STICKY_TOP_CENTER, RowContainerName.BOTTOM_CENTER];
-        const allLeft = [RowContainerName.LEFT, RowContainerName.BOTTOM_LEFT, RowContainerName.TOP_LEFT, RowContainerName.STICKY_TOP_LEFT];
-        const allRight = [RowContainerName.RIGHT, RowContainerName.BOTTOM_RIGHT, RowContainerName.TOP_RIGHT, RowContainerName.STICKY_TOP_RIGHT];
-
         this.forContainers(allLeft, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer));
-            this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
+            this.addManagedEventListeners({ leftPinnedWidthChanged: () => this.onPinnedWidthChanged() });
         });
         this.forContainers(allRight, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer));
-            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
+            this.addManagedEventListeners({ rightPinnedWidthChanged: () => this.onPinnedWidthChanged() });
         });
-        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.name === RowContainerName.CENTER ? eViewport : undefined)));
+        this.forContainers(allMiddle, () =>
+            this.createManagedBean(
+                new SetHeightFeature(this.eContainer, this.name === 'center' ? eViewport : undefined)
+            )
+        );
         this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
 
-        this.forContainers(allCenter, () => this.createManagedBean(
-            new CenterWidthFeature(width => this.comp.setContainerWidth(`${width}px`))
-        ));
+        this.forContainers(allCenter, () =>
+            this.createManagedBean(new CenterWidthFeature((width) => this.comp.setContainerWidth(`${width}px`)))
+        );
 
         this.addListeners();
         this.registerWithCtrlsService();
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll));
+        this.addManagedEventListeners({
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
+            displayedRowsChanged: (params) => this.onDisplayedRowsChanged(params.afterScroll),
+        });
 
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();
@@ -257,8 +336,6 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private listenOnDomOrder(): void {
-        // sticky section must show rows in set order
-        const allStickyContainers = [RowContainerName.STICKY_TOP_CENTER, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_TOP_RIGHT, RowContainerName.STICKY_TOP_FULL_WIDTH];
         const isStickContainer = allStickyContainers.indexOf(this.name) >= 0;
         if (isStickContainer) {
             this.comp.setDomOrder(true);
@@ -266,8 +343,8 @@ export class RowContainerCtrl extends BeanStub {
         }
 
         const listener = () => {
-            const isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
-            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
+            const isEnsureDomOrder = this.gos.get('ensureDomOrder');
+            const isPrintLayout = this.gos.isDomLayout('print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         };
 
@@ -279,25 +356,27 @@ export class RowContainerCtrl extends BeanStub {
     // scroll the column into view. we do not want this, the pinned sections should never scroll.
     // so we listen to scrolls on these containers and reset the scroll if we find one.
     private stopHScrollOnPinnedRows(): void {
-        this.forContainers([RowContainerName.TOP_CENTER, RowContainerName.STICKY_TOP_CENTER, RowContainerName.BOTTOM_CENTER], () => {
-            const resetScrollLeft = () => this.eViewport.scrollLeft = 0;
-            this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
+        this.forContainers(['topCenter', 'stickyTopCenter', 'bottomCenter', 'stickyBottomCenter'], () => {
+            const resetScrollLeft = () => (this.eViewport.scrollLeft = 0);
+            this.addManagedElementListeners(this.eViewport, { scroll: resetScrollLeft });
         });
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged());
+        this.forContainers(['center'], () => this.onHorizontalViewportChanged());
     }
 
     private onDisplayedColumnsWidthChanged(): void {
-        this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged());
+        this.forContainers(['center'], () => this.onHorizontalViewportChanged());
     }
     // this methods prevents the grid views from being scrolled while the dragService is being used
     // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
     private addPreventScrollWhileDragging(): void {
         const preventScroll = (e: TouchEvent) => {
             if (this.dragService.isDragging()) {
-                if (e.cancelable) { e.preventDefault(); }
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
             }
         };
 
@@ -312,34 +391,34 @@ export class RowContainerCtrl extends BeanStub {
         const scrollWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();
 
-        this.columnModel.setViewportPosition(scrollWidth, scrollPosition, afterScroll);
+        this.columnViewportService.setScrollPosition(scrollWidth, scrollPosition, afterScroll);
     }
 
     public getCenterWidth(): number {
-        return getInnerWidth(this.eViewport);
+        return _getInnerWidth(this.eViewport);
     }
 
     public getCenterViewportScrollLeft(): number {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        return getScrollLeft(this.eViewport, this.enableRtl);
+        return _getScrollLeft(this.eViewport, this.enableRtl);
     }
 
-    public registerViewportResizeListener(listener: (() => void)) {
+    public registerViewportResizeListener(listener: () => void) {
         const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eViewport, listener);
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
     public isViewportInTheDOMTree(): boolean {
-        return isInDOM(this.eViewport);
+        return _isInDOM(this.eViewport);
     }
 
     public getViewportScrollLeft(): number {
-        return getScrollLeft(this.eViewport, this.enableRtl);
+        return _getScrollLeft(this.eViewport, this.enableRtl);
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsService.get('alwaysShowHorizontalScroll');
-        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
+        const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
+        return isAlwaysShowHorizontalScroll || _isHorizontalScrollShowing(this.eViewport);
     }
 
     public getViewportElement(): HTMLElement {
@@ -350,21 +429,21 @@ export class RowContainerCtrl extends BeanStub {
         this.eContainer.style.transform = `translateX(${amount}px)`;
     }
 
-    public getHScrollPosition(): { left: number, right: number; } {
+    public getHScrollPosition(): { left: number; right: number } {
         const res = {
             left: this.eViewport.scrollLeft,
-            right: this.eViewport.scrollLeft + this.eViewport.offsetWidth
+            right: this.eViewport.scrollLeft + this.eViewport.offsetWidth,
         };
         return res;
     }
 
     public setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        setScrollLeft(this.eViewport, value, this.enableRtl);
+        _setScrollLeft(this.eViewport, value, this.enableRtl);
     }
 
     private isContainerVisible(): boolean {
-        const pinned = RowContainerCtrl.getPinned(this.name);
+        const pinned = this.options.pinnedType != null;
         return !pinned || (!!this.pinnedWidthFeature && this.pinnedWidthFeature.getWidth() > 0);
     }
 
@@ -377,55 +456,29 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {
-        if (!this.visible) {
+        const rows = this.options.getRowCtrls(this.rowRenderer);
+        if (!this.visible || rows.length === 0) {
             this.comp.setRowCtrls({ rowCtrls: this.EMPTY_CTRLS });
             return;
         }
 
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-        const embedFullWidthRows = this.gridOptionsService.get('embedFullWidthRows');
+        const printLayout = this.gos.isDomLayout('print');
+        const embedFullWidthRows = this.gos.get('embedFullWidthRows');
         const embedFW = embedFullWidthRows || printLayout;
-        
+
         // this list contains either all pinned top, center or pinned bottom rows
         // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
-        const rowsThisContainer = this.getRowCtrls().filter(rowCtrl => {
+        const rowsThisContainer = rows.filter((rowCtrl) => {
             // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
             // row renderer, so should not block them as they still need to animate -  the row renderer
             // will clean these up when they finish animating
             const fullWidthRow = rowCtrl.isFullWidth();
 
-            const match = this.isFullWithContainer ?
-                !embedFW && fullWidthRow
-                : embedFW || !fullWidthRow;
+            const match = this.options.fullWidth ? !embedFW && fullWidthRow : embedFW || !fullWidthRow;
 
             return match;
         });
 
         this.comp.setRowCtrls({ rowCtrls: rowsThisContainer, useFlushSync: afterScroll });
-    }
-
-    private getRowCtrls(): RowCtrl[] {
-        switch (this.name) {
-            case RowContainerName.TOP_CENTER:
-            case RowContainerName.TOP_LEFT:
-            case RowContainerName.TOP_RIGHT:
-            case RowContainerName.TOP_FULL_WIDTH:
-                return this.rowRenderer.getTopRowCtrls();
-
-            case RowContainerName.STICKY_TOP_CENTER:
-            case RowContainerName.STICKY_TOP_LEFT:
-            case RowContainerName.STICKY_TOP_RIGHT:
-            case RowContainerName.STICKY_TOP_FULL_WIDTH:
-                return this.rowRenderer.getStickyTopRowCtrls();
-
-            case RowContainerName.BOTTOM_CENTER:
-            case RowContainerName.BOTTOM_LEFT:
-            case RowContainerName.BOTTOM_RIGHT:
-            case RowContainerName.BOTTOM_FULL_WIDTH:
-                return this.rowRenderer.getBottomRowCtrls();
-
-            default:
-                return this.rowRenderer.getCentreRowCtrls();
-        }
     }
 }

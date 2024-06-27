@@ -1,15 +1,16 @@
 'use strict';
 
-import React, { useCallback, useMemo, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { IOlympicData } from './interfaces';
 import NumberFloatingFilterComponent from './numberFloatingFilterComponent';
-import { IOlympicData } from './interfaces'
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -66,12 +67,12 @@ const GridExample = () => {
             minWidth: 100,
             filter: true,
             floatingFilter: true,
-        }
+        };
     }, []);
 
     const onGridReady = useCallback((params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
+            .then((resp) => resp.json())
             .then((data: IOlympicData[]) => {
                 setRowData(data);
             });
@@ -79,18 +80,27 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact<IOlympicData>
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    reactiveCustomComponents
                     onGridReady={onGridReady}
                 />
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

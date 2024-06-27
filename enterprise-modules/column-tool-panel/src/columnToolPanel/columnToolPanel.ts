@@ -1,41 +1,40 @@
-import {
-    _,
+import type {
     ColDef,
     ColGroupDef,
-    Component,
-    Events,
+    ColumnToolPanelState,
     IColumnToolPanel,
+    IToolPanelColumnCompParams,
     IToolPanelComp,
-    ToolPanelColumnCompParams,
-    ModuleNames,
-    ModuleRegistry,
-    ColumnToolPanelState
-} from "@ag-grid-community/core";
-import { PivotModePanel } from "./pivotModePanel";
-import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
-import { PrimaryColsPanel } from "./primaryColsPanel";
+    IToolPanelParams,
+} from '@ag-grid-community/core';
+import { Component, ModuleNames, ModuleRegistry, _clearElement, _last } from '@ag-grid-community/core';
+import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from '@ag-grid-enterprise/row-grouping';
+
+import { AgPrimaryCols } from './agPrimaryCols';
+import { PivotModePanel } from './pivotModePanel';
+
+export interface ToolPanelColumnCompParams<TData = any, TContext = any>
+    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
+        IToolPanelColumnCompParams {}
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
-
-    private static TEMPLATE = `<div class="ag-column-panel"></div>`;
-
     private initialised = false;
     private params: ToolPanelColumnCompParams;
 
     private childDestroyFuncs: (() => void)[] = [];
 
     private pivotModePanel: PivotModePanel;
-    private primaryColsPanel: PrimaryColsPanel;
+    private primaryColsPanel: AgPrimaryCols;
     private rowGroupDropZonePanel: RowGroupDropZonePanel;
     private valuesDropZonePanel: ValuesDropZonePanel;
     private pivotDropZonePanel: PivotDropZonePanel;
 
     constructor() {
-        super(ColumnToolPanel.TEMPLATE);
+        super(/* html */ `<div class="ag-column-panel"></div>`);
     }
 
     // lazy initialise the panel
-    public setVisible(visible: boolean): void {
+    public override setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
             this.init(this.params);
@@ -43,7 +42,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gridOptionsService.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gos.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -68,10 +67,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         // DO NOT CHANGE TO createManagedBean
-        this.primaryColsPanel = this.createBean(new PrimaryColsPanel());
+        this.primaryColsPanel = this.createBean(new AgPrimaryCols());
         this.childDestroyFuncs.push(() => this.destroyBean(this.primaryColsPanel));
 
-        this.primaryColsPanel.init(true, this.params, "toolPanelUi");
+        this.primaryColsPanel.init(true, this.params, 'toolPanelUi');
         this.primaryColsPanel.addCssClass('ag-column-panel-column-select');
         this.appendChild(this.primaryColsPanel);
 
@@ -98,9 +97,11 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             }
 
             this.setLastVisible();
-            const pivotModeListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => {
-                this.resetChildrenHeight();
-                this.setLastVisible();
+            const [pivotModeListener] = this.addManagedEventListeners({
+                columnPivotModeChanged: () => {
+                    this.resetChildrenHeight();
+                    this.setLastVisible();
+                },
             });
             this.childDestroyFuncs.push(() => pivotModeListener!());
         }
@@ -109,7 +110,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public setPivotModeSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) { return; }
+        if (!this.isRowGroupingModuleLoaded()) {
+            return;
+        }
 
         if (this.pivotModePanel) {
             this.pivotModePanel.setDisplayed(visible);
@@ -124,7 +127,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public setRowGroupsSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) { return; }
+        if (!this.isRowGroupingModuleLoaded()) {
+            return;
+        }
 
         if (this.rowGroupDropZonePanel) {
             this.rowGroupDropZonePanel.setDisplayed(visible);
@@ -136,7 +141,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public setValuesSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) { return; }
+        if (!this.isRowGroupingModuleLoaded()) {
+            return;
+        }
 
         if (this.valuesDropZonePanel) {
             this.valuesDropZonePanel.setDisplayed(visible);
@@ -148,7 +155,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public setPivotSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) { return; }
+        if (!this.isRowGroupingModuleLoaded()) {
+            return;
+        }
 
         if (this.pivotDropZonePanel) {
             this.pivotDropZonePanel.setDisplayed(visible);
@@ -161,16 +170,17 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private setResizers(): void {
-        [
-            this.primaryColsPanel,
-            this.rowGroupDropZonePanel,
-            this.valuesDropZonePanel,
-            this.pivotDropZonePanel
-        ].forEach(panel => {
-            if (!panel) { return; }
-            const eGui = panel.getGui();
-            panel.toggleResizable(!eGui.classList.contains('ag-last-column-drop') && !eGui.classList.contains('ag-hidden'));
-        });
+        [this.primaryColsPanel, this.rowGroupDropZonePanel, this.valuesDropZonePanel, this.pivotDropZonePanel].forEach(
+            (panel) => {
+                if (!panel) {
+                    return;
+                }
+                const eGui = panel.getGui();
+                panel.toggleResizable(
+                    !eGui.classList.contains('ag-last-column-drop') && !eGui.classList.contains('ag-hidden')
+                );
+            }
+        );
     }
 
     private setLastVisible(): void {
@@ -178,10 +188,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         const columnDrops: HTMLElement[] = Array.prototype.slice.call(eGui.querySelectorAll('.ag-column-drop'));
 
-        columnDrops.forEach(columnDrop => columnDrop.classList.remove('ag-last-column-drop'));
+        columnDrops.forEach((columnDrop) => columnDrop.classList.remove('ag-last-column-drop'));
 
         const columnDropEls = eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)');
-        const lastVisible = _.last(columnDropEls) as HTMLElement;
+        const lastVisible = _last(columnDropEls) as HTMLElement;
 
         if (lastVisible) {
             lastVisible.classList.add('ag-last-column-drop');
@@ -202,7 +212,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private isRowGroupingModuleLoaded(): boolean {
-        return ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
+        return ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping', this.gridId);
     }
 
     public expandColumnGroups(groupIds?: string[]): void {
@@ -222,9 +232,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public destroyChildren(): void {
-        this.childDestroyFuncs.forEach(func => func());
+        this.childDestroyFuncs.forEach((func) => func());
         this.childDestroyFuncs.length = 0;
-        _.clearElement(this.getGui());
+        _clearElement(this.getGui());
     }
 
     public refresh(params: ToolPanelColumnCompParams): boolean {
@@ -235,13 +245,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public getState(): ColumnToolPanelState {
         return {
-            expandedGroupIds: this.primaryColsPanel.getExpandedGroups()
+            expandedGroupIds: this.primaryColsPanel.getExpandedGroups(),
         };
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so this must be public.
-    public destroy(): void {
+    public override destroy(): void {
         this.destroyChildren();
         super.destroy();
     }

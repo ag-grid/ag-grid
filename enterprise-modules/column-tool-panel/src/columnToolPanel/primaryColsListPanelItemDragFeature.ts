@@ -1,70 +1,74 @@
-import {
-    Autowired,
-    BeanStub,
-    Column,
+import type {
+    AgColumn,
+    AgProvidedColumnGroup,
+    BeanCollection,
     ColumnModel,
+    ColumnMoveService,
     ColumnPanelItemDragStartEvent,
-    DragSourceType,
-    Events,
-    GridOptionsService,
-    ProvidedColumnGroup,
-    PostConstruct,
-    VirtualList,
-    VirtualListDragFeature,
-    _,
-    VirtualListDragItem
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
+import { BeanStub, DragSourceType, isProvidedColumnGroup } from '@ag-grid-community/core';
+import { VirtualListDragFeature } from '@ag-grid-enterprise/core';
+import type { VirtualList, VirtualListDragItem } from '@ag-grid-enterprise/core';
 
-import { PrimaryColsListPanel } from "./primaryColsListPanel";
-import { ToolPanelColumnComp } from "./toolPanelColumnComp";
-import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
+import type { AgPrimaryColsList } from './agPrimaryColsList';
+import type { ToolPanelColumnComp } from './toolPanelColumnComp';
+import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
+
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
+    private columnModel: ColumnModel;
+    private columnMoveService: ColumnMoveService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.columnMoveService = beans.columnMoveService;
+    }
 
     constructor(
-        private readonly comp: PrimaryColsListPanel,
-        private readonly virtualList: VirtualList,
-    ) { super(); }
+        private readonly comp: AgPrimaryColsList,
+        private readonly virtualList: VirtualList
+    ) {
+        super();
+    }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.createManagedBean(new VirtualListDragFeature<
-            PrimaryColsListPanel,
-            ToolPanelColumnGroupComp | ToolPanelColumnComp,
-            Column | ProvidedColumnGroup,
-            ColumnPanelItemDragStartEvent
-        >(
-            this.comp,
-            this.virtualList,
-            {
+    public postConstruct(): void {
+        this.createManagedBean(
+            new VirtualListDragFeature<
+                AgPrimaryColsList,
+                ToolPanelColumnGroupComp | ToolPanelColumnComp,
+                AgColumn | AgProvidedColumnGroup,
+                ColumnPanelItemDragStartEvent
+            >(this.comp, this.virtualList, {
                 dragSourceType: DragSourceType.ToolPanel,
-                listItemDragStartEvent: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
-                listItemDragEndEvent: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
+                listItemDragStartEvent: 'columnPanelItemDragStart',
+                listItemDragEndEvent: 'columnPanelItemDragEnd',
                 eventSource: this.eventService,
-                getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) => this.getCurrentDragValue(listItemDragStartEvent),
-                isMoveBlocked: (currentDragValue: Column | ProvidedColumnGroup | null) => this.isMoveBlocked(currentDragValue),
-                getNumRows: (comp: PrimaryColsListPanel) => comp.getDisplayedColsList().length,
+                getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) =>
+                    this.getCurrentDragValue(listItemDragStartEvent),
+                isMoveBlocked: (currentDragValue: AgColumn | AgProvidedColumnGroup | null) =>
+                    this.isMoveBlocked(currentDragValue),
+                getNumRows: (comp: AgPrimaryColsList) => comp.getDisplayedColsList().length,
                 moveItem: (
-                    currentDragValue: Column | ProvidedColumnGroup | null,
+                    currentDragValue: AgColumn | AgProvidedColumnGroup | null,
                     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
-                ) => this.moveItem(currentDragValue, lastHoveredListItem)
-            }
-        ));
+                ) => this.moveItem(currentDragValue, lastHoveredListItem),
+            })
+        );
     }
 
-    private getCurrentDragValue(listItemDragStartEvent: ColumnPanelItemDragStartEvent): Column | ProvidedColumnGroup {
-        return listItemDragStartEvent.column;
+    private getCurrentDragValue(
+        listItemDragStartEvent: ColumnPanelItemDragStartEvent
+    ): AgColumn | AgProvidedColumnGroup {
+        return listItemDragStartEvent.column as AgColumn | AgProvidedColumnGroup;
     }
 
-    private isMoveBlocked(currentDragValue: Column | ProvidedColumnGroup | null): boolean {
-        const preventMoving = this.gridOptionsService.get('suppressMovableColumns');
+    private isMoveBlocked(currentDragValue: AgColumn | AgProvidedColumnGroup | null): boolean {
+        const preventMoving = this.gos.get('suppressMovableColumns');
         if (preventMoving) {
             return true;
         }
 
         const currentColumns = this.getCurrentColumns(currentDragValue);
-        const hasNotMovable = currentColumns.find(col => {
+        const hasNotMovable = currentColumns.find((col) => {
             const colDef = col.getColDef();
             return !!colDef.suppressMovable || !!colDef.lockPosition;
         });
@@ -73,25 +77,25 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private moveItem(
-        currentDragValue: Column | ProvidedColumnGroup | null,
+        currentDragValue: AgColumn | AgProvidedColumnGroup | null,
         lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
     ): void {
         const targetIndex: number | null = this.getTargetIndex(currentDragValue, lastHoveredListItem);
 
-        const columnsToMove: Column[] = this.getCurrentColumns(currentDragValue);
+        const columnsToMove: AgColumn[] = this.getCurrentColumns(currentDragValue);
 
         if (targetIndex != null) {
-            this.columnModel.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
+            this.columnMoveService.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
         }
     }
 
-    private getMoveDiff(currentDragValue: Column | ProvidedColumnGroup | null, end: number): number {
-        const allColumns = this.columnModel.getAllGridColumns();
+    private getMoveDiff(currentDragValue: AgColumn | AgProvidedColumnGroup | null, end: number): number {
+        const allColumns = this.columnModel.getCols();
         const currentColumns = this.getCurrentColumns(currentDragValue);
         const currentColumn = currentColumns[0];
         const span = currentColumns.length;
 
-        const currentIndex = allColumns.indexOf(currentColumn);
+        const currentIndex = allColumns.indexOf(currentColumn as AgColumn);
 
         if (currentIndex < end) {
             return span;
@@ -100,22 +104,24 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         return 0;
     }
 
-    private getCurrentColumns(currentDragValue: Column | ProvidedColumnGroup | null): Column[] {
-        if (currentDragValue instanceof ProvidedColumnGroup) {
+    private getCurrentColumns(currentDragValue: AgColumn | AgProvidedColumnGroup | null): AgColumn[] {
+        if (isProvidedColumnGroup(currentDragValue)) {
             return currentDragValue.getLeafColumns();
         }
         return [currentDragValue!];
     }
 
     private getTargetIndex(
-        currentDragValue: Column | ProvidedColumnGroup | null,
+        currentDragValue: AgColumn | AgProvidedColumnGroup | null,
         lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
     ): number | null {
-        if (!lastHoveredListItem) { return null; }
+        if (!lastHoveredListItem) {
+            return null;
+        }
         const columnItemComponent = lastHoveredListItem.component;
         let isBefore = lastHoveredListItem.position === 'top';
 
-        let targetColumn: Column;
+        let targetColumn: AgColumn;
 
         if (columnItemComponent instanceof ToolPanelColumnGroupComp) {
             const columns = columnItemComponent.getColumns();
@@ -131,7 +137,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             return null;
         }
 
-        const targetColumnIndex = this.columnModel.getAllGridColumns().indexOf(targetColumn);
+        const targetColumnIndex = this.columnModel.getCols().indexOf(targetColumn as AgColumn);
         const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
         const diff = this.getMoveDiff(currentDragValue, adjustedTarget);
 

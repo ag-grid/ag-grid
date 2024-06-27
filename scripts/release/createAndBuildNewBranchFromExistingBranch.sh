@@ -34,7 +34,7 @@ fi
 
 echo "########################################################################"
 echo "####### Updating  package.json version.ts files                #########"
-node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "grid-community-modules", "grid-enterprise-modules"]' $PEER_CHARTS_VERSION
+node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION $PEER_CHARTS_VERSION
 
 echo "########################################################################"
 echo "################# Installing Dependencies & Building #########################"
@@ -43,6 +43,7 @@ npm run bootstrap
 
 echo "########################################################################"
 echo "###################### Build               #############################"
+nx run-many -t build --projects=tag:package -c production
 
 echo "########################################################################"
 echo "##################### Updating .gitignore #############################"

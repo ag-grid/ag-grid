@@ -1,0 +1,20 @@
+.tp-gold::after {
+    content: '\1F947';
+    font-size: 1em;
+    top: 50%;
+    left: 100%;
+}
+
+.tp-silver::after {
+    content: '\1F948';
+    font-size: 1em;
+    top: 50%;
+    left: 100%;
+}
+
+.tp-bronze::after {
+    content: '\1F949';
+    font-size: 1em;
+    top: 50%;
+    left: 100%;
+}

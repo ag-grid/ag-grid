@@ -1,8 +1,9 @@
-import { Column } from "../entities/column";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { RowPosition } from "../entities/rowPositionUtils";
-import { CellCtrl } from "../rendering/cell/cellCtrl";
-import { RowPinnedType } from "../interfaces/iRowNode";
+import type { Bean } from '../context/bean';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { RowPosition } from '../entities/rowPositionUtils';
+import type { Column } from '../interfaces/iColumn';
+import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
 
 export interface IRangeService {
     isEmpty(): boolean;
@@ -25,14 +26,18 @@ export interface IRangeService {
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
-    getRangeStartRow(cellRange: CellRange): RowPosition;
-    getRangeEndRow(cellRange: CellRange): RowPosition;
+    getRangeStartRow(cellRange: PartialCellRange): RowPosition;
+    getRangeEndRow(cellRange: PartialCellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
+    createPartialCellRangeFromRangeParams(
+        params: CellRangeParams,
+        allowEmptyColumns: boolean
+    ): PartialCellRange | undefined;
     setCellRanges(cellRanges: CellRange[]): void;
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
 }
 
-export interface ISelectionHandle {
+export interface ISelectionHandle extends Bean {
     getGui(): HTMLElement;
     getType(): SelectionHandleType;
     refresh(cellCtrl: CellCtrl): void;
@@ -42,9 +47,15 @@ export interface ISelectionHandleFactory {
     createSelectionHandle(type: SelectionHandleType): ISelectionHandle;
 }
 
-export enum SelectionHandleType { FILL, RANGE }
+export enum SelectionHandleType {
+    FILL,
+    RANGE,
+}
 
-export enum CellRangeType { VALUE, DIMENSION }
+export enum CellRangeType {
+    VALUE,
+    DIMENSION,
+}
 
 export interface CellRange {
     id?: string;
@@ -58,6 +69,8 @@ export interface CellRange {
     /** The start column for the range */
     startColumn: Column;
 }
+
+export type PartialCellRange = Omit<CellRange, 'startColumn'> & Partial<Pick<CellRange, 'startColumn'>>;
 
 export interface CellRangeParams {
     /** Start row index */
@@ -78,11 +91,11 @@ export interface CellRangeParams {
 }
 
 export interface ClearCellRangeParams {
-    cellRanges?: CellRange[],
+    cellRanges?: CellRange[];
     /** Source passed to `cellValueChanged` event */
-    cellEventSource?: string,
+    cellEventSource?: string;
     /** `true` to dispatch `rangeDeleteStart` and `rangeDeleteEnd` events */
-    dispatchWrapperEvents?: boolean,
+    dispatchWrapperEvents?: boolean;
     /** Source passed to `rangeDeleteStart` and `rangeDeleteEnd` events */
-    wrapperEventSource?: 'deleteKey'
+    wrapperEventSource?: 'deleteKey';
 }

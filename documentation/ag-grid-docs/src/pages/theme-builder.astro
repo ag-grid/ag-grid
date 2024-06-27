@@ -1,0 +1,25 @@
+---
+import { ThemeBuilder } from '@components/theme-builder/ThemeBuilder';
+import { getCollection } from 'astro:content';
+import { getDocsPages } from '../features/docs/utils/pageData';
+import Layout from '../layouts/Layout.astro';
+import { EmptyState } from '@components/theme-builder/EmptyState';
+
+export async function getStaticPaths() {
+    const pages = await getCollection('docs');
+    return getDocsPages(pages);
+}
+---
+
+<Layout
+    title="AG Grid Theme Builder"
+    description={'Easily build and customise themes for AG Grid with our interactive tool. Use our templates or create your own style from scratch. Export styles to AG Grid compatible themes.'}
+    showDocsNav={true}
+    showSearchBar={true}
+    hideFooter
+>
+    <div class:list={['contentViewport layout-grid']}>
+        <ThemeBuilder client:only="react" />
+        <EmptyState />
+    </div>
+</Layout>

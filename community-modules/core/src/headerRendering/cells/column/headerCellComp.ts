@@ -1,24 +1,17 @@
-import { UserCompDetails } from "../../../components/framework/userComponentFactory";
-import { PostConstruct, PreDestroy } from "../../../context/context";
-import { Column, ColumnPinnedType } from "../../../entities/column";
-import { removeAriaSort, setAriaSort } from "../../../utils/aria";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
-import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
-import { IHeaderComp } from "./headerComp";
+import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import type { AgColumn } from '../../../entities/agColumn';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
+import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
+import { RefPlaceholder } from '../../../widgets/component';
+import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
+import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
+import type { IHeaderComp } from './headerComp';
 
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
+    private readonly eResize: HTMLElement = RefPlaceholder;
+    private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;
 
-    private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="columnheader">
-            <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
-            <div ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
-        </div>`;
-
-    @RefSelector('eResize') private eResize: HTMLElement;
-    @RefSelector('eHeaderCompWrapper') private eHeaderCompWrapper: HTMLElement;
-
-    protected readonly column: Column;
+    protected readonly column: AgColumn;
     protected readonly pinned: ColumnPinnedType;
 
     private headerComp: IHeaderComp | undefined;
@@ -26,13 +19,18 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private headerCompVersion = 0;
 
     constructor(ctrl: HeaderCellCtrl) {
-        super(HeaderCellComp.TEMPLATE, ctrl);
-        this.column = ctrl.getColumnGroupChild() as Column;
+        super(
+            /* html */ `<div class="ag-header-cell" role="columnheader">
+            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
+            <div data-ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
+        </div>`,
+            ctrl
+        );
+        this.column = ctrl.getColumnGroupChild() as AgColumn;
         this.pinned = ctrl.getPinned();
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
 
         const setAttribute = (name: string, value: string | null | undefined) => {
@@ -46,11 +44,11 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         setAttribute('col-id', this.column.getColId());
 
         const compProxy: IHeaderCellComp = {
-            setWidth: width => eGui.style.width = width,
+            setWidth: (width) => (eGui.style.width = width),
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
-            setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
-            getUserCompInstance: () => this.headerComp
+            setAriaSort: (sort) => (sort ? _setAriaSort(eGui, sort) : _removeAriaSort(eGui)),
+            setUserCompDetails: (compDetails) => this.setUserCompDetails(compDetails),
+            getUserCompInstance: () => this.headerComp,
         };
 
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize, this.eHeaderCompWrapper);
@@ -59,7 +57,11 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.eResize.insertAdjacentElement('afterend', selectAllGui);
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyHeaderComp();
+        super.destroy();
+    }
+
     private destroyHeaderComp(): void {
         if (this.headerComp) {
             this.eHeaderCompWrapper.removeChild(this.headerCompGui!);
@@ -73,11 +75,10 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
         const versionCopy = this.headerCompVersion;
 
-        compDetails.newAgStackInstance()!.then(comp => this.afterCompCreated(versionCopy, comp));
+        compDetails.newAgStackInstance()!.then((comp) => this.afterCompCreated(versionCopy, comp));
     }
 
     private afterCompCreated(version: number, headerComp: IHeaderComp): void {
-
         if (version != this.headerCompVersion || !this.isAlive()) {
             this.destroyBean(headerComp);
             return;

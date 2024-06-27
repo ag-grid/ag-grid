@@ -1,0 +1,29 @@
+{
+  "name": "subrepo",
+  "version": "0.0.1",
+  "description": "Git subrepo command line tool",
+  "main": "src/cli.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ag-grid/ag-website-shared.git"
+  },
+  "keywords": [
+    "git",
+    "subrepo"
+  ],
+  "author": "Tak Tran <contact@tutaktran.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-website-shared/issues"
+  },
+  "homepage": "https://github.com/ag-grid/ag-website-shared#readme",
+  "devDependencies": {
+    "@types/prompts": "^2.4.9",
+    "@types/yargs": "^17.0.32",
+    "tsx": "^4.7.2"
+  },
+  "dependencies": {
+    "prompts": "^2.4.2",
+    "yargs": "^17.7.2"
+  }
+}

@@ -1,5 +1,6 @@
 ---
 title: "Themes"
+description: "Browse five provided $framework Table themes with light and dark modes; customise themes with CSS variables. Design new themes with the AG Grid Figma Design System"
 ---
 
 The grid is styled with CSS, and a theme is simply a CSS class that applies styles to the grid. Most users choose a provided theme and then [customise](./global-style-customisation/) it to meet their needs. It is also possible to [create your own themes](#creating-your-own-theme).
@@ -48,7 +49,7 @@ There are various ways to load these stylesheets, as described in the sections b
 
 {% if isFramework("javascript") %}
 ### Pre-built Bundles
-Some pre-built bundles, whether [downloaded from our website](./download/) or included in the `ag-grid-community` [NPM package](./npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
+Some pre-built bundles, whether downloaded from our website or included in the `ag-grid-community` [NPM package](./installation/#install-ag-grid-with-npm), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
 {% /if %}
 
 ### Loading 3rd party fonts
@@ -114,11 +115,11 @@ You can load the structural styles and theme from a free CDN by adding this code
 ```html
 <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
+        href="https://cdn.jsdelivr.net/npm/ag-grid-community@{% $agGridVersion %}/styles/ag-grid.css" />
 
 <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-theme-quartz.css" />
+        href="https://cdn.jsdelivr.net/npm/ag-grid-community@{% $agGridVersion %}/styles/ag-theme-quartz.css" />
 ```
 
 {% note %}
@@ -157,4 +158,4 @@ That's it! You've created a theme. You haven't added any styles to it so what yo
 
 ## Creating Themes with the AG Grid Design System
 
-Figma users can now download the AG Grid design system and extend the Quartz or Alpine themes to create custom CSS themes. For more information on how to create themes with the AG Grid design system please see our [AG Grid Design System](./ag-grid-design-system/) page.
+Figma users can now download the AG Grid design system and extend the [Quartz](/example?theme=quartz), [Alpine](/example?theme=alpine), and [Material](/example?theme=material) themes to create custom CSS themes. For more information on how to create themes with the AG Grid design system please see our [AG Grid Design System](./ag-grid-design-system/) page.

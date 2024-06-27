@@ -1,0 +1,125 @@
+@use 'design-system' as *;
+
+.clipboardButtonOuter {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: $spacing-size-1;
+    right: $spacing-size-1;
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 0.33s ease-in-out;
+
+    pre:hover & {
+        opacity: 1;
+    }
+
+    &:hover {
+        .clipboardButtonCopied {
+            color: var(--color-util-brand-400);
+
+            #{$selector-darkmode} & {
+                color: var(--color-link-hover);
+            }
+        }
+
+        svg {
+            --color-icon: var(--color-util-brand-400);
+
+            #{$selector-darkmode} & {
+                --color-icon: var(--color-link-hover);
+            }
+        }
+    }
+
+    // Account for likely scrollbar in example runners
+    :global(.example-runner-outer) & {
+        right: $spacing-size-5;
+    }
+}
+
+.clipboardButton,
+.clipboardButtonCopied {
+    display: flex;
+    align-items: center;
+    height: $spacing-size-8;
+    background-color: var(--color-bg-primary);
+    border-top: 1px solid var(--color-border-primary);
+    border-bottom: 1px solid var(--color-border-primary);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-code-background);
+    }
+}
+
+.clipboardButton {
+    width: calc(#{$spacing-size-8} - var(--radius-sm));
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+    border-right: 1px solid var(--color-border-primary);
+    cursor: pointer;
+    transition: background-color $transition-default-timing;
+
+    svg {
+        --icon-size: 22px;
+        --color-icon: var(--color-util-gray-500);
+
+        transition: fill $transition-default-timing;
+    }
+}
+
+.clipboardButtonCopiedOuter {
+    overflow: hidden;
+}
+
+.clipboardButtonCopied {
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    padding-left: $spacing-size-2;
+    padding-right: $spacing-size-2;
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+    border-left: 1px solid var(--color-border-primary);
+    font-weight: var(--text-regular);
+    color: var(--color-fg-tertiary);
+    transition:
+        transform $transition-default-timing,
+        background-color $transition-default-timing,
+        color $transition-default-timing;
+    cursor: pointer;
+
+    #{$selector-darkmode} & {
+        color: var(--color-bg-primary);
+    }
+}
+
+.hasCopied {
+    opacity: 1;
+
+    .clipboardButton {
+        background-color: var(--color-util-gray-700);
+    }
+
+    .clipboardButton svg {
+        --color-icon: var(--color-fg-white);
+
+        #{$selector-darkmode} & {
+            --color-icon: var(--color-bg-primary);
+        }
+    }
+
+    .clipboardButton:hover svg {
+        --color-icon: var(--color-fg-white);
+
+        #{$selector-darkmode} & {
+            --color-icon: var(--color-bg-primary);
+        }
+    }
+
+    .clipboardButtonCopied,
+    &:hover .clipboardButtonCopied {
+        color: var(--color-fg-white);
+        transform: translateX(0);
+        background-color: var(--color-util-gray-700);
+    }
+}

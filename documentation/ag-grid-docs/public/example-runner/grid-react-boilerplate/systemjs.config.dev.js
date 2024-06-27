@@ -1,33 +1,35 @@
 (function (global) {
-
+    var sjsPaths = {};
+    if (typeof systemJsPaths !== 'undefined') {
+        sjsPaths = systemJsPaths;
+    }
     System.config({
-        transpiler: 'plugin-babel',
-        defaultExtension: 'js',
+        transpiler: 'ts',
+        typescriptOptions: {
+            target: 'es2020',
+            jsx: 'react',
+        },
         paths: {
+            // paths serve as alias
             'npm:': 'https://cdn.jsdelivr.net/npm/',
-            ...systemJsPaths
+            ...sjsPaths,
         },
         map: {
-            // css: boilerplatePath + "css.js",
-            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
-
-            // babel transpiler
-            'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
-            'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
+            css: 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // react
             react: 'npm:react@18.2.0',
             'react-dom': 'npm:react-dom@18.2.0',
             'react-dom/client': 'npm:react-dom@18.2.0',
-            redux: 'npm:redux@4.2.1',
-            'react-redux': 'npm:react-redux@8.0.5',
-            'prop-types': 'npm:prop-types@15.8.1',
 
-            app: appLocation + 'app',
+            ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
+            typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
+            app: appLocation,
             // systemJsMap comes from index.html
             ...systemJsMap,
         },
+
         packages: {
             css: {},
             react: {
@@ -40,8 +42,8 @@
                 main: '../umd/react-dom-server.browser.production.min.js',
             },
             app: {
-                main: './index.tsx',
-                defaultExtension: 'tsx',
+                main: './index.jsx',
+                defaultExtension: 'jsx',
             },
             '@ag-grid-community/react': {
                 main: './dist/package/index.cjs.js',
@@ -68,6 +70,11 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
+            'ag-grid-locale': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
             '@ag-grid-enterprise/advanced-filter': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
@@ -80,7 +87,7 @@
             },
             '@ag-grid-enterprise/charts-enterprise': {
                 main: './dist/package/main.cjs.js',
-                defaultExtension: 'js'
+                defaultExtension: 'js',
             },
             '@ag-grid-enterprise/clipboard': {
                 main: './dist/package/main.cjs.js',
@@ -187,18 +194,26 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
+            'ag-charts-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-enterprise-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
         },
         meta: {
-            '*.jsx': {
-                babelOptions: {
-                    react: true
-                }
+            typescript: {
+                exports: 'ts',
             },
-            '*.css': { loader: 'css' }
-        }
+            '*.css': { loader: 'css' },
+        },
     });
 })(this);
 
-window.addEventListener('error', e => {
-    console.error('ERROR', e.message, e.filename)
+window.addEventListener('error', (e) => {
+    console.error('ERROR', e.message, e.filename);
 });

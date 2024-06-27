@@ -6,9 +6,11 @@
  * @param {number} pixelCount
  * @returns {boolean}
  */
-export function areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
+export function _areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
     // by default, we wait 4 pixels before starting the drag
-    if (pixelCount === 0) { return false; }
+    if (pixelCount === 0) {
+        return false;
+    }
 
     const diffX = Math.abs(e1.clientX - e2.clientX);
     const diffY = Math.abs(e1.clientY - e2.clientY);

@@ -1,26 +1,26 @@
-import { BeanStub } from "../../../context/beanStub";
-import { Autowired, PostConstruct } from "../../../context/context";
-import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
-import { FocusService } from "../../../focusService";
-import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
-import { HeaderRowCtrl } from "../../row/headerRowCtrl";
-import { KeyCode } from "../.././../constants/keyCode";
-import { Beans } from "../../../rendering/beans";
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { Column, ColumnPinnedType } from "../../../entities/column";
-import { CtrlsService } from "../../../ctrlsService";
-import { HorizontalDirection } from "../../../constants/direction";
-import { DragAndDropService, DragSource } from "../../../dragAndDrop/dragAndDropService";
-import { CssClassApplier } from "../cssClassApplier";
-import { ColumnGroup } from "../../../entities/columnGroup";
-import { setAriaColIndex } from "../../../utils/aria";
-import { Events } from "../../../eventKeys";
-import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from "../../../events";
-import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
-import { WithoutGridCommon } from "../../../interfaces/iCommon";
-import { MenuService } from "../../../misc/menuService";
-import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
-import { getInnerWidth } from "../../../utils/dom";
+import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { HorizontalDirection } from '../../../constants/direction';
+import { BeanStub } from '../../../context/beanStub';
+import type { BeanCollection } from '../../../context/context';
+import type { CtrlsService } from '../../../ctrlsService';
+import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
+import type { AgColumn } from '../../../entities/agColumn';
+import { isColumn } from '../../../entities/agColumn';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
+import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
+import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent, HeaderFocusedEvent } from '../../../events';
+import type { FocusService } from '../../../focusService';
+import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
+import type { BrandedType } from '../../../interfaces/brandedType';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
+import type { WithoutGridCommon } from '../../../interfaces/iCommon';
+import type { MenuService } from '../../../misc/menuService';
+import { _setAriaColIndex } from '../../../utils/aria';
+import { _getInnerWidth } from '../../../utils/dom';
+import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
+import { KeyCode } from '../.././../constants/keyCode';
+import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
+import { refreshFirstAndLastStyles } from '../cssClassApplier';
 
 let instanceIdSequence = 0;
 
@@ -32,20 +32,34 @@ export interface IHeaderResizeFeature {
     toggleColumnResizing(resizing: boolean): void;
 }
 
-export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellComp = any, TColumn extends IHeaderColumn = any, TFeature extends IHeaderResizeFeature = any> extends BeanStub {
+export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstanceId'>;
 
+export abstract class AbstractHeaderCellCtrl<
+    TComp extends IAbstractHeaderCellComp = any,
+    TColumn extends AgColumn | AgColumnGroup = any,
+    TFeature extends IHeaderResizeFeature = any,
+> extends BeanStub {
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
-    @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
-    @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
-    @Autowired('menuService') protected readonly menuService: MenuService;
+    private pinnedWidthService: PinnedWidthService;
+    protected focusService: FocusService;
+    protected userComponentFactory: UserComponentFactory;
+    protected ctrlsService: CtrlsService;
+    protected dragAndDropService: DragAndDropService;
+    protected menuService: MenuService;
 
-    protected readonly beans: Beans;
-    private instanceId: string;
-    private columnGroupChild: IHeaderColumn;
+    public wireBeans(beans: BeanCollection) {
+        this.pinnedWidthService = beans.pinnedWidthService;
+        this.focusService = beans.focusService;
+        this.userComponentFactory = beans.userComponentFactory;
+        this.ctrlsService = beans.ctrlsService;
+        this.dragAndDropService = beans.dragAndDropService;
+        this.menuService = beans.menuService;
+    }
+
+    protected beans: BeanCollection;
+    private instanceId: HeaderCellCtrlInstanceId;
+    private columnGroupChild: AgColumn | AgColumnGroup;
     private parentRowCtrl: HeaderRowCtrl;
 
     private isResizing: boolean;
@@ -55,7 +69,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     protected eGui: HTMLElement;
     protected resizeFeature: TFeature | null = null;
     protected comp: TComp;
-    protected column: TColumn
+    protected column: TColumn;
 
     public lastFocusEvent: KeyboardEvent | null = null;
 
@@ -64,7 +78,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
 
-    constructor(columnGroupChild: IHeaderColumn, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroupChild: AgColumn | AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super();
 
         this.columnGroupChild = columnGroupChild;
@@ -72,28 +86,21 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         this.beans = beans;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
-        this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
+        this.instanceId = (columnGroupChild.getUniqueId() + '-' + instanceIdSequence++) as HeaderCellCtrlInstanceId;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
-        return isUserSuppressingHeaderKeyboardEvent(
-            this.gridOptionsService,
-            e,
-            headerRowIndex,
-            column
-        );
+        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column as AgColumn);
     }
 
     protected getWrapperHasFocus(): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement;
+        const activeEl = this.gos.getActiveDomElement();
 
         return activeEl === this.eGui;
     }
@@ -101,38 +108,60 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
         this.addDomData();
-        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListeners(this.beans.eventService, {
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+        });
+
+        this.addManagedElementListeners(this.eGui, {
+            focus: this.onGuiFocus.bind(this),
+        });
+
         this.onDisplayedColumnsChanged();
         this.refreshTabIndex();
     }
 
+    private onGuiFocus(): void {
+        const event: WithoutGridCommon<HeaderFocusedEvent> = {
+            type: 'headerFocused',
+            column: this.column,
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
     protected onDisplayedColumnsChanged(): void {
-        if (!this.comp || !this.column) { return; }
+        if (!this.comp || !this.column) {
+            return;
+        }
         this.refreshFirstAndLastStyles();
         this.refreshAriaColIndex();
     }
 
     private refreshFirstAndLastStyles(): void {
         const { comp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(comp, (column as unknown as Column | ColumnGroup), beans.columnModel);
+        refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
     }
 
     private refreshAriaColIndex(): void {
         const { beans, column } = this;
 
-        const colIdx = beans.columnModel.getAriaColumnIndex(column as unknown as Column | ColumnGroup);
-        setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
+        const colIdx = beans.visibleColsService.getAriaColIndex(column);
+        _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
     protected addResizeAndMoveKeyboardListeners(): void {
-        if (!this.resizeFeature) { return; }
+        if (!this.resizeFeature) {
+            return;
+        }
 
-        this.addManagedListener(this.eGui, 'keydown', this.onGuiKeyDown.bind(this));
-        this.addManagedListener(this.eGui, 'keyup', this.onGuiKeyUp.bind(this));
+        this.addManagedListeners(this.eGui, {
+            keydown: this.onGuiKeyDown.bind(this),
+            keyup: this.onGuiKeyUp.bind(this),
+        });
     }
 
     private refreshTabIndex(): void {
-        const suppressHeaderFocus = this.gridOptionsService.get('suppressHeaderFocus');
+        const suppressHeaderFocus = this.gos.get('suppressHeaderFocus');
         if (suppressHeaderFocus) {
             this.eGui.removeAttribute('tabindex');
         } else {
@@ -141,8 +170,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement;
+        const activeEl = this.gos.getActiveDomElement();
 
         const isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
 
@@ -156,17 +184,21 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
             activeEl !== this.eGui ||
             // if shiftKey and altKey are not pressed, it's cell navigation so we don't process the event
             (!e.shiftKey && !e.altKey)
-        ) { return; }
+        ) {
+            return;
+        }
 
         if (this.isResizing || isLeftOrRight) {
             e.preventDefault();
             e.stopImmediatePropagation();
         }
 
-        if (!isLeftOrRight) { return; }
-        
-        const isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
-        const direction = HorizontalDirection[isLeft ? 'Left' : 'Right' ];
+        if (!isLeftOrRight) {
+            return;
+        }
+
+        const isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
+        const direction = HorizontalDirection[isLeft ? 'Left' : 'Right'];
 
         if (e.altKey) {
             this.isResizing = true;
@@ -186,7 +218,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         if (pinned) {
             const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
             const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {
                 if (bodyWidth > leftWidth + rightWidth) {
@@ -197,15 +229,15 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
                 }
             }
         }
-        
+
         return diff;
     }
 
     private getResizeDiff(e: KeyboardEvent): number {
-        let isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        let isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
 
         const pinned = this.column.getPinned();
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
         if (pinned) {
             if (isRtl !== (pinned === 'right')) {
                 isLeft = !isLeft;
@@ -216,7 +248,9 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     private onGuiKeyUp(): void {
-        if (!this.isResizing) { return; }
+        if (!this.isResizing) {
+            return;
+        }
         if (this.resizeToggleTimeout) {
             window.clearTimeout(this.resizeToggleTimeout);
             this.resizeToggleTimeout = 0;
@@ -225,7 +259,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         this.isResizing = false;
         this.resizeMultiplier = 1;
 
-        this.resizeToggleTimeout = setTimeout(() => {
+        this.resizeToggleTimeout = window.setTimeout(() => {
             this.resizeFeature?.toggleColumnResizing(false);
         }, 150);
     }
@@ -246,8 +280,8 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     private addDomData(): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
-        this.gridOptionsService.setDomData(this.eGui, key, this);
-        this.addDestroyFunc(() => this.gridOptionsService.setDomData(this.eGui, key, null));
+        this.gos.setDomData(this.eGui, key, this);
+        this.addDestroyFunc(() => this.gos.setDomData(this.eGui, key, null));
     }
 
     public getGui(): HTMLElement {
@@ -255,7 +289,9 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     }
 
     public focus(event?: KeyboardEvent): boolean {
-        if (!this.eGui) { return false; }
+        if (!this.eGui) {
+            return false;
+        }
 
         this.lastFocusEvent = event || null;
         this.eGui.focus();
@@ -274,11 +310,11 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         return this.parentRowCtrl.getPinned();
     }
 
-    public getInstanceId(): string {
+    public getInstanceId(): HeaderCellCtrlInstanceId {
         return this.instanceId;
     }
 
-    public getColumnGroupChild(): IHeaderColumn {
+    public getColumnGroupChild(): AgColumn | AgColumnGroup {
         return this.columnGroupChild;
     }
 
@@ -289,20 +325,27 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         }
     }
 
-    protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup): void {
+    protected handleContextMenuMouseEvent(
+        mouseEvent: MouseEvent | undefined,
+        touchEvent: TouchEvent | undefined,
+        column: AgColumn | AgProvidedColumnGroup
+    ): void {
         const event = mouseEvent ?? touchEvent!;
-        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+        if (this.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
-        const columnToUse = column instanceof Column ? column : undefined;
+        const columnToUse = isColumn(column) ? column : undefined;
         if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
             this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
         }
 
-        this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);
+        this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);
     }
 
-    protected dispatchColumnMouseEvent(eventType: "columnHeaderContextMenu" | "columnHeaderClicked", column: Column | ProvidedColumnGroup): void {
+    protected dispatchColumnMouseEvent(
+        eventType: 'columnHeaderContextMenu' | 'columnHeaderClicked',
+        column: AgColumn | AgProvidedColumnGroup
+    ): void {
         const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,
             column,
@@ -311,7 +354,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         this.removeDragSource();

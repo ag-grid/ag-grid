@@ -1,8 +1,9 @@
-import styles from '@design-system/modules/Gif.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 import GifPlayer from 'react-gif-player';
+
+import styles from './Gif.module.scss';
 
 interface Props {
     imageSrc: string;

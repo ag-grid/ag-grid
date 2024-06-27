@@ -1,44 +1,49 @@
-import { RowNodeBlock } from "./rowNodeBlock";
-import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { Logger, LoggerFactory } from "../logger";
-import { IRowModel } from "../interfaces/iRowModel";
-import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
-import { _ } from "../utils";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import { _removeFromArray } from '../utils/array';
+import { _debounce, _log } from '../utils/function';
+import type { RowNodeBlock } from './rowNodeBlock';
 
-@Bean('rowNodeBlockLoader')
-export class RowNodeBlockLoader extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    
-    public static BLOCK_LOADED_EVENT = 'blockLoaded';
-    public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
+export type RowNodeBlockLoaderEvent = 'blockLoaded' | 'blockLoaderFinished';
+export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implements NamedBean {
+    beanName = 'rowNodeBlockLoader' as const;
+
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+    }
 
     private maxConcurrentRequests: number | undefined;
     private checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
     private blocks: RowNodeBlock[] = [];
-    private logger: Logger;
     private active = true;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsService.get('blockLoadDebounceMillis');
+        const blockLoadDebounceMillis = this.gos.get('blockLoadDebounceMillis');
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
-            this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+            this.checkBlockToLoadDebounce = _debounce(
+                this.performCheckBlocksToLoad.bind(this),
+                blockLoadDebounceMillis
+            );
         }
     }
 
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('RowNodeBlockLoader');
-    }
-
     private getMaxConcurrentDatasourceRequests(): number | undefined {
-        const res = this.gridOptionsService.get('maxConcurrentDatasourceRequests');
-        if (res == null) { return 2; } // 2 is the default
-        if (res <= 0) { return; } // negative number, eg -1, means no max restriction
+        const res = this.gos.get('maxConcurrentDatasourceRequests');
+        if (res == null) {
+            return 2;
+        } // 2 is the default
+        if (res <= 0) {
+            return;
+        } // negative number, eg -1, means no max restriction
         return res;
     }
 
@@ -48,16 +53,16 @@ export class RowNodeBlockLoader extends BeanStub {
         // note that we do not remove this listener when removing the block. this is because the
         // cache can get destroyed (and containing blocks) when a block is loading. however the loading block
         // is still counted as an active loading block and we must decrement activeBlockLoadsCount when it finishes.
-        block.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.loadComplete.bind(this));
+        block.addEventListener('loadComplete', this.loadComplete.bind(this));
 
         this.checkBlockToLoad();
     }
 
     public removeBlock(block: RowNodeBlock): void {
-        _.removeFromArray(this.blocks, block);
+        _removeFromArray(this.blocks, block);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.active = false;
     }
@@ -65,9 +70,9 @@ export class RowNodeBlockLoader extends BeanStub {
     public loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
-        this.dispatchEvent({type: RowNodeBlockLoader.BLOCK_LOADED_EVENT});
+        this.dispatchLocalEvent({ type: 'blockLoaded' });
         if (this.activeBlockLoadsCount == 0) {
-            this.dispatchEvent({type: RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT});
+            this.dispatchLocalEvent({ type: 'blockLoaderFinished' });
         }
     }
 
@@ -80,44 +85,49 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     private performCheckBlocksToLoad(): void {
-        if (!this.active) { return; }
+        if (!this.active) {
+            return;
+        }
 
         this.printCacheStatus();
 
         if (this.maxConcurrentRequests != null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
-            this.logger.log(`checkBlockToLoad: max loads exceeded`);
+            if (this.gos.get('debug')) {
+                _log(`RowNodeBlockLoader - checkBlockToLoad: max loads exceeded`);
+            }
             return;
         }
 
         const loadAvailability = this.getAvailableLoadingCount();
-        const blocksToLoad: RowNodeBlock[] = this.blocks.filter(block => (
-            block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD
-        )).slice(0, loadAvailability);
+        const blocksToLoad: RowNodeBlock[] = this.blocks
+            .filter((block) => block.getState() === 'needsLoading')
+            .slice(0, loadAvailability);
 
         this.registerLoads(blocksToLoad.length);
-        blocksToLoad.forEach(block => block.load());
+        blocksToLoad.forEach((block) => block.load());
         this.printCacheStatus();
     }
 
     public getBlockState() {
-        if (this.gridOptionsService.isRowModelType('serverSide')) {
+        if (this.gos.isRowModelType('serverSide')) {
             const ssrm = this.rowModel as IServerSideRowModel;
             return ssrm.getBlockStates();
         }
 
         const result: { [key: string]: any } = {};
         this.blocks.forEach((block: RowNodeBlock) => {
-            const {id, state} = block.getBlockStateJson();
+            const { id, state } = block.getBlockStateJson();
             result[id] = state;
         });
         return result;
     }
 
     private printCacheStatus(): void {
-
-        if (this.logger.isLogging()) {
-            this.logger.log(`printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},`
-                + ` blocks = ${JSON.stringify(this.getBlockState())}`);
+        if (this.gos.get('debug')) {
+            _log(
+                `RowNodeBlockLoader - printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},` +
+                    ` blocks = ${JSON.stringify(this.getBlockState())}`
+            );
         }
     }
 
@@ -130,6 +140,8 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     public getAvailableLoadingCount() {
-        return this.maxConcurrentRequests !== undefined ? this.maxConcurrentRequests - this.activeBlockLoadsCount : undefined;
+        return this.maxConcurrentRequests !== undefined
+            ? this.maxConcurrentRequests - this.activeBlockLoadsCount
+            : undefined;
     }
 }

@@ -1,0 +1,45 @@
+.sectionContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.sectionHeader {
+    display: flex;
+    flex-direction: column;
+}
+
+.sectionHeading {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sectionTitle,
+.sectionDescription {
+    text-align: left;
+}
+
+.sectionLink {
+    display: flex;
+    align-items: center;
+    text-align: right;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    padding: 8px;
+    color: var(--color-text-tertiary);
+}
+
+.linkIcon {
+    margin-right: 8px;
+    --color-icon: var(--color-text-tertiary);
+}
+
+.sectionDescription {
+    margin-bottom: 24px !important;
+}
+
+.sectionContainer h3,
+h2 {
+    font-size: var(--text-fs-xl);
+}

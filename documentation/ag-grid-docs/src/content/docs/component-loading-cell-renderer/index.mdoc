@@ -4,6 +4,8 @@ title: "Loading Component"
 
 The Loading Component is displayed for a row to show data is loading.
 
+## Full Width Loading Row
+
 The example below demonstrates replacing the Provided Loading Component with a Custom Loading Component.
 
 * **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
@@ -13,12 +15,12 @@ The example below demonstrates replacing the Provided Loading Component with a C
 
 {% gridExampleRunner title="Custom Loading Cell Renderer" name="custom-loading-cell-renderer" /%}
 
-## Custom Component
+### Custom Loading Row
 
-{% includeMarkdoc file="component-loading-cell-renderer/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="component-loading-cell-renderer/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="component-loading-cell-renderer/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="component-loading-cell-renderer/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ILoadingCellRendererParams" names=["api", "context", "node"] /%}
@@ -28,12 +30,60 @@ The example below demonstrates replacing the Provided Loading Component with a C
 {% interfaceDocumentation interfaceName="CustomLoadingCellRendererProps" names=["api", "context", "node"] /%}
 {% /if %}
 
-## Dynamic Selection
+### Failed Loading
+
+When using a Custom Loading Component, you can add handling for loading failures in the component directly.
+
+In the example below, note that:
+
+* **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
+* **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
+* The example simulates a long delay to display the spinner clearly and simulates a loading failure.
+
+{% gridExampleRunner title="Custom Loading Cell Renderer Failed" name="custom-loading-cell-renderer-failed" /%}
+
+### Dynamic Loading Row Selection
 
 It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. This requires providing a `loadingCellRendererSelector`.
 
 {% if isFramework("javascript", "angular", "react") %}
-{% includeMarkdoc file="component-loading-cell-renderer/_component-dynamic-angular-react-js.mdoc" /%}
+{% partial file="./_component-dynamic-angular-react-js.mdoc" /%}
 {% /if %}
 
-{% includeMarkdoc file="component-loading-cell-renderer/_component-dynamic-vue.mdoc" /%}
+{% partial file="./_component-dynamic-vue.mdoc" /%}
+
+## Skeleton Loading
+
+The grid can be configured to instead display loading indicators in cells, by enabling `suppressServerSideFullWidthLoadingRow`.
+
+{% gridExampleRunner title="Skeleton Loading Cell Renderer" name="skeleton-loading-cell-renderer" /%}
+
+```
+const gridOptions = {
+    suppressServerSideFullWidthLoadingRow: true,
+};
+```
+
+### Custom Loading Cells
+
+The default grid behaviour can be overridden in order to provide renderers on a per-column basis.
+
+{% gridExampleRunner title="Custom Cell Loading Renderer" name="custom-cell-loading-renderer" /%}
+
+```
+const gridOptions = {
+    suppressServerSideFullWidthLoadingRow: true,
+    columnDefs: [
+        { field: 'athlete', loadingCellRenderer: CustomLoadingCellRenderer },
+        // More columns, with no load renderer...
+    ],
+    defaultColDef: {
+        loadingCellRenderer: () => '',
+    },
+};
+```
+
+The above example demonstrates the following:
+- `suppressServerSideFullWidthLoadingRow` is enabled, preventing the grid from defaulting to full width loading.
+- `loadingCellRenderer` is configured on the *Athlete* column, allowing a loading spinner to be displayed for just this column.
+- `loadingCellRenderer` is configured on the `defaultColDef` providing an empty cell renderer in order to prevent the default grid loading renderer from displaying on other columns.

@@ -1,39 +1,44 @@
-import {
-    Column,
+import type {
+    AgColumn,
     ColumnModel,
+    ColumnNameService,
+    FuncColsService,
     GridOptionsService,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
-    ValueFormatterService,
     ValueService,
-    ValueParserService
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
-import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "../interfaces";
+import type {
+    GridSerializingParams,
+    GridSerializingSession,
+    RowAccumulator,
+    RowSpanningAccumulator,
+} from '../interfaces';
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    public funcColsService: FuncColsService;
     public valueService: ValueService;
-    public gridOptionsService: GridOptionsService;
-    public valueFormatterService: ValueFormatterService;
-    public valueParserService: ValueParserService;
+    public gos: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
 
-    private groupColumns: Column[] = [];
+    private groupColumns: AgColumn[] = [];
 
     constructor(config: GridSerializingParams) {
         const {
             columnModel,
+            funcColsService,
+            columnNameService,
             valueService,
-            gridOptionsService,
-            valueFormatterService,
-            valueParserService,
+            gos,
             processCellCallback,
             processHeaderCallback,
             processGroupHeaderCallback,
@@ -41,10 +46,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } = config;
 
         this.columnModel = columnModel;
+        this.funcColsService = funcColsService;
+        this.columnNameService = columnNameService;
         this.valueService = valueService;
-        this.gridOptionsService = gridOptionsService;
-        this.valueFormatterService = valueFormatterService;
-        this.valueParserService = valueParserService;
+        this.gos = gos;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;
@@ -57,27 +62,28 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract onNewBodyRow(node?: RowNode): RowAccumulator;
     abstract parse(): string;
 
-    public prepare(columnsToExport: Column[]): void {
-        this.groupColumns = columnsToExport.filter(col => !!col.getColDef().showRowGroup);
+    public prepare(columnsToExport: AgColumn[]): void {
+        this.groupColumns = columnsToExport.filter((col) => !!col.getColDef().showRowGroup);
     }
 
-    public extractHeaderValue(column: Column): string {
+    public extractHeaderValue(column: AgColumn): string {
         const value = this.getHeaderName(this.processHeaderCallback, column);
-        return value ?? ''
+        return value ?? '';
     }
 
     public extractRowCellValue(
-        column: Column,
+        column: AgColumn,
         index: number,
         accumulatedRowIndex: number,
         type: string,
         node: RowNode
-    ): { value: any, valueFormatted?: string | null } {
+    ): { value: any; valueFormatted?: string | null } {
         // we render the group summary text e.g. "-> Parent -> Child"...
-        const hideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
-        const value = ((!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index))
-            ? this.createValueForGroupNode(column, node)
-            : this.valueService.getValue(column, node);
+        const hideOpenParents = this.gos.get('groupHideOpenParents');
+        const value =
+            (!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index)
+                ? this.createValueForGroupNode(column, node)
+                : this.valueService.getValue(column, node);
 
         const processedValue = this.processCell({
             accumulatedRowIndex,
@@ -85,23 +91,27 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             column,
             value,
             processCellCallback: this.processCellCallback,
-            type
+            type,
         });
 
         return processedValue;
     }
 
-    private shouldRenderGroupSummaryCell(node: RowNode, column: Column, currentColumnIndex: number): boolean {
+    private shouldRenderGroupSummaryCell(node: RowNode, column: AgColumn, currentColumnIndex: number): boolean {
         const isGroupNode = node && node.group;
         // only on group rows
-        if (!isGroupNode) { return false; }
+        if (!isGroupNode) {
+            return false;
+        }
 
         const currentColumnGroupIndex = this.groupColumns.indexOf(column);
 
         if (currentColumnGroupIndex !== -1) {
-            if (node.groupData?.[column.getId()] != null) { return true; }
+            if (node.groupData?.[column.getId()] != null) {
+                return true;
+            }
 
-            if (this.gridOptionsService.isRowModelType('serverSide') && node.group) {
+            if (this.gos.isRowModelType('serverSide') && node.group) {
                 return true;
             }
 
@@ -110,30 +120,33 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 const colDef = column.getColDef();
                 const isFullWidth = colDef == null || colDef.showRowGroup === true;
 
-                return isFullWidth || colDef.showRowGroup === this.columnModel.getRowGroupColumns()[0].getId();
+                return isFullWidth || colDef.showRowGroup === this.funcColsService.getRowGroupColumns()[0].getId();
             }
         }
 
-        const isGroupUseEntireRow = this.gridOptionsService.isGroupUseEntireRow(this.columnModel.isPivotMode());
+        const isGroupUseEntireRow = this.gos.isGroupUseEntireRow(this.columnModel.isPivotMode());
 
         return currentColumnIndex === 0 && isGroupUseEntireRow;
     }
 
-    private getHeaderName(callback: ((params: ProcessHeaderForExportParams) => string) | undefined, column: Column): string | null {
+    private getHeaderName(
+        callback: ((params: ProcessHeaderForExportParams) => string) | undefined,
+        column: AgColumn
+    ): string | null {
         if (callback) {
-            return callback(this.gridOptionsService.addGridCommonParams({ column }));
+            return callback(this.gos.addGridCommonParams({ column }));
         }
 
-        return this.columnModel.getDisplayNameForColumn(column, 'csv', true);
+        return this.columnNameService.getDisplayNameForColumn(column, 'csv', true);
     }
 
-    private createValueForGroupNode(column: Column, node: RowNode): string {
+    private createValueForGroupNode(column: AgColumn, node: RowNode): string {
         if (this.processRowGroupCallback) {
-            return this.processRowGroupCallback(this.gridOptionsService.addGridCommonParams({ column, node }));
+            return this.processRowGroupCallback(this.gos.addGridCommonParams({ column, node }));
         }
 
-        const isTreeData = this.gridOptionsService.get('treeData');
-        const isSuppressGroupMaintainValueType = this.gridOptionsService.get('suppressGroupMaintainValueType');
+        const isTreeData = this.gos.get('treeData');
+        const isSuppressGroupMaintainValueType = this.gos.get('suppressGroupMaintainValueType');
 
         // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
         const getValueFromNode = (node: RowNode) => {
@@ -141,15 +154,20 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 return node.key;
             }
             const value = node.groupData?.[column.getId()];
-            if (!value || !node.rowGroupColumn || node.rowGroupColumn.getColDef().useValueFormatterForExport === false) { return value; }
-            return this.valueFormatterService.formatValue(node.rowGroupColumn, node, value) ?? value;
-        }
+            if (
+                !value ||
+                !node.rowGroupColumn ||
+                node.rowGroupColumn.getColDef().useValueFormatterForExport === false
+            ) {
+                return value;
+            }
+            return this.valueService.formatValue(node.rowGroupColumn, node, value) ?? value;
+        };
 
-        
         const isFooter = node.footer;
         const keys = [getValueFromNode(node)];
 
-        if (!this.gridOptionsService.isGroupMultiAutoColumn()) {
+        if (!this.gos.isGroupMultiAutoColumn()) {
             while (node.parent) {
                 node = node.parent;
                 keys.push(getValueFromNode(node));
@@ -162,28 +180,43 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     private processCell(params: {
-        accumulatedRowIndex: number, rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string
-    }): { value: any, valueFormatted?: string | null } {
+        accumulatedRowIndex: number;
+        rowNode: RowNode;
+        column: AgColumn;
+        value: any;
+        processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined;
+        type: string;
+    }): { value: any; valueFormatted?: string | null } {
         const { accumulatedRowIndex, rowNode, column, value, processCellCallback, type } = params;
 
         if (processCellCallback) {
             return {
-                value: processCellCallback(this.gridOptionsService.addGridCommonParams({
-                    accumulatedRowIndex,
-                    column: column,
-                    node: rowNode,
-                    value: value,
-                    type: type,
-                    parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode, valueToParse, this.valueService.getValue(column, rowNode)),
-                    formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode, valueToFormat) ?? valueToFormat
-                })) ?? ''
+                value:
+                    processCellCallback(
+                        this.gos.addGridCommonParams({
+                            accumulatedRowIndex,
+                            column: column,
+                            node: rowNode,
+                            value: value,
+                            type: type,
+                            parseValue: (valueToParse: string) =>
+                                this.valueService.parseValue(
+                                    column,
+                                    rowNode,
+                                    valueToParse,
+                                    this.valueService.getValue(column, rowNode)
+                                ),
+                            formatValue: (valueToFormat: any) =>
+                                this.valueService.formatValue(column, rowNode, valueToFormat) ?? valueToFormat,
+                        })
+                    ) ?? '',
             };
         }
 
         if (column.getColDef().useValueFormatterForExport !== false) {
             return {
-                value: value ?? '', 
-                valueFormatted: this.valueFormatterService.formatValue(column, rowNode, value),
+                value: value ?? '',
+                valueFormatted: this.valueService.formatValue(column, rowNode, value),
             };
         }
 

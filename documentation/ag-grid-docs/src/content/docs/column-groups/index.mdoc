@@ -4,11 +4,11 @@ title: "Column Groups"
 
 Columns can be grouped in the grid's header using Column Groups. Column groups can be shown as open / closed to show / hide child Columns.
 
-Column Groups are configured by providing a hierachy of Column Definitions. If a Column Definition contains the `children` attribute then the grid treats it as a Column Group.
+Column Groups are configured by providing a hierarchy of Column Definitions. If a Column Definition contains the `children` attribute then the grid treats it as a Column Group.
 
 {% gridExampleRunner title="Basic Grouping" name="basic-grouping"  exampleHeight=550 /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -45,7 +45,7 @@ Use `defaultColGroupDef` to set properties accross all Column Groups.
 
 {% gridExampleRunner title="Default Props" name="defaults"  exampleHeight=550 /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     defaultColGroupDef: {
         headerName: 'A shared prop for all Groups'
@@ -91,7 +91,7 @@ If you grab the group resize bar, it resizes each child in the group evenly dist
 
 The grid doesn't colour the groups for you. However you can use the column definition `headerClass` for this purpose. The `headerClass` attribute is available on both columns and column groups.
 
-```js {% frameworkTransform=true suppressFrameworkContext=true %}
+```{% frameworkTransform=true suppressFrameworkContext=true %}
 const gridOptions = {
     columnDefs: [
         // the CSS class name supplied to 'headerClass' will get applied to the header group
@@ -153,7 +153,7 @@ Note the following:
 
 Using the **Column Property** `suppressSpanHeaderHeight` the Grid will balance the column headers with different number of levels with an empty column group header cell, as shown in the example below.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -190,8 +190,8 @@ The example below demonstrates using the `headerTooltip` property in the grid co
 
 By default the grid uses the provided Header Group Component. To use a Custom Group Component set `headerGroupComponent` on the Column Definition.
 
-{% includeMarkdoc file="column-groups/_column-def-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_column-def-vue.mdoc" /%}
+{% partial file="./_column-def-javascript.mdoc" /%}
+{% partial file="./_column-def-vue.mdoc" /%}
 
 See [Registering Components](./components/) for an overview of registering componnets.
 
@@ -205,10 +205,10 @@ As with Column Headers, the grid will always handle resize and column moving. Th
 
 * **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then the Custom Component should handle the interaction with the user for opening and closing groups.
 
-{% includeMarkdoc file="column-groups/_group-component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-react.mdoc" /%}
-{% includeMarkdoc file="column-groups/_group-component-interface-vue.mdoc" /%}
+{% partial file="./_group-component-interface-javascript.mdoc" /%}
+{% partial file="./_group-component-interface-angular.mdoc" /%}
+{% partial file="./_group-component-interface-react.mdoc" /%}
+{% partial file="./_group-component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IHeaderGroupParams" /%}
@@ -218,10 +218,10 @@ As with Column Headers, the grid will always handle resize and column moving. Th
 {% interfaceDocumentation interfaceName="CustomHeaderGroupProps" /%}
 {% /if %}
 
-{% includeMarkdoc file="column-groups/_open-close-javascript.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-angular.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-react.mdoc" /%}
-{% includeMarkdoc file="column-groups/_open-close-vue.mdoc" /%}
+{% partial file="./_open-close-javascript.mdoc" /%}
+{% partial file="./_open-close-angular.mdoc" /%}
+{% partial file="./_open-close-react.mdoc" /%}
+{% partial file="./_open-close-vue.mdoc" /%}
 
 ### Dynamic Tooltips
 

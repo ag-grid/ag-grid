@@ -1,4 +1,5 @@
-import { ICON_MAP } from '@components/icon/Icon';
+import { ICON_MAP } from '@ag-website-shared/components/icon/Icon';
+import { FRAMEWORKS } from '@constants';
 import { defineCollection, z } from 'astro:content';
 
 const docs = defineCollection({
@@ -6,7 +7,7 @@ const docs = defineCollection({
         title: z.string(),
         description: z.string().optional(),
         enterprise: z.boolean().optional(),
-        frameworks: z.array(z.string()).optional(),
+        frameworks: z.array(z.enum(FRAMEWORKS as any)).optional(),
         /**
          * Hide right hand side menu
          */
@@ -15,6 +16,18 @@ const docs = defineCollection({
          * Hide left hand page menu
          */
         hidePageMenu: z.boolean().optional(),
+        /**
+         * Override side navigation headings
+         */
+        headings: z
+            .array(
+                z.object({
+                    depth: z.number(),
+                    slug: z.string(),
+                    text: z.string(),
+                })
+            )
+            .optional(),
     }),
 });
 
@@ -34,9 +47,7 @@ const menuItemBase = {
      */
     newWindow: z.boolean().optional(),
     icon: z.enum(Object.keys(ICON_MAP) as any).optional(),
-    // TODO: Add frameworks back
-    // frameworks: z.array(z.enum(FRAMEWORKS as any)).optional(),
-    frameworks: z.array(z.string()).optional(),
+    frameworks: z.array(z.enum(FRAMEWORKS as any)).optional(),
 
     isEnterprise: z.boolean().optional(),
 };
@@ -70,9 +81,6 @@ const menu = defineCollection({
     type: 'data',
     schema: z.object({
         header: z.object({
-            items: z.array(level1MenuItem),
-        }),
-        product: z.object({
             items: z.array(level1MenuItem),
         }),
         api: z.object({

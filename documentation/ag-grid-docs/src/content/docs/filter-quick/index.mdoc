@@ -11,7 +11,7 @@ Quick Filter is a piece of text given to the grid (typically the user will type 
 {% if isFramework("react") %}
 You can set the Quick Filter text via the `quickFilterText` grid option.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
    quickFilterText: 'new filter text'
 }
@@ -21,7 +21,7 @@ const gridOptions = {
 {% if isFramework("javascript", "angular", "vue") %}
 You can set the Quick Filter text by calling the `setGridOption('quickFilterText', text)` method on the grid API.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.setGridOption('quickFilterText', 'new filter text');
 ```
 
@@ -42,7 +42,7 @@ Alternatively, you might want to format string values specifically for searching
 
 Finally, if you want a column to be ignored by the Quick Filter, have `getQuickFilterText` return an empty string `''`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -84,7 +84,7 @@ This can also be set via the API method `setGridOption('includeHiddenColumnsInQu
 
 By default the Quick Filter splits the text into a list of words which are then compared against each row. You may want to override this behaviour, for example to allow using quotes to search for exact string values. This is possible by providing a `quickFilterParser`. Note that the value passed to the parser will have already been converted to upper case.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // split words by comma instead of space
     quickFilterParser: (quickFilter) => quickFilter.split(','),
@@ -97,7 +97,7 @@ The default behaviour of the Quick Filter is to check whether every search term 
 
 The `rowQuickFilterAggregateText` parameter passed to the matcher function is a concatenation of all the Quick Filter Values (using the [Quick Filter Cache](#quick-filter-cache) if enabled). Note that this value will be upper case.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // perform a regular expression search
     quickFilterMatcher: (quickFilterParts, rowQuickFilterAggregateText) => {
@@ -125,9 +125,22 @@ The example also demonstrates having the Quick Filter cache turned on. The grid 
 
 {% gridExampleRunner title="Quick Filter Configuration" name="quick-filter-configuration" /%}
 
+## Pivoting / Group Aggregation Filtering
+
+When [Pivoting](./pivoting/) or [Group Aggregation Filtering](./aggregation-filtering/#filtering-group-aggregations) are enabled, Quick Filter is applied by default to the data after pivoting/aggregating has been performed. This means that filtering will not change the aggregated values, and only columns that are being used for pivoting can be used for filtering.
+
+It is possible to instead filter the data before pivoting/aggregating are applied. This can be done by setting the grid option `applyQuickFilterBeforePivotOrAgg = true`.
+
+The following example demonstrates the difference in filtering behaviour with `applyQuickFilterBeforePivotOrAgg` enabled/disabled. The columns **Athlete** and **Sport** are present, but are not being used for pivoting:
+- Search for “Swimming” or 2000 and note that there are no matches in the grid, as the filter is applied after pivoting.
+- Click the button to apply Quick Filter before pivoting and aggregation and note that there are matches in the grid, as the filter is applied before pivoting.
+
+{% gridExampleRunner title="Quick Filter Pivot / Aggregation" name="quick-filter-pivot-agg" /%}
+
+
 ## Server Side Data
 
-Quick Filters only make sense with client-side data (i.e. when using the [Client-Side Row Model](./client-side-model/)). For the other row models you would need to implement your own server-side filtering to replicate Quick Filter functionality.
+Quick Filters only make sense with client-side data (i.e. when using the [Client-Side Row Model](./row-models/#client-side)). For the other row models you would need to implement your own server-side filtering to replicate Quick Filter functionality.
 
 ## API Reference
 

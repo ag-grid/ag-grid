@@ -504,6 +504,12 @@
                 "url": "./filter-quick/#quick-filter-matcher"
             }
         },
+        "applyQuickFilterBeforePivotOrAgg": {
+            "more": {
+                "name": "Pivoting / Group Aggregation Filtering",
+                "url": "./filter-quick/#pivoting--group-aggregation-filtering"
+            }
+        },
         "isExternalFilterPresent": {
             "more": {
                 "name": "External Filter",
@@ -561,18 +567,7 @@
                 "url": "./integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
-        "legacyChartsMenu": {
-            "more": {
-                "name": "Chart Menu",
-                "url": "./integrated-charts-menu/"
-            }
-        },
-        "getChartToolbarItems": {
-            "more": {
-                "name": "Configuring Toolbar Items",
-                "url": "./integrated-charts-toolbar/#toolbar-customisation"
-            }
-        },
+        "getChartToolbarItems": {},
         "createChartContainer": {
             "more": {
                 "name": "Specifying Chart Container",
@@ -606,7 +601,7 @@
         "chartToolPanelsDef": {
             "more": {
                 "name": "Chart Tool Panel customisation",
-                "url": "./integrated-charts-toolbar/#toolbar-customisation"
+                "url": "./integrated-charts-chart-tool-panels/"
             }
         },
         "chartMenuItems": {
@@ -640,7 +635,7 @@
         "loadingCellRendererSelector": {
             "more": {
                 "name": "Loading Cell Renderer Selector",
-                "url": "./component-loading-cell-renderer/#dynamic-cell-loading-renderer"
+                "url": "./component-loading-cell-renderer/#dynamic-loading-row-selection"
             }
         }
     },
@@ -763,13 +758,13 @@
         "valueCache": {
             "more": {
                 "name": "Value Cache",
-                "url": "./value-getters/#value-cache-properties"
+                "url": "./value-cache/"
             }
         },
         "valueCacheNeverExpires": {
             "more": {
                 "name": "Value Cache",
-                "url": "./value-getters/#value-cache-properties"
+                "url": "./value-cache/"
             }
         },
         "enableCellExpressions": {
@@ -794,13 +789,7 @@
                 "url": "./change-detection/#triggering-value-change-detection"
             }
         },
-        "debug": {},
-        "reactiveCustomComponents": {
-            "more": {
-                "name": "Registering Custom Components",
-                "url": "./components/#registering-custom-components"
-            }
-        }
+        "debug": {}
     },
     "overlays": {
         "meta": {
@@ -808,6 +797,12 @@
             "page": {
                 "name": "Overlays",
                 "url": "./overlays/"
+            }
+        },
+        "loading": {
+            "more": {
+                "name": "Loading Overlay",
+                "url": "./overlays/#loading-overlay"
             }
         },
         "overlayLoadingTemplate": {
@@ -829,7 +824,12 @@
                 "url": "./overlays/"
             }
         },
-        "suppressLoadingOverlay": {},
+        "suppressNoRowsOverlay": {
+            "more": {
+                "name": "No rows overlay",
+                "url": "./overlays/#no-rows-overlay"
+            }
+        },
         "overlayNoRowsTemplate": {
             "more": {
                 "name": "Custom Overlays",
@@ -848,8 +848,7 @@
                 "name": "Overlay Component",
                 "url": "./overlays/"
             }
-        },
-        "suppressNoRowsOverlay": {}
+        }
     },
     "nav": {
         "meta": {
@@ -857,6 +856,12 @@
             "page": {
                 "name": "Keyboard Navigation",
                 "url": "./keyboard-navigation/"
+            }
+        },
+        "focusGridInnerElement": {
+            "more": {
+                "name": "Custom Navigation",
+                "url": "./keyboard-navigation/#custom-navigation"
             }
         },
         "navigateToNextHeader": {
@@ -869,8 +874,7 @@
             "more": {
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
-            },
-            "description": "Allows overriding the default behaviour for when user hits <kbd>⇥ Tab</kbd> key when a header is focused."
+            }
         },
         "navigateToNextCell": {
             "more": {
@@ -882,8 +886,7 @@
             "more": {
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
-            },
-            "description": "Allows overriding the default behaviour for when user hits <kbd>⇥ Tab</kbd> key when a cell is focused."
+            }
         }
     },
     "pagination": {
@@ -978,7 +981,7 @@
         "pivotMaxGeneratedColumns": {
             "more": {
                 "name": "Pivot Max Generated Columns",
-                "url": "./pivoting/#handling-extreme-data"
+                "url": "./pivoting/#pivoting-extreme-amounts-of-data"
             }
         },
         "processPivotResultColDef": {
@@ -1062,13 +1065,13 @@
         "cellFlashDuration": {
             "more": {
                 "name": "How Flashing Works",
-                "url": "./change-cell-renderers/#how-flashing-works"
+                "url": "./change-cell-renderers/#enable-flashing-on-data-change"
             }
         },
         "cellFadeDuration": {
             "more": {
                 "name": "How Flashing Works",
-                "url": "./change-cell-renderers/#how-flashing-works"
+                "url": "./change-cell-renderers/#enable-flashing-on-data-change"
             }
         },
         "allowShowChangeAfterFilter": {
@@ -1082,7 +1085,7 @@
                 "name": "DOM Layout",
                 "url": "./grid-size/#dom-layout"
             },
-            "description": "Switch between layout options. See [Printing](./printing/) and [Auto Height](./grid-size/#grid-auto-height). Default: `normal`"
+            "description": "Switch between layout options. See [Printing](./printing/) and [Auto Height](./grid-size/#auto-height-layout). Default: `normal`"
         },
         "ensureDomOrder": {
             "more": {
@@ -1229,19 +1232,25 @@
                 "url": "./grouping-locking-group-columns"
             }
         },
-        "groupIncludeFooter": {
+        "groupTotalRow": {
             "more": {
-                "name": "Enabling Group Footers",
-                "url": "./grouping-footers/#enabling-group-footers"
+                "name": "Group Total Rows",
+                "url": "./total-rows/#group-total-rows"
             }
         },
-        "groupIncludeTotalFooter": {
+        "grandTotalRow": {
             "more": {
-                "name": "Enabling Group Footers",
-                "url": "./grouping-footers/#enabling-group-footers"
+                "name": "Grand Total Row",
+                "url": "./total-rows/#grand-total-row"
             }
         },
-        "groupSuppressBlankHeader": {},
+        "suppressStickyTotalRow": {},
+        "groupSuppressBlankHeader": {
+            "more": {
+                "name": "Showing Values in Group and Total Rows",
+                "url": "./total-rows/#showing-values-in-group-and-total-rows"
+            }
+        },
         "groupSelectsFiltered": {
             "more": {
                 "name": "Group Selection",
@@ -1400,10 +1409,6 @@
     "clientRowModel": {
         "meta": {
             "displayName": "RowModel: Client-Side",
-            "page": {
-                "name": "Client-Side Row Model",
-                "url": "./client-side-model/"
-            },
             "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "rowData": {
@@ -1465,6 +1470,12 @@
             "more": {
                 "name": "Block Loading Debounce",
                 "url": "./server-side-model-configuration/#block-loading-debounce"
+            }
+        },
+        "suppressServerSideFullWidthLoadingRow": {
+            "more": {
+                "name": "Cell Loading",
+                "url": "./component-loading-cell-renderer/#skeleton-loading"
             }
         },
         "purgeClosedRowNodes": {
@@ -1602,16 +1613,10 @@
             }
         },
         "alwaysShowHorizontalScroll": {
-            "more": {
-                "name": "Make Scrollbars Always Visible",
-                "url": "./scrolling-scenarios/#make-scrollbars-always-visible"
-            }
+            "description": "Set to `true` to always show the horizontal scrollbar. Windows and Mac OS both have settings to control scrollbar visibility. Depending on your browser, you may need to adjust the scrollbar settings in your OS to have this property take effect."
         },
         "alwaysShowVerticalScroll": {
-            "more": {
-                "name": "Make Scrollbars Always Visible",
-                "url": "./scrolling-scenarios/#make-scrollbars-always-visible"
-            }
+            "description": "Set to `true` to always show the vertical scrollbar. Windows and Mac OS both have settings to control scrollbar visibility. Depending on your browser, you may need to adjust the scrollbar settings in your OS to have this property take effect."
         },
         "debounceVerticalScrollbar": {
             "more": {
@@ -1743,8 +1748,8 @@
         },
         "sortingOrder": {
             "more": {
-                "name": "Example Sorting Order and Animation",
-                "url": "./row-sorting/#example-sorting-order-and-animation"
+                "name": "Example Sorting Order",
+                "url": "./row-sorting/#example-sorting-order"
             }
         },
         "accentedSort": {
@@ -1886,19 +1891,19 @@
         "enableBrowserTooltips": {
             "more": {
                 "name": "Default Browser Tooltip",
-                "url": "./tooltips/#default-browser-tooltip"
+                "url": "./tooltips/#browser-tooltip"
             }
         },
         "tooltipShowDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "./tooltips/#tooltip-show-and-hide-delay"
+                "url": "./tooltips/#show-and-hide-delay"
             }
         },
         "tooltipHideDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "./tooltips/#tooltip-show-and-hide-delay"
+                "url": "./tooltips/#show-and-hide-delay"
             }
         },
         "tooltipMouseTrack": {

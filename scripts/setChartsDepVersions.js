@@ -1,4 +1,5 @@
 const fs = require('fs');
+const os = require('os');
 
 const chartsVersion = process.argv[2];
 
@@ -14,21 +15,19 @@ function updateDependency(fileContents, property, chartsVersion) {
     }
 
     let updated = false;
-    Object.entries(fileContents[property])
-        .forEach(([key, value]) => {
-            if (key.startsWith('ag-charts')) {
-                fileContents[property][key] = chartsVersion;
-                updated = true;
-            }
-        });
+    Object.entries(fileContents[property]).forEach(([key, value]) => {
+        if (key.startsWith('ag-charts')) {
+            fileContents[property][key] = chartsVersion;
+            updated = true;
+        }
+    });
 
     return updated;
 }
 
-
 const packageRootDirectories = JSON.parse(fs.readFileSync('package.json', 'utf-8')).workspaces.packages;
 
-const processPackageFile = packageJsonFilename => {
+const processPackageFile = (packageJsonFilename) => {
     if (fs.existsSync(packageJsonFilename)) {
         const packageJson = JSON.parse(fs.readFileSync(packageJsonFilename, 'utf-8'));
 
@@ -37,16 +36,15 @@ const processPackageFile = packageJsonFilename => {
         updated |= updateDependency(packageJson, 'peerDependencies', chartsVersion);
 
         if (updated) {
-            fs.writeFileSync(packageJsonFilename, JSON.stringify(packageJson, null, 2), 'utf-8');
+            fs.writeFileSync(packageJsonFilename, JSON.stringify(packageJson, null, 2) + os.EOL, 'utf-8');
         }
     }
-}
+};
 
 for (const lernaPackage of packageRootDirectories) {
     const packageRootDirectory = lernaPackage.replace('/*', '');
-        const packageJsonFilename = `./${packageRootDirectory}/package.json`;
-        if(fs.existsSync(packageJsonFilename)) {
-            processPackageFile(packageJsonFilename);
-        }
+    const packageJsonFilename = `./${packageRootDirectory}/package.json`;
+    if (fs.existsSync(packageJsonFilename)) {
+        processPackageFile(packageJsonFilename);
+    }
 }
-

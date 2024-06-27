@@ -1,0 +1,12 @@
+@use 'design-system' as *;
+
+.outer {
+    display: flex;
+    justify-content: center;
+}
+
+.figmaCommunityButton :global(svg.icon) {
+    --icon-size: #{$spacing-size-5};
+
+    margin-left: $spacing-size-1;
+}

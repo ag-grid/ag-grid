@@ -1,40 +1,45 @@
-import {
+import type {
     AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
-    AutocompleteEntry,
-    Autowired,
-    Bean,
-    BeanStub,
+    BeanCollection,
     ColumnModel,
     DataTypeService,
-    Events,
     IAdvancedFilterService,
     IRowModel,
     IRowNode,
+    NamedBean,
     NewColumnsLoadedEvent,
-    PostConstruct,
-    ValueParserService,
     ValueService,
     WithoutGridCommon,
-    _
-} from "@ag-grid-community/core";
-import { FilterExpressionParser } from "./filterExpressionParser";
-import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
-import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
-import { FilterExpressionFunctionParams } from "./filterExpressionUtils";
+} from '@ag-grid-community/core';
+import { BeanStub, _exists, _warnOnce } from '@ag-grid-community/core';
 
-interface ExpressionProxy {
-    getValue(colId: string, node: IRowNode): any;
-}
+import { AdvancedFilterCtrl } from './advancedFilterCtrl';
+import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
+import { FilterExpressionParser } from './filterExpressionParser';
+import type {
+    ExpressionProxy,
+    FilterExpressionFunction,
+    FilterExpressionFunctionParams,
+} from './filterExpressionUtils';
 
-@Bean('advancedFilterService')
-export class AdvancedFilterService extends BeanStub implements IAdvancedFilterService {
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
-    @Autowired('valueParserService') private valueParserService: ValueParserService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
+export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvancedFilterService {
+    beanName = 'advancedFilterService' as const;
+
+    private valueService: ValueService;
+    private columnModel: ColumnModel;
+    private dataTypeService?: DataTypeService;
+    private rowModel: IRowModel;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.valueService = beans.valueService;
+        this.columnModel = beans.columnModel;
+        this.dataTypeService = beans.dataTypeService;
+        this.rowModel = beans.rowModel;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
+    }
 
     private enabled: boolean;
     private ctrl: AdvancedFilterCtrl;
@@ -43,26 +48,26 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     private appliedExpression: string | null = null;
     /** The value displayed in the input, which may be invalid */
     private expression: string | null = null;
-    private expressionFunction: Function | null;
+    private expressionFunction: FilterExpressionFunction | null;
     private expressionParams: FilterExpressionFunctionParams | null;
     private isValid: boolean = true;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.setEnabled(this.gridOptionsService.get('enableAdvancedFilter'), true);
+    public postConstruct(): void {
+        this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));
 
         this.expressionProxy = {
             getValue: (colId, node) => {
-                const column = this.columnModel.getPrimaryColumn(colId);
+                const column = this.columnModel.getColDefCol(colId);
                 return column ? this.valueService.getValue(column, node, true) : undefined;
             },
-        }
+        };
 
-        this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue))
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,
-            (event: NewColumnsLoadedEvent) => this.onNewColumnsLoaded(event));
+        this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
+        this.addManagedEventListeners({
+            newColumnsLoaded: (event) => this.onNewColumnsLoaded(event),
+        });
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
     }
 
@@ -75,7 +80,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public doesFilterPass(node: IRowNode): boolean {
-        return this.expressionFunction!(this.expressionProxy, node, this.expressionParams);
+        return this.expressionFunction!(this.expressionProxy, node, this.expressionParams!);
     }
 
     public getModel(): AdvancedFilterModel | null {
@@ -88,8 +93,9 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         const parseModel = (model: AdvancedFilterModel, isFirstParent?: boolean): string | null => {
             if (model.filterType === 'join') {
                 const operator = this.advancedFilterExpressionService.parseJoinOperator(model);
-                const expression = model.conditions.map(condition => parseModel(condition))
-                    .filter(condition => _.exists(condition))
+                const expression = model.conditions
+                    .map((condition) => parseModel(condition))
+                    .filter((condition) => _exists(condition))
                     .join(` ${operator} `);
                 return isFirstParent || model.conditions.length <= 1 ? expression : `(${expression})`;
             } else {
@@ -118,29 +124,32 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public createExpressionParser(expression: string | null): FilterExpressionParser | null {
-        if (!expression) { return null; }
+        if (!expression) {
+            return null;
+        }
 
         return new FilterExpressionParser({
             expression,
             columnModel: this.columnModel,
             dataTypeService: this.dataTypeService,
-            valueParserService: this.valueParserService,
+            valueService: this.valueService,
             advancedFilterExpressionService: this.advancedFilterExpressionService,
         });
     }
 
     public getDefaultExpression(updateEntry: AutocompleteEntry): {
-        updatedValue: string, updatedPosition: number
+        updatedValue: string;
+        updatedPosition: number;
     } {
         const updatedValue = this.advancedFilterExpressionService.getColumnValue(updateEntry) + ' ';
         return {
             updatedValue,
-            updatedPosition: updatedValue.length
+            updatedPosition: updatedValue.length,
         };
     }
 
     public isHeaderActive(): boolean {
-        return !this.gridOptionsService.get('advancedFilterParent');
+        return !this.gos.get('advancedFilterParent');
     }
 
     public getCtrl(): AdvancedFilterCtrl {
@@ -152,13 +161,13 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         const rowModelType = this.rowModel.getType();
         const isValidRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
         if (enabled && !rowModelType) {
-            _.warnOnce('Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.');
+            _warnOnce('Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.');
         }
         this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {
             const event: WithoutGridCommon<AdvancedFilterEnabledChangedEvent> = {
-                type: Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
-                enabled: this.enabled
+                type: 'advancedFilterEnabledChanged',
+                enabled: this.enabled,
             };
             this.eventService.dispatchEvent(event);
         }
@@ -167,7 +176,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     public applyExpression(): void {
         const expressionParser = this.createExpressionParser(this.expression);
         expressionParser?.parseExpression();
-        this.applyExpressionFromParser(expressionParser)
+        this.applyExpressionFromParser(expressionParser);
     }
 
     private applyExpressionFromParser(expressionParser: FilterExpressionParser | null): void {
@@ -179,11 +188,31 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             return;
         }
 
-        const { functionBody, params } = expressionParser.getFunction();
+        const { expressionFunction, params } = this.getFunction(expressionParser);
 
-        this.expressionFunction = new Function('expressionProxy', 'node', 'params', functionBody);
+        this.expressionFunction = expressionFunction;
         this.expressionParams = params;
         this.appliedExpression = this.expression;
+    }
+
+    private getFunction(expressionParser: FilterExpressionParser): {
+        expressionFunction: FilterExpressionFunction;
+        params: FilterExpressionFunctionParams;
+    } {
+        if (this.gos.get('suppressAdvancedFilterEval')) {
+            return expressionParser.getFunctionParsed();
+        } else {
+            const { functionString, params } = expressionParser.getFunctionString();
+            return {
+                expressionFunction: new Function(
+                    'expressionProxy',
+                    'node',
+                    'params',
+                    functionString
+                ) as FilterExpressionFunction,
+                params,
+            };
+        }
     }
 
     public updateValidity(): boolean {
@@ -201,12 +230,16 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     private onNewColumnsLoaded(event: NewColumnsLoadedEvent): void {
-        if (event.source !== 'gridInitializing' || !this.dataTypeService.isPendingInference()) { return; }
+        if (event.source !== 'gridInitializing' || !this.dataTypeService?.isPendingInference()) {
+            return;
+        }
 
         this.ctrl.setInputDisabled(true);
-        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => {
-            destroyFunc?.();
-            this.ctrl.setInputDisabled(false);
+        const [destroyFunc] = this.addManagedEventListeners({
+            dataTypesInferred: () => {
+                destroyFunc?.();
+                this.ctrl.setInputDisabled(false);
+            },
         });
-}
+    }
 }

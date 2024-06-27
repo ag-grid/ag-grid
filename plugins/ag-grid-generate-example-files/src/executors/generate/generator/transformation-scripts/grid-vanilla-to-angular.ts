@@ -1,10 +1,11 @@
-import { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
     addGenericInterfaceImport,
     addLicenseManager,
+    findLocaleImport,
     getActiveTheme,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
@@ -16,6 +17,7 @@ import {
     replaceGridReadyRowData,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
+
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -52,7 +54,12 @@ function getOnGridReadyCode(
     }
 }
 
-function addModuleImports(imports: string[], bindings: ParsedBindings, exampleConfig: ExampleConfig, allStylesheets: string[]): string[] {
+function addModuleImports(
+    imports: string[],
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    allStylesheets: string[]
+): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
@@ -69,7 +76,7 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, exampleCo
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
-    let propertyInterfaces = getPropertyInterfaces(properties);
+    const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
         module: `'@ag-grid-community/core'`,
@@ -90,7 +97,12 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, exampleCo
     return imports;
 }
 
-function addPackageImports(imports: string[], bindings: ParsedBindings, exampleConfig: ExampleConfig, allStylesheets: string[]): string[] {
+function addPackageImports(
+    imports: string[],
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    allStylesheets: string[]
+): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
@@ -108,7 +120,7 @@ function addPackageImports(imports: string[], bindings: ParsedBindings, exampleC
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
-    let propertyInterfaces = getPropertyInterfaces(properties);
+    const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
         module: `'ag-grid-community'`,
@@ -130,10 +142,15 @@ function getImports(
     importType: ImportType,
     allStylesheets: string[]
 ): string[] {
-    let imports = ["import { Component } from '@angular/core';"];
+    const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
         imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
+    }
+
+    const localeImport = findLocaleImport(bindings.imports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from 'ag-grid-locale';`);
     }
 
     if (importType === 'packages') {
@@ -158,9 +175,10 @@ function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, att
         : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
     const agGridTag = `<ag-grid-angular
+    ${exampleConfig.myGridReference ? 'id="myGrid"' : ''}
     ${style}
     ${attributes.join('\n    ')}
-    ></ag-grid-angular>`;
+     />`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag) : agGridTag;
 
@@ -261,7 +279,7 @@ export function vanillaToAngular(
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
-        let standaloneImports = ['AgGridAngular'];
+        const standaloneImports = ['AgGridAngular'];
         if (bindings.data) {
             standaloneImports.push('HttpClientModule');
         }

@@ -13,7 +13,7 @@ The key for the provided Group Cell Component is `agGroupCellRenderer`.
 
 The Cell Component takes many parameters to configure it. Here is an example of a Column and its configuration:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // column definition configured to show group values with the cell renderer set to 'group'
@@ -32,8 +32,8 @@ const gridOptions = {
                 innerRenderer: myInnerRenderer,
                 // provide an inner renderer
                 innerRendererParams: {foo: 'bar'},
-                // provide a footer value getter
-                footerValueGetter: myFooterValueGetter
+                // provide a total row value getter
+                totalValueGetter: myTotalValueGetter
             }
         }
     ]

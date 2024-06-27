@@ -53,7 +53,7 @@ Set the grid property `enableBrowserTooltips=true` to stop using rich HTML Compo
 
 By default, it is impossible to click on tooltips and hovering them has no effect. If `tooltipInteraction=true` is set in the gridOptions, the tooltips will not disappear while being hovered and you will be able to click and select the text within the tooltip.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     tooltipInteraction: true
 }
@@ -86,10 +86,10 @@ In the example below:
 
 {% gridExampleRunner title="Custom Tooltip Component" name="custom-tooltip-component" /%}
 
-{% includeMarkdoc file="tooltips/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ITooltipParams" /%}

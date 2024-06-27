@@ -1,15 +1,15 @@
-import {Component} from '@angular/core';
-import {NgFor, NgIf} from '@angular/common';
+import { AgGridAngular } from '@ag-grid-community/angular';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import {AgGridAngular} from '@ag-grid-community/angular';
-import {ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent} from '@ag-grid-community/core';
-import {TAthlete, getData} from './data';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { Component } from '@angular/core';
+
+import { TAthlete, getData } from './data';
 import './styles.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 interface ColumnWidth {
@@ -19,56 +19,62 @@ interface ColumnWidth {
 
 @Component({
     standalone: true,
-    imports: [AgGridAngular, NgIf, NgFor],
+    imports: [AgGridAngular],
     selector: 'my-app',
     template: `
         <div class="test-container">
             <div class="test-header">
-                <div *ngIf="isVisible" id="exampleButtons" style="margin-bottom: 1rem;">
-                    <button (click)="updateColumnWidth()">Change Columns Width</button>
-                    <button (click)="destroyGrid()">Destroy Grid</button>
-                </div>
-                <div *ngIf="showPreDestroyState" id="gridPreDestroyedState">
-                    State captured on grid pre-destroyed event:<br/>
-                    <strong>Column fields and widths</strong>
-                    <div className="values">
-                        <ul>
-                            <li *ngFor="let item of columnsWidthOnPreDestroyed">
-                                Field: {{item.field}} | Width: {{item.width}}px
-                            </li>
-                        </ul>
+                @if (isVisible) {
+                    <div id="exampleButtons" style="margin-bottom: 1rem;">
+                        <button (click)="updateColumnWidth()">Change Columns Width</button>
+                        <button (click)="destroyGrid()">Destroy Grid</button>
                     </div>
-                    <button (click)="reloadGrid()">Reload Grid</button>
-                </div>
+                }
+                @if (showPreDestroyState) {
+                    <div id="gridPreDestroyedState">
+                        State captured on grid pre-destroyed event:<br />
+                        <strong>Column fields and widths</strong>
+                        <div className="values">
+                            <ul>
+                                @for (item of columnsWidthOnPreDestroyed; track item.field) {
+                                    <li>Field: {{ item.field }} | Width: {{ item.width }}px</li>
+                                }
+                            </ul>
+                        </div>
+                        <button (click)="reloadGrid()">Reload Grid</button>
+                    </div>
+                }
             </div>
-            <ag-grid-angular
-                style="width: 100%; height: 100%;"
-                *ngIf="isVisible"
-                [class]="themeClass"
-                [columnDefs]="columnDefs"
-                [defaultColDef]="defaultColDef"
-                [rowData]="rowData"
-                [gridOptions]="gridOptions"
-                (gridReady)="onGridReady($event)"
-            ></ag-grid-angular>
+            @if (isVisible) {
+                <ag-grid-angular
+                    style="width: 100%; height: 100%;"
+                    [class]="themeClass"
+                    [columnDefs]="columnDefs"
+                    [defaultColDef]="defaultColDef"
+                    [rowData]="rowData"
+                    [gridOptions]="gridOptions"
+                    (gridReady)="onGridReady($event)"
+                />
+            }
         </div>
-    `
+    `,
 })
-
 export class AppComponent {
-    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+    public themeClass =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz' /** DARK MODE END **/;
     public isVisible = true;
     public showPreDestroyState = false;
-    private gridApi!: GridApi;
+    private gridApi: GridApi | undefined;
 
-    private gridOptions: GridOptions = {
+    public gridOptions: GridOptions = {
         onGridPreDestroyed: (params: GridPreDestroyedEvent<TAthlete>) => this.onGridPreDestroyed(params),
     };
 
     public columnDefs: ColDef[] = [
-        {field: 'name', headerName: 'Athlete'},
-        {field: 'medals.gold', headerName: 'Gold Medals'},
-        {field: 'person.age', headerName: 'Age'},
+        { field: 'name', headerName: 'Athlete' },
+        { field: 'medals.gold', headerName: 'Gold Medals' },
+        { field: 'person.age', headerName: 'Age' },
     ];
 
     public columnsWidthOnPreDestroyed: ColumnWidth[] = [];
@@ -77,16 +83,16 @@ export class AppComponent {
         editable: true,
     };
 
-    public rowData: any[] | null = getData()
+    public rowData: any[] | null = getData();
 
     onGridPreDestroyed(params: GridPreDestroyedEvent<TAthlete>) {
-        const allColumns = params.api?.getColumns();
+        const allColumns = params.api.getColumns();
         if (!allColumns) {
             return;
         }
-        const currentColumnWidths = allColumns.map(column => ({
-            field: column?.getColDef().field || '-',
-            width: column?.getActualWidth(),
+        const currentColumnWidths = allColumns.map((column) => ({
+            field: column.getColDef().field || '-',
+            width: column.getActualWidth(),
         }));
 
         this.columnsWidthOnPreDestroyed = currentColumnWidths;
@@ -96,33 +102,36 @@ export class AppComponent {
         if (!this.gridApi) {
             return;
         }
-        const newWidths = this.gridApi.getColumns()!.map(column => {
+        const newWidths = this.gridApi.getColumns()!.map((column) => {
             return { key: column.getColId(), newWidth: Math.round((150 + Math.random() * 100) * 100) / 100 };
-        })
-        this.gridApi?.setColumnWidths(newWidths);
+        });
+        this.gridApi.setColumnWidths(newWidths);
     }
 
     destroyGrid() {
         this.isVisible = false;
         this.showPreDestroyState = true;
+        this.gridApi = undefined;
     }
 
     reloadGrid() {
-        const updatedColDefs = this.columnDefs && this.columnsWidthOnPreDestroyed ?
-            this.columnDefs.map(val => {
-                const colDef = val as ColDef;
-                const result: ColDef = {
-                    ...colDef,
-                };
-                if (colDef.field || colDef.width) {
-                    const width = colDef.field
-                        ? this.columnsWidthOnPreDestroyed.find(i => i.field == colDef.field)?.width
-                        : undefined;
+        const updatedColDefs =
+            this.columnDefs && this.columnsWidthOnPreDestroyed
+                ? this.columnDefs.map((val) => {
+                      const colDef = val as ColDef;
+                      const result: ColDef = {
+                          ...colDef,
+                      };
+                      if (colDef.field || colDef.width) {
+                          const width = colDef.field
+                              ? this.columnsWidthOnPreDestroyed.find((i) => i.field == colDef.field)?.width
+                              : undefined;
 
-                    result.width = typeof width === 'number' ? width : colDef.width;
-                }
-                return result;
-            }) : this.columnDefs;
+                          result.width = typeof width === 'number' ? width : colDef.width;
+                      }
+                      return result;
+                  })
+                : this.columnDefs;
 
         this.columnDefs = updatedColDefs;
         this.columnsWidthOnPreDestroyed = [];

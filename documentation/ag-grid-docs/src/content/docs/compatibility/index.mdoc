@@ -1,0 +1,109 @@
+---
+title: "Version Compatibility"
+---
+
+Listed below are the version compatibility requirements for AG Grid if they exist.
+
+{% if isFramework("javascript") %}
+There are no version compatibility requirements for AG Grid when using the JavaScript version as long as you are using a [supported browser](./supported-browsers).
+{% /if %}
+
+{% if isFramework("vue") %}
+## AG Grid & Vue Compatibility Chart
+
+The table below gives the ranges of compatible versions of AG Grid with Vue versions.
+
+| Vue | AG Grid    |
+| ----| ---------- |
+| 3   | 18 - 32+   |
+| 2   | 18 - 31    |
+
+{% /if %}
+
+{% if isFramework("angular") %}
+## AG Grid & Angular Compatibility Chart
+
+The table below gives the ranges of compatible versions of AG Grid with Angular versions.
+
+| Angular | AG Grid   |
+| --------| --------- |
+| 16 - 18+| 28 - 32+  |
+| 14 - 15 | 25 - 31   |
+| 12 - 13 | 25 - 30   |
+| 10 - 11 | 24 - 27   |
+| 9       | 23 - 27   |
+| 8       | 18 - 27   |
+| 6 - 7   | 18 - 22   |
+
+## Future Support of Angular versions
+
+AG Grid currently supports Angular v14 and above. Future versions of AG Grid will support the last minor of the Angular Long-term (LTS) version at the time of release. See [Angular Support policy and schedule](https://angular.io/guide/releases#support-policy-and-schedule).
+
+### Migration to AG Grid v28+
+
+#### Angular v12+
+
+To migrate applications on Angular v12+ to AG Grid v28+ requires no dependency changes. There are [breaking changes](https://www.ag-grid.com/changelog/?fixVersion=28.0.0), notably `AgGridModule` no longer supports `.withComponents()` as it is not required any more.
+
+```diff
+@NgModule({
+    imports: [
+-         AgGridModule.withComponents([SquareComponent]),
++         AgGridModule,
+    ]
+})
+```
+
+## Notes on Angular 12+
+
+If using Angular 12+ and versions of AG Grid up to v27 the following warning may be present in the build output. To avoid this, upgrade to at least v28 of AG Grid which is published as an Ivy distribution.
+
+```bash
+Generating browser application bundles (phase: setup)...
+Processing legacy "View Engine" libraries:
+- ag-grid-angular [es2015/esm2015]
+Encourage the library authors to publish an Ivy distribution.
+```
+
+## Notes on Angular Components 10-11
+
+If you are using Angular v10-11 and have Ivy **disabled** via `enableIvy: false` then you must declare your custom components with the AgGridModule via the `withComponents` method. This enables AG Grid to be able to use your Angular components by adding them as `entryComponents` for you. You need to provide them in the **top level** `NgModule`:
+
+```js
+@NgModule({
+    imports: [
+        BrowserModule,
+        AgGridModule.withComponents(
+            [
+                SquareComponent,      // Components to be used within the Grid
+                CubeComponent,
+                // ...other components
+            ]
+        ),
+    ]
+})
+```
+
+## Notes on Angular 10
+
+Due to a breaking change in Angular 10 you may experience the following error when building:
+`Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)`
+
+If you wish to use Angular 10 with AG Grid versions 18-23 then you need to set `"skipLibCheck": true`
+in `tsconfig.app.json` Please note however that this is a workaround and Angular 10 is only
+officially supported with AG Grid 24+.
+
+{% /if %}
+
+{% if isFramework("react") %}
+## AG Grid & React Compatibility Chart
+
+The table below gives the ranges of compatible versions of AG Grid with React versions.
+
+| React Version  | AG Grid Versions |
+|----------------| ---------------- |
+| 15.x           | 18 - 21.2        |
+| 16.8 - 17.x    | 22 - 30+         |
+| 18+            | 27.2 - 30+       |
+
+{% /if %}

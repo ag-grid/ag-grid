@@ -1,11 +1,16 @@
-import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
-import { CustomComponentWrapper } from "./customComponentWrapper";
-import { CustomFilterProps, CustomFilterCallbacks } from "./interfaces";
+import type { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from 'ag-grid-community';
 
-export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks> implements IFilter {
+import { CustomComponentWrapper } from './customComponentWrapper';
+import type { CustomFilterCallbacks, CustomFilterProps } from './interfaces';
+
+export class FilterComponentWrapper
+    extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks>
+    implements IFilter
+{
     private model: any = null;
     private readonly onModelChange = (model: any) => this.updateModel(model);
     private readonly onUiChange = () => this.sourceParams.filterChangedCallback();
+    private expectingNewMethods = true;
 
     public isFilterActive(): boolean {
         return this.model != null;
@@ -20,6 +25,7 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
     }
 
     public setModel(model: any): AgPromise<void> {
+        this.expectingNewMethods = true;
         this.model = model;
         return this.refreshProps();
     }
@@ -30,15 +36,29 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
         return true;
     }
 
-    protected getOptionalMethods(): string[] {
+    protected override getOptionalMethods(): string[] {
         return ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onAnyFilterChanged'];
+    }
+
+    protected override setMethods(methods: CustomFilterCallbacks): void {
+        // filtering is run after the component's `doesFilterPass` receives the new `model`.
+        // However, if `doesFilterPass` is using a state variable derived from `model` (via effect),
+        // it won't have updated in time when filtering runs.
+        // We catch this use case here, and re-run filtering
+        if (this.expectingNewMethods === false && this.providedMethods?.doesFilterPass !== methods?.doesFilterPass) {
+            setTimeout(() => {
+                this.sourceParams.filterChangedCallback();
+            });
+        }
+        this.expectingNewMethods = false;
+        super.setMethods(methods);
     }
 
     private updateModel(model: any): void {
         this.setModel(model).then(() => this.sourceParams.filterChangedCallback());
     }
 
-    protected getProps(): CustomFilterProps {
+    protected override getProps(): CustomFilterProps {
         const props = super.getProps();
         props.model = this.model;
         props.onModelChange = this.onModelChange;

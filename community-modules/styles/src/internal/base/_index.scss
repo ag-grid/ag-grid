@@ -1,28 +1,27 @@
+@use 'ag';
+@use 'sass:meta';
+@use 'sass:color';
 
-@use "ag";
-@use "sass:meta";
-@use "sass:color";
-
-@use "./parts/icons";
-@use "./base-variables";
-@use "./parts/root";
-@use "./parts/common-structural";
-@use "./parts/print-structural";
-@use "./parts/reset";
-@use "./parts/widgets";
-@use "./parts/grid-layout";
-@use "./parts/grid-borders";
-@use "./parts/menu";
-@use "./parts/sidebar";
-@use "./parts/filter-tool-panel";
-@use "./parts/columns-tool-panel";
-@use "./parts/header";
-@use "./parts/footer";
-@use "./parts/column-drop";
-@use "./parts/charts";
-@use "./parts/date-time";
-@use "./parts/native-inputs";
-@use "./parts/advanced-filter";
+@use './parts/icons';
+@use './base-variables';
+@use './parts/root';
+@use './parts/common-structural';
+@use './parts/print-structural';
+@use './parts/reset';
+@use './parts/widgets';
+@use './parts/grid-layout';
+@use './parts/grid-borders';
+@use './parts/menu';
+@use './parts/sidebar';
+@use './parts/filter-tool-panel';
+@use './parts/columns-tool-panel';
+@use './parts/header';
+@use './parts/footer';
+@use './parts/column-drop';
+@use './parts/charts';
+@use './parts/date-time';
+@use './parts/native-inputs';
+@use './parts/advanced-filter';
 
 @mixin general-styles() {
     @include icons.output();

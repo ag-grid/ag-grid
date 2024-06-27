@@ -1,25 +1,28 @@
-import { RowRenderer } from "./rowRenderer";
-import { Column } from "../entities/column";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { CtrlsService } from "../ctrlsService";
-import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
-import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
-import { ColumnGroup } from "../entities/columnGroup";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { RowRenderer } from './rowRenderer';
 
-@Bean('autoWidthCalculator')
-export class AutoWidthCalculator extends BeanStub {
+export class AutoWidthCalculator extends BeanStub implements NamedBean {
+    beanName = 'autoWidthCalculator' as const;
 
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
+    private rowRenderer: RowRenderer;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowRenderer = beans.rowRenderer;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private centerRowContainerCtrl: RowContainerCtrl;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
-            this.centerRowContainerCtrl = p.centerRowContainerCtrl;
+    public postConstruct(): void {
+        this.ctrlsService.whenReady((p) => {
+            this.centerRowContainerCtrl = p.center;
         });
     }
 
@@ -27,10 +30,12 @@ export class AutoWidthCalculator extends BeanStub {
     // into the dummy, then check the dummy's width. then destroy the dummy
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
-    public getPreferredWidthForColumn(column: Column, skipHeader?: boolean): number {
+    public getPreferredWidthForColumn(column: AgColumn, skipHeader?: boolean): number {
         const eHeaderCell = this.getHeaderCellForColumn(column);
         // cell isn't visible
-        if (!eHeaderCell) { return -1; }
+        if (!eHeaderCell) {
+            return -1;
+        }
 
         const elements = this.rowRenderer.getAllCellsForColumn(column);
 
@@ -44,17 +49,19 @@ export class AutoWidthCalculator extends BeanStub {
         return this.addElementsToContainerAndGetWidth(elements);
     }
 
-    public getPreferredWidthForColumnGroup(columnGroup: ColumnGroup): number {
+    public getPreferredWidthForColumnGroup(columnGroup: AgColumnGroup): number {
         const eHeaderCell = this.getHeaderCellForColumn(columnGroup);
 
-        if (!eHeaderCell) { return -1; }
+        if (!eHeaderCell) {
+            return -1;
+        }
 
         return this.addElementsToContainerAndGetWidth([eHeaderCell]);
     }
 
     private addElementsToContainerAndGetWidth(elements: HTMLElement[]): number {
         // this element has to be a form, otherwise form elements within a cell
-        // will be validated while being cloned. This can cause issues such as 
+        // will be validated while being cloned. This can cause issues such as
         // radio buttons being reset and losing their values.
         const eDummyContainer = document.createElement('form');
         // position fixed, so it isn't restricted to the boundaries of the parent
@@ -64,7 +71,7 @@ export class AutoWidthCalculator extends BeanStub {
         // css styles that the real cells are inheriting
         const eBodyContainer = this.centerRowContainerCtrl.getContainerElement();
 
-        elements.forEach(el => this.cloneItemIntoDummy(el, eDummyContainer));
+        elements.forEach((el) => this.cloneItemIntoDummy(el, eDummyContainer));
 
         // only append the dummyContainer to the DOM after it contains all the necessary items
         eBodyContainer.appendChild(eDummyContainer);
@@ -84,21 +91,22 @@ export class AutoWidthCalculator extends BeanStub {
     }
 
     private getAutoSizePadding(): number {
-        return this.gridOptionsService.get('autoSizePadding');
+        return this.gos.get('autoSizePadding');
     }
 
     /* tslint:disable */
-    private getHeaderCellForColumn(column: ColumnGroup): HTMLElement | null;
-    private getHeaderCellForColumn(column: Column): HTMLElement | null;
+    private getHeaderCellForColumn(column: AgColumnGroup): HTMLElement | null;
+    private getHeaderCellForColumn(column: AgColumn): HTMLElement | null;
     private getHeaderCellForColumn(column: any): any {
-    /* tslint:enable */
+        /* tslint:enable */
         let element: HTMLElement | null = null;
 
-        this.ctrlsService.getHeaderRowContainerCtrls().forEach(container => {
-                const res = container.getHtmlElementForColumnHeader(column);
-                if (res != null) { element = res; }
+        this.ctrlsService.getHeaderRowContainerCtrls().forEach((container) => {
+            const res = container.getHtmlElementForColumnHeader(column);
+            if (res != null) {
+                element = res;
             }
-        );
+        });
 
         return element;
     }
@@ -116,9 +124,7 @@ export class AutoWidthCalculator extends BeanStub {
         // out one per line
         const eCloneParent = document.createElement('div');
         const eCloneParentClassList = eCloneParent.classList;
-        const isHeader = ['ag-header-cell', 'ag-header-group-cell'].some(
-            cls => eCellClone.classList.contains(cls)
-        );
+        const isHeader = ['ag-header-cell', 'ag-header-group-cell'].some((cls) => eCellClone.classList.contains(cls));
 
         if (isHeader) {
             eCloneParentClassList.add('ag-header', 'ag-header-row');
@@ -132,9 +138,7 @@ export class AutoWidthCalculator extends BeanStub {
         // onto group items.
         let pointer = eCell.parentElement;
         while (pointer) {
-            const isRow = ['ag-header-row', 'ag-row'].some(
-                cls => pointer!.classList.contains(cls)
-            );
+            const isRow = ['ag-header-row', 'ag-row'].some((cls) => pointer!.classList.contains(cls));
             if (isRow) {
                 for (let i = 0; i < pointer.classList.length; i++) {
                     const item = pointer.classList[i];

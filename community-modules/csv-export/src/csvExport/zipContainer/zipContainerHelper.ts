@@ -1,10 +1,9 @@
-import { _ } from "@ag-grid-community/core"
-import { convertDate, convertDecToHex, convertTime } from "./convert";
-import { ZipFile } from "./zipContainer";
-import { getCrcFromCrc32Table } from "./crcTable";
-import { deflateLocalFile } from "./compress";
+import { _utf8_encode } from '@ag-grid-community/core';
 
-const { utf8_encode } = _;
+import { deflateLocalFile } from './compress';
+import { convertDate, convertDecToHex, convertTime } from './convert';
+import { getCrcFromCrc32Table } from './crcTable';
+import type { ZipFile } from './zipContainer';
 
 interface ZipFileHeader {
     localFileHeader: Uint8Array;
@@ -16,64 +15,6 @@ export interface ProcessedZipFile extends ZipFileHeader {
     isCompressed: boolean;
 }
 
-export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ProcessedZipFile> => {
-    const { content } = currentFile;
-
-    const { size, content: rawContent } = !content
-        ? ({ size: 0, content: Uint8Array.from([])})
-        : getDecodedContent(content);
-
-    let deflatedContent: Uint8Array | undefined = undefined;
-    let deflatedSize: number | undefined = undefined;
-    let deflationPerformed = false;
-
-    const shouldDeflate = currentFile.type === 'file' && rawContent && size > 0;
-    if (shouldDeflate)  {
-        const result = await deflateLocalFile(rawContent);
-        deflatedContent = result.content;
-        deflatedSize = result.size;
-        deflationPerformed = true;
-    }
-
-    const headers = getHeaders(
-        currentFile,
-        deflationPerformed,
-        offset,
-        size,
-        rawContent,
-        deflatedSize
-    );
-
-    return {
-        ...headers,
-        content: deflatedContent || rawContent,
-        isCompressed: deflationPerformed,
-    };
-};
-
-export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ProcessedZipFile => {
-    const { content } = currentFile;
-
-    const { content: rawContent } = !content
-        ? ({ content: Uint8Array.from([]) })
-        : getDecodedContent(content);
-
-    const headers = getHeaders(
-        currentFile,
-        false,
-        offset,
-        rawContent.length,
-        rawContent,
-        undefined
-    );
-
-    return {
-        ...headers,
-        content: rawContent,
-        isCompressed: false,
-    };
-};
-
 const getHeaders = (
     currentFile: ZipFile,
     isCompressed: boolean,
@@ -82,11 +23,7 @@ const getHeaders = (
     rawContent: string | Uint8Array,
     deflatedSize: number | undefined
 ): ZipFileHeader => {
-    const {
-        content,
-        path,
-        created: creationDate,
-    } = currentFile;
+    const { content, path, created: creationDate } = currentFile;
 
     const time = convertTime(creationDate);
     const dt = convertDate(creationDate);
@@ -94,13 +31,13 @@ const getHeaders = (
     const crcFlag = getCrcFromCrc32Table(rawContent);
     const zipSize = deflatedSize !== undefined ? deflatedSize : rawSize;
 
-    const utfPath = utf8_encode(path);
+    const utfPath = _utf8_encode(path);
     const isUTF8 = utfPath !== path;
 
     let extraFields = '';
     if (isUTF8) {
         const uExtraFieldPath = convertDecToHex(1, 1) + convertDecToHex(getCrcFromCrc32Table(utfPath), 4) + utfPath;
-        extraFields = "\x75\x70" +  convertDecToHex(uExtraFieldPath.length, 2) + uExtraFieldPath;
+        extraFields = '\x75\x70' + convertDecToHex(uExtraFieldPath.length, 2) + uExtraFieldPath;
     }
 
     const commonHeader =
@@ -129,42 +66,22 @@ const getHeaders = (
         extraFields; // extra field
 
     return {
-        localFileHeader: Uint8Array.from(localFileHeader, c => c.charCodeAt(0)),
-        centralDirectoryHeader: Uint8Array.from(centralDirectoryHeader, c => c.charCodeAt(0)),
+        localFileHeader: Uint8Array.from(localFileHeader, (c) => c.charCodeAt(0)),
+        centralDirectoryHeader: Uint8Array.from(centralDirectoryHeader, (c) => c.charCodeAt(0)),
     };
 };
 
-export const buildCentralDirectoryEnd = (tLen: number, cLen: number, lLen:number): Uint8Array => {
-    const str= 'PK\x05\x06' + // central folder end
-        '\x00\x00' +
-        '\x00\x00' +
-        convertDecToHex(tLen, 2) + // total number of entries in the central folder
-        convertDecToHex(tLen, 2) + // total number of entries in the central folder
-        convertDecToHex(cLen, 4) + // size of the central folder
-        convertDecToHex(lLen, 4) + // central folder start offset
-        '\x00\x00';
-
-    return Uint8Array.from(str, c => c.charCodeAt(0));
-};
-
-export const convertStringToByteArray = (str: string): Uint8Array => {
-    const bytes = new Uint8Array(str.length);
-    for (let i = 0; i < str.length; i++) {
-        bytes[i] = str.charCodeAt(i);
-    }
-
-    return bytes;
-}
-
-export const getDecodedContent = (content: string | Uint8Array): {
+const getDecodedContent = (
+    content: string | Uint8Array
+): {
     size: number;
     content: Uint8Array;
 } => {
     let contentToUse: Uint8Array;
     // base64 content is passed as string
-    if (typeof content ==='string') {
+    if (typeof content === 'string') {
         const base64String = atob(content.split(';base64,')[1]);
-        contentToUse = convertStringToByteArray(base64String);
+        contentToUse = Uint8Array.from(base64String, (c) => c.charCodeAt(0));
     } else {
         contentToUse = content;
     }
@@ -173,4 +90,60 @@ export const getDecodedContent = (content: string | Uint8Array): {
         size: contentToUse.length,
         content: contentToUse,
     };
+};
+
+export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ProcessedZipFile> => {
+    const { content } = currentFile;
+
+    const { size, content: rawContent } = !content
+        ? { size: 0, content: Uint8Array.from([]) }
+        : getDecodedContent(content);
+
+    let deflatedContent: Uint8Array | undefined = undefined;
+    let deflatedSize: number | undefined = undefined;
+    let deflationPerformed = false;
+
+    const shouldDeflate = currentFile.type === 'file' && rawContent && size > 0;
+    if (shouldDeflate) {
+        const result = await deflateLocalFile(rawContent);
+        deflatedContent = result.content;
+        deflatedSize = result.size;
+        deflationPerformed = true;
+    }
+
+    const headers = getHeaders(currentFile, deflationPerformed, offset, size, rawContent, deflatedSize);
+
+    return {
+        ...headers,
+        content: deflatedContent || rawContent,
+        isCompressed: deflationPerformed,
+    };
+};
+
+export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ProcessedZipFile => {
+    const { content } = currentFile;
+
+    const { content: rawContent } = !content ? { content: Uint8Array.from([]) } : getDecodedContent(content);
+
+    const headers = getHeaders(currentFile, false, offset, rawContent.length, rawContent, undefined);
+
+    return {
+        ...headers,
+        content: rawContent,
+        isCompressed: false,
+    };
+};
+
+export const buildCentralDirectoryEnd = (tLen: number, cLen: number, lLen: number): Uint8Array => {
+    const str =
+        'PK\x05\x06' + // central folder end
+        '\x00\x00' +
+        '\x00\x00' +
+        convertDecToHex(tLen, 2) + // total number of entries in the central folder
+        convertDecToHex(tLen, 2) + // total number of entries in the central folder
+        convertDecToHex(cLen, 4) + // size of the central folder
+        convertDecToHex(lLen, 4) + // central folder start offset
+        '\x00\x00';
+
+    return Uint8Array.from(str, (c) => c.charCodeAt(0));
 };

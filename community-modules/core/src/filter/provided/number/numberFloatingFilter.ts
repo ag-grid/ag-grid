@@ -1,9 +1,14 @@
-import { getAllowedCharPattern, NumberFilter, NumberFilterModel, NumberFilterModelFormatter, NumberFilterParams } from './numberFilter';
-import { FloatingFilterInputService, FloatingFilterTextInputService, ITextInputFloatingFilterParams,TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
-import { SimpleFilterModelFormatter } from '../simpleFilter';
+import { BeanStub } from '../../../context/beanStub';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { BeanStub } from '../../../context/beanStub';
+import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
+import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
+import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import type { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import type { INumberFloatingFilterParams, NumberFilterModel, NumberFilterParams } from './iNumberFilter';
+import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
+import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
+import { getAllowedCharPattern } from './numberFilterUtils';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
     private eFloatingFilterTextInput: AgInputTextField;
@@ -18,8 +23,8 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
 
         this.eFloatingFilterTextInput.setDisabled(true);
 
-        const eNumberInput = this.eFloatingFilterNumberInput.getGui()
-        const eTextInput = this.eFloatingFilterTextInput.getGui()
+        const eNumberInput = this.eFloatingFilterNumberInput.getGui();
+        const eTextInput = this.eFloatingFilterTextInput.getGui();
 
         parentElement.appendChild(eNumberInput);
         parentElement.appendChild(eTextInput);
@@ -56,13 +61,15 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 
     private setupListeners(element: HTMLElement, listener: (e: KeyboardEvent) => void): void {
-        this.addManagedListener(element, 'input', listener);
-        this.addManagedListener(element, 'keydown', listener);
+        this.addManagedListeners(element, {
+            input: listener,
+            keydown: listener,
+        });
     }
 
-    public setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void {
+    public setParams(params: { ariaLabel: string; autoComplete?: boolean | string }): void {
         this.setAriaLabel(params.ariaLabel);
-        
+
         if (params.autoComplete !== undefined) {
             this.setAutoComplete(params.autoComplete);
         }
@@ -74,14 +81,11 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 }
 
-export interface INumberFloatingFilterParams extends ITextInputFloatingFilterParams {
-}
-
 export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterModel> {
     private filterModelFormatter: SimpleFilterModelFormatter;
     private allowedCharPattern: string | null;
 
-    public init(params: INumberFloatingFilterParams): void {
+    public override init(params: INumberFloatingFilterParams): void {
         super.init(params);
         this.filterModelFormatter = new NumberFilterModelFormatter(
             this.localeService,
@@ -90,11 +94,11 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
         );
     }
 
-    public onParamsUpdated(params: INumberFloatingFilterParams): void {
+    public override onParamsUpdated(params: INumberFloatingFilterParams): void {
         this.refresh(params);
     }
 
-    public refresh(params: INumberFloatingFilterParams): void {
+    public override refresh(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
@@ -104,7 +108,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
     }
 
     protected getDefaultFilterOptions(): string[] {
-        return NumberFilter.DEFAULT_FILTER_OPTIONS;
+        return DEFAULT_NUMBER_FILTER_OPTIONS;
     }
 
     protected getFilterModelFormatter(): SimpleFilterModelFormatter {
@@ -115,9 +119,11 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
         this.allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (this.allowedCharPattern) {
             // need to use text input
-            return this.createManagedBean(new FloatingFilterTextInputService({
-                config: { allowedCharPattern: this.allowedCharPattern },
-            }));
+            return this.createManagedBean(
+                new FloatingFilterTextInputService({
+                    config: { allowedCharPattern: this.allowedCharPattern },
+                })
+            );
         }
         return this.createManagedBean(new FloatingFilterNumberInputService());
     }

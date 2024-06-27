@@ -1,37 +1,35 @@
-import { AgCheckbox } from '../widgets/agCheckbox';
-import { PostConstruct } from '../context/context';
-import { Column } from '../entities/column';
-import { Component } from '../widgets/component';
-import { Events } from '../events';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { RowNode } from '../entities/rowNode';
-import { stopPropagationForAgGrid } from '../utils/event';
-import { CheckboxSelectionCallback } from '../entities/colDef';
-import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
-import { getAriaCheckboxStateName } from '../utils/aria';
+import type { AgColumn } from '../entities/agColumn';
+import type { CheckboxSelectionCallback } from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
+import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
+import { _getAriaCheckboxStateName } from '../utils/aria';
+import { _stopPropagationForAgGrid } from '../utils/event';
+import type { AgCheckbox } from '../widgets/agCheckbox';
+import { AgCheckboxSelector } from '../widgets/agCheckbox';
+import { Component, RefPlaceholder } from '../widgets/component';
 
 export class CheckboxSelectionComponent extends Component {
-
-    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
     private rowNode: RowNode;
-    private column: Column | undefined;
+    private column: AgColumn | undefined;
     private overrides?: {
-        isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined,
-        callbackParams: any,
+        isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
+        callbackParams: any;
         removeHidden: boolean;
     };
 
     constructor() {
-        super(/* html*/`
+        super(
+            /* html*/ `
             <div class="ag-selection-checkbox" role="presentation">
-                <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
-            </div>`
+                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
+            </div>`,
+            [AgCheckboxSelector]
         );
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.eCheckbox.setPassive(true);
     }
 
@@ -52,8 +50,10 @@ export class CheckboxSelectionComponent extends Component {
     private onSelectionChanged(): void {
         const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
-        const stateName = getAriaCheckboxStateName(translate, state);
-        const [ariaKey, ariaLabel] = this.rowNode.selectable ? ['ariaRowToggleSelection', 'Press Space to toggle row selection'] : ['ariaRowSelectionDisabled', 'Row Selection is disabled for this row'];
+        const stateName = _getAriaCheckboxStateName(translate, state);
+        const [ariaKey, ariaLabel] = this.rowNode.selectable
+            ? ['ariaRowToggleSelection', 'Press Space to toggle row selection']
+            : ['ariaRowSelectionDisabled', 'Row Selection is disabled for this row'];
         const translatedLabel = translate(ariaKey, ariaLabel);
 
         this.eCheckbox.setValue(state, true);
@@ -61,17 +61,23 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onClicked(newValue: boolean, groupSelectsFiltered: boolean | undefined, event: MouseEvent): number {
-        return this.rowNode.setSelectedParams({ newValue, rangeSelect: event.shiftKey, groupSelectsFiltered, event, source: 'checkboxSelected' });
+        return this.rowNode.setSelectedParams({
+            newValue,
+            rangeSelect: event.shiftKey,
+            groupSelectsFiltered,
+            event,
+            source: 'checkboxSelected',
+        });
     }
 
     public init(params: {
-        rowNode: RowNode,
-        column?: Column,
+        rowNode: RowNode;
+        column?: AgColumn;
         overrides?: {
-            isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined,
-            callbackParams: any,
+            isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
+            callbackParams: any;
             removeHidden: boolean;
-        },
+        };
     }): void {
         this.rowNode = params.rowNode;
         this.column = params.column;
@@ -79,44 +85,49 @@ export class CheckboxSelectionComponent extends Component {
 
         this.onSelectionChanged();
 
-        // we don't want double click on this icon to open a group
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event) => {
-            stopPropagationForAgGrid(event);
-        });
+        this.addManagedListeners(this.eCheckbox.getInputElement(), {
+            // we don't want double click on this icon to open a group
+            dblclick: (event) => _stopPropagationForAgGrid(event),
+            click: (event) => {
+                // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
+                // would possibly get selected twice
+                _stopPropagationForAgGrid(event);
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
-            // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
-            // would possibly get selected twice
-            stopPropagationForAgGrid(event);
+                const groupSelectsFiltered = this.gos.get('groupSelectsFiltered');
+                const isSelected = this.eCheckbox.getValue();
 
-            const groupSelectsFiltered = this.gridOptionsService.get('groupSelectsFiltered');
-            const isSelected = this.eCheckbox.getValue();
-
-            if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
-                // try toggling children to determine action.
-                const result = this.onClicked(true, groupSelectsFiltered, event || {});
-                if (result === 0) {
+                if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
+                    // try toggling children to determine action.
+                    const result = this.onClicked(true, groupSelectsFiltered, event || {});
+                    if (result === 0) {
+                        this.onClicked(false, groupSelectsFiltered, event);
+                    }
+                } else if (isSelected) {
                     this.onClicked(false, groupSelectsFiltered, event);
+                } else {
+                    this.onClicked(true, groupSelectsFiltered, event || {});
                 }
-            } else if (isSelected) {
-                this.onClicked(false, groupSelectsFiltered, event);
-            } else {
-                this.onClicked(true, groupSelectsFiltered, event || {});
-            }
+            },
         });
 
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
+        this.addManagedListeners(this.rowNode, {
+            rowSelected: this.onSelectionChanged.bind(this),
+            dataChanged: this.onDataChanged.bind(this),
+            selectableChanged: this.onSelectableChanged.bind(this),
+        });
 
-        const isRowSelectableFunc = this.gridOptionsService.get('isRowSelectable');
+        const isRowSelectableFunc = this.gos.get('isRowSelectable');
         const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {
             const showOrHideSelectListener = this.showOrHideSelect.bind(this);
-            this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, showOrHideSelectListener);
-            this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, showOrHideSelectListener);
-            this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, showOrHideSelectListener);
+            this.addManagedEventListeners({ displayedColumnsChanged: showOrHideSelectListener });
+
+            this.addManagedListeners(this.rowNode, {
+                dataChanged: showOrHideSelectListener,
+                cellChanged: showOrHideSelectListener,
+            });
+
             this.showOrHideSelect();
         }
 
@@ -126,9 +137,11 @@ export class CheckboxSelectionComponent extends Component {
     private shouldHandleIndeterminateState(isSelected: boolean | undefined, groupSelectsFiltered: boolean): boolean {
         // for CSRM groupSelectsFiltered, we can get an indeterminate state where all filtered children are selected,
         // and we would expect clicking to deselect all rather than select all
-        return groupSelectsFiltered &&
+        return (
+            groupSelectsFiltered &&
             (this.eCheckbox.getPreviousValue() === undefined || isSelected === undefined) &&
-            this.gridOptionsService.isRowModelType('clientSide');
+            this.gos.isRowModelType('clientSide')
+        );
     }
 
     private showOrHideSelect(): void {

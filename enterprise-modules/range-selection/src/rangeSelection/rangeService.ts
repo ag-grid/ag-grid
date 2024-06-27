@@ -1,45 +1,72 @@
-import {
-    Autowired,
-    Bean,
+import type {
+    AgColumn,
+    BeanCollection,
     CellNavigationService,
     CellPosition,
     CellPositionUtils,
-    Column,
+    CellRange,
+    CellRangeParams,
+    ClearCellRangeParams,
     ColumnModel,
-    Events,
+    CtrlsService,
+    DragService,
     IRangeService,
     IRowModel,
-    CellRangeParams,
-    PostConstruct,
-    CellRange,
+    NamedBean,
+    PartialCellRange,
+    PinnedRowModel,
+    RangeDeleteEndEvent,
+    RangeDeleteStartEvent,
     RangeSelectionChangedEvent,
+    RowPinnedType,
     RowPosition,
     RowPositionUtils,
-    PinnedRowModel,
-    BeanStub,
-    CtrlsService,
-    AutoScrollService,
-    RowPinnedType,
+    ValueService,
+    VisibleColsService,
     WithoutGridCommon,
-    DragService,
+} from '@ag-grid-community/core';
+import {
+    AutoScrollService,
+    BeanStub,
     CellCtrl,
-    _,
-    ClearCellRangeParams,
-    RangeDeleteStartEvent,
-    RangeDeleteEndEvent
-} from "@ag-grid-community/core";
+    _areEqual,
+    _exists,
+    _existsAndNotEmpty,
+    _getCtrlForEventTarget,
+    _includes,
+    _last,
+    _makeNull,
+    _missing,
+    _shallowCompare,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
-@Bean('rangeService')
-export class RangeService extends BeanStub implements IRangeService {
+export class RangeService extends BeanStub implements NamedBean, IRangeService {
+    beanName = 'rangeService' as const;
 
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
-    @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+    private rowModel: IRowModel;
+    private dragService: DragService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private cellNavigationService: CellNavigationService;
+    private pinnedRowModel: PinnedRowModel;
+    private rowPositionUtils: RowPositionUtils;
+    private cellPositionUtils: CellPositionUtils;
+    private ctrlsService: CtrlsService;
+    private valueService: ValueService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.rowModel = beans.rowModel;
+        this.dragService = beans.dragService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.cellNavigationService = beans.cellNavigationService;
+        this.pinnedRowModel = beans.pinnedRowModel;
+        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellPositionUtils = beans.cellPositionUtils;
+        this.ctrlsService = beans.ctrlsService;
+        this.valueService = beans.valueService;
+    }
 
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
@@ -60,29 +87,34 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public autoScrollService: AutoScrollService;
 
-    @PostConstruct
-    private init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.removeAllCellRanges());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.removeAllCellRanges());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.removeAllCellRanges());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
+    public postConstruct(): void {
+        const onColumnsChanged = this.onColumnsChanged.bind(this);
+        const removeAllCellRanges = () => this.removeAllCellRanges();
+        const refreshLastRangeStart = this.refreshLastRangeStart.bind(this);
+        this.addManagedEventListeners({
+            newColumnsLoaded: onColumnsChanged,
+            columnVisible: onColumnsChanged,
+            columnValueChanged: onColumnsChanged,
+            columnPivotModeChanged: removeAllCellRanges,
+            columnRowGroupChanged: removeAllCellRanges,
+            columnPivotChanged: removeAllCellRanges,
+            columnGroupOpened: refreshLastRangeStart,
+            columnMoved: refreshLastRangeStart,
+            columnPinned: refreshLastRangeStart,
+        });
 
-        this.ctrlsService.whenReady(() => {
-            const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        this.ctrlsService.whenReady((p) => {
+            const gridBodyCtrl = p.gridBodyCtrl;
             this.autoScrollService = new AutoScrollService({
                 scrollContainer: gridBodyCtrl.getBodyViewportElement()!,
                 scrollAxis: 'xy',
                 getVerticalPosition: () => gridBodyCtrl.getScrollFeature().getVScrollPosition().top,
                 setVerticalPosition: (position) => gridBodyCtrl.getScrollFeature().setVerticalScrollPosition(position),
                 getHorizontalPosition: () => gridBodyCtrl.getScrollFeature().getHScrollPosition().left,
-                setHorizontalPosition: (position) => gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(position),
-                shouldSkipVerticalScroll: () => !this.gridOptionsService.isDomLayout('normal'),
-                shouldSkipHorizontalScroll: () => !gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()
+                setHorizontalPosition: (position) =>
+                    gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(position),
+                shouldSkipVerticalScroll: () => !this.gos.isDomLayout('normal'),
+                shouldSkipHorizontalScroll: () => !gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing(),
             });
         });
     }
@@ -92,18 +124,18 @@ export class RangeService extends BeanStub implements IRangeService {
         // first move start column in last cell range (i.e. series chart range)
         this.refreshLastRangeStart();
 
-        const allColumns = this.columnModel.getAllDisplayedColumns();
+        const allColumns = this.visibleColsService.getAllCols();
 
         // check that the columns in each range still exist and are visible
-        this.cellRanges.forEach(cellRange => {
+        this.cellRanges.forEach((cellRange) => {
             const beforeCols = cellRange.columns;
 
             // remove hidden or removed cols from cell range
             cellRange.columns = cellRange.columns.filter(
-                col => col.isVisible() && allColumns.indexOf(col) !== -1
+                (col: AgColumn) => col.isVisible() && allColumns.indexOf(col) !== -1
             );
 
-            const colsInRangeChanged = !_.areEqual(beforeCols, cellRange.columns);
+            const colsInRangeChanged = !_areEqual(beforeCols, cellRange.columns);
 
             if (colsInRangeChanged) {
                 // notify users and other parts of grid (i.e. status panel) that range has changed
@@ -119,30 +151,33 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public refreshLastRangeStart(): void {
-        const lastRange = _.last(this.cellRanges);
+        const lastRange = _last(this.cellRanges);
 
-        if (!lastRange) { return; }
+        if (!lastRange) {
+            return;
+        }
 
         this.refreshRangeStart(lastRange);
     }
 
     public isContiguousRange(cellRange: CellRange): boolean {
-        const rangeColumns = cellRange.columns;
+        const rangeColumns = cellRange.columns as AgColumn[];
 
         if (!rangeColumns.length) {
             return false;
         }
 
-        const allColumns = this.columnModel.getAllDisplayedColumns();
-        const allPositions = rangeColumns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
+        const allColumns = this.visibleColsService.getAllCols();
+        const allPositions = rangeColumns.map((c) => allColumns.indexOf(c)).sort((a, b) => a - b);
 
-        return _.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
+        return _last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
     }
 
-    public getRangeStartRow(cellRange: CellRange): RowPosition {
+    public getRangeStartRow(cellRange: PartialCellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
-            return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow) ?
-                cellRange.startRow : cellRange.endRow;
+            return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow)
+                ? cellRange.startRow
+                : cellRange.endRow;
         }
 
         const rowPinned = this.pinnedRowModel.getPinnedTopRowCount() > 0 ? 'top' : null;
@@ -150,10 +185,11 @@ export class RangeService extends BeanStub implements IRangeService {
         return { rowIndex: 0, rowPinned };
     }
 
-    public getRangeEndRow(cellRange: CellRange): RowPosition {
+    public getRangeEndRow(cellRange: PartialCellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
-            return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow) ?
-                cellRange.endRow : cellRange.startRow;
+            return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow)
+                ? cellRange.endRow
+                : cellRange.startRow;
         }
 
         const pinnedBottomRowCount = this.pinnedRowModel.getPinnedBottomRowCount();
@@ -162,40 +198,44 @@ export class RangeService extends BeanStub implements IRangeService {
         if (pinnedBottom) {
             return {
                 rowIndex: pinnedBottomRowCount - 1,
-                rowPinned: 'bottom'
+                rowPinned: 'bottom',
             };
         }
 
         return {
             rowIndex: this.rowModel.getRowCount() - 1,
-            rowPinned: null
+            rowPinned: null,
         };
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        if (!this.gridOptionsService.get('enableRangeSelection')) { return; }
+        if (!this.gos.get('enableRangeSelection')) {
+            return;
+        }
 
-        const columns = this.calculateColumnsBetween(cell.column, cell.column);
+        const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
 
-        if (!columns) { return; }
+        if (!columns) {
+            return;
+        }
 
-        const suppressMultiRangeSelections = this.gridOptionsService.get('suppressMultiRangeSelection');
+        const suppressMultiRangeSelections = this.gos.get('suppressMultiRangeSelection');
 
         // if not appending, then clear previous range selections
-        if (suppressMultiRangeSelections || !appendRange || _.missing(this.cellRanges)) {
+        if (suppressMultiRangeSelections || !appendRange || _missing(this.cellRanges)) {
             this.removeAllCellRanges(true);
         }
 
         const rowForCell: RowPosition = {
             rowIndex: cell.rowIndex,
-            rowPinned: cell.rowPinned
+            rowPinned: cell.rowPinned,
         };
 
         const cellRange = {
             startRow: rowForCell,
             endRow: rowForCell,
             columns,
-            startColumn: cell.column
+            startColumn: cell.column,
         };
 
         this.cellRanges.push(cellRange);
@@ -206,16 +246,18 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
-        if (this.isEmpty() || !this.newestRangeStartCell) { return; }
+        if (this.isEmpty() || !this.newestRangeStartCell) {
+            return;
+        }
 
-        const cellRange = _.last(this.cellRanges);
+        const cellRange = _last(this.cellRanges);
 
         this.updateRangeEnd(cellRange, cellPosition);
     }
 
     public updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent = false): void {
-        const endColumn = cellPosition.column;
-        const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn, endColumn);
+        const endColumn = cellPosition.column as AgColumn;
+        const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn as AgColumn, endColumn);
 
         if (!colsToAdd || this.isLastCellOfRange(cellRange, cellPosition)) {
             return;
@@ -232,8 +274,8 @@ export class RangeService extends BeanStub implements IRangeService {
     private refreshRangeStart(cellRange: CellRange) {
         const { startColumn, columns } = cellRange;
 
-        const moveColInCellRange = (colToMove: Column, moveToFront: boolean) => {
-            const otherCols = cellRange.columns.filter(col => col !== colToMove);
+        const moveColInCellRange = (colToMove: AgColumn, moveToFront: boolean) => {
+            const otherCols = cellRange.columns.filter((col) => col !== colToMove);
 
             if (colToMove) {
                 cellRange.startColumn = colToMove;
@@ -251,7 +293,7 @@ export class RangeService extends BeanStub implements IRangeService {
             return;
         }
 
-        const shouldMoveRightCol = startColumn === _.last(columns) && startColumn === right;
+        const shouldMoveRightCol = startColumn === _last(columns) && startColumn === right;
 
         if (shouldMoveRightCol) {
             moveColInCellRange(right, false);
@@ -259,30 +301,32 @@ export class RangeService extends BeanStub implements IRangeService {
         }
     }
 
-    public getRangeEdgeColumns(cellRange: CellRange): { left: Column, right: Column; } {
-        const allColumns = this.columnModel.getAllDisplayedColumns();
+    public getRangeEdgeColumns(cellRange: CellRange): { left: AgColumn; right: AgColumn } {
+        const allColumns = this.visibleColsService.getAllCols();
         const allIndices = cellRange.columns
-            .map(c => allColumns.indexOf(c))
-            .filter(i => i > -1)
+            .map((c: AgColumn) => allColumns.indexOf(c))
+            .filter((i) => i > -1)
             .sort((a, b) => a - b);
 
         return {
             left: allColumns[allIndices[0]],
-            right: allColumns[_.last(allIndices)!]
+            right: allColumns[_last(allIndices)!],
         };
     }
 
     // returns true if successful, false if not successful
     public extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined {
-        if (this.isEmpty() || !this.newestRangeStartCell) { return; }
+        if (this.isEmpty() || !this.newestRangeStartCell) {
+            return;
+        }
 
         const key = event.key;
         const ctrlKey = event.ctrlKey || event.metaKey;
 
-        const lastRange = _.last(this.cellRanges)!;
+        const lastRange = _last(this.cellRanges)!;
         const startCell = this.newestRangeStartCell;
         const firstCol = lastRange.columns[0];
-        const lastCol = _.last(lastRange.columns)!;
+        const lastCol = _last(lastRange.columns)!;
 
         // find the cell that is at the furthest away corner from the starting cell
         const endCellIndex = lastRange.endRow!.rowIndex;
@@ -293,7 +337,9 @@ export class RangeService extends BeanStub implements IRangeService {
         const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell, ctrlKey);
 
         // if user is at end of grid, so no cell to extend to, we return false
-        if (!newEndCell) { return; }
+        if (!newEndCell) {
+            return;
+        }
 
         this.setCellRange({
             rowStartIndex: startCell.rowIndex,
@@ -301,14 +347,14 @@ export class RangeService extends BeanStub implements IRangeService {
             rowEndIndex: newEndCell.rowIndex,
             rowEndPinned: newEndCell.rowPinned,
             columnStart: startCell.column,
-            columnEnd: newEndCell.column
+            columnEnd: newEndCell.column,
         });
 
         return newEndCell;
     }
 
     public setCellRange(params: CellRangeParams): void {
-        if (!this.gridOptionsService.get('enableRangeSelection')) {
+        if (!this.gos.get('enableRangeSelection')) {
             return;
         }
 
@@ -317,16 +363,18 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public setCellRanges(cellRanges: CellRange[]): void {
-        if (_.shallowCompare(this.cellRanges, cellRanges)) { return; }
+        if (_shallowCompare(this.cellRanges, cellRanges)) {
+            return;
+        }
 
         this.removeAllCellRanges(true);
 
-        cellRanges.forEach(newRange => {
+        cellRanges.forEach((newRange) => {
             if (newRange.columns && newRange.startRow) {
                 this.setNewestRangeStartCell({
                     rowIndex: newRange.startRow.rowIndex,
                     rowPinned: newRange.startRow.rowPinned,
-                    column: newRange.columns[0]
+                    column: newRange.columns[0],
                 });
             }
 
@@ -342,52 +390,65 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public clearCellRangeCellValues(params: ClearCellRangeParams): void {
         let { cellRanges } = params;
-        const {
-            cellEventSource = 'rangeService',
-            dispatchWrapperEvents,
-            wrapperEventSource = 'deleteKey'
-        } = params;
+        const { cellEventSource = 'rangeService', dispatchWrapperEvents, wrapperEventSource = 'deleteKey' } = params;
 
         if (dispatchWrapperEvents) {
             const startEvent: WithoutGridCommon<RangeDeleteStartEvent> = {
-                type: Events.EVENT_RANGE_DELETE_START,
-                source: wrapperEventSource
+                type: 'rangeDeleteStart',
+                source: wrapperEventSource,
             };
             this.eventService.dispatchEvent(startEvent);
         }
 
-        if (!cellRanges) { cellRanges = this.cellRanges; }
+        if (!cellRanges) {
+            cellRanges = this.cellRanges;
+        }
 
-        cellRanges.forEach(cellRange => {
-            this.forEachRowInRange(cellRange, rowPosition => {
+        cellRanges.forEach((cellRange) => {
+            this.forEachRowInRange(cellRange, (rowPosition) => {
                 const rowNode = this.rowPositionUtils.getRowNode(rowPosition);
-                if (!rowNode) { return; }
+                if (!rowNode) {
+                    return;
+                }
                 for (let i = 0; i < cellRange.columns.length; i++) {
-                    const column = this.columnModel.getGridColumn(cellRange.columns[i]);
-                    if (!column || !column.isCellEditable(rowNode)) { continue; }
-                    rowNode.setDataValue(column, null, cellEventSource);
+                    const column = this.columnModel.getCol(cellRange.columns[i]);
+                    if (!column || !column.isCellEditable(rowNode)) {
+                        continue;
+                    }
+                    const emptyValue =
+                        this.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ??
+                        null;
+                    rowNode.setDataValue(column, emptyValue, cellEventSource);
                 }
             });
         });
 
         if (dispatchWrapperEvents) {
             const endEvent: WithoutGridCommon<RangeDeleteEndEvent> = {
-                type: Events.EVENT_RANGE_DELETE_END,
-                source: wrapperEventSource
+                type: 'rangeDeleteEnd',
+                source: wrapperEventSource,
             };
             this.eventService.dispatchEvent(endEvent);
         }
     }
 
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {
-        let columns: Column[] | undefined;
+        return this.createPartialCellRangeFromRangeParams(params, false) as CellRange | undefined;
+    }
+
+    // Range service can't normally support a range without columns, but charts can
+    public createPartialCellRangeFromRangeParams(
+        params: CellRangeParams,
+        allowEmptyColumns: boolean
+    ): PartialCellRange | undefined {
+        let columns: AgColumn[] | undefined;
         let startsOnTheRight: boolean = false;
 
         if (params.columns) {
-            columns = params.columns.map(c => this.columnModel.getColumnWithValidation(c)!).filter(c => c);
+            columns = params.columns.map((c) => this.columnModel.getCol(c)!).filter((c) => c);
         } else {
-            const columnStart = this.columnModel.getColumnWithValidation(params.columnStart);
-            const columnEnd = this.columnModel.getColumnWithValidation(params.columnEnd);
+            const columnStart = this.columnModel.getCol(params.columnStart);
+            const columnEnd = this.columnModel.getCol(params.columnEnd);
 
             if (!columnStart || !columnEnd) {
                 return;
@@ -400,30 +461,36 @@ export class RangeService extends BeanStub implements IRangeService {
             }
         }
 
-        if (!columns) {
+        if (!columns || (!allowEmptyColumns && columns.length === 0)) {
             return;
         }
 
-        const startRow = params.rowStartIndex != null ? {
-            rowIndex: params.rowStartIndex,
-            rowPinned: params.rowStartPinned || null
-        } : undefined;
+        const startRow =
+            params.rowStartIndex != null
+                ? {
+                      rowIndex: params.rowStartIndex,
+                      rowPinned: params.rowStartPinned || null,
+                  }
+                : undefined;
 
-        const endRow = params.rowEndIndex != null ? {
-            rowIndex: params.rowEndIndex,
-            rowPinned: params.rowEndPinned || null
-        } : undefined;
+        const endRow =
+            params.rowEndIndex != null
+                ? {
+                      rowIndex: params.rowEndIndex,
+                      rowPinned: params.rowEndPinned || null,
+                  }
+                : undefined;
 
         return {
             startRow,
             endRow,
             columns,
-            startColumn: startsOnTheRight ? _.last(columns) : columns[0]
+            startColumn: startsOnTheRight ? _last(columns) : columns[0],
         };
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.gridOptionsService.get('enableRangeSelection')) {
+        if (!this.gos.get('enableRangeSelection')) {
             return;
         }
 
@@ -434,10 +501,10 @@ export class RangeService extends BeanStub implements IRangeService {
                 this.setNewestRangeStartCell({
                     rowIndex: newRange.startRow.rowIndex,
                     rowPinned: newRange.startRow.rowPinned,
-                    column: newRange.startColumn
+                    column: newRange.startColumn,
                 });
             }
-            
+
             this.cellRanges.push(newRange);
             this.dispatchChangedEvent(false, true, newRange.id);
         }
@@ -453,7 +520,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public isMoreThanOneCell(): boolean {
         const len = this.cellRanges.length;
-        
+
         if (len === 0) {
             return false;
         }
@@ -466,9 +533,11 @@ export class RangeService extends BeanStub implements IRangeService {
         const startRow = this.getRangeStartRow(range);
         const endRow = this.getRangeEndRow(range);
 
-        return startRow.rowPinned !== endRow.rowPinned ||
+        return (
+            startRow.rowPinned !== endRow.rowPinned ||
             startRow.rowIndex !== endRow.rowIndex ||
-            range.columns.length !== 1;
+            range.columns.length !== 1
+        );
     }
 
     public areAllRangesAbleToMerge(): boolean {
@@ -477,14 +546,14 @@ export class RangeService extends BeanStub implements IRangeService {
 
         if (len <= 1) return true;
 
-        this.cellRanges.forEach(range => {
-            this.forEachRowInRange(range, row => {
+        this.cellRanges.forEach((range) => {
+            this.forEachRowInRange(range, (row) => {
                 const rowName = `${row.rowPinned || 'normal'}_${row.rowIndex}`;
                 const columns = rowToColumnMap.get(rowName);
-                const currentRangeColIds = range.columns.map(col => col.getId());
+                const currentRangeColIds = range.columns.map((col) => col.getId());
                 if (columns) {
-                    const filteredColumns = currentRangeColIds.filter(col => columns.indexOf(col) === -1);
-                    columns.push(...filteredColumns)
+                    const filteredColumns = currentRangeColIds.filter((col) => columns.indexOf(col) === -1);
+                    columns.push(...filteredColumns);
                 } else {
                     rowToColumnMap.set(rowName, currentRangeColIds);
                 }
@@ -499,7 +568,9 @@ export class RangeService extends BeanStub implements IRangeService {
                 columnsString = currentValString;
                 continue;
             }
-            if (columnsString !== currentValString) { return false; }
+            if (columnsString !== currentValString) {
+                return false;
+            }
         }
 
         return true;
@@ -509,17 +580,21 @@ export class RangeService extends BeanStub implements IRangeService {
         const topRow = this.getRangeStartRow(cellRange);
         const bottomRow = this.getRangeEndRow(cellRange);
         let currentRow: RowPosition | null = topRow;
-        
+
         while (currentRow) {
             callback(currentRow);
 
-            if (this.rowPositionUtils.sameRow(currentRow, bottomRow)) { break; }
+            if (this.rowPositionUtils.sameRow(currentRow, bottomRow)) {
+                break;
+            }
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
         }
     }
 
     public removeAllCellRanges(silent?: boolean): void {
-        if (this.isEmpty()) { return; }
+        if (this.isEmpty()) {
+            return;
+        }
 
         this.onDragStop();
         this.cellRanges.length = 0;
@@ -543,7 +618,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean {
-        const columnInRange = range.columns !== null && _.includes(range.columns, cell.column);
+        const columnInRange = range.columns !== null && _includes(range.columns, cell.column);
         const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
 
         return columnInRange && rowInRange;
@@ -554,21 +629,23 @@ export class RangeService extends BeanStub implements IRangeService {
         const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
         const isLastRow = cell.rowIndex === lastRow!.rowIndex && cell.rowPinned === lastRow!.rowPinned;
         const rangeFirstIndexColumn = cellRange.columns[0];
-        const rangeLastIndexColumn = _.last(cellRange.columns);
-        const lastRangeColumn = cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
+        const rangeLastIndexColumn = _last(cellRange.columns);
+        const lastRangeColumn =
+            cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
         const isLastColumn = cell.column === lastRangeColumn;
 
         return isLastColumn && isLastRow;
     }
 
     public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
-        const allColumns = this.columnModel.getAllDisplayedColumns();
-        const allPositions = cellRange.columns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
+        const allColumns = this.visibleColsService.getAllCols();
+        const allPositions = cellRange.columns.map((c: AgColumn) => allColumns.indexOf(c)).sort((a, b) => a - b);
         const { startRow, endRow } = cellRange;
         const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
 
-        const isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
-        const isLastRow = cell.rowIndex === lastRow!.rowIndex && _.makeNull(cell.rowPinned) === _.makeNull(lastRow!.rowPinned);
+        const isRightColumn = allColumns.indexOf(cell.column as AgColumn) === _last(allPositions);
+        const isLastRow =
+            cell.rowIndex === lastRow!.rowIndex && _makeNull(cell.rowPinned) === _makeNull(lastRow!.rowPinned);
 
         return isRightColumn && isLastRow;
     }
@@ -579,13 +656,13 @@ export class RangeService extends BeanStub implements IRangeService {
             return 0;
         }
 
-        return this.cellRanges.filter(cellRange => this.isCellInSpecificRange(cell, cellRange)).length;
+        return this.cellRanges.filter((cellRange) => this.isCellInSpecificRange(cell, cellRange)).length;
     }
 
-    private isRowInRange(rowIndex: number, floating: RowPinnedType, cellRange: CellRange): boolean {
+    private isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
-        const thisRow: RowPosition = { rowIndex, rowPinned: floating || null };
+        const thisRow: RowPosition = { rowIndex, rowPinned: rowPinned || null };
 
         // compare rowPinned with == instead of === because it can be `null` or `undefined`
         const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;
@@ -606,17 +683,19 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gridOptionsService.get('enableRangeSelection')) { return; }
+        if (!this.gos.get('enableRangeSelection')) {
+            return;
+        }
 
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !this.gridOptionsService.get('suppressMultiRangeSelection');
+        const allowMulti = !this.gos.get('suppressMultiRangeSelection');
         const isMultiSelect = allowMulti ? isMultiKey : false;
-        const extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
+        const extendRange = shiftKey && _existsAndNotEmpty(this.cellRanges);
 
-        if (!isMultiSelect && (!extendRange || _.exists(_.last(this.cellRanges)!.type))) {
+        if (!isMultiSelect && (!extendRange || _exists(_last(this.cellRanges)!.type))) {
             this.removeAllCellRanges(true);
         }
 
@@ -628,7 +707,9 @@ export class RangeService extends BeanStub implements IRangeService {
             this.updateValuesOnMove(startTarget);
         }
 
-        if (!this.lastCellHovered) { return; }
+        if (!this.lastCellHovered) {
+            return;
+        }
 
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;
@@ -643,18 +724,18 @@ export class RangeService extends BeanStub implements IRangeService {
         // rather than creating another range. otherwise we end up with two distinct ranges
         // from a drag operation (one from click, and one from drag).
         if (this.cellRanges.length > 0) {
-            this.draggingRange = _.last(this.cellRanges);
+            this.draggingRange = _last(this.cellRanges);
         } else {
             const mouseRowPosition: RowPosition = {
                 rowIndex: this.lastCellHovered.rowIndex,
-                rowPinned: this.lastCellHovered.rowPinned
+                rowPinned: this.lastCellHovered.rowPinned,
             };
 
             this.draggingRange = {
                 startRow: mouseRowPosition,
                 endRow: mouseRowPosition,
                 columns: [this.lastCellHovered.column],
-                startColumn: this.newestRangeStartCell!.column
+                startColumn: this.newestRangeStartCell!.column,
             };
 
             this.cellRanges.push(this.draggingRange);
@@ -668,35 +749,41 @@ export class RangeService extends BeanStub implements IRangeService {
     public intersectLastRange(fromMouseClick?: boolean) {
         // when ranges are created due to a mouse click without drag (happens in cellMouseListener)
         // this method will be called with `fromMouseClick=true`.
-        if (fromMouseClick && this.dragging) { return; }
-        if (this.gridOptionsService.get('suppressMultiRangeSelection')) { return; }
-        if (this.isEmpty()) { return; }
-        
-        const lastRange = _.last(this.cellRanges);
-        
+        if (fromMouseClick && this.dragging) {
+            return;
+        }
+        if (this.gos.get('suppressMultiRangeSelection')) {
+            return;
+        }
+        if (this.isEmpty()) {
+            return;
+        }
+        const rowPosUtils = this.rowPositionUtils;
+        const lastRange = _last(this.cellRanges);
+
         const intersectionStartRow = this.getRangeStartRow(lastRange);
         const intersectionEndRow = this.getRangeEndRow(lastRange);
 
-        const newRanges: CellRange[] = []
+        const newRanges: CellRange[] = [];
 
         this.cellRanges.slice(0, -1).forEach((range) => {
             const startRow = this.getRangeStartRow(range);
             const endRow = this.getRangeEndRow(range);
-            const cols = range.columns
+            const cols = range.columns;
             const intersectCols = cols.filter((col) => lastRange.columns.indexOf(col) === -1);
             if (intersectCols.length === cols.length) {
                 // No overlapping columns, retain previous range
                 newRanges.push(range);
                 return;
             }
-            if (this.rowPositionUtils.before(intersectionEndRow, startRow) || this.rowPositionUtils.before(endRow, intersectionStartRow)) {
+            if (rowPosUtils.before(intersectionEndRow, startRow) || rowPosUtils.before(endRow, intersectionStartRow)) {
                 // No overlapping rows, retain previous range
                 newRanges.push(range);
                 return;
             }
-            const rangeCountBefore =  newRanges.length;
+            const rangeCountBefore = newRanges.length;
             // Top
-            if (this.rowPositionUtils.before(startRow, intersectionStartRow)) {
+            if (rowPosUtils.before(startRow, intersectionStartRow)) {
                 const top: CellRange = {
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
@@ -709,14 +796,16 @@ export class RangeService extends BeanStub implements IRangeService {
             if (intersectCols.length > 0) {
                 const middle: CellRange = {
                     columns: intersectCols,
-                    startColumn: _.includes(intersectCols, lastRange.startColumn) ? lastRange.startColumn : intersectCols[0],
-                    startRow: this.rowPositionUtils.rowMax([{ ...intersectionStartRow }, { ...startRow }]),
-                    endRow: this.rowPositionUtils.rowMin([{ ...intersectionEndRow }, { ...endRow }]),
+                    startColumn: _includes(intersectCols, lastRange.startColumn)
+                        ? lastRange.startColumn
+                        : intersectCols[0],
+                    startRow: this.rowMax([{ ...intersectionStartRow }, { ...startRow }]),
+                    endRow: this.rowMin([{ ...intersectionEndRow }, { ...endRow }]),
                 };
                 newRanges.push(middle);
             }
             // Bottom
-            if (this.rowPositionUtils.before(intersectionEndRow, endRow)) {
+            if (rowPosUtils.before(intersectionEndRow, endRow)) {
                 newRanges.push({
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
@@ -724,10 +813,10 @@ export class RangeService extends BeanStub implements IRangeService {
                     endRow: { ...endRow },
                 });
             }
-            if ((newRanges.length - rangeCountBefore) === 1) {
+            if (newRanges.length - rangeCountBefore === 1) {
                 // Only one range result from the intersection.
                 // Copy the source range's id, since essentially we just reduced it's size
-                newRanges[newRanges.length -1].id = range.id;
+                newRanges[newRanges.length - 1].id = range.id;
             }
         });
         this.cellRanges = newRanges;
@@ -738,14 +827,36 @@ export class RangeService extends BeanStub implements IRangeService {
             this.dispatchChangedEvent(false, true);
         }
     }
-    
+
+    private rowMax(rows: RowPosition[]): RowPosition | undefined {
+        let max: RowPosition | undefined;
+        rows.forEach((row) => {
+            if (max === undefined || this.rowPositionUtils.before(max, row)) {
+                max = row;
+            }
+        });
+        return max;
+    }
+
+    private rowMin(rows: RowPosition[]): RowPosition | undefined {
+        let min: RowPosition | undefined;
+        rows.forEach((row) => {
+            if (min === undefined || this.rowPositionUtils.before(row, min)) {
+                min = row;
+            }
+        });
+        return min;
+    }
+
     private updateValuesOnMove(eventTarget: EventTarget | null) {
-        const cellCtrl = _.getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const cellCtrl = _getCtrlForEventTarget<CellCtrl>(this.gos, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
         const cell = cellCtrl?.getCellPosition();
 
         this.cellHasChanged = false;
 
-        if (!cell || (this.lastCellHovered && this.cellPositionUtils.equals(cell, this.lastCellHovered))) { return; }
+        if (!cell || (this.lastCellHovered && this.cellPositionUtils.equals(cell, this.lastCellHovered))) {
+            return;
+        }
 
         if (this.lastCellHovered) {
             this.cellHasChanged = true;
@@ -755,7 +866,9 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragging(mouseEvent: MouseEvent | null): void {
-        if (!this.dragging || !mouseEvent) { return; }
+        if (!this.dragging || !mouseEvent) {
+            return;
+        }
 
         this.updateValuesOnMove(mouseEvent.target);
 
@@ -769,15 +882,22 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.autoScrollService.check(mouseEvent, skipVerticalScroll!);
 
-        if (!this.cellHasChanged) { return; }
+        if (!this.cellHasChanged) {
+            return;
+        }
 
-        const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
+        const columns = this.calculateColumnsBetween(
+            this.newestRangeStartCell!.column as AgColumn,
+            cellPosition.column as AgColumn
+        );
 
-        if (!columns) { return; }
+        if (!columns) {
+            return;
+        }
 
         this.draggingRange!.endRow = {
             rowIndex: cellPosition.rowIndex,
-            rowPinned: cellPosition.rowPinned
+            rowPinned: cellPosition.rowPinned,
         };
 
         this.draggingRange!.columns = columns;
@@ -786,7 +906,9 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStop(): void {
-        if (!this.dragging) { return; }
+        if (!this.dragging) {
+            return;
+        }
 
         const { id } = this.draggingRange!;
 
@@ -808,7 +930,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
         const event: WithoutGridCommon<RangeSelectionChangedEvent> = {
-            type: Events.EVENT_RANGE_SELECTION_CHANGED,
+            type: 'rangeSelectionChanged',
             started,
             finished,
             id,
@@ -817,20 +939,21 @@ export class RangeService extends BeanStub implements IRangeService {
         this.eventService.dispatchEvent(event);
     }
 
-    private calculateColumnsBetween(columnFrom: Column, columnTo: Column): Column[] | undefined {
-        const allColumns = this.columnModel.getAllDisplayedColumns();
+    private calculateColumnsBetween(columnFrom: AgColumn, columnTo: AgColumn): AgColumn[] | undefined {
+        const allColumns = this.visibleColsService.getAllCols();
         const isSameColumn = columnFrom === columnTo;
-        const fromIndex = allColumns.indexOf(columnFrom);
+        const fromIndex = allColumns.indexOf(columnFrom as AgColumn);
 
+        const logMissing = (column: AgColumn) => _warnOnce(`column ${column.getId()} is not visible`);
         if (fromIndex < 0) {
-            console.warn(`AG Grid: column ${columnFrom.getId()} is not visible`);
+            logMissing(columnFrom);
             return;
         }
 
-        const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo);
+        const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo as AgColumn);
 
         if (toIndex < 0) {
-            console.warn(`AG Grid: column ${columnTo.getId()} is not visible`);
+            logMissing(columnTo);
             return;
         }
 
@@ -840,7 +963,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         const firstIndex = Math.min(fromIndex, toIndex);
         const lastIndex = firstIndex === fromIndex ? toIndex : fromIndex;
-        const columns: Column[] = [];
+        const columns: AgColumn[] = [];
 
         for (let i = firstIndex; i <= lastIndex; i++) {
             columns.push(allColumns[i]);

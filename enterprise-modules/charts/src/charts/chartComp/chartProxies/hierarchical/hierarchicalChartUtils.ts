@@ -1,19 +1,12 @@
 export type CATEGORY_LABEL_KEY = 'AG-GRID-DEFAULT-LABEL-KEY';
 export const CATEGORY_LABEL_KEY: CATEGORY_LABEL_KEY = 'AG-GRID-DEFAULT-LABEL-KEY';
 
-export interface CategoryGroup<T extends object> {
-    [CATEGORY_LABEL_KEY]: string | null;
-    children: Array<CategoryGroup<T> | CategoryItem<T>>;
-}
-
 export type CategoryItem<T extends object> = {
     [CATEGORY_LABEL_KEY]: string | null;
+    children?: Array<CategoryItem<T>>;
 } & T;
 
-export function createCategoryHierarchy<T extends object>(
-    data: T[],
-    categoryKeys: Array<keyof T>
-): Array<CategoryGroup<T> | CategoryItem<T>> {
+export function createCategoryHierarchy<T extends object>(data: T[], categoryKeys: Array<keyof T>): CategoryItem<T>[] {
     const hierarchy = buildNestedHierarchy(data, getItemDepth, getItemCategoryLabel);
     return formatCategoryHierarchy(hierarchy);
 
@@ -36,7 +29,7 @@ export function createCategoryHierarchy<T extends object>(
 export function createAutoGroupHierarchy<T extends object>(
     data: T[],
     getItemLabels: (item: T) => string[] | null
-): Array<CategoryGroup<T> | CategoryItem<T>> {
+): CategoryItem<T>[] {
     const hierarchy = buildNestedHierarchy(data, getItemDepth, getItemGroupLabel);
     return formatCategoryHierarchy(hierarchy);
 
@@ -57,57 +50,72 @@ export function createAutoGroupHierarchy<T extends object>(
 
 /** Convert an abstract nested hierarchy structure into an ag-charts-compatible 'category-grouped' data structure */
 function formatCategoryHierarchy<T extends object>(
-    hierarchy: Tree<string | null, T>
-): Array<CategoryGroup<T> | CategoryItem<T>> {
-    const { depth, leaves, children } = hierarchy;
-    // If there are no remaining levels of nesting, return a flat list of leaves with no category labels
-    if (depth === 0) return leaves.map((item) => ({ [CATEGORY_LABEL_KEY]: null, ...item }));
-    const results = new Array<CategoryGroup<T> | CategoryItem<T>>();
-    // Push all branches and leaves into the result set, grouping results by the input tree hierarchy path
-    for (const [key, childHierarchy] of children.entries()) {
-        if (childHierarchy.depth === 0) {
-            // If this the deepest parent level, return a flat list of child leaves with their respective category keys
-            results.push(...childHierarchy.leaves.map((item) => ({ [CATEGORY_LABEL_KEY]: key, ...item })));
-        } else {
-            // Otherwise nest the grouped data recursively (ignoring any leaves defined at the current parent level)
-            results.push({ [CATEGORY_LABEL_KEY]: key, children: formatCategoryHierarchy(childHierarchy) });
-        }
+    hierarchy: Tree<T>,
+    key: string | null = null,
+    isChild?: boolean
+): CategoryItem<T>[] {
+    const { depth, rootValues, value, children: inputChildren } = hierarchy;
+    if (rootValues) {
+        return rootValues.map((item) => ({ [CATEGORY_LABEL_KEY]: key, ...item }));
+    } else if (depth === 0) {
+        return [{ [CATEGORY_LABEL_KEY]: key, ...value! }];
     }
-    return results;
+
+    const children: CategoryItem<T>[] = [];
+    for (const [childKey, childHierarchy] of inputChildren.entries()) {
+        children.push(...formatCategoryHierarchy(childHierarchy, childKey, true));
+    }
+
+    return isChild
+        ? [
+              {
+                  [CATEGORY_LABEL_KEY]: key,
+                  children,
+                  ...(value ?? ({} as T)),
+              },
+          ]
+        : children;
 }
 
 /** Data structure that represents an arbitrarily deeply nested tree of keyed values */
-type Tree<K, V> = {
+type Tree<V> = {
     /** Number of child levels nested within this path of the tree (leaves do not count towards the depth) */
     depth: number;
-    /** Items defined at this path within the tree */
-    leaves: V[];
+    rootValues?: V[];
+    value?: V;
     /** Child levels contained within this path of the tree, grouped by child key */
-    children: Map<K, Tree<K, V>>;
+    children: Map<string | null, Tree<V>>;
 };
 
 /** Build an arbitrarily deeply nested hierarchy from a flat list of input items */
-function buildNestedHierarchy<K, V extends object>(
+function buildNestedHierarchy<V extends object>(
     data: V[],
     getItemDepth: (item: V) => number,
-    getItemGroupKey: (item: V, depthIndex: number) => K,
-): Tree<K, V> {
-    const hierarchy: Tree<K, V> = { depth: 0, leaves: [], children: new Map() };
-    return data.reduce((hierarchy, item) => {
+    getItemGroupKey: (item: V, depthIndex: number) => string | null
+): Tree<V> {
+    const hierarchy: Tree<V> = { depth: 0, children: new Map() };
+    data.forEach((item) => {
         const itemDepth = getItemDepth(item);
-        const currentDepth = 0;
-        return createNestedItemHierarchy(item, itemDepth, getItemGroupKey, currentDepth, hierarchy);
-    }, hierarchy);
+        createNestedItemHierarchy(item, itemDepth, getItemGroupKey, 0, hierarchy);
+    });
+    return hierarchy;
 
     function createNestedItemHierarchy(
         item: V,
         itemDepth: number,
-        getItemGroupKey: (item: V, depthIndex: number) => K,
+        getItemGroupKey: (item: V, depthIndex: number) => string | null,
         currentDepth: number,
-        hierarchy: Tree<K, V>
-    ): Tree<K, V> {
+        hierarchy: Tree<V>
+    ): Tree<V> {
         if (currentDepth === itemDepth) {
-            hierarchy.leaves.push(item);
+            if (currentDepth === 0) {
+                if (!hierarchy.rootValues) {
+                    hierarchy.rootValues = [];
+                }
+                hierarchy.rootValues.push(item);
+            } else {
+                hierarchy.value = item;
+            }
             return hierarchy;
         } else {
             const key = getItemGroupKey(item, currentDepth);
@@ -117,7 +125,7 @@ function buildNestedHierarchy<K, V extends object>(
                 itemDepth,
                 getItemGroupKey,
                 currentDepth + 1,
-                existingChildHierarchy || { depth: 0, leaves: [], children: new Map() }
+                existingChildHierarchy || { depth: 0, children: new Map() }
             );
             hierarchy.children.set(key, childHierarchy);
             hierarchy.depth = Math.max(1 + childHierarchy.depth, hierarchy.depth);

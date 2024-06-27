@@ -1,8 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, GridReadyEvent, Module } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridReadyEvent, Module } from 'ag-grid-community';
+import { Component, ViewChild } from '@angular/core';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+
 import { AgGridAngular } from '../ag-grid-angular.component';
 
 // NOTE: More tests can be found under the ag-grid-angular-cli-example example under /src/tests/
@@ -18,7 +19,8 @@ import { AgGridAngular } from '../ag-grid-angular.component';
         [modules]="modules"
         (gridReady)="onGridReady($event)"
         [suppressBrowserResizeObserver]="suppressBrowserResizeObserver"
-        (firstDataRendered)="onFirstDataRendered($event)"></ag-grid-angular>`,
+        (firstDataRendered)="onFirstDataRendered()"
+    />`,
 })
 export class GridWrapperComponent {
     modules: Module[] = [ClientSideRowModelModule];
@@ -37,7 +39,7 @@ export class GridWrapperComponent {
         // this.gridApi.setGridOption('rowData', [{ make: 'Toyota', model: 'Celica', price: 35000 }]);
         this.rowData = [{ make: 'Toyota', model: 'Celica', price: 35000 }];
     }
-    onFirstDataRendered(params: any) {}
+    onFirstDataRendered() {}
 }
 
 describe('Grid OnReady', () => {

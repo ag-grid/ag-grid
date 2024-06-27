@@ -6,7 +6,7 @@
     transition: opacity 1s;
     overflow: auto;
     color: var(--ag-foreground-color);
-    background-color: #5577CC;
+    background-color: #5577cc;
 }
 
 .custom-tooltip.ag-tooltip-hiding {

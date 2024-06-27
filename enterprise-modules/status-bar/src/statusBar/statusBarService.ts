@@ -1,7 +1,10 @@
-import { Bean, BeanStub, IStatusPanelComp, IStatusBarService } from '@ag-grid-community/core';
+import type { ComponentSelector, IStatusBarService, IStatusPanelComp, NamedBean } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('statusBarService')
-export class StatusBarService extends BeanStub implements IStatusBarService {
+import { AgStatusBarSelector } from './agStatusBar';
+
+export class StatusBarService extends BeanStub implements NamedBean, IStatusBarService {
+    beanName = 'statusBarService' as const;
 
     private allComponents: Map<string, IStatusPanelComp> = new Map();
 
@@ -26,7 +29,11 @@ export class StatusBarService extends BeanStub implements IStatusBarService {
         return this.allComponents.get(key)!;
     }
 
-    protected destroy(): void {
+    public getStatusPanelSelector(): ComponentSelector {
+        return AgStatusBarSelector;
+    }
+
+    public override destroy(): void {
         this.unregisterAllComponents();
         super.destroy();
     }

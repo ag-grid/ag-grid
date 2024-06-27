@@ -1,0 +1,87 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $spacing-size-8;
+    gap: $spacing-size-4;
+
+    @media screen and (max-width: $breakpoint-community-small) {
+        flex-direction: column;
+        gap: $spacing-size-8;
+    }
+}
+
+.leftColumn,
+.rightColumn {
+    flex: 1;
+}
+
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: start;
+    padding: 0px $spacing-size-12 0px 0px;
+}
+
+.rightColumn {
+    margin-left: $spacing-size-4;
+    display: flex;
+    align-items: center;
+
+    @media screen and (max-width: $breakpoint-community-small) {
+        margin-left: 0px;
+    }
+}
+
+.videoFrame {
+    width: 100%;
+    height: 300px;
+}
+
+.paginationContainer {
+    display: flex;
+    justify-content: space-around;
+}
+
+.videoContainer {
+    display: flex;
+    overflow-x: scroll !important;
+    gap: $spacing-size-4;
+    padding-bottom: $spacing-size-6;
+}
+
+.video {
+    cursor: pointer;
+    padding: 0px $spacing-size-4;
+    opacity: 0.7;
+}
+
+.youtubeThumbnail {
+    object-fit: cover;
+    width: 220px;
+    height: 165px;
+    clip-path: inset(22px 0);
+}
+
+.videoThumbnail {
+    object-fit: cover;
+    width: 220px;
+    height: 165px;
+    height: auto;
+    margin-top: 22px;
+}
+
+.videoThumbnail,
+.youtubeThumbnail {
+    transition: transform 0.3s ease;
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.active {
+    transform: scale(1.15);
+    opacity: 1;
+}

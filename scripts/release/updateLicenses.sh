@@ -7,7 +7,7 @@ ENTERPRISE_ROOTS=("enterprise-modules")
 
 SOURCE_COMMUNITY_LICENSE=./community-modules/core/LICENSE.txt
 
-LEGACY_COMMUNITY_DIRS=("ag-grid-angular" "ag-grid-community" "ag-grid-react" "ag-grid-vue" "ag-grid-vue3")
+LEGACY_COMMUNITY_DIRS=("ag-grid-angular" "ag-grid-community" "ag-grid-react" "ag-grid-vue3")
 
 ENTERPRISE_ROOT=./enterprise-modules
 SOURCE_ENTERPRISE_LICENSE=$ENTERPRISE_ROOT/core/LICENSE.html

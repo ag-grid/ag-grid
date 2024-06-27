@@ -1,26 +1,21 @@
-import { Component } from "../../widgets/component";
-import { ICellRendererParams } from "./iCellRenderer";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { createIconNoSpan } from "../../utils/icon";
-import { IComponent } from "../../interfaces/iComponent";
+import type { IComponent } from '../../interfaces/iComponent';
+import { _createIconNoSpan } from '../../utils/icon';
+import { Component, RefPlaceholder } from '../../widgets/component';
+import type { ICellRendererParams } from './iCellRenderer';
 
-export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> { }
-export interface ILoadingCellRenderer { }
-export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> { }
+export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {}
+export interface ILoadingCellRenderer {}
+export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> {}
 
 export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
-
-    private static TEMPLATE =
-        `<div class="ag-loading">
-            <span class="ag-loading-icon" ref="eLoadingIcon"></span>
-            <span class="ag-loading-text" ref="eLoadingText"></span>
-        </div>`;
-
-    @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
-    @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
+    private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
+    private readonly eLoadingText: HTMLElement = RefPlaceholder;
 
     constructor() {
-        super(LoadingCellRenderer.TEMPLATE);
+        super(/* html */ `<div class="ag-loading">
+            <span class="ag-loading-icon" data-ref="eLoadingIcon"></span>
+            <span class="ag-loading-text" data-ref="eLoadingText"></span>
+        </div>`);
     }
 
     public init(params: ILoadingCellRendererParams): void {
@@ -33,7 +28,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     private setupLoading(): void {
-        const eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsService, null);
+        const eLoadingIcon = _createIconNoSpan('groupLoading', this.gos, null);
         if (eLoadingIcon) {
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }
@@ -48,7 +43,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

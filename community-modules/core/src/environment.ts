@@ -1,238 +1,94 @@
-import { Bean, Autowired, PostConstruct } from './context/context';
-import { BeanStub } from "./context/beanStub";
-import { exists } from './utils/generic';
-import { Events } from './eventKeys';
-import { WithoutGridCommon } from './interfaces/iCommon';
-import { CssVariablesChanged } from './events';
+import type { NamedBean } from './context/bean';
+import { BeanStub } from './context/beanStub';
+import type { BeanCollection } from './context/context';
+import type { CssVariablesChanged } from './events';
+import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { ResizeObserverService } from './misc/resizeObserverService';
+import { _warnOnce } from './utils/function';
 
-export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
+const ROW_HEIGHT: Variable = {
+    cssName: '--ag-row-height',
+    changeKey: 'rowHeightChanged',
+    defaultValue: 42,
+};
+const HEADER_HEIGHT: Variable = {
+    cssName: '--ag-header-height',
+    changeKey: 'headerHeightChanged',
+    defaultValue: 48,
+};
+const LIST_ITEM_HEIGHT: Variable = {
+    cssName: '--ag-list-item-height',
+    changeKey: 'listItemHeightChanged',
+    defaultValue: 24,
+};
 
-interface HardCodedSize {
-    [key: string]: {
-        [key in SASS_PROPERTIES]?: number;
-    };
-}
+export class Environment extends BeanStub implements NamedBean {
+    beanName = 'environment' as const;
 
-const DEFAULT_ROW_HEIGHT = 25;
-const MIN_COL_WIDTH = 10;
+    private resizeObserverService: ResizeObserverService;
+    private eGridDiv: HTMLElement;
 
-const MAT_GRID_SIZE = 8;
-const BASE_GRID_SIZE = 4;
-const BALHAM_GRID_SIZE = 4;
-const ALPINE_GRID_SIZE = 6;
-
-const QUARTZ_ICON_SIZE = 16;
-const QUARTZ_FONT_SIZE = 14;
-const QUARTZ_GRID_SIZE = 8;
-
-const HARD_CODED_SIZES: HardCodedSize = {
-    // this item is required for custom themes
-    'ag-theme-custom': {
-        headerHeight: 25,
-        headerCellMinWidth: 24,
-        listItemHeight: BASE_GRID_SIZE * 5,
-        rowHeight: 25,
-        chartMenuPanelWidth: 220
-    },
-    'ag-theme-material': {
-        headerHeight: MAT_GRID_SIZE * 7,
-        headerCellMinWidth: 48,
-        listItemHeight: MAT_GRID_SIZE * 4,
-        rowHeight: MAT_GRID_SIZE * 6,
-        chartMenuPanelWidth: 240
-    },
-    'ag-theme-balham': {
-        headerHeight: BALHAM_GRID_SIZE * 8,
-        headerCellMinWidth: 24,
-        listItemHeight: BALHAM_GRID_SIZE * 6,
-        rowHeight: BALHAM_GRID_SIZE * 7,
-        chartMenuPanelWidth: 220
-    },
-    'ag-theme-alpine': {
-        headerHeight: ALPINE_GRID_SIZE * 8,
-        headerCellMinWidth: 36,
-        listItemHeight: ALPINE_GRID_SIZE * 4,
-        rowHeight: ALPINE_GRID_SIZE * 7,
-        chartMenuPanelWidth: 240
-    },
-    'ag-theme-quartz': {
-        headerHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 4.25,
-        headerCellMinWidth: 36,
-        listItemHeight: QUARTZ_ICON_SIZE + QUARTZ_GRID_SIZE,
-        rowHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 3.5,
-        chartMenuPanelWidth: 260
+    public wireBeans(beans: BeanCollection): void {
+        this.resizeObserverService = beans.resizeObserverService;
+        this.eGridDiv = beans.eGridDiv;
     }
-};
 
-/**
- * this object contains a list of Sass variables and an array
- * of CSS styles required to get the correct value.
- * eg. $virtual-item-height requires a structure, so we can get its height.
- * <div class="ag-theme-balham">
- *     <div class="ag-virtual-list-container">
- *         <div class="ag-virtual-list-item"></div>
- *     </div>
- * </div>
- */
-const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
-    headerHeight: ['ag-header-row'],
-    headerCellMinWidth: ['ag-header-cell'],
-    listItemHeight: ['ag-virtual-list-item'],
-    rowHeight: ['ag-row'],
-    chartMenuPanelWidth: ['ag-chart-docked-container']
-};
+    private sizeEls = new Map<Variable, HTMLElement>();
+    private lastKnownValues = new Map<Variable, number>();
+    private themeClasses: readonly string[] = [];
+    private eThemeAncestor: HTMLElement | null = null;
+    private eMeasurementContainer: HTMLElement | null = null;
+    private sizesMeasured = false;
 
-@Bean('environment')
-export class Environment extends BeanStub {
-
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-
-    private calculatedSizes: HardCodedSize | null = {};
-    private mutationObserver: MutationObserver;
-
-    @PostConstruct
-    private postConstruct(): void {
-        const el = this.getTheme().el ?? this.eGridDiv;
-
+    public postConstruct(): void {
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
-
-        this.mutationObserver = new MutationObserver(() => {
-            this.calculatedSizes = {};
-            this.fireGridStylesChangedEvent();
-        });
-
-        this.mutationObserver.observe(el || this.eGridDiv, {
-            attributes: true,
-            attributeFilter: ['class']
-        });
-    }
-
-    private fireGridStylesChangedEvent(): void {
-        const event: WithoutGridCommon<CssVariablesChanged> = {
-            type: Events.EVENT_GRID_STYLES_CHANGED
-        }
-        this.eventService.dispatchEvent(event);
-    }
-
-    private getSassVariable(key: SASS_PROPERTIES): number | undefined {
-        const { themeFamily, el } = this.getTheme();
-
-        if (!themeFamily || themeFamily.indexOf('ag-theme') !== 0) { return; }
-
-        if (!this.calculatedSizes) {
-            this.calculatedSizes = {};
-        }
-
-        if (!this.calculatedSizes[themeFamily]) {
-            this.calculatedSizes[themeFamily] = {};
-        }
-
-        const size = this.calculatedSizes[themeFamily][key];
-
-        if (size != null) {
-            return size;
-        }
-
-        this.calculatedSizes[themeFamily][key] = this.calculateValueForSassProperty(key, themeFamily, el);
-
-        return this.calculatedSizes[themeFamily][key];
-    }
-
-    private calculateValueForSassProperty(property: SASS_PROPERTIES, theme: string, themeElement?: HTMLElement): number | undefined {
-        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
-        const defaultValue = HARD_CODED_SIZES[useTheme][property];
-        const eDocument = this.gridOptionsService.getDocument();
-
-        if (!themeElement) {
-            themeElement = this.eGridDiv;
-        }
-
-        if (!SASS_PROPERTY_BUILDER[property]) { return defaultValue; }
-
-        const classList = SASS_PROPERTY_BUILDER[property];
-        const div = eDocument.createElement('div');
-        
-        // this will apply SASS variables that were manually added to the current theme
-        const classesFromThemeElement = Array.from(themeElement.classList)
-        div.classList.add(theme,...classesFromThemeElement);
-
-        div.style.position = 'absolute';
-
-        const el: HTMLDivElement = classList.reduce((prevEl: HTMLDivElement, currentClass: string) => {
-            const currentDiv = eDocument.createElement('div');
-            currentDiv.style.position = 'static';
-            currentDiv.classList.add(currentClass);
-            prevEl.appendChild(currentDiv);
-
-            return currentDiv;
-        }, div);
-
-        let calculatedValue = 0;
-
-        if (eDocument.body) {
-            eDocument.body.appendChild(div);
-            const sizeName = property.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
-            calculatedValue = parseInt(window.getComputedStyle(el)[sizeName]!, 10);
-            eDocument.body.removeChild(div);
-        }
-
-        return calculatedValue || defaultValue;
-    }
-
-    public isThemeDark(): boolean {
-        const { theme } = this.getTheme();
-        return !!theme && theme.indexOf('dark') >= 0;
-    }
-
-    public chartMenuPanelWidth(): number | undefined {
-        return this.getSassVariable('chartMenuPanelWidth');
-    }
-
-    public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; allThemes: string[] } {
-        const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/g;
-        let el: HTMLElement | undefined = this.eGridDiv;
-        let themeMatch: RegExpMatchArray | null = null;
-        let allThemes: string[] = [];
-
-        while (el) {
-            themeMatch = reg.exec(el.className);
-            if (!themeMatch) {
-                el = el.parentElement || undefined;
-            } else {
-                const matched = el.className.match(reg);
-                if (matched) {
-                    allThemes = matched;
-                }
-                break;
-            }
-        }
-
-        if (!themeMatch) { return { allThemes }; }
-
-        const theme = themeMatch[0];
-
-        return { theme, el, themeFamily: theme.replace(/-dark$/, ''), allThemes };
-    }
-
-    // Material data table has strict guidelines about whitespace, and these values are different than the ones
-    // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    public getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number;
-    public getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number | null | undefined;
-    public getFromTheme(defaultValue: any, sassVariableName: SASS_PROPERTIES): any {
-        return this.getSassVariable(sassVariableName) ?? defaultValue;
+        this.themeClasses = this.getAncestorThemeClasses();
+        this.setUpThemeClassObservers();
+        this.getSizeEl(ROW_HEIGHT);
+        this.getSizeEl(HEADER_HEIGHT);
+        this.getSizeEl(LIST_ITEM_HEIGHT);
     }
 
     public getDefaultRowHeight(): number {
-        return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
+        return this.getCSSVariablePixelValue(ROW_HEIGHT);
     }
 
-    public getListItemHeight() {
-        return this.getFromTheme(20, 'listItemHeight');
+    public getDefaultHeaderHeight(): number {
+        return this.getCSSVariablePixelValue(HEADER_HEIGHT);
+    }
+
+    public getDefaultListItemHeight() {
+        return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
+    }
+
+    public hasMeasuredSizes(): boolean {
+        return this.sizesMeasured;
+    }
+
+    public getThemeClasses(): readonly string[] {
+        return this.themeClasses;
+    }
+
+    public applyThemeClasses(el: HTMLElement) {
+        for (const className of Array.from(el.classList)) {
+            if (className.startsWith('ag-theme-') && !this.themeClasses.includes(className)) {
+                el.classList.remove(className);
+            }
+        }
+        for (const className of this.themeClasses) {
+            if (!el.classList.contains(className)) {
+                el.classList.add(className);
+            }
+        }
+    }
+
+    public getThemeAncestorElement(): HTMLElement | null {
+        return this.eThemeAncestor;
     }
 
     public refreshRowHeightVariable(): number {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
-        const height = this.gridOptionsService.get('rowHeight');
+        const height = this.gos.get('rowHeight');
 
         if (height == null || isNaN(height) || !isFinite(height)) {
             if (oldRowHeight !== null) {
@@ -251,18 +107,125 @@ export class Environment extends BeanStub {
         return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
     }
 
-    public getMinColWidth(): number {
-        const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
-        return exists(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
+    private getCSSVariablePixelValue(variable: Variable): number {
+        const cached = this.lastKnownValues.get(variable);
+        if (cached != null) {
+            return cached;
+        }
+        const measurement = this.measureSizeEl(variable);
+        if (measurement === 'detached' || measurement === 'no-styles') {
+            return variable.defaultValue;
+        }
+        this.lastKnownValues.set(variable, measurement);
+        return measurement;
     }
 
-    protected destroy(): void {
-        this.calculatedSizes = null;
+    private measureSizeEl(variable: Variable): number | 'detached' | 'no-styles' {
+        const sizeEl = this.getSizeEl(variable)!;
+        if (sizeEl.offsetParent == null) {
+            return 'detached';
+        }
+        const newSize = sizeEl.offsetWidth;
+        if (newSize === NO_VALUE_SENTINEL) return 'no-styles';
+        this.sizesMeasured = true;
+        return newSize;
+    }
 
-        if (this.mutationObserver) {
-            this.mutationObserver.disconnect();
+    private getSizeEl(variable: Variable): HTMLElement {
+        let sizeEl = this.sizeEls.get(variable);
+        if (sizeEl) {
+            return sizeEl;
+        }
+        let container = this.eMeasurementContainer;
+        if (!container) {
+            container = this.eMeasurementContainer = document.createElement('div');
+            container.className = 'ag-measurement-container';
+            this.eGridDiv.appendChild(container);
         }
 
-        super.destroy();
+        sizeEl = document.createElement('div');
+        sizeEl.style.width = `var(${variable.cssName}, ${NO_VALUE_SENTINEL}px)`;
+        container.appendChild(sizeEl);
+        this.sizeEls.set(variable, sizeEl);
+
+        let lastMeasurement = this.measureSizeEl(variable);
+
+        if (lastMeasurement === 'no-styles') {
+            _warnOnce(
+                `no value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.`
+            );
+        }
+
+        const unsubscribe = this.resizeObserverService.observeResize(sizeEl, () => {
+            const newMeasurement = this.measureSizeEl(variable);
+            if (newMeasurement === 'detached' || newMeasurement === 'no-styles') {
+                return;
+            }
+            this.lastKnownValues.set(variable, newMeasurement);
+            if (newMeasurement !== lastMeasurement) {
+                lastMeasurement = newMeasurement;
+                this.fireGridStylesChangedEvent(variable.changeKey);
+            }
+        });
+        this.addDestroyFunc(() => unsubscribe());
+
+        return sizeEl;
+    }
+
+    private fireGridStylesChangedEvent(change: ChangeKey): void {
+        const event: WithoutGridCommon<CssVariablesChanged> = {
+            type: 'gridStylesChanged',
+            [change]: true,
+        };
+        this.eventService.dispatchEvent(event);
+    }
+
+    private setUpThemeClassObservers() {
+        const observer = new MutationObserver(() => {
+            const newThemeClasses = this.getAncestorThemeClasses();
+            if (!arraysEqual(newThemeClasses, this.themeClasses)) {
+                this.themeClasses = newThemeClasses;
+                this.fireGridStylesChangedEvent('themeChanged');
+            }
+        });
+
+        let node: HTMLElement | null = this.eGridDiv;
+        while (node) {
+            observer.observe(node || this.eGridDiv, {
+                attributes: true,
+                attributeFilter: ['class'],
+            });
+            node = node.parentElement;
+        }
+    }
+
+    private getAncestorThemeClasses(): readonly string[] {
+        let el: HTMLElement | null = this.eGridDiv;
+        const allThemeClasses: string[] = [];
+        this.eThemeAncestor = null;
+        while (el) {
+            const themeClasses = Array.from(el.classList).filter((c) => c.startsWith('ag-theme-'));
+            for (const themeClass of themeClasses) {
+                this.eThemeAncestor = el;
+                if (!allThemeClasses.includes(themeClass)) {
+                    allThemeClasses.unshift(themeClass);
+                }
+            }
+            el = el.parentElement;
+        }
+        return Object.freeze(allThemeClasses);
     }
 }
+
+const arraysEqual = <T>(a: readonly T[], b: readonly T[]): boolean =>
+    a.length === b.length && a.findIndex((_, i) => a[i] !== b[i]) === -1;
+
+type Variable = {
+    cssName: string;
+    changeKey: ChangeKey;
+    defaultValue: number;
+};
+
+type ChangeKey = 'themeChanged' | 'headerHeightChanged' | 'rowHeightChanged' | 'listItemHeightChanged';
+
+const NO_VALUE_SENTINEL = 15538;

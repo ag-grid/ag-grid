@@ -1,32 +1,35 @@
-import {
-    _,
-    Autowired,
-    BeanStub,
-    StoreUpdatedEvent,
-    Events,
-    PostConstruct,
+import type {
+    BeanCollection,
+    NamedBean,
     RowGroupOpenedEvent,
-    RowNode,
-    Bean,
-    Beans,
-    WithoutGridCommon
-} from "@ag-grid-community/core";
-import { ServerSideRowModel } from "../serverSideRowModel";
-import { StoreFactory } from "../stores/storeFactory";
+    StoreUpdatedEvent,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { BeanStub, RowNode, _exists, _missing } from '@ag-grid-community/core';
 
-@Bean('ssrmExpandListener')
-export class ExpandListener extends BeanStub {
+import type { ServerSideRowModel } from '../serverSideRowModel';
+import type { StoreFactory } from '../stores/storeFactory';
 
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
-    @Autowired('beans') private beans: Beans;
+export class ExpandListener extends BeanStub implements NamedBean {
+    beanName = 'ssrmExpandListener' as const;
 
-    @PostConstruct
-    private postConstruct(): void {
+    private serverSideRowModel: ServerSideRowModel;
+    private storeFactory: StoreFactory;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection) {
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
+        this.beans = beans;
+    }
+
+    public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gridOptionsService.isRowModelType('serverSide')) { return; }
+        if (!this.gos.isRowModelType('serverSide')) {
+            return;
+        }
 
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addManagedEventListeners({ rowGroupOpened: this.onRowGroupOpened.bind(this) });
     }
 
     private onRowGroupOpened(event: RowGroupOpenedEvent): void {
@@ -35,20 +38,22 @@ export class ExpandListener extends BeanStub {
         if (rowNode.expanded) {
             if (rowNode.master) {
                 this.createDetailNode(rowNode);
-            } else if (_.missing(rowNode.childStore)) {
+            } else if (_missing(rowNode.childStore)) {
                 const storeParams = this.serverSideRowModel.getParams();
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
-        } else if (this.gridOptionsService.get('purgeClosedRowNodes') && _.exists(rowNode.childStore)) {
+        } else if (this.gos.get('purgeClosedRowNodes') && _exists(rowNode.childStore)) {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
-        const storeUpdatedEvent: WithoutGridCommon<StoreUpdatedEvent> = { type: Events.EVENT_STORE_UPDATED };
+        const storeUpdatedEvent: WithoutGridCommon<StoreUpdatedEvent> = { type: 'storeUpdated' };
         this.eventService.dispatchEvent(storeUpdatedEvent);
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
-        if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
+        if (_exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
+        }
 
         const detailNode = new RowNode(this.beans);
 
@@ -56,7 +61,7 @@ export class ExpandListener extends BeanStub {
         detailNode.selectable = false;
         detailNode.parent = masterNode;
 
-        if (_.exists(masterNode.id)) {
+        if (_exists(masterNode.id)) {
             detailNode.id = 'detail_' + masterNode.id;
         }
 
@@ -64,12 +69,11 @@ export class ExpandListener extends BeanStub {
         detailNode.level = masterNode.level + 1;
 
         const defaultDetailRowHeight = 200;
-        const rowHeight = this.gridOptionsService.getRowHeightForNode(detailNode).height;
+        const rowHeight = this.gos.getRowHeightForNode(detailNode).height;
 
         detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
         masterNode.detailNode = detailNode;
 
         return detailNode;
     }
-
 }

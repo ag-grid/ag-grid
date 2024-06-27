@@ -1,16 +1,16 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
-import { ThemeTemplateParameters } from "../../miniChartsContainer";
-import { ChartTranslationKey } from "../../../../services/chartTranslationService";
+import type { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniStackedBar extends MiniChartWithAxes {
-
     static chartType: ChartType = 'stackedBar';
     static data = [
         [8, 12, 16],
         [6, 9, 12],
-        [2, 3, 4]
+        [2, 3, 4],
     ];
 
     private readonly bars: _Scene.Rect[][];
@@ -23,7 +23,8 @@ export class MiniStackedBar extends MiniChartWithAxes {
         _isCustomTheme: boolean,
         data = MiniStackedBar.data,
         xScaleDomain = [0, 16],
-        tooltipName: ChartTranslationKey = "stackedBarTooltip") {
+        tooltipName: ChartTranslationKey = 'stackedBarTooltip'
+    ) {
         super(container, tooltipName);
 
         const size = this.size;
@@ -42,7 +43,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
         const bottom = xScale.convert(0);
         const height = yScale.bandwidth;
 
-        this.bars = data.map(series =>
+        this.bars = data.map((series) =>
             series.map((datum, i) => {
                 const rect = new _Scene.Rect();
                 rect.x = padding;
@@ -62,7 +63,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
 
     updateColors(fills: string[], strokes: string[]) {
         this.bars.forEach((series, i) =>
-            series.forEach(bar => {
+            series.forEach((bar) => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
             })

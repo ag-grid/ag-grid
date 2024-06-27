@@ -1,4 +1,4 @@
-@use "ag";
+@use 'ag';
 
 @mixin output {
     .ag-filter-toolpanel-header {
@@ -11,12 +11,10 @@
     }
 
     @include ag.keyboard-focus((ag-filter-toolpanel-header), 4px);
-
-    .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-        @include ag.icon();
-        @include ag.unthemed-rtl(( padding-left: var(--ag-grid-size) ));
-        content: ag.icon-content(filter);
-        position: absolute;
+    .ag-filter-toolpanel-group:not(.ag-has-filter)
+        > .ag-group-title-bar
+        .ag-filter-toolpanel-group-instance-header-icon {
+        display: none;
     }
 
     .ag-filter-toolpanel-group-level-0-header {
@@ -35,7 +33,11 @@
     .ag-filter-toolpanel-search-input {
         flex-grow: 1;
         height: calc(var(--ag-grid-size) * 4);
-        @include ag.unthemed-rtl(( margin-right: var(--ag-grid-size) ));
+        @include ag.unthemed-rtl(
+            (
+                margin-right: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-filter-toolpanel-group-level-0 {
@@ -44,26 +46,26 @@
 
     .ag-filter-toolpanel-expand,
     .ag-filter-toolpanel-group-title-bar-icon {
-        @include ag.unthemed-rtl(( margin-right: var(--ag-grid-size) ));
+        @include ag.unthemed-rtl(
+            (
+                margin-right: var(--ag-grid-size),
+            )
+        );
     }
 
-    @for $i from 1 through 10 {
-        .ag-filter-toolpanel-group-level-#{$i} {
-            .ag-filter-toolpanel-group-level-#{$i}-header {
-                &.ag-filter-toolpanel-group-title-bar {
-                    background-color: transparent;
-                }
-            }
-            .ag-filter-toolpanel-group-level-#{$i + 1}-header {
-                @include ag.unthemed-rtl((
-                    padding-left: calc(var(--ag-filter-tool-panel-group-indent) * #{$i} + var(--ag-grid-size))
-                ));
-            }
-        }
+    .ag-filter-toolpanel-group-title-bar {
+        background-color: transparent;
     }
 
-    .ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
-        padding-left: var(--ag-grid-size);
+    .ag-filter-toolpanel-header {
+        @include ag.unthemed-rtl(
+            (
+                padding-left:
+                    calc(
+                        var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level, 0) + var(--ag-grid-size)
+                    ),
+            )
+        );
     }
 
     .ag-filter-toolpanel-instance-filter {
@@ -72,8 +74,13 @@
         margin-top: var(--ag-grid-size);
     }
 
+    .ag-filter-toolpanel-group-instance-header-icon,
     .ag-filter-toolpanel-instance-header-icon {
-        @include ag.unthemed-rtl((margin-left: var(--ag-grid-size)));
+        @include ag.unthemed-rtl(
+            (
+                margin-left: var(--ag-grid-size),
+            )
+        );
     }
 
     .ag-set-filter-group-icons {

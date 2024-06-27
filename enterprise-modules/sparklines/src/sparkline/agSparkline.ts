@@ -1,21 +1,22 @@
-import { AreaSparkline } from './area/areaSparkline';
-import { SparklineAxis } from './sparkline';
-import { LineSparkline } from './line/lineSparkline';
-import { BarSparkline } from './bar-column/barSparkline';
-import { ColumnSparkline } from './bar-column/columnSparkline';
-
-import {
+import type {
     CrosshairLineOptions,
-    SparklineOptions,
     HighlightStyleOptions,
-    SparklineMarkerOptions,
-    SparklineLineOptions,
     PaddingOptions,
     SparklineCrosshairsOptions,
+    SparklineLineOptions,
+    SparklineMarkerOptions,
+    SparklineOptions,
 } from '@ag-grid-community/core';
-import { SparklineTooltip } from './tooltip/sparklineTooltip';
-import { BarColumnLabel } from './bar-column/barColumnSparkline';
+import { _warnOnce } from '@ag-grid-community/core';
 import { _Util } from 'ag-charts-community';
+
+import { AreaSparkline } from './area/areaSparkline';
+import type { BarColumnLabel } from './bar-column/barColumnSparkline';
+import { BarSparkline } from './bar-column/barSparkline';
+import { ColumnSparkline } from './bar-column/columnSparkline';
+import { LineSparkline } from './line/lineSparkline';
+import type { SparklineAxis } from './sparkline';
+import type { SparklineTooltip } from './tooltip/sparklineTooltip';
 
 const { isNumber } = _Util;
 
@@ -222,28 +223,14 @@ function initCrosshairLineOptions(target: CrosshairLineOptions, options: any) {
     setValueIfPropertyExists(target, 'lineCap', options.lineCap, options);
 }
 
-const doOnceFlags: { [key: string]: boolean } = {};
-/**
- * If the key was passed before, then doesn't execute the func
- * @param {Function} func
- * @param {string} key
- */
-function doOnce(func: () => void, key: string) {
-    if (doOnceFlags[key]) {
-        return;
-    }
-
-    func();
-    doOnceFlags[key] = true;
-}
-
 const offsetValidator = (property: string, value: number, defaultOffset?: number): boolean => {
     if (isNumber(value)) {
         return true;
     }
 
-    const message = `AG Charts: ${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.`;
-    doOnce(() => console.warn(message), `${property} not a number`);
+    _warnOnce(
+        `${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.`
+    );
     return false;
 };
 
@@ -263,7 +250,7 @@ function setValueIfPropertyExists(target: any, property: string, value: any, opt
                 target[property] = value;
             }
         } else {
-            console.warn(`Property ${property} does not exist on the target object.`);
+            _warnOnce(`Property ${property} does not exist on the target object.`);
         }
     }
 }

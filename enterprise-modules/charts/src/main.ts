@@ -1,10 +1,10 @@
-export { GridChartsModule } from "./gridChartsModule";
-export * from './agGridCoreExtension';
-import { time, AgChart } from "ag-charts-community";
+import { AgCharts, time } from 'ag-charts-community';
 
-export * from "ag-charts-community";
+export { GridChartsModule } from './gridChartsModule';
+
+export * from 'ag-charts-community';
 
 export const agCharts = {
     time,
-    AgChart
-}
+    AgCharts,
+};

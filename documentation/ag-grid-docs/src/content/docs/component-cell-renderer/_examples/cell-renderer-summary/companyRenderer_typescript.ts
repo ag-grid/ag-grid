@@ -1,6 +1,6 @@
-import { ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererParams } from '@ag-grid-community/core';
 
 export function CompanyRenderer(params: ICellRendererParams) {
-    const link = `<a href="https://en.wikipedia.org/wiki/${params.value}" target="_blank">${params.value}</a>`
-    return link
-  }
+    const link = `<a href="${params.value}" target="_blank">${new URL(params.value).hostname}</a>`;
+    return link;
+}

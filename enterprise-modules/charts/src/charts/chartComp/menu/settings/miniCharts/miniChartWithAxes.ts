@@ -1,10 +1,9 @@
-import { PostConstruct } from "@ag-grid-community/core";
-import { MiniChart } from "./miniChart";
-import { _Scene } from "ag-charts-community";
-import { ChartTranslationKey } from "../../../services/chartTranslationService";
+import { _Scene } from 'ag-charts-community';
+
+import type { ChartTranslationKey } from '../../../services/chartTranslationService';
+import { MiniChart } from './miniChart';
 
 export abstract class MiniChartWithAxes extends MiniChart {
-
     private readonly stroke = 'gray';
     private readonly axisOvershoot = 3;
 
@@ -12,8 +11,7 @@ export abstract class MiniChartWithAxes extends MiniChart {
         super(container, tooltipName);
     }
 
-    @PostConstruct
-    private addAxes() {
+    public override postConstruct() {
         const size = this.size;
         const padding = this.padding;
 
@@ -35,5 +33,6 @@ export abstract class MiniChartWithAxes extends MiniChart {
 
         root.append(leftAxis);
         root.append(bottomAxis);
+        super.postConstruct();
     }
 }

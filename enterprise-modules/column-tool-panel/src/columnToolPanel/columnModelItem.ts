@@ -1,21 +1,14 @@
-import {
-    AgEventListener,
-    Column,
-    EventService,
-    IEventEmitter,
-    ProvidedColumnGroup
-} from "@ag-grid-community/core";
+import type { AgColumn, AgProvidedColumnGroup, IEventEmitter, IEventListener } from '@ag-grid-community/core';
+import { LocalEventService } from '@ag-grid-community/core';
 
-export class ColumnModelItem implements IEventEmitter {
-
-    private eventService: EventService = new EventService();
-
-    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+export type ColumnModelItemEvent = 'expandedChanged';
+export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
+    private localEventService: LocalEventService<ColumnModelItemEvent> = new LocalEventService();
 
     private readonly group: boolean;
     private readonly displayName: string | null;
-    private readonly columnGroup: ProvidedColumnGroup;
-    private readonly column: Column;
+    private readonly columnGroup: AgProvidedColumnGroup;
+    private readonly column: AgColumn;
     private readonly dept: number;
     private readonly children: ColumnModelItem[];
 
@@ -24,7 +17,7 @@ export class ColumnModelItem implements IEventEmitter {
 
     constructor(
         displayName: string | null,
-        columnOrGroup: Column | ProvidedColumnGroup,
+        columnOrGroup: AgColumn | AgProvidedColumnGroup,
         dept: number,
         group = false,
         expanded?: boolean
@@ -34,39 +27,62 @@ export class ColumnModelItem implements IEventEmitter {
         this.group = group;
 
         if (group) {
-            this.columnGroup = columnOrGroup as ProvidedColumnGroup;
+            this.columnGroup = columnOrGroup as AgProvidedColumnGroup;
             this.expanded = expanded;
             this.children = [];
         } else {
-            this.column = columnOrGroup as Column;
+            this.column = columnOrGroup as AgColumn;
         }
     }
 
-    public isGroup(): boolean { return this.group; }
-    public getDisplayName(): string | null { return this.displayName; }
-    public getColumnGroup(): ProvidedColumnGroup { return this.columnGroup; }
-    public getColumn(): Column { return this.column; }
-    public getDept(): number { return this.dept; }
-    public isExpanded(): boolean { return !!this.expanded; }
-    public getChildren(): ColumnModelItem[] { return this.children; }
-    public isPassesFilter(): boolean { return this.passesFilter; }
+    public isGroup(): boolean {
+        return this.group;
+    }
+    public getDisplayName(): string | null {
+        return this.displayName;
+    }
+    public getColumnGroup(): AgProvidedColumnGroup {
+        return this.columnGroup;
+    }
+    public getColumn(): AgColumn {
+        return this.column;
+    }
+    public getDept(): number {
+        return this.dept;
+    }
+    public isExpanded(): boolean {
+        return !!this.expanded;
+    }
+    public getChildren(): ColumnModelItem[] {
+        return this.children;
+    }
+    public isPassesFilter(): boolean {
+        return this.passesFilter;
+    }
 
     public setExpanded(expanded: boolean): void {
-        if (expanded === this.expanded) { return; }
+        if (expanded === this.expanded) {
+            return;
+        }
         this.expanded = expanded;
-        this.eventService.dispatchEvent({type: ColumnModelItem.EVENT_EXPANDED_CHANGED});
+        this.localEventService.dispatchEvent({ type: 'expandedChanged' });
     }
 
     public setPassesFilter(passesFilter: boolean): void {
         this.passesFilter = passesFilter;
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.addEventListener(eventType, listener);
+    public addEventListener<T extends ColumnModelItemEvent>(
+        eventType: T,
+        listener: IEventListener<ColumnModelItemEvent>
+    ): void {
+        this.localEventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener): void {
-        this.eventService.removeEventListener(eventType, listener);
+    public removeEventListener<T extends ColumnModelItemEvent>(
+        eventType: T,
+        listener: IEventListener<ColumnModelItemEvent>
+    ): void {
+        this.localEventService.removeEventListener(eventType, listener);
     }
-
 }

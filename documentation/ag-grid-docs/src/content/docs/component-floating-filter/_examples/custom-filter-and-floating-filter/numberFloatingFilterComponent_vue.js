@@ -6,20 +6,20 @@ export default {
     `,
     data: function () {
         return {
-            currentValue: null
+            currentValue: null,
         };
     },
     methods: {
         onInputBoxChanged() {
             if (this.currentValue === '') {
                 // Remove the filter
-                this.params.parentFilterInstance(instance => {
+                this.params.parentFilterInstance((instance) => {
                     instance.myMethodForTakingValueFromFloatingFilter(null);
                 });
                 return;
             }
 
-            this.params.parentFilterInstance(instance => {
+            this.params.parentFilterInstance((instance) => {
                 instance.myMethodForTakingValueFromFloatingFilter(this.currentValue);
             });
         },
@@ -31,7 +31,6 @@ export default {
             } else {
                 this.currentValue = parentModel;
             }
-        }
-
-    }
+        },
+    },
 };

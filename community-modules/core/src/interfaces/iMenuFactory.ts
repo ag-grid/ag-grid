@@ -1,10 +1,24 @@
-import { Column } from "../entities/column";
-import { ContainerType } from "./iAfterGuiAttachedParams";
+import type { AgColumn } from '../entities/agColumn';
+import type { ContainerType } from './iAfterGuiAttachedParams';
 
 export interface IMenuFactory {
-    showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType, filtersOnly?: boolean): void;
-    showMenuAfterMouseEvent(column: Column | undefined, mouseEvent: MouseEvent | Touch, containerType: ContainerType, filtersOnly?: boolean): void;
-    showMenuAfterContextMenuEvent(column: Column | undefined, mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent | null): void;
-    isMenuEnabled(column: Column): boolean;
+    showMenuAfterButtonClick(
+        column: AgColumn | undefined,
+        eventSource: HTMLElement,
+        containerType: ContainerType,
+        filtersOnly?: boolean
+    ): void;
+    showMenuAfterMouseEvent(
+        column: AgColumn | undefined,
+        mouseEvent: MouseEvent | Touch,
+        containerType: ContainerType,
+        filtersOnly?: boolean
+    ): void;
+    showMenuAfterContextMenuEvent(
+        column: AgColumn | undefined,
+        mouseEvent?: MouseEvent | null,
+        touchEvent?: TouchEvent | null
+    ): void;
+    isMenuEnabled(column: AgColumn): boolean;
     hideActiveMenu(): void;
 }

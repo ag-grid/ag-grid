@@ -24,7 +24,7 @@ To enable Master / Detail, you should set the following grid options:
 
 These grid options are illustrated below:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // master grid columns
     columnDefs: [],
@@ -68,7 +68,7 @@ It is possible to combine [Server-Side Grouping](./server-side-model-grouping/) 
 
 The following snippet shows row grouping on the 'country' column by setting `rowGroup = true`:
 
-```js {% frameworkTransform=true suppressFrameworkContext=true %}
+```{% frameworkTransform=true suppressFrameworkContext=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
@@ -99,7 +99,7 @@ Rather than use the `autoGroupColumnDef` for the master rows as shown in the exa
 
 This is shown in the code snippet below:
 
-```js {% frameworkTransform=true suppressFrameworkContext=true %}
+```{% frameworkTransform=true suppressFrameworkContext=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
@@ -122,7 +122,7 @@ The following snippets compares these approaches:
 
 Option 1 - fixed detail row height, sets height for all details rows
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     detailRowHeight: 500,
 }
@@ -130,7 +130,7 @@ const gridOptions = {
 
 Option 2 - dynamic detail row height, dynamically sets height for all rows
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     getRowHeight: params => {
         const isDetailRow = params.node.detail;
@@ -148,7 +148,7 @@ const gridOptions = {
 
 Option 3 - use autoHeight
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     detailCellRendererParams: {
         autoHeight: true,

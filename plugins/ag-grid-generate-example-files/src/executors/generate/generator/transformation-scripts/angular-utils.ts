@@ -1,4 +1,4 @@
-import { EventHandler, Property } from '../types';
+import type { EventHandler, Property } from '../types';
 import { recognizedDomEvents } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
@@ -28,7 +28,7 @@ export function convertTemplate(template: string) {
         template = template.replace(new RegExp(`on${event}=`, 'g'), `(${event})=`);
     });
 
-    return template.replace(/\(event\)/g, '($event)');
+    return template.replace(/\(event\)/g, '($event)').replace(/\(event\./g, '($event.');
 }
 
 export function getImport(filename: string) {

@@ -8,7 +8,7 @@ To enable Cell Editing for a Column use the `editable` property on the Column De
 
 {% apiDocumentation source="column-properties/properties.json" section="editing" names=["editable"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -30,7 +30,7 @@ The example below shows `string` editing enabled on all columns by setting `edit
 
 To dynamically determine which cells are editable, a callback function can be supplied to the `editable` property on the Column Definition:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         {

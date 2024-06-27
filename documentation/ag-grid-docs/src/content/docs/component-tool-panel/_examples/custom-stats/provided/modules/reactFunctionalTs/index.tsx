@@ -1,21 +1,27 @@
 'use strict';
 
-import React, { useCallback, useMemo, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CellValueChangedEvent, ColDef, GridReadyEvent, SideBarDef } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
-import { CellValueChangedEvent, ColDef, GridReadyEvent, SideBarDef } from '@ag-grid-community/core';
-import CustomStatsToolPanel from './customStatsToolPanel';
-import { IOlympicData } from './interfaces'
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule]);
+import CustomStatsToolPanel from './customStatsToolPanel';
+import { IOlympicData } from './interfaces';
+import './styles.css';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    SetFilterModule,
+]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -38,14 +44,14 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             filter: true,
-        }
+        };
     }, []);
     const icons = useMemo<{
-        [key: string]: Function | string;
+        [key: string]: ((...args: any[]) => any) | string;
     }>(() => {
         return {
             'custom-stats': '<span class="ag-icon ag-icon-custom-stats"></span>',
-        }
+        };
     }, []);
     const sideBar = useMemo<SideBarDef | string | string[] | boolean | null>(() => {
         return {
@@ -71,17 +77,17 @@ const GridExample = () => {
                     iconKey: 'custom-stats',
                     toolPanel: CustomStatsToolPanel,
                     toolPanelParams: {
-                      title: 'Custom Stats'
+                        title: 'Custom Stats',
                     },
                 },
             ],
             defaultToolPanel: 'customStats',
-        }
+        };
     }, []);
 
     const onGridReady = useCallback((params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
+            .then((resp) => resp.json())
             .then((data: IOlympicData[]) => {
                 setRowData(data);
             });
@@ -93,15 +99,20 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={{ "height": "100%", "boxSizing": "border-box" }}>
-                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div style={{ height: '100%', boxSizing: 'border-box' }}>
+                <div
+                    style={gridStyle}
+                    className={
+                        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                        'ag-theme-quartz' /** DARK MODE END **/
+                    }
+                >
                     <AgGridReact<IOlympicData>
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         icons={icons}
                         sideBar={sideBar}
-                        reactiveCustomComponents
                         onGridReady={onGridReady}
                         onCellValueChanged={onCellValueChanged}
                     />
@@ -109,7 +120,11 @@ const GridExample = () => {
             </div>
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

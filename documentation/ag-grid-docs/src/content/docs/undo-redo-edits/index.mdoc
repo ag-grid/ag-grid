@@ -22,7 +22,7 @@ undo / redo stacks.
 
 The following undo / redo properties are provided in the grid options interface:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     undoRedoCellEditing: true,
     undoRedoCellEditingLimit: 20
@@ -70,11 +70,11 @@ If [Read Only Edit](./value-setters/#read-only-edit) is enabled, undo / redo wil
 
 The example below has the following grid options enabled to demonstrate undo / redo:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     defaultColDef: {
         // makes all cells editable
-        editable: true
+        editable: true,
         // enables flashing to help see cell changes
         enableCellChangeFlash: true,
     },
@@ -111,7 +111,7 @@ If your cell values contain complex objects, there are a few steps necessary for
 
 For manual editing, a [Value Parser](./value-parsers/) is required to convert string values back into complex objects.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -131,7 +131,7 @@ const gridOptions = {
 
 If a [Value Getter](./value-getters/) is being used to create complex objects, a [Value Setter](./value-setters/) must be used to update the data. `colDef.equals` is also needed when [Comparing Values](./change-detection/#comparing-values) to determine if the cell value has changed for rendering.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {

@@ -1,84 +1,84 @@
-import {
-    _,
+import type {
     AgCheckbox,
+    AgColumn,
     AgEvent,
-    Autowired,
+    BeanCollection,
     ColDef,
-    Column,
-    Component,
-    ISetFilterCellRendererParams,
-    SetFilterParams,
-    ITooltipParams,
-    PostConstruct,
-    RefSelector,
-    UserComponentFactory,
-    ValueFormatterService,
-    WithoutGridCommon,
-    ValueFormatterParams,
     ICellRendererComp,
-    ISetFilterTreeListTooltipParams
+    ISetFilterCellRendererParams,
+    ISetFilterTreeListTooltipParams,
+    ITooltipParams,
+    SetFilterParams,
+    UserComponentFactory,
+    ValueFormatterParams,
+    ValueService,
+    WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { ISetFilterLocaleText } from './localeText';
+import {
+    AgCheckboxSelector,
+    Component,
+    RefPlaceholder,
+    _createIcon,
+    _setAriaChecked,
+    _setAriaDescribedBy,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setAriaLabelledBy,
+    _setAriaLevel,
+    _setDisplayed,
+    _toStringOrNull,
+    _warnOnce,
+} from '@ag-grid-community/core';
+
+import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type { ISetFilterLocaleText } from './localeText';
 
 export interface SetFilterListItemSelectionChangedEvent<
-    I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null
-> extends AgEvent {
+    I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
+> extends AgEvent<'selectionChanged'> {
     isSelected: boolean;
     item: I;
 }
 
 export interface SetFilterListItemExpandedChangedEvent<
-    I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null
-> extends AgEvent {
+    I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
+> extends AgEvent<'expandedChanged'> {
     isExpanded: boolean;
     item: I;
 }
 
 export interface SetFilterListItemParams<V> {
-    focusWrapper: HTMLElement,
-    value: V | null | (() => string),
-    params: SetFilterParams<any, V>,
-    translate: (key: keyof ISetFilterLocaleText) => string,
-    valueFormatter?: (params: ValueFormatterParams) => string,
-    item: SetFilterModelTreeItem | string | null,
-    isSelected: boolean | undefined,
-    isTree?: boolean,
-    depth?: number,
-    groupsExist?: boolean,
-    isGroup?: boolean,
-    isExpanded?: boolean,
-    hasIndeterminateExpandState?: boolean,
+    focusWrapper: HTMLElement;
+    value: V | null | (() => string);
+    params: SetFilterParams<any, V>;
+    translate: (key: keyof ISetFilterLocaleText) => string;
+    valueFormatter?: (params: ValueFormatterParams) => string;
+    item: SetFilterModelTreeItem | string | null;
+    isSelected: boolean | undefined;
+    isTree?: boolean;
+    depth?: number;
+    groupsExist?: boolean;
+    isGroup?: boolean;
+    isExpanded?: boolean;
+    hasIndeterminateExpandState?: boolean;
 }
 
+export type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
 /** @param V type of value in the Set Filter */
-export class SetFilterListItem<V> extends Component {
-    public static EVENT_SELECTION_CHANGED = 'selectionChanged';
-    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
+    private valueService: ValueService;
+    private userComponentFactory: UserComponentFactory;
 
-    @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    public wireBeans(beans: BeanCollection) {
+        this.valueService = beans.valueService;
+        this.userComponentFactory = beans.userComponentFactory;
+    }
 
-    private static GROUP_TEMPLATE = /* html */`
-        <div class="ag-set-filter-item" aria-hidden="true">
-            <span class="ag-set-filter-group-icons">
-                <span class="ag-set-filter-group-closed-icon" ref="eGroupClosedIcon"></span>
-                <span class="ag-set-filter-group-opened-icon" ref="eGroupOpenedIcon"></span>
-                <span class="ag-set-filter-group-indeterminate-icon" ref="eGroupIndeterminateIcon"></span>
-            </span>
-            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-        </div>`;
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
-    private static TEMPLATE = /* html */`
-        <div class="ag-set-filter-item">
-            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-        </div>`;
-
-    @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
-
-    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
-    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
-    @RefSelector('eGroupIndeterminateIcon') private eGroupIndeterminateIcon: HTMLElement;
+    private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
+    private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;
+    private readonly eGroupIndeterminateIcon: HTMLElement = RefPlaceholder;
 
     private readonly focusWrapper: HTMLElement;
     private readonly value: V | null | (() => string);
@@ -88,7 +88,7 @@ export class SetFilterListItem<V> extends Component {
     private readonly isTree?: boolean;
     private readonly depth: number;
     private readonly isGroup?: boolean;
-    private readonly groupsExist?: boolean
+    private readonly groupsExist?: boolean;
     private readonly hasIndeterminateExpandState?: boolean;
 
     private item: SetFilterModelTreeItem | string | null;
@@ -102,7 +102,23 @@ export class SetFilterListItem<V> extends Component {
     private destroyCellRendererComponent?: () => void;
 
     constructor(params: SetFilterListItemParams<V>) {
-        super(params.isGroup ? SetFilterListItem.GROUP_TEMPLATE : SetFilterListItem.TEMPLATE);
+        super(
+            params.isGroup
+                ? /* html */ `
+            <div class="ag-set-filter-item" aria-hidden="true">
+                <span class="ag-set-filter-group-icons">
+                    <span class="ag-set-filter-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                    <span class="ag-set-filter-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+                    <span class="ag-set-filter-group-indeterminate-icon" data-ref="eGroupIndeterminateIcon"></span>
+                </span>
+                <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            </div>`
+                : /* html */ `
+            <div class="ag-set-filter-item">
+                <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            </div>`,
+            [AgCheckboxSelector]
+        );
         this.focusWrapper = params.focusWrapper;
         this.value = params.value;
         this.params = params.params;
@@ -118,8 +134,7 @@ export class SetFilterListItem<V> extends Component {
         this.hasIndeterminateExpandState = params.hasIndeterminateExpandState;
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.addDestroyFunc(() => this.destroyCellRendererComponent?.());
 
         this.render();
@@ -128,13 +143,15 @@ export class SetFilterListItem<V> extends Component {
             .setLabelEllipsis(true)
             .setValue(this.isSelected, true)
             .setDisabled(!!this.params.readOnly)
-            .getInputElement().setAttribute('tabindex', '-1');
+            .getInputElement()
+            .setAttribute('tabindex', '-1');
 
         this.refreshVariableAriaLabels();
 
         if (this.isTree) {
             if (this.depth > 0) {
                 this.addCssClass('ag-set-filter-indent-' + this.depth);
+                this.getGui().style.setProperty('--ag-indentation-level', String(this.depth));
             }
             if (this.isGroup) {
                 this.setupExpansion();
@@ -144,12 +161,12 @@ export class SetFilterListItem<V> extends Component {
                 }
             }
 
-            _.setAriaLevel(this.getAriaElement(), this.depth + 1)
+            _setAriaLevel(this.getAriaElement(), this.depth + 1);
         }
 
         this.refreshAriaChecked();
 
-        if (!!this.params.readOnly) {
+        if (this.params.readOnly) {
             // Don't add event listeners if we're read-only.
             return;
         }
@@ -157,19 +174,22 @@ export class SetFilterListItem<V> extends Component {
         this.eCheckbox.onValueChange((value) => this.onCheckboxChanged(!!value));
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.focusWrapper;
     }
 
     private setupExpansion(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gridOptionsService, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('setFilterGroupOpen', this.gridOptionsService, null));
-        this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        this.eGroupClosedIcon.appendChild(_createIcon('setFilterGroupClosed', this.gos, null));
+        this.eGroupOpenedIcon.appendChild(_createIcon('setFilterGroupOpen', this.gos, null));
+        const listener = this.onExpandOrContractClicked.bind(this);
+        this.addManagedElementListeners(this.eGroupClosedIcon, { click: listener });
+        this.addManagedElementListeners(this.eGroupOpenedIcon, { click: listener });
 
         if (this.hasIndeterminateExpandState) {
-            this.eGroupIndeterminateIcon.appendChild(_.createIcon('setFilterGroupIndeterminate', this.gridOptionsService, null));
-            this.addManagedListener(this.eGroupIndeterminateIcon, 'click', this.onExpandOrContractClicked.bind(this));
+            this.eGroupIndeterminateIcon.appendChild(_createIcon('setFilterGroupIndeterminate', this.gos, null));
+            this.addManagedElementListeners(this.eGroupIndeterminateIcon, {
+                click: listener,
+            });
         }
 
         this.setExpandedIcons();
@@ -185,13 +205,13 @@ export class SetFilterListItem<V> extends Component {
             this.isExpanded = isExpanded;
 
             const event: SetFilterListItemExpandedChangedEvent = {
-                type: SetFilterListItem.EVENT_EXPANDED_CHANGED,
+                type: 'expandedChanged',
                 isExpanded: !!isExpanded,
-                item: this.item
+                item: this.item,
             };
 
             if (!silent) {
-                this.dispatchEvent(event);
+                this.dispatchLocalEvent(event);
             }
 
             this.setExpandedIcons();
@@ -200,10 +220,13 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setExpandedIcons(): void {
-        _.setDisplayed(this.eGroupClosedIcon, this.hasIndeterminateExpandState ? this.isExpanded === false : !this.isExpanded);
-        _.setDisplayed(this.eGroupOpenedIcon, this.isExpanded === true);
+        _setDisplayed(
+            this.eGroupClosedIcon,
+            this.hasIndeterminateExpandState ? this.isExpanded === false : !this.isExpanded
+        );
+        _setDisplayed(this.eGroupOpenedIcon, this.isExpanded === true);
         if (this.hasIndeterminateExpandState) {
-            _.setDisplayed(this.eGroupIndeterminateIcon, this.isExpanded === undefined);
+            _setDisplayed(this.eGroupIndeterminateIcon, this.isExpanded === undefined);
         }
     }
 
@@ -211,22 +234,24 @@ export class SetFilterListItem<V> extends Component {
         this.isSelected = isSelected;
 
         const event: SetFilterListItemSelectionChangedEvent = {
-            type: SetFilterListItem.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             isSelected,
-            item: this.item
+            item: this.item,
         };
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
         this.refreshVariableAriaLabels();
         this.refreshAriaChecked();
     }
 
     public toggleSelected(): void {
-        if (!!this.params.readOnly) { return; }
+        if (this.params.readOnly) {
+            return;
+        }
 
         this.setSelected(!this.isSelected);
     }
-    
+
     private setSelected(isSelected: boolean | undefined, silent?: boolean) {
         this.isSelected = isSelected;
         this.eCheckbox.setValue(isSelected, silent);
@@ -234,37 +259,48 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private refreshVariableAriaLabels(): void {
-        if (!this.isTree) { return; }
+        if (!this.isTree) {
+            return;
+        }
         const translate = this.localeService.getLocaleTextFunc();
         const checkboxValue = this.eCheckbox.getValue();
-        const state = checkboxValue === undefined ?
-            translate('ariaIndeterminate', 'indeterminate') : 
-            (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
+        const state =
+            checkboxValue === undefined
+                ? translate('ariaIndeterminate', 'indeterminate')
+                : checkboxValue
+                  ? translate('ariaVisible', 'visible')
+                  : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
-        _.setAriaLabelledBy(this.eCheckbox.getInputElement(), undefined as any);
+        _setAriaLabelledBy(this.eCheckbox.getInputElement(), undefined as any);
         this.eCheckbox.setInputAriaLabel(`${visibilityLabel} (${state})`);
     }
-    
+
     private setupFixedAriaLabels(value: any): void {
-        if (!this.isTree) { return; }
+        if (!this.isTree) {
+            return;
+        }
         const translate = this.localeService.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
-        _.setAriaLabel(ariaEl, `${value} ${itemLabel}`);
-        _.setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
+        _setAriaLabel(ariaEl, `${value} ${itemLabel}`);
+        _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
     private refreshAriaChecked(): void {
         const ariaEl = this.getAriaElement();
 
-        _.setAriaChecked(ariaEl, this.eCheckbox.getValue());
+        _setAriaChecked(ariaEl, this.eCheckbox.getValue());
     }
 
     private refreshAriaExpanded(): void {
-        _.setAriaExpanded(this.getAriaElement(), !!this.isExpanded);
+        _setAriaExpanded(this.getAriaElement(), !!this.isExpanded);
     }
 
-    public refresh(item: SetFilterModelTreeItem | string | null, isSelected: boolean | undefined, isExpanded: boolean | undefined): void {
+    public refresh(
+        item: SetFilterModelTreeItem | string | null,
+        isSelected: boolean | undefined,
+        isExpanded: boolean | undefined
+    ): void {
         this.item = item;
         // setExpanded checks if value has changed, setSelected does not
         if (isSelected !== this.isSelected) {
@@ -290,7 +326,9 @@ export class SetFilterListItem<V> extends Component {
     }
 
     public render(): void {
-        const { params: { column } } = this;
+        const {
+            params: { column },
+        } = this;
 
         let { value } = this;
         let formattedValue: string | null = null;
@@ -302,9 +340,9 @@ export class SetFilterListItem<V> extends Component {
             value = formattedValue as any;
         } else if (this.isTree) {
             // tree values are already formatted via treeListFormatter
-            formattedValue = _.toStringOrNull(value);
+            formattedValue = _toStringOrNull(value);
         } else {
-            formattedValue = this.getFormattedValue(column, value);
+            formattedValue = this.getFormattedValue(column as AgColumn, value);
         }
 
         this.setTooltipAndCellRendererParams(value, formattedValue);
@@ -313,34 +351,48 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setTooltipAndCellRendererParams(value: V | null | (() => string), formattedValue: string | null): void {
-        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
 
         if (this.params.showTooltips && (!isTooltipWhenTruncated || !this.params.cellRenderer)) {
-            const newTooltipText = formattedValue != null ? formattedValue : _.toStringOrNull(value);
+            const newTooltipText = formattedValue != null ? formattedValue : _toStringOrNull(value);
             let shouldDisplayTooltip: (() => boolean) | undefined;
 
             if (isTooltipWhenTruncated) {
                 shouldDisplayTooltip = () => {
                     const el = this.eCheckbox.getGui().querySelector('.ag-label');
-                    if (!el) { return true; } // show label by default
+                    if (!el) {
+                        return true;
+                    } // show label by default
                     return el.scrollWidth > el.clientWidth;
-                }
+                };
             }
-            this.setTooltip({ newTooltipText, location: 'setFilterValue', shouldDisplayTooltip });
+            this.setTooltip({
+                newTooltipText,
+                location: 'setFilterValue',
+                getColDef: () => this.params.colDef,
+                getColumn: () => this.params.column as AgColumn,
+                shouldDisplayTooltip,
+            });
         }
 
-        this.cellRendererParams = this.gridOptionsService.addGridCommonParams({
+        this.cellRendererParams = this.gos.addGridCommonParams({
             value,
             valueFormatted: formattedValue,
             colDef: this.params.colDef,
             column: this.params.column,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setTooltip({ newTooltipText: value, location:'setFilterValue', shouldDisplayTooltip });
-            }
+                this.setTooltip({
+                    newTooltipText: value,
+                    getColDef: () => this.params.colDef,
+                    getColumn: () => this.params.column as AgColumn,
+                    location: 'setFilterValue',
+                    shouldDisplayTooltip,
+                });
+            },
         });
     }
 
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
+    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'setFilterValue';
         res.colDef = this.getComponentHolder();
@@ -350,12 +402,15 @@ export class SetFilterListItem<V> extends Component {
         return res;
     }
 
-    private getFormattedValue(column: Column, value: any) {
-        return this.valueFormatterService.formatValue(column, null, value, this.valueFormatter, false);
+    private getFormattedValue(column: AgColumn, value: any) {
+        return this.valueService.formatValue(column, null, value, this.valueFormatter, false);
     }
 
     private renderCell(): void {
-        const compDetails = this.userComponentFactory.getSetFilterCellRendererDetails(this.params, this.cellRendererParams);
+        const compDetails = this.userComponentFactory.getSetFilterCellRendererDetails(
+            this.params,
+            this.cellRendererParams
+        );
         const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (cellRendererPromise == null) {
@@ -363,7 +418,7 @@ export class SetFilterListItem<V> extends Component {
             return;
         }
 
-        cellRendererPromise.then(component => {
+        cellRendererPromise.then((component) => {
             if (component) {
                 this.cellRendererComponent = component;
                 this.eCheckbox.setLabel(component.getGui());
@@ -373,14 +428,19 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private renderCellWithoutCellRenderer(): void {
-        let valueToRender = (this.cellRendererParams.valueFormatted == null ? this.cellRendererParams.value : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
+        let valueToRender =
+            (this.cellRendererParams.valueFormatted == null
+                ? this.cellRendererParams.value
+                : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            _.warnOnce(`Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`);
+            _warnOnce(
+                `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`
+            );
             valueToRender = '';
         }
 
         this.eCheckbox.setLabel(valueToRender);
-        this.setupFixedAriaLabels(valueToRender)
+        this.setupFixedAriaLabels(valueToRender);
     }
 
     public getComponentHolder(): ColDef {

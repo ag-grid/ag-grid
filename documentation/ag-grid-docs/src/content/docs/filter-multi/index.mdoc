@@ -11,7 +11,7 @@ The Multi Filter allows multiple [Provided Filters](./filtering/#column-filter-t
 
 To use a Multi Filter, specify the following in your Column Definition:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // column configured to use the Multi Filter
@@ -45,7 +45,7 @@ The example below shows Floating Filters enabled for all columns. Note how the F
 
 By default, all filters in the Multi Filter are shown inline in the same view, so that the user has easy, immediate access. However, you can change how filters are presented, by either using sub-menus or accordions to wrap each filter. To do this, you can set `display` to the style of how you would like a particular filter to be displayed:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -101,7 +101,7 @@ The `filterType` will always be set to `'multi'`. The models array is the same l
 
 For example, if the Multi Filter has the default Text Filter and Set Filter, and the Set Filter is active, the Multi Filter model might look something like this:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {

@@ -1,41 +1,49 @@
-import {
-    _,
-    IServerSideStore,
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
+    ColumnModel,
+    ColumnVO,
+    GridOptions,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
-    StoreRefreshAfterParams,
+    IServerSideStore,
+    NamedBean,
     RowNode,
-    ColumnVO,
     RowNodeBlock,
-    ColumnModel,
-    GridOptions
-} from "@ag-grid-community/core";
-import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
-import { StoreFactory } from "./storeFactory";
+    StoreRefreshAfterParams,
+} from '@ag-grid-community/core';
+import { BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 
-@Bean('ssrmStoreUtils')
-export class StoreUtils extends BeanStub {
+import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
+import type { StoreFactory } from './storeFactory';
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
+export class StoreUtils extends BeanStub implements NamedBean {
+    beanName = 'ssrmStoreUtils' as const;
+
+    private columnModel: ColumnModel;
+    private serverSideRowModel: ServerSideRowModel;
+    private storeFactory: StoreFactory;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
+    }
 
     public loadFromDatasource(p: {
-        storeParams: SSRMParams,
-        parentNode: RowNode,
-        parentBlock: RowNodeBlock,
-        success: () => void,
-        fail: () => void,
-        startRow?: number,
-        endRow?: number}
-    ): void {
+        storeParams: SSRMParams;
+        parentNode: RowNode;
+        parentBlock: RowNodeBlock;
+        success: () => void;
+        fail: () => void;
+        startRow?: number;
+        endRow?: number;
+    }): void {
         const { storeParams, parentBlock, parentNode } = p;
         const groupKeys = parentNode.getGroupKeys();
 
-        if (!storeParams.datasource) { return; }
+        if (!storeParams.datasource) {
+            return;
+        }
 
         const request: IServerSideGetRowsRequest = {
             startRow: p.startRow,
@@ -46,14 +54,14 @@ export class StoreUtils extends BeanStub {
             pivotMode: storeParams.pivotMode,
             groupKeys: groupKeys,
             filterModel: storeParams.filterModel,
-            sortModel: storeParams.sortModel
+            sortModel: storeParams.sortModel,
         };
 
-        const getRowsParams: IServerSideGetRowsParams = this.gridOptionsService.addGridCommonParams({
+        const getRowsParams: IServerSideGetRowsParams = this.gos.addGridCommonParams({
             success: p.success,
             fail: p.fail,
             request: request,
-            parentNode: p.parentNode
+            parentNode: p.parentNode,
         });
 
         window.setTimeout(() => {
@@ -66,8 +74,14 @@ export class StoreUtils extends BeanStub {
         }, 0);
     }
 
-    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode | null): IServerSideStore | null {
-        if (_.missingOrEmpty(keys)) { return currentCache; }
+    public getChildStore(
+        keys: string[],
+        currentCache: IServerSideStore,
+        findNodeFunc: (key: string) => RowNode | null
+    ): IServerSideStore | null {
+        if (_missingOrEmpty(keys)) {
+            return currentCache;
+        }
 
         const nextKey = keys[0];
         const nextNode = findNodeFunc(nextKey);
@@ -88,7 +102,11 @@ export class StoreUtils extends BeanStub {
         return null;
     }
 
-    public isServerRefreshNeeded(parentRowNode: RowNode, rowGroupCols: ColumnVO[], params: StoreRefreshAfterParams): boolean {
+    public isServerRefreshNeeded(
+        parentRowNode: RowNode,
+        rowGroupCols: ColumnVO[],
+        params: StoreRefreshAfterParams
+    ): boolean {
         if (params.valueColChanged || params.secondaryColChanged) {
             return true;
         }
@@ -97,54 +115,68 @@ export class StoreUtils extends BeanStub {
         const grouping = level < rowGroupCols.length;
         const leafNodes = !grouping;
 
-        if (leafNodes) { return true; }
+        if (leafNodes) {
+            return true;
+        }
 
         const colIdThisGroup = rowGroupCols[level].id;
         const actionOnThisGroup = params.changedColumns.indexOf(colIdThisGroup) > -1;
 
-        if (actionOnThisGroup) { return true; }
+        if (actionOnThisGroup) {
+            return true;
+        }
 
-        const allCols = this.columnModel.getAllGridColumns();
+        const allCols = this.columnModel.getCols();
         const affectedGroupCols = allCols
             // find all impacted cols which also a group display column
-            .filter(col => col.getColDef().showRowGroup && params.changedColumns.includes(col.getId()))
-            .map(col => col.getColDef().showRowGroup)
+            .filter((col) => col.getColDef().showRowGroup && params.changedColumns.includes(col.getId()))
+            .map((col) => col.getColDef().showRowGroup)
             // if displaying all groups, or displaying the effected col for this group, refresh
-            .some(group => group === true || group === colIdThisGroup);
+            .some((group) => group === true || group === colIdThisGroup);
 
         return affectedGroupCols;
     }
 
     public getServerSideInitialRowCount(): number | null {
-        return this.gridOptionsService.get('serverSideInitialRowCount');
+        return this.gos.get('serverSideInitialRowCount');
     }
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {
-        if (!this.gridOptionsService.isRowModelType('serverSide')) {
-            _.warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
+        if (!this.gos.isRowModelType('serverSide')) {
+            _warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
             return false;
         }
         return true;
     }
     private assertNotTreeData(key: keyof GridOptions) {
-        if (this.gridOptionsService.get('treeData')) {
-            _.warnOnce(`The '${key}' property cannot be used while using tree data.`);
+        if (this.gos.get('treeData')) {
+            _warnOnce(`The '${key}' property cannot be used while using tree data.`);
             return false;
         }
         return true;
     }
 
     public isServerSideSortAllLevels() {
-        return this.gridOptionsService.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
+        return this.gos.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     }
     public isServerSideOnlyRefreshFilteredGroups() {
-        return this.gridOptionsService.get('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
+        return (
+            this.gos.get('serverSideOnlyRefreshFilteredGroups') &&
+            this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups')
+        );
     }
     public isServerSideSortOnServer() {
-        return this.gridOptionsService.get('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
+        return (
+            this.gos.get('serverSideSortOnServer') &&
+            this.assertRowModelIsServerSide('serverSideSortOnServer') &&
+            this.assertNotTreeData('serverSideSortOnServer')
+        );
     }
     public isServerSideFilterOnServer() {
-        return this.gridOptionsService.get('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
+        return (
+            this.gos.get('serverSideFilterOnServer') &&
+            this.assertRowModelIsServerSide('serverSideFilterOnServer') &&
+            this.assertNotTreeData('serverSideFilterOnServer')
+        );
     }
-
 }

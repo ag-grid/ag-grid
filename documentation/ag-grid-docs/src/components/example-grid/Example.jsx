@@ -22,11 +22,11 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import styles from '@design-system/modules/Example.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
+import styles from './Example.module.scss';
 import { Toolbar } from './Toolbar';
 import {
     COUNTRY_CODES,
@@ -375,6 +375,194 @@ const desktopDefaultCols = [
     },
 ];
 
+const createTooltip = (prop) => ({
+    renderer: (params) => ({
+        content: '$' + formatThousands(Math.round(params.datum[params[prop]])),
+    }),
+});
+
+const pieSeriesThemeOverrides = {
+    series: {
+        calloutLabel: {
+            enabled: false,
+        },
+        tooltip: createTooltip('angleKey'),
+    },
+};
+
+const createThemeOverrides = (tooltipProp) => ({
+    series: {
+        tooltip: createTooltip(tooltipProp),
+    },
+});
+
+const cartesianSeriesThemeOverrides = createThemeOverrides('yKey');
+const polarSeriesThemeOverrides = createThemeOverrides('radiusKey');
+
+const scatterSeriesThemeOverrides = {
+    series: {
+        tooltip: {
+            renderer: (params) => {
+                const label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
+                const xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
+                const yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
+                let size = '';
+                if (params.sizeKey) {
+                    size = '<br>' + params.sizeName + ': $' + formatThousands(params.datum[params.sizeKey]);
+                }
+                return {
+                    content: label + xValue + '<br>' + yValue + size,
+                };
+            },
+        },
+    },
+};
+
+const gradientLegendThemeOverrides = {
+    scale: {
+        label: {
+            formatter: ({ value }) => {
+                const num = Number(value);
+                return isNaN(num) ? value : '$' + formatThousands(num);
+            },
+        },
+    },
+};
+
+const hierarchicalSeriesThemeOverrides = {
+    series: {
+        tooltip: {
+            renderer: (params) => {
+                // temporary workaround until fixed in standalone
+                if (!params.sizeName) {
+                    return {};
+                }
+                const findDatum = (datum) => (datum.children ? findDatum(datum.children[0]) : datum);
+                const datum = findDatum(params.datum);
+                const sizeValue = params.sizeName + ': $' + formatThousands(datum[params.sizeKey]);
+                let colorValue = '';
+                if (params.colorKey) {
+                    colorValue = params.colorName + ': $' + formatThousands(datum[params.colorKey]);
+                }
+                return {
+                    content: sizeValue + '<br>' + colorValue,
+                };
+            },
+        },
+    },
+    gradientLegend: gradientLegendThemeOverrides,
+};
+
+const rangeSeriesThemeOverrides = {
+    series: {
+        tooltip: {
+            renderer: ({ xName, xKey, yLowName, yLowKey, yHighName, yHighKey, datum }) => {
+                return {
+                    content:
+                        `${xName}: ${datum[xKey]}<br>${yLowName}: $${formatThousands(datum[yLowKey])}<br>` +
+                        `${yHighName}: $${formatThousands(datum[yHighKey])}`,
+                };
+            },
+        },
+    },
+};
+
+const chartThemeOverrides = {
+    common: {
+        axes: {
+            number: {
+                label: {
+                    formatter: axisLabelFormatter,
+                },
+            },
+            'angle-number': {
+                label: {
+                    formatter: axisLabelFormatter,
+                },
+            },
+            'radius-number': {
+                label: {
+                    formatter: axisLabelFormatter,
+                },
+            },
+        },
+    },
+    pie: pieSeriesThemeOverrides,
+    donut: pieSeriesThemeOverrides,
+    bar: cartesianSeriesThemeOverrides,
+    line: cartesianSeriesThemeOverrides,
+    area: cartesianSeriesThemeOverrides,
+    scatter: scatterSeriesThemeOverrides,
+    bubble: scatterSeriesThemeOverrides,
+    'radial-column': polarSeriesThemeOverrides,
+    'radial-bar': createThemeOverrides('angleKey'),
+    'radar-line': polarSeriesThemeOverrides,
+    'radar-area': polarSeriesThemeOverrides,
+    nightingale: polarSeriesThemeOverrides,
+    histogram: {
+        series: {
+            tooltip: {
+                renderer: (params) => ({
+                    title:
+                        (params.xName || params.xKey) +
+                        ': $' +
+                        formatThousands(params.datum.domain[0]) +
+                        ' - $' +
+                        formatThousands(params.datum.domain[1]),
+                    // With a yKey, the value is the total of the yKey value for the population of the bin.
+                    // Without a yKey, the value is a count of the population of the bin.
+                    content: params.yKey ? formatThousands(Math.round(params.datum.total)) : params.datum.frequency,
+                }),
+            },
+        },
+    },
+    treemap: hierarchicalSeriesThemeOverrides,
+    sunburst: hierarchicalSeriesThemeOverrides,
+    heatmap: {
+        series: {
+            tooltip: {
+                renderer: ({ xKey, yKey, colorKey, yName, datum }) => {
+                    return {
+                        title: '',
+                        content: `<b>${yName}:</b> ${datum[yKey]}<br><b>${datum[xKey]}:</b> $${formatThousands(datum[colorKey])}`,
+                    };
+                },
+            },
+        },
+        gradientLegend: gradientLegendThemeOverrides,
+    },
+    'box-plot': {
+        series: {
+            tooltip: {
+                renderer: ({
+                    xName,
+                    xKey,
+                    minName,
+                    minKey,
+                    q1Name,
+                    q1Key,
+                    medianName,
+                    medianKey,
+                    q3Name,
+                    q3Key,
+                    maxName,
+                    maxKey,
+                    datum,
+                }) => {
+                    return {
+                        content:
+                            `${xName}: ${datum[xKey]}<br>${minName}: $${formatThousands(datum[minKey])}<br>` +
+                            `${q1Name}: $${formatThousands(datum[q1Key])}<br>${medianName}: $${formatThousands(datum[medianKey])}<br>` +
+                            `${q3Name}: $${formatThousands(datum[q3Key])}<br>${maxName}: $${formatThousands(datum[maxKey])}`,
+                    };
+                },
+            },
+        },
+    },
+    'range-bar': rangeSeriesThemeOverrides,
+    'range-area': rangeSeriesThemeOverrides,
+};
+
 const ExampleInner = ({ darkMode }) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
@@ -395,6 +583,7 @@ const ExampleInner = ({ darkMode }) => {
     const [showMessage, setShowMessage] = useState(false);
     const [rowCols, setRowCols] = useState([]);
     const [dataSize, setDataSize] = useState();
+    const [initialLoad, setInitialLoad] = useState(true);
 
     const modules = useMemo(
         () => [
@@ -491,7 +680,6 @@ const ExampleInner = ({ darkMode }) => {
                 defaultToolPanel: 'columns',
                 hiddenByDefault: isSmall,
             },
-            columnMenu: 'new',
             dataTypeDefinitions: {
                 currency: {
                     extendsDataType: 'number',
@@ -538,98 +726,7 @@ const ExampleInner = ({ darkMode }) => {
                     event.api.closeToolPanel();
                 }
             },
-            chartThemeOverrides: {
-                polar: {
-                    series: {
-                        pie: {
-                            calloutLabel: {
-                                enabled: false,
-                            },
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.angleKey])),
-                                }),
-                            },
-                        },
-                    },
-                },
-                cartesian: {
-                    axes: {
-                        number: {
-                            label: {
-                                formatter: axisLabelFormatter,
-                            },
-                        },
-                    },
-                    series: {
-                        column: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
-                                }),
-                            },
-                        },
-                        bar: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
-                                }),
-                            },
-                        },
-                        line: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
-                                }),
-                            },
-                        },
-                        area: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
-                                }),
-                            },
-                        },
-                        scatter: {
-                            tooltip: {
-                                renderer: (params) => {
-                                    const label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                                    const xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
-                                    const yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
-                                    let size = '';
-                                    if (params.sizeKey) {
-                                        size =
-                                            '<br>' +
-                                            params.sizeName +
-                                            ': $' +
-                                            formatThousands(params.datum[params.sizeKey]);
-                                    }
-                                    return {
-                                        content: label + xValue + '<br>' + yValue + size,
-                                    };
-                                },
-                            },
-                        },
-                        histogram: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    title:
-                                        (params.xName || params.xKey) +
-                                        ': $' +
-                                        formatThousands(params.datum.domain[0]) +
-                                        ' - $' +
-                                        formatThousands(params.datum.domain[1]),
-                                    // With a yKey, the value is the total of the yKey value for the population of the bin.
-                                    // Without a yKey, the value is a count of the population of the bin.
-                                    content: params.yKey
-                                        ? formatThousands(Math.round(params.datum.total))
-                                        : params.datum.frequency,
-                                }),
-                            },
-                        },
-                    },
-                },
-            },
+            chartThemeOverrides: chartThemeOverrides,
             excelStyles: [
                 {
                     id: 'v-align',
@@ -787,10 +884,6 @@ const ExampleInner = ({ darkMode }) => {
         loadInstance.current = loadInstance.current + 1;
         const loadInstanceCopy = loadInstance.current;
 
-        if (gridRef.current && gridRef.current.api) {
-            gridRef.current.api.showLoadingOverlay();
-        }
-
         const colDefs = createCols();
 
         const rowCount = getRowCount();
@@ -799,7 +892,8 @@ const ExampleInner = ({ darkMode }) => {
         let row = 0;
         const data = [];
 
-        setShowMessage(true);
+        // Don't show message on initial load as it causes a spike in CLS
+        setShowMessage(!initialLoad);
         setMessage(` Generating rows`);
 
         const loopCount = rowCount > 10000 ? 10000 : 1000;
@@ -956,6 +1050,7 @@ const ExampleInner = ({ darkMode }) => {
     useEffect(() => {
         if (dataSize) {
             createData();
+            setInitialLoad(false);
         }
     }, [dataSize]);
 

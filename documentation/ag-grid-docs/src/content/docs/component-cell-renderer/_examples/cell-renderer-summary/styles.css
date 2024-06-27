@@ -11,9 +11,8 @@
 
 .logo {
     display: block;
-    width: 25px;
+    width: 90px;
     height: auto;
-    max-height: 50%;
     margin-right: 12px;
     filter: brightness(1.1);
 }
@@ -23,6 +22,14 @@
     height: 100%;
     width: 100%;
     align-items: center;
+}
+
+.imgSpanLogo {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
 }
 
 .missionSpan {
@@ -43,4 +50,8 @@
     height: auto;
     max-height: 50%;
     margin-right: 2px;
+}
+
+.logoCell {
+    background-color: #fff3;
 }

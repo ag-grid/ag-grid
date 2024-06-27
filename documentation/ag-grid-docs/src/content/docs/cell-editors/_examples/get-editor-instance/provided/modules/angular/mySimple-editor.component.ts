@@ -1,13 +1,13 @@
-import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { ICellEditorParams } from "@ag-grid-community/core";
-import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+import { ICellEditorAngularComp } from '@ag-grid-community/angular';
+import { ICellEditorParams } from '@ag-grid-community/core';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
 
 @Component({
     standalone: true,
-    template: `<input class="my-simple-editor" [value]="value" #input /> `
+    template: `<input class="my-simple-editor" [value]="value" #input /> `,
 })
 export class MySimpleEditor implements ICellEditorAngularComp, AfterViewInit {
     private params!: ICellEditorParams;
@@ -47,7 +47,7 @@ export class MySimpleEditor implements ICellEditorAngularComp, AfterViewInit {
     myCustomFunction() {
         return {
             rowIndex: this.params.rowIndex,
-            colId: this.params.column.getId()
+            colId: this.params.column.getId(),
         };
     }
 

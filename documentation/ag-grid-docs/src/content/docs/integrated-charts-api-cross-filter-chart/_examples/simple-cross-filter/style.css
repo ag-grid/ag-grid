@@ -5,9 +5,11 @@
 }
 
 #pieChart {
-    flex: 1;
+    height: 20px;
+    flex: 1 1 auto;
 }
 
 #myGrid {
-    flex: 1;
+    height: 20px !important;
+    flex: 1 1 auto;
 }

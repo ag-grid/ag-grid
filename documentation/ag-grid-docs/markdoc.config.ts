@@ -1,33 +1,30 @@
-import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { isFramework } from '@ag-website-shared/markdoc/functions/isFramework';
+import { isNotJavascriptFramework } from '@ag-website-shared/markdoc/functions/isNotJavascriptFramework';
+import { heading } from '@ag-website-shared/markdoc/nodes/heading';
+import { br } from '@ag-website-shared/markdoc/tags/br';
+import { embedSnippet } from '@ag-website-shared/markdoc/tags/embedSnippet';
+import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
+import { idea } from '@ag-website-shared/markdoc/tags/idea';
+import { image } from '@ag-website-shared/markdoc/tags/image';
+import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
+import { note } from '@ag-website-shared/markdoc/tags/note';
+import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
+import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
+import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
+import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
+import { warning } from '@ag-website-shared/markdoc/tags/warning';
+import { Markdoc, component, defineMarkdocConfig } from '@astrojs/markdoc/config';
 
-import { DOCS_TAB_ITEM_ID_PREFIX } from './src/constants';
-import { includeMarkdoc } from './src/utils/markdoc/tags/include-markdoc';
+import { agGridVersion } from './src/constants';
+import { link } from './src/utils/markdoc/tags/link';
 
 export default defineMarkdocConfig({
+    variables: {
+        agGridVersion,
+    },
     nodes: {
-        heading: {
-            ...nodes.heading, // Preserve default anchor link generation
-            render: component('./src/components/Heading.astro'),
-        },
-        link: {
-            ...nodes.link,
-            /**
-             * Transform markdoc links to add url prefix and framework to href
-             */
-            transform(node, config) {
-                const { framework } = config.variables;
-                const children = node.transformChildren(config);
-                const nodeAttributes = node.transformAttributes(config);
-                const href = urlWithPrefix({ url: nodeAttributes.href, framework });
-                const attributes = {
-                    ...nodeAttributes,
-                    href,
-                };
-
-                return new Markdoc.Tag('a', attributes, children);
-            },
-        },
+        heading,
+        link,
         fence: {
             attributes: {
                 ...Markdoc.nodes.fence.attributes!,
@@ -42,59 +39,38 @@ export default defineMarkdocConfig({
                 suppressFrameworkContext: Boolean,
                 spaceBetweenProperties: Boolean,
                 inlineReactProperties: Boolean,
-
-                // TODO: Temporary for mdx migration
-                fixme: Boolean,
             } as any,
             render: component('./src/components/snippet/Snippet.astro'),
         },
     },
     functions: {
-        isFramework: {
-            transform(parameters, context) {
-                const pageFramework = context.variables?.framework;
-                return Object.values(parameters).includes(pageFramework);
-            },
-        },
-        isNotJavascriptFramework: {
-            transform(_, context) {
-                const pageFramework = context.variables?.framework;
-                return pageFramework !== 'javascript';
-            },
-        },
+        isFramework,
+        isNotJavascriptFramework,
     },
     tags: {
-        kbd: {
-            render: 'kbd',
-            attributes: {
-                primary: { type: String },
-            },
-            transform(node) {
-                return new Markdoc.Tag(this.render, {}, [node.attributes.primary]);
-            },
+        kbd,
+        link,
+        oneTrustCookies,
+        tabs,
+        tabItem,
+        videoSection,
+        image,
+        br,
+        note,
+        warning,
+        idea,
+        openInCTA,
+        enterpriseIcon,
+        licenseSetup: {
+            render: component('./src/components/license-setup/LicenseSetup.astro'),
         },
-        br: {
-            render: 'br',
-        },
-        /**
-         * External link that opens in a new tab
-         */
-        externalLink: {
-            render: component('./src/components/ExternalLink.astro'),
-            attributes: {
-                href: { type: String, required: true },
-            },
-        },
-        enterpriseIcon: {
-            render: component('./src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
-        },
-        includeMarkdoc,
         gridExampleRunner: {
             render: component('./src/features/docs/components/DocsExampleRunner.astro'),
             attributes: {
                 title: { type: String, required: true },
                 name: { type: String, required: true },
                 typescriptOnly: { type: Boolean },
+                overrideImportType: { type: String },
                 exampleHeight: { type: Number },
             },
         },
@@ -147,15 +123,6 @@ export default defineMarkdocConfig({
                 cellRenderer: { type: Object },
             },
         },
-        note: {
-            render: component('./src/components/alert/Note'),
-        },
-        warning: {
-            render: component('./src/components/alert/Warning'),
-        },
-        idea: {
-            render: component('./src/components/alert/Idea'),
-        },
         gif: {
             render: component('./src/components/image/Gif.astro'),
             attributes: {
@@ -165,21 +132,7 @@ export default defineMarkdocConfig({
                 wrapped: { type: Boolean },
             },
         },
-        embedSnippet: {
-            render: component('./src/components/snippet/EmbedSnippet.astro'),
-            attributes: {
-                /**
-                 * Source file relative to example folder
-                 */
-                src: { type: String },
-                /**
-                 * Source file url
-                 */
-                url: { type: String },
-                language: { type: String },
-                lineNumbers: { type: Boolean },
-            },
-        },
+        embedSnippet,
         iframe: {
             render: 'iframe',
             attributes: {
@@ -189,27 +142,6 @@ export default defineMarkdocConfig({
         },
         iconsPanel: {
             render: component('./src/components/icon/IconsPanel.astro'),
-        },
-        downloadDSButton: {
-            render: component('./src/components/download-ds-button/DownloadDSButton.astro'),
-        },
-        image: {
-            render: component('./src/components/image/Image.astro'),
-            attributes: {
-                /**
-                 * Docs page name in `src/content/[pageName]
-                 *
-                 * If not provided, will default to the location of the markdoc file
-                 */
-                pageName: { type: String },
-                imagePath: { type: String, required: true },
-                alt: { type: String, required: true },
-                width: { type: String },
-                height: { type: String },
-                minWidth: { type: String },
-                maxWidth: { type: String },
-                margin: { type: String },
-            },
         },
         imageCaption: {
             render: component('./src/components/image/ImageCaption.astro'),
@@ -262,36 +194,8 @@ export default defineMarkdocConfig({
                     matches: ['size-6', 'size-10'],
                 },
                 mobileWrap: {
-                    type: Boolean
-                }
-            },
-        },
-        tabs: {
-            render: component('./src/components/tabs/TabsWithHtmlChildren.astro'),
-            attributes: {
-                omitFromOverview: { type: Boolean, default: false },
-                tabItemIdPrefix: {
-                    type: String,
-                    default: DOCS_TAB_ITEM_ID_PREFIX,
+                    type: Boolean,
                 },
-                headerLinks: {
-                    type: Array,
-                },
-            },
-        },
-        tabItem: {
-            render: component('./src/components/tabs/TabHtmlContent', 'TabHtmlContent'),
-            attributes: {
-                id: { type: String, required: true },
-                label: { type: String },
-            },
-        },
-        videoSection: {
-            render: component('./src/components/video-section/VideoSection.astro'),
-            attributes: {
-                id: { type: String },
-                title: { type: String },
-                showHeader: { type: Boolean },
             },
         },
         learningVideos: {
@@ -302,13 +206,20 @@ export default defineMarkdocConfig({
                 showHeader: { type: Boolean },
             },
         },
-        openInCTA: {
-            render: component('./src/components/open-in-cta/OpenInCTA.astro'),
+        figmaPreview: {
+            render: component('./src/components/figma-preview/FigmaPreview.astro'),
+        },
+        figmaCommunityButton: {
+            render: component('./src/components/figma-community-button/FigmaCommunityButton.astro'),
+        },
+        metaTag: {
+            render: component('./src/features/docs/components/MetaTagComponent.astro'),
             attributes: {
-                type: { type: String, required: true },
-                href: { type: String, required: true },
-                text: { type: String },
+                tags: { type: Array, required: true },
             },
+        },
+        seedProjectsTable: {
+            render: component('./src/components/SeedProjectsTable.astro'),
         },
     },
 });

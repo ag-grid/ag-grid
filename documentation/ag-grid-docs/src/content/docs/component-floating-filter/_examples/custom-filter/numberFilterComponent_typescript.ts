@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
 
 export class NumberFilterComponent implements IFilterComp {
     filterText!: string | null;
@@ -45,7 +45,9 @@ export class NumberFilterComponent implements IFilterComp {
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
-        if (!this.isFilterActive()) { return false; }
+        if (!this.isFilterActive()) {
+            return false;
+        }
 
         const { node } = params;
 
@@ -58,10 +60,12 @@ export class NumberFilterComponent implements IFilterComp {
     }
 
     isFilterActive() {
-        return this.filterText !== null &&
+        return (
+            this.filterText !== null &&
             this.filterText !== undefined &&
             this.filterText !== '' &&
-            this.isNumeric(this.filterText);
+            this.isNumeric(this.filterText)
+        );
     }
 
     getModel() {
@@ -78,6 +82,6 @@ export class NumberFilterComponent implements IFilterComp {
     }
 
     getModelAsString() {
-        return this.isFilterActive() ? '>' + this.filterText : ''
+        return this.isFilterActive() ? '>' + this.filterText : '';
     }
 }

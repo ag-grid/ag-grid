@@ -1,17 +1,10 @@
-import {
-    GridApi,
-    createGrid,
-    ColDef,
-    GridOptions,
-    GridPreDestroyedEvent,
-} from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ColDef, GridApi, GridOptions, GridPreDestroyedEvent, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { TAthlete, getDataSet } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-import { getDataSet, TAthlete } from './data';
 
 interface ColumnWidth {
     field: string;
@@ -33,49 +26,48 @@ const gridOptions: GridOptions = {
     },
     rowData: getDataSet(),
     onGridPreDestroyed: (params: GridPreDestroyedEvent<TAthlete>) => {
-        const allColumns = params.api?.getColumns();
+        const allColumns = params.api.getColumns();
         if (!allColumns) {
             return;
         }
 
-        const currentColumnWidths = allColumns.map(column => ({
-            field: column?.getColDef().field || '-',
-            width: column?.getActualWidth(),
+        const currentColumnWidths = allColumns.map((column) => ({
+            field: column.getColDef().field || '-',
+            width: column.getActualWidth(),
         }));
 
         displayColumnsWidth(currentColumnWidths);
-        columnWidths = new Map(currentColumnWidths
-            .map(columnWidth => [columnWidth.field, columnWidth.width])
-        );
-    }
+        columnWidths = new Map(currentColumnWidths.map((columnWidth) => [columnWidth.field, columnWidth.width]));
+    },
 };
 
 const displayColumnsWidth = (values: ColumnWidth[]) => {
-    const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState');
-    const valuesContainer = parentContainer?.querySelector<HTMLElement>('.values');
+    const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState')!;
+    const valuesContainer = parentContainer.querySelector<HTMLElement>('.values');
     if (!parentContainer || !valuesContainer) {
         return;
     }
 
-    const html = '<ul>'
-        + (values || []).map(value => `<li>Field: ${value.field} | Width: ${value.width}px</li>`).join('')
-        + '</ul>';
+    const html =
+        '<ul>' +
+        (values || []).map((value) => `<li>Field: ${value.field} | Width: ${value.width}px</li>`).join('') +
+        '</ul>';
 
     parentContainer.style.display = 'block';
     valuesContainer.innerHTML = html;
 
     const exampleButtons = document.querySelector<HTMLElement>('#exampleButtons');
     exampleButtons!.style.display = 'none';
-}
+};
 
 function updateColumnWidth() {
     if (!gridApi) {
         return;
     }
 
-    const newWidths = gridApi.getColumns()!.map(column => {
+    const newWidths = gridApi.getColumns()!.map((column) => {
         return { key: column.getColId(), newWidth: Math.round((150 + Math.random() * 100) * 100) / 100 };
-    })
+    });
     gridApi.setColumnWidths(newWidths);
 }
 
@@ -85,27 +77,30 @@ function destroyGrid() {
     }
 
     gridApi.destroy();
+    gridApi = undefined;
 }
 
 function reloadGrid() {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    const updatedColDefs = gridOptions.columnDefs && columnWidths ?
-        gridOptions.columnDefs.map(val => {
-            const colDef = val as ColDef;
-            const result: ColDef = {
-                ...colDef,
-            };
+    const updatedColDefs =
+        gridOptions.columnDefs && columnWidths
+            ? gridOptions.columnDefs.map((val) => {
+                  const colDef = val as ColDef;
+                  const result: ColDef = {
+                      ...colDef,
+                  };
 
-            if (colDef.field) {
-                const restoredWidth = columnWidths?.get(colDef.field);
-                if (restoredWidth) {
-                    result.width = restoredWidth;
-                }
-            }
+                  if (colDef.field && columnWidths) {
+                      const restoredWidth = columnWidths.get(colDef.field);
+                      if (restoredWidth) {
+                          result.width = restoredWidth;
+                      }
+                  }
 
-            return result;
-        }) : gridOptions.columnDefs;
+                  return result;
+              })
+            : gridOptions.columnDefs;
 
     gridOptions.columnDefs = updatedColDefs;
 

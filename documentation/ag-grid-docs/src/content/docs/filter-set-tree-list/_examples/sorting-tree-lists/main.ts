@@ -1,109 +1,112 @@
-import {
-  GridApi,
-  createGrid,
-  GridOptions,
-  ISetFilterParams,
-  KeyCreatorParams,
-  ValueFormatterParams,
-} from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    GridApi,
+    GridOptions,
+    ISetFilterParams,
+    KeyCreatorParams,
+    ValueFormatterParams,
+    createGrid,
+} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, MenuModule, SetFilterModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    MenuModule,
+    SetFilterModule,
+]);
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-  columnDefs: [
-    { field: 'employmentType' },
-    {
-      field: 'startDate',
-      valueFormatter: params => params.value ? params.value.toLocaleDateString() : params.value,
-      filterParams: {
-        treeList: true,
-        comparator: reverseOrderComparator,
-      } as ISetFilterParams<any, Date>,
+    columnDefs: [
+        { field: 'employmentType' },
+        {
+            field: 'startDate',
+            valueFormatter: (params) => (params.value ? params.value.toLocaleDateString() : params.value),
+            filterParams: {
+                treeList: true,
+                comparator: reverseOrderComparator,
+            } as ISetFilterParams<any, Date>,
+        },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 200,
+        filter: true,
+        floatingFilter: true,
+        cellDataType: false,
     },
-  ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 200,
-    filter: true,
-    floatingFilter: true,
-    cellDataType: false,
-  },
-  autoGroupColumnDef: {
-    headerName: 'Employee',
-    field: 'employeeName',
-    cellRendererParams: {
-      suppressCount: true,
+    autoGroupColumnDef: {
+        headerName: 'Employee',
+        field: 'employeeName',
+        cellRendererParams: {
+            suppressCount: true,
+        },
+        filter: 'agSetColumnFilter',
+        filterParams: {
+            treeList: true,
+            keyCreator: (params: KeyCreatorParams) => (params.value ? params.value.join('#') : null),
+            comparator: arrayComparator,
+        } as ISetFilterParams<any, string[]>,
+        minWidth: 280,
     },
-    filter: 'agSetColumnFilter',
-    filterParams: {
-      treeList: true,
-      keyCreator: (params: KeyCreatorParams) => params.value ? params.value.join('#') : null,
-      comparator: arrayComparator,
-    } as ISetFilterParams<any, string[]>,
-    minWidth: 280
-  },
-  treeData: true,
-  groupDefaultExpanded: -1,
-  getDataPath: (data) => {
-    return data.dataPath
-  },
-  getRowId: (params) => {
-    return params.data.employeeId
-  },
-}
+    treeData: true,
+    groupDefaultExpanded: -1,
+    getDataPath: (data) => {
+        return data.dataPath;
+    },
+    getRowId: (params) => String(params.data.employeeId),
+};
 
 function arrayComparator(a: string[] | null, b: string[] | null): number {
-  if (a == null) {
-    return b == null ? 0 : -1;
-  } else if (b == null) {
-    return 1;
-  }
-  for (let i = 0; i < a.length; i++) {
-    if (i >= b.length) {
-      return 1;
+    if (a == null) {
+        return b == null ? 0 : -1;
+    } else if (b == null) {
+        return 1;
     }
-    const comparisonValue = reverseOrderComparator(a[i], b[i]);
-    if (comparisonValue !== 0) {
-      return comparisonValue;
+    for (let i = 0; i < a.length; i++) {
+        if (i >= b.length) {
+            return 1;
+        }
+        const comparisonValue = reverseOrderComparator(a[i], b[i]);
+        if (comparisonValue !== 0) {
+            return comparisonValue;
+        }
     }
-  }
-  return 0;
+    return 0;
 }
 
 function reverseOrderComparator(a: any, b: any): number {
-  return a < b ? 1 : (a > b ? -1 : 0);
+    return a < b ? 1 : a > b ? -1 : 0;
 }
 
 function processData(data: any[]) {
-  const flattenedData: any[] = [];
-  const flattenRowRecursive = (row: any, parentPath: string[]) => {
-    const dateParts = row.startDate.split('/');
-    const startDate = new Date(parseInt(dateParts[2]), dateParts[1] - 1, dateParts[0]);
-    const dataPath = [...parentPath, row.employeeName];
-    flattenedData.push({...row, dataPath, startDate});
-    if (row.underlings) {
-      row.underlings.forEach((underling: any) => flattenRowRecursive(underling, dataPath));
-    }
-  };
-  data.forEach(row => flattenRowRecursive(row, []));
-  return flattenedData;
+    const flattenedData: any[] = [];
+    const flattenRowRecursive = (row: any, parentPath: string[]) => {
+        const dateParts = row.startDate.split('/');
+        const startDate = new Date(parseInt(dateParts[2]), dateParts[1] - 1, dateParts[0]);
+        const dataPath = [...parentPath, row.employeeName];
+        flattenedData.push({ ...row, dataPath, startDate });
+        if (row.underlings) {
+            row.underlings.forEach((underling: any) => flattenRowRecursive(underling, dataPath));
+        }
+    };
+    data.forEach((row) => flattenRowRecursive(row, []));
+    return flattenedData;
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/tree-data.json')
-    .then(response => response.json())
-    .then((data) => gridApi!.setGridOption('rowData', processData(data)))
-})
+    fetch('https://www.ag-grid.com/example-assets/tree-data.json')
+        .then((response) => response.json())
+        .then((data) => gridApi!.setGridOption('rowData', processData(data)));
+});

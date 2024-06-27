@@ -1,9 +1,9 @@
-import { Alert } from '@components/alert/Alert';
+import { Alert } from '@ag-website-shared/components/alert/Alert';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
 import Grid from '@components/grid/Grid';
-import { Icon } from '@components/icon/Icon';
 import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
-import styles from '@design-system/modules/pipelineChangelog.module.scss';
+import styles from '@pages-styles/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -156,7 +156,7 @@ export const Changelog = () => {
     const switchDisplayedFixVersion = useCallback(
         (fixVersion) => {
             setFixVersion(fixVersion);
-            let url = new URL(window.location);
+            const url = new URL(window.location);
             url.searchParams.set('fixVersion', fixVersion);
             window.history.pushState({}, '', url);
         },

@@ -1,9 +1,12 @@
 import { type Framework } from '@ag-grid-types';
 import { getPropertiesFromSource } from '@components/reference-documentation/getPropertiesFromSource';
 import { getAllSectionHeadingLinks } from '@components/reference-documentation/interface-helpers';
+import { getPagePath } from '@features/docs/utils/filesData';
 import Markdoc, { type Node, type RenderableTreeNode } from '@markdoc/markdoc';
 import { type MarkdownHeading } from 'astro';
 import Slugger from 'github-slugger';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 import { transformMarkdoc } from './transformMarkdoc';
 
@@ -17,6 +20,10 @@ function isTabsTag({ tag, type }: Node) {
 
 function isTabItemTag({ tag, type }: Node) {
     return type === 'tag' && tag === TAB_ITEM_TAG_NAME;
+}
+
+function isDocumentNode({ type }: Node) {
+    return type === 'document';
 }
 
 /**
@@ -167,16 +174,43 @@ function getTextFromChildren(node: Node): string {
 }
 
 /**
+ * Find partials and add it to the AST
+ */
+async function resolvePartials({ pageName, ast, framework }: { pageName: string; ast: Node; framework: Framework }) {
+    const pagePath = getPagePath({ pageName });
+    for (const node of ast.walk()) {
+        if (node.type === 'tag' && node.tag === 'partial') {
+            const { file } = node.attributes;
+            const filePath = path.join(pagePath, file);
+
+            const partialContents = readFileSync(filePath).toString();
+            const { ast: partialAst } = transformMarkdoc({ framework, markdocContent: partialContents });
+
+            Object.assign(node, partialAst);
+        }
+    }
+
+    // Flatten partials nodes
+    ast.children = ast.children
+        .map((child) => {
+            return isDocumentNode(child) ? child.children : child;
+        })
+        .flat();
+}
+
+/**
  * Get headings within markdoc content, resolving headings shown based on framework and adding
  * tab headings
  */
 export async function getHeadings({
     title,
+    pageName,
     markdocContent,
     framework,
     getTabItemSlug,
 }: {
     title: string;
+    pageName: string;
     markdocContent: string;
     framework: Framework;
     getTabItemSlug: (id: string) => string;
@@ -188,6 +222,8 @@ export async function getHeadings({
             }
             return node;
         });
+
+        resolvePartials({ pageName, ast, framework });
     };
     const { ast, renderTree } = transformMarkdoc({ framework, markdocContent, transformAst });
     if (!renderTree) {

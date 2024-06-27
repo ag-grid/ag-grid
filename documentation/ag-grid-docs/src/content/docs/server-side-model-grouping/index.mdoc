@@ -10,7 +10,7 @@ This section covers Row Grouping in the Server-Side Row Model (SSRM).
 Row Grouping is enabled in the grid via the `rowGroup` column definition attribute.
 The example below shows how to group rows by 'country':
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
@@ -92,13 +92,13 @@ By default the group nodes stick to the top of the Grid, to disable this behavio
 
 {% gridExampleRunner title="Sticky Groups" name="suppress-sticky-groups" /%}
 
-## Row Group Footers
+## Group Total Rows
 
-To enable [Row Group Footers](./grouping-footers/), set the `groupIncludeFooter` property to true. Note that the total footer is not supported by the SSRM.
+To enable [Group Total Rows](./total-rows/), set the `groupTotalRow` property to 'top' or 'bottom'. Note that the grand total row is not supported by the SSRM.
 
-{% gridExampleRunner title="Group Footers" name="group-footer" /%}
+{% gridExampleRunner title="Group Totals" name="group-footer" /%}
 
-Row group footers can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
+Group total rows can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
 
 {% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" /%}
 
@@ -106,7 +106,7 @@ Row group footers can also be used with `groupDisplayType='multipleColumns'`, as
 
 It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // Expand all group rows
 api.expandAll();
 
@@ -120,7 +120,7 @@ Calling `expandAll()` and `collapseAll()` will have no impact on rows yet to be 
 
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // Expand all top level row nodes
 api.forEachNode(node => {
     if (node.group && node.level == 0) {
@@ -145,7 +145,7 @@ By default, the grid will not show row counts beside the group names. If you do 
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getChildCount"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     getChildCount: data => {
         // here child count is stored in the 'childCount' property

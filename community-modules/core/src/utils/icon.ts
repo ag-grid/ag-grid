@@ -1,14 +1,15 @@
-import { Column } from '../entities/column';
-import { loadTemplate, isNodeOrElement } from './dom';
-import { setAriaRole } from './aria';
-import { GridOptionsService } from '../gridOptionsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { GridOptionsService } from '../gridOptionsService';
+import { _setAriaRole } from './aria';
+import { _isNodeOrElement, _loadTemplate } from './dom';
+import { _warnOnce } from './function';
 
 //
 // IMPORTANT NOTE!
 //
 // If you change the list below, copy/paste the new content into the docs page custom-icons
 //
-export const iconNameClassMap: { [key: string]: string; } = {
+export const iconNameClassMap: { [key: string]: string } = {
     // header column group shown when expanded (click to contract)
     columnGroupOpened: 'expanded',
     // header column group shown when contracted (click to expand)
@@ -148,18 +149,28 @@ export const iconNameClassMap: { [key: string]: string; } = {
     chartsMenuAdvancedSettings: 'settings',
     // shown in Integrated Charts menu add fields
     chartsMenuAdd: 'plus',
+    // checked checkbox
+    checkboxChecked: 'checkbox-checked',
+    // indeterminate checkbox
+    checkboxIndeterminate: 'checkbox-indeterminate',
+    // unchecked checkbox
+    checkboxUnchecked: 'checkbox-unchecked',
+    // radio button on
+    radioButtonOn: 'radio-button-on',
+    // radio button off
+    radioButtonOff: 'radio-button-off',
 };
 
 /**
  * If icon provided, use this (either a string, or a function callback).
  * if not, then use the default icon from the theme
  * @param {string} iconName
- * @param {GridOptionsService} gridOptionsService
+ * @param {GridOptionsService} gos
  * @param {Column | null} [column]
  * @returns {Element}
  */
-export function createIcon(iconName: string, gridOptionsService: GridOptionsService, column: Column | null): Element {
-    const iconContents = createIconNoSpan(iconName, gridOptionsService, column);
+export function _createIcon(iconName: string, gos: GridOptionsService, column: AgColumn | null): Element {
+    const iconContents = _createIconNoSpan(iconName, gos, column);
 
     if (iconContents) {
         const { className } = iconContents;
@@ -177,8 +188,13 @@ export function createIcon(iconName: string, gridOptionsService: GridOptionsServ
     return eResult;
 }
 
-export function createIconNoSpan(iconName: string, gridOptionsService: GridOptionsService, column?: Column | null, forceCreate?: boolean): Element | undefined {
-    let userProvidedIcon: Function | string | null = null;
+export function _createIconNoSpan(
+    iconName: string,
+    gos: GridOptionsService,
+    column?: AgColumn | null,
+    forceCreate?: boolean
+): Element | undefined {
+    let userProvidedIcon: ((...args: any[]) => any) | string | null = null;
 
     // check col for icon first
     const icons: any = column && column.getColDef().icons;
@@ -188,8 +204,8 @@ export function createIconNoSpan(iconName: string, gridOptionsService: GridOptio
     }
 
     // if not in col, try grid options
-    if (gridOptionsService && !userProvidedIcon) {
-        const optionsIcons = gridOptionsService.get('icons');
+    if (gos && !userProvidedIcon) {
+        const optionsIcons = gos.get('icons');
         if (optionsIcons) {
             userProvidedIcon = optionsIcons[iconName];
         }
@@ -208,21 +224,21 @@ export function createIconNoSpan(iconName: string, gridOptionsService: GridOptio
         }
 
         if (typeof rendererResult === 'string') {
-            return loadTemplate(rendererResult);
+            return _loadTemplate(rendererResult);
         }
 
-        if (isNodeOrElement(rendererResult)) {
+        if (_isNodeOrElement(rendererResult)) {
             return rendererResult as Element;
         }
 
-        console.warn('AG Grid: iconRenderer should return back a string or a dom object');
+        _warnOnce('iconRenderer should return back a string or a dom object');
     } else {
         const span = document.createElement('span');
         let cssClass = iconNameClassMap[iconName];
 
         if (!cssClass) {
             if (!forceCreate) {
-                console.warn(`AG Grid: Did not find icon ${iconName}`);
+                _warnOnce(`Did not find icon ${iconName}`);
                 cssClass = '';
             } else {
                 cssClass = iconName;
@@ -231,7 +247,7 @@ export function createIconNoSpan(iconName: string, gridOptionsService: GridOptio
 
         span.setAttribute('class', `ag-icon ag-icon-${cssClass}`);
         span.setAttribute('unselectable', 'on');
-        setAriaRole(span, 'presentation');
+        _setAriaRole(span, 'presentation');
 
         return span;
     }

@@ -1,16 +1,17 @@
-import { ExcelOOXMLTemplate, ExcelCell, ExcelRow } from '@ag-grid-community/core';
+import type { ExcelCell, ExcelOOXMLTemplate, ExcelRow } from '@ag-grid-community/core';
+
 import { getExcelColumnName } from '../../assets/excelUtils';
 import cellFactory from './cell';
 
 const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
-    const mergeMap: { pos: number, excelPos: number }[] = [];
+    const mergeMap: { pos: number; excelPos: number }[] = [];
     let posCounter = 0;
     for (let i = 0; i < cells.length; i++) {
         const cell = cells[i];
         if (cell.mergeAcross) {
             mergeMap.push({
                 pos: i,
-                excelPos: posCounter
+                excelPos: posCounter,
             });
             posCounter += cell.mergeAcross;
         }
@@ -25,13 +26,12 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
                 mergedCells.push({
                     ref: `${getExcelColumnName(mergeMap[i].excelPos + 1 + j)}${rowIdx + 1}`,
                     styleId: cell.styleId,
-                    data: { type: 'empty', value: null }
+                    data: { type: 'empty', value: null },
                 });
             }
             if (mergedCells.length) {
                 cells.splice(mergeMap[i].pos + 1, 0, ...mergedCells);
             }
-
         }
     }
 };
@@ -42,10 +42,12 @@ const rowFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelRow, idx: number, currentSheet: number) {
         const { collapsed, hidden, height, outlineLevel, cells = [] } = config;
         addEmptyCells(cells, idx);
-        const children = cells.filter(shouldDisplayCell).map((cell, idx) => cellFactory.getTemplate(cell, idx, currentSheet));
+        const children = cells
+            .filter(shouldDisplayCell)
+            .map((cell, idx) => cellFactory.getTemplate(cell, idx, currentSheet));
 
         return {
-            name: "row",
+            name: 'row',
             properties: {
                 rawMap: {
                     r: idx + 1,
@@ -54,12 +56,12 @@ const rowFactory: ExcelOOXMLTemplate = {
                     ht: height,
                     customHeight: height != null ? '1' : '0',
                     spans: '1:1',
-                    outlineLevel: outlineLevel || undefined
-                }
+                    outlineLevel: outlineLevel || undefined,
+                },
             },
-            children
+            children,
         };
-    }
+    },
 };
 
 export default rowFactory;

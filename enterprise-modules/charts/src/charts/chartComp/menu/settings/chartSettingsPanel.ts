@@ -1,32 +1,27 @@
-import { _, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
-import { MiniChartsContainer } from "./miniChartsContainer";
-import { AgChartThemePalette } from "ag-charts-community";
-import { ChartController } from "../../chartController";
-import { isStockTheme } from "../../chartProxies/chartTheme";
+import {
+    Component,
+    RefPlaceholder,
+    _clearElement,
+    _createIconNoSpan,
+    _getAbsoluteWidth,
+    _radioCssClass,
+    _setDisplayed,
+    _shallowCompare,
+} from '@ag-grid-community/core';
+import type { AgChartThemePalette } from 'ag-charts-community';
+
+import type { ChartController } from '../../chartController';
+import { isStockTheme } from '../../chartProxies/chartTheme';
+import { MiniChartsContainer } from './miniChartsContainer';
 
 type AnimationDirection = 'left' | 'right';
 
 export class ChartSettingsPanel extends Component {
-
-    public static TEMPLATE = /* html */
-        `<div class="ag-chart-settings-wrapper">
-            <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
-            <div ref="eNavBar" class="ag-chart-settings-nav-bar">
-                <div ref="ePrevBtn" class="ag-chart-settings-prev">
-                    <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
-                </div>
-                <div ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
-                <div ref="eNextBtn" class="ag-chart-settings-next">
-                    <button type="button" class="ag-button ag-chart-settings-next-button"></button>
-                </div>
-            </div>
-        </div>`;
-
-    @RefSelector('eMiniChartsContainer') private readonly eMiniChartsContainer: HTMLElement;
-    @RefSelector('eNavBar') private readonly eNavBar: HTMLElement;
-    @RefSelector('eCardSelector') private readonly eCardSelector: HTMLElement;
-    @RefSelector('ePrevBtn') private readonly ePrevBtn: HTMLElement;
-    @RefSelector('eNextBtn') private readonly eNextBtn: HTMLElement;
+    private readonly eMiniChartsContainer: HTMLElement = RefPlaceholder;
+    private readonly eNavBar: HTMLElement = RefPlaceholder;
+    private readonly eCardSelector: HTMLElement = RefPlaceholder;
+    private readonly ePrevBtn: HTMLElement = RefPlaceholder;
+    private readonly eNextBtn: HTMLElement = RefPlaceholder;
 
     private miniChartsContainers: MiniChartsContainer[] = [];
     private cardItems: HTMLElement[] = [];
@@ -37,25 +32,37 @@ export class ChartSettingsPanel extends Component {
 
     private isAnimating: boolean;
 
-    constructor(
-        private readonly chartController: ChartController,
-    ) {
-        super(ChartSettingsPanel.TEMPLATE);
+    constructor(private readonly chartController: ChartController) {
+        super(/* html */ `<div class="ag-chart-settings-wrapper">
+            <div data-ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
+            <div data-ref="eNavBar" class="ag-chart-settings-nav-bar">
+                <div data-ref="ePrevBtn" class="ag-chart-settings-prev">
+                    <button type="button" class="ag-button ag-chart-settings-prev-button"></button>
+                </div>
+                <div data-ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
+                <div data-ref="eNextBtn" class="ag-chart-settings-next">
+                    <button type="button" class="ag-button ag-chart-settings-next-button"></button>
+                </div>
+            </div>
+        </div>`);
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.resetPalettes();
 
-        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsService)!);
-        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsService)!);
+        this.ePrevBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('previous', this.gos)!);
+        this.eNextBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('next', this.gos)!);
 
-        this.addManagedListener(this.ePrevBtn, 'click', () => this.setActivePalette(this.getPrev(), 'left'));
-        this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
+        this.addManagedElementListeners(this.ePrevBtn, { click: () => this.setActivePalette(this.getPrev(), 'left') });
+        this.addManagedElementListeners(this.eNextBtn, { click: () => this.setActivePalette(this.getNext(), 'right') });
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () => this.resetPalettes(true));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, () => this.resetPalettes(true));
+        const reset = () => this.resetPalettes(true);
+        this.addManagedListeners(this.chartController, {
+            chartTypeChanged: reset,
+            chartApiUpdate: reset,
+        });
+
         this.scrollSelectedIntoView();
     }
 
@@ -65,7 +72,7 @@ export class ChartSettingsPanel extends Component {
         setTimeout(() => {
             const isMiniChartsContainerVisible = (miniChartsContainers: MiniChartsContainer) => {
                 return !miniChartsContainers.getGui().classList.contains('ag-hidden');
-            }
+            };
             const currentMiniChartContainer = this.miniChartsContainers.find(isMiniChartsContainerVisible);
             const currentChart = currentMiniChartContainer!.getGui().querySelector('.ag-selected') as HTMLElement;
 
@@ -81,18 +88,18 @@ export class ChartSettingsPanel extends Component {
     private resetPalettes(forceReset?: boolean): void {
         const palettes = this.chartController.getPalettes();
         const themeTemplateParameters = this.chartController.getThemeTemplateParameters();
-        const chartGroups = this.gridOptionsService.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
+        const chartGroups = this.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
 
-        if ((_.shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
+        if ((_shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
             return;
         }
 
         this.palettes = palettes;
         this.themes = this.chartController.getThemeNames();
-        this.activePaletteIndex = this.themes.findIndex(name => name === this.chartController.getChartThemeName());
+        this.activePaletteIndex = this.themes.findIndex((name) => name === this.chartController.getChartThemeName());
         this.cardItems = [];
 
-        _.clearElement(this.eCardSelector);
+        _clearElement(this.eCardSelector);
 
         this.destroyMiniCharts();
 
@@ -100,7 +107,7 @@ export class ChartSettingsPanel extends Component {
 
         this.palettes.forEach((palette, index) => {
             const isActivePalette = this.activePaletteIndex === index;
-            const { fills, strokes } = palette;
+            const { fills = [], strokes = [] } = palette;
             const themeName = themes[index];
             const isCustomTheme = !isStockTheme(themeName);
             const miniChartsContainer = this.createBean(
@@ -125,16 +132,18 @@ export class ChartSettingsPanel extends Component {
             }
         });
 
-        _.setDisplayed(this.eNavBar, this.palettes.length > 1);
-        _.radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');
+        _setDisplayed(this.eNavBar, this.palettes.length > 1);
+        _radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');
     }
 
     private addCardLink(index: number): void {
         const link = document.createElement('div');
         link.classList.add('ag-chart-settings-card-item');
 
-        this.addManagedListener(link, 'click', () => {
-            this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
+        this.addManagedElementListeners(link, {
+            click: () => {
+                this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
+            },
         });
 
         this.eCardSelector.appendChild(link);
@@ -162,9 +171,11 @@ export class ChartSettingsPanel extends Component {
     }
 
     private setActivePalette(index: number, animationDirection: AnimationDirection) {
-        if (this.isAnimating || this.activePaletteIndex === index) { return; }
+        if (this.isAnimating || this.activePaletteIndex === index) {
+            return;
+        }
 
-        _.radioCssClass(this.cardItems[index], 'ag-selected', 'ag-not-selected');
+        _radioCssClass(this.cardItems[index], 'ag-selected', 'ag-not-selected');
 
         const currentPalette = this.miniChartsContainers[this.activePaletteIndex];
         const currentGui = currentPalette.getGui();
@@ -175,7 +186,7 @@ export class ChartSettingsPanel extends Component {
         futurePalette.updateSelectedMiniChart();
 
         const multiplier = animationDirection === 'left' ? -1 : 1;
-        const final = nextGui.style.left = `${(_.getAbsoluteWidth(this.getGui()) * multiplier)}px`;
+        const final = (nextGui.style.left = `${_getAbsoluteWidth(this.getGui()) * multiplier}px`);
 
         this.activePaletteIndex = index;
 
@@ -204,12 +215,12 @@ export class ChartSettingsPanel extends Component {
     }
 
     private destroyMiniCharts(): void {
-        _.clearElement(this.eMiniChartsContainer);
+        _clearElement(this.eMiniChartsContainer);
 
         this.miniChartsContainers = this.destroyBeans(this.miniChartsContainers);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyMiniCharts();
         super.destroy();
     }

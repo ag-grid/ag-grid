@@ -1,31 +1,35 @@
-import { AgInputNumberField, Autowired, DragService, Events, AgAbstractLabel, DragListenerParams, AgLabelParams, RefSelector, _ } from "@ag-grid-community/core";
+import type {
+    AgInputNumberField,
+    AgLabelParams,
+    BeanCollection,
+    DragListenerParams,
+    DragService,
+} from '@ag-grid-community/core';
+import {
+    AgAbstractLabel,
+    AgInputNumberFieldSelector,
+    RefPlaceholder,
+    _exists,
+    _setFixedWidth,
+} from '@ag-grid-community/core';
 
 export interface AgAngleSelectParams extends AgLabelParams {
     value?: number;
     onValueChange?: (value: number) => void;
-};
+}
 
-export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
+export type AgAngleSelectEvent = 'fieldValueChanged';
+export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleSelectEvent> {
+    protected dragService: DragService;
 
-    private static TEMPLATE = /* html */
-        `<div class="ag-angle-select">
-            <div ref="eLabel"></div>
-            <div class="ag-wrapper ag-angle-select-wrapper">
-                <div ref="eAngleSelectField" class="ag-angle-select-field">
-                    <div ref="eParentCircle" class="ag-angle-select-parent-circle">
-                        <div ref="eChildCircle" class="ag-angle-select-child-circle"></div>
-                    </div>
-                </div>
-                <ag-input-number-field ref="eAngleValue"></ag-input-number-field>
-            </div>
-        </div>`;
+    public wireBeans(beans: BeanCollection) {
+        this.dragService = beans.dragService;
+    }
 
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eParentCircle') private readonly eParentCircle: HTMLElement;
-    @RefSelector('eChildCircle') private readonly eChildCircle: HTMLElement;
-    @RefSelector('eAngleValue') private readonly eAngleValue: AgInputNumberField;
-
-    @Autowired('dragService') protected readonly dragService: DragService;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly eParentCircle: HTMLElement = RefPlaceholder;
+    private readonly eChildCircle: HTMLElement = RefPlaceholder;
+    private readonly eAngleValue: AgInputNumberField = RefPlaceholder;
 
     private parentCircleRect: ClientRect | DOMRect;
     private degrees: number;
@@ -35,10 +39,24 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     private dragListener: DragListenerParams;
 
     constructor(config?: AgAngleSelectParams) {
-        super(config, AgAngleSelect.TEMPLATE);
+        super(
+            config,
+            /* html */ `<div class="ag-angle-select">
+            <div data-ref="eLabel"></div>
+            <div class="ag-wrapper ag-angle-select-wrapper">
+                <div class="ag-angle-select-field">
+                    <div data-ref="eParentCircle" class="ag-angle-select-parent-circle">
+                        <div data-ref="eChildCircle" class="ag-angle-select-child-circle"></div>
+                    </div>
+                </div>
+                <ag-input-number-field data-ref="eAngleValue"></ag-input-number-field>
+            </div>
+        </div>`,
+            [AgInputNumberFieldSelector]
+        );
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         const { value, onValueChange } = this.config;
@@ -53,11 +71,11 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         this.dragListener = {
             eElement: this.eParentCircle,
             dragStartPixels: 0,
-            onDragStart: (e: MouseEvent | Touch) => {
+            onDragStart: () => {
                 this.parentCircleRect = this.eParentCircle.getBoundingClientRect();
             },
             onDragging: (e: MouseEvent | Touch) => this.calculateAngleDrag(e),
-            onDragStop: () => { }
+            onDragStop: () => {},
         };
 
         this.dragService.addDragSource(this.dragListener);
@@ -83,16 +101,17 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
 
         this.updateNumberInput();
 
-        if (_.exists(this.getValue())) {
+        if (_exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
 
-        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
-            const eDocument = this.gridOptionsService.getDocument();
-            if (this.eAngleValue.getInputElement().contains(eDocument.activeElement)) {
-                return;
-            }
-            this.updateNumberInput();
+        this.addManagedListeners(this, {
+            fieldValueChanged: () => {
+                if (this.eAngleValue.getInputElement().contains(this.gos.getActiveDomElement())) {
+                    return;
+                }
+                this.updateNumberInput();
+            },
         });
     }
 
@@ -118,7 +137,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
 
         const radians = Math.atan2(y, x);
         this.degrees = this.toDegrees(radians);
-        this.radius = Math.sqrt((x * x) + (y * y));
+        this.radius = Math.sqrt(x * x + y * y);
 
         this.positionChildCircle(radians);
     }
@@ -127,9 +146,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         const radians = this.toRadians(this.getValue());
         const radius = this.getRadius();
 
-        this
-            .setOffsetX(Math.cos(radians) * radius)
-            .setOffsetY(Math.sin(radians) * radius);
+        this.setOffsetX(Math.cos(radians) * radius).setOffsetY(Math.sin(radians) * radius);
     }
 
     private setOffsetX(offset: number): this {
@@ -166,11 +183,11 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     private toDegrees(radians: number): number {
-        return radians / Math.PI * 180;
+        return (radians / Math.PI) * 180;
     }
 
     private toRadians(degrees: number): number {
-        return degrees / 180 * Math.PI;
+        return (degrees / 180) * Math.PI;
     }
 
     private normalizeNegativeValue(degrees: number): number {
@@ -194,7 +211,9 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     public setRadius(r: number): this {
-        if (this.radius === r) { return this; }
+        if (this.radius === r) {
+            return this;
+        }
         this.radius = r;
         this.calculateCartesian();
 
@@ -202,8 +221,10 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void): this {
-        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
-            callbackFn(this.degrees);
+        this.addManagedListeners(this, {
+            fieldValueChanged: () => {
+                callbackFn(this.degrees);
+            },
         });
         return this;
     }
@@ -227,7 +248,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
             if (!silent) {
-                this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+                this.dispatchLocalEvent({ type: 'fieldValueChanged' });
             }
         }
 
@@ -235,11 +256,11 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     public setWidth(width: number): this {
-        _.setFixedWidth(this.getGui(), width);
+        _setFixedWidth(this.getGui(), width);
         return this;
     }
 
-    public setDisabled(disabled: boolean): this {
+    public override setDisabled(disabled: boolean): this {
         super.setDisabled(disabled);
 
         this.eAngleValue.setDisabled(disabled);
@@ -247,7 +268,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         return this;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.dragService.removeDragSource(this.dragListener);
         super.destroy();
     }

@@ -1,30 +1,28 @@
-import { BeanStub } from "../../../context/beanStub";
-import { PostConstruct } from "../../../context/context";
-import { Column } from "../../../entities/column";
-import { ColumnGroup } from "../../../entities/columnGroup";
-import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
+import { BeanStub } from '../../../context/beanStub';
+import type { AgColumnGroup } from '../../../entities/agColumnGroup';
+import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 export class GroupWidthFeature extends BeanStub {
-
-    private columnGroup: ColumnGroup;
+    private columnGroup: AgColumnGroup;
     private comp: IHeaderGroupCellComp;
 
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: (() => void)[] = [];
 
-    constructor(comp: IHeaderGroupCellComp, columnGroup: ColumnGroup) {
+    constructor(comp: IHeaderGroupCellComp, columnGroup: AgColumnGroup) {
         super();
         this.columnGroup = columnGroup;
         this.comp = comp;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         // we need to listen to changes in child columns, as they impact our width
         this.addListenersToChildrenColumns();
 
         // the children belonging to this group can change, so we need to add and remove listeners as they change
-        this.addManagedListener(this.columnGroup, ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
+        this.addManagedListeners(this.columnGroup, {
+            displayedChildrenChanged: this.onDisplayedChildrenChanged.bind(this),
+        });
 
         this.onWidthChanged();
 
@@ -40,7 +38,7 @@ export class GroupWidthFeature extends BeanStub {
 
         // now add new listeners to the new set of children
         const widthChangedListener = this.onWidthChanged.bind(this);
-        this.columnGroup.getLeafColumns().forEach(column => {
+        this.columnGroup.getLeafColumns().forEach((column) => {
             column.addEventListener('widthChanged', widthChangedListener);
             column.addEventListener('visibleChanged', widthChangedListener);
             this.removeChildListenersFuncs.push(() => {
@@ -51,7 +49,7 @@ export class GroupWidthFeature extends BeanStub {
     }
 
     private removeListenersOnChildrenColumns(): void {
-        this.removeChildListenersFuncs.forEach(func => func());
+        this.removeChildListenersFuncs.forEach((func) => func());
         this.removeChildListenersFuncs = [];
     }
 
@@ -65,5 +63,4 @@ export class GroupWidthFeature extends BeanStub {
         this.comp.setWidth(`${columnWidth}px`);
         this.comp.addOrRemoveCssClass('ag-hidden', columnWidth === 0);
     }
-
 }

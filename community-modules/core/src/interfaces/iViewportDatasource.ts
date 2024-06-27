@@ -1,7 +1,6 @@
-import { IRowNode } from "./iRowNode";
+import type { IRowNode } from './iRowNode';
 
 export interface IViewportDatasource {
-
     /** Gets called exactly once before viewPort is used. Passes methods to be used to tell viewPort of data loads / changes. */
     init(params: IViewportDatasourceParams): void;
 

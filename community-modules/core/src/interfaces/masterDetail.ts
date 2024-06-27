@@ -1,8 +1,8 @@
-import { GridOptions } from "../entities/gridOptions";
-import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columns/columnApi";
-import { IRowNode } from "./iRowNode";
+import type { GridApi } from '../api/gridApi';
+import type { Bean } from '../context/bean';
+import type { GridOptions } from '../entities/gridOptions';
+import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import type { IRowNode } from './iRowNode';
 
 export interface IDetailCellRenderer<TData = any> {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -26,7 +26,7 @@ export interface IDetailCellRendererParams<TData = any, TDetail = any> extends I
 
     agGridReact: any;
     frameworkComponentWrapper: any;
-    pinned: "left" | "right" | null | undefined;
+    pinned: 'left' | 'right' | null | undefined;
 }
 
 export interface GetDetailRowData<TData = any, TDetail = any> {
@@ -46,8 +46,8 @@ interface TemplateFunc<TData = any> {
     (params: ICellRendererParams<TData>): string;
 }
 
-export interface IDetailCellRendererCtrl {
+export interface IDetailCellRendererCtrl extends Bean {
     init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void;
-    registerDetailWithMaster(api: GridApi, columnApi: ColumnApi): void;
+    registerDetailWithMaster(api: GridApi): void;
     refresh(): boolean;
 }

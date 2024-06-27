@@ -1,14 +1,19 @@
-import { Autowired } from "../../context/context";
-import { ICellRenderer } from "./iCellRenderer";
-import { Component } from "../../widgets/component";
-import { FilterManager } from "../../filter/filterManager";
-import { exists } from "../../utils/generic";
-import { clearElement } from "../../utils/dom";
+import type { BeanCollection } from '../../context/context';
+import type { FilterManager } from '../../filter/filterManager';
+import { _clearElement } from '../../utils/dom';
+import { _exists } from '../../utils/generic';
+import { Component } from '../../widgets/component';
+import type { ICellRenderer } from './iCellRenderer';
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
+    private filterManager?: FilterManager;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.filterManager = beans.filterManager;
+    }
 
     private lastValue: number;
 
@@ -17,18 +22,16 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     private refreshCount = 0;
 
-    @Autowired('filterManager') private filterManager: FilterManager;
-
     constructor() {
         super();
 
         const template = document.createElement('span');
         const delta = document.createElement('span');
         delta.setAttribute('class', 'ag-value-change-delta');
-        
+
         const value = document.createElement('span');
         value.setAttribute('class', 'ag-value-change-value');
-        
+
         template.appendChild(delta);
         template.appendChild(value);
 
@@ -43,13 +46,12 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     }
 
     private showDelta(params: any, delta: number): void {
-
         const absDelta = Math.abs(delta);
         const valueFormatted = params.formatValue(absDelta);
 
-        const valueToUse = exists(valueFormatted) ? valueFormatted : absDelta;
+        const valueToUse = _exists(valueFormatted) ? valueFormatted : absDelta;
 
-        const deltaUp = (delta >= 0);
+        const deltaUp = delta >= 0;
 
         if (deltaUp) {
             this.eDelta.textContent = ARROW_UP + valueToUse;
@@ -79,7 +81,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     private hideDeltaValue(): void {
         this.eValue.classList.remove('ag-value-change-value-highlight');
-        clearElement(this.eDelta);
+        _clearElement(this.eDelta);
     }
 
     public refresh(params: any, isInitialRender: boolean = false): boolean {
@@ -89,17 +91,17 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             return false;
         }
 
-        if (exists(params.valueFormatted)) {
+        if (_exists(params.valueFormatted)) {
             this.eValue.textContent = params.valueFormatted;
-        } else if (exists(params.value)) {
+        } else if (_exists(params.value)) {
             this.eValue.textContent = value;
         } else {
-            clearElement(this.eValue);
+            _clearElement(this.eValue);
         }
 
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
-        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
+        if (this.filterManager?.isSuppressFlashingCellsBecauseFiltering()) {
             return false;
         }
 
@@ -114,7 +116,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             this.eValue.classList.add('ag-value-change-value-highlight');
         }
 
-        if(!isInitialRender){
+        if (!isInitialRender) {
             this.setTimerToRemoveDelta();
         }
 

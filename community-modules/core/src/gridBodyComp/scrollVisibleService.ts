@@ -1,30 +1,35 @@
-import { Bean, Autowired, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { Events, ScrollVisibilityChangedEvent } from "../events";
-import { CtrlsService } from "../ctrlsService";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { debounce } from "../utils/function";
-import { ColumnAnimationService } from "../rendering/columnAnimationService";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { ScrollVisibilityChangedEvent } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
     verticalScrollShowing: boolean;
 }
 
-@Bean('scrollVisibleService')
-export class ScrollVisibleService extends BeanStub {
+export class ScrollVisibleService extends BeanStub implements NamedBean {
+    beanName = 'scrollVisibleService' as const;
 
-    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
-    @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
+    private ctrlsService: CtrlsService;
+    private columnAnimationService: ColumnAnimationService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.ctrlsService = beans.ctrlsService;
+        this.columnAnimationService = beans.columnAnimationService;
+    }
 
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-
+    public postConstruct(): void {
+        this.addManagedEventListeners({
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
+        });
     }
 
     public onDisplayedColumnsChanged(): void {
@@ -36,8 +41,8 @@ export class ScrollVisibleService extends BeanStub {
     }
 
     private update(): void {
-        // Because of column animation, if user removes cols anywhere except at the RHS, 
-        // then the cols on the RHS will animate to the left to fill the gap. This animation 
+        // Because of column animation, if user removes cols anywhere except at the RHS,
+        // then the cols on the RHS will animate to the left to fill the gap. This animation
         // means just after the cols are removed, the remaining cols are still in the original
         // location at the start of the animation, so pre animation the H scrollbar is still
         // needed, but post animation it is not. So if animation is active, we only update
@@ -52,13 +57,15 @@ export class ScrollVisibleService extends BeanStub {
     }
 
     private updateImpl(): void {
-        const centerRowCtrl = this.ctrlsService.getCenterRowContainerCtrl();
+        const centerRowCtrl = this.ctrlsService.get('center');
 
-        if (!centerRowCtrl || this.columnAnimationService.isActive()) { return; }
+        if (!centerRowCtrl || this.columnAnimationService.isActive()) {
+            return;
+        }
 
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.isVerticalScrollShowing()
+            verticalScrollShowing: this.isVerticalScrollShowing(),
         };
 
         this.setScrollsVisible(params);
@@ -74,7 +81,7 @@ export class ScrollVisibleService extends BeanStub {
             this.verticalScrollShowing = params.verticalScrollShowing;
 
             const event: WithoutGridCommon<ScrollVisibilityChangedEvent> = {
-                type: Events.EVENT_SCROLL_VISIBILITY_CHANGED
+                type: 'scrollVisibilityChanged',
             };
             this.eventService.dispatchEvent(event);
         }

@@ -1,18 +1,22 @@
+import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from '@ag-grid-community/core';
 
-import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams, BaseCellDataType, Column, _ } from "@ag-grid-community/core";
-import { ADVANCED_FILTER_LOCALE_TEXT } from "./advancedFilterLocaleText";
-import {
+import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import type {
     AutocompleteUpdate,
-    checkAndUpdateExpression,
+    FilterExpressionFunction,
+    FilterExpressionFunctionParams,
     FilterExpressionParserParams,
-    getSearchString,
-    updateExpression,
+    FilterExpressionValidationError,
+} from './filterExpressionUtils';
+import {
+    checkAndUpdateExpression,
     escapeQuotes,
     findEndPosition,
     findStartPosition,
-    FilterExpressionValidationError,
-    FilterExpressionFunctionParams
-} from "./filterExpressionUtils";
+    getSearchString,
+    updateExpression,
+} from './filterExpressionUtils';
 
 interface Parser {
     type: string;
@@ -27,7 +31,7 @@ class ColumnParser implements Parser {
     public valid = true;
     public endPosition: number | undefined;
     public baseCellDataType: BaseCellDataType;
-    public column: Column | null | undefined;
+    public column: AgColumn | null | undefined;
     public hasStartChar = false;
     public hasEndChar = false;
     private colName: string = '';
@@ -54,11 +58,13 @@ class ColumnParser implements Parser {
         }
         return undefined;
     }
-    
+
     public getDisplayValue(): string {
-        return (this.hasStartChar ? ColFilterExpressionParser.COL_START_CHAR : '') +
+        return (
+            (this.hasStartChar ? ColFilterExpressionParser.COL_START_CHAR : '') +
             this.colName +
-            (this.hasEndChar ? ColFilterExpressionParser.COL_END_CHAR : '');
+            (this.hasEndChar ? ColFilterExpressionParser.COL_END_CHAR : '')
+        );
     }
 
     public getColId(): string {
@@ -70,11 +76,15 @@ class ColumnParser implements Parser {
     }
 
     public getValidationError(): FilterExpressionValidationError | null {
-        return this.valid ? null : {
-            message: this.params.advancedFilterExpressionService.translate('advancedFilterValidationInvalidColumn'),
-            startPosition: this.startPosition,
-            endPosition: this.endPosition ?? this.params.expression.length - 1
-        };
+        return this.valid
+            ? null
+            : {
+                  message: this.params.advancedFilterExpressionService.translate(
+                      'advancedFilterValidationInvalidColumn'
+                  ),
+                  startPosition: this.startPosition,
+                  endPosition: this.endPosition ?? this.params.expression.length - 1,
+              };
     }
 
     private parseColumn(fromComplete: boolean, endPosition: number): boolean {
@@ -84,9 +94,9 @@ class ColumnParser implements Parser {
             this.colId = colValue.colId;
             checkAndUpdateExpression(this.params, this.colName, colValue.columnName, endPosition - 1);
             this.colName = colValue.columnName;
-            this.column = this.params.columnModel.getPrimaryColumn(this.colId);
+            this.column = this.params.columnModel.getColDefCol(this.colId);
             if (this.column) {
-                this.baseCellDataType = this.params.dataTypeService.getBaseDataType(this.column) ?? 'text';
+                this.baseCellDataType = this.params.dataTypeService?.getBaseDataType(this.column) ?? 'text';
                 return true;
             }
         }
@@ -132,11 +142,15 @@ class OperatorParser implements Parser {
     }
 
     public getValidationError(): FilterExpressionValidationError | null {
-        return this.valid ? null : {
-            message: this.params.advancedFilterExpressionService.translate('advancedFilterValidationInvalidOption'),
-            startPosition: this.startPosition,
-            endPosition: this.endPosition ?? this.params.expression.length - 1
-        };
+        return this.valid
+            ? null
+            : {
+                  message: this.params.advancedFilterExpressionService.translate(
+                      'advancedFilterValidationInvalidOption'
+                  ),
+                  startPosition: this.startPosition,
+                  endPosition: this.endPosition ?? this.params.expression.length - 1,
+              };
     }
 
     public getDisplayValue(): string {
@@ -148,7 +162,9 @@ class OperatorParser implements Parser {
     }
 
     private parseOperator(fromComplete: boolean, endPosition: number): boolean {
-        const operatorForType = this.params.advancedFilterExpressionService.getDataTypeExpressionOperator(this.baseCellDataType)!;
+        const operatorForType = this.params.advancedFilterExpressionService.getDataTypeExpressionOperator(
+            this.baseCellDataType
+        )!;
         const parsedOperator = operatorForType.findOperator(this.operator);
         this.endPosition = endPosition;
         if (parsedOperator) {
@@ -182,7 +198,7 @@ class OperandParser implements Parser {
         private params: FilterExpressionParserParams,
         public readonly startPosition: number,
         private readonly baseCellDataType: BaseCellDataType,
-        private readonly column: Column | null | undefined,
+        private readonly column: AgColumn | null | undefined
     ) {}
 
     public parse(char: string, position: number): boolean | undefined {
@@ -216,11 +232,13 @@ class OperandParser implements Parser {
     }
 
     public getValidationError(): FilterExpressionValidationError | null {
-        return this.validationMessage ? {
-            message: this.validationMessage,
-            startPosition: this.startPosition,
-            endPosition: this.endPosition ?? this.params.expression.length - 1
-        } : null;
+        return this.validationMessage
+            ? {
+                  message: this.validationMessage,
+                  startPosition: this.startPosition,
+                  endPosition: this.endPosition ?? this.params.expression.length - 1,
+              }
+            : null;
     }
 
     public getRawValue(): string {
@@ -243,7 +261,11 @@ class OperandParser implements Parser {
             this.valid = false;
             this.validationMessage = advancedFilterExpressionService.translate('advancedFilterValidationMissingValue');
         } else {
-            const modelValue = advancedFilterExpressionService.getOperandModelValue(this.operand, this.baseCellDataType, this.column!);
+            const modelValue = advancedFilterExpressionService.getOperandModelValue(
+                this.operand,
+                this.baseCellDataType,
+                this.column!
+            );
             if (modelValue != null) {
                 this.modelValue = modelValue;
             }
@@ -251,14 +273,18 @@ class OperandParser implements Parser {
                 case 'number':
                     if (this.quotes || isNaN(this.modelValue as number)) {
                         this.valid = false;
-                        this.validationMessage = advancedFilterExpressionService.translate('advancedFilterValidationNotANumber');
+                        this.validationMessage = advancedFilterExpressionService.translate(
+                            'advancedFilterValidationNotANumber'
+                        );
                     }
                     break;
                 case 'date':
                 case 'dateString':
                     if (modelValue == null) {
                         this.valid = false;
-                        this.validationMessage = advancedFilterExpressionService.translate('advancedFilterValidationInvalidDate');
+                        this.validationMessage = advancedFilterExpressionService.translate(
+                            'advancedFilterValidationInvalidDate'
+                        );
                     }
                     break;
             }
@@ -300,7 +326,12 @@ export class ColFilterExpressionParser {
                         this.operatorParser = new OperatorParser(this.params, i, this.columnParser!.baseCellDataType);
                         parser = this.operatorParser;
                     } else {
-                        this.operandParser = new OperandParser(this.params, i, this.columnParser!.baseCellDataType, this.columnParser!.column);
+                        this.operandParser = new OperandParser(
+                            this.params,
+                            i,
+                            this.columnParser!.baseCellDataType,
+                            this.columnParser!.column
+                        );
                         parser = this.operandParser;
                     }
                     this.parser = parser;
@@ -321,18 +352,28 @@ export class ColFilterExpressionParser {
     }
 
     public isValid(): boolean {
-        return this.isComplete() && this.columnParser!.valid && this.operatorParser!.valid && (!this.operandParser || this.operandParser!.valid);
+        return (
+            this.isComplete() &&
+            this.columnParser!.valid &&
+            this.operatorParser!.valid &&
+            (!this.operandParser || this.operandParser!.valid)
+        );
     }
 
     public getValidationError(): FilterExpressionValidationError | null {
-        const validationError = this.columnParser?.getValidationError() ?? this.operatorParser?.getValidationError() ?? this.operandParser?.getValidationError();
-        if (validationError) { return validationError; }
+        const validationError =
+            this.columnParser?.getValidationError() ??
+            this.operatorParser?.getValidationError() ??
+            this.operandParser?.getValidationError();
+        if (validationError) {
+            return validationError;
+        }
         const endPosition = this.params.expression.length;
         let translateKey: keyof typeof ADVANCED_FILTER_LOCALE_TEXT | undefined;
         if (!this.columnParser) {
             translateKey = 'advancedFilterValidationMissingColumn';
         } else if (!this.operatorParser) {
-            translateKey =  'advancedFilterValidationMissingOption';
+            translateKey = 'advancedFilterValidationMissingOption';
         } else if (this.operatorParser.expectedNumOperands && !this.operandParser) {
             translateKey = 'advancedFilterValidationMissingValue';
         }
@@ -340,45 +381,58 @@ export class ColFilterExpressionParser {
             return {
                 message: this.params.advancedFilterExpressionService.translate(translateKey),
                 startPosition: endPosition,
-                endPosition
+                endPosition,
             };
         }
         return null;
     }
 
-    public getFunction(params: FilterExpressionFunctionParams): string {
-        const colId = this.columnParser!.getColId();
-        const escapedColId = escapeQuotes(colId);
-        const operator = this.operatorParser?.getOperatorKey();
-        const { operators, evaluatorParams, operands } = params;
-        const operatorForColumn = this.params.advancedFilterExpressionService.getExpressionOperator(this.columnParser!.baseCellDataType, operator);
-        const operatorIndex = this.addToListAndGetIndex(operators, operatorForColumn);
-        const evaluatorParamsForColumn = this.params.advancedFilterExpressionService.getExpressionEvaluatorParams(colId);
-        const evaluatorParamsIndex = this.addToListAndGetIndex(evaluatorParams, evaluatorParamsForColumn);
-        let operand: string;
-        if (this.operatorParser?.expectedNumOperands === 0) {
-            operand = '';
-        } else {
-            const operandIndex = this.addToListAndGetIndex(operands, this.getOperandValue());
-            operand = `, params.operands[${operandIndex}]`;
-        }
-        return `params.operators[${operatorIndex}].evaluator(expressionProxy.getValue('${escapedColId}', node), node, params.evaluatorParams[${evaluatorParamsIndex}]${operand})`;
+    public getFunctionString(params: FilterExpressionFunctionParams): string {
+        return this.getFunctionCommon(params, (operandIndex, operatorIndex, colId, evaluatorParamsIndex) => {
+            const escapedColId = escapeQuotes(colId);
+            const operand = operandIndex == null ? '' : `, params.operands[${operandIndex}]`;
+            return `params.operators[${operatorIndex}].evaluator(expressionProxy.getValue('${escapedColId}', node), node, params.evaluatorParams[${evaluatorParamsIndex}]${operand})`;
+        });
+    }
+
+    public getFunctionParsed(params: FilterExpressionFunctionParams): FilterExpressionFunction {
+        return this.getFunctionCommon(params, (operandIndex, operatorIndex, colId, evaluatorParamsIndex) => {
+            return (expressionProxy, node, p) =>
+                p.operators[operatorIndex].evaluator(
+                    expressionProxy.getValue(colId, node),
+                    node,
+                    p.evaluatorParams[evaluatorParamsIndex],
+                    operandIndex == null ? undefined : p.operands[operandIndex]
+                );
+        });
     }
 
     public getAutocompleteListParams(position: number): AutocompleteListParams | undefined {
-        if (this.isColumnPosition(position)) { return this.getColumnAutocompleteListParams(position); }
-        if (this.isOperatorPosition(position)) { return this.getOperatorAutocompleteListParams(position); }
-        if (this.isBeyondEndPosition(position)) { return undefined; }
+        if (this.isColumnPosition(position)) {
+            return this.getColumnAutocompleteListParams(position);
+        }
+        if (this.isOperatorPosition(position)) {
+            return this.getOperatorAutocompleteListParams(position);
+        }
+        if (this.isBeyondEndPosition(position)) {
+            return undefined;
+        }
         return { enabled: false };
     }
 
-    public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate | null {
+    public updateExpression(
+        position: number,
+        updateEntry: AutocompleteEntry,
+        type?: string
+    ): AutocompleteUpdate | null {
         const { expression } = this.params;
         if (this.isColumnPosition(position)) {
             return updateExpression(
                 this.params.expression,
                 this.startPosition,
-                this.columnParser?.getColId() ? this.columnParser!.endPosition! : findEndPosition(expression, position).endPosition,
+                this.columnParser?.getColId()
+                    ? this.columnParser!.endPosition!
+                    : findEndPosition(expression, position).endPosition,
                 this.params.advancedFilterExpressionService.getColumnValue(updateEntry),
                 true
             );
@@ -403,7 +457,12 @@ export class ColFilterExpressionParser {
                 if (this.operatorParser?.getOperatorKey()) {
                     endPosition = this.operatorParser!.endPosition!;
                 } else {
-                    const { endPosition: calculatedEndPosition, isEmpty } = findEndPosition(expression, position, true, true);
+                    const { endPosition: calculatedEndPosition, isEmpty } = findEndPosition(
+                        expression,
+                        position,
+                        true,
+                        true
+                    );
                     endPosition = calculatedEndPosition;
                     empty = isEmpty;
                 }
@@ -435,6 +494,33 @@ export class ColFilterExpressionParser {
         return model as AdvancedFilterModel;
     }
 
+    private getFunctionCommon<T>(
+        params: FilterExpressionFunctionParams,
+        processFunc: (
+            operandIndex: number | undefined,
+            operatorIndex: number,
+            colId: string,
+            evaluatorParamsIndex: number
+        ) => T
+    ) {
+        const colId = this.columnParser!.getColId();
+        const operator = this.operatorParser?.getOperatorKey();
+        const { operators, evaluatorParams, operands } = params;
+        const operatorForColumn = this.params.advancedFilterExpressionService.getExpressionOperator(
+            this.columnParser!.baseCellDataType,
+            operator
+        );
+        const operatorIndex = this.addToListAndGetIndex(operators, operatorForColumn);
+        const evaluatorParamsForColumn =
+            this.params.advancedFilterExpressionService.getExpressionEvaluatorParams(colId);
+        const evaluatorParamsIndex = this.addToListAndGetIndex(evaluatorParams, evaluatorParamsForColumn);
+        const operandIndex =
+            this.operatorParser?.expectedNumOperands === 0
+                ? undefined
+                : this.addToListAndGetIndex(operands, this.getOperandValue());
+        return processFunc(operandIndex, operatorIndex, colId, evaluatorParamsIndex);
+    }
+
     private getOperandValue(): any {
         let operand: any = this.operandParser!.getRawValue();
         const { baseCellDataType, column } = this.columnParser!;
@@ -444,29 +530,45 @@ export class ColFilterExpressionParser {
                 break;
             case 'date':
             case 'dateString':
-                operand = this.params.valueParserService.parseValue(column!, null, operand, undefined);
+                operand = this.params.valueService.parseValue(column!, null, operand, undefined);
                 break;
         }
         if (baseCellDataType === 'dateString') {
-            return this.params.dataTypeService.getDateParserFunction(column)(operand as string);
+            const { dataTypeService } = this.params;
+            return dataTypeService ? dataTypeService.getDateParserFunction(column)(operand as string) : operand;
         }
         return operand;
     }
 
     private isComplete(): boolean {
-        return !!(this.operatorParser && (!this.operatorParser.expectedNumOperands || (this.operatorParser.expectedNumOperands && this.operandParser)));
+        return !!(
+            this.operatorParser &&
+            (!this.operatorParser.expectedNumOperands ||
+                (this.operatorParser.expectedNumOperands && this.operandParser))
+        );
     }
 
     private isColumnPosition(position: number): boolean {
-        return !this.columnParser || this.columnParser.endPosition == null || position <= this.columnParser.endPosition + 1;
+        return (
+            !this.columnParser || this.columnParser.endPosition == null || position <= this.columnParser.endPosition + 1
+        );
     }
 
     private isOperatorPosition(position: number): boolean {
-        return !this.operatorParser || this.operatorParser.endPosition == null || position <= this.operatorParser.endPosition + 1;
+        return (
+            !this.operatorParser ||
+            this.operatorParser.endPosition == null ||
+            position <= this.operatorParser.endPosition + 1
+        );
     }
 
     private isBeyondEndPosition(position: number): boolean {
-        return this.isComplete() && this.endPosition != null && position > this.endPosition + 1 && this.endPosition + 1 < this.params.expression.length;
+        return (
+            this.isComplete() &&
+            this.endPosition != null &&
+            position > this.endPosition + 1 &&
+            this.endPosition + 1 < this.params.expression.length
+        );
     }
 
     private returnEndPosition(returnPosition: number, treatAsEnd?: boolean): number {
@@ -487,9 +589,7 @@ export class ColFilterExpressionParser {
         const searchString = getSearchString(
             columnName,
             position,
-            this.columnParser?.endPosition == null
-                ? this.params.expression.length
-                : (this.columnParser.endPosition + 1)
+            this.columnParser?.endPosition == null ? this.params.expression.length : this.columnParser.endPosition + 1
         );
         const containsStartChar = this.columnParser?.hasStartChar && searchString.length > 0;
         const containsEndChar = this.columnParser?.hasEndChar && searchString.length === columnName.length + 2;
@@ -506,11 +606,16 @@ export class ColFilterExpressionParser {
         }
 
         const baseCellDataType = this.columnParser!.baseCellDataType;
-        const searchString = this.operatorParser?.startPosition != null && position < this.operatorParser.startPosition ? '' : getSearchString(
-            this.operatorParser?.getDisplayValue() ?? '',
-            position,
-            this.operatorParser?.endPosition == null ? this.params.expression.length : (this.operatorParser.endPosition + 1)
-        );
+        const searchString =
+            this.operatorParser?.startPosition != null && position < this.operatorParser.startPosition
+                ? ''
+                : getSearchString(
+                      this.operatorParser?.getDisplayValue() ?? '',
+                      position,
+                      this.operatorParser?.endPosition == null
+                          ? this.params.expression.length
+                          : this.operatorParser.endPosition + 1
+                  );
         return this.params.advancedFilterExpressionService.generateAutocompleteListParams(
             this.params.advancedFilterExpressionService.getOperatorAutocompleteEntries(column, baseCellDataType),
             `operator-${baseCellDataType}`,
@@ -523,9 +628,12 @@ export class ColFilterExpressionParser {
     }
 
     private hasOperand(baseCellDataType?: BaseCellDataType, operator?: string): boolean {
-        return !baseCellDataType ||
+        return (
+            !baseCellDataType ||
             !operator ||
-            (this.params.advancedFilterExpressionService.getExpressionOperator(baseCellDataType, operator)?.numOperands ?? 0) > 0;
+            (this.params.advancedFilterExpressionService.getExpressionOperator(baseCellDataType, operator)
+                ?.numOperands ?? 0) > 0
+        );
     }
 
     private doesOperandNeedQuotes(baseCellDataType?: BaseCellDataType): boolean {

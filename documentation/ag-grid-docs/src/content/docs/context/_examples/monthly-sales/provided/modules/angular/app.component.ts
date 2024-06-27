@@ -1,241 +1,231 @@
-import { HttpClient, HttpClientModule } from "@angular/common/http"
-import { Component } from "@angular/core"
-// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
-import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, IGroupCellRendererParams } from "@ag-grid-community/core";
-import { AgGridAngular } from "@ag-grid-community/angular";
-import "@ag-grid-community/styles/ag-grid.css"
-import "@ag-grid-community/styles/ag-theme-quartz.css"
-import "./styles.css"
-
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
+import {
+    ColDef,
+    ColGroupDef,
+    GridApi,
+    GridReadyEvent,
+    ICellRendererParams,
+    IGroupCellRendererParams,
+} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Component } from '@angular/core';
+
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule, FiltersToolPanelModule]);
 
 @Component({
-  standalone: true,
-  imports: [AgGridAngular, HttpClientModule],
-  selector: "my-app",
-  template: `<div class="test-container">
-    <div class="test-header">
-      <input
-        type="text"
-        id="filter-text-box"
-        style="width: 100px;"
-        (input)="onQuickFilterChanged()"
-        placeholder="Filter..."
-      />
+    standalone: true,
+    imports: [AgGridAngular, HttpClientModule],
+    selector: 'my-app',
+    template: `<div class="test-container">
+        <div class="test-header">
+            <input
+                type="text"
+                id="filter-text-box"
+                style="width: 100px;"
+                (input)="onQuickFilterChanged()"
+                placeholder="Filter..."
+            />
 
-      <span style="padding-left: 20px;">
-        <b>Period:</b>
-        <button (click)="onChangeMonth(-1)">
-          <i class="fa fa-chevron-left"></i>
-        </button>
-        <button (click)="onChangeMonth(1)">
-          <i class="fa fa-chevron-right"></i>
-        </button>
-        <span id="monthName" style="width: 100px; display: inline-block;"
-          >Year to Jan</span
-        >
-      </span>
+            <span style="padding-left: 20px;">
+                <b>Period:</b>
+                <button (click)="onChangeMonth(-1)">
+                    <i class="fa fa-chevron-left"></i>
+                </button>
+                <button (click)="onChangeMonth(1)">
+                    <i class="fa fa-chevron-right"></i>
+                </button>
+                <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
+            </span>
 
-      <span style="padding-left: 20px;">
-        <b>Legend:</b>&nbsp;&nbsp;
-        <div class="cell-bud legend-box"></div>
-        Actual&nbsp;&nbsp;
-        <div class="cell-act legend-box"></div>
-        Budget
-      </span>
-    </div>
-    <ag-grid-angular
-      style="width: 100%; height: 100%;"
-      [columnDefs]="columnDefs"
-      suppressMovableColumns
-      [context]="context"
-      [defaultColDef]="defaultColDef"
-      [autoGroupColumnDef]="autoGroupColumnDef"
-      [rowSelection]="rowSelection"
-      [groupSelectsChildren]="true"
-      [rowData]="rowData"
-      [class]="themeClass"
-      (gridReady)="onGridReady($event)"
-    ></ag-grid-angular>
-  </div>`,
+            <span style="padding-left: 20px;">
+                <b>Legend:</b>&nbsp;&nbsp;
+                <div class="cell-bud legend-box"></div>
+                Actual&nbsp;&nbsp;
+                <div class="cell-act legend-box"></div>
+                Budget
+            </span>
+        </div>
+        <ag-grid-angular
+            style="width: 100%; height: 100%;"
+            [columnDefs]="columnDefs"
+            suppressMovableColumns
+            [context]="context"
+            [defaultColDef]="defaultColDef"
+            [autoGroupColumnDef]="autoGroupColumnDef"
+            [rowSelection]="rowSelection"
+            [groupSelectsChildren]="true"
+            [rowData]="rowData"
+            [class]="themeClass"
+            (gridReady)="onGridReady($event)"
+        />
+    </div>`,
 })
 export class AppComponent {
-  private gridApi!: GridApi
+    private gridApi!: GridApi;
 
-  public columnDefs: (ColDef | ColGroupDef)[] = [
-    {
-      field: "country",
-      rowGroup: true,
-      hide: true,
-    },
-    {
-      headerName: "Monthly Data",
-      children: [
+    public columnDefs: (ColDef | ColGroupDef)[] = [
         {
-          field: "jan",
-          cellRenderer: accountingCellRenderer,
-          cellClass: "cell-figure",
-          valueGetter: monthValueGetter,
-          cellClassRules: monthCellClassRules,
-          aggFunc: "sum",
+            field: 'country',
+            rowGroup: true,
+            hide: true,
         },
         {
-          field: "feb",
-          cellRenderer: accountingCellRenderer,
-          cellClass: "cell-figure",
-          valueGetter: monthValueGetter,
-          cellClassRules: monthCellClassRules,
-          aggFunc: "sum",
+            headerName: 'Monthly Data',
+            children: [
+                {
+                    field: 'jan',
+                    cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure',
+                    valueGetter: monthValueGetter,
+                    cellClassRules: monthCellClassRules,
+                    aggFunc: 'sum',
+                },
+                {
+                    field: 'feb',
+                    cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure',
+                    valueGetter: monthValueGetter,
+                    cellClassRules: monthCellClassRules,
+                    aggFunc: 'sum',
+                },
+                {
+                    field: 'mar',
+                    cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure',
+                    valueGetter: monthValueGetter,
+                    cellClassRules: monthCellClassRules,
+                    aggFunc: 'sum',
+                },
+                {
+                    field: 'apr',
+                    cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure',
+                    valueGetter: monthValueGetter,
+                    cellClassRules: monthCellClassRules,
+                    aggFunc: 'sum',
+                },
+                {
+                    field: 'may',
+                    cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure',
+                    valueGetter: monthValueGetter,
+                    cellClassRules: monthCellClassRules,
+                    aggFunc: 'sum',
+                },
+                {
+                    field: 'jun',
+                    cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure',
+                    valueGetter: monthValueGetter,
+                    cellClassRules: monthCellClassRules,
+                    aggFunc: 'sum',
+                },
+                {
+                    headerName: 'YTD',
+                    cellClass: 'cell-figure',
+                    cellRenderer: accountingCellRenderer,
+                    valueGetter: yearToDateValueGetter,
+                    aggFunc: 'sum',
+                },
+            ],
         },
-        {
-          field: "mar",
-          cellRenderer: accountingCellRenderer,
-          cellClass: "cell-figure",
-          valueGetter: monthValueGetter,
-          cellClassRules: monthCellClassRules,
-          aggFunc: "sum",
-        },
-        {
-          field: "apr",
-          cellRenderer: accountingCellRenderer,
-          cellClass: "cell-figure",
-          valueGetter: monthValueGetter,
-          cellClassRules: monthCellClassRules,
-          aggFunc: "sum",
-        },
-        {
-          field: "may",
-          cellRenderer: accountingCellRenderer,
-          cellClass: "cell-figure",
-          valueGetter: monthValueGetter,
-          cellClassRules: monthCellClassRules,
-          aggFunc: "sum",
-        },
-        {
-          field: "jun",
-          cellRenderer: accountingCellRenderer,
-          cellClass: "cell-figure",
-          valueGetter: monthValueGetter,
-          cellClassRules: monthCellClassRules,
-          aggFunc: "sum",
-        },
-        {
-          headerName: "YTD",
-          cellClass: "cell-figure",
-          cellRenderer: accountingCellRenderer,
-          valueGetter: yearToDateValueGetter,
-          aggFunc: "sum",
-        },
-      ],
-    },
-  ]
-  public context: any = {
-    month: 0,
-    months: [
-      "jan",
-      "feb",
-      "mar",
-      "apr",
-      "may",
-      "jun",
-      "jul",
-      "aug",
-      "sep",
-      "oct",
-      "nov",
-      "dec",
-    ],
-  }
-  public defaultColDef: ColDef = {
-    flex: 1,
-    minWidth: 120
-  }
-  public autoGroupColumnDef: ColDef = {
-    headerName: "Location",
-    field: "city",
-    minWidth: 260,
-    cellRenderer: "agGroupCellRenderer",
-    cellRendererParams: {
-      checkbox: true,
-    } as IGroupCellRendererParams,
-  }
-  public rowSelection: "single" | "multiple" = "multiple"
-  public rowData!: any[]
-  public themeClass: string =
-    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-    "ag-theme-quartz" /** DARK MODE END **/
+    ];
+    public context: any = {
+        month: 0,
+        months: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
+    };
+    public defaultColDef: ColDef = {
+        flex: 1,
+        minWidth: 120,
+    };
+    public autoGroupColumnDef: ColDef = {
+        headerName: 'Location',
+        field: 'city',
+        minWidth: 260,
+        cellRenderer: 'agGroupCellRenderer',
+        cellRendererParams: {
+            checkbox: true,
+        } as IGroupCellRendererParams,
+    };
+    public rowSelection: 'single' | 'multiple' = 'multiple';
+    public rowData!: any[];
+    public themeClass: string =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz'; /** DARK MODE END **/
 
-  constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) {}
 
-  onChangeMonth(i: number) {
-    var newMonth = (this.context.month += i)
-    if (newMonth < -1) {
-      newMonth = -1
+    onChangeMonth(i: number) {
+        var newMonth = (this.context.month += i);
+        if (newMonth < -1) {
+            newMonth = -1;
+        }
+        if (newMonth > 5) {
+            newMonth = 5;
+        }
+        // Mutate the context object in place
+        this.context.month = newMonth;
+        document.querySelector('#monthName')!.textContent = monthNames[newMonth + 1];
+        this.gridApi.refreshClientSideRowModel('aggregate');
+        this.gridApi.refreshCells();
     }
-    if (newMonth > 5) {
-      newMonth = 5
+
+    onQuickFilterChanged() {
+        this.gridApi.setGridOption(
+            'quickFilterText',
+            (document.getElementById('filter-text-box') as HTMLInputElement).value
+        );
     }
-    // Mutate the context object in place
-    this.context.month = newMonth
-    document.querySelector("#monthName")!.textContent = monthNames[newMonth + 1]
-    this.gridApi.refreshClientSideRowModel("aggregate")
-    this.gridApi.refreshCells()
-  }
 
-  onQuickFilterChanged() {
-    this.gridApi.setGridOption(
-      "quickFilterText",
-      (document.getElementById("filter-text-box") as HTMLInputElement).value
-    )
-  }
+    onGridReady(params: GridReadyEvent) {
+        this.gridApi = params.api;
 
-  onGridReady(params: GridReadyEvent) {
-    this.gridApi = params.api
-
-    this.http
-      .get<any[]>("https://www.ag-grid.com/example-assets/monthly-sales.json")
-      .subscribe(data => {
-        this.rowData = data
-      })
-  }
+        this.http.get<any[]>('https://www.ag-grid.com/example-assets/monthly-sales.json').subscribe((data) => {
+            this.rowData = data;
+        });
+    }
 }
 
 const monthValueGetter =
-  '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]'
+    '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]';
 const monthCellClassRules = {
-  "cell-act": "ctx.month < ctx.months.indexOf(colDef.field)",
-  "cell-bud": "ctx.month >= ctx.months.indexOf(colDef.field)",
-  "cell-negative": "x < 0",
-}
+    'cell-act': 'ctx.month < ctx.months.indexOf(colDef.field)',
+    'cell-bud': 'ctx.month >= ctx.months.indexOf(colDef.field)',
+    'cell-negative': 'x < 0',
+};
 const yearToDateValueGetter =
-  'var total = 0; ctx.months.forEach( function(monthName, monthIndex) { if (monthIndex<=ctx.month) { total += data[monthName + "_act"]; } }); return total; '
+    'var total = 0; ctx.months.forEach( function(monthName, monthIndex) { if (monthIndex<=ctx.month) { total += data[monthName + "_act"]; } }); return total; ';
 const accountingCellRenderer = function (params: ICellRendererParams) {
-  if (params.value == null) {
-    return ""
-  } else if (params.value >= 0) {
-    return params.value.toLocaleString()
-  } else {
-    return "(" + Math.abs(params.value).toLocaleString() + ")"
-  }
-}
+    if (params.value == null) {
+        return '';
+    } else if (params.value >= 0) {
+        return params.value.toLocaleString();
+    } else {
+        return '(' + Math.abs(params.value).toLocaleString() + ')';
+    }
+};
 const monthNames = [
-  "Budget Only",
-  "Year to Jan",
-  "Year to Feb",
-  "Year to Mar",
-  "Year to Apr",
-  "Year to May",
-  "Year to Jun",
-  "Year to Jul",
-  "Year to Aug",
-  "Year to Sep",
-  "Year to Oct",
-  "Year to Nov",
-  "Full Year",
-]
+    'Budget Only',
+    'Year to Jan',
+    'Year to Feb',
+    'Year to Mar',
+    'Year to Apr',
+    'Year to May',
+    'Year to Jun',
+    'Year to Jul',
+    'Year to Aug',
+    'Year to Sep',
+    'Year to Oct',
+    'Year to Nov',
+    'Full Year',
+];

@@ -1,10 +1,45 @@
 ---
-title: "Quick Start" 
+title: "Quick Start"
+description: "Build a $framework Table with AG Grid, the best free, fast and flexible $framework Data Grid. Features Sorting, Filtering, Pagination, Custom Components, and more."
 ---
 
-Welcome to the AG Grid documentation. After reading this page you will have an overview of the key concepts of AG Grid that you will use on a daily basis.
+{% if isFramework("vue") %}
+This page covers the key concepts of AG Grid: A high performance, feature rich, Vue Table and Vue Data Grid. 
+{% /if %}
 
-## Your First Grid
+{% if isFramework("react") %}
+{% videoSection id="6hxbPqziELk" title="React Data Grid quick start video tutorial" playlist="PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" showHeader=true %}
+This page covers the key concepts of AG Grid: A high performance, feature rich, React Table and React Data Grid. 
+{% /videoSection %}
+{% /if %}
+
+{% if isFramework("angular") %}
+{% videoSection id="X_Ip_jGDtho" title="Angular Data Grid quick start video tutorial" playlist="PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x" showHeader=true %}
+This page covers the key concepts of AG Grid: A high performance, feature rich, Angular Table and Angular Data Grid. 
+{% /videoSection %}
+{% /if %}
+
+{% if isFramework("javascript") %}
+{% videoSection id="Ww7-LC6rU6U" title="JavaScript Data Grid quick start video tutorial" playlist="PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK" showHeader=true %}
+This page covers the key concepts of AG Grid: A high performance, feature rich, JavaScript Table and JavaScript Data Grid. 
+{% /videoSection %}
+{% /if %}
+
+{% if isFramework("react") %}
+## Your First React Data Grid
+{% /if %}
+
+{% if isFramework("angular") %}
+## Your First Angular Data Grid
+{% /if %}
+
+{% if isFramework("javascript") %}
+## Your First JavaScript Data Grid
+{% /if %}
+
+{% if isFramework("vue") %}
+## Your First Vue Data Grid
+{% /if %}
 
 Add AG Grid to your application in these steps:
 
@@ -46,7 +81,7 @@ Load the AG Grid library and create a blank container div:
 ```html
 <html lang="en">
  <head>
-   <!-- Includes all JS & CSS for AG Grid -->
+   <!-- Includes all JS & CSS for the JavaScript Data Grid -->
    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
  </head>
  <body>
@@ -56,15 +91,15 @@ Load the AG Grid library and create a blank container div:
 </html>
 ```
 
-**2. Instantiating the Grid**
+**2. Instantiating the JavaScript Grid**
 
 Create the grid inside of your container div using `createGrid`.
 
 ```js
-// Grid Options: Contains all of the grid configurations
+// Grid Options: Contains all of the data grid configurations
 const gridOptions = {};
 
-// Your Javascript code to create the grid
+// Your Javascript code to create the data grid
 const myGridElement = document.querySelector('#myGrid');
 agGrid.createGrid(myGridElement, gridOptions);
 ```
@@ -72,7 +107,7 @@ agGrid.createGrid(myGridElement, gridOptions);
 **3. Define Rows and Columns**
 
 ```js
-// Grid Options: Contains all of the grid configurations
+// Grid Options: Contains all of the data grid configurations
 const gridOptions = {
  // Row Data: The data to be displayed.
  rowData: [
@@ -90,7 +125,7 @@ const gridOptions = {
 };
 ```
 
-**4. Styling the Grid**
+**4. Styling the JavaScript Grid**
 
 Add the `ag-theme-quartz` CSS class to your grid container div to apply the grid's theme.
 
@@ -103,10 +138,10 @@ Add the `ag-theme-quartz` CSS class to your grid container div to apply the grid
 {% if isFramework("react") %}
 <!-- Create React -->
 
-**2. Import the Grid**
+**2. Import the React Grid**
 
 ```js
-import { AgGridReact } from 'ag-grid-react'; // AG Grid Component
+import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
 ```
@@ -135,7 +170,7 @@ const GridExample = () => {
 }
 ```
 
-**4. Grid Component**
+**4. React Grid Component**
 
 The `AgGridReact` component is wrapped in a parent container `div`. Style is applied to the parent container.
 Rows and Columns are set as `AgGridReact` component attributes.
@@ -158,11 +193,11 @@ return (
 
 {% if isFramework("angular") %}
 
-**2. Import the Grid**
+**2. Import the Angular Grid**
 
 ```js
 import { Component } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular'; // AG Grid Component
+import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 ```
 
@@ -172,7 +207,7 @@ import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 @Component({
  selector: 'app-root',
  standalone: true,
- imports: [AgGridAngular], // Add AG Grid component
+ imports: [AgGridAngular], // Add Angular Data Grid Component
  styleUrls: ['./app.component.css'],
  template: ``
 })
@@ -195,7 +230,7 @@ export class AppComponent {
 }
 ```
 
-**4. Grid Component**
+**4. Angular Grid Component**
 
 Rows and Columns are set as `ag-grid-angular` component attributes.
 
@@ -205,8 +240,7 @@ template:
  <!-- The AG Grid component -->
  <ag-grid-angular
    [rowData]="rowData"
-   [columnDefs]="colDefs">
- </ag-grid-angular>
+   [columnDefs]="colDefs" />
 `
 ```
 
@@ -214,11 +248,11 @@ template:
 
 Import the required dependencies into your `styles.css` file.
 
-```css
+```js
 /* Core Grid CSS */
-@import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-grid.css';
 /* Quartz Theme Specific CSS */
-@import 'ag-grid-community/styles/ag-theme-quartz.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 ```
 
 Add the `class` and `style` props to the `ag-grid-angular` component.
@@ -228,14 +262,13 @@ Add the `class` and `style` props to the `ag-grid-angular` component.
  class="ag-theme-quartz"
  style="height: 500px;"
  ...
->
-</ag-grid-angular>
+ />
 ```
 {% /if %}
 
 {% if isFramework("vue") %}
 
-**2. Import the Grid**
+**2. Import the Vue Grid**
 
 ```html
 <template></template>
@@ -244,12 +277,12 @@ Add the `class` and `style` props to the `ag-grid-angular` component.
 import { ref } from 'vue';
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
-import { AgGridVue } from "ag-grid-vue3"; // AG Grid Component
+import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
 
 export default {
  name: "App",
  components: {
-   AgGridVue, // Add AG Grid Vue3 component
+   AgGridVue, // Add Vue Data Grid component
  },
  setup() {},
 };
@@ -282,7 +315,7 @@ setup() {
 },
 ```
 
-**4. Grid Component**
+**4. Vue Grid Component**
 
 Rows and Columns are set as `ag-grid-vue` component attributes. Styling is applied through the class and style attributes.
 
@@ -301,22 +334,44 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
 {% /if %}
 
 {% if isFramework("angular") %}
-**6. Finished**
+**6. Running the Angular Data Grid**
 {% /if %}
 
-{% if isFramework("react", "vue", "javascript") %}
-**5. Finished**
+{% if isFramework("react") %}
+**5. Running the React Data Grid**
+{% /if %}
+
+{% if isFramework("vue") %}
+**5. Running the Vue Data Grid**
+{% /if %}
+
+{% if isFramework("javascript") %}
+**5. Running the JavaScript Data Grid**
 {% /if %}
 
 Below is a live example of the application running. Click `</> Code` to see the code.
 
-{% gridExampleRunner title="Quick Start Example" name="quick-start-example"  exampleHeight=302 /%}
+{% gridExampleRunner title="Quick Start Example" name="quick-start-example"  exampleHeight=303 /%}
 
 {% note %}
 To live-edit the code, open the example in CodeSandbox or Plunker using the buttons to the lower-right.
 {% /note %}
 
-Now that you have a basic grid running, the remainder of this page explores some of the key concepts.
+{% if isFramework("angular") %}
+Now that you have a basic Angular Data Grid running, the remainder of this page explores some of the key concepts.
+{% /if %}
+
+{% if isFramework("react") %}
+Now that you have a basic React Data Grid running, the remainder of this page explores some of the key concepts.
+{% /if %}
+
+{% if isFramework("vue") %}
+Now that you have a basic Vue Data Grid running, the remainder of this page explores some of the key concepts.
+{% /if %}
+
+{% if isFramework("javascript") %}
+Now that you have a basic JavaScript Data Grid running, the remainder of this page explores some of the key concepts.
+{% /if %}
 
 ## Showing Data
 
@@ -326,7 +381,7 @@ The `field` or `valueGetter` attributes [Map Data to Columns](./column-definitio
 
 The `headerName` provides the title for the header. If missing the title is derived from `field`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { headerName: "Make & Model", valueGetter: p => p.make + ' ' + p.model},
@@ -339,10 +394,10 @@ const gridOptions = {
 
 Format text for cell content using a [Value Formatter](./value-formatters/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { field: "price", valueFormatter: p => '£' + Math.floor(p.value).toLocaleString() },
+        { field: "price", valueFormatter: p => '£' + p.value.toLocaleString() },
     ],
 };
 ```
@@ -375,7 +430,7 @@ class CustomButtonComponent {
    this.eGui = document.createElement("div");
    let button = document.createElement("button");
    button.className = "btn-simple";
-   button.innerText = "Push Me!";
+   button.textContent = "Push Me!";
    this.eventListener = () => alert("clicked");
    button.addEventListener("click", this.eventListener);
    this.eGui.appendChild(button);
@@ -460,7 +515,7 @@ columnDefs: ColDef[] = [
 Columns are [Resized](./column-sizing/) by dragging the Column Header edges. Additionally assign `flex` values to
 allow columns to flex to the grid width.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: "make", flex: 2 }, //This column will be twice as wide as the others
@@ -475,7 +530,7 @@ const gridOptions = {
 
 This example demonstrates mapping and formatting values, cell components, and resizing columns.
 
-{% gridExampleRunner title="Showing Data Example" name="showing-data-example" exampleHeight=302 /%}
+{% gridExampleRunner title="Showing Data Example" name="showing-data-example" exampleHeight=303 /%}
 
 ## Working with Data
 
@@ -485,7 +540,7 @@ By default, the row data is used to infer the [Cell Data Type](./cell-data-types
 
 [Column Filters](./filtering/) are embedded into each column menu. These are enabled using the `filter` attribute. The filter type is inferred from the cell data type.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: "make", filter: true },
@@ -494,11 +549,11 @@ const gridOptions = {
 ```
 
 There are 5 [Provided Filters](./filtering/) which can be set through this attribute.
-You can also create your own [Custom Filter](./filter-custom/).
+You can also create your own [Custom Filter](./component-filter/).
 
 [Floating Filters](./floating-filters/) embed the Column Filter into the header for ease of access.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: "make", filter: true, floatingFilter: true },
@@ -510,7 +565,7 @@ const gridOptions = {
 
 Enable [Editing](./cell-editing/) by setting the `editable` attribute to `true`. The cell editor is inferred from the cell data type.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: "make", editable: true },
@@ -521,7 +576,7 @@ const gridOptions = {
 Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](./provided-cell-editors/) which can be set through this attribute.
 You can also create your own [Custom Editors](./cell-editors/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -544,7 +599,7 @@ Data is [Sorted](./row-sorting/) by clicking the column headers. Sorting is enab
 
 [Row Selection](./row-selection/) is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // Column Definitions: Defines the columns to be displayed.
     columnDefs: [
@@ -558,7 +613,7 @@ const gridOptions = {
 
 Enable [Pagination](./row-pagination/) by setting `pagination` to be true.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     pagination: true,
     paginationPageSize: 500,
@@ -615,7 +670,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
    <ag-grid-angular
      // ...
      [class]="themeClass"
-   ></ag-grid-angular>
+    />
  </div>`,
 // ...
 public themeClass: string = "ag-theme-quartz";
@@ -687,11 +742,11 @@ const VueExample = {
     /* Changes the color of the grid text */
       --ag-foreground-color: rgb(14, 68, 145);
       /* Changes the color of the grid background */
-      --ag-background-color: rgba(241, 247, 255);
+      --ag-background-color: rgb(241, 247, 255);
       /* Changes the header color of the top row */
-      --ag-header-background-color: rgba(228, 237, 250);
+      --ag-header-background-color: rgb(228, 237, 250);
       /* Changes the hover color of the row*/
-      --ag-row-hover-color: rgba(0, 38, 255, 0.1);
+      --ag-row-hover-color: rgb(216, 226, 255);
 }
 ```
 
@@ -704,7 +759,7 @@ Quartz and Alpine AG Grid themes within Figma. These default themes can be exten
 existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid
 themes.
 
-{% downloadDSButton /%}
+{% figmaCommunityButton /%}
 
 ### Cell Style
 
@@ -716,7 +771,7 @@ Define rules to apply [Styling to Cells](./cell-styles) using `cellClassRules`. 
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [{
         field: 'electric',
@@ -730,7 +785,7 @@ const gridOptions = {
 
 ### Row Style
 
-Define rules to apply [Styling to Rows](./row-styles) using  and `rowClassRules`. This allows changing style (e.g. row colour) based on row values.
+Define rules to apply [Styling to Rows](./row-styles) using `rowClassRules`. This allows changing style (e.g. row colour) based on row values.
 
 ```css
 .rag-red {
@@ -738,7 +793,7 @@ Define rules to apply [Styling to Rows](./row-styles) using  and `rowClassRules`
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowClassRules: {
         // apply red to Ford cars

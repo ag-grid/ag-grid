@@ -1,0 +1,26 @@
+.ag-dnd-ghost {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    cursor: move;
+    white-space: nowrap;
+    z-index: 9999;
+
+    /* TODO remove this !important, which requires removing the style.height set in dragAndDropservice.ts */
+    height: var(--ag-header-height) !important;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: translateY(calc(var(--ag-grid-size) * 2));
+
+    background-color: var(--ag-drag-ghost-background-color);
+    color: var(--ag-text-color);
+    font-weight: 500;
+
+    border: var(--ag-drag-ghost-border);
+    border-radius: var(--ag-border-radius);
+    box-shadow: var(--ag-drag-ghost-shadow);
+    padding-left: var(--ag-cell-horizontal-padding);
+    padding-right: var(--ag-cell-horizontal-padding);
+    gap: var(--ag-cell-widget-spacing);
+}

@@ -11,7 +11,7 @@ When columns are dragged to the **Values** section of the [Columns Tool Panel](.
 assigned the `sum` aggregation function by default. The default aggregation function can be overridden on a per-column
 basis using the `defaultAggFunc` column property.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -44,7 +44,7 @@ as demonstrated in the previous example, it must be registered first. See [Regis
 By default, all functions are available to all value columns. To restrict the aggregation functions available on a value
 column, use the `allowedAggFuncs` column property as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -95,7 +95,7 @@ If the data changes after the aggregation is done, you can tell the grid to reco
 
 ## Enabling Top Level Aggregations
 
-When aggregations are present, the grid omits aggregating all the top level rows into one parent row as this total aggregation is not shown in the grid. Some applications may wish to use this value via the API, so the property `alwaysAggregateAtRootLevel` can be enabled to force this value to always calculate. The grid will still selectively calculate the top level aggregation in scenarios where it is needed, eg if `groupIncludeTotalFooter` is enabled, or if the root level is being displayed for pivoting.
+When aggregations are present, the grid omits aggregating all the top level rows into one parent row as this total aggregation is not shown in the grid. Some applications may wish to use this value via the API, so the property `alwaysAggregateAtRootLevel` can be enabled to force this value to always calculate. The grid will still selectively calculate the top level aggregation in scenarios where it is needed, eg if `grandTotalRow` is enabled, or if the root level is being displayed for pivoting.
 
 ## Next Up
 

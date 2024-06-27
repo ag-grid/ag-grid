@@ -1,8 +1,17 @@
-import { AgRichSelect, AutocompleteEntry, RichSelectParams, VirtualList, _ } from "@ag-grid-community/core";
+import type { RichSelectParams } from '@ag-grid-community/core';
+import {
+    AgInputTextFieldSelector,
+    _setAriaLabel,
+    _setAriaLabelledBy,
+    _stopPropagationForAgGrid,
+} from '@ag-grid-community/core';
+import { AgRichSelect } from '@ag-grid-enterprise/core';
+
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 
 export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
-    getEditorParams: () => { values?: any[] },
-    wrapperClassName: string,
+    getEditorParams: () => { values?: any[] };
+    wrapperClassName: string;
     ariaLabel: string;
 }
 
@@ -10,58 +19,60 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
     constructor(private readonly params: SelectPillParams) {
         super({
             ...params,
-            template: /* html */`
+            template: /* html */ `
                 <div class="ag-picker-field ag-advanced-filter-builder-pill-wrapper" role="presentation">
-                    <div ref="eLabel"></div>
-                    <div ref="eWrapper" class="ag-wrapper ag-advanced-filter-builder-pill ag-picker-collapsed">
-                        <div ref="eDisplayField" class="ag-picker-field-display ag-advanced-filter-builder-pill-display"></div>
-                        <ag-input-text-field ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
-                        <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+                    <div data-ref="eLabel"></div>
+                    <div data-ref="eWrapper" class="ag-wrapper ag-advanced-filter-builder-pill ag-picker-collapsed">
+                        <div data-ref="eDisplayField" class="ag-picker-field-display ag-advanced-filter-builder-pill-display"></div>
+                        <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
+                        <span data-ref="eDeselect" class="ag-rich-select-deselect-button ag-picker-field-icon" role="presentation"></span>
+                        <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                     </div>
                 </div>`,
+            agComponents: [AgInputTextFieldSelector],
         });
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eWrapper;
     }
 
-    public showPicker(): void {
+    public override showPicker(): void {
         // avoid focus handling issues with multiple rich selects
         setTimeout(() => super.showPicker());
     }
 
-    public hidePicker(): void {
+    public override hidePicker(): void {
         // avoid focus handling issues with multiple rich selects
         setTimeout(() => super.hidePicker());
     }
 
-    protected postConstruct(): void {
+    public override postConstruct(): void {
         super.postConstruct();
 
         const { wrapperClassName, ariaLabel } = this.params;
 
         this.eWrapper.classList.add(wrapperClassName);
-        _.setAriaLabelledBy(this.eWrapper, '');
-        _.setAriaLabel(this.eWrapper, ariaLabel);
+        _setAriaLabelledBy(this.eWrapper, '');
+        _setAriaLabel(this.eWrapper, ariaLabel);
     }
 
-    protected createPickerComponent(): VirtualList {
+    protected override createPickerComponent() {
         if (!this.values) {
             const { values } = this.params.getEditorParams();
             this.values = values!;
-            const key = this.value.key;
-            const value = values!.find(value => value.key === key) ?? {
+            const key = (this.value as AutocompleteEntry).key;
+            const value = values!.find((value) => value.key === key) ?? {
                 key,
-                displayValue: this.value.displayValue
+                displayValue: (this.value as AutocompleteEntry).displayValue,
             };
             this.value = value;
         }
         return super.createPickerComponent();
     }
 
-    protected onEnterKeyDown(event: KeyboardEvent): void {
-        _.stopPropagationForAgGrid(event);
+    protected override onEnterKeyDown(event: KeyboardEvent): void {
+        _stopPropagationForAgGrid(event);
         if (this.isPickerDisplayed) {
             super.onEnterKeyDown(event);
         } else {

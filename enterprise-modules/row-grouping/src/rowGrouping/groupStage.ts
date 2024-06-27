@@ -1,64 +1,84 @@
-import {
-    _,
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    AgColumn,
+    BeanCollection,
     ChangedPath,
-    Column,
     ColumnModel,
+    FuncColsService,
     GetDataPath,
     IRowNodeStage,
+    ISelectionService,
+    IShowRowGroupColsService,
+    InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
-    RowNode,
+    KeyCreatorParams,
+    NamedBean,
     RowNodeTransaction,
     SelectableService,
     StageExecuteParams,
     ValueService,
-    Beans,
-    ISelectionService,
     WithoutGridCommon,
-    InitialGroupOrderComparatorParams,
-    GridOptions,
-    KeyCreatorParams
-} from "@ag-grid-community/core";
-import { BatchRemover } from "./batchRemover";
+} from '@ag-grid-community/core';
+import {
+    BeanStub,
+    RowNode,
+    _areEqual,
+    _exists,
+    _existsAndNotEmpty,
+    _last,
+    _removeFromArray,
+    _sortRowNodesByOrder,
+    _warnOnce,
+} from '@ag-grid-community/core';
+
+import { BatchRemover } from './batchRemover';
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
     field: string | null; // e.g. 'country'
-    rowGroupColumn: Column | null;
+    rowGroupColumn: AgColumn | null;
     leafNode?: RowNode;
 }
 
 interface GroupingDetails {
     pivotMode: boolean;
-    includeParents: boolean;
     expandByDefault: number;
     changedPath: ChangedPath;
     rootNode: RowNode;
-    groupedCols: Column[];
+    groupedCols: AgColumn[];
     groupedColCount: number;
     transactions: RowNodeTransaction[];
-    rowNodeOrder: { [id: string]: number; };
-    
+    rowNodeOrder: { [id: string]: number };
+
     groupAllowUnbalanced: boolean;
     isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
     initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
-    
+
     usingTreeData: boolean;
     suppressGroupMaintainValueType: boolean;
     getDataPath: GetDataPath | undefined;
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-@Bean('groupStage')
-export class GroupStage extends BeanStub implements IRowNodeStage {
+export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
+    beanName = 'groupStage' as const;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectableService') private selectableService: SelectableService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('beans') private beans: Beans;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private selectableService: SelectableService;
+    private valueService: ValueService;
+    private beans: BeanCollection;
+    private selectionService: ISelectionService;
+    private showRowGroupColsService: IShowRowGroupColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.beans = beans;
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.selectableService = beans.selectableService;
+        this.valueService = beans.valueService;
+        this.selectionService = beans.selectionService;
+        this.showRowGroupColsService = beans.showRowGroupColsService!;
+    }
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -68,9 +88,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
+    /** Hierarchical node cache to speed up tree data node insertion */
+    private treeNodeCache = new TreeDataNodeCache();
 
     public execute(params: StageExecuteParams): void {
-
         const details = this.createGroupingDetails(params);
 
         if (details.transactions) {
@@ -90,13 +111,13 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
-        changedPath.forEachChangedNodeDepthFirst(group => {
+        changedPath.forEachChangedNodeDepthFirst((group) => {
             if (group.childrenAfterGroup) {
                 const leafNodes: RowNode[] = [];
                 const groupNodes: RowNode[] = [];
                 let unbalancedNode: RowNode | undefined;
 
-                group.childrenAfterGroup.forEach(row => {
+                group.childrenAfterGroup.forEach((row) => {
                     if (!row.childrenAfterGroup?.length) {
                         leafNodes.push(row);
                     } else {
@@ -111,7 +132,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 if (unbalancedNode) {
                     groupNodes.push(unbalancedNode);
                 }
-                
+
                 group.childrenAfterGroup = [...leafNodes, ...groupNodes];
             }
         }, false);
@@ -120,15 +141,12 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
-        const usingTreeData = this.gridOptionsService.get('treeData');
+        const usingTreeData = this.gos.get('treeData');
 
-        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
+        const groupedCols = usingTreeData ? null : this.funcColsService.getRowGroupColumns();
 
         const details: GroupingDetails = {
-            // someone complained that the parent attribute was causing some change detection
-            // to break in an angular add-on.  Taking the parent out breaks a cyclic dependency, hence this flag got introduced.
-            includeParents: !this.gridOptionsService.get('suppressParentsInRowNodes'),
-            expandByDefault: this.gridOptionsService.get('groupDefaultExpanded'),
+            expandByDefault: this.gos.get('groupDefaultExpanded'),
             groupedCols: groupedCols!,
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),
@@ -137,21 +155,20 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             transactions: rowNodeTransactions!,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
-            groupAllowUnbalanced:  this.gridOptionsService.get('groupAllowUnbalanced'),
-            isGroupOpenByDefault: this.gridOptionsService.getCallback('isGroupOpenByDefault') as any,
-            initialGroupOrderComparator: this.gridOptionsService.getCallback('initialGroupOrderComparator') as any,
+            groupAllowUnbalanced: this.gos.get('groupAllowUnbalanced'),
+            isGroupOpenByDefault: this.gos.getCallback('isGroupOpenByDefault') as any,
+            initialGroupOrderComparator: this.gos.getCallback('initialGroupOrderComparator') as any,
             usingTreeData: usingTreeData,
-            suppressGroupMaintainValueType: this.gridOptionsService.get('suppressGroupMaintainValueType'),
-            getDataPath: usingTreeData ? this.gridOptionsService.get('getDataPath') : undefined,
-            keyCreators: groupedCols?.map(column => column.getColDef().keyCreator) ?? []
+            suppressGroupMaintainValueType: this.gos.get('suppressGroupMaintainValueType'),
+            getDataPath: usingTreeData ? this.gos.get('getDataPath') : undefined,
+            keyCreators: groupedCols?.map((column) => column.getColDef().keyCreator) ?? [],
         };
 
         return details;
     }
 
     private handleTransaction(details: GroupingDetails): void {
-
-        details.transactions.forEach(tran => {
+        details.transactions.forEach((tran) => {
             // we don't allow batch remover for tree data as tree data uses Filler Nodes,
             // and creating/deleting filler nodes needs to be done alongside the node deleting
             // and moving. if we want to Batch Remover working with tree data then would need
@@ -162,13 +179,13 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
-            if (_.existsAndNotEmpty(tran.remove)) {
+            if (_existsAndNotEmpty(tran.remove)) {
                 this.removeNodes(tran.remove as RowNode[], details, batchRemover);
             }
-            if (_.existsAndNotEmpty(tran.update)) {
+            if (_existsAndNotEmpty(tran.update)) {
                 this.moveNodesInWrongPath(tran.update as RowNode[], details, batchRemover);
             }
-            if (_.existsAndNotEmpty(tran.add)) {
+            if (_existsAndNotEmpty(tran.add)) {
                 this.insertNodes(tran.add as RowNode[], details, false);
             }
             // must flush here, and not allow another transaction to be applied,
@@ -187,24 +204,27 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     private sortChildren(details: GroupingDetails): void {
-        details.changedPath.forEachChangedNodeDepthFirst(node => {
-            if (!node.childrenAfterGroup) {
-                return;
-            }
-
-            const didSort = _.sortRowNodesByOrder(node.childrenAfterGroup!, details.rowNodeOrder);
-            if (didSort) {
-                details.changedPath.addParentNode(node);
-            }
-        }, false, true);
+        details.changedPath.forEachChangedNodeDepthFirst(
+            (node) => {
+                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
+                if (didSort) {
+                    details.changedPath.addParentNode(node);
+                }
+            },
+            false,
+            true
+        );
     }
 
     private orderGroups(details: GroupingDetails): void {
         const comparator = details.initialGroupOrderComparator;
-        if (_.exists(comparator)) { recursiveSort(details.rootNode); }
+        if (_exists(comparator)) {
+            recursiveSort(details.rootNode);
+        }
 
         function recursiveSort(rowNode: RowNode): void {
-            const doSort = _.exists(rowNode.childrenAfterGroup) &&
+            const doSort =
+                _exists(rowNode.childrenAfterGroup) &&
                 // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
                 !rowNode.leafGroup;
 
@@ -225,7 +245,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             res.push({
                 key: pointer.key!,
                 rowGroupColumn: pointer.rowGroupColumn,
-                field: pointer.field
+                field: pointer.field,
             });
             pointer = pointer.parent;
         }
@@ -233,9 +253,57 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return res;
     }
 
-    private moveNodesInWrongPath(childNodes: RowNode[], details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
-        childNodes.forEach(childNode => {
+    /**
+     * Topological sort of the given row nodes based on the grouping hierarchy, where parents come before children.
+     * Used to ensure tree data is moved in the correct order (see AG-11678)
+     */
+    private topoSort(rowNodes: RowNode[], details: GroupingDetails): RowNode[] {
+        const sortedNodes: RowNode[] = [];
+        // performance: create a cache of ids to make lookups during the search faster
+        const idLookup = Object.fromEntries(rowNodes.map<[string, number]>((node, i) => [node.id!, i]));
+        // performance: keep track of the nodes we haven't found yet so we can return early
+        const stillToFind = new Set(Object.keys(idLookup));
 
+        const queue = [details.rootNode];
+        let i = 0;
+
+        // BFS for nodes in the hierarchy that match IDs of the given nodes
+        while (i < queue.length) {
+            // performance: indexing into the array instead of using e.g. `.shift` is _much_ faster
+            const node = queue[i];
+            i++;
+            if (node === undefined) {
+                continue;
+            }
+
+            if (node.id && node.id in idLookup) {
+                sortedNodes.push(rowNodes[idLookup[node.id]]);
+                stillToFind.delete(node.id);
+            }
+
+            // we can stop early if we've already found all the nodes
+            if (stillToFind.size === 0) {
+                return sortedNodes;
+            }
+
+            const children = node.childrenAfterGroup ?? [];
+            for (let i = 0; i < children.length; i++) {
+                queue.push(children[i]);
+            }
+        }
+
+        return sortedNodes;
+    }
+
+    private moveNodesInWrongPath(
+        childNodes: RowNode[],
+        details: GroupingDetails,
+        batchRemover: BatchRemover | undefined
+    ): void {
+        // AG-11678 avoid unnecessary sorting when using normal row grouping
+        const sorted = details.usingTreeData ? this.topoSort(childNodes, details) : childNodes;
+
+        sorted.forEach((childNode) => {
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
             if (details.changedPath.isActive()) {
@@ -246,7 +314,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             const oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
             const newPath: string[] = this.getGroupInfo(childNode, details).map(infoToKeyMapper);
 
-            const nodeInCorrectPath = _.areEqual(oldPath, newPath);
+            const nodeInCorrectPath = _areEqual(oldPath, newPath);
 
             if (!nodeInCorrectPath) {
                 this.moveNode(childNode, details, batchRemover);
@@ -255,7 +323,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private moveNode(childNode: RowNode, details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
-
         this.removeNodesInStages([childNode], details, batchRemover);
         this.insertOneNode(childNode, details, true, batchRemover);
 
@@ -274,21 +341,27 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
+    private removeNodes(
+        leafRowNodes: RowNode[],
+        details: GroupingDetails,
+        batchRemover: BatchRemover | undefined
+    ): void {
         this.removeNodesInStages(leafRowNodes, details, batchRemover);
         if (details.changedPath.isActive()) {
-            leafRowNodes.forEach(rowNode => details.changedPath.addParentNode(rowNode.parent));
+            leafRowNodes.forEach((rowNode) => details.changedPath.addParentNode(rowNode.parent));
         }
     }
 
-    private removeNodesInStages(leafRowNodes: RowNode[], details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
+    private removeNodesInStages(
+        leafRowNodes: RowNode[],
+        details: GroupingDetails,
+        batchRemover: BatchRemover | undefined
+    ): void {
         this.removeNodesFromParents(leafRowNodes, details, batchRemover);
         if (details.usingTreeData) {
-            this.postRemoveCreateFillerNodes(leafRowNodes, details);
-
             // When not TreeData, then removeEmptyGroups is called just before the BatchRemover is flushed.
             // However for TreeData, there is no BatchRemover, so we have to call removeEmptyGroups here.
-            const nodeParents = leafRowNodes.map(n => n.parent!);
+            const nodeParents = leafRowNodes.map((n) => n.parent!);
             this.removeEmptyGroups(nodeParents, details);
         }
     }
@@ -301,18 +374,22 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private removeNodesFromParents(nodesToRemove: RowNode[], details: GroupingDetails, provided: BatchRemover | undefined): void {
+    private removeNodesFromParents(
+        nodesToRemove: RowNode[],
+        details: GroupingDetails,
+        provided: BatchRemover | undefined
+    ): void {
         // this method can be called with BatchRemover as optional. if it is missed, we created a local version
         // and flush it at the end. if one is provided, we add to the provided one and it gets flushed elsewhere.
         const batchRemoverIsLocal = provided == null;
         const batchRemoverToUse = provided ? provided : new BatchRemover();
 
-        nodesToRemove.forEach(nodeToRemove => {
+        nodesToRemove.forEach((nodeToRemove) => {
             this.removeFromParent(nodeToRemove, batchRemoverToUse);
 
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
             // the ClientSideNodeManager is responsible for the Root Node.
-            this.forEachParentGroup(details, nodeToRemove.parent!, parentNode => {
+            this.forEachParentGroup(details, nodeToRemove.parent!, (parentNode) => {
                 batchRemoverToUse.removeFromAllLeafChildren(parentNode, nodeToRemove);
             });
         });
@@ -322,31 +399,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private postRemoveCreateFillerNodes(nodesToRemove: RowNode[], details: GroupingDetails): void {
-        nodesToRemove.forEach(nodeToRemove => {
-
-            // if not group, and children are present, need to move children to a group.
-            // otherwise if no children, we can just remove without replacing.
-            const replaceWithGroup = nodeToRemove.hasChildren();
-            if (replaceWithGroup) {
-                const oldPath = this.getExistingPathForNode(nodeToRemove, details);
-                // because we just removed the userGroup, this will always return new support group
-                const newGroupNode = this.findParentForNode(nodeToRemove, oldPath, details);
-
-                // these properties are the ones that will be incorrect in the newly created group,
-                // so copy them from the old childNode
-                newGroupNode.expanded = nodeToRemove.expanded;
-                newGroupNode.allLeafChildren = nodeToRemove.allLeafChildren;
-                newGroupNode.childrenAfterGroup = nodeToRemove.childrenAfterGroup;
-                newGroupNode.childrenMapped = nodeToRemove.childrenMapped;
-                newGroupNode.updateHasChildren();
-
-                newGroupNode.childrenAfterGroup!.forEach(rowNode => rowNode.parent = newGroupNode);
-            }
-
-        });
-    }
-
     private removeEmptyGroups(possibleEmptyGroups: RowNode[], details: GroupingDetails): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
@@ -354,30 +406,36 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         let checkAgain = true;
 
         const groupShouldBeRemoved = (rowNode: RowNode): boolean => {
-
             // because of the while loop below, it's possible we already moved the node,
             // so double check before trying to remove again.
             const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
             const parentRowNode = rowNode.parent;
-            const groupAlreadyRemoved = (parentRowNode && parentRowNode.childrenMapped) ?
-                !parentRowNode.childrenMapped[mapKey] : true;
+            const groupAlreadyRemoved = parentRowNode?.childrenMapped ? !parentRowNode.childrenMapped[mapKey] : true;
 
             if (groupAlreadyRemoved) {
                 // if not linked, then group was already removed
                 return false;
             }
             // if still not removed, then we remove if this group is empty
-            return !!rowNode.isEmptyRowGroupNode();
+            return rowNode.isEmptyRowGroupNode();
         };
 
         while (checkAgain) {
             checkAgain = false;
-            const batchRemover: BatchRemover = new BatchRemover();
-            possibleEmptyGroups.forEach(possibleEmptyGroup => {
+            const batchRemover = new BatchRemover();
+            possibleEmptyGroups.forEach((possibleEmptyGroup) => {
                 // remove empty groups
-                this.forEachParentGroup(details, possibleEmptyGroup, rowNode => {
-                    if (groupShouldBeRemoved(rowNode)) {
+                this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
+                    const shouldBeRemoved = groupShouldBeRemoved(rowNode);
+                    if (shouldBeRemoved && details.usingTreeData && details.getDataPath?.(rowNode.data)) {
+                        // This node has associated tree data so shouldn't be removed, but should no longer be
+                        // marked as a group if it has no children.
+                        rowNode.setGroup(
+                            (rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0) ?? false
+                        );
+                    } else if (shouldBeRemoved) {
                         checkAgain = true;
+
                         this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
@@ -399,13 +457,13 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             if (batchRemover) {
                 batchRemover.removeFromChildrenAfterGroup(child.parent, child);
             } else {
-                _.removeFromArray(child.parent.childrenAfterGroup!, child);
+                _removeFromArray(child.parent.childrenAfterGroup!, child);
                 child.parent.updateHasChildren();
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (child.parent && child.parent.childrenMapped) {
-            child.parent.childrenMapped[mapKey] = undefined;
+        if (child.parent?.childrenMapped != undefined) {
+            delete child.parent.childrenMapped[mapKey];
         }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
@@ -413,36 +471,43 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         child.setRowIndex(null);
     }
 
+    /**
+     * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
+     */
     private addToParent(child: RowNode, parent: RowNode | null) {
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (parent) {
-            const children = parent.childrenMapped != null;
-            if (children) {
-                parent.childrenMapped![mapKey] = child;
+        if (parent?.childrenMapped != null) {
+            if (parent?.childrenMapped?.[mapKey] !== child) {
+                parent.childrenMapped[mapKey] = child;
+                parent.childrenAfterGroup!.push(child);
+                parent.setGroup(true); // calls `.updateHasChildren` internally
             }
-            parent.childrenAfterGroup!.push(child);
-            parent.updateHasChildren();
         }
     }
 
     private areGroupColsEqual(d1: GroupingDetails, d2: GroupingDetails): boolean {
-        if (d1 == null || d2 == null || d1.pivotMode !== d2.pivotMode) { return false; }
+        if (d1 == null || d2 == null || d1.pivotMode !== d2.pivotMode) {
+            return false;
+        }
 
-        return _.areEqual(d1.groupedCols, d2.groupedCols) && _.areEqual(d1.keyCreators, d2.keyCreators);
+        return _areEqual(d1.groupedCols, d2.groupedCols) && _areEqual(d1.keyCreators, d2.keyCreators);
     }
 
     private checkAllGroupDataAfterColsChanged(details: GroupingDetails): void {
-
         const recurse = (rowNodes: RowNode[] | null) => {
-            if (!rowNodes) { return; }
-            rowNodes.forEach(rowNode => {
+            if (!rowNodes) {
+                return;
+            }
+            rowNodes.forEach((rowNode) => {
                 const isLeafNode = !details.usingTreeData && !rowNode.group;
-                if (isLeafNode) { return; }
+                if (isLeafNode) {
+                    return;
+                }
                 const groupInfo: GroupInfo = {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: rowNode.allLeafChildren[0],
+                    leafNode: rowNode.allLeafChildren?.[0],
                 };
                 this.setGroupData(rowNode, groupInfo, details);
                 recurse(rowNode.childrenAfterGroup);
@@ -453,7 +518,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
-
         if (this.noChangeInGroupingColumns(details, afterColumnsChanged)) {
             return;
         }
@@ -479,20 +543,20 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             sibling.childrenMapped = rootNode.childrenMapped;
         }
 
-        this.insertNodes(rootNode.allLeafChildren, details, false);
+        this.insertNodes(rootNode.allLeafChildren!, details, false);
     }
 
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
-        const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();
-        const newGroupDisplayColIds = groupDisplayColumns ?
-            groupDisplayColumns.map(c => c.getId()).join('-') : '';
+        const groupDisplayColumns = this.showRowGroupColsService.getShowRowGroupCols();
+        const newGroupDisplayColIds = groupDisplayColumns ? groupDisplayColumns.map((c) => c.getId()).join('-') : '';
 
         if (afterColumnsChanged) {
             // we only need to redo grouping if doing normal grouping (ie not tree data)
             // and the group cols have changed.
-            noFurtherProcessingNeeded = details.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
+            noFurtherProcessingNeeded =
+                details.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
 
             // if the group display cols have changed, then we need to update rowNode.groupData
             // (regardless of tree data or row grouping)
@@ -508,7 +572,13 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails, isMove: boolean): void {
-        newRowNodes.forEach(rowNode => {
+        if (details.usingTreeData) {
+            this.buildNodeCacheFromRows(newRowNodes, details);
+        } else {
+            this.treeNodeCache.clear();
+        }
+
+        newRowNodes.forEach((rowNode) => {
             this.insertOneNode(rowNode, details, isMove);
             if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(rowNode.parent);
@@ -516,19 +586,35 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         });
     }
 
-    private insertOneNode(childNode: RowNode, details: GroupingDetails, isMove: boolean, batchRemover?: BatchRemover): void {
-
+    private insertOneNode(
+        childNode: RowNode,
+        details: GroupingDetails,
+        isMove: boolean,
+        batchRemover?: BatchRemover
+    ): void {
         const path: GroupInfo[] = this.getGroupInfo(childNode, details);
+        const level = details.usingTreeData ? path.length - 1 : undefined;
 
-        const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
-        if (!parentGroup.group) {
-            console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
-                [parentGroup.data, childNode.data]);
-        }
+        const parentGroup = this.findParentForNode(childNode, path, details, batchRemover, level);
 
         if (details.usingTreeData) {
-            this.swapGroupWithUserNode(parentGroup, childNode, isMove);
+            const info = _last(path);
+            childNode.parent = parentGroup;
+            childNode.level = path.length;
+            this.ensureRowNodeFields(childNode, this.getChildrenMappedKey(info.key, info.rowGroupColumn));
+            this.setGroupData(childNode, info, details);
+            // AG-3441 - only set initial value if node is not being moved
+            if (!isMove) {
+                this.setExpandedInitialValue(details, childNode);
+            }
+            this.addToParent(childNode, parentGroup);
         } else {
+            if (!parentGroup.group) {
+                _warnOnce(`duplicate group keys for row data, keys should be unique`, [
+                    parentGroup.data,
+                    childNode.data,
+                ]);
+            }
             childNode.parent = parentGroup;
             childNode.level = path.length;
             parentGroup.childrenAfterGroup!.push(childNode);
@@ -536,16 +622,27 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails, batchRemover?: BatchRemover): RowNode {
+    private findParentForNode(
+        childNode: RowNode,
+        path: GroupInfo[],
+        details: GroupingDetails,
+        batchRemover?: BatchRemover,
+        stopLevel?: number
+    ): RowNode {
         let nextNode: RowNode = details.rootNode;
 
         path.forEach((groupInfo, level) => {
-            nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
+            // in some cases (i.e. tree data) the given path includes the child node, so we need to exclude it
+            if (stopLevel !== undefined && level >= stopLevel) {
+                return;
+            }
+
+            nextNode = this.getOrCreateNextNode(nextNode, path, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
 
             if (!batchRemover?.isRemoveFromAllLeafChildren(nextNode, childNode)) {
-                nextNode.allLeafChildren.push(childNode);
+                nextNode.allLeafChildren!.push(childNode);
             } else {
                 // if this node is about to be removed, prevent that
                 batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);
@@ -555,49 +652,97 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return nextNode;
     }
 
-    private swapGroupWithUserNode(fillerGroup: RowNode, userGroup: RowNode, isMove: boolean) {
-        userGroup.parent = fillerGroup.parent;
-        userGroup.key = fillerGroup.key;
-        userGroup.field = fillerGroup.field;
-        userGroup.groupData = fillerGroup.groupData;
-        userGroup.level = fillerGroup.level;
-        // AG-3441 - preserve the existing expanded status of the node if we're moving it, so that
-        // you can drag a sub tree from one parent to another without changing its expansion
-        if (!isMove) {
-            userGroup.expanded = fillerGroup.expanded;
-        }
-
-        // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
-        // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
-        userGroup.leafGroup = fillerGroup.leafGroup;
-
-        // always null for userGroups, as row grouping is not allowed when doing tree data
-        userGroup.rowGroupIndex = fillerGroup.rowGroupIndex;
-
-        userGroup.allLeafChildren = fillerGroup.allLeafChildren;
-        userGroup.childrenAfterGroup = fillerGroup.childrenAfterGroup;
-        userGroup.childrenMapped = fillerGroup.childrenMapped;
-        userGroup.sibling = fillerGroup.sibling;
-        userGroup.updateHasChildren();
-
-        this.removeFromParent(fillerGroup);
-        userGroup.childrenAfterGroup!.forEach((rowNode: RowNode) => rowNode.parent = userGroup);
-        this.addToParent(userGroup, fillerGroup.parent);
-    }
-
-    private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
-        details: GroupingDetails): RowNode {
-
+    private getOrCreateNextNode(
+        parentGroup: RowNode,
+        path: GroupInfo[],
+        groupInfo: GroupInfo,
+        level: number,
+        details: GroupingDetails
+    ): RowNode {
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        let nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[key] : undefined;
+        let nextNode = parentGroup?.childrenMapped?.[key];
 
         if (!nextNode) {
-            nextNode = this.createGroup(groupInfo, parentGroup, level, details);
+            if (details.usingTreeData && this.treeNodeCache.has(path, level, key)) {
+                nextNode = this.treeNodeCache.get(path, level, key);
+                nextNode.parent = parentGroup;
+            } else {
+                nextNode = this.createGroup(groupInfo, parentGroup, level, details);
+            }
             // attach the new group to the parent
             this.addToParent(nextNode, parentGroup);
         }
 
         return nextNode;
+    }
+
+    /**
+     * Directly re-initialises the `TreeDataNodeCache`
+     */
+    private buildNodeCacheFromRows(rowNodes: RowNode[], details: GroupingDetails): void {
+        let width = 0;
+        const paths = rowNodes.map((node) => {
+            const info = this.getGroupInfo(node, details);
+            width = Math.max(width, info.length);
+            return info;
+        });
+
+        this.treeNodeCache.clear();
+
+        // Iterate through the paths level-by-level, populating the cache with RowNode
+        // instances for all leaves of the hierarchy, and nulls otherwise (to be backfilled
+        // with filler nodes in the subsequent step)
+        for (let level = 0; level < width; level++) {
+            for (const [rowIdx, path] of paths.entries()) {
+                const isDefined = path[level] !== undefined;
+                const isLeaf = path[level + 1] === undefined;
+
+                if (!isDefined) {
+                    continue;
+                }
+
+                const info = path[level];
+
+                const currentValue = this.treeNodeCache.get(path, level, info.key);
+                if (currentValue != null) {
+                    continue;
+                }
+
+                this.treeNodeCache.set(
+                    path,
+                    level,
+                    info.key,
+                    isLeaf ? this.ensureRowNodeFields(rowNodes[rowIdx], info.key) : null
+                );
+            }
+        }
+
+        this.backfillGroups(this.treeNodeCache.inner(), details.rootNode, 0, details);
+    }
+
+    private ensureRowNodeFields(rowNode: RowNode, key?: string): RowNode {
+        if (key !== undefined) {
+            rowNode.key = key;
+        }
+        rowNode.childrenMapped ??= {};
+        rowNode.allLeafChildren ??= [];
+        rowNode.childrenAfterGroup ??= [];
+        return rowNode;
+    }
+
+    /** Walks the TreeDataNodeCache recursively and backfills `null` entries with filler group nodes */
+    private backfillGroups(
+        cache: InnerTreeDataNodeCache,
+        parent: RowNode,
+        level: number,
+        details: GroupingDetails
+    ): void {
+        for (const [key, value] of Object.entries(cache)) {
+            if (value.node === null) {
+                value.node = this.createGroup({ key, rowGroupColumn: null, field: null }, parent, level, details);
+            }
+            this.backfillGroups(value.subtree, value.node, level + 1, details);
+        }
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
@@ -613,7 +758,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.id = this.createGroupId(groupNode, parent, details.usingTreeData, level);
 
         groupNode.level = level;
-        groupNode.leafGroup = details.usingTreeData ? false : level === (details.groupedColCount - 1);
+        groupNode.leafGroup = details.usingTreeData ? false : level === details.groupedColCount - 1;
 
         groupNode.allLeafChildren = [];
 
@@ -627,7 +772,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.childrenMapped = {};
         groupNode.updateHasChildren();
 
-        groupNode.parent = details.includeParents ? parent : null;
+        groupNode.parent = parent;
 
         this.setExpandedInitialValue(details, groupNode);
 
@@ -638,13 +783,17 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         let createGroupId: (node: RowNode, parent: RowNode | null, level: number) => string | null;
         if (usingTreeData) {
             createGroupId = (node, parent, level) => {
-                if (level < 0) { return null; } // root node
+                if (level < 0) {
+                    return null;
+                } // root node
                 const parentId = parent ? createGroupId(parent, parent.parent, level - 1) : null;
                 return `${parentId == null ? '' : parentId + '-'}${level}-${node.key}`;
             };
         } else {
             createGroupId = (node, parent) => {
-                if (!node.rowGroupColumn) { return null; } // root node
+                if (!node.rowGroupColumn) {
+                    return null;
+                } // root node
                 const parentId = parent ? createGroupId(parent, parent.parent, 0) : null;
                 return `${parentId == null ? '' : parentId + '-'}${node.rowGroupColumn.getColId()}-${node.key}`;
             };
@@ -657,8 +806,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
         groupNode.groupData = {};
-        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
-        groupDisplayCols.forEach(col => {
+        const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
+        groupDisplayCols.forEach((col) => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
             const isTreeData = details.usingTreeData;
@@ -680,7 +829,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         });
     }
 
-    private getChildrenMappedKey(key: string, rowGroupColumn: Column | null): string {
+    private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
         if (rowGroupColumn) {
             // grouping by columns
             return rowGroupColumn.getId() + '-' + key;
@@ -704,21 +853,20 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 field: groupNode.field!,
                 key: groupNode.key!,
                 level: groupNode.level,
-                rowGroupColumn: groupNode.rowGroupColumn!
+                rowGroupColumn: groupNode.rowGroupColumn!,
             };
             groupNode.expanded = userCallback(params) == true;
             return;
         }
 
         // use expandByDefault if exists
-        const { expandByDefault } = details;
         if (details.expandByDefault === -1) {
             groupNode.expanded = true;
             return;
         }
 
         // otherwise
-        groupNode.expanded = groupNode.level < expandByDefault;
+        groupNode.expanded = groupNode.level < details.expandByDefault;
     }
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
@@ -728,19 +876,18 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return this.getGroupInfoFromGroupColumns(rowNode, details);
     }
 
-    private getGroupInfoFromCallback(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {        
-        const keys: string[] | null = details.getDataPath ? details.getDataPath(rowNode.data) : null;
+    private getGroupInfoFromCallback(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
+        const keys = details.getDataPath?.(rowNode.data);
 
-        if (keys === null || keys === undefined || keys.length === 0) {
-            _.warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
+        if (keys === undefined || keys.length === 0) {
+            _warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
         }
-        const groupInfoMapper = (key: string | null) => ({ key, field: null, rowGroupColumn: null }) as GroupInfo;
-        return keys ? keys.map(groupInfoMapper) : [];
+        return keys?.map((key) => ({ key, field: null, rowGroupColumn: null })) ?? [];
     }
 
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
         const res: GroupInfo[] = [];
-        details.groupedCols.forEach(groupCol => {
+        details.groupedCols.forEach((groupCol) => {
             let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
             let keyExists = key !== null && key !== undefined && key !== '';
 
@@ -764,5 +911,53 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             }
         });
         return res;
+    }
+}
+
+/** Hierarchical cache of RowNode or sentinel value indicating a filler group node is necessary */
+type InnerTreeDataNodeCache = Record<string, { node: null | RowNode; subtree: InnerTreeDataNodeCache }>;
+
+class TreeDataNodeCache {
+    private cache: InnerTreeDataNodeCache = {};
+
+    private traverse(path: GroupInfo[], level: number): InnerTreeDataNodeCache {
+        let cache = this.cache;
+        let i = 0;
+
+        while (i <= level) {
+            const key = path[i].key;
+
+            if (!(key in cache)) {
+                cache[key] = { node: null, subtree: {} };
+            }
+            cache = cache[key].subtree;
+
+            i++;
+        }
+
+        return cache;
+    }
+
+    public set(path: GroupInfo[], level: number, key: string, value: null | RowNode) {
+        const cache = this.traverse(path, level - 1);
+        cache[key] = { node: value, subtree: {} };
+    }
+
+    public has(path: GroupInfo[], level: number, key: string): boolean {
+        const cache = this.traverse(path, level - 1);
+        return key in cache;
+    }
+
+    public get(path: GroupInfo[], level: number, key: string): RowNode | null | undefined {
+        const cache = this.traverse(path, level - 1);
+        return cache[key]?.node;
+    }
+
+    public clear(): void {
+        this.cache = {};
+    }
+
+    public inner(): InnerTreeDataNodeCache {
+        return this.cache;
     }
 }

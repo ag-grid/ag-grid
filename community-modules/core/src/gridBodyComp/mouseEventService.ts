@@ -1,21 +1,25 @@
-import { Bean } from "../context/context";
-import { Autowired } from "../context/context";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { NumberSequence } from '../utils';
-import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
-import { BeanStub } from "../context/beanStub";
-import { getCtrlForEventTarget } from "../utils/event";
-import { exists } from "../utils/generic";
-import { CtrlsService } from "../ctrlsService";
-import { CellCtrl } from "../rendering/cell/cellCtrl";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
+import type { CellPosition } from '../entities/cellPositionUtils';
+import { CellCtrl } from '../rendering/cell/cellCtrl';
+import { _getCtrlForEventTarget } from '../utils/event';
+import { _exists } from '../utils/generic';
+import { NumberSequence } from '../utils/numberSequence';
 
-@Bean('mouseEventService')
-export class MouseEventService extends BeanStub {
+const GRID_DOM_KEY = '__ag_grid_instance';
+export class MouseEventService extends BeanStub implements NamedBean {
+    beanName = 'mouseEventService' as const;
 
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private static gridInstanceSequence = new NumberSequence();
-    private static GRID_DOM_KEY = '__ag_grid_instance';
 
     private gridInstanceId = MouseEventService.gridInstanceSequence.next();
 
@@ -23,11 +27,11 @@ export class MouseEventService extends BeanStub {
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
     // for where this is used.
     public stampTopLevelGridCompWithGridInstance(eGridDiv: HTMLElement): void {
-        (eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
+        (eGridDiv as any)[GRID_DOM_KEY] = this.gridInstanceId;
     }
 
     public getRenderedCellForEvent(event: Event): CellCtrl | null {
-        return getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, event.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        return _getCtrlForEventTarget<CellCtrl>(this.gos, event.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
@@ -41,8 +45,8 @@ export class MouseEventService extends BeanStub {
     public isElementInThisGrid(element: HTMLElement): boolean {
         let pointer: HTMLElement | null = element;
         while (pointer) {
-            const instanceId = (pointer as any)[MouseEventService.GRID_DOM_KEY];
-            if (exists(instanceId)) {
+            const instanceId = (pointer as any)[GRID_DOM_KEY];
+            if (_exists(instanceId)) {
                 const eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }
@@ -56,8 +60,8 @@ export class MouseEventService extends BeanStub {
         return cellComp ? cellComp.getCellPosition() : null;
     }
 
-    public getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number; } {
-        const gridPanelHasScrolls = this.gridOptionsService.isDomLayout('normal');
+    public getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number; y: number } {
+        const gridPanelHasScrolls = this.gos.isDomLayout('normal');
         const e = event as MouseEvent;
         let x: number;
         let y: number;
@@ -80,5 +84,4 @@ export class MouseEventService extends BeanStub {
 
         return { x, y };
     }
-
 }

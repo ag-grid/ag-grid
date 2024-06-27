@@ -1,10 +1,14 @@
-import { IFloatingFilter, IFloatingFilterParams } from "@ag-grid-community/core";
-import { CustomComponentWrapper } from "./customComponentWrapper";
-import { updateFloatingFilterParent } from "./floatingFilterComponentProxy";
-import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";
+import type { IFloatingFilter, IFloatingFilterParams } from '@ag-grid-community/core';
+
+import { CustomComponentWrapper } from './customComponentWrapper';
+import { updateFloatingFilterParent } from './floatingFilterComponentProxy';
+import type { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from './interfaces';
 
 // floating filter is normally instantiated via react header filter cell comp, but not in the case of multi filter
-export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloatingFilterParams, CustomFloatingFilterProps, CustomFloatingFilterCallbacks> implements IFloatingFilter {
+export class FloatingFilterComponentWrapper
+    extends CustomComponentWrapper<IFloatingFilterParams, CustomFloatingFilterProps, CustomFloatingFilterCallbacks>
+    implements IFloatingFilter
+{
     private model: any = null;
     private readonly onModelChange = (model: any) => this.updateModel(model);
 
@@ -18,7 +22,7 @@ export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloa
         this.refreshProps();
     }
 
-    protected getOptionalMethods(): string[] {
+    protected override getOptionalMethods(): string[] {
         return ['afterGuiAttached'];
     }
 
@@ -29,7 +33,7 @@ export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloa
         updateFloatingFilterParent(this.sourceParams, model);
     }
 
-    protected getProps(): CustomFloatingFilterProps {
+    protected override getProps(): CustomFloatingFilterProps {
         const props = super.getProps();
         props.model = this.model;
         props.onModelChange = this.onModelChange;

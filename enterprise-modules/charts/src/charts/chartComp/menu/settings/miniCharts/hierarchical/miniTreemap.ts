@@ -1,7 +1,8 @@
-import { _Scene, _Theme, _Util } from 'ag-charts-community';
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
+import { _Scene, _Theme } from 'ag-charts-community';
+
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
 
 export class MiniTreemap extends MiniChart {
     static chartType: ChartType = 'treemap';
@@ -22,7 +23,7 @@ export class MiniTreemap extends MiniChart {
             [1, 1],
             [3, 2, 1],
         ];
-        
+
         const treeSize = data.length;
         const treePadding = treeSize % 2 === 0 ? 0.3 : 0.2;
         const range = [padding, size - padding];
@@ -79,8 +80,7 @@ export class MiniTreemap extends MiniChart {
     }
 
     updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
-        const { properties } = themeTemplate ?? {};
-        const defaultBackgroundColor = properties?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
+        const defaultBackgroundColor = themeTemplate?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(defaultBackgroundColor) ? defaultBackgroundColor[0] : defaultBackgroundColor) ?? 'white';
 

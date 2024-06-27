@@ -1,5 +1,6 @@
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/MatrixTable.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+
+import styles from '../MatrixTable.module.scss';
 
 function TickCrossIcon({ isTick }: { isTick: boolean }) {
     return isTick ? <Icon name="tick" svgClasses={styles.tick} /> : <Icon name="cross" svgClasses={styles.cross} />;

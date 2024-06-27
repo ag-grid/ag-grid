@@ -1,13 +1,16 @@
 ---
 import { getEntry } from 'astro:content';
 import '@design-system/design-system.scss';
-import SiteHeader from '@components/site-header/SiteHeader.astro';
+import SiteHeader from '@ag-website-shared/components/site-header/SiteHeader.astro';
 import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
 import { getIsProduction, getIsStaging, getIsDev } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Plausible from '@components/Plausible.astro';
-import { Footer } from '@components/footer/Footer';
-import styles from '@design-system/modules/GridIndex.module.scss';
+import { Footer } from '@ag-website-shared/components/footer/Footer';
+import styles from '@layouts/Layout.module.scss';
+import { getApiPaths } from '@utils/apiMenuPath';
+import { SITE_BASE_URL } from '@constants';
+import GoogleTagManager from '@components/GoogleTagManager.astro';
 
 interface Props {
     title: string;
@@ -19,7 +22,9 @@ interface Props {
 }
 
 const { data: metadata } = await getEntry('metadata', 'metadata');
+const { data: menuData } = await getEntry('menu', 'data');
 const { data: footerItems } = await getEntry('footer', 'data');
+const apiPaths = getApiPaths(menuData);
 
 const isProduction = getIsProduction();
 const isStaging = getIsStaging();
@@ -54,34 +59,46 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
         {!isProduction && <meta name="robots" content="noindex" />}
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
-        <link rel="canonical" href={canonicalUrl}>
-        {!isDev && <link rel="sitemap" type="application/xml" title="Sitemap" href={urlWithBaseUrl("/sitemap-index.xml")} />}
+        <link rel="canonical" href={canonicalUrl} />
+        {
+            !isDev && (
+                <link
+                    rel="sitemap"
+                    type="application/xml"
+                    title="Sitemap"
+                    href={urlWithBaseUrl('/sitemap-index.xml')}
+                />
+            )
+        }
 
         <!-- Facebook Meta Tags -->
-        <meta property="og:url" content={canonicalUrl}>
-        <meta property="og:type" content="website">
-        <meta property="og:title" content={title}>
-        <meta property="og:description" content={description}>
-        <meta property="og:image" content={socialImage}>
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={socialImage} />
 
         <!-- Twitter Meta Tags -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta property="twitter:domain" content={canonicalUrl.host}>
-        <meta property="twitter:url" content={canonicalUrl}>
-        <meta name="twitter:title" content={title}>
-        <meta name="twitter:description" content={description}>
-        <meta name="twitter:image" content={socialImage}>
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content={canonicalUrl.host} />
+        <meta property="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={socialImage} />
 
-        {isProduction && <Fragment>
-            <script is:inline define:vars={{
-                googleTagManagerId: metadata.googleTagManagerId
-            }}>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer',googleTagManagerId);</script>
-            <Plausible domain="ag-grid.com" />
-        </Fragment>}
+        {
+            isProduction && (
+                <Fragment>
+                    <GoogleTagManager googleTagManagerId={metadata.googleTagManagerId} />
+                    <Plausible domain="ag-grid.com" />
+
+                    <script async type="text/javascript" src="https://secure.inventiveinspired7.com/js/792251.js" />
+                    <noscript>
+                        <img alt="" src="https://secure.inventiveinspired7.com/792251.png" style="display:none;" />
+                    </noscript>
+                </Fragment>
+            )
+        }
 
         {isStaging && <Plausible domain="grid-staging.ag-grid.com" />}
 
@@ -104,7 +121,7 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
             ).toString();
 
             if (localDarkmode === undefined) {
-              localStorage.setItem("documentation:darkmode", isOSDarkmode);
+                localStorage.setItem('documentation:darkmode', isOSDarkmode);
             }
 
             htmlEl.classList.add('no-transitions');
@@ -114,10 +131,14 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
         </script>
 
         <div class:list={styles.mainContainer}>
-            {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} />}
+            {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
             <slot />
         </div>
-        
-        {!hideFooter && <Footer path={path} footerItems={footerItems} />}
+
+        {
+            !hideFooter && (
+                <Footer showMicrosoftMessage={path === SITE_BASE_URL || path === undefined} footerItems={footerItems} />
+            )
+        }
     </body>
 </html>

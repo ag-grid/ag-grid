@@ -1,82 +1,83 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NgClass } from '@angular/common';
-import { IHeaderGroupAngularComp } from "@ag-grid-community/angular";
+import { IHeaderGroupAngularComp } from '@ag-grid-community/angular';
 import { IHeaderGroupParams } from '@ag-grid-community/core';
+import { NgClass } from '@angular/common';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+
 @Component({
     standalone: true,
     imports: [NgClass],
     template: `
         <div class="ag-header-group-cell-label">
-            <div #label class="customHeaderLabel">{{params.displayName}}</div>
-            <div class="customExpandButton" [ngClass]="expandState" (click)="expandOrCollapse()"><i
-                    class="fa fa-arrow-right"></i></div>
+            <div #label class="customHeaderLabel">{{ params.displayName }}</div>
+            <div class="customExpandButton" [ngClass]="expandState" (click)="expandOrCollapse()">
+                <i class="fa fa-arrow-right"></i>
+            </div>
         </div>
     `,
     styles: [
-        `   
+        `
             :host {
                 overflow: hidden;
             }
 
-            .customExpandButton{
-                float:right;
+            .customExpandButton {
+                float: right;
                 margin-top: 2px;
                 margin-left: 3px;
             }
-            
+
             .expanded {
                 animation-name: toExpanded;
                 animation-duration: 1s;
                 -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
                 transform: rotate(180deg);
             }
-            
+
             .fa-arrow-right {
                 color: cornflowerblue;
             }
-            
+
             .collapsed {
                 animation-name: toCollapsed;
                 animation-duration: 1s;
                 -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
                 transform: rotate(0deg);
             }
-            
+
             .ag-header-group-cell-label {
                 display: flex;
                 gap: 0.25rem;
                 overflow: hidden;
             }
-            
+
             .customHeaderLabel {
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            
+
             .customHeaderMenuButton,
             .customHeaderLabel,
             .customSortDownLabel,
             .customSortUpLabel,
-            .customSortRemoveLabel
-            {
+            .customSortRemoveLabel {
                 margin-top: 2px;
                 float: left;
             }
-            
-            .customSortDownLabel{
+
+            .customSortDownLabel {
                 margin-left: 10px;
             }
-            
-            .customSortUpLabel{
+
+            .customSortUpLabel {
                 margin-left: 1px;
             }
-            
-            .customSortRemoveLabel{
+
+            .customSortRemoveLabel {
                 float: left;
                 font-size: 11px;
             }
-            
-            @keyframes  toExpanded{
+
+            @keyframes toExpanded {
                 from {
                     -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
                     transform: rotate(0deg);
@@ -86,8 +87,8 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
                     transform: rotate(180deg);
                 }
             }
-            
-            @keyframes toCollapsed{
+
+            @keyframes toCollapsed {
                 from {
                     -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
                     transform: rotate(180deg);
@@ -97,8 +98,8 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
                     transform: rotate(0deg);
                 }
             }
-        `
-    ]
+        `,
+    ],
 })
 export class CustomHeaderGroup implements IHeaderGroupAngularComp {
     public params!: IHeaderGroupParams;
@@ -109,8 +110,13 @@ export class CustomHeaderGroup implements IHeaderGroupAngularComp {
     agInit(params: IHeaderGroupParams): void {
         this.params = params;
 
-        this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
-        this.params.setTooltip(params.displayName, () => this.label.nativeElement.scrollWidth > this.label.nativeElement.clientWidth);
+        this.params.columnGroup
+            .getProvidedColumnGroup()
+            .addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
+        this.params.setTooltip(
+            params.displayName,
+            () => this.label.nativeElement.scrollWidth > this.label.nativeElement.clientWidth
+        );
 
         this.syncExpandButtons();
     }

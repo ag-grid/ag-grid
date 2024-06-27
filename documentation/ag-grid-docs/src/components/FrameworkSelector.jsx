@@ -1,7 +1,8 @@
-import styles from '@design-system/modules/FrameworkSelector.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import React from 'react';
+
+import styles from './FrameworkSelector.module.scss';
 
 const fwLogos = 'images/fw-logos/';
 

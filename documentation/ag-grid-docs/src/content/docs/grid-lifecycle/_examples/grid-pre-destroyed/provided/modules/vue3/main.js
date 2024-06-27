@@ -1,11 +1,13 @@
-import {createApp, onBeforeMount, ref} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
+
+import { getData } from './data.js';
 import './styles.css';
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {getData} from './data.js';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
@@ -44,20 +46,23 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-
     },
     setup(props) {
-        const columnDefs = ref([{
-            field: "name",
-            headerName: "Athlete"
-        }, {
-            field: "medals.gold",
-            headerName: "Gold Medals"
-        }, {
-            field: "person.age",
-            headerName: "Age"
-        }]);
-        const gridApi = ref();
+        const columnDefs = ref([
+            {
+                field: 'name',
+                headerName: 'Athlete',
+            },
+            {
+                field: 'medals.gold',
+                headerName: 'Gold Medals',
+            },
+            {
+                field: 'person.age',
+                headerName: 'Age',
+            },
+        ]);
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             editable: true,
         });
@@ -66,20 +71,20 @@ const VueExample = {
         const showGrid = ref(true);
         const showExampleButtons = ref(true);
         const showGridPreDestroyedState = ref(false);
-        const rowData = ref(null)
+        const rowData = ref(null);
 
         onBeforeMount(() => {
-            rowData.value = getData()
+            rowData.value = getData();
         });
 
         const onGridPreDestroyed = (params) => {
-            const {api} = params;
+            const { api } = params;
             const allColumns = api.getColumns();
             if (!allColumns) {
                 return;
             }
 
-            columnsWidthOnPreDestroyed.value = allColumns.map(column => ({
+            columnsWidthOnPreDestroyed.value = allColumns.map((column) => ({
                 field: column.getColDef().field || '-',
                 width: column.getActualWidth(),
             }));
@@ -91,32 +96,34 @@ const VueExample = {
             if (!gridApi.value) {
                 return;
             }
-            
-            const newWidths = gridApi.value.getColumns().map(column => {
+
+            const newWidths = gridApi.value.getColumns().map((column) => {
                 return { key: column.getColId(), newWidth: Math.round((150 + Math.random() * 100) * 100) / 100 };
-            })
-            gridApi.value.setColumnWidths(newWidths);            
+            });
+            gridApi.value.setColumnWidths(newWidths);
         };
         const destroyGrid = () => {
             showGrid.value = false;
         };
 
         const reloadGrid = () => {
-            const updatedColDefs = columnsWidthOnPreDestroyed ?
-                columnDefs.value.map(val => {
-                    const colDef = val;
-                    const result = {
-                        ...colDef,
-                    };
+            const updatedColDefs = columnsWidthOnPreDestroyed
+                ? columnDefs.value.map((val) => {
+                      const colDef = val;
+                      const result = {
+                          ...colDef,
+                      };
 
-                    const restoredColConfig = columnsWidthOnPreDestroyed.value
-                        .find(columnWidth => columnWidth.field === colDef.field);
-                    if (restoredColConfig && restoredColConfig.width) {
-                        result.width = restoredColConfig.width;
-                    }
+                      const restoredColConfig = columnsWidthOnPreDestroyed.value.find(
+                          (columnWidth) => columnWidth.field === colDef.field
+                      );
+                      if (restoredColConfig && restoredColConfig.width) {
+                          result.width = restoredColConfig.width;
+                      }
 
-                    return result;
-                }) : columnDefs;
+                      return result;
+                  })
+                : columnDefs;
 
             columnDefs.value = updatedColDefs;
             showGrid.value = true;
@@ -141,10 +148,11 @@ const VueExample = {
             updateColumnWidth,
             destroyGrid,
             reloadGrid,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
-    }
-}
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
+        };
+    },
+};
 
-createApp(VueExample).mount("#app")
-
+createApp(VueExample).mount('#app');

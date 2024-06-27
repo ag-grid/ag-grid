@@ -1,10 +1,10 @@
-import { GridApi, createGrid, GridOptions } from "@ag-grid-community/core";
-import { getData } from './data';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
 
 let gridApi: GridApi;
 
@@ -14,11 +14,14 @@ const gridOptions: GridOptions = {
         { headerName: 'Name (field)', field: 'name' },
         // Using dot notation to access nested property
         { headerName: 'Country (field & dot notation)', field: 'person.country' },
-        // Show default header name 
-        { headerName: 'Total Medals (valueGetter)', valueGetter: p => p.data.medals.gold + p.data.medals.silver + p.data.medals.bronze},
+        // Show default header name
+        {
+            headerName: 'Total Medals (valueGetter)',
+            valueGetter: (p) => p.data.medals.gold + p.data.medals.silver + p.data.medals.bronze,
+        },
     ],
     defaultColDef: {
-        flex: 1
+        flex: 1,
     },
     rowData: getData(),
 };

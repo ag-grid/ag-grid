@@ -1,0 +1,80 @@
+---
+title: "Configuration"
+---
+
+Columns are configured using Column Definitions, manipulated with Column State and referenced using IDs or the Column Object.
+
+## Defining Columns
+
+Each column in the grid is defined using a [Column Definition](./column-definitions/), which is a JavaScript key-value object consisting of [Column Options](./column-properties/).
+An array of these objects can be passed to the `columnDefs` [Grid Option](./grid-options/#reference-columns-columnDefs) and the grid will create matching columns.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'athlete' },
+        { field: 'sport' },
+        { field: 'age' }
+    ]
+}
+```
+
+Columns can be also be configured under [Column Groups](./column-groups/), which present the columns under shared headers. These can be configured by adding a level of nesting to the column definition.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'athlete' },
+        {
+            headerName: 'Stats',
+            children: [
+                { field: 'sport' },
+                { field: 'age' }
+            ]
+        }
+    ]
+}
+```
+
+## Referencing Columns
+
+Columns can be updated via the `colDefs` grid option when a sufficient ID has been provided, or manipulated via the API with a Column Object.
+
+### Column IDs
+
+Every column in the grid needs a unique ID. If this is not provided, one will be generated.
+
+This can be provided via the `colId` [Column Option](./column-properties/#reference-columns-colId).
+If this is omitted, the grid will try to use the `field` [Column Option](./column-properties/#reference-columns-field).
+If neither of these is provided, the grid will generate a numeric column ID.
+Where the provided `colId` or `field` is not unique, the grid will append `_n` where necessary (`n` being the first positive number that allows uniqueness).
+
+In the example below, columns are set up to demonstrate the different ways IDs are generated. Open the example in a new tab and observe the output in the dev console. Note the following:
+
+* Col 1 and Col 2 both use `colId`. The grid appends `'_1'` to Col 2 to make the ID unique.
+* Col 3 and Col 4 both use `field`. The grid appends `'_1'` to Col 4 to make the ID unique.
+* Col 5 and Col 6 have neither `colId` or `field` so the grid generates column IDs.
+
+{% gridExampleRunner title="Column IDs" name="column-ids" exampleHeight=300 /%}
+
+### Column Objects
+
+Every column displayed in the grid is represented by a [Column Object](./column-interface/#column) which has attributes,
+methods and events for interacting with the specific column e.g. `column.isVisible()`.
+
+Columns can be accessed via Grid API methods, and provided as parameters from some [Grid Events](./grid-events/#reference-columns).
+
+The [Column Reference](./column-object/) displays a list of functions available on the Column Object.
+
+It is also possible to listen for [Column Events](./column-events/) by attaching an [Event Listener](./column-object/#reference-events-addEventListener).
+
+{% gridExampleRunner title="Column Object" name="column-object" exampleHeight=321 /%}
+
+## Updating Columns
+
+Columns can be controlled by updating the column state, or updating the column definition.
+
+[Column State](./column-state/) should be used when restoring a users grid, for example saving and restoring column widths.
+
+[Update Column Definitions](./column-updating-definitions/#changing-column-definition) to modify properties that the user cannot control, and as such are not supported by Column State.
+Whilst column definitions can be used to change stateful properties, this can cause additional side effects.

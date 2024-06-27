@@ -1,18 +1,19 @@
-import {Component} from "@angular/core";
-import {NgIf} from "@angular/common";
-import {ICellRendererParams} from "@ag-grid-community/core";
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 // simple cell renderer returns dummy buttons. in a real application, a component would probably
 // be used with operations tied to the buttons. in this example, the cell renderer is just for
 // display purposes.
 @Component({
     standalone: true,
-    imports: [ NgIf ],
     template: `
-        <div *ngIf="params.value === '(Select All)'; else elseBlock">{{params.value}}</div>
-        <ng-template #elseBlock><span [style.color]="removeSpaces(params.valueFormatted)">{{params.valueFormatted}}</span></ng-template>
-    `
+        @if (params.value === '(Select All)') {
+            <div>{{ params.value }}</div>
+        } @else {
+            <span [style.color]="removeSpaces(params.valueFormatted)">{{ params.valueFormatted }}</span>
+        }
+    `,
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
     public params!: ICellRendererParams;
@@ -22,10 +23,10 @@ export class ColourCellRenderer implements ICellRendererAngularComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 
     removeSpaces(str: string) {
-        return str ? str.replace(/\s/g, '') : str
+        return str ? str.replace(/\s/g, '') : str;
     }
 }

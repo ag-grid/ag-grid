@@ -1,30 +1,65 @@
 ---
 title: "Localisation"
+description: "Customise the text within the Grid for your locale. Use provided Locales or create your own entirely. Use the locale callback to hook into your app's localisation."
 ---
 
 All the displayed text in the grid is customisable for the purposes of localisation. This is done by providing locale information to the grid for the required language. Either provide an object  of key/value pairs via the `localeText` property, or provide a `getLocaleText` callback to hook the grid up to your application's localisation.
 
 {% apiDocumentation source="grid-options/properties.json" section="localisation" config={"overrideBottomMargin":"1rem"} /%}
 
-The default language of the grid is American English. The grid does not come with other locales. If you want to provide the grid in another language, you must provide to the grid the relevant  locale information.
+## Provided Locales
 
-## Creating a Locale
+The default language of the grid is American English, however, we provide a number of translations that can be used as a starting point for commonly requested languages:
 
-By default, the grid does not require a locale. If no locale is provided, the grid will default to English. If a locale is provided but is missing values, the default English will be used for the missing values.
+| Locale                | BCP 47 Tag  | Link        |
+| --------------------- | ----------- | ----------- |
+| Arabic (Egyptian)     | ar-EG       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/EG.js)
+| Bulgarian             | bg-BG       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/BG.js) 
+| Chinese (Hong Kong)   | zh-HK       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/HK.js)
+| Chinese (Simplified)  | zh-CN       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/CN.js)
+| Chinese (Taiwan)      | zh-TW       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/TW.js)
+| Croatian              | hr-HR       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/HR.js)
+| Czech                 | cs-CZ       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/CZ.js)
+| Danish                | da-DK       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/DK.js)
+| Dutch                 | nl-NL       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/NL.js)
+| Finnish               | fi-FI       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/FI.js)
+| French                | fr-FR       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/FR.js)
+| German                | de-DE       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/DE.js)
+| Greek                 | el-GR       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/GR.js)
+| Hebrew                | he-IL       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/IL.js)
+| Hungarian             | hu-HU       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/HU.js)
+| Italian               | it-IT       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/IT.js)
+| Japanese              | ja-JP       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/JP.js)
+| Korean                | ko-KR       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/KR.js)
+| Norwegian (Bokmål)    | nb-NO       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/NO.js)
+| Persian               | fa-IR       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/IR.js)
+| Polish                | pl-PL       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/PL.js)
+| Portuguese            | pt-PT       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/PT.js)
+| Portuguese (Brazil)   | pt-BR       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/BR.js)
+| Romanian              | ro-RO       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/RO.js)
+| Slovak                | sk-SK       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/SK.js)
+| Spanish               | es-ES       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/ES.js)
+| Swedish               | sv-SE       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/SE.js)
+| Turkish               | tr-TR       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/TR.js)
+| Ukrainian             | uk-UA       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/UA.js)
+| Urdu (Pakistan)       | ur-PK       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/PK.js)
+| Vietnamese            | vi-VN       | [Link](https://github.com/ag-grid/ag-grid/tree/latest/documentation/ag-grid-docs/public/locales/VN.js)
 
-An example full locale file is provided below. To support other languages, the first step is to copy this file and translate the values into the required language.
-
-{% embedSnippet url="/examples/localisation/localisation/packages/vanilla/locale.js" language="js" /%}
-
-You can download the full file from [here](/examples/localisation/localisation/packages/vanilla/locale.js).
-
-There is a single locale file which covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having a separate localisation file for each module would be harder to manage.
+{% note %}
+Translations are provided as a starting point and may contain errors. We recommend you audit these files before using them in production.
+{% /note %}
 
 ## Installing a Locale
 
-To install a locale into the grid, set the locale object to the grid's `localeText` property. The example below shows this in action:
+To install a locale into the grid, set the locale object to the grid's `localeText` property:
 
-The example has one local file `locale` containing two variables `AG_GRID_LOCALE_EN` which contains all localisation variables that can be configured, and `AG_GRID_LOCALE_ZZZ` which just adds "zzz" to the start of each value. This is done so that the example looks different - otherwise is would just display English as normal and there would be no way of knowing if the locale was working or not as English is the default.
+```{% frameworkTransform=true %}
+const gridOptions = {
+    localeText: localeText,
+};
+```
+
+The example below shows this in action. The example has one local file `locale` containing two variables `AG_GRID_LOCALE_EN` which contains all localisation variables that can be configured, and `AG_GRID_LOCALE_ZZZ` which just adds "zzz" to the start of each value. This is done so that the example looks different - otherwise is would just display English as normal and there would be no way of knowing if the locale was working or not as English is the default.
 
 This to try in the example are as follows:
 
@@ -41,6 +76,16 @@ Some localisation variables have `${variable}` in them. When this occurs, it mea
 ## Changing Locale
 
 The grid uses the locale as it is needed. It does not refresh as the locale changes. If your application allows changing the locale for the application, you must destroy and recreate the grid for it to use the new locale.
+
+## Creating a Locale
+
+By default, the grid does not require a locale. If no locale is provided, the grid will default to English. If a locale is provided but is missing values, the default English will be used for the missing values.
+
+All locales provided are listed above, and are also available in the `ag-grid-locale` package.
+
+To support other languages, the first step is to import the `ag-grid-locale` package and reference the locale you're interested in.
+
+There is a single locale file which covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having a separate localisation file for each module would be harder to manage.
 
 ## Locale Callback
 

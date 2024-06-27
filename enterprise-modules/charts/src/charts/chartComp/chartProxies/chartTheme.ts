@@ -1,21 +1,25 @@
-import { _ } from '@ag-grid-community/core';
-import {
-    _Theme,
+import { _includes, _warnOnce } from '@ag-grid-community/core';
+import type {
     AgChartLegendClickEvent,
     AgChartTheme,
     AgChartThemeName,
     AgChartThemeOverrides,
     AgChartThemePalette,
 } from 'ag-charts-community';
+import { _Theme } from 'ag-charts-community';
+
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
-import { ChartSeriesType, getSeriesType, isPieChartSeries } from '../utils/seriesTypeMapper';
-import { ChartProxy, ChartProxyParams } from './chartProxy';
 import { get } from '../utils/object';
+import type { ChartSeriesType } from '../utils/seriesTypeMapper';
+import { getSeriesType } from '../utils/seriesTypeMapper';
+import type { ChartProxy, ChartProxyParams } from './chartProxy';
 
 export function createAgChartTheme(
     chartProxyParams: ChartProxyParams,
     proxy: ChartProxy,
     isEnterprise: boolean,
+    chartThemeDefaults?: AgChartThemeOverrides,
+    updatedOverrides?: AgChartThemeOverrides
 ): AgChartTheme {
     const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
     const themeName = getSelectedTheme(chartProxyParams);
@@ -29,29 +33,29 @@ export function createAgChartTheme(
     const apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;
 
     const standaloneChartType = getSeriesType(chartProxyParams.chartType);
-    const crossFilterThemeOverridePoint = isPieChartSeries(standaloneChartType) ? standaloneChartType : 'cartesian';
     const crossFilteringOverrides = chartProxyParams.crossFiltering
-        ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
+        ? createCrossFilterThemeOverrides(proxy, chartProxyParams, standaloneChartType)
         : undefined;
-    const formattingPanelOverrides: AgChartThemeOverrides = {
-        ...(chartOptionsToRestore ?? {}),
-    };
 
     const isTitleEnabled = () => {
         const isTitleEnabled = (obj: any) => {
-            if (!obj) { return false; }
-            return Object.keys(obj).some(key => get(obj[key], 'title.enabled', false));
-        }
+            if (!obj) {
+                return false;
+            }
+            return Object.keys(obj).some((key) => get(obj[key], 'title.enabled', false));
+        };
         return isTitleEnabled(gridOptionsThemeOverrides) || isTitleEnabled(apiThemeOverrides);
-    }
+    };
 
     // Overrides in ascending precedence ordering.
     const overrides: (AgChartThemeOverrides | undefined)[] = [
         stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isEnterprise, isTitleEnabled()) : undefined,
+        chartThemeDefaults,
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
         apiThemeOverrides,
-        formattingPanelOverrides,
+        { ...(chartOptionsToRestore ?? {}) },
+        updatedOverrides,
     ];
 
     // Recursively nest theme overrides so they are applied with correct precedence in
@@ -80,41 +84,25 @@ export function createAgChartTheme(
     return theme;
 }
 
-export function applyThemeOverrides(
-    baseTheme: AgChartTheme,
-    overrides: Array<AgChartThemeOverrides | null | undefined>
-): AgChartTheme {
-    return overrides.reduce(
-        (baseTheme, overrides) => {
-            if (!overrides) return baseTheme;
-            return {
-                baseTheme: baseTheme as any,
-                overrides,
-            };
-        },
-        baseTheme,
-    );
-}
-
 function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThemePalette) {
-    const arrayCompare = (arrA: any[], arrB: any[]) => {
-        if (arrA.length !== arrB.length) return false;
+    const arrayCompare = (arrA?: any[], arrB?: any[]) => {
+        if (arrA === arrB) return true;
+        if (arrA?.length !== arrB?.length) return false;
 
-        return arrA.every((v: any, i) => v === arrB[i]);
+        return arrA?.every((v: any, i) => v === arrB?.[i]) ?? false;
     };
 
-    return arrayCompare(paletteA.fills, paletteB.fills) &&
-        arrayCompare(paletteA.strokes, paletteB.strokes);
+    return arrayCompare(paletteA.fills, paletteB.fills) && arrayCompare(paletteA.strokes, paletteB.strokes);
 }
 
 export function isStockTheme(themeName: string): boolean {
-    return _.includes(Object.keys(_Theme.themes), themeName);
+    return _includes(Object.keys(_Theme.themes), themeName);
 }
 
 function createCrossFilterThemeOverrides(
     proxy: ChartProxy,
     chartProxyParams: ChartProxyParams,
-    overrideType: Extract<ChartSeriesType, 'cartesian' | 'pie' | 'donut'>,
+    seriesType: ChartSeriesType
 ): AgChartThemeOverrides {
     const legend = {
         listeners: {
@@ -128,9 +116,8 @@ function createCrossFilterThemeOverrides(
         },
     };
 
-    const series: AgChartThemeOverrides = {};
     return {
-        [overrideType]: {
+        [seriesType]: {
             tooltip: {
                 delay: 500,
             },
@@ -138,7 +125,6 @@ function createCrossFilterThemeOverrides(
             listeners: {
                 click: (e: any) => chartProxyParams.crossFilterCallback(e, true),
             },
-            series,
         },
     };
 }
@@ -189,7 +175,7 @@ function getSelectedTheme(chartProxyParams: ChartProxyParams): string {
     let chartThemeName = chartProxyParams.getChartThemeName();
     const availableThemes = chartProxyParams.getChartThemes();
 
-    if (!_.includes(availableThemes, chartThemeName)) {
+    if (!_includes(availableThemes, chartThemeName)) {
         chartThemeName = availableThemes[0];
     }
 
@@ -201,8 +187,8 @@ export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name:
     const customChartTheme = customChartThemes && customChartThemes[name];
 
     if (!customChartTheme) {
-        console.warn(
-            `AG Grid: no stock theme exists with the name '${name}' and no ` +
+        _warnOnce(
+            `no stock theme exists with the name '${name}' and no ` +
                 "custom chart theme with that name was supplied to 'customChartThemes'"
         );
     }

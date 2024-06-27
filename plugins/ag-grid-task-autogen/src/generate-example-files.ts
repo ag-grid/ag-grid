@@ -1,5 +1,10 @@
-import { DependencyType, type RawProjectGraphDependency, TargetConfiguration, validateDependency } from '@nx/devkit';
-import type { CreateDependencies } from 'nx/src/utils/nx-plugin';
+import {
+    type CreateDependencies,
+    DependencyType,
+    type RawProjectGraphDependency,
+    type TargetConfiguration,
+    validateDependency,
+} from '@nx/devkit';
 
 export function createTask(parentProject: string, srcRelativeInputPath: string): Record<string, TargetConfiguration> {
     return {
@@ -7,7 +12,6 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
             dependsOn: [
                 { projects: 'ag-grid-generate-example-files', target: 'build' },
                 { projects: 'ag-grid-generate-example-files', target: 'generateGridOptionsType' },
-
             ],
             executor: 'ag-grid-generate-example-files:generate',
             inputs: [

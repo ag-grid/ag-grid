@@ -1,22 +1,26 @@
-import { DraggingEvent, DragAndDropService } from "../../dragAndDrop/dragAndDropService";
-import { Column, ColumnPinnedType } from "../../entities/column";
-import { ColumnModel } from "../../columns/columnModel";
-import { Autowired } from "../../context/context";
-import { GridOptionsService } from "../../gridOptionsService";
-import { DropListener } from "./bodyDropTarget";
+import type { FuncColsService } from '../../columns/funcColsService';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import type { AgColumn } from '../../entities/agColumn';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { DropListener } from './bodyDropTarget';
 
-export class BodyDropPivotTarget implements DropListener {
+export class BodyDropPivotTarget extends BeanStub implements DropListener {
+    private funcColsService: FuncColsService;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
+    public wireBeans(beans: BeanCollection) {
+        this.funcColsService = beans.funcColsService;
+    }
 
-    private columnsToAggregate: Column[] = [];
-    private columnsToGroup: Column[] = [];
-    private columnsToPivot: Column[] = [];
+    private columnsToAggregate: AgColumn[] = [];
+    private columnsToGroup: AgColumn[] = [];
+    private columnsToPivot: AgColumn[] = [];
 
     private pinned: ColumnPinnedType;
 
     constructor(pinned: ColumnPinnedType) {
+        super();
         this.pinned = pinned;
     }
 
@@ -25,17 +29,25 @@ export class BodyDropPivotTarget implements DropListener {
         this.clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
-        if (this.gridOptionsService.get('functionsReadOnly')) { return; }
+        if (this.gos.get('functionsReadOnly')) {
+            return;
+        }
 
-        const dragColumns: Column[] | undefined = draggingEvent.dragItem.columns;
+        const dragColumns = draggingEvent.dragItem.columns as AgColumn[] | undefined;
 
-        if (!dragColumns) { return; }
+        if (!dragColumns) {
+            return;
+        }
 
-        dragColumns.forEach(column => {
+        dragColumns.forEach((column) => {
             // we don't allow adding secondary columns
-            if (!column.isPrimary()) { return; }
+            if (!column.isPrimary()) {
+                return;
+            }
 
-            if (column.isAnyFunctionActive()) { return; }
+            if (column.isAnyFunctionActive()) {
+                return;
+            }
 
             if (column.isAllowValue()) {
                 this.columnsToAggregate.push(column);
@@ -44,20 +56,20 @@ export class BodyDropPivotTarget implements DropListener {
             } else if (column.isAllowPivot()) {
                 this.columnsToPivot.push(column);
             }
-
         });
     }
 
-    public getIconName(): string | null {
+    public getIconName(): DragAndDropIcon | null {
         const totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
         if (totalColumns > 0) {
-            return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
+            return this.pinned ? 'pinned' : 'move';
         }
 
         return null;
     }
 
     /** Callback for when drag leaves */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public onDragLeave(draggingEvent: DraggingEvent): void {
         // if we are taking columns out of the center, then we remove them from the report
         this.clearColumnsList();
@@ -70,20 +82,20 @@ export class BodyDropPivotTarget implements DropListener {
     }
 
     /** Callback for when dragging */
-    public onDragging(draggingEvent: DraggingEvent): void {
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public onDragging(draggingEvent: DraggingEvent): void {}
 
     /** Callback for when drag stops */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public onDragStop(draggingEvent: DraggingEvent): void {
         if (this.columnsToAggregate.length > 0) {
-            this.columnModel.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
+            this.funcColsService.addValueColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');
         }
         if (this.columnsToGroup.length > 0) {
-            this.columnModel.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
+            this.funcColsService.addRowGroupColumns(this.columnsToGroup, 'toolPanelDragAndDrop');
         }
         if (this.columnsToPivot.length > 0) {
-            this.columnModel.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
+            this.funcColsService.addPivotColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
         }
     }
-
 }

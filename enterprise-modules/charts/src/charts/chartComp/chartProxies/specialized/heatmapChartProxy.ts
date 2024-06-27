@@ -1,37 +1,44 @@
-import {
-    AgCharts,
+import type {
     AgCartesianChartOptions,
-    AgHeatmapSeriesOptions,
     AgChartThemeOverrides,
+    AgHeatmapSeriesOptions,
     AgHeatmapSeriesTooltipRendererParams,
     AgTooltipRendererResult,
 } from 'ag-charts-community';
-import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
+
 import { flatMap } from '../../utils/array';
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { ChartProxy } from '../chartProxy';
 
 export const HEATMAP_CATEGORY_KEY = 'AG-GRID-DEFAULT-HEATMAP-CATEGORY-KEY';
 export const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';
 export const HEATMAP_VALUE_KEY = 'AG-GRID-DEFAULT-HEATMAP-VALUE-KEY';
 
-export class HeatmapChartProxy extends ChartProxy {
+export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heatmap'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    public override update(params: UpdateParams): void {
+    protected getUpdateOptions(
+        params: UpdateParams,
+        commonChartOptions: AgCartesianChartOptions
+    ): AgCartesianChartOptions {
         const xSeriesKey = HEATMAP_SERIES_KEY;
         const xValueKey = HEATMAP_VALUE_KEY;
         const yKey = HEATMAP_CATEGORY_KEY;
-        const options: AgCartesianChartOptions = {
-            ...this.getCommonChartOptions(params.updatedOverrides),
+        return {
+            ...commonChartOptions,
             series: this.getSeries(params, xSeriesKey, xValueKey, yKey),
             data: this.getData(params, xSeriesKey, xValueKey, yKey),
         };
-
-        AgCharts.update(this.getChartRef(), options);
     }
 
-    protected getSeries(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): AgHeatmapSeriesOptions[] {
+    protected getSeries(
+        params: UpdateParams,
+        xSeriesKey: string,
+        xValueKey: string,
+        yKey: string
+    ): AgHeatmapSeriesOptions[] {
         const [category] = params.categories;
         return [
             {
@@ -68,39 +75,26 @@ export class HeatmapChartProxy extends ChartProxy {
                 [xValueKey]: datum[colId],
                 [yKey]: yValue,
             }));
-        }
-        );
+        });
     }
 
-    protected override getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides['heatmap'] {
         return {
-            heatmap: {
-                gradientLegend: {
-                    gradient: {
-                        preferredLength: 200,
-                    },
+            gradientLegend: {
+                gradient: {
+                    preferredLength: 200,
                 },
-                series: {
-                    tooltip: {
-                        renderer: renderHeatmapTooltip,
-                    },
+            },
+            series: {
+                tooltip: {
+                    renderer: renderHeatmapTooltip,
                 },
             },
         };
     }
-
-    protected override transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
-        // Ignore the base implementation as it assumes only a single category axis
-        // (this method is never actually invoked)
-        return data;
-    }
-
-    public override crossFilteringReset(): void {
-        // cross filtering is not currently supported in heatmap charts
-    }
 }
 
-function renderHeatmapTooltip(params: AgHeatmapSeriesTooltipRendererParams): string | AgTooltipRendererResult {
+function renderHeatmapTooltip(params: AgHeatmapSeriesTooltipRendererParams<any>): string | AgTooltipRendererResult {
     const { xKey, yKey, colorKey, yName, datum } = params;
     const table: Array<{ label: string; value: string | undefined }> = [
         { label: yName, value: datum[yKey] },

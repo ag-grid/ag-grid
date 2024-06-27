@@ -1,7 +1,8 @@
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/Collapsible.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classNames from 'classnames';
-import React, { FunctionComponent, useState } from 'react';
+import React, { type FunctionComponent, useState } from 'react';
+
+import styles from './Collapsible.module.scss';
 
 interface Props {
     title: string;

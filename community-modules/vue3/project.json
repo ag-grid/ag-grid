@@ -4,6 +4,12 @@
   "sourceRoot": "community-modules/vue3/src",
   "projectType": "library",
   "targets": {
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "build": {
       "executor": "nx:noop",
       "dependsOn": ["build:types", "build:package"],
@@ -44,9 +50,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -58,9 +62,7 @@
           "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "community-modules/vue3/dist/package",
         "main": "community-modules/vue3/src/main.ts",
@@ -68,11 +70,8 @@
         "esbuildConfig": "esbuild.config.cjs",
         "external": ["@ag-grid-community/core", "vue", "vue-property-decorator", "vue-class-component"],
         "platform": "browser",
-        "target": "es6",
-        "format": [
-          "cjs",
-          "esm"
-        ],
+        "target": "es2020",
+        "format": ["cjs", "esm"],
         "sourcemap": true
       },
       "configurations": {
@@ -81,14 +80,13 @@
         },
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "community-modules/vue3/jest.config.js"
       }

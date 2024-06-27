@@ -1,8 +1,9 @@
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 import { _Scene, _Theme } from 'ag-charts-community';
+
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { accumulateData } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
 
 export class MiniWaterfall extends MiniChartWithAxes {
     static chartType: ChartType = 'waterfall';
@@ -11,7 +12,13 @@ export class MiniWaterfall extends MiniChartWithAxes {
 
     private data = [4, 3, -3, 6, -3];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplate: ThemeTemplateParameters, isCustomTheme: boolean) {
+    constructor(
+        container: HTMLElement,
+        fills: string[],
+        strokes: string[],
+        themeTemplate: ThemeTemplateParameters,
+        isCustomTheme: boolean
+    ) {
         super(container, 'waterfallTooltip');
 
         this.bars = this.createWaterfall(this.root, this.data, this.size, this.padding, 'vertical').bars;
@@ -20,7 +27,6 @@ export class MiniWaterfall extends MiniChartWithAxes {
 
     updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
         const { data } = this;
-        const { properties } = themeTemplate ?? {};
         const palettePositive = {
             fill: fills[0],
             stroke: strokes[0],
@@ -28,9 +34,13 @@ export class MiniWaterfall extends MiniChartWithAxes {
         const paletteNegative = {
             fill: fills[1],
             stroke: strokes[1],
-        }
-        const positive = isCustomTheme ? palettePositive : properties?.get(_Theme.DEFAULT_WATERFALL_SERIES_POSITIVE_COLOURS) ?? palettePositive;
-        const negative = isCustomTheme ? paletteNegative : properties?.get(_Theme.DEFAULT_WATERFALL_SERIES_NEGATIVE_COLOURS) ?? paletteNegative;
+        };
+        const positive = isCustomTheme
+            ? palettePositive
+            : themeTemplate?.get(_Theme.PALETTE_UP_STROKE) ?? palettePositive;
+        const negative = isCustomTheme
+            ? paletteNegative
+            : themeTemplate?.get(_Theme.PALETTE_DOWN_STROKE) ?? paletteNegative;
         this.bars.forEach((bar, i) => {
             const isPositive = data[i] >= 0;
             bar.fill = isPositive ? positive.fill : negative.fill;

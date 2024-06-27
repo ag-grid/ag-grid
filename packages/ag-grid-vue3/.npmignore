@@ -19,3 +19,4 @@ tslint.json
 vue.config.js
 !dist
 !dist/types/src
+*.map

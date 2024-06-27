@@ -1,16 +1,17 @@
 import { readFileSync } from 'fs';
 
+import { moduleConfig } from '../_copiedFromCore/modules';
 import { getEnterprisePackageName } from '../constants';
 import type { InternalFramework } from '../types';
-import ModuleConfig from '../_copiedFromCore/modules.json';
 
-const modules = Object.values(ModuleConfig).filter((m) => m.module && !m.framework);
+const modules = moduleConfig.filter((m) => m.module && !m.framework);
 // const communityModules = modules.filter((m) => {
 //     return m.module.includes('community');
 // });
 
 interface Params {
     isEnterprise: boolean;
+    isLocale: boolean;
     internalFramework: InternalFramework;
     importType: 'modules' | 'packages';
 }
@@ -22,12 +23,12 @@ function getPackageJsonVersion(packageName: string, isEnterprise: boolean) {
     return '^' + packageJson.version;
 }
 
-export function getPackageJson({ isEnterprise, internalFramework, importType }: Params) {
-    return addPackageJson(isEnterprise, internalFramework, importType);
+export function getPackageJson({ isEnterprise, isLocale, internalFramework, importType }: Params) {
+    return addPackageJson(isEnterprise, isLocale, internalFramework, importType);
 }
 
 /** Used for type checking in plunker, and type checking & dep installation with codesandbox */
-function addPackageJson(isEnterprise, framework, importType) {
+function addPackageJson(isEnterprise, isLocale, framework, importType) {
     const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'vanilla']);
     if (!supportedFrameworks.has(framework)) {
         return;
@@ -43,10 +44,10 @@ function addPackageJson(isEnterprise, framework, importType) {
     };
 
     if (framework === 'angular') {
-        addDependency('@angular/core', '^14');
-        addDependency('@angular/common', '^14');
-        addDependency('@angular/forms', '^14');
-        addDependency('@angular/platform-browser', '^14');
+        addDependency('@angular/core', '^17');
+        addDependency('@angular/common', '^17');
+        addDependency('@angular/forms', '^17');
+        addDependency('@angular/platform-browser', '^17');
     }
 
     function isFrameworkReact() {
@@ -65,6 +66,11 @@ function addPackageJson(isEnterprise, framework, importType) {
     const agGridEnterpriseVersion = getPackageJsonVersion('core', true);
     const agGridReactVersion = getPackageJsonVersion('react', false);
     const agGridAngularVersion = getPackageJsonVersion('angular', false);
+    const agGridLocaleVersion = getPackageJsonVersion('locale', false);
+
+    if (isLocale) {
+        addDependency('ag-grid-locale', agGridLocaleVersion);
+    }
 
     if (importType === 'modules' && framework !== 'vanilla') {
         if (framework === 'angular') {
@@ -83,10 +89,7 @@ function addPackageJson(isEnterprise, framework, importType) {
             addDependency('ag-grid-react', agGridReactVersion);
         }
         addDependency('ag-grid-community', agGridVersion);
-        addDependency(
-            getEnterprisePackageName(),
-            agGridEnterpriseVersion
-        );
+        addDependency(getEnterprisePackageName(), agGridEnterpriseVersion);
     }
 
     return packageJson;

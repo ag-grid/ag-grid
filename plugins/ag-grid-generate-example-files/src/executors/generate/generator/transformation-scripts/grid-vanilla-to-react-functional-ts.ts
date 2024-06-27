@@ -1,11 +1,13 @@
 import { basename } from 'path';
-import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+
+import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
     addGenericInterfaceImport,
     addLicenseManager,
     convertFunctionToConstPropertyTs,
+    findLocaleImport,
     getActiveTheme,
     getFunctionName,
     getIntegratedDarkModeCode,
@@ -15,9 +17,9 @@ import {
     preferParamsApi,
 } from './parser-utils';
 import {
-    convertFunctionalTemplate,
-    convertFunctionToConstCallbackTs,
     EventAndCallbackNames,
+    convertFunctionToConstCallbackTs,
+    convertFunctionalTemplate,
     getImport,
     getValueType,
 } from './react-utils';
@@ -29,7 +31,7 @@ function getModuleImports(
     extraCoreTypes: string[],
     allStylesheets: string[]
 ): string[] {
-    let imports = [
+    const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from '@ag-grid-community/react';",
@@ -48,7 +50,7 @@ function getModuleImports(
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
 
-    let propertyInterfaces = getPropertyInterfaces(bindings.properties);
+    const propertyInterfaces = getPropertyInterfaces(bindings.properties);
     const bImports = [...(bindings.imports || [])];
     bImports.push({
         module: `'@ag-grid-community/core'`,
@@ -104,7 +106,7 @@ function getPackageImports(
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
 
-    let propertyInterfaces = getPropertyInterfaces(bindings.properties);
+    const propertyInterfaces = getPropertyInterfaces(bindings.properties);
     const bImports = [...(bindings.imports || [])];
     bImports.push({
         module: `'ag-grid-community'`,
@@ -132,17 +134,30 @@ function getImports(
     extraCoreTypes: string[],
     allStylesheets: string[]
 ): string[] {
-    if (importType === 'packages') {
-        return getPackageImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets);
-    } else {
-        return getModuleImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets);
+    const imports = [];
+    const localeImport = findLocaleImport(bindings.imports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from 'ag-grid-locale';`);
     }
+
+    if (importType === 'packages') {
+        imports.push(...getPackageImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets));
+    } else {
+        imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets));
+    }
+
+    return imports;
 }
 
-function getTemplate(bindings: ParsedBindings, componentAttributes: string[], rowDataGeneric: string): string {
+function getTemplate(
+    bindings: ParsedBindings,
+    componentAttributes: string[],
+    rowDataGeneric: string,
+    exampleConfig: ExampleConfig
+): string {
     const { inlineGridStyles } = bindings;
     const agGridTag = `
-        <div style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
             <AgGridReact${rowDataGeneric}
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
@@ -240,7 +255,14 @@ export function vanillaToReactFunctionalTs(
             extraCoreTypes = ['GridReadyEvent'];
         }
 
-        const imports = getImports(bindings, exampleConfig, componentFilenames, importType, extraCoreTypes, allStylesheets);
+        const imports = getImports(
+            bindings,
+            exampleConfig,
+            componentFilenames,
+            importType,
+            extraCoreTypes,
+            allStylesheets
+        );
 
         const components: { [componentName: string]: string } = extractComponentInformation(
             properties,
@@ -335,10 +357,15 @@ export function vanillaToReactFunctionalTs(
                 .replace(/params\.api(!?)\.setGridOption\('rowData', data\)/g, 'setRowData(data)')
                 .replace(/gridApi(!?)\./g, 'gridRef.current!.api.')
                 .replace(/gridApi;/g, 'gridRef.current!.api;')
-                .replace(/gridRef\.current\.api(!?)\.setGridOption\(\'rowData\',/g, 'setRowData(')
+                .replace(/gridRef\.current(!?)\.api(!?)\.setGridOption\(\'rowData\',/g, 'setRowData(')
                 .replace(/gridApi/g, 'gridRef.current!.api');
 
-        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), rowDataGeneric);
+        const template = getTemplate(
+            bindings,
+            componentProps.map(thisReferenceConverter),
+            rowDataGeneric,
+            exampleConfig
+        );
         const eventHandlers = bindings.eventHandlers
             .map((event) => convertFunctionToConstCallbackTs(event.handler, callbackDependencies))
             .map(thisReferenceConverter)

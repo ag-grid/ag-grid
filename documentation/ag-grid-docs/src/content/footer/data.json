@@ -16,7 +16,7 @@
             },
             {
                 "name": "Documentation Archive",
-                "url": "/archive"
+                "url": "/documentation-archive"
             }
         ]
     },
@@ -61,6 +61,10 @@
             {
                 "name": "Cookies Policy",
                 "url": "/cookies"
+            },
+            {
+                "name": "Sitemap",
+                "url": "/sitemap"
             }
         ]
     },

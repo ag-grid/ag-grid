@@ -7,7 +7,7 @@ Here we give some hints on testing AG Grid as part of your application.
 {% if isFramework("javascript") %}
 ## Testing with Jest
 
-If you're using [Modules](./packages-modules) then you will have to make the following configuration changes to accommodate ES Modules - if you're using Packages then this configuration is not required.
+If you're using [Modules](./modules) then you will have to make the following configuration changes to accommodate ES Modules - if you're using Packages then this configuration is not required.
 
 In order to test AG Grid with Jest you'll need to make the following configuration changes:
 
@@ -81,7 +81,7 @@ test('examples of some things', async () => {
 {% /if %}
 
 {% if isFramework("javascript") %}
-The test above can be found in the following [GitHub Repo](https://github.com/ag-grid/ag-grid-dev).
+The test above can be found in the following [GitHub Repo](https://github.com/ag-grid/ag-grid-testing/tree/latest).
 {% /if %}
 
 {% if isFramework("javascript") %}
@@ -246,7 +246,7 @@ We can now run our test by executing the following command:
 {% if isFramework("javascript") %}
 ## Checking Grid Data
 
-We can match grid data by looking for rows by matching `div[row="&lt;row id>"]` and then column
+We can match grid data by looking for rows by matching `div[row="<row id>"]` and then column
 values within these rows by looking for `div`'s with a class of `.ag-cell-value`:
 
 {% /if %}
@@ -411,7 +411,7 @@ In order to test AG Grid with Jest you'll need to make the following configurati
 
 In `jest.config.js` add the following line:
 
-`resolver: '&lt;rootDir>myResolver.js',`
+`resolver: '<rootDir>myResolver.js',`
 
 Then create a file called `myResolver.js` in the root directory of your project:
 {% /if %}
@@ -459,7 +459,7 @@ Before we can test our component we need to configure the `TestBed`. In this exa
     imports: [AgGridAngular],
     template: `<ag-grid-angular
         [rowData]="rowData"
-        [columnDefs]="columnDefs"></ag-grid-angular>`,
+        [columnDefs]="columnDefs" />`,
 })
 export class TestHostComponent {
 
@@ -604,8 +604,7 @@ export class EditorComponent implements ICellEditorAngularComp {
                 [columnDefs]="columnDefs"
                 [rowData]="rowData"
                 [stopEditingWhenCellsLoseFocus]="false"
-                (gridReady)="onGridReady($event)">
-            </ag-grid-angular>
+                (gridReady)="onGridReady($event)" />
         </div>`
 })
 class TestHostComponent {
@@ -674,7 +673,7 @@ It is also possible to use [Angular Testing Library](https://testing-library.com
 {% if isFramework("angular") %}
 ```js
 <div data-testid="rowClicked">Row Clicked: {{ rowClicked?.make }}</div>
-<ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (onRowClicked)="onRowClicked($event)"> </ag-grid-angular>
+<ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (onRowClicked)="onRowClicked($event)" />
 ```
 {% /if %}
 
@@ -721,7 +720,7 @@ All the tests above and more can be found in the following [GitHub Repo](https:/
 {% if isFramework("react") %}
 ## Testing with Jest
 
-If you're using [Modules](./packages-modules) then you will have to make the following configuration changes to accommodate ES Modules - if you're using Packages then this configuration is not required.
+If you're using [Modules](./modules) then you will have to make the following configuration changes to accommodate ES Modules - if you're using packages then this configuration is not required.
 
 In order to test AG Grid with Jest you'll need to make the following configuration changes:
 
@@ -1134,7 +1133,7 @@ module.exports = {
 
 ## End to End (e2e) Testing with Playwright
 
-[Playwright](https://playwright.dev/) is another popular e2e testing framework that can be used to test AG Grid applications. A few examples of how to use Playwright with AG Grid can be found in this [Github Repo](https://github.com/ag-grid/ag-grid/tree/latest/grid-packages/ag-grid-dev/e2e).
+[Playwright](https://playwright.dev/) is another popular e2e testing framework that can be used to test AG Grid applications. A few examples of how to use Playwright with AG Grid can be found in this [Github Repo](https://github.com/ag-grid/ag-grid-testing/tree/latest/e2e).
 
 {% if isFramework("angular") %}
 ## Next Up

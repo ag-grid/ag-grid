@@ -1,5 +1,6 @@
 ---
 title: "Row Grouping"
+description: "Enable row grouping in the $framework Data Grid to allow rows to be grouped by columns. Define row groups, use the Grid API, or use the UI to group rows."
 enterprise: true
 ---
 
@@ -10,13 +11,13 @@ Grouping can be configured and customised.
 The grid can be configured to initially display rows in a grouped state or rows can be grouped programmatically through
 the grid API's. Users can also manually group rows through the UI as shown below:
 
-{% imageCaption imagePath="resources/row-grouping.gif" alt="Row Grouping" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/row-grouping.gif" alt="Row Grouping" centered=true constrained=true maxWidth="90%" /%}
 
 ## Enabling Default Row Grouping
 
 To group rows by a particular column, enable the `rowGroup` column property as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
@@ -56,7 +57,7 @@ however extensive Row Grouping customisations are also possible as summarised be
 * **[Group Order](./grouping-group-order/)** - control how row groups are ordered.
 * **[Sorting Groups](./grouping-sorting/)** - configure and customise how row groups are sorted.
 * **[Filtering Groups](./grouping-filtering/)** - configure and customise how row groups are filtered.
-* **[Group Footers](./grouping-footers/)** - add group footers showing totals for each group level.
+* **[Group Totals](./total-rows/)** - add group totals showing totals for each group level.
 * **[Opening Groups](./grouping-opening-groups/)** - control how row groups are expanded and collapsed.
 * **[Complex Objects](./grouping-complex-objects/)** - group rows using row data contains complex objects.
 * **[Unbalanced Groups](./grouping-unbalanced-groups/)** - group rows when there are `null` or `undefined` group values.

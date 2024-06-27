@@ -33,7 +33,7 @@ Chart ranges can be adjusted from within the grid by dragging on the chart range
 The chart range handle will only appear when all series columns are contiguous. However, it is possible to move columns around in the grid to connect the series range.
 {% /note %}
 
-## Defining categories and series
+## Defining Categories and Series
 
 There are several ways for columns to be classified as chart categories or series. Columns can be explicitly configured or left for the grid to infer the type based on the data contained in the cells.
 
@@ -51,7 +51,7 @@ Columns defined as `excluded` will not be included in charts or charting ranges.
 
 The following column definitions show how the different `ColDef.chartDataType` values are applied:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // 'category' columns
@@ -79,7 +79,7 @@ See the [Time Series](./integrated-charts-time-series/) section for details on t
 
 If none of the above `ColDef` properties are present then the grid will infer the charting column type based on the data contained in the cells of the first row. Columns containing `number` values will map to `'series'` charting columns, and columns containing anything else will map to `'category'`.
 
-### Example: Defining categories and series
+### Example: Defining Categories and Series
 
 The example below demonstrates the different ways columns can be defined for charting:
 
@@ -91,9 +91,39 @@ The example below demonstrates the different ways columns can be defined for cha
 * **Silver**: defined as 'series' as `chartType='series'`.
 * **Bronze**: considered a 'series' as data is a `number`.
 
-{% gridExampleRunner title="Defining categories and series" name="defining-categories-and-series"  exampleHeight=710 /%}
+{% gridExampleRunner title="Defining Categories and Series" name="defining-categories-and-series"  exampleHeight=710 /%}
 
 Cell ranges from which categories and data are taken will be highlighted on the grid. The highlight colours can be customised using the `--ag-range-selection-chart-category-background-color` and `--ag-range-selection-chart-background-color` CSS variables. See `style.css` in the example above.
+
+### Switching Categories and Series
+
+It's possible to switch categories and series. This can be done either via the [Set Up Tool Panel](./integrated-charts-chart-tool-panels/#set-up-tool-panel) or the [Range Chart API](./integrated-charts-api-range-chart/). When this is done, the values in the category column will become series, and the series columns will become values in the category.
+
+The example below demonstrates switching categories and series:
+
+{% gridExampleRunner title="Switching Categories and Series" name="switching-categories-and-series"  exampleHeight=710 /%}
+
+## Row Grouping
+
+The best way to display grouped data in a chart is using [Pivot Charts](./integrated-charts-pivot-chart/). However, it is also possible to use Range Charts with [Row Grouping](./grouping/).
+
+When Row Grouping is enabled, the chart can either display a grouped category, or aggregated values.
+
+### Grouped Category
+
+By default, a grouped category will be displayed. For the group category to be displayed correctly, it is necessary to [Add Values to Leaf Nodes](./grouping-single-group-column/#adding-values-to-leaf-nodes) in the grid.
+
+The following example demonstrates this via defining the `field` **Athlete** on the [Group Column Configuration](./grouping-single-group-column/#group-column-configuration):
+
+{% gridExampleRunner title="Grouped Category" name="grouped-category"  exampleHeight=850 /%}
+
+### Aggregated Values
+
+Group values can also be displayed aggregated. This is done by enabling aggregation in the [Set Up Tool Panel](./integrated-charts-chart-tool-panels/#set-up-tool-panel) or by providing an aggregation function to the [Range Chart API](./integrated-charts-api-range-chart/).
+
+This is demonstrated in the following example:
+
+{% gridExampleRunner title="Aggregated Values" name="aggregated-values"  exampleHeight=710 /%}
 
 ## Next Up
 

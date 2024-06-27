@@ -1,16 +1,17 @@
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import { AgEventListener, AgGlobalEventListener } from "../events";
+import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 
-
-export class FrameworkEventListenerService {
+export class FrameworkEventListenerService<
+    TEventListener extends (e: any) => void,
+    TGlobalEventListener extends (name: string, e: any) => void,
+> {
     // Map from user listener to wrapped listener so we can remove listener provided by user
-    private wrappedListeners: Map<AgEventListener, AgEventListener> = new Map();
-    private wrappedGlobalListeners: Map<AgGlobalEventListener, AgGlobalEventListener> = new Map();
+    private wrappedListeners: Map<TEventListener, TEventListener> = new Map();
+    private wrappedGlobalListeners: Map<TGlobalEventListener, TGlobalEventListener> = new Map();
 
     constructor(private frameworkOverrides: IFrameworkOverrides) {}
 
-    public wrap(userListener: AgEventListener): AgEventListener {
-        let listener = userListener;
+    public wrap(userListener: TEventListener): TEventListener {
+        let listener: any = userListener;
         if (this.frameworkOverrides.shouldWrapOutgoing) {
             listener = (event: any) => {
                 this.frameworkOverrides.wrapOutgoing(() => userListener(event));
@@ -20,11 +21,11 @@ export class FrameworkEventListenerService {
         return listener;
     }
 
-    public wrapGlobal(userListener: AgGlobalEventListener): AgGlobalEventListener {
-        let listener = userListener;
+    public wrapGlobal(userListener: TGlobalEventListener): TGlobalEventListener {
+        let listener: any = userListener;
 
         if (this.frameworkOverrides.shouldWrapOutgoing) {
-            listener = (eventType: string, event: any) => {
+            listener = (eventType: any, event: any) => {
                 this.frameworkOverrides.wrapOutgoing(() => userListener(eventType, event));
             };
             this.wrappedGlobalListeners.set(userListener, listener);
@@ -32,10 +33,10 @@ export class FrameworkEventListenerService {
         return listener;
     }
 
-    public unwrap(userListener: AgEventListener): AgEventListener {
+    public unwrap(userListener: TEventListener): TEventListener {
         return this.wrappedListeners.get(userListener) ?? userListener;
     }
-    public unwrapGlobal(userListener: AgGlobalEventListener): AgGlobalEventListener {
+    public unwrapGlobal(userListener: TGlobalEventListener): TGlobalEventListener {
         return this.wrappedGlobalListeners.get(userListener) ?? userListener;
     }
 }

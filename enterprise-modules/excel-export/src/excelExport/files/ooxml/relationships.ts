@@ -1,20 +1,21 @@
-import { ExcelOOXMLTemplate, ExcelRelationship } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate, ExcelRelationship } from '@ag-grid-community/core';
+
 import relationshipFactory from './relationship';
 
 const relationshipsFactory: ExcelOOXMLTemplate = {
     getTemplate(c: ExcelRelationship[]) {
-        const children = c.map(relationship => relationshipFactory.getTemplate(relationship));
+        const children = c.map((relationship) => relationshipFactory.getTemplate(relationship));
 
         return {
-            name: "Relationships",
+            name: 'Relationships',
             properties: {
                 rawMap: {
-                    xmlns: "http://schemas.openxmlformats.org/package/2006/relationships"
-                }
+                    xmlns: 'http://schemas.openxmlformats.org/package/2006/relationships',
+                },
             },
-            children
+            children,
         };
-    }
+    },
 };
 
 export default relationshipsFactory;

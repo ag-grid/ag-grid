@@ -1,8 +1,8 @@
-import { Alert } from '@components/alert/Alert';
+import { Alert } from '@ag-website-shared/components/alert/Alert';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
 import Grid from '@components/grid/Grid';
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/pipelineChangelog.module.scss';
+import styles from '@pages-styles/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -24,11 +24,11 @@ const COLUMN_DEFS = [
         field: 'status',
         width: 135,
         valueGetter: (params) => {
-            let fixVersionsArr = params.data.versions;
-            let hasFixVersion = fixVersionsArr.length > 0;
+            const fixVersionsArr = params.data.versions;
+            const hasFixVersion = fixVersionsArr.length > 0;
             if (hasFixVersion) {
-                let latestFixVersion = fixVersionsArr.length - 1;
-                let fixVersion = fixVersionsArr[latestFixVersion];
+                const latestFixVersion = fixVersionsArr.length - 1;
+                const fixVersion = fixVersionsArr[latestFixVersion];
                 if (fixVersion === 'Next' && (params.data.status === 'Backlog' || params.data.status === 'Done')) {
                     return 'Next Release';
                 }
@@ -78,21 +78,21 @@ const detailCellRendererParams = (params) => {
 
     function makeLinksFunctional(message) {
         let msgArr = message.split(' ');
-        let linkStrIdx = msgArr.findIndex((word) => word.includes('https://'));
+        const linkStrIdx = msgArr.findIndex((word) => word.includes('https://'));
         if (linkStrIdx > 0) {
             msgArr = msgArr.map((element) => {
                 if (element.includes('https://')) {
-                    let beginningIndex = element.indexOf('http');
-                    let endIndex = element.indexOf('<', beginningIndex);
-                    let isEndIndex = endIndex >= 0;
+                    const beginningIndex = element.indexOf('http');
+                    const endIndex = element.indexOf('<', beginningIndex);
+                    const isEndIndex = endIndex >= 0;
                     let length = 0;
                     if (isEndIndex) {
                         length = endIndex - beginningIndex;
                     }
 
                     const httpIdx = element.indexOf('http');
-                    let link = length ? element.substring(httpIdx, httpIdx + length) : element.substring(httpIdx);
-                    let htmlLink = isEndIndex
+                    const link = length ? element.substring(httpIdx, httpIdx + length) : element.substring(httpIdx);
+                    const htmlLink = isEndIndex
                         ? `<a class=${styles.link} href="${link}"
           target="_blank">${link}</a>${element.substring(endIndex)}`
                         : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
@@ -106,7 +106,7 @@ const detailCellRendererParams = (params) => {
     }
 
     message = makeLinksFunctional(message);
-    let res = {};
+    const res = {};
     res.message = message;
 
     return res;
@@ -166,7 +166,7 @@ export const Pipeline = ({ location }) => {
                     onChange={onQuickFilterChange}
                 ></input>
                 <span className={classnames(styles.searchExplainer, 'text-secondary')}>
-                    Find pipeline items by issue number, summary content, or version
+                    Find pipeline items by issue number, summary content
                 </span>
             </div>
 

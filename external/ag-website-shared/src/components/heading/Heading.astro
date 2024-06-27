@@ -1,0 +1,16 @@
+---
+import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
+
+interface Props {
+    level: number;
+    id: string;
+}
+
+const { level, id } = Astro.props;
+const Heading = `h${level}`;
+---
+
+<Heading id={id}>
+    <slot />
+    <LinkIcon href={`#${id}`} />
+</Heading>

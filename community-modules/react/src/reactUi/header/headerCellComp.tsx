@@ -1,11 +1,18 @@
+import type {
+    ColumnSortState,
+    HeaderCellCtrl,
+    IHeader,
+    IHeaderCellComp,
+    UserCompDetails,
+} from '@ag-grid-community/core';
+import { CssClassManager, _removeAriaSort, _setAriaSort } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
 import { BeansContext } from '../beansContext';
-import { CssClassManager, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails, _ } from '@ag-grid-community/core';
-import { isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
+import { isComponentStateless } from '../utils';
 
-const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
-
+const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     const { ctrl } = props;
     const isAlive = ctrl.isAlive();
 
@@ -18,7 +25,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeader>();
 
-    let cssClassManager = useRef<CssClassManager>();
+    const cssClassManager = useRef<CssClassManager>();
     if (isAlive && !cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
@@ -29,19 +36,19 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         }
 
         const compProxy: IHeaderCellComp = {
-            setWidth: width => {
+            setWidth: (width: string) => {
                 if (eGui.current) {
                     eGui.current.style.width = width;
                 }
             },
-            addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
-            setAriaSort: sort => {
+            addOrRemoveCssClass: (name: string, on: boolean) => cssClassManager.current!.addOrRemoveCssClass(name, on),
+            setAriaSort: (sort?: ColumnSortState) => {
                 if (eGui.current) {
-                    sort ? _.setAriaSort(eGui.current, sort) : _.removeAriaSort(eGui.current)
+                    sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
                 }
             },
-            setUserCompDetails: compDetails => setUserCompDetails(compDetails),
-            getUserCompInstance: () => userCompRef.current || undefined
+            setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
+            getUserCompInstance: () => userCompRef.current || undefined,
         };
 
         ctrl.setComp(compProxy, eGui.current, eResize.current!, eHeaderCompWrapper.current!);
@@ -51,7 +58,10 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     }, []);
 
     // js comps
-    useLayoutEffect(() => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!, userCompRef), [userCompDetails]);
+    useLayoutEffect(
+        () => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!, userCompRef),
+        [userCompDetails]
+    );
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {
@@ -67,16 +77,13 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div
-            ref={setRef}
-            className="ag-header-cell"
-            col-id={colId}
-            role="columnheader"
-        >
+        <div ref={setRef} className="ag-header-cell" col-id={colId} role="columnheader">
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
-            { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
-            { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
+                {reactUserComp && userCompStateless && <UserCompClass {...userCompDetails!.params} />}
+                {reactUserComp && !userCompStateless && (
+                    <UserCompClass {...userCompDetails!.params} ref={userCompRef} />
+                )}
             </div>
         </div>
     );

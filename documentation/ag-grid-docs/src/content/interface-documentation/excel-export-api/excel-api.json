@@ -43,6 +43,31 @@
             }
         }
     },
+    "ExcelHeaderFooter": {
+        "meta": {
+            "description": "Properties available on the `ExcelHeaderFooter` interface. At least one of header or footer is required or both.",
+            "suppressMissingPropCheck": true
+        },
+        "header": {
+            "description": "An array of maximum 3 items (`Left`, `Center`, `Right`), containing header configurations.",
+            "type": "ExcelHeaderFooterContent[]"
+        },
+        "footer": {
+            "description": "An array of maximum 3 items (`Left`, `Center`, `Right`), containing footer configurations.",
+            "type": "ExcelHeaderFooterContent[]"
+        }
+    },
+    "ExcelHeaderFooterConfig": {
+        "all": {
+            "type": "ExcelHeaderFooter"
+        },
+        "first": {
+            "type": "ExcelHeaderFooter"
+        },
+        "even": {
+            "type": "ExcelHeaderFooter"
+        }
+    },
     "ExcelHeaderFooterContent": {
         "value": {
             "isRequired": true
@@ -50,6 +75,28 @@
     },
     "ExcelStyle": {
         "id": {
+            "isRequired": true
+        }
+    },
+    "ExcelHeaderFooterImage": {
+        "meta": {},
+        "id": {
+            "isRequired": true
+        },
+        "imageType": {
+            "isRequired": true
+        },
+        "base64": {
+            "isRequired": true,
+            "more": {
+                "name": "Base64",
+                "url": "https://en.wikipedia.org/wiki/Base64"
+            }
+        },
+        "width": {
+            "isRequired": true
+        },
+        "height": {
             "isRequired": true
         }
     }

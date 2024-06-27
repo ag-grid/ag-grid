@@ -1,49 +1,59 @@
-import {
-    AgGroupComponentParams,
-    Autowired,
-    Component,
-    PostConstruct,
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgCheckboxSelector, Component } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
+
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class NavigatorPanel extends Component {
+    private chartTranslationService: ChartTranslationService;
 
-    public static TEMPLATE = /* html */
-        `<div>
-            <ag-group-component ref="navigatorGroup">
-                <ag-slider ref="navigatorHeightSlider"></ag-slider>
-                <ag-checkbox ref="navigatorMiniChartCheckbox"></ag-checkbox>
-            </ag-group-component>
-        </div>`;
-
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+    }
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const navigatorGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             'navigator.enabled',
             {
                 cssIdentifier: 'charts-advanced-settings-top-level',
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
-                title: this.chartTranslationService.translate("navigator"),
+                title: this.chartTranslationService.translate('navigator'),
                 suppressEnabledCheckbox: true,
-                useToggle: true
+                useToggle: true,
             }
         );
-        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.height", "height", 60);
+        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
+            'navigator.height',
+            'height',
+            60
+        );
         navigatorHeightSliderParams.minValue = 10;
-        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams("navigator.miniChart.enabled", "miniChart");
+        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
+            'navigator.miniChart.enabled',
+            'miniChart'
+        );
 
-        this.setTemplate(NavigatorPanel.TEMPLATE, {
-            navigatorGroup: navigatorGroupParams,
-            navigatorHeightSlider: navigatorHeightSliderParams,
-            navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="navigatorGroup">
+                <ag-slider data-ref="navigatorHeightSlider"></ag-slider>
+                <ag-checkbox data-ref="navigatorMiniChartCheckbox"></ag-checkbox>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgSliderSelector, AgCheckboxSelector],
+            {
+                navigatorGroup: navigatorGroupParams,
+                navigatorHeightSlider: navigatorHeightSliderParams,
+                navigatorMiniChartCheckbox: navigatorMiniChartCheckboxParams,
+            }
+        );
     }
 }

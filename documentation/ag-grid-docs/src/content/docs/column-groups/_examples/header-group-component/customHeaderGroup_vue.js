@@ -7,13 +7,14 @@ export default {
     `,
     data: function () {
         return {
-            groupExpanded: false
+            groupExpanded: false,
         };
     },
-    beforeMount() {
-    },
+    beforeMount() {},
     mounted() {
-        this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
+        this.params.columnGroup
+            .getProvidedColumnGroup()
+            .addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
 
         this.syncExpandButtons();
     },
@@ -24,6 +25,6 @@ export default {
         },
         syncExpandButtons() {
             this.groupExpanded = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
-        }
-    }
+        },
+    },
 };

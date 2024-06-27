@@ -1,42 +1,42 @@
-import {
-    _,
-    Autowired,
-    BeanStub,
-    Events,
+import type {
+    AgColumn,
+    BeanCollection,
+    FuncColsService,
+    IRowNode,
+    ISelectionService,
     IServerSideStore,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
+    IsApplyServerSideTransactionParams,
+    LoadSuccessParams,
     RowBounds,
     RowNode,
     ServerSideGroupLevelParams,
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
     StoreRefreshAfterParams,
+    StoreRefreshedEvent,
     StoreUpdatedEvent,
     WithoutGridCommon,
-    Column,
-    ColumnModel,
-    IsApplyServerSideTransactionParams,
-    SelectionChangedEvent,
-    IRowNode,
-    StoreRefreshedEvent,
-    ISelectionService,
-    LoadSuccessParams
-} from "@ag-grid-community/core";
-import { SSRMParams } from "../../serverSideRowModel";
-import { StoreUtils } from "../storeUtils";
-import { BlockUtils } from "../../blocks/blockUtils";
-import { LazyCache } from "./lazyCache";
+} from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, ServerSideTransactionResultStatus, _warnOnce } from '@ag-grid-community/core';
+
+import type { BlockUtils } from '../../blocks/blockUtils';
+import type { SSRMParams } from '../../serverSideRowModel';
+import type { StoreUtils } from '../storeUtils';
+import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
+    private blockUtils: BlockUtils;
+    private storeUtils: StoreUtils;
+    private selectionService: ISelectionService;
+    private funcColsService: FuncColsService;
 
-    @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+    public wireBeans(beans: BeanCollection) {
+        this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
+        this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
+        this.selectionService = beans.selectionService;
+        this.funcColsService = beans.funcColsService;
+    }
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -54,7 +54,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
     private groupField: string | undefined;
-    private rowGroupColumn: Column;
+    private rowGroupColumn: AgColumn;
 
     private idSequence = new NumberSequence();
     private cache: LazyCache;
@@ -71,38 +71,36 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.info = {};
     }
 
-
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         let numberOfRows = 1;
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
 
             this.eventService.dispatchEventOnce({
-                type: Events.EVENT_ROW_COUNT_READY
+                type: 'rowCountReady',
             });
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
 
-        const usingTreeData = this.gridOptionsService.get('treeData');
+        const usingTreeData = this.gos.get('treeData');
 
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.funcColsService.getRowGroupColumns()[this.level];
         }
     }
 
-    @PreDestroy
-    private destroyRowNodes(): void {
+    public override destroy(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+        super.destroy();
     }
 
     /**
      * Given a server response, ingest the rows outside of the data source lifecycle.
-     * 
+     *
      * @param rowDataParams the server response containing the rows to ingest
      * @param startRow the index to start ingesting rows
      * @param expectedRows the expected number of rows in the response (used to determine if the last row index is known)
@@ -113,25 +111,25 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Applies a given transaction to the data set within this store
-     * 
+     *
      * @param transaction an object containing delta instructions determining the changes to apply to this store
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = this.gridOptionsService.getCallback('getRowId');
+        const idFunc = this.gos.getRowIdCallback();
         if (!idFunc) {
-            console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
+            _warnOnce('getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
             };
         }
 
-        const applyCallback = this.gridOptionsService.getCallback('isApplyServerSideTransaction');
+        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
         if (applyCallback) {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                groupLevelInfo: this.info
+                groupLevelInfo: this.info,
             };
             const apply = applyCallback(params);
             if (!apply) {
@@ -159,15 +157,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         let removedNodes: RowNode[] | undefined = undefined;
         if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map(data => (
+            const allIdsToRemove = transaction.remove.map((data) =>
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getGroupKeys(), data })
-            ));
+            );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
         }
 
-        const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
-        
+        const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+
         const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
         const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
         if (isClientSideSort && isUpdateOrAdd) {
@@ -181,18 +179,18 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             update: updatedNodes,
             add: insertedNodes,
             remove: removedNodes,
-        }
+        };
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
         const nodesToDeselect: RowNode[] = [];
-        updatedNodes?.forEach(node => {
+        updatedNodes?.forEach((node) => {
             if (node.isSelected() && !node.selectable) {
                 nodesToDeselect.push(node);
             }
         });
 
-        removedNodes?.forEach(node => {
+        removedNodes?.forEach((node) => {
             if (node.isSelected()) {
                 nodesToDeselect.push(node);
             }
@@ -214,7 +212,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     clearDisplayIndexes(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
-        this.cache.getNodes().forEach(lazyNode => this.blockUtils.clearDisplayIndex(lazyNode.node));
+        this.cache.getNodes().forEach((lazyNode) => this.blockUtils.clearDisplayIndex(lazyNode.node));
 
         if (this.parentRowNode.sibling) {
             this.blockUtils.clearDisplayIndex(this.parentRowNode.sibling);
@@ -236,7 +234,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         return this.displayIndexEnd;
     }
 
-    /** 
+    /**
      * @returns the virtual size of this store
      */
     getRowCount(): number {
@@ -246,7 +244,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         return this.cache.getRowCount();
     }
 
-    /** 
+    /**
      * Sets the current row count of the store, and whether the last row index is known
      */
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void {
@@ -255,7 +253,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Given a display index, returns whether that row is within this store or a child store of this store
-     * 
+     *
      * @param displayIndex the visible index of a row
      * @returns whether or not the row exists within this store
      */
@@ -267,20 +265,32 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Recursively sets up the display indexes and top position of every node belonging to this store.
-     * 
+     *
      * Called after a row height changes, or a store updated event.
-     * 
+     *
      * @param displayIndexSeq the number sequence for generating the display index of each row
      * @param nextRowTop an object containing the next row top value intended to be modified by ref per row
      */
-    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number; }): void {
+    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void {
         this.displayIndexStart = displayIndexSeq.peek();
         this.topPx = nextRowTop.value;
+
+        const footerNode =
+            this.parentRowNode.level > -1 && this.gos.getGroupTotalRowCallback()({ node: this.parentRowNode });
+        if (!footerNode) {
+            this.parentRowNode.destroyFooter();
+        }
+
+        if (footerNode === 'top') {
+            this.parentRowNode.createFooter();
+            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
+        }
 
         // delegate to the store to set the row display indexes
         this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop);
 
-        if (this.parentRowNode.sibling) {
+        if (footerNode === 'bottom') {
+            this.parentRowNode.createFooter();
             this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
         }
 
@@ -290,12 +300,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Recursively applies a provided function to every node
-     * 
+     *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
-    forEachStoreDeep(callback: (store: IServerSideStore, index: number) => void, sequence = new NumberSequence()): void {
+    forEachStoreDeep(
+        callback: (store: IServerSideStore, index: number) => void,
+        sequence = new NumberSequence()
+    ): void {
         callback(this, sequence.next());
-        this.cache.getNodes().forEach(lazyNode => {
+        this.cache.getNodes().forEach((lazyNode) => {
             const childCache = lazyNode.node.childStore;
             if (childCache) {
                 childCache.forEachStoreDeep(callback, sequence);
@@ -305,11 +318,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Recursively applies a provided function to every node
-     * 
+     *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
     forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
-        this.cache.getNodes().forEach(lazyNode => {
+        this.cache.getNodes().forEach((lazyNode) => {
             callback(lazyNode.node, sequence.next());
             const childCache = lazyNode.node.childStore;
             if (childCache) {
@@ -320,12 +333,22 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Recursively applies a provided function to every node
-     * 
+     *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence(), includeFooterNodes = false): void {
+    forEachNodeDeepAfterFilterAndSort(
+        callback: (rowNode: RowNode<any>, index: number) => void,
+        sequence = new NumberSequence(),
+        includeFooterNodes = false
+    ): void {
+        const footerNode =
+            this.parentRowNode.level > -1 && this.gos.getGroupTotalRowCallback()({ node: this.parentRowNode });
+        if (footerNode === 'top') {
+            callback(this.parentRowNode.sibling, sequence.next());
+        }
+
         const orderedNodes = this.cache.getOrderedNodeMap();
-        for (let key in orderedNodes) {
+        for (const key in orderedNodes) {
             const lazyNode = orderedNodes[key];
             callback(lazyNode.node, sequence.next());
             const childCache = lazyNode.node.childStore;
@@ -334,7 +357,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        if (includeFooterNodes && this.parentRowNode.sibling) {
+        if (footerNode === 'bottom') {
             callback(this.parentRowNode.sibling, sequence.next());
         }
     }
@@ -350,13 +373,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 node.stub = true;
             }
         });
-        this.forEachChildStoreShallow(store => store.retryLoads());
+        this.forEachChildStoreShallow((store) => store.retryLoads());
         this.fireStoreUpdatedEvent();
     }
 
     /**
      * Given a display index, returns the row at that location.
-     * 
+     *
      * @param displayRowIndex the displayed index within the grid to search for
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
@@ -369,7 +392,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Given a display index, returns the row top and height for the row at that index.
-     * 
+     *
      * @param displayIndex the display index of the node
      * @returns an object containing the rowTop and rowHeight of the node at the given displayIndex
      */
@@ -395,8 +418,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 return boundsFromRow;
             }
         }
-    
-        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
+
+        const defaultRowHeight = this.gos.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
             const numberOfRowDiff = (nextNode.node.rowIndex! - displayIndex) * defaultRowHeight;
@@ -417,17 +440,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Given a vertical pixel, determines whether this store contains a row at that pixel
-     * 
+     *
      * @param pixel a vertical pixel position from the grid
      * @returns whether that pixel points to a virtual space belonging to this store
      */
     isPixelInRange(pixel: number): boolean {
-        return pixel >= this.topPx && pixel < (this.topPx + this.heightPx);
+        return pixel >= this.topPx && pixel < this.topPx + this.heightPx;
     }
 
     /**
      * Given a vertical pixel, returns the row existing at that pixel location
-     * 
+     *
      * @param pixel a vertical pixel position from the grid
      * @returns the display index at the given pixel location
      */
@@ -439,7 +462,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (pixel >= this.topPx + this.heightPx) {
             return this.getDisplayIndexEnd()! - 1;
         }
-    
+
+        if (
+            this.parentRowNode.sibling &&
+            pixel > this.parentRowNode.sibling.rowTop! &&
+            pixel < this.parentRowNode.sibling.rowTop! + this.parentRowNode.sibling.rowHeight!
+        ) {
+            return this.parentRowNode.sibling.rowIndex!;
+        }
+
         let distToPreviousNodeTop: number = Number.MAX_SAFE_INTEGER;
         let previousNode: RowNode | null = null;
         let distToNextNodeTop: number = Number.MAX_SAFE_INTEGER;
@@ -447,7 +478,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         this.cache.getNodes().forEach(({ node }) => {
             const distBetween = Math.abs(pixel - node.rowTop!);
-    
+
             // previous node
             if (node.rowTop! < pixel) {
                 if (distBetween < distToPreviousNodeTop) {
@@ -475,7 +506,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
+        const defaultRowHeight = this.gos.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
             const nextTop = nextNode.rowTop!;
@@ -491,13 +522,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Given a path of group keys, returns the child store for that group.
-     * 
+     *
      * @param keys the grouping path to the desired store
      * @returns the child store for the given keys, or null if not found
      */
     getChildStore(keys: string[]): IServerSideStore | null {
         return this.storeUtils.getChildStore(keys, this, (key: string) => {
-            const lazyNode = this.cache.getNodes().find(lazyNode => lazyNode.node.key == key);
+            const lazyNode = this.cache.getNodes().find((lazyNode) => lazyNode.node.key == key);
             if (!lazyNode) {
                 return null;
             }
@@ -507,7 +538,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Executes a provided callback on each child store belonging to this store
-     * 
+     *
      * @param cb the callback to execute
      */
     private forEachChildStoreShallow(cb: (store: IServerSideStore) => void) {
@@ -515,22 +546,25 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             if (node.childStore) {
                 cb(node.childStore);
             }
-        })
+        });
     }
 
     /**
      * Executes after a change to sorting, determines recursively whether this store or a child requires refreshed.
-     * 
+     *
      * If a purge refresh occurs, the row count is preserved.
-     * 
+     *
      * @param params a set of properties pertaining to the sort changes
      */
     refreshAfterSort(params: StoreRefreshAfterParams) {
         const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
-        if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
+        if (
+            serverSortsAllLevels ||
+            this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)
+        ) {
             const allRowsLoaded = this.cache.isStoreFullyLoaded();
-            const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
-            
+            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+
             const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
             if (!isClientSideSort) {
                 const oldCount = this.cache.getRowCount();
@@ -546,26 +580,29 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         // call refreshAfterSort on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
-        this.forEachChildStoreShallow(store => store.refreshAfterSort(params));
+        this.forEachChildStoreShallow((store) => store.refreshAfterSort(params));
     }
 
     /**
      * Executes after a change to filtering, determines recursively whether this store or a child requires refreshed.
-     * 
+     *
      * If a refresh occurs, the row count is reset.
-     * 
+     *
      * @param params a set of properties pertaining to the filter changes
      */
     refreshAfterFilter(params: StoreRefreshAfterParams) {
         const serverFiltersAllLevels = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
-        if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
+        if (
+            serverFiltersAllLevels ||
+            this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)
+        ) {
             this.refreshStore(true);
             return;
         }
 
         // call refreshAfterFilter on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
-        this.forEachChildStoreShallow(store => store.refreshAfterFilter(params));
+        this.forEachChildStoreShallow((store) => store.refreshAfterFilter(params));
     }
 
     /**
@@ -586,7 +623,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Used for pagination, given a local/store index, returns the display index of that row
-     * 
+     *
      * @param topLevelIndex the store index of a row
      * @returns the display index for the given store index
      */
@@ -597,7 +634,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Used for pagination to determine if the last page is known, and for aria to determine if the last grid row is known
-     * 
+     *
      * @returns whether the last index of this store is known, or if lazy loading still required
      */
     isLastRowIndexKnown(): boolean {
@@ -606,29 +643,23 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Used by the selection service to select a range of nodes
-     * 
+     *
      * @param firstInRange the first node in the range to find
      * @param lastInRange the last node in the range to find
      * @returns a range of nodes between firstInRange and lastInRange inclusive
      */
     getRowNodesInRange(firstInRange: RowNode<any>, lastInRange: RowNode<any>): RowNode<any>[] {
-        const result: RowNode[] = [];
-
-        let inActiveRange = false;
-
-        // if only one node passed, we start the selection at the top
-        if (_.missing(firstInRange)) {
-            inActiveRange = true;
-        }
-
-        return this.cache.getNodes().filter(({ node }) => {
-            return node.rowIndex! >= firstInRange.rowIndex! &&  node.rowIndex! <= lastInRange.rowIndex!;
-        }).map(({ node }) => node);
+        return this.cache
+            .getNodes()
+            .filter(({ node }) => {
+                return node.rowIndex! >= firstInRange.rowIndex! && node.rowIndex! <= lastInRange.rowIndex!;
+            })
+            .map(({ node }) => node);
     }
 
     /**
      * Mutates a given array to add this stores state, and recursively add all the children store states.
-     * 
+     *
      * @param result a mutable results array
      */
     addStoreStates(result: ServerSideGroupLevelState[]) {
@@ -641,7 +672,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             maxBlocksInCache: this.storeParams.maxBlocksInCache,
             cacheBlockSize: this.storeParams.cacheBlockSize,
         });
-        this.forEachChildStoreShallow(childStore => childStore.addStoreStates(result));
+        this.forEachChildStoreShallow((childStore) => childStore.addStoreStates(result));
     }
 
     public getIdSequence() {
@@ -678,7 +709,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
         const event: WithoutGridCommon<StoreUpdatedEvent> = {
-            type: Events.EVENT_STORE_UPDATED
+            type: 'storeUpdated',
         };
         this.eventService.dispatchEvent(event);
     }
@@ -686,7 +717,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     // gets called when row data updated, and no more refreshing needed
     public fireRefreshFinishedEvent(): void {
         const event: WithoutGridCommon<StoreRefreshedEvent> = {
-            type: Events.EVENT_STORE_REFRESHED,
+            type: 'storeRefreshed',
             route: this.parentRowNode.getRoute(),
         };
         this.eventService.dispatchEvent(event);
@@ -700,7 +731,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         return {
             topPx: this.topPx,
             heightPx: this.heightPx,
-        }
+        };
     }
 
     public getCache() {

@@ -1,0 +1,62 @@
+[
+    {
+        "company": "Microsoft",
+        "website": "https://www.microsoft.com/",
+        "revenue": 198300000000,
+        "hardware": true
+    },
+    {
+        "company": "Dropbox",
+        "website": "https://www.dropbox.com/",
+        "revenue": 2502000000,
+        "hardware": false
+    },
+    {
+        "company": "Oracle",
+        "website": "https://www.oracle.com/",
+        "revenue": 49950000000,
+        "hardware": false
+    },
+    {
+        "company": "Amazon",
+        "website": "https://www.amazon.co.uk/",
+        "revenue": 514000000000,
+        "hardware": true
+    },
+    {
+        "company": "Accenture",
+        "website": "https://www.accenture.com/",
+        "revenue": 64110000000,
+        "hardware": false
+    },
+    {
+        "company": "Meta",
+        "website": "https://www.meta.com/",
+        "revenue": 32000000000,
+        "hardware": true
+    },
+    {
+        "company": "Workday",
+        "website": "https://www.workday.com/",
+        "revenue": 7260000000,
+        "hardware": false
+    },
+    {
+        "company": "Adobe",
+        "website": "https://www.adobe.com/",
+        "revenue": 15780000000,
+        "hardware": false
+    },
+    {
+        "company": "Google",
+        "website": "https://www.google.com/",
+        "revenue": 305630000000,
+        "hardware": true
+    },
+    {
+        "company": "Broadcom",
+        "website": "https://www.broadcom.com/",
+        "revenue": 35820000000,
+        "hardware": true
+    }
+]

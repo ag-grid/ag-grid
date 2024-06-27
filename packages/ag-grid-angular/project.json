@@ -6,15 +6,8 @@
   "targets": {
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": [
-        "build:copy-source"
-      ],
-      "inputs": [
-        "tsDeclarations",
-        "{projectRoot}/angular.json",
-        "{projectRoot}/projects/**",
-        "!{projectRoot}/dist"
-      ],
+      "dependsOn": ["build:copy-source", "@ag-grid-community/core"],
+      "inputs": ["tsDeclarations", "{projectRoot}/angular.json", "{projectRoot}/projects/**", "!{projectRoot}/dist"],
       "cache": true,
       "outputs": ["{projectRoot}/dist"],
       "options": {
@@ -23,9 +16,7 @@
     },
     "build:copy-source": {
       "dependsOn": ["@ag-grid-community/angular:build"],
-      "inputs": [
-        "{workspaceRoot}/community-modules/angular/projects/ag-grid-angular/src/**"
-      ],
+      "inputs": ["{workspaceRoot}/community-modules/angular/projects/ag-grid-angular/src/**"],
       "cache": true,
       "command": "npx gulp copy-from-module-source",
       "options": {

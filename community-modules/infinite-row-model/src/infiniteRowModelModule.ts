@@ -1,10 +1,43 @@
-import { Module, ModuleNames } from "@ag-grid-community/core";
-import { InfiniteRowModel } from "./infiniteRowModel/infiniteRowModel";
-import { VERSION } from "./version";
+import type { Module } from '@ag-grid-community/core';
+import {
+    ModuleNames,
+    RowModelHelperService,
+    _RowNodeBlockModule,
+    _SsrmInfiniteSharedApiModule,
+} from '@ag-grid-community/core';
+
+import { InfiniteRowModel } from './infiniteRowModel/infiniteRowModel';
+import {
+    getInfiniteRowCount,
+    isLastRowIndexKnown,
+    purgeInfiniteCache,
+    refreshInfiniteCache,
+} from './infiniteRowModel/infiniteRowModelApi';
+import { VERSION } from './version';
+
+export const InfiniteRowModelCoreModule: Module = {
+    version: VERSION,
+    moduleName: `${ModuleNames.InfiniteRowModelModule}-core`,
+    rowModel: 'infinite',
+    beans: [InfiniteRowModel],
+    dependantModules: [_RowNodeBlockModule],
+};
+
+export const InfiniteRowModelApiModule: Module = {
+    version: VERSION,
+    moduleName: `${ModuleNames.InfiniteRowModelModule}-api`,
+    beans: [RowModelHelperService],
+    apiFunctions: {
+        refreshInfiniteCache,
+        purgeInfiniteCache,
+        getInfiniteRowCount,
+        isLastRowIndexKnown,
+    },
+    dependantModules: [InfiniteRowModelCoreModule, _SsrmInfiniteSharedApiModule],
+};
 
 export const InfiniteRowModelModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.InfiniteRowModelModule,
-    rowModel: 'infinite',
-    beans: [InfiniteRowModel],
+    dependantModules: [InfiniteRowModelCoreModule, InfiniteRowModelApiModule],
 };

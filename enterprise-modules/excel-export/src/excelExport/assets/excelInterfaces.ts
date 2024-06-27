@@ -1,6 +1,6 @@
-import { ExcelFont, ExcelImage } from "@ag-grid-community/core";
+import type { ExcelFont, ExcelHeaderFooterImage, ExcelImage } from '@ag-grid-community/core';
 
-export type ImageIdMap = Map</** imageId */string, { type: string, index: number }>;
+export type ImageIdMap = Map</** imageId */ string, { type: string; index: number }>;
 export type BorderProperty = string | undefined;
 
 export interface NumberFormat {
@@ -41,14 +41,6 @@ export interface BorderSet {
     diagonal?: Border;
 }
 
-export interface StylesMap {
-    [key: string]: number;
-}
-
-export interface ColorMap {
-    [key: string]: string;
-}
-
 export interface ExcelThemeFont extends ExcelFont {
     colorTheme?: string;
     scheme?: string;
@@ -61,6 +53,19 @@ export interface Fill {
     fgRgb?: string;
     bgIndexed?: string;
     bgRgb?: string;
+}
+
+type ExcelHeaderFooterSide = 'L' | 'C' | 'R';
+type ExcelHeaderPosition = 'H';
+type ExcelFooterPosition = 'F';
+type ExcelHeaderFooterFirst = 'FIRST';
+type ExcelHeaderFooterEven = 'EVEN';
+
+export type ExcelHeaderFooterPosition =
+    `${ExcelHeaderFooterSide}${ExcelHeaderPosition | ExcelFooterPosition}${ExcelHeaderFooterFirst | ExcelHeaderFooterEven | ''}`;
+
+export interface ExcelHeaderFooterCalculatedImage extends ExcelHeaderFooterImage {
+    headerFooterPosition: ExcelHeaderFooterPosition;
 }
 
 export interface ExcelCalculatedImage extends ExcelImage {

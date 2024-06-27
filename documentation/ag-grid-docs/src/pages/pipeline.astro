@@ -1,7 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import { PagesNavigationFromLocalStorage } from '@features/pages-navigation/components/PagesNavigationFromLocalStorage';
+import { PagesNavigationFromLocalStorage } from '@components/pages-navigation/components/PagesNavigationFromLocalStorage';
 import { getDocsPages } from '../features/docs/utils/pageData';
 import type { Framework, MenuSection } from '@ag-grid-types';
 import { Pipeline } from '@components/pipeline/Pipeline';
@@ -17,12 +17,15 @@ const { data: menu } = await getEntry('menu', 'data');
 const allMenuSections = menu.main.sections as MenuSection[];
 ---
 
-<Layout title={'AG Grid Pipeline'} showDocsNav={true} showSearchBar={true}>
+<Layout
+    title={'AG Grid Pipeline'}
+    description={'Lists feature requests and bugs in our product backlog. Browse items release date, issue number or summary content'}
+    showDocsNav={true}
+    showSearchBar={true}
+>
     <div class:list={['contentViewport layout-grid']}>
         <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
 
-        <main is="div">
-            <Pipeline client:only />
-        </main>
+        <Pipeline client:only="react" />
     </div>
 </Layout>

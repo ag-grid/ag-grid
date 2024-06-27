@@ -17,8 +17,19 @@ interface Props {
     extras?: string[];
 }
 
-const { isDev, title, modifiedTimeMs, isEnterprise, styleFiles, scriptFiles, indexFragment, appLocation, extraStyles, extras } =
-    Astro.props as Props;
+const {
+    isDev,
+    title,
+    modifiedTimeMs,
+    isEnterprise,
+    isLocale,
+    styleFiles,
+    scriptFiles,
+    indexFragment,
+    appLocation,
+    extraStyles,
+    extras,
+} = Astro.props as Props;
 
 import { MetaData } from './lib/MetaData';
 import { ExampleStyle } from './lib/ExampleStyle';
@@ -27,12 +38,18 @@ import { Extras } from './lib/Extras';
 import { Scripts } from './lib/Scripts';
 import { SITE_BASE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
-import { getCacheBustingUrl, getGridEnterpriseScriptPath, getGridScriptPath } from '@utils/gridLibraryPaths';
+import {
+    getCacheBustingUrl,
+    getGridEnterpriseScriptPath,
+    getGridScriptPath,
+    getGridLocaleScriptPath,
+} from '@utils/gridLibraryPaths';
 
 const siteUrl = Astro.site ? pathJoin(Astro.site, SITE_BASE_URL) : '/';
 
 const gridScriptPath = getCacheBustingUrl(getGridScriptPath(siteUrl), modifiedTimeMs);
 const gridScriptEnterprisePath = getCacheBustingUrl(getGridEnterpriseScriptPath(siteUrl), modifiedTimeMs);
+const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl), modifiedTimeMs);
 ---
 
 <html lang="en">
@@ -61,6 +78,7 @@ const gridScriptEnterprisePath = getCacheBustingUrl(getGridEnterpriseScriptPath(
             window.__basePath = appLocation;
         </script>
         <script src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath}></script>
+        {isLocale && <script src={gridScriptLocalePath} />}
         <Scripts baseUrl={appLocation} files={scriptFiles} />
         <Styles
             baseUrl={appLocation}

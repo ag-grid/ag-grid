@@ -1,29 +1,25 @@
-import {Component} from "@angular/core";
-import { NgIf } from "@angular/common";
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
-    imports: [NgIf],
     template: `
-        <div
-            [style.paddingLeft.px]="paddingLeft"
-        >
-            <div
-                *ngIf="isGroup"
-                [style.transform]="rotation"
-                [style.cursor]="'pointer'"
-                [style.display]="'inline-block'"
-
-                (click)="onClick()"
-            >
-                &rarr;
-            </div>
+        <div [style.paddingLeft.px]="paddingLeft">
+            @if (isGroup) {
+                <div
+                    [style.transform]="rotation"
+                    [style.cursor]="'pointer'"
+                    [style.display]="'inline-block'"
+                    (click)="onClick()"
+                >
+                    &rarr;
+                </div>
+            }
             &nbsp;
-            {{params.value}}
+            {{ params.value }}
         </div>
-    `
+    `,
 })
 export class CustomGroupCellRenderer implements ICellRendererAngularComp {
     public params!: ICellRendererParams;
@@ -54,5 +50,5 @@ export class CustomGroupCellRenderer implements ICellRendererAngularComp {
 
     onExpand = () => {
         this.rotation = this.params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)';
-    }
+    };
 }

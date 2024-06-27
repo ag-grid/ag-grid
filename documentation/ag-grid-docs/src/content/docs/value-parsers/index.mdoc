@@ -8,7 +8,7 @@ After editing cells in the grid you have the opportunity to parse the value befo
 
 For example suppose you are editing a number using a text editor. The result will be a `string`, however you will probably want to store the result as a `number`. Use a Value Parser to convert the `string` to a `number`.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -57,7 +57,7 @@ Using the value parser for import applies to the following features:
 * [Fill Handle](./range-selection-fill-handle/)
 * [Copy Range Down](./range-selection/#copy-range-down)
 
-Using a value parser for import is normally used in conjunction with [Using a Value Formatter for Export](./value-formatters/#formating-for-export), where a [Value Formatter](./value-formatters/) is defined that does the reverse of the value parser.
+Using a value parser for import is normally used in conjunction with [Using a Value Formatter for Export](./value-formatters/#formatting-for-export), where a [Value Formatter](./value-formatters/) is defined that does the reverse of the value parser.
 
 The following example demonstrates using the value parser for import with each of the supported features mentioned above.
 

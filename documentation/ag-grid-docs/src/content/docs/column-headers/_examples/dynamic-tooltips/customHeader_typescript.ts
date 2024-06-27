@@ -1,4 +1,4 @@
-import { IHeaderParams } from '@ag-grid-community/core'
+import { IHeaderParams } from '@ag-grid-community/core';
 
 export interface ICustomHeaderParams {
     menuIcon: string;
@@ -37,10 +37,10 @@ export class CustomHeader {
             </div>
         `;
 
-        this.eMenuButton = div.querySelector(".customHeaderMenuButton");
-        this.eSortDownButton = div.querySelector(".customSortDownLabel");
-        this.eSortUpButton = div.querySelector(".customSortUpLabel");
-        this.eSortRemoveButton = div.querySelector(".customSortRemoveLabel");
+        this.eMenuButton = div.querySelector('.customHeaderMenuButton');
+        this.eSortDownButton = div.querySelector('.customSortDownLabel');
+        this.eSortUpButton = div.querySelector('.customSortUpLabel');
+        this.eSortRemoveButton = div.querySelector('.customSortRemoveLabel');
 
         if (agParams.enableMenu) {
             this.onMenuClickListener = this.onMenuClick.bind(this);
@@ -57,7 +57,6 @@ export class CustomHeader {
             this.onRemoveSortListener = this.onSortRequested.bind(this, null);
             this.eSortRemoveButton.addEventListener('click', this.onRemoveSortListener);
 
-
             this.onSortChangedListener = this.onSortChanged.bind(this);
             agParams.column.addEventListener('sortChanged', this.onSortChangedListener);
             this.onSortChanged();
@@ -70,29 +69,32 @@ export class CustomHeader {
         this.eGui = div;
 
         const customHeaderLabel = div.querySelector('.customHeaderLabel');
-        agParams.setTooltip(agParams.displayName, () => customHeaderLabel!.scrollWidth > customHeaderLabel!.clientWidth);
+        agParams.setTooltip(
+            agParams.displayName,
+            () => customHeaderLabel!.scrollWidth > customHeaderLabel!.clientWidth
+        );
     }
 
     onSortChanged() {
         const deactivate = (toDeactivateItems: any[]) => {
-            toDeactivateItems.forEach(toDeactivate => {
-                toDeactivate.className = toDeactivate.className.split(' ')[0]
+            toDeactivateItems.forEach((toDeactivate) => {
+                toDeactivate.className = toDeactivate.className.split(' ')[0];
             });
-        }
+        };
 
         const activate = (toActivate: any) => {
-            toActivate.className = toActivate.className + " active";
-        }
-
-        if (this.agParams.column.isSortAscending()) {
+            toActivate.className = toActivate.className + ' active';
+        };
+        const sort = this.agParams.column.getSort();
+        if (sort === 'asc') {
             deactivate([this.eSortUpButton, this.eSortRemoveButton]);
-            activate(this.eSortDownButton)
-        } else if (this.agParams.column.isSortDescending()) {
+            activate(this.eSortDownButton);
+        } else if (sort === 'desc') {
             deactivate([this.eSortDownButton, this.eSortRemoveButton]);
-            activate(this.eSortUpButton)
+            activate(this.eSortUpButton);
         } else {
             deactivate([this.eSortUpButton, this.eSortDownButton]);
-            activate(this.eSortRemoveButton)
+            activate(this.eSortRemoveButton);
         }
     }
 
@@ -110,7 +112,7 @@ export class CustomHeader {
 
     destroy() {
         if (this.onMenuClickListener) {
-            this.eMenuButton.removeEventListener('click', this.onMenuClickListener)
+            this.eMenuButton.removeEventListener('click', this.onMenuClickListener);
         }
         this.eSortDownButton.removeEventListener('click', this.onSortAscRequestedListener);
         this.eSortUpButton.removeEventListener('click', this.onSortDescRequestedListener);
@@ -118,4 +120,3 @@ export class CustomHeader {
         this.agParams.column.removeEventListener('sortChanged', this.onSortChangedListener);
     }
 }
-

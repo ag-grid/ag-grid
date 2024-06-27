@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import ts from 'typescript';
 
-import { Events } from './_copiedFromCore/eventKeys';
-import {getFormatterForTS} from './formatAST';
+import { ALL_EVENTS } from './_copiedFromCore/eventTypes';
+import { getFormatterForTS } from './formatAST';
 
 const { formatNode, findNode, getFullJsDoc, getJsDoc } = getFormatterForTS(ts);
 
@@ -12,9 +12,8 @@ function getCallbackForEvent(eventName: string): string {
     }
     return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
 }
-
-const EVENTS = Object.values(Events)
-const EVENT_LOOKUP = new Set(EVENTS.map(event => getCallbackForEvent(event)));
+const EVENTS = ALL_EVENTS;
+const EVENT_LOOKUP = new Set(EVENTS.map((event) => getCallbackForEvent(event)));
 
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
@@ -25,7 +24,7 @@ function findAllInNodesTree(node) {
     if (interfaceNode || classNode) {
         interfaces.push(node);
     }
-    ts.forEachChild(node, n => {
+    ts.forEachChild(node, (n) => {
         const nodeInterfaces = findAllInNodesTree(n);
         if (nodeInterfaces.length > 0) {
             interfaces = [...interfaces, ...nodeInterfaces];
@@ -37,9 +36,9 @@ function findAllInNodesTree(node) {
 
 function getArgTypes(parameters, file) {
     const args = {};
-    (parameters || []).forEach(p => {
+    (parameters || []).forEach((p) => {
         const initValue = formatNode(p.initializer, file);
-        const argName = `${p.name.escapedText}${p.questionToken ? '?' : ''}`
+        const argName = `${p.name.escapedText}${p.questionToken ? '?' : ''}`;
         args[argName] = `${formatNode(p.type, file)}${initValue ? ` = ${initValue}` : ''}`;
     });
     return args;
@@ -50,36 +49,34 @@ function toCamelCase(value) {
 }
 
 function extractTypesFromNode(node, srcFile, includeQuestionMark) {
-    let nodeMembers = {};
+    const nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
 
-
-    let name = node && node.name && node.name.escapedText;
+    const name = node && node.name && node.name.escapedText;
     let returnType = node && node.type && node.type.getFullText().trim();
-    let optional = includeQuestionMark ? node && !!node.questionToken : undefined;
+    const optional = includeQuestionMark ? node && !!node.questionToken : undefined;
 
     if (kind == 'PropertySignature') {
-
         if (node.type && node.type.parameters) {
             // sendToClipboard?: (params: SendToClipboardParams) => void;
             const methodArgs = getArgTypes(node.type.parameters, srcFile);
             returnType = formatNode(node.type.type, srcFile);
             nodeMembers[name] = {
                 meta: getJsDoc(node),
-                type: { arguments: methodArgs, returnType, optional }
+                type: { arguments: methodArgs, returnType, optional },
             };
         } else {
-            // i.e colWidth?: number;             
+            // i.e colWidth?: number;
             nodeMembers[name] = { meta: getJsDoc(node), type: { returnType, optional } };
         }
     } else if (kind == 'MethodSignature' || kind == 'MethodDeclaration') {
         // i.e isExternalFilterPresent?(): boolean;
-        // i.e doesExternalFilterPass?(node: IRowNode): boolean;        
+        // i.e doesExternalFilterPass?(node: IRowNode): boolean;
         const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
             meta: getJsDoc(node),
-            type: { arguments: methodArgs, returnType, optional }
+            type: { arguments: methodArgs, returnType, optional },
         };
 
         if (EVENT_LOOKUP.has(name)) {
@@ -90,7 +87,6 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             nodeMembers[shortName] = { ...nodeMembers[name], meta: { ...nodeMembers[name].meta, isEvent: true, name } };
             nodeMembers[name] = { ...nodeMembers[name], meta: { ...nodeMembers[name].meta, isEvent: true, name } };
         }
-
     }
     return nodeMembers;
 }
@@ -102,8 +98,8 @@ function parseFile(sourceFile) {
 
 export function getInterfaces(globs) {
     let interfaces = {};
-    let extensions = {};
-    globs.forEach(file => {
+    const extensions = {};
+    globs.forEach((file) => {
         const parsedFile = parseFile(file);
         interfaces = { ...interfaces, ...extractInterfaces(parsedFile, extensions) };
     });
@@ -116,20 +112,20 @@ export function getInterfaces(globs) {
 
 function getAncestors(extensions, child) {
     let ancestors = [];
-    const extended = typeof (child) === 'string' ? child : child.extends;
+    const extended = typeof child === 'string' ? child : child.extends;
     const parents = extensions[extended];
     if (parents) {
         ancestors = [...ancestors, ...parents];
-        parents.forEach(p => {
+        parents.forEach((p) => {
             if (p.extends === 'Omit') {
                 // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
                 // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
                 // e.g. export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'> { }
                 p = p.params[0];
             }
-            
-            ancestors = [...ancestors, ...getAncestors(extensions, p)]
-        })
+
+            ancestors = [...ancestors, ...getAncestors(extensions, p)];
+        });
     }
     return ancestors;
 }
@@ -140,35 +136,43 @@ function isBuiltinUtilityType(type) {
 
 function mergeAncestorProps(isDocStyle, parent, child, getProps) {
     const props = { ...getProps(child) };
-    let mergedProps = props;
+    const mergedProps = props;
     // If the parent has a generic params lets apply the child's specific types
     if (parent.params && parent.params.length > 0) {
+        let globalEventType = undefined;
+        if (parent.extends === 'AgGlobalEvent') {
+            // Special handling for global event types. This should be generic but this is a lot quicker for now.
+            globalEventType = parent.params[0];
+        }
 
         if (child.meta && child.meta.typeParams) {
             child.meta.typeParams.forEach((t, i) => {
-                Object.entries(props).forEach(([k, v]:[string,any]) => { //.filter(([k, v]) => k !== 'meta')
+                Object.entries(props).forEach(([k, v]: [string, any]) => {
+                    if (globalEventType && k === 'type' && v === 'TEventType') {
+                        v = globalEventType;
+                    }
                     delete mergedProps[k];
-                    // Replace the generic params. Regex to make sure you are not just replacing 
+                    // Replace the generic params. Regex to make sure you are not just replacing
                     // random letters in variable names.
-                    var rep = `(?<!\\w)${t}(?!\\w)`;
-                    var re = new RegExp(rep, "g");
-                    var newKey = k.replace(re, parent.params[i]);
+                    const rep = `(?<!\\w)${t}(?!\\w)`;
+                    const re = new RegExp(rep, 'g');
+                    const newKey = k.replace(re, parent.params[i]);
+                    let newValue;
                     if (v) {
-
                         if (isDocStyle) {
                             if (v.type) {
                                 let newArgs = undefined;
                                 if (v.type.arguments) {
                                     newArgs = {};
-                                    Object.entries(v.type.arguments).forEach(([ak, av]:[any,any]) => {
-                                        newArgs[ak] = av.replace(re, parent.params[i])
-                                    })
+                                    Object.entries(v.type.arguments).forEach(([ak, av]: [any, any]) => {
+                                        newArgs[ak] = av.replace(re, parent.params[i]);
+                                    });
                                 }
-                                const newReturnType = v.type.returnType.replace(re, parent.params[i])
-                                newValue = { ...v, type: { ...v.type, returnType: newReturnType, arguments: newArgs } }
+                                const newReturnType = v.type.returnType.replace(re, parent.params[i]);
+                                newValue = { ...v, type: { ...v.type, returnType: newReturnType, arguments: newArgs } };
                             }
                         } else {
-                            var newValue = v.replace(re, parent.params[i]);
+                            newValue = v.replace(re, parent.params[i]);
                         }
                     }
 
@@ -176,14 +180,16 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
                 });
             });
         } else if (!isBuiltinUtilityType(parent.extends)) {
-            throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
+            throw new Error(
+                `Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`
+            );
         }
     }
     return mergedProps;
-};
+}
 
 function mergeRespectingChildOverrides(parent, child) {
-    let merged = { ...child };
+    const merged = { ...child };
     // We want the child properties to be list first for better doc reading experience
     // Normal spread merge to get the correct order wipes out child overrides
     // Hence the manual approach to the merge here.
@@ -191,13 +197,12 @@ function mergeRespectingChildOverrides(parent, child) {
         if (!merged[k]) {
             merged[k] = v;
         }
-    })
+    });
     return merged;
 }
 
 function applyInheritance(extensions, interfaces, isDocStyle) {
-    Object.entries(extensions).forEach(([i,]) => {
-
+    Object.entries(extensions).forEach(([i]) => {
         const allAncestors = getAncestors(extensions, i);
         let extendedInterface = interfaces[i];
 
@@ -205,19 +210,19 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
         // Would need to make this tree work so that the params applied lower down  get sent up the tree and correctly applied
         // Example interface is ICellEditorComp
 
-        allAncestors.forEach(a => {
+        allAncestors.forEach((a) => {
             let extended = a.extends;
 
             let extInt = undefined;
-            let omitFields = [];
+            const omitFields = [];
             if (extended === 'Omit') {
                 // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
                 // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
                 // e.g. export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'> { }
                 extended = a.params[0].replace(/<.*>/, '');
-                a.params.slice(1).forEach(toRemove => {
-                    toRemove.split("|").forEach(property => {
-                        const typeName = property.replace(/'/g, "").trim();
+                a.params.slice(1).forEach((toRemove) => {
+                    toRemove.split('|').forEach((property) => {
+                        const typeName = property.replace(/'/g, '').trim();
                         omitFields.push(typeName);
                     });
                 });
@@ -234,17 +239,26 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
 
             if (isDocStyle) {
                 if (extInt) {
-                    extendedInterface = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a), extendedInterface);
+                    extendedInterface = mergeRespectingChildOverrides(
+                        mergeAncestorProps(isDocStyle, a, extInt, (a) => a),
+                        extendedInterface
+                    );
                 }
                 omitFields.forEach((f) => {
                     delete extendedInterface[f];
                 });
             } else {
                 if (extInt && extInt.type) {
-                    extendedInterface.type = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a.type), extendedInterface.type);
+                    extendedInterface.type = mergeRespectingChildOverrides(
+                        mergeAncestorProps(isDocStyle, a, extInt, (a) => a.type),
+                        extendedInterface.type
+                    );
                 }
                 if (extInt && extInt.docs) {
-                    extendedInterface.docs = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a.docs), extendedInterface.docs);
+                    extendedInterface.docs = mergeRespectingChildOverrides(
+                        mergeAncestorProps(isDocStyle, a, extInt, (a) => a.docs),
+                        extendedInterface.docs
+                    );
                 }
                 omitFields.forEach((f) => {
                     delete extendedInterface.docs?.[f];
@@ -260,49 +274,53 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
 function extractInterfaces(srcFile, extension) {
     const interfaces = findAllInNodesTree(srcFile);
     const iLookup = {};
-    interfaces.forEach(node => {
+    interfaces.forEach((node) => {
         const name = node && node.name && node.name.escapedText;
         const kind = ts.SyntaxKind[node.kind];
 
         if (node.heritageClauses) {
-            node.heritageClauses.forEach(h => {
+            node.heritageClauses.forEach((h) => {
                 if (h.types && h.types.length > 0) {
-                    extension[name] = h.types.map(h => ({ extends: formatNode(h.expression, srcFile), params: h.typeArguments ? h.typeArguments.map(t => formatNode(t, srcFile)) : undefined }));
+                    extension[name] = h.types.map((h) => ({
+                        extends: formatNode(h.expression, srcFile),
+                        params: h.typeArguments ? h.typeArguments.map((t) => formatNode(t, srcFile)) : undefined,
+                    }));
                 }
             });
         }
 
         if (kind == 'EnumDeclaration') {
             iLookup[name] = {
-                meta: { isEnum: true }, type: node.members.map(n => formatNode(n, srcFile)),
-                docs: node.members.map(n => getFullJsDoc(n))
-            }
+                meta: { isEnum: true },
+                type: node.members.map((n) => formatNode(n, srcFile)),
+                docs: node.members.map((n) => getFullJsDoc(n)),
+            };
         } else if (kind == 'TypeAliasDeclaration') {
             iLookup[name] = {
                 meta: {
                     isTypeAlias: true,
-                    typeParams: node.typeParameters ? node.typeParameters.map(tp => formatNode(tp, srcFile)) : undefined
+                    typeParams: node.typeParameters
+                        ? node.typeParameters.map((tp) => formatNode(tp, srcFile))
+                        : undefined,
                 },
-                type: formatNode(node.type, srcFile)
-            }
+                type: formatNode(node.type, srcFile),
+            };
         } else {
-
             let isCallSignature = false;
-            let members = {};
-            let docs = {};
+            const members = {};
+            const docs = {};
             let callSignatureMembers = {};
 
             if (node.members && node.members.length > 0) {
-                node.members.map(p => {
+                node.members.map((p) => {
                     isCallSignature = isCallSignature || ts.SyntaxKind[p.kind] == 'CallSignature';
                     if (isCallSignature) {
-
                         const argTypes = getArgTypes(p.parameters, srcFile);
 
                         callSignatureMembers = {
                             arguments: argTypes,
                             returnType: formatNode(p.type, srcFile),
-                        }
+                        };
                     } else {
                         const propName = formatNode(p, srcFile, true);
                         const propType = formatNode(p.type, srcFile);
@@ -312,72 +330,61 @@ function extractInterfaces(srcFile, extension) {
                             docs[propName] = getFullJsDoc(p);
                         }
                     }
-
                 });
 
                 if (isCallSignature && node.members.length > 1) {
-                    throw new Error('Have a callSignature interface with more than one member! We were not expecting this to be possible!');
+                    throw new Error(
+                        'Have a callSignature interface with more than one member! We were not expecting this to be possible!'
+                    );
                 }
             }
             if (isCallSignature) {
                 iLookup[name] = {
                     meta: { isCallSignature },
-                    type: callSignatureMembers
-                }
+                    type: callSignatureMembers,
+                };
             } else {
-                let meta = {};
-                iLookup[name] = { meta, type: members, docs: Object.entries(docs).length > 0 ? docs : undefined }
+                const meta = {};
+                iLookup[name] = { meta, type: members, docs: Object.entries(docs).length > 0 ? docs : undefined };
             }
 
             if (node.typeParameters) {
                 const orig = iLookup[name];
-                iLookup[name] = { ...orig, meta: { ...orig.meta, typeParams: node.typeParameters.map(tp => formatNode(tp, srcFile)) } }
+                iLookup[name] = {
+                    ...orig,
+                    meta: { ...orig.meta, typeParams: node.typeParameters.map((tp) => formatNode(tp, srcFile)) },
+                };
             }
 
             const doc = getFullJsDoc(node);
             if (doc) {
                 const orig = iLookup[name];
-                iLookup[name] = { ...orig, meta: { ...orig.meta, doc } }
+                iLookup[name] = { ...orig, meta: { ...orig.meta, doc } };
             }
         }
     });
     return iLookup;
 }
 
-
-
-function getClassProperties(filePath, className) {
-    const srcFile = parseFile(filePath);
-    const classNode = findNode(className, srcFile, 'ClassDeclaration');
-
-    let members = {};
-    ts.forEachChild(classNode, n => {
-        members = { ...members, ...extractMethodsAndPropsFromNode(n, srcFile) }
-    });
-
-    return members;
-}
-
 /** Build the interface file in the format that can be used by <interface-documentation> */
 export function buildInterfaceProps(globs) {
-
-    let interfaces = {
+    const interfaces = {
         _config_: {},
     };
-    let extensions = {};
-    globs.forEach(file => {
+    const extensions = {};
+    globs.forEach((file) => {
         const parsedFile = parseFile(file);
 
         // Using this method to build the extensions lookup required to get inheritance correct
         extractInterfaces(parsedFile, extensions);
 
         const interfacesInFile = findAllInNodesTree(parsedFile);
-        interfacesInFile.forEach(iNode => {
+        interfacesInFile.forEach((iNode) => {
             let props: any = {};
-            iNode.forEachChild(ch => {
+            iNode.forEachChild((ch) => {
                 const prop = extractTypesFromNode(ch, parsedFile, true);
-                props = { ...props, ...prop }
-            })
+                props = { ...props, ...prop };
+            });
 
             const kind = ts.SyntaxKind[iNode.kind];
             if (kind == 'TypeAliasDeclaration') {
@@ -385,12 +392,15 @@ export function buildInterfaceProps(globs) {
             }
 
             if (iNode.typeParameters) {
-                props = { ...props, meta: { ...props.meta, typeParams: iNode.typeParameters.map(tp => formatNode(tp, parsedFile)) } }
+                props = {
+                    ...props,
+                    meta: { ...props.meta, typeParams: iNode.typeParameters.map((tp) => formatNode(tp, parsedFile)) },
+                };
             }
 
             const iName = formatNode(iNode.name, parsedFile, true);
             interfaces[iName] = props;
-        })
+        });
     });
 
     applyInheritance(extensions, interfaces, true);
@@ -398,53 +408,19 @@ export function buildInterfaceProps(globs) {
     return interfaces;
 }
 
-function hasPublicModifier(node) {
-    if (node.modifiers) {
-        return node.modifiers.some(m => ts.SyntaxKind[m.kind] == 'PublicKeyword')
-    }
-    return false;
-}
-
-function extractMethodsAndPropsFromNode(node, srcFile) {
-    let nodeMembers = {};
-    const kind = ts.SyntaxKind[node.kind];
-    let name = node && node.name && node.name.escapedText;
-    let returnType = node && node.type && node.type.getFullText().trim();
-
-
-    if (!hasPublicModifier(node)) {
-        return nodeMembers;
-    }
-
-    if (kind == 'MethodDeclaration') {
-        const methodArgs = getArgTypes(node.parameters, srcFile);
-
-        nodeMembers[name] = {
-            meta: getJsDoc(node),
-            type: { arguments: methodArgs, returnType }
-        };
-    } else if (kind == 'PropertyDeclaration') {
-        nodeMembers[name] = {
-            meta: getJsDoc(node),
-            type: { returnType: returnType }
-        }
-    }
-    return nodeMembers;
-}
-
 export function getGridOptions(gridOpsFile: string) {
     const srcFile = parseFile(gridOpsFile);
     const gridOptionsNode = findNode('GridOptions', srcFile);
 
     let gridOpsMembers = {};
-    ts.forEachChild(gridOptionsNode, n => {
-        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile, false) }
+    ts.forEachChild(gridOptionsNode, (n) => {
+        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile, false) };
     });
 
     return gridOpsMembers;
 }
 
-export function getColumnOptions(colDefFile: string, filterFile: string) {    
+export function getColumnOptions(colDefFile: string, filterFile: string) {
     const srcFile = parseFile(colDefFile);
     const abstractColDefNode = findNode('AbstractColDef', srcFile);
     const colGroupDefNode = findNode('ColGroupDef', srcFile);
@@ -454,10 +430,10 @@ export function getColumnOptions(colDefFile: string, filterFile: string) {
 
     let members = {};
     const addToMembers = (node, src) => {
-        ts.forEachChild(node, n => {
-            members = { ...members, ...extractTypesFromNode(n, src, false) }
+        ts.forEachChild(node, (n) => {
+            members = { ...members, ...extractTypesFromNode(n, src, false) };
         });
-    }
+    };
     addToMembers(abstractColDefNode, srcFile);
     addToMembers(colGroupDefNode, srcFile);
     addToMembers(colDefNode, srcFile);
@@ -467,7 +443,15 @@ export function getColumnOptions(colDefFile: string, filterFile: string) {
 }
 
 export function getGridApi(gridApiFile: string) {
-    return getClassProperties(gridApiFile, 'GridApi');
+    const srcFile = parseFile(gridApiFile);
+    const gridApi = findNode('GridApi', srcFile);
+
+    let members = {};
+    ts.forEachChild(gridApi, (n) => {
+        members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
+    });
+
+    return members;
 }
 export function getRowNode(rowNodeFile: string) {
     const srcFile = parseFile(rowNodeFile);
@@ -477,20 +461,31 @@ export function getRowNode(rowNodeFile: string) {
 
     let rowNodeMembers = {};
     const addToMembers = (node) => {
-        ts.forEachChild(node, n => {
-            rowNodeMembers = { ...rowNodeMembers, ...extractTypesFromNode(n, srcFile, false) }
+        ts.forEachChild(node, (n) => {
+            rowNodeMembers = { ...rowNodeMembers, ...extractTypesFromNode(n, srcFile, false) };
         });
-    }
+    };
     addToMembers(baseRowNode);
     addToMembers(groupRowNode);
     addToMembers(iRowNode);
 
     return rowNodeMembers;
 }
-export function getColumn(columnFile: string) {
-    return getClassProperties(columnFile, 'Column');
+
+export function getColumnTypes(columnFile: string, interfaces: string[]) {
+    const srcFile = parseFile(columnFile);
+    let members = {};
+
+    const addToMembers = (node) => {
+        ts.forEachChild(node, (n) => {
+            members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
+        });
+    };
+
+    interfaces.forEach((interfaceName) => {
+        const node = findNode(interfaceName, srcFile);
+        addToMembers(node);
+    });
+
+    return members;
 }
-
-
-
-

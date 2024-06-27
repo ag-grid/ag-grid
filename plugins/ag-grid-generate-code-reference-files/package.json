@@ -1,10 +1,10 @@
 {
   "name": "ag-grid-generate-code-reference-files",
-  "version": "31.1.0",
+  "version": "31.3.1",
   "private": true,
   "dependencies": {
     "glob": "8.0.3",
-    "typescript": "^4.9.5",
+    "typescript": "^5.1.6",
     "@nx/devkit": "17.2.6",
     "@swc/helpers": "0.5.3"
   },

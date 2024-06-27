@@ -1,48 +1,43 @@
-import {
-    AgCheckbox,
-    Autowired,
-    ColumnModel,
-    Component,
-    Events,
-    GridApi,
-    PreConstruct,
-    RefSelector
-} from "@ag-grid-community/core";
+import type { AgCheckbox, BeanCollection, ColumnModel, CtrlsService } from '@ag-grid-community/core';
+import { AgToggleButtonSelector, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 export class PivotModePanel extends Component {
+    private columnModel: ColumnModel;
+    private ctrlsService: CtrlsService;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridApi') private api: GridApi;
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
-    @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
+    private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
 
     private createTemplate(): string {
         return /* html */ `<div class="ag-pivot-mode-panel">
-                <ag-toggle-button ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
+                <ag-toggle-button data-ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
             </div>`;
     }
 
-    @PreConstruct
-    public init(): void {
-        this.setTemplate(this.createTemplate());
+    public postConstruct(): void {
+        this.setTemplate(this.createTemplate(), [AgToggleButtonSelector]);
 
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
-        this.addManagedListener(this.cbPivotMode, Events.EVENT_FIELD_VALUE_CHANGED, this.onBtPivotMode.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onPivotModeChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListeners(this.cbPivotMode, { fieldValueChanged: this.onBtPivotMode.bind(this) });
+        const listener = this.onPivotModeChanged.bind(this);
+        this.addManagedEventListeners({
+            newColumnsLoaded: listener,
+            columnPivotModeChanged: listener,
+        });
     }
 
     private onBtPivotMode(): void {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
-            this.gridOptionsService.updateGridOptions({ options: { pivotMode: newValue}, source: 'toolPanelUi' as any });
-            const { api } = this;
-            if (api) {
-                api.refreshHeader();
-            }
+            this.gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
+            this.ctrlsService.getHeaderRowContainerCtrls().forEach((c) => c.refresh());
         }
     }
 

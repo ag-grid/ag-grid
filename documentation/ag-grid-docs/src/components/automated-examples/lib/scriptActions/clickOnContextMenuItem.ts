@@ -1,4 +1,4 @@
-import { Group } from '@tweenjs/tween.js';
+import type { Group } from '@tweenjs/tween.js';
 
 import { type AgElementFinder } from '../agElements';
 import {
@@ -18,8 +18,13 @@ import { waitFor } from './waitFor';
 export interface ClickOnContextMenuItemParams {
     mouse: Mouse;
     getOverlay: () => HTMLElement;
-    cellColIndex: number;
-    cellRowIndex: number;
+    /**
+     * Begin action with a right click on a grid cell
+     */
+    rightClickOnCell?: {
+        colIndex: number;
+        rowIndex: number;
+    };
     menuItemPath: string[];
     speed?: number;
     duration?: number;
@@ -37,8 +42,7 @@ export interface ClickOnContextMenuItemParams {
 export async function clickOnContextMenuItem({
     mouse,
     getOverlay,
-    cellColIndex,
-    cellRowIndex,
+    rightClickOnCell,
     menuItemPath,
     speed,
     duration,
@@ -47,18 +51,28 @@ export async function clickOnContextMenuItem({
     agElementFinder,
     scriptDebugger,
 }: ClickOnContextMenuItemParams): Promise<void> {
-    await mouseClick({
-        mouse,
-        coords: agElementFinder
-            .get('cell', {
-                colIndex: cellColIndex,
-                rowIndex: cellRowIndex,
-            })
-            ?.getPos()!,
-        clickType: 'right',
-        scriptDebugger,
-    });
-    await waitFor(200);
+    if (rightClickOnCell) {
+        const { colIndex, rowIndex } = rightClickOnCell;
+        await mouseClick({
+            mouse,
+            coords: agElementFinder
+                .get('cell', {
+                    colIndex,
+                    rowIndex,
+                })
+                ?.getPos()!,
+            clickType: 'right',
+            scriptDebugger,
+        });
+        await waitFor(200);
+    }
+
+    function getMenuItemElAtIndex(index: number) {
+        const menuItemName = menuItemPath[index];
+        const menuItemTextEl = findElementWithInnerText({ selector: '.ag-menu-option-text', text: menuItemName });
+
+        return menuItemTextEl?.parentElement;
+    }
 
     const overlay = getOverlay && getOverlay();
     for (let i = 0; i < menuItemPath.length; i++) {
@@ -69,8 +83,7 @@ export async function clickOnContextMenuItem({
                 text: menuItemName,
             })
             ?.getPos();
-        const menuItemTextEl = findElementWithInnerText({ selector: '.ag-menu-option-text', text: menuItemName });
-        const menuItemEl = menuItemTextEl?.parentElement;
+        const menuItemEl = getMenuItemElAtIndex(i);
         const isLastMenuItem = i === menuItemPath.length - 1;
         if (!coords || !menuItemEl) {
             throw new Error(`Cannot find menu item: ${menuItemName}`);
@@ -117,9 +130,12 @@ export async function clickOnContextMenuItem({
             mouse.click();
             await waitFor(500);
 
-            // Send escape to clear context menu
+            // Send escape for each menu item in reverse, to clear the entire context menu
             // NOTE: Not triggering keyboard event, use the Grid API instead, so it is more resilient to browser events
-            menuItemEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            for (let j = menuItemPath.length - 1; j >= 0; j--) {
+                const closeMenuItemEl = getMenuItemElAtIndex(j);
+                closeMenuItemEl?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            }
         } else {
             // Use keyboard event to fake a click
             menuItemEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));

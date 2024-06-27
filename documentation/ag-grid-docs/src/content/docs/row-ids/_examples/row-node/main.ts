@@ -1,64 +1,62 @@
-import { GridApi, createGrid, GridOptions, RowNode, ColDef, GetRowIdParams } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { ColDef, GetRowIdParams, GridApi, GridOptions, RowNode, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-
 const columnDefs: ColDef[] = [
-  { field: 'id', headerName: "Row ID" },
-  { field: "make" },
-  { field: "model" },
-  { field: "price" }
+    { field: 'id', headerName: 'Row ID' },
+    { field: 'make' },
+    { field: 'model' },
+    { field: 'price' },
 ];
 
 // specify the data
 const rowData = [
-  { id: 'c1', make: "Toyota", model: "Celica", price: 35000 },
-  { id: 'c2', make: "Ford", model: "Mondeo", price: 32000 },
-  { id: 'c8', make: "Porsche", model: "Boxster", price: 72000 },
-  { id: 'c4', make: "BMW", model: "M50", price: 60000 },
-  { id: 'c14', make: "Aston Martin", model: "DBX", price: 190000 }
+    { id: 'c1', make: 'Toyota', model: 'Celica', price: 35000 },
+    { id: 'c2', make: 'Ford', model: 'Mondeo', price: 32000 },
+    { id: 'c8', make: 'Porsche', model: 'Boxster', price: 72000 },
+    { id: 'c4', make: 'BMW', model: 'M50', price: 60000 },
+    { id: 'c14', make: 'Aston Martin', model: 'DBX', price: 190000 },
 ];
 
 function getAllRows() {
-  gridApi!.forEachNode( (rowNode: RowNode) => {
-    console.log(`=============== ROW ${rowNode.rowIndex}`)
-    console.log(`id = ${rowNode.id}`)
-    console.log(`rowIndex = ${rowNode.rowIndex}`)
-    console.log(`data = ${JSON.stringify(rowNode.data)}`)
-    console.log(`group = ${rowNode.group}`)
-    console.log(`height = ${rowNode.rowHeight}px`)
-    console.log(`isSelected = ${rowNode.isSelected()}`)
-  });
-  window.alert("Row details printed to developers console");
+    gridApi!.forEachNode((rowNode: RowNode) => {
+        console.log(`=============== ROW ${rowNode.rowIndex}`);
+        console.log(`id = ${rowNode.id}`);
+        console.log(`rowIndex = ${rowNode.rowIndex}`);
+        console.log(`data = ${JSON.stringify(rowNode.data)}`);
+        console.log(`group = ${rowNode.group}`);
+        console.log(`height = ${rowNode.rowHeight}px`);
+        console.log(`isSelected = ${rowNode.isSelected()}`);
+    });
+    window.alert('Row details printed to developers console');
 }
 
 function getRowById() {
-  const rowNode = gridApi!.getRowNode('c2');
-  if (rowNode && rowNode.id == 'c2') {
-    console.log(`################ Got Row Node C2`);
-    console.log(`data = ${JSON.stringify(rowNode.data)}`);
-  }
-  window.alert("Row details printed to developers console");
+    const rowNode = gridApi!.getRowNode('c2');
+    if (rowNode && rowNode.id == 'c2') {
+        console.log(`################ Got Row Node C2`);
+        console.log(`data = ${JSON.stringify(rowNode.data)}`);
+    }
+    window.alert('Row details printed to developers console');
 }
 
 let gridApi: GridApi;
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
-  defaultColDef: {
-    flex: 1
-  },
-  rowData: rowData,
-  rowSelection: 'multiple',
-  getRowId: (params: GetRowIdParams) => params.data.id
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+    },
+    rowData: rowData,
+    rowSelection: 'multiple',
+    getRowId: (params: GetRowIdParams) => String(params.data.id),
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 });

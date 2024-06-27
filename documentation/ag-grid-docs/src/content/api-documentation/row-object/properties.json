@@ -18,7 +18,9 @@
         },
         "expanded": {},
         "isExpandable": {},
-        "setExpanded": {}
+        "setExpanded": {
+            "description": "Set the expanded state of this rowNode. <ul class='content'><li>`expanded` - `true` to expand, `false` to collapse</li><li>`sourceEvent` - Optional event that will be passed to the `rowGroupOpened` event.</li><li>`forceSync` - By default rows are expanded asynchronously for best performance. Set to `true` if you need to interact with the expanded row immediately after this function.</li></ul>"
+        }
     },
     "events": {
         "meta": {

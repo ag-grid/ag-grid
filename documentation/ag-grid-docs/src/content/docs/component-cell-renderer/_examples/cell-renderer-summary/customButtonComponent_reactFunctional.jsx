@@ -1,7 +1,5 @@
-import React from "react";
+import React from 'react';
 
 export default () => {
-  return (
-    <button onClick={() => window.alert("Mission Launched")}>Launch!</button>
-  )
-}
+    return <button onClick={() => window.alert('Software Launched')}>Launch!</button>;
+};

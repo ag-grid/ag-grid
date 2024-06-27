@@ -1,4 +1,4 @@
-import {nextTick} from 'vue';
+import { nextTick } from 'vue';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -10,7 +10,7 @@ export default {
     data() {
         return {
             value: '',
-            cancelBeforeStart: true
+            cancelBeforeStart: true,
         };
     },
     methods: {
@@ -61,7 +61,7 @@ export default {
         },
 
         isCharNumeric(charStr) {
-            return /\d/.test(charStr);
+            return /^\d+$/.test(charStr);
         },
 
         isNumericKey(event) {
@@ -80,7 +80,7 @@ export default {
 
         isLeftOrRight(event) {
             return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
-        }
+        },
     },
 
     created() {
@@ -88,8 +88,7 @@ export default {
         const eventKey = this.params.eventKey;
 
         // only start edit if key pressed is a number, not a letter
-        this.cancelBeforeStart =
-            eventKey && eventKey.length  === 1  && '1234567890'.indexOf(eventKey) < 0;
+        this.cancelBeforeStart = eventKey && eventKey.length === 1 && '1234567890'.indexOf(eventKey) < 0;
     },
     mounted() {
         nextTick(() => {

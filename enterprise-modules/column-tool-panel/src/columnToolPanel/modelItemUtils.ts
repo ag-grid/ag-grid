@@ -1,39 +1,41 @@
-import { ColumnModelItem } from "./columnModelItem";
-import {
-    ColumnModel,
-    Events,
-    ColumnPivotChangeRequestEvent,
-    GridOptionsService,
+import type {
+    AgColumn,
+    BeanCollection,
+    ColumnApplyStateService,
     ColumnEventType,
-    Bean,
-    IAggFuncService,
-    Autowired,
-    Column,
-    EventService,
+    ColumnModel,
     ColumnState,
-    _,
-    WithoutGridCommon,
-    IAggFunc
-} from "@ag-grid-community/core";
+    IAggFunc,
+    IAggFuncService,
+    NamedBean,
+} from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-@Bean('modelItemUtils')
-export class ModelItemUtils {
+import type { ColumnModelItem } from './columnModelItem';
 
-    @Autowired('aggFuncService') aggFuncService: IAggFuncService;
-    @Autowired('columnModel') columnModel: ColumnModel;
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
-    @Autowired('eventService') private eventService: EventService;
+export class ModelItemUtils extends BeanStub implements NamedBean {
+    beanName = 'modelItemUtils' as const;
+
+    private aggFuncService?: IAggFuncService;
+    private columnModel: ColumnModel;
+    private columnApplyStateService: ColumnApplyStateService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.aggFuncService = beans.aggFuncService;
+        this.columnModel = beans.columnModel;
+        this.columnApplyStateService = beans.columnApplyStateService;
+    }
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
         const cols = this.extractAllLeafColumns(colTree);
         this.setAllColumns(cols, selectAllChecked, eventType);
     }
 
-    public setColumn(col: Column, selectAllChecked: boolean, eventType: ColumnEventType): void {
+    public setColumn(col: AgColumn, selectAllChecked: boolean, eventType: ColumnEventType): void {
         this.setAllColumns([col], selectAllChecked, eventType);
     }
 
-    public setAllColumns(cols: Column[], selectAllChecked: boolean, eventType: ColumnEventType): void {
+    public setAllColumns(cols: AgColumn[], selectAllChecked: boolean, eventType: ColumnEventType): void {
         if (this.columnModel.isPivotMode()) {
             this.setAllPivot(cols, selectAllChecked, eventType);
         } else {
@@ -41,13 +43,14 @@ export class ModelItemUtils {
         }
     }
 
-    private extractAllLeafColumns(allItems: ColumnModelItem[]): Column[] {
-
-        const res: Column[] = [];
+    private extractAllLeafColumns(allItems: ColumnModelItem[]): AgColumn[] {
+        const res: AgColumn[] = [];
 
         const recursiveFunc = (items: ColumnModelItem[]) => {
-            items.forEach(item => {
-                if (!item.isPassesFilter()) { return; }
+            items.forEach((item) => {
+                if (!item.isPassesFilter()) {
+                    return;
+                }
                 if (item.isGroup()) {
                     recursiveFunc(item.getChildren());
                 } else {
@@ -61,140 +64,69 @@ export class ModelItemUtils {
         return res;
     }
 
-    private setAllVisible(columns: Column[], visible: boolean, eventType: ColumnEventType): void {
+    private setAllVisible(columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
         const colStateItems: ColumnState[] = [];
 
-        columns.forEach(col => {
-            if (col.getColDef().lockVisible) { return; }
+        columns.forEach((col) => {
+            if (col.getColDef().lockVisible) {
+                return;
+            }
             if (col.isVisible() != visible) {
                 colStateItems.push({
                     colId: col.getId(),
-                    hide: !visible
+                    hide: !visible,
                 });
             }
         });
 
         if (colStateItems.length > 0) {
-            this.columnModel.applyColumnState({state: colStateItems}, eventType);
+            this.columnApplyStateService.applyColumnState({ state: colStateItems }, eventType);
         }
     }
 
-    private setAllPivot(columns: Column[], value: boolean, eventType: ColumnEventType): void {
-        if (this.gridOptionsService.get('functionsPassive')) {
-            this.setAllPivotPassive(columns, value);
-        } else {
-            this.setAllPivotActive(columns, value, eventType);
-        }
+    private setAllPivot(columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
+        this.setAllPivotActive(columns, value, eventType);
     }
 
-    private setAllPivotPassive(columns: Column[], value: boolean): void {
-
-        const copyOfPivotColumns = this.columnModel.getPivotColumns().slice();
-        const copyOfValueColumns = this.columnModel.getValueColumns().slice();
-        const copyOfRowGroupColumns = this.columnModel.getRowGroupColumns().slice();
-
-        let pivotChanged = false;
-        let valueChanged = false;
-        let rowGroupChanged = false;
-
-        const turnOnAction = (col: Column) => {
-            // don't change any column that's already got a function active
-            if (col.isAnyFunctionActive()) { return; }
-
-            if (col.isAllowValue()) {
-                copyOfValueColumns.push(col);
-                valueChanged = true;
-            } else if (col.isAllowRowGroup()) {
-                copyOfRowGroupColumns.push(col);
-                pivotChanged = true;
-            } else if (col.isAllowPivot()) {
-                copyOfPivotColumns.push(col);
-                rowGroupChanged = true;
-            }
-        };
-
-        const turnOffAction = (col: Column) => {
-            if (!col.isAnyFunctionActive()) { return; }
-
-            if (copyOfPivotColumns.indexOf(col) >= 0) {
-                _.removeFromArray(copyOfPivotColumns, col);
-                pivotChanged = true;
-            }
-            if (copyOfValueColumns.indexOf(col) >= 0) {
-                _.removeFromArray(copyOfValueColumns, col);
-                valueChanged = true;
-            }
-            if (copyOfRowGroupColumns.indexOf(col) >= 0) {
-                _.removeFromArray(copyOfRowGroupColumns, col);
-                rowGroupChanged = true;
-            }
-        };
-
-        const action = value ? turnOnAction : turnOffAction;
-
-        columns.forEach(action);
-
-        if (pivotChanged) {
-            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
-                columns: copyOfPivotColumns
-            };
-            this.eventService.dispatchEvent(event);
-        }
-
-        if (rowGroupChanged) {
-            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
-                columns: copyOfRowGroupColumns
-            };
-            this.eventService.dispatchEvent(event);
-        }
-
-        if (valueChanged) {
-            const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
-                type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
-                columns: copyOfRowGroupColumns
-            };
-            this.eventService.dispatchEvent(event);
-        }
-    }
-
-    private setAllPivotActive(columns: Column[], value: boolean, eventType: ColumnEventType): void {
+    private setAllPivotActive(columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
         const colStateItems: ColumnState[] = [];
 
-        const turnOnAction = (col: Column) => {
+        const turnOnAction = (col: AgColumn) => {
             // don't change any column that's already got a function active
-            if (col.isAnyFunctionActive()) { return; }
+            if (col.isAnyFunctionActive()) {
+                return;
+            }
 
             if (col.isAllowValue()) {
-                const aggFunc = typeof col.getAggFunc() === 'string'
-                    ? col.getAggFunc()
-                    : this.aggFuncService.getDefaultAggFunc(col);
+                const aggFunc =
+                    typeof col.getAggFunc() === 'string'
+                        ? col.getAggFunc()
+                        : this.aggFuncService?.getDefaultAggFunc(col);
                 colStateItems.push({
                     colId: col.getId(),
-                    aggFunc: aggFunc
+                    aggFunc: aggFunc,
                 });
             } else if (col.isAllowRowGroup()) {
                 colStateItems.push({
                     colId: col.getId(),
-                    rowGroup: true
+                    rowGroup: true,
                 });
             } else if (col.isAllowPivot()) {
                 colStateItems.push({
                     colId: col.getId(),
-                    pivot: true
+                    pivot: true,
                 });
             }
         };
 
-        const turnOffAction = (col: Column) => {
+        const turnOffAction = (col: AgColumn) => {
             const isActive = col.isPivotActive() || col.isRowGroupActive() || col.isValueActive();
             if (isActive) {
                 colStateItems.push({
                     colId: col.getId(),
                     pivot: false,
                     rowGroup: false,
-                    aggFunc: null
+                    aggFunc: null,
                 });
             }
         };
@@ -204,22 +136,24 @@ export class ModelItemUtils {
         columns.forEach(action);
 
         if (colStateItems.length > 0) {
-            this.columnModel.applyColumnState({state: colStateItems}, eventType);
+            this.columnApplyStateService.applyColumnState({ state: colStateItems }, eventType);
         }
     }
 
     public updateColumns(params: {
-        columns: Column[];
+        columns: AgColumn[];
         visibleState?: { [key: string]: boolean };
-        pivotState?: { [key: string]: {
-            pivot?: boolean;
-            rowGroup?: boolean;
-            aggFunc?: string | IAggFunc | null;
-        } };
+        pivotState?: {
+            [key: string]: {
+                pivot?: boolean;
+                rowGroup?: boolean;
+                aggFunc?: string | IAggFunc | null;
+            };
+        };
         eventType: ColumnEventType;
     }): void {
         const { columns, visibleState, pivotState, eventType } = params;
-        const state: ColumnState[] = columns.map(column => {
+        const state: ColumnState[] = columns.map((column) => {
             const colId = column.getColId();
             if (this.columnModel.isPivotMode()) {
                 const pivotStateForColumn = pivotState?.[colId];
@@ -232,14 +166,14 @@ export class ModelItemUtils {
             } else {
                 return {
                     colId,
-                    hide: !visibleState?.[colId]
-                }
+                    hide: !visibleState?.[colId],
+                };
             }
         });
-        this.columnModel.applyColumnState({ state }, eventType);
+        this.columnApplyStateService.applyColumnState({ state }, eventType);
     }
 
-    public createPivotState(column: Column): {
+    public createPivotState(column: AgColumn): {
         pivot?: boolean;
         rowGroup?: boolean;
         aggFunc?: string | IAggFunc | null;
@@ -247,7 +181,7 @@ export class ModelItemUtils {
         return {
             pivot: column.isPivotActive(),
             rowGroup: column.isRowGroupActive(),
-            aggFunc: column.isValueActive() ? column.getAggFunc() : undefined
-        }
+            aggFunc: column.isValueActive() ? column.getAggFunc() : undefined,
+        };
     }
 }

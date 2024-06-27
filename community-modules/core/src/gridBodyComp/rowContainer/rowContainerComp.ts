@@ -1,51 +1,43 @@
-import { Component } from "../../widgets/component";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
-import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowContainerType } from "./rowContainerCtrl";
-import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
-import { RowComp } from "../../rendering/row/rowComp";
-import { RowCtrl } from "../../rendering/row/rowCtrl";
-import { Beans } from "../../rendering/beans";
-import { getAllValuesInObject } from "../../utils/object";
-import { setAriaRole } from "../../utils/aria";
+import type { BeanCollection } from '../../context/context';
+import { RowComp } from '../../rendering/row/rowComp';
+import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
+import { _setAriaRole } from '../../utils/aria';
+import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
+import { _getAllValuesInObject } from '../../utils/object';
+import type { ComponentSelector } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
+import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
+import { RowContainerCtrl, _getRowContainerOptions } from './rowContainerCtrl';
 
-function templateFactory(): string {
-    const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
-
-    const cssClasses = RowContainerCtrl.getRowContainerCssClasses(name);
-
+function templateFactory(options: RowContainerOptions): string {
     let res: string;
-
-    const centerTemplate =
-        name === RowContainerName.CENTER ||
-        name === RowContainerName.TOP_CENTER ||
-        name === RowContainerName.STICKY_TOP_CENTER ||
-        name === RowContainerName.BOTTOM_CENTER;
-
-    if (centerTemplate) {
-        res = /* html */
-            `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                <div class="${cssClasses.container}" ref="eContainer"></div>
+    if (options.type === 'center') {
+        res =
+            /* html */
+            `<div class="${options.viewport}" data-ref="eViewport" role="presentation">
+                <div class="${options.container}" data-ref="eContainer"></div>
             </div>`;
     } else {
-        res = /* html */
-            `<div class="${cssClasses.container}" ref="eContainer"></div>`;
+        res = /* html */ `<div class="${options.container}" data-ref="eContainer"></div>`;
     }
 
     return res;
 }
 
 export class RowContainerComp extends Component {
+    private beans: BeanCollection;
 
-    @Autowired('beans') private beans: Beans;
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+    }
 
-    @RefSelector('eViewport') private eViewport: HTMLElement;
-    @RefSelector('eContainer') private eContainer: HTMLElement;
+    private readonly eViewport: HTMLElement = RefPlaceholder;
+    private readonly eContainer: HTMLElement = RefPlaceholder;
 
     private readonly name: RowContainerName;
-    private readonly type: RowContainerType;
+    private readonly options: RowContainerOptions;
 
-    private rowComps: {[id: string]: RowComp} = {};
+    private rowComps: { [id: RowCtrlInstanceId]: RowComp } = {};
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
@@ -53,34 +45,35 @@ export class RowContainerComp extends Component {
     private lastPlacedElement: HTMLElement | null;
 
     constructor() {
-        super(templateFactory());
+        super();
         this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
-        this.type = getRowContainerTypeForName(this.name);
+        this.options = _getRowContainerOptions(this.name);
+        this.setTemplate(templateFactory(this.options));
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const compProxy: IRowContainerComp = {
-            setViewportHeight: height => this.eViewport.style.height = height,
+            setViewportHeight: (height) => (this.eViewport.style.height = height),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
-            setDomOrder: domOrder => {
+            setDomOrder: (domOrder) => {
                 this.domOrder = domOrder;
             },
-            setContainerWidth: width => this.eContainer.style.width = width
+            setContainerWidth: (width) => (this.eContainer.style.width = width),
+            setOffsetTop: (offset) => (this.eContainer.style.transform = `translateY(${offset})`),
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
         ctrl.setComp(compProxy, this.eContainer, this.eViewport);
     }
 
-    @PreDestroy
-    private preDestroy(): void {
+    public override destroy(): void {
         // destroys all row comps
         this.setRowCtrls([]);
+        super.destroy();
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[]): void {
-        const oldRows = {...this.rowComps};
+        const oldRows = { ...this.rowComps };
         this.rowComps = {};
 
         this.lastPlacedElement = null;
@@ -99,24 +92,24 @@ export class RowContainerComp extends Component {
                 if (!rowCon.getRowNode().displayed) {
                     return;
                 }
-                const rowComp = new RowComp(rowCon, this.beans, this.type);
+                const rowComp = new RowComp(rowCon, this.beans, this.options.type);
                 this.rowComps[instanceId] = rowComp;
                 this.appendRow(rowComp.getGui());
             }
         };
 
         rowCtrls.forEach(processRow);
-        getAllValuesInObject(oldRows).forEach(oldRowComp => {
+        _getAllValuesInObject(oldRows).forEach((oldRowComp) => {
             this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });
 
-        setAriaRole(this.eContainer, "rowgroup");
+        _setAriaRole(this.eContainer, 'rowgroup');
     }
 
     public appendRow(element: HTMLElement) {
         if (this.domOrder) {
-            insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
+            _insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
         } else {
             this.eContainer.appendChild(element);
         }
@@ -125,9 +118,13 @@ export class RowContainerComp extends Component {
 
     private ensureDomOrder(eRow: HTMLElement): void {
         if (this.domOrder) {
-            ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+            _ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
             this.lastPlacedElement = eRow;
         }
     }
-
 }
+
+export const RowContainerSelector: ComponentSelector = {
+    selector: 'AG-ROW-CONTAINER',
+    component: RowContainerComp,
+};

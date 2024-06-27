@@ -1,15 +1,21 @@
-import { AgColorPanel } from "./agColorPanel";
-import { _, AgPickerFieldParams, AgPickerField, AgDialog } from "@ag-grid-community/core";
+import type { AgPickerFieldParams, ComponentSelector } from '@ag-grid-community/core';
+import { AgPickerField } from '@ag-grid-community/core';
+import { AgDialog } from '@ag-grid-enterprise/core';
+import { _Util } from 'ag-charts-community';
 
-export interface AgColorPickerParams extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+import { AgColorPanel } from './agColorPanel';
+
+export interface AgColorPickerParams
+    extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
     pickerType?: string;
     pickerAriaLabelKey?: string;
     pickerAriaLabelValue?: string;
 }
 
-export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, AgDialog> {
-
+export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, string, AgDialog> {
     private isDestroyingPicker: boolean;
+    private eDisplayFieldColor: HTMLElement;
+    private eDisplayFieldText: HTMLElement;
 
     constructor(config?: AgColorPickerParams) {
         super({
@@ -17,12 +23,20 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
             pickerAriaLabelValue: 'Color Picker',
             pickerType: 'ag-list',
             className: 'ag-color-picker',
-            pickerIcon: 'colorPicker',
+            pickerIcon: 'smallDown',
             ...config,
         });
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
+        const eDocument = this.gos.getDocument();
+        this.eDisplayFieldColor = eDocument.createElement('span');
+        this.eDisplayFieldColor.classList.add('ag-color-picker-color');
+        this.eDisplayFieldText = eDocument.createElement('span');
+        this.eDisplayFieldText.classList.add('ag-color-picker-value');
+        this.eDisplayField.appendChild(this.eDisplayFieldColor);
+        this.eDisplayField.appendChild(this.eDisplayFieldText);
+
         super.postConstruct();
 
         if (this.value) {
@@ -31,23 +45,26 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     }
 
     protected createPickerComponent() {
-        const eGuiRect = this.getGui().getBoundingClientRect();
+        const eGuiRect = this.eWrapper.getBoundingClientRect();
+        const parentRect = this.popupService.getParentRect();
 
-        const colorDialog = this.createBean(new AgDialog({
-            closable: false,
-            modal: true,
-            hideTitleBar: true,
-            minWidth: 190,
-            width: 190,
-            height: 250,
-            x: eGuiRect.right - 190,
-            y: eGuiRect.top - 250
-        }));
+        const colorDialog = this.createBean(
+            new AgDialog({
+                closable: false,
+                modal: true,
+                hideTitleBar: true,
+                minWidth: 190,
+                width: 190,
+                height: 250,
+                x: eGuiRect.right - parentRect.left - 190,
+                y: eGuiRect.top - parentRect.top - 250 - (this.config.pickerGap ?? 0),
+            })
+        );
 
         return colorDialog;
     }
 
-    protected renderAndPositionPicker(): (() => void) {
+    protected override renderAndPositionPicker(): () => void {
         const pickerComponent = this.pickerComponent!;
         const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 
@@ -86,15 +103,23 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
         return () => this.pickerComponent?.close();
     }
 
-    public setValue(color: string): this {
-        if (this.value === color) { return this; }
+    public override setValue(color: string): this {
+        if (this.value === color) {
+            return this;
+        }
 
-        this.eDisplayField.style.backgroundColor = color;
+        this.eDisplayFieldColor.style.backgroundColor = color;
+        this.eDisplayFieldText.textContent = _Util.Color.fromString(color).toHexString().toUpperCase();
 
         return super.setValue(color);
     }
 
-    public getValue(): string {
+    public override getValue(): string {
         return this.value;
     }
 }
+
+export const AgColorPickerSelector: ComponentSelector = {
+    selector: 'AG-COLOR-PICKER',
+    component: AgColorPicker,
+};

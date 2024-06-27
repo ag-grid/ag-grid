@@ -1,28 +1,32 @@
-import {
-    Autowired,
-    Component,
+import type {
+    BeanCollection,
     ICellRenderer,
     ISparklineCellRendererParams,
-    RefSelector,
     ResizeObserverService,
 } from '@ag-grid-community/core';
-import { AgSparkline, SparklineFactoryOptions } from './sparkline/agSparkline';
-import { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
+
+import type { SparklineFactoryOptions } from './sparkline/agSparkline';
+import { AgSparkline } from './sparkline/agSparkline';
+import type { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
-    private static TEMPLATE /* html */ = `<div class="ag-sparkline-wrapper">
-            <span ref="eSparkline"></span>
-        </div>`;
+    private resizeObserverService!: ResizeObserverService;
+    private sparklineTooltipSingleton!: SparklineTooltipSingleton;
 
-    @RefSelector('eSparkline') private eSparkline!: HTMLElement;
+    public wireBeans(beans: BeanCollection) {
+        this.resizeObserverService = beans.resizeObserverService;
+        this.sparklineTooltipSingleton = beans.sparklineTooltipSingleton as SparklineTooltipSingleton;
+    }
 
-    @Autowired('resizeObserverService') private resizeObserverService!: ResizeObserverService;
-    @Autowired('sparklineTooltipSingleton') private sparklineTooltipSingleton!: SparklineTooltipSingleton;
+    private readonly eSparkline: HTMLElement = RefPlaceholder;
 
     private sparkline?: any;
 
     constructor() {
-        super(SparklineCellRenderer.TEMPLATE);
+        super(/* html */ `<div class="ag-sparkline-wrapper">
+            <span data-ref="eSparkline"></span>
+        </div>`);
     }
 
     public init(params: ISparklineCellRendererParams): void {
@@ -69,7 +73,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         return false;
     }
 
-    public destroy() {
+    public override destroy() {
         if (this.sparkline) {
             this.sparkline.destroy();
         }

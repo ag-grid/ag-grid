@@ -1,84 +1,88 @@
-import * as agGrid from "@ag-grid-community/core";
+import * as agGrid from '@ag-grid-community/core';
 
 export class DetailCellRenderer implements agGrid.ICellRendererComp {
-  eGui!: HTMLElement;
-  params!: agGrid.ICellRendererParams;
-  detailGridApi!: agGrid.GridApi;
+    eGui!: HTMLElement;
+    params!: agGrid.ICellRendererParams;
+    detailGridApi!: agGrid.GridApi;
 
-  init(params: ICellRendererParams) {
-    this.params = params;
+    init(params: agGrid.ICellRendererParams) {
+        this.params = params;
 
-    // trick to convert string of HTML into DOM object
-    var eTemp = document.createElement('div');
-    eTemp.innerHTML = this.getTemplate();
-    this.eGui = eTemp.firstElementChild as HTMLElement;
+        // trick to convert string of HTML into DOM object
+        var eTemp = document.createElement('div');
+        eTemp.innerHTML = this.getTemplate();
+        this.eGui = eTemp.firstElementChild as HTMLElement;
 
-    this.setupDetailGrid();
-  }
+        this.setupDetailGrid();
+    }
 
-  setupDetailGrid() {
-    var eDetailGrid = this.eGui.querySelector<HTMLElement>('.full-width-grid')!;
-    var detailGridOptions: agGrid.GridOptions = {
-      columnDefs: [
-        { field: 'callId' },
-        { field: 'direction' },
-        { field: 'number' },
-        { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-        { field: 'switchCode' }
-      ],
-      defaultColDef: {
-        flex: 1,
-        minWidth: 120
-      },
-      rowData: this.params.data.callRecords
-    };
+    setupDetailGrid() {
+        var eDetailGrid = this.eGui.querySelector<HTMLElement>('.full-width-grid')!;
+        var detailGridOptions: agGrid.GridOptions = {
+            columnDefs: [
+                { field: 'callId' },
+                { field: 'direction' },
+                { field: 'number' },
+                { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+                { field: 'switchCode' },
+            ],
+            defaultColDef: {
+                flex: 1,
+                minWidth: 120,
+            },
+            rowData: this.params.data.callRecords,
+        };
 
-    this.detailGridApi = agGrid.createGrid(eDetailGrid, detailGridOptions);
+        this.detailGridApi = agGrid.createGrid(eDetailGrid, detailGridOptions);
 
-    var masterGridApi = this.params.api;
-    var rowId = this.params.node.id!;
+        var masterGridApi = this.params.api;
+        var rowId = this.params.node.id!;
 
-    var gridInfo: agGrid.DetailGridInfo = {
-      id: rowId,
-      api: this.detailGridApi,
-    };
+        var gridInfo: agGrid.DetailGridInfo = {
+            id: rowId,
+            api: this.detailGridApi,
+        };
 
-    console.log("adding detail grid info with id: ", rowId);
-    masterGridApi.addDetailGridInfo(rowId, gridInfo);
-  }
+        console.log('adding detail grid info with id: ', rowId);
+        masterGridApi.addDetailGridInfo(rowId, gridInfo);
+    }
 
-  getTemplate() {
-    var data = this.params.data;
-   // Application logic to match parent theme for this Example
-    const themeClass: string = "full-width-grid " + (document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz');
-    var template =
-      '<div class="full-width-panel">' +
-      '  <div class="full-width-details">' +
-      '    <div class="full-width-detail"><b>Name: </b>' + data.name + '</div>' +
-      '    <div class="full-width-detail"><b>Account: </b>' + data.account + '</div>' +
-      '  </div>' +
-      `  <div class="${themeClass}"></div>` +
-      '</div>';
+    getTemplate() {
+        var data = this.params.data;
+        // Application logic to match parent theme for this Example
+        const themeClass: string =
+            'full-width-grid ' + (document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz');
+        var template =
+            '<div class="full-width-panel">' +
+            '  <div class="full-width-details">' +
+            '    <div class="full-width-detail"><b>Name: </b>' +
+            data.name +
+            '</div>' +
+            '    <div class="full-width-detail"><b>Account: </b>' +
+            data.account +
+            '</div>' +
+            '  </div>' +
+            `  <div class="${themeClass}"></div>` +
+            '</div>';
 
-    return template;
-  }
+        return template;
+    }
 
-  getGui() {
-    return this.eGui;
-  }
+    getGui() {
+        return this.eGui;
+    }
 
-  refresh(params: agGrid.ICellRendererParams): boolean {
-    return false;
-  }
+    refresh(params: agGrid.ICellRendererParams): boolean {
+        return false;
+    }
 
-  destroy() {
-    var rowId = this.params.node.id!;
-    console.log("removing Grid Info with id: " + rowId);
-    var masterGridApi = this.params.api;
-    masterGridApi.removeDetailGridInfo(rowId);
+    destroy() {
+        var rowId = this.params.node.id!;
+        console.log('removing Grid Info with id: ' + rowId);
+        var masterGridApi = this.params.api;
+        masterGridApi.removeDetailGridInfo(rowId);
 
-    console.log("destroying detail grid");
-    this.detailGridApi.destroy();
-  }
-
+        console.log('destroying detail grid');
+        this.detailGridApi.destroy();
+    }
 }

@@ -1,45 +1,50 @@
-import {
-    AgMenuItemComponent,
-    AgMenuList,
-    Autowired,
-    Bean,
-    BeanStub,
-    Component,
+import type {
+    BeanCollection,
     FocusService,
     IAfterGuiAttachedParams,
     MenuItemDef,
+    NamedBean,
     PopupService,
-    PostConstruct,
-    RefSelector,
-    _
 } from '@ag-grid-community/core';
-import { ChartController } from '../chartController';
-import { ChartMenuService } from '../services/chartMenuService';
-import { ChartTranslationService } from '../services/chartTranslationService';
-import { ChartMenuContext } from './chartMenuContext';
+import { BeanStub, Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';
+import { AgMenuList } from '@ag-grid-enterprise/core';
 
-@Bean('chartMenuListFactory')
-export class ChartMenuListFactory extends BeanStub {
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+import type { ChartController } from '../chartController';
+import type { ChartMenuService } from '../services/chartMenuService';
+import type { ChartTranslationService } from '../services/chartTranslationService';
+import type { ChartMenuContext } from './chartMenuContext';
+
+export class ChartMenuListFactory extends BeanStub implements NamedBean {
+    beanName = 'chartMenuListFactory' as const;
+
+    private popupService: PopupService;
+    private chartMenuService: ChartMenuService;
+    private chartTranslationService: ChartTranslationService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.popupService = beans.popupService;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+    }
 
     private activeChartMenuList?: ChartMenuList;
 
     public showMenuList(params: {
-        eventSource: HTMLElement,
-        showMenu: () => void,
-        chartMenuContext: ChartMenuContext
+        eventSource: HTMLElement;
+        showMenu: () => void;
+        chartMenuContext: ChartMenuContext;
     }): void {
         const { eventSource, showMenu, chartMenuContext } = params;
-        const areChartToolPanelsEnabled = this.chartMenuService.doChartToolPanelsExist(chartMenuContext.chartController);
+        const areChartToolPanelsEnabled = this.chartMenuService.doChartToolPanelsExist(
+            chartMenuContext.chartController
+        );
         const menuItems = this.mapWithStockItems(
             this.getMenuItems(chartMenuContext.chartController, areChartToolPanelsEnabled),
             chartMenuContext,
             showMenu,
             eventSource,
-            areChartToolPanelsEnabled)
-        ;
+            areChartToolPanelsEnabled
+        );
         if (!menuItems.length) {
             return;
         }
@@ -49,12 +54,12 @@ export class ChartMenuListFactory extends BeanStub {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        if (this.gridOptionsService.get('enableRtl')) {
+        if (this.gos.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }
 
-        const eGui = chartMenuList.getGui()
+        const eGui = chartMenuList.getGui();
 
         this.popupService.addPopup({
             modal: true,
@@ -63,12 +68,13 @@ export class ChartMenuListFactory extends BeanStub {
             closedCallback: () => {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
-                const document = this.gridOptionsService.getDocument();
-                if (document.activeElement === document.body) {
+                const eDocument = this.gos.getDocument();
+                const activeEl = this.gos.getActiveDomElement();
+                if (!activeEl || activeEl === eDocument.body) {
                     eventSource.focus({ preventScroll: true });
                 }
             },
-            afterGuiAttached: params => chartMenuList.afterGuiAttached(params),
+            afterGuiAttached: (params) => chartMenuList.afterGuiAttached(params),
             positionCallback: () => {
                 {
                     this.popupService.positionPopupByComponent({
@@ -83,47 +89,72 @@ export class ChartMenuListFactory extends BeanStub {
                     });
                 }
             },
-            ariaLabel: 'Chart Menu'
+            ariaLabel: 'Chart Menu',
         });
     }
 
-    private getMenuItems(chartController: ChartController, areChartToolPanelsEnabled: boolean): (MenuItemDef | string)[] {
+    private getMenuItems(
+        chartController: ChartController,
+        areChartToolPanelsEnabled: boolean
+    ): (MenuItemDef | string)[] {
         const defaultItems = [
             ...(areChartToolPanelsEnabled ? ['chartEdit'] : []),
             ...(chartController.isEnterprise() ? ['chartAdvancedSettings'] : []),
             chartController.isChartLinked() ? 'chartUnlink' : 'chartLink',
-            'chartDownload'
+            'chartDownload',
         ];
-        const chartMenuItems = this.gridOptionsService.get('chartMenuItems');
+        const chartMenuItems = this.gos.get('chartMenuItems');
         if (!chartMenuItems) {
             return defaultItems;
         } else if (Array.isArray(chartMenuItems)) {
             return chartMenuItems;
         } else {
-            return chartMenuItems(this.gridOptionsService.addGridCommonParams({
-                defaultItems
-            }));
+            return chartMenuItems(
+                this.gos.addGridCommonParams({
+                    defaultItems,
+                })
+            );
         }
     }
 
-    private mapWithStockItems(originalList: (MenuItemDef | string)[], chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement, areChartToolPanelsEnabled: boolean): MenuItemDef[] {
+    private mapWithStockItems(
+        originalList: (MenuItemDef | string)[],
+        chartMenuContext: ChartMenuContext,
+        showMenu: () => void,
+        eventSource: HTMLElement,
+        areChartToolPanelsEnabled: boolean
+    ): MenuItemDef[] {
         if (!originalList) {
             return [];
         }
         const resultList: MenuItemDef[] = [];
 
-        originalList.forEach(menuItemOrString => {
+        originalList.forEach((menuItemOrString) => {
             let result: MenuItemDef | null;
             if (typeof menuItemOrString === 'string') {
-                result = this.getStockMenuItem(menuItemOrString, chartMenuContext, showMenu, eventSource, areChartToolPanelsEnabled);
+                result = this.getStockMenuItem(
+                    menuItemOrString,
+                    chartMenuContext,
+                    showMenu,
+                    eventSource,
+                    areChartToolPanelsEnabled
+                );
             } else {
                 result = { ...menuItemOrString };
             }
-            if (!result) { return; }
+            if (!result) {
+                return;
+            }
 
             const { subMenu } = result;
             if (Array.isArray(subMenu)) {
-                result.subMenu = this.mapWithStockItems(subMenu, chartMenuContext, showMenu, eventSource, areChartToolPanelsEnabled);
+                result.subMenu = this.mapWithStockItems(
+                    subMenu,
+                    chartMenuContext,
+                    showMenu,
+                    eventSource,
+                    areChartToolPanelsEnabled
+                );
             }
 
             resultList.push(result);
@@ -132,10 +163,22 @@ export class ChartMenuListFactory extends BeanStub {
         return resultList;
     }
 
-    private getStockMenuItem(key: string, chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement, areChartToolPanelsEnabled: boolean): MenuItemDef | null {
+    private getStockMenuItem(
+        key: string,
+        chartMenuContext: ChartMenuContext,
+        showMenu: () => void,
+        eventSource: HTMLElement,
+        areChartToolPanelsEnabled: boolean
+    ): MenuItemDef | null {
         switch (key) {
             case 'chartEdit':
-                return areChartToolPanelsEnabled ? this.createMenuItem(this.chartTranslationService.translate('chartEdit'), 'chartsMenuEdit', showMenu) : null;
+                return areChartToolPanelsEnabled
+                    ? this.createMenuItem(
+                          this.chartTranslationService.translate('chartEdit'),
+                          'chartsMenuEdit',
+                          showMenu
+                      )
+                    : null;
             case 'chartAdvancedSettings':
                 return this.createMenuItem(
                     this.chartTranslationService.translate('chartAdvancedSettings'),
@@ -143,22 +186,20 @@ export class ChartMenuListFactory extends BeanStub {
                     () => this.chartMenuService.openAdvancedSettings(chartMenuContext, eventSource)
                 );
             case 'chartUnlink':
-                return chartMenuContext.chartController.isChartLinked() ? this.createMenuItem(
-                    this.chartTranslationService.translate('chartUnlink'),
-                    'unlinked',
-                    () => this.chartMenuService.toggleLinked(chartMenuContext)
-                ) : null;
+                return chartMenuContext.chartController.isChartLinked()
+                    ? this.createMenuItem(this.chartTranslationService.translate('chartUnlink'), 'unlinked', () =>
+                          this.chartMenuService.toggleLinked(chartMenuContext)
+                      )
+                    : null;
             case 'chartLink':
-                return !chartMenuContext.chartController.isChartLinked() ? this.createMenuItem(
-                    this.chartTranslationService.translate('chartLink'),
-                    'linked',
-                    () => this.chartMenuService.toggleLinked(chartMenuContext)
-                ) : null;
+                return !chartMenuContext.chartController.isChartLinked()
+                    ? this.createMenuItem(this.chartTranslationService.translate('chartLink'), 'linked', () =>
+                          this.chartMenuService.toggleLinked(chartMenuContext)
+                      )
+                    : null;
             case 'chartDownload':
-                return this.createMenuItem(
-                    this.chartTranslationService.translate('chartDownload'),
-                    'save',
-                    () => this.chartMenuService.downloadChart(chartMenuContext)
+                return this.createMenuItem(this.chartTranslationService.translate('chartDownload'), 'save', () =>
+                    this.chartMenuService.downloadChart(chartMenuContext)
                 );
         }
         return null;
@@ -167,36 +208,39 @@ export class ChartMenuListFactory extends BeanStub {
     private createMenuItem(name: string, iconName: string, action: () => void): MenuItemDef {
         return {
             name,
-            icon: _.createIconNoSpan(iconName, this.gridOptionsService, null),
-            action
-        }
+            icon: _createIconNoSpan(iconName, this.gos, null),
+            action,
+        };
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyBean(this.activeChartMenuList);
         super.destroy();
     }
 }
 
 class ChartMenuList extends Component {
-    @Autowired('focusService') private readonly focusService: FocusService;
+    private focusService: FocusService;
 
-    @RefSelector('eChartsMenu') private readonly eChartsMenu: HTMLElement;
+    public wireBeans(beans: BeanCollection) {
+        this.focusService = beans.focusService;
+    }
+
+    private readonly eChartsMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: () => void;
     private mainMenuList: AgMenuList;
 
     constructor(private readonly menuItems: (MenuItemDef | string)[]) {
-        super(/* html */`
-            <div ref="eChartsMenu" role="presentation" class="ag-menu ag-chart-menu-popup"></div>
+        super(/* html */ `
+            <div data-ref="eChartsMenu" role="presentation" class="ag-menu ag-chart-menu-popup"></div>
         `);
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.mainMenuList = this.createManagedBean(new AgMenuList(0));
         this.mainMenuList.addMenuItems(this.menuItems);
-        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener('closeMenu', this.onHidePopup.bind(this));
         this.eChartsMenu.appendChild(this.mainMenuList.getGui());
     }
 

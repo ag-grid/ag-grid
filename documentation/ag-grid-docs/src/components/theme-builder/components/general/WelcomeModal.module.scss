@@ -1,0 +1,18 @@
+@use 'design-system' as *;
+
+.lightImage {
+    #{$selector-darkmode} & {
+        display: none;
+    }
+    border-bottom: 1px solid var(--color-border-secondary);
+    max-width: 456px;
+}
+
+.darkImage {
+    display: none;
+    #{$selector-darkmode} & {
+        display: block;
+    }
+    max-width: 500px;
+    border-bottom: 1px solid var(--color-border-secondary);
+}

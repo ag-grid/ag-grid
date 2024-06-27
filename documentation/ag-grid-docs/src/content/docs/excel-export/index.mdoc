@@ -7,7 +7,7 @@ The grid provides in-built Excel (xlsx) export functionality without the need fo
 Excel can be performed from the [Context Menu](./context-menu/) or programmatically via the [Grid API](./grid-api/) and
 the exported spreadsheets can be fully customised and styled to meet user requirements.
 
-{% imageCaption imagePath="resources/excel-export-context-menu.png" alt="Excel Export" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/excel-export-context-menu.png" alt="Excel Export" maxWidth="48rem" centered=true constrained=true /%}
 
 ## Enabling Excel Export
 
@@ -15,7 +15,7 @@ The enterprise version of the grid provides an 'Excel Export' option via the gri
 
 Excel export is also possible via the [Grid API](./grid-api/) using the following method:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
  api.exportDataAsExcel();
 ```
 
@@ -29,7 +29,7 @@ Note that the raw values, and not the result from a cell renderer will be used, 
 
 * Value Getters will be used.
 * Cell Renderers will **NOT** be used.
-* Value Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formating-for-export) feature.
+* Value Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
 * Cell styles will **NOT** be exported by default.
 
 In the following example reorder some columns and apply some filter and sort operations - then export from the 'Excel Export' option

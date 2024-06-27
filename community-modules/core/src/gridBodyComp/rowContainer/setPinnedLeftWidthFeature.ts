@@ -1,12 +1,14 @@
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
-import { Events } from "../../eventKeys";
-import { setDisplayed, setFixedWidth } from "../../utils/dom";
-import { PinnedWidthService } from "../pinnedWidthService";
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import { _setDisplayed, _setFixedWidth } from '../../utils/dom';
+import type { PinnedWidthService } from '../pinnedWidthService';
 
 export class SetPinnedLeftWidthFeature extends BeanStub {
+    private pinnedWidthService: PinnedWidthService;
 
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
+    public wireBeans(beans: BeanCollection): void {
+        this.pinnedWidthService = beans.pinnedWidthService;
+    }
 
     private element: HTMLElement;
 
@@ -15,20 +17,18 @@ export class SetPinnedLeftWidthFeature extends BeanStub {
         this.element = element;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, this.onPinnedLeftWidthChanged.bind(this));
+    public postConstruct(): void {
+        this.addManagedEventListeners({ leftPinnedWidthChanged: this.onPinnedLeftWidthChanged.bind(this) });
     }
 
     private onPinnedLeftWidthChanged(): void {
         const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         const displayed = leftWidth > 0;
-        setDisplayed(this.element, displayed);
-        setFixedWidth(this.element, leftWidth);
+        _setDisplayed(this.element, displayed);
+        _setFixedWidth(this.element, leftWidth);
     }
 
     public getWidth(): number {
         return this.pinnedWidthService.getPinnedLeftWidth();
     }
-
 }

@@ -1,5 +1,6 @@
 ---
 title: "Edit Components"
+description: "Cell Editors handle the edit operation in the $framework data grid. Use one of seven provided Cell Editors or create a custom cell editor component."
 ---
 
 A Cell Editor Component is the UI that appears, normally inside the Cell, that takes care of the Edit operation. You can select from the [Provided Cell Editors](./provided-cell-editors/) or create your own Custom Cell Editor Components.
@@ -10,10 +11,14 @@ The example below shows some Provided Editor Components and some Custom Editor C
 
 ## Custom Components
 
-{% includeMarkdoc file="cell-editors/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_component-interface-vue.mdoc" /%}
+{% if isFramework("react") %}
+{% metaTag tags=["useGridCellEditor"] /%}
+{% /if %}
+
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ICellEditorParams" config={"description": ""} /%}
@@ -49,7 +54,7 @@ For example:
 
 Cell Editor Components are configured using the `cellEditor` property of the [Column Definition](./column-definitions/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { 
@@ -72,7 +77,7 @@ See [Registering Custom Components](./components/#registering-custom-components)
 
 ## Dynamic Selection
 
-The `colDef.cellRendererSelector` function allows setting different Editor Components for different Rows within a Column.
+The `colDef.cellEditorSelector` function allows setting different Editor Components for different Rows within a Column.
 
 The `params` passed to `cellEditorSelector` are the same as those passed to the Editor Component. Typically the selector will use this to check the row's contents and choose an editor accordingly.
 
@@ -162,10 +167,10 @@ Below shows an example with dynamic props. The following can be noted:
 
 The property `colDef.cellEditorParams` allows custom props to be passed to editors.
 
-{% includeMarkdoc file="cell-editors/_complementing-component-javascript.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_complementing-component-angular.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_complementing-component-react.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_complementing-component-vue.mdoc" /%}
+{% partial file="./_complementing-component-javascript.mdoc" /%}
+{% partial file="./_complementing-component-angular.mdoc" /%}
+{% partial file="./_complementing-component-react.mdoc" /%}
+{% partial file="./_complementing-component-vue.mdoc" /%}
 
 ## Popup Editor
 
@@ -185,7 +190,7 @@ Configure that a Custom Cell Editor is in a popup in one of the following ways:
 1. Implement the `isPopup()` method on the Custom Cell Editor and return `true`.
 {% /if %}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 colDefs = [
   {
     cellEditor: MyPopupEditor,
@@ -205,7 +210,7 @@ Popup Editors appear over the editing Cell. Configure the Popup Editor to appear
 1. Specify `cellEditorPopupPosition='under'` on the [Column Definition](./column-definitions/).
 {% /if %}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 colDef = {
   cellEditorPopup: true,
   cellEditorPopupPosition: 'under',
@@ -230,10 +235,10 @@ If you don't want the grid to act on an event, call `event.stopPropagation()`. T
 
 The following code snippet is one you could include for a simple text editor, which would stop the grid from doing navigation.
 
-{% includeMarkdoc file="cell-editors/_keyboard-option-1-javascript.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_keyboard-option-1-angular.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_keyboard-option-1-react.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_keyboard-option-1-vue.mdoc" /%}
+{% partial file="./_keyboard-option-1-javascript.mdoc" /%}
+{% partial file="./_keyboard-option-1-angular.mdoc" /%}
+{% partial file="./_keyboard-option-1-react.mdoc" /%}
+{% partial file="./_keyboard-option-1-vue.mdoc" /%}
 
 ### Option 2 - Suppress Keyboard Event
 
@@ -241,10 +246,10 @@ If you implement `colDef.suppressKeyboardEvent()`, you can tell the grid which e
 
 {% apiDocumentation source="column-properties/properties.json" section="columns" names=["suppressKeyboardEvent"] /%}
 
-{% includeMarkdoc file="cell-editors/_keyboard-option-2-javascript.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_keyboard-option-2-angular.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_keyboard-option-2-react.mdoc" /%}
-{% includeMarkdoc file="cell-editors/_keyboard-option-2-vue.mdoc" /%}
+{% partial file="./_keyboard-option-2-javascript.mdoc" /%}
+{% partial file="./_keyboard-option-2-angular.mdoc" /%}
+{% partial file="./_keyboard-option-2-react.mdoc" /%}
+{% partial file="./_keyboard-option-2-vue.mdoc" /%}
 
 ## Accessing Instances
 

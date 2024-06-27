@@ -1,17 +1,16 @@
+import type { IGridHeaderComp } from '@ag-grid-community/core';
+import { GridHeaderCtrl } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+
 import { BeansContext } from '../beansContext';
-import {
-    IGridHeaderComp, GridHeaderCtrl,
-} from '@ag-grid-community/core';
 import { CssClasses } from '../utils';
 import HeaderRowContainerComp from './headerRowContainerComp';
 
 const GridHeaderComp = () => {
-
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [height, setHeight] = useState<string>();
 
-    const {context} = useContext(BeansContext);
+    const { context } = useContext(BeansContext);
     const eGui = useRef<HTMLDivElement | null>(null);
     const gridCtrlRef = useRef<GridHeaderCtrl | null>(null);
 
@@ -23,28 +22,31 @@ const GridHeaderComp = () => {
             return;
         }
         const compProxy: IGridHeaderComp = {
-            addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
-            setHeightAndMinHeight: height => setHeight(height)
+            addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+            setHeightAndMinHeight: (height) => setHeight(height),
         };
 
         gridCtrlRef.current = context.createBean(new GridHeaderCtrl());
         gridCtrlRef.current.setComp(compProxy, eGui.current, eGui.current);
     }, []);
 
-    const className = useMemo( ()=> {
-        let res = cssClasses.toString();
+    const className = useMemo(() => {
+        const res = cssClasses.toString();
         return 'ag-header ' + res;
     }, [cssClasses]);
 
-    const style = useMemo( ()=> ({
-        height: height,
-        minHeight: height
-    }), [height]);
+    const style = useMemo(
+        () => ({
+            height: height,
+            minHeight: height,
+        }),
+        [height]
+    );
 
     return (
         <div ref={setRef} className={className} style={style} role="presentation">
             <HeaderRowContainerComp pinned={'left'} />
-            <HeaderRowContainerComp pinned={null}/>
+            <HeaderRowContainerComp pinned={null} />
             <HeaderRowContainerComp pinned={'right'} />
         </div>
     );

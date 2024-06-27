@@ -1,0 +1,27 @@
+{
+  "name": "ag-website-shared",
+  "version": "0.0.1",
+  "description": "Shared code for all AG Grid websites",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ag-grid/ag-website-shared.git"
+  },
+  "keywords": [
+    "ag-grid",
+    "website"
+  ],
+  "author": "AG Grid",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-website-shared/issues"
+  },
+  "homepage": "https://github.com/ag-grid/ag-website-shared#readme",
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0"
+  }
+}

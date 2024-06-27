@@ -12,3 +12,4 @@ tsconfig.watch.json
 dist/**/*.test.*
 project.json
 jest.config.js
+*.map

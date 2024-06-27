@@ -1,8 +1,10 @@
-@use "sass:color";
+@use 'sass:color';
 
-.ag-theme-quartz, .ag-theme-quartz-dark, .ag-theme-quartz-auto-dark {
+.ag-theme-quartz,
+.ag-theme-quartz-dark,
+.ag-theme-quartz-auto-dark {
     // COLOURS
-    
+
     // main colours (overridden by dark mode)
     --ag-active-color: #2196f3;
     --ag-background-color: #fff;
@@ -26,7 +28,7 @@
     --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 20%);
     --ag-menu-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
     --ag-menu-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 20%);
-    
+
     // derived colours (no color blending - these are shared by dark mode)
     --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 8%);
     --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 12%);
@@ -49,6 +51,8 @@
     --ag-input-disabled-border-color: var(--ag-border-color);
     --ag-input-disabled-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 6%);
     --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
+    --ag-chart-menu-label-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
+    --ag-chart-menu-pill-select-button-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
 
     // BORDERS
     --ag-borders: solid 1px;
@@ -63,15 +67,18 @@
     // SIZING
     --ag-grid-size: 8px;
     --ag-icon-size: 16px;
-    --ag-header-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 4.25);       // if changed, update environment.ts
-    --ag-row-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 3.5);          // if changed, update environment.ts
-    --ag-list-item-height: calc(var(--ag-icon-size) + var(--ag-widget-vertical-spacing)); // if changed, update environment.ts
+    --ag-header-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 4.25); // if changed, update environment.ts
+    --ag-row-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 3.5); // if changed, update environment.ts
+    --ag-list-item-height: calc(
+        var(--ag-icon-size) + var(--ag-widget-vertical-spacing)
+    ); // if changed, update environment.ts
     --ag-column-select-indent-size: var(--ag-icon-size);
     --ag-set-filter-indent-size: var(--ag-icon-size);
+    --ag-filter-tool-panel-group-indent: var(--ag-grid-size);
     --ag-advanced-filter-builder-indent-size: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
     --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 2);
     --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 1.5);
-    
+
     --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);
     --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
     --ag-widget-horizontal-spacing: calc(var(--ag-grid-size) * 1.5);
@@ -82,23 +89,24 @@
     --ag-toggle-button-border-width: 2px;
 
     // FONTS
-    --ag-font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    --ag-font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
+        Cantarell, 'Helvetica Neue', sans-serif;
     --ag-font-size: 14px;
     --ag-icon-font-family: agGridQuartz;
 
     // MISC
-    --ag-tab-min-width: 0;
+    --ag-tab-min-width: 290px;
+    --ag-chart-menu-panel-width: 260px;
 
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     --ag-popup-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.15);
     --ag-side-bar-panel-width: 250px;
-};
-
+}
 
 @mixin -dark-vars {
     --ag-background-color: color-mix(in srgb, #fff, #182230 97%);
     --ag-foreground-color: #fff;
-    --ag-border-color: rgba(255,255,255,0.16);
+    --ag-border-color: rgba(255, 255, 255, 0.16);
     --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
     --ag-header-background-color: color-mix(in srgb, #fff, #182230 93%);
     --ag-tooltip-background-color: color-mix(in srgb, #fff, #182230 96%);
@@ -106,11 +114,11 @@
     --ag-input-disabled-background-color: #68686e12;
     --ag-card-shadow: 0 1px 20px 1px black;
     --ag-input-border-color: var(--ag-border-color);
-    --ag-input-disabled-border-color: rgba(255,255,255,0.07);
+    --ag-input-disabled-border-color: rgba(255, 255, 255, 0.07);
     --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
     --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
     --ag-selected-row-background-color: var(--ag-row-hover-color);
-    
+
     --ag-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
     --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
     --ag-menu-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
@@ -121,7 +129,9 @@
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
 
-    --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.30);
+    --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.3);
+
+    --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 
     color-scheme: dark;
 }
@@ -135,4 +145,3 @@
         @include -dark-vars();
     }
 }
-

@@ -12,7 +12,7 @@ the first) column.
 
 To enable row dragging on all columns, set the column property `rowDrag = true` on one (typically the first) column.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // make all rows draggable
@@ -23,7 +23,7 @@ const gridOptions = {
 
 It is also possible to dynamically control which rows are draggable by providing a callback function as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // only allow non-group rows to be dragged
@@ -51,7 +51,7 @@ The example below shows simple managed dragging. The following can be noted:
 
 The logic for managed dragging is simple and has the following constraints:
 
-* Works with [Client-Side](./client-side-model/) row model only; not with the [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/) row models.
+* Works with [Client-Side](./row-models/#client-side) row model only; not with the [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/) row models.
 * Does not work if [Pagination](./row-pagination/) is enabled.
 * Does not work when sorting is applied. This is because the sort order of the rows depends on the data and moving the data would break the sort order.
 * Does not work when filtering is applied. This is because a filter removes rows making it impossible to know what 'real' order of rows when some are missing.
@@ -160,7 +160,7 @@ Dragging Multiple Rows with unmanaged row dragging, the application is in contro
 
 When using row dragging it is also possible to reorder rows by clicking and dragging anywhere on the row without the need for a drag handle by enabling the `rowDragEntireRow` grid option as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country' },
@@ -187,8 +187,7 @@ The example below demonstrates entire row dragging with [Multi-Row Dragging](./r
 
 ## Suppress Row Drag
 
-You can hide the draggable area by calling the grid API `setGridOption('suppressRowDrag', suppressed)`
-or by setting the bound property `suppressRowDrag`.
+You can hide the draggable area by setting the grid option `suppressRowDrag = true`.
 
 The example below is almost identical to the [Managed Dragging](#managed-dragging) example with the following differences:
 
@@ -253,8 +252,6 @@ The example above works, however it is not intuitive as the user is given no vis
 
 Unmanaged row dragging will work with any of the row models [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) and [Viewport](./viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
 
-Because the grid implementation with regard to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
-
 ## Customisation
 
 There are some options that can be used to customise the Row Drag experience, so it has a better integration with your application.
@@ -265,7 +262,7 @@ When a row drag starts, a "floating" DOM element is created to indicate which ro
 
 {% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["rowDragText"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -295,7 +292,7 @@ The example below shows dragging with custom text. The following can be noted:
 
 If the grid has more than one column set with `rowDrag=true`, the `rowDragText` callback can be set in the `colDef`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -362,13 +359,12 @@ ngAfterViewInit() {
 ```js
 // your custom cell renderer code
 
-// this will hold the reference to the element you want to
-// to act as row dragger.
-myRef = React.createRef();
+// this will hold the reference to the element you want to act as row dragger.
+const myRef = useRef(null);
 
-componentDidMount() {
-    this.props.registerRowDragger(this.myRef.current);
-}
+useEffect(() => {
+    props.registerRowDragger(myRef.current!);
+});
 ```
 {% /if %}
 

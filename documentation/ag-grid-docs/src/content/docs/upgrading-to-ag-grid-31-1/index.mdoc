@@ -1,23 +1,26 @@
 ---
 title: "Upgrading to AG Grid 31.1"
+description: "See whats new in AG Grid, view a full list of changes and migrate your $framework Data Grid to v31.1 with our Codemods."
 ---
 
 ## What's New
 
-See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-1/) for details of what's new in this minor version.
+See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-1/) for details of what's new in version 31.1.
 
 ## Codemods
 
 Follow these steps to upgrade your project's AG Grid version to `31.1.0`:
 
-1. Open a terminal and navigate to your project's root folder.
+1. Locate your project's `package.json` and note the version of AG Grid that you are currently using.
 
 1. Update any AG Grid dependencies listed in your project's `package.json` to version `31.1.0`.
 
-1. Run the `migrate` command of version `31.1` of the AG Grid codemod runner:
+1. Open a terminal and navigate to your project's root folder.
+
+1. Run the `migrate` command of version `31.1` of the AG Grid codemod runner, where `$FROM_VERSION` refers to your project's existing AG Grid version:
 
    ```
-   npx @ag-grid-community/cli@31.1 migrate
+   npx @ag-grid-devtools/cli@31.1 migrate --from=$FROM_VERSION
    ```
 
    This will update your project's source files to prepare for the new release.
@@ -27,6 +30,8 @@ Follow these steps to upgrade your project's AG Grid version to `31.1.0`:
 {% note %}
 The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
 {% /note %}
+
+The codemod only transforms source files that make use of deprecated features, so if you aren't currently making use of any of those APIs your source code will be unaffected by the codemod.
 
 See the [Codemods](./codemods/) documentation for more details.
 
@@ -45,11 +50,12 @@ Please note that enabling this setting affects all custom components and you can
 {% /if %}
 
 {% if isFramework("react") %}
+{% metaTag tags=["useGridCellEditor"] /%}
 - `getValue` is no longer used. The component will be passed `value` as a prop with the latest value (and `initialValue` with the value when editing started). When the value is updated in the UI, the component should call the prop `onValueChange` with the updated value.
 - Any other date methods defined via `useImperativeHandle` should now be defined as callbacks, and passed to the new hook `useGridCellEditor`. These are all optional; the hook is only needed if the callbacks are required.
-- If using `api.getCellEditorInstances`, the instance returned will now be a wrapper. To get the React custom cell editor component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Cell Editor Instances](./cell-editors/#accessing-cell-editor-instances).
+- If using `api.getCellEditorInstances`, the instance returned will now be a wrapper. To get the React custom cell editor component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Cell Editor Instances](./cell-editors).
 
-See [Implementing a Cell Editor Component](./cell-editors/#implementing-a-cell-editor-component) for examples and more details on the interfaces.
+See [Implementing a Cell Editor Component](./cell-editors) for examples and more details on the interfaces.
 {% /if %}
 
 {% if isFramework("react") %}

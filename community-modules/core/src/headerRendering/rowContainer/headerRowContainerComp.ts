@@ -1,31 +1,28 @@
-import { ColumnPinnedType } from '../../entities/column';
-import { PostConstruct, PreDestroy } from '../../context/context';
-import { ensureDomOrder } from '../../utils/dom';
-import { getAllValuesInObject } from '../../utils/object';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import { _ensureDomOrder } from '../../utils/dom';
+import { _getAllValuesInObject } from '../../utils/object';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import { HeaderRowComp } from '../row/headerRowComp';
-import { HeaderRowCtrl } from '../row/headerRowCtrl';
-import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
+import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
+import type { IHeaderRowContainerComp } from './headerRowContainerCtrl';
+import { HeaderRowContainerCtrl } from './headerRowContainerCtrl';
+
+const PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
+
+const PINNED_RIGHT_TEMPLATE = /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
+
+const CENTER_TEMPLATE = /* html */ `<div class="ag-header-viewport" role="presentation">
+        <div class="ag-header-container" data-ref="eCenterContainer" role="rowgroup"></div>
+    </div>`;
 
 export class HeaderRowContainerComp extends Component {
-
-    private static PINNED_LEFT_TEMPLATE =  /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
-
-    private static PINNED_RIGHT_TEMPLATE =  /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
-
-    private static CENTER_TEMPLATE =  /* html */
-        `<div class="ag-header-viewport" role="presentation">
-            <div class="ag-header-container" ref="eCenterContainer" role="rowgroup"></div>
-        </div>`;
-
-    @RefSelector('eCenterContainer') private eCenterContainer: HTMLElement;
+    private eCenterContainer: HTMLElement = RefPlaceholder;
 
     private eRowContainer: HTMLElement;
 
     private pinned: ColumnPinnedType;
 
-    private headerRowComps: {[ctrlId: string]: HeaderRowComp} = {};
+    private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
     private rowCompsList: HeaderRowComp[] = [];
 
     constructor(pinned: ColumnPinnedType) {
@@ -33,25 +30,24 @@ export class HeaderRowContainerComp extends Component {
         this.pinned = pinned;
     }
 
-    @PostConstruct
-    private init(): void {
+    public postConstruct(): void {
         this.selectAndSetTemplate();
 
         const compProxy: IHeaderRowContainerComp = {
-            setDisplayed: displayed => this.setDisplayed(displayed),
-            setCtrls: ctrls => this.setCtrls(ctrls),
+            setDisplayed: (displayed) => this.setDisplayed(displayed),
+            setCtrls: (ctrls) => this.setCtrls(ctrls),
 
             // only gets called for center section
-            setCenterWidth: width => this.eCenterContainer.style.width = width,
-            setViewportScrollLeft: left => this.getGui().scrollLeft = left,
+            setCenterWidth: (width) => (this.eCenterContainer.style.width = width),
+            setViewportScrollLeft: (left) => (this.getGui().scrollLeft = left),
 
             // only gets called for pinned sections
-            setPinnedContainerWidth: width => {
+            setPinnedContainerWidth: (width) => {
                 const eGui = this.getGui();
                 eGui.style.width = width;
                 eGui.style.maxWidth = width;
                 eGui.style.minWidth = width;
-            }
+            },
         };
 
         const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));
@@ -62,19 +58,18 @@ export class HeaderRowContainerComp extends Component {
         const pinnedLeft = this.pinned == 'left';
         const pinnedRight = this.pinned == 'right';
 
-        const template = pinnedLeft ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE :
-                         pinnedRight ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE : HeaderRowContainerComp.CENTER_TEMPLATE;
+        const template = pinnedLeft ? PINNED_LEFT_TEMPLATE : pinnedRight ? PINNED_RIGHT_TEMPLATE : CENTER_TEMPLATE;
 
         this.setTemplate(template);
 
         // for left and right, we add rows directly to the root element,
         // but for center container we add elements to the child container.
-        this.eRowContainer = this.eCenterContainer ? this.eCenterContainer : this.getGui();
+        this.eRowContainer = this.eCenterContainer !== RefPlaceholder ? this.eCenterContainer : this.getGui();
     }
 
-    @PreDestroy
-    private destroyRowComps(): void {
+    public override destroy(): void {
         this.setCtrls([]);
+        super.destroy();
     }
 
     private destroyRowComp(rowComp: HeaderRowComp): void {
@@ -83,7 +78,6 @@ export class HeaderRowContainerComp extends Component {
     }
 
     private setCtrls(ctrls: HeaderRowCtrl[]): void {
-
         const oldRowComps = this.headerRowComps;
         this.headerRowComps = {};
         this.rowCompsList = [];
@@ -98,15 +92,15 @@ export class HeaderRowContainerComp extends Component {
                 this.eRowContainer.appendChild(eGui);
             }
             if (prevGui) {
-                ensureDomOrder(this.eRowContainer, eGui, prevGui);
+                _ensureDomOrder(this.eRowContainer, eGui, prevGui);
             }
 
             prevGui = eGui;
         };
 
-        ctrls.forEach(ctrl => {
+        ctrls.forEach((ctrl) => {
             const ctrlId = ctrl.getInstanceId();
-            const existingComp =  oldRowComps[ctrlId];
+            const existingComp = oldRowComps[ctrlId];
             delete oldRowComps[ctrlId];
 
             const rowComp = existingComp ? existingComp : this.createBean(new HeaderRowComp(ctrl));
@@ -116,6 +110,6 @@ export class HeaderRowContainerComp extends Component {
             appendEnsuringDomOrder(rowComp);
         });
 
-        getAllValuesInObject(oldRowComps).forEach(c => this.destroyRowComp(c));
+        _getAllValuesInObject(oldRowComps).forEach((c) => this.destroyRowComp(c));
     }
 }

@@ -1,16 +1,17 @@
 import type { ImportType, InternalFramework } from '@ag-grid-types';
-import { Icon } from '@components/icon/Icon';
-import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
-import styles from '@design-system/modules/ExampleRunner.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import type { FileContents } from '@features/example-generator/types';
 import classnames from 'classnames';
 import { type FunctionComponent, type ReactElement, useState } from 'react';
 
 import { CodeViewer } from './CodeViewer';
 import { ExampleIFrame } from './ExampleIFrame';
+import styles from './ExampleRunner.module.scss';
 
 interface Props {
     id: string;
+    title: string;
     exampleUrl?: string;
     exampleRunnerExampleUrl?: string;
     externalLinks?: ReactElement;
@@ -28,6 +29,7 @@ const DEFAULT_HEIGHT = 500;
 
 export const ExampleRunner: FunctionComponent<Props> = ({
     id,
+    title,
     exampleUrl,
     exampleRunnerExampleUrl,
     externalLinks,
@@ -38,7 +40,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     hideInternalFrameworkSelection,
     loadingIFrameId,
     supportedFrameworks,
-    supportedImportTypes
+    supportedImportTypes,
 }) => {
     const [showCode, setShowCode] = useState(false);
 
@@ -53,6 +55,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                     style={{ height: exampleHeight, width: '100%' }}
                 >
                     <ExampleIFrame
+                        title={title}
                         isHidden={showCode}
                         url={exampleRunnerExampleUrl!}
                         loadingIFrameId={loadingIFrameId}

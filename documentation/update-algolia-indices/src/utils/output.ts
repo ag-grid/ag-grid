@@ -1,6 +1,6 @@
+import algoliasearch from 'algoliasearch';
 import fs from 'fs';
 import { dirname } from 'path';
-import algoliasearch from 'algoliasearch';
 
 const outputDir = './output';
 // in print mode, the results are stored in /output/*.json files, otherwise logged in algolia.
@@ -24,7 +24,7 @@ export const writeResults = (path: string, records: any) => {
         fs.mkdirSync(dirName, { recursive: true });
     }
     fs.writeFileSync(fileName, JSON.stringify(records, null, 2));
-}
+};
 
 export const logWarning = (warning: any) => {
     if (!printMode) {
@@ -36,13 +36,13 @@ export const logWarning = (warning: any) => {
     if (!fs.existsSync(dirName)) {
         fs.mkdirSync(dirName, { recursive: true });
     }
-    
+
     if (fs.existsSync(fileName)) {
         fs.appendFileSync(fileName, JSON.stringify(warning, null, 2));
     } else {
         fs.writeFileSync(fileName, JSON.stringify(warning, null, 2));
     }
-}
+};
 
 export const updateAlgolia = async (indexName, records) => {
     if (printMode) {
@@ -53,7 +53,7 @@ export const updateAlgolia = async (indexName, records) => {
     const index = algoliaClient.initIndex(indexName);
 
     index.setSettings({
-        searchableAttributes: ['title', 'heading', 'subHeading'], // attributes used for searching
+        searchableAttributes: ['metaTag', 'title', 'heading', 'subHeading'], // attributes used for searching
         disableExactOnAttributes: ['text'], // don't allow "exact matches" in the text
         attributesToSnippet: ['text:40'], // configure snippet length shown in results
         distinct: 1, // only allow each page to appear in the results once
@@ -72,4 +72,4 @@ export const updateAlgolia = async (indexName, records) => {
     } catch (e) {
         console.error(`Failed to save records.`, e);
     }
-}
+};

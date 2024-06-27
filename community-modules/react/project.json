@@ -5,7 +5,10 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "nx:noop"
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
     },
     "build": {
       "executor": "nx:noop",
@@ -62,16 +65,16 @@
         "external": ["@ag-grid-community/core", "react", "react-dom"],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "format": ["cjs", "esm"],
         "sourcemap": true
       },
       "configurations": {
-        "watch": {
-        },
+        "watch": {},
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "build:umd": {
@@ -85,7 +88,7 @@
         "tsConfig": "community-modules/react/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "bundle": true,
         "thirdParty": true,
         "skipTypeCheck": true,
@@ -96,7 +99,8 @@
       "configurations": {
         "production": {
           "sourcemap": false
-        }
+        },
+        "sizing": { "metafile": true }
       }
     },
     "test": {

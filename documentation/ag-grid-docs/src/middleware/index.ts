@@ -1,6 +1,25 @@
 import { getIsProduction } from '@utils/env';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { defineMiddleware } from 'astro/middleware';
+import { parse } from 'node-html-parser';
 import * as prettier from 'prettier';
+
+const env = import.meta.env;
+
+const rewriteAstroGeneratedContent = (body: string) => {
+    const html = parse(body);
+
+    // In dev, add public site url base for all scripts, so it works in external sites
+    if (env.DEV) {
+        html.querySelectorAll('script').forEach((script: HTMLElement) => {
+            const src = script.getAttribute('src');
+            if (src != null && src.startsWith(urlWithBaseUrl('/'))) {
+                script.setAttribute('src', new URL(src, env.PUBLIC_SITE_URL).toString());
+            }
+        });
+    }
+    return html.toString();
+};
 
 const BINARY_EXTENSIONS = ['png', 'webp', 'jpeg', 'jpg'];
 
@@ -31,14 +50,22 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     let body = await response.text();
 
-    if (isHtml(context.url.pathname) && getIsProduction()) {
-        try {
-            body = await prettier.format(body, {
-                parser: 'html',
-            });
-        } catch (e) {
-            // eslint-disable-next-line no-console
-            console.warn(`Unable to prettier format for [${context.url.pathname}]`);
+    if (isHtml(context.url.pathname)) {
+        body = rewriteAstroGeneratedContent(body);
+
+        if (getIsProduction()) {
+            try {
+                body = await prettier.format(body, {
+                    parser: 'html',
+                });
+            } catch (e) {
+                // eslint-disable-next-line no-console
+                console.warn(`Unable to prettier format for [${context.url.pathname}]`);
+            }
+        }
+        body = body.trim();
+        if (!/^<!doctype/i.test(body)) {
+            body = '<!doctype html>\n' + body;
         }
     }
 

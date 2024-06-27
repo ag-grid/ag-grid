@@ -1,26 +1,41 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columns/columnModel";
-import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
-import { GridBodyCtrl } from "./gridBodyCtrl";
-import { BodyHeightChangedEvent, Events } from "../events";
-import { CtrlsService } from "../ctrlsService";
-import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
-import { getInnerHeight, getInnerWidth } from "../utils/dom";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { PinnedWidthService } from "./pinnedWidthService";
-import { Column } from "../entities/column";
-import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
+import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnSizeService } from '../columns/columnSizeService';
+import type { ColumnViewportService } from '../columns/columnViewportService';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { BodyHeightChangedEvent } from '../events';
+import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
+import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import { _getInnerHeight, _getInnerWidth } from '../utils/dom';
+import type { GridBodyCtrl } from './gridBodyCtrl';
+import type { PinnedWidthService } from './pinnedWidthService';
+import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
 // vertical scrolling.
 export class ViewportSizeFeature extends BeanStub {
+    private ctrlsService: CtrlsService;
+    private pinnedWidthService: PinnedWidthService;
+    private columnModel: ColumnModel;
+    private visibleColsService: VisibleColsService;
+    private columnSizeService: ColumnSizeService;
+    private scrollVisibleService: ScrollVisibleService;
+    private columnViewportService: ColumnViewportService;
 
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+        this.pinnedWidthService = beans.pinnedWidthService;
+        this.columnModel = beans.columnModel;
+        this.visibleColsService = beans.visibleColsService;
+        this.columnSizeService = beans.columnSizeService;
+        this.scrollVisibleService = beans.scrollVisibleService;
+        this.columnViewportService = beans.columnViewportService;
+    }
 
     private centerContainerCtrl: RowContainerCtrl;
     private gridBodyCtrl: GridBodyCtrl;
@@ -33,13 +48,12 @@ export class ViewportSizeFeature extends BeanStub {
         this.centerContainerCtrl = centerContainerCtrl;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.ctrlsService.whenReady(() => {
-            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+    public postConstruct(): void {
+        this.ctrlsService.whenReady((p) => {
+            this.gridBodyCtrl = p.gridBodyCtrl;
             this.listenForResize();
         });
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
+        this.addManagedEventListeners({ scrollbarWidthChanged: this.onScrollbarWidthChanged.bind(this) });
         this.addManagedPropertyListeners(['alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll'], () => {
             this.checkViewportAndScrolls();
         });
@@ -68,9 +82,11 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnModel.refreshFlexedColumns(
-                    { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
-                );
+                this.columnSizeService.refreshFlexedColumns({
+                    viewportWidth: this.centerWidth,
+                    updateBodyWidths: true,
+                    fireResizedEvent: true,
+                });
             }
         } else {
             this.bodyHeight = 0;
@@ -79,44 +95,50 @@ export class ViewportSizeFeature extends BeanStub {
 
     private keepPinnedColumnsNarrowerThanViewport(): void {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyWidth = getInnerWidth(eBodyViewport);
+        const bodyWidth = _getInnerWidth(eBodyViewport);
 
-        if (bodyWidth <= 50) { return; }
+        if (bodyWidth <= 50) {
+            return;
+        }
 
         // remove 50px from the bodyWidth to give some margin
         let columnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
-        const processUnpinnedColumns = this.gridOptionsService.getCallback('processUnpinnedColumns');
+        const processUnpinnedColumns = this.gos.getCallback('processUnpinnedColumns');
 
-        if (!columnsToRemove.length) { return; }
+        if (!columnsToRemove.length) {
+            return;
+        }
 
         if (processUnpinnedColumns) {
             const params: WithoutGridCommon<ProcessUnpinnedColumnsParams> = {
                 columns: columnsToRemove,
-                viewportWidth: bodyWidth
-            }
-            columnsToRemove = processUnpinnedColumns(params);
+                viewportWidth: bodyWidth,
+            };
+            columnsToRemove = processUnpinnedColumns(params) as AgColumn[];
         }
 
-        this.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature')
+        this.columnModel.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
     }
 
-    private getPinnedColumnsOverflowingViewport(viewportWidth: number): Column[] {
+    private getPinnedColumnsOverflowingViewport(viewportWidth: number): AgColumn[] {
         const pinnedRightWidth = this.pinnedWidthService.getPinnedRightWidth();
         const pinnedLeftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
 
-        if (totalPinnedWidth < viewportWidth) { return []; }
+        if (totalPinnedWidth < viewportWidth) {
+            return [];
+        }
 
-        const pinnedLeftColumns: Column[] = [...this.columnModel.getDisplayedLeftColumns()];
-        const pinnedRightColumns: Column[] = [...this.columnModel.getDisplayedRightColumns()];
+        const pinnedLeftColumns = [...this.visibleColsService.getLeftCols()];
+        const pinnedRightColumns = [...this.visibleColsService.getRightCols()];
 
         let indexRight = 0;
         let indexLeft = 0;
-        let totalWidthRemoved = 0;
+        const totalWidthRemoved = 0;
 
-        const columnsToRemove: Column[] = [];
+        const columnsToRemove: AgColumn[] = [];
 
-        let spaceNecessary = (totalPinnedWidth - totalWidthRemoved) - viewportWidth;
+        let spaceNecessary = totalPinnedWidth - totalWidthRemoved - viewportWidth;
 
         while ((indexLeft < pinnedLeftColumns.length || indexRight < pinnedRightColumns.length) && spaceNecessary > 0) {
             if (indexRight < pinnedRightColumns.length) {
@@ -156,12 +178,12 @@ export class ViewportSizeFeature extends BeanStub {
 
     private checkBodyHeight(): void {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyHeight = getInnerHeight(eBodyViewport);
+        const bodyHeight = _getInnerHeight(eBodyViewport);
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
             const event: WithoutGridCommon<BodyHeightChangedEvent> = {
-                type: Events.EVENT_BODY_HEIGHT_CHANGED
+                type: 'bodyHeightChanged',
             };
             this.eventService.dispatchEvent(event);
         }
@@ -181,7 +203,7 @@ export class ViewportSizeFeature extends BeanStub {
     private updateScrollVisibleServiceImpl(): void {
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: this.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing()
+            verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing(),
         };
 
         this.scrollVisibleService.setScrollsVisible(params);
@@ -198,6 +220,6 @@ export class ViewportSizeFeature extends BeanStub {
         const scrollWidth = this.centerContainerCtrl.getCenterWidth();
         const scrollPosition = this.centerContainerCtrl.getViewportScrollLeft();
 
-        this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
+        this.columnViewportService.setScrollPosition(scrollWidth, scrollPosition);
     }
 }

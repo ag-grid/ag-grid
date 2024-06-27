@@ -1,8 +1,9 @@
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/Toolbar.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { Select } from '@ag-website-shared/components/select/Select';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
-import React, { useDeferredValue, useEffect, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 
+import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
@@ -23,8 +24,8 @@ export const Toolbar = ({
     setGridTheme,
     setCountryColumnPopupEditor,
 }) => {
-    function onDataSizeChanged(event) {
-        const value = event.target.value;
+    function onDataSizeChanged(newValue) {
+        const { value } = newValue;
         setDataSize(value);
         trackDemoToolbar({
             type: 'dataSize',
@@ -32,8 +33,8 @@ export const Toolbar = ({
         });
     }
 
-    function onThemeChanged(event) {
-        const newTheme = event.target.value || 'ag-theme-none';
+    function onThemeChanged(newValue) {
+        const newTheme = newValue.value || 'ag-theme-none';
         setCountryColumnPopupEditor(newTheme, gridRef.current.api);
         setGridTheme(newTheme);
         trackDemoToolbar({
@@ -57,7 +58,9 @@ export const Toolbar = ({
     const deferredQuickFilterText = useDeferredValue(quickFilterText);
 
     useEffect(() => {
-        if(!gridRef.current?.api) return;
+        if (!gridRef.current?.api) {
+            return;
+        }
         gridRef.current.api.setGridOption('quickFilterText', deferredQuickFilterText);
         trackOnceDemoToolbar({
             type: 'filterChange',
@@ -65,41 +68,78 @@ export const Toolbar = ({
     }, [deferredQuickFilterText]);
 
     function onFilterChanged(event) {
-        setQuickFilterText(event.target.value);        
+        setQuickFilterText(event.target.value);
     }
+
+    const dataSizeOptions = useMemo(
+        () =>
+            rowCols.map((rowCol) => {
+                const rows = rowCol[0];
+                const cols = rowCol[1];
+
+                const value = createDataSizeValue(rows, cols);
+                const text = `${rows} Rows, ${cols} Cols`;
+                return {
+                    label: text,
+                    value,
+                };
+            }),
+        [rowCols]
+    );
+    const dataSizeOption = useMemo(
+        () => dataSizeOptions.find((o: { value: string }) => o.value === dataSize) || dataSizeOptions[0],
+        [dataSizeOptions, dataSize]
+    );
+
+    const themeOptions = useMemo(() => {
+        return Object.entries(options).map(([themeName, label]) => ({
+            label,
+            value: themeName,
+        }));
+    }, [options]);
+    const themeOption = useMemo(
+        () => themeOptions.find((o: { value: string }) => o.value === gridTheme) || dataSizeOptions[0],
+        [themeOptions, gridTheme]
+    );
 
     return (
         <div className={styles.toolbar}>
             <div className={styles.controlsContainer}>
                 <div className={styles.controls}>
-                    <label htmlFor="data-size">Data Size:</label>
-                    <select id="data-size" onChange={onDataSizeChanged} value={dataSize}>
-                        {rowCols.map((rowCol) => {
-                            const rows = rowCol[0];
-                            const cols = rowCol[1];
+                    <label htmlFor="data-size" className="text-sm">
+                        Data Size:
+                    </label>
 
-                            const value = createDataSizeValue(rows, cols);
-                            const text = `${rows} Rows, ${cols} Cols`;
-                            return (
-                                <option key={value} value={value}>
-                                    {text}
-                                </option>
-                            );
-                        })}
-                    </select>
+                    {dataSizeOption && (
+                        <Select
+                            isPopper
+                            options={dataSizeOptions}
+                            value={dataSizeOption}
+                            onChange={onDataSizeChanged}
+                            renderItem={(o) => {
+                                return <>{o.label}</>;
+                            }}
+                        />
+                    )}
 
-                    <label htmlFor="grid-theme">Theme:</label>
-                    <select id="grid-theme" onChange={onThemeChanged} value={gridTheme || ''}>
-                        {Object.entries(options).map(([themeName, label]) => (
-                            <option key={themeName} value={themeName}>
-                                {label}
-                            </option>
-                        ))}
-                        {gridTheme && options[gridTheme] == null && <option value={gridTheme}>{gridTheme}</option>}
-                    </select>
+                    <label htmlFor="grid-theme" className="text-sm">
+                        Theme:
+                    </label>
+                    <Select
+                        isPopper
+                        options={themeOptions}
+                        value={themeOption}
+                        onChange={onThemeChanged}
+                        renderItem={(o) => {
+                            return <>{o.label}</>;
+                        }}
+                    />
 
-                    <label htmlFor="global-filter">Filter:</label>
+                    <label htmlFor="global-filter" className={styles.filterLabel}>
+                        Filter:
+                    </label>
                     <input
+                        className={styles.filterInput}
                         placeholder="Filter any column..."
                         type="text"
                         onInput={onFilterChanged}
@@ -107,7 +147,7 @@ export const Toolbar = ({
                         style={{ flex: 1 }}
                     />
 
-                    <a
+                    {/* <a
                         className={styles.videoTour}
                         href="https://youtu.be/bcMvTUVbMvI"
                         target="_blank"
@@ -115,7 +155,7 @@ export const Toolbar = ({
                     >
                         <Icon name="youtube" />
                         Take a video tour
-                    </a>
+                    </a> */}
                 </div>
             </div>
             <div className={styles.scrollIndicator}></div>

@@ -20,10 +20,10 @@ In the following example you can see how the Gold, Silver, Bronze and Total colu
 
 ## Implementing a Floating Filter Component
 
-{% includeMarkdoc file="component-floating-filter/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="component-floating-filter/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="component-floating-filter/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="component-floating-filter/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IFloatingFilterParams" /%}

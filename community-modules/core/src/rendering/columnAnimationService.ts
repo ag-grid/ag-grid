@@ -1,26 +1,30 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
-import { CtrlsService } from "../ctrlsService";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 
-@Bean('columnAnimationService')
-export class ColumnAnimationService extends BeanStub {
+export class ColumnAnimationService extends BeanStub implements NamedBean {
+    beanName = 'columnAnimationService' as const;
 
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    private executeNextFuncs: Function[] = [];
-    private executeLaterFuncs: Function[] = [];
+    private executeNextFuncs: ((...args: any[]) => any)[] = [];
+    private executeLaterFuncs: ((...args: any[]) => any)[] = [];
 
     private active = false;
     private suppressAnimation = false;
 
     private animationThreadCount = 0;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
+    public postConstruct(): void {
+        this.ctrlsService.whenReady((p) => (this.gridBodyCtrl = p.gridBodyCtrl));
     }
 
     public isActive(): boolean {
@@ -32,14 +36,20 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     public start(): void {
-        if (this.active) { return; }
+        if (this.active) {
+            return;
+        }
 
-        if (this.gridOptionsService.get('suppressColumnMoveAnimation')) { return; }
+        if (this.gos.get('suppressColumnMoveAnimation')) {
+            return;
+        }
 
         // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
         // the animation moves all the row the the right rather than to the left (ie it's the static
         // columns that actually get their coordinates updated)
-        if (this.gridOptionsService.get('enableRtl')) { return; }
+        if (this.gos.get('enableRtl')) {
+            return;
+        }
 
         this.ensureAnimationCssClassPresent();
 
@@ -47,11 +57,15 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     public finish(): void {
-        if (!this.active) { return; }
-        this.flush(() => { this.active = false });
+        if (!this.active) {
+            return;
+        }
+        this.flush(() => {
+            this.active = false;
+        });
     }
 
-    public executeNextVMTurn(func: Function): void {
+    public executeNextVMTurn(func: (...args: any[]) => any): void {
         if (this.active) {
             this.executeNextFuncs.push(func);
         } else {
@@ -59,7 +73,7 @@ export class ColumnAnimationService extends BeanStub {
         }
     }
 
-    public executeLaterVMTurn(func: Function): void {
+    public executeLaterVMTurn(func: (...args: any[]) => any): void {
         if (this.active) {
             this.executeLaterFuncs.push(func);
         } else {
@@ -83,23 +97,28 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     private flush(callback: () => void): void {
-        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) { 
+        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) {
             callback();
-            return; 
+            return;
         }
 
-        const runFuncs = (queue: Function[]) => {
+        const runFuncs = (queue: ((...args: any[]) => any)[]) => {
             while (queue.length) {
                 const func = queue.pop();
-                if (func) { func(); }
+                if (func) {
+                    func();
+                }
             }
-        }
+        };
 
         this.getFrameworkOverrides().wrapIncoming(() => {
             window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
             window.setTimeout(() => {
-                runFuncs(this.executeLaterFuncs);
+                // run the callback before executeLaterFuncs
+                // because some functions being executed later
+                // check if this service is `active`.
                 callback();
+                runFuncs(this.executeLaterFuncs);
             }, 200);
         });
     }

@@ -1,15 +1,22 @@
 'use strict';
 
-import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    FirstDataRenderedEvent,
+    GetDetailRowDataParams,
+    GetRowIdParams,
+    GridReadyEvent,
+    ModuleRegistry,
+} from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColDef, FirstDataRenderedEvent, GetDetailRowDataParams, GetRowIdParams, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule]);
 
@@ -30,11 +37,11 @@ const GridExample = () => {
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
-            enableCellChangeFlash: true
-        }
+            enableCellChangeFlash: true,
+        };
     }, []);
     const getRowId = useCallback(function (params: GetRowIdParams) {
-        return params.data.account;
+        return String(params.data.account);
     }, []);
     const detailCellRendererParams = useMemo(() => {
         return {
@@ -42,7 +49,7 @@ const GridExample = () => {
             detailGridOptions: {
                 rowSelection: 'multiple',
                 getRowId: (params: GetRowIdParams) => {
-                    return params.data.callId;
+                    return String(params.data.callId);
                 },
                 columnDefs: [
                     { field: 'callId', checkboxSelection: true },
@@ -60,15 +67,13 @@ const GridExample = () => {
                 // params.successCallback([]);
                 params.successCallback(params.data.callRecords);
             },
-        }
+        };
     }, []);
 
-
     const onGridReady = useCallback((params: GridReadyEvent) => {
-
         fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
-            .then(resp => resp.json())
-            .then(data => {
+            .then((resp) => resp.json())
+            .then((data) => {
                 allRowData = data;
                 setRowData(data);
             });
@@ -102,13 +107,17 @@ const GridExample = () => {
             };
             gridRef.current!.api.applyTransaction(tran);
         }, 2000);
-    }, [])
-
+    }, []);
 
     return (
         <div style={containerStyle}>
-
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     ref={gridRef}
                     rowData={rowData}
@@ -121,11 +130,13 @@ const GridExample = () => {
                     onFirstDataRendered={onFirstDataRendered}
                 />
             </div>
-
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

@@ -1,28 +1,24 @@
-import { Component } from "../widgets/component";
-import { PostConstruct } from "../context/context";
-import { RowNode } from "../entities/rowNode";
-import { Beans } from "./beans";
-import { Column } from "../entities/column";
-import { createIconNoSpan } from "../utils/icon";
-import { DndSourceOnRowDragParams } from "../entities/colDef";
+import type { AgColumn } from '../entities/agColumn';
+import type { DndSourceOnRowDragParams } from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
+import { _createIconNoSpan } from '../utils/icon';
+import { Component } from '../widgets/component';
 
 export class DndSourceComp extends Component {
-
     private readonly rowNode: RowNode;
-    private readonly column: Column;
+    private readonly column: AgColumn;
     private readonly eCell: HTMLElement;
 
-    constructor(rowNode: RowNode, column: Column, eCell: HTMLElement) {
+    constructor(rowNode: RowNode, column: AgColumn, eCell: HTMLElement) {
         super(/* html */ `<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
         this.rowNode = rowNode;
         this.column = column;
         this.eCell = eCell;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
-        eGui.appendChild(createIconNoSpan('rowDrag', this.gridOptionsService, null)!);
+        eGui.appendChild(_createIconNoSpan('rowDrag', this.gos, null)!);
         // we need to stop the event propagation here to avoid starting a range selection while dragging
         this.addGuiEventListener('mousedown', (e: MouseEvent) => {
             e.stopPropagation();
@@ -36,7 +32,6 @@ export class DndSourceComp extends Component {
     }
 
     private onDragStart(dragEvent: DragEvent): void {
-
         const providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
 
         dragEvent.dataTransfer!.setDragImage(this.eCell, 0, 0);
@@ -48,15 +43,15 @@ export class DndSourceComp extends Component {
 
                 dragEvent.dataTransfer!.setData('application/json', jsonData);
                 dragEvent.dataTransfer!.setData('text/plain', jsonData);
-
             } catch (e) {
                 // if we cannot convert the data to json, then we do not set the type
             }
         };
 
         if (providedOnRowDrag) {
-            const params: DndSourceOnRowDragParams = this.gridOptionsService.addGridCommonParams({
-                rowNode: this.rowNode, dragEvent: dragEvent
+            const params: DndSourceOnRowDragParams = this.gos.addGridCommonParams({
+                rowNode: this.rowNode,
+                dragEvent: dragEvent,
             });
             providedOnRowDrag(params);
         } else {

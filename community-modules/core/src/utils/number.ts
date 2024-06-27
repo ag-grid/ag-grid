@@ -1,8 +1,33 @@
-export function padStartWidthZeros(value: number, totalStringSize: number): string {
+export function toNumber(value: any): number | undefined {
+    if (typeof value === 'number') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        const parsed = parseInt(value);
+        if (isNaN(parsed)) {
+            return undefined;
+        }
+        return parsed;
+    }
+    return undefined;
+}
+
+export function toConstrainedNum(min: number, max: number = Number.MAX_VALUE): (value: any) => number | undefined {
+    return (value: any) => {
+        const num = toNumber(value);
+        if (num == null || num < min || num > max) {
+            return undefined; // return undefined if outside bounds, this will then be coerced to the default value.
+        }
+        return num;
+    };
+}
+
+export function _padStartWidthZeros(value: number, totalStringSize: number): string {
     return value.toString().padStart(totalStringSize, '0');
 }
 
-export function createArrayOfNumbers(first: number, last: number): number[] {
+export function _createArrayOfNumbers(first: number, last: number): number[] {
     const result: number[] = [];
 
     for (let i = first; i <= last; i++) {
@@ -12,33 +37,16 @@ export function createArrayOfNumbers(first: number, last: number): number[] {
     return result;
 }
 
-export function cleanNumber(value: any): number | null {
-    if (typeof value === 'string') {
-        value = parseInt(value, 10);
+export function _formatNumberTwoDecimalPlacesAndCommas(
+    value: number,
+    thousandSeparator: string,
+    decimalSeparator: string
+): string {
+    if (typeof value !== 'number') {
+        return '';
     }
 
-    if (typeof value === 'number') {
-        return Math.floor(value);
-    }
-
-    return null;
-}
-
-export function decToHex(number: number, bytes: number): string {
-    let hex = '';
-
-    for (let i = 0; i < bytes; i++) {
-        hex += String.fromCharCode(number & 0xff);
-        number >>>= 8;
-    }
-
-    return hex;
-}
-
-export function formatNumberTwoDecimalPlacesAndCommas(value: number, thousandSeparator: string, decimalSeparator: string): string {
-    if (typeof value !== 'number') { return ''; }
-
-    return formatNumberCommas(Math.round(value * 100) / 100, thousandSeparator, decimalSeparator);
+    return _formatNumberCommas(Math.round(value * 100) / 100, thousandSeparator, decimalSeparator);
 }
 
 /**
@@ -48,12 +56,17 @@ export function formatNumberTwoDecimalPlacesAndCommas(value: number, thousandSep
  * @param {number} value
  * @returns {string}
  */
-export function formatNumberCommas(value: number, thousandSeparator: string, decimalSeparator: string): string {
-    if (typeof value !== 'number') { return ''; }
+export function _formatNumberCommas(value: number, thousandSeparator: string, decimalSeparator: string): string {
+    if (typeof value !== 'number') {
+        return '';
+    }
 
-    return value.toString().replace('.', decimalSeparator).replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${thousandSeparator}`);
+    return value
+        .toString()
+        .replace('.', decimalSeparator)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${thousandSeparator}`);
 }
 
-export function sum(values: number[] | null) {
+export function _sum(values: number[] | null) {
     return values == null ? null : values.reduce((total, value) => total + value, 0);
 }

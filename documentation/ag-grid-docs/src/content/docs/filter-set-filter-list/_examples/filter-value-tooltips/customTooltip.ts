@@ -1,4 +1,4 @@
-import { ITooltipComp, ITooltipParams } from '@ag-grid-community/core'
+import { ITooltipComp, ITooltipParams } from '@ag-grid-community/core';
 
 export class CustomTooltip implements ITooltipComp {
     eGui: any;
@@ -12,9 +12,9 @@ export class CustomTooltip implements ITooltipComp {
         } else {
             eGui.innerHTML = params.value;
         }
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 }

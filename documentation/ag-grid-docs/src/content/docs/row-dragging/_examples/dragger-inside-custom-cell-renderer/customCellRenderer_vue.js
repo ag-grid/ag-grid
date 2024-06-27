@@ -1,6 +1,5 @@
 export default {
-    template:
-        `
+    template: `
           <div class="my-custom-cell-renderer">
               <div class="athlete-info">
                 <span>{{ athlete }}</span>
@@ -13,7 +12,7 @@ export default {
         return {
             athlete: '',
             country: '',
-            year: ''
+            year: '',
         };
     },
     beforeMount() {
@@ -23,5 +22,5 @@ export default {
     },
     mounted() {
         this.params.registerRowDragger(this.$refs.myRef);
-    }
+    },
 };

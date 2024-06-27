@@ -9,7 +9,7 @@ When working with a Range Selection, a Fill Handle allows you to run operations 
 
 To enable the Fill Handle, simply set `enableFillHandle` to `true` in the `gridOptions` as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country' },
@@ -43,7 +43,7 @@ The default Fill Handle behaviour will be as close as possible to other spreadsh
 
 ### Range Reduction
 
-* When reducing the size of the range, cells that are no longer part of the range will be cleared (set to `null`).
+* When reducing the size of the range, cells that are no longer part of the range will be cleared (set to `null`). If your column uses a `valueParser`, it will receive an empty string (`''`) as the new value.
 
 {% gridExampleRunner title="Fill Handle" name="fill-handle"  exampleHeight=560 /%}
 
@@ -62,7 +62,7 @@ By the default, the Fill Handle can be dragged horizontally or vertically. If dr
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["fillHandleDirection"] config={"overrideBottomMargin":"0"} /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country' },
@@ -78,13 +78,20 @@ const gridOptions = {
 
 {% gridExampleRunner title="Fill Handle - Direction" name="fill-handle-direction"  exampleHeight=560 /%}
 
+## Fill Handle Events
+
+When using the fill handle the grid will fire the `fillStart` event before it starts filling cells and the `fillEnd` event when all cells have been filled. See the Custom User Function example below for an example of using these events.
+
+{% apiDocumentation source="grid-events/events.json" section="selection" names=["fillStart", "fillEnd"] /%}
+
+
 ## Custom User Function
 
 Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression. In these scenarios, the `fillOperation` callback should be used.
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["fillOperation"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country' },

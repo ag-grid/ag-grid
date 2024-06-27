@@ -1,50 +1,37 @@
 (function (global) {
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
-        transpiler: "ts",
-        typescriptOptions: {
-            // Copy of compiler options in standard tsconfig.json
-            target: "es2015",
-            module: "system", //gets rid of console warning
-            moduleResolution: "node",
-            sourceMap: false,
-            emitDecoratorMetadata: true,
-            experimentalDecorators: true,
-            lib: ["es2015", "dom"],
-            noImplicitAny: true,
-            suppressImplicitAnyIndexErrors: true
-        },
+        transpiler: 'ts',
+        typescriptOptions: {},
         meta: {
             typescript: {
-                exports: "ts"
+                exports: 'ts',
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' },
         },
-        paths:
-            {
-                // paths serve as alias
-                "npm:": "https://cdn.jsdelivr.net/npm/",
-                ...systemJsPaths
-            },
+        paths: {
+            // paths serve as alias
+            'npm:': 'https://cdn.jsdelivr.net/npm/',
+            ...systemJsPaths,
+        },
         // map tells the System loader where to look for things
         map: {
-            // css: boilerplatePath + "css.js",
-            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + 'css.js',
 
-            ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
-            tslib: "npm:tslib@2.3.1/tslib.js",
-            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+            ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
+            tslib: 'npm:tslib@2.3.1/tslib.js',
+            typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
             // appLocation comes from index.html
             app: appLocation,
-            ...systemJsMap
+            ...systemJsMap,
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
             css: {},
             app: {
-                main: "./main.ts",
-                defaultExtension: "ts",
+                main: './main.ts',
+                defaultExtension: 'ts',
             },
             '@ag-grid-community/core': {
                 format: 'cjs',
@@ -56,6 +43,9 @@
                 format: 'cjs',
             },
             '@ag-grid-community/infinite-row-model': {
+                format: 'cjs',
+            },
+            'ag-grid-locale': {
                 format: 'cjs',
             },
             '@ag-grid-enterprise/advanced-filter': {
@@ -133,10 +123,18 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-        }
+            'ag-charts-community': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-enterprise': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+        },
     });
 })(this);
 
-window.addEventListener('error', e => {
-    console.error('ERROR', e.message, e.filename)
+window.addEventListener('error', (e) => {
+    console.error('ERROR', e.message, e.filename);
 });

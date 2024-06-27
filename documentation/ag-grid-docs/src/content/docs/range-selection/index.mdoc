@@ -90,11 +90,11 @@ Ranges are defined by a list of columns. Pass in either a) a list of columns or 
 
 When you have more than one row selected in a range, pressing keys {% kbd "^ Ctrl" /%}+{% kbd "D" /%} will copy the top row values to all other rows in the selected range.
 
-By default, the Value Formatter and Value Parser will be used whilst copying the range via the [Use Value Formatter For Export](./value-formatters/#formating-for-export) and [Use Value Parser for Import](./value-parsers/#use-value-parser-for-import) features.
+By default, the Value Formatter and Value Parser will be used whilst copying the range via the [Use Value Formatter For Export](./value-formatters/#formatting-for-export) and [Use Value Parser for Import](./value-parsers/#use-value-parser-for-import) features.
 
 ## Delete Range
 
-When [Cell Editing](./cell-editing/) is enabled, pressing the {% kbd "Delete" /%} key will clear all of the cells in the range (by setting the cell values to `null`).
+When [Cell Editing](./cell-editing/) is enabled, pressing the {% kbd "Delete" /%} key will clear all of the cells in the range (by setting the cell values to `null`). If your column uses a `valueParser`, it will receive an empty string (`''`) as the new value.
 
 This will also emit the following events, which can be seen in the [Advanced Range Selection Example](#example-advanced-range-selection) below.
 

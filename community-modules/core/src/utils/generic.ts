@@ -3,34 +3,34 @@
  * @param {T} value
  * @returns {T | null}
  */
-export function makeNull<T extends unknown>(value?: T): T | null {
+export function _makeNull<T>(value?: T): T | null {
     if (value == null || value === '') {
         return null;
     }
     return value;
 }
 
-export function exists(value: string | null | undefined, allowEmptyString?: boolean): value is string;
-export function exists<T>(value: T): value is NonNullable<T>;
-export function exists(value: any, allowEmptyString = false): boolean {
+export function _exists(value: string | null | undefined, allowEmptyString?: boolean): value is string;
+export function _exists<T>(value: T): value is NonNullable<T>;
+export function _exists(value: any, allowEmptyString = false): boolean {
     return value != null && (value !== '' || allowEmptyString);
 }
 
-export function missing<T>(value: T | null | undefined): value is Exclude<undefined | null, T>;
-export function missing(value: any): boolean {
-    return !exists(value);
+export function _missing<T>(value: T | null | undefined): value is Exclude<undefined | null, T>;
+export function _missing(value: any): boolean {
+    return !_exists(value);
 }
 
-export function missingOrEmpty<T>(value?: T[] | string | null): boolean {
+export function _missingOrEmpty<T>(value?: T[] | string | null): boolean {
     return value == null || value.length === 0;
 }
 
-export function toStringOrNull(value: any): string | null {
+export function _toStringOrNull(value: any): string | null {
     return value != null && typeof value.toString === 'function' ? value.toString() : null;
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function attrToNumber(value?: number | string | null): number | null | undefined {
+export function _attrToNumber(value?: number | string | null): number | null | undefined {
     if (value === undefined) {
         // undefined or empty means ignore the value
         return;
@@ -51,7 +51,7 @@ export function attrToNumber(value?: number | string | null): number | null | un
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function attrToBoolean(value?: boolean | string | null): boolean | undefined {
+export function _attrToBoolean(value?: boolean | string | null): boolean | undefined {
     if (value === undefined) {
         // undefined or empty means ignore the value
         return;
@@ -62,30 +62,40 @@ export function attrToBoolean(value?: boolean | string | null): boolean | undefi
         return false;
     }
 
+    return toBoolean(value);
+}
+
+export function toBoolean(value: any): boolean {
     if (typeof value === 'boolean') {
-        // if simple boolean, return the boolean
         return value;
     }
 
-    // if equal to the string 'true' (ignoring case) then return true
-    return (/true/i).test(value);
+    if (typeof value === 'string') {
+        // for boolean, compare to empty String to allow attributes appearing with
+        // no value to be treated as 'true'
+        return value.toUpperCase() === 'TRUE' || value == '';
+    }
+
+    return false;
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function attrToString(value?: string): string | undefined {
-    if (value == null || value === '') { return; }
+export function _attrToString(value?: string): string | undefined {
+    if (value == null || value === '') {
+        return;
+    }
 
     return value;
 }
 
-export function jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
+export function _jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
     const val1Json = val1 ? JSON.stringify(val1) : null;
     const val2Json = val2 ? JSON.stringify(val2) : null;
 
     return val1Json === val2Json;
 }
 
-export function defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
+export function _defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
     const valueAMissing = valueA == null;
     const valueBMissing = valueB == null;
 
@@ -113,7 +123,7 @@ export function defaultComparator(valueA: any, valueB: any, accentedCompare: boo
     }
 
     function doQuickCompare<T>(a: T, b: T): number {
-        return (a > b ? 1 : (a < b ? -1 : 0));
+        return a > b ? 1 : a < b ? -1 : 0;
     }
 
     if (typeof valueA !== 'string') {
@@ -132,10 +142,9 @@ export function defaultComparator(valueA: any, valueB: any, accentedCompare: boo
         // by browser, then just continue with the quick one
         return doQuickCompare(valueA, valueB);
     }
-
 }
 
-export function values<T>(object: { [key: string]: T; } | Set<T> | Map<any, T>): T[] {
+export function _values<T>(object: { [key: string]: T } | Set<T> | Map<any, T>): T[] {
     if (object instanceof Set || object instanceof Map) {
         const arr: T[] = [];
 

@@ -1,17 +1,22 @@
-import { AgPromise, ICellEditor, ICellEditorParams } from "@ag-grid-community/core";
-import { addOptionalMethods } from "./customComponentWrapper";
-import { CustomCellEditorCallbacks, CustomCellEditorProps } from "./interfaces";
+import type { ICellEditor, ICellEditorParams } from '@ag-grid-community/core';
+import { AgPromise } from '@ag-grid-community/core';
+
+import { addOptionalMethods } from './customComponentWrapper';
+import type { CustomCellEditorCallbacks, CustomCellEditorProps } from './interfaces';
 
 export class CellEditorComponentProxy implements ICellEditor {
     private value: any;
     private componentInstance?: any;
     private resolveInstanceCreated?: () => void;
-    private instanceCreated: AgPromise<void> = new AgPromise(resolve => {
+    private instanceCreated: AgPromise<void> = new AgPromise((resolve) => {
         this.resolveInstanceCreated = resolve;
     });
     private readonly onValueChange = (value: any) => this.updateValue(value);
 
-    constructor(private cellEditorParams: ICellEditorParams, private readonly refreshProps: () => void) {
+    constructor(
+        private cellEditorParams: ICellEditorParams,
+        private readonly refreshProps: () => void
+    ) {
         this.value = cellEditorParams.value;
     }
 
@@ -20,7 +25,7 @@ export class CellEditorComponentProxy implements ICellEditor {
             ...this.cellEditorParams,
             initialValue: this.cellEditorParams.value,
             value: this.value,
-            onValueChange: this.onValueChange
+            onValueChange: this.onValueChange,
         };
     }
 
@@ -48,7 +53,7 @@ export class CellEditorComponentProxy implements ICellEditor {
     }
 
     private getOptionalMethods(): string[] {
-        return ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached'];
+        return ['isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached'];
     }
 
     private updateValue(value: any): void {

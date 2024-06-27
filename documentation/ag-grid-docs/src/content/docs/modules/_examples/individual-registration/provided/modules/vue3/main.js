@@ -1,39 +1,31 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue3';
-
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { createApp } from 'vue';
+
 import './styles.css';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-
-import { ModuleRegistry } from '@ag-grid-community/core';
-
 // Register shared Modules globally
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    MenuModule,
-    GridChartsModule,
-]);
-
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, GridChartsModule]);
 
 let rowIdSequence = 100;
-const createRowBlock = () => ['Red', 'Green', 'Blue'].map((color) =>
-({
-    id: rowIdSequence++,
-    color: color,
-    value1: Math.floor(Math.random() * 100),
-})
-);
+const createRowBlock = () =>
+    ['Red', 'Green', 'Blue'].map((color) => ({
+        id: rowIdSequence++,
+        color: color,
+        value1: Math.floor(Math.random() * 100),
+    }));
 
 const VueExample = {
-    template: /* html */
-        `<div class="example-wrapper">
+    /* html */
+    template: `<div class="example-wrapper">
 
             <div class="inner-col">
                 <div style="height: 100%;" class="inner-col">
@@ -69,7 +61,7 @@ const VueExample = {
         </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
     },
     data: function () {
         return {
@@ -83,12 +75,10 @@ const VueExample = {
                 filter: true,
                 floatingFilter: true,
             },
-            columns: [
-                { field: "id" },
-                { field: "color" },
-                { field: "value1" }
-            ],
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            columns: [{ field: 'id' }, { field: 'color' }, { field: 'value1' }],
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     beforeMount() {

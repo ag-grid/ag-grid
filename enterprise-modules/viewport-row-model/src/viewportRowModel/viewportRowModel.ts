@@ -1,29 +1,29 @@
-import {
-    _,
-    Autowired,
-    Bean,
-    BeanStub,
-    Events,
+import type {
+    BeanCollection,
+    FocusService,
     IRowModel,
     IViewportDatasource,
     ModelUpdatedEvent,
-    PostConstruct,
-    PreDestroy,
+    NamedBean,
     RowBounds,
-    RowNode,
+    RowModelType,
     RowRenderer,
-    Beans,
     WithoutGridCommon,
-    FocusService,
-    RowModelType
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
+import { BeanStub, RowNode, _iterateObject, _missing, _warnOnce } from '@ag-grid-community/core';
 
-@Bean('rowModel')
-export class ViewportRowModel extends BeanStub implements IRowModel {
+export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
+    beanName = 'rowModel' as const;
 
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('beans') private beans: Beans;
+    private rowRenderer: RowRenderer;
+    private focusService: FocusService;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection) {
+        this.rowRenderer = beans.rowRenderer;
+        this.focusService = beans.focusService;
+        this.beans = beans;
+    }
 
     // rowRenderer tells us these
     private firstRow = -1;
@@ -31,20 +31,26 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     // datasource tells us this
     private rowCount = -1;
-    private rowNodesByIndex: {[index: number]: RowNode} = {};
+    private rowNodesByIndex: { [index: number]: RowNode } = {};
     private rowHeight: number;
     private viewportDatasource: IViewportDatasource;
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
+    public ensureRowHeightsValid(
+        startPixel: number,
+        endPixel: number,
+        startLimitIndex: number,
+        endLimitIndex: number
+    ): boolean {
+        return false;
+    }
 
-    @PostConstruct
-    private init(): void {
-        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+    public postConstruct(): void {
+        this.rowHeight = this.gos.getRowHeightAsNumber();
+        this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
         this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            this.rowHeight = this.gos.getRowHeightAsNumber();
             this.updateRowHeights();
         });
     }
@@ -57,9 +63,15 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return true;
     }
 
-    @PreDestroy
+    public override destroy(): void {
+        this.destroyDatasource();
+        super.destroy();
+    }
+
     private destroyDatasource(): void {
-        if (!this.viewportDatasource) { return; }
+        if (!this.viewportDatasource) {
+            return;
+        }
 
         if (this.viewportDatasource.destroy) {
             this.viewportDatasource.destroy();
@@ -71,18 +83,18 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     private updateDatasource(): void {
-        const datasource = this.gridOptionsService.get('viewportDatasource');
+        const datasource = this.gos.get('viewportDatasource');
         if (datasource) {
             this.setViewportDatasource(datasource);
         }
     }
 
     private getViewportRowModelPageSize(): number | undefined {
-        return this.gridOptionsService.get('viewportRowModelPageSize');
+        return this.gos.get('viewportRowModelPageSize');
     }
 
     private getViewportRowModelBufferSize(): number {
-        return this.gridOptionsService.get('viewportRowModelBufferSize');
+        return this.gos.get('viewportRowModelBufferSize');
     }
 
     private calculateFirstRow(firstRenderedRow: number): number {
@@ -90,13 +102,17 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         const pageSize = this.getViewportRowModelPageSize()!;
         const afterBuffer = firstRenderedRow - bufferSize;
 
-        if (afterBuffer < 0) { return 0; }
+        if (afterBuffer < 0) {
+            return 0;
+        }
 
         return Math.floor(afterBuffer / pageSize) * pageSize;
     }
 
     private calculateLastRow(lastRenderedRow: number): number {
-        if (lastRenderedRow === -1) { return lastRenderedRow; }
+        if (lastRenderedRow === -1) {
+            return lastRenderedRow;
+        }
 
         const bufferSize = this.getViewportRowModelBufferSize();
         const pageSize = this.getViewportRowModelPageSize()!;
@@ -122,7 +138,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public purgeRowsNotInViewport(): void {
-        Object.keys(this.rowNodesByIndex).forEach(indexStr => {
+        Object.keys(this.rowNodesByIndex).forEach((indexStr) => {
             const index = parseInt(indexStr, 10);
             if (index < this.firstRow || index > this.lastRow) {
                 if (this.isRowFocused(index)) {
@@ -136,8 +152,12 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     private isRowFocused(rowIndex: number): boolean {
         const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
-        if (!focusedCell) { return false; }
-        if (focusedCell.rowPinned != null) { return false; }
+        if (!focusedCell) {
+            return false;
+        }
+        if (focusedCell.rowPinned != null) {
+            return false;
+        }
 
         const hasFocus = focusedCell.rowIndex === rowIndex;
         return hasFocus;
@@ -150,12 +170,12 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         this.rowCount = -1;
 
         if (!viewportDatasource.init) {
-            console.warn('AG Grid: viewport is missing init method.');
+            _warnOnce('viewport is missing init method.');
         } else {
             viewportDatasource.init({
                 setRowCount: this.setRowCount.bind(this),
                 setRowData: this.setRowData.bind(this),
-                getRow: this.getRow.bind(this)
+                getRow: this.getRow.bind(this),
             });
         }
     }
@@ -174,7 +194,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     public getRowNode(id: string): RowNode | undefined {
         let result: RowNode | undefined;
-        this.forEachNode(rowNode => {
+        this.forEachNode((rowNode) => {
             if (rowNode.id === id) {
                 result = rowNode;
             }
@@ -187,7 +207,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (this.rowHeight !== 0) { // avoid divide by zero error
+        if (this.rowHeight !== 0) {
+            // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
         }
 
@@ -197,18 +218,18 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     public getRowBounds(index: number): RowBounds {
         return {
             rowHeight: this.rowHeight,
-            rowTop: this.rowHeight * index
+            rowTop: this.rowHeight * index,
         };
     }
 
     private updateRowHeights() {
-        this.forEachNode(node => {
+        this.forEachNode((node) => {
             node.setRowHeight(this.rowHeight);
             node.setRowTop(this.rowHeight * node.rowIndex!);
         });
-        
+
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             newData: false,
             newPage: false,
             keepRenderedRows: true,
@@ -234,13 +255,15 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        const firstIndex = _.missing(firstInRange) ? 0 : firstInRange.rowIndex!;
+        const firstIndex = firstInRange.rowIndex!;
         const lastIndex = lastInRange.rowIndex!;
 
         const firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
         const lastNodeOutOfRange = lastIndex < this.firstRow || lastIndex > this.lastRow;
 
-        if (firstNodeOutOfRange || lastNodeOutOfRange) { return []; }
+        if (firstNodeOutOfRange || lastNodeOutOfRange) {
+            return [];
+        }
 
         const result: RowNode[] = [];
 
@@ -257,7 +280,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         let callbackCount = 0;
 
-        Object.keys(this.rowNodesByIndex).forEach(indexStr => {
+        Object.keys(this.rowNodesByIndex).forEach((indexStr) => {
             const index = parseInt(indexStr, 10);
             const rowNode: RowNode = this.rowNodesByIndex[index];
             callback(rowNode, callbackCount);
@@ -265,8 +288,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         });
     }
 
-    private setRowData(rowData: {[key: number]: any}): void {
-        _.iterateObject(rowData, (indexStr: string, dataItem: any) => {
+    private setRowData(rowData: { [key: number]: any }): void {
+        _iterateObject(rowData, (indexStr: string, dataItem: any) => {
             const index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
@@ -276,7 +299,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
                 // the abnormal case is we requested a row even though the grid didn't need it
                 // as a result of the paging and buffer (ie the row is off screen), in which
                 // case we need to create a new node now
-                if (_.missing(rowNode)) {
+                if (_missing(rowNode)) {
                     rowNode = this.createBlankRowNode(index);
                     this.rowNodesByIndex[index] = rowNode;
                 }
@@ -300,20 +323,22 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public setRowCount(rowCount: number, keepRenderedRows = false): void {
-        if (rowCount === this.rowCount) { return; }
+        if (rowCount === this.rowCount) {
+            return;
+        }
 
         this.rowCount = rowCount;
 
         this.eventService.dispatchEventOnce({
-            type: Events.EVENT_ROW_COUNT_READY
+            type: 'rowCountReady',
         });
 
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             newData: false,
             newPage: false,
             keepRenderedRows: keepRenderedRows,
-            animate: false
+            animate: false,
         };
 
         this.eventService.dispatchEvent(event);
@@ -323,5 +348,4 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         const foundRowNode = this.getRowNode(rowNode.id!);
         return !!foundRowNode;
     }
-
 }

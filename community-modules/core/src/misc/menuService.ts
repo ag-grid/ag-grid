@@ -1,23 +1,27 @@
-import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
-import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
-import { Column } from "../entities/column";
-import { ContainerType } from "../interfaces/iAfterGuiAttachedParams";
-import { RowNode } from "../entities/rowNode";
-import { CtrlsService } from "../ctrlsService";
-import { AnimationFrameService } from "./animationFrameService";
-import { IColumnChooserFactory, ShowColumnChooserParams } from "../interfaces/iColumnChooserFactory";
-import { FilterManager } from "../filter/filterManager";
-import { isIOSUserAgent } from "../utils/browser";
-import { warnOnce } from "../utils/function";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
+import type { FilterManager } from '../filter/filterManager';
+import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
+import type { Column } from '../interfaces/iColumn';
+import type { IColumnChooserFactory, ShowColumnChooserParams } from '../interfaces/iColumnChooserFactory';
+import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
+import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
+import type { RowRenderer } from '../rendering/rowRenderer';
+import { _isIOSUserAgent } from '../utils/browser';
+import { _warnOnce } from '../utils/function';
+import type { AnimationFrameService } from './animationFrameService';
 
 interface BaseShowColumnMenuParams {
-    column?: Column,
+    column?: Column;
 }
 
 interface BaseShowFilterMenuParams {
-    column: Column,
+    column: Column;
     containerType: ContainerType;
 }
 
@@ -35,15 +39,19 @@ interface AutoShowMenuParams {
     positionBy: 'auto';
 }
 
-export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) & BaseShowColumnMenuParams;
+export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
+    BaseShowColumnMenuParams;
 
-export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) & BaseShowFilterMenuParams;
+export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
+    BaseShowFilterMenuParams;
 
-interface BaseShowContextMenuParams { 
-    rowNode?: RowNode | null,
-    column?: Column | null,
-    value: any,
-    anchorToElement: HTMLElement
+export interface ShowContextMenuParams {
+    /** The `RowNode` associated with the Context Menu */
+    rowNode?: RowNode | null;
+    /** The `Column` associated with the Context Menu */
+    column?: Column | null;
+    /** The value that will be passed to the Context Menu (useful with `getContextMenuItems`). If none is passed, and `RowNode` and `Column` are provided, this will be the respective Cell value */
+    value: any;
 }
 
 interface MouseShowContextMenuParams {
@@ -54,22 +62,41 @@ interface TouchShowContextMenuParam {
     touchEvent: TouchEvent;
 }
 
-export type ShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) & BaseShowContextMenuParams;
+export type EventShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) &
+    ShowContextMenuParams;
+export interface IContextMenuParams extends ShowContextMenuParams {
+    /** The x position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
+    x?: number;
+    /** The y position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
+    y?: number;
+}
 
-@Bean('menuService')
-export class MenuService extends BeanStub {
-    @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
-    @Autowired('filterMenuFactory') private readonly filterMenuFactory: IMenuFactory;
-    @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Optional('columnChooserFactory') private columnChooserFactory: IColumnChooserFactory;
-    @Autowired('filterManager') private filterManager: FilterManager;
+export class MenuService extends BeanStub implements NamedBean {
+    beanName = 'menuService' as const;
+
+    private filterMenuFactory: IMenuFactory;
+    private ctrlsService: CtrlsService;
+    private animationFrameService: AnimationFrameService;
+    private filterManager?: FilterManager;
+    private rowRenderer: RowRenderer;
+    private columnChooserFactory?: IColumnChooserFactory;
+    private contextMenuFactory?: IContextMenuFactory;
+    private enterpriseMenuFactory?: IMenuFactory;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.filterMenuFactory = beans.filterMenuFactory;
+        this.ctrlsService = beans.ctrlsService;
+        this.animationFrameService = beans.animationFrameService;
+        this.filterManager = beans.filterManager;
+        this.rowRenderer = beans.rowRenderer;
+        this.columnChooserFactory = beans.columnChooserFactory;
+        this.contextMenuFactory = beans.contextMenuFactory;
+        this.enterpriseMenuFactory = beans.enterpriseMenuFactory;
+    }
 
     private activeMenuFactory: IMenuFactory;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.activeMenuFactory = this.enterpriseMenuFactory ?? this.filterMenuFactory;
     }
 
@@ -78,20 +105,49 @@ export class MenuService extends BeanStub {
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const menuFactory: IMenuFactory = this.enterpriseMenuFactory && this.isLegacyMenuEnabled()
-            ? this.enterpriseMenuFactory
-            : this.filterMenuFactory;
+        const menuFactory: IMenuFactory =
+            this.enterpriseMenuFactory && this.isLegacyMenuEnabled()
+                ? this.enterpriseMenuFactory
+                : this.filterMenuFactory;
         this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
     }
 
-    public showHeaderContextMenu(column: Column | undefined, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
+    public showHeaderContextMenu(column: AgColumn | undefined, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
         this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 
-    public showContextMenu(
-        params: ShowContextMenuParams
-    ): void {
-        const { column, anchorToElement, rowNode, value } = params;
+    public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {
+        const rowCtrl = this.getRowCtrl(rowNode);
+        const eGui = this.getCellGui(rowCtrl, column);
+
+        if (!eGui) {
+            if (rowCtrl) {
+                return { x: 0, y: rowCtrl.getRowYPosition() };
+            }
+            return { x: 0, y: 0 };
+        }
+
+        const rect = eGui.getBoundingClientRect();
+
+        return {
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2,
+        };
+    }
+
+    public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
+        const { rowNode } = params;
+        const column = params.column as AgColumn | null | undefined;
+        let { anchorToElement, value } = params;
+
+        if (rowNode && column && value == null) {
+            value = rowNode.getValueFromValueService(column);
+        }
+
+        if (anchorToElement == null) {
+            anchorToElement = this.getContextMenuAnchorElement(rowNode, column);
+        }
+
         this.contextMenuFactory?.onContextMenu(
             (params as MouseShowContextMenuParams).mouseEvent ?? null,
             (params as TouchShowContextMenuParam).touchEvent ?? null,
@@ -117,17 +173,21 @@ export class MenuService extends BeanStub {
         this.columnChooserFactory?.hideActiveColumnChooser();
     }
 
-    public isColumnMenuInHeaderEnabled(column: Column): boolean {
+    public isColumnMenuInHeaderEnabled(column: AgColumn): boolean {
         const { suppressMenu, suppressHeaderMenuButton } = column.getColDef();
         const isSuppressMenuButton = suppressHeaderMenuButton ?? suppressMenu;
-        return !isSuppressMenuButton && this.activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory);
+        return (
+            !isSuppressMenuButton &&
+            this.activeMenuFactory.isMenuEnabled(column) &&
+            (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory)
+        );
     }
 
-    public isFilterMenuInHeaderEnabled(column: Column): boolean {
-        return !column.getColDef().suppressHeaderFilterButton && this.filterManager.isFilterAllowed(column);
+    public isFilterMenuInHeaderEnabled(column: AgColumn): boolean {
+        return !column.getColDef().suppressHeaderFilterButton && !!this.filterManager?.isFilterAllowed(column);
     }
 
-    public isHeaderContextMenuEnabled(column?: Column): boolean {
+    public isHeaderContextMenuEnabled(column?: AgColumn): boolean {
         return !column?.getColDef().suppressHeaderContextMenu && this.getColumnMenuType() === 'new';
     }
 
@@ -142,18 +202,26 @@ export class MenuService extends BeanStub {
         // is false (default) user will need to use longpress to display the menu.
         const menuHides = !this.isSuppressMenuHide();
 
-        const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
+        const onIpadAndMenuHides = _isIOSUserAgent() && menuHides;
 
         return !onIpadAndMenuHides;
     }
 
-    public isHeaderFilterButtonEnabled(column: Column): boolean {
-        return this.isFilterMenuInHeaderEnabled(column) && !this.isLegacyMenuEnabled() && !this.isFloatingFilterButtonDisplayed(column);
+    public isHeaderFilterButtonEnabled(column: AgColumn): boolean {
+        return (
+            this.isFilterMenuInHeaderEnabled(column) &&
+            !this.isLegacyMenuEnabled() &&
+            !this.isFloatingFilterButtonDisplayed(column)
+        );
     }
 
-    public isFilterMenuItemEnabled(column: Column): boolean {
-        return this.filterManager.isFilterAllowed(column) && !this.isLegacyMenuEnabled() &&
-            !this.isFilterMenuInHeaderEnabled(column) && !this.isFloatingFilterButtonDisplayed(column);
+    public isFilterMenuItemEnabled(column: AgColumn): boolean {
+        return (
+            !!this.filterManager?.isFilterAllowed(column) &&
+            !this.isLegacyMenuEnabled() &&
+            !this.isFilterMenuInHeaderEnabled(column) &&
+            !this.isFloatingFilterButtonDisplayed(column)
+        );
     }
 
     public isColumnMenuAnchoringEnabled(): boolean {
@@ -168,35 +236,45 @@ export class MenuService extends BeanStub {
         return this.getColumnMenuType() === 'legacy';
     }
 
-    public isFloatingFilterButtonEnabled(column: Column): boolean {
+    public isFloatingFilterButtonEnabled(column: AgColumn): boolean {
         const colDef = column.getColDef();
         const legacySuppressFilterButton = colDef.floatingFilterComponentParams?.suppressFilterButton;
         if (legacySuppressFilterButton != null) {
-            warnOnce(`As of v31.1, 'colDef.floatingFilterComponentParams.suppressFilterButton' is deprecated. Use 'colDef.suppressFloatingFilterButton' instead.`);
+            _warnOnce(
+                `As of v31.1, 'colDef.floatingFilterComponentParams.suppressFilterButton' is deprecated. Use 'colDef.suppressFloatingFilterButton' instead.`
+            );
         }
-        return colDef.suppressFloatingFilterButton == null ? !legacySuppressFilterButton : !colDef.suppressFloatingFilterButton;
+        return colDef.suppressFloatingFilterButton == null
+            ? !legacySuppressFilterButton
+            : !colDef.suppressFloatingFilterButton;
     }
 
     private getColumnMenuType(): 'legacy' | 'new' {
-        return this.gridOptionsService.get('columnMenu') ?? 'legacy';
+        return this.gos.get('columnMenu');
     }
 
-    private isFloatingFilterButtonDisplayed(column: Column): boolean {
+    private isFloatingFilterButtonDisplayed(column: AgColumn): boolean {
         return !!column.getColDef().floatingFilter && this.isFloatingFilterButtonEnabled(column);
     }
 
     private isSuppressMenuHide(): boolean {
-        const suppressMenuHide = this.gridOptionsService.get('suppressMenuHide');
+        const suppressMenuHide = this.gos.get('suppressMenuHide');
         if (this.isLegacyMenuEnabled()) {
             return suppressMenuHide;
         } else {
             // default to true for new
-            return this.gridOptionsService.exists('suppressMenuHide') ? suppressMenuHide : true;
+            return this.gos.exists('suppressMenuHide') ? suppressMenuHide : true;
         }
     }
 
-    private showColumnMenuCommon(menuFactory: IMenuFactory, params: ShowColumnMenuParams, containerType: ContainerType, filtersOnly?: boolean): void {
-        const { column, positionBy } = params;
+    private showColumnMenuCommon(
+        menuFactory: IMenuFactory,
+        params: ShowColumnMenuParams,
+        containerType: ContainerType,
+        filtersOnly?: boolean
+    ): void {
+        const { positionBy } = params;
+        const column = params.column as AgColumn | undefined;
         if (positionBy === 'button') {
             const { buttonElement } = params;
             menuFactory.showMenuAfterButtonClick(column, buttonElement, containerType, filtersOnly);
@@ -208,9 +286,57 @@ export class MenuService extends BeanStub {
             this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
             // make sure we've finished scrolling into view before displaying the menu
             this.animationFrameService.requestAnimationFrame(() => {
-                const headerCellCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHeaderCtrlForColumn(column)!;
-                menuFactory.showMenuAfterButtonClick(column, headerCellCtrl.getAnchorElementForMenu(filtersOnly), containerType, true);
+                const headerCellCtrl = this.ctrlsService
+                    .getHeaderRowContainerCtrl(column.getPinned())
+                    .getHeaderCtrlForColumn(column)!;
+                menuFactory.showMenuAfterButtonClick(
+                    column,
+                    headerCellCtrl.getAnchorElementForMenu(filtersOnly),
+                    containerType,
+                    true
+                );
             });
         }
+    }
+
+    private getRowCtrl(rowNode?: RowNode | null): RowCtrl | undefined {
+        const { rowIndex, rowPinned } = rowNode || {};
+
+        if (rowIndex == null) {
+            return;
+        }
+
+        return this.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
+    }
+
+    private getCellGui(rowCtrl?: RowCtrl, column?: AgColumn | null): HTMLElement | undefined {
+        if (!rowCtrl || !column) {
+            return;
+        }
+
+        const cellCtrl = rowCtrl.getCellCtrl(column);
+
+        return cellCtrl?.getGui() || undefined;
+    }
+
+    private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: AgColumn | null): HTMLElement {
+        const gridBodyEl = this.ctrlsService.getGridBodyCtrl().getGridBodyElement();
+        const rowCtrl = this.getRowCtrl(rowNode);
+
+        if (!rowCtrl) {
+            return gridBodyEl;
+        }
+
+        const cellGui = this.getCellGui(rowCtrl, column);
+
+        if (cellGui) {
+            return cellGui;
+        }
+
+        if (rowCtrl.isFullWidth()) {
+            return rowCtrl.getFullWidthElement() as HTMLElement;
+        }
+
+        return gridBodyEl;
     }
 }

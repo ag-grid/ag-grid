@@ -1,6 +1,6 @@
-import { ColDef } from "../entities/colDef";
-import { FiltersToolPanelState } from "./gridState";
-import { IToolPanel } from "./iToolPanel";
+import type { ColDef } from '../entities/colDef';
+import type { FiltersToolPanelState } from './gridState';
+import type { IToolPanel } from './iToolPanel';
 
 export interface IFiltersToolPanel extends IToolPanel {
     setFilterLayout(colDefs: ColDef[]): void;

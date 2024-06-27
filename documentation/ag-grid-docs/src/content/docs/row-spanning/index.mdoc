@@ -15,7 +15,7 @@ span more than one row, return how many rows to span in the callback
 
 {% apiDocumentation source="column-properties/properties.json" section="spanning" names=["rowSpan"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // turn off row translation
     suppressRowTransform: true,
@@ -33,8 +33,6 @@ const gridOptions = {
 {% note %}
 The property `suppressRowTransform=true` is used to stop the grid positioning rows using CSS
 `transform` and instead the grid will use CSS `top`.
-For an explanation of the difference between these two methods see the article
-[JavaScript GPU Animation with Transform and Translate](https://medium.com/ag-grid/javascript-gpu-animation-with-transform-and-translate-bf09c7000aa6).
 The reason row span will not work with CSS `transform` is that CSS `transform` creates a
 [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
 which constrains CSS `z-index` from placing cells on top of other cells in another row.

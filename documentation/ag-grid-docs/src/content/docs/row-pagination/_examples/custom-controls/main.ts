@@ -1,8 +1,7 @@
-import { ColDef, GridApi, createGrid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core';
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridOptions, ValueFormatterParams, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -25,7 +24,7 @@ const columnDefs: ColDef[] = [
     { headerName: 'Silver', field: 'silver', width: 100 },
     { headerName: 'Bronze', field: 'bronze', width: 100 },
     { headerName: 'Total', field: 'total', width: 100 },
-]
+];
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -42,63 +41,63 @@ const gridOptions: GridOptions<IOlympicData> = {
     suppressPaginationPanel: true,
     suppressScrollOnNewData: true,
     onPaginationChanged: onPaginationChanged,
-}
+};
 
 function setText(selector: string, text: any) {
-    (document.querySelector(selector) as any).innerHTML = text
+    (document.querySelector(selector) as any).innerHTML = text;
 }
 
 function onPaginationChanged() {
-    console.log('onPaginationPageLoaded')
+    console.log('onPaginationPageLoaded');
 
     // Workaround for bug in events order
     if (gridApi!) {
-        setText('#lbLastPageFound', gridApi!.paginationIsLastPageFound())
-        setText('#lbPageSize', gridApi!.paginationGetPageSize())
+        setText('#lbLastPageFound', gridApi!.paginationIsLastPageFound());
+        setText('#lbPageSize', gridApi!.paginationGetPageSize());
         // we +1 to current page, as pages are zero based
-        setText('#lbCurrentPage', gridApi!.paginationGetCurrentPage() + 1)
-        setText('#lbTotalPages', gridApi!.paginationGetTotalPages())
+        setText('#lbCurrentPage', gridApi!.paginationGetCurrentPage() + 1);
+        setText('#lbTotalPages', gridApi!.paginationGetTotalPages());
 
-        setLastButtonDisabled(!gridApi!.paginationIsLastPageFound())
+        setLastButtonDisabled(!gridApi!.paginationIsLastPageFound());
     }
 }
 
 function setLastButtonDisabled(disabled: boolean) {
-    (document.querySelector('#btLast') as any).disabled = disabled
+    (document.querySelector('#btLast') as any).disabled = disabled;
 }
 
 function onBtFirst() {
-    gridApi!.paginationGoToFirstPage()
+    gridApi!.paginationGoToFirstPage();
 }
 
 function onBtLast() {
-    gridApi!.paginationGoToLastPage()
+    gridApi!.paginationGoToLastPage();
 }
 
 function onBtNext() {
-    gridApi!.paginationGoToNextPage()
+    gridApi!.paginationGoToNextPage();
 }
 
 function onBtPrevious() {
-    gridApi!.paginationGoToPreviousPage()
+    gridApi!.paginationGoToPreviousPage();
 }
 
 function onBtPageFive() {
     // we say page 4, as the first page is zero
-    gridApi!.paginationGoToPage(4)
+    gridApi!.paginationGoToPage(4);
 }
 
 function onBtPageFifty() {
     // we say page 49, as the first page is zero
-    gridApi!.paginationGoToPage(49)
+    gridApi!.paginationGoToPage(49);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+});

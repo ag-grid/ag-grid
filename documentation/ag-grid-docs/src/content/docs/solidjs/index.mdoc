@@ -27,8 +27,8 @@ The NPM dependency for AG Grid Solid is `ag-grid-solid`. When adding this to you
 
 ```jsx
 "dependencies": {
-   "ag-grid-community": "~@AG_GRID_VERSION@",
-   "ag-grid-solid": "~@AG_GRID_VERSION@",
+   "ag-grid-community": "~{% $agGridVersion %}",
+   "ag-grid-solid": "~{% $agGridVersion %}",
    ...
 ```
 
@@ -125,7 +125,6 @@ const MySolidApp = ()=> {
     const myAction = ()=> {
         // use grid api
         gridRef.api.selectAll();
-        // use grid column api
         gridRef.api.applyColumnState(...);
     };
 
@@ -210,9 +209,9 @@ If using [AG Grid Modules](./modules/), the dependencies will be different.
 
 ```jsx
 "dependencies": {
-    "@ag-grid-community/core": "~@AG_GRID_VERSION@",
-    "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
-    "@ag-grid-community/solid": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/core": "~{% $agGridVersion %}",
+    "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+    "@ag-grid-community/solid": "~{% $agGridVersion %}",
    ...
 ```
 

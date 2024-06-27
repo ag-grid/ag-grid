@@ -16,7 +16,7 @@ Otherwise, in order to know what values to use in the group column filter, a `fi
 
 ### Single Group Column
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {  
     columnDefs: [
         { field: 'sport', rowGroup: true, hide: true },
@@ -41,7 +41,7 @@ Note that [Adding Values to Leaf Nodes](./grouping-single-group-column/#adding-v
 
 When applying a filter directly on the group column instead of using the Group Column Filter, the filter model is tied to the group column instead of the underlying columns. To set the filter via the Grid API on a single group column (`setFilterModel`), it needs to be referenced using the name `ag-Grid-AutoColumn`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.setFilterModel({
     'ag-Grid-AutoColumn': {
         filterType: 'text',
@@ -63,7 +63,7 @@ The following example demonstrates filtering with a single group column. Note th
 
 Filtering with [Multiple Group Columns](./grouping-multiple-group-columns/) uses the same approach as described above with a [Single Group Column](#single-group-column), however the `filterValueGetter` must return different filter values for each group column, as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {  
     columnDefs: [
         { field: 'sport', rowGroup: true, hide: true },
@@ -93,7 +93,7 @@ Note in the snippet above that the `filterValueGetter` uses the `colId` value to
 
 Similar to when using a single group column, the filter model is tied to the group columns instead of the underlying columns. To set the filter via the Grid API against each of the group columns, `ag-Grid-AutoColumn-[colId]` is used, where `[colId]` is the column id.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.setFilterModel({
     'ag-Grid-AutoColumn-sport': {
         filterType: 'text',
@@ -126,4 +126,4 @@ The following example demonstrates filtering with row groups. Note the following
 
 ## Next Up
 
-Continue to the next section to learn about [Group Footers](./grouping-footers/).
+Continue to the next section to learn about [Opening Groups](./grouping-opening-groups/).

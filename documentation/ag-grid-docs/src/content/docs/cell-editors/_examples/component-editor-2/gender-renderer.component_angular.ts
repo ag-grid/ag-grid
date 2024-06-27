@@ -1,16 +1,14 @@
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
-import { NgIf } from '@angular/common';
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     standalone: true,
-    imports: [NgIf],
     template: `
-        <span *ngIf="value">
-            <i [class]="iconClass"> </i> {{ value }}
-        </span>
-    `
+        @if (value) {
+            <span> <i [class]="iconClass"> </i> {{ value }} </span>
+        }
+    `,
 })
 export class GenderRenderer implements ICellRendererAngularComp {
     public iconClass!: string;

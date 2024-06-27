@@ -29,7 +29,7 @@ var LINUX_DISTROS = [
     'PCLinuxOS',
     'Mageia',
     'Endless',
-]
+];
 
 var CITIES = [
     'Tokyo',
@@ -51,31 +51,28 @@ var CITIES = [
     'Bangkok',
     'Los Angeles',
     'Buenos Aires',
-]
+];
 
-var LAPTOPS = [
-    'Hewlett Packard',
-    'Lenovo',
-    'Dell',
-    'Asus',
-    'Apple',
-    'Acer',
-    'Microsoft',
-    'Razer',
-]
+var LAPTOPS = ['Hewlett Packard', 'Lenovo', 'Dell', 'Asus', 'Apple', 'Acer', 'Microsoft', 'Razer'];
 
-var idCounter = 0
+var idCounter = 0;
 
 function letter(i: number) {
-    return 'abcdefghijklmnopqrstuvwxyz'.substring(i, i + 1)
+    return 'abcdefghijklmnopqrstuvwxyz'.substring(i, i + 1);
 }
 
 function randomLetter() {
-    return letter(Math.floor(Math.random() * 26 + 1))
+    return letter(Math.floor(Math.random() * 26 + 1));
 }
 
-export function createDataItem(name: string, distro: string, laptop: string, city: string, value: number, idToUse: number | undefined = undefined): any {
-
+export function createDataItem(
+    name: string,
+    distro: string,
+    laptop: string,
+    city: string,
+    value: number,
+    idToUse: number | undefined = undefined
+): any {
     const id = idToUse != null ? idToUse : idCounter++;
     return {
         id: id,
@@ -84,11 +81,11 @@ export function createDataItem(name: string, distro: string, laptop: string, cit
         distro: distro,
         laptop: laptop,
         value: value,
-    }
+    };
 }
 
 export function getData() {
-    var myRowData = []
+    var myRowData = [];
     for (var i = 0; i < 10000; i++) {
         var name =
             'Mr ' +
@@ -98,17 +95,12 @@ export function getData() {
             randomLetter() +
             randomLetter() +
             randomLetter() +
-            randomLetter()
-        var city = CITIES[i % CITIES.length]
-        var distro =
-            LINUX_DISTROS[i % LINUX_DISTROS.length] +
-            ' v' +
-            Math.floor(Math.random() * 100 + 1) / 10
-        var university = LAPTOPS[i % LAPTOPS.length]
-        var value = Math.floor(Math.random() * 100) + 10 // between 10 and 110        
-        myRowData.push(
-            createDataItem(name, distro, university, city, value)
-        )
+            randomLetter();
+        var city = CITIES[i % CITIES.length];
+        var distro = LINUX_DISTROS[i % LINUX_DISTROS.length] + ' v' + Math.floor(Math.random() * 100 + 1) / 10;
+        var university = LAPTOPS[i % LAPTOPS.length];
+        var value = Math.floor(Math.random() * 100) + 10; // between 10 and 110
+        myRowData.push(createDataItem(name, distro, university, city, value));
     }
     return myRowData;
 }

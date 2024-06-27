@@ -71,11 +71,11 @@ function onRowSelected(event: RowSelectedEvent<ICar>) {
 {% if isFramework("angular") %}
 ### Configure via Component
 
-The `&lt;ag-grid-angular>` component is generic with respect to `TData`. As there is no way to explicitly set generic parameters on Angular components, Angular infers the `TData` generic type from Inputs / Outputs. However, it will not always be successful, leaving `TData` inferred as `any`.
+The `<ag-grid-angular>` component is generic with respect to `TData`. As there is no way to explicitly set generic parameters on Angular components, Angular infers the `TData` generic type from Inputs / Outputs. However, it will not always be successful, leaving `TData` inferred as `any`.
 
 We recommend providing the generic `TData` type to  your `columnDefs` property as in practice we see this leading to the most accurate inference.
 
-To provide the generic type of `ICar` to the `columnDefs` property you use the type `ColDef&lt;ICar>` as follows:
+To provide the generic type of `ICar` to the `columnDefs` property you use the type `ColDef<ICar>` as follows:
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -93,7 +93,7 @@ Then set this on your component template as `[columnDefs]="columnDefs"`. This pr
 <ag-grid-angular 
    [columnDefs]="columnDefs"    
    (rowSelected)="onRowSelected($event)"
-></ag-grid-angular>
+ />
 ```
 {% /if %}
 
@@ -114,7 +114,7 @@ onRowSelected(event: RowSelectedEvent<ICar>) {}
 {% if isFramework("react") %}
 ### Configure via Component
 
-The `&lt;AgGridReact>` component accepts a generic parameter as `&lt;AgGridReact&lt;ICar>>`.
+The `<AgGridReact>` component accepts a generic parameter as `<AgGridReact<ICar>>`.
 
 {% /if %}
 
@@ -129,7 +129,7 @@ The `&lt;AgGridReact>` component accepts a generic parameter as `&lt;AgGridReact
 {% /if %}
 
 {% if isFramework("react") %}
-This ensures all the props defined on `&lt;AgGridReact>` conform to the `ICar` interface. These props can be defined with types like this.
+This ensures all the props defined on `<AgGridReact>` conform to the `ICar` interface. These props can be defined with types like this.
 {% /if %}
 
 {% if isFramework("react") %}

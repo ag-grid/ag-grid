@@ -19,7 +19,7 @@ The example below shows print layout. The following can be noted:
 
 Print layout can be turned on by setting the property `domLayout='print'` or by calling the grid API `setGridOption('domLayout', 'print')`. Similarly the layout can be set back to normal by unsetting the `domLayout` property or calling the grid API `setGridOption('domLayout', null)`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // setting the grid layout to 'print'
 api.setGridOption('domLayout', 'print');
 // resetting the layout back to normal
@@ -70,4 +70,4 @@ When the grid is in print layout, it will be rendering all cells without using r
 
 ## Row Models
 
-The only [Row Model](./row-models/) that print layout works with is the default [Client Side](./client-side-model/) row model. It will not work with the others ([Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/)). This is because the grid will render the entire data-set which goes against the philosophy of the other row models which lazy load data.
+The only [Row Model](./row-models/) that print layout works with is the default [Client Side](./row-models/#client-side) row model. It will not work with the others ([Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/)). This is because the grid will render the entire data-set which goes against the philosophy of the other row models which lazy load data.

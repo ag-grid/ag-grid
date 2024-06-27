@@ -1,22 +1,23 @@
-import { Bean, PostConstruct } from "../context/context";
-import { RowNode } from "../entities/rowNode";
-import { BeanStub } from "../context/beanStub";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { RowNode } from '../entities/rowNode';
 
-@Bean('valueCache')
-export class ValueCache extends BeanStub {
+export class ValueCache extends BeanStub implements NamedBean {
+    beanName = 'valueCache' as const;
 
     private cacheVersion = 0;
     private active: boolean;
     private neverExpires: boolean;
 
-    @PostConstruct
-    public init(): void {
-        this.active = this.gridOptionsService.get('valueCache');
-        this.neverExpires = this.gridOptionsService.get('valueCacheNeverExpires');
+    public postConstruct(): void {
+        this.active = this.gos.get('valueCache');
+        this.neverExpires = this.gos.get('valueCacheNeverExpires');
     }
 
     public onDataChanged(): void {
-        if (this.neverExpires) { return; }
+        if (this.neverExpires) {
+            return;
+        }
 
         this.expire();
     }

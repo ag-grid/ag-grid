@@ -1,28 +1,30 @@
-
 'use strict';
 
-import React, { useCallback, useMemo, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridReadyEvent, SuppressKeyboardEventParams } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
-import { ColDef, GridReadyEvent, SuppressKeyboardEventParams } from '@ag-grid-community/core';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
 import CustomElements from './customElements';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const GRID_CELL_CLASSNAME = "ag-cell";
+const GRID_CELL_CLASSNAME = 'ag-cell';
 
 function getAllFocusableElementsOf(el: HTMLElement) {
-    return Array.from<HTMLElement>(el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((focusableEl) => {
+    return Array.from<HTMLElement>(
+        el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    ).filter((focusableEl) => {
         return focusableEl.tabIndex !== -1;
     });
 }
 
-const getEventPath: (event: Event) =>  HTMLElement[]  = (event: Event) =>{
+const getEventPath: (event: Event) => HTMLElement[] = (event: Event) => {
     const path: HTMLElement[] = [];
     let currentTarget: any = event.target;
     while (currentTarget) {
@@ -30,7 +32,7 @@ const getEventPath: (event: Event) =>  HTMLElement[]  = (event: Event) =>{
         currentTarget = currentTarget.parentElement;
     }
     return path;
-}
+};
 
 /**
  * Capture whether the user is tabbing forwards or backwards and suppress keyboard event if tabbing
@@ -39,33 +41,49 @@ const getEventPath: (event: Event) =>  HTMLElement[]  = (event: Event) =>{
 function suppressKeyboardEvent({ event }: SuppressKeyboardEventParams<any>) {
     const { key, shiftKey } = event;
     const path = getEventPath(event);
-    const isTabForward = key === "Tab" && shiftKey === false;
-    const isTabBackward = key === "Tab" && shiftKey === true;
+    const isTabForward = key === 'Tab' && shiftKey === false;
+    const isTabBackward = key === 'Tab' && shiftKey === true;
+
     let suppressEvent = false;
+
     // Handle cell children tabbing
     if (isTabForward || isTabBackward) {
-        const eGridCell = path.find(el => {
-            if (el.classList === undefined)
-                return false;
+        const eGridCell = path.find((el) => {
+            if (el.classList === undefined) return false;
             return el.classList.contains(GRID_CELL_CLASSNAME);
         });
+
         if (!eGridCell) {
             return suppressEvent;
         }
+
         const focusableChildrenElements = getAllFocusableElementsOf(eGridCell);
         const lastCellChildEl = focusableChildrenElements[focusableChildrenElements.length - 1];
         const firstCellChildEl = focusableChildrenElements[0];
+
         // Suppress keyboard event if tabbing forward within the cell and the current focused element is not the last child
-        if (isTabForward && focusableChildrenElements.length > 0) {
+        if (focusableChildrenElements.length === 0) {
+            return false;
+        }
+
+        const currentIndex = focusableChildrenElements.indexOf(document.activeElement as HTMLElement);
+
+        if (isTabForward) {
             const isLastChildFocused = lastCellChildEl && document.activeElement === lastCellChildEl;
+
             if (!isLastChildFocused) {
                 suppressEvent = true;
+                if (currentIndex !== -1 || document.activeElement === eGridCell) {
+                    event.preventDefault();
+                    focusableChildrenElements[currentIndex + 1].focus();
+                }
             }
         }
         // Suppress keyboard event if tabbing backwards within the cell, and the current focused element is not the first child
-        else if (isTabBackward && focusableChildrenElements.length > 0) {
-            const cellHasFocusedChildren = eGridCell.contains(document.activeElement) &&
-                eGridCell !== document.activeElement;
+        else {
+            const cellHasFocusedChildren =
+                eGridCell.contains(document.activeElement) && eGridCell !== document.activeElement;
+
             // Manually set focus to the last child element if cell doesn't have focused children
             if (!cellHasFocusedChildren) {
                 lastCellChildEl.focus();
@@ -73,57 +91,73 @@ function suppressKeyboardEvent({ event }: SuppressKeyboardEventParams<any>) {
                 // move to the 2nd last child element
                 event.preventDefault();
             }
+
             const isFirstChildFocused = firstCellChildEl && document.activeElement === firstCellChildEl;
             if (!isFirstChildFocused) {
                 suppressEvent = true;
+                if (currentIndex !== -1 || document.activeElement === eGridCell) {
+                    event.preventDefault();
+                    focusableChildrenElements[currentIndex - 1].focus();
+                }
             }
         }
     }
+
     return suppressEvent;
 }
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState<any[]>();
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {
-            field: "athlete"
+            field: 'athlete',
         },
         {
-            field: "country",
+            field: 'country',
             flex: 1,
-            cellRenderer: CustomElements
-        }
+            cellRenderer: CustomElements,
+        },
     ]);
-    const defaultColDef = useMemo<ColDef>(() => { return {
-        minWidth: 130,
-        suppressKeyboardEvent
-    } }, []);
+    const defaultColDef = useMemo<ColDef>(() => {
+        return {
+            minWidth: 130,
+            suppressKeyboardEvent,
+        };
+    }, []);
 
-            const onGridReady = useCallback((params: GridReadyEvent) => {
-                fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-                    .then(resp => resp.json())
-                    .then((data: any[]) => {
-                        setRowData( data);
-                    });
-            }, []);
+    const onGridReady = useCallback((params: GridReadyEvent) => {
+        fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+            .then((resp) => resp.json())
+            .then((data: any[]) => {
+                setRowData(data);
+            });
+    }, []);
 
-    return  (
+    return (
         <div style={containerStyle}>
-            <div  style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    reactiveCustomComponents
                     onGridReady={onGridReady}
                 />
             </div>
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

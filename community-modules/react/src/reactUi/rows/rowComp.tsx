@@ -1,34 +1,49 @@
-import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect, useCallback } from 'react';
-import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from '@ag-grid-community/core';
-import { showJsComp } from '../jsComp';
-import { isComponentStateless, getNextValueIfDifferent, agFlushSync } from '../utils';
+import type {
+    CellCtrl,
+    ICellRenderer,
+    IRowComp,
+    RowContainerType,
+    RowCtrl,
+    RowStyle,
+    UserCompDetails,
+} from '@ag-grid-community/core';
+import { CssClassManager } from '@ag-grid-community/core';
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
+import { showJsComp } from '../jsComp';
+import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
-const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) => {
-
-    const { context, gridOptionsService } = useContext(BeansContext);
+const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
+    const { context, gos } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
 
     const tabIndex = rowCtrl.getTabIndex();
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
-    
-    // Flag used to avoid problematic initialState setter funcs being called on a dead / non displayed row. 
+
+    // Flag used to avoid problematic initialState setter funcs being called on a dead / non displayed row.
     // Due to async rendering its possible for the row to be destroyed before React has had a chance to render it.
-    const isDisplayed = rowCtrl.getRowNode().displayed; 
-    const [rowIndex, setRowIndex] = useState<string | null>(() => isDisplayed ? rowCtrl.getRowIndex() : null);
+    const isDisplayed = rowCtrl.getRowNode().displayed;
+    const [rowIndex, setRowIndex] = useState<string | null>(() => (isDisplayed ? rowCtrl.getRowIndex() : null));
     const [rowId, setRowId] = useState<string | null>(() => rowCtrl.getRowId());
     const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.getBusinessKey());
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.getRowStyles());
+    const cellCtrlsRef = useRef<CellCtrl[] | null>(null);
+    const prevCellCtrlsRef = useRef<CellCtrl[] | null>(null);
     const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(() => null);
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    const [top, setTop] = useState<string | undefined>(() => isDisplayed ? rowCtrl.getInitialRowTop(containerType) : undefined);
-    const [transform, setTransform] = useState<string | undefined>(() => isDisplayed ? rowCtrl.getInitialTransform(containerType) : undefined);
+    const [top, setTop] = useState<string | undefined>(() =>
+        isDisplayed ? rowCtrl.getInitialRowTop(containerType) : undefined
+    );
+    const [transform, setTransform] = useState<string | undefined>(() =>
+        isDisplayed ? rowCtrl.getInitialTransform(containerType) : undefined
+    );
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
@@ -43,21 +58,26 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
     // child) after the fullWidthCompDetails is set.
     // I think this looping could be avoided if we use a ref Callback instead of useRef,
     useEffect(() => {
-        if (autoHeightSetup.current) { return; }
-        if (!fullWidthCompDetails) { return; }
-        if (autoHeightSetupAttempt > 10) { return; }
+        if (autoHeightSetup.current) {
+            return;
+        }
+        if (!fullWidthCompDetails) {
+            return;
+        }
+        if (autoHeightSetupAttempt > 10) {
+            return;
+        }
 
         const eChild = eGui.current?.firstChild as HTMLElement;
         if (eChild) {
             rowCtrl.setupDetailRowAutoHeight(eChild);
             autoHeightSetup.current = true;
         } else {
-            setAutoHeightSetupAttempt(prev => prev + 1);
+            setAutoHeightSetupAttempt((prev) => prev + 1);
         }
-
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
 
-    let cssClassManager = useRef<CssClassManager>();
+    const cssClassManager = useRef<CssClassManager>();
     if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
@@ -68,12 +88,14 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             rowCtrl.unsetComp(containerType);
             return;
         }
-        
+
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
-        if (!rowCtrl.isAlive()) { return; }
-        
+        if (!rowCtrl.isAlive()) {
+            return;
+        }
+
         const compProxy: IRowComp = {
             // the rowTop is managed by state, instead of direct style manipulation by rowCtrl (like all the other styles)
             // as we need to have an initial value when it's placed into he DOM for the first time, for animation to work.
@@ -84,7 +106,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             // React code to execute, so avoiding React for managing CSS Classes made the grid go much faster.
             addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
 
-            setDomOrder: domOrder => domOrderRef.current = domOrder,
+            setDomOrder: (domOrder) => (domOrderRef.current = domOrder),
             setRowIndex,
             setRowId,
             setRowBusinessKey,
@@ -92,17 +114,21 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
-                agFlushSync(useFlushSync, () => {
-                    setCellCtrls(prev => getNextValueIfDifferent(prev, next, domOrderRef.current));
-                });
+                prevCellCtrlsRef.current = cellCtrlsRef.current;
+                cellCtrlsRef.current = next;
+
+                const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
+                if (nextCells !== prevCellCtrlsRef.current) {
+                    agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
+                }
             },
-            showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
+            showFullWidth: (compDetails) => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
-            refreshFullWidth: getUpdatedParams => {
+            refreshFullWidth: (getUpdatedParams) => {
                 if (canRefreshFullWidthRef.current) {
-                    setFullWidthCompDetails(prevFullWidthCompDetails => ({
+                    setFullWidthCompDetails((prevFullWidthCompDetails) => ({
                         ...prevFullWidthCompDetails!,
-                        params: getUpdatedParams()
+                        params: getUpdatedParams(),
                     }));
                     return true;
                 } else {
@@ -111,13 +137,15 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
                     }
                     return fullWidthCompRef.current.refresh(getUpdatedParams());
                 }
-            }
+            },
         };
         rowCtrl.setComp(compProxy, eGui.current, containerType);
-
     }, []);
 
-    useLayoutEffect(() => showJsComp(fullWidthCompDetails, context, eGui.current!, fullWidthCompRef), [fullWidthCompDetails]);
+    useLayoutEffect(
+        () => showJsComp(fullWidthCompDetails, context, eGui.current!, fullWidthCompRef),
+        [fullWidthCompDetails]
+    );
 
     const rowStyles = useMemo(() => {
         const res = { top, transform };
@@ -130,37 +158,36 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
     const showCells = !isFullWidth && cellCtrls != null;
 
     const reactFullWidthCellRendererStateless = useMemo(() => {
-        const res = fullWidthCompDetails?.componentFromFramework && isComponentStateless(fullWidthCompDetails.componentClass);
+        const res =
+            fullWidthCompDetails?.componentFromFramework && isComponentStateless(fullWidthCompDetails.componentClass);
         return !!res;
     }, [fullWidthCompDetails]);
 
     // needs to be a ref to avoid stale closure, as used in compProxy passed to row ctrl
     const canRefreshFullWidthRef = useRef(false);
     useEffect(() => {
-        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gridOptionsService.get('reactiveCustomComponents');
+        canRefreshFullWidthRef.current =
+            reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
-    const showCellsJsx = () => cellCtrls?.map(cellCtrl => (
-        <CellComp
-            cellCtrl={cellCtrl}
-            editingRow={rowCtrl.isEditing()}
-            printLayout={rowCtrl.isPrintLayout()}
-            key={cellCtrl.getInstanceId()}
-        />
-    ));
+    const showCellsJsx = () =>
+        cellCtrls?.map((cellCtrl) => (
+            <CellComp
+                cellCtrl={cellCtrl}
+                editingRow={rowCtrl.isEditing()}
+                printLayout={rowCtrl.isPrintLayout()}
+                key={cellCtrl.getInstanceId()}
+            />
+        ));
 
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails!.componentClass;
         return (
             <>
-                {
-                    reactFullWidthCellRendererStateless
-                    && <FullWidthComp  {...fullWidthCompDetails!.params} />
-                }
-                {
-                    !reactFullWidthCellRendererStateless
-                    && <FullWidthComp  {...fullWidthCompDetails!.params} ref={fullWidthCompRef} />
-                }
+                {reactFullWidthCellRendererStateless && <FullWidthComp {...fullWidthCompDetails!.params} />}
+                {!reactFullWidthCellRendererStateless && (
+                    <FullWidthComp {...fullWidthCompDetails!.params} ref={fullWidthCompRef} />
+                )}
             </>
         );
     };
@@ -170,9 +197,9 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             ref={setRef}
             role={'row'}
             style={rowStyles}
-            row-index={ rowIndex }
-            row-id={ rowId }
-            row-business-key={ rowBusinessKey }
+            row-index={rowIndex}
+            row-id={rowId}
+            row-business-key={rowBusinessKey}
             tabIndex={tabIndex}
         >
             {showCells && showCellsJsx()}

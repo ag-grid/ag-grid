@@ -5,90 +5,100 @@ export interface ComponentType {
 
 export const DateComponent: ComponentType = {
     propertyName: 'dateComponent',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const HeaderComponent: ComponentType = {
     propertyName: 'headerComponent',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const HeaderGroupComponent: ComponentType = {
     propertyName: 'headerGroupComponent',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const CellRendererComponent: ComponentType = {
     propertyName: 'cellRenderer',
-    cellRenderer: true
+    cellRenderer: true,
+};
+
+export const EditorRendererComponent: ComponentType = {
+    propertyName: 'cellRenderer',
+    cellRenderer: false,
+};
+
+export const LoadingCellRendererComponent: ComponentType = {
+    propertyName: 'loadingCellRenderer',
+    cellRenderer: true,
 };
 
 export const CellEditorComponent: ComponentType = {
     propertyName: 'cellEditor',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const InnerRendererComponent: ComponentType = {
     propertyName: 'innerRenderer',
-    cellRenderer: true
+    cellRenderer: true,
 };
 
 export const LoadingOverlayComponent: ComponentType = {
     propertyName: 'loadingOverlayComponent',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const NoRowsOverlayComponent: ComponentType = {
     propertyName: 'noRowsOverlayComponent',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const TooltipComponent: ComponentType = {
     propertyName: 'tooltipComponent',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const FilterComponent: ComponentType = {
     propertyName: 'filter',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const FloatingFilterComponent: ComponentType = {
     propertyName: 'floatingFilterComponent',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const ToolPanelComponent: ComponentType = {
     propertyName: 'toolPanel',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const StatusPanelComponent: ComponentType = {
     propertyName: 'statusPanel',
-    cellRenderer: false
+    cellRenderer: false,
 };
 
 export const FullWidth: ComponentType = {
     propertyName: 'fullWidthCellRenderer',
-    cellRenderer: true
+    cellRenderer: true,
 };
 
 export const FullWidthLoading: ComponentType = {
     propertyName: 'loadingCellRenderer',
-    cellRenderer: true
+    cellRenderer: true,
 };
 
 export const FullWidthGroup: ComponentType = {
     propertyName: 'groupRowRenderer',
-    cellRenderer: true
+    cellRenderer: true,
 };
 
 export const FullWidthDetail: ComponentType = {
     propertyName: 'detailCellRenderer',
-    cellRenderer: true
+    cellRenderer: true,
 };
 
 export const MenuItemComponent: ComponentType = {
     propertyName: 'menuItem',
-    cellRenderer: false
+    cellRenderer: false,
 };

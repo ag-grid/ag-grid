@@ -1,4 +1,4 @@
-import { IStatusPanelComp, IStatusPanelParams } from "@ag-grid-community/core";
+import { IStatusPanelComp, IStatusPanelParams } from '@ag-grid-community/core';
 
 export class CountStatusBarComponent implements IStatusPanelComp {
     params!: IStatusPanelParams;
@@ -12,7 +12,7 @@ export class CountStatusBarComponent implements IStatusPanelComp {
         this.eGui.className = 'ag-status-name-value';
 
         var label = document.createElement('span');
-        label.innerText = 'Row Count Component: ';
+        label.textContent = 'Row Count Component: ';
         this.eGui.appendChild(label);
 
         this.eCount = document.createElement('span');
@@ -29,13 +29,11 @@ export class CountStatusBarComponent implements IStatusPanelComp {
 
     destroy() {
         if (!this.params.api.isDestroyed()) {
-            this.params.api.removeEventListener("gridReady", this.onGridReady);
+            this.params.api.removeEventListener('gridReady', this.onGridReady);
         }
     }
 
     onGridReady() {
-        this.eCount.innerText = this.params.api.getDisplayedRowCount() + ''
+        this.eCount.textContent = this.params.api.getDisplayedRowCount() + '';
     }
 }
-
-

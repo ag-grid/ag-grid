@@ -1,45 +1,27 @@
-import { AgAbstractField, AgFieldParams } from "./agAbstractField";
-import { Component } from "./component";
-import { RefSelector } from "./componentAnnotations";
-import { setAriaExpanded, setAriaRole } from "../utils/aria";
-import { createIconNoSpan } from "../utils/icon";
-import { setElementWidth, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
-import { AddPopupParams, PopupService } from "./popupService";
-import { Autowired } from "../context/context";
-import { Events } from "../eventKeys";
+import type { BeanCollection } from '../context/context';
+import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
+import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
+import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
+import { _createIconNoSpan } from '../utils/icon';
+import type { AgAbstractFieldEvent } from './agAbstractField';
+import { AgAbstractField } from './agAbstractField';
+import type { Component } from './component';
+import { RefPlaceholder } from './component';
+import type { AddPopupParams, PopupService } from './popupService';
 
-export interface AgPickerFieldParams extends AgFieldParams {
-    pickerType: string;
-    pickerGap?: number;
-    /**
-     * If true, will set min-width and max-width (if present), and will set width to wrapper element width.
-     * If false, will set min-width, max-width and width to maxPickerWidth or wrapper element width.
-     */
-    variableWidth?: boolean;
-    minPickerWidth?: number | string;
-    maxPickerWidth?: number | string;
-    maxPickerHeight?: number | string;
-    pickerAriaLabelKey: string;
-    pickerAriaLabelValue: string;
-    template?: string;
-    className?: string;
-    pickerIcon?: string;
-    ariaRole?: string;
-    modalPicker?: boolean;
-    inputWidth?: number | 'flex';
-}
+export type AgPickerFieldEvent = AgAbstractFieldEvent;
+export abstract class AgPickerField<
+    TValue,
+    TConfig extends AgPickerFieldParams = AgPickerFieldParams,
+    TEventType extends string = AgPickerFieldEvent,
+    TComponent extends Component<TEventType | AgPickerFieldEvent> = Component<TEventType | AgPickerFieldEvent>,
+> extends AgAbstractField<TValue, TConfig, TEventType | AgPickerFieldEvent> {
+    protected popupService: PopupService;
 
-const TEMPLATE = /* html */`
-    <div class="ag-picker-field" role="presentation">
-        <div ref="eLabel"></div>
-            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
-            <div ref="eDisplayField" class="ag-picker-field-display"></div>
-            <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
-        </div>
-    </div>`;
-
-export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams = AgPickerFieldParams, TComponent extends Component = Component> extends AgAbstractField<TValue, TConfig> {
+    public wireBeans(beans: BeanCollection): void {
+        this.popupService = beans.popupService;
+    }
 
     protected abstract createPickerComponent(): TComponent;
 
@@ -50,8 +32,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     protected variableWidth: boolean;
     protected minPickerWidth: string | undefined;
     protected maxPickerWidth: string | undefined;
-    protected value: TValue;
-
+    protected override value: TValue;
 
     private skipClick: boolean = false;
     private pickerGap: number = 4;
@@ -60,21 +41,34 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     private destroyMouseWheelFunc: (() => null) | undefined;
     private ariaRole?: string;
 
-    @Autowired('popupService') protected popupService: PopupService;
-
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
-    @RefSelector('eDisplayField') protected readonly eDisplayField: HTMLElement;
-    @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    protected readonly eWrapper: HTMLElement = RefPlaceholder;
+    protected readonly eDisplayField: HTMLElement = RefPlaceholder;
+    private readonly eIcon: HTMLButtonElement = RefPlaceholder;
 
     constructor(config?: TConfig) {
-        super(config, config?.template || TEMPLATE, config?.className);
+        super(
+            config,
+            config?.template ||
+                /* html */ `
+            <div class="ag-picker-field" role="presentation">
+                <div data-ref="eLabel"></div>
+                    <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
+                    <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
+                    <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+                </div>
+            </div>`,
+            config?.agComponents || [],
+            config?.className
+        );
 
         this.ariaRole = config?.ariaRole;
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
         this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
 
-        if (!config) { return; }
+        if (!config) {
+            return;
+        }
 
         const { pickerGap, maxPickerHeight, variableWidth, minPickerWidth, maxPickerWidth } = config;
 
@@ -97,7 +91,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         }
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
 
         this.setupAria();
@@ -106,15 +100,15 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         this.eDisplayField.setAttribute('id', displayId);
 
         const ariaEl = this.getAriaElement();
-        this.addManagedListener(ariaEl, 'keydown', this.onKeyDown.bind(this));
+        this.addManagedElementListeners(ariaEl, { keydown: this.onKeyDown.bind(this) });
 
-        this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
-        this.addManagedListener(this.eWrapper, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
+        this.addManagedElementListeners(this.eLabel, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
+        this.addManagedElementListeners(this.eWrapper, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
 
         const { pickerIcon, inputWidth } = this.config;
 
         if (pickerIcon) {
-            const icon = createIconNoSpan(pickerIcon, this.gridOptionsService);
+            const icon = _createIconNoSpan(pickerIcon, this.gos);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }
@@ -127,13 +121,13 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
 
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
-        
-        ariaEl.setAttribute('tabindex', (this.gridOptionsService.get('tabIndex')).toString());
 
-        setAriaExpanded(ariaEl, false);
+        ariaEl.setAttribute('tabindex', this.gos.get('tabIndex').toString());
+
+        _setAriaExpanded(ariaEl, false);
 
         if (this.ariaRole) {
-            setAriaRole(ariaEl, this.ariaRole);
+            _setAriaRole(ariaEl, this.ariaRole);
         }
     }
 
@@ -158,7 +152,9 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             return;
         }
 
-        if (this.isDisabled()) { return; }
+        if (this.isDisabled()) {
+            return;
+        }
 
         if (this.isPickerDisplayed) {
             this.hidePicker();
@@ -204,13 +200,15 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         this.toggleExpandedStyles(true);
     }
 
-    protected renderAndPositionPicker(): (() => void) {
-        const eDocument = this.gridOptionsService.getDocument();
+    protected renderAndPositionPicker(): () => void {
+        const eDocument = this.gos.getDocument();
         const ePicker = this.pickerComponent!.getGui();
 
-        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) {
-            this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
-                this.hidePicker();
+        if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
+            [this.destroyMouseWheelFunc] = this.addManagedEventListeners({
+                bodyScroll: () => {
+                    this.hidePicker();
+                },
             });
         }
 
@@ -223,7 +221,8 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
-                const shouldRestoreFocus = eDocument.activeElement === eDocument.body;
+                const activeEl = this.gos.getActiveDomElement();
+                const shouldRestoreFocus = !activeEl || activeEl === eDocument.body;
                 this.beforeHidePicker();
 
                 if (shouldRestoreFocus && this.isAlive()) {
@@ -231,7 +230,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
                 }
             },
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
-        }
+        };
 
         const addPopupRes = this.popupService.addPopup(popupParams);
 
@@ -241,15 +240,15 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             if (minPickerWidth) {
                 ePicker.style.minWidth = minPickerWidth;
             }
-            ePicker.style.width = formatSize(getAbsoluteWidth(this.eWrapper));
+            ePicker.style.width = _formatSize(_getAbsoluteWidth(this.eWrapper));
             if (maxPickerWidth) {
                 ePicker.style.maxWidth = maxPickerWidth;
             }
         } else {
-            setElementWidth(ePicker, maxPickerWidth ?? getAbsoluteWidth(this.eWrapper));
+            _setElementWidth(ePicker, maxPickerWidth ?? _getAbsoluteWidth(this.eWrapper));
         }
 
-        const maxHeight = maxPickerHeight ?? `${getInnerHeight(this.popupService.getPopupParent())}px`;
+        const maxHeight = maxPickerHeight ?? `${_getInnerHeight(this.popupService.getPopupParent())}px`;
 
         ePicker.style.setProperty('max-height', maxHeight);
         ePicker.style.position = 'absolute';
@@ -260,12 +259,14 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     protected alignPickerToComponent(): void {
-        if (!this.pickerComponent) { return; } 
+        if (!this.pickerComponent) {
+            return;
+        }
 
         const { pickerType } = this.config;
         const { pickerGap } = this;
 
-        const alignSide = this.gridOptionsService.get('enableRtl') ? 'right' : 'left';
+        const alignSide = this.gos.get('enableRtl') ? 'right' : 'left';
 
         this.popupService.positionPopupByComponent({
             type: pickerType,
@@ -274,7 +275,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
             position: 'under',
             alignSide,
             keepWithinBounds: true,
-            nudgeY: pickerGap
+            nudgeY: pickerGap,
         });
     }
 
@@ -297,11 +298,13 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     protected toggleExpandedStyles(expanded: boolean): void {
-        if (!this.isAlive()) { return; }
+        if (!this.isAlive()) {
+            return;
+        }
 
         const ariaEl = this.getAriaElement();
 
-        setAriaExpanded(ariaEl, expanded);
+        _setAriaExpanded(ariaEl, expanded);
 
         this.eWrapper.classList.toggle('ag-picker-expanded', expanded);
         this.eWrapper.classList.toggle('ag-picker-collapsed', !expanded);
@@ -318,7 +321,9 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     private togglePickerHasFocus(focused: boolean): void {
-        if (!this.pickerComponent) { return; }
+        if (!this.pickerComponent) {
+            return;
+        }
 
         this.eWrapper.classList.toggle('ag-picker-has-focus', focused);
     }
@@ -330,11 +335,11 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
     }
 
     public setInputWidth(width: number | 'flex'): this {
-        setElementWidth(this.eWrapper, width);
+        _setElementWidth(this.eWrapper, width);
         return this;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eWrapper;
     }
 
@@ -369,7 +374,7 @@ export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams 
         return this;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.hidePicker();
         super.destroy();
     }

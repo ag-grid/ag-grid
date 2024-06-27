@@ -14,7 +14,7 @@ The `script-src` policy will work only with `'self'` rule. If you are working wi
 
 Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/). Below demonstrates the difference where expressions are used instead of functions.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // this column definition does NOT use expressions. no need for unsafe-eval
@@ -38,6 +38,8 @@ const gridOptions = {
     ]
 }
 ```
+
+By default, [Advanced Filter](./filter-advanced) also requires `unsafe-eval`, however this can be disabled by [Suppressing Advanced Filter Function Evaluation](./filter-advanced/#suppress-advanced-filter-function-evaluation).
 
 ### style-src
 
@@ -83,8 +85,10 @@ AG Grid is tested for a wide variety of security vulnerabilities using the [Sona
 
 The SonarQube security test results for our main NPM packages are shown below:
 
-| AG-Grid Package     | Result |
-| ------------------- | ------ |
-| ag-grid-community   | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community) |
-| ag-grid-enterprise  | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
-| ag-charts-community | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-charts-community)](https://sonarcloud.io/dashboard?id=ag-charts-community) |
+
+| AG-Grid Package           | Result |
+| ------------------------- | ------ |
+| ag-grid-community         | [![Quality Badge](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community) |
+| ag-grid-enterprise        | [![Quality Badge](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| ag-grid-charts-enterprise | [![Quality Badge](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-charts-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-charts-enterprise) |
+| ag-charts-community       | [![Quality Badge](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-charts-community)](https://sonarcloud.io/dashboard?id=ag-charts-community) |

@@ -1,5 +1,5 @@
 ---
-import LoadingLogo from '@images/inline-svgs/ag-grid-logomark-loading.svg?react';
+import LoadingLogo from '@ag-website-shared/images/inline-svgs/ag-grid-logomark-loading.svg?react';
 import RemoveLogoOnInitScript from './RemoveLogoOnInitScript.astro';
 import { getLoadingLogoId } from '@features/example-runner/utils/getLoadingLogoId';
 
@@ -17,7 +17,7 @@ const minHeight = exampleHeight + FRAME_WRAPPER_HEIGHT;
 const loadingLogoId = getLoadingLogoId({ pageName, exampleName });
 ---
 
-<div class="container" style={{ minHeight: `${minHeight}px` }}>
+<div class="container example-runner-outer" style={{ minHeight: `${minHeight}px` }}>
     <LoadingLogo id={loadingLogoId} />
     <slot />
 </div>

@@ -21,36 +21,37 @@ provide.
 
 ## Time Axis Configuration
 
-Columns that contain date object values will be automatically plotted using a [Time Axis](https://charts.ag-grid.com/react/axes-types/#time)
-unless it has been explicitly changed through the `chartDataType` column definition property.
+A [Time Axis](https://charts.ag-grid.com/react/axes-types/#time) can be configured by setting `chartDataType = 'time'` on the column definition.
 
-Numeric timestamps in the Javascript format are also allowed, but the column should be explicitly configured to use a time axis
-via `chartDataType='time'` on the column definition.
+For the time axis to work correctly, the column must contain values in one of the following formats:
+- `Date`
+- `string` in ISO 8601 format
+- `number` representing the numeric timestamp
+
+Additionally, if `chartDataType` is not specified and the column contains `Date` values, it will automatically use a time axis.
 
 The following snippet shows how different time series values can be configured to enable a time axis:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // date objects are treated as time by default
         { field: 'someDate' },
+        { field: 'someIsoString', chartDataType: 'time' },
         { field: 'someTimestamp', chartDataType: 'time' },
     ],
     rowData: [
         {
             someDate: new Date('Mon Apr 17 2023 12:43:17'), // date object
-            someTimestamp: 1681735397000, // numeric timestamp (Javascript format)
+            someIsoString: '2023-04-17T11:43:17.000Z', // ISO 8601 string
+            someTimestamp: 1681735397000, // numeric timestamp (JavaScript format)
         },
         // ... more rows
     ]
 }
 ```
 
-Notice that no configuration is necessary for date objects but numeric timestamps and calendar date string require
-that `chartDataType='time'` is set on the column definitions.
-
-The following example demonstrates how a column containing numeric timestamps can be configured to use a time axis using
-the `chartDataType='time'` property on the 'timestamp' column definition:
+The following example demonstrates configuring numeric timestamps to use a time axis:
 
 {% gridExampleRunner title="Time Axis Configuration" name="time-axis-config"  exampleHeight=740 /%}
 

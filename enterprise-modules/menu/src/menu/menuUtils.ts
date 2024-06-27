@@ -1,42 +1,51 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
-    ColumnModel,
+import type {
+    AgColumn,
+    BeanCollection,
     FocusService,
     HeaderNavigationService,
     HeaderPosition,
-    CloseMenuEvent,
+    NamedBean,
     PopupEventParams,
-    _
-} from "@ag-grid-community/core";
+    VisibleColsService,
+} from '@ag-grid-community/core';
+import { BeanStub, _isVisible, _last } from '@ag-grid-community/core';
+import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 export interface MenuRestoreFocusParams {
-    column: Column | undefined;
+    column: AgColumn | undefined;
     headerPosition: HeaderPosition | null;
     columnIndex: number;
     eventSource?: HTMLElement;
 }
 
-@Bean('menuUtils')
-export class MenuUtils extends BeanStub {
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+export class MenuUtils extends BeanStub implements NamedBean {
+    beanName = 'menuUtils' as const;
+
+    private focusService: FocusService;
+    private headerNavigationService: HeaderNavigationService;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.focusService = beans.focusService;
+        this.headerNavigationService = beans.headerNavigationService;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     public restoreFocusOnClose(
         restoreFocusParams: MenuRestoreFocusParams,
-        eComp:  HTMLElement,
+        eComp: HTMLElement,
         e?: Event,
         restoreIfMouseEvent?: boolean
     ): void {
         const { eventSource } = restoreFocusParams;
         const isKeyboardEvent = e instanceof KeyboardEvent;
-        if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) { return; }
-        
-        const eDocument = this.gridOptionsService.getDocument();
-        if (!eComp.contains(eDocument.activeElement) && eDocument.activeElement !== eDocument.body) {
+        if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) {
+            return;
+        }
+
+        const eDocument = this.gos.getDocument();
+        const activeEl = this.gos.getActiveDomElement();
+        if (!eComp.contains(activeEl) && activeEl !== eDocument.body) {
             // something else has focus, so don't return focus to the header
             return;
         }
@@ -51,8 +60,8 @@ export class MenuUtils extends BeanStub {
     ): void {
         let keyboardEvent: KeyboardEvent | undefined;
 
-        if (event && event.event && event.event instanceof KeyboardEvent) {
-            keyboardEvent = event.event;
+        if (event && event.keyboardEvent) {
+            keyboardEvent = event.keyboardEvent;
         }
 
         hidePopupFunc(keyboardEvent && { keyboardEvent });
@@ -60,12 +69,19 @@ export class MenuUtils extends BeanStub {
         // this method only gets called when the menu was closed by selecting an option
         // in this case we focus the cell that was previously focused, otherwise the header
         const focusedCell = this.focusService.getFocusedCell();
-        const eDocument = this.gridOptionsService.getDocument();
+        const eDocument = this.gos.getDocument();
+        const activeEl = this.gos.getActiveDomElement();
 
-        if (eDocument.activeElement === eDocument.body) {
+        if (!activeEl || activeEl === eDocument.body) {
             if (focusedCell) {
                 const { rowIndex, rowPinned, column } = focusedCell;
-                this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true, preventScrollOnBrowserFocus: true });
+                this.focusService.setFocusedCell({
+                    rowIndex,
+                    column,
+                    rowPinned,
+                    forceBrowserFocus: true,
+                    preventScrollOnBrowserFocus: true,
+                });
             } else {
                 this.focusHeaderCell(restoreFocusParams);
             }
@@ -75,13 +91,15 @@ export class MenuUtils extends BeanStub {
     public onContextMenu(
         mouseEvent: MouseEvent | null | undefined,
         touchEvent: TouchEvent | null | undefined,
-        showMenuCallback: (eventOrTouch: (MouseEvent | Touch)
-    ) => boolean): void {
+        showMenuCallback: (eventOrTouch: MouseEvent | Touch) => boolean
+    ): void {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsService.get('allowContextMenuWithControlKey')) {
+        if (!this.gos.get('allowContextMenuWithControlKey')) {
             // then do the check
-            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
+            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
+                return;
+            }
         }
 
         // need to do this regardless of context menu showing or not, so doing
@@ -90,21 +108,26 @@ export class MenuUtils extends BeanStub {
             this.blockMiddleClickScrollsIfNeeded(mouseEvent);
         }
 
-        if (this.gridOptionsService.get('suppressContextMenu')) { return; }
+        if (this.gos.get('suppressContextMenu')) {
+            return;
+        }
 
-        const eventOrTouch: (MouseEvent | Touch) = mouseEvent ?? touchEvent!.touches[0];
+        const eventOrTouch: MouseEvent | Touch = mouseEvent ?? touchEvent!.touches[0];
         if (showMenuCallback(eventOrTouch)) {
             const event = mouseEvent ?? touchEvent;
-            event!.preventDefault();
+
+            if (event && event.cancelable) {
+                event.preventDefault();
+            }
         }
     }
 
     private focusHeaderCell(restoreFocusParams: MenuRestoreFocusParams): void {
         const { column, columnIndex, headerPosition, eventSource } = restoreFocusParams;
 
-        const isColumnStillVisible = this.columnModel.getAllDisplayedColumns().some(col => col === column);
+        const isColumnStillVisible = this.visibleColsService.getAllCols().some((col) => col === column);
 
-        if (isColumnStillVisible && eventSource && _.isVisible(eventSource)) {
+        if (isColumnStillVisible && eventSource && _isVisible(eventSource)) {
             const focusableEl = this.focusService.findTabbableParent(eventSource);
             if (focusableEl) {
                 if (column) {
@@ -116,15 +139,15 @@ export class MenuUtils extends BeanStub {
         // if the focusEl is no longer in the DOM, we try to focus
         // the header that is closest to the previous header position
         else if (headerPosition && columnIndex !== -1) {
-            const allColumns = this.columnModel.getAllDisplayedColumns();
-            const columnToFocus = allColumns[columnIndex] || _.last(allColumns);
+            const allColumns = this.visibleColsService.getAllCols();
+            const columnToFocus = allColumns[columnIndex] || _last(allColumns);
 
             if (columnToFocus) {
                 this.focusService.focusHeaderPosition({
                     headerPosition: {
                         headerRowIndex: headerPosition.headerRowIndex,
-                        column: columnToFocus
-                    }
+                        column: columnToFocus,
+                    },
                 });
             }
         }
@@ -135,10 +158,7 @@ export class MenuUtils extends BeanStub {
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
         // they want.
-        const { gridOptionsService } = this;
-        const { which } = mouseEvent;
-
-        if (gridOptionsService.get('suppressMiddleClickScrolls') && which === 2) {
+        if (this.gos.get('suppressMiddleClickScrolls') && mouseEvent.which === 2) {
             mouseEvent.preventDefault();
         }
     }

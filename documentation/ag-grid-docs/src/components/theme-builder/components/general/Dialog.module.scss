@@ -1,0 +1,127 @@
+@use 'design-system' as *;
+
+$overlay-animation-time: 250ms;
+$content-animation-time: 200ms;
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.8;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 0.8;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes scaleFadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes scaleFadeOutDown {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+}
+
+.overlay {
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-black), var(--color-bg-primary) 35%);
+        opacity: 0.8;
+    }
+
+    background-color: color-mix(in srgb, var(--color-black), var(--color-black) 45%);
+    z-index: 1000;
+    position: fixed;
+    inset: 0;
+    opacity: 0.8;
+
+    &[data-state='open'] {
+        animation: fadeIn $overlay-animation-time ease-in;
+    }
+    &[data-state='closed'] {
+        animation: fadeOut $overlay-animation-time ease-in;
+    }
+}
+
+.content {
+    background-color: var(--color-bg-primary);
+    border-radius: 8px;
+    box-shadow:
+        hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+        hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 464px;
+    max-height: 85vh;
+    z-index: 1000;
+    &:focus {
+        outline: none;
+    }
+    overflow: hidden;
+
+    &[data-state='open'] {
+        animation: scaleFadeInUp $content-animation-time cubic-bezier(0.4, 0, 1, 1);
+    }
+    &[data-state='closed'] {
+        animation: scaleFadeOutDown $content-animation-time cubic-bezier(1, 1, 0, 0.4);
+    }
+}
+
+.title {
+    margin: 0;
+    font-size: var(--text-fs-lg);
+    margin-bottom: 8px;
+    color: var(--color-text-secondary);
+}
+
+.description {
+    margin: 10px 0 0;
+    color: var(--mauve-11);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.contentModal {
+    padding: $spacing-size-6;
+}
+
+.actions {
+    padding: $spacing-size-4;
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-size-2;
+    border-top: 1px solid var(--color-border-secondary);
+    font-size: 14px;
+
+    &.noSeparator {
+        padding: 0 $spacing-size-6 $spacing-size-6;
+        border-top: none;
+    }
+}
+
+.fullWidth {
+    width: 100%;
+}

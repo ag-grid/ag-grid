@@ -1,32 +1,31 @@
-import { Component } from "@angular/core";
-
-import { ICellRendererParams } from "@ag-grid-community/core";
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ICellRendererParams } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 @Component({
     standalone: true,
     template: `
         <div class="full-width-panel">
             <div class="full-width-flag">
-                <img border="0" [src]="flag">
+                <img border="0" [src]="flag" />
             </div>
             <div class="full-width-summary">
-                <span class="full-width-title">{{data.name}}</span>
-                <br/>
+                <span class="full-width-title">{{ data.name }}</span>
+                <br />
                 <label>
                     <b>Population:</b>
-                    {{data.population}}
+                    {{ data.population }}
                 </label>
-                <br/>
+                <br />
                 <label>
                     <b>Known For:</b>
-                    {{data.summary}}
+                    {{ data.summary }}
                 </label>
-                <br/>
+                <br />
             </div>
             <div class="full-width-center" [innerHTML]="latinText()"></div>
         </div>
-    `
+    `,
 })
 export class FullWidthCellRenderer implements ICellRendererAngularComp {
     public data: any;

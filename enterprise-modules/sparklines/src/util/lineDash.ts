@@ -1,5 +1,6 @@
-export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, lineDash: string = 'solid'): number[] {
+import { _warnOnce } from '@ag-grid-community/core';
 
+export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, lineDash: string = 'solid'): number[] {
     const buttOrNull: { [key: string]: number[] } = {
         solid: [],
         dash: [4, 3],
@@ -12,7 +13,7 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
         shortDashDotDot: [3, 1, 1, 1, 1, 1],
         longDash: [8, 3],
         longDashDot: [8, 3, 1, 3],
-        longDashDotDot: [8, 3, 1, 3, 1, 3]
+        longDashDotDot: [8, 3, 1, 3, 1, 3],
     };
 
     const roundOrSquare: { [key: string]: number[] } = {
@@ -27,12 +28,12 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
         shortDashDotDot: [2, 2, 0, 2, 0, 2],
         longDash: [7, 3],
         longDashDot: [7, 3, 0, 3],
-        longDashDotDot: [7, 3, 0, 3, 0, 3]
+        longDashDotDot: [7, 3, 0, 3, 0, 3],
     };
 
     if (lineCap === 'round' || lineCap === 'square') {
         if (roundOrSquare[lineDash] == undefined) {
-            console.warn(`'${lineDash}' is not a valid 'lineDash' option.`);
+            warnInvalid(lineDash);
             return roundOrSquare.solid;
         }
 
@@ -40,9 +41,13 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
     }
 
     if (buttOrNull[lineDash] == undefined) {
-        console.warn(`'${lineDash}' is not a valid 'lineDash' option.`);
+        warnInvalid(lineDash);
         return buttOrNull.solid;
     }
 
     return buttOrNull[lineDash];
+}
+
+function warnInvalid(lineDash: string) {
+    _warnOnce(`'${lineDash}' is not a valid 'lineDash' option.`);
 }

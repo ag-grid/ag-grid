@@ -1,0 +1,55 @@
+.ag-autocomplete {
+    align-items: center;
+    display: flex;
+    width: 100%;
+
+    > * {
+        flex: 1 1 auto;
+    }
+}
+
+.ag-autocomplete-list-popup {
+    position: absolute;
+    user-select: none;
+}
+
+.ag-autocomplete-list {
+    position: relative;
+    width: 100%;
+    min-width: 200px;
+    /* the cell editor looks better when it extends to a half row boundary, hence
+     the multiple of row height */
+    height: calc(var(--ag-row-height) * 6.5);
+}
+
+.ag-autocomplete-virtual-list-item {
+    display: flex;
+    cursor: default;
+    height: var(--ag-list-item-height);
+
+    &:focus-visible::after {
+        content: none;
+    }
+
+    &:hover {
+        background-color: var(--ag-row-hover-color);
+    }
+}
+
+.ag-autocomplete-row {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    overflow: hidden;
+}
+
+.ag-autocomplete-row-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0px var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-autocomplete-row-selected {
+    background-color: var(--ag-selected-row-background-color);
+}

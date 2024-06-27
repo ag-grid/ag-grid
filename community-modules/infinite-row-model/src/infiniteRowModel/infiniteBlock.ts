@@ -1,19 +1,14 @@
-import {
-    _,
-    IGetRowsParams,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
-    RowNode,
-    RowNodeBlock,
-    LoadSuccessParams,
-    Beans,
-    Autowired
-} from "@ag-grid-community/core";
-import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
+import type { BeanCollection, IGetRowsParams, LoadSuccessParams, NumberSequence } from '@ag-grid-community/core';
+import { RowNode, RowNodeBlock, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
+
+import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 export class InfiniteBlock extends RowNodeBlock {
-    @Autowired('beans') private beans: Beans;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+    }
 
     private readonly startRow: number;
     private readonly endRow: number;
@@ -37,25 +32,24 @@ export class InfiniteBlock extends RowNodeBlock {
         this.endRow = this.startRow + params.blockSize!;
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.createRowNodes();
     }
 
-    public getBlockStateJson(): {id: string, state: any} {
+    public getBlockStateJson(): { id: string; state: any } {
         return {
             id: '' + this.getId(),
             state: {
                 blockNumber: this.getId(),
                 startRow: this.getStartRow(),
                 endRow: this.getEndRow(),
-                pageStatus: this.getState()
-            }
+                pageStatus: this.getState(),
+            },
         };
     }
 
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
-        if (_.exists(data)) {
+        if (_exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
             // on index) as long user is not inserting or deleting rows,
@@ -68,8 +62,8 @@ export class InfiniteBlock extends RowNodeBlock {
 
     protected loadFromDatasource(): void {
         const params = this.createLoadParams();
-        if (_.missing(this.params.datasource.getRows)) {
-            console.warn(`AG Grid: datasource is missing getRows method`);
+        if (_missing(this.params.datasource.getRows)) {
+            _warnOnce(`datasource is missing getRows method`);
             return;
         }
 
@@ -95,14 +89,16 @@ export class InfiniteBlock extends RowNodeBlock {
             failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
-            context: this.gridOptionsService.getGridCommonParams().context
+            context: this.gos.getGridCommonParams().context,
         };
         return params;
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number) => void,
-                       sequence: NumberSequence,
-                       rowCount: number): void {
+    public forEachNode(
+        callback: (rowNode: RowNode, index: number) => void,
+        sequence: NumberSequence,
+        rowCount: number
+    ): void {
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
             const rowIndex = this.startRow + index;
             if (rowIndex < rowCount) {
@@ -170,12 +166,12 @@ export class InfiniteBlock extends RowNodeBlock {
         this.parentCache.pageLoaded(this, finalRowCount);
     }
 
-    @PreDestroy
-    private destroyRowNodes(): void {
-        this.rowNodes.forEach(rowNode => {
+    public override destroy(): void {
+        this.rowNodes.forEach((rowNode) => {
             // this is needed, so row render knows to fade out the row, otherwise it
             // sees row top is present, and thinks the row should be shown.
             rowNode.clearRowTopAndRowIndex();
         });
+        super.destroy();
     }
 }

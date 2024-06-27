@@ -9,9 +9,10 @@ interface Props {
     name: string;
     exampleHeight?: number;
     typescriptOnly?: boolean;
+    overrideImportType?: ImportType;
 }
 
-const { title, name, exampleHeight, typescriptOnly } = Astro.props as Props;
+const { title, name, exampleHeight, typescriptOnly, overrideImportType } = Astro.props as Props;
 
 const pageName = getPageNameFromPath(Astro.url.pathname);
 const isDev = getIsDev();
@@ -19,11 +20,12 @@ const isDev = getIsDev();
 
 <ExampleRunnerContainer exampleHeight={exampleHeight} pageName={pageName} exampleName={name}>
     <DocsExampleRunner
-        client:only
+        client:only="react"
         title={title}
         name={name}
         exampleHeight={exampleHeight}
         typescriptOnly={typescriptOnly}
+        overrideImportType={overrideImportType}
         pageName={pageName}
         isDev={isDev}
     />

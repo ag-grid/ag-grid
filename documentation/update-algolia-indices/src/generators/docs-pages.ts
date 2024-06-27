@@ -1,7 +1,8 @@
 import fs from 'fs';
-import { JSDOM, VirtualConsole } from 'JSDOM';
-import { MENU_FILE_PATH, DIST_DIR, SUPPORTED_FRAMEWORKS } from '../utils/constants';
-import { writeResults, logWarning } from '../utils/output';
+import { JSDOM, VirtualConsole } from 'jsdom';
+
+import { DIST_DIR, MENU_FILE_PATH, SUPPORTED_FRAMEWORKS } from '../utils/constants';
+import { logWarning, writeResults } from '../utils/output';
 
 const virtualConsole = new VirtualConsole();
 // this ignores console errors, this is because JSDOM does not have comprehensive
@@ -12,9 +13,9 @@ let pageRank = 0;
 export const getAllDocPages = () => {
     const menu = getMenuData();
     pageRank = 0;
-    const flattenedMenuItems = getFlattenedMenuItems(menu.sections)
+    const flattenedMenuItems = getFlattenedMenuItems(menu.sections);
     return flattenedMenuItems;
-}
+};
 
 export const parseDocPage = async (item: FlattenedMenuItem) => {
     const filePath = `${DIST_DIR}${item.path}/index.html`;
@@ -42,6 +43,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
     let subHeading = undefined;
     let text = '';
     let position = 0;
+    let metaTag = undefined;
 
     const createPreviousRecord = () => {
         // Because content for the header comes after the header
@@ -62,11 +64,11 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
             text: cleanContents(text),
             rank,
             positionInPage: position++,
+            metaTag,
         });
-    }
+    };
 
     const recursivelyParseContent = (container) => {
-
         for (let currentTag = container; currentTag != null; currentTag = currentTag.nextElementSibling) {
             try {
                 if (['style', 'pre'].includes(currentTag.nodeName.toLowerCase())) {
@@ -84,7 +86,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                         break;
                     }
 
-                    case 'H3': 
+                    case 'H3':
                     case 'H4': {
                         createPreviousRecord();
                         subHeading = currentTag.textContent.trim();
@@ -93,6 +95,10 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     }
 
                     case 'DIV': {
+                        createPreviousRecord();
+                        if (currentTag.getAttribute('data-meta')) {
+                            metaTag = JSON.parse(currentTag.getAttribute('data-meta').replaceAll('&quot;', '"'));
+                        }
                         // process content inside div containers
                         recursivelyParseContent(currentTag.firstChild);
                         break;
@@ -117,9 +123,9 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
     };
     recursivelyParseContent(container);
     createPreviousRecord();
-    
+
     return records;
-}
+};
 
 interface MenuItem {
     title: string;
@@ -131,7 +137,7 @@ const getMenuData = () => {
     const file = fs.readFileSync(MENU_FILE_PATH, null);
     const { main } = JSON.parse(file);
     return main;
-}
+};
 
 interface FlattenedMenuItem {
     title: string;
@@ -155,21 +161,27 @@ const getFlattenedMenuItems = (menuItems: MenuItem[], result = [], prefix) => {
         }
     });
     return result;
-}
+};
 
 const disallowedTags = ['style', 'pre'];
-const cleanContents = contents => {
+const cleanContents = (contents) => {
     // remove all content from disallowed tags
-    disallowedTags.forEach(tag => contents = contents.replace(new RegExp(`<${tag}(\\s.*?)?>.*?</${tag}>`, 'gs'), ''));
+    disallowedTags.forEach(
+        (tag) => (contents = contents.replace(new RegExp(`<${tag}(\\s.*?)?>.*?</${tag}>`, 'gs'), ''))
+    );
 
     return contents
         .replace(/<.*?>/gs, ' ') // remove tags
-        .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&.*?;/g, '') // remove HTML characters
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&')
+        .replace(/&.*?;/g, '') // remove HTML characters
         .replace(/\s+/g, ' ') // compress whitespace
-        .replace(/\s+([.,?!:)])/g, '$1').replace(/\(\s+/g, '(')  // neaten punctuation
+        .replace(/\s+([.,?!:)])/g, '$1')
+        .replace(/\(\s+/g, '(') // neaten punctuation
         .trim();
 };
 
-const extractTitle = titleTag => {
+const extractTitle = (titleTag) => {
     return titleTag.textContent;
-}
+};

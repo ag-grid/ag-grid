@@ -1,16 +1,21 @@
-import { NumberSequence } from "../utils";
-import { RowBounds } from "./iRowModel";
-import { IRowNode } from "./iRowNode";
-import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
+import type { Bean } from '../context/bean';
+import type { NumberSequence } from '../utils/numberSequence';
+import type { RowBounds } from './iRowModel';
+import type { IRowNode } from './iRowNode';
+import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
-export interface IServerSideStore {
+export interface IServerSideStore extends Bean {
     clearDisplayIndexes(): void;
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void;
     forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence, includeFooterNodes?: boolean): void;
+    forEachNodeDeepAfterFilterAndSort(
+        callback: (rowNode: IRowNode, index: number) => void,
+        sequence?: NumberSequence,
+        includeFooterNodes?: boolean
+    ): void;
     retryLoads(): void;
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): IRowNode | undefined;
     getRowBounds(index: number): RowBounds | null;
@@ -26,7 +31,7 @@ export interface IServerSideStore {
     isLastRowIndexKnown(): boolean;
     getRowNodesInRange(firstInRange: IRowNode, lastInRange: IRowNode): IRowNode[];
     addStoreStates(result: ServerSideGroupLevelState[]): void;
-    getStoreBounds(): { topPx: number, heightPx: number };
+    getStoreBounds(): { topPx: number; heightPx: number };
 }
 
 export interface StoreRefreshAfterParams {

@@ -4,14 +4,15 @@ import { createAutomatedIntegratedCharts } from '@components/automated-examples/
 import { INTEGRATED_CHARTS_ID } from '@components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
 import breakpoints from '@design-system/breakpoint.module.scss';
-import automatedExamplesVars from '@design-system/modules/AutomatedExamplesVars.module.scss';
-import styles from '@design-system/modules/AutomatedIntegratedCharts.module.scss';
 import { trackHomepageExampleIntegratedCharts, trackOnceHomepageExampleIntegratedCharts } from '@utils/analytics';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+import automatedExamplesVars from './AutomatedExamplesVars.module.scss';
+import styles from './AutomatedIntegratedCharts.module.scss';
 
 const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = parseInt(breakpoints['automated-row-grouping-medium'], 10);
 const AUTOMATED_EXAMPLE_MOBILE_SCALE = parseFloat(automatedExamplesVars['mobile-grid-scale']);
@@ -61,7 +62,7 @@ export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticDa
     });
 
     useEffect(() => {
-        let params = {
+        const params = {
             gridClassname,
             darkMode,
             getOverlay: () => {
@@ -83,7 +84,7 @@ export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticDa
                         setAllScriptEnabledVars(true);
                         automatedExampleManager.start(exampleId);
                     },
-                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon.svg')} />`,
+                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon-dark.svg')}" />`,
                 },
             ],
             onStateChange(state) {

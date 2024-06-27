@@ -1,0 +1,13 @@
+.wrapper {
+    display: grid;
+    grid-template-rows: 1fr 370px;
+    height: 100%;
+}
+
+#myGrid {
+    grid-row: 1 / 2;
+}
+
+#myChart {
+    grid-row: 2 / 3;
+}

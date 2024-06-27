@@ -8,8 +8,7 @@ exports[`Snippet Component > given a mix of grid options > it should create 'ang
     [rowDragManaged]="rowDragManaged"
     [rowSelection]="rowSelection"
     [postSort]="postSort"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 // columnDefs property (special)
 this.columnDefs = [
@@ -50,8 +49,7 @@ exports[`Snippet Component > given a mix of grid options > it should create 'ang
     [rowDragManaged]="rowDragManaged"
     [rowSelection]="rowSelection"
     [postSort]="postSort"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 // columnDefs property (special)
 this.columnDefs = [
@@ -823,8 +821,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 exports[`Snippet Component > given col defs with arrow function properties > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 this.columnDefs = [
     {
@@ -838,8 +835,7 @@ this.columnDefs = [
 exports[`Snippet Component > given col defs with arrow function properties > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 this.columnDefs = [
     {
@@ -1019,8 +1015,7 @@ exports[`Snippet Component > given col defs with arrow function properties > it 
 exports[`Snippet Component > given column definitions with functions > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 this.columnDefs = [
     {
@@ -1042,8 +1037,7 @@ this.columnDefs = [
 exports[`Snippet Component > given column definitions with functions > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 this.columnDefs = [
     {
@@ -1343,8 +1337,7 @@ exports[`Snippet Component > given column definitions with functions > it should
 exports[`Snippet Component > given column definitions with group columns > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 // 2 levels of grouping
 this.columnDefs = [
@@ -1368,8 +1361,7 @@ this.columnDefs = [
 exports[`Snippet Component > given column definitions with group columns > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 // 2 levels of grouping
 this.columnDefs = [
@@ -1699,8 +1691,7 @@ this.columnDefs = [
 exports[`Snippet Component > given complex column definition with array property > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 this.columnDefs = [
     {
@@ -1716,8 +1707,7 @@ this.columnDefs = [
 exports[`Snippet Component > given complex column definition with array property > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 this.columnDefs = [
     {
@@ -2039,8 +2029,7 @@ const myValueFormatter = params => {
 exports[`Snippet Component > given simple column definitions > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 // define 3 columns
 this.columnDefs = [
@@ -2053,8 +2042,7 @@ this.columnDefs = [
 exports[`Snippet Component > given simple column definitions > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"
-    /* other grid options ... */>
-</ag-grid-angular>
+    /* other grid options ... */ />
 
 // define 3 columns
 this.columnDefs = [

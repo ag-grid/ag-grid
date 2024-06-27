@@ -7,9 +7,7 @@ export class MultiIndexMap<K> {
             throw new Error('AG Grid: At least one index must be provided.');
         }
         this.indexes = indexes;
-        this.maps = new Map(
-            this.indexes.map(index => [index, new Map()])
-        );
+        this.maps = new Map(this.indexes.map((index) => [index, new Map()]));
     }
 
     public getSize(): number {
@@ -25,7 +23,7 @@ export class MultiIndexMap<K> {
     }
 
     public set(item: K) {
-        this.indexes.forEach(index => {
+        this.indexes.forEach((index) => {
             const map = this.maps.get(index);
             if (!map) {
                 throw new Error(`AG Grid: ${String(index)} not found`);
@@ -35,7 +33,7 @@ export class MultiIndexMap<K> {
     }
 
     public delete(item: K) {
-        this.indexes.forEach(index => {
+        this.indexes.forEach((index) => {
             const map = this.maps.get(index);
             if (!map) {
                 throw new Error(`AG Grid: ${String(index)} not found`);
@@ -45,7 +43,7 @@ export class MultiIndexMap<K> {
     }
 
     public clear() {
-        this.maps.forEach(map => map.clear());
+        this.maps.forEach((map) => map.clear());
     }
 
     private getIterator(index: keyof K) {
@@ -55,20 +53,20 @@ export class MultiIndexMap<K> {
         }
         return map.values();
     }
-    
+
     public forEach(callback: (item: K) => void) {
         const iterator = this.getIterator(this.indexes[0]);
         let pointer: IteratorResult<K, any>;
-        while (pointer = iterator.next()) {
+        while ((pointer = iterator.next())) {
             if (pointer.done) break;
             callback(pointer.value);
         }
     }
-    
+
     public find(callback: (item: K) => boolean) {
         const iterator = this.getIterator(this.indexes[0]);
         let pointer: IteratorResult<K, any>;
-        while (pointer = iterator.next()) {
+        while ((pointer = iterator.next())) {
             if (pointer.done) break;
             if (callback(pointer.value)) {
                 return pointer.value;
@@ -80,7 +78,7 @@ export class MultiIndexMap<K> {
         const iterator = this.getIterator(this.indexes[0]);
         let pointer: IteratorResult<K, any>;
         const result: K[] = [];
-        while (pointer = iterator.next()) {
+        while ((pointer = iterator.next())) {
             if (pointer.done) break;
             if (predicate(pointer.value)) {
                 result.push(pointer.value);

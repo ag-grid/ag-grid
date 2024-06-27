@@ -1,0 +1,44 @@
+@use '../../../../design-system' as *;
+
+.label {
+    padding-left: $spacing-size-3;
+
+    svg {
+        margin-right: $spacing-size-4;
+    }
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: $spacing-size-2;
+}
+
+.detail {
+    text-align: center;
+    font-size: var(--text-fs-sm);
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+}
+
+.tick svg {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: 24px;
+    fill: var(--color-util-brand-700);
+    background: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 95%);
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.tick span {
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.dash {
+    opacity: 0.4;
+}

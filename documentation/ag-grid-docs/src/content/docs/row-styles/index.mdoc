@@ -4,9 +4,13 @@ title: "Row Styles"
 
 Row customisation can be achieved in the following ways:
 
-* **Row Style:** Providing a CSS style for the rows.
-* **Row Class:** Providing a CSS class for the rows.
-* **Row Class Rules:** Providing rules for applying CSS classes.
+* **Row Style:** Providing a CSS style for the rows. Applied individually to each element.
+* **Row Class:** Providing a CSS class for the rows. Not removed on data refresh.
+* **Row Class Rules:** Providing rules for applying CSS classes. These styles are dynamic and applied in batches.
+
+{% note %}
+We recommend Row Class Rules for most use cases. See [Refresh of Styles](./row-styles/#refresh-of-styles) for more details.
+{% /note %}
 
 Each of these approaches are presented in the following sections.
 
@@ -18,7 +22,7 @@ You can add CSS styles to each row in the following ways:
 
 {% apiDocumentation source="grid-options/properties.json" section="styling" names=["rowStyle", "getRowStyle"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // set background colour on every row, this is probably bad, should be using CSS classes
     rowStyle: { background: 'black' },
@@ -31,13 +35,15 @@ const gridOptions = {
 }
 ```
 
+If your data is static, use row classes to apply styles for better performance.
+
 ## Row Class
 
 You can add CSS classes to each row in the following ways:
 
 {% apiDocumentation source="grid-options/properties.json" section="styling" names=["rowClass", "getRowClass"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // all rows assigned CSS class 'my-green-class'
     rowClass: 'my-green-class',
@@ -52,26 +58,28 @@ const gridOptions = {
 
 ## Row Class Rules
 
-You can define rules which can be applied to include certain CSS classes via the grid option `rowClassRules`. These rules are provided as a JavaScript map where the keys are class names and the values are expressions that if evaluated to `true`, the class gets used. The expression can either be a JavaScript function, or a string which is treated as a shorthand for a function by the grid.
+You can define rules which can be applied to include certain CSS classes via the grid option `rowClassRules`. These rules are provided as a map where the keys are class names and the values are expressions that if evaluated to `true`, the class gets used. The expression can either be a function, or a string which is treated as a shorthand for a function by the grid.
 
 {% apiDocumentation source="grid-options/properties.json" section="styling" names=["rowClassRules"] /%}
 
 The following snippet shows `rowClassRules` that use functions and the value from the year column:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowClassRules: {
         // apply green to 2008
-        'rag-green-outer': function(params) { return params.data.year === 2008; },
+        'rag-green-outer': (params) => { return params.data.year === 2008; },
 
         // apply amber 2004
-        'rag-amber-outer': function(params) { return params.data.year === 2004; },
+        'rag-amber-outer': (params) => { return params.data.year === 2004; },
 
         // apply red to 2000
-        'rag-red-outer': function(params) { return params.data.year === 2000; }
+        'rag-red-outer': (params) => { return params.data.year === 2000; }
     }
 }
 ```
+
+## Row Style/Class Functions
 
 All rowStyle, rowClass and rowClassRules functions take a `RowClassParams` params object.
 
@@ -89,7 +97,7 @@ params object):
 
 The following snippet shows `rowClassRules` applying classes to rows using expressions on an age column value:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowClassRules: {
         'rag-green': 'data.age < 20',
@@ -113,8 +121,7 @@ The example below demonstrates `rowClassRules`:
 
 * `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and <= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
 
-* The grid re-evaluates the rowClassRules when the data is changed. The example
-  shows changing the data in the three different ways: `rowNode.setDataValue`, `rowNode.setData` and `api.applyTransaction`. See [Updating Data](./data-update/) for details on these update functions.
+* The grid re-evaluates the rowClassRules and applies styles when the data is changed independent of mechanism. See [Updating Data](./data-update/) for details on methods to update data.
 
 {% gridExampleRunner title="Row Class Rules" name="row-class-rules" /%}
 
@@ -126,7 +133,7 @@ Highlighting Rows is on by default. To turn it off, set the grid property `suppr
 
 Highlighting Columns is off by default. To turn it on, set the grid property `columnHoverHighlight=true`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // turns OFF row hover, it's on by default
     suppressRowHoverHighlight: true,
@@ -145,9 +152,7 @@ In this example Column highlighting is disabled by default and Row highlighting 
 
 {% gridExampleRunner title="No Highlighting Rows And Columns" name="highlight-nothing" /%}
 
-Rows highlight by default as this is a common requirement. Column highlighting is less common and as such needs to be opted in.
-
-Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the row's getting hovered. The grid cannot depend on using CSS `:hover` selector as this will not highlight the entire row if Columns are pinned.
+Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the rows getting hovered. The grid cannot depend on using CSS `:hover` selector as this will not highlight the entire row if Columns are pinned.
 
 Column Highlighting works by the grid adding the CSS class `ag-column-hover`
 to all Cells to be highlighted.

@@ -6,9 +6,7 @@
   "targets": {
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": [
-        "@ag-grid-community/core:build:package"
-      ],
+      "dependsOn": ["@ag-grid-community/core:build:package"],
       "inputs": [
         "tsDeclarations",
         "{projectRoot}/angular.json",
@@ -21,6 +19,12 @@
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "script": "build"
+      }
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
       }
     },
     "pack": {

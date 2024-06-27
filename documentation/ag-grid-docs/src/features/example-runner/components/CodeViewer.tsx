@@ -1,14 +1,13 @@
 import type { ImportType, InternalFramework } from '@ag-grid-types';
-import Code from '@components/Code';
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/CodeViewer.module.scss';
+import Code from '@ag-website-shared/components/code/Code';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import type { FileContents } from '@features/example-generator/types';
 import { doOnEnter } from '@utils/doOnEnter';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 
-import { POST_INIT_MESSAGE_END, POST_INIT_MESSAGE_START } from '../constants';
 import { CodeOptions } from './CodeOptions';
+import styles from './CodeViewer.module.scss';
 
 export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
@@ -74,7 +73,7 @@ export const CodeViewer = ({
 }) => {
     const [activeFile, setActiveFile] = useState(initialSelectedFile);
     const [showFiles, setShowFiles] = useState(true);
-    let localFiles = { ...files };
+    const localFiles = { ...files };
     const exampleFiles = Object.keys(localFiles);
     stripOutDarkModeCode(localFiles);
 

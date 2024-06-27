@@ -14,7 +14,7 @@ This page discusses alternatives to this approach.
 
 A Value Setter is the inverse of a [Value Getter](./value-getters/). Where the value getter allows getting values from your data using a function rather than a field, the value setter allows you to set values into your data using a function rather than specifying a field.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // Option 1: using field for getting and setting the value
@@ -77,8 +77,7 @@ const gridOptions = {
 <ag-grid-angular
    [readOnlyEdit]="true"
    (cellEditRequest)="onCellEditRequest($event)"
-   /* other grid options ... */>
-</ag-grid-angular>
+   /* other grid options ... */ />
 
 this.onCellEditRequest = event => {
    console.log('Cell Editing updated a cell, but the grid did nothing!');

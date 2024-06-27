@@ -1,7 +1,8 @@
-import { Icon } from '@components/icon/Icon';
-import styles from '@design-system/modules/ToggleAutomatedExampleButton.module.scss';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classnames from 'classnames';
 import { type FunctionComponent } from 'react';
+
+import styles from './ToggleAutomatedExampleButton.module.scss';
 
 interface Props {
     isHoveredOver: boolean;

@@ -1,101 +1,134 @@
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { WithoutGridCommon } from "../../interfaces/iCommon";
-import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { OverlayWrapperComponent } from "./overlayWrapperComponent";
-import { PaginationProxy } from "../../pagination/paginationProxy";
-import { ColumnModel } from "../../columns/columnModel";
-import { Events } from "../../eventKeys";
-import { ILoadingOverlayParams } from "./loadingOverlayComponent";
-import { INoRowsOverlayParams } from "./noRowsOverlayComponent";
-import { GridOptions } from "../../entities/gridOptions";
+import type { ColumnModel } from '../../columns/columnModel';
+import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { GridOptions } from '../../entities/gridOptions';
+import type { IRowModel } from '../../interfaces/iRowModel';
+import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
-@Bean('overlayService')
-export class OverlayService extends BeanStub {
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+const enum OverlayServiceState {
+    Hidden = 0,
+    Loading = 1,
+    NoRows = 2,
+}
+
+export class OverlayService extends BeanStub implements NamedBean {
+    beanName = 'overlayService' as const;
+
+    private userComponentFactory: UserComponentFactory;
+    private rowModel: IRowModel;
+    private columnModel: ColumnModel;
+
+    private state: OverlayServiceState = OverlayServiceState.Hidden;
+    private showInitialOverlay: boolean = true;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.userComponentFactory = beans.userComponentFactory;
+        this.rowModel = beans.rowModel;
+        this.columnModel = beans.columnModel;
+    }
 
     private overlayWrapperComp: OverlayWrapperComponent;
-    private manuallyDisplayed: boolean = false;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.onRowDataUpdated());
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
+    public postConstruct(): void {
+        const updateOverlayVisibility = () => this.updateOverlayVisibility();
+
+        this.addManagedEventListeners({
+            newColumnsLoaded: updateOverlayVisibility,
+            rowDataUpdated: updateOverlayVisibility,
+        });
+
+        this.addManagedPropertyListener('loading', updateOverlayVisibility);
     }
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
-
-        if (
-            !this.gridOptionsService.get('columnDefs') ||
-            (this.gridOptionsService.isRowModelType('clientSide') && !this.gridOptionsService.get('rowData'))
-        ) {
-            this.showLoadingOverlay();
-        }
+        this.updateOverlayVisibility();
     }
 
     public showLoadingOverlay(): void {
-        if (this.gridOptionsService.get('suppressLoadingOverlay')) { return; }
+        this.showInitialOverlay = false;
 
-        const params: WithoutGridCommon<ILoadingOverlayParams> = {};
+        const loading = this.gos.get('loading');
+        if (!loading && (loading !== undefined || this.gos.get('suppressLoadingOverlay'))) {
+            return;
+        }
 
-        const compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
-        this.showOverlay(compDetails, 'ag-overlay-loading-wrapper', 'loadingOverlayComponentParams');
+        this.doShowLoadingOverlay();
     }
 
     public showNoRowsOverlay(): void {
-        if (this.gridOptionsService.get('suppressNoRowsOverlay')) { return; }
+        this.showInitialOverlay = false;
 
-        const params: WithoutGridCommon<INoRowsOverlayParams> = {};
+        if (this.gos.get('loading') || this.gos.get('suppressNoRowsOverlay')) {
+            return;
+        }
 
-        const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);
-        this.showOverlay(compDetails, 'ag-overlay-no-rows-wrapper', 'noRowsOverlayComponentParams');
+        this.doShowNoRowsOverlay();
+    }
+
+    public hideOverlay(): void {
+        this.showInitialOverlay = false;
+
+        if (this.gos.get('loading')) {
+            return;
+        }
+
+        this.doHideOverlay();
+    }
+
+    private updateOverlayVisibility(): void {
+        let loading = this.gos.get('loading');
+
+        if (this.showInitialOverlay && loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
+            loading =
+                !this.gos.get('columnDefs') ||
+                !this.columnModel.isReady() ||
+                (!this.gos.get('rowData') && this.gos.isRowModelType('clientSide'));
+        }
+
+        if (loading) {
+            if (this.state !== OverlayServiceState.Loading) {
+                this.doShowLoadingOverlay();
+            }
+        } else {
+            this.showInitialOverlay = false;
+            if (this.rowModel.isEmpty() && !this.gos.get('suppressNoRowsOverlay')) {
+                if (this.state !== OverlayServiceState.NoRows) {
+                    this.doShowNoRowsOverlay();
+                }
+            } else if (this.state !== OverlayServiceState.Hidden) {
+                this.doHideOverlay();
+            }
+        }
+    }
+
+    private doShowLoadingOverlay(): void {
+        this.state = OverlayServiceState.Loading;
+        this.showOverlay(
+            this.userComponentFactory.getLoadingOverlayCompDetails({}),
+            'ag-overlay-loading-wrapper',
+            'loadingOverlayComponentParams'
+        );
+    }
+
+    private doShowNoRowsOverlay(): void {
+        this.state = OverlayServiceState.NoRows;
+        this.showOverlay(
+            this.userComponentFactory.getNoRowsOverlayCompDetails({}),
+            'ag-overlay-no-rows-wrapper',
+            'noRowsOverlayComponentParams'
+        );
+    }
+
+    private doHideOverlay(): void {
+        this.state = OverlayServiceState.Hidden;
+        this.overlayWrapperComp.hideOverlay();
     }
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
-        const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
-            promise.then(comp => {
-                if (comp!.refresh) {
-                    comp.refresh(this.gridOptionsService.addGridCommonParams({
-                        ...(currentValue ?? {})
-                    }));
-                }
-            });
-        });
-
-        this.manuallyDisplayed = this.columnModel.isReady() && !this.paginationProxy.isEmpty();
-        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, listenerDestroyFunc);
-    }
-
-    public hideOverlay(): void {
-        this.manuallyDisplayed = false;
-        this.overlayWrapperComp.hideOverlay();
-    }
-
-    private showOrHideOverlay(): void {
-        const isEmpty = this.paginationProxy.isEmpty();
-        const isSuppressNoRowsOverlay = this.gridOptionsService.get('suppressNoRowsOverlay');
-        if (isEmpty && !isSuppressNoRowsOverlay) {
-            this.showNoRowsOverlay();
-        } else {
-            this.hideOverlay();
-        }
-    }
-
-    private onRowDataUpdated(): void {
-        this.showOrHideOverlay();
-    }
-
-    private onNewColumnsLoaded(): void {
-        // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
-        // this problem exists before of the race condition between the services (column controller in this case)
-        // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
-        // this race condition would not happen.
-        if (this.columnModel.isReady() && !this.paginationProxy.isEmpty() && !this.manuallyDisplayed) {
-            this.hideOverlay();
-        }
+        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, gridOption);
     }
 }

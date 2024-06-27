@@ -16,17 +16,12 @@
     "module": "es2020",
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2020",
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "target": "ES2022",
+    "lib": ["es2018", "dom"],
     "paths": {
-      "ag-grid-angular": [
-        "dist/ag-grid-angular/ag-grid-angular",
-        "dist/ag-grid-angular"
-      ]
-    }
+      "ag-grid-angular": ["dist/ag-grid-angular/ag-grid-angular", "dist/ag-grid-angular"]
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

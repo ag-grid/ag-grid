@@ -1,7 +1,6 @@
-import { PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { DomLayoutType } from "../entities/gridOptions";
-import { warnOnce } from "../utils/function";
+import { BeanStub } from '../context/beanStub';
+import type { DomLayoutType } from '../entities/gridOptions';
+import { _warnOnce } from '../utils/function';
 
 export interface LayoutView {
     updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
@@ -10,7 +9,7 @@ export interface LayoutView {
 export enum LayoutCssClasses {
     AUTO_HEIGHT = 'ag-layout-auto-height',
     NORMAL = 'ag-layout-normal',
-    PRINT = 'ag-layout-print'
+    PRINT = 'ag-layout-print',
 }
 
 export interface UpdateLayoutClassesParams {
@@ -27,8 +26,7 @@ export class LayoutFeature extends BeanStub {
         this.view = view;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedPropertyListener('domLayout', this.updateLayoutClasses.bind(this));
         this.updateLayoutClasses();
     }
@@ -38,24 +36,26 @@ export class LayoutFeature extends BeanStub {
         const params = {
             autoHeight: domLayout === 'autoHeight',
             normal: domLayout === 'normal',
-            print: domLayout === 'print'
+            print: domLayout === 'print',
         };
-        const cssClass = params.autoHeight ? LayoutCssClasses.AUTO_HEIGHT :
-                            params.print ? LayoutCssClasses.PRINT : LayoutCssClasses.NORMAL;
+        const cssClass = params.autoHeight
+            ? LayoutCssClasses.AUTO_HEIGHT
+            : params.print
+              ? LayoutCssClasses.PRINT
+              : LayoutCssClasses.NORMAL;
         this.view.updateLayoutClasses(cssClass, params);
     }
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
     private getDomLayout(): DomLayoutType {
-        const domLayout: DomLayoutType = this.gridOptionsService.get('domLayout') ?? 'normal';
+        const domLayout: DomLayoutType = this.gos.get('domLayout') ?? 'normal';
         const validLayouts: DomLayoutType[] = ['normal', 'print', 'autoHeight'];
 
         if (validLayouts.indexOf(domLayout) === -1) {
-            warnOnce(`${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`);
+            _warnOnce(`${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`);
             return 'normal';
         }
 
         return domLayout;
     }
-
 }

@@ -1,4 +1,6 @@
-import { GridOptionsService, IAggFuncParams } from '@ag-grid-community/core';
+import type { IAggFuncParams } from '@ag-grid-community/core';
+import { GridOptionsService } from '@ag-grid-community/core';
+
 import { AggFuncService } from './aggFuncService';
 
 function createService(): AggFuncService {
@@ -9,14 +11,14 @@ function createService(): AggFuncService {
 
     const service = new AggFuncService() as any;
 
-    service.gridOptionsService = gridOptionsService;
+    service.gos = gridOptionsService;
 
     return service;
 }
 
 function createParams(values: any[]): IAggFuncParams {
     return {
-        values: values
+        values: values,
     } as IAggFuncParams;
 }
 
@@ -34,7 +36,9 @@ describe('aggSum', () => {
     });
 
     it('returns sum of bigints', () => {
-        const result = sum(createParams([BigInt(3245234), BigInt(6654432), BigInt(67468456345), BigInt(-4657563), BigInt(45745456)]));
+        const result = sum(
+            createParams([BigInt(3245234), BigInt(6654432), BigInt(67468456345), BigInt(-4657563), BigInt(45745456)])
+        );
 
         expect(result).toBe(BigInt(67519443904));
     });

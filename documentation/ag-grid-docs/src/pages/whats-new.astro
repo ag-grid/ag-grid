@@ -1,50 +1,11 @@
 ---
-import { getCollection, getEntry } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
-import { PagesNavigationFromLocalStorage } from '@features/pages-navigation/components/PagesNavigationFromLocalStorage';
-import { getDocsPages } from '../features/docs/utils/pageData';
-import { Version } from '../components/version/Version';
-import type { Framework, MenuSection } from '@ag-grid-types';
-import styles from '@design-system/modules/WhatsNew.module.scss';
+import { getEntry } from 'astro:content';
+import WhatsNew from '@ag-website-shared/components/whats-new/pages/whats-new.astro';
+import type { MenuSection } from '@ag-grid-types';
 
-export async function getStaticPaths() {
-    const pages = await getCollection('docs');
-    return getDocsPages(pages);
-}
-
-const pageName = Astro.params.pageName as Framework;
-
+const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
 const { data: menu } = await getEntry('menu', 'data');
 const allMenuSections = menu.main.sections as MenuSection[];
-
-const versionsContent = await getEntry('versions', 'ag-grid-versions');
-const versionsData: any[] = versionsContent ? versionsContent.data : [];
 ---
 
-<Layout title={"What's new"} showDocsNav={true} showSearchBar={true}>
-    <div class:list={['contentViewport layout-grid']}>
-        <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
-
-        <main is="div">
-            <div class={styles.whatsNewContainer}>
-                <h1>What's New in AG Grid</h1>
-                <p class={styles.description}>See what's new in recent AG Grid versions.</p>
-                <div class={styles.versions}>
-                    {
-                        versionsData.map((versionInfo, index) => {
-                            return (
-                                <Version
-                                    isLatest={index === 0}
-                                    version={versionInfo.version}
-                                    date={versionInfo.date}
-                                    highlights={versionInfo.highlights}
-                                    notesUrl={versionInfo.notesUrl}
-                                />
-                            );
-                        })
-                    }
-                </div>
-            </div>
-        </main>
-    </div>
-</Layout>
+<WhatsNew site="grid" versionsData={versionsData} allMenuSections={allMenuSections} />

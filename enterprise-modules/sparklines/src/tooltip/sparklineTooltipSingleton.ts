@@ -1,15 +1,17 @@
-import { Bean, BeanStub, PostConstruct, PreDestroy } from '@ag-grid-community/core';
+import type { NamedBean } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
+
 import { SparklineTooltip } from '../sparkline/tooltip/sparklineTooltip';
 
 /**
  * This 'bean' creates a single sparkline tooltip that is bound to the grid lifecycle.
  */
-@Bean('sparklineTooltipSingleton')
-export class SparklineTooltipSingleton extends BeanStub {
+export class SparklineTooltipSingleton extends BeanStub implements NamedBean {
+    beanName = 'sparklineTooltipSingleton' as const;
+
     private tooltip!: SparklineTooltip;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.tooltip = new SparklineTooltip();
     }
 
@@ -17,10 +19,10 @@ export class SparklineTooltipSingleton extends BeanStub {
         return this.tooltip;
     }
 
-    @PreDestroy
-    private destroyTooltip(): void {
+    public override destroy(): void {
         if (this.tooltip) {
             this.tooltip.destroy();
         }
+        super.destroy();
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/angular",
-  "version": "31.1.0",
+  "version": "31.3.1",
   "scripts": {
     "clean": "rimraf dist",
     "ng": "./node_modules/.bin/ng",
@@ -9,29 +9,30 @@
     "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
     "test:watch": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/ng test --watch true  --browsers ChromeHeadless",
     "lint": "./node_modules/.bin/ng lint",
-    "update-angular-components": "node updateGridAndColumnProperties.js"
+    "prettier-fix": "prettier --write \"projects/ag-grid-angular/src/**/*.ts\"",
+    "update-angular-components": "node updateGridAndColumnProperties.js && npm run prettier-fix"
   },
   "license": "MIT",
-  "module": "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs",
+  "module": "./dist/ag-grid-angular/fesm2022/ag-grid-community-angular.mjs",
   "typings": "./dist/ag-grid-angular/index.d.ts",
   "dependencies": {
-    "@angular/animations": "^14.3.0",
-    "@angular/common": "^14.3.0",
-    "@angular/compiler": "^14.3.0",
-    "@angular/core": "^14.3.0",
-    "@angular/platform-browser": "^14.3.0",
-    "@angular/platform-browser-dynamic": "^14.3.0",
+    "@angular/animations": "^16.2.12",
+    "@angular/common": "^16.2.12",
+    "@angular/compiler": "^16.2.12",
+    "@angular/core": "^16.2.12",
+    "@angular/platform-browser": "^16.2.12",
+    "@angular/platform-browser-dynamic": "^16.2.12",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.13.3"
   },
   "devDependencies": {
-    "@ag-grid-community/core": "31.1.0",
-    "@ag-grid-community/client-side-row-model": "31.1.0",
-    "@angular-devkit/build-angular": "^14.2.12",
-    "@angular/cli": "^14.2.12",
-    "@angular/forms": "^14.2.12",
-    "@angular/compiler-cli": "^14.3.0",
+    "@ag-grid-community/core": "31.3.1",
+    "@ag-grid-community/client-side-row-model": "31.3.1",
+    "@angular-devkit/build-angular": "^16.2.14",
+    "@angular/cli": "^16.2.14",
+    "@angular/forms": "^16.2.12",
+    "@angular/compiler-cli": "^16.2.12",
     "@types/jasmine": "~4.0.0",
     "@types/node": "18.19.10",
     "jasmine-core": "~4.3.0",
@@ -40,8 +41,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
-    "ng-packagr": "^14.2.2",
-    "typescript": "~4.7.4",
+    "ng-packagr": "^16.2.3",
+    "typescript": "~5.1.6",
     "replace-in-file": "4.1.0",
     "rimraf": "3.0.2"
   }

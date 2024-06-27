@@ -1,6 +1,6 @@
 {
   "name": "update-algolia-indices",
-  "version": "0.0.1",
+  "version": "31.3.1",
   "description": "Update algolia indices",
   "main": "src/index.ts",
   "type": "module",
@@ -16,8 +16,8 @@
     "@types/prompts": "^2.4.9",
     "algoliasearch": "^4.22.1",
     "tsx": "^4.7.0",
-    "commander": "^12.0.0"
+    "commander": "^12.0.0",
+    "jsdom": "^24.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

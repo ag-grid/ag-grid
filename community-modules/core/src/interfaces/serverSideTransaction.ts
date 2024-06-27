@@ -1,4 +1,4 @@
-import { IRowNode } from "./iRowNode";
+import type { IRowNode } from './iRowNode';
 
 export interface ServerSideTransaction {
     /**
@@ -60,5 +60,5 @@ export enum ServerSideTransactionResultStatus {
     /**
      * Store has not started yet, transaction not applied
      */
-    StoreNotStarted = "StoreNotStarted"
+    StoreNotStarted = 'StoreNotStarted',
 }

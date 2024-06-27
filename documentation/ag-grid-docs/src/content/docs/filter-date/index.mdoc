@@ -8,7 +8,7 @@ Date Filters allow you to filter date data.
 
 Configure as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -69,7 +69,7 @@ This pattern is intended to be similar to the JavaScript `compareTo(a, b)` funct
 
 Below is an example of using a date filter with a comparator.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         // column definition configured to use a date filter
@@ -200,10 +200,10 @@ The example below shows how to register a custom date component that contains an
 
 {% gridExampleRunner title="Custom Date Component" name="custom-date" /%}
 
-{% includeMarkdoc file="filter-date/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="filter-date/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="filter-date/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="filter-date/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IDateParams" /%}

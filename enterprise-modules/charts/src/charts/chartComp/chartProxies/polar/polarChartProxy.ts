@@ -1,23 +1,18 @@
-import {ChartProxy, ChartProxyParams, UpdateParams} from '../chartProxy';
-import {
-    AgCharts,
-    AgNightingaleSeriesOptions,
+import type { SeriesGroupType } from '@ag-grid-community/core';
+import type {
     AgPolarAxisOptions,
     AgPolarChartOptions,
+    AgPolarSeriesOptions,
     AgRadarAreaSeriesOptions,
-    AgRadarLineSeriesOptions,
-    AgRadialBarSeriesOptions,
-    AgRadialColumnSeriesOptions
 } from 'ag-charts-community';
 
-type AgPolarSeriesOptions =
-    AgRadarLineSeriesOptions |
-    AgRadarAreaSeriesOptions |
-    AgNightingaleSeriesOptions |
-    AgRadialBarSeriesOptions |
-    AgRadialColumnSeriesOptions;
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { ChartProxy } from '../chartProxy';
 
-export class PolarChartProxy extends ChartProxy {
+export class PolarChartProxy extends ChartProxy<
+    AgPolarChartOptions,
+    'radar-line' | 'radar-area' | 'nightingale' | 'radial-column' | 'radial-bar'
+> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -25,49 +20,70 @@ export class PolarChartProxy extends ChartProxy {
     public getAxes(_: UpdateParams): AgPolarAxisOptions[] {
         const radialBar = this.standaloneChartType === 'radial-bar';
         return [
-            {type: radialBar ? 'angle-number' : 'angle-category'},
-            {type: radialBar ? 'radius-category' : 'radius-number'},
+            { type: radialBar ? 'angle-number' : 'angle-category' },
+            { type: radialBar ? 'radius-category' : 'radius-number' },
         ];
     }
 
     public getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
-        const {fields} = params;
-        const [category] = params.categories;
+        const { fields, categories, seriesGroupType } = params;
+        const [category] = categories;
         const radialBar = this.standaloneChartType === 'radial-bar';
+        const seriesGroupTypeOptions = this.getSeriesGroupTypeOptions(seriesGroupType);
 
-        return fields.map(f => ({
+        return fields.map((f) => ({
             type: this.standaloneChartType as AgRadarAreaSeriesOptions['type'],
             angleKey: radialBar ? f.colId : category.id,
-            angleName: radialBar ? (f.displayName ?? undefined) : category.name,
+            angleName: radialBar ? f.displayName ?? undefined : category.name,
             radiusKey: radialBar ? category.id : f.colId,
-            radiusName: radialBar ? category.name : (f.displayName ?? undefined),
+            radiusName: radialBar ? category.name : f.displayName ?? undefined,
+            ...seriesGroupTypeOptions,
         }));
     }
 
-    public update(params: UpdateParams): void {
+    public override getSeriesGroupType(): SeriesGroupType | undefined {
+        const standaloneChartType = this.standaloneChartType;
+        if (!['nightingale', 'radial-bar', 'radial-column'].includes(standaloneChartType)) {
+            return undefined;
+        }
+        const firstSeriesProperties = this.getChart().series?.[0]?.properties.toJson();
+        const getStackedValue = () => (firstSeriesProperties.normalizedTo ? 'normalized' : 'stacked');
+        if (standaloneChartType === 'nightingale') {
+            return firstSeriesProperties.grouped ? 'grouped' : getStackedValue();
+        } else {
+            return firstSeriesProperties.stacked ? getStackedValue() : 'grouped';
+        }
+    }
+
+    protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarChartOptions {
         const axes = this.getAxes(params);
 
-        const options: AgPolarChartOptions = {
-            ...this.getCommonChartOptions(params.updatedOverrides),
+        return {
+            ...commonChartOptions,
             data: this.getData(params, axes),
             axes,
             series: this.getSeries(params),
         };
-
-        AgCharts.update(this.getChartRef(), options);
     }
 
     private getData(params: UpdateParams, axes: AgPolarAxisOptions[]): any[] {
         const isCategoryAxis = axes.some((axis) => axis.type === 'angle-category' || axis.type === 'radius-category');
-        return this.getDataTransformedData(params, isCategoryAxis);
+        if (isCategoryAxis) {
+            const [category] = params.categories;
+            return this.transformCategoryData(params.data, category.id);
+        } else {
+            return params.data;
+        }
     }
 
-    private getDataTransformedData(params: UpdateParams, isCategoryAxis: boolean) {
-        const [category] = params.categories;
-        return this.transformData(params.data, category.id, isCategoryAxis);
-    }
-
-    public crossFilteringReset(): void {
-        // cross filtering is not currently supported in polar charts
+    private getSeriesGroupTypeOptions(seriesGroupType?: SeriesGroupType): Partial<AgPolarSeriesOptions> {
+        if (!seriesGroupType) {
+            return {};
+        }
+        return {
+            grouped: seriesGroupType === 'grouped' || undefined,
+            stacked: seriesGroupType !== 'grouped' || undefined,
+            normalizedTo: seriesGroupType === 'normalized' ? 100 : undefined,
+        };
     }
 }

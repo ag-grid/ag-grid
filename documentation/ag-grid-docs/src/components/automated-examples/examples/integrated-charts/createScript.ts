@@ -1,6 +1,6 @@
-import { Group } from '@tweenjs/tween.js';
+import type { Group } from '@tweenjs/tween.js';
 
-import { GridApi } from 'ag-grid-community';
+import type { GridApi } from 'ag-grid-community';
 
 import { createAgElementFinder } from '../../lib/agElements';
 import { type Mouse } from '../../lib/createMouse';
@@ -119,8 +119,10 @@ export const createScript = ({
             actionType: 'clickOnContextMenuItem',
             actionParams: {
                 mouse,
-                cellColIndex: END_CELL_COL_INDEX,
-                cellRowIndex: END_CELL_ROW_INDEX,
+                rightClickOnCell: {
+                    colIndex: END_CELL_COL_INDEX,
+                    rowIndex: END_CELL_ROW_INDEX,
+                },
                 menuItemPath: ['Chart Range', 'Column', 'Stacked'],
                 tweenGroup,
                 scriptDebugger,
@@ -164,14 +166,31 @@ export const createScript = ({
             },
         },
 
+        // Open chart tool panel
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartToolPanelButton',
+                target: 'chartMenuToolbarButton',
             },
         },
-        // Wait for chart tool panel button to finish coming out
+        {
+            type: 'agAction',
+            actionType: 'clickOnContextMenuItem',
+            actionParams: {
+                mouse,
+                menuItemPath: ['Edit Chart'],
+                tweenGroup,
+                scriptDebugger,
+                speed: 0.5,
+            },
+        },
+        {
+            type: 'agAction',
+            actionType: 'openChartToolPanel',
+        },
+
+        // Wait for chart toolbar pop up to show
         { type: 'wait', duration: 500 },
 
         // Click on data tab
@@ -192,38 +211,85 @@ export const createScript = ({
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartToolPanelGroupItemInput',
+                target: 'chartToolPanelPickerField',
                 targetParams: {
                     groupTitle: 'Series',
-                    itemTitle: 'Apr',
+                    selectLabel: 'Add a series',
+                    usePickerDisplayFieldSelector: true,
                 },
+                // Picker element requires mousedown
+                useMouseDown: true,
             },
         },
-        { type: 'wait', duration: 500 },
+        { type: 'wait', duration: 100 },
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartToolPanelGroupItemInput',
+                target: 'chartToolPanelSelectListItem',
                 targetParams: {
-                    groupTitle: 'Series',
-                    itemTitle: 'May',
+                    text: 'Apr',
                 },
+                useMouseDown: true,
             },
         },
-        { type: 'wait', duration: 500 },
+        { type: 'wait', duration: 100 },
+
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartToolPanelGroupItemInput',
+                target: 'chartToolPanelPickerField',
                 targetParams: {
                     groupTitle: 'Series',
-                    itemTitle: 'Feb',
+                    selectLabel: 'Add a series',
+                    usePickerDisplayFieldSelector: true,
                 },
+                // Picker element requires mousedown
+                useMouseDown: true,
             },
         },
-        { type: 'wait', duration: 500 },
+        { type: 'wait', duration: 100 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelSelectListItem',
+                targetParams: {
+                    text: 'May',
+                },
+                useMouseDown: true,
+            },
+        },
+        { type: 'wait', duration: 100 },
+
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelPickerField',
+                targetParams: {
+                    groupTitle: 'Series',
+                    selectLabel: 'Add a series',
+                    usePickerDisplayFieldSelector: true,
+                },
+                // Picker element requires mousedown
+                useMouseDown: true,
+            },
+        },
+        { type: 'wait', duration: 100 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelSelectListItem',
+                targetParams: {
+                    text: 'Feb',
+                },
+                useMouseDown: true,
+            },
+        },
+        { type: 'wait', duration: 100 },
 
         // Click on settings tab
         {
@@ -232,7 +298,7 @@ export const createScript = ({
             actionParams: {
                 target: 'chartToolPanelTab',
                 targetParams: {
-                    text: 'Settings',
+                    text: 'Chart',
                 },
             },
         },
@@ -292,6 +358,24 @@ export const createScript = ({
         },
         { type: 'wait', duration: 300 },
 
+        // Enable legend
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelCheckbox',
+                targetParams: {
+                    groupTitle: 'Legend',
+                    checkboxLabel: 'Enabled',
+                    /**
+                     * There is a hidden checkbox, so need to check the first legend one
+                     */
+                    index: 0,
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
         // Change Legend position
         {
             type: 'agAction',
@@ -306,7 +390,7 @@ export const createScript = ({
                 useMouseDown: true,
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 200 },
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
@@ -315,8 +399,11 @@ export const createScript = ({
                 targetParams: {
                     text: 'Top',
                 },
+                // Picker element requires mousedown
+                useMouseDown: true,
             },
         },
+
         { type: 'wait', duration: 300 },
 
         // Move off screen

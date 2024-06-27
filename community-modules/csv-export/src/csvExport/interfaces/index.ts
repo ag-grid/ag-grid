@@ -1,38 +1,45 @@
-import {
-    Column,
+import type {
+    AgColumn,
     ColumnGroup,
     ColumnModel,
+    ColumnNameService,
+    FuncColsService,
     GridOptionsService,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
-    ValueFormatterService,
     ValueService,
-    ValueParserService
-} from "@ag-grid-community/core";
-import { GridSerializer } from "../gridSerializer";
+} from '@ag-grid-community/core';
+
+import type { GridSerializer } from '../gridSerializer';
 
 export interface BaseCreatorBeans {
     gridSerializer: GridSerializer;
-    gridOptionsService: GridOptionsService;
+    gos: GridOptionsService;
 }
 
 export interface RowAccumulator {
-    onColumn(column: Column, index: number, node?: RowNode): void;
+    onColumn(column: AgColumn, index: number, node?: RowNode): void;
 }
 
 export interface RowSpanningAccumulator {
-    onColumn(columnGroup: ColumnGroup, header: string, index: number, span: number, collapsibleGroupRanges: number[][]): void;
+    onColumn(
+        columnGroup: ColumnGroup,
+        header: string,
+        index: number,
+        span: number,
+        collapsibleGroupRanges: number[][]
+    ): void;
 }
 
 export interface GridSerializingParams {
     columnModel: ColumnModel;
+    funcColsService: FuncColsService;
+    columnNameService: ColumnNameService;
     valueService: ValueService;
-    gridOptionsService: GridOptionsService;
-    valueFormatterService: ValueFormatterService,
-    valueParserService: ValueParserService,
+    gos: GridOptionsService;
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
@@ -45,7 +52,7 @@ export interface CsvSerializingParams extends GridSerializingParams {
 }
 
 export interface GridSerializingSession<T> {
-    prepare(columnsToExport: Column[]): void;
+    prepare(columnsToExport: AgColumn[]): void;
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
     onNewHeaderRow(): RowAccumulator;
     onNewBodyRow(node?: RowNode): RowAccumulator;

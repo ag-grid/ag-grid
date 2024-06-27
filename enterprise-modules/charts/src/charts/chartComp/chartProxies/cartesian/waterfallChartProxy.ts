@@ -1,23 +1,25 @@
-import {AgCartesianAxisOptions, AgWaterfallSeriesOptions} from "ag-charts-community";
-import {ChartProxyParams, UpdateParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isHorizontal} from "../../utils/seriesTypeMapper";
+import type { AgCartesianAxisOptions, AgCartesianChartOptions, AgWaterfallSeriesOptions } from 'ag-charts-community';
 
-export class WaterfallChartProxy extends CartesianChartProxy {
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { CartesianChartProxy } from './cartesianChartProxy';
 
+export class WaterfallChartProxy extends CartesianChartProxy<'waterfall'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    protected override getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
+    protected override getAxes(
+        params: UpdateParams,
+        commonChartOptions: AgCartesianChartOptions
+    ): AgCartesianAxisOptions[] {
         return [
             {
                 type: this.getXAxisType(params),
-                position: isHorizontal(this.chartType) ? 'left' : 'bottom',
+                position: this.isHorizontal(commonChartOptions) ? 'left' : 'bottom',
             },
             {
                 type: 'number',
-                position: isHorizontal(this.chartType) ? 'bottom' : 'left',
+                position: this.isHorizontal(commonChartOptions) ? 'bottom' : 'left',
             },
         ];
     }
@@ -27,11 +29,10 @@ export class WaterfallChartProxy extends CartesianChartProxy {
         const [firstField] = params.fields;
         const firstSeries: AgWaterfallSeriesOptions = {
             type: this.standaloneChartType as 'waterfall',
-            direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
             xKey: category.id,
             xName: category.name,
             yKey: firstField.colId,
-            yName: firstField.displayName ?? undefined
+            yName: firstField.displayName ?? undefined,
         };
 
         return [firstSeries]; // waterfall only supports a single series!

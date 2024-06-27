@@ -1,13 +1,16 @@
-import { BeanStub } from "../../context/beanStub";
-import { missing } from "../../utils/generic";
-import { Autowired, Optional, PostConstruct } from "../../context/context";
-import { IRangeService } from "../../interfaces/IRangeService";
-import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import type { IRangeService } from '../../interfaces/IRangeService';
 
 export class DragListenerFeature extends BeanStub {
+    private dragService: DragService;
+    private rangeService?: IRangeService;
 
-    @Optional('rangeService') private rangeService: IRangeService;
-    @Autowired('dragService') private dragService: DragService;
+    public wireBeans(beans: BeanCollection) {
+        this.dragService = beans.dragService;
+        this.rangeService = beans.rangeService;
+    }
 
     private eContainer: HTMLElement;
 
@@ -18,9 +21,8 @@ export class DragListenerFeature extends BeanStub {
 
     private params: DragListenerParams;
 
-    @PostConstruct
-    private postConstruct(): void {
-        if (missing(this.rangeService)) {
+    public postConstruct(): void {
+        if (!this.rangeService) {
             return;
         }
 
@@ -28,7 +30,7 @@ export class DragListenerFeature extends BeanStub {
             eElement: this.eContainer,
             onDragStart: this.rangeService.onDragStart.bind(this.rangeService),
             onDragStop: this.rangeService.onDragStop.bind(this.rangeService),
-            onDragging: this.rangeService.onDragging.bind(this.rangeService)
+            onDragging: this.rangeService.onDragging.bind(this.rangeService),
         };
 
         this.addManagedPropertyListener('enableRangeSelection', (props) => {
@@ -42,7 +44,7 @@ export class DragListenerFeature extends BeanStub {
 
         this.addDestroyFunc(() => this.disableFeature());
 
-        const isRangeSelection = this.gridOptionsService.get('enableRangeSelection');
+        const isRangeSelection = this.gos.get('enableRangeSelection');
         if (isRangeSelection) {
             this.enableFeature();
         }

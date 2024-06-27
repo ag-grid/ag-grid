@@ -1,16 +1,20 @@
+import type { AgSelectParams, BeanCollection } from '@ag-grid-community/core';
 import {
-    _,
-    AgGroupComponent,
-    AgGroupComponentParams,
-    AgSelectParams,
-    Autowired,
+    AgSelectSelector,
     Component,
-    PostConstruct,
-    RefSelector
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../services/chartTranslationService";
-import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
-import { ChartOptionsProxy } from '../../services/chartOptionsService';
+    RefPlaceholder,
+    _capitalise,
+    _includes,
+    _removeFromParent,
+} from '@ag-grid-community/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import type { AgGroupComponent } from '@ag-grid-enterprise/core';
+
+import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import type { ChartOptionsProxy } from '../../services/chartOptionsService';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
 interface Font {
     fontFamily?: string;
@@ -25,64 +29,81 @@ export interface FontPanelParams {
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
     onEnableChange?: (enabled: boolean) => void;
-    chartMenuUtils: ChartMenuParamsFactory,
-    keyMapper: (key: string) => string
+    chartMenuParamsFactory: ChartMenuParamsFactory;
+    keyMapper: (key: string) => string;
+    cssIdentifier?: string;
 }
 
 export class FontPanel extends Component {
+    private chartTranslationService: ChartTranslationService;
 
-    public static TEMPLATE = /* html */
-        `<div class="ag-font-panel">
-            <ag-group-component ref="fontGroup">
-                <ag-select ref="familySelect"></ag-select>
-                <ag-select ref="weightStyleSelect"></ag-select>
-                <div class="ag-charts-font-size-color">
-                    <ag-select ref="sizeSelect"></ag-select>
-                    <ag-color-picker ref="colorPicker"></ag-color-picker>
-                </div>
-            </ag-group-component>
-        </div>`;
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+    }
 
-    @RefSelector('fontGroup') private fontGroup: AgGroupComponent;
+    private readonly fontGroup: AgGroupComponent = RefPlaceholder;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-
-    private readonly params: FontPanelParams;
     private readonly chartOptions: ChartOptionsProxy;
     private activeComps: Component[] = [];
 
-    constructor(params: FontPanelParams) {
+    constructor(private readonly params: FontPanelParams) {
         super();
-        this.params = params;
-        this.chartOptions = params.chartMenuUtils.getChartOptions();
+        this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
+        const {
+            cssIdentifier = 'charts-format-sub-level',
+            name: title,
+            enabled,
+            onEnableChange,
+            suppressEnabledCheckbox,
+            chartMenuParamsFactory,
+            keyMapper,
+        } = this.params;
         const fontGroupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-sub-level',
+            cssIdentifier,
             direction: 'vertical',
             suppressOpenCloseIcons: true,
-            title: this.params.name || this.chartTranslationService.translate('font'),
-            enabled: this.params.enabled,
-            suppressEnabledCheckbox: !!this.params.suppressEnabledCheckbox,
-            onEnableChange: enabled => {
-                if (this.params.onEnableChange) {
-                    this.params.onEnableChange(enabled);
+            title,
+            enabled,
+            suppressEnabledCheckbox: true,
+            onEnableChange: (enabled) => {
+                if (onEnableChange) {
+                    onEnableChange(enabled);
                 }
-            }
+            },
+            useToggle: !suppressEnabledCheckbox,
         };
-        this.setTemplate(FontPanel.TEMPLATE, {
-            fontGroup: fontGroupParams,
-            familySelect: this.getFamilySelectParams(),
-            weightStyleSelect: this.getWeightStyleSelectParams(),
-            sizeSelect: this.getSizeSelectParams(),
-            colorPicker: this.params.chartMenuUtils.getDefaultColorPickerParams(this.params.keyMapper('color'))
-        });
+        this.setTemplate(
+            /* html */ `<div class="ag-font-panel">
+        <ag-group-component data-ref="fontGroup">
+            <ag-select data-ref="familySelect"></ag-select>
+            <ag-select data-ref="weightStyleSelect"></ag-select>
+            <div class="ag-charts-font-size-color">
+                <ag-select data-ref="sizeSelect"></ag-select>
+                <ag-color-picker data-ref="colorPicker"></ag-color-picker>
+            </div>
+        </ag-group-component>
+    </div>`,
+            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector],
+            {
+                fontGroup: fontGroupParams,
+                familySelect: this.getFamilySelectParams(),
+                weightStyleSelect: this.getWeightStyleSelectParams(),
+                sizeSelect: this.getSizeSelectParams(),
+                colorPicker: chartMenuParamsFactory.getDefaultColorPickerParams(keyMapper('color')),
+            }
+        );
+        this.addOrRemoveCssClass('ag-font-panel-no-header', !title);
     }
 
-    public addCompToPanel(comp: Component) {
-        this.fontGroup.addItem(comp);
+    public addItem(comp: Component<any>, prepend?: boolean) {
+        if (prepend) {
+            this.fontGroup.prependItem(comp);
+        } else {
+            this.fontGroup.addItem(comp);
+        }
         this.activeComps.push(comp);
     }
 
@@ -111,7 +132,7 @@ export class FontPanel extends Component {
             'Palatino, serif',
             'Times New Roman, serif',
             'Times, serif',
-            'Verdana, sans-serif'
+            'Verdana, sans-serif',
         ];
 
         const family = this.getInitialFontValue('fontFamily');
@@ -119,14 +140,14 @@ export class FontPanel extends Component {
 
         if (family) {
             // check for known values using lowercase
-            const lowerCaseValues = families.map(f => f.toLowerCase());
+            const lowerCaseValues = families.map((f) => f.toLowerCase());
             const valueIndex = lowerCaseValues.indexOf(family.toLowerCase());
 
             if (valueIndex >= 0) {
                 initialValue = families[valueIndex];
             } else {
                 // add user provided value to list
-                const capitalisedFontValue = _.capitalise(family);
+                const capitalisedFontValue = _capitalise(family);
 
                 families.push(capitalisedFontValue);
 
@@ -134,83 +155,81 @@ export class FontPanel extends Component {
             }
         }
 
-        const options = families.sort().map(value => ({ value, text: value }));
+        const options = families.sort().map((value) => ({ value, text: value }));
 
-        return {
+        return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
+            'font',
             options,
-            inputWidth: 'flex',
-            value: `${initialValue}`,
-            onValueChange: newValue => this.setFont({ fontFamily: newValue! })
-        };
+            `${initialValue}`,
+            (newValue) => this.setFont({ fontFamily: newValue! })
+        );
     }
 
     private getSizeSelectParams(): AgSelectParams {
         const sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
         const size = this.getInitialFontValue('fontSize');
 
-        if (!_.includes(sizes, size)) {
+        if (!_includes(sizes, size)) {
             sizes.push(size!);
         }
 
-        const options = sizes.sort((a, b) => a - b).map(value => ({ value: `${value}`, text: `${value}` }));
+        const options = sizes.sort((a, b) => a - b).map((value) => ({ value: `${value}`, text: `${value}` }));
 
-        return {
+        return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
+            'size',
             options,
-            inputWidth: 'flex',
-            value: `${size}`,
-            onValueChange: newValue => this.setFont({ fontSize: parseInt(newValue!, 10) }),
-            label: this.chartTranslationService.translate('size')
-        };
+            `${size}`,
+            (newValue) => this.setFont({ fontSize: parseInt(newValue!, 10) })
+        );
     }
 
     private getWeightStyleSelectParams(): AgSelectParams {
         const weight = this.getInitialFontValue('fontWeight') ?? 'normal';
         const style = this.getInitialFontValue('fontStyle') ?? 'normal';
 
-        const weightStyles: { name: 'normal' | 'bold' | 'italic' | 'boldItalic' | 'predefined', weight: string, style: string }[] = [
+        const weightStyles: {
+            name: 'normal' | 'bold' | 'italic' | 'boldItalic' | 'predefined';
+            weight: string;
+            style: string;
+        }[] = [
             { name: 'normal', weight: 'normal', style: 'normal' },
             { name: 'bold', weight: 'bold', style: 'normal' },
             { name: 'italic', weight: 'normal', style: 'italic' },
-            { name: 'boldItalic', weight: 'bold', style: 'italic' }
+            { name: 'boldItalic', weight: 'bold', style: 'italic' },
         ];
 
-        let selectedOption = weightStyles.find(x => x.weight === weight && x.style === style);
+        let selectedOption = weightStyles.find((x) => x.weight === weight && x.style === style);
 
         if (!selectedOption) {
             selectedOption = { name: 'predefined', weight, style };
             weightStyles.unshift(selectedOption);
         }
 
-        const options = weightStyles.map(ws => ({
+        const options = weightStyles.map((ws) => ({
             value: ws.name,
             text: this.chartTranslationService.translate(ws.name),
         }));
 
-        return {
+        return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
+            'weight',
             options,
-            inputWidth: 'flex',
-            value: selectedOption.name,
-            onValueChange: newValue => {
-                const selectedWeightStyle = weightStyles.find(x => x.name === newValue);
+            selectedOption.name,
+            (newValue) => {
+                const selectedWeightStyle = weightStyles.find((x) => x.name === newValue);
 
                 this.setFont({ fontWeight: selectedWeightStyle!.weight, fontStyle: selectedWeightStyle!.style });
             }
-        };
-    }
-
-    public addItemToPanel(item: Component) {
-        this.fontGroup.addItem(item);
-        this.activeComps.push(item);
+        );
     }
 
     private destroyActiveComps(): void {
-        this.activeComps.forEach(comp => {
-            _.removeFromParent(comp.getGui());
+        this.activeComps.forEach((comp) => {
+            _removeFromParent(comp.getGui());
             this.destroyBean(comp);
         });
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         this.destroyActiveComps();
         super.destroy();
     }

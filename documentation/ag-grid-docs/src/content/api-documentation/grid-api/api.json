@@ -200,7 +200,7 @@
         "getRowNode": {
             "more": {
                 "name": "Application Assigned IDs",
-                "url": "./row-ids/#application-assigned-ids"
+                "url": "./row-ids/#row-ids"
             }
         },
         "forEachNode": {
@@ -448,6 +448,12 @@
                 "name": "Advanced Filter",
                 "url": "./filter-advanced/#configuring-advanced-filter-builder"
             }
+        },
+        "hideAdvancedFilterBuilder": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "./filter-advanced/#configuring-advanced-filter-builder"
+            }
         }
     },
     "navigation": {
@@ -472,7 +478,8 @@
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
             }
-        }
+        },
+        "setFocusedHeader": {}
     },
     "editing": {
         "meta": {
@@ -561,10 +568,26 @@
         "meta": {
             "displayName": "Events"
         },
-        "addEventListener": {},
-        "addGlobalListener": {},
-        "removeEventListener": {},
-        "removeGlobalListener": {},
+        "addEventListener": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgEventTypeParams"]
+            }
+        },
+        "removeEventListener": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgEventTypeParams"]
+            }
+        },
+        "addGlobalListener": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgEventTypeParams"]
+            }
+        },
+        "removeGlobalListener": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgEventTypeParams"]
+            }
+        },
         "addRenderedRowListener": {
             "more": {
                 "name": "Row Events",
@@ -652,7 +675,7 @@
         "getCellRendererInstances": {
             "more": {
                 "name": "Cell Renderer Instances",
-                "url": "./component-cell-renderer/#accessing-cell-renderer-instances"
+                "url": "./component-cell-renderer/#accessing-instances"
             }
         },
         "getSizesForCurrentTheme": {},
@@ -671,11 +694,7 @@
     },
     "scrolling": {
         "meta": {
-            "displayName": "Scrolling",
-            "page": {
-                "name": "Scrolling",
-                "url": "./scrolling-scenarios/"
-            }
+            "displayName": "Scrolling"
         },
         "ensureIndexVisible": {
             "more": {
@@ -721,7 +740,6 @@
                 "url": "./overlays/"
             }
         },
-        "showLoadingOverlay": {},
         "showNoRowsOverlay": {},
         "hideOverlay": {}
     },
@@ -761,7 +779,7 @@
             }
         },
         "paginationIsLastPageFound": {
-            "description": "Returns `true` when the last page is known; this will always be the case if you are using the [Client-Side Row Model](./client-side-model/) for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](./infinite-scrolling/)."
+            "description": "Returns `true` when the last page is known; this will always be the case if you are using the Client-Side Row Model for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](./infinite-scrolling/)."
         },
         "paginationGetPageSize": {},
         "paginationGetCurrentPage": {},
@@ -826,6 +844,7 @@
                 "url": "./column-menu/#column-menu-api--events"
             }
         },
+        "showContextMenu": {},
         "hidePopupMenu": {
             "description": "Hides any visible [context menu](./context-menu/) or [column menu](./column-menu/)."
         },
@@ -1011,7 +1030,21 @@
         "meta": {
             "displayName": "Miscellaneous"
         },
-        "getValue": {},
+        "getState": {
+            "more": {
+                "name": "Grid State",
+                "url": "./grid-state/"
+            }
+        },
+        "getCellValue": {
+            "description": "Gets the cell value for the given column and `rowNode` (row). Will return the cell value or the formatted value depending on the value of `params.useFormatter`."
+        },
+        "expireValueCache": {
+            "more": {
+                "name": "Value Cache",
+                "url": "./value-cache/"
+            }
+        },
         "destroy": {},
         "isDestroyed": {},
         "setGridAriaProperty": {
@@ -1026,11 +1059,7 @@
     },
     "data": {
         "meta": {
-            "displayName": "RowModel: Client-Side",
-            "page": {
-                "name": "Client-Side Row Model",
-                "url": "./client-side-model/"
-            }
+            "displayName": "RowModel: Client-Side"
         },
         "applyTransaction": {
             "more": {

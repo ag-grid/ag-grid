@@ -1,7 +1,8 @@
+import type { ChartType } from '@ag-grid-community/core';
 import { _Scene, _Theme, _Util } from 'ag-charts-community';
-import { ChartType } from '@ag-grid-community/core';
+
+import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
-import { ThemeTemplateParameters } from '../../miniChartsContainer';
 
 export class MiniHeatmap extends MiniChart {
     static chartType: ChartType = 'heatmap';
@@ -68,17 +69,17 @@ export class MiniHeatmap extends MiniChart {
     }
 
     updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
-        const { properties } = themeTemplate ?? {};
-        const defaultColorRange = properties?.get(_Theme.DEFAULT_DIVERGING_SERIES_COLOUR_RANGE);
-        const defaultBackgroundColor = properties?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
+        const defaultColorRange = themeTemplate?.get(_Theme.DEFAULT_DIVERGING_SERIES_COLOUR_RANGE);
+        const defaultBackgroundColor = themeTemplate?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(defaultBackgroundColor) ? defaultBackgroundColor[0] : defaultBackgroundColor) ?? 'white';
 
         const colorRange = isCustomTheme ? [fills[0], fills[1]] : defaultColorRange;
         const stroke = isCustomTheme ? strokes[0] : backgroundFill;
 
+        const fillFn = _Util.interpolateColor(colorRange[0], colorRange[1]);
         this.rects.forEach((rect, i) => {
-            rect.fill = _Util.Color.interpolate(colorRange[0], colorRange[1])(i * 0.2);
+            rect.fill = fillFn(i * 0.2);
             rect.stroke = stroke;
         });
     }

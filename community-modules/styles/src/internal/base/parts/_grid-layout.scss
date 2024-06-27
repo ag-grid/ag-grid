@@ -1,4 +1,4 @@
-@use "ag";
+@use 'ag';
 
 @mixin output {
     .ag-rtl {
@@ -10,23 +10,27 @@
         border: var(--ag-borders) var(--ag-border-color);
     }
 
-    // support 100 levels here because row group indentation is used for tree data which can be quite deep
-    @for $i from 1 to 100 {
-        .ag-row > .ag-cell-wrapper.ag-row-group-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * #{$i}) ));
-        }
-        
-        .ag-row-group-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-row-group-indent-size)) ));
-        }
+    .ag-row > .ag-cell-wrapper.ag-row-group {
+        padding-left: calc(
+            var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+        );
+    }
 
-        .ag-row-level-#{$i} .ag-pivot-leaf-group {
-            @include ag.unthemed-rtl(( margin-left: var(--ag-row-group-indent-size) ));
-        }
+    .ag-cell-wrapper.ag-row-group,
+    .ag-cell-wrapper.ag-row-group-leaf-indent {
+        padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
+    }
+
+    .ag-pivot-leaf-group {
+        margin-left: var(--ag-row-group-indent-size);
     }
 
     .ag-row-group-leaf-indent {
-        @include ag.unthemed-rtl(( margin-left: var(--ag-row-group-indent-size) ));
+        @include ag.unthemed-rtl(
+            (
+                margin-left: var(--ag-row-group-indent-size),
+            )
+        );
     }
 
     .ag-value-change-delta {
@@ -55,7 +59,7 @@
     }
 
     .ag-cell-data-changed {
-        background-color: var(--ag-value-change-value-highlight-background-color)!important;
+        background-color: var(--ag-value-change-value-highlight-background-color) !important;
     }
 
     .ag-cell-data-changed-animation {
@@ -63,7 +67,7 @@
     }
 
     .ag-cell-highlight {
-        background-color: var(--ag-range-selection-highlight-color)!important;
+        background-color: var(--ag-range-selection-highlight-color) !important;
     }
 
     .ag-row {
@@ -73,7 +77,13 @@
         border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
     }
 
-    .ag-row-highlight-above::after, .ag-row-highlight-below::after {
+    .ag-sticky-bottom .ag-row {
+        border-bottom: none;
+        border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+    }
+
+    .ag-row-highlight-above::after,
+    .ag-row-highlight-below::after {
         content: '';
         position: absolute;
         width: calc(100% - 1px);
@@ -110,7 +120,7 @@
     }
 
     .ag-row-selected::before {
-        content: "";
+        content: '';
         background-color: var(--ag-selected-row-background-color);
         display: block;
         position: absolute;
@@ -125,7 +135,7 @@
         // add a background on hover - use an absolutely positioned rectangle instead of
         // a `background-color` so that `--ag-row-hover-color: transparent` doesn't remove
         // an existing background color
-        content: "";
+        content: '';
         background-color: var(--ag-row-hover-color);
         display: block;
         position: absolute;
@@ -139,14 +149,17 @@
     // Default the content position to relative so that it doesn't
     // appear under the background
     .ag-row-hover.ag-full-width-row.ag-row-group > * {
-        position: relative
+        position: relative;
     }
 
     .ag-row-hover.ag-row-selected::before {
         background-color: var(--ag-row-hover-color);
         // overlay the background color on the hover color when hovering over a selected row,
         // if the background color is semi-transparent it will blend properly
-        background-image: linear-gradient(var(--ag-selected-row-background-color), var(--ag-selected-row-background-color));
+        background-image: linear-gradient(
+            var(--ag-selected-row-background-color),
+            var(--ag-selected-row-background-color)
+        );
     }
 
     .ag-column-hover {
@@ -154,18 +167,38 @@
     }
 
     .ag-right-aligned-cell {
-        @include ag.unthemed-rtl(( text-align: right ));
+        @include ag.unthemed-rtl(
+            (
+                text-align: right,
+            )
+        );
     }
 
     // right-align numeric values in cells with wrappers
     .ag-right-aligned-cell .ag-cell-value,
     .ag-right-aligned-cell .ag-group-value {
-        @include ag.unthemed-rtl(( margin-left: auto ));
+        @include ag.unthemed-rtl(
+            (
+                margin-left: auto,
+            )
+        );
     }
 
-    .ag-cell, .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    .ag-right-aligned-cell .ag-skeleton-effect {
+        @include ag.unthemed-rtl(
+            (
+                margin-left: auto,
+            )
+        );
+    }
+
+    .ag-cell,
+    .ag-full-width-row .ag-cell-wrapper.ag-row-group {
         // assign internal variables to simplify the `line-height` value
-        --ag-internal-calculated-line-height: var(--ag-line-height, calc(var(--ag-row-height) - var(--ag-row-border-width)));
+        --ag-internal-calculated-line-height: var(
+            --ag-line-height,
+            calc(var(--ag-row-height) - var(--ag-row-border-width))
+        );
         --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
         // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
@@ -195,7 +228,7 @@
         box-shadow: var(--ag-card-shadow);
         padding: 0;
         // do not add `height` here.
-        // height: (--ag-row-height) breaks gridOptions.rowHeight for the cellEditor 
+        // height: (--ag-row-height) breaks gridOptions.rowHeight for the cellEditor
         background-color: var(--ag-control-panel-background-color);
     }
 
@@ -220,8 +253,10 @@
         background-color: var(--ag-background-color);
     }
 
-    .ag-layout-auto-height, .ag-layout-print {
-        .ag-center-cols-viewport, .ag-center-cols-container {
+    .ag-layout-auto-height,
+    .ag-layout-print {
+        .ag-center-cols-viewport,
+        .ag-center-cols-container {
             min-height: 50px;
         }
     }
@@ -239,15 +274,49 @@
         padding-top: 30px;
     }
 
+    .ag-skeleton-container {
+        width: 100%;
+        height: 100%;
+        align-content: center;
+    }
+
+    .ag-skeleton-effect {
+        background-color: var(--ag-row-loading-skeleton-effect-color);
+        width: 100%;
+        height: 1em;
+        border-radius: 0.25rem;
+        animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+    }
+
+    @keyframes ag-skeleton-loading {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.4;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
     .ag-loading {
-        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-left: var(--ag-cell-horizontal-padding),
+            )
+        );
         display: flex;
         height: 100%;
         align-items: center;
     }
 
     .ag-loading-icon {
-        @include ag.unthemed-rtl(( padding-right: var(--ag-cell-widget-spacing) ));
+        @include ag.unthemed-rtl(
+            (
+                padding-right: var(--ag-cell-widget-spacing),
+            )
+        );
     }
 
     .ag-icon-loading {

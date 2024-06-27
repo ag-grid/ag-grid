@@ -95,7 +95,7 @@ export const modRewriteRules = `
     RewriteRule ^(.*)\\.php(\\/.+)$ /$1.php [R=301,L]
 
 ${SITE_301_REDIRECTS.map((redirect) => {
-    const { from, fromPattern, to } = redirect;
+    const { from, fromPattern, to } = redirect as any;
     if (!to) {
         console.warn('Missing `to` in redirect', redirect);
         return;

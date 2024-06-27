@@ -1,14 +1,16 @@
 ---
 title: "Row Sorting"
+description: "Sort row data in the $framework Data Grid. Customise row sorting with a custom comparator. Sort by multiple columns and apply post sorting for additional control."
 ---
 
 This page describes how to sort row data in the grid and how you can customise that sorting to match your requirements.
 
 ## Sorting
 
-Sorting is enabled by default for all columns. You can sort a column by clicking on the column header. To enable / disable sorting per column use the `sortable` column definition attribute.
+Sorting is enabled by default for all columns. You can sort a column by clicking on the column header. To enable / disable
+sorting per column use the `sortable` column definition attribute.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'name' },
@@ -21,7 +23,7 @@ const gridOptions = {
 
 To disable sorting for all columns, set sorting in the [default column definition](./column-definitions/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // disable sorting on all columns
     defaultColDef: {
@@ -42,7 +44,7 @@ Custom sorting is provided at a column level by configuring a comparator on the 
 
 {% apiDocumentation source="column-properties/properties.json" section="sort" names=["comparator"] /%}
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -72,23 +74,6 @@ Example below shows the following:
 
 {% gridExampleRunner title="Custom Sorting" name="custom-sorting" /%}
 
-### Custom Sorting Groups Example
-
-When [Row Grouping](./grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
-
-```js {% frameworkTransform=true %}
-var gridOptions = {
-    autoGroupColumnDef: {
-        field: 'athlete',
-        comparator: function(valueA, valueB, nodeA, nodeB, isDescending) {
-            return (valueA == valueB) ? 0 : (valueA > valueB) ? 1 : -1;
-        },
-    }
-};
-```
-
-{% gridExampleRunner title="Custom Sorting Groups" name="custom-sorting-groups" /%}
-
 ## Multi Column Sorting
 
 It is possible to sort by multiple columns. The default action for multiple column sorting is for
@@ -98,7 +83,8 @@ the {% kbd "^ Ctrl" /%} key (or {% kbd "Command" /%} key on Apple) instead set t
 The example below demonstrates the following:
 
 * The grid sorts by **Country** then **Athlete** by default.
-* The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down {% kbd "^ Ctrl" /%} (or {% kbd "Command" /%} on Apple) and selecting multiple columns.
+* The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down {% kbd "^ Ctrl" /%}
+(or {% kbd "Command" /%} on Apple) and selecting multiple columns.
 
 {% gridExampleRunner title="Multi Column Sort" name="multi-column" /%}
 
@@ -125,9 +111,9 @@ the `gridOptions` or the `colDef`. If defined both in `colDef` and
 `gridOptions`, the `colDef` will get preference, allowing you to define a common default,
 and then tailor per column.
 
-## Example: Sorting Order and Animation
+## Example: Sorting Order
 
-The example below shows animation of the rows plus different combinations of sorting orders as follows:
+The example below shows different combinations of sorting orders as follows:
 
 * **Default Columns:** descending -> ascending -> no sort
 * **Column Athlete:** ascending -> descending
@@ -163,7 +149,7 @@ This is provided via the `postSortRows` grid callback function as shown below:
 
 {% apiDocumentation source="grid-options/properties.json" section="sort" names=["postSortRows"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     postSortRows: params => {
         let rowNodes = params.nodes;

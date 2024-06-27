@@ -1,15 +1,19 @@
-import { Autowired, Bean } from "../../context/context";
-import { IComponent } from "../../interfaces/iComponent";
-import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
-import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-import { BeanStub } from "../../context/beanStub";
-import { loadTemplate } from "../../utils/dom";
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { IComponent } from '../../interfaces/iComponent';
+import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
+import { _loadTemplate } from '../../utils/dom';
+import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 
-@Bean("agComponentUtils")
-export class AgComponentUtils extends BeanStub {
+export class AgComponentUtils extends BeanStub implements NamedBean {
+    beanName = 'agComponentUtils' as const;
 
-    @Autowired("componentMetadataProvider")
     private componentMetadataProvider: ComponentMetadataProvider;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.componentMetadataProvider = beans.componentMetadataProvider;
+    }
 
     public adaptFunction(propertyName: string, jsCompFunc: any): any {
         const metadata: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
@@ -19,12 +23,11 @@ export class AgComponentUtils extends BeanStub {
         return null;
     }
 
-    public adaptCellRendererFunction(callback: any): { new(): IComponent<ICellRendererParams>; } {
+    public adaptCellRendererFunction(callback: any): { new (): IComponent<ICellRendererParams> } {
         class Adapter implements ICellRendererComp {
-
             private eGui: HTMLElement;
 
-            refresh(params: ICellRendererParams): boolean {
+            refresh(): boolean {
                 return false;
             }
 
@@ -36,14 +39,14 @@ export class AgComponentUtils extends BeanStub {
                 const callbackResult: string | HTMLElement = callback(params);
                 const type = typeof callbackResult;
                 if (type === 'string' || type === 'number' || type === 'boolean') {
-                    this.eGui = loadTemplate('<span>' + callbackResult + '</span>');
+                    this.eGui = _loadTemplate('<span>' + callbackResult + '</span>');
                     return;
                 }
-                if (callbackResult==null) {
-                    this.eGui = loadTemplate('<span></span>');
+                if (callbackResult == null) {
+                    this.eGui = _loadTemplate('<span></span>');
                     return;
                 }
-                this.eGui =  callbackResult as HTMLElement;
+                this.eGui = callbackResult as HTMLElement;
             }
         }
 
@@ -51,7 +54,9 @@ export class AgComponentUtils extends BeanStub {
     }
 
     public doesImplementIComponent(candidate: any): boolean {
-        if (!candidate) { return false; }
+        if (!candidate) {
+            return false;
+        }
         return (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
     }
 }

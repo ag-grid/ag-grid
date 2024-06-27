@@ -12,7 +12,7 @@ individual filters.
 
 {% apiDocumentation source="grid-api/api.json" section="filter" names=["getFilterModel", "setFilterModel"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // Gets filter model via the grid API
 const model = api.getFilterModel();
 
@@ -44,7 +44,7 @@ This is useful if you want to save the global filter state and apply it at a lat
 
 You can reset all filters by doing the following:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.setFilterModel(null);
 ```
 
@@ -140,7 +140,7 @@ The example below shows how you can interact with an individual filter instance,
 
 Sometimes it maybe useful to strictly control the filters used by the grid via API, whilst still exposing filter settings in-use to users. The `readOnly` filter parameter changes the behaviour of all provided column filters so their UI is read-only. In this mode, API filter changes are still honoured and reflected in the UI:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -171,7 +171,7 @@ The following example demonstrates all of the Provided Filters with `readOnly: t
 
 ## Launching Filters
 
-How filters are launched can be customised if grid option `columnMenu = 'new'`.
+How filters are launched can be customised (unless grid option `columnMenu = 'legacy'`.
 
 `colDef.suppressHeaderFilterButton = true` can be used to disable the button in the header that opens the filter.
 

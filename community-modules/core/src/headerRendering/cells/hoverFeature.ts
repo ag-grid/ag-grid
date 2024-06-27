@@ -1,32 +1,36 @@
-import { Column } from "../../entities/column";
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
-import { ColumnHoverService } from "../../rendering/columnHoverService";
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { ColumnHoverService } from '../../rendering/columnHoverService';
 
 export class HoverFeature extends BeanStub {
+    private columnHoverService: ColumnHoverService;
 
-    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
+    public wireBeans(beans: BeanCollection): void {
+        this.columnHoverService = beans.columnHoverService;
+    }
 
-    private readonly columns: Column[];
+    private readonly columns: AgColumn[];
 
     private element: HTMLElement;
 
-    constructor(columns: Column[], element: HTMLElement) {
+    constructor(columns: AgColumn[], element: HTMLElement) {
         super();
         this.columns = columns;
         this.element = element;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        if (this.gridOptionsService.get('columnHoverHighlight')) {
+    public postConstruct(): void {
+        if (this.gos.get('columnHoverHighlight')) {
             this.addMouseHoverListeners();
         }
     }
 
     private addMouseHoverListeners(): void {
-        this.addManagedListener(this.element, 'mouseout', this.onMouseOut.bind(this));
-        this.addManagedListener(this.element, 'mouseover', this.onMouseOver.bind(this));
+        this.addManagedListeners(this.element, {
+            mouseout: this.onMouseOut.bind(this),
+            mouseover: this.onMouseOver.bind(this),
+        });
     }
 
     private onMouseOut(): void {
@@ -36,5 +40,4 @@ export class HoverFeature extends BeanStub {
     private onMouseOver(): void {
         this.columnHoverService.setMouseOver(this.columns);
     }
-
 }

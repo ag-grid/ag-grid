@@ -1,108 +1,161 @@
 [
     {
+        "version": "32.0.0",
+        "date": "July 1nd 2024",
+        "highlights": [
+            {
+                "text": "Rich Select Editor Multi Selection Support",
+                "path": "./provided-cell-editors-rich-select/#multi-selection"
+            },
+            {
+                "text": "Reduced Bundle Size"
+            },
+            {
+                "text": "Translation of Localisation Strings",
+                "path": "./localisation"
+            },
+            {
+                "text": "Improved Chart Tool Panel UI",
+                "path": "./integrated-charts-chart-tool-panels"
+            },
+            {
+                "text": "Accessibility Updates",
+                "path": "./accessibility"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-32"
+    },
+    {
+        "version": "31.3.1",
+        "date": "April 30th 2024",
+        "highlights": [
+            {
+                "text": "Sticky Group Total and Grand Total Rows",
+                "path": "./total-rows"
+            },
+            {
+                "text": "Skeleton Content Displayed in Loading Grid Cells",
+                "path": "./component-loading-cell-renderer/#skeleton-loading"
+            },
+            {
+                "text": "Global Grid Options to Apply to All AG Grid Instances",
+                "path": "./grid-interface/#global-grid-options"
+            },
+            {
+                "text": "Add a Background Image in Excel Export Files",
+                "path": "./excel-export-extra-content/#adding-images-to-the-header-or-footer"
+            },
+            {
+                "text": "Accessibility Improvements",
+                "path": "./keyboard-navigation/"
+            }
+        ],
+        "versionType": "Minor",
+        "notesPath": "./upgrading-to-ag-grid-31-3"
+    },
+    {
         "version": "31.2.0",
         "date": "March 20th 2024",
         "highlights": [
             {
                 "text": "Integrated Enterprise Charts Menu Redesign",
-                "url": "/javascript-data-grid/integrated-charts/"
+                "path": "./integrated-charts"
             },
             {
                 "text": "Display Tooltips for Truncated Cell Values and Column Headers",
-                "url": "/javascript-data-grid/component-cell-renderer/#dynamic-tooltips"
+                "path": "./component-cell-renderer/#dynamic-tooltips"
             },
             {
                 "text": "Exporting Grid Content as a Formatted Excel Table",
-                "url": "/javascript-data-grid/excel-export-tables/"
+                "path": "./excel-export-tables"
             },
             {
                 "text": "Dark Mode for Material Design Theme",
-                "url": "/javascript-data-grid/themes/#provided-themes"
+                "path": "./themes/#provided-themes"
             },
             {
-                "text": "Figma Design System includes Material Design Theme",
-                "url": "/javascript-data-grid/ag-grid-design-system/"
+                "text": "Figma Design System Includes Material Design Theme",
+                "path": "./ag-grid-design-system"
             }
         ],
-        "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31-2/"
+        "notesPath": "./upgrading-to-ag-grid-31-2"
     },
     {
         "version": "31.1.0",
         "date": "February 20th 2024",
         "highlights": [
             {
-                "text": "Integrated Charts use all AG Charts Enterprise features",
-                "url": "/javascript-data-grid/integrated-charts/"
+                "text": "Integrated Charts Use All AG Charts Enterprise Features",
+                "path": "./integrated-charts"
             },
             {
                 "text": "Column Menu Redesign",
-                "url": "/javascript-data-grid/column-menu/"
+                "path": "./column-menu"
             },
             {
                 "text": "Custom Column/Context Menu Item Components",
-                "url": "/javascript-data-grid/component-menu-item/"
+                "path": "./component-menu-item"
             },
             {
                 "text": "Compressed Excel file",
-                "url": "/javascript-data-grid/excel-export/"
+                "path": "./excel-export"
             },
             {
-                "text": "Client-side Sorting in Server-side row model",
-                "url": "/javascript-data-grid/server-side-model-sorting/#client-side-sorting"
+                "text": "Client-Side Sorting in Server-Side Row Model",
+                "path": "./server-side-model-sorting/#client-side-sorting"
             }
         ],
-        "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31-1/"
+        "notesPath": "./upgrading-to-ag-grid-31-1"
     },
     {
         "version": "31.0.0",
         "date": "November 29th 2023",
         "highlights": [
             {
-                "text": "Save/Restore the initial grid state as a single object",
-                "url": "https://www.ag-grid.com/javascript-data-grid/grid-state/"
+                "text": "Save/Restore the Initial Grid State as a Single Object",
+                "path": "./grid-state"
             },
             {
                 "text": "New Quartz Theme",
-                "url": "https://www.ag-grid.com/example/?theme=ag-theme-quartz-auto-dark"
+                "url": "/example/?theme=ag-theme-quartz-auto-dark"
             },
             {
-                "text": "Column Header resizing and moving via keyboard",
-                "url": "https://www.ag-grid.com/javascript-data-grid/keyboard-navigation/#column-header-navigation"
+                "text": "Column Header Resizing and Moving via Keyboard",
+                "path": "./keyboard-navigation/#column-header-navigation"
             },
             {
-                "text": "Prevent Group Column reordering and removal",
-                "url": "https://www.ag-grid.com/javascript-data-grid/grouping-locking-group-columns/"
+                "text": "Prevent Group Column Reordering and Removal",
+                "path": "./grouping-locking-group-columns"
             },
             {
                 "text": "Pagination Panel Page Size Selector",
-                "url": "https://www.ag-grid.com/javascript-data-grid/row-pagination/#top"
+                "path": "./row-pagination/#top"
             }
         ],
-        "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31/"
+        "notesPath": "./upgrading-to-ag-grid-31"
     },
     {
         "version": "30.2.0",
         "date": "September 26th 2023",
         "highlights": [
             {
-                "text": "Advanced Filter Builder UI for building filter expressions",
-                "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder"
+                "text": "Advanced Filter Builder UI for Building Filter Expressions",
+                "path": "./filter-advanced/#advanced-filter-builder"
             },
             {
                 "text": "Support for Custom Matching in Quick Filter",
-                "url": "https://www.ag-grid.com/javascript-data-grid/filter-quick/#quick-filter-matcher"
+                "path": "./filter-quick/#quick-filter-matcher"
             },
             {
-                "text": "Typing, filtering, async population of values in Rich Select Editor",
-                "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/#rich-select-cell-editor"
+                "text": "Typing, Filtering, Async Population of Values in Rich Select Editor",
+                "path": "./provided-cell-editors-rich-select/"
             },
             {
                 "text": "Dynamic Group Footer Rows",
-                "url": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers"
+                "path": "./total-rows/#dynamically-display-group-total-rows"
             },
             {
-                "text": "Documentation examples on CodeSandbox",
-                "url": ""
+                "text": "Documentation Examples on CodeSandbox"
             }
         ]
     },
@@ -111,24 +164,24 @@
         "date": "August 22nd 2023",
         "highlights": [
             {
-                "text": "Advanced filtering with boolean expressions",
-                "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/"
+                "text": "Advanced Filtering with Boolean Expressions",
+                "path": "./filter-advanced"
             },
             {
                 "text": "Rebuilt Rich Select Editor",
-                "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/#rich-select-cell-editor"
+                "path": "./provided-cell-editors-rich-select/"
             },
             {
-                "text": "Figma Design System to design and customize AG Grid",
-                "url": "https://www.ag-grid.com/javascript-data-grid/ag-grid-design-system/"
+                "text": "Figma Design System to Design and Customize AG Grid",
+                "path": "./ag-grid-design-system"
             },
             {
-                "text": "Automatic pivot columns for server-side row model",
-                "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-pivoting/#supplying-pivot-result-fields-simple"
+                "text": "Automatic Pivot Columns for Server-Side Row Model",
+                "path": "./server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             },
             {
                 "text": "Interactive Tooltips",
-                "url": "https://www.ag-grid.com/javascript-data-grid/tooltips/#interactive-tooltips"
+                "path": "./tooltips/#interactive-tooltips"
             }
         ]
     },
@@ -137,24 +190,23 @@
         "date": "June 19th 2023",
         "highlights": [
             {
-                "text": "Cell data types with automatic type inference",
-                "url": "https://www.ag-grid.com/javascript-data-grid/cell-data-types/"
+                "text": "Cell Data Types With Automatic Type Inference",
+                "path": "./cell-data-types"
             },
             {
-                "text": "Built-in cell editors",
-                "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/?ref=blog.ag-grid.com#top"
+                "text": "Built-in Cell Editors",
+                "path": "./provided-cell-editors/?ref=blog.ag-grid.com#top"
             },
             {
-                "text": "Group footer rows when using server-side row model",
-                "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-grouping/#row-group-footers"
+                "text": "Group Footer Rows when Using Server-Side Row Model",
+                "path": "./server-side-model-grouping/#group-total-rows"
             },
             {
-                "text": "Module registration is no longer global and is per-grid",
-                "url": "https://www.ag-grid.com/javascript-data-grid/modules/#providing-modules-to-individual-grids"
+                "text": "Module Registration Is No Longer Global and Is Per-Grid",
+                "path": "./modules/#providing-modules-to-individual-grids"
             },
             {
-                "text": "Export row groups to Excel with their current expanded state",
-                "url": ""
+                "text": "Export Row Groups to Excel with Their Current Expanded State"
             }
         ]
     },
@@ -163,24 +215,21 @@
         "date": "April 20th 2023",
         "highlights": [
             {
-                "text": "Sticky group rows for master-detail, tree data and server-side row model",
-                "url": "https://www.ag-grid.com/javascript-data-grid/master-detail-master-rows/"
+                "text": "Sticky Group Rows for Master-Detail, Tree Data and Server-Side Row Model",
+                "path": "./master-detail-master-rows"
             },
             {
-                "text": "Horizontal sticky column group headers",
-                "url": ""
+                "text": "Horizontal Sticky Column Group Headers"
             },
             {
-                "text": "ShadowDOM support",
-                "url": ""
+                "text": "ShadowDOM Support"
             },
             {
-                "text": "Tooltip customization and interaction support for charts",
-                "url": "https://www.ag-grid.com/javascript-charts/tooltips/#interaction-with-tooltips"
+                "text": "Tooltip Customization and Interaction Support for Charts",
+                "chartsPath": "./tooltips/#interaction-with-tooltips"
             },
             {
-                "text": "Pie chart callout labels anti-collision improvements",
-                "url": ""
+                "text": "Pie Chart Callout Labels Anti-Collision Improvements"
             }
         ]
     },
@@ -189,25 +238,207 @@
         "date": "March 21st 2023",
         "highlights": [
             {
-                "text": "Header checkbox and group selection when using server-side row model",
-                "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-selection/#header-checkbox-selection"
+                "text": "Header Checkbox and Group Selection when Using Server-Side Row Model",
+                "path": "./server-side-model-selection/#header-checkbox-selection"
             },
             {
-                "text": "Entering more than two filter conditions in a column filter",
-                "url": "https://www.ag-grid.com/javascript-data-grid/filter-conditions/"
+                "text": "Entering More than Two Filter Conditions in a Column Filter",
+                "path": "./filter-conditions"
             },
             {
-                "text": "Vertically-spanning column header cells",
-                "url": ""
+                "text": "Vertically-Spanning Column Header Cells"
             },
             {
-                "text": "Displaying \"No Data\" overlay in the chart when there's no data",
-                "url": "https://www.ag-grid.com/javascript-charts/overlays/#missing-data-overlay"
+                "text": "Displaying \"No Data\" Overlay in the Chart when there's no Data",
+                "chartsPath": "./overlays/#missing-data-overlay"
             },
             {
-                "text": "Displaying stacked and unstacked column series together in the chart",
-                "url": ""
+                "text": "Displaying Stacked and Unstacked Column Series Together in the Chart"
             }
         ]
+    },
+    {
+        "version": "29.1.0",
+        "date": "March 2023"
+    },
+    {
+        "version": "29.0.0",
+        "date": "January 2023"
+    },
+    {
+        "version": "28.2.1",
+        "date": "November 2022"
+    },
+    {
+        "version": "28.1.1",
+        "date": "August 2022"
+    },
+    {
+        "version": "28.1.0",
+        "date": "August 2022"
+    },
+    {
+        "version": "28.0.0",
+        "date": "July 2022"
+    },
+    {
+        "version": "27.3.0",
+        "date": "May 2022"
+    },
+    {
+        "version": "27.2.0",
+        "date": "April 2022"
+    },
+    {
+        "version": "27.1.0",
+        "date": "March 2022"
+    },
+    {
+        "version": "27.0.1",
+        "date": "February 2022"
+    },
+    {
+        "version": "27.0.0",
+        "date": "February 2022"
+    },
+    {
+        "version": "26.2.0",
+        "date": "November 2021"
+    },
+    {
+        "version": "26.1.0",
+        "date": "November 2021"
+    },
+    {
+        "version": "26.0.0",
+        "date": "August 2021"
+    },
+    {
+        "version": "25.3.0",
+        "date": "July 2021"
+    },
+    {
+        "version": "25.2.0",
+        "date": "May 2021"
+    },
+    {
+        "version": "25.1.0",
+        "date": "March 2021"
+    },
+    {
+        "version": "25.0.0",
+        "date": "January 2021"
+    },
+    {
+        "version": "24.1.0",
+        "date": "October 2020"
+    },
+    {
+        "version": "24.0.0",
+        "date": "September 2020"
+    },
+    {
+        "version": "23.2.0",
+        "date": "June 2020"
+    },
+    {
+        "version": "23.1.1",
+        "date": "May 2020"
+    },
+    {
+        "version": "23.1.0",
+        "date": "May 2020"
+    },
+    {
+        "version": "23.0.2",
+        "date": "March 2020"
+    },
+    {
+        "version": "23.0.0",
+        "date": "March 2020"
+    },
+    {
+        "version": "22.1.1",
+        "date": "December 2019"
+    },
+    {
+        "version": "22.1.0",
+        "date": "December 2019"
+    },
+    {
+        "version": "22.0.0",
+        "date": "November 2019"
+    },
+    {
+        "version": "21.2.2",
+        "date": "September 2019"
+    },
+    {
+        "version": "21.2.1",
+        "date": "September 2019"
+    },
+    {
+        "version": "21.2.0",
+        "date": "August 2019"
+    },
+    {
+        "version": "21.1.0",
+        "date": "July 2019"
+    },
+    {
+        "version": "21.0.1",
+        "date": "June 2019"
+    },
+    {
+        "version": "21.0.0",
+        "date": "June 2019"
+    },
+    {
+        "version": "20.2.0",
+        "date": "March 2019"
+    },
+    {
+        "version": "20.1.0",
+        "date": "February 2019"
+    },
+    {
+        "version": "20.0.0",
+        "date": "January 2019"
+    },
+    {
+        "version": "19.1.4",
+        "date": "November 2018"
+    },
+    {
+        "version": "19.0.0",
+        "date": "September 2018"
+    },
+    {
+        "version": "18.1.0",
+        "date": "June 2018"
+    },
+    {
+        "version": "17.1.1",
+        "date": "April 2018"
+    },
+    {
+        "version": "17.0.0",
+        "date": "March 2018"
+    },
+    {
+        "version": "16.0.0",
+        "date": "January 2018"
+    },
+    {
+        "version": "15.0.0",
+        "date": "December 2017"
+    },
+    {
+        "version": "14.1.0",
+        "date": "November 2017"
+    },
+    {
+        "version": "14.0.0",
+        "date": "October 2017"
     }
 ]

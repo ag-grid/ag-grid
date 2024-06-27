@@ -1,78 +1,20 @@
-import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { Autowired, PostConstruct } from '../../context/context';
-import { IRowModel } from '../../interfaces/iRowModel';
-import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { clearElement, loadTemplate, removeFromParent, setDisabled } from '../../utils/dom';
-import { debounce } from '../../utils/function';
-import { AgPromise } from '../../utils/promise';
-import { PopupEventParams } from '../../widgets/popupService';
-import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { convertToSet } from '../../utils/set';
-import { Component } from '../../widgets/component';
-import { IRowNode } from '../../interfaces/iRowNode';
-import { RefSelector } from '../../widgets/componentAnnotations';
+import type { BeanCollection } from '../../context/context';
+import type { FilterChangedEventSourceType } from '../../events';
+import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import type { IDoesFilterPassParams, IFilterComp } from '../../interfaces/iFilter';
+import type { IRowModel } from '../../interfaces/iRowModel';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
-import { FilterChangedEventSourceType } from '../../events';
-
-type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
-
-/**
- * Parameters provided by the grid to the `init` method of a `ProvidedFilter`.
- * Do not use in `colDef.filterParams` - see `IProvidedFilterParams` instead.
- */
-export type ProvidedFilterParams<TData = any> = IProvidedFilterParams & IFilterParams<TData>;
-
-/**
- * Common parameters in `colDef.filterParams` used by all provided filters. Extended by the specific filter types.
- */
-export interface IProvidedFilterParams {
-    /**
-     * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
-     * The options are:
-     *
-     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.
-     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.
-     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.
-     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.
-     */
-    buttons?: FilterButtonType[];
-    /**
-     * If the Apply button is present, the filter popup will be closed immediately when the Apply
-     * or Reset button is clicked if this is set to `true`.
-     *
-     * @default false
-     */
-    closeOnApply?: boolean;
-    /**
-     * Overrides the default debounce time in milliseconds for the filter. Defaults are:
-     * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).
-     * - `DateFilter` and `SetFilter`: 0ms
-     */
-    debounceMs?: number;
-    /**
-     * If set to `true`, disables controls in the filter to mutate its state. Normally this would
-     * be used in conjunction with the Filter API.
-     *
-     * @default false
-     */
-    readOnly?: boolean;
-}
-
-/** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
-export interface IProvidedFilter extends IFilter {
-    /**
-     * Applies the model shown in the UI (so that `getModel()` will now return what was in the UI
-     * when `applyModel()` was called).
-     * @param source The source of the method call. Default 'api'.
-     */
-    applyModel(source?: 'api' | 'ui' | 'rowDataUpdated'): boolean;
-    /**
-     * Returns the filter model from the UI. If changes have been made to the UI but not yet
-     * applied, this model will reflect those changes.
-     */
-    getModelFromUi(): any;
-}
+import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
+import { _debounce, _warnOnce } from '../../utils/function';
+import type { AgPromise } from '../../utils/promise';
+import type { ComponentSelector } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
+import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
+import type { PopupEventParams } from '../../widgets/popupService';
+import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import { getDebounceMs, isUseApplyButton } from '../floating/provided/providedFilterUtils';
+import type { IProvidedFilter, ProvidedFilterParams } from './iProvidedFilter';
 
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
@@ -102,12 +44,15 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private positionableFeature: PositionableFeature | undefined;
 
-    @Autowired('rowModel') protected readonly rowModel: IRowModel;
+    protected rowModel: IRowModel;
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+    }
 
-    @RefSelector('eFilterBody') protected readonly eFilterBody: HTMLElement;
+    protected readonly eFilterBody: HTMLElement = RefPlaceholder;
 
     private eButtonsPanel: HTMLElement;
-    private buttonListeners: ((() => null) | undefined)[] = [];
+    private buttonListeners: (() => null)[] = [];
 
     constructor(private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT) {
         super();
@@ -118,6 +63,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected abstract updateUiVisibility(): void;
 
     protected abstract createBodyTemplate(): string;
+    protected abstract getAgComponents(): ComponentSelector[];
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 
@@ -127,28 +73,24 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
-        this.createManagedBean(new ManagedFocusFeature(
-            this.getFocusableElement(),
-            {
-                handleKeyDown: this.handleKeyDown.bind(this)
-            }
-        ));
-
-        this.positionableFeature = new PositionableFeature(
-            this.getPositionableElement(),
-            {
-                forcePopupParentAsOffsetParent: true
-            }
+        this.createManagedBean(
+            new ManagedFocusFeature(this.getFocusableElement(), {
+                handleKeyDown: this.handleKeyDown.bind(this),
+            })
         );
+
+        this.positionableFeature = new PositionableFeature(this.getPositionableElement(), {
+            forcePopupParentAsOffsetParent: true,
+        });
 
         this.createBean(this.positionableFeature);
     }
 
     // override
-    protected handleKeyDown(e: KeyboardEvent): void { }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected handleKeyDown(e: KeyboardEvent): void {}
 
     public abstract getModelFromUi(): M | null;
 
@@ -167,14 +109,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (eGui) {
             eGui.removeEventListener('submit', this.onFormSubmit);
         }
-        const templateString = /* html */`
+        const templateString = /* html */ `
             <form class="ag-filter-wrapper">
-                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" ref="eFilterBody">
+                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" data-ref="eFilterBody">
                     ${this.createBodyTemplate()}
                 </div>
             </form>`;
 
-        this.setTemplate(templateString, paramsMap);
+        this.setTemplate(templateString, this.getAgComponents(), paramsMap);
 
         eGui = this.getGui();
         if (eGui) {
@@ -197,14 +139,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected setParams(params: ProvidedFilterParams): void {
         this.providedFilterParams = params;
-        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.applyActive = isUseApplyButton(params);
 
         this.resetButtonsPanel();
     }
 
     protected updateParams(params: ProvidedFilterParams): void {
         this.providedFilterParams = params;
-        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.applyActive = isUseApplyButton(params);
 
         this.resetUiToActiveModel(this.getModel(), () => {
             this.updateUiVisibility();
@@ -224,16 +166,15 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             }
         } else {
             // Always empty the buttons panel before adding new buttons
-            clearElement(this.eButtonsPanel);
-            this.buttonListeners.forEach(destroyFunc => destroyFunc?.());
+            _clearElement(this.eButtonsPanel);
+            this.buttonListeners.forEach((destroyFunc) => destroyFunc());
             this.buttonListeners = [];
-
         }
 
         if (!hasButtons) {
             // The case when we need to hide the buttons panel because there are no buttons
             if (this.eButtonsPanel) {
-                removeFromParent(this.eButtonsPanel);
+                _removeFromParent(this.eButtonsPanel);
             }
 
             return;
@@ -245,7 +186,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         // to the DOM once. This is much faster than appending each button individually.
         const fragment = document.createDocumentFragment();
 
-        const addButton = (type: FilterButtonType): void => {
+        const addButton = (type: 'apply' | 'clear' | 'reset' | 'cancel'): void => {
             let text;
             let clickListener: (e?: Event) => void;
 
@@ -264,29 +205,31 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     break;
                 case 'cancel':
                     text = this.translate('cancelFilter');
-                    clickListener = (e) => { this.onBtCancel(e!); };
+                    clickListener = (e) => {
+                        this.onBtCancel(e!);
+                    };
                     break;
                 default:
-                    console.warn('AG Grid: Unknown button type specified');
+                    _warnOnce('Unknown button type specified');
                     return;
             }
 
             const buttonType = type === 'apply' ? 'submit' : 'button';
-            const button = loadTemplate(
+            const button = _loadTemplate(
                 /* html */
                 `<button
                     type="${buttonType}"
-                    ref="${type}FilterButton"
+                    data-ref="${type}FilterButton"
                     class="ag-button ag-standard-button ag-filter-apply-panel-button"
                 >${text}
                 </button>`
             );
 
-            this.buttonListeners.push(this.addManagedListener(button, 'click', clickListener));
+            this.buttonListeners.push(...this.addManagedElementListeners(button, { click: clickListener }));
             fragment.append(button);
         };
 
-        convertToSet(buttons).forEach(type => addButton(type));
+        buttons.forEach((type) => addButton(type));
 
         this.eButtonsPanel.append(fragment);
         this.getGui().appendChild(this.eButtonsPanel);
@@ -298,8 +241,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     private setupOnBtApplyDebounce(): void {
-        const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        const debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        const debounceMs = getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
+        const debounceFunc = _debounce(this.checkApplyDebounce.bind(this), debounceMs);
         this.onBtApplyDebounce = () => {
             this.debouncePending = true;
             debounceFunc();
@@ -369,10 +312,13 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     /**
      * Applies changes made in the UI to the filter, and returns true if the model has changed.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         const newModel = this.getModelFromUi();
 
-        if (!this.isModelValid(newModel!)) { return false; }
+        if (!this.isModelValid(newModel!)) {
+            return false;
+        }
 
         const previousModel = this.appliedModel;
 
@@ -383,6 +329,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return !this.areModelsEqual(previousModel!, newModel!);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected isModelValid(model: M): boolean {
         return true;
     }
@@ -393,7 +340,9 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
         // Prevent form submission
-        if (e) { e.preventDefault(); }
+        if (e) {
+            e.preventDefault();
+        }
         if (this.applyModel(afterDataChange ? 'rowDataUpdated' : 'ui')) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
@@ -409,11 +358,12 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         }
     }
 
-    public onNewRowsLoaded(): void {
-    }
+    public onNewRowsLoaded(): void {}
 
     public close(e?: Event): void {
-        if (!this.hidePopup) { return; }
+        if (!this.hidePopup) {
+            return;
+        }
 
         const keyboardEvent = e as KeyboardEvent;
         const key = keyboardEvent && keyboardEvent.key;
@@ -438,9 +388,9 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
         if (this.applyActive && !this.isReadOnly()) {
             const isValid = this.isModelValid(this.getModelFromUi()!);
-            const applyFilterButton = this.getRefElement('applyFilterButton');
+            const applyFilterButton = this.queryForHtmlElement(`[data-ref="applyFilterButton"]`);
             if (applyFilterButton) {
-                setDisabled(applyFilterButton, !isValid);
+                _setDisabled(applyFilterButton, !isValid);
             }
         }
 
@@ -461,16 +411,18 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private refreshFilterResizer(containerType?: ContainerType): void {
         // tool panel is scrollable, so don't need to size
-        if (!this.positionableFeature || containerType === 'toolPanel') { return; }
+        if (!this.positionableFeature || containerType === 'toolPanel') {
+            return;
+        }
 
         const isResizable = containerType === 'floatingFilter' || containerType === 'columnFilter';
 
-        const { positionableFeature, gridOptionsService } = this;
+        const { positionableFeature, gos } = this;
 
         if (isResizable) {
             positionableFeature.restoreLastSize();
             positionableFeature.setResizable(
-                gridOptionsService.get('enableRtl')
+                gos.get('enableRtl')
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );
@@ -489,30 +441,12 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         }
     }
 
-    // static, as used by floating filter also
-    public static getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
-        if (ProvidedFilter.isUseApplyButton(params)) {
-            if (params.debounceMs != null) {
-                console.warn('AG Grid: debounceMs is ignored when apply button is present');
-            }
-
-            return 0;
-        }
-
-        return params.debounceMs != null ? params.debounceMs : debounceDefault;
-    }
-
-    // static, as used by floating filter also
-    public static isUseApplyButton(params: ProvidedFilterParams): boolean {
-        return !!params.buttons && params.buttons.indexOf('apply') >= 0;
-    }
-
     public refresh(newParams: ProvidedFilterParams): boolean {
         this.providedFilterParams = newParams;
         return true;
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         const eGui = this.getGui();
 
         if (eGui) {

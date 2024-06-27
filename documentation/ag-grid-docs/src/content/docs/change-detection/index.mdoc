@@ -11,7 +11,7 @@ Change detection can be broken down into the following two categories:
 1. **Aggregation Change Detection:** When a value for any cell changes, the grid will recalculate all [aggregations](./aggregation/) that are impacted by the changed value. This means the grid will automatically keep aggregation results (the values in the grouped row) up to date as the data beneath it changes.
 
 {% note %}
-If you are using a custom cell renderer see [Component Refresh](./component-cell-renderer/#component-refresh) for more details on how to update your component following change detection.
+If you are using a custom cell renderer see [Cell Components](./component-cell-renderer) for more details on how to update your component following change detection.
 {% /note %}
 
 ## Example: Change Detection and Value Getters
@@ -49,7 +49,7 @@ If your row data attributes are simple types (string, boolean, number) or immuta
 
 If you do need to provide custom comparison of objects, use the `colDef.equals(val1,val2)` method. For example, the following code snippet provides custom comparison to a 'Name' column where the name is stored in a complex object.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -100,7 +100,7 @@ The example below shows change detection impacting the result of groups. The gri
 
 {% gridExampleRunner title="Change Detection with Groups" name="change-detection-groups"  exampleHeight=590 /%}
 
-Notice above that the group column is also editable (eg you can change one of the rows from group 'A' to group 'G'), however the row does **not** move into the correct group after this change is made. This is discussed below in the section [Change Detection and Sorting, Filtering, Grouping](#sorting-filtering-grouping).
+Notice above that the group column is also editable (eg you can change one of the rows from group 'A' to group 'G'), however the row does **not** move into the correct group after this change is made. This is discussed below in the section [Change Detection and Sorting, Filtering, Grouping](#change-detection-and-sorting-filtering-grouping).
 
 ### Triggering Aggregation Change Detection
 

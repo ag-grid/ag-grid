@@ -1,5 +1,6 @@
 ---
 title: "Cell Components"
+description: "Component cell renderers allow images, buttons, and hyperlinks to be added to $framework Table Cells. Use a provided cell renderer or create a custom cell renderer."
 ---
 
 {% if isFramework("javascript") %}
@@ -34,27 +35,6 @@ The example below shows adding images, hyperlinks, and buttons to a cell using C
 
 {% gridExampleRunner title="Simple Cell Renderer" name="cell-renderer-summary"  exampleHeight=460 /%}
 
-## Custom Components
-
-{% includeMarkdoc file="component-cell-renderer/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_component-interface-vue.mdoc" /%}
-
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="ICellRendererParams" config={"description":""} /%}
-{% /if %}
-
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomCellRendererProps" config={"description":""} /%}
-{% /if %}
-
-{% includeMarkdoc file="component-cell-renderer/_params_vue.mdoc" /%}
-
-{% note %}
-Note that if [Row Selection](./row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the {% kbd "␣ Space" /%} key from triggering both row selection and toggling the checkbox.
-{% /note %}
-
 ## Provided Components
 
 The grid comes with some Cell Components out of the box. These Provided Cell Components cover common some common complex cell rendering requirements.
@@ -65,7 +45,32 @@ The grid comes with some Cell Components out of the box. These Provided Cell Com
 
 * [Checkbox Cell Renderer](./cell-data-types/): For displaying boolean values with a checkbox when `cellDataType` of Boolean is used.
 
-## Selecting Components
+## Custom Components
+
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="ICellRendererParams" config={"description":""} /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomCellRendererProps" config={"description":""} /%}
+{% /if %}
+
+{% partial file="./_params_vue.mdoc" /%}
+
+{% note %}
+Note that if [Row Selection](./row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the {% kbd "␣ Space" /%} key from triggering both row selection and toggling the checkbox.
+{% /note %}
+
+{% partial file="./_renderer-function-javascript.mdoc" /%}
+{% partial file="./_renderer-function-angular.mdoc" /%}
+{% partial file="./_renderer-function-vue.mdoc" /%}
+
+### Selecting Components
 
 The Cell Component for a Column is set via `colDef.cellRenderer` and can be any of the following types:
 
@@ -96,7 +101,7 @@ The Cell Component for a Column is set via `colDef.cellRenderer` and can be any 
 The code snippet below demonstrates each of these method types.
 
 {% if isFramework("javascript", "angular") %}
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // 1 - String - The name of a Cell Component registered with the grid.
@@ -123,7 +128,7 @@ const gridOptions = {
 {% /if %}
 
 {% if isFramework("react") %}
-```js {% spaceBetweenProperties=true %}
+```{% spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // 1 - String - The name of a Cell Component registered with the grid.
@@ -150,7 +155,7 @@ const gridOptions = {
 {% /if %}
 
 {% if isFramework("vue") %}
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // 1 - String - The name of a Cell Component registered with the grid.
@@ -171,7 +176,7 @@ const gridOptions = {
 ```
 {% /if %}
 
-## Dynamic Selection
+### Dynamic Component Selection
 
 The `colDef.cellRendererSelector` function allows setting difference Cell Components for different Rows within a Column.
 
@@ -181,8 +186,8 @@ The result is an object with `component` and `params` to use instead of `cellRen
 
 This following shows the Selector always returning back a Mood Cell Renderer:
 
-{% includeMarkdoc file="component-cell-renderer/_selector-common.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_selector-vue.mdoc" /%}
+{% partial file="./_selector-common.mdoc" /%}
+{% partial file="./_selector-vue.mdoc" /%}
 
 Here is a full example.
 
@@ -192,36 +197,7 @@ Here is a full example.
 
 {% gridExampleRunner title="Dynamic Rendering Component" name="dynamic-rendering-component"  exampleHeight=335 /%}
 
-## Custom Props
-
-The `props` passed to the Cell Component can be complimented with custom props. This allows configuring reusable Cell Components - e.g. a component could have buttons that are optionally displayed via additional props.
-
-Compliment props to a cell renderer using the Column Definition attribute  `cellRendererParams`. When provided, these props will be merged with the grid provided props.
-
-{% includeMarkdoc file="component-cell-renderer/_complementing-component-javascript.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_complementing-component-angular.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_complementing-component-react.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_complementing-component-vue.mdoc" /%}
-
-This example shows rendering an image with and without custom props and using custom props to pass a callback to a button.
-The `Refresh Data` button triggers the cell components to refresh by randomising the success data.
-
-{% gridExampleRunner title="Custom Props" name="custom-props" /%}
-
-{% includeMarkdoc file="component-cell-renderer/_renderer-function-javascript.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_renderer-function-angular.mdoc" /%}
-{% includeMarkdoc file="component-cell-renderer/_renderer-function-vue.mdoc" /%}
-
-{% if isFramework("javascript") %}
-{% note %}
-You might be wondering how the grid knows if you have provided a Cell Renderer component class or
-a simple function, as JavaScript uses functions to implement classes. The answer is the grid looks
-for the `getGui()` method in the prototype of the function (a mandatory method in the cell renderer
-interface). If the `getGui()` method exists, it assumes a component, otherwise it assumes a function.
-{% /note %}
-{% /if %}
-
-## Accessing Instances
+### Accessing Instances
 
 After the grid has created an instance of a Cell Component for a cell it is possible to access that instance. This is useful if you want to call a method that you provide on the Cell Component that has nothing to do with the operation of the grid. Accessing Cell Components is done using the grid API `getCellRendererInstances(params)`.
 
@@ -259,7 +235,32 @@ refer to the [hook specific](./react-hooks/) documentation for more information.
 {% /note %}
 {% /if %}
 
-## Dynamic Tooltips
+### Custom Props
+
+The `props` passed to the Cell Component can be complimented with custom props. This allows configuring reusable Cell Components - e.g. a component could have buttons that are optionally displayed via additional props.
+
+Compliment props to a cell renderer using the Column Definition attribute  `cellRendererParams`. When provided, these props will be merged with the grid provided props.
+
+{% partial file="./_complementing-component-javascript.mdoc" /%}
+{% partial file="./_complementing-component-angular.mdoc" /%}
+{% partial file="./_complementing-component-react.mdoc" /%}
+{% partial file="./_complementing-component-vue.mdoc" /%}
+
+This example shows rendering an image with and without custom props and using custom props to pass a callback to a button.
+The `Refresh Data` button triggers the cell components to refresh by randomising the success data.
+
+{% gridExampleRunner title="Custom Props" name="custom-props" /%}
+
+{% if isFramework("javascript") %}
+{% note %}
+You might be wondering how the grid knows if you have provided a Cell Renderer component class or
+a simple function, as JavaScript uses functions to implement classes. The answer is the grid looks
+for the `getGui()` method in the prototype of the function (a mandatory method in the cell renderer
+interface). If the `getGui()` method exists, it assumes a component, otherwise it assumes a function.
+{% /note %}
+{% /if %}
+
+### Dynamic Tooltips
 
 When working with Custom Cell Renderers it is possible to register custom tooltips that are displayed dynamically by using the `setTooltip` method.
 {% if isFramework("javascript", "angular", "vue") %}
@@ -275,3 +276,9 @@ The example below demonstrates a dynamic tooltip being displayed on Cell Compone
 * The Athlete column uses the `shouldDisplayTooltip` callback to only display Tooltips when the text is not fully displayed.
 
 {% gridExampleRunner title="Dynamic Tooltips" name="dynamic-tooltips" /%}
+
+### Keyboard Navigation
+
+When using custom Cell Components, the custom Cell Component is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid cell with a custom Cell Component will focus the entire cell instead of any of the elements inside the custom cell renderer.
+
+In order to handle focus in your custom cell component, implement [Custom Cell Component Keyboard Navigation](./keyboard-navigation/#custom-cell-component).

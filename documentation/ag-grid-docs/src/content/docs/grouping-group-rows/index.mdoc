@@ -6,13 +6,13 @@ enterprise: true
 This section covers the Group Rows display type, where group rows are automatically added by the grid containing the
 row groups instead of group columns. This can be preferred if you have a lot of information you want to say about the group.
 
-{% imageCaption imagePath="../grouping-display-types/resources/group-rows.png" alt="Group Rows" centered=true constrained=true /%}
+{% imageCaption imagePath="../grouping-display-types/resources/group-rows.png" alt="Group Rows" centered=true constrained=true maxWidth="80%" /%}
 
 ## Enabling Group Rows
 
 To display each row group using group rows set `groupDisplayType = 'groupRows'` as shown below:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
@@ -49,14 +49,14 @@ Cell Renderer with your own [Custom Cell Renderer](./component-cell-renderer/), 
 If using Group Rows and no `groupRowRenderer` properties are provided, then the default
 [Group Cell Renderer](./group-cell-renderer/) is used with its default values.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // groups by row - the grid defaults to using the default group cell renderer for the row with default settings.
     groupDisplayType: 'groupRows', 
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // identical to above - uses 'agGroupCellRenderer' which is the default, so doesn't change anything.
     groupDisplayType: 'groupRows',
@@ -72,7 +72,7 @@ Using your own Cell Renderer hands over rendering of the group row to your custo
 the customer Cell Renderer will also need to provide expand / collapse functionality.
 
 {% if isFramework("javascript", "angular", "react") %}
-{% includeMarkdoc file="grouping-group-rows/_group-config-common.mdoc" /%}
+{% partial file="./_group-config-common.mdoc" /%}
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -93,7 +93,7 @@ const gridOptions = {
 Configure the default Group Cell Renderer using `groupRowRendererParams`. Full details on what to configure are provided
 in the page [Group Cell Renderer](./group-cell-renderer/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // use Group Rows and configure the Group Cell Renderer
     groupDisplayType: 'groupRows', 

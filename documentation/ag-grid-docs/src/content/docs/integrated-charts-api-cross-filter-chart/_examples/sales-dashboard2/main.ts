@@ -1,162 +1,176 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ModuleRegistry, ValueFormatterParams } from '@ag-grid-community/core';
+import {
+    FirstDataRenderedEvent,
+    GridApi,
+    GridOptions,
+    GridReadyEvent,
+    ModuleRegistry,
+    ValueFormatterParams,
+    createGrid,
+} from '@ag-grid-community/core';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { getData } from "./data";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, GridChartsModule, MenuModule, MultiFilterModule, SetFilterModule]);
+import { getData } from './data';
 
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    GridChartsModule,
+    MenuModule,
+    MultiFilterModule,
+    SetFilterModule,
+]);
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-  columnDefs: [
-    { field: 'salesRep', chartDataType: 'category' },
-    { field: 'handset', chartDataType: 'category' },
-    {
-      headerName: 'Sale Price',
-      field: 'sale',
-      maxWidth: 160,
-      aggFunc: 'sum',
-      filter: 'agNumberColumnFilter',
-      chartDataType: 'series',
-    },
-    {
-      field: 'saleDate',
-      chartDataType: 'category',
-      filter: 'agSetColumnFilter',
-      filterParams: {
-        valueFormatter: (params: ValueFormatterParams) => `${params.value}`,
-      },
-    },
-    {
-      field: 'quarter',
-      maxWidth: 160,
-      filter: 'agSetColumnFilter',
-      chartDataType: 'category',
-    },
-  ],
-  defaultColDef: {
-    flex: 1,
-    editable: true,
-    filter: 'agMultiColumnFilter',
-    floatingFilter: true,
-  },
-  enableCharts: true,
-  chartThemeOverrides: {
-    bar: {
-      axes: {
-        category: {
-          label: {
-            rotation: 0,
-          },
+    columnDefs: [
+        { field: 'salesRep', chartDataType: 'category' },
+        { field: 'handset', chartDataType: 'category' },
+        {
+            headerName: 'Sale Price',
+            field: 'sale',
+            maxWidth: 160,
+            aggFunc: 'sum',
+            filter: 'agNumberColumnFilter',
+            chartDataType: 'series',
         },
-      },
+        {
+            field: 'saleDate',
+            chartDataType: 'category',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                valueFormatter: (params: ValueFormatterParams) => `${params.value}`,
+            },
+        },
+        {
+            field: 'quarter',
+            maxWidth: 160,
+            filter: 'agSetColumnFilter',
+            chartDataType: 'category',
+        },
+    ],
+    defaultColDef: {
+        flex: 1,
+        editable: true,
+        filter: 'agMultiColumnFilter',
+        floatingFilter: true,
     },
-  },
-  onGridReady : (params: GridReadyEvent) => {
-    getData().then(rowData => params.api.setGridOption('rowData', rowData));
-  },
-  onFirstDataRendered,
-}
-
-
+    enableCharts: true,
+    chartThemeOverrides: {
+        bar: {
+            axes: {
+                category: {
+                    label: {
+                        rotation: 0,
+                    },
+                },
+            },
+        },
+    },
+    onGridReady: (params: GridReadyEvent) => {
+        getData().then((rowData) => params.api.setGridOption('rowData', rowData));
+    },
+    onFirstDataRendered,
+};
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  createQuarterlySalesChart(params.api);
-  createSalesByRefChart(params.api);
-  createHandsetSalesChart(params.api);
+    createQuarterlySalesChart(params.api);
+    createSalesByRefChart(params.api);
+    createHandsetSalesChart(params.api);
 }
 
 function createQuarterlySalesChart(api: GridApi) {
-  api.createCrossFilterChart({
-    chartType: 'line',
-    cellRange: {
-      columns: ['quarter', 'sale'],
-    },
-    aggFunc: 'sum',
-    chartThemeOverrides: {
-      common: {
-        title: {
-          enabled: true,
-          text: 'Quarterly Sales ($)',
+    api.createCrossFilterChart({
+        chartType: 'line',
+        cellRange: {
+            columns: ['quarter', 'sale'],
         },
-        axes: {
-          category: {
-            label: {
-              rotation: 0,
+        aggFunc: 'sum',
+        chartThemeOverrides: {
+            common: {
+                title: {
+                    enabled: true,
+                    text: 'Quarterly Sales ($)',
+                },
+                axes: {
+                    category: {
+                        label: {
+                            rotation: 0,
+                        },
+                    },
+                    number: {
+                        label: {
+                            formatter: (params: any) => {
+                                return params.value / 1000 + 'k';
+                            },
+                        },
+                    },
+                },
             },
-          },
-          number: {
-            label: {
-              formatter: (params: any) => {
-                return params.value / 1000 + 'k'
-              },
-            },
-          },
         },
-      },
-    },
-    chartContainer: document.querySelector('#lineChart') as any,
-  })
+        chartContainer: document.querySelector('#lineChart') as any,
+    });
 }
 
 function createSalesByRefChart(api: GridApi) {
-  api.createCrossFilterChart({
-    chartType: 'donut',
-    cellRange: {
-      columns: ['salesRep', 'sale'],
-    },
-    aggFunc: 'sum',
-    chartThemeOverrides: {
-      common: {
-        title: {
-          enabled: true,
-          text: 'Sales by Representative ($)',
+    api.createCrossFilterChart({
+        chartType: 'donut',
+        cellRange: {
+            columns: ['salesRep', 'sale'],
         },
-      },
-      pie: {
-        legend: {
-          position: 'right',
+        aggFunc: 'sum',
+        chartThemeOverrides: {
+            common: {
+                title: {
+                    enabled: true,
+                    text: 'Sales by Representative ($)',
+                },
+            },
+            pie: {
+                legend: {
+                    position: 'right',
+                },
+                series: {
+                    title: {
+                        enabled: false,
+                    },
+                    calloutLabel: {
+                        enabled: false,
+                    },
+                },
+            },
         },
-        series: {
-          title: {
-            enabled: false,
-          },
-          calloutLabel: {
-            enabled: false,
-          },
-        },
-      },
-    },
-    chartContainer: document.querySelector('#donutChart') as any,
-  })
+        chartContainer: document.querySelector('#donutChart') as any,
+    });
 }
 
 function createHandsetSalesChart(api: GridApi) {
-  api.createCrossFilterChart({
-    chartType: 'area',
-    cellRange: {
-      columns: ['handset', 'sale'],
-    },
-    aggFunc: 'count',
-    chartThemeOverrides: {
-      common: {
-        title: {
-          enabled: true,
-          text: 'Handsets Sold (Units)',
+    api.createCrossFilterChart({
+        chartType: 'area',
+        cellRange: {
+            columns: ['handset', 'sale'],
         },
-      }
-    },
-    chartContainer: document.querySelector('#areaChart') as any,
-  })
+        aggFunc: 'count',
+        chartThemeOverrides: {
+            common: {
+                title: {
+                    enabled: true,
+                    text: 'Handsets Sold (Units)',
+                },
+            },
+        },
+        chartContainer: document.querySelector('#areaChart') as any,
+    });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-})
+    gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+});

@@ -1,10 +1,10 @@
 {
   "name": "ag-grid-task-autogen",
-  "version": "31.1.0",
+  "version": "31.3.1",
   "private": true,
   "dependencies": {
-    "@nx/devkit": "17.2.6",
-    "nx": "17.2.6",
+    "@nx/devkit": "18.3.4",
+    "nx": "18.3.4",
     "tslib": "^2.3.0"
   },
   "type": "module",

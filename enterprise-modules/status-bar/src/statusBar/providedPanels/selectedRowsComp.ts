@@ -1,16 +1,20 @@
-import { Autowired, Events, GridApi, PostConstruct, IStatusPanelComp, _, ISelectionService } from '@ag-grid-community/core';
-import { NameValueComp } from "./nameValueComp";
+import type { BeanCollection, IRowModel, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
+import { _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
 
-export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
+import { AgNameValue } from './agNameValue';
 
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('selectionService') private selectionService: ISelectionService;
+export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
 
-    @PostConstruct
-    protected postConstruct(): void {
+    public wireBeans(beans: BeanCollection) {
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
 
+    public postConstruct(): void {
         if (!this.isValidRowModel()) {
-            console.warn(`AG Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`);
+            _warnOnce(`agSelectedRowCountComponent should only be used with the client and server side row model.`);
             return;
         }
 
@@ -22,13 +26,12 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.onRowSelectionChanged();
 
         const eventListener = this.onRowSelectionChanged.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, eventListener);
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, eventListener);
+        this.addManagedEventListeners({ modelUpdated: eventListener, selectionChanged: eventListener });
     }
 
     private isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.gridApi.__getModel().getType();
+        const rowModelType = this.rowModel.getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 
@@ -42,12 +45,11 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        this.setValue(_.formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
+        this.setValue(_formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
         this.setDisplayed(selectedRowCount > 0);
     }
 
-    public init() {
-    }
+    public init() {}
 
     public refresh(): boolean {
         return true;
@@ -55,8 +57,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
-
 }

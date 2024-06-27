@@ -1,69 +1,75 @@
-import {
-    AgGroupComponentParams,
-    AgSlider,
-    Autowired,
-    Component,
-    Events,
-    PostConstruct,
-    RefSelector,
-} from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { AgChartPaddingOptions } from "ag-charts-community";
-import { ChartController } from "../../../chartController";
-import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
+import type { BeanCollection } from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
+import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
+
+import type { AgSlider } from '../../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../../widgets/agSlider';
+import type { ChartController } from '../../../chartController';
+import type { ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PaddingPanel extends Component {
+    private readonly paddingTopSlider: AgSlider = RefPlaceholder;
 
-    public static TEMPLATE = /* html */
-        `<div>
-            <ag-group-component ref="chartPaddingGroup">
-                <ag-slider ref="paddingTopSlider"></ag-slider>
-                <ag-slider ref="paddingRightSlider"></ag-slider>
-                <ag-slider ref="paddingBottomSlider"></ag-slider>
-                <ag-slider ref="paddingLeftSlider"></ag-slider>
-            </ag-group-component>
-        <div>`;
+    private chartTranslationService: ChartTranslationService;
 
-    @RefSelector('paddingTopSlider') private paddingTopSlider: AgSlider;
-
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-
-    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory, private readonly chartController: ChartController) {
+    public wireBeans(beans: BeanCollection): void {
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+    }
+    constructor(
+        private readonly chartMenuUtils: ChartMenuParamsFactory,
+        private readonly chartController: ChartController
+    ) {
         super();
     }
 
-    @PostConstruct
-    private init() {
+    public postConstruct() {
         const chartPaddingGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,
-            title: this.chartTranslationService.translate("padding"),
-            suppressEnabledCheckbox: true
+            title: this.chartTranslationService.translate('padding'),
+            suppressEnabledCheckbox: true,
         };
-        const getSliderParams = (property: keyof AgChartPaddingOptions) => 
+        const getSliderParams = (property: keyof AgChartPaddingOptions) =>
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
-        this.setTemplate(PaddingPanel.TEMPLATE, {
-            chartPaddingGroup: chartPaddingGroupParams,
-            paddingTopSlider: getSliderParams('top'),
-            paddingRightSlider: getSliderParams('right'),
-            paddingBottomSlider: getSliderParams('bottom'),
-            paddingLeftSlider: getSliderParams('left')
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="chartPaddingGroup">
+                <ag-slider data-ref="paddingTopSlider"></ag-slider>
+                <ag-slider data-ref="paddingRightSlider"></ag-slider>
+                <ag-slider data-ref="paddingBottomSlider"></ag-slider>
+                <ag-slider data-ref="paddingLeftSlider"></ag-slider>
+            </ag-group-component>
+        <div>`,
+            [AgGroupComponentSelector, AgSliderSelector],
+            {
+                chartPaddingGroup: chartPaddingGroupParams,
+                paddingTopSlider: getSliderParams('top'),
+                paddingRightSlider: getSliderParams('right'),
+                paddingBottomSlider: getSliderParams('bottom'),
+                paddingLeftSlider: getSliderParams('left'),
+            }
+        );
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
-            this.updateTopPadding(e.chartOptions);
+        this.addManagedEventListeners({
+            chartOptionsChanged: (e) => {
+                this.updateTopPadding(e.chartOptions);
+            },
         });
     }
 
-    private updateTopPadding(chartOptions: any) {
+    private updateTopPadding(chartOptions: AgChartThemeOverrides) {
         // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
         const topPadding = [...this.chartController.getChartSeriesTypes(), 'common']
-            .map((seriesType) => chartOptions[seriesType]?.padding?.top)
+            .map((seriesType: ChartThemeOverridesSeriesType) => chartOptions[seriesType]?.padding?.top)
             .find((value) => value != null);
         if (topPadding != null) {
-            this.paddingTopSlider.setValue(topPadding);
+            this.paddingTopSlider.setValue(`${topPadding}`);
         }
     }
 }

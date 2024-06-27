@@ -57,7 +57,7 @@ Below shows an example of this, where the Detail Grids are configured with diffe
 
 {% gridExampleRunner title="Dynamic Params" name="dynamic-params" /%}
 
-{% includeMarkdoc file="master-detail-grids/_changing-the-template.mdoc" /%}
+{% partial file="./_changing-the-template.mdoc" /%}
 
 ## Accessing Detail Grids
 
@@ -71,7 +71,7 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
 
 {% apiDocumentation source="grid-api/api.json" section="masterDetail" names=["getDetailGridInfo"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
 const detailGridInfo = api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
@@ -81,7 +81,7 @@ The grid generates IDs for detail grids by prefixing the parent row's ID with `d
 
 {% apiDocumentation source="grid-api/api.json" section="masterDetail" names=["forEachDetailGridInfo"] /%}
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // iterate over all DetailGridInfos, and call stopEditing() on each one
 api.forEachDetailGridInfo(detailGridInfo => {
     detailGridInfo.api.flashCells();

@@ -1,7 +1,8 @@
-import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
-import { _Scene } from 'ag-charts-community';
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
+import type { _Scene } from 'ag-charts-community';
+
 import { createPolarPaths } from '../miniChartHelpers';
+import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
 export class MiniRadarLine extends MiniChartWithPolarAxes {
     static chartType: ChartType = 'radarLine';
@@ -12,14 +13,10 @@ export class MiniRadarLine extends MiniChartWithPolarAxes {
     private data = [
         [8, 7, 8, 7, 8, 8, 7, 8],
         [6, 8, 5, 10, 6, 7, 4, 6],
-        [0, 3, 3, 5, 4, 4, 2, 0]
+        [0, 3, 3, 5, 4, 4, 2, 0],
     ];
 
-    constructor(
-        container: HTMLElement,
-        fills: string[],
-        strokes: string[],
-    ) {
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
         super(container, 'radarLineTooltip');
 
         this.showRadiusAxisLine = false;
@@ -27,11 +24,18 @@ export class MiniRadarLine extends MiniChartWithPolarAxes {
         const radius = (this.size - this.padding * 2) / 2;
         const innerRadius = 0;
 
-        const { paths, markers } = createPolarPaths(this.root, this.data, this.size, radius, innerRadius, this.markerSize);
+        const { paths, markers } = createPolarPaths(
+            this.root,
+            this.data,
+            this.size,
+            radius,
+            innerRadius,
+            this.markerSize
+        );
 
         this.lines = paths;
         this.markers = markers;
-    
+
         this.updateColors(fills, strokes);
     }
 

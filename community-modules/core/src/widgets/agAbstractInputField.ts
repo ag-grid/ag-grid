@@ -1,30 +1,43 @@
-import { RefSelector } from './componentAnnotations';
-import { AgAbstractField, AgFieldParams, FieldElement } from './agAbstractField';
-import { setDisabled, setElementWidth, addOrRemoveAttribute } from '../utils/dom';
-import { setAriaLabel } from '../utils/aria';
+import type { AgInputFieldParams } from '../interfaces/agFieldParams';
+import { _setAriaLabel } from '../utils/aria';
+import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
+import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
+import { AgAbstractField } from './agAbstractField';
+import { RefPlaceholder } from './component';
 
-export interface AgInputFieldParams extends AgFieldParams {
-    inputName?: string;
-    inputWidth?: number | 'flex';
-}
+export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;
+export abstract class AgAbstractInputField<
+    TElement extends FieldElement,
+    TValue,
+    TConfig extends AgInputFieldParams = AgInputFieldParams,
+    TEventType extends string = AgAbstractInputFieldEvent,
+> extends AgAbstractField<TValue, TConfig, AgAbstractInputFieldEvent | TEventType> {
+    protected readonly eLabel: HTMLElement = RefPlaceholder;
+    protected readonly eWrapper: HTMLElement = RefPlaceholder;
+    protected readonly eInput: TElement = RefPlaceholder;
 
-export abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends AgInputFieldParams = AgInputFieldParams>
-    extends AgAbstractField<TValue, TConfig> {
-    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
-    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
-    @RefSelector('eInput') protected readonly eInput: TElement;
-
-    constructor(config?: TConfig, className?: string, private readonly inputType: string | null = 'text', private readonly displayFieldTag = 'input') {
-        super(config, /* html */`
+    constructor(
+        config?: TConfig,
+        className?: string,
+        private readonly inputType: string | null = 'text',
+        private readonly displayFieldTag = 'input'
+    ) {
+        super(
+            config,
+            config?.template ??
+                /* html */ `
             <div role="presentation">
-                <div ref="eLabel" class="ag-input-field-label"></div>
-                <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                    <${displayFieldTag} ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
+                <div data-ref="eLabel" class="ag-input-field-label"></div>
+                <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
+                    <${displayFieldTag} data-ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
                 </div>
-            </div>`, className);
+            </div>`,
+            [],
+            className
+        );
     }
 
-    protected postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
         this.setInputType();
 
@@ -48,7 +61,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     }
 
     protected addInputListeners() {
-        this.addManagedListener(this.eInput, 'input', e => this.setValue(e.target.value));
+        this.addManagedElementListeners(this.eInput, { input: (e: any) => this.setValue(e.target.value) });
     }
 
     private setInputType() {
@@ -62,7 +75,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     }
 
     public setInputWidth(width: number | 'flex'): this {
-        setElementWidth(this.eWrapper, width);
+        _setElementWidth(this.eWrapper, width);
 
         return this;
     }
@@ -73,7 +86,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         return this;
     }
 
-    public getFocusableElement(): HTMLElement {
+    public override getFocusableElement(): HTMLElement {
         return this.eInput;
     }
 
@@ -85,20 +98,20 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     }
 
     public setInputPlaceholder(placeholder?: string | null): this {
-        addOrRemoveAttribute(this.eInput, 'placeholder', placeholder);
+        _addOrRemoveAttribute(this.eInput, 'placeholder', placeholder);
 
         return this;
     }
 
     public setInputAriaLabel(label?: string | null): this {
-        setAriaLabel(this.eInput, label);
+        _setAriaLabel(this.eInput, label);
         this.refreshAriaLabelledBy();
 
         return this;
     }
 
-    public setDisabled(disabled: boolean): this {
-        setDisabled(this.eInput, disabled);
+    public override setDisabled(disabled: boolean): this {
+        _setDisabled(this.eInput, disabled);
 
         return super.setDisabled(disabled);
     }
@@ -107,13 +120,13 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         if (value === true) {
             // Remove the autocomplete attribute if the value is explicitly set to true
             // to allow the default browser autocomplete/autofill behaviour.
-            addOrRemoveAttribute(this.eInput, 'autocomplete', null);
+            _addOrRemoveAttribute(this.eInput, 'autocomplete', null);
         } else {
             // When a string is provided, use it as the value of the autocomplete attribute.
             // This enables users to specify how they want to the browser to handle the autocomplete on the input, as per spec:
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete#values
-            const autoCompleteValue = typeof value === 'string' ? value : 'off'
-            addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
+            const autoCompleteValue = typeof value === 'string' ? value : 'off';
+            _addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
         }
         return this;
     }

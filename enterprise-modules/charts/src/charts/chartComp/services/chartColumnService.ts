@@ -1,39 +1,67 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ColumnModel,
+    ColumnNameService,
+    FuncColsService,
+    IShowRowGroupColsService,
+    NamedBean,
     RowNode,
-    RowRenderer,
-    ValueService
-} from "@ag-grid-community/core";
+    RowPositionUtils,
+    ValueService,
+    VisibleColsService,
+} from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
-@Bean("chartColumnService")
-export class ChartColumnService extends BeanStub {
+export class ChartColumnService extends BeanStub implements NamedBean {
+    beanName = 'chartColumnService' as const;
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+    private columnModel: ColumnModel;
+    private showRowGroupColsService?: IShowRowGroupColsService;
+    private columnNameService: ColumnNameService;
+    private visibleColsService: VisibleColsService;
+    private funcColsService: FuncColsService;
+    private valueService: ValueService;
+    private rowPositionUtils: RowPositionUtils;
 
-    public getColumn(colId: string): Column | null {
-        return this.columnModel.getPrimaryColumn(colId);
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.columnNameService = beans.columnNameService;
+        this.visibleColsService = beans.visibleColsService;
+        this.funcColsService = beans.funcColsService;
+        this.valueService = beans.valueService;
+        this.rowPositionUtils = beans.rowPositionUtils;
     }
 
-    public getAllDisplayedColumns(): Column[] {
-        return this.columnModel.getAllDisplayedColumns();
+    private valueColsWithoutSeriesType: Set<string> = new Set();
+
+    public postConstruct(): void {
+        const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
+        this.addManagedEventListeners({
+            newColumnsLoaded: clearValueCols,
+            rowDataUpdated: clearValueCols,
+        });
     }
 
-    public getColDisplayName(col: Column): string | null {
-        return this.columnModel.getDisplayNameForColumn(col, 'chart');
+    public getColumn(colId: string): AgColumn | null {
+        return this.columnModel.getColDefCol(colId);
     }
 
-    public getRowGroupColumns(): Column[] {
-        return this.columnModel.getRowGroupColumns();
+    public getAllDisplayedColumns(): AgColumn[] {
+        return this.visibleColsService.getAllCols();
     }
 
-    public getGroupDisplayColumns(): Column[] {
-        return this.columnModel.getGroupDisplayColumns();
+    public getColDisplayName(col: AgColumn): string | null {
+        return this.columnNameService.getDisplayNameForColumn(col, 'chart');
+    }
+
+    public getRowGroupColumns(): AgColumn[] {
+        return this.funcColsService.getRowGroupColumns();
+    }
+
+    public getGroupDisplayColumns(): AgColumn[] {
+        return this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
     }
 
     public isPivotMode(): boolean {
@@ -44,13 +72,13 @@ export class ChartColumnService extends BeanStub {
         return this.columnModel.isPivotActive();
     }
 
-    public getChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const displayedCols = this.columnModel.getAllDisplayedColumns();
+    public getChartColumns(): { dimensionCols: Set<AgColumn>; valueCols: Set<AgColumn> } {
+        const gridCols = this.columnModel.getCols();
 
-        const dimensionCols = new Set<Column>();
-        const valueCols = new Set<Column>();
+        const dimensionCols = new Set<AgColumn>();
+        const valueCols = new Set<AgColumn>();
 
-        displayedCols.forEach(col => {
+        gridCols.forEach((col) => {
             const colDef = col.getColDef();
             const chartDataType = colDef.chartDataType;
 
@@ -67,7 +95,9 @@ export class ChartColumnService extends BeanStub {
                     case 'excluded':
                         return;
                     default:
-                        console.warn(`AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
+                        _warnOnce(
+                            `unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`
+                        );
                         break;
                 }
             }
@@ -83,20 +113,23 @@ export class ChartColumnService extends BeanStub {
             }
 
             // if 'chartDataType' is not provided then infer type based data contained in first row
-            (this.isNumberCol(col) ? valueCols : dimensionCols).add(col);
+            (this.isInferredValueCol(col) ? valueCols : dimensionCols).add(col);
         });
 
         return { dimensionCols, valueCols };
     }
 
-    private isNumberCol(col: Column): boolean {
-        if (col.getColId() === 'ag-Grid-AutoColumn') {
+    private isInferredValueCol(col: AgColumn): boolean {
+        const colId = col.getColId();
+        if (colId === 'ag-Grid-AutoColumn') {
             return false;
         }
 
-        const row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: null });
+        const row = this.rowPositionUtils.getRowNode({ rowIndex: 0, rowPinned: null });
 
-        if (!row) { return false; }
+        if (!row) {
+            return this.valueColsWithoutSeriesType.has(colId);
+        }
 
         let cellValue = this.valueService.getValue(col, row);
 
@@ -108,11 +141,19 @@ export class ChartColumnService extends BeanStub {
             cellValue = cellValue.toNumber();
         }
 
-        return typeof cellValue === 'number';
+        const isNumber = typeof cellValue === 'number';
+
+        if (isNumber) {
+            this.valueColsWithoutSeriesType.add(colId);
+        }
+
+        return isNumber;
     }
 
-    private extractLeafData(row: RowNode, col: Column): any {
-        if (!row.allLeafChildren) { return null; }
+    private extractLeafData(row: RowNode, col: AgColumn): any {
+        if (!row.allLeafChildren) {
+            return null;
+        }
 
         for (let i = 0; i < row.allLeafChildren.length; i++) {
             const childRow = row.allLeafChildren[i];
@@ -124,5 +165,10 @@ export class ChartColumnService extends BeanStub {
         }
 
         return null;
+    }
+
+    public override destroy(): void {
+        this.valueColsWithoutSeriesType.clear();
+        super.destroy();
     }
 }

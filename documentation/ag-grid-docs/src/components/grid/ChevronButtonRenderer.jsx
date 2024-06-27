@@ -1,7 +1,8 @@
-import styles from '@design-system/modules/ChevronButtonRenderer.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
+
+import styles from './ChevronButtonRenderer.module.scss';
 
 const TreeClosed = urlWithBaseUrl('/theme-icons/quartz/tree-closed.svg');
 
@@ -34,6 +35,12 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
                         ref={ref}
                         src={TreeClosed}
                         style={{ cursor: 'pointer' }}
+                        onMouseDown={(e) => {
+                            // prevents this component from being focused
+                            e.preventDefault();
+                            // and focuses the cellWrapper instead.
+                            props.eGridCell.focus();
+                        }}
                         onClick={() => {
                             clickHandler();
                         }}

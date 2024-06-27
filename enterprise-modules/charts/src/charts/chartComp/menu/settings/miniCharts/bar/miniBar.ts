@@ -1,13 +1,14 @@
-import { _Scene } from "ag-charts-community";
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { ChartType } from "@ag-grid-community/core";
+import type { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniBar extends MiniChartWithAxes {
     static chartType: ChartType = 'groupedBar';
     private readonly bars: _Scene.Rect[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "groupedBarTooltip");
+        super(container, 'groupedBarTooltip');
 
         const padding = this.padding;
         const size = this.size;

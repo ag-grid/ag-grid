@@ -1,32 +1,36 @@
-import { RowNode } from "../entities/rowNode";
-import { RowPinnedType } from "../interfaces/iRowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { Events, PinnedRowDataChangedEvent } from "../events";
-import { BeanStub } from "../context/beanStub";
-import { missingOrEmpty } from "../utils/generic";
-import { last } from "../utils/array";
-import { Beans } from "../rendering/beans";
-import { WithoutGridCommon } from "../interfaces/iCommon";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import { RowNode } from '../entities/rowNode';
+import type { CssVariablesChanged, PinnedHeightChangedEvent, PinnedRowDataChangedEvent } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { RowPinnedType } from '../interfaces/iRowNode';
+import { _last } from '../utils/array';
+import { _missingOrEmpty } from '../utils/generic';
 
-@Bean('pinnedRowModel')
-export class PinnedRowModel extends BeanStub {
+export class PinnedRowModel extends BeanStub implements NamedBean {
+    beanName = 'pinnedRowModel' as const;
 
-    @Autowired('beans') private beans: Beans;
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+    }
 
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.setPinnedTopRowData();
         this.setPinnedBottomRowData();
         this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
         this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
+        this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanges.bind(this) });
     }
 
     public isEmpty(floating: RowPinnedType): boolean {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        return missingOrEmpty(rows);
+        return _missingOrEmpty(rows);
     }
 
     public isRowsToRender(floating: RowPinnedType): boolean {
@@ -35,7 +39,7 @@ export class PinnedRowModel extends BeanStub {
 
     public getRowAtPixel(pixel: number, floating: RowPinnedType): number {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (missingOrEmpty(rows)) {
+        if (_missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (let i = 0; i < rows.length; i++) {
@@ -50,20 +54,54 @@ export class PinnedRowModel extends BeanStub {
         return rows.length - 1;
     }
 
+    private onGridStylesChanges(e: CssVariablesChanged) {
+        if (e.rowHeightChanged) {
+            const estimateRowHeight = (rowNode: RowNode) => {
+                rowNode.setRowHeight(rowNode.rowHeight, true);
+            };
+            this.pinnedBottomRows.forEach(estimateRowHeight);
+            this.pinnedTopRows.forEach(estimateRowHeight);
+        }
+    }
+
+    public ensureRowHeightsValid(): boolean {
+        let anyChange = false;
+        let rowTop = 0;
+        const updateRowHeight = (rowNode: RowNode) => {
+            if (rowNode.rowHeightEstimated) {
+                const rowHeight = this.gos.getRowHeightForNode(rowNode);
+                rowNode.setRowTop(rowTop);
+                rowNode.setRowHeight(rowHeight.height);
+                rowTop += rowHeight.height;
+                anyChange = true;
+            }
+        };
+        this.pinnedBottomRows?.forEach(updateRowHeight);
+        rowTop = 0;
+        this.pinnedTopRows?.forEach(updateRowHeight);
+
+        const event: WithoutGridCommon<PinnedHeightChangedEvent> = {
+            type: 'pinnedHeightChanged',
+        };
+        this.eventService.dispatchEvent(event);
+
+        return anyChange;
+    }
+
     private setPinnedTopRowData(): void {
-        const rowData = this.gridOptionsService.get('pinnedTopRowData');
+        const rowData = this.gos.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
-            type: Events.EVENT_PINNED_ROW_DATA_CHANGED
+            type: 'pinnedRowDataChanged',
         };
         this.eventService.dispatchEvent(event);
     }
 
     private setPinnedBottomRowData(): void {
-        const rowData = this.gridOptionsService.get('pinnedBottomRowData');
+        const rowData = this.gos.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
-            type: Events.EVENT_PINNED_ROW_DATA_CHANGED
+            type: 'pinnedRowDataChanged',
         };
         this.eventService.dispatchEvent(event);
     }
@@ -71,17 +109,19 @@ export class PinnedRowModel extends BeanStub {
     private createNodesFromData(allData: any[] | undefined, isTop: boolean): RowNode[] {
         const rowNodes: RowNode[] = [];
         if (allData) {
+            const getRowId = this.gos.getRowIdCallback();
+            const idPrefix = isTop ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
+
             let nextRowTop = 0;
             allData.forEach((dataItem: any, index: number) => {
                 const rowNode = new RowNode(this.beans);
                 rowNode.data = dataItem;
 
-                const idPrefix = isTop ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
-                rowNode.id = idPrefix + index;
+                rowNode.id = getRowId?.({ data: dataItem, level: 0 }) ?? idPrefix + index;
 
                 rowNode.rowPinned = isTop ? 'top' : 'bottom';
                 rowNode.setRowTop(nextRowTop);
-                rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode).height);
+                rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode).height);
                 rowNode.setRowIndex(index);
                 nextRowTop += rowNode.rowHeight!;
                 rowNodes.push(rowNode);
@@ -90,11 +130,11 @@ export class PinnedRowModel extends BeanStub {
         return rowNodes;
     }
 
-    public getPinnedTopRowData(): RowNode[] {
+    public getPinnedTopRowNodes(): RowNode[] {
         return this.pinnedTopRows;
     }
 
-    public getPinnedBottomRowData(): RowNode[] {
+    public getPinnedBottomRowNodes(): RowNode[] {
         return this.pinnedBottomRows;
     }
 
@@ -119,14 +159,14 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (missingOrEmpty(this.pinnedTopRows)) {
+        if (_missingOrEmpty(this.pinnedTopRows)) {
             return;
         }
         this.pinnedTopRows.forEach(callback);
     }
 
     public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (missingOrEmpty(this.pinnedBottomRows)) {
+        if (_missingOrEmpty(this.pinnedBottomRows)) {
             return;
         }
         this.pinnedBottomRows.forEach(callback);
@@ -137,9 +177,11 @@ export class PinnedRowModel extends BeanStub {
     }
 
     private getTotalHeight(rowNodes: RowNode[]): number {
-        if (!rowNodes || rowNodes.length === 0) { return 0; }
+        if (!rowNodes || rowNodes.length === 0) {
+            return 0;
+        }
 
-        const lastNode = last(rowNodes);
+        const lastNode = _last(rowNodes);
         return lastNode.rowTop! + lastNode.rowHeight!;
     }
 }

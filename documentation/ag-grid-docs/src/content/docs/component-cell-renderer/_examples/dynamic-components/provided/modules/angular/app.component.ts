@@ -1,19 +1,17 @@
-import { Component } from '@angular/core';
 import { AgGridAngular } from '@ag-grid-community/angular';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { Component } from '@angular/core';
 
 import { ChildMessageRenderer } from './child-message-renderer.component';
 import { CubeRenderer } from './cube-renderer.component';
 import { CurrencyRenderer } from './currency-renderer.component';
 import { ParamsRenderer } from './params-renderer.component';
 import { SquareRenderer } from './square-renderer.component';
-
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
-import { ColDef, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
-
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -21,71 +19,72 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular, ChildMessageRenderer, CubeRenderer, CurrencyRenderer, ParamsRenderer, SquareRenderer],
-    template: `
-        <div class="example-wrapper">
+    template: ` <div class="example-wrapper">
         <button (click)="refreshEvenRowsCurrencyData()" style="margin-bottom: 10px" class="btn btn-primary">
             Refresh Even Row Currency Data
         </button>
         <ag-grid-angular
-                #agGrid
-                style="width: 100%; height: 100%;"
-                id="myGrid"
-                [class]="themeClass"
-                [columnDefs]="columnDefs"
-                [rowData]="rowData"
-                [context]="context"
-                [defaultColDef]="defaultColDef"
-                (gridReady)="onGridReady($event)"
-        ></ag-grid-angular>
-        </div>`
+            #agGrid
+            style="width: 100%; height: 100%;"
+            id="myGrid"
+            [class]="themeClass"
+            [columnDefs]="columnDefs"
+            [rowData]="rowData"
+            [context]="context"
+            [defaultColDef]="defaultColDef"
+            (gridReady)="onGridReady($event)"
+        />
+    </div>`,
 })
 export class AppComponent {
-    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+    themeClass =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz' /** DARK MODE END **/;
     private gridApi!: GridApi;
 
     public columnDefs: ColDef[] = [
         {
-            headerName: "Row",
-            field: "row",
-            width: 150
+            headerName: 'Row',
+            field: 'row',
+            width: 150,
         },
         {
-            headerName: "Square",
-            field: "value",
+            headerName: 'Square',
+            field: 'value',
             cellRenderer: SquareRenderer,
             editable: true,
-            colId: "square",
-            width: 150
+            colId: 'square',
+            width: 150,
         },
         {
-            headerName: "Cube",
-            field: "value",
+            headerName: 'Cube',
+            field: 'value',
             cellRenderer: CubeRenderer,
-            colId: "cube",
-            width: 150
+            colId: 'cube',
+            width: 150,
         },
         {
-            headerName: "Row Params",
-            field: "row",
+            headerName: 'Row Params',
+            field: 'row',
             cellRenderer: ParamsRenderer,
-            colId: "params",
-            width: 150
+            colId: 'params',
+            width: 150,
         },
         {
-            headerName: "Currency (Pipe)",
-            field: "currency",
+            headerName: 'Currency (Pipe)',
+            field: 'currency',
             cellRenderer: CurrencyRenderer,
-            colId: "currency",
-            width: 120
+            colId: 'currency',
+            width: 120,
         },
         {
-            headerName: "Child/Parent",
-            field: "value",
+            headerName: 'Child/Parent',
+            field: 'value',
             cellRenderer: ChildMessageRenderer,
-            colId: "params",
+            colId: 'params',
             editable: false,
-            minWidth: 150
-        }
+            minWidth: 150,
+        },
     ];
 
     public defaultColDef: ColDef = {
@@ -117,7 +116,7 @@ export class AppComponent {
     }
 
     methodFromParent(cell: any) {
-        alert("Parent Component Method from " + cell + "!");
+        alert('Parent Component Method from ' + cell + '!');
     }
 
     createRowData() {
@@ -126,10 +125,9 @@ export class AppComponent {
             rowData.push({
                 row: 'Row ' + i,
                 value: i,
-                currency: i + Number(Math.random().toFixed(2))
+                currency: i + Number(Math.random().toFixed(2)),
             });
         }
         return rowData;
     }
 }
-

@@ -1,11 +1,13 @@
-import { AgAbstractInputField, AgInputFieldParams } from "./agAbstractInputField";
+import type { AgInputFieldParams } from '../interfaces/agFieldParams';
+import { AgAbstractInputField } from './agAbstractInputField';
+import type { ComponentSelector } from './component';
 
 export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
     constructor(config?: AgInputFieldParams) {
         super(config, 'ag-text-area', null, 'textarea');
     }
 
-    public setValue(value: string, silent?: boolean): this {
+    public override setValue(value: string, silent?: boolean): this {
         const ret = super.setValue(value, silent);
 
         this.eInput.value = value;
@@ -25,3 +27,8 @@ export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, s
         return this;
     }
 }
+
+export const AgInputTextAreaSelector: ComponentSelector = {
+    selector: 'AG-INPUT-TEXT-AREA',
+    component: AgInputTextArea,
+};

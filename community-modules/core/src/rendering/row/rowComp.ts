@@ -1,28 +1,28 @@
-import { Component } from "../../widgets/component";
-import { ICellRendererComp, ICellRendererParams } from "../cellRenderers/iCellRenderer";
-import { Beans } from "../beans";
-import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
-import { IRowComp, RowCtrl } from "./rowCtrl";
-import { CellComp } from "../cell/cellComp";
-import { getAllValuesInObject } from "../../utils/object";
-import { setAriaRole } from "../../utils/aria";
-import { CellCtrl } from "../cell/cellCtrl";
-import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
-import { RowStyle } from "../../entities/gridOptions";
+import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import type { BeanCollection } from '../../context/context';
+import type { RowStyle } from '../../entities/gridOptions';
+import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
+import { _setAriaRole } from '../../utils/aria';
+import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
+import { _errorOnce } from '../../utils/function';
+import { _getAllValuesInObject } from '../../utils/object';
+import { Component } from '../../widgets/component';
+import { CellComp } from '../cell/cellComp';
+import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
+import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import type { IRowComp, RowCtrl } from './rowCtrl';
 
 export class RowComp extends Component {
-
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
     private rowCtrl: RowCtrl;
 
     private domOrder: boolean;
-    private cellComps: { [key: string]: CellComp | null; } = {};
+    private cellComps: { [key: CellCtrlInstanceId]: CellComp | null } = {};
 
-    constructor(ctrl: RowCtrl, beans: Beans, containerType: RowContainerType) {
+    constructor(ctrl: RowCtrl, beans: BeanCollection, containerType: RowContainerType) {
         super();
 
         this.beans = beans;
@@ -36,25 +36,25 @@ export class RowComp extends Component {
         const eGui = this.getGui();
         const style = eGui.style;
         this.domOrder = this.rowCtrl.getDomOrder();
-        setAriaRole(eGui, 'row');
+        _setAriaRole(eGui, 'row');
         const tabIndex = this.rowCtrl.getTabIndex();
         if (tabIndex != null) {
             eGui.setAttribute('tabindex', tabIndex.toString());
         }
 
         const compProxy: IRowComp = {
-            setDomOrder: domOrder => this.domOrder = domOrder,
-            setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
-            showFullWidth: compDetails => this.showFullWidth(compDetails),
+            setDomOrder: (domOrder) => (this.domOrder = domOrder),
+            setCellCtrls: (cellCtrls) => this.setCellCtrls(cellCtrls),
+            showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setUserStyles: (styles: RowStyle | undefined) => addStylesToElement(eGui, styles),
-            setTop: top => style.top = top,
-            setTransform: transform => style.transform = transform,
-            setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
+            setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(eGui, styles),
+            setTop: (top) => (style.top = top),
+            setTransform: (transform) => (style.transform = transform),
+            setRowIndex: (rowIndex) => eGui.setAttribute('row-index', rowIndex),
             setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
-            setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),
-            refreshFullWidth: getUpdatedParams => this.refreshFullWidth(getUpdatedParams)
+            setRowBusinessKey: (businessKey) => eGui.setAttribute('row-business-key', businessKey),
+            refreshFullWidth: (getUpdatedParams) => this.refreshFullWidth(getUpdatedParams),
         };
 
         ctrl.setComp(compProxy, this.getGui(), containerType);
@@ -83,7 +83,9 @@ export class RowComp extends Component {
         // if not in cache, create new one
         const res = compDetails.newAgStackInstance();
 
-        if (!res) { return; }
+        if (!res) {
+            return;
+        }
 
         res.then(callback);
     }
@@ -91,7 +93,7 @@ export class RowComp extends Component {
     private setCellCtrls(cellCtrls: CellCtrl[]): void {
         const cellsToRemove = Object.assign({}, this.cellComps);
 
-        cellCtrls.forEach(cellCtrl => {
+        cellCtrls.forEach((cellCtrl) => {
             const key = cellCtrl.getInstanceId();
             const existingCellComp = this.cellComps[key];
 
@@ -102,47 +104,53 @@ export class RowComp extends Component {
             }
         });
 
-        const cellCompsToRemove = getAllValuesInObject(cellsToRemove)
-            .filter(cellComp => cellComp != null);
+        const cellCompsToRemove = _getAllValuesInObject(cellsToRemove).filter((cellComp) => cellComp != null);
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
         this.ensureDomOrder(cellCtrls);
     }
 
     private ensureDomOrder(cellCtrls: CellCtrl[]): void {
-        if (!this.domOrder) { return; }
+        if (!this.domOrder) {
+            return;
+        }
 
         const elementsInOrder: HTMLElement[] = [];
-        cellCtrls.forEach(cellCtrl => {
+        cellCtrls.forEach((cellCtrl) => {
             const cellComp = this.cellComps[cellCtrl.getInstanceId()];
             if (cellComp) {
                 elementsInOrder.push(cellComp.getGui());
             }
         });
 
-        setDomChildOrder(this.getGui(), elementsInOrder);
+        _setDomChildOrder(this.getGui(), elementsInOrder);
     }
 
     private newCellComp(cellCtrl: CellCtrl): void {
-        const cellComp = new CellComp(this.beans, cellCtrl,
-            this.rowCtrl.isPrintLayout(), this.getGui(), this.rowCtrl.isEditing());
+        const cellComp = new CellComp(
+            this.beans,
+            cellCtrl,
+            this.rowCtrl.isPrintLayout(),
+            this.getGui(),
+            this.rowCtrl.isEditing()
+        );
         this.cellComps[cellCtrl.getInstanceId()] = cellComp;
         this.getGui().appendChild(cellComp.getGui());
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
         this.destroyAllCells();
     }
 
     private destroyAllCells(): void {
-        const cellsToDestroy = getAllValuesInObject(this.cellComps).filter(cp => cp != null);
+        const cellsToDestroy = _getAllValuesInObject(this.cellComps).filter((cp) => cp != null);
         this.destroyCells(cellsToDestroy as CellComp[]);
     }
 
     private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
         if (this.fullWidthCellRenderer) {
-            console.error('AG Grid - should not be setting fullWidthRowComponent twice');
+            _errorOnce('should not be setting fullWidthRowComponent twice');
         }
 
         this.fullWidthCellRenderer = fullWidthRowComponent;
@@ -156,14 +164,17 @@ export class RowComp extends Component {
     }
 
     private destroyCells(cellComps: CellComp[]): void {
-        cellComps.forEach(cellComp => {
-
+        cellComps.forEach((cellComp) => {
             // could be old reference, ie removed cell
-            if (!cellComp) { return; }
+            if (!cellComp) {
+                return;
+            }
 
             // check cellComp belongs in this container
             const instanceId = cellComp.getCtrl().getInstanceId();
-            if (this.cellComps[instanceId] !== cellComp) {return; }
+            if (this.cellComps[instanceId] !== cellComp) {
+                return;
+            }
 
             cellComp.detach();
             cellComp.destroy();

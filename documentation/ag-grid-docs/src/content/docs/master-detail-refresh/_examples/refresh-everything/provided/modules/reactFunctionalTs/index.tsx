@@ -1,16 +1,24 @@
 'use strict';
 
-import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    FirstDataRenderedEvent,
+    GetRowIdFunc,
+    GetRowIdParams,
+    GridReadyEvent,
+    ModuleRegistry,
+} from '@ag-grid-community/core';
 import { AgGridReact, CustomDetailCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColDef, FirstDataRenderedEvent, GetRowIdParams, GridReadyEvent, ModuleRegistry, GetRowIdFunc } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { IAccount } from './interfaces'
+import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { IAccount } from './interfaces';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule]);
 
@@ -31,13 +39,11 @@ const GridExample = () => {
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
-            enableCellChangeFlash: true
-        }
+            enableCellChangeFlash: true,
+        };
     }, []);
     const getRowId = useMemo<GetRowIdFunc>(() => {
-        return (params: GetRowIdParams) => {
-            return params.data.account;
-        }
+        return (params: GetRowIdParams) => String(params.data.account);
     }, []);
     const detailCellRendererParams = useMemo(() => {
         return {
@@ -45,7 +51,7 @@ const GridExample = () => {
             detailGridOptions: {
                 rowSelection: 'multiple',
                 getRowId: (params: GetRowIdParams) => {
-                    return params.data.callId;
+                    return String(params.data.callId);
                 },
                 columnDefs: [
                     { field: 'callId', checkboxSelection: true },
@@ -62,55 +68,60 @@ const GridExample = () => {
             getDetailRowData: (params) => {
                 params.successCallback(params.data.callRecords);
             },
-        } as CustomDetailCellRendererProps<IAccount, ICallRecord>
+        } as CustomDetailCellRendererProps<IAccount, ICallRecord>;
     }, []);
 
-
     const onGridReady = useCallback((params: GridReadyEvent) => {
-
         fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
-            .then(resp => resp.json())
+            .then((resp) => resp.json())
             .then((data: IAccount[]) => {
                 allRowData = data;
                 setRowData(data);
             });
     }, []);
 
-    const onFirstDataRendered = useCallback((params: FirstDataRenderedEvent) => {
-        // arbitrarily expand a row for presentational purposes
-        setTimeout(function () {
-            gridRef.current!.api.getDisplayedRowAtIndex(0)!.setExpanded(true);
-        }, 0);
-        setInterval(function () {
-            if (!allRowData) {
-                return;
-            }
-            const data = allRowData[0];
-            const newCallRecords: any[] = [];
-            data.callRecords.forEach(function (record: any, index: number) {
-                newCallRecords.push({
-                    name: record.name,
-                    callId: record.callId,
-                    duration: record.duration + (index % 2),
-                    switchCode: record.switchCode,
-                    direction: record.direction,
-                    number: record.number,
+    const onFirstDataRendered = useCallback(
+        (params: FirstDataRenderedEvent) => {
+            // arbitrarily expand a row for presentational purposes
+            setTimeout(function () {
+                gridRef.current!.api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+            }, 0);
+            setInterval(function () {
+                if (!allRowData) {
+                    return;
+                }
+                const data = allRowData[0];
+                const newCallRecords: any[] = [];
+                data.callRecords.forEach(function (record: any, index: number) {
+                    newCallRecords.push({
+                        name: record.name,
+                        callId: record.callId,
+                        duration: record.duration + (index % 2),
+                        switchCode: record.switchCode,
+                        direction: record.direction,
+                        number: record.number,
+                    });
                 });
-            });
-            data.callRecords = newCallRecords;
-            data.calls++;
-            const tran = {
-                update: [data],
-            };
-            gridRef.current!.api.applyTransaction(tran);
-        }, 2000);
-    }, [allRowData])
-
+                data.callRecords = newCallRecords;
+                data.calls++;
+                const tran = {
+                    update: [data],
+                };
+                gridRef.current!.api.applyTransaction(tran);
+            }, 2000);
+        },
+        [allRowData]
+    );
 
     return (
         <div style={containerStyle}>
-
-            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div
+                style={gridStyle}
+                className={
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+                    'ag-theme-quartz' /** DARK MODE END **/
+                }
+            >
                 <AgGridReact<IAccount>
                     ref={gridRef}
                     rowData={rowData}
@@ -125,8 +136,11 @@ const GridExample = () => {
             </div>
         </div>
     );
-
-}
+};
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

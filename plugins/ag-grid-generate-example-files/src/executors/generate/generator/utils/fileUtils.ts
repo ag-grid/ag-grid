@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import path from 'path';
 
 import type { InternalFramework, TransformTsFileExt } from '../types';
@@ -16,7 +16,6 @@ export const getBoilerPlateName = (internalFramework: InternalFramework) => {
             return boilerPlateTemplate('react-ts');
         case 'typescript':
         case 'angular':
-        case 'vue':
         case 'vue3':
             return boilerPlateTemplate(internalFramework);
         default:
@@ -28,6 +27,8 @@ export const getTransformTsFileExt = (internalFramework: InternalFramework): Tra
     let transformTsFileExt: TransformTsFileExt;
     if (internalFramework === 'reactFunctionalTs') {
         transformTsFileExt = '.tsx';
+    } else if (internalFramework === 'reactFunctional') {
+        transformTsFileExt = '.jsx';
     } else if (!TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)) {
         transformTsFileExt = '.js';
     }
@@ -74,7 +75,6 @@ export const getFrameworkFromInternalFramework = (internalFramework: InternalFra
         case 'reactFunctionalTs':
         case 'reactFunctional':
             return 'react';
-        case 'vue':
         case 'vue3':
             return 'vue';
         default:
@@ -95,7 +95,6 @@ export const getEntryFileName = (internalFramework: InternalFramework) => {
         case 'reactFunctionalTs':
             return 'index.tsx';
         case 'vanilla':
-        case 'vue':
         case 'vue3':
             return 'main.js';
         default:
@@ -154,3 +153,4 @@ export const getFileList = async ({ folderPath, fileList }: { folderPath: string
 };
 
 export const getIsEnterprise = ({ entryFile }: { entryFile: string }) => entryFile?.includes('ag-grid-enterprise');
+export const getIsLocale = ({ entryFile }: { entryFile: string }) => entryFile?.includes('ag-grid-locale');

@@ -1,10 +1,11 @@
-import { IFilterOptionDef } from '../../interfaces/iFilter';
-import { ScalarFilterParams } from './scalarFilter';
-import { SimpleFilterParams } from './simpleFilter';
+import type { IFilterOptionDef } from '../../interfaces/iFilter';
+import { _warnOnce } from '../../utils/function';
+import type { ScalarFilterParams } from './iScalarFilter';
+import type { SimpleFilterParams } from './iSimpleFilter';
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
-    protected customFilterOptions: { [name: string]: IFilterOptionDef; } = {};
+    protected customFilterOptions: { [name: string]: IFilterOptionDef } = {};
     protected filterOptions: (IFilterOptionDef | string)[];
     protected defaultOption: string;
 
@@ -19,15 +20,19 @@ export class OptionsFactory {
     }
 
     private mapCustomOptions(): void {
-        if (!this.filterOptions) { return; }
+        if (!this.filterOptions) {
+            return;
+        }
 
-        this.filterOptions.forEach(filterOption => {
-            if (typeof filterOption === 'string') { return; }
+        this.filterOptions.forEach((filterOption) => {
+            if (typeof filterOption === 'string') {
+                return;
+            }
 
             const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
             const propertyCheck = (keys: [keyof IFilterOptionDef]) => {
-                if (!keys.some(key => filterOption[key] != null)) {
-                    console.warn(`AG Grid: ignoring FilterOptionDef as it doesn't contain one of '${keys}'`);
+                if (!keys.some((key) => filterOption[key] != null)) {
+                    _warnOnce(`ignoring FilterOptionDef as it doesn't contain one of '${keys}'`);
                     return false;
                 }
 
@@ -35,7 +40,7 @@ export class OptionsFactory {
             };
 
             if (!requiredProperties.every(propertyCheck)) {
-                this.filterOptions = this.filterOptions.filter(v => v === filterOption) || [];
+                this.filterOptions = this.filterOptions.filter((v) => v === filterOption) || [];
                 return;
             }
 
@@ -54,10 +59,10 @@ export class OptionsFactory {
             } else if (firstFilterOption.displayKey) {
                 this.defaultOption = firstFilterOption.displayKey;
             } else {
-                console.warn(`AG Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'`);
+                _warnOnce(`invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'`);
             }
         } else {
-            console.warn('AG Grid: no filter options for filter');
+            _warnOnce('no filter options for filter');
         }
     }
 

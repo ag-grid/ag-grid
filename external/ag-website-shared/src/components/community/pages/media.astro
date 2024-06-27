@@ -1,0 +1,28 @@
+---
+import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
+import Blogs from '@ag-website-shared/components/community/components/news-updates/Blogs';
+import Podcasts from '@ag-website-shared/components/community/components/news-updates/Podcasts';
+import Videos from '@ag-website-shared/components/community/components/news-updates/Videos';
+
+import blogs from '@ag-website-shared/content/community/news-updates/blogs.json';
+import podcasts from '@ag-website-shared/content/community/news-updates/podcasts.json';
+import videos from '@ag-website-shared/content/community/news-updates/videos.json';
+---
+
+<CommunityLayout
+    title="AG Grid: Media"
+    description="Browse our appearances in community podcasts, blogs, and events to get the latest news & updates directly from our team."
+    pageTitle="Community Podcasts and Publications featuring AG Grid"
+>
+    <section>
+        <Videos client:load videos={videos} />
+    </section>
+    <section>
+        <h2>Podcasts</h2>
+        <Podcasts client:load podcasts={podcasts} />
+    </section>
+    <section>
+        <h2>Blogs</h2>
+        <Blogs client:visible blogs={blogs} />
+    </section>
+</CommunityLayout>

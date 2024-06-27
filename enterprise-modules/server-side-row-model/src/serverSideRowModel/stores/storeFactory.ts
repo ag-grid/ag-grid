@@ -1,24 +1,30 @@
-import {
-    _,
-    Autowired,
-    Bean,
+import type {
+    BeanCollection,
+    ColumnModel,
+    FuncColsService,
+    GetServerSideGroupLevelParamsParams,
     IServerSideStore,
+    NamedBean,
     RowNode,
     ServerSideGroupLevelParams,
-    GetServerSideGroupLevelParamsParams,
-    ColumnModel,
     WithoutGridCommon,
-    GridOptionsService
-} from "@ag-grid-community/core";
-import { SSRMParams } from "../serverSideRowModel";
-import { FullStore } from "./fullStore";
-import { LazyStore } from "./lazy/lazyStore";
+} from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
-@Bean('ssrmStoreFactory')
-export class StoreFactory {
+import type { SSRMParams } from '../serverSideRowModel';
+import { FullStore } from './fullStore';
+import { LazyStore } from './lazy/lazyStore';
 
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+export class StoreFactory extends BeanStub implements NamedBean {
+    beanName = 'ssrmStoreFactory' as const;
+
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+    }
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
@@ -29,7 +35,6 @@ export class StoreFactory {
     }
 
     private getStoreParams(ssrmParams: SSRMParams, parentNode: RowNode): ServerSideGroupLevelParams {
-
         const userStoreParams = this.getLevelSpecificParams(parentNode);
 
         // if user provided overrideParams, we take infiniteScroll from there if it exists
@@ -40,20 +45,25 @@ export class StoreFactory {
         const storeParams: ServerSideGroupLevelParams = {
             suppressInfiniteScroll: !infiniteScroll,
             cacheBlockSize,
-            maxBlocksInCache
+            maxBlocksInCache,
         };
 
         return storeParams;
     }
 
-    private getMaxBlocksInCache(infiniteScroll: boolean, ssrmParams: SSRMParams, userStoreParams?: ServerSideGroupLevelParams)
-        : number | undefined {
+    private getMaxBlocksInCache(
+        infiniteScroll: boolean,
+        ssrmParams: SSRMParams,
+        userStoreParams?: ServerSideGroupLevelParams
+    ): number | undefined {
+        if (!infiniteScroll) {
+            return undefined;
+        }
 
-        if (!infiniteScroll) { return undefined; }
-
-        const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
-            ? userStoreParams.maxBlocksInCache
-            : this.gridOptionsService.get('maxBlocksInCache');
+        const maxBlocksInCache =
+            userStoreParams && userStoreParams.maxBlocksInCache != null
+                ? userStoreParams.maxBlocksInCache
+                : this.gos.get('maxBlocksInCache');
 
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 
@@ -62,16 +72,18 @@ export class StoreFactory {
         }
 
         if (ssrmParams.dynamicRowHeight) {
-            const message = 'Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
+            const message =
+                'Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _.warnOnce(message);
+            _warnOnce(message);
             return undefined;
         }
 
         if (this.columnModel.isAutoRowHeightActive()) {
-            const message = 'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
+            const message =
+                'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _.warnOnce(message);
+            _warnOnce(message);
             return undefined;
         }
 
@@ -79,11 +91,14 @@ export class StoreFactory {
     }
 
     private getBlockSize(infiniteScroll: boolean, userStoreParams?: ServerSideGroupLevelParams): number | undefined {
-        if (!infiniteScroll) { return undefined; }
+        if (!infiniteScroll) {
+            return undefined;
+        }
 
-        const blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
-            ? userStoreParams.cacheBlockSize
-            : this.gridOptionsService.get('cacheBlockSize');
+        const blockSize =
+            userStoreParams && userStoreParams.cacheBlockSize != null
+                ? userStoreParams.cacheBlockSize
+                : this.gos.get('cacheBlockSize');
 
         if (blockSize != null && blockSize > 0) {
             return blockSize;
@@ -93,31 +108,33 @@ export class StoreFactory {
     }
 
     private getLevelSpecificParams(parentNode: RowNode): ServerSideGroupLevelParams | undefined {
-
-        const callback = this.gridOptionsService.getCallback('getServerSideGroupLevelParams');
-        if (!callback) { return undefined; }
+        const callback = this.gos.getCallback('getServerSideGroupLevelParams');
+        if (!callback) {
+            return undefined;
+        }
 
         const params: WithoutGridCommon<GetServerSideGroupLevelParamsParams> = {
             level: parentNode.level + 1,
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
-            rowGroupColumns: this.columnModel.getRowGroupColumns(),
-            pivotColumns: this.columnModel.getPivotColumns(),
-            pivotMode: this.columnModel.isPivotMode()
+            rowGroupColumns: this.funcColsService.getRowGroupColumns(),
+            pivotColumns: this.funcColsService.getPivotColumns(),
+            pivotMode: this.columnModel.isPivotMode(),
         };
 
         const res = callback(params);
-        
+
         return res;
     }
 
     private isInfiniteScroll(storeParams?: ServerSideGroupLevelParams): boolean {
-        const res = (storeParams && storeParams.suppressInfiniteScroll != null)
-            ? storeParams.suppressInfiniteScroll
-            : this.isSuppressServerSideInfiniteScroll();
+        const res =
+            storeParams && storeParams.suppressInfiniteScroll != null
+                ? storeParams.suppressInfiniteScroll
+                : this.isSuppressServerSideInfiniteScroll();
         return !res;
     }
 
     private isSuppressServerSideInfiniteScroll(): boolean {
-        return this.gridOptionsService.get('suppressServerSideInfiniteScroll');
+        return this.gos.get('suppressServerSideInfiniteScroll');
     }
 }

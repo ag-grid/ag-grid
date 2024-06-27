@@ -18,10 +18,10 @@ The example below shows two custom filters. The first is on the `Athlete` column
 
 ## Implementing a Filter Component
 
-{% includeMarkdoc file="component-filter/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="component-filter/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="component-filter/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="component-filter/_component-interface-vue.mdoc" /%}
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
 
 ## Custom Filter Parameters
 
@@ -71,6 +71,8 @@ The following props are passed to the custom filter components (`CustomFilterPro
 ### Filter Callbacks
 
 The following callbacks can be passed to the `useGridFilter` hook (`CustomFilterCallbacks` interface). The hook must be used for filters to work. The `doesFilterPass` callback is mandatory, but all others are optional.
+
+Note that `doesFilterPass` is only called with the [Client-Side Row Model](./row-models/). If being used exclusively with other row models, it can just return `true` as the filtering logic is performed on the server.
 {% /if %}
 
 {% if isFramework("react") %}
@@ -94,7 +96,7 @@ There are two ways you can get fix this problem:
 
 * Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
   This is the best solution, but you can only do this if you are writing the component yourself.
-* Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#example-custom-date-component)
+* Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#custom-selection-component)
 
 ## Accessing the Component Instance
 

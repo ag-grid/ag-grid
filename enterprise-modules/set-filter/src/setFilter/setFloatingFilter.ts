@@ -1,52 +1,55 @@
-import {
-    Autowired,
-    Component,
-    IFloatingFilter,
-    RefSelector,
-    IFloatingFilterParams,
+import type {
+    AgColumn,
     AgInputTextField,
-    ColumnModel,
+    BeanCollection,
+    ColumnNameService,
+    IFloatingFilter,
+    IFloatingFilterParams,
     SetFilterModel,
 } from '@ag-grid-community/core';
+import { AgInputTextFieldSelector, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import { SetFilter } from './setFilter';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
-import { SetValueModel } from './setValueModel';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
-    @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnNameService = beans.columnNameService;
+    }
 
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;
     private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
-        super(/* html */`
+        super(
+            /* html */ `
             <div class="ag-floating-filter-input ag-set-floating-filter-input" role="presentation">
-                <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
-            </div>`
+                <ag-input-text-field data-ref="eFloatingFilterText"></ag-input-text-field>
+            </div>`,
+            [AgInputTextFieldSelector]
         );
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 
     public init(params: IFloatingFilterParams): void {
         this.params = params;
 
-        this.eFloatingFilterText
-            .setDisabled(true)
-            .addGuiEventListener('click', () => this.params.showParentFilter());
+        this.eFloatingFilterText.setDisabled(true).addGuiEventListener('click', () => this.params.showParentFilter());
 
         this.setParams(params);
     }
 
     private setParams(params: IFloatingFilterParams): void {
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnNameService.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
         const translate = this.localeService.getLocaleTextFunc();
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
@@ -79,15 +82,16 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         this.parentSetFilterInstance((setFilter) => {
             const setValueModel = setFilter.getValueModel();
 
-            if (!setValueModel) { return; }
+            if (!setValueModel) {
+                return;
+            }
 
             // unlike other filters, what we show in the floating filter can be different, even
             // if another filter changes. this is due to how set filter restricts its values based
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            this.addManagedListener(
-                setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, () => this.updateFloatingFilterText());
+            this.addManagedListeners(setValueModel, { availableValuesChanged: () => this.updateFloatingFilterText() });
         });
 
         this.availableValuesListenerAdded = true;

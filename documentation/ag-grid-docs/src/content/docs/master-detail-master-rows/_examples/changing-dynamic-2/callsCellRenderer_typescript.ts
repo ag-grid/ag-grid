@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class CallsCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -6,17 +6,18 @@ export class CallsCellRenderer implements ICellRendererComp {
 
     init(params: ICellRendererParams) {
         var eTemp = document.createElement('div');
-        eTemp.innerHTML = '<span class="calls-cell-renderer">' +
-            '<button ref="btAdd">+</button>' +
-            '<button ref="btRemove">-</button>' +
-            '<span ref="eValue"></span>' +
+        eTemp.innerHTML =
+            '<span class="calls-cell-renderer">' +
+            '<button data-ref="btAdd">+</button>' +
+            '<button data-ref="btRemove">-</button>' +
+            '<span data-ref="eValue"></span>' +
             '</span>';
 
         this.eGui = eTemp.firstChild as HTMLElement;
 
-        this.eValue = this.eGui.querySelector('[ref="eValue"]');
-        var btAdd = this.eGui.querySelector('[ref="btAdd"]')!;
-        var btRemove = this.eGui.querySelector('[ref="btRemove"]')!;
+        this.eValue = this.eGui.querySelector('[data-ref="eValue"]');
+        var btAdd = this.eGui.querySelector('[data-ref="btAdd"]')!;
+        var btRemove = this.eGui.querySelector('[data-ref="btRemove"]')!;
 
         btAdd.addEventListener('click', this.onBtAdd.bind(this, params));
         btRemove.addEventListener('click', this.onBtRemove.bind(this, params));
@@ -25,25 +26,28 @@ export class CallsCellRenderer implements ICellRendererComp {
     }
 
     onBtRemove(params: ICellRendererParams) {
-
         var oldData = params.node.data;
 
         var oldCallRecords = oldData.callRecords;
 
-        if (oldCallRecords.length == 0) { return; }
+        if (oldCallRecords.length == 0) {
+            return;
+        }
 
         var newCallRecords = oldCallRecords.slice(0); // make a copy
         newCallRecords.pop(); // remove one item
 
         var minutes = 0;
-        newCallRecords.forEach(function (r: any) { minutes += r.duration });
+        newCallRecords.forEach(function (r: any) {
+            minutes += r.duration;
+        });
 
         var newData = {
             name: oldData.name,
             account: oldData.account,
             calls: newCallRecords.length,
             minutes: minutes,
-            callRecords: newCallRecords
+            callRecords: newCallRecords,
         };
 
         params.api.applyTransaction({ update: [newData] });
@@ -56,23 +60,25 @@ export class CallsCellRenderer implements ICellRendererComp {
 
         var newCallRecords = oldCallRecords.slice(0); // make a copy
         newCallRecords.push({
-            name: ["Bob", "Paul", "David", "John"][Math.floor(Math.random() * 4)],
+            name: ['Bob', 'Paul', 'David', 'John'][Math.floor(Math.random() * 4)],
             callId: Math.floor(Math.random() * 1000),
             duration: Math.floor(Math.random() * 100) + 1,
-            switchCode: "SW5",
-            direction: "Out",
-            number: "(02) " + Math.floor(Math.random() * 1000000)
+            switchCode: 'SW5',
+            direction: 'Out',
+            number: '(02) ' + Math.floor(Math.random() * 1000000),
         }); // add one item
 
         var minutes = 0;
-        newCallRecords.forEach(function (r: any) { minutes += r.duration });
+        newCallRecords.forEach(function (r: any) {
+            minutes += r.duration;
+        });
 
         var newData = {
             name: oldData.name,
             account: oldData.account,
             calls: newCallRecords.length,
             minutes: minutes,
-            callRecords: newCallRecords
+            callRecords: newCallRecords,
         };
 
         params.api.applyTransaction({ update: [newData] });
@@ -88,5 +94,4 @@ export class CallsCellRenderer implements ICellRendererComp {
     getGui() {
         return this.eGui;
     }
-
 }

@@ -1,6 +1,6 @@
 {
   "sortingOrder": {
-    "typeName": "(SortDirection)[]",
+    "typeName": "SortDirection[]",
     "typesToInclude": [
       "SortDirection"
     ]
@@ -74,7 +74,7 @@
     "typesToInclude": []
   },
   "icons": {
-    "typeName": "{\n        [key: string]: Function | string;\n    }",
+    "typeName": "{\n        [key: string]: ((...args: any[]) => any) | string;\n    }",
     "typesToInclude": []
   },
   "datasource": {
@@ -325,6 +325,10 @@
   },
   "tooltipShowMode": {
     "typeName": "'standard' | 'whenTruncated'",
+    "typesToInclude": []
+  },
+  "grandTotalRow": {
+    "typeName": "'top' | 'bottom'",
     "typesToInclude": []
   },
   "rowHeight": {
@@ -604,29 +608,35 @@
       "SendToClipboardParams"
     ]
   },
+  "focusGridInnerElement": {
+    "typeName": "(params: FocusGridInnerElementParams<TData>) => boolean",
+    "typesToInclude": [
+      "FocusGridInnerElementParams"
+    ]
+  },
   "navigateToNextHeader": {
-    "typeName": "(params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null)",
+    "typeName": "(params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null",
     "typesToInclude": [
       "NavigateToNextHeaderParams",
       "HeaderPosition"
     ]
   },
   "tabToNextHeader": {
-    "typeName": "(params: TabToNextHeaderParams<TData>) => (HeaderPosition | null)",
+    "typeName": "(params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean | null",
     "typesToInclude": [
       "TabToNextHeaderParams",
       "HeaderPosition"
     ]
   },
   "navigateToNextCell": {
-    "typeName": "(params: NavigateToNextCellParams<TData>) => (CellPosition | null)",
+    "typeName": "(params: NavigateToNextCellParams<TData>) => CellPosition | null",
     "typesToInclude": [
       "NavigateToNextCellParams",
       "CellPosition"
     ]
   },
   "tabToNextCell": {
-    "typeName": "(params: TabToNextCellParams<TData>) => (CellPosition | null)",
+    "typeName": "(params: TabToNextCellParams<TData>) => CellPosition | boolean | null",
     "typesToInclude": [
       "TabToNextCellParams",
       "CellPosition"
@@ -795,6 +805,12 @@
       "GetChartMenuItems"
     ]
   },
+  "groupTotalRow": {
+    "typeName": "'top' | 'bottom' | UseGroupTotalRow<TData>",
+    "typesToInclude": [
+      "UseGroupTotalRow"
+    ]
+  },
   "suppressMakeColumnVisibleAfterUnGroup": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -884,10 +900,6 @@
     "typesToInclude": []
   },
   "skipHeaderOnAutoSize": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "suppressParentsInRowNodes": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -987,15 +999,7 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "suppressAggAtRootLevel": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "suppressFocusAfterRefresh": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "functionsPassive": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1095,10 +1099,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "excludeHiddenColumnsFromQuickFilter": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "ensureDomOrder": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1143,14 +1143,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "enterMovesDown": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "enterMovesDownAfterEdit": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "enterNavigatesVerticallyAfterEdit": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1184,14 +1176,6 @@
     "typesToInclude": []
   },
   "enableCharts": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "enableChartToolPanelsButton": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "suppressChartToolPanelsButton": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1256,10 +1240,6 @@
     "typesToInclude": []
   },
   "detailRowAutoHeight": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "serverSideFilterAllLevels": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1379,8 +1359,24 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "legacyChartsMenu": {
+  "applyQuickFilterBeforePivotOrAgg": {
     "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "suppressServerSideFullWidthLoadingRow": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "suppressAdvancedFilterEval": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "loading": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "suppressStickyTotalRow": {
+    "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []
   }
 }

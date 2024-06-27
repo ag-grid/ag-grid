@@ -1,32 +1,33 @@
-import {
-    _,
-    Autowired,
-    Bean,
-    BeanStub,
+import type {
+    BeanCollection,
     ColumnModel,
-    IRowNodeStage,
-    RowNode,
-    StageExecuteParams,
-    Beans,
-    WithoutGridCommon,
     GetGroupIncludeFooterParams,
-    GridOptions
-} from "@ag-grid-community/core";
+    IRowNodeStage,
+    NamedBean,
+    StageExecuteParams,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { BeanStub, RowNode, _exists, _missingOrEmpty } from '@ag-grid-community/core';
 
 interface FlattenDetails {
     hideOpenParents: boolean;
     groupRemoveSingleChildren: boolean;
     groupRemoveLowestSingleChildren: boolean;
-    groupIncludeTotalFooter: boolean;
     isGroupMultiAutoColumn: boolean;
-    getGroupIncludeFooter: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => boolean;
+    grandTotalRow: 'top' | 'bottom' | undefined;
+    groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
 }
 
-@Bean('flattenStage')
-export class FlattenStage extends BeanStub implements IRowNodeStage {
+export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
+    beanName = 'flattenStage' as const;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('beans') private beans: Beans;
+    private beans: BeanCollection;
+    private columnModel: ColumnModel;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+        this.columnModel = beans.columnModel;
+    }
 
     public execute(params: StageExecuteParams): RowNode[] {
         const rootNode = params.rowNode;
@@ -47,14 +48,16 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         // we do not want the footer total if the gris is empty
         const atLeastOneRowPresent = result.length > 0;
 
-        const includeGroupTotalFooter = !showRootNode
+        const includeGrandTotalRow =
+            !showRootNode &&
             // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
-            && atLeastOneRowPresent
-            && details.groupIncludeTotalFooter;
+            atLeastOneRowPresent &&
+            details.grandTotalRow;
 
-        if (includeGroupTotalFooter) {
+        if (includeGrandTotalRow) {
             rootNode.createFooter();
-            this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0);
+            const addToTop = details.grandTotalRow === 'top';
+            this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
         }
 
         return result;
@@ -62,16 +65,17 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
     private getFlattenDetails(): FlattenDetails {
         // these two are mutually exclusive, so if first set, we don't set the second
-        const groupRemoveSingleChildren = this.gridOptionsService.get('groupRemoveSingleChildren');
-        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsService.get('groupRemoveLowestSingleChildren');
+        const groupRemoveSingleChildren = this.gos.get('groupRemoveSingleChildren');
+        const groupRemoveLowestSingleChildren =
+            !groupRemoveSingleChildren && this.gos.get('groupRemoveLowestSingleChildren');
 
         return {
             groupRemoveLowestSingleChildren,
             groupRemoveSingleChildren,
-            isGroupMultiAutoColumn: this.gridOptionsService.isGroupMultiAutoColumn(),
-            hideOpenParents : this.gridOptionsService.get('groupHideOpenParents'),
-            groupIncludeTotalFooter : this.gridOptionsService.get('groupIncludeTotalFooter'),
-            getGroupIncludeFooter : this.gridOptionsService.getGroupIncludeFooter(),
+            isGroupMultiAutoColumn: this.gos.isGroupMultiAutoColumn(),
+            hideOpenParents: this.gos.get('groupHideOpenParents'),
+            grandTotalRow: this.gos.getGrandTotalRow(),
+            groupTotalRow: this.gos.getGroupTotalRowCallback(),
         };
     }
 
@@ -82,7 +86,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         skipLeafNodes: boolean,
         uiLevel: number
     ) {
-        if (_.missingOrEmpty(rowsToFlatten)) {
+        if (_missingOrEmpty(rowsToFlatten)) {
             return;
         }
 
@@ -107,17 +111,23 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
             const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
 
-            const isHiddenOpenParent = details.hideOpenParents && rowNode.expanded && !rowNode.master && !neverAllowToExpand;
+            const isHiddenOpenParent =
+                details.hideOpenParents && rowNode.expanded && !rowNode.master && !neverAllowToExpand;
 
-            const thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
-                !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
+            const thisRowShouldBeRendered =
+                !isSkippedLeafNode &&
+                !isHiddenOpenParent &&
+                !isRemovedSingleChildrenGroup &&
+                !isRemovedLowestSingleChildrenGroup;
 
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(details, rowNode, result, uiLevel);
             }
 
             // if we are pivoting, we never map below the leaf group
-            if (skipLeafNodes && rowNode.leafGroup) { continue; }
+            if (skipLeafNodes && rowNode.leafGroup) {
+                continue;
+            }
 
             if (isParent) {
                 const excludedParent = isRemovedSingleChildrenGroup || isRemovedLowestSingleChildrenGroup;
@@ -125,8 +135,18 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
                 // we traverse the group if it is expended, however we always traverse if the parent node
                 // was removed (as the group will never be opened if it is not displayed, we show the children instead)
                 if (rowNode.expanded || excludedParent) {
+                    const doesRowShowFooter = details.groupTotalRow({ node: rowNode });
+                    if (!doesRowShowFooter) {
+                        rowNode.destroyFooter();
+                    }
+
                     // if the parent was excluded, then ui level is that of the parent
                     const uiLevelForChildren = excludedParent ? uiLevel : uiLevel + 1;
+                    if (doesRowShowFooter === 'top') {
+                        rowNode.createFooter();
+                        this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
+                    }
+
                     this.recursivelyAddToRowsToDisplay(
                         details,
                         rowNode.childrenAfterSort,
@@ -135,15 +155,9 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
                         uiLevelForChildren
                     );
 
-                    // put a footer in if user is looking for it
-                    const doesRowShowFooter = details.getGroupIncludeFooter({ node: rowNode });
-                    if (doesRowShowFooter) {
-                        // ensure node is available.
+                    if (doesRowShowFooter === 'bottom') {
                         rowNode.createFooter();
                         this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
-                    } else {
-                        // remove node if it's unnecessary.
-                        rowNode.destroyFooter();
                     }
                 }
             } else if (rowNode.master && rowNode.expanded) {
@@ -158,14 +172,21 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         details: FlattenDetails,
         rowNode: RowNode,
         result: RowNode[],
-        uiLevel: number
+        uiLevel: number,
+        addToTop?: boolean
     ): void {
-        result.push(rowNode);
+        if (addToTop) {
+            result.unshift(rowNode);
+        } else {
+            result.push(rowNode);
+        }
         rowNode.setUiLevel(details.isGroupMultiAutoColumn ? 0 : uiLevel);
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
-        if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
+        if (_exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
+        }
 
         const detailNode = new RowNode(this.beans);
 
@@ -173,7 +194,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         detailNode.selectable = false;
         detailNode.parent = masterNode;
 
-        if (_.exists(masterNode.id)) {
+        if (_exists(masterNode.id)) {
             detailNode.id = 'detail_' + masterNode.id;
         }
 

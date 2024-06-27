@@ -1,0 +1,107 @@
+.ag-filter-toolpanel {
+    flex: 1 1 0px;
+    min-width: 0;
+}
+
+.ag-filter-toolpanel-header {
+    position: relative;
+}
+
+.ag-filter-toolpanel-header,
+.ag-filter-toolpanel-search {
+    display: flex;
+    align-items: center;
+
+    > * {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.ag-filter-toolpanel-header {
+    height: calc(var(--ag-grid-size) * 6);
+
+    &:focus-visible {
+        border-radius: var(--ag-border-radius);
+        box-shadow: inset var(--ag-focus-shadow);
+    }
+}
+
+.ag-filter-toolpanel-header,
+.ag-filter-toolpanel-search {
+    padding: 0 var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-group:not(.ag-has-filter) > .ag-group-title-bar .ag-filter-toolpanel-group-instance-header-icon {
+    display: none;
+}
+
+.ag-filter-toolpanel-group-level-0-header {
+    height: calc(var(--ag-grid-size) * 8);
+}
+
+.ag-filter-toolpanel-group-item {
+    margin-top: calc(var(--ag-grid-size) * 0.5);
+    margin-bottom: calc(var(--ag-grid-size) * 0.5);
+}
+
+.ag-filter-toolpanel-search {
+    margin-top: var(--ag-widget-container-vertical-padding);
+    margin-bottom: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-search-input {
+    flex-grow: 1;
+    height: calc(var(--ag-grid-size) * 4);
+}
+
+.ag-filter-toolpanel-group-title-bar-icon {
+    margin-right: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-expand {
+    margin-right: var(--ag-grid-size);
+    cursor: pointer;
+}
+
+.ag-filter-toolpanel-group-title-bar,
+.ag-filter-toolpanel-instance-header {
+    padding-left: calc(var(--ag-grid-size) + var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level));
+}
+
+.ag-filter-toolpanel-instance-body {
+    margin-left: var(--ag-filter-tool-panel-group-indent);
+}
+
+.ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
+    padding-left: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-group-instance-header-icon,
+.ag-filter-toolpanel-instance-header-icon {
+    margin-left: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-instance-filter {
+    background-color: var(--ag-chrome-background-color);
+}
+
+.ag-filter-toolpanel-group-level-0 {
+    border-top: none;
+}
+
+.ag-filter-toolpanel-header {
+    height: initial;
+    padding-top: var(--ag-grid-size);
+    padding-bottom: var(--ag-grid-size);
+}
+
+.ag-filter-toolpanel-group-item {
+    margin: 0;
+}
+
+.ag-filter-toolpanel-header,
+.ag-filter-toolpanel-search {
+    font-weight: 500;
+    color: var(--ag-header-text-color);
+}

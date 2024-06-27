@@ -1,24 +1,34 @@
-import {
-    _,
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ColumnModel,
-    GridApi,
+    FilterManager,
+    IClientSideRowModel,
+    NamedBean,
     RowNode,
-    ValueService
-} from "@ag-grid-community/core";
+    ValueService,
+} from '@ag-grid-community/core';
+import { BeanStub, _includes, _warnOnce } from '@ag-grid-community/core';
 
-@Bean("chartCrossFilterService")
-export class ChartCrossFilterService extends BeanStub {
+export class ChartCrossFilterService extends BeanStub implements NamedBean {
+    beanName = 'chartCrossFilterService' as const;
 
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('valueService') private readonly valueService: ValueService;
+    private columnModel: ColumnModel;
+    private valueService: ValueService;
+    private filterManager?: FilterManager;
+    private clientSideRowModel?: IClientSideRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.valueService = beans.valueService;
+        this.filterManager = beans.filterManager;
+        if (beans.rowModel.getType() === 'clientSide') {
+            this.clientSideRowModel = beans.rowModel as IClientSideRowModel;
+        }
+    }
 
     public filter(event: any, reset: boolean = false): void {
-        const filterModel = this.gridApi.getFilterModel();
+        const filterModel = this.filterManager?.getFilterModel() ?? {};
 
         // filters should be reset when user clicks on canvas background
         if (reset) {
@@ -26,13 +36,17 @@ export class ChartCrossFilterService extends BeanStub {
             return;
         }
 
-        let colId = ChartCrossFilterService.extractFilterColId(event);
+        const colId = ChartCrossFilterService.extractFilterColId(event);
         if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event, colId);
         } else {
-            console.warn("AG Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
-                "to be defined on the column with id: '" + colId + "'");
+            _warnOnce(
+                "cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
+                    "to be defined on the column with id: '" +
+                    colId +
+                    "'"
+            );
         }
     }
 
@@ -40,23 +54,23 @@ export class ChartCrossFilterService extends BeanStub {
         const filtersExist = Object.keys(filterModel).length > 0;
         if (filtersExist) {
             // only reset filters / charts when necessary to prevent undesirable flickering effect
-            this.gridApi.setFilterModel(null);
-            this.gridApi.onFilterChanged();
+            this.filterManager?.setFilterModel(null);
+            this.filterManager?.onFilterChanged({ source: 'api' });
         }
     }
 
     private updateFilters(filterModel: any, event: any, colId: string) {
-        let dataKey = ChartCrossFilterService.extractFilterColId(event);
-        let rawValue = event.datum[dataKey];
+        const dataKey = ChartCrossFilterService.extractFilterColId(event);
+        const rawValue = event.datum[dataKey];
         if (rawValue === undefined) {
             return;
         }
 
-        let selectedValue = rawValue.toString();
+        const selectedValue = rawValue.toString();
 
         if (event.event.metaKey || event.event.ctrlKey) {
             const existingGridValues = this.getCurrentGridValuesForCategory(colId);
-            const valueAlreadyExists = _.includes(existingGridValues, selectedValue);
+            const valueAlreadyExists = _includes(existingGridValues, selectedValue);
 
             let updatedValues;
             if (valueAlreadyExists) {
@@ -69,24 +83,24 @@ export class ChartCrossFilterService extends BeanStub {
             filterModel[colId] = this.getUpdatedFilterModel(colId, updatedValues);
         } else {
             const updatedValues = [selectedValue];
-            filterModel = {[colId]: this.getUpdatedFilterModel(colId, updatedValues)};
+            filterModel = { [colId]: this.getUpdatedFilterModel(colId, updatedValues) };
         }
 
-        this.gridApi.setFilterModel(filterModel);
+        this.filterManager?.setFilterModel(filterModel);
     }
 
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
-        let columnFilterType = this.getColumnFilterType(colId);
+        const columnFilterType = this.getColumnFilterType(colId);
         if (columnFilterType === 'agMultiColumnFilter') {
-            return {filterType: 'multi', filterModels: [null, {filterType: 'set', values: updatedValues}]};
+            return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
         }
-        return {filterType: 'set', values: updatedValues};
+        return { filterType: 'set', values: updatedValues };
     }
 
     private getCurrentGridValuesForCategory(colId: string) {
-        let filteredValues: any[] = [];
+        const filteredValues: any[] = [];
         const column = this.getColumnById(colId);
-        this.gridApi.forEachNodeAfterFilter((rowNode: RowNode) => {
+        this.clientSideRowModel?.forEachNodeAfterFilter((rowNode: RowNode) => {
             if (column && !rowNode.group) {
                 const value = this.valueService.getValue(column, rowNode) + '';
                 if (!filteredValues.includes(value)) {
@@ -106,16 +120,16 @@ export class ChartCrossFilterService extends BeanStub {
             colId = colId.replace('-filtered-out', '');
         }
 
-        let filterType = this.getColumnFilterType(colId);
+        const filterType = this.getColumnFilterType(colId);
         if (typeof filterType === 'boolean') {
             return filterType;
         }
 
-        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
+        return _includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
     }
 
     private getColumnFilterType(colId: any) {
-        let gridColumn = this.getColumnById(colId);
+        const gridColumn = this.getColumnById(colId);
         if (gridColumn) {
             const colDef = gridColumn.getColDef();
             return colDef.filter;
@@ -123,6 +137,6 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getColumnById(colId: string) {
-        return this.columnModel.getGridColumn(colId) as Column;
+        return this.columnModel.getCol(colId) as AgColumn;
     }
 }

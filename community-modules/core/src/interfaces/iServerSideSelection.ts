@@ -1,4 +1,4 @@
-import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./selectionState";
+import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
 export interface IServerSideSelectionState extends ServerSideRowSelectionState {}
 

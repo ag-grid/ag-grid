@@ -6,13 +6,13 @@ enterprise: true
 This section covers the Single Group Column display type, where a single group column is automatically added by the grid
 containing all row groups under a single row group hierarchy.
 
-{% imageCaption imagePath="resources/single-group-column.png" alt="Single Group Column" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/single-group-column.png" alt="Single Group Column" centered=true constrained=true maxWidth="80%" /%}
 
 ## Enabling Single Group Column
 
 By default, a Single Group Column is used, but it can be explicitly set using `groupDisplayType = 'singleColumn'` as shown below:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
@@ -43,7 +43,7 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 The Single Group Column display type adds a single Auto Group Column to the grid. To change the default configuration
 of this group column, use the `autoGroupColumnDef` grid option as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
         headerName: 'My Group',

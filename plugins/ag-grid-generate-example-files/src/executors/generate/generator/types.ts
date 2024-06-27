@@ -1,4 +1,4 @@
-export type TransformTsFileExt = undefined | '.js' | '.tsx';
+export type TransformTsFileExt = undefined | '.js' | '.tsx' | '.jsx';
 
 export interface ExampleSettings {
     enterprise?: boolean;
@@ -12,6 +12,10 @@ export interface ExampleConfig {
     noStyle?: boolean;
     licenseKey?: boolean;
     supportedFrameworks?: InternalFramework[];
+    /**
+     * Example uses `#myGrid`, which needs to be generated in framework examples
+     */
+    myGridReference?: boolean;
 }
 
 export type ImportType = 'packages' | 'modules';
@@ -23,7 +27,7 @@ export interface BindingImport {
     imports: string[];
 }
 
-export interface InlineGridStyles{
+export interface InlineGridStyles {
     theme: string;
     width: string;
     height: string;
@@ -32,15 +36,14 @@ export interface EventHandler {
     name: string;
     handlerName: string;
     handler: string;
-
 }
-export interface ExternalEventHandlers{
+export interface ExternalEventHandlers {
     name: string;
     params: string[];
     body: string;
 }
 
-export interface DataCallback{
+export interface DataCallback {
     url: string;
     callback: string;
 }
@@ -97,14 +100,7 @@ export interface GeneratedContents extends ExampleConfig {
     packageJson: Record<string, any>;
 }
 
-export type InternalFramework =
-    | 'vanilla'
-    | 'typescript'
-    | 'reactFunctional'
-    | 'reactFunctionalTs'
-    | 'angular'
-    | 'vue'
-    | 'vue3';
+export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
 export const FRAMEWORKS: InternalFramework[] = [
     'vanilla',
@@ -112,7 +108,6 @@ export const FRAMEWORKS: InternalFramework[] = [
     'reactFunctional',
     'reactFunctionalTs',
     'angular',
-    'vue',
     'vue3',
 ];
 export const TYPESCRIPT_INTERNAL_FRAMEWORKS: InternalFramework[] = ['typescript', 'reactFunctionalTs', 'angular'];

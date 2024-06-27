@@ -20,13 +20,7 @@ The Side Bar is configured using the grid property `sideBar`. The property takes
 
 The default Side Bar contains the Columns and Filters Tool Panels. To use the default Side Bar, set the grid property `sideBar=true`. The Columns panel will be open by default.
 
-The default configuration doesn't allow customisation of the Tool Panels. More detailed configuration are explained below.
-
-In the following example note the following:
-
-* The grid property `sideBar` is set to `true`.
-* The Side Bar is displayed with Tool Panels Columns and Filters.
-* The Columns panel is displayed by default.
+The default configuration doesn't allow customisation of the Tool Panels.
 
 {% gridExampleRunner title="Boolean Configuration" name="boolean-configuration" /%}
 
@@ -53,7 +47,7 @@ The `toolPanels` property follows the `ToolPanelDef` interface:
 
 The following snippet shows configuring the Tool Panel using a `SideBarDef` object:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     sideBar: {
         toolPanels: [
@@ -94,14 +88,14 @@ The `boolean` and `string` configurations are shortcuts for more detailed config
 
 The following code snippets show an example of the `boolean` shortcut and the equivalent `SideBarDef` long form.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // shortcut
     sideBar: true,
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // equivalent detailed long form
     sideBar: {
@@ -128,14 +122,14 @@ const gridOptions = {
 
 The following code snippets show an example of the `string` shortcut and the equivalent `SideBarDef` long form.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // shortcut
     sideBar: 'filters',
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // equivalent detailed long form
     sideBar: {
@@ -155,7 +149,7 @@ const gridOptions = {
 
 You can also use shortcuts inside the `toolPanel.items` array for specifying the Columns and Filters items.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // shortcut
     sideBar: {
@@ -164,7 +158,7 @@ const gridOptions = {
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // equivalent detailed long form
     sideBar: {
@@ -190,7 +184,7 @@ const gridOptions = {
 
 ## Side Bar Customisation
 
-If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below shows changing the label and icon for the columns and filters tab.
+If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below changes the filter label and icon.
 
 {% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" /%}
 
@@ -198,7 +192,7 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 Parameters are passed to Tool Panels via the `toolPanelParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [Columns Tool Panel](./tool-panel-columns/).
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     sideBar: {
         toolPanels: [
@@ -218,7 +212,7 @@ const gridOptions = {
 }
 ```
 
-This example configures the Columns Tool Panel. See the [Columns Tool Panel](./tool-panel-columns/) documentation for the full list of possible parameters to this Tool Panel.
+See the [Columns Tool Panel](./tool-panel-columns/) documentation for the full list of possible parameters to this Tool Panel.
 
 ## Side Bar API
 

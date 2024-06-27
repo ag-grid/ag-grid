@@ -1,4 +1,4 @@
-import { RowNode } from "../entities/rowNode";
+import type { RowNode } from '../entities/rowNode';
 
 export interface RowBounds {
     rowTop: number;
@@ -9,7 +9,6 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export interface IRowModel {
-
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
 
@@ -39,7 +38,7 @@ export interface IRowModel {
 
     /** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then
      *  then no rows should be returned  */
-    getNodesInRangeForSelection(first: RowNode, last: RowNode | null): RowNode[];
+    getNodesInRangeForSelection(first: RowNode, last: RowNode): RowNode[];
 
     /** Iterate through each node. What this does depends on the model type. For clientSide, goes through
      * all nodes. For serverSide, goes through what's loaded in memory. */
@@ -56,7 +55,12 @@ export interface IRowModel {
     isLastRowIndexKnown(): boolean;
 
     /** Used by CSRM only - is makes sure there are now estimated row heights within the range. */
-    ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
+    ensureRowHeightsValid(
+        startPixel: number,
+        endPixel: number,
+        startLimitIndex: number,
+        endLimitIndex: number
+    ): boolean;
 
     /** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData
      * from gridOptions, the other row models will start calling their datasources. */

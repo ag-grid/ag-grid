@@ -1,18 +1,25 @@
-import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { IRowModel } from "../interfaces/iRowModel";
-import { ISelectionService } from "../interfaces/iSelectionService";
-import { SelectionService } from "../selectionService";
-import { ChangedPath } from "../utils/changedPath";
-import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-@Bean('selectableService')
-export class SelectableService extends BeanStub {
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    
-    @PostConstruct
-    private init() {
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import { SelectionService } from '../selection/selectionService';
+import { ChangedPath } from '../utils/changedPath';
+
+export class SelectableService extends BeanStub implements NamedBean {
+    beanName = 'selectableService' as const;
+
+    private rowModel: IRowModel;
+    private selectionService: ISelectionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
+    }
+
+    public postConstruct() {
         this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());
     }
 
@@ -24,23 +31,27 @@ export class SelectableService extends BeanStub {
     }
 
     private updateSelectable(skipLeafNodes = false) {
-        const isRowSelecting = !!this.gridOptionsService.get('rowSelection');
-        const isRowSelectable = this.gridOptionsService.get('isRowSelectable');
+        const isRowSelecting = !!this.gos.get('rowSelection');
+        const isRowSelectable = this.gos.get('isRowSelectable');
 
-        if (!isRowSelecting || !isRowSelectable) { return; }
+        if (!isRowSelecting || !isRowSelectable) {
+            return;
+        }
 
-        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        const isGroupSelectsChildren = this.gos.get('groupSelectsChildren');
 
         const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
 
         const nodesToDeselect: RowNode[] = [];
 
         const nodeCallback = (node: RowNode) => {
-            if (skipLeafNodes && !node.group) { return; }
+            if (skipLeafNodes && !node.group) {
+                return;
+            }
 
             // Only in the CSRM, we allow group node selection if a child has a selectable=true when using groupSelectsChildren
             if (isCsrmGroupSelectsChildren && node.group) {
-                const hasSelectableChild = node.childrenAfterGroup!.some(rowNode => rowNode.selectable === true);
+                const hasSelectableChild = node.childrenAfterGroup!.some((rowNode) => rowNode.selectable === true);
                 node.setRowSelectable(hasSelectableChild, true);
                 return;
             }
@@ -52,7 +63,7 @@ export class SelectableService extends BeanStub {
                 nodesToDeselect.push(node);
             }
         };
-        
+
         // Needs to be depth first in this case, so that parents can be updated based on child.
         if (isCsrmGroupSelectsChildren) {
             const csrm = this.rowModel as IClientSideRowModel;
@@ -64,7 +75,11 @@ export class SelectableService extends BeanStub {
         }
 
         if (nodesToDeselect.length) {
-            this.selectionService.setNodesSelected({ nodes: nodesToDeselect, newValue: false, source: 'selectableChanged' });
+            this.selectionService.setNodesSelected({
+                nodes: nodesToDeselect,
+                newValue: false,
+                source: 'selectableChanged',
+            });
         }
 
         // if csrm and group selects children, update the groups after deselecting leaf nodes.
@@ -72,5 +87,4 @@ export class SelectableService extends BeanStub {
             this.selectionService.updateGroupsFromChildrenSelections('selectableChanged');
         }
     }
-
 }

@@ -1,0 +1,1476 @@
+{
+    "favourites": [
+        {
+            "link": "https://docs.openbb.co/pro/widgets/tabular-data",
+            "repo": "https://github.com/OpenBB-finance/OpenBBTerminal",
+            "title": "Terminal Pro @ OpenBB",
+            "description": "A sleek graphical interface that is intuitive and fully customizable, making it easier for you to access and analyze financial information with ease.",
+            "open_source": true,
+            "stars": 25600,
+            "type": "Product",
+            "tags": ["Finance"],
+            "frameworks": ["React"],
+            "products": ["Grid", "Charts"],
+            "img": "open-bb-terminal-pro.webp",
+            "favourite": true
+        },
+        {
+            "repo": "https://github.com/windmill-labs/windmill",
+            "title": "Windmill",
+            "description": "Open-source developer platform to turn scripts into workflows and UIs. Fastest workflow engine (5x vs Airflow). Open-source alternative to Airplane and Retool.",
+            "link": "https://www.windmill.dev/docs/apps/app_configuration_settings/aggrid_table#aggird-table-input",
+            "type": "Product",
+            "open_source": true,
+            "stars": 8000,
+            "img": "windmill.webp",
+            "tags": ["Platform"],
+            "frameworks": ["Svelte"],
+            "products": ["Grid"]
+        },
+        {
+            "title": "Pinpoint",
+            "description": "Pinpoint is an APM (Application Performance Management) tool for large-scale distributed systems written in Java / PHP/PYTHON.",
+            "repo": "https://github.com/pinpoint-apm/pinpoint",
+            "open_source": true,
+            "stars": 13100,
+            "type": "Product",
+            "link": "https://pinpoint-apm.gitbook.io/pinpoint",
+            "img": "pinpoint.webp",
+            "frameworks": ["React", "Angular", "Vue"],
+            "products": ["Grid", "Charts"]
+        },
+        {
+            "link": "https://www.prisma.io/studio",
+            "repo": "https://github.com/prisma/studio",
+            "title": "Prisma Studio",
+            "description": "The easiest way to explore and manipulate your data in all of your Prisma projects.",
+            "open_source": true,
+            "stars": 1700,
+            "type": "Product",
+            "favourite": true,
+            "img": "prisma-studio.webp",
+            "tags": ["Database"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
+        },
+        {
+            "link": "https://trafficcontrol.apache.org/",
+            "repo": "https://github.com/apache/trafficcontrol",
+            "title": "Apache Traffic Control",
+            "description": "Apache Traffic Control is an Open Source implementation of a Content Delivery Network",
+            "open_source": true,
+            "stars": 1000,
+            "type": "Product",
+            "favourite": true,
+            "img": "apache-traffic-control.webp",
+            "tags": ["CDN"],
+            "frameworks": ["Angular"],
+            "products": ["Grid"]
+        },
+        {
+            "repo": "https://github.com/mlflow/mlflow/tree/master",
+            "title": "MLFlow",
+            "description": "MLflow is a platform to streamline machine learning development, including tracking experiments, packaging code into reproducible runs, and sharing and deploying models.",
+            "link": "https://mlflow.org",
+            "type": "Product",
+            "open_source": true,
+            "stars": 16700,
+            "img": "ml-flow.webp",
+            "favourite": true,
+            "tags": ["ML / AI"],
+            "frameworks": ["React"],
+            "products": ["Grid", "Charts"]
+        },
+        {
+            "repo": "https://github.com/jpmorganchase/salt-ds",
+            "title": "J.P.Morgan - Salt DS",
+            "description": "React UI components built with a focus on accessibility, customisation and ease-of-use",
+            "link": "https://www.saltdesignsystem.com/salt/components/ag-grid-theme/examples",
+            "type": "Integration",
+            "open_source": true,
+            "stars": 100,
+            "favourite": true,
+            "img": "salt-ds.webp",
+            "tags": ["Design System"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
+        },
+        {
+            "title": "Irida",
+            "description": "Canada’s Integrated Rapid Infectious Disease Analysis Platform for Genomic Epidemiology",
+            "repo": "https://github.com/phac-nml/irida",
+            "open_source": true,
+            "stars": 45,
+            "type": "Product",
+            "link": "https://phac-nml.github.io/irida-documentation/user/tutorials/web-upload/",
+            "favourite": true,
+            "img": "irida.webp",
+            "tags": ["Public Health"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
+        },
+        {
+            "title": "Allianz NG-Aquila",
+            "description": "Aquila is an open-source component library provided by the Allianz Global Digital Factory (GDF).",
+            "repo": "https://github.com/allianz/ng-aquila",
+            "open_source": true,
+            "stars": 200,
+            "type": "Integration",
+            "link": "https://allianz.github.io/ng-aquila/documentation/ag-grid/overview",
+            "img": "allianz-ng.webp",
+            "favourite": true,
+            "tags": ["Components"],
+            "frameworks": ["Angular"],
+            "products": ["Grid"]
+        },
+        {
+            "title": "Microsoft MDR Gamut",
+            "description": "MSR Gamut: A Design Probe to Understand How Data Scientists Understand Machine Learning Models",
+            "repo": "https://github.com/microsoft/msrgamut",
+            "open_source": true,
+            "stars": 15,
+            "type": "Product",
+            "link": "https://microsoft.github.io/msrgamut/",
+            "favourite": true,
+            "img": "mdr-gamut.webp",
+            "tags": ["Demo"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
+        },
+        {
+            "title": "Siemens IX",
+            "description": "iX is an open-source design system for designers and developers, to consistently create the perfect digital experience for industrial software products.",
+            "repo": "https://github.com/siemens/ix",
+            "open_source": true,
+            "stars": 140,
+            "type": "Integration",
+            "link": "https://ix.siemens.io/docs/controls/grid",
+            "favourite": true,
+            "img": "siemens.webp",
+            "frameworks": ["React", "Angular", "Vue"],
+            "products": ["Grid"]
+        },
+        {
+            "title": "NASA Aerie UI",
+            "description": "The client application for Aerie, a software framework for modeling spacecraft",
+            "repo": "https://github.com/NASA-AMMOS/aerie-ui",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://nasa-ammos.github.io/aerie-docs/",
+            "favourite": true,
+            "img": "nasa-eerie.webp",
+            "companyLogo": "nasa.svg",
+            "tags": ["Science"],
+            "frameworks": ["Svelte"],
+            "products": ["Grid"]
+        },
+        {
+            "title": "MongoDB Compass",
+            "description": "Compass is a free interactive tool for querying, optimizing, and analyzing your MongoDB data. Get key insights, drag and drop to build pipelines, and more.",
+            "repo": "https://github.com/mongodb-js/compass",
+            "open_source": true,
+            "stars": 1000,
+            "type": "Product",
+            "link": "https://mongodb.com/compass",
+            "favourite": true,
+            "img": "mongodb-compass.webp",
+            "tags": ["Database"],
+            "frameworks": ["Angular"],
+            "products": ["Grid"]
+        },
+        {
+            "link": "https://marmelab.com/react-admin/DatagridAG.html",
+            "repo": "https://github.com/marmelab/react-admin",
+            "title": "React Admin",
+            "description": "A frontend Framework for building data-driven applications running on top of REST/GraphQL APIs, using TypeScript, React and Material Design.",
+            "open_source": true,
+            "type": "Integration",
+            "stars": 23500,
+            "img": "react-admin.webp",
+            "tags": ["Library"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
+        },
+        {
+            "link": "https://tableflow.com/docs/introduction",
+            "repo": "https://github.com/tableflowhq/csv-import",
+            "title": "Tableflow",
+            "description": "TableFlow is a data import platform for companies to collect and transform customer data.",
+            "open_source": true,
+            "stars": 1600,
+            "type": "Product",
+            "img": "tableflow.webp",
+            "tags": ["Library"],
+            "frameworks": ["React", "JavaScript"],
+            "products": ["Grid"]
+        },
+        {
+            "title": "Cube",
+            "description": "Cube is the semantic layer for building data applications. It helps data engineers and application developers access data from modern data stores, organize it into consistent definitions, and deliver it to every application.",
+            "repo": "https://github.com/cube-js/cube",
+            "open_source": true,
+            "stars": 16900,
+            "type": "Product",
+            "link": "https://react-pivot-table-demo.cube.dev/#/",
+            "img": "cube-js.webp",
+            "tags": ["Library"],
+            "frameworks": ["React"],
+            "products": ["Grid"]
+        }
+    ],
+    "other": [
+        {
+            "repo": "https://github.com/Azure/azure-iot-pcs-device-simulation",
+            "title": "Azure IoT Device Simulations",
+            "type": "Product",
+            "open_source": true,
+            "stars": 35,
+            "description": "Helps you build simulated devices that look and behave like the real thing enabling powerful testing scenarios"
+        },
+        {
+            "link": "https://enso.org/",
+            "repo": "https://github.com/enso-org/enso",
+            "title": "Enso.org",
+            "description": "Hybrid visual and textual functional programming.",
+            "open_source": true,
+            "stars": 7200,
+            "type": "Product"
+        },
+        {
+            "repo": "https://github.com/0wczar/airframe-react",
+            "link": "http://dashboards.webkom.co/react/airframe/dashboards/projects",
+            "title": "Airframe React",
+            "open_source": true,
+            "description": "High Quality Dashboard / Admin / Analytics template that works great on any smartphone, tablet or desktop.",
+            "stars": 3900,
+            "type": "Integration"
+        },
+        {
+            "link": "https://wtmdoc.walkingtec.cn/",
+            "repo": "https://github.com/dotnetcore/wtm",
+            "title": "WTM",
+            "description": "Walkingtec.mvvm framework (WTM) is a rapid development framework based on .net core.",
+            "open_source": true,
+            "stars": 4000,
+            "type": "Integration"
+        },
+        {
+            "repo": "https://github.com/yobulkdev/yobulkdev",
+            "link": "https://www.yobulk.dev/",
+            "title": "YoBulk",
+            "description": "Open Source & AI driven Data Onboarding Platform:Free flatfile.com alternative",
+            "open_source": true,
+            "stars": 850,
+            "type": "Product"
+        },
+        {
+            "repo": "https://github.com/oughtinc/ice",
+            "link": "https://ice.ought.org",
+            "title": "Ice",
+            "description": "Interactive Composition Explorer: a debugger for compositional language model programs",
+            "open_source": true,
+            "stars": 490,
+            "type": "Product"
+        },
+        {
+            "link": "https://wowup.io/",
+            "repo": "https://github.com/WowUp/WowUp",
+            "title": "WowUp",
+            "description": "World of Warcraft addon updater powered by the community",
+            "open_source": true,
+            "stars": 830,
+            "type": "Product"
+        },
+        {
+            "repo": "https://github.com/geosolutions-it/MapStore2",
+            "link": "https://mapstore.geosolutionsgroup.com/mapstore/#/",
+            "title": "Map Store2",
+            "description": "Modern webmapping with OpenLayers, Leaflet, Cesium and React",
+            "open_source": true,
+            "stars": 450,
+            "type": "Product"
+        },
+        {
+            "link": "https://www.elfdict.com",
+            "repo": "https://github.com/galadhremmin/Parf-Edhellen/tree/master",
+            "title": "Parf Edhellen",
+            "description": "A dictionary for Tolkien's languages",
+            "open_source": true,
+            "stars": 75,
+            "type": "Product"
+        },
+        {
+            "repo": "https://github.com/certego/BuffaLogs",
+            "title": "BuffaLogs",
+            "link": "https://github.com/certego/BuffaLogs/wiki/1.-About",
+            "description": "BuffaLogs is an Open Source Django App whose main purpose is to detect login anomalies",
+            "type": "Product",
+            "open_source": true,
+            "stars": 15
+        },
+        {
+            "repo": "https://github.com/railmapgen/rmg",
+            "link": "https://railmapgen.github.io/?app=rmg",
+            "title": "Rail Map Gen",
+            "description": "A tool for generating railway maps and information panels in the styles of following public transportation systems",
+            "stars": 145,
+            "open_source": true,
+            "type": "Product"
+        },
+        {
+            "repo": "https://github.com/REditorSupport/vscode-R",
+            "link": "https://marketplace.visualstudio.com/items?itemName=REditorSupport.r",
+            "title": "VS Code - R",
+            "description": "R Extension for Visual Studio Code",
+            "type": "Integration",
+            "open_source": true,
+            "stars": 1000
+        },
+        {
+            "repo": "https://github.com/vxcontrol/soldr",
+            "link": "https://github.com/vxcontrol/soldr",
+            "title": "Soldr",
+            "description": "SOLDR is an Endpoint Detection and Response system which consists of centralised management part with extensive Web UI and Agents being installed on endpoint systems.",
+            "type": "Product",
+            "open_source": true,
+            "stars": 57
+        },
+        {
+            "link": "https://openziti.io/",
+            "title": "Ziti Console",
+            "description": "The OpenZiti Console is an administrative web interface for an OpenZiti network.",
+            "repo": "https://github.com/openziti/ziti-console",
+            "type": "Product",
+            "open_source": true,
+            "stars": 18
+        },
+        {
+            "repo": "https://github.com/vishwajeetraj11/quizco-frontend",
+            "title": "Quizco",
+            "description": "Quiz Builder and Assessment Application",
+            "link": "https://quizco-app.netlify.app/",
+            "type": "Product",
+            "open_source": true,
+            "stars": 19
+        },
+        {
+            "repo": "https://github.com/sipb/hydrant",
+            "title": "Hydrant",
+            "description": "MIT semester course planning app",
+            "link": "https://hydrant.mit.edu/",
+            "type": "Product",
+            "open_source": true,
+            "stars": 21
+        },
+        {
+            "link": "https://shawnbanasick.github.io/ken-q-analysis/index.html",
+            "title": "Ken Q Analysis",
+            "description": "A web application for Q Methodology",
+            "repo": "https://github.com/shawnbanasick/ken-q-analysis",
+            "type": "Integration",
+            "open_source": true,
+            "stars": 10
+        },
+        {
+            "repo": "https://github.com/gedge-platform/gedge-platform",
+            "title": "Gedge Platform",
+            "description": "GEdge-Platform is a cloud edge computing platform for ultra low-latency services at the edge of the network.",
+            "link": "https://gedge-platform.github.io/",
+            "type": "Product",
+            "open_source": true,
+            "stars": 15
+        },
+        {
+            "repo": "https://github.com/jose-donato/budgetguru",
+            "title": "Budget Guru",
+            "description": "BudgetGuru is your AI-powered guide to smarter personal finance.",
+            "link": "https://budgetguru.vercel.app",
+            "type": "Product",
+            "open_source": true,
+            "stars": 15
+        },
+        {
+            "repo": "https://github.com/jeffvli/feishin",
+            "title": "Feishin",
+            "description": "A modern self-hosted music player.",
+            "link": "https://feishin.vercel.app",
+            "type": "Product",
+            "open_source": true,
+            "stars": 1300
+        },
+        {
+            "repo": "https://github.com/mlops-ai/mlops",
+            "title": "ML Ops",
+            "description": "Open-source tool for tracking & monitoring machine learning models.",
+            "link": "https://pypi.org/project/mlops-ai/",
+            "type": "Product",
+            "open_source": true,
+            "stars": 10
+        },
+        {
+            "repo": "https://github.com/opensource-emr/hospital-management-emr",
+            "title": "Hospital Management EMR",
+            "description": "A complete open source for electronic healthcare record management in Hospitals, Clinics and Pharmacy.",
+            "link": "https://opensource-emr.github.io/hospital-management-emr/",
+            "type": "Product",
+            "open_source": true,
+            "stars": 180
+        },
+        {
+            "repo": "https://github.com/AppImage/appimage.github.io",
+            "title": "App Image",
+            "description": "Given an URL to an AppImage, the GitHub action in this project inspects the AppImage and puts it into a community-maintained catalog",
+            "link": "https://appimage.github.io/",
+            "type": "Product",
+            "open_source": true,
+            "stars": 290
+        },
+        {
+            "repo": "https://github.com/vegaprotocol/vega.xyz",
+            "title": "Vega",
+            "description": "Vega's main website",
+            "link": "https://vega.xyz",
+            "type": "Product",
+            "open_source": true,
+            "stars": 10
+        },
+        {
+            "repo": "https://github.com/vegaprotocol/vegawallet-desktop",
+            "title": "VegaWallet Desktop",
+            "description": "Desktop application for Vega Protocol's wallet",
+            "link": "https://vega.xyz",
+            "type": "Product",
+            "open_source": true,
+            "stars": 15
+        },
+        {
+            "repo": "https://github.com/sassoftware/vscode-sas-extension",
+            "title": "VS Code SaS Extension",
+            "description": "This SAS Extension for Visual Studio Code provides support for the SAS language, including features such as SAS syntax highlighting, code completion, hover help, code folding, outline, SAS code snippets and run SAS code.",
+            "link": "https://github.com/sassoftware/vscode-sas-extension",
+            "type": "Product",
+            "open_source": true,
+            "stars": 100
+        },
+        {
+            "title": "Paladin Cloud CE",
+            "description": "An extensible, cloud security platform for developers.",
+            "repo": "https://github.com/PaladinCloud/CE",
+            "open_source": true,
+            "stars": 550,
+            "type": "Product",
+            "link": "https://paladincloud.io/"
+        },
+        {
+            "title": "Acuity VAHub",
+            "description": "Source code for main part of ACUITY's Visual Analytics application",
+            "repo": "https://github.com/digital-ECMT/acuity-vahub",
+            "open_source": true,
+            "stars": 5,
+            "type": "Product",
+            "link": "https://github.com/digital-ECMT/acuity-docker/wiki"
+        },
+        {
+            "title": "JP Project Identity Server 4",
+            "description": "ASP.NET Core 3 & Angular 8 Administration Panel for IdentityServer4 and ASP.NET Core Identity",
+            "repo": "https://github.com/brunobritodev/JPProject.IdentityServer4.AdminUI",
+            "open_source": true,
+            "stars": 750,
+            "type": "Product",
+            "link": "https://admin.jpproject.net/"
+        },
+        {
+            "title": "Firebot",
+            "description": "A powerful all-in-one bot for Twitch streamers",
+            "repo": "https://github.com/crowbartools/Firebot",
+            "open_source": true,
+            "stars": 300,
+            "type": "Product",
+            "link": "https://firebot.app"
+        },
+        {
+            "title": "Coveo Search UI",
+            "description": "Coveo JavaScript Search UI Framework",
+            "repo": "https://github.com/coveo/search-ui",
+            "open_source": true,
+            "stars": 131,
+            "type": "Product",
+            "link": "https://docs.coveo.com/en/187/glossary/coveo-javascript-search-framework"
+        },
+        {
+            "title": "PaC Bot",
+            "description": "Policy as Code Bot (PacBot) is a platform for continuous compliance monitoring, compliance reporting and security automation for the cloud",
+            "repo": "https://github.com/tmobile/pacbot",
+            "open_source": true,
+            "stars": 1300,
+            "type": "Product",
+            "link": "https://tmobile.github.io/pacbot/"
+        },
+        {
+            "title": "Knowage Server",
+            "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
+            "repo": "https://github.com/KnowageLabs/Knowage-Server",
+            "open_source": true,
+            "stars": 390,
+            "type": "Product",
+            "link": "https://knowage-suite.com"
+        },
+        {
+            "title": "Source Academy Frontend",
+            "description": "Frontend of online learning environment Source Academy @ NUS (React, Redux, Saga, Blueprint)",
+            "repo": "https://github.com/source-academy/frontend",
+            "open_source": true,
+            "stars": 100,
+            "type": "Product",
+            "link": "https://sourceacademy.org"
+        },
+        {
+            "title": "GWT Examples",
+            "description": "Examples of Google Web Toolkit",
+            "repo": "https://github.com/ascendtech/gwt-examples/tree/master",
+            "open_source": true,
+            "stars": 15,
+            "type": "Product",
+            "link": "https://github.com/ascendtech/gwt-examples"
+        },
+        {
+            "title": "Night Hawk Response",
+            "description": "Custom built application for asynchronus forensic data presentation on an Elasticsearch backend.",
+            "repo": "https://github.com/biggiesmallsAG/nightHawkResponse",
+            "open_source": true,
+            "stars": 600,
+            "type": "Product",
+            "link": "https://github.com/biggiesmallsAG/nightHawkResponse"
+        },
+        {
+            "title": "MyLG (Unsupported)",
+            "description": "myLG is an open source software utility which combines the functions of the different network probes in one network diagnostic tool.",
+            "repo": "https://github.com/mehrdadrad/mylg",
+            "open_source": true,
+            "stars": 2700,
+            "type": "Product",
+            "link": "https://mylg.io"
+        },
+        {
+            "title": "OpenEMM",
+            "description": "Web-based software for email automation and marketing (newsletters, multi-stage mail campaigns, transaction mails, autoresponder, etc.)",
+            "repo": "https://github.com/agnitas-org/openemm",
+            "open_source": true,
+            "stars": 90,
+            "type": "Product",
+            "link": "https://www.agnitas.de/en/e-marketing_manager/email-marketing-software-variants/openemm/"
+        },
+        {
+            "title": "Shukun AI",
+            "description": "SHUKUN AI is an AI-native database search application that helps companies explore and analyze data. SHUKUN AI provides a feature that helps you split complex natural language tasks into smaller parts then combines them into the results.",
+            "repo": "https://github.com/shukun-ai/shukun-ai",
+            "open_source": true,
+            "stars": 15,
+            "type": "Product",
+            "link": "https://github.com/shukun-ai/shukun-ai"
+        },
+        {
+            "title": "Section App Client",
+            "description": "Frontend of the ESN section app",
+            "repo": "https://github.com/heddendorp/section-app-client",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://tumi.esn.world"
+        },
+        {
+            "title": "Statbotics",
+            "description": "Statbotics is an open-source data analytics platform for the FIRST Robotics Competition (FRC)",
+            "repo": "https://github.com/avgupta456/statbotics",
+            "open_source": true,
+            "stars": 60,
+            "type": "Product",
+            "link": "https://statbotics.io/"
+        },
+        {
+            "title": "Code Companion AI",
+            "description": "AI coding assistant app",
+            "repo": "https://github.com/codecompanion-ai/code-companion",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://codecompanion.ai/"
+        },
+        {
+            "title": "Scaleph",
+            "description": "Open data platform based on Kubernetes",
+            "repo": "https://github.com/flowerfine/scaleph",
+            "open_source": true,
+            "stars": 330,
+            "type": "Product",
+            "link": "https://flowerfine.github.io/scaleph-repress-site/en/"
+        },
+        {
+            "title": "Xata Form (Archived)",
+            "description": "Create, share and analyse your forms with Xata. Open Source alternative to Typeform.",
+            "repo": "https://github.com/xataio/xataform",
+            "open_source": true,
+            "stars": 70,
+            "type": "Product",
+            "link": "https://github.com/xataio/xataform"
+        },
+        {
+            "title": "Dash Player (Chinese)",
+            "description": "A video player tailored for English learners to help you easily improve your English by watching videos and immersing yourself in real context.",
+            "repo": "https://github.com/solidSpoon/DashPlayer",
+            "open_source": true,
+            "stars": 50,
+            "type": "Product",
+            "link": "https://solidspoon.xyz/app/dash-player/"
+        },
+        {
+            "title": "Relation Graph (Chinese)",
+            "description": "Use G6, X6, JsPlumb, etc. to implement the blood relationship map",
+            "repo": "https://github.com/zhou-fuhao/relation-graph-vue2",
+            "open_source": true,
+            "stars": 60,
+            "type": "Product",
+            "link": "https://github.com/zhou-fuhao/relation-graph-vue2"
+        },
+        {
+            "title": "HSR Optimiizer",
+            "description": "A character optimizer, relic scorer, and various other tools for Honkai Star Rail",
+            "repo": "https://github.com/fribbels/hsr-optimizer",
+            "open_source": true,
+            "stars": 35,
+            "type": "Product",
+            "link": "https://fribbels.github.io/hsr-optimizer/"
+        },
+        {
+            "title": "MSAez",
+            "description": "MSA Easy is a comprehensive tool designed to assist in the analysis, design, implementation, and operation of microservices",
+            "repo": "https://github.com/msa-ez/platform",
+            "open_source": true,
+            "stars": 25,
+            "type": "Product",
+            "link": "https://www.msaez.io/"
+        },
+        {
+            "title": "Dominate AI",
+            "description": "Dominate A.I - The world's best open source CRM for Tech Founders",
+            "repo": "https://github.com/DominateAi/Dominate-AI",
+            "open_source": true,
+            "stars": 70,
+            "type": "Product",
+            "link": "https://dominate.ai/"
+        },
+        {
+            "title": "Parkour 2",
+            "description": "Parkour2: Laboratory Information Management System",
+            "repo": "https://github.com/maxplanck-ie/parkour2",
+            "open_source": true,
+            "stars": 20,
+            "type": "Product",
+            "link": "https://github.com/maxplanck-ie/parkour2"
+        },
+        {
+            "title": "Invoice Generator",
+            "description": "React-based invoice generator with PDF export",
+            "repo": "https://github.com/guranshdeol/Invoice-Generator",
+            "open_source": true,
+            "stars": 10,
+            "type": "Product",
+            "link": "https://invoice-generator-guransh.netlify.app/"
+        },
+        {
+            "title": "Devstar",
+            "description": "Maximize efficiency and productivity with our free online developer toolkit. Streamline workflows and unlock your full potential with our user-friendly platform.",
+            "repo": "https://github.com/hannansatopay/devstar",
+            "open_source": true,
+            "stars": 20,
+            "type": "Integration",
+            "link": "https://developerstar.com"
+        },
+        {
+            "title": "FortifyQL",
+            "description": "FortifyQL is an all-in-one security monitoring tool for GraphQL API's.",
+            "repo": "https://github.com/oslabs-beta/FortifyQL",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://github.com/oslabs-beta/FortifyQL"
+        },
+        {
+            "title": "Ciphyr",
+            "description": "GraphQL Security Monitoring Application",
+            "repo": "https://github.com/oslabs-beta/Ciphyr",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://ciphyr.io"
+        },
+        {
+            "title": "L3AGI",
+            "description": "Open-source framework to make AI agents' team collaboration as effective as human collaboration.",
+            "repo": "https://github.com/l3vels/L3AGI",
+            "open_source": true,
+            "stars": 170,
+            "type": "Product",
+            "link": "https://l3agi.com"
+        },
+        {
+            "title": "Orbital",
+            "description": "Orbital automates integration between data sources (APIs, Databases, Queues and Functions). BFF's, API Composition and ETL pipelines that adapt as your specs change.",
+            "repo": "https://github.com/orbitalapi/orbital",
+            "open_source": true,
+            "stars": 280,
+            "type": "Product",
+            "link": "https://orbitalhq.com"
+        },
+        {
+            "title": "Infineon Design System",
+            "description": "The Infineon Digital Design System supports designers, developers and project managers to build user interfaces faster and better",
+            "repo": "https://github.com/Infineon/infineon-design-system-stencil",
+            "open_source": true,
+            "stars": 10,
+            "type": "Product",
+            "link": "https://infineon.github.io/infineon-design-system-stencil/"
+        },
+        {
+            "title": "NextJS AirBnb Clone",
+            "description": "A clone of the AirBnb site using Next JS",
+            "repo": "https://github.com/koolkishan/nextjs-airbnb-clone-starter",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://github.com/koolkishan/nextjs-airbnb-clone-starter"
+        },
+        {
+            "title": "Tabbled",
+            "description": "Self-hosted low-code platform for business applications like CRM, ERP, WMS, etc.",
+            "repo": "https://github.com/tabbled/tabbled",
+            "open_source": true,
+            "stars": 45,
+            "type": "Product",
+            "link": "https://tabbled.org"
+        },
+        {
+            "title": "Agenta",
+            "description": "The all-in-one LLM developer platform: prompt management, evaluation, human feedback, and deployment all in one place.",
+            "repo": "https://github.com/Agenta-AI/agenta",
+            "open_source": true,
+            "stars": 700,
+            "type": "Product",
+            "link": "https://agenta.ai"
+        },
+        {
+            "title": "DataCap",
+            "description": "DataCap is integrated software for data transformation, integration, and visualization.",
+            "repo": "https://github.com/devlive-community/datacap",
+            "open_source": true,
+            "stars": 800,
+            "type": "Product",
+            "link": "https://datacap.edurt.io/"
+        },
+        {
+            "title": "SD WebUI Agent Scheduler",
+            "description": "An A1111/Vladmandic Stable Diffusion Web UI extension to power up your image generation workflow!",
+            "repo": "https://github.com/ArtVentureX/sd-webui-agent-scheduler",
+            "open_source": true,
+            "stars": 550,
+            "type": "Product",
+            "link": "https://github.com/ArtVentureX/sd-webui-agent-scheduler"
+        },
+        {
+            "title": "Lightstreamer Example",
+            "description": "This project contains a demo client showing integration between Lightstreamer JavaScript Client library and Vue.js",
+            "repo": "https://github.com/Lightstreamer/Lightstreamer-example-StockList-client-vue",
+            "open_source": true,
+            "stars": 15,
+            "type": "Product",
+            "link": "https://demos.lightstreamer.com/VueDemo/"
+        },
+        {
+            "title": "TraderX",
+            "description": "Sample Trading Application, designed to be a distributed reference application in the financial services domain which can serve as a starting point for experimentation with various techniques and other open source projects",
+            "repo": "https://github.com/finos/traderX",
+            "open_source": true,
+            "stars": 23,
+            "type": "Product",
+            "link": "https://github.com/finos/traderX"
+        },
+        {
+            "title": "Domino",
+            "description": "User friendly and open source platform for workflow creation and monitoring",
+            "repo": "https://github.com/Tauffer-Consulting/domino",
+            "open_source": true,
+            "stars": 60,
+            "type": "Product",
+            "link": "https://domino-workflows.io/"
+        },
+        {
+            "title": "SudoEMR",
+            "description": "An Open Source Hospital Management System",
+            "repo": "https://github.com/MyLikita-Health/sudoEMR",
+            "open_source": true,
+            "stars": 50,
+            "type": "Product",
+            "link": "https://sudoemr.com"
+        },
+        {
+            "title": "Buckroo",
+            "description": "The data wrangling assistant for pandas. Quickly explore dataframes, and run pandas commands via a GUI.",
+            "repo": "https://github.com/paddymul/buckaroo",
+            "open_source": true,
+            "stars": 90,
+            "type": "Product",
+            "link": "https://buckaroo-data.readthedocs.io/en/latest/"
+        },
+        {
+            "title": "Courseography",
+            "description": "Courseography is a tool created by David Liu and Ian Stewart-Binks to guide students through their undergraduate careers.",
+            "repo": "https://github.com/Courseography/courseography",
+            "open_source": true,
+            "stars": 60,
+            "type": "Product",
+            "link": "https://courseography.teach.cs.toronto.edu/grid"
+        },
+        {
+            "title": "Scout",
+            "description": "Scout is a data discovery tool to explore open data portals worldwide.",
+            "repo": "https://github.com/tsdataclinic/scout",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://scout.tsdataclinic.com"
+        },
+        {
+            "title": "Van (Chinese)",
+            "description": "springboot + bpmnjs + flowable/activiti/camunda + form-design + rbac workflow low-code practical project",
+            "repo": "https://github.com/L1yp/van",
+            "open_source": true,
+            "stars": 180,
+            "type": "Product",
+            "link": "https://admin.l1yp.com/"
+        },
+        {
+            "title": "Status Page",
+            "description": "Monitor your websites, showcase status including daily history, and get Slack/Telegram/Discord notification whenever your website status changes. Using Vue, Vite, Cloudflare Workers, CRON Triggers, and KV storage.",
+            "repo": "https://github.com/stubijs/statuspage",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://status.jstubenrauch.de"
+        },
+        {
+            "title": "Micro Frontend",
+            "description": "This is a proof of concept with Vue3, to show one of many ways to design a microfrontend",
+            "repo": "https://github.com/vitorlofonseca/microfrontend-vue-and-vite",
+            "open_source": true,
+            "stars": 25,
+            "type": "Example",
+            "link": "https://github.com/vitorlofonseca/microfrontend-vue-and-vite"
+        },
+        {
+            "title": "Slickflow",
+            "description": ".NET Open Source Workflow Engine",
+            "repo": "https://github.com/besley/Slickflow",
+            "open_source": true,
+            "stars": 760,
+            "type": "Product",
+            "link": "https://github.com/besley/Slickflow"
+        },
+        {
+            "title": "Research Literature Manager",
+            "description": "S free and open source research literature manager that makes it simple to manage the research papers you have read",
+            "repo": "https://github.com/EshaanAgg/Research-Literature-Manager",
+            "open_source": true,
+            "stars": 15,
+            "type": "Product",
+            "link": "https://github.com/EshaanAgg/Research-Literature-Manager"
+        },
+        {
+            "title": "Baseball Trade Trees",
+            "description": "Analyze any trade in baseball history.",
+            "repo": "https://github.com/GrubHubGitTub/BaseballTradeTrees",
+            "open_source": true,
+            "stars": 10,
+            "type": "Product",
+            "link": "https://mlb-trade-trees-next.vercel.app"
+        },
+        {
+            "title": "QL Rest",
+            "description": "REST API for QuantLib. This project aims to simplify the development of microservices for risk management and pricing of various financial instruments in the distributed environment using QuantLib",
+            "repo": "https://github.com/mkipnis/ql_rest",
+            "open_source": true,
+            "stars": 20,
+            "type": "Product",
+            "link": "https://ustreasuries.online"
+        },
+        {
+            "title": "SD Parseq",
+            "description": "Parameter sequencer for Stable Diffusion",
+            "repo": "https://github.com/rewbs/sd-parseq",
+            "open_source": true,
+            "stars": 310,
+            "type": "Product",
+            "link": "https://sd-parseq.web.app/ "
+        },
+        {
+            "title": "VSCode Messenger",
+            "description": "RPC messaging library for the VS Code extension platform",
+            "repo": "https://github.com/TypeFox/vscode-messenger",
+            "open_source": true,
+            "stars": 20,
+            "type": "Product",
+            "link": "https://github.com/TypeFox/vscode-messenger"
+        },
+        {
+            "title": "NeuVector Manager",
+            "description": "NeuVector Security Center Admin Console for the SUSE NeuVector Container Security Platform.",
+            "repo": "https://github.com/neuvector/manager",
+            "open_source": true,
+            "stars": 25,
+            "type": "Product",
+            "link": "https://open-docs.neuvector.com"
+        },
+        {
+            "title": "Egeria UI",
+            "description": "User interface instance using main Egeria functionalities.",
+            "repo": "https://github.com/odpi/egeria-ui",
+            "open_source": true,
+            "stars": 40,
+            "type": "Integration",
+            "link": "https://github.com/odpi/egeria-ui"
+        },
+        {
+            "title": "VarFish Server",
+            "description": "VarFish: comprehensive DNA variant analysis for diagnostics and research",
+            "repo": "https://github.com/varfish-org/varfish-server",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://github.com/varfish-org/varfish-server"
+        },
+        {
+            "title": "Tutors",
+            "description": "The core Tutors Reader application.",
+            "repo": "https://github.com/tutors-sdk/tutors",
+            "open_source": true,
+            "stars": 100,
+            "type": "Product",
+            "link": "https://tutors.dev"
+        },
+        {
+            "title": "Yaki App",
+            "description": "Open Source, Cross platform, Native Kubernetes IDE",
+            "repo": "https://github.com/vivekagate/yakiapp",
+            "open_source": true,
+            "stars": 100,
+            "type": "Product",
+            "link": "https://github.com/vivekagate/yakiapp"
+        },
+        {
+            "title": "Unigraph",
+            "description": "A local-first and universal knowledge graph, personal search engine, and workspace for your life.",
+            "repo": "https://github.com/unigraph-dev/unigraph-dev",
+            "open_source": true,
+            "stars": 700,
+            "type": "Product",
+            "link": "https://unigraph.dev/"
+        },
+        {
+            "title": "Distributed ATS",
+            "description": "DistributedATS is a FIX Protocol based multi matching engine exchange(CLOB) that integrates QuickFIX and LiquiBook over OpenDDS",
+            "repo": "https://github.com/mkipnis/DistributedATS",
+            "open_source": true,
+            "stars": 60,
+            "type": "Product",
+            "link": "https://visualkey.link"
+        },
+        {
+            "title": "Visual Key",
+            "description": "A tool to visually generate a private key and address with automatic balance and activity check across several EVM-compatible blockchains",
+            "repo": "https://github.com/denyshorman/visualkey",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://github.com/denyshorman/visualkey"
+        },
+        {
+            "title": "New World Buddy",
+            "description": "New World Buddy is a desktop application designed to be used while playing New World.",
+            "repo": "https://github.com/giniedp/nw-buddy",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://www.nw-buddy.de/"
+        },
+        {
+            "title": "Unreal Vault Organizer",
+            "description": "Organize your Unreal Vault via tags, advanced search options, notification of updates for assets",
+            "repo": "https://github.com/delebash/unreal_vault_organizer",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "relinkpo": "https://github.com/delebash/unreal_vault_organizer"
+        },
+        {
+            "title": "Datavizta",
+            "description": "Explore Boavizta's data and methods through a pedagogical frontend",
+            "repo": "https://github.com/Boavizta/datavizta",
+            "open_source": true,
+            "stars": 20,
+            "type": "Product",
+            "link": "https://dataviz.boavizta.org/"
+        },
+        {
+            "title": "Clickhouse Mate",
+            "description": "Advanced User-Interface for ClickHouse",
+            "repo": "https://github.com/metrico/clickhouse-mate",
+            "open_source": true,
+            "stars": 80,
+            "type": "Product",
+            "link": "https://metrico.github.io/clickhouse-mate/"
+        },
+        {
+            "title": "Project Forge",
+            "description": "ProjectForge is a web-based solution for project management including time tracking, team calendar, gantt-charting, financial administration, issue management, controlling and managing work-break-down-structures (e. g. together with JIRA as issue management system).",
+            "repo": "https://github.com/micromata/projectforge",
+            "open_source": true,
+            "stars": 110,
+            "type": "Product",
+            "link": "https://micromata.github.io/projectforge/"
+        },
+        {
+            "title": "TskMgr",
+            "description": "Minimalistic distributed task system (Nx Cloud community)",
+            "repo": "https://github.com/mathpaquette/tskmgr",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://github.com/mathpaquette/tskmgr"
+        },
+        {
+            "title": "Rio",
+            "description": "This project is a collaborative effort by the Rosedale-Rio Bravo Water Storage District (https://www.rrbwsd.com), Environmental Defense Fund (https://www.edf.org), Westwater Research (http://www.waterexchange.com), and Environmental Science Associates (https://esassoc.com).",
+            "repo": "https://github.com/sitkatech/rio",
+            "open_source": true,
+            "stars": 10,
+            "type": "Product",
+            "link": "https://github.com/sitkatech/rio"
+        },
+        {
+            "title": "Flex",
+            "description": "Gluu Flex is a commercial distribution of the Linux Foundation Janssen Project. It was created for businesses who want the protections of a commercial license, plus some additional tools convenient for enterprise scale. ",
+            "repo": "https://github.com/GluuFederation/flex",
+            "open_source": true,
+            "stars": 25,
+            "type": "Integration",
+            "link": "https://gluu.org/flex/"
+        },
+        {
+            "title": "Whitebrick Client",
+            "description": "No Code DB built on Hasura, Serverless & Jamstack",
+            "repo": "https://github.com/whitebrick/whitebrick-client",
+            "open_source": true,
+            "stars": 20,
+            "type": "Product",
+            "link": "https://whitebrick.com"
+        },
+        {
+            "title": "ArtGen Core",
+            "description": "Next Generation Low Code Headless CMS",
+            "repo": "https://github.com/ArtgenIO/Core",
+            "open_source": true,
+            "stars": 60,
+            "type": "Product",
+            "link": "https://artgen.io"
+        },
+        {
+            "title": "Quake",
+            "description": "Quake is a knowledge management meta-framework for geeks. Use meta-data + Transflow to CRUD data, Git + markdown to management content, Web Component for frontend-custom. ",
+            "repo": "https://github.com/phodal/quake",
+            "open_source": true,
+            "stars": 450,
+            "type": "Product",
+            "link": "https://quake-demo.inherd.org/"
+        },
+        {
+            "title": "Survey Solutions",
+            "description": "Survey Solutions is a survey management and data collection system developed by the World Bank.",
+            "repo": "https://github.com/surveysolutions/surveysolutions",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://docs.mysurvey.solutions/"
+        },
+        {
+            "title": "We Dance",
+            "description": "Community platform for dancers",
+            "repo": "https://github.com/we-dance/platform",
+            "open_source": true,
+            "stars": 50,
+            "type": "Product",
+            "link": "https://wedance.vip"
+        },
+        {
+            "repo": "https://github.com/SCADA-LTS/Scada-LTS",
+            "title": "Scada LTS",
+            "description": "Scada-LTS is an Open Source, web-based, multi-platform solution for building your own SCADA (Supervisory Control and Data Acquisition) system.",
+            "link": "https://github.com/SCADA-LTS/Scada-LTS",
+            "open_source": true,
+            "stars": 615,
+            "type": "Product",
+            "tags": ["Grid", "Charts", "React"],
+            "img": "sample.webp"
+        },
+        {
+            "title": "React Importer",
+            "description": "A modern CSV import flow for React projects",
+            "repo": "https://github.com/czhu12/react-importer",
+            "open_source": true,
+            "stars": 80,
+            "type": "Product",
+            "link": "https://czhu12.github.io/react-importer/"
+        },
+        {
+            "title": "Metriql",
+            "description": "Metriql is an open-source metrics store which allows companies to define their metrics as code and share them across their BI and data tools easily",
+            "repo": "https://github.com/metriql/metriql",
+            "open_source": true,
+            "stars": 290,
+            "type": "Product",
+            "link": "https://metriql.com"
+        },
+        {
+            "title": "DayZ Server Manager",
+            "description": "A server installer and watch-dog for dayz standalone with built-in Discord and RCon bot",
+            "repo": "https://github.com/mr-guard/dayz-server-manager",
+            "open_source": true,
+            "stars": 110,
+            "type": "Product",
+            "link": "https://github.com/mr-guard/dayz-server-manager"
+        },
+        {
+            "title": "SF Dahlia Web",
+            "description": "DAHLIA is the affordable housing portal for the City and County of San Francisco.",
+            "repo": "https://github.com/SFDigitalServices/sf-dahlia-web",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://housing.sfgov.org"
+        },
+        {
+            "title": "VSCode Kusto",
+            "description": "A Visual Studio Code extension that provides the ability to run Kusto queries in Notebooks as well as plain text files.",
+            "repo": "https://github.com/notebookPowerTools/vscode-kusto",
+            "open_source": true,
+            "stars": 25,
+            "type": "Product",
+            "link": "https://marketplace.visualstudio.com/items?itemName=donjayamanne.kusto"
+        },
+        {
+            "title": "Fribbels Epic 7 Optimizer",
+            "description": "A gear optimizer for the mobile game Epic 7",
+            "repo": "https://github.com/fribbels/Fribbels-Epic-7-Optimizer",
+            "open_source": true,
+            "stars": 460,
+            "type": "Product",
+            "link": "https://github.com/fribbels/Fribbels-Epic-7-Optimizer"
+        },
+        {
+            "title": "OperatorFabric",
+            "description": "OperatorFabric is a modular, extensible, industrial-strength platform for use in electricity, water, and other utility operations.",
+            "repo": "https://github.com/opfab/operatorfabric-core",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://opfab.github.io/"
+        },
+        {
+            "title": "AspNetCoreSpa",
+            "description": "Asp.Net 7.0 & Angular 15 SPA Fullstack application with plenty of examples.",
+            "repo": "https://github.com/fullstackproltd/AspNetCoreSpa",
+            "open_source": true,
+            "stars": 1500,
+            "type": "Product",
+            "link": "https://aspnetcorespa.fullstackpro.co.uk/"
+        },
+        {
+            "title": "Switchboard Dapp",
+            "description": "Switchboard dApp is a decentralized application that allows management of identities, assets, applications, services and access controls with DIDs(Decentralised Identifiers) and VCs(Verifiable Credentials)",
+            "repo": "https://github.com/energywebfoundation/switchboard-dapp",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://switchboard.energyweb.org/"
+        },
+        {
+            "title": "VSCode Q",
+            "description": "vscode kdb+/q extension ",
+            "repo": "https://github.com/jshinonome/vscode-q",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://github.com/jshinonome/vscode-q"
+        },
+        {
+            "title": "Open Trading Platform",
+            "description": "An open source highly scalable platform for building cross asset execution orientated trading applications that can be easily deployed on-prem or in the cloud. Primarily written in Golang, with a Java FIX market simulator and React client. ",
+            "repo": "https://github.com/ettec/open-trading-platform",
+            "open_source": true,
+            "stars": 60,
+            "type": "Product",
+            "link": "https://github.com/ettec/open-trading-platform"
+        },
+        {
+            "title": "AoE II Companion",
+            "description": "A companion app for Age of Empires 2",
+            "repo": "https://github.com/denniske/aoe2companion",
+            "open_source": true,
+            "stars": 90,
+            "type": "Product",
+            "link": "https://https://www.aoe2companion.com/"
+        },
+        {
+            "title": "Federal Geospatial Platform Visualiser (FGPV)",
+            "description": "The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.0 'AA' compliant common viewer platform for the Government of Canada.",
+            "repo": "https://github.com/fgpv-vpgf/fgpv-vpgf",
+            "open_source": true,
+            "stars": 50,
+            "type": "Product",
+            "link": "https://fgpv-vpgf.github.io/fgpv-vpgf/develop/docs/#/"
+        },
+        {
+            "title": "Management Presence Server",
+            "description": "The Management Presence Server (MPS) is a cloud-agnostic microservice that enables platforms featuring Intel® AMT to be managed over the internet.",
+            "repo": "https://github.com/open-amt-cloud-toolkit/mps",
+            "open_source": true,
+            "stars": 25,
+            "type": "Product",
+            "link": "https://open-amt-cloud-toolkit.github.io/docs/"
+        },
+        {
+            "title": "WizardMC",
+            "description": "Official website of the WizardMC minecraft server.",
+            "repo": "https://github.com/EvoWide/wizardmc.fr",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://wizardmc.fr/"
+        },
+        {
+            "title": "PIMS",
+            "description": "Property Inventory Management System",
+            "repo": "https://github.com/bcgov/PIMS",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://pims.gov.bc.ca"
+        },
+        {
+            "title": "MX Division Builds",
+            "description": "A tool to create and share build easily currently in public beta",
+            "repo": "https://github.com/mxswat/mx-division-builds",
+            "open_source": true,
+            "stars": 80,
+            "type": "Product",
+            "link": "https://mxswat.github.io/mx-division-builds/"
+        },
+        {
+            "title": "Homer UI",
+            "description": "This project provides the Front-End components of HOMER 7.x and higher, featuring native integration with all supported backend components for search and analytics including pgsql, influxdb, prometheus, loki and more.",
+            "repo": "https://github.com/sipcapture/homer-ui",
+            "open_source": true,
+            "stars": 65,
+            "type": "Product",
+            "link": "https://sipcapture.org/"
+        },
+        {
+            "title": "Theia Trace Extension",
+            "description": "Theia trace viewer extension using the tsp-typescript-client",
+            "repo": "https://github.com/eclipse-cdt-cloud/theia-trace-extension",
+            "open_source": true,
+            "stars": 50,
+            "type": "Product",
+            "link": "https://github.com/eclipse-cdt-cloud/theia-trace-extension"
+        },
+        {
+            "title": "Employee Mangement System",
+            "description": "Employee management system frontend react",
+            "repo": "https://github.com/fenil29/employee-management-system-frontend-react",
+            "open_source": true,
+            "stars": 90,
+            "type": "Product",
+            "link": "https://github.com/fenil29/employee-management-system-frontend-react"
+        },
+        {
+            "title": "Chemotion",
+            "description": "An Electronic Lab Notebook for chemists!",
+            "repo": "https://github.com/ComPlat/chemotion_ELN",
+            "open_source": true,
+            "stars": 110,
+            "type": "Product",
+            "link": "https://www.chemotion.net/"
+        },
+        {
+            "title": "Candilib V2",
+            "description": "Application for online reservation of places for the practical driving license test.",
+            "repo": "https://github.com/LAB-MI/candilibV2",
+            "open_source": true,
+            "stars": 40,
+            "type": "Product",
+            "link": "https://github.com/LAB-MI/candilibV2"
+        },
+        {
+            "title": "NGX Formly",
+            "description": "JSON powered / Dynamic forms for Angular",
+            "repo": "https://github.com/ngx-formly/ngx-formly",
+            "open_source": true,
+            "stars": 2700,
+            "type": "Product",
+            "link": "https://formly.dev"
+        },
+        {
+            "title": "BTS CE Lite",
+            "description": "BTS-CE-Lite (Boda-Lite) is a cross platform vendor and technology agnostic telecommunication network management desktop application",
+            "repo": "https://github.com/bodastage/bts-ce-lite",
+            "open_source": true,
+            "stars": 30,
+            "type": "Product",
+            "link": "https://www.bodastage.org/bts-ce-lite"
+        },
+        {
+            "title": "SYNCloud",
+            "description": "Run popular services on your device with one click",
+            "repo": "https://github.com/syncloud/platform",
+            "open_source": true,
+            "stars": 400,
+            "type": "Product",
+            "link": "https://syncloud.org/"
+        },
+        {
+            "title": "TestPlan",
+            "description": "Testplan, a multi-testing framework, because unit tests can only go so far..",
+            "repo": "https://github.com/morganstanley/testplan",
+            "open_source": true,
+            "stars": 170,
+            "type": "Integration",
+            "link": "http://testplan.readthedocs.io/"
+        },
+        {
+            "title": "Kendraio App",
+            "description": "Kendraio App is an open source dashboard application for rights owners, music makers, managers and record labels, enabling users to manage and track their digital media assets, collaborations and associated rights.",
+            "repo": "https://github.com/kendraio/kendraio-app",
+            "open_source": true,
+            "stars": 22,
+            "type": "Product",
+            "link": "https://app.kendra.io/"
+        },
+        {
+            "title": "ZimFarm",
+            "description": "Farm operated by bots to grow and harvest new zim files",
+            "repo": "https://github.com/openzim/zimfarm",
+            "open_source": true,
+            "stars": 70,
+            "type": "Product",
+            "link": "https://farm.openzim.org/"
+        },
+        {
+            "title": "File Manager",
+            "description": "A file manager web app with Django rest framework in backend and Vue.js in frontend with ag-grid data tables integration.",
+            "repo": "https://github.com/talented/FileManager",
+            "open_source": true,
+            "stars": 80,
+            "type": "Product",
+            "link": "https://github.com/talented/FileManager"
+        },
+        {
+            "title": "C2C UI",
+            "description": "User interface for camptocamp.org",
+            "repo": "https://github.com/c2corg/c2c_ui",
+            "open_source": true,
+            "stars": 25,
+            "type": "Product",
+            "link": "https://www.camptocamp.org"
+        },
+        {
+            "title": "CoinFi",
+            "description": "CoinFi is the cryptocurrency market intelligence platform.",
+            "repo": "https://github.com/coinfi/coinfi",
+            "open_source": true,
+            "stars": 70,
+            "type": "Product",
+            "link": "https://www.coinfi.com"
+        },
+        {
+            "title": "AccountGo",
+            "description": "Accounting System built in ASP.NET DotNetCore, ReactJS, MobX. Don't forget to click STAR if you like this project.",
+            "repo": "https://github.com/AccountGo/accountgo",
+            "open_source": true,
+            "stars": 370,
+            "type": "Product",
+            "link": "http://accountgo.net/"
+        },
+        {
+            "title": "Krypto Trading Bot",
+            "description": "Self-hosted crypto trading bot (automated high frequency market making) written in C++",
+            "repo": "https://github.com/ctubio/Krypto-trading-bot",
+            "link": "https://github.com/ctubio/Krypto-trading-bot",
+            "open_source": true,
+            "stars": 3200,
+            "type": "Product"
+        },
+        {
+            "title": "Hook0",
+            "description": "Open-source webhook server that helps you provide webhooks to your users. It handles for you a great amount of features that are usually tedious to (re)implement.",
+            "repo": "https://github.com/hook0/hook0",
+            "open_source": true,
+            "stars": 360,
+            "type": "Product",
+            "link": "https://www.hook0.com/"
+        },
+        {
+            "title": "LiteSpeedTest",
+            "description": "LiteSpeedTest is a simple tool for batch test ss/ssr/v2ray/trojan/clash servers.",
+            "repo": "https://github.com/xxf098/LiteSpeedTest",
+            "open_source": true,
+            "stars": 310,
+            "type": "Product",
+            "link": "https://github.com/xxf098/LiteSpeedTest"
+        },
+        {
+            "title": "Siembol",
+            "description": "An open-source, real-time Security Information & Event Management tool based on big data technologies, providing a scalable, advanced security analytics framework.",
+            "repo": "https://github.com/G-Research/siembol",
+            "open_source": true,
+            "stars": 200,
+            "type": "Product",
+            "link": "https://siembol.io/"
+        },
+        {
+            "title": "Scancode Workbench",
+            "description": "ScanCode Workbench is a desktop app to review and conclude license and origin from code scans generated by ScanCode Toolkit.",
+            "repo": "https://github.com/nexB/scancode-workbench",
+            "open_source": true,
+            "stars": 150,
+            "type": "Product",
+            "link": "https://github.com/nexB/scancode-workbench/releases/latest"
+        },
+        {
+            "title": "MapleStory Music",
+            "description": "MapleStory Music website",
+            "repo": "https://github.com/maplestory-music/maplestory-music.github.io",
+            "open_source": true,
+            "stars": 100,
+            "type": "Product",
+            "link": "https://maplestory-music.github.io/"
+        },
+        {
+            "title": "Opensearch Dashboard Observability",
+            "description": "Visualize and explore your logs, traces and metrics data in OpenSearch Dashboards",
+            "repo": "https://github.com/opensearch-project/dashboards-observability",
+            "open_source": true,
+            "stars": 10,
+            "type": "Product",
+            "link": "https://opensearch.org/docs/latest/observability-plugin/index/"
+        }
+    ]
+}

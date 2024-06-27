@@ -26,7 +26,7 @@ interface Props {
     children?: any;
     extras?: string[];
 
-    vueFramework: 'vue' | 'vue3';
+    vueFramework: 'vue3';
 }
 
 const {
@@ -45,12 +45,11 @@ const {
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
-const vueFrameworkTitle = vueFramework === 'vue3' ? 'Vue 3' : 'Vue';
 ---
 
 <html lang="en">
     <head>
-        <MetaData isDev={isDev} title={`${vueFrameworkTitle} Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
+        <MetaData isDev={isDev} title={`Vue 3 Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
         <ExampleStyle rootSelector="#app" extraStyles={extraStyles} />
         <Styles baseUrl={appLocation} files={styleFiles} />
         <Extras extras={extras ?? []} />

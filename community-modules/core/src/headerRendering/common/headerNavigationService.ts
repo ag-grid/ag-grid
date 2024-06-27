@@ -1,38 +1,53 @@
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { CtrlsService } from "../../ctrlsService";
-import { Column } from "../../entities/column";
-import { ColumnGroup } from "../../entities/columnGroup";
-import { FocusService } from "../../focusService";
-import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
-import { last } from "../../utils/array";
-import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
+import type { ColumnModel } from '../../columns/columnModel';
+import type { VisibleColsService } from '../../columns/visibleColsService';
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import { isColumnGroup } from '../../entities/agColumnGroup';
+import type { FocusService } from '../../focusService';
+import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { Column, ColumnGroup } from '../../interfaces/iColumn';
+import { _last } from '../../utils/array';
+import { HeaderRowType } from '../row/headerRowComp';
+import type { HeaderPosition, HeaderPositionUtils } from './headerPosition';
 
 export enum HeaderNavigationDirection {
     UP,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT,
 }
 
-@Bean('headerNavigationService')
-export class HeaderNavigationService extends BeanStub {
+export class HeaderNavigationService extends BeanStub implements NamedBean {
+    beanName = 'headerNavigationService' as const;
 
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private focusService: FocusService;
+    private headerPositionUtils: HeaderPositionUtils;
+    private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private visibleColService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.focusService = beans.focusService;
+        this.headerPositionUtils = beans.headerPositionUtils;
+        this.ctrlsService = beans.ctrlsService;
+        this.columnModel = beans.columnModel;
+        this.visibleColService = beans.visibleColsService;
+    }
 
     private gridBodyCon: GridBodyCtrl;
     private currentHeaderRowWithoutSpan: number = -1;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
+    public postConstruct(): void {
+        this.ctrlsService.whenReady((p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
 
-        const eDocument = this.gridOptionsService.getDocument();
-        this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
+        const eDocument = this.gos.getDocument();
+        this.addManagedElementListeners(eDocument, { mousedown: () => this.setCurrentHeaderRowWithoutSpan(-1) });
     }
 
     public getHeaderRowCount(): number {
@@ -40,22 +55,80 @@ export class HeaderNavigationService extends BeanStub {
         return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
     }
 
+    public getHeaderPositionForColumn(
+        colKey: string | Column | ColumnGroup,
+        floatingFilter: boolean
+    ): HeaderPosition | null {
+        let column: AgColumn | AgColumnGroup | null;
+
+        if (typeof colKey === 'string') {
+            column = this.columnModel.getCol(colKey);
+            if (!column) {
+                column = this.visibleColService.getColumnGroup(colKey);
+            }
+        } else {
+            column = colKey as AgColumn | AgColumnGroup;
+        }
+
+        if (!column) {
+            return null;
+        }
+
+        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        const allCtrls = centerHeaderContainer.getAllCtrls();
+        const isFloatingFilterVisible = _last(allCtrls).getType() === HeaderRowType.FLOATING_FILTER;
+        const headerRowCount = this.getHeaderRowCount() - 1;
+
+        let row = -1;
+        let col: AgColumn | AgColumnGroup | null = column;
+
+        while (col) {
+            row++;
+            col = col.getParent();
+        }
+
+        let headerRowIndex = row;
+
+        if (floatingFilter && isFloatingFilterVisible && headerRowIndex === headerRowCount - 1) {
+            headerRowIndex++;
+        }
+
+        return headerRowIndex === -1
+            ? null
+            : {
+                  headerRowIndex,
+                  column,
+              };
+    }
+
     /*
      * This method navigates grid header vertically
      * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
-    public navigateVertically(direction: HeaderNavigationDirection, fromHeader: HeaderPosition | null, event: KeyboardEvent): boolean {
+    public navigateVertically(
+        direction: HeaderNavigationDirection,
+        fromHeader: HeaderPosition | null,
+        event: KeyboardEvent
+    ): boolean {
         if (!fromHeader) {
             fromHeader = this.focusService.getFocusedHeader();
         }
 
-        if (!fromHeader) { return false; }
+        if (!fromHeader) {
+            return false;
+        }
 
-        const { headerRowIndex, column } = fromHeader;
+        const { headerRowIndex } = fromHeader;
+        const column = fromHeader.column as AgColumn;
         const rowLen = this.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP;
 
-        let { headerRowIndex: nextRow, column: nextFocusColumn, headerRowIndexWithoutSpan } = isUp
+        let {
+            headerRowIndex: nextRow,
+            column: nextFocusColumn,
+            // eslint-disable-next-line prefer-const
+            headerRowIndexWithoutSpan,
+        } = isUp
             ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
             : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
 
@@ -74,15 +147,14 @@ export class HeaderNavigationService extends BeanStub {
             this.currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
         }
 
-
         if (!skipColumn && !nextFocusColumn) {
             return false;
         }
 
         return this.focusService.focusHeaderPosition({
             headerPosition: { headerRowIndex: nextRow, column: nextFocusColumn! },
-            allowUserOverride:  true,
-            event
+            allowUserOverride: true,
+            event,
         });
     }
 
@@ -94,12 +166,16 @@ export class HeaderNavigationService extends BeanStub {
      * This method navigates grid header horizontally
      * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
-    public navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean = false, event: KeyboardEvent): boolean {
+    public navigateHorizontally(
+        direction: HeaderNavigationDirection,
+        fromTab: boolean = false,
+        event: KeyboardEvent
+    ): boolean {
         const focusedHeader = this.focusService.getFocusedHeader()!;
         const isLeft = direction === HeaderNavigationDirection.LEFT;
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
         let nextHeader: HeaderPosition;
-        let normalisedDirection: 'Before' |  'After';
+        let normalisedDirection: 'Before' | 'After';
 
         // either navigating to the left or isRtl (cannot be both)
         if (this.currentHeaderRowWithoutSpan !== -1) {
@@ -122,14 +198,27 @@ export class HeaderNavigationService extends BeanStub {
                 direction: normalisedDirection,
                 fromTab,
                 allowUserOverride: true,
-                event
+                event,
             });
+        } else if (fromTab) {
+            const userFunc = this.gos.getCallback('tabToNextHeader');
+            if (userFunc) {
+                return this.focusService.focusHeaderPositionFromUserFunc({
+                    userFunc,
+                    headerPosition: nextHeader,
+                    direction: normalisedDirection,
+                });
+            }
         }
 
         return this.focusNextHeaderRow(focusedHeader, normalisedDirection, event);
     }
 
-    private focusNextHeaderRow(focusedHeader: HeaderPosition, direction: 'Before' | 'After', event: KeyboardEvent): boolean {
+    private focusNextHeaderRow(
+        focusedHeader: HeaderPosition,
+        direction: 'Before' | 'After',
+        event: KeyboardEvent
+    ): boolean {
         const currentIndex = focusedHeader.headerRowIndex;
         let nextPosition: HeaderPosition | null = null;
         let nextRowIndex: number;
@@ -150,27 +239,34 @@ export class HeaderNavigationService extends BeanStub {
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
-        if (!nextPosition) { return false; }
+        if (!nextPosition) {
+            return false;
+        }
 
-        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition?.headerRowIndex)
+        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(
+            nextPosition.column as AgColumn,
+            nextPosition?.headerRowIndex
+        );
 
         return this.focusService.focusHeaderPosition({
             headerPosition: { column, headerRowIndex },
             direction,
             fromTab: true,
             allowUserOverride: true,
-            event
+            event,
         });
     }
 
-    public scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
-        if (column.getPinned()) { return; }
+    public scrollToColumn(column: AgColumn | AgColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
+        if (column.getPinned()) {
+            return;
+        }
 
-        let columnToScrollTo: Column;
+        let columnToScrollTo: AgColumn;
 
-        if (column instanceof ColumnGroup) {
+        if (isColumnGroup(column)) {
             const columns = column.getDisplayedLeafColumns();
-            columnToScrollTo = direction === 'Before' ? last(columns) : columns[0];
+            columnToScrollTo = direction === 'Before' ? _last(columns) : columns[0];
         } else {
             columnToScrollTo = column;
         }

@@ -43,16 +43,17 @@
       "options": {
         "script": "copySrcFilesForGeneration"
       },
-      "inputs": [
-        "{workspaceRoot}/community-modules/core/src/eventKeys.ts"
-      ],
+      "cache": false,
+      "inputs": ["{workspaceRoot}/community-modules/core/src/eventTypes.ts"],
       "outputs": [
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventKeys.ts"
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts"
       ]
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

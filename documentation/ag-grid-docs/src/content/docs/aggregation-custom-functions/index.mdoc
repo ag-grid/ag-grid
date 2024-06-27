@@ -9,7 +9,7 @@ This section covers how custom aggregation functions can be supplied and used in
 
 Custom aggregation functions can be supplied directly to `colDef.aggFunc` as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
@@ -53,7 +53,7 @@ and is done using the `aggFuncs` grid option:
 
 The following snippet shows how to register custom functions using the `aggFuncs` grid option:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'sales', aggFunc: 'mySum' },
@@ -123,7 +123,7 @@ The following can be noted from the example:
 
 Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total', not just for row groups. For example if you have 10 rows in the grid, the grid will still call the aggregation with 10 values to get a grand total aggregation.
 
-The grand total aggregation is normally not seen, unless the grid is configured with [Grouping Total Footers](./grouping-footers/#enabling-group-footers). Total footers display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
+The grand total aggregation is normally not seen, unless the grid is configured with [Grand Total Row](./total-rows/#grand-total-row). The grand total row display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
 
 When the grid is empty, the aggregations are still called once with an empty set. This is to calculate the grand total aggregation for the top level.
 
@@ -135,7 +135,7 @@ If you are unaware of the tree-like nature, your custom aggregation functions ma
 
 For example, with the simple mean average function below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const simpleAvg = (params) => {
   const values = params.values;
   const sum = values.reduce((a,b) => a + b, 0);
@@ -150,7 +150,7 @@ To create a custom aggregation function, which is applied to all leaf rows, the 
 
 For example, the following function would create average over all leaf rows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
  const avgAggFunction = (params) => {
    // the average will be the sum / count
    let sum = 0;
@@ -209,7 +209,7 @@ When values from multiple columns are required, a value object containing all th
 should be passed around instead of a simple value. This value object should also contain a `toString()` method, so it can
 also be resolved by the grid to a single value. This is shown in the code snippet below:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'gold', aggFunc: 'sum' },
@@ -267,7 +267,7 @@ will not work when pivoting.
 
 For groups, when aggregating, the grid stores the results in the colId of the column. For example, if you have a group defined as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {

@@ -1,43 +1,72 @@
-import {
-    Autowired,
-    Bean,
-    BeanStub,
-    CellRange,
+import type {
+    BaseCreateChartParams,
+    BeanCollection,
     CellRangeParams,
     ChartDownloadParams,
     ChartModel,
+    ChartParamsCellRange,
     ChartRef,
     ChartType,
-    ColumnModel,
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
+    Environment,
+    FocusService,
     GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
     IRangeService,
-    ModuleRegistry,
+    NamedBean,
     OpenChartToolPanelParams,
-    Optional,
-    PreDestroy,
+    PartialCellRange,
     SeriesChartType,
-    UpdateChartParams
-} from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport} from "ag-charts-community";
-import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
-import { getCanonicalChartType, isEnterpriseChartType } from './chartComp/utils/seriesTypeMapper';
-import { upgradeChartModel } from "./chartModelMigration";
-import { VERSION as GRID_VERSION } from "../version";
+    SeriesGroupType,
+    UpdateChartParams,
+    VisibleColsService,
+} from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
+import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
+import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
+
+import { VERSION as GRID_VERSION } from '../version';
+import type { GridChartParams } from './chartComp/gridChartComp';
+import { GridChartComp } from './chartComp/gridChartComp';
+import { ChartParamsValidator } from './chartComp/utils/chartParamsValidator';
+import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
+import { upgradeChartModel } from './chartModelMigration';
 
 export interface CrossFilteringContext {
     lastSelectedChartId: string;
 }
 
-@Bean('chartService')
-export class ChartService extends BeanStub implements IChartService {
+export interface CommonCreateChartParams extends BaseCreateChartParams {
+    cellRange: PartialCellRange;
+    pivotChart?: boolean;
+    suppressChartRanges?: boolean;
+    switchCategorySeries?: boolean;
+    aggFunc?: string | IAggFunc;
+    crossFiltering?: boolean;
+    chartOptionsToRestore?: AgChartThemeOverrides;
+    chartPaletteToRestore?: AgChartThemePalette;
+    seriesChartTypes?: SeriesChartType[];
+    seriesGroupType?: SeriesGroupType;
+    focusDialogOnOpen?: boolean;
+}
 
-    @Optional('rangeService') private rangeService: IRangeService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+export class ChartService extends BeanStub implements NamedBean, IChartService {
+    beanName = 'chartService' as const;
+
+    private visibleColsService: VisibleColsService;
+    private rangeService?: IRangeService;
+    private environment: Environment;
+    private focusService: FocusService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.visibleColsService = beans.visibleColsService;
+        this.rangeService = beans.rangeService;
+        this.environment = beans.environment;
+        this.focusService = beans.focusService;
+    }
 
     public static CHARTS_VERSION = CHARTS_VERSION;
 
@@ -54,20 +83,14 @@ export class ChartService extends BeanStub implements IChartService {
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
     public updateChart(params: UpdateChartParams): void {
-        const chartType = params.chartType;
-        if (chartType && isEnterpriseChartType(chartType) && !this.isEnterprise()) {
-            ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
-            return;
-        }
-
         if (this.activeChartComps.size === 0) {
-            console.warn(`AG Grid - No active charts to update.`);
+            _warnOnce(`No active charts to update.`);
             return;
         }
 
-        const chartComp = [...this.activeChartComps].find(chartComp => chartComp.getChartId() === params.chartId);
+        const chartComp = [...this.activeChartComps].find((chartComp) => chartComp.getChartId() === params.chartId);
         if (!chartComp) {
-            console.warn(`AG Grid - Unable to update chart. No active chart found with ID: ${params.chartId}.`);
+            _warnOnce(`Unable to update chart. No active chart found with ID: ${params.chartId}.`);
             return;
         }
 
@@ -78,16 +101,16 @@ export class ChartService extends BeanStub implements IChartService {
         const models: ChartModel[] = [];
 
         const versionedModel = (c: ChartModel) => {
-            return {...c, version: GRID_VERSION };
+            return { ...c, version: GRID_VERSION };
         };
-        this.activeChartComps.forEach(c => models.push(versionedModel(c.getChartModel())));
+        this.activeChartComps.forEach((c) => models.push(versionedModel(c.getChartModel())));
 
         return models;
     }
 
     public getChartRef(chartId: string): ChartRef | undefined {
         let chartRef;
-        this.activeCharts.forEach(cr => {
+        this.activeCharts.forEach((cr) => {
             if (cr.chartId === chartId) {
                 chartRef = cr;
             }
@@ -97,7 +120,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public getChartComp(chartId: string): GridChartComp | undefined {
         let chartComp;
-        this.activeChartComps.forEach(comp => {
+        this.activeChartComps.forEach((comp) => {
             if (comp.getChartId() === chartId) {
                 chartComp = comp;
             }
@@ -107,7 +130,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
         let url: any;
-        this.activeChartComps.forEach(c => {
+        this.activeChartComps.forEach((c) => {
             if (c.getChartId() === params.chartId) {
                 url = c.getChartImageDataURL(params.fileFormat);
             }
@@ -116,28 +139,31 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public downloadChart(params: ChartDownloadParams) {
-        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
+        const chartComp = Array.from(this.activeChartComps).find((c) => c.getChartId() === params.chartId);
         chartComp?.downloadChart(params.dimensions, params.fileName, params.fileFormat);
     }
 
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === params.chartId);
+        const chartComp = Array.from(this.activeChartComps).find((c) => c.getChartId() === params.chartId);
         chartComp?.openChartToolPanel(params.panel);
     }
 
     public closeChartToolPanel(chartId: string) {
-        const chartComp = Array.from(this.activeChartComps).find(c => c.getChartId() === chartId);
+        const chartComp = Array.from(this.activeChartComps).find((c) => c.getChartId() === chartId);
         chartComp?.closeChartToolPanel();
     }
 
-    public createChartFromCurrentRange(chartType: ChartType = 'groupedColumn'): ChartRef | undefined {
-        const selectedRange: CellRange = this.getSelectedRange();
-        return this.createChart(selectedRange, chartType);
+    public createChartFromCurrentRange(
+        chartType: ChartType = 'groupedColumn',
+        fromApi?: boolean
+    ): ChartRef | undefined {
+        const cellRange: PartialCellRange = this.getSelectedRange();
+        return this.createChart({ cellRange, chartType, focusDialogOnOpen: !fromApi });
     }
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            console.warn("AG Grid - unable to restore chart as no chart model is provided");
+            _warnOnce('unable to restore chart as no chart model is provided');
             return;
         }
 
@@ -145,228 +171,128 @@ export class ChartService extends BeanStub implements IChartService {
             model = upgradeChartModel(model);
         }
 
-        const params = {
-            cellRange: model.cellRange,
-            chartType: model.chartType,
-            chartThemeName: model.chartThemeName,
-            chartContainer: chartContainer,
-            suppressChartRanges: model.suppressChartRanges,
-            switchCategorySeries: model.switchCategorySeries,
-            aggFunc: model.aggFunc,
-            unlinkChart: model.unlinkChart,
-            seriesChartTypes: model.seriesChartTypes
-        };
-
-        const getCellRange = (cellRangeParams: CellRangeParams) => {
-            return this.rangeService
-                ? this.rangeService.createCellRangeFromCellRangeParams(cellRangeParams)
-                : undefined;
-        }
+        let cellRange: PartialCellRange | undefined;
+        let pivotChart: true | undefined;
+        let suppressChartRanges: boolean | undefined;
+        let chartPaletteToRestore: AgChartThemePalette | undefined;
 
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
+            this.gos.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' as any });
 
-            // pivot chart range contains all visible column without a row range to include all rows
-            const columns = this.columnModel.getAllDisplayedColumns().map(col => col.getColId());
-            const chartAllRangeParams: CellRangeParams = { 
-                rowStartIndex: null,
-                rowStartPinned: undefined,
-                rowEndIndex: null,
-                rowEndPinned: undefined,
-                columns 
-            };
-
-            const cellRange = getCellRange(chartAllRangeParams);
-            if (!cellRange) {
-                console.warn("AG Grid - unable to create chart as there are no columns in the grid.");
-                return;
-            }
-
-            return this.createChart(
-                cellRange,
-                params.chartType,
-                params.chartThemeName,
-                true,
-                true,
-                params.chartContainer,
-                false,
-                undefined,
-                undefined,
-                params.unlinkChart,
-                false,
-                model.chartOptions);
+            cellRange = this.createCellRange(undefined, true);
+            pivotChart = true;
+            suppressChartRanges = true;
+        } else {
+            cellRange = this.createCellRange(model.cellRange);
+            chartPaletteToRestore = model.chartPalette;
+            suppressChartRanges = model.suppressChartRanges;
         }
 
-        const cellRange = getCellRange(params.cellRange);
         if (!cellRange) {
-            console.warn("AG Grid - unable to create chart as no range is selected");
             return;
         }
 
-        return this.createChart(
-            cellRange!,
-            params.chartType,
-            params.chartThemeName,
-            false,
-            params.suppressChartRanges,
-            params.chartContainer,
-            params.switchCategorySeries,
-            params.aggFunc,
-            undefined,
-            params.unlinkChart,
-            false,
-            model.chartOptions,
-            model.chartPalette,
-            params.seriesChartTypes);
-    }
-
-    public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        const cellRange = this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
-
-        if (!cellRange) {
-            console.warn("AG Grid - unable to create chart as no range is selected");
-            return;
-        }
-
-        return this.createChart(
+        return this.createChart({
+            ...model,
             cellRange,
-            params.chartType,
-            params.chartThemeName,
-            false,
-            params.suppressChartRanges,
-            params.chartContainer,
-            params.switchCategorySeries,
-            params.aggFunc,
-            params.chartThemeOverrides,
-            params.unlinkChart,
-            undefined,
-            undefined,
-            undefined,
-            params.seriesChartTypes);
+            pivotChart,
+            suppressChartRanges,
+            chartContainer,
+            chartOptionsToRestore: model.chartOptions,
+            chartPaletteToRestore,
+        });
     }
 
-    public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
+    public createRangeChart(params: CreateRangeChartParams, fromApi?: boolean): ChartRef | undefined {
+        const cellRange = this.createCellRange(params.cellRange);
+
+        if (!cellRange) {
+            return;
+        }
+
+        return this.createChart({
+            ...params,
+            cellRange,
+            focusDialogOnOpen: !fromApi,
+        });
+    }
+
+    public createPivotChart(params: CreatePivotChartParams, fromApi?: boolean): ChartRef | undefined {
         // if required enter pivot mode
-        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
+        this.gos.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' as any });
 
-        // pivot chart range contains all visible column without a row range to include all rows
-        const chartAllRangeParams: CellRangeParams = {
-            rowStartIndex: null,
-            rowStartPinned: undefined,
-            rowEndIndex: null,
-            rowEndPinned: undefined,
-            columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
-        };
-
-        const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(chartAllRangeParams)
-            : undefined;
+        const cellRange = this.createCellRange(undefined, true);
 
         if (!cellRange) {
-            console.warn("AG Grid - unable to create chart as there are no columns in the grid.");
             return;
         }
 
-        return this.createChart(
+        return this.createChart({
+            ...params,
             cellRange,
-            params.chartType,
-            params.chartThemeName,
-            true,
-            true,
-            params.chartContainer,
-            false,
-            undefined,
-            params.chartThemeOverrides,
-            params.unlinkChart);
+            pivotChart: true,
+            suppressChartRanges: true,
+            focusDialogOnOpen: !fromApi,
+        });
     }
 
-    public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        const cellRange = this.rangeService?.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams);
+    public createCrossFilterChart(params: CreateCrossFilterChartParams, fromApi?: boolean): ChartRef | undefined {
+        const cellRange = this.createCellRange(params.cellRange);
 
         if (!cellRange) {
-            console.warn("AG Grid - unable to create chart as no range is selected");
             return;
         }
 
-        const crossFiltering = true;
-
-        const suppressChartRangesSupplied = typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+        const suppressChartRangesSupplied =
+            typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
         const suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
 
-        return this.createChart(
+        return this.createChart({
+            ...params,
             cellRange,
-            params.chartType,
-            params.chartThemeName,
-            false,
             suppressChartRanges,
-            params.chartContainer,
-            false,
-            params.aggFunc,
-            params.chartThemeOverrides,
-            params.unlinkChart,
-            crossFiltering);
+            crossFiltering: true,
+            focusDialogOnOpen: !fromApi,
+        });
     }
 
-    private createChart(
-        cellRange: CellRange,
-        chartType: ChartType,
-        chartThemeName?: string,
-        pivotChart = false,
-        suppressChartRanges = false,
-        container?: HTMLElement,
-        switchCategorySeries = false,
-        aggFunc?: string | IAggFunc,
-        chartThemeOverrides?: AgChartThemeOverrides,
-        unlinkChart = false,
-        crossFiltering  = false,
-        chartOptionsToRestore?: AgChartThemeOverrides,
-        chartPaletteToRestore?: AgChartThemePalette,
-        seriesChartTypes?: SeriesChartType[]): ChartRef | undefined {
-        
-        if (isEnterpriseChartType(chartType) && !this.isEnterprise()) {
-            ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+    private createChart(params: CommonCreateChartParams): ChartRef | undefined {
+        const validationResult = ChartParamsValidator.validateCreateParams(params);
+        if (!validationResult) {
             return undefined;
         }
+        params = validationResult === true ? params : validationResult;
 
-        const createChartContainerFunc = this.gridOptionsService.getCallback('createChartContainer');
+        const { chartType, chartContainer } = params;
 
-        const params: GridChartParams = {
+        const createChartContainerFunc = this.gos.getCallback('createChartContainer');
+
+        const gridChartParams: GridChartParams = {
+            ...params,
             chartId: this.generateId(),
-            pivotChart,
-            cellRange,
             chartType: getCanonicalChartType(chartType),
-            chartThemeName,
-            insideDialog: !(container || createChartContainerFunc),
-            suppressChartRanges,
-            switchCategorySeries,
-            aggFunc,
-            chartThemeOverrides,
-            unlinkChart,
-            crossFiltering,
+            insideDialog: !(chartContainer || createChartContainerFunc),
             crossFilteringContext: this.crossFilteringContext,
-            chartOptionsToRestore,
-            chartPaletteToRestore,
-            seriesChartTypes,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset()),
+            crossFilteringResetCallback: () => this.activeChartComps.forEach((c) => c.crossFilteringReset()),
         };
 
-        const chartComp = new GridChartComp(params);
-        this.context.createBean(chartComp);
+        const chartComp = new GridChartComp(gridChartParams);
+        this.createBean(chartComp);
 
         const chartRef = this.createChartRef(chartComp);
 
-        if (container) {
+        if (chartContainer) {
             // if container exists, means developer initiated chart create via API, so place in provided container
-            container.appendChild(chartComp.getGui());
+            chartContainer.appendChild(chartComp.getGui());
 
             // if the chart container was placed outside an element that
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
-            const theme = this.environment.getTheme();
+            const themeEl = this.environment.getThemeAncestorElement();
 
-            if (theme.el && !theme.el.contains(container)) {
-                container.classList.add(theme.theme!);
+            if (themeEl && !themeEl.contains(chartContainer)) {
+                this.environment.applyThemeClasses(chartContainer);
             }
         } else if (createChartContainerFunc) {
             // otherwise, user created chart via grid UI, check if developer provides containers (e.g. if the application
@@ -374,12 +300,10 @@ export class ChartService extends BeanStub implements IChartService {
             createChartContainerFunc(chartRef);
         } else {
             // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
-            chartComp.addEventListener(
-                GridChartComp.EVENT_DESTROYED,
-                () => {
-                    this.activeChartComps.delete(chartComp);
-                    this.activeCharts.delete(chartRef);
-                });
+            chartComp.addEventListener('destroyed', () => {
+                this.activeChartComps.delete(chartComp);
+                this.activeCharts.delete(chartRef);
+            });
         }
 
         return chartRef;
@@ -389,14 +313,17 @@ export class ChartService extends BeanStub implements IChartService {
         const chartRef: ChartRef = {
             destroyChart: () => {
                 if (this.activeCharts.has(chartRef)) {
-                    this.context.destroyBean(chartComp);
+                    this.destroyBean(chartComp);
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }
             },
+            focusChart: () => {
+                this.focusService.focusInto(chartComp.getGui());
+            },
             chartElement: chartComp.getGui(),
             chart: chartComp.getUnderlyingChart(),
-            chartId: chartComp.getChartModel().chartId
+            chartId: chartComp.getChartModel().chartId,
         };
 
         this.activeCharts.add(chartRef);
@@ -405,17 +332,38 @@ export class ChartService extends BeanStub implements IChartService {
         return chartRef;
     }
 
-    private getSelectedRange(): CellRange {
-        const ranges = this.rangeService.getCellRanges();
-        return ranges.length > 0 ? ranges[0] : {} as CellRange;
+    private getSelectedRange(): PartialCellRange {
+        const ranges = this.rangeService?.getCellRanges() ?? [];
+        return ranges.length > 0 ? ranges[0] : { columns: [] };
     }
 
     private generateId(): string {
         return `id-${Math.random().toString(36).substring(2, 18)}`;
     }
 
-    @PreDestroy
-    private destroyAllActiveCharts(): void {
-        this.activeCharts.forEach(chart => chart.destroyChart());
+    private createCellRange(cellRangeParams?: ChartParamsCellRange, allRange?: boolean): PartialCellRange | undefined {
+        const rangeParams = allRange
+            ? {
+                  rowStartIndex: null,
+                  rowStartPinned: undefined,
+                  rowEndIndex: null,
+                  rowEndPinned: undefined,
+                  columns: this.visibleColsService.getAllCols().map((col) => col.getColId()),
+              }
+            : cellRangeParams;
+        const cellRange =
+            rangeParams &&
+            this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
+        if (!cellRange) {
+            _warnOnce(
+                `unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`
+            );
+        }
+        return cellRange;
+    }
+
+    public override destroy(): void {
+        this.activeCharts.forEach((chart) => chart.destroyChart());
+        super.destroy();
     }
 }

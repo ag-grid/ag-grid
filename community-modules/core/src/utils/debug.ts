@@ -1,4 +1,3 @@
-
 /**
  * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
  * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
@@ -16,7 +15,7 @@
     if (!eBox) {
         const template = `<div id="__ag__message" style="display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;"></div>`;
 
-        eBox = loadTemplate(template);
+        eBox = _loadTemplate(template);
 
         if (document.body) {
             document.body.appendChild(eBox);

@@ -1,36 +1,35 @@
-import {
-    Autowired,
-    Component,
-    UserComponentFactory,
+import type {
+    BeanCollection,
     IToolPanelComp,
     IToolPanelParams,
     ToolPanelDef,
-    PostConstruct,
-    WithoutGridCommon
-} from "@ag-grid-community/core";
-import { HorizontalResizeComp } from "./horizontalResizeComp";
+    UserComponentFactory,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { Component, _warnOnce } from '@ag-grid-community/core';
+
+import { AgHorizontalResize } from './agHorizontalResize';
 
 export class ToolPanelWrapper extends Component {
+    private userComponentFactory: UserComponentFactory;
 
-    @Autowired("userComponentFactory") private userComponentFactory: UserComponentFactory;
+    public wireBeans(beans: BeanCollection) {
+        this.userComponentFactory = beans.userComponentFactory;
+    }
 
-    private static TEMPLATE = /* html */
-        `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`;
-
-    private toolPanelCompInstance: IToolPanelComp;
+    private toolPanelCompInstance: IToolPanelComp | undefined;
     private toolPanelId: string;
-    private resizeBar: HorizontalResizeComp;
+    private resizeBar: AgHorizontalResize;
     private width: number | undefined;
     private params: IToolPanelParams;
 
     constructor() {
-        super(ToolPanelWrapper.TEMPLATE);
+        super(/* html */ `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`);
     }
 
-    @PostConstruct
-    private setupResize(): void {
+    public postConstruct(): void {
         const eGui = this.getGui();
-        const resizeBar = this.resizeBar = this.createManagedBean(new HorizontalResizeComp());
+        const resizeBar = (this.resizeBar = this.createManagedBean(new AgHorizontalResize()));
 
         eGui.setAttribute('id', `ag-${this.getCompId()}`);
 
@@ -54,7 +53,7 @@ export class ToolPanelWrapper extends Component {
         this.params = compDetails.params;
 
         if (componentPromise == null) {
-            console.warn(`AG Grid: error processing tool panel component ${id}. You need to specify 'toolPanel'`);
+            _warnOnce(`error processing tool panel component ${id}. You need to specify 'toolPanel'`);
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));
@@ -81,12 +80,12 @@ export class ToolPanelWrapper extends Component {
         }
     }
 
-    public getToolPanelInstance(): IToolPanelComp {
+    public getToolPanelInstance(): IToolPanelComp | undefined {
         return this.toolPanelCompInstance;
     }
 
     public setResizerSizerSide(side: 'right' | 'left') {
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
         const isLeft = side === 'left';
         const inverted = isRtl ? isLeft : !isLeft;
 
@@ -94,7 +93,6 @@ export class ToolPanelWrapper extends Component {
     }
 
     public refresh(): void {
-        this.toolPanelCompInstance.refresh(this.params);
+        this.toolPanelCompInstance?.refresh(this.params);
     }
-
 }

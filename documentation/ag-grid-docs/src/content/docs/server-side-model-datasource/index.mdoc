@@ -18,9 +18,9 @@ However, note that the Server-Side Row Model does not impose any restrictions on
 
 ## Enabling Server-Side Row Model
 
-The [Client-Side Row Model](./client-side-model/) is the default Row Model. To use the SSRM instead, set the `rowModelType` as follows:
+The [Client-Side Row Model](./row-models/#client-side) is the default Row Model. To use the SSRM instead, set the `rowModelType` as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     rowModelType: 'serverSide',
 }
@@ -69,7 +69,7 @@ The datasource is registered with the grid via either a) the grid property `serv
 
 Registering the datasource via grid options is done as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     serverSideDatasource: myDatasource
 }
@@ -77,7 +77,7 @@ const gridOptions = {
 
 Alternatively, the datasource can be registered via the grid API:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.setGridOption('serverSideDatasource', myDatasource);
 ```
 

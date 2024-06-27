@@ -7,12 +7,15 @@ function resolvePath(srcPath) {
 
 export default getViteConfig({
     root: __dirname,
-    cacheDir: './node_modules/.vite/test',
+    cacheDir: '../../node_modules/.vite/test',
     test: {
         globals: true,
+        cache: { dir: '../../node_modules/.vitest' },
         environment: 'node',
         include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         exclude: ['**/_examples/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+        reporters: ['default'],
+        coverage: { reportsDirectory: '../../coverage/ag-grid-docs', provider: 'v8' },
     },
     resolve: {
         alias: {

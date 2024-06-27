@@ -15,7 +15,7 @@ Note that:
 
 * In the grid column definitions we link to the corresponding types defined in the `excelStyles` array storing the export configuration we want to apply for the column values.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { headerName: 'provided', field: 'rawValue' },
@@ -87,7 +87,7 @@ When exporting dates to Excel format, you should use an Excel Style with `dataTy
 
 If your date values are not in ISO format, please use the `processCellCallback` method to convert them. As demonstrated in example above, by default Excel displays these date values as numbers. To format these numbers like regular dates in Excel, please enter a numberFormat value containing the desired date value format in the Excel Style as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {

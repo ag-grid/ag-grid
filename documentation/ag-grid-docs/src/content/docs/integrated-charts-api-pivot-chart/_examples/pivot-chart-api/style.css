@@ -1,11 +1,11 @@
 #myGrid {
-  flex: 1 1 auto;
-  overflow: hidden;
-  height: 40% !important;
+    flex: 1 1 auto;
+    overflow: hidden;
+    height: 40% !important;
 }
 
 #myChart {
-  flex: 1 1 auto;
-  overflow: hidden;
-  height: 60%;
+    flex: 1 1 auto;
+    overflow: hidden;
+    height: 60%;
 }

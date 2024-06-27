@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class DetailCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -19,12 +19,15 @@ export class DetailCellRenderer implements ICellRendererComp {
             '  <p>' +
             '    <label>' +
             '      Calls:<br>' +
-            '    <input type="text" value="' + params.data.calls + '">' +
+            '    <input type="text" value="' +
+            params.data.calls +
+            '">' +
             '    </label>' +
             '  </p>' +
             '  <p>' +
             '    <label>' +
-            '        Last Updated: ' + new Date().toLocaleTimeString() +
+            '        Last Updated: ' +
+            new Date().toLocaleTimeString() +
             '    </label>' +
             '  </p>' +
             '</form>' +

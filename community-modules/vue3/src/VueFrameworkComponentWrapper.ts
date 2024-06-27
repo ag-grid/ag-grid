@@ -1,9 +1,9 @@
-import {BaseComponentWrapper, WrappableInterface} from '@ag-grid-community/core';
-import {VueComponentFactory} from './VueComponentFactory';
+import type { WrappableInterface } from '@ag-grid-community/core';
+import { BaseComponentWrapper, _warnOnce } from '@ag-grid-community/core';
+
+import { VueComponentFactory } from './VueComponentFactory';
 
 interface VueWrappableInterface extends WrappableInterface {
-    overrideProcessing(methodName: string): boolean;
-
     processMethod(methodName: string, args: IArguments): any;
 }
 
@@ -28,16 +28,16 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         const that = this;
 
         class DynamicComponent extends VueComponent<any, any> implements WrappableInterface {
-            public init(params: any): void {
+            public override init(params: any): void {
                 super.init(params);
             }
 
             public hasMethod(name: string): boolean {
-                const componentInstance = wrapper.getFrameworkComponentInstance()
+                const componentInstance = wrapper.getFrameworkComponentInstance();
                 if (!componentInstance[name]) {
-                    return componentInstance.$.setupState[name] != null
+                    return componentInstance.$.setupState[name] != null;
                 } else {
-                    return true
+                    return true;
                 }
             }
 
@@ -53,10 +53,6 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
 
             public addMethod(name: string, callback: () => any): void {
                 (wrapper as any)[name] = callback;
-            }
-
-            public overrideProcessing(methodName: string): boolean {
-                return that.parent!.autoParamsRefresh && methodName === 'refresh';
             }
 
             public processMethod(methodName: string, args: IArguments): any {
@@ -81,21 +77,26 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 
     public createComponent<T>(component: any, params: any): any {
-        return VueComponentFactory.createAndMountComponent(component, params, this.parent!, VueFrameworkComponentWrapper.provides!);
+        return VueComponentFactory.createAndMountComponent(
+            component,
+            params,
+            this.parent!,
+            VueFrameworkComponentWrapper.provides!
+        );
     }
 
-    protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any {
+    protected override createMethodProxy(
+        wrapper: VueWrappableInterface,
+        methodName: string,
+        mandatory: boolean
+    ): () => any {
         return function () {
-            if (wrapper.overrideProcessing(methodName)) {
-                return wrapper.processMethod(methodName, arguments);
-            }
-
             if (wrapper.hasMethod(methodName)) {
                 return wrapper.callMethod(methodName, arguments);
             }
 
             if (mandatory) {
-                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
+                _warnOnce('Framework component is missing the method ' + methodName + '()');
             }
             return null;
         };
@@ -116,7 +117,10 @@ abstract class VueComponent<P, T> {
     }
 
     public destroy(): void {
-        if (this.getFrameworkComponentInstance() && typeof this.getFrameworkComponentInstance().destroy === 'function') {
+        if (
+            this.getFrameworkComponentInstance() &&
+            typeof this.getFrameworkComponentInstance().destroy === 'function'
+        ) {
             this.getFrameworkComponentInstance().destroy();
         }
         this.unmount();
@@ -127,7 +131,7 @@ abstract class VueComponent<P, T> {
     }
 
     protected init(params: P): void {
-        const {componentInstance, element, destroy: unmount} = this.createComponent(params);
+        const { componentInstance, element, destroy: unmount } = this.createComponent(params);
 
         this.componentInstance = componentInstance;
         this.unmount = unmount;
@@ -139,4 +143,3 @@ abstract class VueComponent<P, T> {
 
     protected abstract createComponent(params: P): any;
 }
-

@@ -1,3 +1,4 @@
+import { basename } from 'path';
 import prettier from 'prettier';
 
 import { ANGULAR_GENERATED_MAIN_FILE_NAME } from '../constants';
@@ -5,14 +6,16 @@ import { vanillaToAngular } from '../transformation-scripts/grid-vanilla-to-angu
 import { vanillaToReactFunctional } from '../transformation-scripts/grid-vanilla-to-react-functional';
 import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanilla-to-react-functional-ts';
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
-import { vanillaToVue } from '../transformation-scripts/grid-vanilla-to-vue';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
-import { getIntegratedDarkModeCode, readAsJsFile, removeModuleRegistration } from '../transformation-scripts/parser-utils';
-import { InternalFramework, ParsedBindings } from '../types';
-import type { FileContents, ExampleConfig } from '../types';
+import {
+    getIntegratedDarkModeCode,
+    readAsJsFile,
+    removeModuleRegistration,
+} from '../transformation-scripts/parser-utils';
+import type { InternalFramework, ParsedBindings } from '../types';
+import type { ExampleConfig, FileContents } from '../types';
 import { deepCloneObject } from './deepCloneObject';
 import { getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
-import { basename } from 'path';
 
 interface FrameworkFiles {
     files: FileContents;
@@ -60,17 +63,31 @@ const createVueFilesGenerator =
         ) => (importType) => string;
         internalFramework: InternalFramework;
     }): ConfigGenerator =>
-    async ({ bindings, indexHtml, componentScriptFiles, otherScriptFiles, styleFiles, isDev, importType, exampleConfig }) => {
+    async ({
+        bindings,
+        indexHtml,
+        componentScriptFiles,
+        otherScriptFiles,
+        styleFiles,
+        isDev,
+        importType,
+        exampleConfig,
+    }) => {
         const componentNames = getComponentName(componentScriptFiles);
-        let mainJs = sourceGenerator(deepCloneObject(bindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
+        let mainJs = sourceGenerator(
+            deepCloneObject(bindings),
+            exampleConfig,
+            componentNames,
+            Object.keys(styleFiles)
+        )(importType);
 
-        if(!isDev){
+        if (!isDev) {
             mainJs = await prettier.format(mainJs, { parser: 'babel' });
         }
 
         const entryFileName = getEntryFileName(internalFramework)!;
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
+        const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
 
         return {
             files: {
@@ -92,19 +109,19 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         mainJs = mainJs.replace(/createGrid\(/g, 'agGrid.createGrid(');
 
         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
-        mainJs = mainJs.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
-        
+        mainJs = mainJs.replace(/LicenseManager\.setLicenseKey\(/g, 'agGrid.LicenseManager.setLicenseKey(');
+
         // Javascript is packages only
         mainJs = removeModuleRegistration(mainJs);
-        
+
         const integratedDarkModeCode = getIntegratedDarkModeCode(bindings.exampleName, false, 'gridApi');
         mainJs = mainJs.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${integratedDarkModeCode}`);
 
         // remove any leading new lines
         mainJs = mainJs.replace(/^\s*[\r\n]/, '');
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-        if(!isDev){
+        const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
+        if (!isDev) {
             mainJs = await prettier.format(mainJs, { parser: 'babel' });
         }
 
@@ -125,19 +142,24 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         typedBindings,
         isDev,
         importType,
-        exampleConfig
+        exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'typescript';
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
 
-        let mainTs = vanillaToTypescript(deepCloneObject(typedBindings), exampleConfig, mainFileName, entryFile)(importType);
+        let mainTs = vanillaToTypescript(
+            deepCloneObject(typedBindings),
+            exampleConfig,
+            mainFileName,
+            entryFile
+        )(importType);
 
-        if(!isDev){
+        if (!isDev) {
             mainTs = await prettier.format(mainTs, { parser: 'typescript' });
         }
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
+        const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
 
         return {
             files: {
@@ -148,14 +170,28 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             // NOTE: `scriptFiles` not required, as system js handles import
         };
     },
-    reactFunctional: async ({ bindings, indexHtml, otherScriptFiles, componentScriptFiles, styleFiles, isDev, importType, exampleConfig }) => {
+    reactFunctional: async ({
+        bindings,
+        indexHtml,
+        otherScriptFiles,
+        componentScriptFiles,
+        styleFiles,
+        isDev,
+        importType,
+        exampleConfig,
+    }) => {
         const internalFramework = 'reactFunctional';
         const entryFileName = getEntryFileName(internalFramework)!;
 
         const componentNames = getComponentName(componentScriptFiles);
-        let indexJsx = vanillaToReactFunctional(deepCloneObject(bindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
+        let indexJsx = vanillaToReactFunctional(
+            deepCloneObject(bindings),
+            exampleConfig,
+            componentNames,
+            Object.keys(styleFiles)
+        )(importType);
 
-        if(!isDev){
+        if (!isDev) {
             indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
         }
 
@@ -169,13 +205,27 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             // NOTE: `scriptFiles` not required, as system js handles import
         };
     },
-    reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, componentScriptFiles, styleFiles, isDev, importType, exampleConfig }) => {
+    reactFunctionalTs: async ({
+        typedBindings,
+        indexHtml,
+        otherScriptFiles,
+        componentScriptFiles,
+        styleFiles,
+        isDev,
+        importType,
+        exampleConfig,
+    }) => {
         const internalFramework: InternalFramework = 'reactFunctionalTs';
         const entryFileName = getEntryFileName(internalFramework)!;
         const componentNames = getComponentName(componentScriptFiles);
-        let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
+        let indexTsx = vanillaToReactFunctionalTs(
+            deepCloneObject(typedBindings),
+            exampleConfig,
+            componentNames,
+            Object.keys(styleFiles)
+        )(importType);
 
-        if(!isDev){
+        if (!isDev) {
             indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
         }
 
@@ -189,15 +239,28 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             // NOTE: `scriptFiles` not required, as system js handles import
         };
     },
-    angular: async ({ typedBindings, otherScriptFiles, componentScriptFiles, styleFiles, isDev, importType, exampleConfig }) => {
+    angular: async ({
+        typedBindings,
+        otherScriptFiles,
+        componentScriptFiles,
+        styleFiles,
+        isDev,
+        importType,
+        exampleConfig,
+    }) => {
         const internalFramework: InternalFramework = 'angular';
         const entryFileName = getEntryFileName(internalFramework)!;
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
         const componentNames = getComponentName(componentScriptFiles);
-        let appComponent = vanillaToAngular(deepCloneObject(typedBindings), exampleConfig, componentNames, Object.keys(styleFiles))(importType);
+        let appComponent = vanillaToAngular(
+            deepCloneObject(typedBindings),
+            exampleConfig,
+            componentNames,
+            Object.keys(styleFiles)
+        )(importType);
 
-        if(!isDev){
+        if (!isDev) {
             appComponent = await prettier.format(appComponent, { parser: 'typescript' });
         }
 
@@ -214,10 +277,6 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             },
         };
     },
-    vue: createVueFilesGenerator({
-        sourceGenerator: vanillaToVue,
-        internalFramework: 'vue',
-    }),
     vue3: createVueFilesGenerator({
         sourceGenerator: vanillaToVue3,
         internalFramework: 'vue3',

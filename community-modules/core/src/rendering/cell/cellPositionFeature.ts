@@ -1,11 +1,10 @@
-import { CellCtrl } from "./cellCtrl";
-import { Column } from "../../entities/column";
-import { areEqual, last } from "../../utils/array";
-import { Events } from "../../eventKeys";
-import { missing } from "../../utils/generic";
-import { BeanStub } from "../../context/beanStub";
-import { Beans } from "../beans";
-import { RowNode } from "../../entities/rowNode";
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
+import { _areEqual, _last } from '../../utils/array';
+import { _missing } from '../../utils/generic';
+import type { CellCtrl } from './cellCtrl';
 
 /**
  * Takes care of:
@@ -14,19 +13,18 @@ import { RowNode } from "../../entities/rowNode";
  *  #) Cell Left (the horizontal positioning of the cell, the vertical positioning is on the row)
  */
 export class CellPositionFeature extends BeanStub {
-
     private cellCtrl: CellCtrl;
     private eGui: HTMLElement;
 
-    private readonly column: Column;
+    private readonly column: AgColumn;
     private readonly rowNode: RowNode;
 
-    private colsSpanning: Column[];
+    private colsSpanning: AgColumn[];
     private rowSpan: number;
 
-    private beans: Beans;
+    private beans: BeanCollection;
 
-    constructor(ctrl: CellCtrl, beans: Beans) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
 
         this.cellCtrl = ctrl;
@@ -39,7 +37,7 @@ export class CellPositionFeature extends BeanStub {
     private setupRowSpan(): void {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
 
-        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded())
+        this.addManagedListeners(this.beans.eventService, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
     }
 
     public setComp(eGui: HTMLElement): void {
@@ -57,16 +55,18 @@ export class CellPositionFeature extends BeanStub {
 
     private onNewColumnsLoaded(): void {
         const rowSpan = this.column.getRowSpan(this.rowNode);
-        if (this.rowSpan === rowSpan) { return; }
+        if (this.rowSpan === rowSpan) {
+            return;
+        }
 
         this.rowSpan = rowSpan;
         this.applyRowSpan(true);
     }
 
     private onDisplayColumnsChanged(): void {
-        const colsSpanning: Column[] = this.getColSpanningList();
+        const colsSpanning: AgColumn[] = this.getColSpanningList();
 
-        if (!areEqual(this.colsSpanning, colsSpanning)) {
+        if (!_areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL
@@ -75,21 +75,27 @@ export class CellPositionFeature extends BeanStub {
 
     private setupColSpan(): void {
         // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-        if (this.column.getColDef().colSpan == null) { return; }
+        if (this.column.getColDef().colSpan == null) {
+            return;
+        }
 
         this.colsSpanning = this.getColSpanningList();
 
-        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
-        // because we are spanning over multiple cols, we check for width any time any cols width changes.
-        // this is expensive - really we should be explicitly checking only the cols we are spanning over
-        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
-        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
+        this.addManagedListeners(this.beans.eventService, {
+            // because we are col spanning, a reorder of the cols can change what cols we are spanning over
+            displayedColumnsChanged: this.onDisplayColumnsChanged.bind(this),
+            // because we are spanning over multiple cols, we check for width any time any cols width changes.
+            // this is expensive - really we should be explicitly checking only the cols we are spanning over
+            // instead of every col, however it would be tricky code to track the cols we are spanning over, so
+            // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
+            displayedColumnsWidthChanged: this.onWidthChanged.bind(this),
+        });
     }
 
     public onWidthChanged(): void {
-        if (!this.eGui) { return; }
+        if (!this.eGui) {
+            return;
+        }
         const width = this.getCellWidth();
         this.eGui.style.width = `${width}px`;
     }
@@ -102,20 +108,20 @@ export class CellPositionFeature extends BeanStub {
         return this.colsSpanning.reduce((width, col) => width + col.getActualWidth(), 0);
     }
 
-    public getColSpanningList(): Column[] {
+    public getColSpanningList(): AgColumn[] {
         const colSpan = this.column.getColSpan(this.rowNode);
-        const colsSpanning: Column[] = [];
+        const colsSpanning: AgColumn[] = [];
 
         // if just one col, the col span is just the column we are in
         if (colSpan === 1) {
             colsSpanning.push(this.column);
         } else {
-            let pointer: Column | null = this.column;
+            let pointer: AgColumn | null = this.column;
             const pinned = this.column.getPinned();
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
-                pointer = this.beans.columnModel.getDisplayedColAfter(pointer);
-                if (!pointer || missing(pointer)) {
+                pointer = this.beans.visibleColsService.getColAfter(pointer);
+                if (!pointer || _missing(pointer)) {
                     break;
                 }
                 // we do not allow col spanning to span outside of pinned areas
@@ -129,16 +135,18 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.eGui) { return; }
+        if (!this.eGui) {
+            return;
+        }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
         this.eGui.style.left = left + 'px';
     }
 
     private getCellLeft(): number | null {
-        let mostLeftCol: Column;
+        let mostLeftCol: AgColumn;
 
-        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
-            mostLeftCol = last(this.colsSpanning);
+        if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
+            mostLeftCol = _last(this.colsSpanning);
         } else {
             mostLeftCol = this.column;
         }
@@ -151,10 +159,10 @@ export class CellPositionFeature extends BeanStub {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
+        const leftWidth = this.beans.visibleColsService.getColsLeftWidth();
 
         if (this.column.getPinned() === 'right') {
-            const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
+            const bodyWidth = this.beans.visibleColsService.getBodyContainerWidth();
             return leftWidth + bodyWidth + (leftPosition || 0);
         }
 
@@ -163,10 +171,11 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private applyRowSpan(force?: boolean): void {
+        if (this.rowSpan === 1 && !force) {
+            return;
+        }
 
-        if (this.rowSpan === 1 && !force) { return; }
-
-        const singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();
+        const singleRowHeight = this.beans.gos.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
         this.eGui.style.height = `${totalRowHeight}px`;
@@ -174,7 +183,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     // overriding to make public, as we don't dispose this bean via context
-    public destroy() {
+    public override destroy() {
         super.destroy();
     }
 }

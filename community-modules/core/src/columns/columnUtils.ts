@@ -1,103 +1,85 @@
-import { IHeaderColumn } from "../interfaces/iHeaderColumn";
-import { ColumnGroup } from "../entities/columnGroup";
-import { IProvidedColumn } from "../interfaces/iProvidedColumn";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
-import { Column } from "../entities/column";
-import { Bean } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { attrToNumber } from "../utils/generic";
-import { ColDef } from "../entities/colDef";
+import type { Context } from '../context/context';
+import { isColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { ColumnInstanceId } from '../interfaces/iColumn';
+import { _warnOnce } from '../utils/function';
+import { depthFirstOriginalTreeSearch } from './columnFactory';
 
-// takes in a list of columns, as specified by the column definitions, and returns column groups
-@Bean('columnUtils')
-export class ColumnUtils extends BeanStub {
+export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 
-    public calculateColMinWidth(colDef: ColDef): number {
-        return colDef.minWidth != null ? colDef.minWidth : this.environment.getMinColWidth();
-    }
+// Possible candidate for reuse (alot of recursive traversal duplication)
+export function getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
+    const result: AgColumn[] = [];
 
-    public calculateColMaxWidth(colDef: ColDef): number {
-        return colDef.maxWidth != null ? colDef.maxWidth : Number.MAX_SAFE_INTEGER;
-    }
-
-    public calculateColInitialWidth(colDef: ColDef): number {
-        const minColWidth = this.calculateColMinWidth(colDef);
-        const maxColWidth = this.calculateColMaxWidth(colDef);
-
-        let width : number;
-        const colDefWidth = attrToNumber(colDef.width);
-        const colDefInitialWidth = attrToNumber(colDef.initialWidth);
-
-        if (colDefWidth != null) {
-            width = colDefWidth;
-        } else if (colDefInitialWidth != null) {
-            width = colDefInitialWidth;
-        } else {
-            width = 200;
+    const recursiveFindColumns = (childColumns: (AgColumn | AgProvidedColumnGroup)[]): void => {
+        for (let i = 0; i < childColumns.length; i++) {
+            const child = childColumns[i];
+            if (isColumn(child)) {
+                result.push(child);
+            } else if (isProvidedColumnGroup(child)) {
+                recursiveFindColumns(child.getChildren());
+            }
         }
+    };
 
-        return Math.max(Math.min(width, maxColWidth), minColWidth);
+    recursiveFindColumns(rootColumns);
+
+    return result;
+}
+
+export function getWidthOfColsInList(columnList: AgColumn[]) {
+    return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
+}
+
+export function destroyColumnTree(
+    context: Context,
+    oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
+    newTree?: (AgColumn | AgProvidedColumnGroup)[] | null
+): void {
+    const oldObjectsById: { [id: ColumnInstanceId]: (AgColumn | AgProvidedColumnGroup) | null } = {};
+
+    if (!oldTree) {
+        return;
     }
 
-    public getOriginalPathForColumn(column: Column, originalBalancedTree: IProvidedColumn[]): ProvidedColumnGroup[] | null {
-        const result: ProvidedColumnGroup[] = [];
-        let found = false;
+    // add in all old columns to be destroyed
+    depthFirstOriginalTreeSearch(null, oldTree, (child) => {
+        oldObjectsById[child.getInstanceId()] = child;
+    });
 
-        const recursePath = (balancedColumnTree: IProvidedColumn[], dept: number): void => {
-            for (let i = 0; i < balancedColumnTree.length; i++) {
-                if (found) { return; }
-                    // quit the search, so 'result' is kept with the found result
-
-                const node = balancedColumnTree[i];
-                if (node instanceof ProvidedColumnGroup) {
-                    const nextNode = node;
-                    recursePath(nextNode.getChildren(), dept + 1);
-                    result[dept] = node;
-                } else if (node === column) {
-                    found = true;
-                }
-            }
-        };
-
-        recursePath(originalBalancedTree, 0);
-
-        // we should always find the path, but in case there is a bug somewhere, returning null
-        // will make it fail rather than provide a 'hard to track down' bug
-        return found ? result : null;
-    }
-
-    public depthFirstOriginalTreeSearch(parent: ProvidedColumnGroup | null, tree: IProvidedColumn[], callback: (treeNode: IProvidedColumn, parent: ProvidedColumnGroup | null) => void): void {
-        if (!tree) { return; }
-
-        tree.forEach((child: IProvidedColumn) => {
-            if (child instanceof ProvidedColumnGroup) {
-                this.depthFirstOriginalTreeSearch(child, child.getChildren(), callback);
-            }
-            callback(child, parent);
-        });
-
-    }
-
-    public depthFirstAllColumnTreeSearch(tree: IHeaderColumn[] | null, callback: (treeNode: IHeaderColumn) => void): void {
-        if (!tree) { return; }
-
-        tree.forEach((child: IHeaderColumn) => {
-            if (child instanceof ColumnGroup) {
-                this.depthFirstAllColumnTreeSearch(child.getChildren(), callback);
-            }
-            callback(child);
-        });
-
-    }
-
-    public depthFirstDisplayedColumnTreeSearch(tree: IHeaderColumn[] | null, callback: (treeNode: IHeaderColumn) => void): void {
-        if (!tree) { return; }
-
-        tree.forEach((child: IHeaderColumn) => {
-            if (child instanceof ColumnGroup) {
-                this.depthFirstDisplayedColumnTreeSearch(child.getDisplayedChildren(), callback);
-            }
-            callback(child);
+    // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
+    if (newTree) {
+        depthFirstOriginalTreeSearch(null, newTree, (child) => {
+            oldObjectsById[child.getInstanceId()] = null;
         });
     }
+
+    // what's left can be destroyed
+    const colsToDestroy = Object.values(oldObjectsById).filter((item) => item != null);
+    context.destroyBeans(colsToDestroy);
+}
+
+export function isColumnGroupAutoCol(col: AgColumn): boolean {
+    const colId = col.getId();
+    return colId.startsWith(GROUP_AUTO_COLUMN_ID);
+}
+
+export function convertColumnTypes(type: string | string[]): string[] {
+    let typeKeys: string[] = [];
+
+    if (type instanceof Array) {
+        const invalidArray = type.some((a) => typeof a !== 'string');
+        if (invalidArray) {
+            _warnOnce("if colDef.type is supplied an array it should be of type 'string[]'");
+        } else {
+            typeKeys = type;
+        }
+    } else if (typeof type === 'string') {
+        typeKeys = type.split(',');
+    } else {
+        _warnOnce("colDef.type should be of type 'string' | 'string[]'");
+    }
+    return typeKeys;
 }

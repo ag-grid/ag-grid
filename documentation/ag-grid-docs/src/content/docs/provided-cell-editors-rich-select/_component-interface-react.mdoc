@@ -1,0 +1,16 @@
+{% if isFramework("react") %}
+The Component is provided `props` containing, amongst other things, the value to be rendered.
+{% /if %}
+
+{% if isFramework("react") %}
+```ts
+// this comp gets inserted into the Cell
+const MyCustomEditorRenderer = props => {
+    return <>{props.value}</>;
+};
+```
+{% /if %}
+
+{% if isFramework("react") %}
+The provided `props` (interface IRichCellEditorRendererParams) are:
+{% /if %}

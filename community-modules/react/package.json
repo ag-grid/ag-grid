@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/react",
-  "version": "31.1.0",
+  "version": "31.3.1",
   "description": "AG Grid React Component",
   "main": "./dist/package/index.cjs.js",
   "types": "./dist/types/src/index.d.ts",
@@ -14,7 +14,7 @@
   "scripts": {
     "cypress:open": "npx cross-env NODE_ENV=test cypress open",
     "cypress:e2e": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/integration/*spec.js'",
-    "cypress:components": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/components/**/*spec.js'"
+    "cypress:components": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/components/**/*spec.jsx'"
   },
   "repository": {
     "type": "git",
@@ -36,12 +36,12 @@
   "devDependencies": {
     "@babel/runtime": "^7.16.3",
     "prop-types": "^15.6.2",
-    "@ag-grid-community/client-side-row-model": "31.1.0",
-    "@ag-grid-community/core": "31.1.0",
+    "@ag-grid-community/client-side-row-model": "31.3.1",
+    "@ag-grid-community/core": "31.3.1",
     "@babel/plugin-proposal-throw-expressions": "7.14.5",
     "@babel/preset-typescript": "7.15.0",
-    "@types/react": "~18.0.0",
-    "@types/react-dom": "~18.0.0",
+    "@types/react": "~18.2.0",
+    "@types/react-dom": "~18.2.0",
     "babel-preset-react-app": "^10.0.0",
     "cypress": "^5.6.0",
     "cypress-react-unit-test": "^4.17.0",
@@ -53,13 +53,13 @@
     "react": "^16.9.0",
     "react-app-polyfill": "^2.0.0",
     "react-dom": "^16.9.0",
-    "typescript": "~4.7.4"
+    "typescript": "~5.1.6"
   },
   "dependencies": {
     "prop-types": "^15.8.1"
   },
   "peerDependencies": {
-    "@ag-grid-community/core": "31.1.0",
+    "@ag-grid-community/core": "31.3.1",
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.3.0 || ^17.0.0 || ^18.0.0"
   },

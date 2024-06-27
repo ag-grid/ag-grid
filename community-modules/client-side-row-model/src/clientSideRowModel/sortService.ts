@@ -1,27 +1,35 @@
-import {
-    _,
-    RowNodeSorter,
-    SortedRowNode,
-    SortOption,
-    Autowired,
-    Bean,
+import type {
+    BeanCollection,
     ChangedPath,
     ColumnModel,
-    PostConstruct,
-    RowNode,
-    BeanStub,
-    WithoutGridCommon,
+    FuncColsService,
+    IRowNode,
+    IShowRowGroupColsService,
+    NamedBean,
     PostSortRowsParams,
+    RowNode,
+    RowNodeSorter,
     RowNodeTransaction,
-    IRowNode
-} from "@ag-grid-community/core";
+    SortOption,
+    SortedRowNode,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _missing, _warnOnce } from '@ag-grid-community/core';
 
+export class SortService extends BeanStub implements NamedBean {
+    beanName = 'sortService' as const;
 
-@Bean('sortService')
-export class SortService extends BeanStub {
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private rowNodeSorter: RowNodeSorter;
+    private showRowGroupColsService?: IShowRowGroupColsService;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
+    public wireBeans(beans: BeanCollection): void {
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.rowNodeSorter = beans.rowNodeSorter;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
+    }
 
     public sort(
         sortOptions: SortOption[],
@@ -29,10 +37,10 @@ export class SortService extends BeanStub {
         useDeltaSort: boolean,
         rowNodeTransactions: RowNodeTransaction[] | null | undefined,
         changedPath: ChangedPath | undefined,
-        sortContainsGroupColumns: boolean,
+        sortContainsGroupColumns: boolean
     ): void {
-        const groupMaintainOrder = this.gridOptionsService.get('groupMaintainOrder');
-        const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
+        const groupMaintainOrder = this.gos.get('groupMaintainOrder');
+        const groupColumnsPresent = this.columnModel.getCols().some((c) => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
         if (useDeltaSort && rowNodeTransactions) {
@@ -40,7 +48,7 @@ export class SortService extends BeanStub {
         }
 
         const isPivotMode = this.columnModel.isPivotMode();
-        const postSortFunc = this.gridOptionsService.getCallback('postSortRows');
+        const postSortFunc = this.gos.getCallback('postSortRows');
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
@@ -52,19 +60,22 @@ export class SortService extends BeanStub {
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
-            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
+            const skipSortingGroups =
+                groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
-                const nextGroup = this.columnModel.getRowGroupColumns()?.[rowNode.level + 1];
+                const nextGroup = this.funcColsService.getRowGroupColumns()?.[rowNode.level + 1];
                 // if the sort is null, then sort was explicitly removed, so remove sort from this group.
-                const wasSortExplicitlyRemoved =  nextGroup?.getSort() === null;
+                const wasSortExplicitlyRemoved = nextGroup?.getSort() === null;
 
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
                 if (rowNode.childrenAfterSort && !wasSortExplicitlyRemoved) {
-                    const indexedOrders: { [key:string]: number } = {};
+                    const indexedOrders: { [key: string]: number } = {};
                     rowNode.childrenAfterSort.forEach((node, idx) => {
                         indexedOrders[node.id!] = idx;
                     });
-                    childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] ?? 0) - (indexedOrders[row2.id!] ?? 0));
+                    childrenToBeSorted.sort(
+                        (row1, row2) => (indexedOrders[row1.id!] ?? 0) - (indexedOrders[row2.id!] ?? 0)
+                    );
                 }
                 rowNode.childrenAfterSort = childrenToBeSorted;
             } else if (!sortActive || skipSortingPivotLeafs) {
@@ -100,13 +111,13 @@ export class SortService extends BeanStub {
 
         const addNodesFunc = (rowNodes: IRowNode[]) => {
             if (rowNodes) {
-                rowNodes.forEach(rowNode => dirtyNodes[rowNode.id!] = true);
+                rowNodes.forEach((rowNode) => (dirtyNodes[rowNode.id!] = true));
             }
         };
 
         // all leaf level nodes in the transaction were impacted
         if (rowNodeTransactions) {
-            rowNodeTransactions.forEach(tran => {
+            rowNodeTransactions.forEach((tran) => {
                 addNodesFunc(tran.add);
                 addNodesFunc(tran.update);
                 addNodesFunc(tran.remove);
@@ -120,7 +131,7 @@ export class SortService extends BeanStub {
         rowNode: RowNode,
         allTouchedNodes: { [rowId: string]: true },
         changedPath: ChangedPath,
-        sortOptions: SortOption[],
+        sortOptions: SortOption[]
     ) {
         const unsortedRows = rowNode.childrenAfterAggFilter!;
         const oldSortedRows = rowNode.childrenAfterSort;
@@ -131,7 +142,7 @@ export class SortService extends BeanStub {
         const untouchedRowsMap: { [rowId: string]: true } = {};
         const touchedRows: RowNode[] = [];
 
-        unsortedRows.forEach(row => {
+        unsortedRows.forEach((row) => {
             if (allTouchedNodes[row.id!] || !changedPath.canSkip(row)) {
                 touchedRows.push(row);
             } else {
@@ -139,21 +150,20 @@ export class SortService extends BeanStub {
             }
         });
 
-        const sortedUntouchedRows = oldSortedRows.filter(child => untouchedRowsMap[child.id!]);
-        
-        const mapNodeToSortedNode = (rowNode: RowNode, pos: number): SortedRowNode => (
-            { currentPos: pos, rowNode: rowNode }
-        );
+        const sortedUntouchedRows = oldSortedRows.filter((child) => untouchedRowsMap[child.id!]);
+
+        const mapNodeToSortedNode = (rowNode: RowNode, pos: number): SortedRowNode => ({
+            currentPos: pos,
+            rowNode: rowNode,
+        });
 
         const sortedChangedRows = touchedRows
             .map(mapNodeToSortedNode)
             .sort((a, b) => this.rowNodeSorter.compareRowNodes(sortOptions, a, b));
 
-        return this.mergeSortedArrays(
-            sortOptions,
-            sortedChangedRows,
-            sortedUntouchedRows.map(mapNodeToSortedNode)
-        ).map(({ rowNode }) => rowNode);
+        return this.mergeSortedArrays(sortOptions, sortedChangedRows, sortedUntouchedRows.map(mapNodeToSortedNode)).map(
+            ({ rowNode }) => rowNode
+        );
     }
 
     // Merge two sorted arrays into each other
@@ -164,7 +174,6 @@ export class SortService extends BeanStub {
 
         // Traverse both array, adding them in order
         while (i < arr1.length && j < arr2.length) {
-
             // Check if current element of first
             // array is smaller than current element
             // of second array. If yes, store first
@@ -192,7 +201,7 @@ export class SortService extends BeanStub {
     }
 
     private updateChildIndexes(rowNode: RowNode) {
-        if (_.missing(rowNode.childrenAfterSort)) {
+        if (_missing(rowNode.childrenAfterSort)) {
             return;
         }
 
@@ -208,19 +217,21 @@ export class SortService extends BeanStub {
     }
 
     private updateGroupDataForHideOpenParents(changedPath?: ChangedPath) {
-        if (!this.gridOptionsService.get('groupHideOpenParents')) {
+        if (!this.gos.get('groupHideOpenParents')) {
             return;
         }
 
-        if (this.gridOptionsService.get('treeData')) {
-            _.warnOnce(`The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`);
+        if (this.gos.get('treeData')) {
+            _warnOnce(
+                `The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`
+            );
             return false;
         }
 
         // recurse breadth first over group nodes after sort to 'pull down' group data to child groups
         const callback = (rowNode: RowNode) => {
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterSort, false);
-            rowNode.childrenAfterSort!.forEach(child => {
+            rowNode.childrenAfterSort!.forEach((child) => {
                 if (child.hasChildren()) {
                     callback(child);
                 }
@@ -228,28 +239,33 @@ export class SortService extends BeanStub {
         };
 
         if (changedPath) {
-            changedPath.executeFromRootNode(rowNode => callback(rowNode));
+            changedPath.executeFromRootNode((rowNode) => callback(rowNode));
         }
     }
 
     private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[] | null, clearOperation: boolean) {
-        if (!this.gridOptionsService.get('groupHideOpenParents') || _.missing(rowNodes)) { return; }
+        if (!this.gos.get('groupHideOpenParents') || _missing(rowNodes)) {
+            return;
+        }
 
-        rowNodes.forEach(childRowNode => {
-            const groupDisplayCols = this.columnModel.getGroupDisplayColumns();
-            groupDisplayCols.forEach(groupDisplayCol => {
-
+        rowNodes.forEach((childRowNode) => {
+            const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
+            groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    console.error('AG Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup');
+                    _errorOnce(
+                        'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup'
+                    );
                     return;
                 }
 
                 const displayingGroupKey = showRowGroup;
-                const rowGroupColumn = this.columnModel.getPrimaryColumn(displayingGroupKey);
+                const rowGroupColumn = this.columnModel.getColDefCol(displayingGroupKey);
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
 
-                if (thisRowNodeMatches) { return; }
+                if (thisRowNodeMatches) {
+                    return;
+                }
 
                 if (clearOperation) {
                     // if doing a clear operation, we clear down the value for every possible group column

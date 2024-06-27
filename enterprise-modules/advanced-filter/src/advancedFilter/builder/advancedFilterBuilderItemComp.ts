@@ -1,52 +1,65 @@
-import {
-    AutocompleteEntry,
-    Autowired,
+import type {
     BaseCellDataType,
-    Beans,
+    BeanCollection,
     DragAndDropService,
     DragSource,
-    DragSourceType,
-    Events,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
+} from '@ag-grid-community/core';
+import {
+    DragSourceType,
     KeyCode,
-    PostConstruct,
-    RefSelector,
+    RefPlaceholder,
     TabGuardComp,
     TooltipFeature,
-    _
-} from "@ag-grid-community/core";
-import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
-import { AddDropdownComp } from "./addDropdownComp";
-import { AdvancedFilterBuilderDragFeature, AdvancedFilterBuilderDragStartedEvent } from "./advancedFilterBuilderDragFeature";
-import { AdvancedFilterBuilderItemNavigationFeature } from "./advancedFilterBuilderItemNavigationFeature";
-import { getAdvancedFilterBuilderAddButtonParams } from "./advancedFilterBuilderUtils";
-import { ConditionPillWrapperComp } from "./conditionPillWrapperComp";
-import {
+    _createIconNoSpan,
+    _removeAriaExpanded,
+    _setAriaDisabled,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setAriaLevel,
+    _setDisplayed,
+    _setVisible,
+    _stopPropagationForAgGrid,
+} from '@ag-grid-community/core';
+
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
+import { AddDropdownComp } from './addDropdownComp';
+import type { AdvancedFilterBuilderDragStartedEvent } from './advancedFilterBuilderDragFeature';
+import type { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
+import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
+import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
+import { ConditionPillWrapperComp } from './conditionPillWrapperComp';
+import type {
     AdvancedFilterBuilderAddEvent,
     AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
-    CreatePillParams
-} from "./iAdvancedFilterBuilder";
-import { InputPillComp } from "./inputPillComp";
-import { JoinPillWrapperComp } from "./joinPillWrapperComp";
-import { SelectPillComp } from "./selectPillComp";
+    CreatePillParams,
+} from './iAdvancedFilterBuilder';
+import { InputPillComp } from './inputPillComp';
+import { JoinPillWrapperComp } from './joinPillWrapperComp';
+import { SelectPillComp } from './selectPillComp';
 
-export class AdvancedFilterBuilderItemComp extends TabGuardComp {
-    @RefSelector('eTreeLines') private eTreeLines: HTMLElement;
-    @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
-    @RefSelector('eItem') private eItem: HTMLElement;
-    @RefSelector('eButtons') private eButtons: HTMLElement;
-    @RefSelector('eValidation') private eValidation: HTMLElement;
-    @RefSelector('eMoveUpButton') private eMoveUpButton: HTMLElement;
-    @RefSelector('eMoveDownButton') private eMoveDownButton: HTMLElement;
-    @RefSelector('eAddButton') private eAddButton: HTMLElement;
-    @RefSelector('eRemoveButton') private eRemoveButton: HTMLElement;
-    @Autowired('beans') private readonly beans: Beans;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
+export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBuilderEvents> {
+    private dragAndDropService: DragAndDropService;
+    private advancedFilterExpressionService: AdvancedFilterExpressionService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.dragAndDropService = beans.dragAndDropService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
+    }
+
+    private readonly eTreeLines: HTMLElement = RefPlaceholder;
+    private readonly eDragHandle: HTMLElement = RefPlaceholder;
+    private readonly eButtons: HTMLElement = RefPlaceholder;
+    private readonly eValidation: HTMLElement = RefPlaceholder;
+    private readonly eMoveUpButton: HTMLElement = RefPlaceholder;
+    private readonly eMoveDownButton: HTMLElement = RefPlaceholder;
+    private readonly eAddButton: HTMLElement = RefPlaceholder;
+    private readonly eRemoveButton: HTMLElement = RefPlaceholder;
 
     private ePillWrapper: JoinPillWrapperComp | ConditionPillWrapperComp;
     private validationTooltipFeature: TooltipFeature;
@@ -62,43 +75,42 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
-                    <div ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
-                    <span ref="eDragHandle" class="ag-drag-handle" aria-hidden="true"></span>
-                    <span ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" aria-hidden="true"></span>
+                <div class="ag-advanced-filter-builder-item" role="presentation">
+                    <div data-ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
+                    <span data-ref="eDragHandle" class="ag-drag-handle" aria-hidden="true"></span>
+                    <span data-ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" aria-hidden="true"></span>
                 </div>
-                <div ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
-                    <span ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
-                    <span ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
-                    <div ref="eAddButton" role="presentation"></div>
-                    <span ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
+                <div data-ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
+                    <span data-ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
+                    <span data-ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
+                    <div data-ref="eAddButton" role="presentation"></div>
+                    <span data-ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
                 </div>
             </div>
         `);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         const { filterModel, level, showMove } = this.item;
 
         const isJoin = filterModel!.filterType === 'join';
         this.ePillWrapper = this.createManagedBean(isJoin ? new JoinPillWrapperComp() : new ConditionPillWrapperComp());
         this.ePillWrapper.init({ item: this.item, createPill: (params: CreatePillParams) => this.createPill(params) });
         this.eDragHandle.insertAdjacentElement('afterend', this.ePillWrapper.getGui());
-        
+
         if (level === 0) {
             const eTreeLine = document.createElement('div');
             eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-vertical-bottom');
             eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-root');
             this.eTreeLines.appendChild(eTreeLine);
 
-            _.setDisplayed(this.eDragHandle, false);
-            _.setDisplayed(this.eButtons, false);
-            _.setAriaExpanded(this.focusWrapper, true);
+            _setDisplayed(this.eDragHandle, false);
+            _setDisplayed(this.eButtons, false);
+            _setAriaExpanded(this.focusWrapper, true);
         } else {
             this.setupTreeLines(level);
 
-            this.eDragHandle.appendChild(_.createIconNoSpan('advancedFilterBuilderDrag', this.gridOptionsService)!);
+            this.eDragHandle.appendChild(_createIconNoSpan('advancedFilterBuilderDrag', this.gos)!);
             this.setupValidation();
             this.setupMoveButtons(showMove);
             this.setupAddButton();
@@ -108,22 +120,23 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             this.updateAriaExpanded();
         }
 
-        _.setAriaLevel(this.focusWrapper, level + 1);
+        _setAriaLevel(this.focusWrapper, level + 1);
 
         this.initialiseTabGuard({});
 
-        this.createManagedBean(new AdvancedFilterBuilderItemNavigationFeature(
-            this.getGui(),
-            this.focusWrapper,
-            this.ePillWrapper
-        ));
+        this.createManagedBean(
+            new AdvancedFilterBuilderItemNavigationFeature(this.getGui(), this.focusWrapper, this.ePillWrapper)
+        );
 
         this.updateAriaLabel();
 
-        this.addManagedListener(this.ePillWrapper, AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED, () => this.dispatchEvent({
-            type: AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED
-        }));
-        this.addManagedListener(this.ePillWrapper, AdvancedFilterBuilderEvents.EVENT_VALID_CHANGED, () => this.updateValidity());
+        this.addManagedListeners(this.ePillWrapper, {
+            advancedFilterBuilderValueChanged: () =>
+                this.dispatchLocalEvent({
+                    type: 'advancedFilterBuilderValueChanged',
+                }),
+            advancedFilterBuilderValidChanged: () => this.updateValidity(),
+        });
     }
 
     public setState(params: {
@@ -133,7 +146,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         showStartTreeLine: boolean;
     }): void {
         const { level } = this.item;
-        if (level === 0) { return; }
+        if (level === 0) {
+            return;
+        }
         const { showMove } = this.item;
         const { disableMoveUp, disableMoveDown, treeLines, showStartTreeLine } = params;
         this.updateTreeLines(treeLines, showStartTreeLine);
@@ -143,8 +158,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             this.moveDownDisabled = !!disableMoveDown;
             this.eMoveUpButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveUp);
             this.eMoveDownButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveDown);
-            _.setAriaDisabled(this.eMoveUpButton, !!disableMoveUp);
-            _.setAriaDisabled(this.eMoveDownButton, !!disableMoveDown);
+            _setAriaDisabled(this.eMoveUpButton, !!disableMoveUp);
+            _setAriaDisabled(this.eMoveDownButton, !!disableMoveDown);
             this.moveUpTooltipFeature.refreshToolTip();
             this.moveDownTooltipFeature.refreshToolTip();
         }
@@ -181,120 +196,156 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             eTreeLine.classList.toggle('ag-advanced-filter-builder-item-tree-line-vertical-top', isLastChild);
             eTreeLine.classList.toggle('ag-advanced-filter-builder-item-tree-line-vertical', !isLastChild);
         }
-        this.eDragHandle.classList.toggle('ag-advanced-filter-builder-item-tree-line-vertical-bottom', showStartTreeLine);
+        this.eDragHandle.classList.toggle(
+            'ag-advanced-filter-builder-item-tree-line-vertical-bottom',
+            showStartTreeLine
+        );
     }
 
     private setupValidation(): void {
-        this.eValidation.appendChild(_.createIconNoSpan('advancedFilterBuilderInvalid', this.gridOptionsService)!);
-        this.validationTooltipFeature = this.createManagedBean(new TooltipFeature({
-            getGui: () => this.eValidation,
-            getLocation: () => 'advancedFilter',
-            getTooltipValue: () => this.ePillWrapper.getValidationMessage(),
-            getTooltipShowDelayOverride: () => 1000
-        }));
+        this.eValidation.appendChild(_createIconNoSpan('advancedFilterBuilderInvalid', this.gos)!);
+        this.validationTooltipFeature = this.createManagedBean(
+            new TooltipFeature({
+                getGui: () => this.eValidation,
+                getLocation: () => 'advancedFilter',
+                getTooltipValue: () => this.ePillWrapper.getValidationMessage(),
+                getTooltipShowDelayOverride: () => 1000,
+            })
+        );
         this.updateValidity();
     }
 
     private setupAddButton(): void {
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(
-            key => this.advancedFilterExpressionService.translate(key),
-            this.gridOptionsService.get('advancedFilterBuilderParams')?.addSelectWidth
+            (key) => this.advancedFilterExpressionService.translate(key),
+            this.gos.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
-        this.addManagedListener(
-            eAddButton,
-            Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            ({ value }: FieldPickerValueSelectedEvent) => this.dispatchEvent<AdvancedFilterBuilderAddEvent>({
-                type: AdvancedFilterBuilderEvents.EVENT_ADDED,
-                item: this.item,
-                isJoin: value.key === 'join'
-            })
-        );
+        this.addManagedListeners(eAddButton, {
+            fieldPickerValueSelected: ({ value }: FieldPickerValueSelectedEvent) =>
+                this.dispatchLocalEvent<AdvancedFilterBuilderAddEvent>({
+                    type: 'advancedFilterBuilderAdded',
+                    item: this.item,
+                    isJoin: value.key === 'join',
+                }),
+        });
         this.eAddButton.appendChild(eAddButton.getGui());
 
-        this.createManagedBean(new TooltipFeature({
-            getGui: () => this.eAddButton,
-            getLocation: () => 'advancedFilter',
-            getTooltipValue: () => this.advancedFilterExpressionService.translate('advancedFilterBuilderAddButtonTooltip')
-        }));
+        this.createManagedBean(
+            new TooltipFeature({
+                getGui: () => this.eAddButton,
+                getLocation: () => 'advancedFilter',
+                getTooltipValue: () =>
+                    this.advancedFilterExpressionService.translate('advancedFilterBuilderAddButtonTooltip'),
+            })
+        );
     }
 
     private setupRemoveButton(): void {
-        this.eRemoveButton.appendChild(_.createIconNoSpan('advancedFilterBuilderRemove', this.gridOptionsService)!);
-        this.addManagedListener(this.eRemoveButton, 'click', () => this.removeItem());
-        this.addManagedListener(this.eRemoveButton, 'keydown', (event: KeyboardEvent) => {
-            switch (event.key) {
-                case KeyCode.ENTER:
-                    event.preventDefault();
-                    _.stopPropagationForAgGrid(event);
-                    this.removeItem();
-                    break;
-            }
+        this.eRemoveButton.appendChild(_createIconNoSpan('advancedFilterBuilderRemove', this.gos)!);
+        this.addManagedListeners(this.eRemoveButton, {
+            click: () => this.removeItem(),
+            keydown: (event: KeyboardEvent) => {
+                switch (event.key) {
+                    case KeyCode.ENTER:
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.removeItem();
+                        break;
+                }
+            },
         });
 
-        this.createManagedBean(new TooltipFeature({
-            getGui: () => this.eRemoveButton,
-            getLocation: () => 'advancedFilter',
-            getTooltipValue: () => this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip')
-        }));
-        _.setAriaLabel(this.eRemoveButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip'));
+        this.createManagedBean(
+            new TooltipFeature({
+                getGui: () => this.eRemoveButton,
+                getLocation: () => 'advancedFilter',
+                getTooltipValue: () =>
+                    this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip'),
+            })
+        );
+        _setAriaLabel(
+            this.eRemoveButton,
+            this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip')
+        );
 
         this.activateTabIndex([this.eRemoveButton]);
     }
 
     private setupMoveButtons(showMove?: boolean): void {
         if (showMove) {
-            this.eMoveUpButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveUp', this.gridOptionsService)!);
-            this.addManagedListener(this.eMoveUpButton, 'click', () => this.moveItem(true));
-            this.addManagedListener(this.eMoveUpButton, 'keydown', (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        event.preventDefault();
-                        _.stopPropagationForAgGrid(event);
-                        this.moveItem(true);
-                        break;
-                }
+            this.eMoveUpButton.appendChild(_createIconNoSpan('advancedFilterBuilderMoveUp', this.gos)!);
+
+            this.addManagedListeners(this.eMoveUpButton, {
+                click: () => this.moveItem(true),
+                keydown: (event: KeyboardEvent) => {
+                    switch (event.key) {
+                        case KeyCode.ENTER:
+                            event.preventDefault();
+                            _stopPropagationForAgGrid(event);
+                            this.moveItem(true);
+                            break;
+                    }
+                },
             });
 
-            this.moveUpTooltipFeature = this.createManagedBean(new TooltipFeature({
-                getGui: () => this.eMoveUpButton,
-                getLocation: () => 'advancedFilter',
-                getTooltipValue: () => this.moveUpDisabled
-                    ? null
-                    : this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip')
-            }));
-            _.setAriaLabel(this.eMoveUpButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip'));
+            this.moveUpTooltipFeature = this.createManagedBean(
+                new TooltipFeature({
+                    getGui: () => this.eMoveUpButton,
+                    getLocation: () => 'advancedFilter',
+                    getTooltipValue: () =>
+                        this.moveUpDisabled
+                            ? null
+                            : this.advancedFilterExpressionService.translate(
+                                  'advancedFilterBuilderMoveUpButtonTooltip'
+                              ),
+                })
+            );
+            _setAriaLabel(
+                this.eMoveUpButton,
+                this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip')
+            );
 
-            this.eMoveDownButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveDown', this.gridOptionsService)!);
-            this.addManagedListener(this.eMoveDownButton, 'click', () => this.moveItem(false));
-            this.addManagedListener(this.eMoveDownButton, 'keydown', (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        event.preventDefault();
-                        _.stopPropagationForAgGrid(event);
-                        this.moveItem(false);
-                        break;
-                }
+            this.eMoveDownButton.appendChild(_createIconNoSpan('advancedFilterBuilderMoveDown', this.gos)!);
+            this.addManagedListeners(this.eMoveDownButton, {
+                click: () => this.moveItem(false),
+                keydown: (event: KeyboardEvent) => {
+                    switch (event.key) {
+                        case KeyCode.ENTER:
+                            event.preventDefault();
+                            _stopPropagationForAgGrid(event);
+                            this.moveItem(false);
+                            break;
+                    }
+                },
             });
 
-            this.moveDownTooltipFeature = this.createManagedBean(new TooltipFeature({
-                getGui: () => this.eMoveDownButton,
-                getLocation: () => 'advancedFilter',
-                getTooltipValue: () => this.moveDownDisabled
-                    ? null
-                    : this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip')
-            }));
-            _.setAriaLabel(this.eMoveDownButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip'));
+            this.moveDownTooltipFeature = this.createManagedBean(
+                new TooltipFeature({
+                    getGui: () => this.eMoveDownButton,
+                    getLocation: () => 'advancedFilter',
+                    getTooltipValue: () =>
+                        this.moveDownDisabled
+                            ? null
+                            : this.advancedFilterExpressionService.translate(
+                                  'advancedFilterBuilderMoveDownButtonTooltip'
+                              ),
+                })
+            );
+            _setAriaLabel(
+                this.eMoveDownButton,
+                this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip')
+            );
 
             this.activateTabIndex([this.eMoveUpButton, this.eMoveDownButton]);
         } else {
-            _.setDisplayed(this.eMoveUpButton, false);
-            _.setDisplayed(this.eMoveDownButton, false);
+            _setDisplayed(this.eMoveUpButton, false);
+            _setDisplayed(this.eMoveDownButton, false);
         }
     }
 
     private updateValidity(): void {
-        _.setVisible(this.eValidation, !this.item.valid);
+        _setVisible(this.eValidation, !this.item.valid);
         this.validationTooltipFeature.refreshToolTip();
         this.updateAriaLabel();
     }
@@ -302,52 +353,52 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     private createPill(params: CreatePillParams): SelectPillComp | InputPillComp {
         const { key, displayValue, cssClass, update, ariaLabel } = params;
         const onUpdated = (key: string) => {
-            if (key == null) { return; }
+            if (key == null) {
+                return;
+            }
             update(key);
-            this.dispatchEvent({
-                type: AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED
+            this.dispatchLocalEvent({
+                type: 'advancedFilterBuilderValueChanged',
             });
         };
         if (params.isSelect) {
             const { getEditorParams, pickerAriaLabelKey, pickerAriaLabelValue } = params;
-            const advancedFilterBuilderParams = this.gridOptionsService.get('advancedFilterBuilderParams');
+            const advancedFilterBuilderParams = this.gos.get('advancedFilterBuilderParams');
             const minPickerWidth = `${advancedFilterBuilderParams?.pillSelectMinWidth ?? 140}px`;
             const maxPickerWidth = `${advancedFilterBuilderParams?.pillSelectMaxWidth ?? 200}px`;
-            const comp = this.createBean(new SelectPillComp({
-                pickerAriaLabelKey,
-                pickerAriaLabelValue,
-                pickerType: 'ag-list',
-                value: {
-                    key,
-                    displayValue
-                },
-                valueFormatter: (value: AutocompleteEntry) =>
-                    value == null ? null : value.displayValue ?? value.key,
-                variableWidth: true,
-                minPickerWidth,
-                maxPickerWidth,
-                getEditorParams,
-                wrapperClassName: cssClass,
-                ariaLabel
-            }));
-            this.addManagedListener(
-                comp,
-                Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-                ({ value }: FieldPickerValueSelectedEvent) => onUpdated(value?.key)
+            const comp = this.createBean(
+                new SelectPillComp({
+                    pickerAriaLabelKey,
+                    pickerAriaLabelValue,
+                    pickerType: 'ag-list',
+                    value: {
+                        key,
+                        displayValue,
+                    },
+                    valueFormatter: (value: AutocompleteEntry) =>
+                        value == null ? null : value.displayValue ?? value.key,
+                    variableWidth: true,
+                    minPickerWidth,
+                    maxPickerWidth,
+                    getEditorParams,
+                    wrapperClassName: cssClass,
+                    ariaLabel,
+                })
             );
+            this.addManagedListeners(comp, {
+                fieldPickerValueSelected: ({ value }: FieldPickerValueSelectedEvent) => onUpdated(value?.key),
+            });
             return comp;
         } else {
-            const comp = this.createBean(new InputPillComp({
-                value: displayValue,
-                cssClass,
-                type: this.getInputType(params.baseCellDataType),
-                ariaLabel
-            }));
-            this.addManagedListener(
-                comp,
-                Events.EVENT_FIELD_VALUE_CHANGED,
-                ({ value }: FieldValueEvent) => onUpdated(value)
+            const comp = this.createBean(
+                new InputPillComp({
+                    value: displayValue,
+                    cssClass,
+                    type: this.getInputType(params.baseCellDataType),
+                    ariaLabel,
+                })
             );
+            this.addManagedListeners(comp, { fieldValueChanged: ({ value }: FieldValueEvent) => onUpdated(value) });
             return comp;
         }
     }
@@ -371,15 +422,17 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             type: DragSourceType.AdvancedFilterBuilder,
             eElement: this.eDragHandle,
             dragItemName: () => this.ePillWrapper.getDragName(),
-            getDefaultIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => 'notAllowed',
             getDragItem: () => ({}),
-            onDragStarted: () => this.dragFeature.dispatchEvent<AdvancedFilterBuilderDragStartedEvent>({
-                type: AdvancedFilterBuilderDragFeature.EVENT_DRAG_STARTED,
-                item: this.item
-            }),
-            onDragStopped: () => this.dragFeature.dispatchEvent({
-                type: AdvancedFilterBuilderDragFeature.EVENT_DRAG_ENDED
-            })
+            onDragStarted: () =>
+                this.dragFeature.dispatchLocalEvent<AdvancedFilterBuilderDragStartedEvent>({
+                    type: 'advancedFilterBuilderDragStarted',
+                    item: this.item,
+                }),
+            onDragStopped: () =>
+                this.dragFeature.dispatchLocalEvent({
+                    type: 'advancedFilterBuilderDragEnded',
+                }),
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);
@@ -392,39 +445,40 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         const validationMessage = this.ePillWrapper.getValidationMessage();
         let ariaLabel;
         if (validationMessage) {
-            ariaLabel = this.advancedFilterExpressionService.translate(
-                'ariaAdvancedFilterBuilderItemValidation',
-                [wrapperLabel, level, validationMessage]
-            );
+            ariaLabel = this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderItemValidation', [
+                wrapperLabel,
+                level,
+                validationMessage,
+            ]);
         } else {
-            ariaLabel = this.advancedFilterExpressionService.translate(
-                'ariaAdvancedFilterBuilderItem',
-                [wrapperLabel, level]
-            );
+            ariaLabel = this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderItem', [
+                wrapperLabel,
+                level,
+            ]);
         }
-        _.setAriaLabel(this.focusWrapper, ariaLabel);
+        _setAriaLabel(this.focusWrapper, ariaLabel);
     }
 
     private updateAriaExpanded(): void {
-        _.removeAriaExpanded(this.focusWrapper);
+        _removeAriaExpanded(this.focusWrapper);
         const { filterModel } = this.item;
         if (filterModel?.filterType === 'join' && filterModel.conditions.length) {
-            _.setAriaExpanded(this.focusWrapper, true);
+            _setAriaExpanded(this.focusWrapper, true);
         }
     }
 
     private removeItem(): void {
-        this.dispatchEvent<AdvancedFilterBuilderRemoveEvent>({
-            type: AdvancedFilterBuilderEvents.EVENT_REMOVED,
-            item: this.item
+        this.dispatchLocalEvent<AdvancedFilterBuilderRemoveEvent>({
+            type: 'advancedFilterBuilderRemoved',
+            item: this.item,
         });
     }
 
     private moveItem(backwards: boolean): void {
-        this.dispatchEvent<AdvancedFilterBuilderMoveEvent>({
-            type: AdvancedFilterBuilderEvents.EVENT_MOVED,
+        this.dispatchLocalEvent<AdvancedFilterBuilderMoveEvent>({
+            type: 'advancedFilterBuilderMoved',
             item: this.item,
-            backwards
+            backwards,
         });
     }
 }

@@ -1,20 +1,20 @@
-import { BeanStub } from "../context/beanStub";
-import { Column } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
-import { RowNode } from "../entities/rowNode";
-import { TooltipStateManager, TooltipParentComp } from "./tooltipStateManager";
-import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { WithoutGridCommon } from "../interfaces/iCommon";
-import { Beans } from "../rendering/beans";
-import { Autowired, PostConstruct } from "../context/context";
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
+import type { TooltipParentComp } from './tooltipStateManager';
+import { TooltipStateManager } from './tooltipStateManager';
 
 export interface ITooltipFeatureCtrl {
     getTooltipValue(): any;
     getGui(): HTMLElement;
     getLocation(): TooltipLocation;
 
-    getColumn?(): Column | ColumnGroup;
+    getColumn?(): AgColumn | AgColumnGroup;
     getColDef?(): ColDef | ColGroupDef;
     getRowIndex?(): number;
     getRowNode?(): RowNode;
@@ -27,15 +27,21 @@ export interface ITooltipFeatureCtrl {
 }
 
 export class TooltipFeature extends BeanStub {
+    private beans: BeanCollection;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
+    }
 
     private tooltip: any;
 
     private tooltipManager: TooltipStateManager | undefined;
     private browserTooltips: boolean;
 
-    @Autowired('beans') private beans: Beans;
-
-    constructor(private readonly ctrl: ITooltipFeatureCtrl, beans?: Beans) {
+    constructor(
+        private readonly ctrl: ITooltipFeatureCtrl,
+        beans?: BeanCollection
+    ) {
         super();
 
         if (beans) {
@@ -43,17 +49,17 @@ export class TooltipFeature extends BeanStub {
         }
     }
 
-    @PostConstruct
-    private postConstruct() {
+    public postConstruct() {
         this.refreshToolTip();
     }
-
 
     private setBrowserTooltip(tooltip: string | null) {
         const name = 'title';
         const eGui = this.ctrl.getGui();
 
-        if (!eGui) { return; }
+        if (!eGui) {
+            return;
+        }
 
         if (tooltip != null && tooltip != '') {
             eGui.setAttribute(name, tooltip);
@@ -67,23 +73,28 @@ export class TooltipFeature extends BeanStub {
     }
 
     private createTooltipFeatureIfNeeded(): void {
-        if (this.tooltipManager != null) { return; }
+        if (this.tooltipManager != null) {
+            return;
+        }
 
         const parent: TooltipParentComp = {
             getTooltipParams: () => this.getTooltipParams(),
-            getGui: () => this.ctrl.getGui()
+            getGui: () => this.ctrl.getGui(),
         };
 
-        this.tooltipManager = this.createBean(new TooltipStateManager(
-            parent,
-            this.ctrl.getTooltipShowDelayOverride?.(),
-            this.ctrl.getTooltipHideDelayOverride?.(),
-            this.ctrl.shouldDisplayTooltip
-        ), this.beans.context);
+        this.tooltipManager = this.createBean(
+            new TooltipStateManager(
+                parent,
+                this.ctrl.getTooltipShowDelayOverride?.(),
+                this.ctrl.getTooltipHideDelayOverride?.(),
+                this.ctrl.shouldDisplayTooltip
+            ),
+            this.beans.context
+        );
     }
 
     public refreshToolTip() {
-        this.browserTooltips = this.beans.gridOptionsService.get('enableBrowserTooltips');
+        this.browserTooltips = this.beans.gos.get('enableBrowserTooltips');
         this.updateTooltipText();
 
         if (this.browserTooltips) {
@@ -112,9 +123,8 @@ export class TooltipFeature extends BeanStub {
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
-            hideTooltipCallback: () => this.tooltipManager?.hideTooltip(true)
+            hideTooltipCallback: () => this.tooltipManager?.hideTooltip(true),
         };
-
     }
 
     private getTooltipText() {
@@ -122,7 +132,7 @@ export class TooltipFeature extends BeanStub {
     }
 
     // overriding to make public, as we don't dispose this bean via context
-    public destroy() {
+    public override destroy() {
         if (this.tooltipManager) {
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         }

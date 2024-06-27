@@ -7,10 +7,6 @@ The Chart Menu appears in the top-right corner of the chart. The Chart Menu prov
 
 {% gridExampleRunner title="Chart Menu" name="menu" /%}
 
-{% note %}
-If using AG Charts Community, the legacy format Chart Menu is displayed by default. Set `legacyChartsMenu = false` to use the new format Chart Menu. This will become the default in version 32.
-{% /note %}
-
 ## Default Chart Menu Items
 
 The following items are displayed within the Chart Menu by default:
@@ -36,7 +32,7 @@ The following example demonstrates hiding the Edit Chart and Advanced Settings m
 
 The Chart Menu can be hidden by returning an empty array from the `getChartToolbarItems()` grid callback:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = { 
     getChartToolbarItems: () => [] // hide the Chart Menu
 }

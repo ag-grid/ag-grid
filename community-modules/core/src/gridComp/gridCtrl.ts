@@ -1,66 +1,80 @@
-import { Autowired } from "../context/context";
-import { FocusService } from "../focusService";
-import { BeanStub } from "../context/beanStub";
-import { ModuleRegistry } from "../modules/moduleRegistry";
-import { ModuleNames } from "../modules/moduleNames";
-import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
-import { Events } from "../eventKeys";
-import { ResizeObserverService } from "../misc/resizeObserverService";
-import { GridSizeChangedEvent } from "../events";
-import { ColumnModel } from "../columns/columnModel";
-import { CtrlsService } from "../ctrlsService";
-import { MouseEventService } from "../gridBodyComp/mouseEventService";
-import { last } from "../utils/array";
-import { DragAndDropService, DragSourceType } from "../dragAndDrop/dragAndDropService";
-import { WithoutGridCommon } from "../interfaces/iCommon";
+import type { VisibleColsService } from '../columns/visibleColsService';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import { DragSourceType } from '../dragAndDrop/dragAndDropService';
+import type { GridSizeChangedEvent } from '../events';
+import type { FocusService } from '../focusService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { FocusableContainer } from '../interfaces/iFocusableContainer';
+import type { IWatermark } from '../interfaces/iWatermark';
+import type { LayoutView } from '../styling/layoutFeature';
+import { LayoutFeature } from '../styling/layoutFeature';
+import { _last } from '../utils/array';
+import type { ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
-    getFocusableContainers(): HTMLElement[];
+    getFocusableContainers(): FocusableContainer[];
     setCursor(value: string | null): void;
     setUserSelect(value: string | null): void;
 }
 
-export class GridCtrl extends BeanStub {
+export interface OptionalGridComponents {
+    paginationSelector?: ComponentSelector;
+    gridHeaderDropZonesSelector?: ComponentSelector;
+    sideBarSelector?: ComponentSelector;
+    statusBarSelector?: ComponentSelector;
+    watermarkSelector?: ComponentSelector;
+}
 
-    @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
+export class GridCtrl extends BeanStub {
+    private beans: BeanCollection;
+    private focusService: FocusService;
+    private visibleColsService: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.beans = beans;
+        this.focusService = beans.focusService;
+        this.visibleColsService = beans.visibleColsService;
+    }
 
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
+
+    private additionalFocusableContainers: Set<FocusableContainer> = new Set();
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.context.getGridId());
+        this.eGui.setAttribute('grid-id', this.gridId);
+
+        const { dragAndDropService, mouseEventService, ctrlsService, resizeObserverService } = this.beans;
 
         // this drop target is just used to see if the drop event is inside the grid
-        this.dragAndDropService.addDropTarget({
+        dragAndDropService.addDropTarget({
             getContainer: () => this.eGui,
             isInterestedIn: (type) => type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel,
-            getIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
+            getIconName: () => 'notAllowed',
         });
 
-        this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
+        mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 
         this.createManagedBean(new LayoutFeature(this.view));
 
         this.addRtlSupport();
 
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(
-            this.eGridHostDiv, this.onGridSizeChanged.bind(this));
+        const unsubscribeFromResize = resizeObserverService.observeResize(
+            this.eGridHostDiv,
+            this.onGridSizeChanged.bind(this)
+        );
         this.addDestroyFunc(() => unsubscribeFromResize());
 
-        this.ctrlsService.registerGridCtrl(this);
+        ctrlsService.register('gridCtrl', this);
     }
 
     public isDetailGrid(): boolean {
@@ -69,33 +83,28 @@ export class GridCtrl extends BeanStub {
         return el?.getAttribute('row-id')?.startsWith('detail') || false;
     }
 
-    public showDropZones(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
-    }
-
-    public showSideBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
-    }
-
-    public showStatusBar(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
-    }
-
-    public showWatermark(): boolean {
-        return ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
+    public getOptionalSelectors(): OptionalGridComponents {
+        const beans = this.beans;
+        return {
+            paginationSelector: beans.paginationService?.getPaginationSelector(),
+            gridHeaderDropZonesSelector: beans.columnDropZonesService?.getDropZoneSelector(),
+            sideBarSelector: beans.sideBarService?.getSideBarSelector(),
+            statusBarSelector: beans.statusBarService?.getStatusPanelSelector(),
+            watermarkSelector: (beans.licenseManager as IWatermark)?.getWatermarkSelector(),
+        };
     }
 
     private onGridSizeChanged(): void {
         const event: WithoutGridCommon<GridSizeChangedEvent> = {
-            type: Events.EVENT_GRID_SIZE_CHANGED,
+            type: 'gridSizeChanged',
             clientWidth: this.eGridHostDiv.clientWidth,
-            clientHeight: this.eGridHostDiv.clientHeight
+            clientHeight: this.eGridHostDiv.clientHeight,
         };
         this.eventService.dispatchEvent(event);
     }
 
     private addRtlSupport(): void {
-        const cssClass = this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        const cssClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         this.view.setRtlClass(cssClass);
     }
 
@@ -116,38 +125,57 @@ export class GridCtrl extends BeanStub {
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
-        const focusableContainers = this.view.getFocusableContainers();
-        const idxWithFocus = focusableContainers.findIndex(container => container.contains(eDocument.activeElement));
+        const focusableContainers = this.getFocusableContainers();
+        const activeEl = this.gos.getActiveDomElement();
+        const idxWithFocus = focusableContainers.findIndex((container) => container.getGui().contains(activeEl));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
-        if (nextIdx <= 0 || nextIdx >= focusableContainers.length) {
+        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
             return false;
         }
 
-        return this.focusService.focusInto(focusableContainers[nextIdx]);
+        if (nextIdx === 0) {
+            if (idxWithFocus > 0) {
+                const allColumns = this.visibleColsService.getAllCols();
+                const lastColumn = _last(allColumns);
+                if (this.focusService.focusGridView(lastColumn, true)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return this.focusContainer(focusableContainers[nextIdx], backwards);
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
-        const focusableContainers = this.view.getFocusableContainers();
-        const allColumns = this.columnModel.getAllDisplayedColumns();
+        const focusableContainers = this.getFocusableContainers();
+        const allColumns = this.visibleColsService.getAllCols();
+
+        const userCallbackFunction = this.gos.getCallback('focusGridInnerElement');
+
+        if (userCallbackFunction && userCallbackFunction({ fromBottom: !!fromBottom })) {
+            return true;
+        }
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {
-                return this.focusService.focusInto(last(focusableContainers), true);
+                return this.focusContainer(_last(focusableContainers), true);
             }
 
-            const lastColumn = last(allColumns);
-            if (this.focusService.focusGridView(lastColumn, true)) { return true; }
+            const lastColumn = _last(allColumns);
+            if (this.focusService.focusGridView(lastColumn, true)) {
+                return true;
+            }
         }
 
-        if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
+        if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
             if (this.focusService.focusGridView(allColumns[0])) {
                 return true;
             }
 
             for (let i = 1; i < focusableContainers.length; i++) {
-                if (this.focusService.focusInto(focusableContainers[i])) {
+                if (this.focusService.focusInto(focusableContainers[i].getGui())) {
                     return true;
                 }
             }
@@ -159,5 +187,29 @@ export class GridCtrl extends BeanStub {
 
     public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
+    }
+
+    public addFocusableContainer(container: FocusableContainer): void {
+        this.additionalFocusableContainers.add(container);
+    }
+
+    public removeFocusableContainer(container: FocusableContainer): void {
+        this.additionalFocusableContainers.delete(container);
+    }
+
+    private focusContainer(comp: FocusableContainer, up?: boolean): boolean {
+        comp?.setAllowFocus?.(true);
+        const result = this.focusService.focusInto(comp.getGui(), up);
+        comp?.setAllowFocus?.(false);
+        return result;
+    }
+
+    private getFocusableContainers(): FocusableContainer[] {
+        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers.values()];
+    }
+
+    public override destroy(): void {
+        this.additionalFocusableContainers.clear();
+        super.destroy();
     }
 }

@@ -1,10 +1,10 @@
 {
-    "extends": "./tsconfig.lib.json",
-    "compilerOptions": {
-        "strict": false,
-        "declaration": true,
-        "emitDeclarationOnly": true,
-        "types": ["node"]
-    },
-    "include": ["src/*.ts"]
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "strict": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "types": ["node"]
+  },
+  "include": ["src/*.ts"]
 }

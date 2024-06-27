@@ -1,23 +1,30 @@
 (function (global) {
-
     System.config({
-        transpiler: 'plugin-babel',
+        // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
+        transpiler: 'ts',
+        typescriptOptions: {
+            target: 'es2020',
+        },
+        meta: {
+            typescript: {
+                exports: 'ts',
+            },
+            '*.css': { loader: 'css' },
+        },
         defaultExtension: 'js',
         paths: {
             // paths serve as alias
-            "npm:": "https://cdn.jsdelivr.net/npm/",
-            ...systemJsPaths
+            'npm:': 'https://cdn.jsdelivr.net/npm/',
+            ...systemJsPaths,
         },
         map: {
-            // babel transpiler
-            'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
-            'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
+            css: (boilerplatePath.length === 0 ? `./` : `${boilerplatePath}/`) + 'css.js',
 
-            // css: boilerplatePath + "css.js",
-            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+            ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
+            tslib: 'npm:tslib@2.3.1/tslib.js',
+            typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
-            // vuejs
-            'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
+            vue: 'npm:vue@3.2.29/dist/vue.esm-browser.js',
             '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.prod.js',
 
             // vue class component
@@ -25,20 +32,20 @@
 
             app: appLocation + 'app',
             // systemJsMap comes from index.html
-            ...systemJsMap
+            ...systemJsMap,
         },
         packages: {
-            'vue': {
-                defaultExtension: 'js'
+            vue: {
+                defaultExtension: 'js',
             },
             'vue-class-component': {
-                defaultExtension: 'js'
+                defaultExtension: 'js',
             },
             'vue-property-decorator': {
-                defaultExtension: 'js'
+                defaultExtension: 'js',
             },
             app: {
-                defaultExtension: 'js'
+                defaultExtension: 'js',
             },
             '@ag-grid-community/vue3': {
                 main: './dist/package/main.cjs.js',
@@ -55,6 +62,9 @@
                 format: 'cjs',
             },
             '@ag-grid-community/infinite-row-model': {
+                format: 'cjs',
+            },
+            'ag-grid-locale': {
                 format: 'cjs',
             },
             '@ag-grid-enterprise/advanced-filter': {
@@ -137,21 +147,18 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-        }
-        ,
-        meta: {
-            '*.js': {
-                babelOptions: {
-                    stage1: true,
-                    stage2: true,
-                    es2015: true
-                }
+            'ag-charts-community': {
+                defaultExtension: 'js',
+                format: 'cjs',
             },
-            '*.css': { loader: 'css' }
-        }
+            'ag-charts-enterprise': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+        },
     });
 })(this);
 
-window.addEventListener('error', e => {
-    console.error('ERROR', e.message, e.filename)
+window.addEventListener('error', (e) => {
+    console.error('ERROR', e.message, e.filename);
 });

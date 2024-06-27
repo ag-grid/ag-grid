@@ -9,7 +9,6 @@ automatically filters values in both the grid and other cross-filter charts.
 {% gif imagePath="resources/cross-filtering.gif" alt="Cross Filtering" /%}
 
 This built-in feature of integrated charts is particularly useful for creating interactive reports and dashboards.
-
 ## Creating cross-filter charts
 
 Cross-Filter charts are created programmatically using `createCrossFilterChart(params)` on the grid's API.
@@ -18,7 +17,7 @@ Cross-Filter charts are created programmatically using `createCrossFilterChart(p
 
 The following snippet shows how a cross-filtering pie chart can be created:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 api.createCrossFilterChart({
     chartType: 'pie',
     cellRange: {
@@ -32,7 +31,7 @@ Note in the snippet above that the `sale` values are aggregated by the `salesRep
 
 A corresponding column configuration for the chart above is shown in the following snippet:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'salesRep', filter: 'agSetColumnFilter', chartDataType: 'category' },
@@ -42,7 +41,7 @@ const gridOptions = {
 ```
 
 {% note %}
-Cross-filtering requires that grid filtering is enabled with either a [Set Filter](./filter-set/) or [Multi Filter](./filter-multi/) configured on the category column used in the chart. It is also important to define the [Chart Data Type](./integrated-charts-range-chart/#coldefchartdatatype) as it's not possible to infer the type when all data is filtered out..
+Cross-filtering Charts only support Client-Side Row Model. Grid filtering needs to be enabled on the category column(s) with either a [Set Filter](./filter-set/) or [Multi Filter](./filter-multi/). It is also important to define the [Chart Data Type](./integrated-charts-range-chart/#coldefchartdatatype) as it's not possible to infer the type when all data is filtered out.
 {% /note %}
 
 The following example shows how to create a simple cross-filtering pie chart. Note the following:

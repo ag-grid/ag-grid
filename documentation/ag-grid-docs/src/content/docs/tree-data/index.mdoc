@@ -12,7 +12,7 @@ This section introduces simple ways to work with Tree Data, before covering more
 
 In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options using:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     treeData: true
 }
@@ -62,7 +62,7 @@ There are two ways to configure the Group Column:
 
 * **Auto Column Group** - this is automatically selected by the grid when in Tree Data mode, however you can override the default.
 
-* **Custom Column Group** - you can provide your own custom column group definition, which gives allows more control over how the Group Column is displayed.
+* **Custom Column Group** - you can provide your own custom column group definition, which gives more control over how the Group Column is displayed.
 
 ### Auto Column Group
 
@@ -70,7 +70,7 @@ When the grid is working with Tree Data there is no need to explicitly specify a
 [Auto Group Column](./grouping-single-group-column/#group-column-configuration). However, you will probably want to
 override some defaults as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
         headerName: "My Group",
@@ -169,7 +169,7 @@ This can be seen in the [File Browser](#example-file-browser) example above, whe
 
 To disable Tree Data filtering and use regular filtering instead (which only shows groups where leaf children pass the filter), enable the following Grid Options property:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     excludeChildrenWhenTreeDataFiltering: true,
 }
@@ -230,7 +230,7 @@ To enable selection set `gridOptions.rowSelection` to 'single' or 'multiple' as 
 
 Click selection is supported with tree data. However when you are displaying tree data, clicking rows for selection is confusing as mouse clicks are also used for expanding / contracting rows. For this reason we recommend not using click selection and using checkbox selection instead.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // don't have click select rows
     suppressRowClickSelection: true,

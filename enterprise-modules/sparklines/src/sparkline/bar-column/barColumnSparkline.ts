@@ -1,9 +1,11 @@
-import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
-import { FontStyle, FontWeight, _Scene, _Util } from 'ag-charts-community';
+import type { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
+import type { FontStyle, FontWeight } from 'ag-charts-community';
+import { _Scene, _Util } from 'ag-charts-community';
 
-import { SeriesNodeDatum, Sparkline, ZINDICIES } from '../sparkline';
-import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { Label } from '../label/label';
+import type { SeriesNodeDatum } from '../sparkline';
+import { Sparkline, ZINDICIES } from '../sparkline';
+import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 
 const { extent } = _Util;
 
@@ -91,15 +93,15 @@ export abstract class BarColumnSparkline extends Sparkline {
         this.label.enabled = false;
     }
 
-    protected abstract generateNodeData(): RectNodeDatum[] | undefined;
-    protected abstract updateYScaleRange(): void;
-    protected abstract updateXScaleRange(): void;
+    protected abstract override generateNodeData(): RectNodeDatum[] | undefined;
+    protected abstract override updateYScaleRange(): void;
+    protected abstract override updateXScaleRange(): void;
 
-    protected getNodeData(): RectNodeDatum[] {
+    protected override getNodeData(): RectNodeDatum[] {
         return this.nodeSelectionData;
     }
 
-    protected update(): void {
+    protected override update(): void {
         this.updateSelections();
         this.updateNodes();
     }
@@ -116,7 +118,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         this.updateLabelSelection(nodeData);
     }
 
-    protected updateNodes(): void {
+    protected override updateNodes(): void {
         this.updateRectNodes();
         this.updateLabelNodes();
     }
@@ -125,8 +127,8 @@ export abstract class BarColumnSparkline extends Sparkline {
         const { xScale, paddingInner, paddingOuter, smallestInterval } = this;
 
         // calculate step
-        let domainLength = xScale.domain[1] - xScale.domain[0];
-        let intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
+        const domainLength = xScale.domain[1] - xScale.domain[0];
+        const intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
 
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum of 50 bands to ensure the step (width of individual bands + padding) does not fall below a certain number of pixels.
@@ -141,7 +143,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         return step;
     }
 
-    protected updateYScaleDomain(): void {
+    protected override updateYScaleDomain(): void {
         const { yScale, yData, valueAxisDomain } = this;
 
         const yMinMax = extent(yData as number[]);

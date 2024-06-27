@@ -9,19 +9,22 @@ export default {
     `,
     data: function () {
         return {
-            date: null
+            date: null,
+            ariaLabel: undefined,
         };
     },
     mounted() {
         this.picker = flatpickr(this.$refs['flatpickr'], {
             onChange: this.onDateChanged.bind(this),
             dateFormat: 'd/m/Y',
-            wrap: true
+            wrap: true,
         });
 
         this.eInput = this.$refs['eInput'];
 
         this.picker.calendarContainer.classList.add('ag-custom-component-popup');
+
+        this.eInput.setAttribute('aria-label', this.ariaLabel);
     },
     methods: {
         onDateChanged(selectedDates) {
@@ -43,7 +46,11 @@ export default {
         },
 
         setInputAriaLabel(label) {
-            this.eInput.setAttribute('aria-label', label);
-        }
-    }
+            if (this.eInput) {
+                this.eInput.setAttribute('aria-label', label);
+            } else {
+                this.ariaLabel = label;
+            }
+        },
+    },
 };

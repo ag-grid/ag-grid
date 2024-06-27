@@ -1,18 +1,17 @@
-import { Component } from "./component";
-import { IPopupComponent } from "../interfaces/iPopupComponent";
+import type { IPopupComponent } from '../interfaces/iPopupComponent';
+import { Component } from './component';
 
 export class PopupComponent extends Component implements IPopupComponent<any> {
-
     public isPopup(): boolean {
         return true;
     }
 
-    setParentComponent(container: Component) {
+    override setParentComponent(container: Component) {
         container.addCssClass('ag-has-popup');
         super.setParentComponent(container);
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         const parentComp = this.parentComponent;
         const hasParent = parentComp && parentComp.isAlive();
 

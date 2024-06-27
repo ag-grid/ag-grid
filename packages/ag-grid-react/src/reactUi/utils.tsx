@@ -1,17 +1,16 @@
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom';
 
 export const classesList = (...list: (string | null | undefined)[]): string => {
-    const filtered = list.filter( s => s != null && s !== '');
+    const filtered = list.filter((s) => s != null && s !== '');
 
     return filtered.join(' ');
-}
+};
 
 export class CssClasses {
-
-    private classesMap: {[name: string]: boolean} = {};
+    private classesMap: { [name: string]: boolean } = {};
 
     constructor(...initialClasses: string[]) {
-        initialClasses.forEach(className => {
+        initialClasses.forEach((className) => {
             this.classesMap[className] = true;
         });
     }
@@ -20,41 +19,49 @@ export class CssClasses {
         // important to not make a copy if nothing has changed, so react
         // won't trigger a render cycle on new object instance
         const nothingHasChanged = !!this.classesMap[className] == on;
-        if (nothingHasChanged) { return this; }
+        if (nothingHasChanged) {
+            return this;
+        }
 
         const res = new CssClasses();
-        res.classesMap = {...this.classesMap};
+        res.classesMap = { ...this.classesMap };
         res.classesMap[className] = on;
         return res;
     }
 
     public toString(): string {
-        const res = Object.keys(this.classesMap).filter(key => this.classesMap[key]).join(' ');
+        const res = Object.keys(this.classesMap)
+            .filter((key) => this.classesMap[key])
+            .join(' ');
         return res;
     }
-
 }
 
 export const isComponentStateless = (Component: any) => {
     const hasSymbol = () => typeof Symbol === 'function' && Symbol.for;
-    const getMemoType = () => hasSymbol() ? Symbol.for('react.memo') : 0xead3;
+    const getMemoType = () => (hasSymbol() ? Symbol.for('react.memo') : 0xead3);
 
     return (
-            typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent)
-        ) || (typeof Component === 'object' && Component.$$typeof === getMemoType());
-}
+        (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent)) ||
+        (typeof Component === 'object' && Component.$$typeof === getMemoType())
+    );
+};
 
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
 const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && (ReactDOM as any).flushSync != null;
+
+export function isReact17Minus(): boolean {
+    return !createRootAndFlushSyncAvailable;
+}
 
 let disableFlushSync = false;
 /** Enable flushSync to be disabled for the callback and the next frame (via setTimeout 0) to prevent flushSync during an existing render.
  * Provides an alternative to the more fine grained useFlushSync boolean param to agFlushSync.
  */
-export function runWithoutFlushSync<T>(func: () => T){
-    if(!disableFlushSync){
+export function runWithoutFlushSync<T>(func: () => T) {
+    if (!disableFlushSync) {
         // We only re-enable flushSync asynchronously to avoid re-enabling it while React is still triggering renders related to the original call.
-        setTimeout(() => disableFlushSync = false, 0);
+        setTimeout(() => (disableFlushSync = false), 0);
     }
     disableFlushSync = true;
     return func();
@@ -71,15 +78,19 @@ export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
     } else {
         fn();
     }
-}
+};
 
 /**
  * The aim of this function is to maintain references to prev or next values where possible.
  * If there are not real changes then return the prev value to avoid unnecessary renders.
  * @param maintainOrder If we want to maintain the order of the elements in the dom in line with the next array
- * @returns 
+ * @returns
  */
-export function getNextValueIfDifferent<T extends { getInstanceId: () => string }>(prev: T[] | null, next: T[] | null, maintainOrder: boolean): T[] | null {
+export function getNextValueIfDifferent<T extends { getInstanceId: () => string }>(
+    prev: T[] | null,
+    next: T[] | null,
+    maintainOrder: boolean
+): T[] | null {
     if (next == null || prev == null) {
         return next;
     }
@@ -108,6 +119,7 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
         const c = next[i];
         nextMap.set(c.getInstanceId(), c);
     }
+
     for (let i = 0; i < prev.length; i++) {
         const c = prev[i];
         prevMap.set(c.getInstanceId(), c);
@@ -134,7 +146,14 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     if (oldValues.length === 0 && newValues.length === next.length) {
         return next;
     }
-    // Spread as we need to combine the old and new values
+    // Spread as required to combine the old and new values
+    if (oldValues.length === 0) {
+        return newValues;
+    }
+
+    if (newValues.length === 0) {
+        return oldValues;
+    }
+
     return [...oldValues, ...newValues];
 }
-

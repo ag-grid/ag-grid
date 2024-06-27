@@ -18,7 +18,7 @@ The example below shows the Filters Tool Panel. The following can be noted:
 
 It is possible to remove items from the Filters Tool Panel. Items are suppressed by setting one or more of the following `toolPanelParams` to `true` when you are using the `agFiltersToolPanel` component:
 
-{% interfaceDocumentation interfaceName="ToolPanelFiltersCompParams" exclude="["api", "columnApi"] config={"overrideBottomMargin":"1rem"} /%}
+{% interfaceDocumentation interfaceName="IToolPanelFiltersCompParams" config={"overrideBottomMargin":"1rem"} /%}
 
 {% br /%}
 
@@ -55,7 +55,7 @@ interface IFiltersToolPanel {
 
 The code snippet below shows how to expand and collapse filter groups using the Filters Tool Panel instance:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // lookup Filters Tool Panel instance by id, in this case using the default filter instance id
 const filtersToolPanel = api.getToolPanelInstance('filters');
 
@@ -98,7 +98,7 @@ interface IFiltersToolPanel {
 
 The code snippet below shows how to expand and collapse filters using the Filters Tool Panel instance:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // lookup Filters Tool Panel instance by id, in this case using the default filter instance id
 const filtersToolPanel = api.getToolPanelInstance('filters');
 
@@ -142,7 +142,7 @@ Notice that the same [Column Definitions](./column-definitions/) that are suppli
 
 The code snippets below show how to set custom filter layouts using the Filters Tool Panel instance:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // original column definitions supplied to the grid
     columnDefs: [
@@ -153,7 +153,7 @@ const gridOptions = {
 }
 ```
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 // lookup Filters Tool Panel instance by id, in this case using the default columns instance id
 const filtersToolPanel = api.getToolPanelInstance('filters');
 

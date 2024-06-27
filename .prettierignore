@@ -1,0 +1,22 @@
+node_modules
+yarn.lock
+package-lock.json
+dist
+*.zip
+.github
+
+# Website
+.astro
+
+# Generated grid options json
+plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json
+
+# Generated scss files
+_icon-font-codes.scss
+community-modules/styles/src/internal/ag/generated/*
+
+# Algolia
+documentation/update-algolia-indices/output
+
+# Packages - generated files
+/packages/*

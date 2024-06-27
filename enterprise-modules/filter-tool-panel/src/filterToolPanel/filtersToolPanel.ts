@@ -1,62 +1,58 @@
-import {
+import type {
     ColDef,
     ColGroupDef,
-    Component,
     FiltersToolPanelState,
     IFiltersToolPanel,
     IToolPanelComp,
+    IToolPanelFiltersCompParams,
     IToolPanelParams,
-    RefSelector
-} from "@ag-grid-community/core";
-import { FiltersToolPanelHeaderPanel } from "./filtersToolPanelHeaderPanel";
-import { FiltersToolPanelListPanel } from "./filtersToolPanelListPanel";
+} from '@ag-grid-community/core';
+import { Component, RefPlaceholder } from '@ag-grid-community/core';
 
-export interface ToolPanelFiltersCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, FiltersToolPanelState> {
-    /** To suppress Expand / Collapse All */
-    suppressExpandAll: boolean;
-    /** To suppress the Filter Search */
-    suppressFilterSearch: boolean;
-    /** Suppress updating the layout of columns as they are rearranged in the grid */
-    suppressSyncLayoutWithGrid: boolean;
-}
+import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
+import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';
+import type { AgFiltersToolPanelList } from './agFiltersToolPanelList';
+import { AgFiltersToolPanelListSelector } from './agFiltersToolPanelList';
+
+export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
+    extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,
+        IToolPanelFiltersCompParams {}
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-filter-toolpanel">
-            <ag-filters-tool-panel-header ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
-            <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
-         </div>`;
-
-    @RefSelector('filtersToolPanelHeaderPanel') private filtersToolPanelHeaderPanel: FiltersToolPanelHeaderPanel;
-
-    @RefSelector('filtersToolPanelListPanel') private filtersToolPanelListPanel: FiltersToolPanelListPanel;
+    private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader = RefPlaceholder;
+    private readonly filtersToolPanelListPanel: AgFiltersToolPanelList = RefPlaceholder;
 
     private initialised = false;
     private params: ToolPanelFiltersCompParams;
     private listenerDestroyFuncs: (() => void)[] = [];
 
     constructor() {
-        super(FiltersToolPanel.TEMPLATE);
+        super(
+            /* html */ `<div class="ag-filter-toolpanel">
+            <ag-filters-tool-panel-header data-ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
+            <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
+         </div>`,
+            [AgFiltersToolPanelHeaderSelector, AgFiltersToolPanelListSelector]
+        );
     }
 
     public init(params: ToolPanelFiltersCompParams): void {
         // if initialised is true, means this is a refresh
         if (this.initialised) {
-            this.listenerDestroyFuncs.forEach(func => func());
+            this.listenerDestroyFuncs.forEach((func) => func());
             this.listenerDestroyFuncs = [];
         }
 
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gridOptionsService.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gos.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            suppressSyncLayoutWithGrid: false
+            suppressSyncLayoutWithGrid: false,
         });
         this.params = {
             ...defaultParams,
-            ...params
+            ...params,
         };
 
         this.filtersToolPanelHeaderPanel.init(this.params);
@@ -71,16 +67,20 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         // this is necessary to prevent a memory leak while refreshing the tool panel
         this.listenerDestroyFuncs.push(
-            this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this))!,
-            this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this))!,
-            this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this))!,
-            this.addManagedListener(this.filtersToolPanelListPanel, 'filterExpanded', this.onFilterExpanded.bind(this))!,
-            this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this))!
+            ...this.addManagedListeners(this.filtersToolPanelHeaderPanel, {
+                expandAll: this.onExpandAll.bind(this),
+                collapseAll: this.onCollapseAll.bind(this),
+                searchChanged: this.onSearchChanged.bind(this),
+            }),
+            ...this.addManagedListeners(this.filtersToolPanelListPanel, {
+                filterExpanded: this.onFilterExpanded.bind(this),
+                groupExpanded: this.onGroupExpanded.bind(this),
+            })
         );
     }
 
     // lazy initialise the panel
-    public setVisible(visible: boolean): void {
+    public override setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
             this.init(this.params);
@@ -143,7 +143,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
-    public destroy(): void {
+    public override destroy(): void {
         super.destroy();
     }
 }

@@ -1,20 +1,13 @@
-import { Component } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgFor } from '@angular/common';
 import { AgGridAngular } from '@ag-grid-community/angular';
-import {
-    ColDef,
-    GridApi,
-    ICellRenderer,
-    ICellRendererParams,
-    IRowNode
-} from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, ICellRenderer, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Component } from '@angular/core';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -23,7 +16,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     template: `
         <span>
             <img [src]="src" />
-            {{displayValue}}
+            {{ displayValue }}
         </span>
     `,
 })
@@ -34,9 +27,9 @@ export class DeltaRenderer implements ICellRenderer {
     agInit(params: ImageCellRendererParams): void {
         this.displayValue = params.value;
         if (params.value > 15) {
-            this.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png'
+            this.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
         } else {
-            this.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png'
+            this.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
         }
     }
 
@@ -51,10 +44,11 @@ export interface ImageCellRendererParams extends ICellRendererParams {
 }
 @Component({
     standalone: true,
-    imports: [NgFor],
     template: `
         <span>
-            <img *ngFor="let number of arr" [src]="src" />
+            @for (number of arr; track $index) {
+                <img [src]="src" />
+            }
         </span>
     `,
 })
@@ -64,16 +58,12 @@ export class IconRenderer implements ICellRenderer {
 
     agInit(params: ImageCellRendererParams): void {
         this.src = `https://www.ag-grid.com/example-assets/weather/${params.rendererImage}`;
-        this.arr = new Array(
-            Math.floor(params.value! / (params.divisor ?? 1))
-        );
+        this.arr = new Array(Math.floor(params.value! / (params.divisor ?? 1)));
     }
 
     refresh(params: ImageCellRendererParams): boolean {
         this.src = `https://www.ag-grid.com/example-assets/weather/${params.rendererImage}`;
-        this.arr = new Array(
-            Math.floor(params.value! / (params.divisor ?? 1))
-        );
+        this.arr = new Array(Math.floor(params.value! / (params.divisor ?? 1)));
         return true;
     }
 }
@@ -94,7 +84,7 @@ export class IconRenderer implements ICellRenderer {
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
-            ></ag-grid-angular>
+            />
         </div>
     `,
 })
@@ -117,10 +107,7 @@ export class AppComponent {
     randomiseFrost() {
         // iterate over the "days of air frost" and randomise each.
         this.gridApi.forEachNode((rowNode: IRowNode) => {
-            rowNode.setDataValue(
-                'Days of air frost (days)',
-                Math.floor(Math.random() * 4) + 1
-            );
+            rowNode.setDataValue('Days of air frost (days)', Math.floor(Math.random() * 4) + 1);
         });
     }
 
@@ -128,9 +115,7 @@ export class AppComponent {
         this.gridApi = params.api;
 
         this.http
-            .get(
-                'https://www.ag-grid.com/example-assets/weather-se-england.json'
-            )
+            .get('https://www.ag-grid.com/example-assets/weather-se-england.json')
             .subscribe((data) => params.api.setGridOption('rowData', data));
     }
 

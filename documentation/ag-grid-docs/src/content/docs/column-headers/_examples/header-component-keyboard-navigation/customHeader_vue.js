@@ -4,7 +4,7 @@ export default {
             <span>{{ params.displayName }}</span>
             <button>Click me</button>
             <input value="120"/>
-            <a href="https://ag-grid.com" target="_blank">Link</a>
+            <a href="https://www.ag-grid.com" target="_blank">Link</a>
         </div>
-    `
+    `,
 };

@@ -1,67 +1,86 @@
-import {
-    PopupService,
-    Component,
-    Autowired,
-    Events,
+import type {
+    AgColumn,
+    BeanCollection,
+    ColumnModel,
+    ColumnNameService,
+    DragAndDropIcon,
+    DragItem,
     DropTarget,
-    Column,
-    ColumnAggFuncChangeRequestEvent,
-    RefSelector,
-    Optional,
+    FuncColsService,
     IAggFuncService,
-    VirtualList,
-    KeyCode,
-    _,
+    PopupService,
     SortController,
     SortIndicatorComp,
-    WithoutGridCommon,
-    PillDragComp,
-    ColumnModel,
-    DragItem,
+} from '@ag-grid-community/core';
+import {
+    Component,
     DragSourceType,
-    DragAndDropService
-} from "@ag-grid-community/core";
-import { TDropZone } from "./baseDropZonePanel";
+    KeyCode,
+    RefPlaceholder,
+    SortIndicatorSelector,
+    _loadTemplate,
+} from '@ag-grid-community/core';
+import { PillDragComp, VirtualList } from '@ag-grid-enterprise/core';
 
-export class DropZoneColumnComp extends PillDragComp<Column> {
-    @Autowired('popupService') private readonly popupService: PopupService;
-    @Optional('aggFuncService') private readonly aggFuncService: IAggFuncService;
-    @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('columnModel') protected readonly columnModel: ColumnModel;
+import type { TDropZone } from './baseDropZonePanel';
 
-    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
+export class DropZoneColumnComp extends PillDragComp<AgColumn> {
+    private popupService: PopupService;
+    private sortController: SortController;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private funcColsService: FuncColsService;
+    private aggFuncService?: IAggFuncService;
+
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
+        this.popupService = beans.popupService;
+        this.sortController = beans.sortController;
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.funcColsService = beans.funcColsService;
+        this.aggFuncService = beans.aggFuncService;
+    }
+
+    private readonly eSortIndicator: SortIndicatorComp = RefPlaceholder;
 
     private displayName: string | null;
     private popupShowing = false;
 
     constructor(
-        private column: Column,
+        private column: AgColumn,
         dragSourceDropTarget: DropTarget,
         ghost: boolean,
         private dropZonePurpose: TDropZone,
         horizontal: boolean
     ) {
         super(
-            dragSourceDropTarget, ghost, horizontal,
-            /* html */`
+            dragSourceDropTarget,
+            ghost,
+            horizontal,
+            /* html */ `
                 <span role="option">
-                    <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
-                    <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
-                    <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
-                    <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
+                    <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
+                    <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
+                    <ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>
+                    <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
                 </span>
-            `);
+            `,
+            [SortIndicatorSelector]
+        );
     }
 
-    public init(): void {
-        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnDrop');
+    public override postConstruct(): void {
+        this.displayName = this.columnNameService.getDisplayNameForColumn(this.column, 'columnDrop');
 
-        super.init();
+        super.postConstruct();
 
         this.setupSort();
 
-        this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
-            this.setupAria();
+        this.addManagedEventListeners({
+            sortChanged: () => {
+                this.setupAria();
+            },
         });
 
         if (this.isGroupingZone()) {
@@ -73,7 +92,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    public getItem(): Column {
+    public getItem(): AgColumn {
         return this.column;
     }
 
@@ -85,11 +104,17 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         return this.column.getColDef().headerTooltip;
     }
 
-    protected addAdditionalAriaInstructions(ariaInstructions: string[], translate: (key: string, defaultValue: string) => string): void {
-        const isSortSuppressed = this.gridOptionsService.get('rowGroupPanelSuppressSort');
-        const isFunctionsReadOnly = this.gridOptionsService.get('functionsReadOnly')
+    protected override addAdditionalAriaInstructions(
+        ariaInstructions: string[],
+        translate: (key: string, defaultValue: string) => string
+    ): void {
+        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
+        const isFunctionsReadOnly = this.gos.get('functionsReadOnly');
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
-            const aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
+            const aggregationMenuAria = translate(
+                'ariaDropZoneColumnValueItemDescription',
+                'Press ENTER to change the aggregation type'
+            );
             ariaInstructions.push(aggregationMenuAria);
         }
 
@@ -101,16 +126,16 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         super.addAdditionalAriaInstructions(ariaInstructions, translate);
     }
 
-    protected isDraggable(): boolean {
+    protected override isDraggable(): boolean {
         return this.isReadOnly();
     }
 
-    protected isRemovable(): boolean {
-         return this.isReadOnly();
+    protected override isRemovable(): boolean {
+        return this.isReadOnly();
     }
 
     private isReadOnly(): boolean {
-        return !this.isGroupingAndLocked() && !this.gridOptionsService.get('functionsReadOnly');
+        return !this.isGroupingAndLocked() && !this.gos.get('functionsReadOnly');
     }
 
     protected getAriaDisplayName(): string {
@@ -123,15 +148,17 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
-        const isSortSuppressed = this.gridOptionsService.get('rowGroupPanelSuppressSort');
+        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
         return [
             aggFuncName && `${aggFuncName}${aggSeparator}`,
             name,
-            this.isGroupingZone() && !isSortSuppressed && columnSort && `, ${sortDirection[columnSort]}`
-        ].filter(part => !!part).join('');
+            this.isGroupingZone() && !isSortSuppressed && columnSort && `, ${sortDirection[columnSort]}`,
+        ]
+            .filter((part) => !!part)
+            .join('');
     }
 
-    private getColumnAndAggFuncName(): { name: string, aggFuncName: string } {
+    private getColumnAndAggFuncName(): { name: string; aggFuncName: string } {
         const name = this.displayName as string;
         let aggFuncName: string = '';
 
@@ -153,12 +180,12 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             return;
         }
 
-        if (!this.gridOptionsService.get('rowGroupPanelSuppressSort')) {
+        if (!this.gos.get('rowGroupPanelSuppressSort')) {
             this.eSortIndicator.setupSort(this.column, true);
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
-                const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
+                const multiSort = sortUsingCtrl ? event.ctrlKey || event.metaKey : event.shiftKey;
                 this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
             };
 
@@ -172,8 +199,8 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         }
     }
 
-    protected getDefaultIconName(): string {
-        return DragAndDropService.ICON_HIDE;
+    protected override getDefaultIconName(): DragAndDropIcon {
+        return 'hide';
     }
 
     protected createGetDragItem(): () => DragItem {
@@ -183,61 +210,69 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             visibleState[column.getId()] = column.isVisible();
             return {
                 columns: [column],
-                visibleState: visibleState
+                visibleState: visibleState,
             };
         };
     }
 
-    protected setupComponents(): void {
+    protected override setupComponents(): void {
         super.setupComponents();
 
-        if (this.isAggregationZone() && !this.gridOptionsService.get('functionsReadOnly')) {
+        if (this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         super.onKeyDown(e);
 
         const isEnter = e.key === KeyCode.ENTER;
-        if (isEnter && this.isAggregationZone() && !this.gridOptionsService.get('functionsReadOnly')) {
+        if (isEnter && this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
             e.preventDefault();
             this.onShowAggFuncSelection();
         }
     }
 
-    protected getDisplayValue(): string {
+    protected override getDisplayValue(): string {
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
         return this.isAggregationZone() ? `${aggFuncName}(${name})` : name;
     }
 
     private onShowAggFuncSelection(): void {
-        if (this.popupShowing) { return; }
+        if (this.popupShowing) {
+            return;
+        }
 
         this.popupShowing = true;
 
         const virtualList = new VirtualList({ cssIdentifier: 'select-agg-func' });
-        const rows = this.aggFuncService.getFuncNames(this.column);
+        const rows = this.aggFuncService!.getFuncNames(this.column);
         const eGui = this.getGui();
         const virtualListGui = virtualList.getGui();
 
         virtualList.setModel({
-            getRow: function (index: number) { return rows[index]; },
-            getRowCount: function () { return rows.length; }
+            getRow: function (index: number) {
+                return rows[index];
+            },
+            getRowCount: function () {
+                return rows.length;
+            },
         });
 
-        this.getContext().createBean(virtualList);
+        this.createBean(virtualList);
 
-        const ePopup = _.loadTemplate(/* html*/ `<div class="ag-select-agg-func-popup"></div>`);
+        const ePopup = _loadTemplate(/* html*/ `<div class="ag-select-agg-func-popup"></div>`);
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const focusoutListener = this.addManagedListener(ePopup, 'focusout', (e: FocusEvent) => {
-            if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
-                addPopupRes.hideFunc();
-            }
+        const [focusoutListener] = this.addManagedElementListeners(ePopup, {
+            focusout: (e: FocusEvent) => {
+                if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
+                    addPopupRes.hideFunc();
+                }
+            },
         });
 
         const popupHiddenFunc = (callbackEvent?: KeyboardEvent) => {
@@ -260,20 +295,20 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             eChild: ePopup,
             closeOnEsc: true,
             closedCallback: popupHiddenFunc,
-            ariaLabel: translate('ariaLabelAggregationFunction', 'Aggregation Function')
+            ariaLabel: translate('ariaLabelAggregationFunction', 'Aggregation Function'),
         });
 
         if (addPopupRes) {
-            virtualList.setComponentCreator(
-                this.createAggSelect.bind(this, addPopupRes.hideFunc)
-            );
+            virtualList.setComponentCreator(this.createAggSelect.bind(this, addPopupRes.hideFunc));
         }
 
         virtualList.addGuiEventListener('keydown', (e: KeyboardEvent) => {
             if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
                 const row = virtualList.getLastFocusedRow();
 
-                if (row == null) { return; }
+                if (row == null) {
+                    return;
+                }
 
                 const comp = virtualList.getComponentAt(row) as AggItemComp;
 
@@ -289,31 +324,23 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
             ePopup: ePopup,
             keepWithinBounds: true,
             column: this.column,
-            position: 'under'
+            position: 'under',
         });
 
         virtualList.refresh();
 
-        let rowToFocus = rows.findIndex(r => r === this.column.getAggFunc());
-        if (rowToFocus === -1) { rowToFocus = 0; }
+        let rowToFocus = rows.findIndex((r) => r === this.column.getAggFunc());
+        if (rowToFocus === -1) {
+            rowToFocus = 0;
+        }
 
         virtualList.focusRow(rowToFocus);
     }
 
     private createAggSelect(hidePopup: () => void, value: any): Component {
-
         const itemSelected = () => {
             hidePopup();
-            if (this.gridOptionsService.get('functionsPassive')) {
-                const event: WithoutGridCommon<ColumnAggFuncChangeRequestEvent> = {
-                    type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
-                    columns: [this.column],
-                    aggFunc: value
-                };
-                this.eventService.dispatchEvent(event);
-            } else {
-                this.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
-            }
+            this.funcColsService.setColumnAggFunc(this.column, value, 'toolPanelDragAndDrop');
         };
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -325,7 +352,7 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && this.columnModel.isColumnGroupingLocked(this.column);
+        return this.isGroupingZone() && this.columnModel.isColGroupLocked(this.column);
     }
 
     private isAggregationZone() {
@@ -340,14 +367,13 @@ export class DropZoneColumnComp extends PillDragComp<Column> {
         return DragSourceType.ToolPanel;
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
         (this.column as any) = null;
     }
 }
 
 class AggItemComp extends Component {
-
     public selectItem: () => void;
 
     constructor(itemSelected: () => void, value: string) {
@@ -356,5 +382,4 @@ class AggItemComp extends Component {
         this.getGui().innerText = value;
         this.addGuiEventListener('click', this.selectItem);
     }
-
 }

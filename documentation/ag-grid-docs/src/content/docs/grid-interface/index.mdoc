@@ -1,15 +1,16 @@
 ---
-title: "Grid Overview" 
+title: "Grid Overview"
+description: "Browse all the $framework Table Grid interfaces. Configure and interact with the grid using Grid Options, Grid Events, Grid State, and the Grid API."
 ---
 
 This section provides key information for configuring and interacting with a grid.
 
 ## Grid Options
 
-{% includeMarkdoc file="grid-interface/_index-javascript.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_index-angular.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_index-react.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_index-vue.mdoc" /%}
+{% partial file="./_index-javascript.mdoc" /%}
+{% partial file="./_index-angular.mdoc" /%}
+{% partial file="./_index-react.mdoc" /%}
+{% partial file="./_index-vue.mdoc" /%}
 
 ### Updating Grid Options
 
@@ -27,7 +28,7 @@ Simply update the bound property and the grid will respond to the new value. In 
 ```js
 <ag-grid-angular
    [rowHeight]="rowHeight"    
-</ag-grid-angular>
+   />
 
 updateHeight() {
   this.rowHeight = 50;
@@ -85,14 +86,27 @@ Not all Grid Options support updates. These are marked as Initial.
 
 For a full list of options see: [Options Reference](./grid-options).
 
+### Global Grid Options
+
+Global Grid Options can be used to share configuration across all grids in an application. Global grid options are provided by passing the global options to `provideGlobalGridOptions`. Each grid will inherit the global options with local options taking precedence if both define the same property.
+
+```js {% frameworkTransform=false %}
+import { provideGlobalGridOptions } from 'ag-grid-community';
+
+// provide localeText to all grids via global options
+provideGlobalGridOptions({
+   localeText: userLocaleText,
+});
+```
+
 ## Grid Events
 
 As a user interacts with the grid events will be fired to enable your application to respond to specific actions.
 
-{% includeMarkdoc file="grid-interface/_events-javascript.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_events-angular.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_events-react.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_events-vue.mdoc" /%}
+{% partial file="./_events-javascript.mdoc" /%}
+{% partial file="./_events-angular.mdoc" /%}
+{% partial file="./_events-react.mdoc" /%}
+{% partial file="./_events-vue.mdoc" /%}
 
 {% note %}
 TypeScript users can take advantage of the events' interfaces. Construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support [TypeScript Generics](./typescript-generics/).
@@ -102,10 +116,10 @@ For a full list of events see: [Grid Events](./grid-events).
 
 ## Grid API
 
-{% includeMarkdoc file="grid-interface/_api-javascript.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_api-angular.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_api-react.mdoc" /%}
-{% includeMarkdoc file="grid-interface/_api-vue.mdoc" /%}
+{% partial file="./_api-javascript.mdoc" /%}
+{% partial file="./_api-angular.mdoc" /%}
+{% partial file="./_api-react.mdoc" /%}
+{% partial file="./_api-vue.mdoc" /%}
 
 For a full list of api methods see: [Grid API](./grid-api).
 

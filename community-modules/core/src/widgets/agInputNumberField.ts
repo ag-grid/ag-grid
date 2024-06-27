@@ -1,6 +1,8 @@
-import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
-import { addOrRemoveAttribute } from '../utils/dom';
-import { exists } from "../utils/generic";
+import { _addOrRemoveAttribute } from '../utils/dom';
+import { _exists } from '../utils/generic';
+import type { AgInputTextFieldParams } from './agInputTextField';
+import { AgInputTextField } from './agInputTextField';
+import type { ComponentSelector } from './component';
 
 export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
     precision?: number;
@@ -19,18 +21,19 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         super(config, 'ag-number-field', 'number');
     }
 
-    postConstruct() {
+    public override postConstruct() {
         super.postConstruct();
-        this.addManagedListener(this.eInput, 'blur', () => {
-            const floatedValue = parseFloat(this.eInput.value);
-            const value = isNaN(floatedValue) ? '' : this.normalizeValue(floatedValue.toString());
+        this.addManagedListeners(this.eInput, {
+            blur: () => {
+                const floatedValue = parseFloat(this.eInput.value);
+                const value = isNaN(floatedValue) ? '' : this.normalizeValue(floatedValue.toString());
 
-            if (this.value !== value) {
-                this.setValue(value);
-            }
+                if (this.value !== value) {
+                    this.setValue(value);
+                }
+            },
+            wheel: this.onWheel.bind(this),
         });
-
-        this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));
 
         this.eInput.step = 'any';
 
@@ -43,13 +46,15 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
     private onWheel(e: WheelEvent) {
         // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
-        if (document.activeElement === this.eInput) {
+        if (this.gos.getActiveDomElement() === this.eInput) {
             e.preventDefault();
         }
     }
 
     public normalizeValue(value: string): string {
-        if (value === '') { return ''; }
+        if (value === '') {
+            return '';
+        }
 
         if (this.precision != null) {
             value = this.adjustPrecision(value);
@@ -94,7 +99,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
         this.min = min;
 
-        addOrRemoveAttribute(this.eInput, 'min', min);
+        _addOrRemoveAttribute(this.eInput, 'min', min);
 
         return this;
     }
@@ -106,7 +111,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
         this.max = max;
 
-        addOrRemoveAttribute(this.eInput, 'max', max);
+        _addOrRemoveAttribute(this.eInput, 'max', max);
 
         return this;
     }
@@ -124,19 +129,25 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
 
         this.step = step;
 
-        addOrRemoveAttribute(this.eInput, 'step', step);
+        _addOrRemoveAttribute(this.eInput, 'step', step);
 
         return this;
     }
 
-    public setValue(value?: string | null, silent?: boolean): this {
-        return this.setValueOrInputValue(v => super.setValue(v, silent), () => this, value);
+    public override setValue(value?: string | null, silent?: boolean): this {
+        return this.setValueOrInputValue(
+            (v) => super.setValue(v, silent),
+            () => this,
+            value
+        );
     }
 
-    public setStartValue(value?: string | null): void {
+    public override setStartValue(value?: string | null): void {
         return this.setValueOrInputValue<void>(
-            v => super.setValue(v, true),
-            v => { this.eInput.value = v; },
+            (v) => super.setValue(v, true),
+            (v) => {
+                this.eInput.value = v;
+            },
             value
         );
     }
@@ -146,7 +157,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         setInputValueOnlyFunc: (value: string) => T,
         value?: string | null
     ): T {
-        if (exists(value)) {
+        if (_exists(value)) {
             // need to maintain the scientific notation format whilst typing (e.g. 1e10)
             let setInputValueOnly = this.isScientificNotation(value);
             if (setInputValueOnly && this.eInput.validity.valid) {
@@ -159,13 +170,15 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
                 setInputValueOnly = value != normalizedValue;
             }
 
-            if (setInputValueOnly) { return setInputValueOnlyFunc(value); }
+            if (setInputValueOnly) {
+                return setInputValueOnlyFunc(value);
+            }
         }
 
         return setValueFunc(value);
     }
 
-    public getValue(): string | null | undefined {
+    public override getValue(): string | null | undefined {
         if (!this.eInput.validity.valid) {
             return undefined;
         }
@@ -180,3 +193,8 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
         return typeof value === 'string' && value.includes('e');
     }
 }
+
+export const AgInputNumberFieldSelector: ComponentSelector = {
+    selector: 'AG-INPUT-NUMBER-FIELD',
+    component: AgInputNumberField,
+};

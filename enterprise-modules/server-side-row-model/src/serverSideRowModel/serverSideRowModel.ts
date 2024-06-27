@@ -1,43 +1,47 @@
-import {
-    _,
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
+import type {
+    AdvancedFilterModel,
+    AgColumn,
+    BeanCollection,
     ColumnModel,
+    ColumnNameService,
     ColumnVO,
-    Events,
     FilterManager,
+    FilterModel,
+    FuncColsService,
+    IPivotColDefService,
     IServerSideDatasource,
     IServerSideRowModel,
     IServerSideStore,
-    ModelUpdatedEvent,
-    NumberSequence,
-    PostConstruct,
-    PreDestroy,
-    RowBounds,
-    RowNode,
-    RowRenderer,
-    StoreRefreshAfterParams,
-    RefreshServerSideParams,
-    ServerSideGroupLevelState,
-    Beans,
-    SortModelItem,
-    WithoutGridCommon,
-    RowModelType,
-    Optional,
-    IPivotColDefService,
     LoadSuccessParams,
+    ModelUpdatedEvent,
+    NamedBean,
+    PivotResultColsService,
+    RefreshServerSideParams,
+    RowBounds,
+    RowModelType,
+    RowRenderer,
+    ServerSideGroupLevelState,
     SortController,
-    FilterModel,
-    AdvancedFilterModel,
-} from "@ag-grid-community/core";
+    SortModelItem,
+    StoreRefreshAfterParams,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import {
+    BeanStub,
+    ModuleNames,
+    ModuleRegistry,
+    NumberSequence,
+    RowNode,
+    _debounce,
+    _errorOnce,
+    _jsonEquals,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
-import { NodeManager } from "./nodeManager";
-import { SortListener } from "./listeners/sortListener";
-import { StoreFactory } from "./stores/storeFactory";
-import { FullStore } from "./stores/fullStore";
-import { LazyStore } from "./stores/lazy/lazyStore";
+import type { NodeManager } from './nodeManager';
+import { FullStore } from './stores/fullStore';
+import { LazyStore } from './stores/lazy/lazyStore';
+import type { StoreFactory } from './stores/storeFactory';
 
 export interface SSRMParams {
     sortModel: SortModelItem[];
@@ -51,19 +55,36 @@ export interface SSRMParams {
     datasource?: IServerSideDatasource;
 }
 
-@Bean('rowModel')
-export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
+export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSideRowModel {
+    beanName = 'rowModel' as const;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
-    @Autowired('beans') private beans: Beans;
-    @Optional('pivotColDefService') private pivotColDefService: IPivotColDefService;
+    private columnModel: ColumnModel;
+    private columnNameService: ColumnNameService;
+    private pivotResultColsService: PivotResultColsService;
+    private funcColsService: FuncColsService;
+    private filterManager?: FilterManager;
+    private sortController: SortController;
+    private rowRenderer: RowRenderer;
+    private nodeManager: NodeManager;
+    private storeFactory: StoreFactory;
+    private beans: BeanCollection;
+    private pivotColDefService?: IPivotColDefService;
 
-    private onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
+    public wireBeans(beans: BeanCollection) {
+        this.columnModel = beans.columnModel;
+        this.columnNameService = beans.columnNameService;
+        this.pivotResultColsService = beans.pivotResultColsService;
+        this.funcColsService = beans.funcColsService;
+        this.filterManager = beans.filterManager;
+        this.sortController = beans.sortController;
+        this.rowRenderer = beans.rowRenderer;
+        this.nodeManager = beans.ssrmNodeManager as NodeManager;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
+        this.beans = beans;
+        this.pivotColDefService = beans.pivotColDefService;
+    }
+
+    private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -77,16 +98,19 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private managingPivotResultColumns = false;
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(): boolean { return false; }
+    public ensureRowHeightsValid(): boolean {
+        return false;
+    }
 
     public start(): void {
         this.started = true;
         this.updateDatasource();
     }
 
-    @PreDestroy
     private destroyDatasource(): void {
-        if (!this.datasource) { return; }
+        if (!this.datasource) {
+            return;
+        }
 
         if (this.datasource.destroy) {
             this.datasource.destroy();
@@ -96,24 +120,31 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.datasource = undefined;
     }
 
-    @PostConstruct
-    private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
-
+    public postConstruct(): void {
         const resetListener = this.resetRootStore.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
-        this.addManagedPropertyListeners([
-            /**
-             * Following properties omitted as they are likely to come with undesired  side effects.
-             * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
-             * */
-            'masterDetail', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
-            'suppressServerSideInfiniteScroll', 'cacheBlockSize',
-        ], resetListener);
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.onColumnEverything.bind(this),
+            storeUpdated: this.onStoreUpdated.bind(this),
+            columnValueChanged: resetListener,
+            columnPivotChanged: resetListener,
+            columnRowGroupChanged: resetListener,
+            columnPivotModeChanged: resetListener,
+        });
+
+        this.addManagedPropertyListeners(
+            [
+                /**
+                 * Following properties omitted as they are likely to come with undesired  side effects.
+                 * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
+                 * */
+                'masterDetail',
+                'treeData',
+                'removePivotHeaderRowWhenSingleValueColumn',
+                'suppressServerSideInfiniteScroll',
+                'cacheBlockSize',
+            ],
+            resetListener
+        );
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
@@ -121,7 +152,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private updateDatasource(): void {
-        const datasource = this.gridOptionsService.get('serverSideDatasource');
+        const datasource = this.gos.get('serverSideDatasource');
 
         if (datasource) {
             this.setDatasource(datasource);
@@ -129,11 +160,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private verifyProps(): void {
-        if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
-            _.warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
+        if (this.gos.exists('initialGroupOrderComparator')) {
+            _warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
         }
-        if (this.gridOptionsService.isRowSelection() && !this.gridOptionsService.exists('getRowId')) {
-            _.warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
+        if (this.gos.isRowSelection() && !this.gos.exists('getRowId')) {
+            _warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
         }
     }
 
@@ -143,7 +174,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         //      useEffect(() => setDatasource(ds), []);
         // thus if we set the datasource before the grid UI has finished initialising, we do not set it,
         // and the ssrm.start() method will set the datasoure when the grid is ready.
-        if (!this.started) { return; }
+        if (!this.started) {
+            return;
+        }
 
         this.destroyDatasource();
         this.datasource = datasource;
@@ -152,12 +185,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]) {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return; }
+        if (!rootStore) {
+            return;
+        }
 
         const storeToExecuteOn = rootStore.getChildStore(route);
 
-        if (!storeToExecuteOn) { return };
-    
+        if (!storeToExecuteOn) {
+            return;
+        }
+
         if (storeToExecuteOn instanceof LazyStore) {
             storeToExecuteOn.applyRowData(rowDataParams, startRow, rowDataParams.rowData.length);
         } else if (storeToExecuteOn instanceof FullStore) {
@@ -167,7 +204,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public isLastRowIndexKnown(): boolean {
         const cache = this.getRootStore();
-        if (!cache) { return false; }
+        if (!cache) {
+            return false;
+        }
         return cache.isLastRowIndexKnown();
     }
 
@@ -180,17 +219,17 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        const rowGroupColumnVos = this.columnsToValueObjects(this.columnModel.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.funcColsService.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.funcColsService.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.funcColsService.getPivotColumns());
 
         // compares two sets of columns, ensuring no columns have been added or removed (unless specified via allowRemovedColumns)
         // if the columns are found, also ensures the field and aggFunc properties have not been changed.
-        const areColsSame = (params: { oldCols: ColumnVO[], newCols: ColumnVO[], allowRemovedColumns?: boolean }) => {
+        const areColsSame = (params: { oldCols: ColumnVO[]; newCols: ColumnVO[]; allowRemovedColumns?: boolean }) => {
             const oldColsMap: { [key: string]: ColumnVO } = {};
-            params.oldCols.forEach(col => oldColsMap[col.id] = col);
+            params.oldCols.forEach((col) => (oldColsMap[col.id] = col));
 
-            const allColsUnchanged = params.newCols.every(col => {
+            const allColsUnchanged = params.newCols.every((col) => {
                 const equivalentCol = oldColsMap[col.id];
                 if (equivalentCol) {
                     delete oldColsMap[col.id];
@@ -200,9 +239,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             const missingCols = !params.allowRemovedColumns && !!Object.values(oldColsMap).length;
             return allColsUnchanged && !missingCols;
-        }
+        };
 
-        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
+        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -211,11 +250,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             oldCols: this.storeParams.pivotCols,
             newCols: pivotColumnVos,
         });
-        const valuesDifferent = !!rowGroupColumnVos?.length && !areColsSame({
-            oldCols: this.storeParams.valueCols,
-            newCols: valueColumnVos,
-            allowRemovedColumns: true,
-        });
+        const valuesDifferent =
+            !!rowGroupColumnVos?.length &&
+            !areColsSame({
+                oldCols: this.storeParams.valueCols,
+                newCols: valueColumnVos,
+                allowRemovedColumns: true,
+            });
 
         const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
@@ -231,9 +272,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
-    @PreDestroy
     private destroyRootStore(): void {
-        if (!this.rootNode || !this.rootNode.childStore) { return; }
+        if (!this.rootNode || !this.rootNode.childStore) {
+            return;
+        }
         this.rootNode.childStore = this.destroyBean(this.rootNode.childStore)!;
         this.nodeManager.clear();
     }
@@ -244,7 +286,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
 
         const rootStore = this.getRootStore();
-        if (!rootStore) { return; }
+        if (!rootStore) {
+            return;
+        }
 
         rootStore.refreshAfterSort(params);
 
@@ -252,18 +296,23 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public generateSecondaryColumns(pivotFields: string[]) {
+        if (!this.pivotColDefService) {
+            ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'pivotResultFields', this.gridId);
+            return;
+        }
+
         const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
-        this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
-    };
+        this.pivotResultColsService.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
+    }
 
     public resetRowHeights(): void {
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
 
-        const rootNodeHeight = this.gridOptionsService.getRowHeightForNode(this.rootNode);
+        const rootNodeHeight = this.gos.getRowHeightForNode(this.rootNode);
         this.rootNode.setRowHeight(rootNodeHeight.height, rootNodeHeight.estimated);
         if (this.rootNode.sibling) {
-            const rootNodeSibling = this.gridOptionsService.getRowHeightForNode(this.rootNode.sibling);
+            const rootNodeSibling = this.gos.getRowHeightForNode(this.rootNode.sibling);
             this.rootNode.sibling.setRowHeight(rootNodeSibling.height, rootNodeSibling.estimated);
         }
 
@@ -276,20 +325,20 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private resetRowHeightsForAllRowNodes(): boolean {
         let atLeastOne = false;
-        this.forEachNode(rowNode => {
-            const rowHeightForNode = this.gridOptionsService.getRowHeightForNode(rowNode);
+        this.forEachNode((rowNode) => {
+            const rowHeightForNode = this.gos.getRowHeightForNode(rowNode);
             rowNode.setRowHeight(rowHeightForNode.height, rowHeightForNode.estimated);
             // we keep the height each row is at, however we set estimated=true rather than clear the height.
             // this means the grid will not reset the row heights back to defaults, rather it will re-calc
             // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
             const detailNode = rowNode.detailNode;
             if (detailNode) {
-                const detailRowHeight = this.gridOptionsService.getRowHeightForNode(detailNode);
+                const detailRowHeight = this.gos.getRowHeightForNode(detailNode);
                 detailNode.setRowHeight(detailRowHeight.height, detailRowHeight.estimated);
             }
 
             if (rowNode.sibling) {
-                const siblingRowHeight = this.gridOptionsService.getRowHeightForNode(rowNode.sibling);
+                const siblingRowHeight = this.gos.getRowHeightForNode(rowNode.sibling);
                 detailNode.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
             }
             atLeastOne = true;
@@ -313,7 +362,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
-            this.columnModel.setSecondaryColumns(null, 'api');
+            this.pivotResultColsService.setPivotResultCols(null, 'api');
             this.managingPivotResultColumns = false;
         }
 
@@ -323,22 +372,24 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.dispatchModelUpdated(true);
     }
 
-    public columnsToValueObjects(columns: Column[]): ColumnVO[] {
-        return columns.map(col => ({
-            id: col.getId(),
-            aggFunc: col.getAggFunc(),
-            displayName: this.columnModel.getDisplayNameForColumn(col, 'model'),
-            field: col.getColDef().field
-        }) as ColumnVO);
+    public columnsToValueObjects(columns: AgColumn[]): ColumnVO[] {
+        return columns.map(
+            (col) =>
+                ({
+                    id: col.getId(),
+                    aggFunc: col.getAggFunc(),
+                    displayName: this.columnNameService.getDisplayNameForColumn(col, 'model'),
+                    field: col.getColDef().field,
+                }) as ColumnVO
+        );
     }
 
     private createStoreParams(): SSRMParams {
+        const rowGroupColumnVos = this.columnsToValueObjects(this.funcColsService.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.funcColsService.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.funcColsService.getPivotColumns());
 
-        const rowGroupColumnVos = this.columnsToValueObjects(this.columnModel.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
-
-        const dynamicRowHeight = this.gridOptionsService.isGetRowHeightFunction();
+        const dynamicRowHeight = this.gos.isGetRowHeightFunction();
 
         const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
@@ -348,15 +399,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             pivotMode: this.columnModel.isPivotMode(),
 
             // sort and filter model
-            filterModel: this.filterManager.isAdvancedFilterEnabled()
-                ? this.filterManager.getAdvancedFilterModel()
-                : this.filterManager.getFilterModel(),
+            filterModel: this.filterManager?.isAdvancedFilterEnabled()
+                ? this.filterManager?.getAdvancedFilterModel()
+                : this.filterManager?.getFilterModel() ?? {},
             sortModel: this.sortController.getSortModel(),
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
             // blockSize: blockSize == null ? 100 : blockSize,
-            dynamicRowHeight: dynamicRowHeight
+            dynamicRowHeight: dynamicRowHeight,
         };
 
         return params;
@@ -368,11 +419,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private dispatchModelUpdated(reset = false): void {
         const modelUpdatedEvent: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             animate: !reset,
             keepRenderedRows: !reset,
             newPage: false,
-            newData: false
+            newData: false,
         };
         this.eventService.dispatchEvent(modelUpdatedEvent);
     }
@@ -380,7 +431,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private onStoreUpdated(): void {
         // sometimes if doing a batch update, we do the batch first,
         // then call onStoreUpdated manually. eg expandAll() method.
-        if (this.pauseStoreUpdateListening) { return; }
+        if (this.pauseStoreUpdateListening) {
+            return;
+        }
 
         this.updateRowIndexesAndBounds();
         this.dispatchModelUpdated();
@@ -403,20 +456,26 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public updateRowIndexesAndBounds(): void {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return; }
+        if (!rootStore) {
+            return;
+        }
         rootStore.setDisplayIndexes(new NumberSequence(), { value: 0 });
     }
 
     public retryLoads(): void {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return; }
+        if (!rootStore) {
+            return;
+        }
         rootStore.retryLoads();
         this.onStoreUpdated();
     }
 
     public getRow(index: number): RowNode | undefined {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return undefined; }
+        if (!rootStore) {
+            return undefined;
+        }
         return rootStore.getRowUsingDisplayIndex(index) as RowNode;
     }
 
@@ -432,7 +491,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // recalculating row-indexes etc, and also getting rendering
         // engine to re-render (listens on ModelUpdated event)
         this.pauseStoreUpdateListening = true;
-        this.forEachNode(node => {
+        this.forEachNode((node) => {
             if (node.stub) {
                 return;
             }
@@ -445,12 +504,17 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.onStoreUpdated();
     }
 
-    public refreshAfterFilter(newFilterModel: FilterModel | AdvancedFilterModel | null, params: StoreRefreshAfterParams): void {
+    public refreshAfterFilter(
+        newFilterModel: FilterModel | AdvancedFilterModel | null,
+        params: StoreRefreshAfterParams
+    ): void {
         if (this.storeParams) {
             this.storeParams.filterModel = newFilterModel;
         }
         const rootStore = this.getRootStore();
-        if (!rootStore) { return; }
+        if (!rootStore) {
+            return;
+        }
         rootStore.refreshAfterFilter(params);
 
         this.onStoreUpdated();
@@ -464,30 +528,36 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRowCount(): number {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return 0; }
+        if (!rootStore) {
+            return 0;
+        }
 
         return rootStore.getDisplayIndexEnd()!;
     }
 
     public getTopLevelRowCount(): number {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return 1; }
+        if (!rootStore) {
+            return 1;
+        }
         return rootStore.getRowCount();
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return topLevelIndex; }
+        if (!rootStore) {
+            return topLevelIndex;
+        }
         return rootStore.getTopLevelRowDisplayedIndex(topLevelIndex);
     }
 
     public getRowBounds(index: number): RowBounds {
         const rootStore = this.getRootStore();
         if (!rootStore) {
-            const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            const rowHeight = this.gos.getRowHeightAsNumber();
             return {
                 rowTop: 0,
-                rowHeight: rowHeight
+                rowHeight: rowHeight,
             };
         }
         return rootStore.getRowBounds(index)!;
@@ -498,9 +568,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (!root) {
             return undefined;
         }
-        
+
         const states: any = {};
-        root.forEachStoreDeep(store => {
+        root.forEachStoreDeep((store) => {
             if (store instanceof FullStore) {
                 const { id, state } = store.getBlockStateJson();
                 states[id] = state;
@@ -517,7 +587,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRowIndexAtPixel(pixel: number): number {
         const rootStore = this.getRootStore();
-        if (pixel <= 0 || !rootStore) { return 0; }
+        if (pixel <= 0 || !rootStore) {
+            return 0;
+        }
 
         return rootStore.getRowIndexAtPixel(pixel)!;
     }
@@ -536,21 +608,32 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return; }
+        if (!rootStore) {
+            return;
+        }
         rootStore.forEachNodeDeep(callback);
     }
 
-    public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes = false): void {
+    public forEachNodeAfterFilterAndSort(
+        callback: (node: RowNode, index: number) => void,
+        includeFooterNodes = false
+    ): void {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return; }
+        if (!rootStore) {
+            return;
+        }
         rootStore.forEachNodeDeepAfterFilterAndSort(callback, undefined, includeFooterNodes);
     }
 
     /** @return false if store hasn't started */
     public executeOnStore(route: string[], callback: (cache: IServerSideStore) => void): boolean {
-        if (!this.started) { return false; }
+        if (!this.started) {
+            return false;
+        }
         const rootStore = this.getRootStore();
-        if (!rootStore) { return true; }
+        if (!rootStore) {
+            return true;
+        }
 
         const storeToExecuteOn = rootStore.getChildStore(route);
 
@@ -562,7 +645,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public refreshStore(params: RefreshServerSideParams = {}): void {
         const route = params.route ? params.route : [];
-        this.executeOnStore(route, store => store.refreshStore(params.purge == true));
+        this.executeOnStore(route, (store) => store.refreshStore(params.purge == true));
     }
 
     public getStoreState(): ServerSideGroupLevelState[] {
@@ -574,23 +657,24 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return res;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode | null): RowNode[] {
-        if (!_.exists(firstInRange)) {
-            return [];   
-        }
-
-        if (!lastInRange) {
-            return [firstInRange];
-        }
-
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
         const startIndex = firstInRange.rowIndex;
         const endIndex = lastInRange.rowIndex;
-        if (startIndex === null || endIndex === null) {
-            return [firstInRange];
+
+        if (startIndex === null && endIndex === null) {
+            return [];
+        }
+
+        if (endIndex === null) {
+            return firstInRange ? [firstInRange] : [];
+        }
+
+        if (startIndex === null) {
+            return [lastInRange];
         }
 
         const nodeRange: RowNode[] = [];
-        const [firstIndex, lastIndex] = [startIndex, endIndex].sort((a,b) => a - b);
+        const [firstIndex, lastIndex] = [startIndex, endIndex].sort((a, b) => a - b);
         this.forEachNode((node) => {
             const thisRowIndex = node.rowIndex;
             if (thisRowIndex == null || node.stub) {
@@ -603,8 +687,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         });
 
         // don't allow range selection if we don't have the full range of rows
-        if (nodeRange.length !== (lastIndex - firstIndex + 1)) {
-            return [firstInRange];
+        if (nodeRange.length !== lastIndex - firstIndex + 1) {
+            return firstInRange ? [firstInRange, lastInRange] : [];
         }
 
         return nodeRange;
@@ -612,7 +696,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRowNode(id: string): RowNode | undefined {
         let result: RowNode | undefined;
-        this.forEachNode(rowNode => {
+        this.forEachNode((rowNode) => {
             if (rowNode.id === id) {
                 result = rowNode;
             }
@@ -635,7 +719,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                 rootStore.setRowCount(rowCount, lastRowIndexKnown);
                 return;
             }
-            console.error('AG Grid: Infinite scrolling must be enabled in order to set the row count.');
+            _errorOnce('Infinite scrolling must be enabled in order to set the row count.');
         }
+    }
+
+    public override destroy(): void {
+        this.destroyDatasource();
+        this.destroyRootStore();
+        super.destroy();
     }
 }

@@ -1,44 +1,64 @@
-import {
-    AgMenuList,
-    Autowired,
-    Bean,
-    BeanStub,
-    Column,
+import type {
+    AgColumn,
+    BeanCollection,
     ColumnModel,
-    FilterManager,
+    FuncColsService,
     IRowModel,
     MenuItemDef,
     MenuService,
-    _
-} from "@ag-grid-community/core";
-import { MenuItemMapper } from "./menuItemMapper";
+    NamedBean,
+} from '@ag-grid-community/core';
+import { BeanStub, _removeRepeatsFromArray } from '@ag-grid-community/core';
+import { AgMenuList } from '@ag-grid-enterprise/core';
 
-@Bean('columnMenuFactory')
-export class ColumnMenuFactory extends BeanStub {
-    @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('menuService') private readonly menuService: MenuService;
+import type { MenuItemMapper } from './menuItemMapper';
 
-    private static MENU_ITEM_SEPARATOR = 'separator';
+const MENU_ITEM_SEPARATOR = 'separator';
 
-    public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
-        const menuList = parent.createManagedBean(new AgMenuList(0, {
-            column: column ?? null,
-            node: null,
-            value: null
-        }));
+export class ColumnMenuFactory extends BeanStub implements NamedBean {
+    beanName = 'columnMenuFactory' as const;
+
+    private menuItemMapper: MenuItemMapper;
+    private columnModel: ColumnModel;
+    private funcColsService: FuncColsService;
+    private rowModel: IRowModel;
+    private menuService: MenuService;
+
+    public wireBeans(beans: BeanCollection) {
+        this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
+        this.columnModel = beans.columnModel;
+        this.funcColsService = beans.funcColsService;
+        this.rowModel = beans.rowModel;
+        this.menuService = beans.menuService;
+    }
+
+    public createMenu(
+        parent: BeanStub<any>,
+        column: AgColumn | undefined,
+        sourceElement: () => HTMLElement
+    ): AgMenuList {
+        const menuList = parent.createManagedBean(
+            new AgMenuList(0, {
+                column: column ?? null,
+                node: null,
+                value: null,
+            })
+        );
 
         const menuItems = this.getMenuItems(column);
-        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, column ?? null, sourceElement);
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(
+            menuItems,
+            column ?? null,
+            sourceElement,
+            'columnMenu'
+        );
 
         menuList.addMenuItems(menuItemsMapped);
 
         return menuList;
     }
 
-    private getMenuItems(column?: Column): (string | MenuItemDef)[] {
+    private getMenuItems(column?: AgColumn): (string | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
         let result: (string | MenuItemDef)[];
 
@@ -46,16 +66,18 @@ export class ColumnMenuFactory extends BeanStub {
         if (Array.isArray(columnMainMenuItems)) {
             result = columnMainMenuItems;
         } else if (typeof columnMainMenuItems === 'function') {
-            result = columnMainMenuItems(this.gridOptionsService.addGridCommonParams({
-                column: column!,
-                defaultItems
-            }));
+            result = columnMainMenuItems(
+                this.gos.addGridCommonParams({
+                    column: column!,
+                    defaultItems,
+                })
+            );
         } else {
-            const userFunc = this.gridOptionsService.getCallback('getMainMenuItems');
+            const userFunc = this.gos.getCallback('getMainMenuItems');
             if (userFunc && column) {
                 result = userFunc({
                     column,
-                    defaultItems
+                    defaultItems,
                 });
             } else {
                 result = defaultItems;
@@ -64,12 +86,12 @@ export class ColumnMenuFactory extends BeanStub {
 
         // GUI looks weird when two separators are side by side. this can happen accidentally
         // if we remove items from the menu then two separators can edit up adjacent.
-        _.removeRepeatsFromArray(result, ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        _removeRepeatsFromArray(result, MENU_ITEM_SEPARATOR);
 
         return result;
     }
 
-    private getDefaultMenuOptions(column?: Column): string[] {
+    private getDefaultMenuOptions(column?: AgColumn): string[] {
         const result: string[] = [];
 
         const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
@@ -84,7 +106,7 @@ export class ColumnMenuFactory extends BeanStub {
 
         const allowPinning = !column.getColDef().lockPinned;
 
-        const rowGroupCount = this.columnModel.getRowGroupColumns().length;
+        const rowGroupCount = this.funcColsService.getRowGroupColumns().length;
         const doingGrouping = rowGroupCount > 0;
 
         const allowValue = column.isAllowValue();
@@ -94,13 +116,13 @@ export class ColumnMenuFactory extends BeanStub {
 
         const isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
 
-        const usingTreeData = this.gridOptionsService.get('treeData');
+        const usingTreeData = this.gos.get('treeData');
 
         const allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
-            (isPrimary && doingGrouping && allowValue)
+            (isPrimary && doingGrouping && allowValue) ||
             // secondary columns can always have aggValue, as it means it's a pivot value column
-            || !isPrimary;
+            !isPrimary;
 
         if (!isLegacyMenuEnabled && column.isSortable()) {
             const sort = column.getSort();
@@ -113,12 +135,12 @@ export class ColumnMenuFactory extends BeanStub {
             if (sort) {
                 result.push('sortUnSort');
             }
-            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+            result.push(MENU_ITEM_SEPARATOR);
         }
 
         if (this.menuService.isFilterMenuItemEnabled(column)) {
             result.push('columnFilter');
-            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+            result.push(MENU_ITEM_SEPARATOR);
         }
 
         if (allowPinning) {
@@ -130,19 +152,19 @@ export class ColumnMenuFactory extends BeanStub {
         }
 
         if (allowPinning || allowValueAgg) {
-            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+            result.push(MENU_ITEM_SEPARATOR);
         }
 
         result.push('autoSizeThis');
         result.push('autoSizeAll');
-        result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        result.push(MENU_ITEM_SEPARATOR);
 
         const showRowGroup = column.getColDef().showRowGroup;
         if (showRowGroup) {
             result.push('rowUnGroup');
         } else if (allowRowGroup && column.isPrimary()) {
             if (column.isRowGroupActive()) {
-                const groupLocked = this.columnModel.isColumnGroupingLocked(column);
+                const groupLocked = this.columnModel.isColGroupLocked(column);
                 if (!groupLocked) {
                     result.push('rowUnGroup');
                 }
@@ -150,7 +172,7 @@ export class ColumnMenuFactory extends BeanStub {
                 result.push('rowGroup');
             }
         }
-        result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        result.push(MENU_ITEM_SEPARATOR);
         if (!isLegacyMenuEnabled) {
             result.push('columnChooser');
         }

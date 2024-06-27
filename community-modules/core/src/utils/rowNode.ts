@@ -1,4 +1,4 @@
-import { RowNode } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
 
 /**
  * Gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
@@ -7,11 +7,13 @@ import { RowNode } from '../entities/rowNode';
  * don't have order id's
  * @param {RowNode[]} rowNodes
  * @param {Object} rowNodeOrder
- * 
+ *
  * @returns a boolean representing whether nodes were reordered
  */
-export function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number; }): boolean {
-    if (!rowNodes) { return false; }
+export function _sortRowNodesByOrder(rowNodes: RowNode[] | null, rowNodeOrder: { [id: string]: number }): boolean {
+    if (!rowNodes) {
+        return false;
+    }
 
     const comparator = (nodeA: RowNode, nodeB: RowNode) => {
         const positionA = rowNodeOrder[nodeA.id!];

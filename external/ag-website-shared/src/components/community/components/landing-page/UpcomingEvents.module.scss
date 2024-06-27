@@ -1,0 +1,161 @@
+@use 'design-system' as *;
+
+.yearFiltersContainer {
+    display: flex;
+    justify-content: flex-start;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-8;
+}
+
+.yearFilter {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-util-gray-200);
+    color: var(--color-text-primary);
+    padding: $spacing-size-2 $spacing-size-4;
+    cursor: pointer;
+    font-weight: 200;
+    border-bottom-width: 1px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    transition: background-color 0.3s ease;
+}
+
+.active {
+    border: none;
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-brand-400);
+    border-bottom-width: 1px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    color: var(--color-text-primary);
+}
+
+.eventTilesContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: $spacing-size-8;
+
+    @media screen and (max-width: $breakpoint-community-medium) {
+        flex-direction: column;
+        gap: $spacing-size-6;
+    }
+}
+
+.linkWrapper {
+    all: unset;
+    flex: 1;
+    cursor: pointer;
+}
+
+.eventTile {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-md);
+    padding: $spacing-size-4;
+    background: var(--color-bg-primary);
+    overflow: hidden;
+    gap: $spacing-size-2;
+}
+
+.headerContainer {
+    display: flex;
+    gap: $spacing-size-4;
+}
+
+.titleContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: $spacing-size-1;
+}
+
+.title {
+    font-weight: 800;
+    color: red;
+}
+
+.flagContainer {
+    display: flex;
+    align-items: center;
+}
+
+.flag {
+    height: 22px;
+    width: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.organizerLogoContainer {
+    display: flex;
+    align-items: center;
+}
+
+.organiserLogo {
+    width: 32px;
+    height: auto;
+}
+
+.description {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.title {
+    font-weight: var(--text-semibold);
+    font-size: var(--text-fs-lg);
+    margin-bottom: 4px;
+    color: var(--color-fg-primary);
+    padding-top: 8px;
+}
+
+.description {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.location {
+    --color-icon: var(--color-text-secondary);
+    --icon-size: 20px;
+    color: var(--color-text-primary);
+    font-weight: var(--text-semibold);
+    opacity: 0.8;
+    margin-bottom: 4px;
+    border: 1px solid var(--color-border-secondary);
+    width: fit-content;
+    border-radius: var(--radius-2xl);
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-color: var(--color-util-brand-100);
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    font-size: var(--text-fs-base);
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 10%);
+    }
+}
+
+.conferenceIcon {
+    margin-top: 16px;
+    height: 32px;
+    width: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.date {
+    padding-top: $spacing-size-3;
+    opacity: 0.7;
+}

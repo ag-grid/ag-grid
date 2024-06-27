@@ -1,28 +1,60 @@
-import { Column } from "../entities/column";
-import { AgEvent, SelectionEventSourceType } from "../events";
+import type { AgEvent, SelectionEventSourceType } from '../events';
+import type { Column } from '../interfaces/iColumn';
+import type { BuildEventTypeMap } from './iEventEmitter';
 
 export type RowNodeEventType =
-    'rowSelected' |
-    'selectableChanged' |
-    'displayedChanged' |
-    'dataChanged' |
-    'cellChanged' |
-    'masterChanged' |
-    'heightChanged' |
-    'topChanged' |
-    'groupChanged' |
-    'allChildrenCountChanged' |
-    'firstChildChanged' |
-    'lastChildChanged' |
-    'childIndexChanged' |
-    'rowIndexChanged' |
-    'expandedChanged' |
-    'hasChildrenChanged' |
-    'uiLevelChanged' |
-    'rowHighlightChanged' |
-    'mouseEnter' |
-    'mouseLeave' |
-    'draggingChanged';
+    | 'rowSelected'
+    | 'selectableChanged'
+    | 'displayedChanged'
+    | 'dataChanged'
+    | 'cellChanged'
+    | 'masterChanged'
+    | 'heightChanged'
+    | 'topChanged'
+    | 'groupChanged'
+    | 'allChildrenCountChanged'
+    | 'firstChildChanged'
+    | 'lastChildChanged'
+    | 'childIndexChanged'
+    | 'rowIndexChanged'
+    | 'expandedChanged'
+    | 'hasChildrenChanged'
+    | 'uiLevelChanged'
+    | 'rowHighlightChanged'
+    | 'mouseEnter'
+    | 'mouseLeave'
+    | 'draggingChanged';
+
+export type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
+    RowNodeEventType,
+    {
+        rowSelected: RowSelectedEvent<TData>;
+        selectableChanged: SelectableChangedEvent<TData>;
+        displayedChanged: DisplayedChangedEvent<TData>;
+        dataChanged: DataChangedEvent<TData>;
+        cellChanged: CellChangedEvent<TData>;
+        masterChanged: MasterChangedEvent<TData>;
+        heightChanged: HeightChangedEvent<TData>;
+        topChanged: TopChangedEvent<TData>;
+        groupChanged: GroupChangedEvent<TData>;
+        allChildrenCountChanged: AllChildrenCountChangedEvent<TData>;
+        firstChildChanged: FirstChildChangedEvent<TData>;
+        lastChildChanged: LastChildChangedEvent<TData>;
+        childIndexChanged: ChildIndexChangedEvent<TData>;
+        rowIndexChanged: RowIndexChangedEvent<TData>;
+        expandedChanged: ExpandedChangedEvent<TData>;
+        hasChildrenChanged: HasChildrenChangedEvent<TData>;
+        uiLevelChanged: UiLevelChangedEvent<TData>;
+        rowHighlightChanged: RowHighlightChangedEvent<TData>;
+        mouseEnter: MouseEnterEvent<TData>;
+        mouseLeave: MouseLeaveEvent<TData>;
+        draggingChanged: DraggingChangedEvent<TData>;
+    }
+>;
+
+export type AgRowNodeEventListener<TEventType extends keyof RowNodeEventTypeMap<TData>, TData = any> = (
+    params: RowNodeEventTypeMap<TData>[TEventType]
+) => void;
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -39,30 +71,52 @@ export interface SetSelectedParams {
     source: SelectionEventSourceType;
 }
 
-export interface RowNodeEvent<TData = any> extends AgEvent {
-    /** Event identifier */
-    type: RowNodeEventType;
+export interface RowNodeEvent<T extends RowNodeEventType, TData = any> extends AgEvent<T> {
     node: IRowNode<TData>;
 }
 
-export interface DataChangedEvent<TData = any> extends RowNodeEvent<TData> {
+export interface RowSelectedEvent<TData = any> extends RowNodeEvent<'rowSelected', TData> {}
+export interface MouseEnterEvent<TData = any> extends RowNodeEvent<'mouseEnter', TData> {}
+export interface MouseLeaveEvent<TData = any> extends RowNodeEvent<'mouseLeave', TData> {}
+export interface HeightChangedEvent<TData = any> extends RowNodeEvent<'heightChanged', TData> {}
+export interface RowIndexChangedEvent<TData = any> extends RowNodeEvent<'rowIndexChanged', TData> {}
+export interface TopChangedEvent<TData = any> extends RowNodeEvent<'topChanged', TData> {}
+export interface ExpandedChangedEvent<TData = any> extends RowNodeEvent<'expandedChanged', TData> {}
+export interface FirstChildChangedEvent<TData = any> extends RowNodeEvent<'firstChildChanged', TData> {}
+export interface LastChildChangedEvent<TData = any> extends RowNodeEvent<'lastChildChanged', TData> {}
+export interface ChildIndexChangedEvent<TData = any> extends RowNodeEvent<'childIndexChanged', TData> {}
+export interface AllChildrenCountChangedEvent<TData = any> extends RowNodeEvent<'allChildrenCountChanged', TData> {}
+export interface UiLevelChangedEvent<TData = any> extends RowNodeEvent<'uiLevelChanged', TData> {}
+export interface DataChangedEvent<TData = any> extends RowNodeEvent<'dataChanged', TData> {
     oldData: TData | undefined;
     newData: TData | undefined;
     update: boolean;
 }
-
-export interface CellChangedEvent<TData = any> extends RowNodeEvent<TData> {
+export interface CellChangedEvent<TData = any> extends RowNodeEvent<'cellChanged', TData> {
     column: Column;
     newValue: TData | undefined;
     oldValue: TData | undefined;
 }
 
-export enum RowHighlightPosition { Above, Below }
+export interface SelectableChangedEvent<TData = any> extends RowNodeEvent<'selectableChanged', TData> {}
+export interface DisplayedChangedEvent<TData = any> extends RowNodeEvent<'displayedChanged', TData> {}
+export interface MasterChangedEvent<TData = any> extends RowNodeEvent<'masterChanged', TData> {}
+export interface GroupChangedEvent<TData = any> extends RowNodeEvent<'groupChanged', TData> {}
+export interface HasChildrenChangedEvent<TData = any> extends RowNodeEvent<'hasChildrenChanged', TData> {}
+export interface RowHighlightChangedEvent<TData = any> extends RowNodeEvent<'rowHighlightChanged', TData> {}
+export interface DraggingChangedEvent<TData = any> extends RowNodeEvent<'draggingChanged', TData> {}
+
+export enum RowHighlightPosition {
+    Above,
+    Below,
+}
 
 export type RowPinnedType = 'top' | 'bottom' | null | undefined;
 
-export interface VerticalScrollPosition { top: number, bottom: number; }
-
+export interface VerticalScrollPosition {
+    top: number;
+    bottom: number;
+}
 
 interface BaseRowNode<TData = any> {
     /** Unique ID for the node. Either provided by the application, or generated by the grid if not. */
@@ -76,7 +130,7 @@ interface BaseRowNode<TData = any> {
     /**
      * This will be `true` if it has a rowIndex assigned, otherwise `false`.
      */
-    displayed: boolean
+    displayed: boolean;
     /** Either `'top'` or `'bottom'` if row pinned, otherwise `undefined` or `null`. */
     rowPinned: RowPinnedType;
     /** Is this row selectable. */
@@ -85,7 +139,6 @@ interface BaseRowNode<TData = any> {
     rowHeight: number | null | undefined;
     /** The row top position in pixels. */
     rowTop: number | null;
-
 
     /** `true` if this node is a group node (i.e. it has children) */
     group: boolean | undefined;
@@ -105,9 +158,9 @@ interface BaseRowNode<TData = any> {
     parent: IRowNode<TData> | null;
 
     /** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */
-    stub: boolean;
+    stub: boolean | undefined;
     /** Used by server side row model, `true` if this row node failed a load. */
-    failedLoad: boolean;
+    failedLoad: boolean | undefined;
 
     /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
     rowIndex: number | null;
@@ -118,7 +171,7 @@ interface BaseRowNode<TData = any> {
     /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail). */
     master: boolean;
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row). */
-    detail: boolean;
+    detail: boolean | undefined;
 }
 
 interface GroupRowNode<TData = any> {
@@ -128,25 +181,24 @@ interface GroupRowNode<TData = any> {
     key: string | null;
 
     /** If using row grouping, contains the group values for this group. */
-    groupData: { [key: string]: any | null; } | null;
+    groupData: { [key: string]: any | null } | null;
     /** If using row grouping and aggregation, contains the aggregation data. */
     aggData: any;
-
 
     /** The row group column used for this group. */
     rowGroupColumn: Column | null;
     /**
      * If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.
      * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`.
-    */
+     */
     rowGroupIndex: number | null;
     /** `true` if group is expanded, otherwise `false`. */
     expanded: boolean;
 
     /** `true` if this node is a group and the group is the bottom level in the tree. */
-    leafGroup: boolean;
+    leafGroup: boolean | undefined;
     /** All lowest level nodes beneath this node, no groups. */
-    allLeafChildren: IRowNode<TData>[];
+    allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
     allChildrenCount: number | null;
     /** Children of this group. If multi levels of grouping, shows only immediate children. */
@@ -157,14 +209,12 @@ interface GroupRowNode<TData = any> {
     childrenAfterFilter: IRowNode<TData>[] | null;
 
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
-    footer: boolean;
+    footer: boolean | undefined;
     /** If using footers, reference to the footer node for this group. */
     sibling: IRowNode<TData>;
 }
 
-
 export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<TData> {
-
     /**
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
@@ -176,7 +226,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     /** Returns:
      * - `true` if node is selected.
      * - `false` if the node isn't selected.
-     * - `undefined` if it's partially selected (group where not all children are selected). 
+     * - `undefined` if it's partially selected (group where not all children are selected).
      */
     isSelected(): boolean | undefined;
 
@@ -188,14 +238,17 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     isRowPinned(): boolean;
 
     /** Returns:
-    * - `true` if the node can be expanded, i.e it is a group or master row.
-    * - `false` if the node cannot be expanded.
-    */
+     * - `true` if the node can be expanded, i.e it is a group or master row.
+     * - `false` if the node cannot be expanded.
+     */
     isExpandable(): boolean;
     /**
-     * Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.
+     * Set the expanded state of this rowNode.
+     * @param expanded - `true` to expand, `false` to collapse.
+     * @param sourceEvent - Optional event that will be passed to the `rowGroupOpened` event.
+     * @param forceSync - By default rows are expanded asynchronously for best performance. Set to `true` if you need to interact with the expanded row immediately after this function.
      */
-    setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent): void;
+    setExpanded(expanded: boolean, sourceEvent?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
 
     /**
      * Returns:
@@ -212,9 +265,9 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     isHovered(): boolean;
 
     /** Add an event listener. */
-    addEventListener(eventType: RowNodeEventType, listener: Function): void;
+    addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void;
     /** Remove event listener. */
-    removeEventListener(eventType: RowNodeEventType, listener: Function): void;
+    removeEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void;
 
     /**
      * The first time `quickFilter` runs, the grid creates a one-off string representation of the row.
@@ -235,7 +288,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * @param rowHeight - new height of the row
      * @param estimated - is this an estimated height. Default: `false`
      */
-    setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void
+    setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void;
 
     /**
      * Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.

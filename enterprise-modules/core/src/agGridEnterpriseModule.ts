@@ -1,15 +1,20 @@
-import { Module, ModuleNames } from "@ag-grid-community/core";
-import { GridLicenseManager as LicenseManager } from "./license/gridLicenseManager";
-import { WatermarkComp } from "./license/watermark";
+import type { Module } from '@ag-grid-community/core';
+import { ModuleNames } from '@ag-grid-community/core';
 
-export { WatermarkComp } from "./license/watermark";
-import { VERSION } from "./version";
+import { GridLicenseManager as LicenseManager } from './license/gridLicenseManager';
+import { VERSION } from './version';
+import { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
+
+export { AgWatermark } from './license/watermark';
 
 export const EnterpriseCoreModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.EnterpriseCoreModule,
     beans: [LicenseManager],
-    agStackComponents: [
-        { componentName: 'AgWatermark', componentClass: WatermarkComp }
-    ]
+    userComponents: [
+        {
+            name: 'agMenuItem',
+            classImp: AgMenuItemRenderer,
+        },
+    ],
 };

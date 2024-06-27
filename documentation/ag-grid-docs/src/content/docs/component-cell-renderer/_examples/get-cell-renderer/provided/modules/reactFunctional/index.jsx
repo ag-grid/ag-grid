@@ -1,15 +1,15 @@
-
 'use strict';
 
-import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import './styles.css';
+import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
 import MedalCellRenderer from './medalCellRenderer.jsx';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -25,7 +25,12 @@ const GridExample = () => {
         { field: 'gold', width: 100, cellRenderer: MedalCellRenderer },
         { field: 'silver', width: 100, cellRenderer: MedalCellRenderer },
         { field: 'bronze', width: 100, cellRenderer: MedalCellRenderer },
-        { field: 'total', editable: false, valueGetter: (params) => params.data.gold + params.data.silver + params.data.bronze, width: 100 }
+        {
+            field: 'total',
+            editable: false,
+            valueGetter: (params) => params.data.gold + params.data.silver + params.data.bronze,
+            width: 100,
+        },
     ]);
     const defaultColDef = useMemo(() => {
         return {
@@ -33,13 +38,13 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             filter: true,
-        }
+        };
     }, []);
 
     const onGridReady = useCallback((params) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => {
+            .then((resp) => resp.json())
+            .then((data) => {
                 setRowData(data);
             });
     }, []);
@@ -49,10 +54,10 @@ const GridExample = () => {
         // pass in list of columns, here it's gold only
         const params = { columns: ['gold'] };
         const instances = gridRef.current.api.getCellRendererInstances(params);
-        instances.forEach(instance => {
+        instances.forEach((instance) => {
             instance.medalUserFunction();
         });
-    }, [])
+    }, []);
 
     const onFirstRowGold = useCallback(() => {
         console.log('=========> calling gold row one');
@@ -60,44 +65,52 @@ const GridExample = () => {
         const firstRowNode = gridRef.current.api.getDisplayedRowAtIndex(0);
         const params = { columns: ['gold'], rowNodes: [firstRowNode] };
         const instances = gridRef.current.api.getCellRendererInstances(params);
-        instances.forEach(instance => {
+        instances.forEach((instance) => {
             instance.medalUserFunction();
         });
-    }, [])
+    }, []);
 
     const onCallAllCells = useCallback(() => {
         console.log('=========> calling everything');
         // no params, goes through all rows and columns where cell renderer exists
         const instances = gridRef.current.api.getCellRendererInstances();
-        instances.forEach(instance => {
+        instances.forEach((instance) => {
             instance.medalUserFunction();
         });
-    }, [])
+    }, []);
 
     return (
         <div style={containerStyle}>
             <div className="example-wrapper">
-                <div style={{ "marginBottom": "5px" }}>
+                <div style={{ marginBottom: '5px' }}>
                     <button onClick={onCallGold}>Gold</button>
                     <button onClick={onFirstRowGold}>First Row Gold</button>
                     <button onClick={onCallAllCells}>All Cells</button>
                 </div>
 
-                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                <div
+                    style={gridStyle}
+                    className={
+                        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                        'ag-theme-quartz' /** DARK MODE END **/
+                    }
+                >
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        reactiveCustomComponents
                         onGridReady={onGridReady}
                     />
                 </div>
             </div>
-
         </div>
     );
-}
+};
 
 const root = createRoot(document.getElementById('root'));
-root.render(<StrictMode><GridExample /></StrictMode>);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

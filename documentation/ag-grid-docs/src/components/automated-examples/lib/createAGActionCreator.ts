@@ -1,6 +1,6 @@
-import { Group } from '@tweenjs/tween.js';
+import type { Group } from '@tweenjs/tween.js';
 
-import type { ApplyColumnStateParams, CreateRangeChartParams, GridApi } from 'ag-grid-community';
+import type { ApplyColumnStateParams, ChartToolPanelName, CreateRangeChartParams, GridApi } from 'ag-grid-community';
 
 import { type AgElementFinder } from './agElements';
 import { type AgElementName } from './agElements/agElementsConfig';
@@ -9,6 +9,7 @@ import { addCellRange } from './scriptActions/addCellRange';
 import { type ClickOnContextMenuItemParams, clickOnContextMenuItem } from './scriptActions/clickOnContextMenuItem';
 import { dragColumnToRowGroupPanel } from './scriptActions/dragColumnToRowGroupPanel';
 import { moveToElementAndClick } from './scriptActions/moveToElementAndClick';
+import { openChartToolPanel } from './scriptActions/openChartToolPanel';
 import { resetGrid } from './scriptActions/resetGrid';
 import { clearAllSingleCellSelections, clearSingleCell, selectSingleCell } from './scriptActions/singleCell';
 import { type ScriptDebugger } from './scriptDebugger';
@@ -136,6 +137,13 @@ interface MoveToElementAndClickAction {
     };
 }
 
+interface OpenChartToolPanelAction {
+    actionType: 'openChartToolPanel';
+    actionParams?: {
+        panel?: ChartToolPanelName;
+    };
+}
+
 export type AGCreatorAction =
     | ResetAction
     | ResetColumnStateAction
@@ -152,7 +160,8 @@ export type AGCreatorAction =
     | AddCellRangeAction
     | CreateRangeChartAction
     | ClickOnContextMenuItemAction
-    | MoveToElementAndClickAction;
+    | MoveToElementAndClickAction
+    | OpenChartToolPanelAction;
 
 export function createAGActionCreator({
     getOverlay,
@@ -252,6 +261,13 @@ export function createAGActionCreator({
                 easing: action.actionParams.easing || defaultEasing,
                 speed: action.actionParams.speed,
                 duration: action.actionParams.duration,
+            });
+        } else if (actionType === 'openChartToolPanel') {
+            const action = agAction as OpenChartToolPanelAction;
+
+            openChartToolPanel({
+                gridApi,
+                ...action.actionParams,
             });
         }
     };

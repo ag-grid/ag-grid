@@ -1,7 +1,8 @@
-import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
-import { _Scene } from 'ag-charts-community';
-import { ChartType } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
+import type { _Scene } from 'ag-charts-community';
+
 import { createPolarPaths } from '../miniChartHelpers';
+import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
 export class MiniRadarArea extends MiniChartWithPolarAxes {
     static chartType: ChartType = 'radarArea';
@@ -10,14 +11,10 @@ export class MiniRadarArea extends MiniChartWithPolarAxes {
     private data = [
         [8, 10, 5, 7, 4, 1, 5, 8],
         [1, 1, 2, 7, 7, 8, 10, 1],
-        [4, 5, 9, 9, 4, 2, 3, 4]
+        [4, 5, 9, 9, 4, 2, 3, 4],
     ];
 
-    constructor(
-        container: HTMLElement,
-        fills: string[],
-        strokes: string[],
-    ) {
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
         super(container, 'radarAreaTooltip');
 
         this.showRadiusAxisLine = false;

@@ -1,18 +1,16 @@
 ---
-import { getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import styles from '@design-system/modules/GridHomepage.module.scss';
+import styles from '@pages-styles/homepage.module.scss';
 import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
 import FrameworkSelector from '@components/FrameworkSelector';
-import ChartsLogo from '@images/inline-svgs/ag-charts-logo.svg?react';
+import ChartsLogo from '@ag-website-shared/images/inline-svgs/ag-charts-logo.svg?react';
 import HeroGrid from '@components/hero-grid/HeroGrid.astro';
 import { AutomatedExamples } from '@components/automated-examples/AutomatedExamples';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-
-// TODO: Is this best place to get the current version from?
-const { data: versions } = await getEntry('versions', 'ag-grid-versions');
-const agGridVersion = versions[0].version;
+import { agGridVersion } from '@constants';
+import { Image } from 'astro:assets';
+import { enterpriseGridUrl } from '@utils/server/enterpriseGridUrl';
 
 const frameworksData = [
     {
@@ -32,10 +30,6 @@ const frameworksData = [
         url: '/javascript-data-grid/',
     },
 ];
-
-// TODO: Use `agGridEnterpriseVersion` from `@constants`;
-const agGridEnterpriseVersion = '31.1.1';
-const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-charts-enterprise.min.js`;
 ---
 
 <!-- Grid font for Quartz theme -->
@@ -57,7 +51,7 @@ const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterpris
 
 <Layout
     title="AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"
-    description={`AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version ${agGridVersion} is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise.`}
+    description={'AG Grid is a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more. Free Community version or 2-month Enterprise trial available.'}
     showSearchBar={false}
     showDocsNav={false}
 >
@@ -116,12 +110,16 @@ const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterpris
                 </p>
             </div>
             <div class={styles.chartsExample}>
-                <img
+                <Image
+                    width={720}
+                    height={322}
                     class={styles.chartsExampleLight}
                     src={urlWithBaseUrl('images/ag-charts-gallery-light.webp')}
                     alt="AG Charts"
                 />
-                <img
+                <Image
+                    width={720}
+                    height={322}
                     class={styles.chartsExampleDark}
                     src={urlWithBaseUrl('images/ag-charts-gallery-dark.webp')}
                     alt="AG Charts"
@@ -130,7 +128,7 @@ const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterpris
         </div>
     </div>
 
-    <AutomatedExamples client:only />
+    <AutomatedExamples client:only="react" />
 
     <div class={styles.homepageSponsorship}>
         <section class:list={[styles.sponsorshipInner, 'layout-max-width-small']}>

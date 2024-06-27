@@ -9,7 +9,7 @@ This section describes the different ways that aggregated values can be filtered
 
 By default, when using [Filters](./filtering-overview/) and [Aggregations](./aggregation/) the filtering will only apply to the cell values in leaf-level rows, and not to any of the aggregated values in the group rows. Also, when a column filter is applied, the aggregated values shown in the group rows will be updated based on the filtered rows only.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
@@ -33,7 +33,7 @@ The example below demonstrates how aggregated values update to reflect the appli
 
 To prevent the [Default Behaviour](./aggregation-filtering/#default-filtering-with-aggregated-values) of [Aggregated](./aggregation/) values being calculated from the [Filtered](./filtering-overview/) results only, and instead calculate them from the pre-filtered data, enable the `suppressAggFilteredOnly` option.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     suppressAggFilteredOnly: true,
 }
@@ -57,7 +57,7 @@ have any data of their own. However when using [Aggregation](./aggregation/), gr
 
 You can filter the grid based on the group row aggregated values by setting the `groupAggFiltering` grid option as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     groupAggFiltering: true,
 }
@@ -90,7 +90,7 @@ As seen above, the default behaviour of [Filtering Group Aggregations](./aggrega
 
 See an example implementation of this callback below.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     groupAggFiltering: (params) => !!params.node.group,
 }
@@ -113,4 +113,4 @@ The properties of the [Row Node](./row-object/) provided by the `groupAggFilteri
 
 ## Next Up
 
-Continue to the next section to learn about [Other Aggregation Topics](./aggregation-other/).
+Continue to the next section to learn about [Total Rows](./total-rows/).

@@ -1,68 +1,75 @@
-import {
-    _,
-    AgDialog,
-    Autowired,
-    CellRange,
-    ChartCreated,
-    ChartDestroyed,
+import type {
+    BeanCollection,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
     ChartModel,
     ChartToolPanelName,
     ChartType,
-    Component,
-    Events,
+    FocusService,
     IAggFunc,
+    PartialCellRange,
     PopupService,
-    PostConstruct,
-    RefSelector,
     SeriesChartType,
     UpdateChartParams,
     WithoutGridCommon,
-    FocusService,
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
+import {
+    Component,
+    RefPlaceholder,
+    _clearElement,
+    _getAbsoluteHeight,
+    _getAbsoluteWidth,
+    _includes,
+    _removeFromParent,
+    _setDisplayed,
+    _warnOnce,
+} from '@ag-grid-community/core';
+import { AgDialog } from '@ag-grid-enterprise/core';
+import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 
-import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
-import { ChartMenu } from "./menu/chartMenu";
-import { TitleEdit } from "./chartTitle/titleEdit";
-import { ChartController, DEFAULT_THEMES } from "./chartController";
-import { ChartDataModel, ChartModelParams } from "./model/chartDataModel";
-import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
-import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
-import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
-import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
-import { PolarChartProxy } from "./chartProxies/polar/polarChartProxy";
-import { PieChartProxy } from "./chartProxies/pie/pieChartProxy";
-import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { RangeChartProxy } from "./chartProxies/statistical/rangeChartProxy";
-import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { BoxPlotChartProxy } from "./chartProxies/statistical/boxPlotChartProxy";
-import { TreemapChartProxy } from "./chartProxies/hierarchical/treemapChartProxy";
-import { SunburstChartProxy } from "./chartProxies/hierarchical/sunburstChartProxy";
-import { HeatmapChartProxy } from './chartProxies/specialized/heatmapChartProxy';
+import type { CrossFilteringContext } from '../chartService';
+import { ChartController, DEFAULT_THEMES } from './chartController';
+import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
+import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';
+import { HistogramChartProxy } from './chartProxies/cartesian/histogramChartProxy';
+import { LineChartProxy } from './chartProxies/cartesian/lineChartProxy';
+import { ScatterChartProxy } from './chartProxies/cartesian/scatterChartProxy';
 import { WaterfallChartProxy } from './chartProxies/cartesian/waterfallChartProxy';
-import { ChartTranslationKey, ChartTranslationService } from "./services/chartTranslationService";
-import { ChartCrossFilterService } from "./services/chartCrossFilterService";
-import { CrossFilteringContext } from "../chartService";
-import { ChartOptionsService } from "./services/chartOptionsService";
-import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
-import { getCanonicalChartType, isHierarchical } from "./utils/seriesTypeMapper";
+import type { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
+import { ComboChartProxy } from './chartProxies/combo/comboChartProxy';
+import { HierarchicalChartProxy } from './chartProxies/hierarchical/hierarchicalChartProxy';
+import { PieChartProxy } from './chartProxies/pie/pieChartProxy';
+import { PolarChartProxy } from './chartProxies/polar/polarChartProxy';
+import { HeatmapChartProxy } from './chartProxies/specialized/heatmapChartProxy';
+import { BoxPlotChartProxy } from './chartProxies/statistical/boxPlotChartProxy';
+import { RangeChartProxy } from './chartProxies/statistical/rangeChartProxy';
+import { ChartMenu } from './menu/chartMenu';
+import type { ChartMenuContext } from './menu/chartMenuContext';
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
-import { ChartMenuContext } from "./menu/chartMenuContext";
+import type { ChartModelParams } from './model/chartDataModel';
+import { ChartDataModel } from './model/chartDataModel';
+import type { ChartCrossFilterService } from './services/chartCrossFilterService';
+import type { ChartMenuService } from './services/chartMenuService';
+import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
+import { ChartOptionsService } from './services/chartOptionsService';
+import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
 import { deepMerge } from './utils/object';
-import { ChartMenuService, CHART_TOOL_PANEL_MENU_OPTIONS } from "./services/chartMenuService";
+import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
 
 export interface GridChartParams {
     chartId: string;
-    pivotChart: boolean;
-    cellRange: CellRange;
+    pivotChart?: boolean;
+    cellRange: PartialCellRange;
     chartType: ChartType;
     chartThemeName?: string;
     insideDialog: boolean;
-    suppressChartRanges: boolean;
-    switchCategorySeries: boolean,
+    focusDialogOnOpen?: boolean;
+    suppressChartRanges?: boolean;
+    switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
-    crossFiltering: boolean;
+    crossFiltering?: boolean;
     crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
@@ -71,30 +78,26 @@ export interface GridChartParams {
 }
 
 export class GridChartComp extends Component {
-    private static TEMPLATE = /* html */
-        `<div class="ag-chart" tabindex="-1">
-            <div ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper">
-                <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
-                <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
-            </div>
-            <div ref="eTitleEditContainer"></div>
-            <div ref="eMenuContainer" class="ag-chart-docked-container" style="min-width: 0px;"></div>
-        </div>`;
+    private crossFilterService: ChartCrossFilterService;
+    private chartTranslationService: ChartTranslationService;
+    private chartMenuService: ChartMenuService;
+    private focusService: FocusService;
+    private popupService: PopupService;
 
-    @RefSelector('eChart') private readonly eChart: HTMLElement;
-    @RefSelector('eChartContainer') private readonly eChartContainer: HTMLElement;
-    @RefSelector('eMenuContainer') private readonly eMenuContainer: HTMLElement;
-    @RefSelector('eEmpty') private readonly eEmpty: HTMLElement;
-    @RefSelector('eTitleEditContainer') private readonly eTitleEditContainer: HTMLDivElement;
+    public wireBeans(beans: BeanCollection): void {
+        this.crossFilterService = beans.chartCrossFilterService as ChartCrossFilterService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
+        this.focusService = beans.focusService;
+        this.popupService = beans.popupService;
+    }
 
-    @Autowired('chartCrossFilterService') private readonly crossFilterService: ChartCrossFilterService;
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
-    @Autowired('focusService') private readonly focusService: FocusService;
-    @Autowired('popupService') private readonly popupService: PopupService;
+    private readonly eChart: HTMLElement = RefPlaceholder;
+    private readonly eChartContainer: HTMLElement = RefPlaceholder;
+    private readonly eMenuContainer: HTMLElement = RefPlaceholder;
+    private readonly eEmpty: HTMLElement = RefPlaceholder;
 
     private chartMenu: ChartMenu;
-    private titleEdit: TitleEdit;
     private chartDialog: AgDialog;
 
     private chartController: ChartController;
@@ -111,27 +114,24 @@ export class GridChartComp extends Component {
     private onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
-        super(GridChartComp.TEMPLATE);
+        super(/* html */ `<div class="ag-chart">
+            <div data-ref="eChartContainer" class="ag-chart-components-wrapper ag-chart-menu-hidden">
+                <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
+                <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
+            </div>
+            <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
+            </div>`);
         this.params = params;
     }
 
-    @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         const modelParams: ChartModelParams = {
-            chartId: this.params.chartId,
-            pivotChart: this.params.pivotChart,
+            ...this.params,
             chartType: getCanonicalChartType(this.params.chartType),
             chartThemeName: this.getThemeName(),
-            switchCategorySeries: this.params.switchCategorySeries,
-            aggFunc: this.params.aggFunc,
-            cellRange: this.params.cellRange,
-            suppressChartRanges: this.params.suppressChartRanges,
-            unlinkChart: this.params.unlinkChart,
-            crossFiltering: this.params.crossFiltering,
-            seriesChartTypes: this.params.seriesChartTypes,
         };
 
-        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isRtl = this.gos.get('enableRtl');
 
         this.addCssClass(isRtl ? 'ag-rtl' : 'ag-ltr');
 
@@ -150,12 +150,14 @@ export class GridChartComp extends Component {
         }
 
         this.addMenu();
-        this.addTitleEditComp();
 
-        this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.update.bind(this));
+        this.addManagedElementListeners(this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
+        this.addManagedListeners(this.chartController, { chartModelUpdate: this.update.bind(this) });
 
-        this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], this.reactivePropertyUpdate.bind(this));
+        this.addManagedPropertyListeners(
+            ['chartThemeOverrides', 'chartThemes'],
+            this.reactivePropertyUpdate.bind(this)
+        );
 
         this.update();
         this.raiseChartCreatedEvent();
@@ -183,11 +185,11 @@ export class GridChartComp extends Component {
             chartInstance,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
-            customChartThemes: this.gridOptionsService.get('customChartThemes'),
+            customChartThemes: this.gos.get('customChartThemes'),
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
             getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
             apiChartThemeOverrides: this.params.chartThemeOverrides,
-            crossFiltering: this.params.crossFiltering,
+            crossFiltering: this.params.crossFiltering ?? false,
             crossFilterCallback,
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),
@@ -206,30 +208,30 @@ export class GridChartComp extends Component {
 
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
-            console.warn('AG Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            _warnOnce('invalid chart type supplied: ' + chartProxyParams.chartType);
             return;
-        }
-
-        const canvas = this.eChart.querySelector('canvas');
-        if (canvas) {
-            canvas.classList.add('ag-charts-canvas');
         }
 
         this.chartController.setChartProxy(this.chartProxy);
         this.createMenuContext();
-        this.titleEdit && this.titleEdit.refreshTitle(this.chartMenuContext);
     }
 
     private createMenuContext(): void {
-        if (this.chartMenuContext) { return; }
-        const chartMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(this.chartOptionsService.getChartThemeOverridesProxy()));
-        const chartAxisMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(this.chartOptionsService.getAxisThemeOverridesProxy()));
+        if (this.chartMenuContext) {
+            return;
+        }
+        const chartMenuParamsFactory = this.createManagedBean(
+            new ChartMenuParamsFactory(this.chartOptionsService.getChartThemeOverridesProxy())
+        );
+        const chartAxisMenuParamsFactory = this.createManagedBean(
+            new ChartMenuParamsFactory(this.chartOptionsService.getAxisThemeOverridesProxy())
+        );
         this.chartMenuContext = {
             chartController: this.chartController,
             chartOptionsService: this.chartOptionsService,
             chartMenuParamsFactory,
-            chartAxisMenuParamsFactory
-        }
+            chartAxisMenuParamsFactory,
+        };
     }
 
     private getChartThemeName(): string {
@@ -241,7 +243,7 @@ export class GridChartComp extends Component {
     }
 
     private getGridOptionsChartThemeOverrides(): AgChartThemeOverrides | undefined {
-        return this.gridOptionsService.get('chartThemeOverrides');
+        return this.gos.get('chartThemeOverrides');
     }
 
     private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {
@@ -277,15 +279,13 @@ export class GridChartComp extends Component {
             case 'radialBar':
                 return new PolarChartProxy(chartProxyParams);
             case 'rangeBar':
-                return new RangeChartProxy(chartProxyParams);
             case 'rangeArea':
                 return new RangeChartProxy(chartProxyParams);
             case 'boxPlot':
                 return new BoxPlotChartProxy(chartProxyParams);
             case 'treemap':
-                return new TreemapChartProxy(chartProxyParams);
             case 'sunburst':
-                return new SunburstChartProxy(chartProxyParams);
+                return new HierarchicalChartProxy(chartProxyParams);
             case 'heatmap':
                 return new HeatmapChartProxy(chartProxyParams);
             case 'waterfall':
@@ -300,9 +300,15 @@ export class GridChartComp extends Component {
     }
 
     private addDialog(): void {
-        const title = this.chartTranslationService.translate(this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle');
+        const title = this.chartTranslationService.translate(
+            this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle'
+        );
 
         const { width, height } = this.getBestDialogSize();
+
+        const afterGuiAttached = this.params.focusDialogOnOpen
+            ? () => setTimeout(() => this.focusService.focusInto(this.getGui()))
+            : undefined;
 
         this.chartDialog = new AgDialog({
             resizable: true,
@@ -313,21 +319,30 @@ export class GridChartComp extends Component {
             height,
             component: this,
             centered: true,
-            closable: true
+            closable: true,
+            afterGuiAttached,
         });
 
-        this.getContext().createBean(this.chartDialog);
+        this.createBean(this.chartDialog);
 
-        this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
+        this.chartDialog.addEventListener('destroyed', () => {
             this.destroy();
             this.chartMenuService.hideAdvancedSettings();
+            const lastFocusedCell = this.focusService.getFocusedCell();
+            setTimeout(() => {
+                if (lastFocusedCell) {
+                    this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
+                } else {
+                    this.focusService.focusGridInnerElement();
+                }
+            });
         });
     }
 
-    private getBestDialogSize(): { width: number, height: number; } {
+    private getBestDialogSize(): { width: number; height: number } {
         const popupParent = this.popupService.getPopupParent();
-        const maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
-        const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
+        const maxWidth = _getAbsoluteWidth(popupParent) * 0.75;
+        const maxHeight = _getAbsoluteHeight(popupParent) * 0.75;
         const ratio = 0.553;
 
         const chart = this.chartProxy.getChart();
@@ -349,20 +364,10 @@ export class GridChartComp extends Component {
 
     private addMenu(): void {
         if (!this.params.crossFiltering) {
-            this.chartMenu = this.createBean(new ChartMenu(
-                this.eChartContainer,
-                this.eMenuContainer,
-                this.chartMenuContext
-            ));
+            this.chartMenu = this.createBean(
+                new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartMenuContext)
+            );
             this.eChartContainer.appendChild(this.chartMenu.getGui());
-        }
-    }
-
-    private addTitleEditComp(): void {
-        this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
-        this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
-        if (this.chartProxy) {
-            this.titleEdit.refreshTitle(this.chartMenuContext);
         }
     }
 
@@ -378,37 +383,42 @@ export class GridChartComp extends Component {
         const updatedChartType = this.chartTypeChanged(params);
         // If the chart type has changed, grab the theme overrides from the exisiting chart before destroying it,
         // so that we can retain any compatible theme overrides across different chart types.
-        const persistedThemeOverrides = updatedChartType || this.chartEmpty
-            ? (((updatedChartType) => {
-                const currentChartType = this.chartType;
-                const targetChartType = updatedChartType;
-                const existingChartInstance = this.chartProxy.getChart();
-                const existingChartOptions = existingChartInstance?.getOptions()
-                const existingAxes = existingChartInstance?.axes;
-                return this.chartOptionsService.getPersistedChartThemeOverrides(
-                    existingChartOptions,
-                    existingAxes,
-                    currentChartType,
-                    targetChartType ?? currentChartType,
-                );
-            }))(updatedChartType)
-            : undefined;
+        const persistedThemeOverrides =
+            updatedChartType || this.chartEmpty
+                ? ((updatedChartType) => {
+                      const currentChartType = this.chartType;
+                      const targetChartType = updatedChartType;
+                      const existingChartInstance = this.chartProxy.getChart();
+                      const existingChartOptions = existingChartInstance?.getOptions();
+                      const existingAxes = existingChartInstance?.axes;
+                      return this.chartOptionsService.getPersistedChartThemeOverrides(
+                          existingChartOptions,
+                          existingAxes,
+                          currentChartType,
+                          targetChartType ?? currentChartType
+                      );
+                  })(updatedChartType)
+                : undefined;
 
         // recreate chart if chart type has changed
         if (updatedChartType) this.createChart();
-        
+
         // combine any provided theme overrides with any retained theme overrides from changing chart type
-        const updatedThemeOverrides = persistedThemeOverrides && params?.chartThemeOverrides
-            ? deepMerge(persistedThemeOverrides, params.chartThemeOverrides)
-            : persistedThemeOverrides || params?.chartThemeOverrides;
+        const updatedThemeOverrides =
+            persistedThemeOverrides && params?.chartThemeOverrides
+                ? deepMerge(persistedThemeOverrides, params.chartThemeOverrides)
+                : persistedThemeOverrides || params?.chartThemeOverrides;
 
         // update chart options if chart type hasn't changed or if overrides are supplied
         this.updateChart(updatedThemeOverrides);
 
         if (params?.chartId) {
-            this.chartProxy.getChart().waitForUpdate().then(() => {
-                this.chartController.raiseChartApiUpdateEvent();
-            });
+            this.chartProxy
+                .getChart()
+                .waitForUpdate()
+                .then(() => {
+                    this.chartController.raiseChartApiUpdateEvent();
+                });
         }
     }
 
@@ -416,9 +426,8 @@ export class GridChartComp extends Component {
         const { chartProxy } = this;
 
         const selectedCols = this.chartController.getSelectedValueColState();
-        const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.chartController.getChartData();
-        const chartEmpty = this.handleEmptyChart(data, fields);
+        const chartEmpty = this.handleEmptyChart(data, selectedCols.length);
 
         this.chartEmpty = chartEmpty;
         if (chartEmpty) {
@@ -428,14 +437,15 @@ export class GridChartComp extends Component {
             return;
         }
 
-        let chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
+        const chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
         chartProxy.update(chartUpdateParams);
 
-        this.chartProxy.getChart().waitForUpdate().then(() => {
-            this.chartController.raiseChartUpdatedEvent();
-        });
-
-        this.titleEdit.refreshTitle(this.chartMenuContext);
+        this.chartProxy
+            .getChart()
+            .waitForUpdate()
+            .then(() => {
+                this.chartController.raiseChartUpdatedEvent();
+            });
     }
 
     private chartTypeChanged(updateParams?: UpdateChartParams): ChartType | null {
@@ -444,7 +454,7 @@ export class GridChartComp extends Component {
         // If the grid chart component is out of sync with the existing chart instance type, return the correct chart type
         if (this.chartType !== currentType) return targetChartType ?? currentType;
         // If the target chart type is different to the current chart type, return the new chart type
-        if (targetChartType && (currentType !== targetChartType)) return targetChartType;
+        if (targetChartType && currentType !== targetChartType) return targetChartType;
         // Otherwise nothing has changed
         return null;
     }
@@ -457,24 +467,24 @@ export class GridChartComp extends Component {
         return this.chartProxy.getChartImageDataURL(fileFormat);
     }
 
-    private handleEmptyChart(data: any[], fields: any[]): boolean {
+    private handleEmptyChart(data: any[], numFields: number): boolean {
         const pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();
-        
+
         // Determine the minimum number of fields based on the chart type
         const chartType = this.chartController.getChartType();
         let minFieldsRequired = 1;
         if (this.chartController.isActiveXYChart()) {
             minFieldsRequired = chartType === 'bubble' ? 3 : 2;
-        } else if (isHierarchical(chartType)) {
+        } else if (isHierarchical(getSeriesType(chartType))) {
             minFieldsRequired = 0;
         }
 
-        const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
+        const isEmptyChart = numFields < minFieldsRequired || data.length === 0;
 
         if (this.eChart) {
             const isEmpty = pivotModeDisabled || isEmptyChart;
-            _.setDisplayed(this.eChart, !isEmpty);
-            _.setDisplayed(this.eEmpty, isEmpty);
+            _setDisplayed(this.eChart, !isEmpty);
+            _setDisplayed(this.eEmpty, isEmpty);
         }
 
         if (pivotModeDisabled) {
@@ -490,7 +500,7 @@ export class GridChartComp extends Component {
         return false;
     }
 
-    public downloadChart(dimensions?: { width: number, height: number }, fileName?: string, fileFormat?: string): void {
+    public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string): void {
         this.chartProxy.downloadChart(dimensions, fileName, fileFormat);
     }
 
@@ -525,34 +535,40 @@ export class GridChartComp extends Component {
     }
 
     private getThemeName(): string {
-        const availableChartThemes = this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
+        const availableChartThemes = this.gos.get('chartThemes') || DEFAULT_THEMES;
 
         if (availableChartThemes.length === 0) {
             throw new Error('Cannot create chart: no chart themes available.');
         }
 
         const { chartThemeName } = this.params;
-        return _.includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
+        return _includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
     }
 
     private getAllKeysInObjects(objects: any[]): string[] {
         const allValues: any = {};
-    
-        objects.filter(obj => obj != null).forEach(obj => {
-            Object.keys(obj).forEach(key => allValues[key] = null);
-        });
-    
+
+        objects
+            .filter((obj) => obj != null)
+            .forEach((obj) => {
+                Object.keys(obj).forEach((key) => (allValues[key] = null));
+            });
+
         return Object.keys(allValues);
     }
 
     private validateCustomThemes() {
         const suppliedThemes = this.getChartThemes();
-        const customChartThemes = this.gridOptionsService.get('customChartThemes');
+        const customChartThemes = this.gos.get('customChartThemes');
         if (customChartThemes) {
-            this.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
-                if (!_.includes(suppliedThemes, customThemeName)) {
-                    console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
-                        "supplied but not added to the 'chartThemes' list");
+            this.getAllKeysInObjects([customChartThemes]).forEach((customThemeName) => {
+                if (!_includes(suppliedThemes, customThemeName)) {
+                    _warnOnce(
+                        "a custom chart theme with the name '" +
+                            customThemeName +
+                            "' has been " +
+                            "supplied but not added to the 'chartThemes' list"
+                    );
                 }
             });
         }
@@ -563,41 +579,42 @@ export class GridChartComp extends Component {
         this.chartController.setChartThemeName(this.getThemeName(), true);
 
         const chartId = this.getChartId();
-        const modelType = this.chartController.isCrossFilterChart()
-            ? 'crossFilter'
-            : this.getChartModel().modelType;
+        const modelType = this.chartController.isCrossFilterChart() ? 'crossFilter' : this.getChartModel().modelType;
 
         // standalone requires that `undefined` / `null` values are supplied as `{}`
-        const chartThemeOverrides = this.gridOptionsService.get('chartThemeOverrides') || {};
+        const chartThemeOverrides = this.gos.get('chartThemeOverrides') || {};
 
         this.update({
             type: `${modelType}ChartUpdate`,
             chartId,
-            chartThemeOverrides
+            chartThemeOverrides,
         });
     }
 
     private raiseChartCreatedEvent(): void {
-        const event: WithoutGridCommon<ChartCreated> = {
-            type: Events.EVENT_CHART_CREATED,
-            chartId: this.chartController.getChartId()
+        const event: WithoutGridCommon<ChartCreatedEvent> = {
+            type: 'chartCreated',
+            chartId: this.chartController.getChartId(),
         };
 
-        this.chartProxy.getChart().waitForUpdate().then(() => {
-            this.eventService.dispatchEvent(event);
-        });
+        this.chartProxy
+            .getChart()
+            .waitForUpdate()
+            .then(() => {
+                this.eventService.dispatchEvent(event);
+            });
     }
 
     private raiseChartDestroyedEvent(): void {
-        const event: WithoutGridCommon<ChartDestroyed> = {
-            type: Events.EVENT_CHART_DESTROYED,
+        const event: WithoutGridCommon<ChartDestroyedEvent> = {
+            type: 'chartDestroyed',
             chartId: this.chartController.getChartId(),
         };
 
         this.eventService.dispatchEvent(event);
     }
 
-    protected destroy(): void {
+    public override destroy(): void {
         super.destroy();
 
         if (this.chartProxy) {
@@ -605,7 +622,6 @@ export class GridChartComp extends Component {
         }
 
         this.destroyBean(this.chartMenu);
-        this.destroyBean(this.titleEdit);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {
@@ -617,9 +633,9 @@ export class GridChartComp extends Component {
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
         const eGui = this.getGui();
-        _.clearElement(eGui);
+        _clearElement(eGui);
         // remove from parent, so if user provided container, we detach from the provided dom element
-        _.removeFromParent(eGui);
+        _removeFromParent(eGui);
 
         this.raiseChartDestroyedEvent();
     }

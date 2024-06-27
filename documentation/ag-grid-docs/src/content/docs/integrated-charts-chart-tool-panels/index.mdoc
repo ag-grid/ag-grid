@@ -7,7 +7,7 @@ The Chart Tool Panels allow users to change the selected chart type and customis
 
 {% gridExampleRunner title="Chart Tool Panels" name="chart-tool-panels" /%}
 
-The Chart Tool Panels are accessed by selecting `Edit Chart` from the [Chart Menu](./chart-menu) in the top-right corner of the chart. Note they can also be opened 
+The Chart Tool Panels are accessed by selecting `Edit Chart` from the [Chart Menu](./integrated-charts-menu) in the top-right corner of the chart. Note they can also be opened 
 via configuration (see examples in this section), or programmatically through the Grid API, see [Open / Close Chart Tool Panels](#chart-tool-panel-api).
 
 ## Chart Tool Panel
@@ -21,6 +21,8 @@ Chart Panel
 It is possible to configure which chart groups and chart types are included and in which order via the `chartToolPanelsDef` grid option:
 
 {% apiDocumentation source="grid-options/properties.json" section="charts" names=["chartToolPanelsDef"] /%}
+
+Note that the Chart Panel key is `settingsPanel`.
 
 The full list of chart groups with the corresponding chart types are shown below:
 
@@ -39,21 +41,23 @@ The example below shows a subset of the provided chart groups with the chart typ
 
 {% gridExampleRunner title="Chart Tool Panel Customisation" name="settings-panel-customisation" /%}
 
-## Data Tool Panel
+## Set Up Tool Panel
 
-The Data Panel can be used to change the chart category and series.
+The Set Up Panel can be used to change the chart category and series. It is not applicable for Pivot Charts. 
 
-{% imageCaption imagePath="resources/data-panel.png" alt="Chart Data Panel" maxWidth="30%" constrained=true centered=true %}
-Chart Data Panel
+{% imageCaption imagePath="resources/data-panel.png" alt="Chart Set Up Panel" maxWidth="30%" constrained=true centered=true %}
+Chart Set Up Panel
 {% /imageCaption %}
 
 It is possible to configure which groups are shown, the order in which they appear and whether they are opened by default via the `chartToolPanelsDef` grid option:
 
 {% apiDocumentation source="grid-options/properties.json" section="charts" names=["chartToolPanelsDef"] /%}
 
-The default list and order of the Data Panel groups are as shown below:
+Note that the Set Up Panel key is `dataPanel`.
 
-```js {% frameworkTransform=true %}
+The default list and order of the Set Up Panel groups are as shown below:
+
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartToolPanelsDef: {
         dataPanel: {
@@ -71,29 +75,31 @@ const gridOptions = {
 The `seriesChartType` group is only shown in [Combination Charts](./integrated-charts-api-range-chart/#combination-charts).
 {% /note %}
 
-The following example shows some Data Panel customisations. Note the following:
+The following example shows some Set Up Panel customisations. Note the following:
 
 * The **Categories** group is not included.
 * The **Series** group is closed by default.
-* The Data Panel is configured to be open by default via `defaultToolPanel: 'data'`.
+* The Set Up Panel is configured to be open by default via `defaultToolPanel: 'data'`.
 
-{% gridExampleRunner title="Data Tool Panel Customisation" name="data-panel-customisation" /%}
+{% gridExampleRunner title="Set Up Tool Panel Customisation" name="data-panel-customisation" /%}
 
-## Format Tool Panel
+## Customize Tool Panel
 
-The Format Panel allows users to format the chart where the available formatting options differ between chart types.
+The Customize Panel allows users to format the chart where the available formatting options differ between chart types.
 
-{% imageCaption imagePath="resources/format-panel.png" alt="Chart Format Panel" maxWidth="30%" constrained=true centered=true %}
-Chart Format Panel
+{% imageCaption imagePath="resources/format-panel.png" alt="Chart Customize Panel" maxWidth="30%" constrained=true centered=true %}
+Chart Customize Panel
 {% /imageCaption %}
 
 It is possible to configure which groups are shown, the order in which they appear and whether they are opened by default via the `chartToolPanelsDef` grid option:
 
 {% apiDocumentation source="grid-options/properties.json" section="charts" names=["chartToolPanelsDef"] /%}
 
+Note that the Customize Panel key is `formatPanel`.
+
 The default list and order of format groups are as follows:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartToolPanelsDef: {
         formatPanel: {
@@ -115,20 +121,20 @@ The selected chart determines which groups are displayed. For example, a pie cha
 For chart types that have both horizontal and vertical axes, the `axis` group can be replaced with the more specific `horizontalAxis` and `verticalAxis` groups to control these options independently.
 {% /note %}
 
-The following example shows some Format Panel customisations. Note the following:
+The following example shows some Customize Panel customisations. Note the following:
 
-* The format panel groups have been reordered.
+* The customize panel groups have been reordered.
 * The **Horizontal Axis** group is open by default.
 * The **Legend** group has been omitted.
-* The Format Panel is configured to be open by default via `defaultToolPanel: 'format'`.
+* The Customize Panel is configured to be open by default via `defaultToolPanel: 'format'`.
 
-{% gridExampleRunner title="Format Tool Panel Customisation" name="format-panel-customisation" /%}
+{% gridExampleRunner title="Customize Tool Panel Customisation" name="format-panel-customisation" /%}
 
 ## Omitting & Ordering Tool Panels
 
 The Chart Tool Panels can be omitted and ordered using the `chartToolPanelsDef.panels` grid option:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartToolPanelsDef: {
         panels: ['data', 'format', 'settings'], // default order
@@ -138,7 +144,7 @@ const gridOptions = {
 
 To hide the Chart Tool Panels, the `chartToolPanelsDef.panels` grid option can be set to an empty array:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartToolPanelsDef: {
         panels: [], // No Chart Tool Panels are shown and Edit Chart is removed from the Chart Menu
@@ -148,9 +154,9 @@ const gridOptions = {
 
 The following example shows how the Chart Tool Panels can be omitted and ordered. Note the following:
 
-* The **Format** Tool Panel has been omitted.
-* The **Data** Tool Panel appears before the **Chart** Tool Panel.
-* The Data Panel is configured to be open by default via `defaultToolPanel: 'data'`.
+* The **Customize** Tool Panel has been omitted.
+* The **Set Up** Tool Panel appears before the **Chart** Tool Panel.
+* The Set Up Panel is configured to be open by default via `defaultToolPanel: 'data'`.
 
 {% gridExampleRunner title="Omitting & Ordering Tool Panels" name="omitting-ordering-tool-panels" /%}
 
@@ -162,8 +168,8 @@ The Chart Tool Panels can be opened and closed programmatically using the follow
 
 The example below demonstrates how you can open and close the Chart Tool Panels.
 
-* Click **Open Chart Tool Panel** to open the default `Settings` tab via `openChartToolPanel()`
-* Click **Open Chart Tool Panel Format tab** to open the `Format` tab via `openChartToolPanel()`
+* Click **Open Chart Tool Panel** to open the default `Chart` tab via `openChartToolPanel()`
+* Click **Open Chart Tool Panel Customize tab** to open the `Customize` tab via `openChartToolPanel()`
 * Click **Close Chart Tool Panel** to close via `closeChartToolPanel()`
 
 {% gridExampleRunner title="Open/Close Chart Tool Panel" name="chart-tool-panel-api"  exampleHeight=800 /%}

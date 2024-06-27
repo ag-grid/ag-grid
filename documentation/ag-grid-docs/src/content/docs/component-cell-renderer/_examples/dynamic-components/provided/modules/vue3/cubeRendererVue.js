@@ -6,17 +6,16 @@ export default {
     `,
     data: function () {
         return {
-            value: null
+            value: null,
         };
     },
-    beforeMount() {
-    },
+    beforeMount() {},
     mounted() {
         this.value = this.valueCubed();
     },
     methods: {
         valueCubed() {
             return this.params.value * this.params.value * this.params.value;
-        }
-    }
+        },
+    },
 };

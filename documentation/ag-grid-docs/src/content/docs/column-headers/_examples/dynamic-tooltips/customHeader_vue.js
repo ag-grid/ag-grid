@@ -18,17 +18,18 @@ export default {
         return {
             ascSort: null,
             descSort: null,
-            noSort: null
+            noSort: null,
         };
     },
-    beforeMount() {
-    },
+    beforeMount() {},
     mounted() {
         this.params.column.addEventListener('sortChanged', this.onSortChanged);
         this.onSortChanged();
         this.params.setTooltip(this.params.displayName, () => {
-            if (!this.$refs.label) { return; }
-            return this.$refs.label.scrollWidth > this.$refs.label.clientWidth
+            if (!this.$refs.label) {
+                return;
+            }
+            return this.$refs.label.scrollWidth > this.$refs.label.clientWidth;
         });
     },
     methods: {
@@ -38,9 +39,10 @@ export default {
 
         onSortChanged() {
             this.ascSort = this.descSort = this.noSort = 'inactive';
-            if (this.params.column.isSortAscending()) {
+            const sort = this.params.column.getSort();
+            if (sort === 'asc') {
                 this.ascSort = 'active';
-            } else if (this.params.column.isSortDescending()) {
+            } else if (sort === 'desc') {
                 this.descSort = 'active';
             } else {
                 this.noSort = 'active';
@@ -49,6 +51,6 @@ export default {
 
         onSortRequested(order, event) {
             this.params.setSort(order, event.shiftKey);
-        }
-    }
+        },
+    },
 };

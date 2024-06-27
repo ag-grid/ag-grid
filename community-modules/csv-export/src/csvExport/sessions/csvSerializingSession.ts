@@ -1,6 +1,8 @@
-import { Column, ColumnGroup, CsvCustomContent, RowNode } from "@ag-grid-community/core";
-import { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from "../interfaces";
-import { BaseGridSerializingSession } from "./baseGridSerializingSession";
+import { _warnOnce } from '@ag-grid-community/core';
+import type { AgColumn, AgColumnGroup, CsvCustomContent, RowNode } from '@ag-grid-community/core';
+
+import type { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
+import { BaseGridSerializingSession } from './baseGridSerializingSession';
 
 const LINE_SEPARATOR = '\r\n';
 
@@ -20,7 +22,9 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     }
 
     public addCustomContent(content: CsvCustomContent) {
-        if (!content) { return; }
+        if (!content) {
+            return;
+        }
         if (typeof content === 'string') {
             if (!/^\s*\n/.test(content)) {
                 this.beginNewLine();
@@ -29,7 +33,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             content = content.replace(/\r?\n/g, LINE_SEPARATOR);
             this.result += content;
         } else {
-            content.forEach(row => {
+            content.forEach((row) => {
                 this.beginNewLine();
                 row.forEach((cell, index) => {
                     if (index !== 0) {
@@ -48,11 +52,11 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         this.beginNewLine();
 
         return {
-            onColumn: this.onNewHeaderGroupingRowColumn.bind(this)
+            onColumn: this.onNewHeaderGroupingRowColumn.bind(this),
         };
     }
 
-    private onNewHeaderGroupingRowColumn(columnGroup: ColumnGroup, header: string, index: number, span: number) {
+    private onNewHeaderGroupingRowColumn(columnGroup: AgColumnGroup, header: string, index: number, span: number) {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
@@ -64,7 +68,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
 
     private appendEmptyCells(count: number) {
         for (let i = 1; i <= count; i++) {
-            this.result += this.columnSeparator + this.putInQuotes("");
+            this.result += this.columnSeparator + this.putInQuotes('');
         }
     }
 
@@ -72,11 +76,11 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         this.beginNewLine();
 
         return {
-            onColumn: this.onNewHeaderRowColumn.bind(this)
+            onColumn: this.onNewHeaderRowColumn.bind(this),
         };
     }
 
-    private onNewHeaderRowColumn(column: Column, index: number): void {
+    private onNewHeaderRowColumn(column: AgColumn, index: number): void {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
@@ -87,11 +91,11 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         this.beginNewLine();
 
         return {
-            onColumn: this.onNewBodyRowColumn.bind(this)
+            onColumn: this.onNewBodyRowColumn.bind(this),
         };
     }
 
-    private onNewBodyRowColumn(column: Column, index: number, node: RowNode): void {
+    private onNewBodyRowColumn(column: AgColumn, index: number, node: RowNode): void {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
@@ -114,12 +118,12 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            console.warn('AG Grid: unknown value type during csv conversion');
+            _warnOnce('unknown value type during csv conversion');
             stringValue = '';
         }
 
         // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-        const valueEscaped = stringValue.replace(/"/g, "\"\"");
+        const valueEscaped = stringValue.replace(/"/g, '""');
 
         return '"' + valueEscaped + '"';
     }

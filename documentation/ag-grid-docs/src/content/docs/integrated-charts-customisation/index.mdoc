@@ -23,7 +23,7 @@ default instead, named with a `-dark` suffix, e.g. `'ag-vivid-dark'`.
 The selected theme can be changed by the user via the [Chart Tool Panel](./integrated-charts-chart-tool-panels/) or
 by changing the order of the provided themes using the `chartThemes` grid option as shown below:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     chartThemes: ['ag-vivid', 'ag-polychroma', 'ag-material', 'ag-sheets', 'ag-default']
 }
@@ -35,7 +35,7 @@ Integrated Charts uses a theme based configuration which 'overrides' the theme d
 
 To override a charts theme, use the `chartsThemeOverrides` grid option.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     chartThemeOverrides: {
         common: {
@@ -84,7 +84,7 @@ The following documentation links describe different types of overrides specific
 
 Custom [AG Charts Themes](https://charts.ag-grid.com/react/themes/) can also be supplied to the grid via the `customChartThemes` grid option.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     customChartThemes: {
         myCustomTheme: {

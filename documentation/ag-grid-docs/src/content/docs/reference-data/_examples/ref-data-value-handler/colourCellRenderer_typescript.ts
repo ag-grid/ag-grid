@@ -1,4 +1,4 @@
-import { ICellRendererParams, ICellRendererComp } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class ColourCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
@@ -6,15 +6,15 @@ export class ColourCellRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
         if (params.value === '(Select All)') {
-            this.eGui.innerText = params.value;
+            this.eGui.textContent = params.value;
         } else {
-            this.eGui.innerText = params.valueFormatted || '';
+            this.eGui.textContent = params.valueFormatted || '';
             this.eGui.style.color = this.removeSpaces(params.valueFormatted || '');
         }
     }
 
     removeSpaces(str: string) {
-        return str ? str.replace(/\s/g, '') : str
+        return str ? str.replace(/\s/g, '') : str;
     }
 
     getGui() {
@@ -22,7 +22,6 @@ export class ColourCellRenderer implements ICellRendererComp {
     }
 
     refresh() {
-        return false
+        return false;
     }
 }
-

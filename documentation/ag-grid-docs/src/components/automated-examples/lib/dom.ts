@@ -103,12 +103,16 @@ export function findElementWithInnerText({
     containerEl = document.body,
     selector,
     text,
+    index,
 }: {
     containerEl?: HTMLElement;
     selector: string;
     text: string;
+    index?: number;
 }): HTMLElement | undefined {
     let element!: HTMLElement;
+    let curIndex = 0;
+
     containerEl.querySelectorAll(selector).forEach((el) => {
         const htmlElement = el as HTMLElement;
         const sanitisedElementText = htmlElement.innerText
@@ -116,8 +120,13 @@ export function findElementWithInnerText({
             .replace(/\u200e/g, '') // Left to Right mark eg, in localisation text
             .replace(/\u200f/g, ''); // Right to Left mark eg, in localisation text
         if (sanitisedElementText === text.trim()) {
-            element = htmlElement;
-            return;
+            if (index === undefined) {
+                element = htmlElement;
+                return;
+            } else if (index === curIndex) {
+                element = htmlElement;
+            }
+            curIndex++;
         }
     });
 

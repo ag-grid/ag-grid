@@ -1,7 +1,8 @@
-import { _ModuleSupport, _Scene, _Theme, _Util } from 'ag-charts-community';
-import { ChartType } from '@ag-grid-community/core';
-import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
+import type { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
 import { accumulateData } from '../miniChartHelpers';
+import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
 export class MiniRadialColumn extends MiniChartWithPolarAxes {
     static chartType: ChartType = 'radialColumn';

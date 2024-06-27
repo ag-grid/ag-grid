@@ -1,34 +1,41 @@
-import { BeanStub } from "./context/beanStub";
-import { Autowired, Bean, PostConstruct } from "./context/context";
-import { CtrlsService } from "./ctrlsService";
-import { Logger } from "./logger";
-import { ColumnModel, convertSourceType } from "./columns/columnModel";
-import { ModuleNames } from "./modules/moduleNames";
-import { ModuleRegistry } from "./modules/moduleRegistry";
-import { IRowModel } from "./interfaces/iRowModel";
-import { WithoutGridCommon } from "./interfaces/iCommon";
-import { GridReadyEvent } from "./events";
-import { Events } from "./eventKeys";
-import { PropertyValueChangedEvent } from "./gridOptionsService";
-import { ColDef, ColGroupDef } from "./entities/colDef";
+import type { ColumnModel } from './columns/columnModel';
+import { convertSourceType } from './columns/columnModel';
+import type { NamedBean } from './context/bean';
+import { BeanStub } from './context/beanStub';
+import type { BeanCollection } from './context/context';
+import type { CtrlsService } from './ctrlsService';
+import type { ColDef, ColGroupDef } from './entities/colDef';
+import type { GridReadyEvent } from './events';
+import type { PropertyValueChangedEvent } from './gridOptionsService';
+import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { IRowModel } from './interfaces/iRowModel';
+import { ModuleNames } from './modules/moduleNames';
+import { ModuleRegistry } from './modules/moduleRegistry';
+import { _log } from './utils/function';
 
-@Bean('syncService')
-export class SyncService extends BeanStub {
-    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
+export class SyncService extends BeanStub implements NamedBean {
+    beanName = 'syncService' as const;
+
+    private ctrlsService: CtrlsService;
+    private columnModel: ColumnModel;
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        this.ctrlsService = beans.ctrlsService;
+        this.columnModel = beans.columnModel;
+        this.rowModel = beans.rowModel;
+    }
 
     private waitingForColumns: boolean = false;
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.addManagedPropertyListener('columnDefs', (event) => this.setColumnDefs(event));
     }
 
     public start(): void {
         // we wait until the UI has finished initialising before setting in columns and rows
         this.ctrlsService.whenReady(() => {
-            const columnDefs = this.gridOptionsService.get('columnDefs');
+            const columnDefs = this.gos.get('columnDefs');
             if (columnDefs) {
                 this.setColumnsAndData(columnDefs);
             } else {
@@ -38,28 +45,31 @@ export class SyncService extends BeanStub {
         });
     }
 
-    private setColumnsAndData(columnDefs:  (ColDef | ColGroupDef)[]): void {
-        this.columnModel.setColumnDefs(columnDefs ?? [], "gridInitializing");
+    private setColumnsAndData(columnDefs: (ColDef | ColGroupDef)[]): void {
+        this.columnModel.setColumnDefs(columnDefs ?? [], 'gridInitializing');
         this.rowModel.start();
     }
-    
+
     private gridReady(): void {
         this.dispatchGridReadyEvent();
-        const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
-        const logger = new Logger('AG Grid', () => this.gridOptionsService.get('debug'));
-        logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+        const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.gridId);
+        if (this.gos.get('debug')) {
+            _log(`initialised successfully, enterprise = ${isEnterprise}`);
+        }
     }
 
     private dispatchGridReadyEvent(): void {
         const readyEvent: WithoutGridCommon<GridReadyEvent> = {
-            type: Events.EVENT_GRID_READY,
+            type: 'gridReady',
         };
         this.eventService.dispatchEvent(readyEvent);
     }
 
     private setColumnDefs(event: PropertyValueChangedEvent<'columnDefs'>): void {
-        const columnDefs = this.gridOptionsService.get('columnDefs');
-        if (!columnDefs) { return; }
+        const columnDefs = this.gos.get('columnDefs');
+        if (!columnDefs) {
+            return;
+        }
 
         if (this.waitingForColumns) {
             this.waitingForColumns = false;

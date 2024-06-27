@@ -126,7 +126,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/nm" />
-      <excludeFolder url="file://$MODULE_DIR$/test" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/client-side-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/react/dist" />
@@ -145,7 +144,6 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/multi-filter/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/range-selection/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/rich-select/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/advanced-filter/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts-enterprise/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/clipboard/dist" />
@@ -168,6 +166,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/.angular" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/styles" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore" />
     </content>
     <content url="file://$MODULE_DIR$/community-modules/angular/dist" />
     <content url="file://$MODULE_DIR$/community-modules/react/dev" />

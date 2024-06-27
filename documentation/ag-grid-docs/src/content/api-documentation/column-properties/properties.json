@@ -84,7 +84,8 @@
                 "name": "Configuring the Context Menu",
                 "url": "./context-menu/#configuring-the-context-menu"
             }
-        }
+        },
+        "context": {}
     },
     "charts": {
         "meta": {
@@ -231,7 +232,7 @@
         "useValueFormatterForExport": {
             "more": {
                 "name": "Using Value Formatters with Other Grid Features",
-                "url": "./value-formatters/#formating-for-export"
+                "url": "./value-formatters/#formatting-for-export"
             }
         }
     },
@@ -316,7 +317,26 @@
         "cellRendererSelector": {
             "more": {
                 "name": "Many Renderers One Column",
-                "url": "./component-cell-renderer/#dynamic-selection"
+                "url": "./component-cell-renderer/#dynamic-component-selection"
+            }
+        },
+        "loadingCellRenderer": {
+            "description": "Provide your own cell loading Renderer component for this column's cells when using SSRM.",
+            "more": {
+                "name": "SSRM Cell Loading",
+                "url": "./component-loading-cell-renderer/#skeleton-loading"
+            }
+        },
+        "loadingCellRendererParams": {
+            "more": {
+                "name": "SSRM Cell Loading",
+                "url": "./component-loading-cell-renderer/#skeleton-loading"
+            }
+        },
+        "loadingCellRendererSelector": {
+            "more": {
+                "name": "SSRM Cell Loading",
+                "url": "./component-loading-cell-renderer/#skeleton-loading"
             }
         },
         "autoHeight": {},
@@ -480,7 +500,9 @@
             }
         },
         "rowDrag": {},
-        "rowDragText": {}
+        "rowDragText": {},
+        "dndSource": {},
+        "dndSourceOnRowDrag": {}
     },
     "events": {
         "meta": {
@@ -520,7 +542,8 @@
                 "url": "./tooltips"
             }
         },
-        "tooltipComponentParams": {}
+        "tooltipComponentParams": {},
+        "context": {}
     },
     "groupsHeader": {
         "meta": {

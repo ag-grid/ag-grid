@@ -13,7 +13,7 @@ export default forwardRef((props, ref) => {
                 console.log('renderer refreshed');
                 setValue(params.value);
                 return true;
-            }
+            },
         };
     });
 

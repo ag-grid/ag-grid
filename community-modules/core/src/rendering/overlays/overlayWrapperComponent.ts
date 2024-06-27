@@ -1,34 +1,36 @@
-import { Autowired, PostConstruct } from '../../context/context';
-import { Component } from '../../widgets/component';
-import { RefSelector } from '../../widgets/componentAnnotations';
-import { AgPromise } from '../../utils';
-import { clearElement } from '../../utils/dom';
-import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
-
-import { OverlayService } from './overlayService';
+import type { BeanCollection } from '../../context/context';
+import type { GridOptions } from '../../entities/gridOptions';
+import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
+import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
+import { _clearElement } from '../../utils/dom';
+import type { AgPromise } from '../../utils/promise';
+import type { ComponentSelector } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
+import type { IOverlayComp } from './overlayComponent';
+import type { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
+    private overlayService: OverlayService;
 
-    // wrapping in outer div, and wrapper, is needed to center the loading icon
-    private static TEMPLATE = /* html */`
-        <div class="ag-overlay" role="presentation">
-            <div class="ag-overlay-panel" role="presentation">
-                <div class="ag-overlay-wrapper" ref="eOverlayWrapper" role="presentation"></div>
-            </div>
-        </div>`;
+    public wireBeans(beans: BeanCollection): void {
+        this.overlayService = beans.overlayService;
+    }
 
-    @Autowired('overlayService') private readonly overlayService: OverlayService;
+    private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
 
-    @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
-
-    private activeOverlay: Component;
-    private inProgress = false;
-    private destroyRequested = false;
-    private activeOverlayWrapperCssClass: string;
-    private updateListenerDestroyFunc?: () => null;
+    private activePromise: AgPromise<IOverlayComp> | null = null;
+    private activeOverlay: IOverlayComp | null = null;
+    private updateListenerDestroyFunc: (() => null) | null = null;
+    private activeOverlayWrapperCssClass: string | null = null;
 
     constructor() {
-        super(OverlayWrapperComponent.TEMPLATE);
+        // wrapping in outer div, and wrapper, is needed to center the loading icon
+        super(/* html */ `
+            <div class="ag-overlay" role="presentation">
+                <div class="ag-overlay-panel" role="presentation">
+                    <div class="ag-overlay-wrapper" data-ref="eOverlayWrapper" role="presentation"></div>
+                </div>
+            </div>`);
     }
 
     public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
@@ -38,8 +40,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayWrapperClassList.toggle(LayoutCssClasses.PRINT, params.print);
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false, { skipAriaHidden: true });
 
@@ -55,48 +56,70 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayWrapperClassList.toggle(overlayWrapperCssClass, true);
     }
 
-    public showOverlay(overlayComp: AgPromise<Component> | null, overlayWrapperCssClass: string, updateListenerDestroyFunc: () => null): void {
-        if (this.inProgress) {
-            return;
-        }
-
+    public showOverlay(
+        overlayComponentPromise: AgPromise<IOverlayComp> | null,
+        overlayWrapperCssClass: string,
+        gridOption?: keyof GridOptions
+    ): void {
         this.setWrapperTypeClass(overlayWrapperCssClass);
         this.destroyActiveOverlay();
 
-        this.inProgress = true;
+        this.activePromise = overlayComponentPromise;
 
-        if (overlayComp) {
-            overlayComp.then(comp => {
-                this.inProgress = false;
-
-                this.eOverlayWrapper.appendChild(comp!.getGui());
-                this.activeOverlay = comp!;
-                this.updateListenerDestroyFunc = updateListenerDestroyFunc;
-
-                if (this.destroyRequested) {
-                    this.destroyRequested = false;
-                    this.destroyActiveOverlay();
+        overlayComponentPromise?.then((comp) => {
+            if (this.activePromise !== overlayComponentPromise) {
+                // Another promise was started, we need to cancel this old operation
+                if (this.activeOverlay !== comp) {
+                    // We can destroy the component as it will not be used
+                    this.destroyBean(comp);
+                    comp = null;
                 }
-            });
-        }
+                return;
+            }
+
+            this.activePromise = null; // Promise completed, so we can reset this
+
+            if (!comp) {
+                return; // Error handling
+            }
+
+            if (this.activeOverlay == comp) {
+                return; // same component, already active
+            }
+
+            this.eOverlayWrapper.appendChild(comp.getGui());
+            this.activeOverlay = comp;
+
+            if (gridOption) {
+                const component = comp;
+                this.updateListenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
+                    component.refresh?.(this.gos.addGridCommonParams({ ...(currentValue ?? {}) }));
+                });
+            }
+        });
 
         this.setDisplayed(true, { skipAriaHidden: true });
     }
 
     private destroyActiveOverlay(): void {
-        if (this.inProgress) {
-            this.destroyRequested = true;
-            return;
+        this.activePromise = null;
+
+        const activeOverlay = this.activeOverlay;
+        if (!activeOverlay) {
+            return; // Nothing to destroy
         }
 
-        if (!this.activeOverlay) {
-            return;
+        this.activeOverlay = null;
+
+        const updateListenerDestroyFunc = this.updateListenerDestroyFunc;
+        if (updateListenerDestroyFunc) {
+            updateListenerDestroyFunc();
+            this.updateListenerDestroyFunc = null;
         }
 
-        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay)!;
-        this.updateListenerDestroyFunc?.();
+        this.destroyBean(activeOverlay);
 
-        clearElement(this.eOverlayWrapper);
+        _clearElement(this.eOverlayWrapper);
     }
 
     public hideOverlay(): void {
@@ -104,8 +127,12 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setDisplayed(false, { skipAriaHidden: true });
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.destroyActiveOverlay();
         super.destroy();
     }
 }
+export const OverlayWrapperSelector: ComponentSelector = {
+    selector: 'AG-OVERLAY-WRAPPER',
+    component: OverlayWrapperComponent,
+};

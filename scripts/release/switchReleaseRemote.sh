@@ -41,3 +41,9 @@ mv $WORKING_DIR_ROOT/public_html_tmp $PUBLIC_HTML_PATH
 
 # we don't copy the archives - it's too big
 mv $WORKING_DIR_ROOT/public_html_$TIMESTAMP/archive $PUBLIC_HTML_PATH/
+
+cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/eula $PUBLIC_HTML_PATH/
+cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/ecommerce $PUBLIC_HTML_PATH/
+cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/support $PUBLIC_HTML_PATH/
+cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/__shared $PUBLIC_HTML_PATH/
+cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/robots.txt $PUBLIC_HTML_PATH/

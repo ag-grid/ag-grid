@@ -6,13 +6,13 @@ enterprise: true
 This section covers the Multiple Group Columns display type, where a group column is automatically added by the grid for
 each row group.
 
-{% imageCaption imagePath="../grouping-display-types/resources/multiple-group-columns.png" alt="Multiple Group Columns" centered=true constrained=true /%}
+{% imageCaption imagePath="../grouping-display-types/resources/multiple-group-columns.png" alt="Multiple Group Columns" centered=true constrained=true maxWidth="80%" /%}
 
 ## Enabling Multiple Group Columns
 
 To display each row group under a separate group column set `groupDisplayType = 'multipleColumns'` as shown below:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
@@ -44,7 +44,7 @@ This is demonstrated in the following example, note the following:
 The Multiple Group Columns display type adds an Auto Group Column for each row group to the grid. To change the default
 configurations of these group columns, use the `autoGroupColumnDef` grid option as shown below:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
         headerValueGetter: params => `${params.colDef.headerName} Group Column`,

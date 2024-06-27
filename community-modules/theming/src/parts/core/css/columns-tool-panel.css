@@ -1,0 +1,22 @@
+.ag-column-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1 1 auto;
+}
+
+.ag-pivot-mode-panel {
+    height: var(--ag-header-height);
+    display: flex;
+}
+
+.ag-pivot-mode-select {
+    display: flex;
+    align-items: center;
+    margin-left: var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-column-panel-column-select {
+    border-top: var(--ag-tool-panel-separator-border);
+    border-bottom: var(--ag-tool-panel-separator-border);
+}

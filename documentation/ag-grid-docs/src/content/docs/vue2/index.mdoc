@@ -4,8 +4,9 @@ frameworks: ["vue"]
 version: 2
 ---
 
-AG Grid is the industry standard for Vue Enterprise Applications. Developers using AG Grid
-are building applications that would not be possible if AG Grid did not exist.
+{% warning %}
+AG Grid no longer supports Vue 2. The last version to support Vue 2 is AG Grid v31.3. 
+{% /warning %}
 
 {% tabs headerLinks=[{"type":"codesandbox","href":"https://codesandbox.io/s/ag-grid-vue-example-xu6c4?file=/src/App.vue"}] %}
 
@@ -295,7 +296,7 @@ provide the AG Grid functionality.
 
 If everything works as expected, you should see a simple grid like the one on the screenshot:
 
-{% imageCaption imagePath="resources/step1.png" alt="AG Grid hello world" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/step1.png" alt="AG Grid hello world" centered=true constrained=true maxWidth="80%" /%}
 
 ## Sorting And Filtering
 
@@ -321,7 +322,7 @@ With this property set, the grid will display a small column menu icon when you 
 Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and
 the text that you want to filter by.
 
-{% imageCaption imagePath="resources/step2.png" alt="AG Grid sorting and filtering" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/step2.png" alt="AG Grid sorting and filtering" centered=true constrained=true maxWidth="80%" /%}
 
 ## Fetch Remote Data
 
@@ -407,15 +408,14 @@ export default {
 </style>
 ```
 
-We've enabled [multiple row selection](./row-selection/#example-multiple-row-selection) by adding `rowSelection="multiple"`, and we've
+We've enabled [multiple row selection](./row-selection/#multiple-row-selection) by adding `rowSelection="multiple"`, and we've
 also added a checkbox to the `make` column with `checkboxSelection: true`.
 
-{% imageCaption imagePath="resources/vue-grid-1.png" alt="Vue AG Grid Selection" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/vue-grid-1.png" alt="Vue AG Grid Selection" centered=true constrained=true maxWidth="80%" /%}
 
 Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing
 we have to add is a button that gets the selected data and sends it to the server. To do this, we are
-going to use the [AG Grid API](./grid-api/) - we will store a reference to both the grid and
-column API's in the `gridReady` event
+going to use the [AG Grid API](./grid-api/) - we will store a reference to the grid api in the `gridReady` event
 
 To test this we'll add a button that gets the selected data and sends it to the server.
 Let's go ahead and make these changes:
@@ -523,7 +523,7 @@ enterprise license key. You can ignore the message as we are trialing. In additi
 the grid got a few UI improvements - a custom context menu and fancier column menu popup -
 feel free to look around:
 
-{% imageCaption imagePath="resources/step3.png" alt="AG Grid final" centered=true constrained=true /%}
+{% imageCaption imagePath="resources/step3.png" alt="AG Grid final" centered=true constrained=true maxWidth="80%" /%}
 
 Now, let's enable grouping! Add an `autoGroupColumnDef` property, bind to it, and update
 the `columnDefs` with a `rowGroup`:
@@ -624,7 +624,7 @@ the provided AG Grid SCSS files - replace the `style` block in `src/App.vue` wit
 
 ```scss
 <style lang="scss">
-  @use "~ag-grid-community/styles" as ag;
+  @use "ag-grid-community/styles" as ag;
   @include ag.grid-styles((
     theme: alpine,
     --ag-odd-row-background-color: #ACE

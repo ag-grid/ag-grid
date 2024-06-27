@@ -2,61 +2,103 @@
 title: "Highlighting Changes"
 ---
 
-This page shows ways to highlight cells by flashing or animating value changes.
+Highlight changes by flashing or animating cells.
+
+{% gridExampleRunner title="Animated Flashing Cells" name="animated-flashing-cells" /%}
+
+In the example above, to show changing values:
+
+* Columns A and B use [Flashing Cells](./change-cell-renderers/#flashing-cells).
+* Columns C and D use the [Animate Show Change](./change-cell-renderers/#animate-show-changed-cells) cell renderer.
+* Columns E and F use the [Animate Slide Cell](./change-cell-renderers/#animate-slide-cells) cell renderer.
 
 ## Flashing Cells
 
-Set Column attribute `enableCellChangeFlash=true` to flash data changes on that Column.
+You can trigger cells to flash either though the Grid API or by enabling cells to flash when the data changes.
+
+### Enable Flashing on Data Change
+
+Set Column attribute `enableCellChangeFlash=true` to flash the cells when data changes.
+
+{% gridExampleRunner title="Flashing Data Changes" name="flashing-data-changes-coldef" /%}
+
+In the example above:
+
+* All columns have `enableCellChangeFlash=true` so changes to the columns values will flash the cell.
+* Clicking **Update Some Data** will randomly update some data. The grid will then flash the cells where data has changed.
+
+To change the length of the effect, use the grid options `cellFlashDuration` and `cellFadeDuration`.
+
+By default, value changes caused by updates to column filters are not highlighted with cell flashing. This behaviour can be toggled by enabling the grid option `allowShowChangeAfterFilter`
+
+### Flash Cells using the API
 
 Alternatively flash cells using the grid API `flashCells(params)`. The params object takes a list of columns and rows to flash, together with the `flashDuration` and the `fadeDuration` values.
 
 {% apiDocumentation source="grid-api/api.json" section="refresh" names=["flashCells"] /%}
 
-Below note the following:
-
-* All columns have `enableCellChangeFlash=true` so changes to the columns values will flash.
-* Clicking **Update Some Data** will update a bunch of data. The grid will then flash the cells where data has changed.
-* Clicking **Flash One Cell** provides the API `flashCells()` with one column and one row to flash one cell.
-* Clicking **Flash Two Rows** provides the API `flashCells()` with two row nodes only to flash the two rows.
-* Clicking **Flash Two Columns** provides the API `flashCells()` with two columns only to flash the two columns.
+When calling `flashCells()`, pass the `flashDuration` and `fadeDuration` values (in milliseconds) as params to change the duration of cell flashing.
 
 {% gridExampleRunner title="Flashing Data Changes" name="flashing-data-changes" /%}
 
-### How Flashing Works
+In the example above, all three buttons use the `flashCells(params)` API. Note the following:
 
-Each time the call value is changed, the grid adds the CSS class `ag-cell-data-changed` for 500ms by default, and then then CSS class `ag-cell-data-changed-animation` for 1,000ms by default. The grid provided themes use this to apply a background color.
+* Clicking **Flash One Cell** uses parameters with one column and one row to flash the intersecting cell.
+* Clicking **Flash Two Rows** uses parameters consisting of two row nodes, causing those rows to flash.
+* Clicking **Flash Two Columns** uses parameters consisting of two columns, causing those columns to flash.
 
-If you want to override the flash background color, this has to be done by overriding the relevant CSS class. There are two ways to change how long a cell remains "flashed".
+### Customise Flash Colour
 
-1. Change the grid options `cellFlashDuration` and `cellFadeDuration`.
-1. When calling `flashCells()`, pass the `flashDuration` and `fadeDuration` values (in milliseconds) as params.
+Each time the cell value is changed, the grid adds the CSS class `ag-cell-data-changed` for 500ms by default, and then the CSS class `ag-cell-data-changed-animation` for 1,000ms by default. The grid-provided themes use this to apply a background color. To override the flash background color, override the relevant CSS class.
 
-The example below demonstrates flashing duration changes. The following can be noted:
+{% gridExampleRunner title="Customising Flashing" name="customising-flashing" /%}
 
-* The `cellFlashDuration` value has been changed to 2000ms, so cells will remain in their "flashed" state for 2 seconds.
-* The `cellFadeDuration` value has been changed to 500ms, so the fading animation will happen faster than what it normally would (1 second).
-* Clicking **Update Some Data** will update some data to demonstrate the changes mentioned above.
-* Clicking **Flash Two Rows** will pass a custom `flashDuration` of 3000ms and a custom `fadeDuration` delay of 2000ms to demonstrate default values can be overridden.
-* The example demonstrates how to change the default colour of the flash using the `--ag-value-change-value-highlight-background-color` CSS variable.
+The example above demonstrates customising the flashing cell background color using the `--ag-value-change-value-highlight-background-color` CSS variable.
 
-{% gridExampleRunner title="Changing Flashing Delay" name="flashing-delay-changes" /%}
+## Animated Cell Renderers
 
-### Filtering & Aggregations
+Interesting animations for data changes can be achieved using [Cell Components](./component-cell-renderer/). You can create your own or use one of the provided Show Change Cell Components. The grid provides two such components out of the box.
 
-One exception to the above is changes due to filtering. If you are [Row Grouping](./grouping/) the data with [Aggregations](./aggregation/), then the aggregated values will change as filtering adds and removes rows contained within the groups. It typically doesn't make sense to flash these changes when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not usefully bringing the users attention to any particular cell. If you do not like this exception and would like to flash changes even when it's the result of a filter change, then set grid property `allowShowChangeAfterFilter=true`.
+### Animate Show Changed Cells
 
-## Animated Cells
+The difference between the previous and new value is temporarily shown beside the new value and is then faded out. This difference is shown in either green or red, for an increase or decrease in value respectively, alongside an arrow indicating the direction of change.
 
-Interesting animations for data changes can be achieved using [Cell Components](./component-cell-renderer/). You can create your own or use one of the provided Show Change Cell Components. The grid provides two such components out of the box:
+{% gridExampleRunner title="Animate Show Change Renderer" name="animate-show-change-renderer"  exampleHeight=530 /%}
 
-1. **Animate Show Changed**: The previous value is temporarily shown beside the old value with a directional arrow showing increase or decrease in value. The old value is then faded out. Set with `cellRenderer="agAnimateShowChangeCellRenderer"`
-1. **Animate Slide Cell**: The previous value shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away. Set with `cellRenderer="agAnimateSlideCellRenderer"`.
-
-The example below demonstrates these.
+The example above demonstrates the following:
 
 * Columns A, B are editable.
 * Columns C and D are updated via clicking the button.
 * Changes to any of the first 4 columns results in animations in the Total and Average column.
-* The example demonstrates setting custom colours for up and down changes using the `--ag-value-change-delta-up-color` and `--ag-value-change-delta-down-color` CSS Variables.
+* This can be set as a cell renderer in the column definitions:
 
-{% gridExampleRunner title="Animation Renderers" name="animation-renderers"  exampleHeight=530 /%}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        // set the cell renderer in the column definition
+        { cellRenderer: "agAnimateShowChangeCellRenderer" },
+    ]
+}
+```
+
+### Animate Slide Cells
+
+The previous value is shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away.
+
+{% gridExampleRunner title="Animate Slide Renderer" name="animate-slide-renderer"  exampleHeight=530 /%}
+
+The example above demonstrates the following:
+
+* Columns A, B are editable.
+* Columns C and D are updated via clicking the button.
+* Changes to any of the first 4 columns results in animations in the Total and Average column.
+* This can be set as a cell renderer in the column definitions:
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        // set the cell renderer in the column definition
+        { cellRenderer: "agAnimateSlideCellRenderer" },
+    ]
+}
+```

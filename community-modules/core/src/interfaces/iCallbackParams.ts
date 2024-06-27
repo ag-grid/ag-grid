@@ -1,10 +1,10 @@
-import { HeaderPosition } from "../headerRendering/common/headerPosition";
-import { ChartMenuOptions } from "./iChartOptions";
-import { AgGridCommon } from "./iCommon";
-import { ServerSideTransaction } from "./serverSideTransaction";
-import { CellPosition } from "../entities/cellPositionUtils";
-import { Column } from "../entities/column";
-import { IRowNode } from "./iRowNode";
+import type { CellPosition } from '../entities/cellPositionUtils';
+import type { HeaderPosition } from '../headerRendering/common/headerPosition';
+import type { ChartToolbarMenuItemOptions } from './iChartOptions';
+import type { Column } from './iColumn';
+import type { AgGridCommon } from './iCommon';
+import type { IRowNode } from './iRowNode';
+import type { ServerSideTransaction } from './serverSideTransaction';
 
 export interface GetContextMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Names of the items that would be provided by default. */
@@ -30,8 +30,8 @@ export interface GetChartMenuItemsParams<TData = any, TContext = any> extends Ag
 }
 
 export interface ProcessUnpinnedColumnsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    columns: Column[],
-    viewportWidth: number
+    columns: Column[];
+    viewportWidth: number;
 }
 
 export interface PostProcessPopupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -61,7 +61,12 @@ export interface ProcessDataFromClipboardParams<TData = any, TContext = any> ext
 }
 
 export interface GetChartToolbarItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    defaultItems?: ChartMenuOptions[];
+    defaultItems?: ChartToolbarMenuItemOptions[];
+}
+
+export interface FocusGridInnerElementParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** This will be true if the focus is coming from and element below the grid in the DOM structure. */
+    fromBottom: boolean;
 }
 
 export interface NavigateToNextHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -88,7 +93,6 @@ export interface TabToNextHeaderParams<TData = any, TContext = any> extends AgGr
     headerRowCount: number;
 }
 
-
 export interface TabToNextCellParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** True if the Shift key is also down */
     backwards: boolean;
@@ -99,7 +103,6 @@ export interface TabToNextCellParams<TData = any, TContext = any> extends AgGrid
     previousCellPosition: CellPosition;
     /** The cell the grid would normally pick as the next cell for navigation.  */
     nextCellPosition: CellPosition | null;
-
 }
 
 export interface NavigateToNextCellParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -117,7 +120,6 @@ export interface NavigateToNextCellParams<TData = any, TContext = any> extends A
 export interface PaginationNumberFormatterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: number;
 }
-
 
 export interface IsGroupOpenByDefaultParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The row node being considered. */
@@ -168,13 +170,14 @@ export interface GetRowIdParams<TData = any, TContext = any> extends AgGridCommo
     parentKeys?: string[];
 }
 
+export type RenderedRowEvent = 'virtualRowRemoved';
 export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     eRow: HTMLElement;
     ePinnedLeftRow?: HTMLElement;
     ePinnedRightRow?: HTMLElement;
     rowIndex: number;
     node: IRowNode<TData>;
-    addRenderedRowListener: (eventType: string, listener: Function) => void;
+    addRenderedRowListener: (eventType: RenderedRowEvent, listener: (...args: any[]) => any) => void;
 }
 
 export interface FillOperationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -207,7 +210,7 @@ export interface RowHeightParams<TData = any, TContext = any> extends AgGridComm
     node: IRowNode<TData>;
 }
 
-export interface IsExternalFilterPresentParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> { }
+export interface IsExternalFilterPresentParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
 export interface InitialGroupOrderComparatorParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     nodeA: IRowNode<TData>;
@@ -237,6 +240,10 @@ export interface GetGroupAggFilteringParams<TData = any, TContext = any> extends
 }
 
 export interface GetGroupIncludeFooterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    node: IRowNode<TData>;
+}
+
+export interface GetGroupIncludeTotalRowParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     node: IRowNode<TData>;
 }
 

@@ -1,27 +1,39 @@
-
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgIf } from "@angular/common";
+import { AgGridAngular } from '@ag-grid-community/angular';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+    ColDef,
+    GridApi,
+    GridOptions,
+    GridPreDestroyedEvent,
+    GridReadyEvent,
+    GridState,
+    StateUpdatedEvent,
+} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import './styles.css';
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ColDef, GridApi, GridOptions, GridReadyEvent, GridState, GridPreDestroyedEvent, StateUpdatedEvent } from '@ag-grid-community/core';
-import { IOlympicData } from './interfaces'
-
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ChangeDetectorRef, Component } from '@angular/core';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule, RangeSelectionModule]);
+import { IOlympicData } from './interfaces';
+import './styles.css';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    SetFilterModule,
+    RangeSelectionModule,
+]);
 
 @Component({
     standalone: true,
-    imports: [AgGridAngular, HttpClientModule, NgIf],
+    imports: [AgGridAngular, HttpClientModule],
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
@@ -31,30 +43,34 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
                     <button (click)="printState()">Print State</button>
                 </span>
             </div>
-            <ag-grid-angular *ngIf="gridVisible"
-                style="width: 100%; height: 100%;"
-                [class]="themeClass"
-                [columnDefs]="columnDefs"
-                [defaultColDef]="defaultColDef"
-                [enableRangeSelection]="true"
-                [sideBar]="true"
-                [pagination]="true"
-                [rowSelection]="rowSelection"
-                [suppressRowClickSelection]="true"
-                [suppressColumnMoveAnimation]="true"
-                [rowData]="rowData"
-                [initialState]="initialState"
-                [gridOptions]="gridOptions"
-                (stateUpdated)="onStateUpdated($event)"
-                (gridReady)="onGridReady($event)"
-            ></ag-grid-angular>
+            @if (gridVisible) {
+                <ag-grid-angular
+                    style="width: 100%; height: 100%;"
+                    [class]="themeClass"
+                    [columnDefs]="columnDefs"
+                    [defaultColDef]="defaultColDef"
+                    [enableRangeSelection]="true"
+                    [sideBar]="true"
+                    [pagination]="true"
+                    [rowSelection]="rowSelection"
+                    [suppressRowClickSelection]="true"
+                    [suppressColumnMoveAnimation]="true"
+                    [rowData]="rowData"
+                    [initialState]="initialState"
+                    [gridOptions]="gridOptions"
+                    (stateUpdated)="onStateUpdated($event)"
+                    (gridReady)="onGridReady($event)"
+                />
+            }
         </div>
-    `
+    `,
 })
 export class AppComponent {
-    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+    themeClass =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz' /** DARK MODE END **/;
     private gridApi!: GridApi<IOlympicData>;
-    
+
     public columnDefs: ColDef[] = [
         {
             field: 'athlete',
@@ -86,11 +102,14 @@ export class AppComponent {
     public initialState?: GridState;
     public gridOptions: GridOptions = {
         onGridPreDestroyed: (params: GridPreDestroyedEvent<IOlympicData>) => {
-            console.log('Grid state on destroy (can be persisted)', params.state)
-        }
+            console.log('Grid state on destroy (can be persisted)', params.state);
+        },
     };
 
-    constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
+    constructor(
+        private http: HttpClient,
+        private cdRef: ChangeDetectorRef
+    ) {}
 
     reloadGrid(): void {
         const state = this.gridApi.getState();
@@ -114,10 +133,8 @@ export class AppComponent {
 
     onGridReady(params: GridReadyEvent<IOlympicData>): void {
         this.gridApi = params.api;
-        this.http.get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe(data => this.rowData = data);
+        this.http
+            .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            .subscribe((data) => (this.rowData = data));
     }
 }
-
-
-
-

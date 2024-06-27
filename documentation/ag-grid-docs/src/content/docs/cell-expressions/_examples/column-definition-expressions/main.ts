@@ -1,31 +1,30 @@
-import { CellValueChangedEvent, ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
-import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from "@ag-grid-community/core";
+import { CellValueChangedEvent, ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+
+import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-
-
 const columnDefs: ColDef[] = [
-  {
-    headerName: 'String (editable)',
-    field: 'simple',
-    editable: true,
-  },
-  {
-    headerName: 'Number (editable)',
-    field: 'number',
-    editable: true,
-    valueFormatter: `"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")`,
-  },
-  {
-    headerName: 'Name (editable)',
-    editable: true,
-    valueGetter: 'data.firstName + " " + data.lastName',
-    valueSetter:
-      // an expression can span multiple lines!!!
-      `var nameSplit = newValue.split(" ");
+    {
+        headerName: 'String (editable)',
+        field: 'simple',
+        editable: true,
+    },
+    {
+        headerName: 'Number (editable)',
+        field: 'number',
+        editable: true,
+        valueFormatter: `"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")`,
+    },
+    {
+        headerName: 'Name (editable)',
+        editable: true,
+        valueGetter: 'data.firstName + " " + data.lastName',
+        valueSetter:
+            // an expression can span multiple lines!!!
+            `var nameSplit = newValue.split(" ");
              var newFirstName = nameSplit[0];
              var newLastName = nameSplit[1];
              if (data.firstName !== newFirstName || data.lastName !== newLastName) {  
@@ -35,32 +34,31 @@ const columnDefs: ColDef[] = [
             } else {  
                 return false;
             }`,
-  },
-  { headerName: 'A', field: 'a', width: 100 },
-  { headerName: 'B', field: 'b', width: 100 },
-  { headerName: 'A + B', valueGetter: 'data.a + data.b' },
-]
+    },
+    { headerName: 'A', field: 'a', width: 100 },
+    { headerName: 'B', field: 'b', width: 100 },
+    { headerName: 'A + B', valueGetter: 'data.a + data.b' },
+];
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
-  defaultColDef: {
-    flex: 1,
-    sortable: false
-  },
-  rowData: getData(),
-  onCellValueChanged: onCellValueChanged,
-  autoSizeStrategy: {type: 'fitGridWidth'}
-}
-
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        sortable: false,
+    },
+    rowData: getData(),
+    onCellValueChanged: onCellValueChanged,
+    autoSizeStrategy: { type: 'fitGridWidth' },
+};
 
 function onCellValueChanged(event: CellValueChangedEvent) {
-  console.log('data after changes is: ', event.data)
+    console.log('data after changes is: ', event.data);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
+});

@@ -1,5 +1,6 @@
 import { basename } from 'path';
-import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+
+import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -7,6 +8,7 @@ import {
     addLicenseManager,
     addRelativeImports,
     convertFunctionToConstProperty,
+    findLocaleImport,
     getActiveTheme,
     getFunctionName,
     getIntegratedDarkModeCode,
@@ -14,9 +16,9 @@ import {
     preferParamsApi,
 } from './parser-utils';
 import {
-    convertFunctionalTemplate,
-    convertFunctionToConstCallback,
     EventAndCallbackNames,
+    convertFunctionToConstCallback,
+    convertFunctionalTemplate,
     getImport,
     getValueType,
 } from './react-utils';
@@ -27,7 +29,7 @@ function getModuleImports(
     componentFilenames: string[],
     allStylesheets: string[]
 ): string[] {
-    let imports = [
+    const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from '@ag-grid-community/react';",
@@ -52,7 +54,7 @@ function getModuleImports(
         imports.push(...componentFilenames.map(getImport));
     }
 
-    addRelativeImports(bindings, imports, 'js');
+    addRelativeImports(bindings, imports, 'jsx');
 
     if (bindings.moduleRegistration) {
         const moduleImports = bindings.imports.filter((i) => i.imports.find((m) => m.includes('Module')));
@@ -92,8 +94,8 @@ function getPackageImports(
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
- 
-    addRelativeImports(bindings, imports, 'js');
+
+    addRelativeImports(bindings, imports, 'jsx');
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
@@ -109,16 +111,24 @@ function getImports(
     importType: ImportType,
     allStylesheets: string[]
 ): string[] {
-    if (importType === 'packages') {
-        return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
-    } else {
-        return getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets);
+    const imports = [];
+    const localeImport = findLocaleImport(bindings.imports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from 'ag-grid-locale';`);
     }
+
+    if (importType === 'packages') {
+        imports.push(...getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets));
+    } else {
+        imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
+    }
+
+    return imports;
 }
 
-function getTemplate(bindings: ParsedBindings, componentAttributes: string[]): string {
+function getTemplate(bindings: ParsedBindings, componentAttributes: string[], exampleConfig: ExampleConfig): string {
     const agGridTag = `
-        <div style={gridStyle} className={${getActiveTheme(bindings.inlineGridStyles.theme, false)}}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(bindings.inlineGridStyles.theme, false)}}>
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
@@ -300,7 +310,7 @@ export function vanillaToReactFunctional(
                 .replace("gridRef.current.api.setGridOption('rowData',", 'setRowData(')
                 .replace(/gridApi/g, 'gridRef.current.api');
 
-        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
+        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), exampleConfig);
         const eventHandlers = bindings.eventHandlers
             .map((event) => convertFunctionToConstCallback(event.handler, callbackDependencies))
             .map(thisReferenceConverter)
@@ -352,6 +362,7 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
 
 const root = createRoot(document.getElementById('root'));
 root.render(<StrictMode><GridExample /></StrictMode>);
+window.tearDownExample = () => root.unmount();
 `;
 
         if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {

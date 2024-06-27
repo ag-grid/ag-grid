@@ -9,3 +9,4 @@ tsconfig-main.json
 tsconfig-precheck.json
 tsconfig-src.json
 updateGridAndColumnProperties.js
+*.map

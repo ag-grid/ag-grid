@@ -1,12 +1,13 @@
 import type { ImportType, InternalFramework } from '@ag-grid-types';
 import { USE_PACKAGES } from '@constants';
-import styles from '@design-system/modules/CodeOptions.module.scss';
 import { setImportType, setInternalFramework } from '@stores/frameworkStore';
 import { isReactInternalFramework, isVueInternalFramework } from '@utils/framework';
 import { useImportType } from '@utils/hooks/useImportType';
 import { useCallback } from 'react';
 
-type SelectorType = 'typescript' | 'react' | 'vue';
+import styles from './CodeOptions.module.scss';
+
+type SelectorType = 'typescript' | 'react';
 interface SelectorConfig {
     label: string;
     labelValues: Record<string, string>;
@@ -24,13 +25,6 @@ const SELECTOR_CONFIG: Record<SelectorType, SelectorConfig> = {
         labelValues: {
             Javascript: 'reactFunctional',
             Typescript: 'reactFunctionalTs',
-        },
-    },
-    vue: {
-        label: 'Version',
-        labelValues: {
-            'Vue 2': 'vue',
-            'Vue 3': 'vue3',
         },
     },
 };
@@ -94,7 +88,15 @@ function CodeOptionSelector({
     );
 }
 
-function ImportTypeSelector({ id, tracking, supportedImportTypes }: { id: string; tracking?: (value: string) => void , supportedImportTypes: ImportType[]}) {
+function ImportTypeSelector({
+    id,
+    tracking,
+    supportedImportTypes,
+}: {
+    id: string;
+    tracking?: (value: string) => void;
+    supportedImportTypes: ImportType[];
+}) {
     const formId = `${id}-import-selector`;
     const importType = useImportType();
 
@@ -109,7 +111,7 @@ function ImportTypeSelector({ id, tracking, supportedImportTypes }: { id: string
         [importType]
     );
 
-    const importTypes: ImportType[]= supportedImportTypes?.length > 0 ? supportedImportTypes : ['modules', 'packages'];
+    const importTypes: ImportType[] = supportedImportTypes?.length > 0 ? supportedImportTypes : ['modules', 'packages'];
     return (
         <div>
             <label className="text-sm" htmlFor={formId}>
@@ -125,29 +127,44 @@ function ImportTypeSelector({ id, tracking, supportedImportTypes }: { id: string
                 }}
                 onBlur={onChange}
             >
-                {importTypes.map((i) => (<option key={i} value={i}>{IMPORT_TYPE_CONFIG[i]}</option>))}
+                {importTypes.map((i) => (
+                    <option key={i} value={i}>
+                        {IMPORT_TYPE_CONFIG[i]}
+                    </option>
+                ))}
             </select>
         </div>
     );
 }
 
-export const CodeOptions = ({ id, internalFramework, supportedFrameworks, supportedImportTypes }: { id: string; internalFramework: InternalFramework; supportedFrameworks: InternalFramework[]; supportedImportTypes: ImportType[] }) => {
+export const CodeOptions = ({
+    id,
+    internalFramework,
+    supportedFrameworks,
+    supportedImportTypes,
+}: {
+    id: string;
+    internalFramework: InternalFramework;
+    supportedFrameworks: InternalFramework[];
+    supportedImportTypes: ImportType[];
+}) => {
     let showTypescriptSelector = internalFramework === 'vanilla' || internalFramework === 'typescript';
     const showReactSelector = isReactInternalFramework(internalFramework);
-    const showVueSelector = isVueInternalFramework(internalFramework);
 
-    if(supportedFrameworks?.length > 0){
+    if (supportedFrameworks?.length > 0) {
         showTypescriptSelector = showTypescriptSelector && supportedFrameworks.includes('vanilla');
     }
 
-    return <div className={styles.outer}>
+    return (
+        <div className={styles.outer}>
             {showTypescriptSelector && (
                 <CodeOptionSelector id={id} type="typescript" internalFramework={internalFramework} />
             )}
             {showReactSelector && <CodeOptionSelector id={id} type="react" internalFramework={internalFramework} />}
 
-            {showVueSelector && <CodeOptionSelector id={id} type="vue" internalFramework={internalFramework} />}
-
-            {internalFramework !== 'vanilla' && <ImportTypeSelector id={id} supportedImportTypes={supportedImportTypes}/>}
+            {internalFramework !== 'vanilla' && (
+                <ImportTypeSelector id={id} supportedImportTypes={supportedImportTypes} />
+            )}
         </div>
+    );
 };

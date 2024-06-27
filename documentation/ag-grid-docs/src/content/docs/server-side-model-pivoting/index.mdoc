@@ -13,7 +13,7 @@ pivot mode which is set through the grid option `pivotMode=true`.
 
 In the snippet below a pivot is defined on the 'year' column and pivot mode is enabled:
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     // pivot mode enabled
     pivotMode: true,
@@ -68,7 +68,7 @@ The simplest way to provide pivot result columns is by supplying the fields cont
 and appropriate column groups. By default, the grid expects the fields to be separated by an underscore (`'_'`), however,
 this can be altered via the `serverSidePivotResultSeparator` grid option as shown below:
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
@@ -129,7 +129,7 @@ It is also possible to create your own pivot result columns and provide them to 
 but can become complex when column groups are involved.
 
 Pivot result columns are defined identically to the columns supplied to the grid options: you provide a list of [Column Definitions](./column-definitions/)
-passing a list of columns and / or column groups using the following column API method:
+passing a list of columns and / or column groups using the following grid API method:
 
 {% apiDocumentation source="grid-api/api.json" section="Pivoting" names=["setPivotResultColumns"] /%}
 

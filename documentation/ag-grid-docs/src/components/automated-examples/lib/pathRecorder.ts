@@ -31,7 +31,7 @@ function initListeners({ onSpace, mousePositionSelector, onMouseMove }) {
 
 function createRecorder() {
     let isRecording = false;
-    let listeners = [];
+    const listeners = [];
     let recording = [];
 
     function toggleIsRecording() {

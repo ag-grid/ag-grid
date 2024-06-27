@@ -1,11 +1,10 @@
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { Column, ColumnGroup } from '../interfaces/iColumn';
+import type { AgGridCommon } from '../interfaces/iCommon';
+import type { IComponent } from '../interfaces/iComponent';
+import type { IRowNode } from '../interfaces/iRowNode';
+import { _escapeString } from '../utils/string';
 import { PopupComponent } from '../widgets/popupComponent';
-import { IComponent } from '../interfaces/iComponent';
-import { escapeString } from '../utils/string';
-import { Column } from '../entities/column';
-import { ColumnGroup } from '../entities/columnGroup';
-import { ColGroupDef, ColDef } from '../entities/colDef';
-import { AgGridCommon } from '../interfaces/iCommon';
-import { IRowNode } from '../interfaces/iRowNode';
 
 export type TooltipLocation =
     | 'advancedFilter'
@@ -44,16 +43,16 @@ export interface ITooltipParams<TData = any, TValue = any, TContext = any> exten
     hideTooltipCallback?: () => void;
 }
 
-export interface ITooltipComp extends IComponent<ITooltipParams> { }
+export interface ITooltipComp extends IComponent<ITooltipParams> {}
 
 export class TooltipComponent extends PopupComponent implements ITooltipComp {
     constructor() {
-        super(/* html */`<div class="ag-tooltip"></div>`);
+        super(/* html */ `<div class="ag-tooltip"></div>`);
     }
 
     // will need to type params
     public init(params: ITooltipParams): void {
         const { value } = params;
-        this.getGui().textContent = escapeString(value, true) as string;
+        this.getGui().textContent = _escapeString(value, true) as string;
     }
 }

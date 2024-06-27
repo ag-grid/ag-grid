@@ -20,14 +20,14 @@ There are many ways to import CSS, but however you are doing this in your app yo
 <!-- old path -->
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/ag-grid-community@{% $agGridVersion %}/dist/styles/ag-grid.css" />
 ```
 
 ```html
 <!-- new path -->
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/ag-grid-community@{% $agGridVersion %}/styles/ag-grid.css" />
 ```
 
 ### Modules
@@ -38,20 +38,20 @@ If you are using [Grid Modules](./modules/) then you will need to use the new `@
 <!-- old path -->
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@ag-grid-community/core@@AG_GRID_VERSION@/dist/styles/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/@ag-grid-community/core@{% $agGridVersion %}/dist/styles/ag-grid.css" />
 ```
 
 ```html
 <!-- new path -->
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@ag-grid-community/styles@@AG_GRID_VERSION@/ag-grid.css" />
+  href="https://cdn.jsdelivr.net/npm/@ag-grid-community/styles@{% $agGridVersion %}/ag-grid.css" />
 ```
 
 {% if isFramework("javascript") %}
 ### Bundled Files
 
-If you are using an [AG Grid Bundle](./download/#download-ag-grid-bundle) where the themes are included in the `.js` file, all **CSS Variables** need to be set after the bundle has been imported, as follows:
+If you are using an [AG Grid Bundle](./installation/#download-ag-grid-bundle) where the themes are included in the `.js` file, all **CSS Variables** need to be set after the bundle has been imported, as follows:
 
 {% /if %}
 
@@ -65,7 +65,7 @@ If you are using an [AG Grid Bundle](./download/#download-ag-grid-bundle) where 
     </head>
     <body>
     <div id="myGrid" class="ag-theme-alpine"></div>
-    <script src="//https://cdn.jsdelivr.net/npm/browse/ag-grid-community@@AG_GRID_VERSION@/dist/ag-grid-community.min.js"></script>
+    <script src="//https://cdn.jsdelivr.net/npm/browse/ag-grid-community@{% $agGridVersion %}/dist/ag-grid-community.min.js"></script>
     <!-- Style added after AG Grid bundle -->
     <style>
         .ag-theme-alpine {

@@ -1,7 +1,8 @@
-import { Autowired, Bean } from "../../context/context";
-import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
-import { BeanStub } from "../../context/beanStub";
-import { CtrlsService } from "../../ctrlsService";
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
@@ -11,11 +12,16 @@ export interface HorizontalResizeParams {
     onResizeEnd: (delta: number) => void;
 }
 
-@Bean('horizontalResizeService')
-export class HorizontalResizeService extends BeanStub {
+export class HorizontalResizeService extends BeanStub implements NamedBean {
+    beanName = 'horizontalResizeService' as const;
 
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    private dragService: DragService;
+    private ctrlsService: CtrlsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.dragService = beans.dragService;
+        this.ctrlsService = beans.ctrlsService;
+    }
 
     private dragStartX: number;
     private resizeAmount: number;
@@ -28,7 +34,7 @@ export class HorizontalResizeService extends BeanStub {
             onDragStop: this.onDragStop.bind(this, params),
             onDragging: this.onDragging.bind(this, params),
             includeTouch: true,
-            stopPropagationForTouch: true
+            stopPropagationForTouch: true,
         };
 
         this.dragService.addDragSource(dragSource);
@@ -50,8 +56,7 @@ export class HorizontalResizeService extends BeanStub {
     }
 
     private setResizeIcons(): void {
-
-        const ctrl = this.ctrlsService.getGridCtrl();
+        const ctrl = this.ctrlsService.get('gridCtrl');
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
         ctrl.setResizeCursor(true);
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
@@ -64,7 +69,7 @@ export class HorizontalResizeService extends BeanStub {
     }
 
     private resetIcons(): void {
-        const ctrl = this.ctrlsService.getGridCtrl();
+        const ctrl = this.ctrlsService.get('gridCtrl');
         ctrl.setResizeCursor(false);
         ctrl.disableUserSelect(false);
     }
@@ -73,5 +78,4 @@ export class HorizontalResizeService extends BeanStub {
         this.resizeAmount = mouseEvent.clientX - this.dragStartX;
         params.onResizing(this.resizeAmount);
     }
-
 }

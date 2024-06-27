@@ -5,14 +5,14 @@ import { createAutomatedRowGrouping } from '@components/automated-examples/examp
 import { ROW_GROUPING_ID } from '@components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
 import breakpoints from '@design-system/breakpoint.module.scss';
-import automatedExamplesVars from '@design-system/modules/AutomatedExamplesVars.module.scss';
-import styles from '@design-system/modules/AutomatedRowGrouping.module.scss';
 import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '@utils/analytics';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import automatedExamplesVars from './AutomatedExamplesVars.module.scss';
+import styles from './AutomatedRowGrouping.module.scss';
 import type { AutomatedExampleManager } from './lib/createAutomatedExampleManager';
 
 const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = parseInt(breakpoints['automated-row-grouping-medium'], 10);
@@ -87,7 +87,7 @@ export function AutomatedRowGrouping({
     });
 
     useEffect(() => {
-        let params = {
+        const params = {
             gridClassname,
             darkMode,
             getOverlay: () => {
@@ -109,7 +109,7 @@ export function AutomatedRowGrouping({
                         setAllScriptEnabledVars(true);
                         automatedExampleManager.start(exampleId);
                     },
-                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon.svg')} />`,
+                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon.svg')}" />`,
                 },
             ],
             onStateChange(state) {

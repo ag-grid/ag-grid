@@ -1,8 +1,26 @@
-import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
-import { AgSparkline, SparklineFactoryOptions } from './agSparkline';
+import type { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
+import { afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals';
 import 'jest-canvas-mock';
-import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
+
+import type { SparklineFactoryOptions } from './agSparkline';
+import { AgSparkline } from './agSparkline';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
+
+// mock the DOMMatrix
+const matrixMock = jest.fn(() => ({
+    a: 1,
+    b: 0,
+    c: 0,
+    d: 1,
+    e: 0,
+    f: 0,
+    multiplySelf: () => matrixMock,
+    preMultiplySelf: () => matrixMock,
+    inverse: () => matrixMock,
+    invertSelf: () => matrixMock,
+}));
+
+global.DOMMatrix = matrixMock as any;
 
 const data = [
     7,
@@ -27,8 +45,8 @@ const data = [
 
 describe('line sparkline', () => {
     let sparkline: any;
-    let containerDiv: HTMLElement = document.createElement('div');
-    let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
+    const containerDiv: HTMLElement = document.createElement('div');
+    const markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
         return {};
     };
 
@@ -120,8 +138,8 @@ describe('line sparkline', () => {
 
 describe('area sparkline', () => {
     let sparkline: any;
-    let containerDiv: HTMLElement = document.createElement('div');
-    let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
+    const containerDiv: HTMLElement = document.createElement('div');
+    const markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
         return {};
     };
 
@@ -213,8 +231,8 @@ describe('area sparkline', () => {
 
 describe('column sparkline', () => {
     let sparkline: any;
-    let containerDiv: HTMLElement = document.createElement('div');
-    let columnFormatter = (params: ColumnFormatterParams): ColumnFormat => {
+    const containerDiv: HTMLElement = document.createElement('div');
+    const columnFormatter = (params: ColumnFormatterParams): ColumnFormat => {
         return {};
     };
 

@@ -1,410 +1,480 @@
-import { ILogger } from "../iLogger";
-import { Component } from "../widgets/component";
-import { exists, values } from "../utils/generic";
-import { iterateObject } from "../utils/object";
-import { getFunctionName } from "../utils/function";
-import { ModuleRegistry } from "../modules/moduleRegistry";
+import type { AlignedGridsService } from '../alignedGridsService';
+import type { ApiFunctionService } from '../api/apiFunctionService';
+import type { GridApi } from '../api/gridApi';
+import type { RowModelHelperService } from '../api/rowModelHelperService';
+import type { CellNavigationService } from '../cellNavigationService';
+import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
+import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
+import type { ColumnDefFactory } from '../columns/columnDefFactory';
+import type { ColumnEventDispatcher } from '../columns/columnEventDispatcher';
+import type { ColumnFactory } from '../columns/columnFactory';
+import type { ColumnGetStateService } from '../columns/columnGetStateService';
+import type { ColumnGroupStateService } from '../columns/columnGroupStateService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnMoveService } from '../columns/columnMoveService';
+import type { ColumnNameService } from '../columns/columnNameService';
+import type { ColumnSizeService } from '../columns/columnSizeService';
+import type { ColumnViewportService } from '../columns/columnViewportService';
+import type { DataTypeService } from '../columns/dataTypeService';
+import type { FuncColsService } from '../columns/funcColsService';
+import type { PivotResultColsService } from '../columns/pivotResultColsService';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import type { AgComponentUtils } from '../components/framework/agComponentUtils';
+import type { ComponentMetadataProvider } from '../components/framework/componentMetadataProvider';
+import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
+import type { UserComponentFactory } from '../components/framework/userComponentFactory';
+import type { UserComponentRegistry } from '../components/framework/userComponentRegistry';
+import type { CtrlsFactory } from '../ctrlsFactory';
+import type { CtrlsService } from '../ctrlsService';
+import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
+import type { DragService } from '../dragAndDrop/dragService';
+import type { EditService } from '../edit/editService';
+import type { RowEditService } from '../edit/rowEditService';
+import type { CellPositionUtils } from '../entities/cellPositionUtils';
+import type { GridOptions } from '../entities/gridOptions';
+import type { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
+import type { RowPositionUtils } from '../entities/rowPositionUtils';
+import type { Environment } from '../environment';
+import type { EventService } from '../eventService';
+import type { AgGlobalEventListener } from '../events';
+import type { ColumnFilterService } from '../filter/columnFilterService';
+import type { FilterManager } from '../filter/filterManager';
+import type { QuickFilterService } from '../filter/quickFilterService';
+import type { FocusService } from '../focusService';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import type { NavigationService } from '../gridBodyComp/navigationService';
+import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
+import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
+import type { GridDestroyService } from '../gridDestroyService';
+import type { GridOptionsService } from '../gridOptionsService';
+import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
+import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
+import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
+import type { IChartService } from '../interfaces/IChartService';
+import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import type { IAggFuncService } from '../interfaces/iAggFuncService';
+import type { IAutoColService } from '../interfaces/iAutoColService';
+import type { IClipboardService } from '../interfaces/iClipboardService';
+import type { IColumnChooserFactory } from '../interfaces/iColumnChooserFactory';
+import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
+import type { ICsvCreator } from '../interfaces/iCsvCreator';
+import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService';
+import type { IExcelCreator } from '../interfaces/iExcelCreator';
+import type { IExpansionService } from '../interfaces/iExpansionService';
+import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
+import type { IColumnDropZonesService, IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { ISideBarService } from '../interfaces/iSideBar';
+import type { IStatusBarService } from '../interfaces/iStatusBarService';
+import type { LocaleService } from '../localeService';
+import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { ApiEventService } from '../misc/apiEventService';
+import type { MenuService } from '../misc/menuService';
+import type { ResizeObserverService } from '../misc/resizeObserverService';
+import type { StateService } from '../misc/state/stateService';
+import { ModuleRegistry } from '../modules/moduleRegistry';
+import type { PageBoundsListener } from '../pagination/pageBoundsListener';
+import type { PageBoundsService } from '../pagination/pageBoundsService';
+import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
+import type { PaginationService } from '../pagination/paginationService';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
+import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
+import type { ColumnHoverService } from '../rendering/columnHoverService';
+import type { OverlayService } from '../rendering/overlays/overlayService';
+import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculator';
+import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
+import type { RowRenderer } from '../rendering/rowRenderer';
+import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import type { RowNodeSorter } from '../rowNodes/rowNodeSorter';
+import type { SelectableService } from '../rowNodes/selectableService';
+import type { SortController } from '../sortController';
+import type { StylingService } from '../styling/stylingService';
+import type { SyncService } from '../syncService';
+import type { UndoRedoService } from '../undoRedo/undoRedoService';
+import type { ValidationService } from '../validation/validationService';
+import type { ExpressionService } from '../valueService/expressionService';
+import type { ValueCache } from '../valueService/valueCache';
+import type { ValueService } from '../valueService/valueService';
+import type { PopupService } from '../widgets/popupService';
+import type { GenericContextParams, GenericSingletonBean } from './genericContext';
+import { GenericContext } from './genericContext';
 
-// steps in booting up:
-// 1. create all beans
-// 2. autowire all attributes
-// 3. wire all beans
-// 4. initialise the model
-// 5. initialise the view
-// 6. boot??? (not sure if this is needed)
-// each bean is responsible for initialising itself, taking items from the gridOptionsService
-
-export interface ContextParams {
-    providedBeanInstances: any;
-    beanClasses: any[];
-    debug: boolean;
+export interface ContextParams extends GenericContextParams<BeanName, BeanCollection> {
     gridId: string;
 }
 
-export interface ComponentMeta {
-    componentClass: new () => Object;
-    componentName: string;
+export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
+
+export type ControllerName = 'headerFilterCell' | 'detailCellRenderer' | 'groupCellRendererCtrl';
+export type UserComponentName =
+    | 'agColumnHeader'
+    | 'agColumnGroupHeader'
+    | 'agSortIndicator'
+    | 'agAnimateShowChangeCellRenderer'
+    | 'agAnimateSlideCellRenderer'
+    | 'agLoadingCellRenderer'
+    | 'agSkeletonCellRenderer'
+    | 'agCheckboxCellRenderer'
+    | 'agLoadingOverlay'
+    | 'agNoRowsOverlay'
+    | 'agTooltipComponent'
+    | 'agReadOnlyFloatingFilter'
+    | 'agTextColumnFilter'
+    | 'agNumberColumnFilter'
+    | 'agDateColumnFilter'
+    | 'agDateInput'
+    | 'agTextColumnFloatingFilter'
+    | 'agNumberColumnFloatingFilter'
+    | 'agDateColumnFloatingFilter'
+    | 'agMultiColumnFilter'
+    | 'agMultiColumnFloatingFilter'
+    | 'agGroupColumnFilter'
+    | 'agGroupColumnFloatingFilter'
+    | 'agSetColumnFilter'
+    | 'agSetColumnFloatingFilter'
+    | 'agCellEditor'
+    | 'agSelectCellEditor'
+    | 'agTextCellEditor'
+    | 'agNumberCellEditor'
+    | 'agDateCellEditor'
+    | 'agDateStringCellEditor'
+    | 'agCheckboxCellEditor'
+    | 'agLargeTextCellEditor'
+    | 'agRichSelect'
+    | 'agRichSelectCellEditor'
+    | 'agMenuItem'
+    | 'agColumnsToolPanel'
+    | 'agFiltersToolPanel'
+    | 'agGroupRowRenderer'
+    | 'agGroupCellRenderer'
+    | 'agDetailCellRenderer'
+    | 'agSparklineCellRenderer'
+    | 'agAggregationComponent'
+    | 'agSelectedRowCountComponent'
+    | 'agTotalRowCountComponent'
+    | 'agFilteredRowCountComponent'
+    | 'agTotalAndFilteredRowCountComponent';
+export interface NamedClass<TName = string> {
+    classImp: new (...args: []) => object;
+    name: TName;
+}
+export type ControllerMeta = NamedClass<ControllerName>;
+export type ComponentMeta = NamedClass<UserComponentName>;
+
+export interface CoreBeanCollection {
+    context: Context;
+    resizeObserverService: ResizeObserverService;
+    pageBoundsListener: PageBoundsListener;
+    gos: GridOptionsService;
+    environment: Environment;
+    rowRenderer: RowRenderer;
+    valueService: ValueService;
+    eventService: EventService;
+    columnModel: ColumnModel;
+    columnViewportService: ColumnViewportService;
+    columnNameService: ColumnNameService;
+    visibleColsService: VisibleColsService;
+    columnMoveService: ColumnMoveService;
+    columnSizeService: ColumnSizeService;
+    headerNavigationService: HeaderNavigationService;
+    navigationService: NavigationService;
+    columnAnimationService: ColumnAnimationService;
+    focusService: FocusService;
+    popupService: PopupService;
+    stylingService: StylingService;
+    columnHoverService: ColumnHoverService;
+    userComponentFactory: UserComponentFactory;
+    userComponentRegistry: UserComponentRegistry;
+    animationFrameService: AnimationFrameService;
+    dragService: DragService;
+    dragAndDropService: DragAndDropService;
+    sortController: SortController;
+    columnFilterService?: ColumnFilterService;
+    filterManager?: FilterManager;
+    rowContainerHeightService: RowContainerHeightService;
+    frameworkOverrides: IFrameworkOverrides;
+    cellPositionUtils: CellPositionUtils;
+    rowPositionUtils: RowPositionUtils;
+    selectionService: ISelectionService;
+    rowCssClassCalculator: RowCssClassCalculator;
+    rowModel: IRowModel;
+    ctrlsService: CtrlsService;
+    ctrlsFactory: CtrlsFactory;
+    valueCache: ValueCache;
+    rowNodeEventThrottle: RowNodeEventThrottle;
+    localeService: LocaleService;
+    syncService: SyncService;
+    ariaAnnouncementService: AriaAnnouncementService;
+    rangeService?: IRangeService;
+    selectionHandleFactory: ISelectionHandleFactory;
+    validationService?: ValidationService;
+    gridApi: GridApi;
+    gridOptions: GridOptions;
+    eGridDiv: HTMLElement;
+    columnApplyStateService: ColumnApplyStateService;
+    columnFactory: ColumnFactory;
+    pivotResultColsService: PivotResultColsService;
+    autoColService?: IAutoColService;
+    columnDefFactory: ColumnDefFactory;
+    columnGroupStateService: ColumnGroupStateService;
+    columnEventDispatcher: ColumnEventDispatcher;
+    columnAutosizeService: ColumnAutosizeService;
+    funcColsService: FuncColsService;
+    quickFilterService?: QuickFilterService;
+    showRowGroupColsService?: IShowRowGroupColsService;
+    columnDropZonesService?: IColumnDropZonesService;
+    headerPositionUtils: HeaderPositionUtils;
+    dataTypeService?: DataTypeService;
+    globalEventListener: AgGlobalEventListener;
+    globalSyncEventListener: AgGlobalEventListener;
+    stateService?: StateService;
+    overlayService: OverlayService;
+    columnGetStateService: ColumnGetStateService;
+    pinnedRowModel: PinnedRowModel;
+    menuService: MenuService;
+    apiEventService: ApiEventService;
+    undoRedoService?: UndoRedoService;
+    rowNodeBlockLoader?: RowNodeBlockLoader;
+    csvCreator?: ICsvCreator;
+    excelCreator?: IExcelCreator;
+    clipboardService?: IClipboardService;
+    mouseEventService: MouseEventService;
+    cellNavigationService: CellNavigationService;
+    scrollVisibleService: ScrollVisibleService;
+    pinnedWidthService: PinnedWidthService;
+    expressionService: ExpressionService;
+    autoWidthCalculator: AutoWidthCalculator;
+    componentMetadataProvider: ComponentMetadataProvider;
+    agComponentUtils: AgComponentUtils;
+    frameworkComponentWrapper: FrameworkComponentWrapper;
+    horizontalResizeService: HorizontalResizeService;
+    filterMenuFactory: IMenuFactory;
+    enterpriseMenuFactory?: IMenuFactory;
+    contextMenuFactory?: IContextMenuFactory;
+    editService?: EditService;
+    rowEditService?: RowEditService;
+    alignedGridsService?: AlignedGridsService;
+    paginationAutoPageSizeService?: PaginationAutoPageSizeService;
+    paginationService?: PaginationService;
+    pageBoundsService: PageBoundsService;
+    apiFunctionService: ApiFunctionService;
+    rowModelHelperService?: RowModelHelperService;
+    detailGridApiService?: IDetailGridApiService;
+    gridDestroyService: GridDestroyService;
+    expansionService: IExpansionService;
+    sideBarService?: ISideBarService;
+    ssrmTransactionManager?: IServerSideTransactionManager;
+    columnChooserFactory?: IColumnChooserFactory;
+    aggFuncService?: IAggFuncService;
+    advancedFilterService: IAdvancedFilterService;
+    filterStage?: IRowNodeStage;
+    sortStage?: IRowNodeStage;
+    flattenStage?: IRowNodeStage;
+    groupStage?: IRowNodeStage;
+    aggregationStage?: IRowNodeStage;
+    pivotStage?: IRowNodeStage;
+    filterAggregatesStage?: IRowNodeStage;
+    rowNodeSorter: RowNodeSorter;
+    pivotColDefService?: IPivotColDefService;
+    statusBarService?: IStatusBarService;
+    chartService?: IChartService;
+    selectableService: SelectableService;
 }
 
-export interface ControllerMeta {
-    controllerClass: new () => Object;
-    controllerName: string;
-}
+export type BeanCollection = CoreBeanCollection & {
+    // `unknown | undefined` to make sure the type is handled correctly when used
+    [key in Exclude<BeanName, keyof CoreBeanCollection>]?: unknown;
+};
 
-interface BeanWrapper {
-    bean: any;
-    beanInstance: any;
-    beanName: any;
-}
+export class Context extends GenericContext<BeanName, BeanCollection> {
+    private gridId: string;
 
-export class Context {
+    protected override init(params: ContextParams): void {
+        this.gridId = params.gridId;
 
-    private beanWrappers: { [key: string]: BeanWrapper; } = {};
-    private contextParams: ContextParams;
-    private logger: ILogger;
-
-    private destroyed = false;
-
-    public constructor(params: ContextParams, logger: ILogger) {
-        if (!params || !params.beanClasses) {
-            return;
-        }
-
-        this.contextParams = params;
-
-        this.logger = logger;
-        this.logger.log(">> creating ag-Application Context");
-
-        this.createBeans();
-
-        const beanInstances = this.getBeanInstances();
-
-        this.wireBeans(beanInstances);
-
-        this.logger.log(">> ag-Application Context ready - component is alive");
+        this.beans.context = this;
+        super.init(params);
     }
 
-    private getBeanInstances(): any[] {
-        return values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
-    }
+    public override destroy(): void {
+        super.destroy();
 
-    public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
-        if (!bean) {
-            throw Error(`Can't wire to bean since it is null`);
-        }
-        this.wireBeans([bean], afterPreCreateCallback);
-        return bean;
-    }
-
-    private wireBeans(beanInstances: any[], afterPreCreateCallback?: (comp: Component) => void): void {
-        this.autoWireBeans(beanInstances);
-        this.methodWireBeans(beanInstances);
-
-        this.callLifeCycleMethods(beanInstances, 'preConstructMethods');
-
-        // the callback sets the attributes, so the component has access to attributes
-        // before postConstruct methods in the component are executed
-        if (exists(afterPreCreateCallback)) {
-            beanInstances.forEach(afterPreCreateCallback);
-        }
-
-        this.callLifeCycleMethods(beanInstances, 'postConstructMethods');
-    }
-
-    private createBeans(): void {
-        // register all normal beans
-        this.contextParams.beanClasses.forEach(this.createBeanWrapper.bind(this));
-        // register override beans, these will overwrite beans above of same name
-
-        // instantiate all beans - overridden beans will be left out
-        iterateObject(this.beanWrappers, (key: string, beanEntry: BeanWrapper) => {
-            let constructorParamsMeta: any;
-            if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
-                constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
-            }
-            const constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
-            const newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, [null, ...constructorParams]));
-            beanEntry.beanInstance = newInstance;
-        });
-
-        const createdBeanNames = Object.keys(this.beanWrappers).join(', ');
-        this.logger.log(`created beans: ${createdBeanNames}`);
-    }
-
-    // tslint:disable-next-line
-    private createBeanWrapper(BeanClass: new () => Object): void {
-        const metaData = (BeanClass as any).__agBeanMetaData;
-
-        if (!metaData) {
-            let beanName: string;
-            if (BeanClass.prototype.constructor) {
-                beanName = getFunctionName(BeanClass.prototype.constructor);
-            } else {
-                beanName = "" + BeanClass;
-            }
-            console.error(`Context item ${beanName} is not a bean`);
-            return;
-        }
-
-        const beanEntry = {
-            bean: BeanClass,
-            beanInstance: null as any,
-            beanName: metaData.beanName
-        };
-
-        this.beanWrappers[metaData.beanName] = beanEntry;
-    }
-
-    private autoWireBeans(beanInstances: any[]): void {
-        beanInstances.forEach(beanInstance => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
-                const attributes = metaData.agClassAttributes;
-                if (!attributes) {
-                    return;
-                }
-
-                attributes.forEach((attribute: any) => {
-                    const otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
-                    beanInstance[attribute.attributeName] = otherBean;
-                });
-            });
-        });
-    }
-
-    private methodWireBeans(beanInstances: any[]): void {
-        beanInstances.forEach(beanInstance => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
-                iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
-                    // skip constructor, as this is dealt with elsewhere
-                    if (methodName === "agConstructor") {
-                        return;
-                    }
-                    const initParams = this.getBeansForParameters(wireParams, beanName);
-                    beanInstance[methodName].apply(beanInstance, initParams);
-                });
-            });
-        });
-    }
-
-    private forEachMetaDataInHierarchy(beanInstance: any, callback: (metaData: any, beanName: string) => void): void {
-
-        let prototype: any = Object.getPrototypeOf(beanInstance);
-        while (prototype != null) {
-
-            const constructor: any = prototype.constructor;
-
-            if (constructor.hasOwnProperty('__agBeanMetaData')) {
-                const metaData = constructor.__agBeanMetaData;
-                const beanName = this.getBeanName(constructor);
-                callback(metaData, beanName);
-            }
-
-            prototype = Object.getPrototypeOf(prototype);
-        }
-    }
-
-    private getBeanName(constructor: any): string {
-        if (constructor.__agBeanMetaData && constructor.__agBeanMetaData.beanName) {
-            return constructor.__agBeanMetaData.beanName;
-        }
-
-        const constructorString = constructor.toString();
-        const beanName = constructorString.substring(9, constructorString.indexOf("("));
-        return beanName;
-    }
-
-    private getBeansForParameters(parameters: any, beanName: string): any[] {
-        const beansList: any[] = [];
-        if (parameters) {
-            iterateObject(parameters, (paramIndex: string, otherBeanName: string) => {
-                const otherBean = this.lookupBeanInstance(beanName, otherBeanName);
-                beansList[Number(paramIndex)] = otherBean;
-            });
-        }
-        return beansList;
-    }
-
-    private lookupBeanInstance(wiringBean: string, beanName: string, optional = false): any {
-        if (this.destroyed) {
-            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
-            return null;
-        }
-
-        if (beanName === "context") {
-            return this;
-        }
-
-        if (this.contextParams.providedBeanInstances && this.contextParams.providedBeanInstances.hasOwnProperty(beanName)) {
-            return this.contextParams.providedBeanInstances[beanName];
-        }
-
-        const beanEntry = this.beanWrappers[beanName];
-
-        if (beanEntry) {
-            return beanEntry.beanInstance;
-        }
-
-        if (!optional) {
-            console.error(`AG Grid: unable to find bean reference ${beanName} while initialising ${wiringBean}`);
-        }
-
-        return null;
-    }
-
-    private callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
-        beanInstances.forEach(beanInstance => this.callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod));
-    }
-
-    private callLifeCycleMethodsOnBean(beanInstance: any, lifeCycleMethod: string, methodToIgnore?: string): void {
-        // putting all methods into a map removes duplicates
-        const allMethods: { [methodName: string]: boolean; } = {};
-
-        // dump methods from each level of the metadata hierarchy
-        this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
-            const methods = metaData[lifeCycleMethod] as string[];
-            if (methods) {
-                methods.forEach(methodName => {
-                    if (methodName != methodToIgnore) {
-                        allMethods[methodName] = true;
-                    }
-                });
-            }
-        });
-
-        const allMethodsList = Object.keys(allMethods);
-        allMethodsList.forEach(methodName => beanInstance[methodName]());
-    }
-
-    public getBean(name: string): any {
-        return this.lookupBeanInstance("getBean", name, true);
-    }
-
-    public destroy(): void {
-        if (this.destroyed) { return; }
-
-        // Set before doing the destroy, so if context.destroy() gets called via another bean
-        // we are marked as destroyed already to prevent running destroy() twice
-        this.destroyed = true;
-
-        this.logger.log(">> Shutting down ag-Application Context");
-
-        const beanInstances = this.getBeanInstances();
-        this.destroyBeans(beanInstances);
-
-        this.contextParams.providedBeanInstances = null;
-
-        ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
-
-        this.logger.log(">> ag-Application Context shut down - component is dead");
-    }
-
-    public destroyBean<T>(bean: T): undefined {
-        if (!bean) { return; }
-
-        this.destroyBeans([bean]);
-    }
-
-    public destroyBeans<T>(beans: T[]): T[] {
-        if (!beans) { return []; }
-
-        beans.forEach(bean => {
-            this.callLifeCycleMethodsOnBean(bean, 'preDestroyMethods', 'destroy');
-
-            // call destroy() explicitly if it exists
-            const beanAny = bean as any;
-
-            if (typeof beanAny.destroy === 'function') {
-                beanAny.destroy();
-            }
-        });
-
-        return [];
-    }
-
-    public isDestroyed(): boolean {
-        return this.destroyed;
+        ModuleRegistry.__unRegisterGridModules(this.gridId);
     }
 
     public getGridId(): string {
-        return this.contextParams.gridId;
+        return this.gridId;
     }
 }
 
-export function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.preConstructMethods) {
-        props.preConstructMethods = [];
-    }
-    props.preConstructMethods.push(methodName);
-}
-
-export function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.postConstructMethods) {
-        props.postConstructMethods = [];
-    }
-    props.postConstructMethods.push(methodName);
-}
-
-export function PreDestroy(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    const props = getOrCreateProps(target.constructor);
-    if (!props.preDestroyMethods) {
-        props.preDestroyMethods = [];
-    }
-    props.preDestroyMethods.push(methodName);
-}
-
-export function Bean(beanName: string): Function {
-    return (classConstructor: any) => {
-        const props = getOrCreateProps(classConstructor);
-        props.beanName = beanName;
-    };
-}
-
-export function Autowired(name?: string): Function {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        autowiredFunc(target, name, false, target, propertyKey, null);
-    };
-}
-
-export function Optional(name?: string): Function {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        autowiredFunc(target, name, true, target, propertyKey, null);
-    };
-}
-
-function autowiredFunc(target: any, name: string | undefined, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number | null) {
-    if (name === null) {
-        console.error("AG Grid: Autowired name should not be null");
-        return;
-    }
-    if (typeof index === "number") {
-        console.error("AG Grid: Autowired should be on an attribute");
-        return;
-    }
-
-    // it's an attribute on the class
-    const props = getOrCreateProps(target.constructor);
-    if (!props.agClassAttributes) {
-        props.agClassAttributes = [];
-    }
-    props.agClassAttributes.push({
-        attributeName: methodOrAttributeName,
-        beanName: name,
-        optional: optional
-    });
-}
-
-export function Qualifier(name: string): Function {
-    return (classPrototype: any, methodOrAttributeName: string, index: number) => {
-        const constructor: any = typeof classPrototype == "function" ? classPrototype : classPrototype.constructor;
-        let props: any;
-
-        if (typeof index === "number") {
-            // it's a parameter on a method
-            let methodName: string;
-            if (methodOrAttributeName) {
-                props = getOrCreateProps(constructor);
-                methodName = methodOrAttributeName;
-            } else {
-                props = getOrCreateProps(constructor);
-                methodName = "agConstructor";
-            }
-            if (!props.autowireMethods) {
-                props.autowireMethods = {};
-            }
-            if (!props.autowireMethods[methodName]) {
-                props.autowireMethods[methodName] = {};
-            }
-            props.autowireMethods[methodName][index] = name;
-        }
-    };
-}
-
-function getOrCreateProps(target: any): any {
-    if (!target.hasOwnProperty("__agBeanMetaData")) {
-        target.__agBeanMetaData = {};
-    }
-
-    return target.__agBeanMetaData;
-}
+export type BeanName =
+    | 'advancedFilterExpressionService'
+    | 'advancedFilterService'
+    | 'advancedSettingsMenuFactory'
+    | 'aggFuncService'
+    | 'agGridAngular'
+    | 'agGridReact'
+    | 'agGridVue'
+    | 'agComponentUtils'
+    | 'aggregationStage'
+    | 'alignedGridsService'
+    | 'animationFrameService'
+    | 'apiFunctionService'
+    | 'ariaAnnouncementService'
+    | 'apiEventService'
+    | 'autoColService'
+    | 'autoWidthCalculator'
+    | 'beans'
+    | 'cellEditorFactory'
+    | 'cellNavigationService'
+    | 'cellPositionUtils'
+    | 'cellRendererFactory'
+    | 'cellRendererService'
+    | 'changeDetectionService'
+    | 'chartColumnService'
+    | 'chartCrossFilterService'
+    | 'chartMenuItemMapper'
+    | 'chartMenuListFactory'
+    | 'chartMenuService'
+    | 'chartTranslationService'
+    | 'chartService'
+    | 'clipboardService'
+    | 'columnAutosizeService'
+    | 'columnChooserFactory'
+    | 'columnController'
+    | 'columnDefFactory'
+    | 'columnDropZonesService'
+    | 'columnEditorFactory'
+    | 'columnEventDispatcher'
+    | 'columnFilterService'
+    | 'columnGetStateService'
+    | 'columnSizeService'
+    | 'columnFactory'
+    | 'columnAnimationService'
+    | 'columnHoverService'
+    | 'columnMenuFactory'
+    | 'columnModel'
+    | 'columnMoveService'
+    | 'columnPositionService'
+    | 'columnNameService'
+    | 'columnViewportService'
+    | 'columnGroupStateService'
+    | 'columnApplyStateService'
+    | 'columnUtils'
+    | 'pivotResultColsService'
+    | 'componentMetadataProvider'
+    | 'context'
+    | 'contextMenuFactory'
+    | 'ctrlsFactory'
+    | 'ctrlsService'
+    | 'csvCreator'
+    | 'dataTypeService'
+    | 'visibleColsService'
+    | 'detailGridApiService'
+    | 'dragAndDropService'
+    | 'dragService'
+    | 'editService'
+    | 'excelCreator'
+    | 'enterpriseMenuFactory'
+    | 'environment'
+    | 'eventService'
+    | 'eGridDiv'
+    | 'expansionService'
+    | 'expressionService'
+    | 'filterAggregatesStage'
+    | 'filterManager'
+    | 'filterMenuFactory'
+    | 'filterStage'
+    | 'flattenStage'
+    | 'focusService'
+    | 'funcColsService'
+    | 'frameworkComponentWrapper'
+    | 'frameworkOverrides'
+    | 'globalEventListener'
+    | 'globalSyncEventListener'
+    | 'gridApi'
+    | 'gridDestroyService'
+    | 'gridOptions'
+    | 'gos'
+    | 'gridOptionsWrapper'
+    | 'gridSerializer'
+    | 'groupStage'
+    | 'headerNavigationService'
+    | 'headerPositionUtils'
+    | 'horizontalResizeService'
+    | 'immutableService'
+    | 'lazyBlockLoadingService'
+    | 'licenseManager'
+    | 'localeService'
+    | 'loggerFactory'
+    | 'menuItemMapper'
+    | 'menuService'
+    | 'menuUtils'
+    | 'modelItemUtils'
+    | 'mouseEventService'
+    | 'navigationService'
+    | 'overlayService'
+    | 'paginationAutoPageSizeService'
+    | 'paginationService'
+    | 'pinnedRowModel'
+    | 'pinnedWidthService'
+    | 'pivotColDefService'
+    | 'pivotStage'
+    | 'popupService'
+    | 'quickFilterService'
+    | 'rangeService'
+    | 'resizeObserverService'
+    | 'pageBoundsListener'
+    | 'pageBoundsService'
+    | 'renderStatusService'
+    | 'rowContainerHeightService'
+    | 'rowCssClassCalculator'
+    | 'rowEditService'
+    | 'rowModel'
+    | 'rowNodeBlockLoader'
+    | 'rowNodeEventThrottle'
+    | 'rowModelHelperService'
+    | 'rowNodeSorter'
+    | 'rowPositionUtils'
+    | 'rowRenderer'
+    | 'scrollVisibleService'
+    | 'selectableService'
+    | 'selectionController'
+    | 'selectionHandleFactory'
+    | 'selectionService'
+    | 'showRowGroupColsService'
+    | 'sideBarService'
+    | 'sortController'
+    | 'sortService'
+    | 'sortStage'
+    | 'sparklineTooltipSingleton'
+    | 'ssrmBlockUtils'
+    | 'ssrmExpandListener'
+    | 'ssrmFilterListener'
+    | 'ssrmListenerUtils'
+    | 'ssrmNodeManager'
+    | 'ssrmSortService'
+    | 'ssrmStoreFactory'
+    | 'ssrmStoreUtils'
+    | 'ssrmTransactionManager'
+    | 'stateService'
+    | 'statusBarService'
+    | 'stylingService'
+    | 'syncService'
+    | 'templateService'
+    | 'toolPanelColDefService'
+    | 'undoRedoService'
+    | 'userComponentFactory'
+    | 'userComponentRegistry'
+    | 'valueCache'
+    | 'valueService'
+    | 'validationLogger'
+    | 'validationService';

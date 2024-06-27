@@ -1,5 +1,4 @@
 export class AutoScrollService {
-
     private tickingInterval: number | null = null;
 
     private scrollHorizontally: boolean;
@@ -27,16 +26,16 @@ export class AutoScrollService {
     private tickCount: number;
 
     constructor(params: {
-        scrollContainer: HTMLElement,
-        scrollAxis: 'x' | 'y' | 'xy',
-        scrollByTick?: number,
-        getVerticalPosition?: () => number,
-        setVerticalPosition?: (position: number) => void,
-        getHorizontalPosition?: () => number,
-        setHorizontalPosition?: (position: number) => void,
-        shouldSkipVerticalScroll?: () => boolean,
-        shouldSkipHorizontalScroll?: () => boolean,
-        onScrollCallback?: () => void
+        scrollContainer: HTMLElement;
+        scrollAxis: 'x' | 'y' | 'xy';
+        scrollByTick?: number;
+        getVerticalPosition?: () => number;
+        setVerticalPosition?: (position: number) => void;
+        getHorizontalPosition?: () => number;
+        setHorizontalPosition?: (position: number) => void;
+        shouldSkipVerticalScroll?: () => boolean;
+        shouldSkipHorizontalScroll?: () => boolean;
+        onScrollCallback?: () => void;
     }) {
         this.scrollContainer = params.scrollContainer;
         this.scrollHorizontally = params.scrollAxis.indexOf('x') !== -1;
@@ -65,15 +64,17 @@ export class AutoScrollService {
     public check(mouseEvent: MouseEvent, forceSkipVerticalScroll: boolean = false): void {
         const skipVerticalScroll = forceSkipVerticalScroll || this.shouldSkipVerticalScroll();
 
-        if (skipVerticalScroll && this.shouldSkipHorizontalScroll()) { return; }
+        if (skipVerticalScroll && this.shouldSkipHorizontalScroll()) {
+            return;
+        }
 
         const rect = this.scrollContainer.getBoundingClientRect();
         const scrollTick = this.scrollByTick;
 
-        this.tickLeft = mouseEvent.clientX < (rect.left + scrollTick);
-        this.tickRight = mouseEvent.clientX > (rect.right - scrollTick);
-        this.tickUp = mouseEvent.clientY < (rect.top + scrollTick) && !skipVerticalScroll;
-        this.tickDown = mouseEvent.clientY > (rect.bottom - scrollTick) && !skipVerticalScroll;
+        this.tickLeft = mouseEvent.clientX < rect.left + scrollTick;
+        this.tickRight = mouseEvent.clientX > rect.right - scrollTick;
+        this.tickUp = mouseEvent.clientY < rect.top + scrollTick && !skipVerticalScroll;
+        this.tickDown = mouseEvent.clientY > rect.bottom - scrollTick && !skipVerticalScroll;
 
         if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
             this.ensureTickingStarted();
@@ -92,9 +93,7 @@ export class AutoScrollService {
     private doTick(): void {
         this.tickCount++;
 
-        let tickAmount: number;
-
-        tickAmount = this.tickCount > 20 ? 200 : (this.tickCount > 10 ? 80 : 40);
+        const tickAmount = this.tickCount > 20 ? 200 : this.tickCount > 10 ? 80 : 40;
 
         if (this.scrollVertically) {
             const vScrollPosition = this.getVerticalPosition();

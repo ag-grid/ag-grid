@@ -1,8 +1,8 @@
-import { Column } from "../entities/column";
-import { ColumnChooserParams } from "../entities/colDef";
+import type { AgColumn } from '../entities/agColumn';
+import type { ColumnChooserParams } from '../entities/colDef';
 
 export interface ShowColumnChooserParams {
-    column?: Column | null;
+    column?: AgColumn | null;
     chooserParams?: ColumnChooserParams;
     eventSource?: HTMLElement;
 }
@@ -10,5 +10,5 @@ export interface ShowColumnChooserParams {
 export interface IColumnChooserFactory {
     showColumnChooser(params: ShowColumnChooserParams): void;
 
-    hideActiveColumnChooser(): void
+    hideActiveColumnChooser(): void;
 }

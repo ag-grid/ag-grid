@@ -1,10 +1,10 @@
-import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
 export class FullWidthCellRenderer implements ICellRendererComp {
     private eGui: HTMLElement | undefined;
 
     init(params: ICellRendererParams) {
-        this.eGui = document.createElement("div");
+        this.eGui = document.createElement('div');
         this.eGui.classList.add('full-width-panel');
         this.eGui.innerHTML = `
             <button><img width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/${params.data.code}.png"></button>
@@ -21,4 +21,3 @@ export class FullWidthCellRenderer implements ICellRendererComp {
         return false;
     }
 }
-    

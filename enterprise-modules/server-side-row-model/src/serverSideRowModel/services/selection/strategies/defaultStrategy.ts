@@ -1,5 +1,17 @@
-import { Autowired, BeanStub, Events, IRowModel, PostConstruct, RowNode, SelectionChangedEvent, SelectionEventSourceType, WithoutGridCommon, ISetNodesSelectedParams, IServerSideSelectionState } from "@ag-grid-community/core";
-import { ISelectionStrategy } from "./iSelectionStrategy";
+import type {
+    BeanCollection,
+    IRowModel,
+    IServerSideSelectionState,
+    ISetNodesSelectedParams,
+    RowNode,
+    SelectionChangedEvent,
+    SelectionEventSourceType,
+    WithoutGridCommon,
+} from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _last, _warnOnce, isSelectionUIEvent } from '@ag-grid-community/core';
+
+import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
+import type { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectedState {
     selectAll: boolean;
@@ -7,10 +19,14 @@ interface SelectedState {
 }
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
-    @Autowired('rowModel') private rowModel: IRowModel;
+    private rowModel: IRowModel;
+    private selectionCtx = new ServerSideRowRangeSelectionContext();
+
+    public wireBeans(beans: BeanCollection) {
+        this.rowModel = beans.rowModel;
+    }
 
     private selectedState: SelectedState = { selectAll: false, toggledNodes: new Set() };
-    private lastSelected: string | null = null;
 
     private selectAllUsed: boolean = false;
     // this is to prevent regressions, default selectionService retains reference of clicked nodes.
@@ -18,13 +34,12 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     private rowSelection?: 'single' | 'multiple';
 
-    @PostConstruct
-    private init(): void {
-        this.rowSelection = this.gridOptionsService.get('rowSelection');
+    public postConstruct(): void {
+        this.selectionCtx.init(this.rowModel);
+        this.rowSelection = this.gos.get('rowSelection');
         this.addManagedPropertyListener('rowSelection', (propChange) => {
             this.rowSelection = propChange.currentValue;
         });
-
     }
 
     public getSelectedState(): IServerSideSelectionState {
@@ -42,14 +57,14 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         };
 
         if (typeof state !== 'object') {
-            console.error('AG Grid: The provided selection state should be an object.');
+            _errorOnce('The provided selection state should be an object.');
             return;
         }
 
         if ('selectAll' in state && typeof state.selectAll === 'boolean') {
             newState.selectAll = state.selectAll;
-        }  else {
-            console.error('AG Grid: Select all status should be of boolean type.');
+        } else {
+            _errorOnce('Select all status should be of boolean type.');
             return;
         }
 
@@ -58,11 +73,11 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 if (typeof key === 'string') {
                     newState.toggledNodes.add(key);
                 } else {
-                    console.warn(`AG Grid: Provided ids must be of string type. Invalid id provided: ${key}`);
+                    _warnOnce(`Provided ids must be of string type. Invalid id provided: ${key}`);
                 }
             });
         } else {
-            console.error('AG Grid: `toggledNodes` must be an array of string ids.');
+            _warnOnce('`toggledNodes` must be an array of string ids.');
             return;
         }
 
@@ -76,7 +91,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         let anyNodesToggled = false;
 
-        removedNodeIds.forEach(id => {
+        removedNodeIds.forEach((id) => {
             if (this.selectedState.toggledNodes.delete(id)) {
                 anyNodesToggled = true;
             }
@@ -85,16 +100,28 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         return anyNodesToggled;
     }
 
-    public setNodesSelected(params: ISetNodesSelectedParams): number {
-        if (params.nodes.length === 0) return 0;
+    private overrideSelectionValue(newValue: boolean, source: SelectionEventSourceType): boolean {
+        if (!isSelectionUIEvent(source)) {
+            return newValue;
+        }
 
-        const onlyThisNode = params.clearSelection && params.newValue && !params.rangeSelect;
+        const root = this.selectionCtx.getRoot();
+        const node = root ? this.rowModel.getRowNode(root) : null;
+
+        return node ? node.isSelected() ?? false : true;
+    }
+
+    public setNodesSelected(params: ISetNodesSelectedParams): number {
+        const { nodes, clearSelection, newValue, rangeSelect, source } = params;
+        if (nodes.length === 0) return 0;
+
+        const onlyThisNode = clearSelection && newValue && !rangeSelect;
         if (this.rowSelection !== 'multiple' || onlyThisNode) {
-            if (params.nodes.length > 1) {
-                throw new Error('AG Grid: cannot select multiple rows when rowSelection is set to \'single\'');
+            if (nodes.length > 1) {
+                throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
             }
-            const node = params.nodes[0];
-            if (params.newValue) {
+            const node = nodes[0];
+            if (newValue && node.selectable) {
                 this.selectedNodes = { [node.id!]: node };
                 this.selectedState = {
                     selectAll: false,
@@ -105,41 +132,63 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 this.selectedState = {
                     selectAll: false,
                     toggledNodes: new Set(),
-                }
+                };
             }
-            this.lastSelected = node.id!;
+            if (node.selectable) {
+                this.selectionCtx.setRoot(node.id!);
+            }
             return 1;
         }
 
-        const updateNodeState = (node: RowNode) => {
-            if (params.newValue) {
+        const updateNodeState = (node: RowNode, value = newValue) => {
+            if (value && node.selectable) {
                 this.selectedNodes[node.id!] = node;
             } else {
                 delete this.selectedNodes[node.id!];
             }
 
-            const isNodeSelectable = node.selectable;
-            const doesNodeConform = params.newValue === this.selectedState.selectAll;
-            if (doesNodeConform || !isNodeSelectable) {
+            const doesNodeConform = value === this.selectedState.selectAll;
+            if (doesNodeConform || !node.selectable) {
                 this.selectedState.toggledNodes.delete(node.id!);
-                return;
+            } else {
+                this.selectedState.toggledNodes.add(node.id!);
             }
-            this.selectedState.toggledNodes.add(node.id!);
-        }
+        };
 
-        if (params.rangeSelect && this.lastSelected) {
-            if (params.nodes.length > 1) {
+        if (rangeSelect) {
+            if (nodes.length > 1) {
                 throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
             }
-            const node = params.nodes[0];
-            const lastSelectedNode = this.rowModel.getRowNode(this.lastSelected);
-            this.rowModel.getNodesInRangeForSelection(node, lastSelectedNode ?? null).forEach(updateNodeState);
-            this.lastSelected = node.id!;
+            const node = nodes[0];
+            const newSelectionValue = this.overrideSelectionValue(newValue, source);
+
+            if (this.selectionCtx.isInRange(node.id!)) {
+                const partition = this.selectionCtx.truncate(node.id!);
+
+                // When we are selecting a range, we may need to de-select part of the previously
+                // selected range (see AG-9620)
+                // When we are de-selecting a range, we can/should leave the other nodes unchanged
+                // (i.e. selected nodes outside the current range should remain selected - see AG-10215)
+                if (newSelectionValue) {
+                    partition.discard.forEach((node) => updateNodeState(node, false));
+                }
+                partition.keep.forEach((node) => updateNodeState(node, newSelectionValue));
+            } else {
+                const fromNode = this.selectionCtx.getRoot();
+                const toNode = node;
+                if (fromNode !== toNode.id) {
+                    const partition = this.selectionCtx.extend(node.id!);
+                    if (newSelectionValue) {
+                        partition.discard.forEach((node) => updateNodeState(node, false));
+                    }
+                    partition.keep.forEach((node) => updateNodeState(node, newSelectionValue));
+                }
+            }
             return 1;
         }
 
-        params.nodes.forEach(updateNodeState);
-        this.lastSelected = params.nodes[params.nodes.length - 1].id!;
+        nodes.forEach((node) => updateNodeState(node));
+        this.selectionCtx.setRoot(_last(nodes).id!);
         return 1;
     }
 
@@ -156,8 +205,8 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     public getSelectedNodes(): RowNode<any>[] {
         if (this.selectAllUsed) {
-            console.warn(
-                `AG Grid: getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model.
+            _warnOnce(
+                `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model.
                 Use \`api.getServerSideSelectionState()\` instead.`
             );
         }
@@ -165,7 +214,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public getSelectedRows(): any[] {
-        return this.getSelectedNodes().map(node => node.data);
+        return this.getSelectedNodes().map((node) => node.data);
     }
 
     public getSelectionCount(): number {
@@ -180,16 +229,16 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         this.selectedState = {
             selectAll: false,
             toggledNodes: new Set([rowNodeToKeepSelected.id!]),
-        }
+        };
 
-        this.rowModel.forEachNode(node => {
+        this.rowModel.forEachNode((node) => {
             if (node !== rowNodeToKeepSelected) {
                 node.selectThisNode(false, undefined, source);
             }
         });
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
-            type: Events.EVENT_SELECTION_CHANGED,
+            type: 'selectionChanged',
             source,
         };
         this.eventService.dispatchEvent(event);
@@ -200,19 +249,21 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     public isEmpty(): boolean {
         return !this.selectedState.selectAll && !this.selectedState.toggledNodes?.size;
     }
-    
-    public selectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
+
+    public selectAllRowNodes(): void {
         this.selectedState = { selectAll: true, toggledNodes: new Set() };
         this.selectedNodes = {};
         this.selectAllUsed = true;
+        this.selectionCtx.reset();
     }
 
-    public deselectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
+    public deselectAllRowNodes(): void {
         this.selectedState = { selectAll: false, toggledNodes: new Set() };
         this.selectedNodes = {};
+        this.selectionCtx.reset();
     }
 
-    public getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null {
+    public getSelectAllState(): boolean | null {
         if (this.selectedState.selectAll) {
             if (this.selectedState.toggledNodes.size > 0) {
                 return null;

@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelProtection } from '@ag-grid-community/core';
+import type { ExcelOOXMLTemplate, ExcelProtection } from '@ag-grid-community/core';
 
 const protectionFactory: ExcelOOXMLTemplate = {
     getTemplate(protection: ExcelProtection) {
@@ -9,11 +9,11 @@ const protectionFactory: ExcelOOXMLTemplate = {
             properties: {
                 rawMap: {
                     hidden,
-                    locked
-                }
-            }
+                    locked,
+                },
+            },
         };
-    }
+    },
 };
 
 export default protectionFactory;

@@ -1,7 +1,9 @@
-import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-community";
-import { ChartType } from "@ag-grid-community/core";
-import { createColumnRects, CreateColumnRectsParams } from "../miniChartHelpers";
+import type { ChartType } from '@ag-grid-community/core';
+import { _Scene } from 'ag-charts-community';
+
+import type { CreateColumnRectsParams } from '../miniChartHelpers';
+import { createColumnRects } from '../miniChartHelpers';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export interface Coordinate {
     x: number;
@@ -15,12 +17,10 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
 
     private columnData = [3, 4.5];
 
-    private areaData = [
-        [5, 4, 6, 5, 4],
-    ];
+    private areaData = [[5, 4, 6, 5, 4]];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "areaColumnComboTooltip");
+        super(container, 'areaColumnComboTooltip');
 
         const { root, columnData, areaData, size, padding } = this;
 
@@ -64,13 +64,16 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
 
             const lastX = xScale.convert(series.length - 1);
 
-            pathData[i].push({
-                x: lastX,
-                y: yZero
-            }, {
-                x: firstX,
-                y: yZero
-            });
+            pathData[i].push(
+                {
+                    x: lastX,
+                    y: yZero,
+                },
+                {
+                    x: firstX,
+                    y: yZero,
+                }
+            );
         });
 
         this.areas = pathData.map((points) => {
@@ -85,7 +88,7 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
 
         root.append(this.areas);
-        root.append(([]as _Scene.Rect[]).concat.apply([], this.columns));
+        root.append(([] as _Scene.Rect[]).concat.apply([], this.columns));
 
         this.updateColors(fills, strokes);
     }
@@ -97,8 +100,8 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
 
         this.columns.forEach((bar: _Scene.Rect, i: number) => {
-            bar.fill = fills[i+1];
-            bar.stroke = strokes[i+1];
+            bar.fill = fills[i + 1];
+            bar.stroke = strokes[i + 1];
         });
     }
 }

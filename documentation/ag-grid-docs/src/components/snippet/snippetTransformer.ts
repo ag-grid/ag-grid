@@ -145,7 +145,7 @@ class AngularTransformer extends SnippetTransformer {
             return result.trim();
         }
         const props = this.propertiesVisited.map((property) => `${tab(1)}[${property}]="${property}"`).join('\n');
-        return '<ag-grid-angular\n' + props + '\n    /* other grid options ... */>\n' + '</ag-grid-angular>\n' + result;
+        return '<ag-grid-angular\n' + props + '\n    /* other grid options ... */ />\n' + result;
     }
 
     addComment(property) {

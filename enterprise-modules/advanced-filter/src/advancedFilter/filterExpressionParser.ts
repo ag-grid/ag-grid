@@ -1,6 +1,13 @@
-import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
-import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
-import { AutocompleteUpdate, FilterExpression, FilterExpressionFunctionParams, FilterExpressionParserParams } from "./filterExpressionUtils";
+import type { AdvancedFilterModel } from '@ag-grid-community/core';
+
+import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
+import type {
+    AutocompleteUpdate,
+    FilterExpressionFunction,
+    FilterExpressionFunctionParams,
+    FilterExpressionParserParams,
+} from './filterExpressionUtils';
+import { JoinFilterExpressionParser } from './joinFilterExpressionParser';
 
 export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;
@@ -21,25 +28,37 @@ export class FilterExpressionParser {
 
     public getValidationMessage(): string | null {
         const error = this.joinExpressionParser.getValidationError();
-        if (!error) { return null; }
+        if (!error) {
+            return null;
+        }
         const { message, startPosition, endPosition } = error;
         return startPosition < this.params.expression.length
             ? this.params.advancedFilterExpressionService.translate('advancedFilterValidationMessage', [
-                message, this.params.expression.slice(startPosition, endPosition + 1).trim()
-            ])
+                  message,
+                  this.params.expression.slice(startPosition, endPosition + 1).trim(),
+              ])
             : this.params.advancedFilterExpressionService.translate('advancedFilterValidationMessageAtEnd', [message]);
     }
 
-    public getFunction(): FilterExpression {
-        const params: FilterExpressionFunctionParams = {
-            operands: [],
-            operators: [],
-            evaluatorParams: []
-        };
-        const functionBody = `return ${this.joinExpressionParser.getFunction(params)};`;
+    public getFunctionString(): {
+        functionString: string;
+        params: FilterExpressionFunctionParams;
+    } {
+        const params = this.createFunctionParams();
         return {
-            functionBody,
-            params
+            functionString: `return ${this.joinExpressionParser.getFunctionString(params)};`,
+            params,
+        };
+    }
+
+    public getFunctionParsed(): {
+        expressionFunction: FilterExpressionFunction;
+        params: FilterExpressionFunctionParams;
+    } {
+        const params = this.createFunctionParams();
+        return {
+            expressionFunction: this.joinExpressionParser.getFunctionParsed(params),
+            params,
         };
     }
 
@@ -53,5 +72,13 @@ export class FilterExpressionParser {
 
     public getModel(): AdvancedFilterModel | null {
         return this.isValid() ? this.joinExpressionParser.getModel() : null;
+    }
+
+    private createFunctionParams(): FilterExpressionFunctionParams {
+        return {
+            operands: [],
+            operators: [],
+            evaluatorParams: [],
+        };
     }
 }

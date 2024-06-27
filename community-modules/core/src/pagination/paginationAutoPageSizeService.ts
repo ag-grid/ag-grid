@@ -1,30 +1,37 @@
-import { BeanStub } from "../context/beanStub";
-import { Events } from "../events";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { CtrlsService } from "../ctrlsService";
-import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
-import { debounce } from "../utils/function";
-import { PaginationProxy } from "./paginationProxy";
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
+import { _debounce } from '../utils/function';
+import type { PaginationService } from './paginationService';
 
-@Bean('paginationAutoPageSizeService')
-export class PaginationAutoPageSizeService extends BeanStub {
+export class PaginationAutoPageSizeService extends BeanStub implements NamedBean {
+    beanName = 'paginationAutoPageSizeService' as const;
 
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    private ctrlsService: CtrlsService;
+    private paginationService: PaginationService;
 
-    private centerRowContainerCon: RowContainerCtrl;
+    public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
+        this.paginationService = beans.paginationService!;
+    }
+
+    private centerRowsCtrl: RowContainerCtrl;
 
     // Once the body is rendered, we debounce changes to the page size,
     // but we do not want to debounce the first time the body is rendered.
     private isBodyRendered: boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.ctrlsService.whenReady(p => {
-            this.centerRowContainerCon = p.centerRowContainerCtrl;
+    public postConstruct(): void {
+        this.ctrlsService.whenReady((p) => {
+            this.centerRowsCtrl = p.center;
 
-            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
-            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
+            const listener = this.checkPageSize.bind(this);
+            this.addManagedEventListeners({
+                bodyHeightChanged: listener,
+                scrollVisibilityChanged: listener,
+            });
             this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 
             this.checkPageSize();
@@ -32,34 +39,36 @@ export class PaginationAutoPageSizeService extends BeanStub {
     }
 
     private notActive(): boolean {
-        return !this.gridOptionsService.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
+        return !this.gos.get('paginationAutoPageSize') || this.centerRowsCtrl == null;
     }
 
     private onPaginationAutoSizeChanged(): void {
         if (this.notActive()) {
-            this.paginationProxy.unsetAutoCalculatedPageSize();
+            this.paginationService.unsetAutoCalculatedPageSize();
         } else {
             this.checkPageSize();
         }
     }
 
     private checkPageSize(): void {
-        if (this.notActive()) { return; }
+        if (this.notActive()) {
+            return;
+        }
 
-        const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature()!.getBodyHeight();
+        const bodyHeight = this.centerRowsCtrl.getViewportSizeFeature()!.getBodyHeight();
 
         if (bodyHeight > 0) {
             const update = () => {
-                const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+                const rowHeight = Math.max(this.gos.getRowHeightAsNumber(), 1); // prevent divide by zero error if row height is 0
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
-                this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
-            }
+                this.paginationService.setPageSize(newPageSize, 'autoCalculated');
+            };
 
             if (!this.isBodyRendered) {
                 update();
                 this.isBodyRendered = true;
             } else {
-                debounce(() => update(), 50)();
+                _debounce(() => update(), 50)();
             }
         } else {
             this.isBodyRendered = false;

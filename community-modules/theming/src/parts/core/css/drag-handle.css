@@ -1,0 +1,5 @@
+.ag-drag-handle {
+    cursor: grab;
+    /* TODO what var should this use? */
+    color: varXXX(--ag-icon-font-color);
+}

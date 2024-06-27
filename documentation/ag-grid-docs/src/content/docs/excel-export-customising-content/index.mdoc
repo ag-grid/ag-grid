@@ -5,11 +5,11 @@ enterprise: true
 
 ## Customising Cell and Row Group values
 
-By default, the values exported to Excel will be formatted via the [Using the Value Formatter for Export](./value-formatters/#formating-for-export) feature.
+By default, the values exported to Excel will be formatted via the [Using the Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
 
 The grid cell and row group values can be customised specifically for Excel export using the following function params for a call to `exportDataAsExcel` API method or in the `defaultExcelExportParams`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 gridApi.exportDataAsExcel({
     processCellCallback(params) {
         const value = params.value
@@ -42,7 +42,7 @@ When using row grouping while [hiding open parents](./grouping-multiple-group-co
 
 The column headers and group headers exported to Excel can be customised using the following function params for a call to `exportDataAsExcel` API method or in the `defaultExcelExportParams`.
 
-```js {% frameworkTransform=true %}
+```{% frameworkTransform=true %}
 gridApi.exportDataAsExcel({
     processGroupHeaderCallback(params) {
         return `group header: ${params.api.getDisplayNameForColumnGroup(params.columnGroup, null)}`
