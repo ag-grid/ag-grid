@@ -1,25 +1,18 @@
-/* eslint-disable no-console */
 import fs from 'fs/promises';
 import path from 'path';
 import prettier from 'prettier';
 
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
+import { SOURCE_ENTRY_FILE_NAME, getEnterprisePackageName } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
-import {
-    ExampleConfig,
-    FRAMEWORKS,
-    GeneratedContents,
-    ImportType,
-    InternalFramework,
-    TYPESCRIPT_INTERNAL_FRAMEWORKS,
-} from './generator/types';
-
-import { getEnterprisePackageName, SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
+import type { ExampleConfig, GeneratedContents, ImportType, InternalFramework } from './generator/types';
+import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
 import {
     getBoilerPlateFiles,
     getEntryFileName,
     getIsEnterprise,
+    getIsLocale,
     getMainFileName,
     getProvidedExampleFiles,
     getProvidedExampleFolder,
@@ -74,7 +67,9 @@ async function getProvidedFiles(folderPath: string) {
             });
             const providedExampleEntries = await Promise.all(
                 files.map(async (fileName) => {
-                    let contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString('utf-8');
+                    const contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString(
+                        'utf-8'
+                    );
                     return [fileName, contents];
                 })
             );
@@ -108,6 +103,7 @@ export async function generateFiles(options: ExecutorOptions) {
     ]);
 
     const isEnterprise = getIsEnterprise({ entryFile });
+    const isLocale = getIsLocale({ entryFile });
     const frameworkProvidedExamples = sourceFileList.includes('provided') ? await getProvidedFiles(folderPath) : {};
 
     const { bindings, typedBindings } = gridVanillaSrcParser(
@@ -118,9 +114,7 @@ export async function generateFiles(options: ExecutorOptions) {
         gridOptionsTypes
     );
 
-    const isIntegratedCharts = typedBindings.imports.some((m) =>
-        m.module.includes('@ag-grid-enterprise/charts-enterprise')
-    );
+    const isIntegratedCharts = typedBindings.imports.some((m) => m.module.includes('@ag-grid-enterprise/charts'));
 
     let interfaceFile = undefined;
     if (sourceFileList.includes('interfaces.ts')) {
@@ -157,11 +151,12 @@ export async function generateFiles(options: ExecutorOptions) {
         for (const importType of importTypes) {
             const packageJson = getPackageJson({
                 isEnterprise,
+                isLocale,
                 internalFramework,
                 importType,
             });
 
-            let frameworkExampleConfig = {
+            const frameworkExampleConfig = {
                 ...exampleConfig,
                 ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
             };
@@ -176,7 +171,7 @@ export async function generateFiles(options: ExecutorOptions) {
 
             let files = {};
             let scriptFiles = [];
-            let mergedStyleFiles = { ...styleFiles };
+            const mergedStyleFiles = { ...styleFiles };
             if (provideFrameworkFiles === undefined) {
                 const result = await getFrameworkFiles({
                     entryFile,
@@ -217,13 +212,14 @@ export async function generateFiles(options: ExecutorOptions) {
             }
 
             let styleFilesKeys = [];
-            let mergedFiles = { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents };
-            if((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)){
+            const mergedFiles = { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents };
+            if ((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)) {
                 styleFilesKeys = Object.keys(mergedStyleFiles);
             }
             // Replace files with provided examples
             const result: GeneratedContents = {
                 isEnterprise,
+                isLocale,
                 isIntegratedCharts,
                 entryFileName,
                 mainFileName,
@@ -247,7 +243,7 @@ async function convertModulesToPackages(fileContent: any, isDev: boolean, intern
     // Remove the original import statements that contain modules
     fileContent = fileContent
         // Don't match the HttpClientModule / FormsModule from Angular
-        .replace(/import ((.|\n)[^}]*?\w(?<!(HttpClient|Forms))Module(.|\n)*?)from.*\n/g, '')
+        .replace(/import ((.|\n)[^}{]*?\w(?<!(HttpClient|Forms))Module(.|\n)*?)from.*\n/g, '')
         // Remove ModuleRegistry import if by itself
         .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
         // Remove if ModuleRegistry is with other imports

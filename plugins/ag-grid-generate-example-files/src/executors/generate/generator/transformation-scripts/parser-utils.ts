@@ -1,13 +1,10 @@
 import { transform } from 'sucrase';
 import ts from 'typescript';
 
-import { getEnterprisePackageName } from '../constants';
-import { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
+import { getEnterprisePackageName, integratedChartsUsesChartsEnterprise } from '../constants';
+import type { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
 
-export function readAsJsFile(
-    srcFile,
-    internalFramework: InternalFramework,
-) {
+export function readAsJsFile(srcFile, internalFramework: InternalFramework) {
     let tsFile = srcFile
         // Remove imports like import 'ag-grid-community/styles/ag-grid.css';
         .replace(/import ['"].*['"](;?)\n/g, '');
@@ -22,7 +19,7 @@ export function readAsJsFile(
         tsFile = tsFile.replace(/export /g, '');
     }
 
-    const jsFile = transform(tsFile, { transforms: ['typescript'] }).code; ///disableESTransforms: true
+    const jsFile = transform(tsFile, { transforms: ['typescript'], disableESTransforms: true }).code;
     return jsFile;
 }
 
@@ -48,7 +45,6 @@ export function tsGenerate(node, srcFile) {
         }
         return printer.printNode(ts.EmitHint.Unspecified, node, srcFile);
     } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error);
     }
     return 'ERROR - Printing';
@@ -98,7 +94,6 @@ export function tsCollect(tsTree, tsBindings: ParsedBindings, collectors, recurs
                 try {
                     c.apply(tsBindings, node);
                 } catch (error) {
-                    // eslint-disable-next-line no-console
                     console.error(error);
                 }
             });
@@ -454,8 +449,6 @@ export function convertImportPath(modulePackage: string, convertToPackage: boole
             '"@ag-grid-community/angular"': "'ag-grid-angular'",
             "'@ag-grid-community/vue3'": "'ag-grid-vue3'",
             '"@ag-grid-community/vue3"': "'ag-grid-vue3'",
-            "'@ag-grid-community/vue'": "'ag-grid-vue'",
-            '"@ag-grid-community/vue"': "'ag-grid-vue'",
             "'@ag-grid-community/react'": "'ag-grid-react'",
             '"@ag-grid-community/react"': "'ag-grid-react'",
         };
@@ -554,7 +547,14 @@ export function addBindingImports(
             const namedImport = v.namedImport ? v.namedImport : '';
             const importStr = unique.length > 0 ? `{ ${unique.join(', ')} }` : '';
             const joiningComma = namedImport && importStr ? ', ' : '';
-            imports.push(`import ${namedImport}${joiningComma}${importStr} from ${k};`);
+            let fullImportStr = `import ${namedImport}${joiningComma}${importStr} from ${k};`;
+            if (!integratedChartsUsesChartsEnterprise && !convertToPackage) {
+                fullImportStr = fullImportStr.replace(
+                    /@ag-grid-enterprise\/charts-enterprise/g,
+                    '@ag-grid-enterprise/charts'
+                );
+            }
+            imports.push(fullImportStr);
         }
     });
     if (hasEnterpriseModules && convertToPackage) {
@@ -563,7 +563,7 @@ export function addBindingImports(
 }
 
 /** Add imports such as "import { colors } from './colors.js';"
- * Does not include the imports for _framework component
+ * Does not include the imports for framework component
  */
 export function addRelativeImports(bindings: ParsedBindings, imports: string[], extension: string) {
     const filterOtherFiles = (b) => b.module.includes('./') && !b.module.includes('_');
@@ -574,8 +574,6 @@ export function addRelativeImports(bindings: ParsedBindings, imports: string[], 
         });
     }
 }
-
-
 
 export function removeModuleRegistration(code: string) {
     return code.replace(/ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');
@@ -617,7 +615,7 @@ export function preferParamsApi(code: string): string {
 }
 
 export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile) {
-    let interfaces = [];
+    const interfaces = [];
     // If the example has an existing interface file then merge that with our globally shared interfaces
     if (currentFile) {
         interfaces.push(currentFile);
@@ -629,6 +627,10 @@ export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile
         return interfaces.join('\n');
     }
     return undefined;
+}
+
+export function findLocaleImport(bindingImports) {
+    return bindingImports.find((bindingImport) => bindingImport.module.includes('ag-grid-local'));
 }
 
 function getGenericInterface(tData) {
