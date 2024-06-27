@@ -51,6 +51,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     private eGui: HTMLElement;
     private componentSelectors: Map<AgComponentSelector, ComponentSelector>;
+    private suppressDataRefValidation: boolean = false;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
@@ -163,7 +164,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
             } else {
                 // Don't warn if the data-ref is used for passing parameters to the component
                 const usedAsParamRef = paramsMap && paramsMap[elementRef];
-                if (!usedAsParamRef) {
+                if (!this.suppressDataRefValidation && !usedAsParamRef) {
                     // This can happen because of:
                     // 1. The data-ref has a typo and doesn't match the property in the component
                     // 2. The  property is not initialised with the RefPlaceholder and should be.
@@ -282,9 +283,11 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     public setTemplateFromElement(
         element: HTMLElement,
         components?: ComponentSelector[],
-        paramsMap?: { [key: string]: any }
+        paramsMap?: { [key: string]: any },
+        suppressDataRefValidation = false
     ): void {
         this.eGui = element;
+        this.suppressDataRefValidation = suppressDataRefValidation;
         if (components) {
             for (let i = 0; i < components.length; i++) {
                 const component = components[i];
