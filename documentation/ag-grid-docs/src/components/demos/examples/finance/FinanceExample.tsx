@@ -58,7 +58,7 @@ const numberFormatter: ValueFormatterFunc = ({ value }) => {
 };
 
 const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode = false }) => {
-    const [rowData, setRowData] = useState(getData);
+    const [rowData, setRowData] = useState(getData());
     const gridRef = useRef<AgGridReact>(null);
 
     useEffect(() => {
