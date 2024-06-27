@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const gulp = require('gulp');
 const { series } = gulp;
 const replace = require('gulp-replace');

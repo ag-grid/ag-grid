@@ -79,45 +79,8 @@ The example below has grouped headers, headers and floating filters to demonstra
 
 Most people will be happy with the default navigation the grid does when you use the arrow keys and the {% kbd "⇥ Tab" /%} key. Some people will want to override this (e.g. you may want the {% kbd "⇥ Tab" /%} key to navigate to the cell below, not the cell to the right). To facilitate this, the grid offers four methods: `navigateToNextCell`, `tabToNextCell`, `navigateToNextHeader` and `tabToNextHeader`.
 
-### navigateToNextCell
 
-Provide a callback `navigateToNextCell` if you want to override the arrow key navigation.
-
-{% apiDocumentation source="grid-options/properties.json" section="nav" names=["navigateToNextCell"] /%}
-
-### tabToNextCell
-
-Provide a callback `tabToNextCell` if you want to override the {% kbd "⇥ Tab" /%} key navigation.
-
-{% apiDocumentation source="grid-options/properties.json" section="nav" names=["tabToNextCell"] /%}
-
-### CellPosition
-
-Both functions above use `CellPosition`. This is an object that represents a cell in the grid.
-
-{% interfaceDocumentation interfaceName="CellPosition" /%}
-
-The functions take a `CellPosition` for current and next cells, as well as returning a `CellPosition` object. The returned `CellPosition` will be the one the grid puts focus on next. Return the provided `nextCellPosition` to stick with the grid default behaviour. Return `null`/`undefined` to skip the navigation.
-
-### navigateToNextHeader
-
-Provide a callback `navigateToNextHeader` if you want to override the arrow key navigation.
-
-{% apiDocumentation source="grid-options/properties.json" section="nav" names=["navigateToNextHeader"] /%}
-
-### tabToNextHeader
-
-Provide a callback `tabToNextHeader` if you want to override the {% kbd "⇥ Tab" /%} key navigation.
-
-{% apiDocumentation source="grid-options/properties.json" section="nav" names=["tabToNextHeader"] /%}
-
-### HeaderPosition
-
-Both `navigateToNextHeader` and `tabToNextHeader` use `HeaderPosition`. This is an object that represents a header in the grid.
-
-{% interfaceDocumentation interfaceName="HeaderPosition" /%}
-
-You should return the `HeaderPosition` you want in the `navigateToNextHeader` and `tabToNextHeader` functions to have it focused. Returning `null` or `undefined` in `navigateToNextHeader` will do nothing (same as focusing the current focused cell), however, doing the same thing in `tabToNextHeader` will allow the browser default behaviour for {% kbd "⇥ Tab" /%} to happen. This is useful for tabbing outside of the grid from the last cell or {% kbd "⇧ Shift" /%} tabbing out of the grid from the first cell.
+{% apiDocumentation source="grid-options/properties.json" section="nav" names=["focusGridInnerElement", "navigateToNextCell", "tabToNextCell", "navigateToNextHeader", "tabToNextHeader"] /%}
 
 {% note %}
 The `navigateToNextCell` and `tabToNextCell` are only called while navigating across grid cells, while
@@ -177,17 +140,26 @@ myInput.addEventListener("keydown", event => {
 }, true);
 ```
 
-### Example: Tabbing into the Grid
+### Tabbing into the Grid
 
-In the following example there is an input box provided to test tabbing into the grid. Notice the following:
+In the following example there are two input box provided to test tabbing into the grid. Notice the following:
 
-* Tabbing out of the first input box will gain focus on the first grid cell.
-* When the first cell is out of view due to either scrolling down (rows) or across (columns), tabbing out of the first input will cause the grid to navigate to the first cell.
-* Tabbing out of the second input box will have the default behaviour which is to focus the first grid header.
-* When the first header is out of view due to horizontal scroll, tabbing into the grid will cause the grid to scroll to focus the first header.
-* Shift-Tabbing out third input (below the grid) will have the default focus behaviour, which is to focus the last element of the grid. This element will vary depending on how many features have been enabled (eg. Row Pagination, Tool Panels, etc...).
+* Tabbing out of the input above the grid will focus the first grid header.
+* When the first cell is out of view due to either scrolling down (rows) or across (columns), the grid will scroll back to the left to display the first column.
+* Tabbing out of the input below the grid with shift pressed will focus the last cell of the grid.
+* When the last column is out of view due to horizontal scroll, shift tabbing into the grid will cause the grid to scroll to focus the last cell.
 
 {% gridExampleRunner title="Tabbing into the Grid" name="tabbing-into-grid" /%}
+
+
+### Custom Tabbing into the Grid
+
+The `focusGridInnerElement` callback can be used to change the element focused by the grid when receiving focus from outside . Notice the following:
+
+* Tabbing out of the input above the grid will focus the last focused cell if the grid was previously focused and the element is still in the DOM or otherwise the header.
+* Shift Tabbing out of the input below the grid will focus the last focused cell if the grid was previously focused and the element is still in the DOM or otherwise the last cell in the bottom row.
+
+{% gridExampleRunner title="Custom tabbing into the Grid" name="custom-tabbing-into-grid" /%}
 
 ## Keyboard Events
 

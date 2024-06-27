@@ -1,5 +1,12 @@
-import type { GridApi, GridOptions, IRowNode, Module } from '@ag-grid-community/core';
-import { ALWAYS_SYNC_GLOBAL_EVENTS, ComponentUtil, createGrid } from '@ag-grid-community/core';
+import type { AgEventType, GridApi, GridOptions, IRowNode, Module } from '@ag-grid-community/core';
+import {
+    ALWAYS_SYNC_GLOBAL_EVENTS,
+    ComponentUtil,
+    _combineAttributesAndGridOptions,
+    _processOnChange,
+    _warnOnce,
+    createGrid,
+} from '@ag-grid-community/core';
 import { markRaw, toRaw } from '@vue/reactivity';
 import type { PropType } from 'vue';
 import { defineComponent, getCurrentInstance, h } from 'vue';
@@ -59,7 +66,7 @@ export const AgGridVue = defineComponent({
     watch,
     methods: {
         globalEventListenerFactory(restrictToSyncOnly?: boolean) {
-            return (eventType: string) => {
+            return (eventType: AgEventType) => {
                 if (this.isDestroyed) {
                     return;
                 }
@@ -92,7 +99,7 @@ export const AgGridVue = defineComponent({
                 };
                 // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
                 // which can reset grid state (ie row selection)
-                ComponentUtil.processOnChange(options, this.api as any);
+                _processOnChange(options, this.api as any);
             }
         },
         checkForBindingConflicts() {
@@ -101,7 +108,7 @@ export const AgGridVue = defineComponent({
                 ((thisAsAny.rowData && thisAsAny.rowData !== 'AG-VUE-OMITTED-PROPERTY') || this.gridOptions.rowData) &&
                 thisAsAny.modelValue
             ) {
-                console.warn('AG Grid: Using both rowData and v-model. rowData will be ignored.');
+                _warnOnce('Using both rowData and v-model. rowData will be ignored.');
             }
         },
         getRowData(): any[] {
@@ -186,7 +193,7 @@ export const AgGridVue = defineComponent({
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        const gridOptions = markRaw(ComponentUtil.combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
+        const gridOptions = markRaw(_combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
 
         this.checkForBindingConflicts();
 

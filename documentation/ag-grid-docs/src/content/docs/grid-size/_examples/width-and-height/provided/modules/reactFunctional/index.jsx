@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -10,7 +10,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
     const gridRef = useRef(null);
@@ -55,10 +55,6 @@ const GridExample = () => {
         setWidthAndHeight('400px', '400px');
     };
 
-    const noSize = () => {
-        setWidthAndHeight('', '');
-    };
-
     const setWidthAndHeight = (width, height) => {
         setStyle({
             width,
@@ -69,11 +65,9 @@ const GridExample = () => {
     return (
         <div className="example-wrapper">
             <div style={{ marginBottom: '5px' }}>
-                Set width and height: &nbsp;
-                <button onClick={() => fillLarge()}>100%</button>
-                <button onClick={() => fillMedium()}>60%</button>
-                <button onClick={() => fillExact()}>400px</button>
-                <button onClick={() => noSize()}>None (default size)</button>
+                <button onClick={() => fillLarge()}>Fill 100%</button>
+                <button onClick={() => fillMedium()}>Fill 60%</button>
+                <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
             </div>
             <div
                 className={

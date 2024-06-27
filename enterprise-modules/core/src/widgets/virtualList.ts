@@ -2,12 +2,12 @@ import type {
     AnimationFrameService,
     BeanCollection,
     Component,
+    ComponentEvent,
     CssVariablesChanged,
     Environment,
     ResizeObserverService,
 } from '@ag-grid-community/core';
 import {
-    Events,
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
@@ -18,6 +18,7 @@ import {
     _setAriaSetSize,
     _stopPropagationForAgGrid,
     _waitUntil,
+    _warnOnce,
 } from '@ag-grid-community/core';
 
 import type { VirtualListModel } from './iVirtualList';
@@ -28,7 +29,19 @@ interface VirtualListParams {
     listName?: string;
 }
 
-export class VirtualList<C extends Component = Component> extends TabGuardComp {
+function getVirtualListTemplate(cssIdentifier: string) {
+    return (
+        /* html */
+        `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
+            <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
+        </div>`
+    );
+}
+
+export class VirtualList<
+    C extends Component<any> = Component<any>,
+    TEventType extends string = ComponentEvent,
+> extends TabGuardComp<TEventType> {
     private resizeObserverService: ResizeObserverService;
     protected animationFrameService: AnimationFrameService;
     private environment: Environment;
@@ -55,7 +68,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(params?: VirtualListParams) {
-        super(VirtualList.getTemplate(params?.cssIdentifier || 'default'));
+        super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
 
         const { cssIdentifier = 'default', ariaRole = 'listbox', listName } = params || {};
 
@@ -78,11 +91,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         });
 
         this.setAriaProperties();
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_STYLES_CHANGED,
-            this.onGridStylesChanged.bind(this)
-        );
+        this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanged.bind(this) });
     }
 
     private onGridStylesChanged(e: CssVariablesChanged): void {
@@ -147,12 +156,8 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        if (this.navigate(e.shiftKey)) {
-            e.preventDefault();
-        } else {
-            _stopPropagationForAgGrid(e);
-            this.forceFocusOutOfContainer(e.shiftKey);
-        }
+        _stopPropagationForAgGrid(e);
+        this.forceFocusOutOfContainer(e.shiftKey);
     }
 
     private navigate(up: boolean): boolean {
@@ -244,15 +249,6 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.renderedRows.forEach((value, key) => func(value.rowComponent, key));
     }
 
-    private static getTemplate(cssIdentifier: string) {
-        return (
-            /* html */
-            `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
-            </div>`
-        );
-    }
-
     private getItemHeight(): number {
         if (!this.isHeightFromTheme) {
             return this.rowHeight;
@@ -267,7 +263,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         const lastRow = this.model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
-            console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
+            _warnOnce('invalid row index for ensureIndexVisible: ', index);
             return false;
         }
 
@@ -360,7 +356,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
     }
 
-    private drawVirtualRows(softRefresh?: boolean) {
+    protected drawVirtualRows(softRefresh?: boolean) {
         if (!this.isAlive() || !this.model) {
             return;
         }

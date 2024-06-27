@@ -1,19 +1,13 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { deepMerge, getData } from './data';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    GridChartsModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi;
 
@@ -80,7 +74,7 @@ const myCustomThemeLight = deepMerge(commonThemeProperties, {
                 number: {
                     bottom: {
                         line: {
-                            color: '#424242',
+                            stroke: '#424242',
                         },
                         label: {
                             color: '#555555',
@@ -94,7 +88,7 @@ const myCustomThemeLight = deepMerge(commonThemeProperties, {
                 category: {
                     left: {
                         line: {
-                            color: '#424242',
+                            stroke: '#424242',
                         },
                         label: {
                             color: '#555555',

@@ -1,17 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    ClipboardModule,
-    ExcelExportModule,
-    MenuModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, ExcelExportModule, MenuModule]);
 
 var rowData = [
     { a: 1, b: 1, c: 1, d: 1, e: 1 },

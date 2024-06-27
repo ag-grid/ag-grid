@@ -1,6 +1,8 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed,
@@ -18,10 +20,10 @@ import type {
     CellMouseOutEvent,
     CellMouseOverEvent,
     CellValueChangedEvent,
-    ChartCreated,
-    ChartDestroyed,
-    ChartOptionsChanged,
-    ChartRangeSelectionChanged,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
+    ChartOptionsChangedEvent,
+    ChartRangeSelectionChangedEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
@@ -44,7 +46,7 @@ import type {
     DisplayedColumnsChangedEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    ExpandCollapseAllEvent,
+    ExpandOrCollapseAllEvent,
     FillEndEvent,
     FillStartEvent,
     FilterChangedEvent,
@@ -56,6 +58,7 @@ import type {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
+    HeaderFocusedEvent,
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
@@ -71,7 +74,10 @@ import type {
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
-    RowDragEvent,
+    RowDragEndEvent,
+    RowDragEnterEvent,
+    RowDragLeaveEvent,
+    RowDragMoveEvent,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
@@ -106,10 +112,10 @@ import type {
 } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
-import type { AgChartTheme, AgChartThemeOverrides } from '../interfaces/iAgChartOptions';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,
+    FocusGridInnerElementParams,
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetContextMenuItemsParams,
@@ -762,12 +768,16 @@ export interface GridOptions<TData = any> {
 
     // *** Overlays *** //
     /**
-     * Provide a template for 'loading' overlay.
+     * Show or hide the loading overlay.
+     */
+    loading?: boolean;
+
+    /**
+     * Provide a HTML string to override the default loading overlay.
      */
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
-     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
      * @initial
      */
     loadingOverlayComponent?: any;
@@ -775,33 +785,31 @@ export interface GridOptions<TData = any> {
      * Customise the parameters provided to the loading overlay component.
      */
     loadingOverlayComponentParams?: any;
-
     /**
      * Disables the 'loading' overlay.
+     * @deprecated v32 - Deprecated. Use `loading=false` instead.
      * @default false
      * @initial
      */
     suppressLoadingOverlay?: boolean;
 
     /**
-     * Provide a template for 'no rows' overlay.
+     * Provide a HTML string to override the default no-rows overlay.
      */
     overlayNoRowsTemplate?: string;
-
     /**
-     * Provide a custom no rows overlay component.
-     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
+     * Provide a custom no-rows overlay component.
      * @initial
      */
     noRowsOverlayComponent?: any;
     /**
-     * Customise the parameters provided to the no rows overlay component.
+     * Customise the parameters provided to the no-rows overlay component.
      */
     noRowsOverlayComponentParams?: any;
-
     /**
-     * Disables the 'no rows' overlay.
+     * Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      * @default false
+     * @initial
      */
     suppressNoRowsOverlay?: boolean;
 
@@ -1598,12 +1606,10 @@ export interface GridOptions<TData = any> {
     /**
      * **React only**.
      *
-     * If enabled, makes it easier to set up custom components.
-     * If disabled, custom components will either need to have methods declared imperatively,
-     * or the component props will not update reactively. The behaviour with this disabled is deprecated,
-     * and in v32 this will default to `true`.
+     * @deprecated As of v32 custom components are created reactively by default.
+     * Set this property to `false` to switch to the legacy way of declaring custom components imperatively.
      * @initial
-     * @default false
+     * @default true
      */
     reactiveCustomComponents?: boolean;
 
@@ -1683,6 +1689,11 @@ export interface GridOptions<TData = any> {
     createChartContainer?: (params: ChartRefParams<TData>) => void;
 
     // *** Keyboard Navigation *** //
+    /**
+     * Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
+     * @returns `True` if this function should override the grid's default behavior, `False` to allow the grid's default behavior.
+     */
+    focusGridInnerElement?: (params: FocusGridInnerElementParams<TData>) => boolean;
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */
@@ -1798,7 +1809,7 @@ export interface GridOptions<TData = any> {
      */
     resetRowDataOnUpdate?: boolean;
     /**
-     * Allows you to process rows after they are created, so you can do final adding of custom attributes etc.
+     * Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
@@ -2050,19 +2061,19 @@ export interface GridOptions<TData = any> {
     /**
      * A chart has been created.
      */
-    onChartCreated?(event: ChartCreated<TData>): void;
+    onChartCreated?(event: ChartCreatedEvent<TData>): void;
     /**
      * The data range for the chart has been changed.
      */
-    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged<TData>): void;
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChangedEvent<TData>): void;
     /**
-     * Formatting changes have been made by users through the Format Panel.
+     * Formatting changes have been made by users through the Customize Panel.
      */
-    onChartOptionsChanged?(event: ChartOptionsChanged<TData>): void;
+    onChartOptionsChanged?(event: ChartOptionsChangedEvent<TData>): void;
     /**
      * A chart has been destroyed.
      */
-    onChartDestroyed?(event: ChartDestroyed<TData>): void;
+    onChartDestroyed?(event: ChartDestroyedEvent<TData>): void;
 
     // *** Keyboard Navigation *** //
     /**
@@ -2132,19 +2143,19 @@ export interface GridOptions<TData = any> {
     /**
      * A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.
      */
-    onRowDragEnter?(event: RowDragEvent<TData>): void;
+    onRowDragEnter?(event: RowDragEnterEvent<TData>): void;
     /**
      * The mouse has moved while dragging.
      */
-    onRowDragMove?(event: RowDragEvent<TData>): void;
+    onRowDragMove?(event: RowDragMoveEvent<TData>): void;
     /**
      * The mouse has left the grid while dragging.
      */
-    onRowDragLeave?(event: RowDragEvent<TData>): void;
+    onRowDragLeave?(event: RowDragLeaveEvent<TData>): void;
     /**
      * The drag has finished over the grid.
      */
-    onRowDragEnd?(event: RowDragEvent<TData>): void;
+    onRowDragEnd?(event: RowDragEndEvent<TData>): void;
 
     // *** Row Grouping *** //
     /**
@@ -2158,7 +2169,7 @@ export interface GridOptions<TData = any> {
     /**
      * Fired when calling either of the API methods `expandAll()` or `collapseAll()`.
      */
-    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent<TData>): void;
+    onExpandOrCollapseAll?(event: ExpandOrCollapseAllEvent<TData>): void;
     /**
      * Exceeded the `pivotMaxGeneratedColumns` limit when generating columns.
      */
@@ -2187,6 +2198,10 @@ export interface GridOptions<TData = any> {
     onStoreRefreshed?(event: StoreRefreshedEvent<TData>): void;
 
     // *** Selection *** //
+    /**
+     * Header is focused.
+     */
+    onHeaderFocused?(event: HeaderFocusedEvent<TData>): void;
     /**
      * Cell is clicked.
      */
@@ -2354,6 +2369,11 @@ export interface ChartRef {
      * The application is responsible for calling this when the chart is no longer needed.
      */
     destroyChart: () => void;
+    /**
+     * Focuses the chart.
+     * If opening the dialog via the API, the chart is not focused by default, and this method can be used.
+     */
+    focusChart: () => void;
 }
 
 export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef {}

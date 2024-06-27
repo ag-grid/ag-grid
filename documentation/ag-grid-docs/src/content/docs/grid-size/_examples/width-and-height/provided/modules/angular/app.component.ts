@@ -1,7 +1,7 @@
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { NgStyle } from '@angular/common';
@@ -10,7 +10,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 @Component({
     standalone: true,
@@ -19,11 +19,9 @@ ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModul
     template: `
         <div style="height: 100%; display: flex; flex-direction: column;">
             <div style="margin-bottom: 5px;">
-                Set width and height: &nbsp;
-                <button (click)="fillLarge()">100%</button>
-                <button (click)="fillMedium()">60%</button>
-                <button (click)="fillExact()">400px</button>
-                <button (click)="noSize()">None (default size)</button>
+                <button (click)="fillLarge()">Fill 100%</button>
+                <button (click)="fillMedium()">Fill 60%</button>
+                <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
             </div>
             <div [ngStyle]="style">
                 <ag-grid-angular
@@ -84,10 +82,6 @@ export class AppComponent implements OnInit {
 
     fillExact() {
         this.setWidthAndHeight('400px', '400px');
-    }
-
-    noSize() {
-        this.setWidthAndHeight('', '');
     }
 
     setWidthAndHeight(width: string, height: string) {

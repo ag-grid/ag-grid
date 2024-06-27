@@ -12,7 +12,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, _exists, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _exists, _warnOnce } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -38,7 +38,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.columnModel = beans.columnModel;
         this.dataTypeService = beans.dataTypeService;
         this.rowModel = beans.rowModel;
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private enabled: boolean;
@@ -65,9 +65,9 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         };
 
         this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, (event: NewColumnsLoadedEvent) =>
-            this.onNewColumnsLoaded(event)
-        );
+        this.addManagedEventListeners({
+            newColumnsLoaded: (event) => this.onNewColumnsLoaded(event),
+        });
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
     }
 
@@ -166,7 +166,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {
             const event: WithoutGridCommon<AdvancedFilterEnabledChangedEvent> = {
-                type: Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+                type: 'advancedFilterEnabledChanged',
                 enabled: this.enabled,
             };
             this.eventService.dispatchEvent(event);
@@ -235,9 +235,11 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         }
 
         this.ctrl.setInputDisabled(true);
-        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => {
-            destroyFunc?.();
-            this.ctrl.setInputDisabled(false);
+        const [destroyFunc] = this.addManagedEventListeners({
+            dataTypesInferred: () => {
+                destroyFunc?.();
+                this.ctrl.setInputDisabled(false);
+            },
         });
     }
 }

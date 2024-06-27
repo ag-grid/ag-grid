@@ -6,7 +6,7 @@ import type {
     RichCellEditorParams,
     RichSelectParams,
 } from '@ag-grid-community/core';
-import { Events, PopupComponent, _missing, _warnOnce } from '@ag-grid-community/core';
+import { PopupComponent, _missing, _warnOnce } from '@ag-grid-community/core';
 import { AgRichSelect } from '@ag-grid-enterprise/core';
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
@@ -43,24 +43,14 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             });
         }
 
-        this.addManagedListener(
-            this.richSelect,
-            Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-            this.onEditorPickerValueSelected.bind(this)
-        );
-        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
+        this.addManagedListeners(this.richSelect, {
+            fieldPickerValueSelected: this.onEditorPickerValueSelected.bind(this),
+        });
         this.focusAfterAttached = cellStartedEdit;
     }
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         this.params.stopEditing(!e.fromEnterKey);
-    }
-
-    private onEditorFocusOut(e: FocusEvent): void {
-        if (this.richSelect.getGui().contains(e.relatedTarget as Element)) {
-            return;
-        }
-        this.params.stopEditing(true);
     }
 
     private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
@@ -81,6 +71,8 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             valuePlaceholder,
             eventKey,
             multiSelect,
+            suppressDeselectAll,
+            suppressMultiSelectPillRenderer,
         } = this.params;
 
         const ret: RichSelectParams = {
@@ -102,6 +94,8 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             placeholder: valuePlaceholder,
             initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
             multiSelect,
+            suppressDeselectAll,
+            suppressMultiSelectPillRenderer,
         };
 
         let valuesResult;
@@ -118,6 +112,13 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             ret.searchStringCreator = this.getSearchStringCallback(valuesResult);
         } else {
             valuesPromise = valuesResult;
+        }
+
+        if (multiSelect && allowTyping) {
+            this.params.allowTyping = ret.allowTyping = false;
+            _warnOnce(
+                'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.'
+            );
         }
 
         return { params: ret, valuesPromise };
@@ -171,6 +172,10 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
                 }
             }
         });
+    }
+
+    public focusIn(): void {
+        this.richSelect.getFocusableElement().focus();
     }
 
     public getValue(): any {

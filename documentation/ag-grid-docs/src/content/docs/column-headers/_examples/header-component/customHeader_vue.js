@@ -1,7 +1,7 @@
 export default {
     template: `
       <div>
-      <div v-if="params.enableMenu" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
+      <div v-if="params.enableFilterButton" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
         <i class="fa" :class="params.menuIcon"></i>
       </div>
       <div class="customHeaderLabel">{{ params.displayName }}</div>
@@ -33,9 +33,10 @@ export default {
 
         onSortChanged() {
             this.ascSort = this.descSort = this.noSort = 'inactive';
-            if (this.params.column.isSortAscending()) {
+            const sort = this.params.column.getSort();
+            if (sort === 'asc') {
                 this.ascSort = 'active';
-            } else if (this.params.column.isSortDescending()) {
+            } else if (sort === 'desc') {
                 this.descSort = 'active';
             } else {
                 this.noSort = 'active';

@@ -65,13 +65,6 @@ export function _utf8_encode(s: string | null): string {
     }
 
     function encodeCodePoint(point: number): string {
-        if (point >= 0 && point <= 31 && point !== 10) {
-            const convertedCode = point.toString(16).toUpperCase();
-            const paddedCode = convertedCode.padStart(4, '0');
-
-            return `_x${paddedCode}_`;
-        }
-
         if ((point & 0xffffff80) == 0) {
             // 1-byte sequence
             return stringFromCharCode(point);

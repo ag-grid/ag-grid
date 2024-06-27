@@ -1,7 +1,8 @@
-import type { AgComponentSelector, AgLabelParams, LabelAlignment } from '@ag-grid-community/core';
-import { AgAbstractLabel, AgInputNumberField, Events, RefPlaceholder } from '@ag-grid-community/core';
+import type { AgInputNumberField, AgLabelParams, ComponentSelector, LabelAlignment } from '@ag-grid-community/core';
+import { AgAbstractLabel, AgInputNumberFieldSelector, RefPlaceholder } from '@ag-grid-community/core';
 
-import { AgInputRange } from './agInputRange';
+import type { AgInputRange } from './agInputRange';
+import { AgInputRangeSelector } from './agInputRange';
 
 export interface AgSliderParams extends AgLabelParams {
     minValue?: number;
@@ -12,17 +13,8 @@ export interface AgSliderParams extends AgLabelParams {
     onValueChange?: (newValue: number) => void;
 }
 
-export class AgSlider extends AgAbstractLabel<AgSliderParams> {
-    static readonly selector: AgComponentSelector = 'AG-SLIDER';
-
-    private static TEMPLATE /* html */ = `<div class="ag-slider">
-            <label data-ref="eLabel"></label>
-            <div class="ag-wrapper ag-slider-wrapper">
-                <ag-input-range data-ref="eSlider"></ag-input-range>
-                <ag-input-number-field data-ref="eText"></ag-input-number-field>
-            </div>
-        </div>`;
-
+export type AgSliderEvent = 'fieldValueChanged';
+export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eSlider: AgInputRange = RefPlaceholder;
     private readonly eText: AgInputNumberField = RefPlaceholder;
@@ -30,7 +22,17 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
     protected override labelAlignment: LabelAlignment = 'top';
 
     constructor(config?: AgSliderParams) {
-        super(config, AgSlider.TEMPLATE, [AgInputRange, AgInputNumberField]);
+        super(
+            config,
+            /* html */ `<div class="ag-slider">
+            <label data-ref="eLabel"></label>
+            <div class="ag-wrapper ag-slider-wrapper">
+                <ag-input-range data-ref="eSlider"></ag-input-range>
+                <ag-input-number-field data-ref="eText"></ag-input-number-field>
+            </div>
+        </div>`,
+            [AgInputRangeSelector, AgInputNumberFieldSelector]
+        );
     }
 
     public override postConstruct() {
@@ -58,17 +60,20 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {
-        const eventChanged = Events.EVENT_FIELD_VALUE_CHANGED;
-        this.addManagedListener(this.eText, eventChanged, () => {
-            const textValue = parseFloat(this.eText.getValue()!);
-            this.eSlider.setValue(textValue.toString(), true);
-            callbackFn(textValue || 0);
+        this.addManagedListeners(this.eText, {
+            fieldValueChanged: () => {
+                const textValue = parseFloat(this.eText.getValue()!);
+                this.eSlider.setValue(textValue.toString(), true);
+                callbackFn(textValue || 0);
+            },
         });
 
-        this.addManagedListener(this.eSlider, eventChanged, () => {
-            const sliderValue = this.eSlider.getValue()!;
-            this.eText.setValue(sliderValue, true);
-            callbackFn(parseFloat(sliderValue));
+        this.addManagedListeners(this.eSlider, {
+            fieldValueChanged: () => {
+                const sliderValue = this.eSlider.getValue()!;
+                this.eText.setValue(sliderValue, true);
+                callbackFn(parseFloat(sliderValue));
+            },
         });
 
         return this;
@@ -110,7 +115,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
         this.eSlider.setValue(value, true);
 
         if (!silent) {
-            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' });
         }
 
         return this;
@@ -122,3 +127,8 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams> {
         return this;
     }
 }
+
+export const AgSliderSelector: ComponentSelector = {
+    selector: 'AG-SLIDER',
+    component: AgSlider,
+};

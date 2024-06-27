@@ -1,0 +1,319 @@
+@use 'design-system' as *;
+
+.hasLicenseInput {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-5;
+
+    label {
+        display: flex;
+        flex-direction: row;
+        gap: $spacing-size-2;
+        cursor: pointer;
+    }
+}
+
+.licenceWrapper {
+    margin-top: $spacing-size-2;
+    position: relative;
+}
+
+.license,
+.licencePlaceholder {
+    width: 100%;
+    height: 14.2em;
+    padding: $spacing-size-4;
+    word-break: break-all;
+    font-family: var(--text-monospace-font-family);
+    font-size: 15px;
+    line-height: var(--text-lh-base);
+}
+
+.license {
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
+    background-color: var(--color-bg-secondary);
+    color: var(--color-fg-secondary);
+
+    &::placeholder {
+        opacity: 0;
+    }
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-tertiary);
+    }
+}
+
+.licencePlaceholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    pointer-events: none;
+
+    b {
+        opacity: 0.6;
+    }
+
+    span {
+        opacity: 0.5;
+    }
+}
+
+.licenceWrapper + :global(.alert) {
+    margin-top: 0;
+}
+
+.licenseOutput {
+    margin-top: $spacing-size-1;
+    margin-bottom: $spacing-size-3;
+
+    span {
+        margin-right: $spacing-size-5;
+    }
+
+    .valid {
+        color: var(--color-positive);
+
+        svg {
+            --color-icon: var(--color-positive);
+        }
+    }
+
+    .invalid {
+        color: var(--color-negative);
+
+        svg {
+            --color-icon: var(--color-negative);
+        }
+    }
+
+    :global('.icon') {
+        --icon-size: 0.75em;
+    }
+}
+
+.licenseData {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-8;
+    margin-top: $spacing-size-2;
+
+    .inputList {
+        margin-bottom: $spacing-size-10;
+    }
+}
+
+.expired {
+    color: var(--color-negative);
+}
+
+.frameworkImportContainer,
+.frameworkContainer,
+.importContainer {
+    display: flex;
+    align-items: center;
+}
+
+.frameworkImportContainer {
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+
+    .divider {
+        align-self: stretch;
+        width: 1px;
+        background-color: var(--color-util-gray-300);
+    }
+}
+
+.importsLink {
+    width: 100%;
+    margin-top: -$spacing-size-2;
+
+    a {
+        font-weight: var(--text-regular);
+    }
+}
+
+.frameworkContainer {
+    gap: $spacing-size-2;
+}
+
+.frameworkLogo {
+    width: $spacing-size-6;
+    height: $spacing-size-6;
+    border-radius: var(--radius-xs);
+}
+
+.inputList,
+.productsList {
+    display: flex;
+    gap: $spacing-size-8;
+    margin-top: $spacing-size-1;
+
+    label {
+        display: flex;
+        align-items: center;
+        gap: $spacing-size-2;
+    }
+}
+
+.productsList {
+    gap: $spacing-size-3;
+    flex-wrap: wrap;
+}
+
+.productWrapper {
+    padding: $spacing-size-3;
+    width: calc(50% - #{$spacing-size-3} / 2);
+    min-width: 260px;
+    border: 1px solid var(--color-border-secondary);
+    background-color: color-mix(in srgb, var(--color-util-brand-50), var(--color-bg-primary));
+    border-radius: var(--radius-sm);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-200);
+    }
+}
+
+.licensedProduct {
+    strong {
+        position: relative;
+        font-size: var(--text-fs-lg);
+        line-height: var(--text-lh-ultra-tight);
+
+        &::after {
+            position: absolute;
+            top: $spacing-size-6;
+            left: 0;
+            font-size: var(--text-fs-sm);
+            font-weight: var(--text-regular);
+            color: var(--color-fg-quinary);
+            min-width: 160px;
+        }
+    }
+}
+
+.integratedProduct {
+    margin-top: $spacing-size-5;
+}
+
+.icQuestion {
+    display: flex;
+    align-items: center;
+
+    label {
+        margin-top: 0;
+    }
+
+    input {
+        position: relative;
+        margin-right: $spacing-size-1;
+        top: 4px;
+    }
+}
+
+.error {
+    border: 1px solid var(--color-input-error);
+    background-color: var(--color-util-warning-100);
+}
+
+.results {
+    margin-top: $spacing-size-8;
+
+    h2 {
+        margin-top: $spacing-size-12;
+    }
+}
+
+.reposTable {
+    thead {
+        line-height: 1.2;
+        vertical-align: bottom;
+    }
+
+    th:first-child,
+    td:first-child {
+        padding-left: 0;
+    }
+
+    td {
+        vertical-align: middle;
+        text-transform: capitalize;
+    }
+
+    .frameworkLogo {
+        margin-right: $spacing-size-1;
+    }
+
+    @media screen and (max-width: 900px) {
+        thead {
+            display: none;
+        }
+
+        tr,
+        td {
+            display: block;
+            text-align: left;
+        }
+
+        tr {
+            padding: $spacing-size-4 0;
+
+            &:nth-child(even) {
+                background-color: unset;
+            }
+        }
+
+        td {
+            padding: 0;
+            line-height: var(--text-lh-tight);
+            font-weight: var(--text-bold);
+
+            &:not(:last-child) {
+                margin-bottom: $spacing-size-2;
+            }
+        }
+
+        td[data-column]::before {
+            content: attr(data-column) ': ';
+            font-weight: var(--text-regular);
+            color: var(--color-fg-secondary);
+        }
+    }
+
+    @media screen and (min-width: 900px) {
+        th:last-child,
+        td:last-child {
+            padding-right: 0;
+            text-align: right;
+        }
+
+        [data-column='Github Repo'] {
+            width: 280px;
+        }
+
+        [data-column='Framework'] {
+            width: 140px;
+        }
+
+        [data-column='Import Type'] {
+            width: 140px;
+        }
+    }
+
+    @media screen and (min-width: 1600px) {
+        [data-column='License Type'] {
+            width: 160px;
+        }
+    }
+}
+
+.repoButton {
+    > svg:global(.icon) {
+        --icon-size: 1.5em;
+
+        position: relative;
+        right: 4px;
+    }
+}

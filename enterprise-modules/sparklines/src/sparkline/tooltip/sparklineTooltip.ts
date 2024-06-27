@@ -29,13 +29,11 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
     let contentHtml;
 
     if (color) {
-        titleHtml = title
-            ? `<span class="${SparklineTooltip.class}-title"; style="color: ${color}">${title}</span>`
-            : '';
-        contentHtml = `<span class="${SparklineTooltip.class}-content" style="color: ${color}">${content}</span>`;
+        titleHtml = title ? `<span class="${TooltipClass}-title"; style="color: ${color}">${title}</span>` : '';
+        contentHtml = `<span class="${TooltipClass}-content" style="color: ${color}">${content}</span>`;
     } else {
-        titleHtml = title ? `<span class="${SparklineTooltip.class}-title">${title}</span>` : '';
-        contentHtml = `<span class="${SparklineTooltip.class}-content">${content}</span>`;
+        titleHtml = title ? `<span class="${TooltipClass}-title">${title}</span>` : '';
+        contentHtml = `<span class="${TooltipClass}-content">${content}</span>`;
     }
 
     let style = `opacity: ${opacity}`;
@@ -43,16 +41,15 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
         style += `; background-color: ${backgroundColor.toLowerCase()}`;
     }
 
-    return `<div class="${SparklineTooltip.class}" style="${style}">
+    return `<div class="${TooltipClass}" style="${style}">
                 ${titleHtml}
                 ${contentHtml}
             </div>`;
 }
 
+const TooltipClass = 'ag-sparkline-tooltip';
 export class SparklineTooltip {
     element: HTMLElement = document.createElement('div');
-
-    static class: string = 'ag-sparkline-tooltip';
 
     constructor() {
         const tooltipRoot = document.body;
@@ -62,23 +59,23 @@ export class SparklineTooltip {
     isVisible(): boolean {
         const { element } = this;
         if (element.classList) {
-            return !element.classList.contains(`${SparklineTooltip.class}-wrapper-hidden`);
+            return !element.classList.contains(`${TooltipClass}-wrapper-hidden`);
         }
 
         // IE11
         const classes = element.getAttribute('class');
         if (classes) {
-            return classes.split(' ').indexOf(`${SparklineTooltip.class}-wrapper-hidden`) < 0;
+            return classes.split(' ').indexOf(`${TooltipClass}-wrapper-hidden`) < 0;
         }
 
         return false;
     }
 
     updateClass(visible?: boolean) {
-        const classList = [`${SparklineTooltip.class}-wrapper`];
+        const classList = [`${TooltipClass}-wrapper`];
 
         if (visible !== true) {
-            classList.push(`${SparklineTooltip.class}-wrapper-hidden`);
+            classList.push(`${TooltipClass}-wrapper-hidden`);
         }
 
         this.element.setAttribute('class', classList.join(' '));

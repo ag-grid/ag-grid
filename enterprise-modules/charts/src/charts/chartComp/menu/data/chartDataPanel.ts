@@ -1,8 +1,12 @@
-import type { BeanCollection, ChartDataPanel as ChartDataPanelType, ChartType } from '@ag-grid-community/core';
+import type {
+    BeanCollection,
+    ChartDataPanel as ChartDataPanelType,
+    ChartType,
+    IChartService,
+} from '@ag-grid-community/core';
 import { AgToggleButton, Component, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
-import type { ChartService } from '../../../chartService';
-import { ChartController } from '../../chartController';
+import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getMaxNumCategories, getMaxNumSeries, supportsInvertedCategorySeries } from '../../utils/seriesTypeMapper';
@@ -22,14 +26,12 @@ const DefaultDataPanelDef: ChartDataPanelType = {
 };
 
 export class ChartDataPanel extends Component {
-    public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
-
     protected chartTranslationService: ChartTranslationService;
-    private chartService: ChartService;
+    private chartService: IChartService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
-        this.chartService = beans.chartService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+        this.chartService = beans.chartService!;
     }
 
     private readonly chartController: ChartController;
@@ -44,7 +46,7 @@ export class ChartDataPanel extends Component {
     private panels: Component[] = [];
 
     constructor(private readonly chartMenuContext: ChartMenuContext) {
-        super(ChartDataPanel.TEMPLATE);
+        super(/* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`);
 
         this.chartController = chartMenuContext.chartController;
     }
@@ -54,16 +56,11 @@ export class ChartDataPanel extends Component {
         this.isSwitchCategorySeriesToggled = this.chartController.isCategorySeriesSwitched();
 
         this.updatePanels();
-        this.addManagedListener(
-            this.chartController,
-            ChartController.EVENT_CHART_MODEL_UPDATE,
-            this.updatePanels.bind(this)
-        );
-        this.addManagedListener(
-            this.chartController,
-            ChartController.EVENT_CHART_API_UPDATE,
-            this.updatePanels.bind(this)
-        );
+        const listener = this.updatePanels.bind(this);
+        this.addManagedListeners(this.chartController, {
+            chartModelUpdate: listener,
+            chartApiUpdate: listener,
+        });
     }
 
     public override destroy(): void {

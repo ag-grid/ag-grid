@@ -10,17 +10,9 @@
       "outputs": [],
       "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
     },
-    "build:updateWithCoreExports": {
-      "dependsOn": ["@ag-grid-community/core:build"],
-      "cache": true,
-      "command": "node updateMainTsWithCoreExports.js",
-      "options": {
-        "cwd": "packages/ag-grid-enterprise"
-      }
-    },
     "build:umd": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build", "build:updateWithCoreExports", "build:copy-styles"],
+      "dependsOn": ["^build", "@ag-grid-community/core:build", "build:copy-styles"],
       "inputs": [
         "tsDefaults",
         {
@@ -46,10 +38,6 @@
         "cwd": "packages/ag-grid-enterprise"
       }
     },
-    "build:format-copied-files": {
-      "command": "nx format:write --projects ag-grid-enterprise",
-      "dependsOn": ["build:copy-styles"]
-    },
     "build:types": {
       "dependsOn": ["^build:types"],
       "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
@@ -60,7 +48,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:updateWithCoreExports", "build:format-copied-files"],
+      "dependsOn": ["^build", "@ag-grid-community/core:build"],
       "inputs": [
         "tsDefaults",
         {
@@ -76,7 +64,7 @@
         "external": ["ag-grid-community"],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "format": ["cjs", "esm"],
         "sourcemap": true
       },

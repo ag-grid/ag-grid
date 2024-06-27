@@ -1,19 +1,19 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
-    { headerName: 'Athlete Name', field: 'athlete', suppressHeaderMenuButton: true },
+    { headerName: 'Athlete Name', field: 'athlete', suppressHeaderFilterButton: true },
     { field: 'age', sortable: false },
-    { field: 'country', suppressHeaderMenuButton: true },
+    { field: 'country', suppressHeaderFilterButton: true },
     { field: 'year', sortable: false },
-    { field: 'date', suppressHeaderMenuButton: true, sortable: false },
+    { field: 'date', suppressHeaderFilterButton: true, sortable: false },
     { field: 'sport', sortable: false },
     { field: 'gold' },
     { field: 'silver', sortable: false },
-    { field: 'bronze', suppressHeaderMenuButton: true },
+    { field: 'bronze', suppressHeaderFilterButton: true },
     { field: 'total', sortable: false },
 ];
 
@@ -27,7 +27,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
         width: 150,
         headerComponentParams: {
-            menuIcon: 'fa-bars',
             template: `<div class="ag-cell-label-container" role="presentation">
                     <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
                     <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>

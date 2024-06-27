@@ -1,5 +1,31 @@
 [
     {
+        "version": "32.0.0",
+        "date": "July 1nd 2024",
+        "highlights": [
+            {
+                "text": "Rich Select Editor Multi Selection Support",
+                "path": "./provided-cell-editors-rich-select/#multi-selection"
+            },
+            {
+                "text": "Reduced Bundle Size"
+            },
+            {
+                "text": "Translation of Localisation Strings",
+                "path": "./localisation"
+            },
+            {
+                "text": "Improved Chart Tool Panel UI",
+                "path": "./integrated-charts-chart-tool-panels"
+            },
+            {
+                "text": "Accessibility Updates",
+                "path": "./accessibility"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-32"
+    },
+    {
         "version": "31.3.1",
         "date": "April 30th 2024",
         "highlights": [
@@ -24,6 +50,7 @@
                 "path": "./keyboard-navigation/"
             }
         ],
+        "versionType": "Minor",
         "notesPath": "./upgrading-to-ag-grid-31-3"
     },
     {

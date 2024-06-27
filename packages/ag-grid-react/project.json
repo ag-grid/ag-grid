@@ -25,10 +25,6 @@
         "cwd": "packages/ag-grid-react"
       }
     },
-    "build:format-copied-files": {
-      "command": "nx format:write --projects ag-grid-react",
-      "dependsOn": ["build:copy-source"]
-    },
     "build:types": {
       "executor": "@nx/js:tsc",
       "dependsOn": ["@ag-grid-community/core:build:types", "build:copy-source"],
@@ -59,7 +55,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["ag-grid-community:build:types", "build:copy-source", "build:format-copied-files"],
+      "dependsOn": ["ag-grid-community:build:types", "build:copy-source"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -77,7 +73,7 @@
         "external": ["ag-grid-community", "react", "react-dom"],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "format": ["cjs", "esm"],
         "sourcemap": true
       },
@@ -99,7 +95,7 @@
         "tsConfig": "packages/ag-grid-react/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
-        "target": "es6",
+        "target": "es2020",
         "bundle": true,
         "thirdParty": true,
         "skipTypeCheck": true,

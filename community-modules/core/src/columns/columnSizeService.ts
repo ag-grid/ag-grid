@@ -6,6 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEventType } from '../events';
 import type { Column } from '../interfaces/iColumn';
 import { _removeFromArray, _removeFromUnorderedArray } from '../utils/array';
+import { _errorOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel } from './columnModel';
@@ -169,7 +170,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
                 if (loopCount > 1000) {
                     // this should never happen, but in the future, someone might introduce a bug here,
                     // so we stop the browser from hanging and report bug properly
-                    console.error('AG Grid: infinite loop in resizeColumnSets');
+                    _errorOnce('infinite loop in resizeColumnSets');
                     break;
                 }
 
@@ -209,11 +210,11 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
                     const minWidth = col.getMinWidth();
                     const maxWidth = col.getMaxWidth();
 
-                    if (_exists(minWidth) && colNewWidth < minWidth) {
+                    if (colNewWidth < minWidth) {
                         colNewWidth = minWidth;
                         finishedCols[col.getId()] = true;
                         finishedColsGrew = true;
-                    } else if (_exists(maxWidth) && maxWidth > 0 && colNewWidth > maxWidth) {
+                    } else if (maxWidth > 0 && colNewWidth > maxWidth) {
                         colNewWidth = maxWidth;
                         finishedCols[col.getId()] = true;
                         finishedColsGrew = true;
@@ -272,7 +273,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
             minWidthAccumulated += minWidth || 0;
 
             const maxWidth = col.getMaxWidth();
-            if (_exists(maxWidth) && maxWidth > 0) {
+            if (maxWidth > 0) {
                 maxWidthAccumulated += maxWidth;
             } else {
                 // if at least one columns has no max width, it means the group of columns
@@ -338,7 +339,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
             if (isFlex) {
                 flexingColumns.push(displayedCenterCols[i]);
                 totalFlex += displayedCenterCols[i].getFlex();
-                minimumFlexedWidth += displayedCenterCols[i].getMinWidth() ?? 0;
+                minimumFlexedWidth += displayedCenterCols[i].getMinWidth();
             } else {
                 knownColumnsWidth += displayedCenterCols[i].getActualWidth();
             }
@@ -354,7 +355,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
         if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
             // known columns and the minimum width of all the flex cols are too wide for viewport
             // so don't flex
-            flexingColumns.forEach((col) => col.setActualWidth(col.getMinWidth() ?? 0, source));
+            flexingColumns.forEach((col) => col.setActualWidth(col.getMinWidth(), source));
 
             // No columns should flex, but all have been changed. Swap arrays so events fire properly.
             // Expensive logic won't execute as flex columns is empty.
@@ -376,9 +377,9 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
                 const minWidth = col.getMinWidth();
                 const maxWidth = col.getMaxWidth();
 
-                if (_exists(minWidth) && widthByFlexRule < minWidth) {
+                if (widthByFlexRule < minWidth) {
                     constrainedWidth = minWidth;
-                } else if (_exists(maxWidth) && widthByFlexRule > maxWidth) {
+                } else if (widthByFlexRule > maxWidth) {
                     constrainedWidth = maxWidth;
                 }
 
@@ -515,23 +516,19 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
                     const widthOverride = limitsMap?.[column.getId()];
                     const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth;
                     const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
-                    const colMinWidth = column.getMinWidth() ?? 0;
-                    const colMaxWidth = column.getMaxWidth() ?? Number.MAX_VALUE;
+                    const colMinWidth = column.getMinWidth();
+                    const colMaxWidth = column.getMaxWidth();
                     const minWidth =
-                        typeof minOverride === 'number' && minOverride > colMinWidth
-                            ? minOverride
-                            : column.getMinWidth();
+                        typeof minOverride === 'number' && minOverride > colMinWidth ? minOverride : colMinWidth;
                     const maxWidth =
-                        typeof maxOverride === 'number' && maxOverride < colMaxWidth
-                            ? maxOverride
-                            : column.getMaxWidth();
+                        typeof maxOverride === 'number' && maxOverride < colMaxWidth ? maxOverride : colMaxWidth;
                     let newWidth = Math.round(column.getActualWidth() * scale);
 
-                    if (_exists(minWidth) && newWidth < minWidth) {
+                    if (newWidth < minWidth) {
                         newWidth = minWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
-                    } else if (_exists(maxWidth) && newWidth > maxWidth) {
+                    } else if (newWidth > maxWidth) {
                         newWidth = maxWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;

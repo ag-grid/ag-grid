@@ -1,6 +1,6 @@
 import type { AgPromise } from '../utils/promise';
 
-export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible';
+export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible' | 'popupPositioning';
 
 export interface IFrameworkOverrides {
     setInterval(action: any, interval?: any): AgPromise<number>;
@@ -60,4 +60,13 @@ export interface IFrameworkOverrides {
      * @param path Optional path to append to the base url. i.e 'aligned-grids' Does not need the leading `/`
      */
     getDocLink(path?: string): string;
+
+    /** Used by `RowRenderer` when getting lock. Allows React 17- async refreshes to work. */
+    getLockOnRefresh?(): void;
+
+    /** Used by `RowRenderer` when releasing lock. Allows React 17- async refreshes to work. */
+    releaseLockOnRefresh?(): void;
+
+    /** Used by `RowRenderer` when a refresh happens whilst another refresh is ongoing. */
+    getLockOnRefreshError?(): string;
 }

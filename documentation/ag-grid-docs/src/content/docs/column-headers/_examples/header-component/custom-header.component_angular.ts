@@ -12,7 +12,7 @@ export interface ICustomHeaderParams {
     imports: [NgClass],
     template: `
         <div>
-            @if (params.enableMenu) {
+            @if (params.enableFilterButton) {
                 <div #menuButton class="customHeaderMenuButton" (click)="onMenuClicked($event)">
                     <i class="fa {{ params.menuIcon }}"></i>
                 </div>
@@ -79,9 +79,10 @@ export class CustomHeader implements IHeaderAngularComp {
 
     onSortChanged() {
         this.ascSort = this.descSort = this.noSort = 'inactive';
-        if (this.params.column.isSortAscending()) {
+        const sort = this.params.column.getSort();
+        if (sort === 'asc') {
             this.ascSort = 'active';
-        } else if (this.params.column.isSortDescending()) {
+        } else if (sort === 'desc') {
             this.descSort = 'active';
         } else {
             this.noSort = 'active';

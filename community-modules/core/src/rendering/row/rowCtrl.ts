@@ -4,24 +4,23 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
-import { RowNode } from '../../entities/rowNode';
+import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
-import type { EventsType } from '../../eventKeys';
+import type { AgEventType } from '../../eventTypes';
 import type {
-    AgEventListener,
     CellFocusedEvent,
     RowClickedEvent,
     RowDoubleClickedEvent,
     RowEvent,
     VirtualRowRemovedEvent,
 } from '../../events';
-import { Events } from '../../events';
-import { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { BrandedType } from '../../interfaces/brandedType';
-import type { ProcessRowParams } from '../../interfaces/iCallbackParams';
+import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
+import type { IEventListener } from '../../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
@@ -29,7 +28,7 @@ import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
-import { _isElementChildOfClass, _isVisible } from '../../utils/dom';
+import { _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
@@ -41,13 +40,7 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import type { RowCssClassCalculatorParams } from './rowCssClassCalculator';
 import { RowDragComp } from './rowDragComp';
 
-enum RowType {
-    Normal = 'Normal',
-    FullWidth = 'FullWidth',
-    FullWidthLoading = 'FullWidthLoading',
-    FullWidthGroup = 'FullWidthGroup',
-    FullWidthDetail = 'FullWidthDetail',
-}
+type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
 let instanceIdSequence = 0;
 export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
@@ -78,7 +71,8 @@ interface CellCtrlListAndMap {
     map: { [key: ColumnInstanceId]: CellCtrl };
 }
 
-export class RowCtrl extends BeanStub {
+export type RowCtrlEvent = RenderedRowEvent;
+export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
     private instanceId: RowCtrlInstanceId;
@@ -123,7 +117,7 @@ export class RowCtrl extends BeanStub {
         fullWidth: false,
     };
 
-    private rowDragComps: BeanStub[] = [];
+    private rowDragComps: RowDragComp[] = [];
 
     private readonly useAnimationFrameForCreate: boolean;
 
@@ -211,19 +205,22 @@ export class RowCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
-        const gui: RowGui = { rowComp, element, containerType };
-        this.allRowGuis.push(gui);
-
-        if (containerType === RowContainerType.LEFT) {
+    private updateGui(containerType: RowContainerType, gui: RowGui | undefined) {
+        if (containerType === 'left') {
             this.leftGui = gui;
-        } else if (containerType === RowContainerType.RIGHT) {
+        } else if (containerType === 'right') {
             this.rightGui = gui;
-        } else if (containerType === RowContainerType.FULL_WIDTH) {
+        } else if (containerType === 'fullWidth') {
             this.fullWidthGui = gui;
         } else {
             this.centerGui = gui;
         }
+    }
+
+    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
+        const gui: RowGui = { rowComp, element, containerType };
+        this.allRowGuis.push(gui);
+        this.updateGui(containerType, gui);
 
         this.initialiseRowComp(gui);
 
@@ -238,26 +235,11 @@ export class RowCtrl extends BeanStub {
 
     public unsetComp(containerType: RowContainerType): void {
         this.allRowGuis = this.allRowGuis.filter((rowGui) => rowGui.containerType !== containerType);
-
-        switch (containerType) {
-            case RowContainerType.LEFT:
-                this.leftGui = undefined;
-                break;
-            case RowContainerType.RIGHT:
-                this.rightGui = undefined;
-                break;
-            case RowContainerType.FULL_WIDTH:
-                this.fullWidthGui = undefined;
-                break;
-            case RowContainerType.CENTER:
-                this.centerGui = undefined;
-                break;
-            default:
-        }
+        this.updateGui(containerType, undefined);
     }
 
     public isCacheable(): boolean {
-        return this.rowType === RowType.FullWidthDetail && this.gos.get('keepDetailRows');
+        return this.rowType === 'FullWidthDetail' && this.gos.get('keepDetailRows');
     }
 
     public setCached(cached: boolean): void {
@@ -401,7 +383,7 @@ export class RowCtrl extends BeanStub {
     private setupFullWidth(gui: RowGui): void {
         const pinned = this.getPinnedForContainer(gui.containerType);
 
-        if (this.rowType == RowType.FullWidthDetail) {
+        if (this.rowType == 'FullWidthDetail') {
             if (
                 !ModuleRegistry.__assertRegistered(
                     ModuleNames.MasterDetailModule,
@@ -473,15 +455,15 @@ export class RowCtrl extends BeanStub {
         const isFullWidthGroup = isGroupRow && this.gos.isGroupUseEntireRow(pivotMode);
 
         if (isStub) {
-            this.rowType = RowType.FullWidthLoading;
+            this.rowType = 'FullWidthLoading';
         } else if (isDetailCell) {
-            this.rowType = RowType.FullWidthDetail;
+            this.rowType = 'FullWidthDetail';
         } else if (isFullWidthCell) {
-            this.rowType = RowType.FullWidth;
+            this.rowType = 'FullWidth';
         } else if (isFullWidthGroup) {
-            this.rowType = RowType.FullWidthGroup;
+            this.rowType = 'FullWidthGroup';
         } else {
-            this.rowType = RowType.Normal;
+            this.rowType = 'Normal';
         }
     }
 
@@ -574,18 +556,14 @@ export class RowCtrl extends BeanStub {
 
     private getCellCtrlsForContainer(containerType: RowContainerType) {
         switch (containerType) {
-            case RowContainerType.LEFT:
+            case 'left':
                 return this.leftCellCtrls.list;
-            case RowContainerType.RIGHT:
+            case 'right':
                 return this.rightCellCtrls.list;
-            case RowContainerType.FULL_WIDTH:
+            case 'fullWidth':
                 return [];
-            case RowContainerType.CENTER:
+            case 'center':
                 return this.centerCellCtrls.list;
-            default: {
-                const exhaustiveCheck: never = containerType;
-                throw new Error(`Unhandled case: ${exhaustiveCheck}`);
-            }
         }
     }
 
@@ -685,7 +663,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public isFullWidth(): boolean {
-        return this.rowType !== RowType.Normal;
+        return this.rowType !== 'Normal';
     }
 
     public refreshFullWidth(): boolean {
@@ -713,41 +691,37 @@ export class RowCtrl extends BeanStub {
 
     private addListeners(): void {
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_HEIGHT_CHANGED]: () => this.onRowHeightChanged(),
-            [RowNode.EVENT_ROW_SELECTED]: () => this.onRowSelected(),
-            [RowNode.EVENT_ROW_INDEX_CHANGED]: this.onRowIndexChanged.bind(this),
-            [RowNode.EVENT_TOP_CHANGED]: this.onTopChanged.bind(this),
-            [RowNode.EVENT_EXPANDED_CHANGED]: this.updateExpandedCss.bind(this),
-            [RowNode.EVENT_HAS_CHILDREN_CHANGED]: this.updateExpandedCss.bind(this),
+            heightChanged: () => this.onRowHeightChanged(),
+            rowSelected: () => this.onRowSelected(),
+            rowIndexChanged: this.onRowIndexChanged.bind(this),
+            topChanged: this.onTopChanged.bind(this),
+            expandedChanged: this.updateExpandedCss.bind(this),
+            hasChildrenChanged: this.updateExpandedCss.bind(this),
         });
 
         if (this.rowNode.detail) {
             // if the master row node has updated data, we also want to try to refresh the detail row
-            this.addManagedListener(
-                this.rowNode.parent!,
-                RowNode.EVENT_DATA_CHANGED,
-                this.onRowNodeDataChanged.bind(this)
-            );
+            this.addManagedListeners(this.rowNode.parent!, { dataChanged: this.onRowNodeDataChanged.bind(this) });
         }
 
         this.addManagedListeners(this.rowNode, {
-            [RowNode.EVENT_DATA_CHANGED]: this.onRowNodeDataChanged.bind(this),
-            [RowNode.EVENT_CELL_CHANGED]: this.postProcessCss.bind(this),
-            [RowNode.EVENT_HIGHLIGHT_CHANGED]: this.onRowNodeHighlightChanged.bind(this),
-            [RowNode.EVENT_DRAGGING_CHANGED]: this.postProcessRowDragging.bind(this),
-            [RowNode.EVENT_UI_LEVEL_CHANGED]: this.onUiLevelChanged.bind(this),
+            dataChanged: this.onRowNodeDataChanged.bind(this),
+            cellChanged: this.postProcessCss.bind(this),
+            rowHighlightChanged: this.onRowNodeHighlightChanged.bind(this),
+            draggingChanged: this.postProcessRowDragging.bind(this),
+            uiLevelChanged: this.onUiLevelChanged.bind(this),
         });
 
-        this.addManagedListeners<EventsType>(this.beans.eventService, {
-            [Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED]: this.onPaginationPixelOffsetChanged.bind(this),
-            [Events.EVENT_HEIGHT_SCALE_CHANGED]: this.onTopChanged.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: this.onVirtualColumnsChanged.bind(this),
-            [Events.EVENT_CELL_FOCUSED]: this.onCellFocusChanged.bind(this),
-            [Events.EVENT_CELL_FOCUS_CLEARED]: this.onCellFocusChanged.bind(this),
-            [Events.EVENT_PAGINATION_CHANGED]: this.onPaginationChanged.bind(this),
-            [Events.EVENT_MODEL_UPDATED]: this.refreshFirstAndLastRowStyles.bind(this),
-            [Events.EVENT_COLUMN_MOVED]: () => this.updateColumnLists(),
+        this.addManagedListeners(this.beans.eventService, {
+            paginationPixelOffsetChanged: this.onPaginationPixelOffsetChanged.bind(this),
+            heightScaleChanged: this.onTopChanged.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
+            cellFocused: this.onCellFocusChanged.bind(this),
+            cellFocusCleared: this.onCellFocusChanged.bind(this),
+            paginationChanged: this.onPaginationChanged.bind(this),
+            modelUpdated: this.refreshFirstAndLastRowStyles.bind(this),
+            columnMoved: () => this.updateColumnLists(),
         });
 
         this.addDestroyFunc(() => {
@@ -771,11 +745,13 @@ export class RowCtrl extends BeanStub {
     }
 
     private addListenersForCellComps(): void {
-        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
-        });
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, (event) => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
+        this.addManagedListeners(this.rowNode, {
+            rowIndexChanged: () => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
+            },
+            cellChanged: (event) => {
+                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
+            },
         });
     }
 
@@ -956,7 +932,8 @@ export class RowCtrl extends BeanStub {
         } // can happen with react ui, comp not yet ready
 
         element.classList.toggle('ag-full-width-focus', isFocused);
-        if (isFocused) {
+
+        if (isFocused && event?.forceBrowserFocus) {
             // we don't scroll normal rows into view when we focus them, so we don't want
             // to scroll Full Width rows either.
             element.focus({ preventScroll: true });
@@ -1001,7 +978,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    public createRowEvent(type: string, domEvent?: Event): RowEvent {
+    public createRowEvent<T extends AgEventType>(type: T, domEvent?: Event): RowEvent<T> {
         return this.gos.addGridCommonParams({
             type: type,
             node: this.rowNode,
@@ -1012,7 +989,7 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
+    private createRowEventWithSource<T extends AgEventType>(type: T, domEvent: Event): RowEvent<T> {
         const event = this.createRowEvent(type, domEvent);
         // when first developing this, we included the rowComp in the event.
         // this seems very weird. so when introducing the event types, i left the 'source'
@@ -1029,10 +1006,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(
-            Events.EVENT_ROW_DOUBLE_CLICKED,
-            mouseEvent
-        );
+        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource('rowDoubleClicked', mouseEvent);
 
         this.beans.eventService.dispatchEvent(agEvent);
     }
@@ -1051,11 +1025,20 @@ export class RowCtrl extends BeanStub {
             this.beans.rangeService.removeAllCellRanges();
         }
 
+        const element = this.getFullWidthElement();
+        const target = mouseEvent.target as HTMLElement;
+
+        let forceBrowserFocus = true;
+
+        if (element && element.contains(target as HTMLElement) && _isFocusableFormField(target)) {
+            forceBrowserFocus = false;
+        }
+
         this.beans.focusService.setFocusedCell({
             rowIndex: node.rowIndex!,
             column: presentedColsService.getAllCols()[0],
             rowPinned: node.rowPinned,
-            forceBrowserFocus: true,
+            forceBrowserFocus,
         });
     }
 
@@ -1066,7 +1049,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
+        const agEvent: RowClickedEvent = this.createRowEventWithSource('rowClicked', mouseEvent);
 
         this.beans.eventService.dispatchEvent(agEvent);
 
@@ -1131,7 +1114,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
-        if (this.rowType !== RowType.FullWidthDetail) {
+        if (this.rowType !== 'FullWidthDetail') {
             return;
         }
 
@@ -1169,12 +1152,13 @@ export class RowCtrl extends BeanStub {
     }
 
     private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
-        const params = this.gos.addGridCommonParams({
+        const { gos, rowNode } = this;
+        const params = gos.addGridCommonParams({
             fullWidth: true,
-            data: this.rowNode.data,
-            node: this.rowNode,
-            value: this.rowNode.key,
-            valueFormatted: this.rowNode.key,
+            data: rowNode.data,
+            node: rowNode,
+            value: rowNode.key,
+            valueFormatted: rowNode.key,
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
@@ -1185,15 +1169,16 @@ export class RowCtrl extends BeanStub {
             setTooltip: (value, shouldDisplayTooltip) => this.refreshRowTooltip(value, shouldDisplayTooltip),
         } as WithoutGridCommon<ICellRendererParams>);
 
+        const compFactory = this.beans.userComponentFactory;
         switch (this.rowType) {
-            case RowType.FullWidthDetail:
-                return this.beans.userComponentFactory.getFullWidthDetailCellRendererDetails(params);
-            case RowType.FullWidthGroup:
-                return this.beans.userComponentFactory.getFullWidthGroupCellRendererDetails(params);
-            case RowType.FullWidthLoading:
-                return this.beans.userComponentFactory.getFullWidthLoadingCellRendererDetails(params);
+            case 'FullWidthDetail':
+                return compFactory.getFullWidthDetailCellRendererDetails(params);
+            case 'FullWidthGroup':
+                return compFactory.getFullWidthGroupCellRendererDetails(params);
+            case 'FullWidthLoading':
+                return compFactory.getFullWidthLoadingCellRendererDetails(params);
             default:
-                return this.beans.userComponentFactory.getFullWidthCellRendererDetails(params);
+                return compFactory.getFullWidthCellRendererDetails(params);
         }
     }
 
@@ -1255,11 +1240,11 @@ export class RowCtrl extends BeanStub {
     }
 
     private isFirstRowOnPage(): boolean {
-        return this.rowNode.rowIndex === this.beans.rowBoundsService.getFirstRow();
+        return this.rowNode.rowIndex === this.beans.pageBoundsService.getFirstRow();
     }
 
     private isLastRowOnPage(): boolean {
-        return this.rowNode.rowIndex === this.beans.rowBoundsService.getLastRow();
+        return this.rowNode.rowIndex === this.beans.pageBoundsService.getLastRow();
     }
 
     private refreshFirstAndLastRowStyles(): void {
@@ -1349,13 +1334,10 @@ export class RowCtrl extends BeanStub {
     }
 
     private getPinnedForContainer(rowContainerType: RowContainerType): ColumnPinnedType {
-        const pinned =
-            rowContainerType === RowContainerType.LEFT
-                ? 'left'
-                : rowContainerType === RowContainerType.RIGHT
-                  ? 'right'
-                  : null;
-        return pinned;
+        if (rowContainerType === 'left' || rowContainerType === 'right') {
+            return rowContainerType;
+        }
+        return null;
     }
 
     private getInitialRowClasses(rowContainerType: RowContainerType): string[] {
@@ -1382,9 +1364,7 @@ export class RowCtrl extends BeanStub {
         const rowStyle = this.gos.get('rowStyle');
 
         if (rowStyle && typeof rowStyle === 'function') {
-            console.warn(
-                'AG Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead'
-            );
+            _warnOnce('rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
 
@@ -1456,24 +1436,28 @@ export class RowCtrl extends BeanStub {
         // mouse hover, it sets such in the rowNode, and then all three reflect the change as
         // all are listening for event on the row node.
 
+        const { rowNode, beans, gos } = this;
         // step 1 - add listener, to set flag on row node
-        this.addManagedListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter());
-        this.addManagedListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
-
-        // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
-            // if hover turned off, we don't add the class. we do this here so that if the application
-            // toggles this property mid way, we remove the hover form the last row, but we stop
-            // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
-            if (!this.beans.dragService.isDragging() && !this.gos.get('suppressRowHoverHighlight')) {
-                eRow.classList.add('ag-row-hover');
-                this.rowNode.setHovered(true);
-            }
+        this.addManagedListeners(eRow, {
+            mouseenter: () => rowNode.onMouseEnter(),
+            mouseleave: () => rowNode.onMouseLeave(),
         });
 
-        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
-            eRow.classList.remove('ag-row-hover');
-            this.rowNode.setHovered(false);
+        // step 2 - listen for changes on row node (which any eRow can trigger)
+        this.addManagedListeners(rowNode, {
+            mouseEnter: () => {
+                // if hover turned off, we don't add the class. we do this here so that if the application
+                // toggles this property mid way, we remove the hover form the last row, but we stop
+                // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
+                if (!beans.dragService.isDragging() && !gos.get('suppressRowHoverHighlight')) {
+                    eRow.classList.add('ag-row-hover');
+                    rowNode.setHovered(true);
+                }
+            },
+            mouseLeave: () => {
+                eRow.classList.remove('ag-row-hover');
+                rowNode.setHovered(false);
+            },
         });
     }
 
@@ -1535,11 +1519,11 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    public override addEventListener(eventType: string, listener: AgEventListener): void {
+    public override addEventListener<T extends RowCtrlEvent>(eventType: T, listener: IEventListener<T>): void {
         super.addEventListener(eventType, listener);
     }
 
-    public override removeEventListener(eventType: string, listener: AgEventListener): void {
+    public override removeEventListener<T extends RowCtrlEvent>(eventType: T, listener: IEventListener<T>): void {
         super.removeEventListener(eventType, listener);
     }
 
@@ -1566,9 +1550,9 @@ export class RowCtrl extends BeanStub {
 
         this.rowNode.setHovered(false);
 
-        const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
+        const event: VirtualRowRemovedEvent = this.createRowEvent('virtualRowRemoved');
 
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
         this.beans.eventService.dispatchEvent(event);
         super.destroy();
     }
@@ -1639,7 +1623,7 @@ export class RowCtrl extends BeanStub {
             return topPx;
         }
 
-        const pixelOffset = this.beans.rowBoundsService.getPixelOffset();
+        const pixelOffset = this.beans.pageBoundsService.getPixelOffset();
         const multiplier = reverse ? 1 : -1;
 
         return topPx + pixelOffset * multiplier;
@@ -1683,17 +1667,18 @@ export class RowCtrl extends BeanStub {
             return '';
         }
 
+        const rowNode = this.rowNode;
         let rowTop: number;
         if (this.isSticky()) {
-            rowTop = this.rowNode.stickyRowTop;
+            rowTop = rowNode.stickyRowTop;
         } else {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             const pixels = this.slideInAnimation[rowContainerType]
-                ? this.roundRowTopToBounds(this.rowNode.oldRowTop!)
-                : this.rowNode.rowTop;
+                ? this.roundRowTopToBounds(rowNode.oldRowTop!)
+                : rowNode.rowTop;
             const afterPaginationPixels = this.applyPaginationOffset(pixels!);
             // we don't apply scaling if row is pinned
-            rowTop = this.rowNode.isRowPinned()
+            rowTop = rowNode.isRowPinned()
                 ? afterPaginationPixels
                 : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
         }
@@ -1755,6 +1740,11 @@ export class RowCtrl extends BeanStub {
 
     private updateRowIndexes(gui?: RowGui): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
+
+        if (rowIndexStr === null) {
+            return;
+        }
+
         const headerRowCount =
             this.beans.headerNavigationService.getHeaderRowCount() +
             (this.beans.filterManager?.getHeaderRowCount() ?? 0);

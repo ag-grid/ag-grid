@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { type GridState, ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
@@ -17,17 +17,16 @@ import styled from '@emotion/styled';
 import { memo, useRef, useState } from 'react';
 import root from 'react-shadow';
 
-import type { GridState } from '../../../../../../../packages/ag-grid-community/dist/types/core/main';
 import { useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
+import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { useGridOptions } from '../grid-config/grid-config-atom';
 import { allPresets } from '../presets/presets';
 import { withErrorBoundary } from './ErrorBoundary';
 import { InfoTooltip } from './Tooltip';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     AdvancedFilterModule,
     ClipboardModule,
@@ -55,6 +54,7 @@ const GridPreview = () => {
 
     return (
         <Wrapper style={{ backgroundColor }}>
+            <GridConfigDropdownButton />
             <ColorPickerWrapper>
                 <ColorEditor value={backgroundColor} onChange={setBackground} preventTransparency />
                 <StyledInfoTooltip title="Page background color - this is not part of your theme" />
@@ -96,8 +96,8 @@ const GridPreview = () => {
                                                 ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
                                         }, 1);
                                     }
-                                    if (config.loadingOverlay) {
-                                        api.showLoadingOverlay();
+                                    if (config.loadingOverlay !== undefined) {
+                                        api.setGridOption('loading', config.loadingOverlay);
                                     }
                                 }}
                                 initialState={{
@@ -110,7 +110,9 @@ const GridPreview = () => {
                                     stateRef.current.rowSelection = api.getState().rowSelection || [];
                                 }}
                                 onRangeSelectionChanged={({ api }) => {
-                                    stateRef.current.rangeSelection = api.getState().rangeSelection;
+                                    stateRef.current.rangeSelection = config.showIntegratedChartPopup
+                                        ? undefined
+                                        : api.getState().rangeSelection;
                                 }}
                                 key={updateCount}
                                 {...gridOptions}
@@ -163,6 +165,9 @@ const Wrapper = styled('div')`
 `;
 
 const GridSizer = styled('div')`
-    width: min(80%, 1020px);
-    height: min(80%, 654px);
+    position: absolute;
+    top: 68px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
 `;

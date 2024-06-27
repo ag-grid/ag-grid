@@ -1,13 +1,15 @@
 import { join } from 'path';
 
-import { type ParamType, type Part, getParamType } from '../../src/theme-types';
+import { getParamType } from '../../src/theme-types';
+import type { ParamType, Part } from '../../src/theme-types';
 import { DEV_MODE, fatalError, getProjectDir, writeTsFile } from './utils';
 
 export const generateDocsFile = async () => {
     const mainExports = await import('../../src/main');
     const { allParts } = await import('../../src/parts/parts');
     const { getParamDocs, getParamDocsKeys } = await import('../../src/metadata/docs');
-    const { getPartParams } = await import('../../src/theme-types');
+
+    validateDocs(getParamDocsKeys().map((key) => [key, getParamDocs(key)]));
 
     const exportedParts = new Set<Part>();
     for (const [exportName, exportValue] of Object.entries(mainExports)) {
@@ -31,13 +33,13 @@ export const generateDocsFile = async () => {
             throw fatalError(`Part ${part.partId}/${part.variantId} is not exported`);
         }
         try {
-            getPartParams(part).forEach(getParamType);
+            part.additionalParamNames?.forEach(getParamType);
         } catch (e: any) {
             throw fatalError(`Error in part ${part.partId}/${part.variantId}: ${e.message}`);
         }
     }
 
-    const allParams = Array.from(new Set<string>(allParts.flatMap((p) => getPartParams(p)))).sort();
+    const allParams = Array.from(new Set<string>(allParts.flatMap((p) => p.additionalParamNames || []))).sort();
 
     const allParamsSet = new Set(allParams);
     const superfluousParamDocs = getParamDocsKeys().filter((p) => !allParamsSet.has(p));
@@ -81,12 +83,72 @@ const fatalErrorInProdOnly = (message: string) => {
     }
 };
 
+const validateDocs = (paramDocs: [string, string | undefined][]) => {
+    for (const [param, docs] of paramDocs) {
+        const error = getDocsError(param, docs);
+        if (error) {
+            fatalErrorInProdOnly(`Issue with docs for param ${param}: ${error} (docs: "${docs}")`);
+        }
+    }
+};
+
+const getDocsError = (key: string, docs: string | undefined): string | null => {
+    if (docs == null) {
+        return 'No docs';
+    }
+    const keyWords = key.replace(/(?<=[a-z])(?=[A-Z])/g, ' ').toLowerCase();
+    const suffix = paramSuffixes.find((s) => keyWords.endsWith(s));
+    if (!suffix) {
+        return 'Ends with unrecognised suffix';
+    }
+    if (suffix === 'size') {
+        return /\b(sizes?|amounts?)\b/i.test(docs) ? null : "Should contain the term 'size' or 'amount'";
+    }
+    if (suffix === 'border') {
+        return /\b(borders?|lines?)\b/i.test(docs) ? null : "Should contain the term 'border' or 'line'";
+    }
+    const words = suffix.replace('scale', 'multiply').split(' ');
+    for (const word of words) {
+        if (!docs.toLowerCase().includes(word)) {
+            return `Does not contain the pattern "${word}"`;
+        }
+    }
+    return null;
+};
+
+const paramSuffixes = [
+    'background color',
+    'color scheme',
+    'color',
+    'scale',
+    'padding start',
+    'padding',
+    'spacing',
+    'size',
+    'width',
+    'height',
+    'radius',
+    'indent',
+    'border style',
+    'border',
+    'shadow',
+    'image',
+    'font family',
+    'font weight',
+    'transition duration',
+    'duration',
+    'display',
+];
+
 const paramExtraDocs: Record<ParamType, string[]> = {
     color: [
         'A CSS color value e.g. "red" or "#ff0088". The following shorthands are accepted:',
         '- `true` -> "solid 1px var(--ag-border-color)"',
         '- `false` -> "none".',
         // TODO add {ref: 'paramName'} when implemented as well as color extensions
+    ],
+    colorScheme: [
+        'A CSS color-scheme value, e.g. "light", "dark", or "inherit" to use the same setting as the parent application',
     ],
     border: [
         'A CSS border value e.g. "solid 1px red". See https://developer.mozilla.org/en-US/docs/Web/CSS/border. The following shorthands are accepted:',

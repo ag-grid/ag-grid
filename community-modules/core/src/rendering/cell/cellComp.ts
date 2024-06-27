@@ -8,6 +8,7 @@ import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellE
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
+import { _warnOnce } from '../../utils/function';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { Component } from '../../widgets/component';
@@ -269,7 +270,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const versionCopy = this.editorVersion;
 
         const cellEditorPromise = compDetails.newAgStackInstance();
-        if (!cellEditorPromise) {
+        if (cellEditorPromise == null) {
             return;
         } // if empty, userComponentFactory already did a console message
 
@@ -450,7 +451,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         if (!cellEditor.getGui) {
-            console.warn(`AG Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
+            _warnOnce(`cellEditor for column ${this.column.getId()} is missing getGui() method`);
             this.beans.context.destroyBean(cellEditor);
             return;
         }
@@ -500,8 +501,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
         if (this.beans.gos.get('editType') === 'fullRow') {
-            console.warn(
-                'AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+            _warnOnce(
+                'popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                     '- either turn off fullRowEdit, or stop using popup editors.'
             );
         }

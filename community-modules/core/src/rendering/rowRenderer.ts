@@ -9,9 +9,7 @@ import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
-import type { EventsType } from '../eventKeys';
 import type {
-    AgEventListener,
     BodyScrollEvent,
     CellFocusedEvent,
     DisplayedRowsChangedEvent,
@@ -19,17 +17,18 @@ import type {
     ModelUpdatedEvent,
     ViewportChangedEvent,
 } from '../events';
-import { Events } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
+import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationService } from '../pagination/paginationService';
-import type { RowBoundsService } from '../pagination/rowBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
 import { _browserSupportsPreventScroll } from '../utils/browser';
@@ -92,7 +91,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private animationFrameService: AnimationFrameService;
     private paginationService?: PaginationService;
-    private rowBoundsService: RowBoundsService;
+    private pageBoundsService: PageBoundsService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private pinnedRowModel: PinnedRowModel;
@@ -106,7 +105,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.animationFrameService = beans.animationFrameService;
         this.paginationService = beans.paginationService;
-        this.rowBoundsService = beans.rowBoundsService;
+        this.pageBoundsService = beans.pageBoundsService;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -161,12 +160,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private initialise(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_PAGINATION_CHANGED]: this.onPageLoaded.bind(this),
-            [Events.EVENT_PINNED_ROW_DATA_CHANGED]: this.onPinnedRowDataChanged.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_BODY_SCROLL]: this.onBodyScroll.bind(this),
-            [Events.EVENT_BODY_HEIGHT_CHANGED]: this.redraw.bind(this),
+        this.addManagedEventListeners({
+            paginationChanged: this.onPageLoaded.bind(this),
+            pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            bodyScroll: this.onBodyScroll.bind(this),
+            bodyHeightChanged: this.redraw.bind(this),
         });
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
@@ -265,21 +264,21 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_CELL_FOCUSED]: (event: CellFocusedEvent) => {
+        this.addManagedEventListeners({
+            cellFocused: (event) => {
                 this.onCellFocusChanged(event);
             },
-            [Events.EVENT_CELL_FOCUS_CLEARED]: () => this.onCellFocusChanged(),
-            [Events.EVENT_FLASH_CELLS]: (event) => {
+            cellFocusCleared: () => this.onCellFocusChanged(),
+            flashCells: (event) => {
                 this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onFlashCells(event));
             },
-            [Events.EVENT_COLUMN_HOVER_CHANGED]: () => {
+            columnHoverChanged: () => {
                 this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onColumnHover());
             },
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: () => {
+            displayedColumnsChanged: () => {
                 this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onDisplayedColumnsChanged());
             },
-            [Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED]: () => {
+            displayedColumnsWidthChanged: () => {
                 // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
                 // then changing the width of the containers will impact left position. eg the center cols all have their
                 // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
@@ -296,11 +295,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
         // if the grid columns change, then refresh the listeners again
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_COLUMNS_CHANGED,
-            this.refreshListenersToColumnsForCellComps.bind(this)
-        );
+        this.addManagedEventListeners({
+            gridColumnsChanged: this.refreshListenersToColumnsForCellComps.bind(this),
+        });
 
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
     }
@@ -315,17 +312,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         const addRangeSelectionListeners = () => {
-            this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
-            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+            this.eventService.addEventListener('rangeSelectionChanged', onRangeSelectionChanged);
+            this.eventService.addEventListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventService.addEventListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventService.addEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
 
         const removeRangeSelectionListeners = () => {
-            this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+            this.eventService.removeEventListener('rangeSelectionChanged', onRangeSelectionChanged);
+            this.eventService.removeEventListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventService.removeEventListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventService.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeRangeSelectionListeners());
         this.addManagedPropertyListener('enableRangeSelection', (params) => {
@@ -626,6 +623,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (this.stickyRowFeature) {
             this.stickyRowFeature.checkStickyRows();
+
+            // this is a hack, if sticky rows brings in rows from other pages
+            // need to update the model height to include them.
+            const extraHeight =
+                this.stickyRowFeature.getExtraTopHeight() + this.stickyRowFeature.getExtraBottomHeight();
+            if (extraHeight) {
+                this.updateContainerHeights(extraHeight);
+            }
         }
 
         this.recycleRows(rowsToRecycle, animate);
@@ -652,17 +657,18 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.getScrollFeature().scrollToTop();
+            this.stickyRowFeature?.resetOffsets();
         }
     }
 
-    private updateContainerHeights(): void {
+    private updateContainerHeights(additionalHeight = 0): void {
         // when doing print layout, we don't explicitly set height on the containers
         if (this.printLayout) {
             this.rowContainerHeightService.setModelHeight(null);
             return;
         }
 
-        let containerHeight = this.rowBoundsService.getCurrentPageHeight();
+        let containerHeight = this.pageBoundsService.getCurrentPageHeight();
         // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
         // we still want the scroll to be present, otherwise there would be no way to scroll the header
         // which might be needed us user wants to access columns
@@ -672,25 +678,29 @@ export class RowRenderer extends BeanStub implements NamedBean {
             containerHeight = 1;
         }
 
-        this.rowContainerHeightService.setModelHeight(containerHeight);
+        this.rowContainerHeightService.setModelHeight(containerHeight + additionalHeight);
     }
 
     private getLockOnRefresh(): void {
         if (this.refreshInProgress) {
+            const frameworkMessage = this.frameworkOverrides.getLockOnRefreshError?.() ?? '';
             throw new Error(
                 'AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows. ' +
                     'Your code probably called a grid API method while the grid was in the render stage. To overcome ' +
                     'this, put the API call into a timeout, e.g. instead of api.redrawRows(), ' +
                     'call setTimeout(function() { api.redrawRows(); }, 0). To see what part of your code ' +
-                    'that caused the refresh check this stacktrace.'
+                    'that caused the refresh check this stacktrace.' +
+                    frameworkMessage
             );
         }
 
         this.refreshInProgress = true;
+        this.frameworkOverrides.getLockOnRefresh?.();
     }
 
     private releaseLockOnRefresh(): void {
         this.refreshInProgress = false;
+        this.frameworkOverrides.releaseLockOnRefresh?.();
     }
 
     public isRefreshInProgress(): boolean {
@@ -715,7 +725,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                     rowPinned: cellPosition.rowPinned,
                     forceBrowserFocus: true,
                     preventScrollOnBrowserFocus: true,
-                    type: 'mock',
+                    type: 'cellFocused',
                 })
             );
         }
@@ -755,7 +765,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return res;
     }
 
-    public addRenderedRowListener(eventName: string, rowIndex: number, callback: AgEventListener): void {
+    public addRenderedRowListener(
+        eventName: RenderedRowEvent,
+        rowIndex: number,
+        callback: IEventListener<RenderedRowEvent>
+    ): void {
         const rowComp = this.rowCtrlsByRowIndex[rowIndex];
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);
@@ -1027,6 +1041,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (this.stickyRowFeature) {
             hasStickyRowChanges = this.stickyRowFeature.checkStickyRows();
+
+            // this is a hack, if sticky rows brings in rows from other pages
+            // need to update the model height to include them.
+            const extraHeight =
+                this.stickyRowFeature.getExtraTopHeight() + this.stickyRowFeature.getExtraBottomHeight();
+            if (extraHeight) {
+                this.updateContainerHeights(extraHeight);
+            }
         }
 
         const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
@@ -1146,7 +1168,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
         const event: WithoutGridCommon<DisplayedRowsChangedEvent> = {
-            type: Events.EVENT_DISPLAYED_ROWS_CHANGED,
+            type: 'displayedRowsChanged',
             afterScroll,
         };
         this.eventService.dispatchEvent(event);
@@ -1305,8 +1327,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             newLast = -1; // setting to -1 means nothing in range
         } else if (this.printLayout) {
             this.environment.refreshRowHeightVariable();
-            newFirst = this.rowBoundsService.getFirstRow();
-            newLast = this.rowBoundsService.getLastRow();
+            newFirst = this.pageBoundsService.getFirstRow();
+            newLast = this.pageBoundsService.getLastRow();
         } else {
             const bufferPixels = this.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
@@ -1316,8 +1338,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             let firstPixel: number;
             let lastPixel: number;
             do {
-                const paginationOffset = this.rowBoundsService.getPixelOffset();
-                const { pageFirstPixel, pageLastPixel } = this.rowBoundsService.getCurrentPagePixelRange();
+                const paginationOffset = this.pageBoundsService.getPixelOffset();
+                const { pageFirstPixel, pageLastPixel } = this.pageBoundsService.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
                 const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
@@ -1344,8 +1366,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             let firstRowIndex = this.rowModel.getRowIndexAtPixel(firstPixel);
             let lastRowIndex = this.rowModel.getRowIndexAtPixel(lastPixel);
 
-            const pageFirstRow = this.rowBoundsService.getFirstRow();
-            const pageLastRow = this.rowBoundsService.getLastRow();
+            const pageFirstRow = this.pageBoundsService.getFirstRow();
+            const pageLastRow = this.pageBoundsService.getLastRow();
 
             // adjust, in case buffer extended actual size
             if (firstRowIndex < pageFirstRow) {
@@ -1382,7 +1404,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.lastRenderedRow = newLast;
 
             const event: WithoutGridCommon<ViewportChangedEvent> = {
-                type: Events.EVENT_VIEWPORT_CHANGED,
+                type: 'viewportChanged',
                 firstRow: newFirst,
                 lastRow: newLast,
             };
@@ -1403,7 +1425,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.dataFirstRenderedFired = true;
 
         const event: WithoutGridCommon<FirstDataRenderedEvent> = {
-            type: Events.EVENT_FIRST_DATA_RENDERED,
+            type: 'firstDataRendered',
             firstRow: this.firstRenderedRow,
             lastRow: this.lastRenderedRow,
         };
@@ -1424,12 +1446,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const rowModelHeightsChanged = this.rowModel.ensureRowHeightsValid(
             topPixel,
             bottomPixel,
-            this.rowBoundsService.getFirstRow(),
-            this.rowBoundsService.getLastRow()
+            this.pageBoundsService.getFirstRow(),
+            this.pageBoundsService.getLastRow()
         );
         if (rowModelHeightsChanged || stickyHeightsChanged) {
             this.eventService.dispatchEvent({
-                type: Events.EVENT_RECALCULATE_ROW_BOUNDS,
+                type: 'recalculateRowBounds',
             });
         }
 

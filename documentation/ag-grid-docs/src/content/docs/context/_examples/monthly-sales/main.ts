@@ -8,18 +8,12 @@ import {
     IGroupCellRendererParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    FiltersToolPanelModule,
-    RowGroupingModule,
-    SetFilterModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, FiltersToolPanelModule, RowGroupingModule, SetFilterModule]);
 
 var monthValueGetter =
     '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]';

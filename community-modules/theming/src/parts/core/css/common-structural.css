@@ -55,8 +55,21 @@ ag-grid-aurelia {
     display: block;
 }
 
-.ag-select-agg-func-popup {
-    position: absolute;
+/* special setting for lists to prevent scroll
+     while tabbing out of the container */
+.ag-virtual-list-viewport .ag-tab-guard {
+    /* this keeps the tabguard within "visible" range
+       while scrolling so focusing the tabguard doesn't
+       scroll the list viewport. */
+    position: sticky;
+}
+
+.ag-tab-guard-top {
+    top: 1px;
+}
+
+.ag-tab-guard-bottom {
+    bottom: 1px;
 }
 
 .ag-shake-left-to-right {
@@ -447,6 +460,7 @@ ag-grid-aurelia {
 
 .ag-cell-wrap-text {
     white-space: normal;
+    word-break: break-word;
 }
 
 .ag-sparkline-wrapper {
@@ -743,5 +757,15 @@ ag-grid-aurelia {
     .ag-icon-tree-closed {
         display: block;
         transform: rotate(180deg);
+    }
+}
+
+.ag-measurement-container {
+    width: 0;
+    overflow: hidden;
+    visibility: hidden;
+
+    div {
+        position: absolute;
     }
 }

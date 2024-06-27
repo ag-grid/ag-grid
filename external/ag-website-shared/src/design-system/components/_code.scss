@@ -54,8 +54,7 @@ pre.code,
     padding: 0;
     border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
     background-color: var(--color-code-background);
-    overflow: visible;
-    overflow-y: auto;
+    overflow: hidden;
 
     #{$selector-darkmode} & {
         color-scheme: dark;
@@ -78,18 +77,12 @@ pre.code,
 
 pre.code > code,
 #{$blog-code-selector} > code {
-    position: relative;
-    display: inline-block;
-    min-width: 100%;
-    margin-bottom: -6px;
+    display: block;
+    width: 100%;
     padding: $vertical-padding + 2px $spacing-size-4 $vertical-padding;
-    font-size: 15px;
-    background-color: var(--color-code-background);
-    background-size: 3em 3em;
-    background-origin: content-box;
-    background-attachment: local;
     border: none;
-    border-radius: 0;
+    font-size: 15px;
+    overflow: hidden;
     overflow-x: auto;
 }
 
@@ -136,7 +129,8 @@ pre.code.line-numbers > code,
 #{$blog-code-selector}.line-numbers > code {
     position: relative;
     white-space: inherit;
-    min-height: calc(100% - 1px);
+    height: 100%;
+    overflow: auto;
 }
 
 .line-numbers .line-numbers-rows {
@@ -166,6 +160,14 @@ pre.code.line-numbers > code,
     display: block;
     padding-right: 0.8em;
     text-align: right;
+}
+
+.copy-to-clipboard {
+    overflow: hidden;
+
+    > code {
+        max-width: 100%;
+    }
 }
 
 // Theme colors
@@ -256,6 +258,13 @@ code[class*='language-css'] {
 
 .language-css .token.property {
     color: var(--tag-color);
+}
+
+.language-bash {
+    .token.function {
+        color: var(--default-text-color);
+        font-weight: 600;
+    }
 }
 
 .token.atrule,

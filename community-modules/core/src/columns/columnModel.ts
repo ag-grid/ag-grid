@@ -2,11 +2,11 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { type AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
-import { Events } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
@@ -148,7 +148,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))
         );
-        this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
+        this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
     }
 
     // called from SyncService, when grid has finished initialising
@@ -405,7 +405,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         if (this.gos.isDomLayout('print')) {
-            console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
+            _warnOnce(`Changing the column pinning status is not allowed with domLayout='print'`);
             return;
         }
 
@@ -639,8 +639,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         newOrder = this.columnMoveService.placeLockedColumns(newOrder);
 
         if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
-            console.warn(
-                'AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
+            _warnOnce(
+                'Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
             );
             return;
         }

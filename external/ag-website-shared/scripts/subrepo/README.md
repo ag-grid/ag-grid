@@ -10,8 +10,8 @@ Run this script with
 
 ```
 # npm
-npx tsx [shared-repo-folder]/scripts/subrepo [push | pull | check] [--verbose]
+npx tsx [shared-repo-folder]/scripts/subrepo [push | pull | check] [--subrepo subrepo] [--verbose]
 
 # yarn
-yarn run tsx [shared-repo-folder]/scripts/subrepo [push | pull | check] [--verbose]
+yarn run tsx [shared-repo-folder]/scripts/subrepo [push | pull | check] [--subrepo subrepo] [--verbose]
 ```

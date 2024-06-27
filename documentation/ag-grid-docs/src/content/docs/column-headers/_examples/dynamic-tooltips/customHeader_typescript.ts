@@ -85,11 +85,11 @@ export class CustomHeader {
         const activate = (toActivate: any) => {
             toActivate.className = toActivate.className + ' active';
         };
-
-        if (this.agParams.column.isSortAscending()) {
+        const sort = this.agParams.column.getSort();
+        if (sort === 'asc') {
             deactivate([this.eSortUpButton, this.eSortRemoveButton]);
             activate(this.eSortDownButton);
-        } else if (this.agParams.column.isSortDescending()) {
+        } else if (sort === 'desc') {
             deactivate([this.eSortDownButton, this.eSortRemoveButton]);
             activate(this.eSortUpButton);
         } else {

@@ -1,22 +1,18 @@
 import type {
-    AgComponentSelector,
     ColDef,
     ColGroupDef,
     ColumnEventType,
+    ComponentSelector,
     ToolPanelColumnCompParams,
 } from '@ag-grid-community/core';
 import { Component, PositionableFeature, RefPlaceholder } from '@ag-grid-community/core';
 
-import { AgPrimaryColsHeader } from './agPrimaryColsHeader';
-import { AgPrimaryColsList } from './agPrimaryColsList';
+import type { AgPrimaryColsHeader } from './agPrimaryColsHeader';
+import { AgPrimaryColsHeaderSelector } from './agPrimaryColsHeader';
+import type { AgPrimaryColsList } from './agPrimaryColsList';
+import { AgPrimaryColsListSelector } from './agPrimaryColsList';
 
 export class AgPrimaryCols extends Component {
-    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS';
-    private static TEMPLATE /* html */ = `<div class="ag-column-select">
-            <ag-primary-cols-header data-ref="primaryColsHeaderPanel"></ag-primary-cols-header>
-            <ag-primary-cols-list data-ref="primaryColsListPanel"></ag-primary-cols-list>
-        </div>`;
-
     private readonly primaryColsHeaderPanel: AgPrimaryColsHeader = RefPlaceholder;
     private readonly primaryColsListPanel: AgPrimaryColsList = RefPlaceholder;
 
@@ -26,7 +22,13 @@ export class AgPrimaryCols extends Component {
     private positionableFeature: PositionableFeature;
 
     constructor() {
-        super(AgPrimaryCols.TEMPLATE, [AgPrimaryColsHeader, AgPrimaryColsList]);
+        super(
+            /* html */ `<div class="ag-column-select">
+            <ag-primary-cols-header data-ref="primaryColsHeaderPanel"></ag-primary-cols-header>
+            <ag-primary-cols-list data-ref="primaryColsListPanel"></ag-primary-cols-list>
+        </div>`,
+            [AgPrimaryColsHeaderSelector, AgPrimaryColsListSelector]
+        );
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
@@ -45,16 +47,20 @@ export class AgPrimaryCols extends Component {
             this.primaryColsHeaderPanel.setDisplayed(false);
         }
 
-        this.addManagedListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
-        this.addManagedListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
+        this.addManagedListeners(this.primaryColsListPanel, {
+            groupExpanded: this.onGroupExpanded.bind(this),
+            selectionChanged: this.onSelectionChange.bind(this),
+        });
 
         this.primaryColsListPanel.init(this.params, this.allowDragging, this.eventType);
 
-        this.addManagedListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
-        this.addManagedListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
-        this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
-        this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
-        this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+        this.addManagedListeners(this.primaryColsHeaderPanel, {
+            expandAll: this.onExpandAll.bind(this),
+            collapseAll: this.onCollapseAll.bind(this),
+            selectAll: this.onSelectAll.bind(this),
+            unselectAll: this.onUnselectAll.bind(this),
+            filterChanged: this.onFilterChanged.bind(this),
+        });
 
         this.positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
         this.createManagedBean(this.positionableFeature);
@@ -113,3 +119,8 @@ export class AgPrimaryCols extends Component {
         return this.primaryColsListPanel.getExpandedGroups();
     }
 }
+
+export const AgPrimaryColsSelector: ComponentSelector = {
+    selector: 'AG-PRIMARY-COLS',
+    component: AgPrimaryCols,
+};

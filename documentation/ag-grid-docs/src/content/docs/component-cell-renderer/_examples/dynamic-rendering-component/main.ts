@@ -9,12 +9,12 @@ import {
     RowEditingStoppedEvent,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 import { GenderRenderer } from './genderRenderer_typescript';
 import { MoodRenderer } from './moodRenderer_typescript';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 interface IRow {
     value: number | string;

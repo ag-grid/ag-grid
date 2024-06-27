@@ -1,10 +1,8 @@
+import type { ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
+import { AgPromise, _warnOnce } from 'ag-grid-community';
 import type { ReactPortal } from 'react';
 import { createElement } from 'react';
 import { createPortal } from 'react-dom';
-import { renderToStaticMarkup } from 'react-dom/server';
-
-import type { ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
-import { AgPromise, _warnOnce } from 'ag-grid-community';
 
 import generateNewKey from './keyGenerator';
 import type { PortalManager } from './portalManager';
@@ -65,7 +63,10 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         if (this.componentInstance && typeof this.componentInstance.destroy == 'function') {
             this.componentInstance.destroy();
         }
-        return this.portalManager.destroyPortal(this.portal as ReactPortal);
+        const portal = this.portal;
+        if (portal) {
+            this.portalManager.destroyPortal(portal);
+        }
     }
 
     protected createParentElement(params: any) {
@@ -202,13 +203,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     }
 
     private createReactComponent(resolve: (value: any) => void) {
-        this.portalManager.mountReactPortal(this.portal!, this, (value: any) => {
-            resolve(value);
-        });
-    }
-
-    public isNullValue(): boolean {
-        return this.valueRenderedIsNull(this.params);
+        this.portalManager.mountReactPortal(this.portal!, this, resolve);
     }
 
     public rendered(): boolean {
@@ -216,33 +211,6 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             (this.isStatelessComponent() && this.statelessComponentRendered()) ||
             !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance())
         );
-    }
-
-    private valueRenderedIsNull(params: any): boolean {
-        // we only do this for cellRenderers
-        if (!this.componentType.cellRenderer) {
-            return false;
-        }
-
-        // we've no way of knowing if a component returns null without rendering it first
-        // so we render it to markup and check the output - if it'll be null we know and won't timeout
-        // waiting for a component that will never be created
-
-        const originalConsoleError = console.error;
-        try {
-            // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
-            // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
-            // for this single operation
-            console.error = () => {};
-            const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params) as any);
-            return staticMarkup === '';
-        } catch (ignore) {
-            // prevent error throw
-        } finally {
-            console.error = originalConsoleError;
-        }
-
-        return false;
     }
 
     /*

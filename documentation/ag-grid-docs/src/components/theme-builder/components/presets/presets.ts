@@ -1,29 +1,36 @@
-import { type CoreParam, type PartId, opaqueForeground, ref } from '@ag-grid-community/theming';
+import { type ParamTypes, type PartId, opaqueForeground, ref } from '@ag-grid-community/theming';
 import { allParamModels } from '@components/theme-builder/model/ParamModel';
 import { allPartModels } from '@components/theme-builder/model/PartModel';
+import { enabledAdvancedParamsAtom } from '@components/theme-builder/model/advanced-params';
 import { getApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import { resetChangedModelItems } from '@components/theme-builder/model/changed-model-items';
 
 import type { Store } from '../../model/store';
+import { gridConfigAtom } from '../grid-config/grid-config-atom';
+import { type ProductionGridConfigField, defaultConfigFields } from '../grid-config/grid-options';
 
 export type Preset = {
     name?: string;
     pageBackgroundColor: string;
-    params?: Partial<Record<CoreParam, string>>;
+    params?: Partial<ParamTypes>;
     parts?: Partial<Record<PartId, string>>;
+    additionalGridFeatures?: ProductionGridConfigField[];
 };
 
 export const lightModePreset: Preset = {
     pageBackgroundColor: '#FAFAFA',
     params: {
         headerFontSize: '14px',
+        colorScheme: 'light',
     },
 };
+
 export const darkModePreset: Preset = {
     pageBackgroundColor: '#1D2634',
     params: {
         backgroundColor: '#1f2836',
         foregroundColor: '#FFF',
+        colorScheme: 'dark',
         chromeBackgroundColor: opaqueForeground(0.07),
         headerFontSize: '14px',
     },
@@ -39,6 +46,7 @@ export const allPresets: Preset[] = [
             fontSize: '12px',
             backgroundColor: '#21222C',
             foregroundColor: '#68FF8E',
+            colorScheme: 'dark',
             accentColor: '#00A2FF',
             borderColor: '#429356',
             gridSize: '4px',
@@ -49,7 +57,7 @@ export const allPresets: Preset[] = [
             headerFontSize: '14px',
             headerFontWeight: '700',
             headerVerticalPaddingScale: '1.5',
-            dataColor: '#50F178',
+            cellTextColor: '#50F178',
             oddRowBackgroundColor: '#21222C',
             rowVerticalPaddingScale: '1.5',
             cellHorizontalPaddingScale: '0.8',
@@ -57,7 +65,12 @@ export const allPresets: Preset[] = [
             rowBorder: true,
             columnBorder: true,
             sidePanelBorder: true,
+
+            rangeSelectionBorderColor: 'yellow',
+            rangeSelectionBorderStyle: 'dashed',
+            rangeSelectionBackgroundColor: 'color-mix(in srgb, transparent, yellow 10%)',
         },
+        additionalGridFeatures: ['columnsToolPanel'],
     },
     {
         pageBackgroundColor: '#F6F8F9',
@@ -66,6 +79,7 @@ export const allPresets: Preset[] = [
             fontSize: '13px',
             backgroundColor: '#FFFFFF',
             foregroundColor: '#555B62',
+            colorScheme: 'light',
             accentColor: '#087AD1',
             borderColor: '#D7E2E6',
             chromeBackgroundColor: ref('backgroundColor'),
@@ -76,7 +90,6 @@ export const allPresets: Preset[] = [
             headerTextColor: '#84868B',
             headerFontSize: '13px',
             headerFontWeight: '400',
-            cellTextColor: '#4F5760',
             rowVerticalPaddingScale: '0.8',
             cellHorizontalPaddingScale: '0.7',
             wrapperBorder: false,
@@ -92,6 +105,7 @@ export const allPresets: Preset[] = [
             fontSize: '16px',
             backgroundColor: '#0C0C0D',
             foregroundColor: '#BBBEC9',
+            colorScheme: 'dark',
             accentColor: '#15BDE8',
             borderColor: '#ffffff00',
             chromeBackgroundColor: ref('backgroundColor'),
@@ -103,7 +117,6 @@ export const allPresets: Preset[] = [
             headerFontSize: '14px',
             headerFontWeight: '500',
             headerVerticalPaddingScale: '0.9',
-            cellTextColor: '#BBBEC9',
             rowVerticalPaddingScale: '1.2',
             cellHorizontalPaddingScale: '1',
             wrapperBorder: false,
@@ -117,6 +130,7 @@ export const allPresets: Preset[] = [
         pageBackgroundColor: '#ffffff',
         params: {
             backgroundColor: '#ffffff',
+            colorScheme: 'light',
             headerBackgroundColor: '#F9FAFB',
             headerTextColor: '#919191',
             foregroundColor: 'rgb(46, 55, 66)',
@@ -140,6 +154,7 @@ export const allPresets: Preset[] = [
             fontSize: '13px',
             backgroundColor: '#FFDEB4',
             foregroundColor: '#593F2B',
+            colorScheme: 'light',
             accentColor: '#064DB9',
             borderColor: '#E9CBA4',
             chromeBackgroundColor: ref('backgroundColor'),
@@ -152,7 +167,6 @@ export const allPresets: Preset[] = [
             headerFontSize: '16px',
             headerFontWeight: '600',
             headerVerticalPaddingScale: '1.6',
-            cellTextColor: '#BBBEC9',
             rowVerticalPaddingScale: '1',
             cellHorizontalPaddingScale: '1',
             wrapperBorder: false,
@@ -168,6 +182,7 @@ export const allPresets: Preset[] = [
             fontSize: '15px',
             backgroundColor: '#F1EDE1',
             foregroundColor: '#605E57',
+            colorScheme: 'light',
             accentColor: '#0086F4',
             borderColor: '#98968F',
             chromeBackgroundColor: ref('backgroundColor'),
@@ -178,7 +193,6 @@ export const allPresets: Preset[] = [
             headerTextColor: '#3C3A35',
             headerFontSize: '15px',
             headerFontWeight: '700',
-            cellTextColor: '#605E57',
             rowVerticalPaddingScale: '1.2',
         },
     },
@@ -186,11 +200,19 @@ export const allPresets: Preset[] = [
 
 export const applyPreset = (store: Store, preset: Preset) => {
     const presetParams: any = preset.params || {};
-    for (const { property, valueAtom } of allParamModels()) {
+    const advancedParams = new Set<string>();
+    for (const { property, valueAtom, onlyEditableAsAdvancedParam } of allParamModels()) {
         if (store.get(valueAtom) != null || presetParams[property] != null) {
             store.set(valueAtom, presetParams[property] ?? null);
         }
+        if (presetParams[property] != null && onlyEditableAsAdvancedParam) {
+            advancedParams.add(property);
+        }
     }
+    store.set(enabledAdvancedParamsAtom, advancedParams);
+
+    const activeConfigFields = Array.from(new Set(defaultConfigFields.concat(preset.additionalGridFeatures || [])));
+    store.set(gridConfigAtom, Object.fromEntries(activeConfigFields.map((field) => [field, true])));
 
     const presetParts = preset.parts || {};
     for (const part of allPartModels()) {

@@ -1,9 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CellEditRequestEvent, GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RangeSelectionModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule]);
 
 let gridApi: GridApi<IOlympicDataWithId>;
 
@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
         editable: true,
         cellDataType: false,
     },
-    getRowId: (params: GetRowIdParams) => params.data.id,
+    getRowId: (params: GetRowIdParams) => String(params.data.id),
     enableRangeSelection: true,
     enableFillHandle: true,
     readOnlyEdit: true,

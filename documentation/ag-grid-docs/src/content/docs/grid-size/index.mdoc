@@ -3,7 +3,8 @@ title: "Grid Layout"
 description: "Format the grid layout for your $framework Table. Change grid width/height, assign a DOM layout value, format dynamic resizing."
 ---
 
-The grid expands to fit the width and height of its container div. Your application should set the width and height of the container using CSS styles.
+Under normal usage, your application should set the width and height of the grid using CSS styles. The grid will then fit the width you provide 
+and use scrolling inside the grid to allow all rows and columns to be viewed.
 
 {% if isFramework("javascript") %}
 ```html
@@ -57,9 +58,15 @@ The grid expands to fit the width and height of its container div. Your applicat
 ```
 {% /if %}
 
-If the container div has no height set, or has a % height and its parent has no height,
-it would naturally have a height of 0px. In this case the grid will adopt a default height
-of 400px.
+{% warning %}
+If using % for your height, then make sure the container you are putting the grid into
+also has height specified, as the browser will fit the div according to a percentage of
+the parent's height, and if the parent has no height, then this % will always be zero.
+
+If your grid is not the size you think it should be then put a border on the grid's
+div and see if that's the size you want (the grid will fill this div). If it is not the size
+you want, then you have a CSS layout issue in your application.
+{% /warning %}
 
 ## DOM Layout
 
@@ -97,7 +104,7 @@ Sometimes the vertical height of the grid is greater than the number of rows you
 
 Depending on your scenario, you may wish for the grid to auto-size it's height to the number of rows displayed inside the grid. This is useful if you have relatively few rows and don't want empty space between the last row and the bottom of the grid.
 
-To allow the grid to auto-size it's height to fit rows, set grid property `domLayout='autoHeight'`.
+To allow the grid to auto-size its height to fit rows, set grid property `domLayout='autoHeight'`.
 
 When `domLayout='autoHeight'` then your application **should not** set height on the grid div, as the div should be allowed flow naturally to fit the grid contents. When auto height is off then your application **should** set height on the grid div, as the grid will fill the div you provide it.
 

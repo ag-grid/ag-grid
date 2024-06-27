@@ -9,7 +9,7 @@ import {
     GridState,
     StateUpdatedEvent,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -24,7 +24,6 @@ import { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,

@@ -206,11 +206,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private sortChildren(details: GroupingDetails): void {
         details.changedPath.forEachChangedNodeDepthFirst(
             (node) => {
-                if (!node.childrenAfterGroup) {
-                    return;
-                }
-
-                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup!, details.rowNodeOrder);
+                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
                 if (didSort) {
                     details.changedPath.addParentNode(node);
                 }
@@ -257,12 +253,57 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         return res;
     }
 
+    /**
+     * Topological sort of the given row nodes based on the grouping hierarchy, where parents come before children.
+     * Used to ensure tree data is moved in the correct order (see AG-11678)
+     */
+    private topoSort(rowNodes: RowNode[], details: GroupingDetails): RowNode[] {
+        const sortedNodes: RowNode[] = [];
+        // performance: create a cache of ids to make lookups during the search faster
+        const idLookup = Object.fromEntries(rowNodes.map<[string, number]>((node, i) => [node.id!, i]));
+        // performance: keep track of the nodes we haven't found yet so we can return early
+        const stillToFind = new Set(Object.keys(idLookup));
+
+        const queue = [details.rootNode];
+        let i = 0;
+
+        // BFS for nodes in the hierarchy that match IDs of the given nodes
+        while (i < queue.length) {
+            // performance: indexing into the array instead of using e.g. `.shift` is _much_ faster
+            const node = queue[i];
+            i++;
+            if (node === undefined) {
+                continue;
+            }
+
+            if (node.id && node.id in idLookup) {
+                sortedNodes.push(rowNodes[idLookup[node.id]]);
+                stillToFind.delete(node.id);
+            }
+
+            // we can stop early if we've already found all the nodes
+            if (stillToFind.size === 0) {
+                return sortedNodes;
+            }
+
+            const children = node.childrenAfterGroup ?? [];
+            for (let i = 0; i < children.length; i++) {
+                queue.push(children[i]);
+            }
+        }
+
+        return sortedNodes;
+    }
+
     private moveNodesInWrongPath(
         childNodes: RowNode[],
         details: GroupingDetails,
         batchRemover: BatchRemover | undefined
     ): void {
-        childNodes.forEach((childNode) => {
+        // AG-11678 avoid unnecessary sorting when using normal row grouping
+        const sorted = details.usingTreeData ? this.topoSort(childNodes, details) : childNodes;
+
+        sorted.forEach((childNode) => {
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
             if (details.changedPath.isActive()) {
@@ -466,7 +507,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: rowNode.allLeafChildren[0],
+                    leafNode: rowNode.allLeafChildren?.[0],
                 };
                 this.setGroupData(rowNode, groupInfo, details);
                 recurse(rowNode.childrenAfterGroup);
@@ -502,7 +543,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             sibling.childrenMapped = rootNode.childrenMapped;
         }
 
-        this.insertNodes(rootNode.allLeafChildren, details, false);
+        this.insertNodes(rootNode.allLeafChildren!, details, false);
     }
 
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
@@ -569,7 +610,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             this.addToParent(childNode, parentGroup);
         } else {
             if (!parentGroup.group) {
-                console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`, [
+                _warnOnce(`duplicate group keys for row data, keys should be unique`, [
                     parentGroup.data,
                     childNode.data,
                 ]);
@@ -601,7 +642,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
 
             if (!batchRemover?.isRemoveFromAllLeafChildren(nextNode, childNode)) {
-                nextNode.allLeafChildren.push(childNode);
+                nextNode.allLeafChildren!.push(childNode);
             } else {
                 // if this node is about to be removed, prevent that
                 batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);

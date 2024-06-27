@@ -26,7 +26,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
-        this.storeFactory = beans.ssrmStoreFactory;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
     }
 
     public loadFromDatasource(p: {

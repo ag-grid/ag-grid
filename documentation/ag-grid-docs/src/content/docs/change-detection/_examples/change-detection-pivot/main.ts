@@ -8,10 +8,10 @@ import {
     ValueGetterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 interface Student {
     student: number;
@@ -44,9 +44,7 @@ const gridOptions: GridOptions = {
     rowData: getRowData(),
     pivotMode: true,
     groupDefaultExpanded: 1,
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.student;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.student),
     onGridReady: (params: GridReadyEvent) => {
         (document.getElementById('pivot-mode') as HTMLInputElement).checked = true;
     },

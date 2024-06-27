@@ -6,10 +6,10 @@ import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import type { SortDirection } from './entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from './events';
-import { Events } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 import type { SortOption } from './rowNodes/rowNodeSorter';
+import { _warnOnce } from './utils/function';
 
 export interface SortModelItem {
     /** Column Id to apply the sort to. */
@@ -18,10 +18,9 @@ export interface SortModelItem {
     sort: 'asc' | 'desc';
 }
 
+const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 export class SortController extends BeanStub implements NamedBean {
     beanName = 'sortController' as const;
-
-    private static DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
@@ -113,7 +112,7 @@ export class SortController extends BeanStub implements NamedBean {
 
     public dispatchSortChangedEvents(source: string, columns?: AgColumn[]): void {
         const event: WithoutGridCommon<SortChangedEvent> = {
-            type: Events.EVENT_SORT_CHANGED,
+            type: 'sortChanged',
             source,
         };
 
@@ -150,13 +149,11 @@ export class SortController extends BeanStub implements NamedBean {
         } else if (this.gos.get('sortingOrder')) {
             sortingOrder = this.gos.get('sortingOrder');
         } else {
-            sortingOrder = SortController.DEFAULT_SORTING_ORDER;
+            sortingOrder = DEFAULT_SORTING_ORDER;
         }
 
         if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-            console.warn(
-                `AG Grid: sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`
-            );
+            _warnOnce(`sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`);
             return null;
         }
 
@@ -172,8 +169,8 @@ export class SortController extends BeanStub implements NamedBean {
         }
 
         // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
-        if (SortController.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
-            console.warn('AG Grid: invalid sort type ' + result);
+        if (DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
+            _warnOnce('invalid sort type ', result);
             return null;
         }
 

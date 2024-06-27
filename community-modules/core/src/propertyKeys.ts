@@ -28,6 +28,7 @@ type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 type CallbackKeys = KeysOfType<(any: AgGridCommon<any, any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
+// eslint-disable-next-line @typescript-eslint/ban-types
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
 
 export const INITIAL_GRID_OPTION_KEYS = {
@@ -113,7 +114,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getLocaleText: true,
     getRowId: true,
     reactiveCustomComponents: true,
-    columnMenu: 'new',
+    columnMenu: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
@@ -385,13 +386,13 @@ export class PropertyKeys {
         'applyQuickFilterBeforePivotOrAgg',
         'suppressServerSideFullWidthLoadingRow',
         'suppressAdvancedFilterEval',
+        'loading',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.
     public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow'];
 
-    /** You do not need to include event callbacks in this list, as they are generated automatically. */
-    public static FUNCTIONAL_PROPERTIES: FunctionKeys[] = [
+    public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [
         'doesExternalFilterPass',
         'processPivotResultColDef',
         'processPivotResultColGroupDef',
@@ -406,10 +407,6 @@ export class PropertyKeys {
         'detailCellRenderer',
         'quickFilterParser',
         'quickFilterMatcher',
-    ];
-
-    /** These callbacks extend AgGridCommon interface */
-    public static CALLBACK_PROPERTIES: CallbackKeys[] = [
         'getLocaleText',
         'isExternalFilterPresent',
         'getRowHeight',
@@ -422,6 +419,7 @@ export class PropertyKeys {
         'getGroupRowAgg',
         'isFullWidthRow',
         'sendToClipboard',
+        'focusGridInnerElement',
         'navigateToNextHeader',
         'tabToNextHeader',
         'navigateToNextCell',
@@ -454,11 +452,6 @@ export class PropertyKeys {
         'groupAggFiltering',
         'chartMenuItems',
         'groupTotalRow',
-    ];
-
-    public static FUNCTION_PROPERTIES: GridOptionKey[] = [
-        ...PropertyKeys.FUNCTIONAL_PROPERTIES,
-        ...PropertyKeys.CALLBACK_PROPERTIES,
     ];
 
     public static ALL_PROPERTIES: GridOptionKey[] = [

@@ -87,12 +87,12 @@ When using selection where all selected rows may not have been loaded, it is ins
 
 ### API Selection
 
-The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and the row with the ID `United States2004`.
+The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `group-country-year-United States`, and the row with the ID `group-country-year-United States2004`.
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 api.setServerSideSelectionState({
     selectAll: true,
-    toggledNodes: ['United States', 'United States2004'],
+    toggledNodes: ['group-country-year-United States', 'group-country-year-United States2004'],
 });
 ```
 
@@ -106,7 +106,7 @@ In the example below, note the following;
 
 ### Group Selection API
 
-The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and its child row with the ID `United States2004`.
+The below snippet demonstrates how to set all nodes as selected, except in the case of the "United States" group, whose only selected child is the row with the ID `group-country-year-United States2004`.
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 params.api.setServerSideSelectionState({
@@ -116,13 +116,13 @@ params.api.setServerSideSelectionState({
     // including indeterminate nodes
     toggledNodes: [{
         // as this is a group node with toggledNodes, this node will be marked as indeterminate
-        nodeId: 'United States',
+        nodeId: 'group-country-year-United States',
         // selectAllChildren can be used to determine whether this groups children are all selected
         selectAllChildren: false,
         toggledNodes: [{
             // this group node has no toggledNodes, and so it will respect its own `selectAllChildren` property along
             // with its descendants.
-            nodeId: 'United States2004',
+            nodeId: 'group-country-year-United States2004',
             selectAllChildren: true,
         }],
     }],

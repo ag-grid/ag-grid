@@ -1,12 +1,15 @@
 import ts from 'typescript';
 
 import { inputGlob, writeJSONFile } from '../../executors-utils';
-import { getGridOptions, getInterfaces } from './generate-code-reference-files';
-import { getGridApi } from './generate-code-reference-files';
-import { getRowNode } from './generate-code-reference-files';
-import { getColumnOptions } from './generate-code-reference-files';
-import { getColumn } from './generate-code-reference-files';
-import { buildInterfaceProps } from './generate-code-reference-files';
+import {
+    buildInterfaceProps,
+    getColumnOptions,
+    getColumnTypes,
+    getGridApi,
+    getGridOptions,
+    getInterfaces,
+    getRowNode,
+} from './generate-code-reference-files';
 
 type ExecutorOptions = { output: string };
 
@@ -33,7 +36,7 @@ async function generateFile(options: ExecutorOptions) {
     const gridOpsFile = workspaceRoot + '/community-modules/core/src/entities/gridOptions.ts';
     const colDefFile = workspaceRoot + '/community-modules/core/src/entities/colDef.ts';
     const filterFile = workspaceRoot + '/community-modules/core/src/interfaces/iFilter.ts';
-    const gridApiFile = workspaceRoot + '/community-modules/core/src/gridApi.ts';
+    const gridApiFile = workspaceRoot + '/community-modules/core/src/api/gridApi.ts';
     const columnFile = workspaceRoot + '/community-modules/core/src/interfaces/iColumn.ts';
     const rowNodeFile = workspaceRoot + '/community-modules/core/src/interfaces/iRowNode.ts';
 
@@ -54,7 +57,18 @@ async function generateFile(options: ExecutorOptions) {
         await writeJSONFile(distFolder + '/grid-api.AUTO.json', getGridApi(gridApiFile));
         await writeJSONFile(distFolder + '/row-node.AUTO.json', getRowNode(rowNodeFile));
         await writeJSONFile(distFolder + '/column-options.AUTO.json', getColumnOptions(colDefFile, filterFile));
-        await writeJSONFile(distFolder + '/column.AUTO.json', getColumn(columnFile));
+        await writeJSONFile(
+            distFolder + '/column.AUTO.json',
+            getColumnTypes(columnFile, ['Column', 'IHeaderColumn', 'IProvidedColumn'])
+        );
+        await writeJSONFile(
+            distFolder + '/columnGroup.AUTO.json',
+            getColumnTypes(columnFile, ['ColumnGroup', 'IHeaderColumn'])
+        );
+        await writeJSONFile(
+            distFolder + '/providedColumnGroup.AUTO.json',
+            getColumnTypes(columnFile, ['ProvidedColumnGroup', 'IProvidedColumn'])
+        );
         await writeJSONFile(distFolder + '/interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
         await writeJSONFile(distFolder + '/doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
     };

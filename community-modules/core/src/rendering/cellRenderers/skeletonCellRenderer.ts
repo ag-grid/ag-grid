@@ -3,10 +3,8 @@ import { Component } from '../../widgets/component';
 import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
-    private static TEMPLATE = `<div class="ag-skeleton-container"></div>`;
-
     constructor() {
-        super(SkeletonCellRenderer.TEMPLATE);
+        super(/* html */ `<div class="ag-skeleton-container"></div>`);
     }
 
     public init(params: ILoadingCellRendererParams): void {
@@ -15,7 +13,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         this.addDestroyFunc(() => _setAriaLabelledBy(params.eParentOfValue));
         _setAriaLabelledBy(params.eParentOfValue, id);
 
-        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+        params.node.failedLoad ? this.setupFailed() : this.setupLoading(params);
     }
 
     private setupFailed(): void {
@@ -26,10 +24,22 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         _setAriaLabel(this.getGui(), ariaFailed);
     }
 
-    private setupLoading(): void {
+    private setupLoading(params: ILoadingCellRendererParams): void {
         const eDocument = this.gos.getDocument();
         const skeletonEffect = eDocument.createElement('div');
         skeletonEffect.classList.add('ag-skeleton-effect');
+
+        // Use the row index to derive a width value for the skeleton cell
+        // to avoid them having uniform width when rendering
+        const rowIndex = params.node.rowIndex;
+        if (rowIndex != null) {
+            // Base value of 75% with variation between [-25%, 25%]. We alternate between sin and
+            // cos to achieve a semi-random appearance without actually needing a random number.
+            // We avoid using random numbers because then skeletons have consistent widths after
+            // being scrolled on and off screen.
+            const width = 75 + 25 * (rowIndex % 2 === 0 ? Math.sin(rowIndex) : Math.cos(rowIndex));
+            skeletonEffect.style.width = `${width}%`;
+        }
 
         this.getGui().appendChild(skeletonEffect);
 

@@ -1,8 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CellEditRequestEvent, GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicDataWithId>;
 
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then((data: any[]) => {
-            data.forEach((item, index) => (item.id = index));
+            data.forEach((item, index) => (item.id = String(index)));
             gridApi!.setGridOption('rowData', data);
         });
 });

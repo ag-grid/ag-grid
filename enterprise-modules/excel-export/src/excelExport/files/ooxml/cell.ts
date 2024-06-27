@@ -1,6 +1,7 @@
 import type { ExcelCell, ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import { _escapeString } from '@ag-grid-community/core';
 
+import { replaceInvisibleCharacters } from '../../assets/excelUtils';
 import { getStyleId } from './styles/stylesheet';
 
 const convertLegacyType = (type: string): string => {
@@ -42,7 +43,7 @@ const cellFactory: ExcelOOXMLTemplate = {
             children = [
                 {
                     name: 'f',
-                    textNode: _escapeString(value),
+                    textNode: _escapeString(replaceInvisibleCharacters(value), false),
                 },
             ];
         } else if (convertedType === 'inlineStr') {
@@ -52,7 +53,7 @@ const cellFactory: ExcelOOXMLTemplate = {
                     children: [
                         {
                             name: 't',
-                            textNode: _escapeString(value),
+                            textNode: _escapeString(replaceInvisibleCharacters(value), false),
                         },
                     ],
                 },

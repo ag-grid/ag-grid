@@ -7,7 +7,7 @@ import type {
     PopupService,
 } from '@ag-grid-community/core';
 import { BeanStub, Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';
-import { AgMenuItemComponent, AgMenuList } from '@ag-grid-enterprise/core';
+import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../chartController';
 import type { ChartMenuService } from '../services/chartMenuService';
@@ -23,8 +23,8 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService;
-        this.chartMenuService = beans.chartMenuService;
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     private activeChartMenuList?: ChartMenuList;
@@ -240,7 +240,7 @@ class ChartMenuList extends Component {
     public postConstruct(): void {
         this.mainMenuList = this.createManagedBean(new AgMenuList(0));
         this.mainMenuList.addMenuItems(this.menuItems);
-        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener('closeMenu', this.onHidePopup.bind(this));
         this.eChartsMenu.appendChild(this.mainMenuList.getGui());
     }
 

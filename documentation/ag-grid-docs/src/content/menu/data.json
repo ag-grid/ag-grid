@@ -2,7 +2,7 @@
     "header": {
         "items": [
             {
-                "title": "Demo",
+                "title": "Demos",
                 "path": "/example"
             },
             {
@@ -88,6 +88,10 @@
                         "path": "column-object"
                     },
                     {
+                        "title": "Column Group Reference",
+                        "path": "column-object-group"
+                    },
+                    {
                         "title": "Events Reference",
                         "path": "column-events"
                     }
@@ -147,8 +151,12 @@
                                 "path": "videos"
                             },
                             {
-                                "title": "Licensing / AG Grid Enterprise",
+                                "title": "AG Grid Enterprise",
                                 "path": "licensing"
+                            },
+                            {
+                                "title": "Installing Your Licence Key",
+                                "path": "license-install"
                             },
                             {
                                 "title": "React Best Practices",
@@ -1346,6 +1354,10 @@
                                 "isEnterprise": true
                             },
                             {
+                                "title": "Drag & Drop",
+                                "path": "drag-and-drop"
+                            },
+                            {
                                 "title": "Printing",
                                 "path": "printing"
                             },
@@ -1382,6 +1394,11 @@
                             {
                                 "title": "Scrolling Performance",
                                 "path": "scrolling-performance"
+                            },
+                            {
+                                "title": "NgZone",
+                                "path": "angular-ngzone",
+                                "frameworks": ["angular"]
                             }
                         ]
                     }
@@ -1393,6 +1410,10 @@
                     {
                         "title": "Migration",
                         "items": [
+                            {
+                                "title": "Upgrading to AG Grid 32",
+                                "path": "upgrading-to-ag-grid-32"
+                            },
                             {
                                 "title": "Upgrading to AG Grid 31.3",
                                 "path": "upgrading-to-ag-grid-31-3"

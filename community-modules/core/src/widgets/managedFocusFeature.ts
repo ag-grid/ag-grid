@@ -52,30 +52,32 @@ export class ManagedFocusFeature extends BeanStub {
         this.addKeyDownListeners(this.eFocusableElement);
 
         if (this.callbacks.onFocusIn) {
-            this.addManagedListener(this.eFocusableElement, 'focusin', this.callbacks.onFocusIn);
+            this.addManagedElementListeners(this.eFocusableElement, { focusin: this.callbacks.onFocusIn });
         }
 
         if (this.callbacks.onFocusOut) {
-            this.addManagedListener(this.eFocusableElement, 'focusout', this.callbacks.onFocusOut);
+            this.addManagedElementListeners(this.eFocusableElement, { focusout: this.callbacks.onFocusOut });
         }
     }
 
     private addKeyDownListeners(eGui: HTMLElement): void {
-        this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            if (e.defaultPrevented || _isStopPropagationForAgGrid(e)) {
-                return;
-            }
+        this.addManagedElementListeners(eGui, {
+            keydown: (e: KeyboardEvent) => {
+                if (e.defaultPrevented || _isStopPropagationForAgGrid(e)) {
+                    return;
+                }
 
-            if (this.callbacks.shouldStopEventPropagation!(e)) {
-                _stopPropagationForAgGrid(e);
-                return;
-            }
+                if (this.callbacks.shouldStopEventPropagation!(e)) {
+                    _stopPropagationForAgGrid(e);
+                    return;
+                }
 
-            if (e.key === KeyCode.TAB) {
-                this.callbacks.onTabKeyDown!(e);
-            } else if (this.callbacks.handleKeyDown) {
-                this.callbacks.handleKeyDown(e);
-            }
+                if (e.key === KeyCode.TAB) {
+                    this.callbacks.onTabKeyDown!(e);
+                } else if (this.callbacks.handleKeyDown) {
+                    this.callbacks.handleKeyDown(e);
+                }
+            },
         });
     }
 }

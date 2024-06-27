@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "emitDecoratorMetadata": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "module": "commonjs",
+    "types": ["jest", "node"]
+  },
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

@@ -1,22 +1,16 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { createApp, onBeforeMount, ref } from 'vue';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    RowGroupingModule,
-    SetFilterModule,
-    FiltersToolPanelModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule, FiltersToolPanelModule]);
 
 const VueExample = {
     template: `
@@ -118,7 +112,7 @@ const VueExample = {
                 ],
             },
         ]);
-        const gridApi = ref();
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             flex: 1,
             minWidth: 120,

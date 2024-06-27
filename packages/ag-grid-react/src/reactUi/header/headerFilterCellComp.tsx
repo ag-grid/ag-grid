@@ -1,7 +1,11 @@
-import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
-
-import type { HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from 'ag-grid-community';
+import type {
+    HeaderFilterCellCtrl,
+    IFloatingFilter,
+    IHeaderFilterCellComp,
+    UserCompDetails,
+} from 'ag-grid-community';
 import { AgPromise } from 'ag-grid-community';
+import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CustomContext } from '../../shared/customComp/customContext';
 import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy';
@@ -23,7 +27,7 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     );
     const [buttonWrapperAriaHidden, setButtonWrapperAriaHidden] = useState<'true' | 'false'>('false');
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails | null>();
-    const [renderKey, setRenderKey] = useState<number>(1);
+    const [, setRenderKey] = useState<number>(1);
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);

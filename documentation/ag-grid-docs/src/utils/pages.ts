@@ -43,6 +43,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // NOTE: Manually specified, so it can be referenced by key
     'reference/column-options.AUTO.json': 'dist/documentation/reference/column-options.AUTO.json',
     'reference/column.AUTO.json': 'dist/documentation/reference/column.AUTO.json',
+    'reference/columnGroup.AUTO.json': 'dist/documentation/reference/columnGroup.AUTO.json',
+    'reference/providedColumnGroup.AUTO.json': 'dist/documentation/reference/providedColumnGroup.AUTO.json',
     'reference/doc-interfaces.AUTO.json': 'dist/documentation/reference/doc-interfaces.AUTO.json',
     'reference/grid-api.AUTO.json': 'dist/documentation/reference/grid-api.AUTO.json',
     'reference/grid-options.AUTO.json': 'dist/documentation/reference/grid-options.AUTO.json',
@@ -55,6 +57,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
         'community-modules/client-side-row-model/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/csv-export/dist/**': 'community-modules/csv-export/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/infinite-row-model/dist/**': 'community-modules/infinite-row-model/dist/**/*.{cjs,js,map}',
+    'ag-grid-locale/dist/**': 'community-modules/locale/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/styles/**': 'community-modules/styles/**/*.{css,scss}',
 
     // Enterprise modules

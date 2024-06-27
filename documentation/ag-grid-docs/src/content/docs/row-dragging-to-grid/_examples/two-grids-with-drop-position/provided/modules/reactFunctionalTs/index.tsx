@@ -17,7 +17,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columns: ColDef[] = [
     { field: 'id', rowDrag: true },
@@ -75,7 +75,7 @@ const GridExample = () => {
         setRightRowData(createRowBlock(2));
     }, [createDataItem]);
 
-    const getRowId = (params: GetRowIdParams) => params.data.id;
+    const getRowId = (params: GetRowIdParams) => String(params.data.id);
 
     const addRecordToGrid = (side: string, data: any) => {
         // if data missing or data has no it, do nothing

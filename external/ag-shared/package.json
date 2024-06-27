@@ -1,0 +1,29 @@
+{
+  "name": "ag-shared",
+  "version": "9.3.1-beta.20240611",
+  "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
+  "main": "./dist/package/main.cjs.js",
+  "types": "./dist/types/src/main.d.ts",
+  "module": "./dist/package/main.esm.mjs",
+  "exports": {
+    "import": "./dist/package/main.esm.mjs",
+    "require": "./dist/package/main.cjs.js",
+    "types": "./dist/types/src/main.d.ts",
+    "default": "./dist/package/main.cjs.js"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-shared.git"
+  },
+  "keywords": [],
+  "author": "AG Grid <info@ag-grid.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "publishConfig": {
+    "access": "private"
+  }
+}

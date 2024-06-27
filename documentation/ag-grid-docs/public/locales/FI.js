@@ -469,8 +469,8 @@ const AG_GRID_LOCALE_FI = {
     customCombo: 'Mukautettu yhdistelmä',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Taso ${variable}. Muokkaa painamalla ENTER.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. Taso ${variable}. ${variable} Muokkaa painamalla ENTER.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Taso ${variable}. Muokkaa painamalla ENTER',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. Taso ${variable}. ${variable} Muokkaa painamalla ENTER',
     ariaAdvancedFilterBuilderList: 'Edistynyt suodatinrakentajan lista',
     ariaAdvancedFilterBuilderFilterItem: 'Suodatusehto',
     ariaAdvancedFilterBuilderGroupItem: 'Suodatinryhmä',

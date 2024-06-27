@@ -18,13 +18,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
-    ClientSideRowModelModule,
-    MasterDetailModule,
-    MenuModule,
-    ColumnsToolPanelModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule]);
 
 let allRowData: any[];
 
@@ -47,7 +41,7 @@ const GridExample = () => {
         };
     }, []);
     const getRowId = useCallback(function (params: GetRowIdParams) {
-        return params.data.account;
+        return String(params.data.account);
     }, []);
     const detailCellRendererParams = useMemo(() => {
         return {
@@ -55,7 +49,7 @@ const GridExample = () => {
             detailGridOptions: {
                 rowSelection: 'multiple',
                 getRowId: (params: GetRowIdParams) => {
-                    return params.data.callId;
+                    return String(params.data.callId);
                 },
                 columnDefs: [
                     { field: 'callId', checkboxSelection: true },

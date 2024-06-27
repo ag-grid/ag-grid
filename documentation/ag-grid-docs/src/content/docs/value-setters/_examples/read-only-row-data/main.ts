@@ -1,8 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CellEditRequestEvent, GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicDataWithId>;
 
@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
         minWidth: 100,
         editable: true,
     },
-    getRowId: (params: GetRowIdParams) => params.data.id,
+    getRowId: (params: GetRowIdParams) => String(params.data.id),
     readOnlyEdit: true,
     onCellEditRequest: onCellEditRequest,
 };

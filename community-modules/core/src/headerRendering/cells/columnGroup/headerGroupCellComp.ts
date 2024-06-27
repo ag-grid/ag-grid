@@ -6,16 +6,17 @@ import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCel
 import type { IHeaderGroupComp } from './headerGroupComp';
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
-    private static TEMPLATE /* html */ = `<div class="ag-header-group-cell" role="columnheader">
-            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
-        </div>`;
-
     private eResize: HTMLElement = RefPlaceholder;
 
     private headerGroupComp: IHeaderGroupComp | undefined;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
-        super(HeaderGroupCellComp.TEMPLATE, ctrl);
+        super(
+            /* html */ `<div class="ag-header-group-cell" role="columnheader">
+            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
+        </div>`,
+            ctrl
+        );
     }
 
     public postConstruct(): void {

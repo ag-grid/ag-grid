@@ -13,6 +13,8 @@ import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { MenuItemMapper } from './menuItemMapper';
 
+const MENU_ITEM_SEPARATOR = 'separator';
+
 export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'columnMenuFactory' as const;
 
@@ -23,16 +25,18 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
-        this.menuItemMapper = beans.menuItemMapper;
+        this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
         this.rowModel = beans.rowModel;
         this.menuService = beans.menuService;
     }
 
-    private static MENU_ITEM_SEPARATOR = 'separator';
-
-    public createMenu(parent: BeanStub, column: AgColumn | undefined, sourceElement: () => HTMLElement): AgMenuList {
+    public createMenu(
+        parent: BeanStub<any>,
+        column: AgColumn | undefined,
+        sourceElement: () => HTMLElement
+    ): AgMenuList {
         const menuList = parent.createManagedBean(
             new AgMenuList(0, {
                 column: column ?? null,
@@ -42,7 +46,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         );
 
         const menuItems = this.getMenuItems(column);
-        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, column ?? null, sourceElement);
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(
+            menuItems,
+            column ?? null,
+            sourceElement,
+            'columnMenu'
+        );
 
         menuList.addMenuItems(menuItemsMapped);
 
@@ -77,7 +86,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         // GUI looks weird when two separators are side by side. this can happen accidentally
         // if we remove items from the menu then two separators can edit up adjacent.
-        _removeRepeatsFromArray(result, ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        _removeRepeatsFromArray(result, MENU_ITEM_SEPARATOR);
 
         return result;
     }
@@ -126,12 +135,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             if (sort) {
                 result.push('sortUnSort');
             }
-            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+            result.push(MENU_ITEM_SEPARATOR);
         }
 
         if (this.menuService.isFilterMenuItemEnabled(column)) {
             result.push('columnFilter');
-            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+            result.push(MENU_ITEM_SEPARATOR);
         }
 
         if (allowPinning) {
@@ -143,12 +152,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         }
 
         if (allowPinning || allowValueAgg) {
-            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+            result.push(MENU_ITEM_SEPARATOR);
         }
 
         result.push('autoSizeThis');
         result.push('autoSizeAll');
-        result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        result.push(MENU_ITEM_SEPARATOR);
 
         const showRowGroup = column.getColDef().showRowGroup;
         if (showRowGroup) {
@@ -163,7 +172,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                 result.push('rowGroup');
             }
         }
-        result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        result.push(MENU_ITEM_SEPARATOR);
         if (!isLegacyMenuEnabled) {
             result.push('columnChooser');
         }

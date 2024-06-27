@@ -1,7 +1,7 @@
 import type {
     AgPromise,
     BeanCollection,
-    ICellRendererParams,
+    IRichCellEditorRendererParams,
     RichSelectParams,
     UserCompDetails,
     UserComponentFactory,
@@ -11,11 +11,10 @@ import {
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,
-    _setAriaActiveDescendant,
     _setAriaSelected,
 } from '@ag-grid-community/core';
 
-import type { VirtualList } from './virtualList';
+import type { AgRichSelect } from './agRichSelect';
 
 export class RichSelectRow<TValue> extends Component {
     private userComponentFactory: UserComponentFactory;
@@ -27,11 +26,7 @@ export class RichSelectRow<TValue> extends Component {
     private value: TValue;
     private parsedValue: string | null;
 
-    constructor(
-        private readonly params: RichSelectParams<TValue>,
-        private readonly wrapperEl: HTMLElement,
-        private readonly isItemSelected: (value: TValue) => boolean
-    ) {
+    constructor(private readonly params: RichSelectParams<TValue>) {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
     }
 
@@ -49,10 +44,6 @@ export class RichSelectRow<TValue> extends Component {
         }
 
         this.value = value;
-
-        if (this.isItemSelected(value)) {
-            this.updateSelected(true);
-        }
     }
 
     public highlightString(matchString: string): void {
@@ -72,7 +63,7 @@ export class RichSelectRow<TValue> extends Component {
                 const highlightedPart = _escapeString(parsedValue.slice(index, highlightEndIndex), true);
                 const endPart = _escapeString(parsedValue.slice(highlightEndIndex));
                 this.renderValueWithoutRenderer(
-                    `${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`
+                    /* html */ `${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`
                 );
             } else {
                 hasMatch = false;
@@ -95,18 +86,7 @@ export class RichSelectRow<TValue> extends Component {
         return this.value;
     }
 
-    public updateHighlighted(highlighted: boolean): void {
-        const eGui = this.getGui();
-        const parentId = `ag-rich-select-row-${this.getCompId()}`;
-
-        eGui.parentElement?.setAttribute('id', parentId);
-
-        if (highlighted) {
-            const parentAriaEl = (this.getParentComponent() as VirtualList).getAriaElement();
-            _setAriaActiveDescendant(parentAriaEl, parentId);
-            this.wrapperEl.setAttribute('data-active-option', parentId);
-        }
-
+    public toggleHighlighted(highlighted: boolean): void {
         this.addOrRemoveCssClass('ag-rich-select-row-highlighted', highlighted);
     }
 
@@ -142,13 +122,21 @@ export class RichSelectRow<TValue> extends Component {
         let userCompDetails: UserCompDetails | undefined;
 
         if (this.params.cellRenderer) {
-            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
+            const richSelect = this.getParentComponent()?.getParentComponent() as AgRichSelect;
+            userCompDetails = this.userComponentFactory.getEditorRendererDetails<
+                RichSelectParams,
+                IRichCellEditorRendererParams<TValue>
+            >(this.params, {
                 value,
                 valueFormatted,
+                getValue: () => richSelect?.getValue(),
+                setValue: (value: TValue[] | TValue | null) => {
+                    richSelect?.setValue(value, true);
+                },
                 setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                     this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
                 },
-            } as ICellRendererParams);
+            });
         }
 
         if (userCompDetails) {

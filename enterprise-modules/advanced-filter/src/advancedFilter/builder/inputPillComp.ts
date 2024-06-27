@@ -4,7 +4,6 @@ import {
     AgInputNumberField,
     AgInputTextField,
     Component,
-    Events,
     KeyCode,
     RefPlaceholder,
     _exists,
@@ -16,11 +15,12 @@ import {
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
-export class InputPillComp extends Component {
+export type InputPillCompEvent = 'fieldValueChanged';
+export class InputPillComp extends Component<InputPillCompEvent> {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.advancedFilterExpressionService = beans.advancedFilterExpressionService;
+        this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
     private readonly ePill: HTMLElement = RefPlaceholder;
@@ -59,18 +59,20 @@ export class InputPillComp extends Component {
 
         this.renderValue();
 
-        this.addManagedListener(this.ePill, 'click', (event: MouseEvent) => {
-            event.preventDefault();
-            this.showEditor();
-        });
-        this.addManagedListener(this.ePill, 'keydown', (event: KeyboardEvent) => {
-            switch (event.key) {
-                case KeyCode.ENTER:
-                    event.preventDefault();
-                    _stopPropagationForAgGrid(event);
-                    this.showEditor();
-                    break;
-            }
+        this.addManagedListeners(this.ePill, {
+            click: (event: MouseEvent) => {
+                event.preventDefault();
+                this.showEditor();
+            },
+            keydown: (event: KeyboardEvent) => {
+                switch (event.key) {
+                    case KeyCode.ENTER:
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.showEditor();
+                        break;
+                }
+            },
         });
         this.addDestroyFunc(() => this.destroyBean(this.eEditor));
     }
@@ -87,22 +89,22 @@ export class InputPillComp extends Component {
         this.eEditor = this.createEditorComp(this.params.type);
         this.eEditor.setValue(this.value);
         const eEditorGui = this.eEditor.getGui();
-        this.eEditor.addManagedListener(eEditorGui, 'keydown', (event: KeyboardEvent) => {
-            switch (event.key) {
-                case KeyCode.ENTER:
-                    event.preventDefault();
-                    _stopPropagationForAgGrid(event);
-                    this.updateValue(true);
-                    break;
-                case KeyCode.ESCAPE:
-                    event.preventDefault();
-                    _stopPropagationForAgGrid(event);
-                    this.hideEditor(true);
-                    break;
-            }
-        });
-        this.eEditor.addManagedListener(eEditorGui, 'focusout', () => {
-            this.updateValue(false);
+        this.eEditor.addManagedElementListeners(eEditorGui, {
+            keydown: (event: KeyboardEvent) => {
+                switch (event.key) {
+                    case KeyCode.ENTER:
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.updateValue(true);
+                        break;
+                    case KeyCode.ESCAPE:
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.hideEditor(true);
+                        break;
+                }
+            },
+            focusout: () => this.updateValue(false),
         });
         this.getGui().appendChild(eEditorGui);
         this.eEditor.getFocusableElement().focus();
@@ -165,8 +167,8 @@ export class InputPillComp extends Component {
             return;
         }
         const value = this.eEditor!.getValue() ?? '';
-        this.dispatchEvent<WithoutGridCommon<FieldValueEvent>>({
-            type: Events.EVENT_FIELD_VALUE_CHANGED,
+        this.dispatchLocalEvent<WithoutGridCommon<FieldValueEvent>>({
+            type: 'fieldValueChanged',
             value,
         });
         this.value = value;

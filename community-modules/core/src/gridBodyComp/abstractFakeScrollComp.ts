@@ -1,6 +1,4 @@
 import type { BeanCollection } from '../context/context';
-import { Events } from '../eventKeys';
-import type { BodyScrollEvent } from '../events';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import { _isVisible } from '../utils/dom';
@@ -33,11 +31,9 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     public postConstruct(): void {
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_SCROLL_VISIBILITY_CHANGED,
-            this.onScrollVisibilityChanged.bind(this)
-        );
+        this.addManagedEventListeners({
+            scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
+        });
         this.onScrollVisibilityChanged();
         this.addOrRemoveCssClass('ag-apple-scrollbar', _isMacOsUserAgent() || _isIOSUserAgent());
     }
@@ -56,16 +52,16 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     protected addActiveListenerToggles(): void {
-        const activateEvents = ['mouseenter', 'mousedown', 'touchstart'];
-        const deactivateEvents = ['mouseleave', 'touchend'];
         const eGui = this.getGui();
-
-        activateEvents.forEach((eventName) =>
-            this.addManagedListener(eGui, eventName, () => this.addOrRemoveCssClass('ag-scrollbar-active', true))
-        );
-        deactivateEvents.forEach((eventName) =>
-            this.addManagedListener(eGui, eventName, () => this.addOrRemoveCssClass('ag-scrollbar-active', false))
-        );
+        const onActivate = () => this.addOrRemoveCssClass('ag-scrollbar-active', true);
+        const onDeactivate = () => this.addOrRemoveCssClass('ag-scrollbar-active', false);
+        this.addManagedListeners(eGui, {
+            mouseenter: onActivate,
+            mousedown: onActivate,
+            touchstart: onActivate,
+            mouseleave: onDeactivate,
+            touchend: onDeactivate,
+        });
     }
 
     protected onScrollVisibilityChanged(): void {
@@ -80,20 +76,22 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, (params: BodyScrollEvent) => {
-            if (params.direction === this.direction) {
-                if (this.hideTimeout !== null) {
-                    window.clearTimeout(this.hideTimeout);
-                    this.hideTimeout = null;
+        this.addManagedEventListeners({
+            bodyScroll: (params) => {
+                if (params.direction === this.direction) {
+                    if (this.hideTimeout !== null) {
+                        window.clearTimeout(this.hideTimeout);
+                        this.hideTimeout = null;
+                    }
+                    this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
                 }
-                this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
-            }
-        });
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => {
-            this.hideTimeout = window.setTimeout(() => {
-                this.addOrRemoveCssClass('ag-scrollbar-scrolling', false);
-                this.hideTimeout = null;
-            }, 400);
+            },
+            bodyScrollEnd: () => {
+                this.hideTimeout = window.setTimeout(() => {
+                    this.addOrRemoveCssClass('ag-scrollbar-scrolling', false);
+                    this.hideTimeout = null;
+                }, 400);
+            },
         });
     }
 
@@ -115,6 +113,6 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     public onScrollCallback(fn: () => void): void {
-        this.addManagedListener(this.getViewport(), 'scroll', fn);
+        this.addManagedElementListeners(this.getViewport(), { scroll: fn });
     }
 }

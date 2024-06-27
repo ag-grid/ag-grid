@@ -1,21 +1,21 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 import { CustomHeader } from './customHeader_typescript';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', suppressHeaderMenuButton: true, minWidth: 120 },
+    { field: 'athlete', suppressHeaderFilterButton: true, minWidth: 120 },
     {
         field: 'age',
         sortable: false,
         headerComponentParams: { menuIcon: 'fa-external-link-alt' },
     },
-    { field: 'country', suppressHeaderMenuButton: true, minWidth: 120 },
+    { field: 'country', suppressHeaderFilterButton: true, minWidth: 120 },
     { field: 'year', sortable: false },
-    { field: 'date', suppressHeaderMenuButton: true },
+    { field: 'date', suppressHeaderFilterButton: true },
     { field: 'sport', sortable: false },
     {
         field: 'gold',
@@ -23,7 +23,7 @@ const columnDefs: ColDef[] = [
         minWidth: 120,
     },
     { field: 'silver', sortable: false },
-    { field: 'bronze', suppressHeaderMenuButton: true, minWidth: 120 },
+    { field: 'bronze', suppressHeaderFilterButton: true, minWidth: 120 },
     { field: 'total', sortable: false },
 ];
 
@@ -42,7 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
         headerComponentParams: {
-            menuIcon: 'fa-bars',
+            menuIcon: 'fa-filter',
         },
     },
 };

@@ -11,12 +11,12 @@ import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
 const groupTemplate =
     /* html */
     `<span class="ag-cell-wrapper">
-    <span class="ag-group-expanded" data-ref="eExpanded"></span>
-    <span class="ag-group-contracted" data-ref="eContracted"></span>
-    <span class="ag-group-checkbox ag-invisible" data-ref="eCheckbox"></span>
-    <span class="ag-group-value" data-ref="eValue"></span>
-    <span class="ag-group-child-count" data-ref="eChildCount"></span>
-</span>`;
+        <span class="ag-group-expanded" data-ref="eExpanded"></span>
+        <span class="ag-group-contracted" data-ref="eContracted"></span>
+        <span class="ag-group-checkbox ag-invisible" data-ref="eCheckbox"></span>
+        <span class="ag-group-value" data-ref="eValue"></span>
+        <span class="ag-group-child-count" data-ref="eChildCount"></span>
+    </span>`;
 
 export class GroupCellRenderer extends Component implements ICellRendererComp {
     private readonly eExpanded: HTMLElement = RefPlaceholder;
@@ -55,7 +55,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any): void {
         if (compDetails) {
             const componentPromise = compDetails.newAgStackInstance();
-            if (!componentPromise) {
+            if (componentPromise == null) {
                 return;
             }
             componentPromise.then((comp) => {

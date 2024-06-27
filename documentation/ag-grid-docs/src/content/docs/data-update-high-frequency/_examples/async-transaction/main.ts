@@ -7,14 +7,14 @@ import {
     ValueFormatterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { getData, globalRowData } from './data';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
-var UPDATE_COUNT = 200;
+const UPDATE_COUNT = 500;
 
 const columnDefs: ColDef[] = [
     // these are the row groups, so they are all hidden (they are show in the group column)
@@ -157,9 +157,7 @@ const gridOptions: GridOptions = {
     suppressAggFuncInHeader: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.trade;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.trade),
     defaultColDef: {
         width: 120,
     },
@@ -173,16 +171,16 @@ const gridOptions: GridOptions = {
 };
 
 function onNormalUpdate() {
-    var startMillis = new Date().getTime();
+    const startMillis = new Date().getTime();
 
     setMessage('Running Transaction');
 
-    for (var i = 0; i < UPDATE_COUNT; i++) {
+    for (let i = 0; i < UPDATE_COUNT; i++) {
         setTimeout(() => {
             // pick one index at random
-            var index = Math.floor(Math.random() * globalRowData.length);
-            var itemToUpdate = globalRowData[index];
-            var newItem = copyObject(itemToUpdate);
+            const index = Math.floor(Math.random() * globalRowData.length);
+            const itemToUpdate = globalRowData[index];
+            const newItem = copyObject(itemToUpdate);
             // copy previous to current value
             newItem.previous = newItem.current;
             // then create new current value
@@ -196,29 +194,29 @@ function onNormalUpdate() {
     // we assume the browser executes the timeouts in order they are created,
     // so this timeout executes after all the update timeouts created above.
     setTimeout(() => {
-        var endMillis = new Date().getTime();
-        var duration = endMillis - startMillis;
+        const endMillis = new Date().getTime();
+        const duration = endMillis - startMillis;
         setMessage('Transaction took ' + duration.toLocaleString() + 'ms');
     }, 0);
 
     function setMessage(msg: string) {
-        var eMessage = document.querySelector('#eMessage') as any;
+        const eMessage = document.querySelector('#eMessage') as any;
         eMessage.textContent = msg;
     }
 }
 
 function onAsyncUpdate() {
-    var startMillis = new Date().getTime();
+    const startMillis = new Date().getTime();
 
     setMessage('Running Async');
 
-    var updatedCount = 0;
-    for (var i = 0; i < UPDATE_COUNT; i++) {
+    let updatedCount = 0;
+    for (let i = 0; i < UPDATE_COUNT; i++) {
         setTimeout(() => {
             // pick one index at random
-            var index = Math.floor(Math.random() * globalRowData.length);
-            var itemToUpdate = globalRowData[index];
-            var newItem = copyObject(itemToUpdate);
+            const index = Math.floor(Math.random() * globalRowData.length);
+            const itemToUpdate = globalRowData[index];
+            const newItem = copyObject(itemToUpdate);
             // copy previous to current value
             newItem.previous = newItem.current;
             // then create new current value
@@ -236,15 +234,15 @@ function onAsyncUpdate() {
         if (updatedCount === UPDATE_COUNT) {
             // print message in next VM turn to allow browser to refresh
             setTimeout(() => {
-                var endMillis = new Date().getTime();
-                var duration = endMillis - startMillis;
+                const endMillis = new Date().getTime();
+                const duration = endMillis - startMillis;
                 setMessage('Async took ' + duration.toLocaleString() + 'ms');
             }, 0);
         }
     }
 
     function setMessage(msg: string) {
-        var eMessage = document.querySelector('#eMessage') as any;
+        const eMessage = document.querySelector('#eMessage') as any;
         eMessage.textContent = msg;
     }
 }
@@ -252,7 +250,7 @@ function onAsyncUpdate() {
 // makes a copy of the original and merges in the new values
 function copyObject(object: any) {
     // start with new object
-    var newObject: any = {};
+    const newObject: any = {};
 
     // copy in the old values
     Object.keys(object).forEach((key) => {
@@ -264,6 +262,6 @@ function copyObject(object: any) {
 
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(eGridDiv, gridOptions);
 });

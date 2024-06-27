@@ -55,8 +55,8 @@ function copyJsonFile(sourceFile, destinationFile) {
 const srcPropertyKeys = '../../community-modules/core/src/propertyKeys.ts';
 const destPropertyKeys = './src/executors/generate/generator/_copiedFromCore/propertyKeys.ts';
 
-const srcEventKeys = '../../community-modules/core/src/eventKeys.ts';
-const destEventKeys = './src/executors/generate/generator/_copiedFromCore/eventKeys.ts';
+const srcEventKeys = '../../community-modules/core/src/eventTypes.ts';
+const destEventKeys = './src/executors/generate/generator/_copiedFromCore/eventTypes.ts';
 
 const srcModules = '../../documentation/ag-grid-docs/src/content/matrix-table/modules.json';
 const destModules = './src/executors/generate/generator/_copiedFromCore/modules.ts';

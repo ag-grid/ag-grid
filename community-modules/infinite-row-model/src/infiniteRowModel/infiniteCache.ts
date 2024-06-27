@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     FocusService,
     IDatasource,
-    Logger,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
@@ -10,7 +9,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, NumberSequence, _exists, _getAllValuesInObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, _exists, _getAllValuesInObject, _log, _missing } from '@ag-grid-community/core';
 
 import { InfiniteBlock } from './infiniteBlock';
 
@@ -28,23 +27,19 @@ export interface InfiniteCacheParams {
     dynamicRowHeight: boolean;
 }
 
+// this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
+// blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
+// scrolled over are not needed to be loaded.
+const MAX_EMPTY_BLOCKS_TO_KEEP = 2;
+
 export class InfiniteCache extends BeanStub {
     protected rowRenderer: RowRenderer;
     private focusService: FocusService;
 
-    private logger: Logger;
-
     public wireBeans(beans: BeanCollection): void {
         this.rowRenderer = beans.rowRenderer;
         this.focusService = beans.focusService;
-
-        this.logger = beans.loggerFactory.create('InfiniteCache');
     }
-
-    // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
-    // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
-    // scrolled over are not needed to be loaded.
-    private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
 
     private readonly params: InfiniteCacheParams;
 
@@ -126,7 +121,9 @@ export class InfiniteCache extends BeanStub {
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
+        if (this.gos.get('debug')) {
+            _log(`InfiniteCache - onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
+        }
 
         this.checkRowCount(block, lastRow);
         // we fire cacheUpdated even if the row count has not changed, as some items need updating even
@@ -148,7 +145,7 @@ export class InfiniteCache extends BeanStub {
         // we want to keep, which means we are left with blocks that we can potentially purge
         const maxBlocksProvided = this.params.maxBlocksInCache! > 0;
         const blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache! - 1 : null;
-        const emptyBlocksToKeep = InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        const emptyBlocksToKeep = MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: InfiniteBlock, index: number) => {
             const purgeBecauseBlockEmpty = block.getState() === 'needsLoading' && index >= emptyBlocksToKeep;
@@ -277,7 +274,7 @@ export class InfiniteCache extends BeanStub {
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
             const event: WithoutGridCommon<StoreUpdatedEvent> = {
-                type: Events.EVENT_STORE_UPDATED,
+                type: 'storeUpdated',
             };
             this.eventService.dispatchEvent(event);
         }
@@ -316,11 +313,6 @@ export class InfiniteCache extends BeanStub {
         let lastBlockId = -1;
         let inActiveRange = false;
         const numberSequence: NumberSequence = new NumberSequence();
-
-        // if only one node passed, we start the selection at the top
-        if (_missing(firstInRange)) {
-            inActiveRange = true;
-        }
 
         let foundGapInSelection = false;
 

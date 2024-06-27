@@ -13,9 +13,9 @@ const App = () => {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxster', price: 72000 },
     ]);
-    const [colDefs, setColDefs] = useState<ColDef[]>([{ field: 'make' }, { field: 'model' }, { field: 'price' }]);
+    const [colDefs] = useState<ColDef[]>([{ field: 'make' }, { field: 'model' }, { field: 'price' }]);
 
-    const onGridReady = (params: any) => {
+    const onGridReady = () => {
         setTimeout(() => setRowData([...rowData, ...rowData]), 2000);
     };
 

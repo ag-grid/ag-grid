@@ -10,7 +10,7 @@ import type { RowNode } from '../entities/rowNode';
  *
  * @returns a boolean representing whether nodes were reordered
  */
-export function _sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number }): boolean {
+export function _sortRowNodesByOrder(rowNodes: RowNode[] | null, rowNodeOrder: { [id: string]: number }): boolean {
     if (!rowNodes) {
         return false;
     }

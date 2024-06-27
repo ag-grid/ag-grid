@@ -4,10 +4,9 @@ import { _warnOnce } from '@ag-grid-community/core';
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';
 
+const DATE_TREE_LIST_PATH_GETTER = (date: Date | null) =>
+    date ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())] : null;
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
-    private static readonly DATE_TREE_LIST_PATH_GETTER = (date: Date | null) =>
-        date ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())] : null;
-
     /** all displayed items in a tree structure */
     private allDisplayedItemsTree: SetFilterModelTreeItem[] = [];
     /** all displayed items flattened and filtered */
@@ -152,7 +151,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             }
         }
         if (isDate) {
-            return TreeSetDisplayValueModel.DATE_TREE_LIST_PATH_GETTER as any;
+            return DATE_TREE_LIST_PATH_GETTER as any;
         }
         _warnOnce(
             'property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.'

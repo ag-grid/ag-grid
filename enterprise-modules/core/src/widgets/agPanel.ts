@@ -11,12 +11,22 @@ import {
 } from '@ag-grid-community/core';
 
 export interface PanelOptions extends PositionableOptions {
-    component?: Component;
+    component?: Component<any>;
     hideTitleBar?: boolean | null;
     closable?: boolean | null;
     resizable?: boolean | ResizableStructure;
     title?: string | null;
     cssIdentifier?: string | null;
+}
+function getTemplate(config: PanelOptions) {
+    const cssIdentifier = config.cssIdentifier || 'default';
+    return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
+        <div data-ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
+            <span data-ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
+            <div data-ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
+        </div>
+        <div data-ref="eContentWrapper" class="ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper"></div>
+    </div>`;
 }
 
 export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
@@ -33,18 +43,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
     protected readonly eTitle: HTMLElement = RefPlaceholder;
 
     constructor(protected readonly config: TConfig) {
-        super(AgPanel.getTemplate(config));
-    }
-
-    private static getTemplate(config: PanelOptions) {
-        const cssIdentifier = config.cssIdentifier || 'default';
-        return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
-            <div data-ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
-                <span data-ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
-                <div data-ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
-            </div>
-            <div data-ref="eContentWrapper" class="ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper"></div>
-        </div>`;
+        super(getTemplate(config));
     }
 
     public postConstruct() {
@@ -92,21 +91,25 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             _setDisplayed(this.eTitleBar, false);
         }
 
-        this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
-            if (
-                eGui.contains(e.relatedTarget as HTMLElement) ||
-                eGui.contains(this.gos.getActiveDomElement()) ||
-                this.eTitleBarButtons.contains(e.target as HTMLElement)
-            ) {
-                e.preventDefault();
-                return;
-            }
+        this.addManagedElementListeners(this.eTitleBar, {
+            mousedown: (e: MouseEvent) => {
+                if (
+                    eGui.contains(e.relatedTarget as HTMLElement) ||
+                    eGui.contains(this.gos.getActiveDomElement()) ||
+                    this.eTitleBarButtons.contains(e.target as HTMLElement)
+                ) {
+                    e.preventDefault();
+                    return;
+                }
 
-            const focusEl = this.eContentWrapper.querySelector('button, [href], input, select, textarea, [tabindex]');
+                const focusEl = this.eContentWrapper.querySelector(
+                    'button, [href], input, select, textarea, [tabindex]'
+                );
 
-            if (focusEl) {
-                (focusEl as HTMLElement).focus();
-            }
+                if (focusEl) {
+                    (focusEl as HTMLElement).focus();
+                }
+            },
         });
 
         if (popup && this.positionableFeature.isPositioned()) {
@@ -162,7 +165,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             eGui.appendChild(child);
 
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
+            closeButtonComp.addManagedElementListeners(eGui, { click: this.onBtClose.bind(this) });
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
             eGui.parentElement!.removeChild(eGui);
@@ -171,7 +174,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
     }
 
-    public setBodyComponent(bodyComponent: Component) {
+    public setBodyComponent(bodyComponent: Component<any>) {
         bodyComponent.setParentComponent(this);
         this.eContentWrapper.appendChild(bodyComponent.getGui());
     }

@@ -1,12 +1,12 @@
 import { GridApi, GridOptions, IServerSideDatasource, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, AdvancedFilterModule, MenuModule, ServerSideRowModelModule]);
+ModuleRegistry.registerModules([AdvancedFilterModule, MenuModule, ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {

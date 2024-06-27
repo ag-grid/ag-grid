@@ -8,10 +8,10 @@ import {
     ValueGetterParams,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
@@ -312,9 +312,7 @@ const gridOptions: GridOptions = {
     rowData: globalRowData,
     suppressAggFuncInHeader: true,
     suppressRowClickSelection: true,
-    getRowId: (params: GetRowIdParams) => {
-        return params.data.trade;
-    },
+    getRowId: (params: GetRowIdParams) => String(params.data.trade),
     onGridReady: (params) => {
         createRowData();
         params.api.setGridOption('rowData', globalRowData);

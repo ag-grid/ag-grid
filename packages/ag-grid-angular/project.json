@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": ["build:copy-source", "build:format-copied-files"],
+      "dependsOn": ["build:copy-source", "@ag-grid-community/core"],
       "inputs": ["tsDeclarations", "{projectRoot}/angular.json", "{projectRoot}/projects/**", "!{projectRoot}/dist"],
       "cache": true,
       "outputs": ["{projectRoot}/dist"],
@@ -22,10 +22,6 @@
       "options": {
         "cwd": "packages/ag-grid-angular"
       }
-    },
-    "build:format-copied-files": {
-      "command": "nx format:write --projects ag-grid-angular",
-      "dependsOn": ["build:copy-source"]
     },
     "pack": {
       "executor": "nx:run-commands",

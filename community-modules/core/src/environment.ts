@@ -1,38 +1,25 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import { Events } from './eventKeys';
 import type { CssVariablesChanged } from './events';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { ResizeObserverService } from './misc/resizeObserverService';
+import { _warnOnce } from './utils/function';
 
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
     changeKey: 'rowHeightChanged',
-    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-    defaultValue: 20,
-    // defaultValue: 42,
+    defaultValue: 42,
 };
 const HEADER_HEIGHT: Variable = {
     cssName: '--ag-header-height',
     changeKey: 'headerHeightChanged',
-    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-    defaultValue: 30,
-    // defaultValue: 48,
+    defaultValue: 48,
 };
 const LIST_ITEM_HEIGHT: Variable = {
     cssName: '--ag-list-item-height',
     changeKey: 'listItemHeightChanged',
-    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-    defaultValue: 10,
-    // defaultValue: 24,
-};
-const CHART_MENU_PANEL_WIDTH: Variable = {
-    cssName: '--ag-chart-menu-panel-width',
-    changeKey: 'chartMenuPanelWidthChanged',
-    // TODO This is an artificially small default so that we can see issues in our examples with delayed loading of styles, restore correct default pre-release
-    defaultValue: 100,
-    // defaultValue: 260,
+    defaultValue: 24,
 };
 
 export class Environment extends BeanStub implements NamedBean {
@@ -60,7 +47,6 @@ export class Environment extends BeanStub implements NamedBean {
         this.getSizeEl(ROW_HEIGHT);
         this.getSizeEl(HEADER_HEIGHT);
         this.getSizeEl(LIST_ITEM_HEIGHT);
-        this.getSizeEl(CHART_MENU_PANEL_WIDTH);
     }
 
     public getDefaultRowHeight(): number {
@@ -73,10 +59,6 @@ export class Environment extends BeanStub implements NamedBean {
 
     public getDefaultListItemHeight() {
         return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
-    }
-
-    public getDefaultChartMenuPanelWidth(): number {
-        return this.getCSSVariablePixelValue(CHART_MENU_PANEL_WIDTH);
     }
 
     public hasMeasuredSizes(): boolean {
@@ -158,14 +140,10 @@ export class Environment extends BeanStub implements NamedBean {
         if (!container) {
             container = this.eMeasurementContainer = document.createElement('div');
             container.className = 'ag-measurement-container';
-            container.style.width = '0';
-            container.style.overflow = 'hidden';
-            container.style.visibility = 'hidden';
             this.eGridDiv.appendChild(container);
         }
 
         sizeEl = document.createElement('div');
-        sizeEl.style.position = 'absolute';
         sizeEl.style.width = `var(${variable.cssName}, ${NO_VALUE_SENTINEL}px)`;
         container.appendChild(sizeEl);
         this.sizeEls.set(variable, sizeEl);
@@ -173,8 +151,8 @@ export class Environment extends BeanStub implements NamedBean {
         let lastMeasurement = this.measureSizeEl(variable);
 
         if (lastMeasurement === 'no-styles') {
-            console.warn(
-                `AG Grid: no value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.`
+            _warnOnce(
+                `no value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.`
             );
         }
 
@@ -196,7 +174,7 @@ export class Environment extends BeanStub implements NamedBean {
 
     private fireGridStylesChangedEvent(change: ChangeKey): void {
         const event: WithoutGridCommon<CssVariablesChanged> = {
-            type: Events.EVENT_GRID_STYLES_CHANGED,
+            type: 'gridStylesChanged',
             [change]: true,
         };
         this.eventService.dispatchEvent(event);
@@ -248,11 +226,6 @@ type Variable = {
     defaultValue: number;
 };
 
-type ChangeKey =
-    | 'themeChanged'
-    | 'headerHeightChanged'
-    | 'rowHeightChanged'
-    | 'listItemHeightChanged'
-    | 'chartMenuPanelWidthChanged';
+type ChangeKey = 'themeChanged' | 'headerHeightChanged' | 'rowHeightChanged' | 'listItemHeightChanged';
 
 const NO_VALUE_SENTINEL = 15538;

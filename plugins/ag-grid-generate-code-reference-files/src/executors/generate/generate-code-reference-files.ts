@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import ts from 'typescript';
 
-import { Events } from './_copiedFromCore/eventKeys';
+import { ALL_EVENTS } from './_copiedFromCore/eventTypes';
 import { getFormatterForTS } from './formatAST';
 
 const { formatNode, findNode, getFullJsDoc, getJsDoc } = getFormatterForTS(ts);
@@ -12,7 +12,7 @@ function getCallbackForEvent(eventName: string): string {
     }
     return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
 }
-const EVENTS = Object.values(Events);
+const EVENTS = ALL_EVENTS;
 const EVENT_LOOKUP = new Set(EVENTS.map((event) => getCallbackForEvent(event)));
 
 function findAllInNodesTree(node) {
@@ -139,10 +139,18 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
     const mergedProps = props;
     // If the parent has a generic params lets apply the child's specific types
     if (parent.params && parent.params.length > 0) {
+        let globalEventType = undefined;
+        if (parent.extends === 'AgGlobalEvent') {
+            // Special handling for global event types. This should be generic but this is a lot quicker for now.
+            globalEventType = parent.params[0];
+        }
+
         if (child.meta && child.meta.typeParams) {
             child.meta.typeParams.forEach((t, i) => {
                 Object.entries(props).forEach(([k, v]: [string, any]) => {
-                    //.filter(([k, v]) => k !== 'meta')
+                    if (globalEventType && k === 'type' && v === 'TEventType') {
+                        v = globalEventType;
+                    }
                     delete mergedProps[k];
                     // Replace the generic params. Regex to make sure you are not just replacing
                     // random letters in variable names.
@@ -358,18 +366,6 @@ function extractInterfaces(srcFile, extension) {
     return iLookup;
 }
 
-function getClassProperties(filePath, className) {
-    const srcFile = parseFile(filePath);
-    const classNode = findNode(className, srcFile, 'ClassDeclaration');
-
-    let members = {};
-    ts.forEachChild(classNode, (n) => {
-        members = { ...members, ...extractMethodsAndPropsFromNode(n, srcFile) };
-    });
-
-    return members;
-}
-
 /** Build the interface file in the format that can be used by <interface-documentation> */
 export function buildInterfaceProps(globs) {
     const interfaces = {
@@ -410,39 +406,6 @@ export function buildInterfaceProps(globs) {
     applyInheritance(extensions, interfaces, true);
 
     return interfaces;
-}
-
-function hasPublicModifier(node) {
-    if (node.modifiers) {
-        return node.modifiers.some((m) => ts.SyntaxKind[m.kind] == 'PublicKeyword');
-    }
-    return false;
-}
-
-function extractMethodsAndPropsFromNode(node, srcFile) {
-    const nodeMembers = {};
-    const kind = ts.SyntaxKind[node.kind];
-    const name = node && node.name && node.name.escapedText;
-    const returnType = node && node.type && node.type.getFullText().trim();
-
-    if (!hasPublicModifier(node)) {
-        return nodeMembers;
-    }
-
-    if (kind == 'MethodDeclaration') {
-        const methodArgs = getArgTypes(node.parameters, srcFile);
-
-        nodeMembers[name] = {
-            meta: getJsDoc(node),
-            type: { arguments: methodArgs, returnType },
-        };
-    } else if (kind == 'PropertyDeclaration') {
-        nodeMembers[name] = {
-            meta: getJsDoc(node),
-            type: { returnType: returnType },
-        };
-    }
-    return nodeMembers;
 }
 
 export function getGridOptions(gridOpsFile: string) {
@@ -508,22 +471,21 @@ export function getRowNode(rowNodeFile: string) {
 
     return rowNodeMembers;
 }
-export function getColumn(columnFile: string) {
-    const srcFile = parseFile(columnFile);
-    const columnNode = findNode('Column', srcFile);
-    const iHeaderColumnNode = findNode('IHeaderColumn', srcFile);
-    const iProvidedColumnNode = findNode('IProvidedColumn', srcFile);
 
+export function getColumnTypes(columnFile: string, interfaces: string[]) {
+    const srcFile = parseFile(columnFile);
     let members = {};
+
     const addToMembers = (node) => {
         ts.forEachChild(node, (n) => {
             members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
         });
     };
 
-    addToMembers(columnNode);
-    addToMembers(iHeaderColumnNode);
-    addToMembers(iProvidedColumnNode);
+    interfaces.forEach((interfaceName) => {
+        const node = findNode(interfaceName, srcFile);
+        addToMembers(node);
+    });
 
     return members;
 }

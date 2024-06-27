@@ -1,7 +1,6 @@
 import type {
     AbstractColDef,
     AgColumn,
-    AgComponentSelector,
     AgProvidedColumnGroup,
     BeanCollection,
     ColGroupDef,
@@ -9,17 +8,19 @@ import type {
     ColumnModel,
     ColumnNameService,
     ColumnToolPanelState,
+    ComponentSelector,
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     _exists,
     _includes,
     _setAriaLabel,
     _setAriaLevel,
+    _warnOnce,
     isProvidedColumnGroup,
 } from '@ag-grid-community/core';
-import { VirtualList, type VirtualListModel } from '@ag-grid-enterprise/core';
+import { VirtualList } from '@ag-grid-enterprise/core';
+import type { VirtualListModel } from '@ag-grid-enterprise/core';
 import type { ToolPanelColDefService } from '@ag-grid-enterprise/side-bar';
 
 import { ExpandState } from './agPrimaryColsHeader';
@@ -48,11 +49,8 @@ class UIColumnModel implements VirtualListModel {
 
 const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
-export class AgPrimaryColsList extends Component {
-    static readonly selector: AgComponentSelector = 'AG-PRIMARY-COLS-LIST';
-
-    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
-
+export type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
+export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private colDefService: ToolPanelColDefService;
@@ -61,8 +59,8 @@ export class AgPrimaryColsList extends Component {
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.colDefService = beans.toolPanelColDefService;
-        this.modelItemUtils = beans.modelItemUtils;
+        this.colDefService = beans.toolPanelColDefService as ToolPanelColDefService;
+        this.modelItemUtils = beans.modelItemUtils as ModelItemUtils;
     }
 
     private allowDragging: boolean;
@@ -82,7 +80,7 @@ export class AgPrimaryColsList extends Component {
     private isInitialState: boolean = false;
 
     constructor() {
-        super(AgPrimaryColsList.TEMPLATE);
+        super(/* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`);
     }
 
     public override destroy(): void {
@@ -102,23 +100,21 @@ export class AgPrimaryColsList extends Component {
         this.eventType = eventType;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+            this.addManagedEventListeners({ columnMoved: this.onColumnsChanged.bind(this) });
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnsChanged.bind(this));
+        this.addManagedEventListeners({
+            newColumnsLoaded: this.onColumnsChanged.bind(this),
+        });
 
-        const eventsImpactingCheckedState: string[] = [
-            Events.EVENT_COLUMN_PIVOT_CHANGED,
-            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            Events.EVENT_COLUMN_VALUE_CHANGED,
-            Events.EVENT_COLUMN_VISIBLE,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-        ];
-
-        eventsImpactingCheckedState.forEach((event) => {
-            // update header select all checkbox with current selection state
-            this.addManagedListener(this.eventService, event, this.fireSelectionChangedEvent.bind(this));
+        const listener = this.fireSelectionChangedEvent.bind(this);
+        this.addManagedEventListeners({
+            columnPivotChanged: listener,
+            columnPivotModeChanged: listener,
+            columnRowGroupChanged: listener,
+            columnValueChanged: listener,
+            columnVisible: listener,
+            newColumnsLoaded: listener,
         });
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
@@ -273,12 +269,8 @@ export class AgPrimaryColsList extends Component {
     private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
         const columnExpandedListener = this.onColumnExpanded.bind(this);
         const addListeners = (item: ColumnModelItem) => {
-            item.addEventListener(ColumnModelItem.EVENT_EXPANDED_CHANGED, columnExpandedListener);
-            const removeFunc = item.removeEventListener.bind(
-                item,
-                ColumnModelItem.EVENT_EXPANDED_CHANGED,
-                columnExpandedListener
-            );
+            item.addEventListener('expandedChanged', columnExpandedListener);
+            const removeFunc = item.removeEventListener.bind(item, 'expandedChanged', columnExpandedListener);
             this.destroyColumnItemFuncs.push(removeFunc);
         };
 
@@ -443,7 +435,7 @@ export class AgPrimaryColsList extends Component {
 
         const unrecognisedGroupIds = groupIds.filter((groupId) => !_includes(expandedGroupIds, groupId));
         if (unrecognisedGroupIds.length > 0) {
-            console.warn('AG Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
+            _warnOnce('unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
         }
     }
 
@@ -565,7 +557,7 @@ export class AgPrimaryColsList extends Component {
 
     private fireGroupExpandedEvent(): void {
         const expandState = this.getExpandState();
-        this.dispatchEvent({ type: 'groupExpanded', state: expandState });
+        this.dispatchLocalEvent({ type: 'groupExpanded', state: expandState });
     }
 
     private fireSelectionChangedEvent(): void {
@@ -573,7 +565,7 @@ export class AgPrimaryColsList extends Component {
             return;
         }
         const selectionState = this.getSelectionState();
-        this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
+        this.dispatchLocalEvent({ type: 'selectionChanged', state: selectionState });
     }
 
     public getExpandedGroups(): string[] {
@@ -592,3 +584,8 @@ export class AgPrimaryColsList extends Component {
         return expandedGroupIds;
     }
 }
+
+export const AgPrimaryColsListSelector: ComponentSelector = {
+    selector: 'AG-PRIMARY-COLS-LIST',
+    component: AgPrimaryColsList,
+};

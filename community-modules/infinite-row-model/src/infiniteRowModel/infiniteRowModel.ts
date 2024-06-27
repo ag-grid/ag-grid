@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    EventsType,
     FilterManager,
     IDatasource,
     IInfiniteRowModel,
@@ -15,7 +14,7 @@ import type {
     SortController,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, Events, NumberSequence, _jsonEquals, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, _jsonEquals, _warnOnce } from '@ag-grid-community/core';
 
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
@@ -94,11 +93,11 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     private addEventListeners(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_FILTER_CHANGED]: this.onFilterChanged.bind(this),
-            [Events.EVENT_SORT_CHANGED]: this.onSortChanged.bind(this),
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverything.bind(this),
-            [Events.EVENT_STORE_UPDATED]: this.onCacheUpdated.bind(this),
+        this.addManagedEventListeners({
+            filterChanged: this.onFilterChanged.bind(this),
+            sortChanged: this.onSortChanged.bind(this),
+            newColumnsLoaded: this.onColumnEverything.bind(this),
+            storeUpdated: this.onCacheUpdated.bind(this),
         });
 
         this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
@@ -174,7 +173,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        const getRowIdFunc = this.gos.getCallback('getRowId');
+        const getRowIdFunc = this.gos.getRowIdCallback();
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
@@ -186,7 +185,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
 
     private createModelUpdatedEvent(): WithoutGridCommon<ModelUpdatedEvent> {
         return {
-            type: Events.EVENT_MODEL_UPDATED,
+            type: 'modelUpdated',
             // not sure if these should all be false - noticed if after implementing,
             // maybe they should be true?
             newPage: false,
@@ -234,7 +233,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
 
         this.eventService.dispatchEventOnce({
-            type: Events.EVENT_ROW_COUNT_READY,
+            type: 'rowCountReady',
         });
 
         const event = this.createModelUpdatedEvent();

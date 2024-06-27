@@ -1,7 +1,8 @@
+import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
+
 import type { IAggFunc } from '../entities/colDef';
 import type { ChartRef } from '../entities/gridOptions';
 import type { CellRangeParams } from './IRangeService';
-import type { AgChartThemeOverrides, AgChartThemePalette } from './iAgChartOptions';
 import type {
     ChartToolPanelName,
     ChartType,
@@ -80,10 +81,10 @@ export interface IChartService {
     isEnterprise(): boolean;
     getChartModels(): ChartModel[];
     getChartRef(chartId: string): ChartRef | undefined;
-    createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
-    createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
-    createChartFromCurrentRange(chartType: ChartType): ChartRef | undefined;
-    createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
+    createRangeChart(params: CreateRangeChartParams, fromApi?: boolean): ChartRef | undefined;
+    createCrossFilterChart(params: CreateCrossFilterChartParams, fromApi?: boolean): ChartRef | undefined;
+    createChartFromCurrentRange(chartType: ChartType, fromApi?: boolean): ChartRef | undefined;
+    createPivotChart(params: CreatePivotChartParams, fromApi?: boolean): ChartRef | undefined;
     restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
     downloadChart(params: ChartDownloadParams): void;

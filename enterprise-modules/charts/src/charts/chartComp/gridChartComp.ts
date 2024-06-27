@@ -1,7 +1,7 @@
 import type {
     BeanCollection,
-    ChartCreated,
-    ChartDestroyed,
+    ChartCreatedEvent,
+    ChartDestroyedEvent,
     ChartModel,
     ChartToolPanelName,
     ChartType,
@@ -15,7 +15,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     RefPlaceholder,
     _clearElement,
     _getAbsoluteHeight,
@@ -23,6 +22,7 @@ import {
     _includes,
     _removeFromParent,
     _setDisplayed,
+    _warnOnce,
 } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
@@ -43,7 +43,6 @@ import { PolarChartProxy } from './chartProxies/polar/polarChartProxy';
 import { HeatmapChartProxy } from './chartProxies/specialized/heatmapChartProxy';
 import { BoxPlotChartProxy } from './chartProxies/statistical/boxPlotChartProxy';
 import { RangeChartProxy } from './chartProxies/statistical/rangeChartProxy';
-import { TitleEdit } from './chartTitle/titleEdit';
 import { ChartMenu } from './menu/chartMenu';
 import type { ChartMenuContext } from './menu/chartMenuContext';
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
@@ -64,6 +63,7 @@ export interface GridChartParams {
     chartType: ChartType;
     chartThemeName?: string;
     insideDialog: boolean;
+    focusDialogOnOpen?: boolean;
     suppressChartRanges?: boolean;
     switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
@@ -85,30 +85,19 @@ export class GridChartComp extends Component {
     private popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.crossFilterService = beans.chartCrossFilterService;
-        this.chartTranslationService = beans.chartTranslationService;
-        this.chartMenuService = beans.chartMenuService;
+        this.crossFilterService = beans.chartCrossFilterService as ChartCrossFilterService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
+        this.chartMenuService = beans.chartMenuService as ChartMenuService;
         this.focusService = beans.focusService;
         this.popupService = beans.popupService;
     }
-
-    private static TEMPLATE /* html */ = `<div class="ag-chart" tabindex="-1">
-            <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
-                <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
-                <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
-            </div>
-            <div data-ref="eTitleEditContainer"></div>
-            <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
-        </div>`;
 
     private readonly eChart: HTMLElement = RefPlaceholder;
     private readonly eChartContainer: HTMLElement = RefPlaceholder;
     private readonly eMenuContainer: HTMLElement = RefPlaceholder;
     private readonly eEmpty: HTMLElement = RefPlaceholder;
-    private readonly eTitleEditContainer: HTMLDivElement = RefPlaceholder;
 
     private chartMenu: ChartMenu;
-    private titleEdit: TitleEdit;
     private chartDialog: AgDialog;
 
     private chartController: ChartController;
@@ -125,7 +114,13 @@ export class GridChartComp extends Component {
     private onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
-        super(GridChartComp.TEMPLATE);
+        super(/* html */ `<div class="ag-chart">
+            <div data-ref="eChartContainer" class="ag-chart-components-wrapper ag-chart-menu-hidden">
+                <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
+                <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
+            </div>
+            <div data-ref="eMenuContainer" class="ag-chart-docked-container"></div>
+            </div>`);
         this.params = params;
     }
 
@@ -155,10 +150,9 @@ export class GridChartComp extends Component {
         }
 
         this.addMenu();
-        this.addTitleEditComp();
 
-        this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.update.bind(this));
+        this.addManagedElementListeners(this.getGui(), { focusin: this.setActiveChartCellRange.bind(this) });
+        this.addManagedListeners(this.chartController, { chartModelUpdate: this.update.bind(this) });
 
         this.addManagedPropertyListeners(
             ['chartThemeOverrides', 'chartThemes'],
@@ -214,13 +208,12 @@ export class GridChartComp extends Component {
 
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
-            console.warn('AG Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            _warnOnce('invalid chart type supplied: ' + chartProxyParams.chartType);
             return;
         }
 
         this.chartController.setChartProxy(this.chartProxy);
         this.createMenuContext();
-        this.titleEdit && this.titleEdit.refreshTitle(this.chartMenuContext);
     }
 
     private createMenuContext(): void {
@@ -313,6 +306,10 @@ export class GridChartComp extends Component {
 
         const { width, height } = this.getBestDialogSize();
 
+        const afterGuiAttached = this.params.focusDialogOnOpen
+            ? () => setTimeout(() => this.focusService.focusInto(this.getGui()))
+            : undefined;
+
         this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
@@ -323,13 +320,22 @@ export class GridChartComp extends Component {
             component: this,
             centered: true,
             closable: true,
+            afterGuiAttached,
         });
 
         this.createBean(this.chartDialog);
 
-        this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
+        this.chartDialog.addEventListener('destroyed', () => {
             this.destroy();
             this.chartMenuService.hideAdvancedSettings();
+            const lastFocusedCell = this.focusService.getFocusedCell();
+            setTimeout(() => {
+                if (lastFocusedCell) {
+                    this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
+                } else {
+                    this.focusService.focusGridInnerElement();
+                }
+            });
         });
     }
 
@@ -362,14 +368,6 @@ export class GridChartComp extends Component {
                 new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartMenuContext)
             );
             this.eChartContainer.appendChild(this.chartMenu.getGui());
-        }
-    }
-
-    private addTitleEditComp(): void {
-        this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
-        this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
-        if (this.chartProxy) {
-            this.titleEdit.refreshTitle(this.chartMenuContext);
         }
     }
 
@@ -448,8 +446,6 @@ export class GridChartComp extends Component {
             .then(() => {
                 this.chartController.raiseChartUpdatedEvent();
             });
-
-        this.titleEdit.refreshTitle(this.chartMenuContext);
     }
 
     private chartTypeChanged(updateParams?: UpdateChartParams): ChartType | null {
@@ -567,8 +563,8 @@ export class GridChartComp extends Component {
         if (customChartThemes) {
             this.getAllKeysInObjects([customChartThemes]).forEach((customThemeName) => {
                 if (!_includes(suppliedThemes, customThemeName)) {
-                    console.warn(
-                        "AG Grid: a custom chart theme with the name '" +
+                    _warnOnce(
+                        "a custom chart theme with the name '" +
                             customThemeName +
                             "' has been " +
                             "supplied but not added to the 'chartThemes' list"
@@ -596,8 +592,8 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartCreatedEvent(): void {
-        const event: WithoutGridCommon<ChartCreated> = {
-            type: Events.EVENT_CHART_CREATED,
+        const event: WithoutGridCommon<ChartCreatedEvent> = {
+            type: 'chartCreated',
             chartId: this.chartController.getChartId(),
         };
 
@@ -610,8 +606,8 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartDestroyedEvent(): void {
-        const event: WithoutGridCommon<ChartDestroyed> = {
-            type: Events.EVENT_CHART_DESTROYED,
+        const event: WithoutGridCommon<ChartDestroyedEvent> = {
+            type: 'chartDestroyed',
             chartId: this.chartController.getChartId(),
         };
 
@@ -626,7 +622,6 @@ export class GridChartComp extends Component {
         }
 
         this.destroyBean(this.chartMenu);
-        this.destroyBean(this.titleEdit);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {

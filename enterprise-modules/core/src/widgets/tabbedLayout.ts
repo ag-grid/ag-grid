@@ -16,6 +16,13 @@ interface TabbedItemWrapper {
     eHeaderButton: HTMLElement;
 }
 
+function getTabbedLayoutTemplate(cssClass?: string) {
+    return /* html */ `<div class="ag-tabs ${cssClass}">
+        <div data-ref="eHeader"></div>
+        <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+    </div>`;
+}
+
 export class TabbedLayout extends TabGuardComp {
     private focusService: FocusService;
 
@@ -37,7 +44,7 @@ export class TabbedLayout extends TabGuardComp {
     private readonly tabbedItemScrollMap = new Map<string, number>();
 
     constructor(params: TabbedLayoutParams) {
-        super(TabbedLayout.getTemplate(params.cssClass));
+        super(getTabbedLayoutTemplate(params.cssClass));
         this.params = params;
     }
 
@@ -56,13 +63,6 @@ export class TabbedLayout extends TabGuardComp {
         });
 
         this.addDestroyFunc(() => this.activeItem?.tabbedItem?.afterDetachedCallback?.());
-    }
-
-    private static getTemplate(cssClass?: string) {
-        return /* html */ `<div class="ag-tabs ${cssClass}">
-            <div data-ref="eHeader"></div>
-            <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
-        </div>`;
     }
 
     private setupHeader(): void {
@@ -93,7 +93,7 @@ export class TabbedLayout extends TabGuardComp {
         const eIcon = _createIconNoSpan('close', this.gos, undefined, true)!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
-        this.addManagedListener(eCloseButton, 'click', () => this.params.onCloseClicked?.());
+        this.addManagedElementListeners(eCloseButton, { click: () => this.params.onCloseClicked?.() });
         const eCloseButtonWrapper = eDocument.createElement('div');
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
         _setAriaRole(eCloseButtonWrapper, 'presentation');
@@ -177,12 +177,13 @@ export class TabbedLayout extends TabGuardComp {
             nextEl = focusService.findNextFocusableElement(eBody, false, backwards);
 
             if (!nextEl) {
-                e.preventDefault();
                 if (suppressTrapFocus && !backwards) {
                     this.forceFocusOutOfContainer(backwards);
                 } else if (enableCloseButton && !backwards) {
+                    e.preventDefault();
                     this.eCloseButton?.focus();
                 } else {
+                    e.preventDefault();
                     this.focusHeader();
                 }
                 return;
@@ -197,9 +198,9 @@ export class TabbedLayout extends TabGuardComp {
 
     private focusInnerElement(fromBottom?: boolean): void {
         if (fromBottom) {
-            this.focusHeader();
-        } else {
             this.focusBody(true);
+        } else {
+            this.focusHeader();
         }
     }
 
@@ -280,8 +281,10 @@ export class TabbedLayout extends TabGuardComp {
             if (this.params.keepScrollPosition) {
                 const scrollableContainer =
                     (tabbedItem.getScrollableContainer && tabbedItem.getScrollableContainer()) || body;
-                this.lastScrollListener = this.addManagedListener(scrollableContainer, 'scroll', () => {
-                    this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
+                [this.lastScrollListener] = this.addManagedElementListeners(scrollableContainer, {
+                    scroll: () => {
+                        this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
+                    },
                 });
                 const scrollPosition = this.tabbedItemScrollMap.get(tabbedItem.name);
                 if (scrollPosition !== undefined) {

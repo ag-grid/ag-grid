@@ -1,30 +1,34 @@
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
-import { Events } from '../events';
+import type { FocusService } from '../focusService';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
+import { _addFocusableContainerListener } from '../utils/focus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import type { AgComponentSelector } from '../widgets/component';
-import { Component, RefPlaceholder } from '../widgets/component';
-import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
+import type { ComponentSelector } from '../widgets/component';
+import { RefPlaceholder } from '../widgets/component';
+import { TabGuardComp } from '../widgets/tabGuardComp';
+import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
+import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
 import type { PaginationService } from './paginationService';
 
-export class PaginationComp extends Component {
+export class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowNodeBlockLoader?: RowNodeBlockLoader;
     private rowModel: IRowModel;
     private paginationService: PaginationService;
+    private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
         this.rowModel = beans.rowModel;
         this.paginationService = beans.paginationService!;
+        this.focusService = beans.focusService;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-PAGINATION';
 
     private readonly btFirst: HTMLElement = RefPlaceholder;
     private readonly btPrevious: HTMLElement = RefPlaceholder;
@@ -43,6 +47,7 @@ export class PaginationComp extends Component {
     private nextButtonDisabled = false;
     private lastButtonDisabled = false;
     private areListenersSetup = false;
+    private allowFocusInnerElement = false;
 
     constructor() {
         super();
@@ -50,7 +55,7 @@ export class PaginationComp extends Component {
 
     public postConstruct(): void {
         const isRtl = this.gos.get('enableRtl');
-        this.setTemplate(this.getTemplate(), [PageSizeSelectorComp]);
+        this.setTemplate(this.getTemplate(), [PageSizeSelectorSelector]);
 
         const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
@@ -69,7 +74,24 @@ export class PaginationComp extends Component {
 
         this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
 
+        this.initialiseTabGuard({
+            // prevent tab guard default logic
+            onTabKeyDown: () => {},
+            focusInnerElement: (fromBottom) => {
+                if (this.allowFocusInnerElement) {
+                    this.tabGuardFeature.getTabGuardCtrl().focusInnerElement(fromBottom);
+                } else {
+                    this.focusService.focusGridInnerElement(fromBottom);
+                }
+            },
+            forceFocusOutWhenTabGuardsAreEmpty: true,
+        });
+
         this.onPaginationChanged();
+    }
+
+    public setAllowFocus(allowFocus: boolean): void {
+        this.allowFocusInnerElement = allowFocus;
     }
 
     private onPaginationChanged(): void {
@@ -96,11 +118,7 @@ export class PaginationComp extends Component {
 
     private setupListeners() {
         if (!this.areListenersSetup) {
-            this.addManagedListener(
-                this.eventService,
-                Events.EVENT_PAGINATION_CHANGED,
-                this.onPaginationChanged.bind(this)
-            );
+            this.addManagedEventListeners({ paginationChanged: this.onPaginationChanged.bind(this) });
 
             [
                 { el: this.btFirst, fn: this.onBtFirst.bind(this) },
@@ -109,14 +127,19 @@ export class PaginationComp extends Component {
                 { el: this.btLast, fn: this.onBtLast.bind(this) },
             ].forEach((item) => {
                 const { el, fn } = item;
-                this.addManagedListener(el, 'click', fn);
-                this.addManagedListener(el, 'keydown', (e: KeyboardEvent) => {
-                    if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
-                        e.preventDefault();
-                        fn();
-                    }
+                this.addManagedListeners(el, {
+                    click: fn,
+                    keydown: (e: KeyboardEvent) => {
+                        if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                            e.preventDefault();
+                            fn();
+                        }
+                    },
                 });
             });
+
+            _addFocusableContainerListener(this, this.getGui(), this.focusService);
+
             this.areListenersSetup = true;
         }
     }
@@ -299,3 +322,8 @@ export class PaginationComp extends Component {
         this.lbRecordCount.textContent = this.formatNumber(0);
     }
 }
+
+export const PaginationSelector: ComponentSelector = {
+    selector: 'AG-PAGINATION',
+    component: PaginationComp,
+};

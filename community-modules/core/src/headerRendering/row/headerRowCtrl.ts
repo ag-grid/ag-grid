@@ -2,9 +2,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
-import { Events } from '../../eventKeys';
-import type { EventsType } from '../../eventKeys';
-import type { VirtualColumnsChangedEvent } from '../../events';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
 import { _values } from '../../utils/generic';
@@ -68,6 +65,16 @@ export class HeaderRowCtrl extends BeanStub {
         return this.instanceId;
     }
 
+    /** Checks that every header cell that is currently visible has been rendered.
+     * Can only be false under some circumstances when using React
+     */
+    public areCellsRendered(): boolean {
+        if (!this.comp) {
+            return false;
+        }
+        return this.getHeaderCellCtrls().every((ctrl) => ctrl.getGui() != null);
+    }
+
     /**
      *
      * @param comp Proxy to the actual component
@@ -94,25 +101,30 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_RESIZED]: this.onColumnResized.bind(this),
-            [Events.EVENT_DISPLAYED_COLUMNS_CHANGED]: this.onDisplayedColumnsChanged.bind(this),
-            [Events.EVENT_VIRTUAL_COLUMNS_CHANGED]: (params: VirtualColumnsChangedEvent) =>
-                this.onVirtualColumnsChanged(params.afterScroll),
-            [Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED]: this.onRowHeightChanged.bind(this),
-            [Events.EVENT_GRID_STYLES_CHANGED]: this.onRowHeightChanged.bind(this),
-            [Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED]: this.onRowHeightChanged.bind(this),
+        const onHeightChanged = this.onRowHeightChanged.bind(this);
+        this.addManagedEventListeners({
+            columnResized: this.onColumnResized.bind(this),
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
+            columnHeaderHeightChanged: onHeightChanged,
+            gridStylesChanged: onHeightChanged,
+            advancedFilterEnabledChanged: onHeightChanged,
         });
 
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
         this.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
 
-        this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('pivotGroupHeaderHeight', this.onRowHeightChanged.bind(this));
-        this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
+        this.addManagedPropertyListeners(
+            [
+                'headerHeight',
+                'pivotHeaderHeight',
+                'groupHeaderHeight',
+                'pivotGroupHeaderHeight',
+                'floatingFiltersHeight',
+            ],
+            onHeightChanged
+        );
     }
 
     public getHeaderCellCtrl(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
@@ -254,8 +266,11 @@ export class HeaderRowCtrl extends BeanStub {
             }
         }
 
-        const ctrlsToDisplay = Array.from(this.headerCellCtrls.values());
-        return ctrlsToDisplay;
+        return this.getHeaderCellCtrls();
+    }
+
+    private getHeaderCellCtrls(): AbstractHeaderCellCtrl[] {
+        return Array.from(this.headerCellCtrls?.values() ?? []);
     }
 
     private recycleAndCreateHeaderCtrls(
@@ -350,19 +365,27 @@ export class HeaderRowCtrl extends BeanStub {
         return this.beans.columnViewportService.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
+    public findHeaderCellCtrl(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
         if (!this.headerCellCtrls) {
-            return false;
+            return;
         }
 
-        const allCtrls = Array.from(this.headerCellCtrls.values());
+        const allCtrls = this.getHeaderCellCtrls();
         const ctrl: AbstractHeaderCellCtrl | undefined = allCtrls.find((ctrl) => ctrl.getColumnGroupChild() == column);
+
+        return ctrl;
+    }
+
+    public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
+        const ctrl = this.findHeaderCellCtrl(column);
 
         if (!ctrl) {
             return false;
         }
 
-        return ctrl.focus(event);
+        const focused = ctrl.focus(event);
+
+        return focused;
     }
 
     public override destroy(): void {

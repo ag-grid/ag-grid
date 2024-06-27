@@ -1,4 +1,5 @@
-import { BeanStub, type ExportParams } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
+import type { ExportParams } from '@ag-grid-community/core';
 
 import type { BaseCreatorBeans, GridSerializingSession } from './interfaces';
 

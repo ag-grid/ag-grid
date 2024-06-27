@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-
 import type {
     BaseCellEditor,
     BaseDate,
@@ -24,6 +22,7 @@ import type {
     IStatusPanelParams,
     ITooltipParams,
 } from 'ag-grid-community';
+import { useContext } from 'react';
 
 import { CustomContext } from './customContext';
 
@@ -101,7 +100,7 @@ export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMe
 export interface CustomLoadingOverlayProps<TData = any, TContext = any>
     extends ILoadingOverlayParams<TData, TContext> {}
 
-/** Props provided to custom no rows overlay component */
+/** Props provided to custom no-rows overlay component */
 export interface CustomNoRowsOverlayProps<TData = any, TContext = any> extends INoRowsOverlayParams<TData, TContext> {}
 
 /** Props provided to custom status panel components */

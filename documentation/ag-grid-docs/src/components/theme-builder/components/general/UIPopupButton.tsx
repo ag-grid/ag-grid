@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FloatingPortal, type UseFloatingOptions, autoUpdate, offset, shift, useFloating } from '@floating-ui/react';
+import { type Placement, type UseFloatingOptions, autoUpdate, offset, shift, useFloating } from '@floating-ui/react';
 import { type ReactNode, useState } from 'react';
 
 import { combineClassNames, useClickAwayListener } from '../component-utils';
@@ -12,7 +12,7 @@ export type UIPopupButtonProps = {
     endDecorator?: React.ReactNode;
     className?: string;
     variant?: 'primary' | 'secondary';
-    placement?: 'left-start' | 'right-start' | 'top-end';
+    placement?: Placement;
     offset?: number;
 };
 
@@ -88,6 +88,7 @@ const DropdownArea = styled(Card)`
     margin-left: 8px;
     padding: 16px;
     width: 350px;
+    overflow: auto;
 
     .dropdownWrapper {
         @keyframes scaleIn {

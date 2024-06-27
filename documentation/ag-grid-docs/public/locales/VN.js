@@ -469,8 +469,8 @@ const AG_GRID_LOCALE_VN = {
     customCombo: 'Kết hợp tùy chỉnh',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Mức ${variable}. Nhấn ENTER để chỉnh sửa.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. Mức ${variable}. ${variable} Nhấn ENTER để chỉnh sửa.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Mức ${variable}. Nhấn ENTER để chỉnh sửa',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. Mức ${variable}. ${variable} Nhấn ENTER để chỉnh sửa',
     ariaAdvancedFilterBuilderList: 'Danh sách bộ lọc nâng cao',
     ariaAdvancedFilterBuilderFilterItem: 'Điều kiện bộ lọc',
     ariaAdvancedFilterBuilderGroupItem: 'Nhóm bộ lọc',

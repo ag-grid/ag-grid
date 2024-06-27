@@ -79,16 +79,13 @@ input[type='number'] {
         }
 
         &:hover:not(:disabled):not([readonly]),
-        &:focus:not(:disabled):not([readonly]),
         &:focus-visible:not(:disabled):not([readonly]),
-        &.hover,
-        &.focus {
+        &.hover {
             border-color: var(--color-input-border-hover);
         }
 
         &:focus:not(:disabled):not([readonly]),
-        &:focus-visible:not(:disabled):not([readonly]),
-        &.focus {
+        &:focus-visible:not(:disabled):not([readonly]) {
             box-shadow:
                 0 0 0 $spacing-size-1 var(--color-input-shadow-focus),
                 var(--shadow-xs);
@@ -114,8 +111,7 @@ input[type='radio']#{$selector-exclude-grid} {
     outline: none;
 
     &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]),
-    &.focus {
+    &:focus-visible:not(:disabled):not([readonly]) {
         box-shadow: 0 0 0 $spacing-size-1 var(--color-input-shadow-focus);
     }
 
@@ -150,8 +146,7 @@ input[type='checkbox']:not(.switch)#{$selector-exclude-grid} {
 
     &:hover:not(:disabled):not([readonly]),
     &.hover,
-    &:focus-visible:not(:disabled):not([readonly]),
-    &.focus {
+    &:focus-visible:not(:disabled):not([readonly]) {
         border-color: var(--color-input-border-hover);
     }
 
@@ -174,15 +169,15 @@ input[type='checkbox']:not(.switch)#{$selector-exclude-grid} {
 }
 
 input[type='checkbox'].switch {
-    $height: $spacing-size-6;
+    $height: $spacing-size-5;
 
-    width: 44px;
+    width: $height * 2;
     height: $height;
-    background-color: var(--color-bg-tertiary);
+    background-color: var(--color-fg-quinary);
     border-radius: math.div($height, 2);
     background-image: radial-gradient(
-        var(--color-bg-primary) calc($height / 2 - 3px),
-        transparent calc($height / 2 - 3px)
+        var(--color-bg-primary) calc($height / 2 - 3.5px),
+        transparent calc($height / 2 - 2.5px)
     );
     background-repeat: no-repeat;
     background-size: $height $height;
@@ -242,13 +237,11 @@ select#{$selector-exclude-grid} {
 
     &:hover,
     &.hover,
-    &:focus-visible,
-    &.focus {
+    &:focus-visible {
         border-color: var(--color-input-border-hover);
     }
 
-    &:focus-visible,
-    &.focus {
+    &:focus-visible {
         box-shadow: 0 0 0 $spacing-size-1 var(--color-input-shadow-focus);
     }
 
@@ -267,6 +260,15 @@ select#{$selector-exclude-grid} {
 
     #{$selector-darkmode} & {
         --svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23eaecf0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
+    }
+}
+
+textarea {
+    outline: none;
+    transition: box-shadow $transition-default-timing;
+
+    &:focus-visible {
+        box-shadow: 0 0 0 $spacing-size-1 var(--color-input-shadow-focus);
     }
 }
 

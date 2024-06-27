@@ -86,11 +86,11 @@ When you provide your own template, everything should work as expected as long a
 
 | Ref | Description |
 |-|-|
-| `eMenu` | The container where the column menu icon will appear to enable opening the column menu. |
+| `eMenu` | The container where the column menu icon will appear to enable opening the column menu (in AG Grid Community, this is only used when `columnMenu = 'legacy'`). |
 | `eFilterButton` | The container where the column filter icon will appear to enable opening the filter (not used when `columnMenu = 'legacy'`). |
 | `eLabel` | The container where there is going to be an onClick mouse listener to trigger the sort. |
 | `eText` | The text displayed on the column. |
-| `eFilter` | The container with the icon that will appear if the user filters this column. |
+| `eFilter` | The container with the icon that will appear if the user filters this column (only used when `columnMenu = 'legacy'` or `suppressHeaderFilterButton = true`). |
 | `eSortOrder` | In case of sorting on multiple columns, this shows the index that represents the position of this column in the order. |
 | `eSortAsc` | In case of sorting ascending the data in the column, this shows the associated icon. |
 | `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
@@ -129,9 +129,9 @@ const gridOptions = {
 
 Note that specifying your own templates is compatible with other configurations:
 
-* `suppressHeaderMenuButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
+* `suppressHeaderFilterButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
 * `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
-* **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderMenuButton`
+* **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderFilterButton`
 
 {% gridExampleRunner title="Header template" name="header-template" /%}
 
@@ -141,7 +141,7 @@ Note that specifying your own templates is compatible with other configurations:
 Column Headers by default use the Provided Header Component. The default can be overridden with Custom Header Component. This example shows a Custom Header Component. Note the following:
 
 * Column moving and resizing works without custom logic.
-* Use of `suppressHeaderMenuButton=true` to suppress the menu.
+* Use of `suppressHeaderFilterButton=true` to suppress the menu.
 * Use of `sortable=false` to suppress sorting.
 * Configurable menu icon.
 

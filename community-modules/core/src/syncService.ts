@@ -5,14 +5,13 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { ColDef, ColGroupDef } from './entities/colDef';
-import { Events } from './eventKeys';
 import type { GridReadyEvent } from './events';
 import type { PropertyValueChangedEvent } from './gridOptionsService';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel } from './interfaces/iRowModel';
-import { Logger } from './logger';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
+import { _log } from './utils/function';
 
 export class SyncService extends BeanStub implements NamedBean {
     beanName = 'syncService' as const;
@@ -54,13 +53,14 @@ export class SyncService extends BeanStub implements NamedBean {
     private gridReady(): void {
         this.dispatchGridReadyEvent();
         const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.gridId);
-        const logger = new Logger('AG Grid', () => this.gos.get('debug'));
-        logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+        if (this.gos.get('debug')) {
+            _log(`initialised successfully, enterprise = ${isEnterprise}`);
+        }
     }
 
     private dispatchGridReadyEvent(): void {
         const readyEvent: WithoutGridCommon<GridReadyEvent> = {
-            type: Events.EVENT_GRID_READY,
+            type: 'gridReady',
         };
         this.eventService.dispatchEvent(readyEvent);
     }

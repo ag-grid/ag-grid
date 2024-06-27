@@ -469,9 +469,8 @@ const AG_GRID_LOCALE_RO = {
     customCombo: 'Combinație personalizată',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Apăsați ENTER pentru a edita.',
-    ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Nivel ${variable}. ${variable} Apăsați ENTER pentru a edita.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Apăsați ENTER pentru a edita',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. Nivel ${variable}. ${variable} Apăsați ENTER pentru a edita',
     ariaAdvancedFilterBuilderList: 'Listă constructor filtru avansat',
     ariaAdvancedFilterBuilderFilterItem: 'Condiție filtru',
     ariaAdvancedFilterBuilderGroupItem: 'Grup filtru',

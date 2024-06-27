@@ -1,5 +1,5 @@
-import type { AgChartThemeOverrides, ChartOptionsChanged, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import type { ChartOptionsChangedEvent, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce } from '@ag-grid-community/core';
 import type {
     AgBaseThemeableChartOptions,
     AgCartesianAxesTheme,
@@ -7,10 +7,10 @@ import type {
     AgCartesianAxisType,
     AgCartesianChartOptions,
     AgChartOptions,
+    AgChartThemeOverrides,
     AgPolarAxesTheme,
     AgPolarAxisType,
 } from 'ag-charts-community';
-import { AgCharts } from 'ag-charts-community';
 
 import type { ChartController } from '../chartController';
 import type { AgChartActual, AgChartAxisType } from '../utils/integration';
@@ -282,7 +282,7 @@ export class ChartOptionsService extends BeanStub {
         chart
             .waitForUpdate()
             .then(() => func())
-            .catch((e) => console.error(`AG Grid - chart update failed`, e));
+            .catch((e) => _errorOnce(`chart update failed`, e));
     }
 
     private getAxisProperty<T = string>(expression: string): T {
@@ -446,7 +446,7 @@ export class ChartOptionsService extends BeanStub {
         // N.B. 'calculated' here refers to the fact that the property exists on the internal series object itself,
         // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
         // the value, and will likely be cleaned up in a future release
-        const series = this.getChart().series.find((s: any) => ChartOptionsService.isMatchingSeries(seriesType, s));
+        const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
         return get(calculated ? series : series?.properties.toJson(), expression, undefined) as T;
     }
 
@@ -638,8 +638,8 @@ export class ChartOptionsService extends BeanStub {
     private raiseChartOptionsChangedEvent(): void {
         const chartModel = this.chartController.getChartModel();
 
-        const event: WithoutGridCommon<ChartOptionsChanged> = {
-            type: Events.EVENT_CHART_OPTIONS_CHANGED,
+        const event: WithoutGridCommon<ChartOptionsChangedEvent> = {
+            type: 'chartOptionsChanged',
             chartId: chartModel.chartId,
             chartType: chartModel.chartType,
             chartThemeName: this.chartController.getChartThemeName(),
@@ -649,11 +649,11 @@ export class ChartOptionsService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
-        return isSeriesType(seriesType) && series.type === seriesType;
-    }
-
     public override destroy(): void {
         super.destroy();
     }
+}
+
+function isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
+    return isSeriesType(seriesType) && series.type === seriesType;
 }

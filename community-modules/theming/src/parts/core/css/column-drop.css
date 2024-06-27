@@ -15,7 +15,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: var(--ag-label-widget-spacing);
+    gap: var(--ag-grid-size);
 }
 
 .ag-column-drop-cell-text {
@@ -144,8 +144,12 @@
 }
 
 .ag-select-agg-func-popup {
-    @include ag.card();
-
+    position: absolute;
+    /* TODO variable to controll this */
+    border: solid 1px var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    box-shadow: var(--ag-dropdown-shadow);
+    padding: var(--ag-grid-size);
     background: var(--ag-background-color);
     height: calc(var(--ag-grid-size) * 5 * 3.5);
     padding: 0;
@@ -153,27 +157,28 @@
 
 .ag-select-agg-func-virtual-list-item {
     cursor: default;
-    @include ag.unthemed-rtl((padding-left: calc(var(--ag-grid-size) * 2)));
+    padding-left: calc(var(--ag-grid-size) * 2);
 
     &:hover {
         background-color: var(--ag-selected-row-background-color);
     }
-}
 
-@include ag.keyboard-focus((ag-select-agg-func-virtual-list-item), 1px);
+    &:focus-visible {
+        shadow: var(--ag-focus-shadow);
+    }
+}
 
 .ag-sort-indicator-container {
     display: contents;
 }
 
-/* TODO remove this and replace with flex gap in column drop, already done for header */
 .ag-sort-indicator-icon {
-    @include ag.unthemed-rtl((padding-left: var(--ag-grid-size)));
+    padding-left: var(--ag-grid-size);
 }
 
 .ag-column-drop-horizontal {
     background-color: var(--ag-header-background-color);
-    border-bottom: var(--ag-header-border);
+    border-bottom: var(--ag-header-row-border);
 }
 
 .ag-column-drop-horizontal-half-width:not(:last-child) {

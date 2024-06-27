@@ -1,12 +1,13 @@
+import type { GridApi } from './api/gridApi';
 import { ComponentUtil } from './components/componentUtil';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import type { DomLayoutType, GridOptions } from './entities/gridOptions';
+import type { DomLayoutType, GetRowIdFunc, GridOptions } from './entities/gridOptions';
 import type { Environment } from './environment';
-import type { AgEvent, GridOptionsChangedEvent } from './events';
-import { ALWAYS_SYNC_GLOBAL_EVENTS, Events } from './events';
-import type { GridApi } from './gridApi';
+import type { AgEventType } from './eventTypes';
+import type { AgEvent } from './events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type {
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
@@ -19,7 +20,7 @@ import { LocalEventService } from './localEventService';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
-import { _warnOnce } from './utils/function';
+import { _log, _warnOnce } from './utils/function';
 import { _exists, _missing, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
@@ -80,6 +81,44 @@ export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
 
+/**
+ * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
+ */
+const PROPERTY_COERCIONS: Map<keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]> = new Map([
+    ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, toBoolean]),
+    ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, toNumber]),
+    ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : toBoolean(val))],
+    ['pageSize', toConstrainedNum(1)],
+    ['autoSizePadding', toConstrainedNum(0)],
+    ['keepDetailRowsCount', toConstrainedNum(1)],
+    ['rowBuffer', toConstrainedNum(0)],
+    ['infiniteInitialRowCount', toConstrainedNum(1)],
+    ['cacheOverflowSize', toConstrainedNum(1)],
+    ['cacheBlockSize', toConstrainedNum(1)],
+    ['serverSideInitialRowCount', toConstrainedNum(1)],
+    ['viewportRowModelPageSize', toConstrainedNum(1)],
+    ['viewportRowModelBufferSize', toConstrainedNum(0)],
+] as [keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]][]);
+
+function getCoercedValue<K extends keyof GridOptions>(key: K, value: GridOptions[K]): GridOptions[K] {
+    const coerceFunc = PROPERTY_COERCIONS.get(key);
+
+    if (!coerceFunc) {
+        return value;
+    }
+
+    return coerceFunc(value);
+}
+
+export function getCoercedGridOptions(gridOptions: GridOptions): GridOptions {
+    const newGo: GridOptions = {};
+    Object.entries(gridOptions).forEach(([key, value]: [keyof GridOptions, any]) => {
+        const coercedValue = getCoercedValue(key, value);
+        newGo[key] = coercedValue;
+    });
+    return newGo;
+}
+
 export class GridOptionsService extends BeanStub implements NamedBean {
     beanName = 'gos' as const;
 
@@ -106,7 +145,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return this.gridOptions['context'];
     }
 
-    private propertyEventService: LocalEventService = new LocalEventService();
+    private propertyEventService: LocalEventService<keyof GridOptions> = new LocalEventService();
 
     public postConstruct(): void {
         const async = !this.get('suppressAsyncEvents');
@@ -118,13 +157,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_GRID_OPTIONS_CHANGED,
-            ({ options }: GridOptionsChangedEvent) => {
+        this.addManagedEventListeners({
+            gridOptionsChanged: ({ options }) => {
                 this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
-            }
-        );
+            },
+        });
     }
 
     /**
@@ -177,46 +214,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return callback;
     }
 
-    /**
-     * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
-     */
-    private static PROPERTY_COERCIONS: Map<keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]> = new Map(
-        [
-            ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, toBoolean]),
-            ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, toNumber]),
-            ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : toBoolean(val))],
-            ['pageSize', toConstrainedNum(1)],
-            ['autoSizePadding', toConstrainedNum(0)],
-            ['keepDetailRowsCount', toConstrainedNum(1)],
-            ['rowBuffer', toConstrainedNum(0)],
-            ['infiniteInitialRowCount', toConstrainedNum(1)],
-            ['cacheOverflowSize', toConstrainedNum(1)],
-            ['cacheBlockSize', toConstrainedNum(1)],
-            ['serverSideInitialRowCount', toConstrainedNum(1)],
-            ['viewportRowModelPageSize', toConstrainedNum(1)],
-            ['viewportRowModelBufferSize', toConstrainedNum(0)],
-        ] as [keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]][]
-    );
-
-    private static getCoercedValue<K extends keyof GridOptions>(key: K, value: GridOptions[K]): GridOptions[K] {
-        const coerceFunc = this.PROPERTY_COERCIONS.get(key);
-
-        if (!coerceFunc) {
-            return value;
-        }
-
-        return coerceFunc(value);
-    }
-
-    public static getCoercedGridOptions(gridOptions: GridOptions): GridOptions {
-        const newGo: GridOptions = {};
-        Object.entries(gridOptions).forEach(([key, value]: [keyof GridOptions, any]) => {
-            const coercedValue = GridOptionsService.getCoercedValue(key, value);
-            newGo[key] = coercedValue;
-        });
-        return newGo;
-    }
-
     private static changeSetId = 0;
     public updateGridOptions({
         options,
@@ -234,7 +231,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
                 _warnOnce(`${key} is an initial property and cannot be updated.`);
             }
-            const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
+            const coercedValue = getCoercedValue(key as keyof GridOptions, value);
             const shouldForce = force || (typeof coercedValue === 'object' && source === 'api'); // force objects as they could have been mutated.
 
             const previousValue = this.gridOptions[key as keyof GridOptions];
@@ -258,12 +255,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
         events.forEach((event) => {
             if (this.gridOptions.debug) {
-                console.log(
-                    `AG Grid: Updated property ${event.type} from `,
-                    event.previousValue,
-                    ' to  ',
-                    event.currentValue
-                );
+                _log(`Updated property ${event.type} from ${event.previousValue} to ${event.currentValue}`);
             }
             this.propertyEventService.dispatchEvent(event);
         });
@@ -281,7 +273,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     // This is required for events such as GridPreDestroyed.
     // Other events can be fired asynchronously or synchronously depending on config.
     globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
-        return (eventName: string, event?: any) => {
+        return (eventName: AgEventType, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
             if (!this.isAlive()) {
                 return;
@@ -318,7 +310,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 this.scrollbarWidth = scrollbarWidth;
 
                 this.eventService.dispatchEvent({
-                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED,
+                    type: 'scrollbarWidthChanged',
                 });
             }
         }
@@ -424,7 +416,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             return rowHeight;
         }
 
-        console.warn('AG Grid row height must be a number if not using standard row model');
+        _warnOnce('row height must be a number if not using standard row model');
         return this.environment.getDefaultRowHeight();
     }
 
@@ -591,5 +583,29 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         updatedParams.api = this.api;
         updatedParams.context = this.gridOptionsContext;
         return updatedParams;
+    }
+
+    // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
+    public getRowIdCallback<TData = any>():
+        | ((
+              params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
+          ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
+        | undefined {
+        const getRowId = this.getCallback('getRowId');
+
+        if (getRowId === undefined) {
+            return getRowId;
+        }
+
+        return (params) => {
+            let id = getRowId(params);
+
+            if (typeof id !== 'string') {
+                _warnOnce(`The getRowId callback must return a string. The ID ${id} is being cast to a string.`);
+                id = String(id);
+            }
+
+            return id;
+        };
     }
 }

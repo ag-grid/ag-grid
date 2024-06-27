@@ -9,6 +9,7 @@ import type {
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
     IRowNode,
+    RowNode,
     UserCompDetails,
     UserComponentFactory,
     ValueService,
@@ -19,7 +20,6 @@ import {
     CheckboxSelectionComponent,
     KeyCode,
     RowDragComp,
-    RowNode,
     _cloneObject,
     _createIconNoSpan,
     _isElementInEventPath,
@@ -195,7 +195,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             _setAriaExpanded(eGridCell, !!node.expanded);
         };
 
-        this.expandListener = this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
+        [this.expandListener] = this.addManagedListeners(node, { expandedChanged: listener }) || null;
         listener();
     }
 
@@ -408,7 +408,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             } else if (typeof footerValueGetter === 'string') {
                 footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
             } else {
-                console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
+                _warnOnce('footerValueGetter should be either a function or a string (expression)');
             }
         } else {
             const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -490,11 +490,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        this.addManagedListener(
-            this.displayedGroupNode,
-            RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
-            this.updateChildCount.bind(this)
-        );
+        this.addManagedListeners(this.displayedGroupNode, {
+            allChildrenCountChanged: this.updateChildCount.bind(this),
+        });
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
@@ -544,33 +542,27 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         // if editing groups, then double click is to start editing
         const isDoubleClickEdit = this.params.column?.isCellEditable(params.node) && this.gos.get('enableGroupEdit');
         if (!isDoubleClickEdit && this.isExpandable() && !params.suppressDoubleClickExpand) {
-            this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
+            this.addManagedListeners(eGroupCell, { dblclick: this.onCellDblClicked.bind(this) });
         }
 
-        this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
-        this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListeners(this.eExpanded, { click: this.onExpandClicked.bind(this) });
+        this.addManagedListeners(this.eContracted, { click: this.onExpandClicked.bind(this) });
 
         // expand / contract as the user hits enter
-        this.addManagedListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(
-            params.node,
-            RowNode.EVENT_EXPANDED_CHANGED,
-            this.showExpandAndContractIcons.bind(this)
-        );
+        this.addManagedListeners(eGroupCell, { keydown: this.onKeyDown.bind(this) });
+        this.addManagedListeners(params.node, { expandedChanged: this.showExpandAndContractIcons.bind(this) });
 
         this.showExpandAndContractIcons();
 
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
         const expandableChangedListener = this.onRowNodeIsExpandableChanged.bind(this);
-        this.addManagedListener(
-            this.displayedGroupNode,
-            RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
-            expandableChangedListener
-        );
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_GROUP_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
+        this.addManagedListeners(this.displayedGroupNode, {
+            allChildrenCountChanged: expandableChangedListener,
+            masterChanged: expandableChangedListener,
+            groupChanged: expandableChangedListener,
+            hasChildrenChanged: expandableChangedListener,
+        });
     }
 
     private onExpandClicked(mouseEvent: MouseEvent): void {
@@ -656,7 +648,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.comp.addOrRemoveCssClass('ag-row-group', addExpandableCss);
 
         if (pivotMode) {
-            this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
+            this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', !!pivotModeAndLeafGroup);
         } else if (!isTotalFooterNode) {
             this.comp.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
         }
@@ -676,11 +668,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
-        const node: IRowNode = this.params.node;
+        const node: RowNode = this.params.node as RowNode;
         const suppressPadding = this.params.suppressPadding;
 
         if (!suppressPadding) {
-            this.addManagedListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
+            this.addManagedListeners(node, { uiLevelChanged: this.setIndent.bind(this) });
             this.setIndent();
         }
     }

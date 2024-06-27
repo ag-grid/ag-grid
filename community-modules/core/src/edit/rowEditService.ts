@@ -1,7 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { Events } from '../eventKeys';
-import type { RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent } from '../events';
+import type { RowEditingStartedEvent, RowEditingStoppedEvent, RowValueChangedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
@@ -48,7 +47,7 @@ export class RowEditService extends BeanStub implements NamedBean {
         }
 
         if (fireRowEditEvent) {
-            const event: RowValueChangedEvent = rowCtrl.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
+            const event: RowValueChangedEvent = rowCtrl.createRowEvent('rowValueChanged');
             this.eventService.dispatchEvent(event);
         }
 
@@ -63,9 +62,9 @@ export class RowEditService extends BeanStub implements NamedBean {
         rowCtrl.setEditingRow(value);
         rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.addOrRemoveCssClass('ag-row-editing', value));
 
-        const event: RowEvent = value
-            ? (rowCtrl.createRowEvent(Events.EVENT_ROW_EDITING_STARTED) as RowEditingStartedEvent)
-            : (rowCtrl.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED) as RowEditingStoppedEvent);
+        const event: RowEditingStartedEvent | RowEditingStoppedEvent = value
+            ? rowCtrl.createRowEvent('rowEditingStarted')
+            : rowCtrl.createRowEvent('rowEditingStopped');
 
         this.eventService.dispatchEvent(event);
     }

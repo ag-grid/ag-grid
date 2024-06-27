@@ -1,17 +1,14 @@
 import type { BeanCollection } from '../../context/context';
-import { Events } from '../../eventKeys';
 import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _clearElement } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { AgSelect } from '../../widgets/agSelect';
-import type { AgComponentSelector } from '../../widgets/component';
+import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { PaginationService } from '../paginationService';
 
 export class PageSizeSelectorComp extends Component {
-    static readonly selector: AgComponentSelector = 'AG-PAGE-SIZE-SELECTOR';
-
     private paginationService: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -30,9 +27,7 @@ export class PageSizeSelectorComp extends Component {
             this.onPageSizeSelectorValuesChange();
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event) =>
-            this.handlePaginationChanged(event)
-        );
+        this.addManagedEventListeners({ paginationChanged: (event) => this.handlePaginationChanged(event) });
     }
 
     private handlePageSizeItemSelected = (): void => {
@@ -227,3 +222,8 @@ export class PageSizeSelectorComp extends Component {
         super.destroy();
     }
 }
+
+export const PageSizeSelectorSelector: ComponentSelector = {
+    selector: 'AG-PAGE-SIZE-SELECTOR',
+    component: PageSizeSelectorComp,
+};

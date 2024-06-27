@@ -15,6 +15,7 @@ import {
     addLicenseManager,
     addRelativeImports,
     convertFunctionToConstProperty,
+    findLocaleImport,
     getActiveTheme,
     getFunctionName,
     getIntegratedDarkModeCode,
@@ -251,10 +252,10 @@ function getModuleImports(
     componentFileNames: string[],
     allStylesheets: string[]
 ): string[] {
-    const { inlineGridStyles } = bindings;
+    const { inlineGridStyles, imports: bindingImports } = bindings;
 
     const imports = [
-        "import { createApp, onBeforeMount, ref } from 'vue';",
+        "import { createApp, onBeforeMount, ref, shallowRef } from 'vue';",
         "import { AgGridVue } from '@ag-grid-community/vue3';",
     ];
 
@@ -297,7 +298,7 @@ function getPackageImports(
     const { inlineGridStyles } = bindings;
 
     const imports = [
-        "import { createApp, onBeforeMount, ref } from 'vue';",
+        "import { createApp, onBeforeMount, ref, shallowRef } from 'vue';",
         "import { AgGridVue } from 'ag-grid-vue3';",
     ];
 
@@ -331,11 +332,20 @@ function getImports(
     importType: ImportType,
     allStylesheets: string[]
 ): string[] {
-    if (importType === 'packages') {
-        return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
-    } else {
-        return getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets);
+    const imports = [];
+
+    const localeImport = findLocaleImport(bindings.imports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from 'ag-grid-locale';`);
     }
+
+    if (importType === 'packages') {
+        imports.push(...getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets));
+    } else {
+        imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
+    }
+
+    return imports;
 }
 
 export function vanillaToVue3(
@@ -382,7 +392,7 @@ const VueExample = {
     },
     setup(props) {
         const columnDefs = ref(${columnDefs});
-        const gridApi = ref();
+        const gridApi = shallowRef();
         ${defaultColDef ? `const defaultColDef = ref(${defaultColDef});` : ''}
         ${propertyVars.join(';\n')}
         

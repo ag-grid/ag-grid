@@ -31,7 +31,7 @@ function copyFileWithTSNoCheck(sourceFile, destinationDir, destinationFile) {
     });
 }
 
-const srcPropertyKeys = '../../community-modules/core/src/eventKeys.ts';
+const srcPropertyKeys = '../../community-modules/core/src/eventTypes.ts';
 const destDir = './executors/generate/_copiedFromCore';
-const destPropertyFile = '/eventKeys.ts';
+const destPropertyFile = '/eventTypes.ts';
 copyFileWithTSNoCheck(srcPropertyKeys, destDir, destPropertyFile);

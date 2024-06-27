@@ -1,8 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'id', headerName: 'Row ID' },
@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
     rowData: rowData,
-    getRowId: (params: GetRowIdParams) => params.data.id,
+    getRowId: (params: GetRowIdParams) => String(params.data.id),
 };
 
 // setup the grid after the page has finished loading

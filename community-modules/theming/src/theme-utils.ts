@@ -66,6 +66,7 @@ export const definePart = <T extends string = never, D extends Part<string>[] = 
         defaults: { ...args.additionalParams, ...args.overrideParams } as any,
         css: args.css || [],
         dependencies: args.dependencies || (() => []),
+        additionalParamNames: Object.keys(args.additionalParams || {}),
     };
 };
 

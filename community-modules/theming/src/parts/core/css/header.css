@@ -6,7 +6,7 @@
     overflow: hidden;
     background-color: var(--ag-header-background-color);
     color: var(--ag-header-text-color);
-    border-bottom: var(--ag-header-border);
+    border-bottom: var(--ag-header-row-border);
     font-size: var(--ag-header-font-size);
     font-family: var(--ag-header-font-family);
     font-weight: var(--ag-header-font-weight);
@@ -22,7 +22,7 @@
 .ag-header-row:not(:first-child) {
     .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
     .ag-header-group-cell.ag-header-group-cell-with-group {
-        border-top: var(--ag-header-border);
+        border-top: var(--ag-header-row-border);
     }
 }
 
@@ -47,7 +47,7 @@
 }
 
 /* Implement header cell hover background as a pseudoelement so that it overlays
-on top of any custom colour that the application has given this cell */
+on top of any custom color that the application has given this cell */
 .ag-header-cell:not(.ag-floating-filter),
 .ag-header-group-cell {
     &::before {
@@ -85,7 +85,7 @@ on top of any custom colour that the application has given this cell */
     flex: 1 1 auto;
     align-self: stretch;
     align-items: center;
-    gap: var(--ag-label-widget-spacing);
+    gap: var(--ag-grid-size);
 }
 
 .ag-header-cell-label {
@@ -109,6 +109,7 @@ on top of any custom colour that the application has given this cell */
 .ag-header-cell-text {
     overflow: hidden;
     text-overflow: ellipsis;
+    word-break: break-word;
 }
 
 .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
@@ -156,9 +157,9 @@ on top of any custom colour that the application has given this cell */
     content: '';
     position: absolute;
     z-index: 1;
-    height: var(--ag-column-header-border-height);
-    top: calc(50% - var(--ag-column-header-border-height) * 0.5);
-    border-right: var(--ag-column-header-border);
+    height: var(--ag-header-column-border-height);
+    top: calc(50% - var(--ag-header-column-border-height) * 0.5);
+    border-right: var(--ag-header-column-border);
     right: 0;
 }
 

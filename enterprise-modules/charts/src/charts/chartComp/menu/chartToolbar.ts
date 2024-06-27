@@ -13,7 +13,7 @@ export class ChartToolbar extends Component {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     private readonly eMenu: HTMLButtonElement = RefPlaceholder;
@@ -48,7 +48,9 @@ export class ChartToolbar extends Component {
             }
 
             this.buttonListenersDestroyFuncs.push(
-                this.addManagedListener(buttonEl, 'click', (event: MouseEvent) => callback(event.target as HTMLElement))
+                ...this.addManagedElementListeners(buttonEl, {
+                    click: (event: MouseEvent) => callback(event.currentTarget as HTMLElement),
+                })
             );
 
             menuEl.appendChild(buttonEl);

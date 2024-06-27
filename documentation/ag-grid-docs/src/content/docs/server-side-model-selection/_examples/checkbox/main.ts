@@ -6,13 +6,13 @@ import {
     IServerSideDatasource,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, RowGroupingModule, ServerSideRowModelModule]);
+ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {

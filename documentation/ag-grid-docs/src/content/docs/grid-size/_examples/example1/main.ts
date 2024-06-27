@@ -6,9 +6,9 @@ import {
     GridSizeChangedEvent,
     createGrid,
 } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -44,7 +44,7 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
     if (allColumns && allColumns.length > 0) {
         for (var i = 0; i < allColumns.length; i++) {
             var column = allColumns[i];
-            totalColsWidth += column.getMinWidth() || 0;
+            totalColsWidth += column.getMinWidth();
             if (totalColsWidth > gridWidth) {
                 columnsToHide.push(column.getColId());
             } else {

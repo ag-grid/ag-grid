@@ -1,12 +1,19 @@
 import type { GenericBean } from './genericBean';
 
+type BeanComparator<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> = (
+    bean1: GenericBean<TBeanName, TBeanCollection>,
+    bean2: GenericBean<TBeanName, TBeanCollection>
+) => number;
+
 export interface GenericContextParams<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     providedBeanInstances: Partial<{ [key in TBeanName]: GenericBean<TBeanName, TBeanCollection> }>;
     beanClasses: GenericSingletonBean<TBeanName, TBeanCollection>[];
-    beanComparator?: (
-        bean1: GenericBean<TBeanName, TBeanCollection>,
-        bean2: GenericBean<TBeanName, TBeanCollection>
-    ) => number;
+    derivedBeans?: ((context: GenericContext<TBeanName, TBeanCollection>) => {
+        beanName: TBeanName;
+        bean: TBeanCollection[TBeanName];
+    })[];
+    beanInitComparator?: BeanComparator<TBeanName, TBeanCollection>;
+    beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
 }
 
 export interface GenericSingletonBean<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
@@ -28,6 +35,7 @@ export interface BaseBean<TBeanCollection> {
 export class GenericContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: GenericBean<TBeanName, TBeanCollection>[] = [];
+    private beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
 
     private destroyed = false;
 
@@ -35,6 +43,8 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
         if (!params || !params.beanClasses) {
             return;
         }
+
+        this.beanDestroyComparator = params.beanDestroyComparator;
 
         this.init(params);
     }
@@ -54,9 +64,15 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
             this.createdBeans.push(instance);
         });
 
-        if (params.beanComparator) {
+        params.derivedBeans?.forEach((beanFunc) => {
+            const { beanName, bean } = beanFunc(this);
+            this.beans[beanName] = bean;
+            this.createdBeans.push(bean);
+        });
+
+        if (params.beanInitComparator) {
             // sort the beans so that they are in a consistent order
-            this.createdBeans.sort(params.beanComparator);
+            this.createdBeans.sort(params.beanInitComparator);
         }
 
         this.initBeans(this.createdBeans);
@@ -113,6 +129,9 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
         this.destroyed = true;
 
         const beanInstances = this.getBeanInstances();
+        if (this.beanDestroyComparator) {
+            beanInstances.sort(this.beanDestroyComparator);
+        }
         this.destroyBeans(beanInstances);
 
         this.beans = {} as TBeanCollection;

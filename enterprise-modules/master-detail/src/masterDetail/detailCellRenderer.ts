@@ -21,10 +21,6 @@ import {
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
-    private static TEMPLATE /* html */ = `<div class="ag-details-row" role="gridcell">
-            <div data-ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
-        </div>`;
-
     private eDetailGrid: HTMLElement = RefPlaceholder;
 
     private detailApi: GridApi;
@@ -65,12 +61,14 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private selectAndSetTemplate(): void {
         if (this.params.pinned) {
-            this.setTemplate('<div class="ag-details-row"></div>', []);
+            this.setTemplate(/* html*/ `<div class="ag-details-row"></div>`);
             return;
         }
 
         const setDefaultTemplate = () => {
-            this.setTemplate(DetailCellRenderer.TEMPLATE, []);
+            this.setTemplate(/* html */ `<div class="ag-details-row" role="gridcell">
+                <div data-ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
+            </div>`);
         };
 
         if (_missing(this.params.template)) {

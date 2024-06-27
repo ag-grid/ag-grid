@@ -81,11 +81,9 @@ The grid uses the locale as it is needed. It does not refresh as the locale chan
 
 By default, the grid does not require a locale. If no locale is provided, the grid will default to English. If a locale is provided but is missing values, the default English will be used for the missing values.
 
-An example full locale file is provided below. To support other languages, the first step is to copy this file and translate the values into the required language.
+All locales provided are listed above, and are also available in the `ag-grid-locale` package.
 
-{% embedSnippet url="/examples/localisation/localisation/packages/vanilla/locale.js" language="js" /%}
-
-You can download the full file from [here](/examples/localisation/localisation/packages/vanilla/locale.js).
+To support other languages, the first step is to import the `ag-grid-locale` package and reference the locale you're interested in.
 
 There is a single locale file which covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having a separate localisation file for each module would be harder to manage.
 

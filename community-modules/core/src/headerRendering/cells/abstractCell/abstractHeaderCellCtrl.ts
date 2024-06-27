@@ -8,8 +8,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import { isColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
-import { Events } from '../../../eventKeys';
-import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from '../../../events';
+import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent, HeaderFocusedEvent } from '../../../events';
 import type { FocusService } from '../../../focusService';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import type { BrandedType } from '../../../interfaces/brandedType';
@@ -21,7 +20,7 @@ import { _getInnerWidth } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
-import { CssClassApplier } from '../cssClassApplier';
+import { refreshFirstAndLastStyles } from '../cssClassApplier';
 
 let instanceIdSequence = 0;
 
@@ -109,13 +108,25 @@ export abstract class AbstractHeaderCellCtrl<
     protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
         this.addDomData();
-        this.addManagedListener(
-            this.beans.eventService,
-            Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
-            this.onDisplayedColumnsChanged.bind(this)
-        );
+        this.addManagedListeners(this.beans.eventService, {
+            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+        });
+
+        this.addManagedElementListeners(this.eGui, {
+            focus: this.onGuiFocus.bind(this),
+        });
+
         this.onDisplayedColumnsChanged();
         this.refreshTabIndex();
+    }
+
+    private onGuiFocus(): void {
+        const event: WithoutGridCommon<HeaderFocusedEvent> = {
+            type: 'headerFocused',
+            column: this.column,
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     protected onDisplayedColumnsChanged(): void {
@@ -128,7 +139,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     private refreshFirstAndLastStyles(): void {
         const { comp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
+        refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
     }
 
     private refreshAriaColIndex(): void {
@@ -143,8 +154,10 @@ export abstract class AbstractHeaderCellCtrl<
             return;
         }
 
-        this.addManagedListener(this.eGui, 'keydown', this.onGuiKeyDown.bind(this));
-        this.addManagedListener(this.eGui, 'keyup', this.onGuiKeyUp.bind(this));
+        this.addManagedListeners(this.eGui, {
+            keydown: this.onGuiKeyDown.bind(this),
+            keyup: this.onGuiKeyUp.bind(this),
+        });
     }
 
     private refreshTabIndex(): void {
@@ -326,7 +339,7 @@ export abstract class AbstractHeaderCellCtrl<
             this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
         }
 
-        this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);
+        this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);
     }
 
     protected dispatchColumnMouseEvent(

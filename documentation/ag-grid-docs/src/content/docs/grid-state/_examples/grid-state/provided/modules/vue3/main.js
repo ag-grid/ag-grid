@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
@@ -7,12 +7,11 @@ import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { createApp, onBeforeMount, ref } from 'vue';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import './styles.css';
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
@@ -72,7 +71,7 @@ const VueExample = {
             { field: 'bronze' },
             { field: 'total' },
         ]);
-        const gridApi = ref();
+        const gridApi = shallowRef();
         const defaultColDef = ref({
             flex: 1,
             minWidth: 100,

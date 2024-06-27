@@ -16,17 +16,6 @@
         overflow: hidden;
     }
 
-    .ag-chart-title-edit {
-        position: absolute;
-        display: none;
-        top: 0;
-        left: 0;
-        text-align: center;
-    }
-    .ag-chart-title-edit.currently-editing {
-        display: inline-block;
-    }
-
     .ag-chart-canvas-wrapper {
         position: relative;
         flex: 1 1 auto;
@@ -142,6 +131,11 @@
     .ag-chart-settings-next {
         position: relative;
         flex: none;
+
+        &:focus-within {
+            box-shadow: var(--ag-input-focus-box-shadow);
+            border-radius: 1px;
+        }
     }
 
     .ag-chart-settings-prev-button,
@@ -350,6 +344,11 @@
 
     @include ag.keyboard-focus((ag-charts-data-group-title-bar, ag-charts-format-top-level-group-title-bar), 4px);
 
+    .ag-charts-data-group-title-bar .ag-charts-data-group-title,
+    .ag-charts-format-top-level-group-title-bar .ag-charts-format-top-level-group-title {
+        cursor: pointer;
+    }
+
     .ag-charts-data-group-container {
         padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
 
@@ -381,6 +380,14 @@
 
     .ag-charts-format-sub-level-group-container {
         @include ag.vertical-widget-container();
+    }
+
+    .ag-charts-format-sub-level-no-header-group-container > * {
+        margin-bottom: var(--ag-widget-vertical-spacing);
+    }
+
+    .ag-charts-format-sub-level-group-container .ag-charts-format-sub-level-group-item.ag-font-panel-no-header {
+        margin: 0;
     }
 
     .ag-charts-settings-group-container {

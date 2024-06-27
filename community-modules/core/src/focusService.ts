@@ -9,9 +9,7 @@ import type { AgColumnGroup } from './entities/agColumnGroup';
 import type { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPositionUtils } from './entities/rowPositionUtils';
-import type { EventsType } from './eventKeys';
 import type { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
-import { Events } from './events';
 import type { FilterManager } from './filter/filterManager';
 import type { NavigationService } from './gridBodyComp/navigationService';
 import type { GridCtrl } from './gridComp/gridCtrl';
@@ -23,6 +21,8 @@ import type { IRangeService } from './interfaces/IRangeService';
 import type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
 import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { FocusableContainer } from './interfaces/iFocusableContainer';
+import type { RowPinnedType } from './interfaces/iRowNode';
 import { RowCtrl } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
@@ -116,11 +116,11 @@ export class FocusService extends BeanStub implements NamedBean {
     public postConstruct(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_COLUMN_PIVOT_MODE_CHANGED]: clearFocusedCellListener,
-            [Events.EVENT_NEW_COLUMNS_LOADED]: this.onColumnEverythingChanged.bind(this),
-            [Events.EVENT_COLUMN_GROUP_OPENED]: clearFocusedCellListener,
-            [Events.EVENT_COLUMN_ROW_GROUP_CHANGED]: clearFocusedCellListener,
+        this.addManagedEventListeners({
+            columnPivotModeChanged: clearFocusedCellListener,
+            newColumnsLoaded: this.onColumnEverythingChanged.bind(this),
+            columnGroupOpened: clearFocusedCellListener,
+            columnRowGroupChanged: clearFocusedCellListener,
         });
 
         this.registerKeyboardFocusEvents();
@@ -275,7 +275,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         const event: WithoutGridCommon<CellFocusClearedEvent> = {
-            type: Events.EVENT_CELL_FOCUS_CLEARED,
+            type: 'cellFocusCleared',
             ...this.getFocusEventParams(),
         };
 
@@ -306,11 +306,10 @@ export class FocusService extends BeanStub implements NamedBean {
             : null;
 
         const event: WithoutGridCommon<CellFocusedEvent> = {
-            type: Events.EVENT_CELL_FOCUSED,
+            type: 'cellFocused',
             ...this.getFocusEventParams(),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
-            floating: null,
         };
 
         this.eventService.dispatchEvent(event);
@@ -485,21 +484,23 @@ export class FocusService extends BeanStub implements NamedBean {
         rowWithoutSpanValue?: number;
     }): boolean {
         const { headerPosition, direction, fromCell, rowWithoutSpanValue, event } = params;
-        if (headerPosition.headerRowIndex === -1) {
+        const { column, headerRowIndex } = headerPosition;
+
+        if (headerRowIndex === -1) {
             if (this.filterManager?.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             }
-            return this.focusGridView(headerPosition.column as AgColumn);
+            return this.focusGridView(column as AgColumn);
         }
 
-        this.headerNavigationService.scrollToColumn(headerPosition.column as AgColumn, direction);
+        this.headerNavigationService.scrollToColumn(column as AgColumn, direction);
 
-        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
+        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
         const focusSuccess = headerRowContainerCtrl.focusHeader(
             headerPosition.headerRowIndex,
-            headerPosition.column as AgColumn,
+            column as AgColumn,
             event
         );
 
@@ -550,13 +551,14 @@ export class FocusService extends BeanStub implements NamedBean {
         return !!this.focusedCellPosition;
     }
 
-    public isRowFocused(rowIndex: number, floating?: string | null): boolean {
+    public isRowFocused(rowIndex: number, rowPinnedType: RowPinnedType): boolean {
         if (this.focusedCellPosition == null) {
             return false;
         }
 
         return (
-            this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === _makeNull(floating)
+            this.focusedCellPosition.rowIndex === rowIndex &&
+            this.focusedCellPosition.rowPinned === _makeNull(rowPinnedType)
         );
     }
 
@@ -768,5 +770,17 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public clearAdvancedFilterColumn(): void {
         this.advancedFilterFocusColumn = undefined;
+    }
+
+    public addFocusableContainer(container: FocusableContainer): void {
+        this.gridCtrl.addFocusableContainer(container);
+    }
+
+    public removeFocusableContainer(container: FocusableContainer): void {
+        this.gridCtrl.removeFocusableContainer(container);
+    }
+
+    public focusGridInnerElement(fromBottom?: boolean): boolean {
+        return this.gridCtrl.focusInnerElement(fromBottom);
     }
 }

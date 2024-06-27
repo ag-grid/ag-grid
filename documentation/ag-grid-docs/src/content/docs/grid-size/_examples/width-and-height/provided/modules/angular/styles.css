@@ -8,3 +8,7 @@
     flex: 1 1 0px;
     width: 100%;
 }
+
+#myGrid {
+    height: 100%;
+}

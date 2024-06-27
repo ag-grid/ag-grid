@@ -21,11 +21,7 @@ const App = () => {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxster', price: 72000 },
     ]);
-    const [colDefs, setColDefs] = useState<ColDef<RowData>[]>([
-        { field: 'make' },
-        { field: 'model' },
-        { field: 'price' },
-    ]);
+    const [colDefs] = useState<ColDef<RowData>[]>([{ field: 'make' }, { field: 'model' }, { field: 'price' }]);
 
     useEffect(() => {
         console.log(gridRef.current?.api.setGridOption('rowData', [{ make: 'Toyota', model: 'Celica', price: 35000 }]));

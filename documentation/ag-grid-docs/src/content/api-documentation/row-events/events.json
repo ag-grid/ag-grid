@@ -12,7 +12,7 @@
             "description": "Row was selected or unselected.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "RowSelectedEvent"
                 },
                 "returnType": "void"
             }
@@ -21,7 +21,7 @@
             "description": "Mouse has entered the row.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "MouseEnterEvent"
                 },
                 "returnType": "void"
             }
@@ -30,7 +30,7 @@
             "description": "Mouse has left the row.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "MouseLeaveEvent"
                 },
                 "returnType": "void"
             }
@@ -57,7 +57,7 @@
             "description": "`rowHeight` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "HeightChangedEvent"
                 },
                 "returnType": "void"
             }
@@ -66,7 +66,7 @@
             "description": "`rowIndex` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "RowIndexChangedEvent"
                 },
                 "returnType": "void"
             }
@@ -75,7 +75,7 @@
             "description": "`rowTop` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "TopChangedEvent"
                 },
                 "returnType": "void"
             }
@@ -84,7 +84,7 @@
             "description": "`expanded` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "ExpandedChangedEvent"
                 },
                 "returnType": "void"
             }
@@ -93,7 +93,7 @@
             "description": "`firstChild` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "FirstChildChangedEvent"
                 },
                 "returnType": "void"
             }
@@ -102,7 +102,7 @@
             "description": "`lastChild` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "LastChildChangedEvent"
                 },
                 "returnType": "void"
             }
@@ -111,7 +111,7 @@
             "description": "`childIndex` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "ChildIndexChangedEvent"
                 },
                 "returnType": "void"
             }
@@ -120,7 +120,7 @@
             "description": "`allChildrenCount` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "AllChildrenCountChangedEvent"
                 },
                 "returnType": "void"
             }
@@ -129,7 +129,7 @@
             "description": "`uiLevel` has changed.",
             "type": {
                 "arguments": {
-                    "event": "RowNodeEvent"
+                    "event": "UiLevelChangedEvent"
                 },
                 "returnType": "void"
             }

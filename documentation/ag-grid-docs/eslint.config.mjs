@@ -3,7 +3,7 @@ import rootESLint from '../../eslint.config.mjs';
 export default [
     ...rootESLint,
     {
-        ignores: ['.astro/', '**/_examples/'],
+        ignores: ['.astro/', '**/_examples/', 'scripts/showcase-github/tmp/', '**/.angular'],
     },
     {
         rules: {
@@ -20,6 +20,7 @@ export default [
             '@typescript-eslint/ban-types': 'warn',
             '@typescript-eslint/ban-ts-comment': 'warn',
             '@typescript-eslint/triple-slash-reference': 'warn',
+            'import-x/consistent-type-specifier-style': 'off',
         },
     },
     {

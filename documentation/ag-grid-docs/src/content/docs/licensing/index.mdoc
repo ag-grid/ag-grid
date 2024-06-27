@@ -1,5 +1,5 @@
 ---
-title: "Licensing, Community and Enterprise"
+title: "Community and Enterprise"
 enterprise: true
 ---
 
@@ -23,108 +23,6 @@ See [Pricing](/license-pricing) for a full feature comparison and details on pur
 
 It is free to try out AG Grid Enterprise. Please take AG Grid Enterprise for a test run - you do not need to contact us in order to do so. All that we ask when trialing is that you don't use AG Grid Enterprise in a project intended for production.
 
-## Installing AG Grid Enterprise
-
-To install AG Grid Enterprise you would typically do one of the following:
-
-### Grid Bundled/UMD Script
-
-If including the bundled AG Grid script directly into your webpage then reference `ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js` in your HTML file instead of `ag-grid-community/dist/ag-grid-community.js`.
-
-For example:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js"></script>
-```
-
-You use AG Grid in the same way as when using the Community edition but including the enterprise script will enable all AG Grid enterprise features.
-
-### Grid Packages
-
-If using node modules and grid [packages](./modules/#packages-vs-modules) include the enterprise package `ag-grid-charts-enterprise`.
-
-```js
-"dependencies": {
-    "ag-grid-community": "~{% $agGridVersion %}",
-    "ag-grid-charts-enterprise": "~{% $agGridVersion %}"
-    ...
-}
-```
-
-Then import the AG Grid Enterprise package in your application before any grid instance is created.
-
-```js
-import 'ag-grid-enterprise';
-```
-
-{% note %}
-The versions of `ag-grid-community` and `ag-grid-charts-enterprise` should match. They are released in tandem and expect to be on the same version.
-{% /note %}
-
-### Grid Modules
-
-If using node modules and grid [modules](./modules/#packages-vs-modules) then you'll need to include the enterprise feature modules for the features that you require.
-For example to add the enterprise Row Grouping feature along with Server Side row model add the following packages to your `package.json` file:
-
-```js
-"dependencies": {    
-    "@ag-grid-enterprise/row-grouping": "~{% $agGridVersion %}",
-    "@ag-grid-enterprise/server-side-row-model": "~{% $agGridVersion %}",
-    ...
-}
-```
-
-Then reference and import the AG Grid Enterprise modules:
-
-```js
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
-```
-
-Then depending on your choice of framework you'll need to provide the modules to the grid or register them globally (see [Installing Grid Modules](./modules/#installing-ag-grid-modules) for full details.). Please refer to the [Modules](./modules/) documentation for all the enterprise modules.
-
-{% if isFramework("javascript") %}
-```js
-createGrid(<dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
-```
-{% /if %}
-
-{% if isFramework("angular") %}
-```ts
-public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
-<ag-grid-angular
-   [rowData]="rowData"
-   [columnDefs]="columnDefs"
-   [modules]="modules" />
-```
-{% /if %}
-
-{% if isFramework("react") %}
-```jsx
-<AgGridReact
-   rowData={rowData}
-   columnDefs={columnDefs}
-   modules={[ServerSideRowModelModule, RowGroupingModule]}>
-</AgGridReact>
-```
-{% /if %}
-
-{% if isFramework("vue") %}
-```html
-<ag-grid-vue
-   :rowData="rowData"
-   :columnDefs="columnDefs"
-   :modules="[ServerSideRowModelModule, RowGroupingModule]">
-</ag-grid-vue>
-```
-{% /if %}
-
-{% note %}
-The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enterprise/**` should match. They are released in tandem and expect to be on the same version.
-{% /note %}
-
-## Trial License Key
-
 When you do not have a license key installed then AG Grid Enterprise will display a invalid key watermark. If you would like to remove this watermark so it's not in the way, please send us an e-mail {% link isExternal=true href="mailto: info@ag-grid.com" %}info@ag-grid.com{% /link %} and get a trial license key.
 
 ## Support While Trialing
@@ -133,11 +31,13 @@ You can access {% link isExternal=true href="https://ag-grid.zendesk.com/" %}Sup
 
 ## Setting the License Key
 
-Set the license key via the method described below. AG Grid checks the license key without making any network calls. The license key is set once for the grid library -
+AG Grid checks the license key without making any network calls. The license key is set once for the grid library -
 you do not need to set the license key for each instance of AG Grid that you create as it is set once statically into the AG Grid library.
 You must set the license key before you create an instance of AG Grid or AG Grid will complain upon creation that no license key has been set.
 
 Note that you must pass the key exactly as provided by AG Grid - do not modify the key in any way.
+
+Please refer to [Setting the License Key](./license-install) on how to set the license key, as well as a list of seed projects we provide to help you get started.
 
 {% note %}
 If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
@@ -145,148 +45,10 @@ visible to others. We appreciate that this is happening and just ask that you do
 product is JavaScript, there is little we can do to prevent this.
 {% /note %}
 
-{% if isFramework("javascript") %}
-### Grid Bundled/UMD Script
+## License Key for Grid and Charts
 
-If you are using the bundled version of AG Grid (e.g. you are using `ag-grid-enterprise/dist/ag-grid-enterprise.js` directly in an HTML file) set the license like this.
+If you have purchased the Enterprise Bundle (licenses for both AG Grid Enterprise and AG Charts Enterprise) then you will have ONE license key.
+This license key will work for both AG Grid Enterprise and AG Charts Enterprise.
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/ag-grid-charts-enterprise/dist/ag-grid-charts-enterprise.js"></script>
-<script>
-    agGrid.LicenseManager.setLicenseKey("your license key");
-</script>
-```
-{% /if %}
+Conversely if you already have a license key for AG Grid Enterprise and want to get a license for AG Charts Enterprise (or vice versa), then you will a replacement license ky to cover both.
 
-### Grid Packages
-
-If you are using grid packages (e.g. you are using `import ag-grid-enterprise`) set the license like this.
-
-```js
-import { LicenseManager } from  'ag-grid-enterprise'
-
-LicenseManager.setLicenseKey("your license key")
-```
-
-### Grid Modules
-
-If you are using grid modules (e.g. you are using `import { RowGroupingModule } from @ag-grid-enterprise/row-grouping`) set the license like this.
-
-```js
-import { LicenseManager } from '@ag-grid-enterprise/core'
-
-LicenseManager.setLicenseKey("your license key")
-```
-
-{% note %}
-If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be available - you do not need to specify it as a dependency.
-{% /note %}
-
-### Do Not Mix Loading Mechanisms
-
-If you mix the methods above (eg if you are using CommonJS in your application, but use the JavaScript approach above to set license key) then it will not work. This is because the AG Grid library will be loaded twice, one will have the license key and the other will be used in your application without the license key.
-
-{% if isFramework("angular") %}
-We recommend setting the license key in your main boot files (typically named either `main.ts` or `boot.ts`, before you
-bootstrap your application.
-
-For example:
-
-{% /if %}
-
-{% if isFramework("angular") %}
-```js
-// other imports...
-
-import {LicenseManager} from "@ag-grid-enterprise/core";
-LicenseManager.setLicenseKey("your license key");
-
-// bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
-```
-{% /if %}
-
-{% if isFramework("react") %}
-We recommend setting the license key in your main bootstrap file (typically named `index.js`), before you bootstrap your application.
-
-For example:
-
-{% /if %}
-
-{% if isFramework("react") %}
-```jsx
-import React from "react";
-import {render} from "react-dom";
-
-import "@ag-grid-enterprise/core/styles/ag-grid.css";
-import "@ag-grid-enterprise/core/styles/ag-theme-quartz.css";
-
-import {LicenseManager} from "@ag-grid-enterprise/core";
-LicenseManager.setLicenseKey("your license key");
-
-import App from "./App";
-
-document.addEventListener('DOMContentLoaded', () => {
-   render(
-       <App/>,
-       document.querySelector('#app')
-   );
-});
-```
-{% /if %}
-
-{% if isFramework("vue") %}
-We recommend setting the license key in your main bootstrap file (typically named `main.js`), before you bootstrap your application.
-
-For example:
-
-{% /if %}
-
-{% if isFramework("vue") %}
-```js
-import Vue from "vue";
-
-import "@ag-grid-enterprise/styles/ag-grid.css";
-import "@ag-grid-enterprise/styles/ag-theme-quartz.css";
-
-import { LicenseManager } from "@ag-grid-enterprise/core";
-
-LicenseManager.setLicenseKey("your license key");
-
-new Vue({
-   el: "#el",
-   ...
-});
-```
-{% /if %}
-
-### Invalid License
-
-If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
-
-{% gridExampleRunner title="Invalid License" name="forceWatermark" /%}
-
-## Seed / Example Projects
-
-We have a number of seed projects that illustrate how to get up and running with AG Grid Enterprise and how to set the license key.
-You can clone the relevant seed project and use it as a basis for your project, or just to validate your license key.
-
-You can find the seed projects on [GitHub](https://github.com/ag-grid/ag-grid-seed)
-
-| Build Tool / CLI       | Packages or Modules | GitHub Project Full Path                                                               |
-|------------------------|---------------------|----------------------------------------------------------------------------------------|
-| Angular CLI            | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/angular-cli)          |
-| Create React App (CRA) | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/create-react-app)     |
-| Nuxt / Vue3            | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/nuxt-vue3)            |
-| Vite / React           | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-react)           |
-| Vite / TypeScript      | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-typescript)      |
-| Vite / Vue 3           | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/vite-vue3)            |
-| Webpack 5 / JavaScript | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/webpack5-javascript)  |
-| Webpack 5 / TypeScript | Modules             | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/modules/webpack5-typescript)  |
-| Angular CLI            | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/angular-cli)         |
-| Create React App (CRA) | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/create-react-app)    |
-| Nuxt / Vue3            | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/nuxt-vue3)           |
-| Vite / React           | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-react)          |
-| Vite / TypeScript      | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-typescript)     |
-| Vite / Vue 3           | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/vite-vue3)           |
-| Webpack 5 / JavaScript | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/webpack5-javascript) |
-| Webpack 5 / TypeScript | packages            | [link](https://github.com/ag-grid/ag-grid-seed/tree/main/packages/webpack5-typescript) |

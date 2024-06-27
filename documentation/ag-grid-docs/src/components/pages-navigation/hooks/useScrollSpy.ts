@@ -3,7 +3,18 @@ import { scrollspy } from '@utils/scrollspy';
 import type { MarkdownHeading } from 'astro';
 import { useEffect, useRef } from 'react';
 
-export function useScrollSpy({ headings, offset = 120 }: { headings: MarkdownHeading[]; offset?: number }) {
+export function useScrollSpy({
+    headings,
+    offset = 120,
+    delayedScrollSpy,
+}: {
+    headings: MarkdownHeading[];
+    offset?: number;
+    /**
+     * Delay scroll spy running, so the UI has time to render
+     */
+    delayedScrollSpy?: boolean;
+}) {
     const menuRef = useRef<HTMLElement>(null);
     const location = useLocation();
 
@@ -14,7 +25,16 @@ export function useScrollSpy({ headings, offset = 120 }: { headings: MarkdownHea
         }
     }
 
-    useEffect(() => scrollspy(headings, handleScrollSpy, { offset }), [location?.hash, headings]);
+    useEffect(() => {
+        function runScrollSpy() {
+            scrollspy(headings, handleScrollSpy, { offset });
+        }
+        if (delayedScrollSpy) {
+            setTimeout(() => runScrollSpy(), 500);
+        } else {
+            runScrollSpy();
+        }
+    }, [location?.hash, headings, delayedScrollSpy]);
 
     return menuRef;
 }

@@ -1,25 +1,17 @@
 import type { BeanCollection } from '@ag-grid-community/core';
-import { AgCheckbox, Component } from '@ag-grid-community/core';
+import { AgCheckboxSelector, Component } from '@ag-grid-community/core';
+import { AgGroupComponentSelector } from '@ag-grid-enterprise/core';
 import type { AgGroupComponentParams } from '@ag-grid-enterprise/core';
-import { AgGroupComponent } from '@ag-grid-enterprise/core';
 
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../../widgets/agColorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class CrosshairPanel extends Component {
-    public static TEMPLATE = /* html */ `<div>
-            <ag-group-component data-ref="crosshairGroup">
-                <ag-checkbox data-ref="crosshairLabelCheckbox"></ag-checkbox>
-                <ag-checkbox data-ref="crosshairSnapCheckbox"></ag-checkbox>
-                <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
-            </ag-group-component>
-        </div>`;
-
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.chartTranslationService = beans.chartTranslationService;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
@@ -50,11 +42,21 @@ export class CrosshairPanel extends Component {
             'crosshair.stroke',
             'color'
         );
-        this.setTemplate(CrosshairPanel.TEMPLATE, [AgGroupComponent, AgCheckbox, AgColorPicker], {
-            crosshairGroup: crosshairGroupParams,
-            crosshairLabelCheckbox: crosshairLabelCheckboxParams,
-            crosshairSnapCheckbox: crosshairSnapCheckboxParams,
-            crosshairStrokeColorPicker: crosshairStrokeColorPickerParams,
-        });
+        this.setTemplate(
+            /* html */ `<div>
+            <ag-group-component data-ref="crosshairGroup">
+                <ag-checkbox data-ref="crosshairLabelCheckbox"></ag-checkbox>
+                <ag-checkbox data-ref="crosshairSnapCheckbox"></ag-checkbox>
+                <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
+            </ag-group-component>
+        </div>`,
+            [AgGroupComponentSelector, AgCheckboxSelector, AgColorPickerSelector],
+            {
+                crosshairGroup: crosshairGroupParams,
+                crosshairLabelCheckbox: crosshairLabelCheckboxParams,
+                crosshairSnapCheckbox: crosshairSnapCheckboxParams,
+                crosshairStrokeColorPicker: crosshairStrokeColorPickerParams,
+            }
+        );
     }
 }

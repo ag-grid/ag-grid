@@ -1,0 +1,24 @@
+.custom-color-cell-renderer.color-tag {
+    overflow: 'hidden';
+    text-overflow: 'ellipsis';
+}
+
+.custom-color-cell-renderer.color-tag span {
+    border-left-width: 10px;
+    border-left-style: solid;
+    padding-left: 5px;
+}
+
+.ag-picker-field-display .custom-color-cell-renderer.color-pill {
+    display: flex;
+}
+
+.custom-color-cell-renderer.color-pill span {
+    padding: 0 5px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+}
+
+.custom-color-cell-renderer.color-pill span:not(:first-child) {
+    margin-left: 5px;
+}

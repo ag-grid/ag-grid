@@ -1,5 +1,4 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import classnames from 'classnames';
 import type { FunctionComponent, MouseEventHandler, ReactNode } from 'react';
 
 import styles from './OpenInCTA.module.scss';
@@ -10,75 +9,78 @@ type BaseProps = {
     type: CtaType;
     tracking?: () => void;
 };
+
 type ButtonProps = BaseProps & {
     onClick: MouseEventHandler<HTMLButtonElement>;
 };
+
 type LinkProps = BaseProps & {
     href: string;
 };
 
 type Props = ButtonProps | LinkProps;
 
-const COPY_TEXT: Record<CtaType, ReactNode> = {
+const TOOLTIPS: Record<CtaType, ReactNode> = {
     newTab: (
         <>
             <span className={styles.tooltip}>New Tab</span>
-            <Icon name="newTab" />
         </>
     ),
     plunker: (
         <>
             <span className={styles.tooltip}>Plunker</span>
-            <Icon name="plunker" />
         </>
     ),
     stackblitz: (
         <>
             <span className={styles.tooltip}>StackBlitz</span>
-            <Icon name="stackblitz" />
         </>
     ),
     codesandbox: (
         <>
             <span className={styles.tooltip}>CodeSandbox</span>
-            <Icon name="codesandbox" />
         </>
     ),
 };
 
 export const OpenInCTA: FunctionComponent<Props> = (props) => {
     const { type, tracking } = props;
-    const copyText = COPY_TEXT[type];
+    const tooltip = TOOLTIPS[type];
 
     const isButton = Boolean((props as ButtonProps).onClick);
 
     if (isButton) {
         const { onClick } = props as ButtonProps;
         return (
-            <button
-                className={classnames('button-style-none', styles.cta)}
-                onClick={(event) => {
-                    onClick(event);
-                    tracking && tracking();
-                }}
-            >
-                {copyText}
-            </button>
+            <span className={styles.cta}>
+                {tooltip}
+                <button
+                    className="button-style-none"
+                    onClick={(event) => {
+                        onClick(event);
+                        tracking && tracking();
+                    }}
+                >
+                    <Icon name={type} />
+                </button>
+            </span>
         );
     } else {
         const { href } = props as LinkProps;
         return (
-            <a
-                className={styles.cta}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => {
-                    tracking && tracking();
-                }}
-            >
-                {copyText}
-            </a>
+            <span className={styles.cta}>
+                {tooltip}
+                <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => {
+                        tracking && tracking();
+                    }}
+                >
+                    <Icon name={type} />
+                </a>
+            </span>
         );
     }
 };

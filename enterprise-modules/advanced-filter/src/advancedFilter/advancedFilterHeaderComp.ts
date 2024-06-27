@@ -1,7 +1,6 @@
 import type { BeanCollection, ColumnModel, FocusService, HeaderNavigationService } from '@ag-grid-community/core';
 import {
     Component,
-    Events,
     KeyCode,
     _clearElement,
     _setAriaColIndex,
@@ -38,9 +37,20 @@ export class AdvancedFilterHeaderComp extends Component {
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
 
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () =>
-            this.onGridColumnsChanged()
-        );
+        const heightListener = () => {
+            if (this.enabled) {
+                this.setEnabledHeight();
+            }
+        };
+
+        this.addManagedEventListeners({
+            gridColumnsChanged: () => this.onGridColumnsChanged(),
+            columnHeaderHeightChanged: heightListener,
+            gridStylesChanged: heightListener,
+        });
+
+        this.addManagedPropertyListener('headerHeight', heightListener);
+        this.addManagedPropertyListener('floatingFiltersHeight', heightListener);
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
 
@@ -82,10 +92,7 @@ export class AdvancedFilterHeaderComp extends Component {
             const eAdvancedFilterGui = this.eAdvancedFilter.getGui();
             this.eAdvancedFilter.addCssClass('ag-advanced-filter-header-cell');
 
-            this.height = this.columnModel.getFloatingFiltersHeight();
-            const height = `${this.height}px`;
-            eGui.style.height = height;
-            eGui.style.minHeight = height;
+            this.setEnabledHeight();
 
             this.setAriaRowIndex();
             _setAriaRole(eAdvancedFilterGui, 'gridcell');
@@ -100,6 +107,14 @@ export class AdvancedFilterHeaderComp extends Component {
         }
         _setDisplayed(eGui, enabled);
         this.enabled = enabled;
+    }
+
+    private setEnabledHeight(): void {
+        const eGui = this.getGui();
+        this.height = this.columnModel.getFloatingFiltersHeight();
+        const height = `${this.height}px`;
+        eGui.style.height = height;
+        eGui.style.minHeight = height;
     }
 
     private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {

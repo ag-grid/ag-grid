@@ -48,8 +48,6 @@ class SparklineCrosshairs {
     };
 }
 export class AreaSparkline extends Sparkline {
-    static className = 'AreaSparkline';
-
     fill: string = 'rgba(124, 181, 236, 0.25)';
 
     protected strokePath: _Scene.Path = new _Scene.Path();

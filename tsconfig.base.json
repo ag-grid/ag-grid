@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "esModuleInterop": true,
-    "target": "ES6",
+    "target": "ES2020",
     "module": "commonjs",
     "lib": ["ES2022", "DOM"],
     "skipLibCheck": true,
@@ -24,6 +24,7 @@
       "@ag-grid-community/client-side-row-model": ["community-modules/client-side-row-model/src/main.ts"],
       "@ag-grid-community/core": ["community-modules/core/src/main.ts"],
       "@ag-grid-enterprise/core": ["enterprise-modules/core/src/main.ts"],
+      "@ag-grid-enterprise/side-bar": ["enterprise-modules/side-bar/src/main.ts"],
       "@ag-grid-enterprise/status-bar": ["enterprise-modules/status-bar/src/main.ts"]
     }
   },

@@ -82,7 +82,7 @@ describe.each([
         isValid: false,
         message: validGridChartsVersionErrorMessage({
             type: 'invalidGrid',
-            // @ts-ignore
+            // @ts-expect-error testing null
             gridVersion: null,
             chartsVersion: '7.0.0',
         }),
@@ -104,7 +104,7 @@ describe.each([
         message: validGridChartsVersionErrorMessage({
             type: 'invalidCharts',
             gridVersion: '29.0.0',
-            // @ts-ignore
+            // @ts-expect-error testing null
             chartsVersion: null,
         }),
     },
@@ -130,6 +130,7 @@ describe.each([
     { gridVersion: '31.2.0', chartsVersion: '9.3.0-beta.20240423', isValid: true },
 ])('validGridChartsVersion', ({ gridVersion, chartsVersion, isValid, message }) => {
     it(`gridVersion: ${gridVersion}, chartsVersion: ${chartsVersion} ${isValid ? 'is valid' : `is not valid${message ? ` - ${message}` : ''}`}`, () => {
+        // @ts-ignore
         expect(validGridChartsVersion({ gridVersion, chartsVersion })).toEqual({
             isValid,
             ...(message ? { message } : {}),
@@ -150,6 +151,7 @@ describe.each([
     { gridVersion: '8.weird.string', output: undefined },
 ])('gridChartVersion', ({ gridVersion, output }) => {
     it(`gridVersion: ${gridVersion} returns ${JSON.stringify(output)}`, () => {
+        // @ts-ignore
         expect(gridChartVersion(gridVersion)).toEqual(output);
     });
 });

@@ -1,7 +1,7 @@
-import { Events } from '../../eventKeys';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
-import { AgCheckbox } from '../../widgets/agCheckbox';
+import type { AgCheckbox } from '../../widgets/agCheckbox';
+import { AgCheckboxSelector } from '../../widgets/agCheckbox';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
@@ -12,7 +12,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
             <div class="ag-cell-wrapper ag-cell-edit-wrapper ag-checkbox-edit">
                 <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
             </div>`,
-            [AgCheckbox]
+            [AgCheckboxSelector]
         );
     }
 
@@ -30,9 +30,9 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
 
         this.setAriaLabel(isSelected);
 
-        this.addManagedListener(this.eCheckbox, Events.EVENT_FIELD_VALUE_CHANGED, (event: { selected?: boolean }) =>
-            this.setAriaLabel(event.selected)
-        );
+        this.addManagedListeners(this.eCheckbox, {
+            fieldValueChanged: (event: { selected?: boolean }) => this.setAriaLabel(event.selected),
+        });
     }
 
     public getValue(): boolean | undefined {

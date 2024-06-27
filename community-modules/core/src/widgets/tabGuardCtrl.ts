@@ -27,6 +27,9 @@ export class TabGuardCtrl extends BeanStub {
     private readonly eFocusableElement: HTMLElement;
     private readonly focusTrapActive: boolean;
     private readonly forceFocusOutWhenTabGuardsAreEmpty: boolean;
+    // When true, this prevents the browser from tabbing into and out of the element.
+    // Instead, focus must be handled manually
+    private readonly isFocusableContainer: boolean;
 
     private readonly providedFocusInnerElement?: (fromBottom: boolean) => void;
     private readonly providedFocusIn?: (event: FocusEvent) => void;
@@ -38,6 +41,8 @@ export class TabGuardCtrl extends BeanStub {
 
     private skipTabGuardFocus: boolean = false;
     private forcingFocusOut: boolean = false;
+    // Used when `isFocusableContainer` enabled
+    private allowFocus: boolean = false;
 
     constructor(params: {
         comp: ITabGuard;
@@ -46,6 +51,7 @@ export class TabGuardCtrl extends BeanStub {
         eFocusableElement: HTMLElement;
         focusTrapActive?: boolean;
         forceFocusOutWhenTabGuardsAreEmpty?: boolean;
+        isFocusableContainer?: boolean;
         focusInnerElement?: (fromBottom: boolean) => void;
         onFocusIn?: (event: FocusEvent) => void;
         onFocusOut?: (event: FocusEvent) => void;
@@ -61,6 +67,7 @@ export class TabGuardCtrl extends BeanStub {
             eBottomGuard,
             focusTrapActive,
             forceFocusOutWhenTabGuardsAreEmpty,
+            isFocusableContainer,
             focusInnerElement,
             onFocusIn,
             onFocusOut,
@@ -78,6 +85,7 @@ export class TabGuardCtrl extends BeanStub {
         this.eFocusableElement = eFocusableElement;
         this.focusTrapActive = !!focusTrapActive;
         this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty;
+        this.isFocusableContainer = !!isFocusableContainer;
 
         this.providedFocusIn = onFocusIn;
         this.providedFocusOut = onFocusOut;
@@ -100,7 +108,7 @@ export class TabGuardCtrl extends BeanStub {
         this.activateTabGuards();
 
         [this.eTopGuard, this.eBottomGuard].forEach((guard) =>
-            this.addManagedListener(guard, 'focus', this.onFocus.bind(this))
+            this.addManagedElementListeners(guard, { focus: this.onFocus.bind(this) })
         );
     }
 
@@ -135,6 +143,13 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private onFocus(e: FocusEvent): void {
+        if (this.isFocusableContainer && !this.eFocusableElement.contains(e.relatedTarget as HTMLElement)) {
+            if (!this.allowFocus) {
+                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                return;
+            }
+        }
+
         if (this.skipTabGuardFocus) {
             this.skipTabGuardFocus = false;
             return;
@@ -150,6 +165,10 @@ export class TabGuardCtrl extends BeanStub {
                 this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
                 return;
             }
+        }
+
+        if (this.isFocusableContainer && this.eFocusableElement.contains(e.relatedTarget as HTMLElement)) {
+            return;
         }
 
         const fromBottom = e.target === this.eBottomGuard;
@@ -206,7 +225,7 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private onFocusIn(e: FocusEvent): void {
-        if (this.focusTrapActive) {
+        if (this.focusTrapActive || this.forcingFocusOut) {
             return;
         }
 
@@ -214,7 +233,9 @@ export class TabGuardCtrl extends BeanStub {
             this.providedFocusIn(e);
         }
 
-        this.deactivateTabGuards();
+        if (!this.isFocusableContainer) {
+            this.deactivateTabGuards();
+        }
     }
 
     private onFocusOut(e: FocusEvent): void {
@@ -307,7 +328,11 @@ export class TabGuardCtrl extends BeanStub {
         });
     }
 
-    public isTabGuard(element: HTMLElement): boolean {
-        return element === this.eTopGuard || element === this.eBottomGuard;
+    public isTabGuard(element: HTMLElement, bottom?: boolean): boolean {
+        return (element === this.eTopGuard && !bottom) || (element === this.eBottomGuard && (bottom ?? true));
+    }
+
+    public setAllowFocus(allowFocus: boolean): void {
+        this.allowFocus = allowFocus;
     }
 }

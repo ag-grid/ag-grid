@@ -1,13 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    CellValueChangedEvent,
-    ColDef,
-    CommunityFeaturesModule,
-    ModuleRegistry,
-    RowValueChangedEvent,
-} from '@ag-grid-community/core';
+import { CellValueChangedEvent, ColDef, ModuleRegistry, RowValueChangedEvent } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -19,7 +13,7 @@ import { createRoot } from 'react-dom/client';
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
 function getRowData(): any[] {
     const rowData: any[] = [];
@@ -125,7 +119,6 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         editType={'fullRow'}
-                        reactiveCustomComponents
                         onCellValueChanged={onCellValueChanged}
                         onRowValueChanged={onRowValueChanged}
                     />

@@ -6,9 +6,9 @@ import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
+import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
-import { Events } from '../../events';
-import { CssClassApplier } from '../../headerRendering/cells/cssClassApplier';
+import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
@@ -753,8 +753,8 @@ export class CellCtrl extends BeanStub {
         this.addDestroyFunc(() => this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
-    public createEvent(domEvent: Event | null, eventType: string): CellEvent {
-        const event: CellEvent = this.beans.gos.addGridCommonParams({
+    public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
+        const event: CellEvent<T> = this.beans.gos.addGridCommonParams({
             type: eventType,
             node: this.rowNode,
             data: this.rowNode.data,
@@ -806,7 +806,7 @@ export class CellCtrl extends BeanStub {
 
     private refreshFirstAndLastStyles(): void {
         const { cellComp, column, beans } = this;
-        CssClassApplier.refreshFirstAndLastStyles(cellComp, column, beans.visibleColsService);
+        refreshFirstAndLastStyles(cellComp, column, beans.visibleColsService);
     }
 
     private refreshAriaColIndex(): void {
@@ -951,7 +951,15 @@ export class CellCtrl extends BeanStub {
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
-            const focusEl = this.cellComp.getFocusableElement();
+            let focusEl = this.cellComp.getFocusableElement();
+
+            if (this.editing) {
+                const focusableEls = this.beans.focusService.findFocusableElements(focusEl, null, true);
+                if (focusableEls.length) {
+                    focusEl = focusableEls[0];
+                }
+            }
+
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
         }
 
@@ -1030,7 +1038,7 @@ export class CellCtrl extends BeanStub {
 
     public dispatchCellContextMenuEvent(event: Event | null) {
         const colDef = this.column.getColDef();
-        const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
+        const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, 'cellContextMenu');
 
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
 

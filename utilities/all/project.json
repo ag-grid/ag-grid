@@ -140,7 +140,7 @@
       }
     },
     "clean": {
-      "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'packages/*/dist/' 'documentation/*/dist/'"
+      "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'packages/*/dist/' 'documentation/*/dist/' 'community-modules/locale/umd/'"
     },
     "generate-examples": {
       "executor": "nx:noop",
@@ -178,6 +178,7 @@
     "community-modules/core",
     "community-modules/client-side-row-model",
     "community-modules/styles",
+    "community-modules/locale",
     "community-modules/csv-export",
     "community-modules/infinite-row-model",
     "community-modules/angular",
@@ -211,6 +212,8 @@
     "packages/ag-grid-vue3",
     "documentation/ag-grid-docs",
     "external/ag-website-shared",
+    "external/ag-shared",
+    "testing/behavioural",
     "ag-grid-generate-example-files"
   ],
   "tags": []

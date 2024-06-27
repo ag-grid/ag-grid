@@ -69,6 +69,23 @@
         display: block;
     }
 
+    // special setting for lists to prevent scroll
+    // while tabbing out of the container
+    .ag-virtual-list-viewport .ag-tab-guard {
+        // this keeps the tabguard within "visible" range
+        // while scrolling so focusing the tabguard doesn't
+        // scroll the list viewport.
+        position: sticky;
+    }
+
+    .ag-tab-guard-top {
+        top: 1px;
+    }
+
+    .ag-tab-guard-bottom {
+        bottom: 1px;
+    }
+
     .ag-select-agg-func-popup {
         position: absolute;
     }
@@ -113,10 +130,6 @@
 
         &.ag-layout-normal {
             height: 100%;
-
-            &.ag-default-height {
-                height: var(--ag-default-grid-height);
-            }
         }
     }
 
@@ -477,6 +490,7 @@
     .ag-header-cell-text {
         overflow: hidden;
         text-overflow: ellipsis;
+        word-break: break-word;
     }
 
     .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
@@ -788,6 +802,7 @@
 
     .ag-cell-wrap-text {
         white-space: normal;
+        word-break: break-word;
     }
 
     .ag-cell-wrapper {
@@ -1289,6 +1304,29 @@
 
     // /**
     //  ****************************
+    //  * Pill
+    //  ****************************
+    // */
+    .ag-pill-container {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: nowrap;
+    }
+
+    .ag-pill {
+        display: flex;
+        white-space: nowrap;
+        padding: 0 0.25rem;
+        align-items: center;
+    }
+
+    .ag-pill .ag-pill-button {
+        border: none;
+        padding: 0;
+    }
+
+    // /**
+    //  ****************************
     //  * Rich Select
     //  ****************************
     // */
@@ -1758,7 +1796,7 @@
     .ag-spectrum-color {
         flex: 1 1 auto;
         position: relative;
-        overflow: hidden;
+        overflow: visible;
         cursor: default;
     }
 
@@ -1800,19 +1838,39 @@
         height: 100%;
     }
 
+    .ag-spectrum-alpha {
+        --ag-spectrum-alpha-background-checked: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect x="0" y="0" width="4" height="4" fill="%23fff"/><path d="M0 0H2V4H4V2H0Z" fill="%23b2b2b2"/></svg>');
+    }
+
     .ag-spectrum-alpha-background {
-        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
+        background:
+            linear-gradient(
+                to right,
+                var(--ag-internal-spectrum-alpha-color-from),
+                var(--ag-internal-spectrum-alpha-color-to)
+            ),
+            var(--ag-spectrum-alpha-background-checked) top left / 4px 4px;
         width: 100%;
         height: 100%;
     }
 
     .ag-spectrum-tool {
         cursor: pointer;
+        position: relative;
     }
 
     .ag-spectrum-slider {
         position: absolute;
         pointer-events: none;
+    }
+
+    .ag-spectrum-alpha .ag-spectrum-slider {
+        background: linear-gradient(
+                to bottom,
+                var(--ag-internal-spectrum-alpha-color),
+                var(--ag-internal-spectrum-alpha-color)
+            )
+            white;
     }
 
     .ag-recent-colors {
@@ -1869,5 +1927,15 @@
 
     .ag-body .ag-body-viewport {
         -webkit-overflow-scrolling: touch;
+    }
+
+    .ag-measurement-container {
+        width: 0;
+        overflow: hidden;
+        visibility: hidden;
+
+        div {
+            position: absolute;
+        }
     }
 }

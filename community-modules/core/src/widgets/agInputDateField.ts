@@ -3,10 +3,9 @@ import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _addOrRemoveAttribute } from '../utils/dom';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
-import type { AgComponentSelector } from './component';
+import type { ComponentSelector } from './component';
 
 export class AgInputDateField extends AgInputTextField {
-    static override selector: AgComponentSelector = 'AG-INPUT-DATE-FIELD';
     private min?: string;
     private max?: string;
     private step?: number;
@@ -18,18 +17,18 @@ export class AgInputDateField extends AgInputTextField {
     public override postConstruct() {
         super.postConstruct();
 
-        this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));
-
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
         const usingSafari = _isBrowserSafari();
-        this.addManagedListener(this.eInput, 'mousedown', () => {
-            if (this.isDisabled() || usingSafari) {
-                return;
-            }
-            this.eInput.focus();
+        this.addManagedListeners(this.eInput, {
+            wheel: this.onWheel.bind(this),
+            mousedown: () => {
+                if (this.isDisabled() || usingSafari) {
+                    return;
+                }
+                this.eInput.focus();
+            },
         });
-
         this.eInput.step = 'any';
     }
 
@@ -89,3 +88,8 @@ export class AgInputDateField extends AgInputTextField {
         this.setValue(_serialiseDate(date ?? null, false), silent);
     }
 }
+
+export const AgInputDateFieldSelector: ComponentSelector = {
+    selector: 'AG-INPUT-DATE-FIELD',
+    component: AgInputDateField,
+};

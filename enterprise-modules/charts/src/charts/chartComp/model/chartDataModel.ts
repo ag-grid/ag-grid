@@ -49,8 +49,8 @@ export class ChartDataModel extends BeanStub {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.rangeService = beans.rangeService;
-        this.chartTranslationService = beans.chartTranslationService;
+        this.rangeService = beans.rangeService!;
+        this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
 
     public readonly params: ChartModelParams;
@@ -159,8 +159,9 @@ export class ChartDataModel extends BeanStub {
         resetOrder?: boolean;
         maintainColState?: boolean;
         setColsFromRange?: boolean;
+        fromModelUpdate?: boolean;
     }): void {
-        const { updatedColState, resetOrder, maintainColState, setColsFromRange } = params ?? {};
+        const { updatedColState, resetOrder, maintainColState, setColsFromRange, fromModelUpdate } = params ?? {};
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -176,7 +177,7 @@ export class ChartDataModel extends BeanStub {
         this.setValueCellRange(valueCols, allColsFromRanges, setColsFromRange);
 
         if (!updatedColState && !maintainColState) {
-            this.resetColumnState();
+            this.resetColumnState(fromModelUpdate || setColsFromRange);
             // dimension / category cell range could be out of sync after resetting column state when row grouping
             this.syncDimensionCellRange();
         }
@@ -305,7 +306,7 @@ export class ChartDataModel extends BeanStub {
         return { startRow, endRow };
     }
 
-    private resetColumnState(): void {
+    private resetColumnState(suppressSelectAutoGroupCol?: boolean): void {
         const { dimensionCols, valueCols } = this.chartColumnService.getChartColumns();
         const allCols = this.getAllColumnsFromRanges();
         const isInitialising = this.valueColState.length < 1;
@@ -328,9 +329,10 @@ export class ChartDataModel extends BeanStub {
                     selected = true;
                 }
             } else {
-                selected = isAutoGroupCol
-                    ? true
-                    : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
+                selected =
+                    isAutoGroupCol && !suppressSelectAutoGroupCol
+                        ? true
+                        : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
             }
 
             this.dimensionColState.push({

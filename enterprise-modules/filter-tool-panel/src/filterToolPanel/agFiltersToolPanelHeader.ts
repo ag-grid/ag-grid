@@ -1,8 +1,14 @@
-import type { AgColumn, AgComponentSelector, BeanCollection, ColumnModel } from '@ag-grid-community/core';
-import {
+import type {
+    AgColumn,
+    AgEvent,
     AgInputTextField,
+    BeanCollection,
+    ColumnModel,
+    ComponentSelector,
+} from '@ag-grid-community/core';
+import {
+    AgInputTextFieldSelector,
     Component,
-    Events,
     RefPlaceholder,
     _createIconNoSpan,
     _debounce,
@@ -16,15 +22,13 @@ export enum EXPAND_STATE {
     COLLAPSED,
     INDETERMINATE,
 }
-
-export class AgFiltersToolPanelHeader extends Component {
+export type AgFiltersToolPanelHeaderEvent = 'collapseAll' | 'expandAll' | 'searchChanged';
+export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeaderEvent> {
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-FILTERS-TOOL-PANEL-HEADER';
 
     private readonly eExpand: Element = RefPlaceholder;
     private readonly eFilterTextField: AgInputTextField = RefPlaceholder;
@@ -46,7 +50,7 @@ export class AgFiltersToolPanelHeader extends Component {
                 <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <ag-input-text-field data-ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
             </div>`,
-            [AgInputTextField]
+            [AgInputTextFieldSelector]
         );
 
         const translate = this.localeService.getLocaleTextFunc();
@@ -58,8 +62,8 @@ export class AgFiltersToolPanelHeader extends Component {
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedElementListeners(this.eExpand, { click: this.onExpandClicked.bind(this) });
+        this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
     }
 
     public init(params: ToolPanelFiltersCompParams): void {
@@ -96,7 +100,7 @@ export class AgFiltersToolPanelHeader extends Component {
     private onSearchTextChanged(): void {
         if (!this.onSearchTextChangedDebounced) {
             this.onSearchTextChangedDebounced = _debounce(() => {
-                this.dispatchEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() });
+                this.dispatchLocalEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() });
             }, 300);
         }
 
@@ -104,9 +108,9 @@ export class AgFiltersToolPanelHeader extends Component {
     }
 
     private onExpandClicked(): void {
-        const event =
+        const event: AgEvent<AgFiltersToolPanelHeaderEvent> =
             this.currentExpandState === EXPAND_STATE.EXPANDED ? { type: 'collapseAll' } : { type: 'expandAll' };
-        this.dispatchEvent(event);
+        this.dispatchLocalEvent(event);
     }
 
     public setExpandState(state: EXPAND_STATE): void {
@@ -117,3 +121,8 @@ export class AgFiltersToolPanelHeader extends Component {
         _setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
     }
 }
+
+export const AgFiltersToolPanelHeaderSelector: ComponentSelector = {
+    selector: 'AG-FILTERS-TOOL-PANEL-HEADER',
+    component: AgFiltersToolPanelHeader,
+};

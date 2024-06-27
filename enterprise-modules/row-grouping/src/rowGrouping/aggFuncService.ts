@@ -1,7 +1,7 @@
 import type { AgColumn, IAggFunc, IAggFuncParams, IAggFuncService, NamedBean } from '@ag-grid-community/core';
 import { BeanStub, _exists, _existsAndNotEmpty, _includes, _iterateObject, _last } from '@ag-grid-community/core';
 
-const defaultAggFuncNames: { [key: string]: string } = {
+const defaultAggFuncNames = {
     sum: 'Sum',
     first: 'First',
     last: 'Last',
@@ -9,20 +9,13 @@ const defaultAggFuncNames: { [key: string]: string } = {
     max: 'Max',
     count: 'Count',
     avg: 'Average',
-};
+} as const;
+type DefaultAggFuncName = keyof typeof defaultAggFuncNames;
 
 export class AggFuncService extends BeanStub implements NamedBean, IAggFuncService {
     beanName = 'aggFuncService' as const;
 
-    private static AGG_SUM = 'sum';
-    private static AGG_FIRST = 'first';
-    private static AGG_LAST = 'last';
-    private static AGG_MIN = 'min';
-    private static AGG_MAX = 'max';
-    private static AGG_COUNT = 'count';
-    private static AGG_AVG = 'avg';
-
-    private aggFuncsMap: { [key: string]: IAggFunc } = {};
+    private aggFuncsMap: { [key in string]: IAggFunc } = {};
     private initialised = false;
 
     public postConstruct(): void {
@@ -39,13 +32,14 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 
     private initialiseWithDefaultAggregations(): void {
-        this.aggFuncsMap[AggFuncService.AGG_SUM] = aggSum;
-        this.aggFuncsMap[AggFuncService.AGG_FIRST] = aggFirst;
-        this.aggFuncsMap[AggFuncService.AGG_LAST] = aggLast;
-        this.aggFuncsMap[AggFuncService.AGG_MIN] = aggMin;
-        this.aggFuncsMap[AggFuncService.AGG_MAX] = aggMax;
-        this.aggFuncsMap[AggFuncService.AGG_COUNT] = aggCount;
-        this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
+        const aggMap = this.aggFuncsMap as { [key in DefaultAggFuncName]: IAggFunc };
+        aggMap['sum'] = aggSum;
+        aggMap['first'] = aggFirst;
+        aggMap['last'] = aggLast;
+        aggMap['min'] = aggMin;
+        aggMap['max'] = aggMax;
+        aggMap['count'] = aggCount;
+        aggMap['avg'] = aggAvg;
         this.initialised = true;
     }
 
@@ -56,7 +50,7 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
         return allowed && funcExists;
     }
 
-    public getDefaultFuncLabel(fctName: string): string {
+    public getDefaultFuncLabel(fctName: DefaultAggFuncName): string {
         return defaultAggFuncNames[fctName] ?? fctName;
     }
 
@@ -67,8 +61,8 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
             return defaultAgg;
         }
 
-        if (this.isAggFuncPossible(column, AggFuncService.AGG_SUM)) {
-            return AggFuncService.AGG_SUM;
+        if (this.isAggFuncPossible(column, 'sum')) {
+            return 'sum';
         }
 
         const allKeys = this.getFuncNames(column);

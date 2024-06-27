@@ -1,10 +1,10 @@
+import { paramValueToCss } from '@ag-grid-community/theming';
 import { Checkmark, ChevronDown } from '@carbon/icons-react';
 import { ParamModel, useParamAtom } from '@components/theme-builder/model/ParamModel';
 import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
 import styled from '@emotion/styled';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 
-import { paramValueToCss } from '../../../../../../../community-modules/theming/src/theme-types';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
 import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';

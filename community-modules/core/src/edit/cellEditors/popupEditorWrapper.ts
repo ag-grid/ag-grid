@@ -4,14 +4,12 @@ import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
 
 export class PopupEditorWrapper extends PopupComponent {
-    public static DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
-
     constructor(private readonly params: ICellEditorParams) {
         super(/* html */ `<div class="ag-popup-editor" tabindex="-1"/>`);
     }
 
     public postConstruct(): void {
-        this.gos.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.gos.setDomData(this.getGui(), 'popupEditorWrapper', true);
         this.addKeyDownListener();
     }
 
@@ -24,6 +22,6 @@ export class PopupEditorWrapper extends PopupComponent {
             }
         };
 
-        this.addManagedListener(eGui, 'keydown', listener);
+        this.addManagedElementListeners(eGui, { keydown: listener });
     }
 }

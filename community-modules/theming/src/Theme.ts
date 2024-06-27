@@ -154,16 +154,6 @@ export class Theme {
             }
         }
 
-        // Uncomment to print a console error when rendered CSS contains a variable that doesn't match a theme param
-        // const allowedVariables = new Set(Object.keys(this.getParams()).map(paramToVariableName));
-        // allowedVariables.add('--ag-line-height');
-        // allowedVariables.add('--ag-indentation-level');
-        // for (const [, variable] of this.getCSS().matchAll(/var\((--ag-[\w-]+)[^)]*\)/g)) {
-        //     if (!allowedVariables.has(variable) && !variable.startsWith('--ag-internal')) {
-        //         logErrorMessageOnce(`${variable} does not match a theme param`);
-        //     }
-        // }
-
         await Promise.all(loadPromises);
     }
 
@@ -235,7 +225,7 @@ export class Theme {
             variablesCss += `\t${variable}: var(${inheritedVariable}, ${defaultValue});\n`;
             inheritanceCss += `\t${inheritedVariable}: var(${variable});\n`;
         }
-        let css = `.ag-root-wrapper, .ag-measurement-container {\n${variablesCss}}\n`;
+        let css = `.ag-root-wrapper, .ag-measurement-container, .ag-apply-theme-variables {\n${variablesCss}}\n`;
         css += `:has(> .ag-root-wrapper) {\n${inheritanceCss}}\n`;
         return {
             css,

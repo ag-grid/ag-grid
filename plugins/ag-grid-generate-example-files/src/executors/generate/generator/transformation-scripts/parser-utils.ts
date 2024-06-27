@@ -629,6 +629,10 @@ export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile
     return undefined;
 }
 
+export function findLocaleImport(bindingImports) {
+    return bindingImports.find((bindingImport) => bindingImport.module.includes('ag-grid-local'));
+}
+
 function getGenericInterface(tData) {
     let interfaceStr = '';
     switch (tData) {

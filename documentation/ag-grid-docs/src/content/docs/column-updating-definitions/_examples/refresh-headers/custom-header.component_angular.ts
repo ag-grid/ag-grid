@@ -6,7 +6,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
     standalone: true,
     template: `
         <div style="display: flex">
-            @if (params.enableMenu) {
+            @if (params.enableFilterButton) {
                 <span #menuButton class="ag-icon ag-icon-menu" (click)="onMenuClicked($event)"></span>
             }
             <div style="flex-grow: 1;">

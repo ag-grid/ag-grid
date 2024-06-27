@@ -1,5 +1,5 @@
 import type {
-    AgComponentSelector,
+    AgInputNumberField,
     AgLabelParams,
     BeanCollection,
     DragListenerParams,
@@ -7,8 +7,7 @@ import type {
 } from '@ag-grid-community/core';
 import {
     AgAbstractLabel,
-    AgInputNumberField,
-    Events,
+    AgInputNumberFieldSelector,
     RefPlaceholder,
     _exists,
     _setFixedWidth,
@@ -19,26 +18,13 @@ export interface AgAngleSelectParams extends AgLabelParams {
     onValueChange?: (value: number) => void;
 }
 
-export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
+export type AgAngleSelectEvent = 'fieldValueChanged';
+export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleSelectEvent> {
     protected dragService: DragService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
     }
-
-    static readonly selector: AgComponentSelector = 'AG-ANGLE-SELECT';
-
-    private static TEMPLATE /* html */ = `<div class="ag-angle-select">
-            <div data-ref="eLabel"></div>
-            <div class="ag-wrapper ag-angle-select-wrapper">
-                <div class="ag-angle-select-field">
-                    <div data-ref="eParentCircle" class="ag-angle-select-parent-circle">
-                        <div data-ref="eChildCircle" class="ag-angle-select-child-circle"></div>
-                    </div>
-                </div>
-                <ag-input-number-field data-ref="eAngleValue"></ag-input-number-field>
-            </div>
-        </div>`;
 
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eParentCircle: HTMLElement = RefPlaceholder;
@@ -53,7 +39,21 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     private dragListener: DragListenerParams;
 
     constructor(config?: AgAngleSelectParams) {
-        super(config, AgAngleSelect.TEMPLATE, [AgInputNumberField]);
+        super(
+            config,
+            /* html */ `<div class="ag-angle-select">
+            <div data-ref="eLabel"></div>
+            <div class="ag-wrapper ag-angle-select-wrapper">
+                <div class="ag-angle-select-field">
+                    <div data-ref="eParentCircle" class="ag-angle-select-parent-circle">
+                        <div data-ref="eChildCircle" class="ag-angle-select-child-circle"></div>
+                    </div>
+                </div>
+                <ag-input-number-field data-ref="eAngleValue"></ag-input-number-field>
+            </div>
+        </div>`,
+            [AgInputNumberFieldSelector]
+        );
     }
 
     public override postConstruct() {
@@ -71,7 +71,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
         this.dragListener = {
             eElement: this.eParentCircle,
             dragStartPixels: 0,
-            onDragStart: (e: MouseEvent | Touch) => {
+            onDragStart: () => {
                 this.parentCircleRect = this.eParentCircle.getBoundingClientRect();
             },
             onDragging: (e: MouseEvent | Touch) => this.calculateAngleDrag(e),
@@ -105,11 +105,13 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
 
-        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
-            if (this.eAngleValue.getInputElement().contains(this.gos.getActiveDomElement())) {
-                return;
-            }
-            this.updateNumberInput();
+        this.addManagedListeners(this, {
+            fieldValueChanged: () => {
+                if (this.eAngleValue.getInputElement().contains(this.gos.getActiveDomElement())) {
+                    return;
+                }
+                this.updateNumberInput();
+            },
         });
     }
 
@@ -219,8 +221,10 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void): this {
-        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
-            callbackFn(this.degrees);
+        this.addManagedListeners(this, {
+            fieldValueChanged: () => {
+                callbackFn(this.degrees);
+            },
         });
         return this;
     }
@@ -244,7 +248,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
             if (!silent) {
-                this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+                this.dispatchLocalEvent({ type: 'fieldValueChanged' });
             }
         }
 

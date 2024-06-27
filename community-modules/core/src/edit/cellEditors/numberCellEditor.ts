@@ -1,6 +1,7 @@
 import { KeyCode } from '../../constants/keyCode';
 import { _exists } from '../../utils/generic';
-import { AgInputNumberField } from '../../widgets/agInputNumberField';
+import type { AgInputNumberField } from '../../widgets/agInputNumberField';
+import { AgInputNumberFieldSelector } from '../../widgets/agInputNumberField';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { INumberCellEditorParams } from './iNumberCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -13,7 +14,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         return /* html */ `<ag-input-number-field class="ag-cell-editor" data-ref="eInput"></ag-input-number-field>`;
     }
     public getAgComponents() {
-        return [AgInputNumberField];
+        return [AgInputNumberFieldSelector];
     }
 
     public init(eInput: AgInputNumberField, params: INumberCellEditorParams): void {
@@ -34,7 +35,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
         const inputEl = eInput.getInputElement();
         if (params.preventStepping) {
-            eInput.addManagedListener(inputEl, 'keydown', this.preventStepping);
+            eInput.addManagedElementListeners(inputEl, { keydown: this.preventStepping });
         } else if (params.showStepperButtons) {
             inputEl.classList.add('ag-number-field-input-stepper');
         }

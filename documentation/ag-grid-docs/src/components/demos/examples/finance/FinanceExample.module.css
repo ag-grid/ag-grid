@@ -1,0 +1,46 @@
+:global(:root) {
+    --layout-grid-header-height: 32px;
+}
+
+.grid {
+    height: calc(100vh - var(--layout-grid-header-height));
+    --ag-value-change-value-highlight-background-color: #44ad4961;
+    --ag-value-change-delta-down-color: rgb(255, 0, 92);
+    --ag-value-change-delta-up-color: rgb(53, 182, 90);
+}
+
+:global(.ag-theme-quartz-dark) {
+    --ag-row-hover-color: #323a46;
+}
+
+:global(div.ag-theme-quartz),
+:global(div.ag-theme-quartz-dark) {
+    @media screen and (max-width: 720px) {
+        --ag-font-size: 12px;
+        --ag-grid-size: 6px;
+    }
+}
+
+:global(.ag-theme-quartz .ag-row-group),
+.container {
+    width: 100%;
+}
+
+:global(.ag-theme-quartz .ag-value-change-value-highlight),
+:global(.ag-theme-quartz-dark .ag-value-change-value-highlight) {
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+:global(.ag-right-aligned-cell) {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+:global(.ticker-name) {
+    opacity: 0.8;
+}

@@ -1,8 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -31,10 +31,6 @@ function fillMedium() {
 
 function fillExact() {
     setWidthAndHeight('400px');
-}
-
-function noSize() {
-    setWidthAndHeight('');
 }
 
 function setWidthAndHeight(size: string) {

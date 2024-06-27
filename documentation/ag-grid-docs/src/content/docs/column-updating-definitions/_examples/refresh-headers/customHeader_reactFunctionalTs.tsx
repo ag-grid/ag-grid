@@ -2,14 +2,14 @@ import { CustomHeaderProps } from '@ag-grid-community/react';
 import React, { useRef } from 'react';
 
 const CustomHeader = (props: CustomHeaderProps) => {
-    const { enableMenu, displayName, showColumnMenu } = props;
+    const { enableFilterButton, displayName, showColumnMenu } = props;
     const menuButtonRef = useRef(null);
 
     console.log('CustomHeader rendered -> ' + displayName);
 
     return (
         <div style={{ display: 'flex' }}>
-            {enableMenu && (
+            {enableFilterButton && (
                 <div
                     ref={menuButtonRef}
                     className="ag-icon ag-icon-menu"

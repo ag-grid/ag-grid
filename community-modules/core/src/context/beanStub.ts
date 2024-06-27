@@ -1,6 +1,7 @@
 import type { GridOptions } from '../entities/gridOptions';
 import type { EventService } from '../eventService';
-import type { AgEvent, AgEventListener } from '../events';
+import type { AgEventType } from '../eventTypes';
+import type { AgEvent, AgEventListener, AgEventTypeParams } from '../events';
 import type {
     GridOptionsService,
     PropertyChangedEvent,
@@ -17,14 +18,17 @@ import type { Bean } from './bean';
 import type { BeanCollection, Context } from './context';
 import type { BaseBean } from './genericContext';
 
-type LocalEventOrDestroyed<TLocalEvent extends string> = TLocalEvent | 'destroyed';
+export type BeanStubEvent = 'destroyed';
+export type EventOrDestroyed<TEventType extends string> = TEventType | BeanStubEvent;
 
-export abstract class BeanStub<TLocalEvent extends string = string>
-    implements BaseBean<BeanCollection>, Bean, IEventEmitter<LocalEventOrDestroyed<TLocalEvent>>
+type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
+
+type AgEventHandlers = { [K in AgEventType]?: (event: AgEventTypeParams[K]) => void };
+
+export abstract class BeanStub<TEventType extends string = BeanStubEvent>
+    implements BaseBean<BeanCollection>, Bean, IEventEmitter<EventOrDestroyed<TEventType>>
 {
-    public static EVENT_DESTROYED = 'destroyed' as const;
-
-    protected localEventService?: LocalEventService<LocalEventOrDestroyed<TLocalEvent>>;
+    protected localEventService?: LocalEventService<EventOrDestroyed<TEventType>>;
 
     private stubContext: Context; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
@@ -76,48 +80,68 @@ export abstract class BeanStub<TLocalEvent extends string = string>
         this.destroyFunctions.length = 0;
         this.destroyed = true;
 
-        this.dispatchEvent({ type: BeanStub.EVENT_DESTROYED });
+        // cast destroy type as we do not want to expose destroy event type to the dispatchLocalEvent method
+        // as no one else should be firing destroyed at the bean stub.
+        this.dispatchLocalEvent({ type: 'destroyed' } as { type: BeanStubEvent } as any);
     }
 
-    public addEventListener(eventType: LocalEventOrDestroyed<TLocalEvent>, listener: AgEventListener): void {
+    // The typing of AgEventListener<any, any, any> is not ideal, but it's the best we can do at the moment to enable
+    // eventService to have the best typing at the expense of BeanStub local events
+    /** Add a local event listener against this BeanStub */
+    public addEventListener<T extends TEventType>(eventType: T, listener: AgEventListener<any, any, any>): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
-
         this.localEventService!.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: LocalEventOrDestroyed<TLocalEvent>, listener: AgEventListener): void {
+    /** Remove a local event listener from this BeanStub */
+    public removeEventListener<T extends TEventType>(eventType: T, listener: AgEventListener<any, any, any>): void {
         if (this.localEventService) {
             this.localEventService.removeEventListener(eventType, listener);
         }
     }
 
-    public dispatchEvent<T extends AgEvent<LocalEventOrDestroyed<TLocalEvent>>>(event: T): void {
+    public dispatchLocalEvent<TEvent extends AgEvent<TEventType>>(event: TEvent): void {
         if (this.localEventService) {
             this.localEventService.dispatchEvent(event);
         }
     }
 
-    public addManagedListeners<TEvent extends string>(
-        object: Window | HTMLElement | IEventEmitter,
-        handlers: Partial<Record<TEvent, (event?: any) => void>>
-    ): void {
+    public addManagedElementListeners<TEvent extends keyof HTMLElementEventMap>(
+        object: Element | Document,
+        handlers: EventHandlers<TEvent, HTMLElementEventMap[TEvent]>
+    ) {
+        return this._setupListeners<keyof HTMLElementEventMap>(object, handlers);
+    }
+    public addManagedEventListeners(handlers: AgEventHandlers) {
+        return this._setupListeners<AgEventType>(this.eventService, handlers);
+    }
+    public addManagedListeners<TEvent extends string>(object: IEventEmitter<TEvent>, handlers: EventHandlers<TEvent>) {
+        return this._setupListeners<TEvent>(object, handlers);
+    }
+
+    private _setupListeners<TEvent extends string>(
+        object: HTMLElement | IEventEmitter<TEvent>,
+        handlers: EventHandlers<TEvent>
+    ) {
+        const destroyFuncs: (() => null)[] = [];
         for (const k in handlers) {
             const handler = handlers[k];
             if (handler) {
-                this.addManagedListener(object, k, handler);
+                destroyFuncs.push(this._setupListener(object, k, handler));
             }
         }
+        return destroyFuncs;
     }
 
-    public addManagedListener(
-        object: Window | HTMLElement | IEventEmitter,
-        event: string,
+    private _setupListener<const T extends string>(
+        object: Window | HTMLElement | IEventEmitter<T>,
+        event: T,
         listener: (event?: any) => void
-    ): (() => null) | undefined {
+    ): () => null {
         if (this.destroyed) {
-            return;
+            return () => null;
         }
 
         if (object instanceof HTMLElement) {

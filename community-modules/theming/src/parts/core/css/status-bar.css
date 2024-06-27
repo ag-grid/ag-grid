@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     overflow: hidden;
-    border-top: var(--ag-footer-border);
+    border-top: var(--ag-footer-row-border);
     padding-right: calc(var(--ag-grid-size) * 4);
     padding-left: calc(var(--ag-grid-size) * 4);
     line-height: 1.5;

@@ -11,6 +11,7 @@ import type {
     CreatePivotChartParams,
     CreateRangeChartParams,
     Environment,
+    FocusService,
     GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
@@ -23,7 +24,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 
@@ -49,6 +50,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
+    focusDialogOnOpen?: boolean;
 }
 
 export class ChartService extends BeanStub implements NamedBean, IChartService {
@@ -57,11 +59,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     private visibleColsService: VisibleColsService;
     private rangeService?: IRangeService;
     private environment: Environment;
+    private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
         this.rangeService = beans.rangeService;
         this.environment = beans.environment;
+        this.focusService = beans.focusService;
     }
 
     public static CHARTS_VERSION = CHARTS_VERSION;
@@ -80,13 +84,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public updateChart(params: UpdateChartParams): void {
         if (this.activeChartComps.size === 0) {
-            console.warn(`AG Grid - No active charts to update.`);
+            _warnOnce(`No active charts to update.`);
             return;
         }
 
         const chartComp = [...this.activeChartComps].find((chartComp) => chartComp.getChartId() === params.chartId);
         if (!chartComp) {
-            console.warn(`AG Grid - Unable to update chart. No active chart found with ID: ${params.chartId}.`);
+            _warnOnce(`Unable to update chart. No active chart found with ID: ${params.chartId}.`);
             return;
         }
 
@@ -149,14 +153,17 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         chartComp?.closeChartToolPanel();
     }
 
-    public createChartFromCurrentRange(chartType: ChartType = 'groupedColumn'): ChartRef | undefined {
+    public createChartFromCurrentRange(
+        chartType: ChartType = 'groupedColumn',
+        fromApi?: boolean
+    ): ChartRef | undefined {
         const cellRange: PartialCellRange = this.getSelectedRange();
-        return this.createChart({ cellRange, chartType });
+        return this.createChart({ cellRange, chartType, focusDialogOnOpen: !fromApi });
     }
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            console.warn('AG Grid - unable to restore chart as no chart model is provided');
+            _warnOnce('unable to restore chart as no chart model is provided');
             return;
         }
 
@@ -166,7 +173,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
         let cellRange: PartialCellRange | undefined;
         let pivotChart: true | undefined;
-        let suppressChartRanges: true | undefined;
+        let suppressChartRanges: boolean | undefined;
         let chartPaletteToRestore: AgChartThemePalette | undefined;
 
         if (model.modelType === 'pivot') {
@@ -179,6 +186,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         } else {
             cellRange = this.createCellRange(model.cellRange);
             chartPaletteToRestore = model.chartPalette;
+            suppressChartRanges = model.suppressChartRanges;
         }
 
         if (!cellRange) {
@@ -196,7 +204,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         });
     }
 
-    public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
+    public createRangeChart(params: CreateRangeChartParams, fromApi?: boolean): ChartRef | undefined {
         const cellRange = this.createCellRange(params.cellRange);
 
         if (!cellRange) {
@@ -206,10 +214,11 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         return this.createChart({
             ...params,
             cellRange,
+            focusDialogOnOpen: !fromApi,
         });
     }
 
-    public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
+    public createPivotChart(params: CreatePivotChartParams, fromApi?: boolean): ChartRef | undefined {
         // if required enter pivot mode
         this.gos.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' as any });
 
@@ -224,10 +233,11 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             cellRange,
             pivotChart: true,
             suppressChartRanges: true,
+            focusDialogOnOpen: !fromApi,
         });
     }
 
-    public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
+    public createCrossFilterChart(params: CreateCrossFilterChartParams, fromApi?: boolean): ChartRef | undefined {
         const cellRange = this.createCellRange(params.cellRange);
 
         if (!cellRange) {
@@ -243,6 +253,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             cellRange,
             suppressChartRanges,
             crossFiltering: true,
+            focusDialogOnOpen: !fromApi,
         });
     }
 
@@ -289,7 +300,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             createChartContainerFunc(chartRef);
         } else {
             // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
-            chartComp.addEventListener(GridChartComp.EVENT_DESTROYED, () => {
+            chartComp.addEventListener('destroyed', () => {
                 this.activeChartComps.delete(chartComp);
                 this.activeCharts.delete(chartRef);
             });
@@ -306,6 +317,9 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }
+            },
+            focusChart: () => {
+                this.focusService.focusInto(chartComp.getGui());
             },
             chartElement: chartComp.getGui(),
             chart: chartComp.getUnderlyingChart(),
@@ -341,8 +355,8 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             rangeParams &&
             this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
-            console.warn(
-                `AG Grid - unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`
+            _warnOnce(
+                `unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`
             );
         }
         return cellRange;

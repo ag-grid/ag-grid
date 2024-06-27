@@ -28,7 +28,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
         // Add a default label formatter to show '%' for normalized charts if none is provided
         if (this.isNormalised()) {
             const numberAxis = axes[1];
-            numberAxis.label = { ...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%' };
+            numberAxis.label = { ...numberAxis.label, formatter: (params) => Math.round(params.value) + '%' };
         }
 
         return axes;

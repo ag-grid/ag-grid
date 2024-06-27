@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
-    EventsType,
     FuncColsService,
     IShowRowGroupColsService,
     NamedBean,
@@ -12,7 +11,7 @@ import type {
     ValueService,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { BeanStub, Events } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
 export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
@@ -39,9 +38,9 @@ export class ChartColumnService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
-        this.addManagedListeners<EventsType>(this.eventService, {
-            [Events.EVENT_NEW_COLUMNS_LOADED]: clearValueCols,
-            [Events.EVENT_ROW_DATA_UPDATED]: clearValueCols,
+        this.addManagedEventListeners({
+            newColumnsLoaded: clearValueCols,
+            rowDataUpdated: clearValueCols,
         });
     }
 
@@ -96,8 +95,8 @@ export class ChartColumnService extends BeanStub implements NamedBean {
                     case 'excluded':
                         return;
                     default:
-                        console.warn(
-                            `AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`
+                        _warnOnce(
+                            `unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`
                         );
                         break;
                 }

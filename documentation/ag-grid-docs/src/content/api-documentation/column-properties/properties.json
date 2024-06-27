@@ -84,7 +84,8 @@
                 "name": "Configuring the Context Menu",
                 "url": "./context-menu/#configuring-the-context-menu"
             }
-        }
+        },
+        "context": {}
     },
     "charts": {
         "meta": {
@@ -541,7 +542,8 @@
                 "url": "./tooltips"
             }
         },
-        "tooltipComponentParams": {}
+        "tooltipComponentParams": {},
+        "context": {}
     },
     "groupsHeader": {
         "meta": {

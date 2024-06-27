@@ -88,6 +88,10 @@
         padding-right: var(--ag-icon-size);
     }
 
+    .ag-virtual-list-viewport .ag-advanced-filter-builder-item-wrapper .ag-tab-guard {
+        position: absolute;
+    }
+
     .ag-advanced-filter-builder-item-tree-lines > * {
         width: var(--ag-advanced-filter-builder-indent-size);
     }
