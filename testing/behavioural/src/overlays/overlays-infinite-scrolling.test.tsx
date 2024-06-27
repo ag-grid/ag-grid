@@ -27,8 +27,6 @@ describe('ag-grid overlays infinite scrolling state', () => {
     });
 
     beforeEach(() => {
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
         resetGrids();
     });
 
