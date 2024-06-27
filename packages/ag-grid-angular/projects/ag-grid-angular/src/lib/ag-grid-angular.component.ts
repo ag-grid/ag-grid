@@ -717,7 +717,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
-    /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.
+    /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks used by your application.
      * @initial
      */
     @Input() public context: any = undefined;
