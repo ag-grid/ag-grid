@@ -52,8 +52,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
             deep: true,
         },
     };
-    let timeout: number | null = null;
-    let changes: { [key: string]: any } = {};
+
     ComponentUtil.ALL_PROPERTIES.filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
         .forEach((propertyName: string) => {
             props[propertyName] = {
@@ -62,13 +61,14 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
 
             watch[propertyName] = {
                 handler(currentValue: any, previousValue: any) {
-                    changes[propertyName] =
+                    this.batchChanges[propertyName] =
                         currentValue === ComponentUtil.VUE_OMITTED_PROPERTY ? undefined : currentValue;
-                    if (timeout == null) {
-                        timeout = setTimeout(() => {
-                            _processOnChange(changes, this.api);
-                            timeout = null;
-                            changes = {};
+                    if (this.batchTimeout == null) {
+                        this.batchTimeout = setTimeout(() => {
+                            // Clear the timeout before processing the changes in case processChanges triggers another change.
+                            this.batchTimeout = null;
+                            _processOnChange(this.batchChanges, this.api);
+                            this.batchChanges = {};
                         }, 0);
                     }
                 },
