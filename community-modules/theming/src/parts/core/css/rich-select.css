@@ -90,12 +90,12 @@
     white-space: nowrap;
     padding: 0 0.25rem;
     align-items: center;
-    border: 1px solid var(--ag-chip-border-color);
     border-radius: var(--ag-border-radius);
-    background-color: var(--ag-chip-background-color);
+    background: var(--ag-select-cell-background-color);
+    border: var(--ag-select-cell-border);
 
     &:focus-visible {
-        border-color: var(--ag-input-focus-border-color);
+        box-shadow: var(--ag-focus-shadow);
     }
 }
 
@@ -105,7 +105,7 @@
     margin-left: var(--ag-grid-size);
 
     &:hover {
-        color: var(--ag-active-color);
+        color: var(--ag-accent-color);
         cursor: pointer;
     }
 }

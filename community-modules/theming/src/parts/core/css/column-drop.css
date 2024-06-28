@@ -30,7 +30,6 @@
     flex-direction: column;
     overflow: hidden;
     align-items: stretch;
-    flex: 1 1 0px;
 }
 
 .ag-column-drop-vertical-title-bar {
@@ -118,15 +117,6 @@
 .ag-column-drop-vertical-cell {
     /* TODO use gap */
     margin-top: var(--ag-grid-size);
-}
-
-.ag-column-drop-vertical {
-    min-height: 50px;
-
-    &:not(.ag-last-column-drop) {
-        /* TODO this style belongs in the columns tool panel file */
-        border-bottom: var(--ag-tool-panel-separator-border);
-    }
 }
 
 .ag-column-drop-vertical-icon {
