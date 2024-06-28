@@ -3,7 +3,7 @@ export default {
       <div>
           <div class="year-filter">
             <label>
-              <input type="radio" value="false" v-model="isActive" v-on:change="toggleFilter(false)"/> All
+              <input ref="eFilterAll" type="radio" value="false" v-model="isActive" v-on:change="toggleFilter(false)"/> All
             </label>
             <label>
               <input type="radio" value="true" v-model="isActive" v-on:change="toggleFilter(true)"/> After 2004
@@ -35,6 +35,11 @@ export default {
         },
         onFloatingFilterChanged(value) {
             this.setModel(value);
+        },
+        afterGuiAttached(params) {
+            if (!params || !params.suppressFocus) {
+                this.$refs.eFilterAll.focus();
+            }
         },
     },
 };

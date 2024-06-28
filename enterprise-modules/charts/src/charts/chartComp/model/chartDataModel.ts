@@ -159,9 +159,8 @@ export class ChartDataModel extends BeanStub {
         resetOrder?: boolean;
         maintainColState?: boolean;
         setColsFromRange?: boolean;
-        fromModelUpdate?: boolean;
     }): void {
-        const { updatedColState, resetOrder, maintainColState, setColsFromRange, fromModelUpdate } = params ?? {};
+        const { updatedColState, resetOrder, maintainColState, setColsFromRange } = params ?? {};
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -177,7 +176,7 @@ export class ChartDataModel extends BeanStub {
         this.setValueCellRange(valueCols, allColsFromRanges, setColsFromRange);
 
         if (!updatedColState && !maintainColState) {
-            this.resetColumnState(fromModelUpdate || setColsFromRange);
+            this.resetColumnState();
             // dimension / category cell range could be out of sync after resetting column state when row grouping
             this.syncDimensionCellRange();
         }
@@ -306,7 +305,7 @@ export class ChartDataModel extends BeanStub {
         return { startRow, endRow };
     }
 
-    private resetColumnState(suppressSelectAutoGroupCol?: boolean): void {
+    private resetColumnState(): void {
         const { dimensionCols, valueCols } = this.chartColumnService.getChartColumns();
         const allCols = this.getAllColumnsFromRanges();
         const isInitialising = this.valueColState.length < 1;
@@ -329,10 +328,9 @@ export class ChartDataModel extends BeanStub {
                     selected = true;
                 }
             } else {
-                selected =
-                    isAutoGroupCol && !suppressSelectAutoGroupCol
-                        ? true
-                        : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
+                selected = isAutoGroupCol
+                    ? true
+                    : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
             }
 
             this.dimensionColState.push({

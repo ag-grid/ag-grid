@@ -152,6 +152,8 @@ const docs: Record<string, string | undefined> = {
     columnDropCellBackgroundColor:
         'Background color for the representation of columns within the column drop component',
     columnDropCellBorder: 'Border for the representation of columns within the column drop component',
+    selectCellBackgroundColor: 'Background color for selected items within the multiple select widget',
+    selectCellBorder: 'Border for selected items within the multiple select widget',
     advancedFilterBuilderButtonBarBorder: 'Color of the dividing line above the buttons in the advanced filter builder',
     advancedFilterBuilderIndentSize:
         'Amount that each level of the nesting in the advanced filter builder is indented by',

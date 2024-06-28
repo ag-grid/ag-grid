@@ -14,7 +14,7 @@ export const AG_GRID_LOCALE_DE = {
     selectAllSearchResults: '(Alle Suchergebnisse auswählen)',
     addCurrentSelectionToFilter: 'Aktuelle Auswahl zum Filter hinzufügen',
     searchOoo: 'Suchen...',
-    blanks: '(Leerzeichen)',
+    blanks: '(Leer)',
     noMatches: 'Keine Übereinstimmungen',
 
     // Number Filter & Text Filter
@@ -151,8 +151,8 @@ export const AG_GRID_LOCALE_DE = {
     noPin: 'Nicht anheften',
     valueAggregation: 'Wertaggregation',
     noAggregation: 'Keine',
-    autosizeThisColumn: 'Diese Spalte auto-größen',
-    autosizeAllColumns: 'Alle Spalten auto-größen',
+    autosizeThisColumn: 'Diese Spalte automatisch anpassen',
+    autosizeAllColumns: 'Alle Spalten automatisch anpassen',
     groupBy: 'Gruppieren nach',
     ungroupBy: 'Gruppierung aufheben nach',
     ungroupAll: 'Alle Gruppierungen aufheben',
