@@ -43,30 +43,6 @@ The following example demonstrates different ways of customising the column menu
 
 {% gridExampleRunner title="Customising the Column Menu" name="customising-column-menu" /%}
 
-## Legacy Tabbed Column Menu
-
-The menu can also be displayed in the legacy tabbed format with three panels by setting the grid option `columnMenu = 'legacy'`. If you want to change the order in which panels are shown, or hide them, you can specify the property `menuTabs` in the `colDef`.
-
-The property `menuTabs` is an array of strings. The valid values are: `'filterMenuTab'`, `'generalMenuTab'` and `'columnsMenuTab'`.
-
-* `generalMenuTab`: Include to show the main panel.
-* `filterMenuTab`: Include to show the filter panel.
-* `columnsMenuTab`: Include to show the column chooser panel.
-
-The order of the menu tabs shown in the menu will match the order you specify in this array.
-
-If you don't specify a `menuTabs` for a `colDef` the default is: `['generalMenuTab', 'filterMenuTab', 'columnsMenuTab']`
-
-The following example demonstrates the default tabbed menu:
-
-* The **Athlete** column shows the default tabs.
-* The **Age** column changes the order of the tabs to `['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']`
-* The **Country** column changes the order of the tabs to `['filterMenuTab', 'columnsMenuTab']`. Note that the `'generalMenuTab'` is suppressed.
-* The **Year** column changes the tabs to `['generalMenuTab']`. Note that the `'filterMenuTab'` and `'columnsMenuTab'` are suppressed.
-* The **Sport** column hides the menu by suppressing all the menuTabs that can be shown: `[]`.
-
-{% gridExampleRunner title="Column Menu" name="column-menu-legacy" /%}
-
 ## Customising the Menu Items
 
 The main menu list, by default, will show a set of items. You can adjust which of these items get displayed, or you can start from scratch and provide your own items. There are two ways to customise the menu items:
@@ -224,3 +200,27 @@ The following example demonstrates using `postProcessPopup()` to move the **Age*
 Under most scenarios, the menu will fit inside the grid. However if the grid is small and / or the menu is very large, then the menu will not fit inside the grid and it will be clipped. This will lead to a bad user experience.
 
 To fix this, you should set the [Popup Parent](./context-menu/#popup-parent) property.
+
+## Legacy Tabbed Column Menu
+
+The menu can also be displayed in the legacy tabbed format with three panels by setting the grid option `columnMenu = 'legacy'`. If you want to change the order in which panels are shown, or hide them, you can specify the property `menuTabs` in the `colDef`.
+
+The property `menuTabs` is an array of strings. The valid values are: `'filterMenuTab'`, `'generalMenuTab'` and `'columnsMenuTab'`.
+
+* `generalMenuTab`: Include to show the main panel.
+* `filterMenuTab`: Include to show the filter panel.
+* `columnsMenuTab`: Include to show the column chooser panel.
+
+The order of the menu tabs shown in the menu will match the order you specify in this array.
+
+If you don't specify a `menuTabs` for a `colDef` the default is: `['generalMenuTab', 'filterMenuTab', 'columnsMenuTab']`
+
+The following example demonstrates the default tabbed menu:
+
+* The **Athlete** column shows the default tabs.
+* The **Age** column changes the order of the tabs to `['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']`
+* The **Country** column changes the order of the tabs to `['filterMenuTab', 'columnsMenuTab']`. Note that the `'generalMenuTab'` is suppressed.
+* The **Year** column changes the tabs to `['generalMenuTab']`. Note that the `'filterMenuTab'` and `'columnsMenuTab'` are suppressed.
+* The **Sport** column hides the menu by suppressing all the menuTabs that can be shown: `[]`.
+
+{% gridExampleRunner title="Column Menu" name="column-menu-legacy" /%}
