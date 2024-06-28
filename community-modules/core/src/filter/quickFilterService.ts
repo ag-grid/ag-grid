@@ -187,7 +187,6 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
             quickFilterAggregateText = this.getQuickFilterAggregateText(node);
         }
         const { quickFilterParts, matcher } = this;
-
         return matcher!(quickFilterParts!, quickFilterAggregateText);
     }
 
