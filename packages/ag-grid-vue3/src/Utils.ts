@@ -65,8 +65,9 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
                         currentValue === ComponentUtil.VUE_OMITTED_PROPERTY ? undefined : currentValue;
                     if (this.batchTimeout == null) {
                         this.batchTimeout = setTimeout(() => {
-                            _processOnChange(this.batchChanges, this.api);
+                            // Clear the timeout before processing the changes in case processChanges triggers another change.
                             this.batchTimeout = null;
+                            _processOnChange(this.batchChanges, this.api);
                             this.batchChanges = {};
                         }, 0);
                     }
