@@ -1799,7 +1799,7 @@ export interface GridOptions<TData = any> {
     getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
 
     /**
-     * Allows setting the ID for a particular row node based on the data.
+     * Provide a pure function that returns a string ID to uniquely identify a given row. This enables the grid to work optimally with data changes and updates.
      * @initial
      */
     getRowId?: GetRowIdFunc<TData>;
