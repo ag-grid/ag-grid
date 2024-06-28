@@ -7297,48 +7297,48 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-angular@10.0.0-beta.20240626.1926:
-  version "10.0.0-beta.20240626.1926"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-10.0.0-beta.20240626.1926.tgz#aef45839d9474c1a338fcf4946cc2fd5fac4fce4"
-  integrity sha512-JceQnCD/AXlZsRve8qnQJx+kYZg1pNpaHX/B7cqmvI2lEm0Lb9po4JsIhGAolsd0RDItT8orI0KEijIM9FZOhA==
+ag-charts-angular@10.0.0-beta.20240627.1727:
+  version "10.0.0-beta.20240627.1727"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-10.0.0-beta.20240627.1727.tgz#e47326716799adb29821d2ac4f57f344647bea84"
+  integrity sha512-+KyqbybxVGcVXNLZkgPDiXvuTs6FIIoLjHQnT9pT+dukLV/E/nbQRZwp8/2Bpm09an+So0WrUtliJv5bIXbriw==
   dependencies:
-    ag-charts-community "10.0.0-beta.20240626.1926"
+    ag-charts-community "10.0.0-beta.20240627.1727"
     tslib "^2.3.0"
 
-ag-charts-community@10.0.0-beta.20240626.1926:
-  version "10.0.0-beta.20240626.1926"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-10.0.0-beta.20240626.1926.tgz#9eb4640f86118d46fc9c807566478a4dbcf983fb"
-  integrity sha512-eKO/APNqffo0fS2xiIik5408xfe+CYuf/Xm6kDpbaZIAt2US0BGbcDhWvusMaaehDtTIO9mUz6PKeL2eGiYoYg==
+ag-charts-community@10.0.0-beta.20240627.1727:
+  version "10.0.0-beta.20240627.1727"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-10.0.0-beta.20240627.1727.tgz#1dbfa54862d2f868adca57a8b62bbdcd94c2ff6d"
+  integrity sha512-LbePbWmCHDT9oGVqJFIg7ZP9rmS75c5q7pTOEJNvleyKRlloS5TBy1rcE5JoB2aJAAyUFge0LeOKFFzISRF3Yw==
   dependencies:
-    ag-charts-locale "10.0.0-beta.20240626.1926"
-    ag-charts-types "10.0.0-beta.20240626.1926"
+    ag-charts-locale "10.0.0-beta.20240627.1727"
+    ag-charts-types "10.0.0-beta.20240627.1727"
 
-ag-charts-enterprise@10.0.0-beta.20240626.1926:
-  version "10.0.0-beta.20240626.1926"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-10.0.0-beta.20240626.1926.tgz#dde23be49b0c446177fe25365605e5c01f54f560"
-  integrity sha512-ERi1U9WqFKbGCFYLwcJsGj8E6BHE1AYy37tKsKn9G6h7GYZqUaZDUHAvE1XTLmz/SXUkxklQ74OOPEsiCyphYw==
+ag-charts-enterprise@10.0.0-beta.20240627.1727:
+  version "10.0.0-beta.20240627.1727"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-10.0.0-beta.20240627.1727.tgz#7b3334af706c23821a0a3efa50e19435a7d18746"
+  integrity sha512-kI0iUmGPQRWsU0WtQAnNRnewn1FYOrUcZnHxwEdpqw8HFVcK0pyga7iQVfltcJswzAO8um8UfZJf6JNb1Ndljg==
   dependencies:
-    ag-charts-community "10.0.0-beta.20240626.1926"
+    ag-charts-community "10.0.0-beta.20240627.1727"
 
-ag-charts-locale@10.0.0-beta.20240626.1926:
-  version "10.0.0-beta.20240626.1926"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-10.0.0-beta.20240626.1926.tgz#866f3cc75ed284b7cc5d372f284de0e4425c6ee8"
-  integrity sha512-qv3Ad4dRUXE+EJUkdNYOWlFASks9nT1F+griTL1oDtBo1JQogePRWZaJyQWFFvXQfu9b/EZ8H+WwWKHDTeWeow==
+ag-charts-locale@10.0.0-beta.20240627.1727:
+  version "10.0.0-beta.20240627.1727"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-10.0.0-beta.20240627.1727.tgz#e6a19d95f25b6ba8199434547d9ebee491b74100"
+  integrity sha512-EA75UZLhIYqq8b7y93A+xmxcPMBjHOitu2NkEwYEwojI8TIJra+n7jXKEL6bI7IAnQmIJHZeDSHKZep4PlrDJQ==
 
-ag-charts-react@10.0.0-beta.20240626.1926:
-  version "10.0.0-beta.20240626.1926"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-10.0.0-beta.20240626.1926.tgz#24731948e139b75342f2360a76a43cb54d10a25a"
-  integrity sha512-Dp3VertYZ/MqwLJU8/3H0Zsa220G0nlBu9Piq59w67kI4Ojg51QwcVuTFBTQxoRKDhAcNKLSq3i1qqhLXaB9kQ==
+ag-charts-react@10.0.0-beta.20240627.1727:
+  version "10.0.0-beta.20240627.1727"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-10.0.0-beta.20240627.1727.tgz#55ee8645cc197f1bbefa44132af745a190e054f5"
+  integrity sha512-9wEn/zlb0yReMGU8qAkH5SxoQnKJai0Guy6pQN/IiSgXcPEvSDjKZyJwBZfCtIvQsxlzf1m8hHxFnuIUfypxMA==
 
-ag-charts-types@10.0.0-beta.20240626.1926:
-  version "10.0.0-beta.20240626.1926"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-10.0.0-beta.20240626.1926.tgz#a6134025955bf491ee5908b9bcb122f9105dfc79"
-  integrity sha512-6oV4K3XORsqytXmrEXlgKmazWGaZ9wS1EFrkstYzgT9cKaKUwdQql/eiy00NczY42/i+d7xJ5qZgfXmx7uvurw==
+ag-charts-types@10.0.0-beta.20240627.1727:
+  version "10.0.0-beta.20240627.1727"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-10.0.0-beta.20240627.1727.tgz#4a2b3c1185a5b99f6edb06ab2fae4eb672cd4291"
+  integrity sha512-b/Htio3JT/nj4h+bdNt0sKVszeNw/yLw/adZMv4nPwRiL3QXHEJEoKUxWgweCY9HKOY4GY4ZKdK22UUUHe+nIA==
 
-ag-charts-vue3@10.0.0-beta.20240626.1926:
-  version "10.0.0-beta.20240626.1926"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-10.0.0-beta.20240626.1926.tgz#87fbb250093acf2bd6a55e88a631d8b51a85c03c"
-  integrity sha512-BVMRii0isyZ8kNTad7XUl43Piz9MLtu0cRkMAJNrw+M9hwkZq0tAAIIOIGGugW9t3AIj6drgmoJnJL9GOFE49Q==
+ag-charts-vue3@10.0.0-beta.20240627.1727:
+  version "10.0.0-beta.20240627.1727"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-10.0.0-beta.20240627.1727.tgz#e454bc50191fb7718be4f1ffbdd5757ab9207bd6"
+  integrity sha512-4l0n37deBi/dSq1T3y+drglr0Icdq9fenqWLtkR6sqgfcSQqFD1XNkp20Tawn/OxCvHAKb2s1IB58ly2x3v4jA==
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
@@ -24790,7 +24790,7 @@ string-length@^5.0.1:
     char-regex "^2.0.0"
     strip-ansi "^7.0.1"
 
-"string-width-cjs@npm:string-width@^4.2.0", "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0":
   version "4.2.3"
   resolved "http://52.50.158.57:4873/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -24807,6 +24807,15 @@ string-width@^1.0.1, string-width@^1.0.2:
     code-point-at "^1.0.0"
     is-fullwidth-code-point "^1.0.0"
     strip-ansi "^3.0.0"
+
+"string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+  version "4.2.3"
+  resolved "http://52.50.158.57:4873/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
 
 string-width@^2.0.0, string-width@^2.1.0, string-width@^2.1.1:
   version "2.1.1"
@@ -24908,7 +24917,7 @@ stringify-entities@^4.0.0:
     character-entities-html4 "^2.0.0"
     character-entities-legacy "^3.0.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
   version "6.0.1"
   resolved "http://52.50.158.57:4873/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -24935,6 +24944,13 @@ strip-ansi@^5.0.0, strip-ansi@^5.1.0, strip-ansi@^5.2.0:
   integrity sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==
   dependencies:
     ansi-regex "^4.1.0"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+  version "6.0.1"
+  resolved "http://52.50.158.57:4873/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
 
 strip-ansi@^7.0.1, strip-ansi@^7.1.0:
   version "7.1.0"
@@ -27623,7 +27639,7 @@ wordwrap@^1.0.0:
   resolved "http://52.50.158.57:4873/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
   integrity sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
   version "7.0.0"
   resolved "http://52.50.158.57:4873/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
@@ -27661,6 +27677,15 @@ wrap-ansi@^6.2.0:
   version "6.2.0"
   resolved "http://52.50.158.57:4873/wrap-ansi/-/wrap-ansi-6.2.0.tgz#e9393ba07102e6c91a3b221478f0257cd2856e53"
   integrity sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@^7.0.0:
+  version "7.0.0"
+  resolved "http://52.50.158.57:4873/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
   dependencies:
     ansi-styles "^4.0.0"
     string-width "^4.1.0"
