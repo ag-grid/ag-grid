@@ -1,14 +1,20 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { FirstDataRenderedEvent, GridApi, GridOptions, RowDataUpdatedEvent, createGrid } from '@ag-grid-community/core';
+import { createGrid } from '@ag-grid-community/core';
+import type { FirstDataRenderedEvent, GridApi, GridOptions, RowDataUpdatedEvent } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
-import { TAthlete, getData } from './data';
+import { fetchDataAsync } from './data';
+import type { TAthlete } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const updateRowCount = (id: string) => {
     const element = document.querySelector(`#${id} > .value`);
     element!.textContent = `${new Date().toLocaleTimeString()}`;
+};
+
+const setBtnReloadDataDisabled = (disabled: boolean) => {
+    (document.getElementById('btnReloadData') as HTMLButtonElement).disabled = disabled;
 };
 
 let gridApi: GridApi;
@@ -19,7 +25,7 @@ const gridOptions: GridOptions = {
         { field: 'person.age', headerName: 'Age' },
         { field: 'medals.gold', headerName: 'Gold Medals' },
     ],
-    rowData: getData(),
+    loading: true,
     onFirstDataRendered: (event: FirstDataRenderedEvent) => {
         updateRowCount('firstDataRendered');
         console.log('First Data Rendered');
@@ -28,10 +34,39 @@ const gridOptions: GridOptions = {
         updateRowCount('rowDataUpdated');
         console.log('Row Data Updated');
     },
+    onGridReady: () => {
+        console.log('Loading Data ...');
+        fetchDataAsync()
+            .then((data) => {
+                console.log('Data Loaded');
+                gridApi!.setGridOption('rowData', data);
+            })
+            .catch((error) => {
+                console.error('Failed to load data', error);
+            })
+            .finally(() => {
+                gridApi!.setGridOption('loading', false);
+                setBtnReloadDataDisabled(false);
+            });
+    },
 };
 
-function loadData() {
-    gridApi!.setGridOption('rowData', getData());
+function onBtnReloadData() {
+    console.log('Reloading Data ...');
+    setBtnReloadDataDisabled(true);
+    gridApi!.setGridOption('loading', true);
+    fetchDataAsync()
+        .then((data) => {
+            console.log('Data Reloaded');
+            gridApi!.setGridOption('rowData', data);
+        })
+        .catch((error) => {
+            console.error('Failed to reload data', error);
+        })
+        .finally(() => {
+            gridApi!.setGridOption('loading', false);
+            setBtnReloadDataDisabled(false);
+        });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

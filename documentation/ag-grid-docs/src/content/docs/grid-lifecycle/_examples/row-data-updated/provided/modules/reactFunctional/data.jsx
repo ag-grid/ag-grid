@@ -1,17 +1,4 @@
-export interface TAthlete {
-    name: string;
-    medals: {
-        gold: number;
-        silver: number;
-        bronze: number;
-    };
-    person: {
-        age: number;
-        country: string;
-    };
-}
-
-export function fetchDataAsync(): Promise<TAthlete[]> {
+export function fetchDataAsync() {
     // Simulate a slow network request
     return new Promise((resolve) => {
         setTimeout(() => {
