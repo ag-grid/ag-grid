@@ -676,6 +676,10 @@
             "more": {
                 "name": "Cell Renderer Instances",
                 "url": "./component-cell-renderer/#accessing-instances"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["ICellRendererParams"],
+                "include": []
             }
         },
         "getSizesForCurrentTheme": {},
