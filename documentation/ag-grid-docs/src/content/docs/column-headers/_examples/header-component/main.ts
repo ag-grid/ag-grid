@@ -32,7 +32,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     rowData: null,
-    suppressMenuHide: true,
     components: {
         agColumnHeader: CustomHeader,
     },
