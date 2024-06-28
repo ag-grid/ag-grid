@@ -53,6 +53,8 @@ export const AgGridVue = defineComponent({
         isDestroyed: boolean;
         gridReadyFired: boolean;
         emitRowModel?: () => void | null;
+        batchTimeout: number | null;
+        batchChanges: { [key: string]: any };
     } {
         return {
             api: undefined,
@@ -60,6 +62,8 @@ export const AgGridVue = defineComponent({
             isDestroyed: false,
             gridReadyFired: false,
             emitRowModel: undefined,
+            batchTimeout: null,
+            batchChanges: {},
         };
     },
     computed,
