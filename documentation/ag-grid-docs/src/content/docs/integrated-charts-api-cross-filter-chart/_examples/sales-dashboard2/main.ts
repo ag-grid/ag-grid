@@ -164,6 +164,7 @@ function createHandsetSalesChart(api: GridApi) {
                     enabled: true,
                     text: 'Handsets Sold (Units)',
                 },
+                padding: { left: 47, right: 80 },
             },
         },
         chartContainer: document.querySelector('#areaChart') as any,
