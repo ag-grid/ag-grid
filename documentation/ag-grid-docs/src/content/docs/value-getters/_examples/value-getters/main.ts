@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, ValueGetterParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { GridApi, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 function hashValueGetter(params: ValueGetterParams) {
-    return params.node ? params.node.rowIndex : null;
+    return params.node ? Number(params.node.id) : null;
 }
 
 function abValueGetter(params: ValueGetterParams) {
@@ -31,7 +31,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: [
         {
-            headerName: '#',
+            headerName: 'ID #',
             maxWidth: 100,
             valueGetter: hashValueGetter,
         },

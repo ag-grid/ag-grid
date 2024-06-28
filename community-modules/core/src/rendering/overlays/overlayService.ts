@@ -94,7 +94,11 @@ export class OverlayService extends BeanStub implements NamedBean {
             }
         } else {
             this.showInitialOverlay = false;
-            if (this.rowModel.isEmpty() && !this.gos.get('suppressNoRowsOverlay')) {
+            if (
+                this.rowModel.isEmpty() &&
+                !this.gos.get('suppressNoRowsOverlay') &&
+                this.gos.isRowModelType('clientSide')
+            ) {
                 if (this.state !== OverlayServiceState.NoRows) {
                     this.doShowNoRowsOverlay();
                 }

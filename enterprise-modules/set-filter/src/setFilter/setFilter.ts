@@ -836,7 +836,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         eMiniFilter.setInputPlaceholder(this.translateForSetFilter('searchOoo'));
 
         if (!params || !params.suppressFocus) {
-            eMiniFilter.getFocusableElement().focus();
+            if (eMiniFilter.isDisplayed()) {
+                eMiniFilter.getFocusableElement().focus();
+            } else {
+                this.virtualList?.focusRow(0);
+            }
         }
     }
 

@@ -1,12 +1,12 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { ColDef, GridApi, GridOptions } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, RowGroupingModule]);
 
-const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }, { field: 'sport' }];
+const columnDefinitions: ColDef[] = [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }, { field: 'sport' }];
 
 const updatedHeaderColumnDefs: ColDef[] = [
     { field: 'athlete', headerName: 'C1' },
@@ -18,7 +18,7 @@ const updatedHeaderColumnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: columnDefs,
+    columnDefs: columnDefinitions,
     rowData: null,
     autoSizeStrategy: {
         type: 'fitGridWidth',
@@ -30,7 +30,7 @@ function onBtUpdateHeaders() {
 }
 
 function onBtRestoreHeaders() {
-    gridApi!.setGridOption('columnDefs', columnDefs);
+    gridApi!.setGridOption('columnDefs', columnDefinitions);
 }
 
 // setup the grid after the page has finished loading

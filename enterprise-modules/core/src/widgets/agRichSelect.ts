@@ -585,10 +585,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         e.preventDefault();
 
         if (this.listComponent?.getCurrentList()) {
-            if (this.config.multiSelect) {
+            const lastRowHovered = this.listComponent.getLastItemHovered();
+            if (this.config.multiSelect || !lastRowHovered) {
                 this.dispatchPickerEventAndHidePicker(this.value, true);
             } else {
-                const lastRowHovered = this.listComponent.getLastItemHovered();
                 this.onListValueSelected(new Set<TValue>([lastRowHovered]), true);
             }
         }

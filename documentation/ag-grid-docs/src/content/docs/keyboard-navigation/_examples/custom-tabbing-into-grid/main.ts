@@ -30,14 +30,6 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 let lastFocused: { column: string | Column | ColumnGroup | null; rowIndex?: number | null } | undefined;
 
-const onCellFocused = (params: CellFocusedParams) => {
-    lastFocused = { column: params.column, rowIndex: params.rowIndex };
-};
-
-const onHeaderFocused = (params: HeaderFocusedParams) => {
-    lastFocused = { column: params.column, rowIndex: null };
-};
-
 const focusGridInnerElement = (params: FocusGridInnerElementParams) => {
     if (!lastFocused || !lastFocused.column) {
         return false;
@@ -61,8 +53,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
     },
-    onCellFocused: onCellFocused,
-    onHeaderFocused: onHeaderFocused,
+    onCellFocused: (params: CellFocusedParams) => {
+        lastFocused = { column: params.column, rowIndex: params.rowIndex };
+    },
+    onHeaderFocused: (params: HeaderFocusedParams) => {
+        lastFocused = { column: params.column, rowIndex: null };
+    },
     focusGridInnerElement: focusGridInnerElement,
 };
 
