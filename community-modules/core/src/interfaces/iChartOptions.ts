@@ -30,7 +30,8 @@ export type ChartFormatPanelGroup =
     | 'axis'
     | 'horizontalAxis'
     | 'verticalAxis'
-    | 'series';
+    | 'series'
+    | 'navigator';
 
 export type ChartDataPanelGroup = 'categories' | 'series' | 'seriesChartType' | 'chartSpecific';
 
