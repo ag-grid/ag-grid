@@ -17,7 +17,6 @@ export class SimpleTextEditor implements ICellEditorAngularComp, AfterViewInit {
     agInit(params: ICellEditorParams): void {
         this.params = params;
         this.value = this.getInitialValue(params);
-        console.log('AGI INIT', this.value);
     }
 
     getValue(): any {
