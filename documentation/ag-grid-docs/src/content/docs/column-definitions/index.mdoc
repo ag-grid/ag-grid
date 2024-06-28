@@ -130,6 +130,7 @@ In the example below, use the 'Sort Athlete' button to apply a column state.
 
 To update an attribute by [Updating Column Definitions](./column-updating-definitions/#changing-column-definition), pass a new array of [Column Definitions](./column-definitions/) to the grid options.
 
+{% if isFramework("javascript", "angular", "vue") %}
 ```{% frameworkTransform=false %}
 // Define new column definitions
 const updatedHeaderColumnDefs = [
@@ -141,6 +142,19 @@ const updatedHeaderColumnDefs = [
 // Supply new column definitions to the grid
 gridApi.setGridOption('columnDefs', updatedHeaderColumnDefs);
 ```
+{% /if %}
+
+{% if isFramework("react") %}
+```{% frameworkTransform=false %}
+// Supply new column definitions to the grid
+setColumnDefs([
+  { field: 'athlete', headerName: 'C1' },
+  { field: 'age', headerName: 'C2' },
+  { field: 'country', headerName: 'C3' },
+  { field: 'sport', headerName: 'C4' },
+]);
+```
+{% /if %}
 
 In the example below, use the 'Update Header Names' button to update the column definitions.
 
