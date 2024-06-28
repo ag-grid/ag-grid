@@ -55,7 +55,7 @@ const GridExample = () => {
 
     const getMainMenuItems = useCallback((params) => {
         return [
-            ...params.defaultItems,
+            ...params.defaultItems.filter((item) => item !== 'columnFilter'),
             'separator',
             {
                 name: 'Filter',

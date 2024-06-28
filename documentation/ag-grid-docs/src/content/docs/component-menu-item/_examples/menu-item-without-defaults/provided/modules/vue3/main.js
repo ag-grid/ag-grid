@@ -61,7 +61,7 @@ const VueExample = {
         onBeforeMount(() => {
             getMainMenuItems.value = (params) => {
                 return [
-                    ...params.defaultItems,
+                    ...params.defaultItems.filter((item) => item !== 'columnFilter'),
                     'separator',
                     {
                         name: 'Filter',
