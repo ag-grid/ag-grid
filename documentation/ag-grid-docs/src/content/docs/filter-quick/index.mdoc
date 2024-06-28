@@ -101,8 +101,7 @@ The `rowQuickFilterAggregateText` parameter passed to the matcher function is a 
 const gridOptions = {
     // perform a regular expression search
     quickFilterMatcher: (quickFilterParts, rowQuickFilterAggregateText) => {
-        const escapeString = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        return quickFilterParts.every(part => rowQuickFilterAggregateText.match(escapeString(part)));
+        return quickFilterParts.every(part => rowQuickFilterAggregateText.match(part));
     },
 }
 ```
