@@ -103,8 +103,13 @@ function quickFilterParser(quickFilter: string) {
 }
 
 function quickFilterMatcher(quickFilterParts: string[], rowQuickFilterAggregateText: string) {
-    const escapeString = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return quickFilterParts.every((part) => rowQuickFilterAggregateText.match(escapeString(part)));
+    let result: boolean;
+    try {
+        result = quickFilterParts.every((part) => rowQuickFilterAggregateText.match(part));
+    } catch {
+        result = false;
+    }
+    return result;
 }
 
 // setup the grid after the page has finished loading

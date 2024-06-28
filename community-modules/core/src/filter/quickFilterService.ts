@@ -188,16 +188,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         }
         const { quickFilterParts, matcher } = this;
 
-        let result: boolean;
-
-        // an error can be thrown while building regular expressions
-        try {
-            result = matcher!(quickFilterParts!, quickFilterAggregateText);
-        } catch {
-            result = false;
-        }
-
-        return result;
+        return matcher!(quickFilterParts!, quickFilterAggregateText);
     }
 
     private checkGenerateQuickFilterAggregateText(node: RowNode): void {
