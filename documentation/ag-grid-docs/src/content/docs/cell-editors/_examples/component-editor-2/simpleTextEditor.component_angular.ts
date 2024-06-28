@@ -1,10 +1,12 @@
 import { ICellEditorAngularComp } from '@ag-grid-community/angular';
 import { ICellEditorParams } from '@ag-grid-community/core';
 import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     standalone: true,
-    template: `<input class="my-simple-editor" [value]="value" #input /> `,
+    imports: [FormsModule],
+    template: `<input #input [(ngModel)]="value" class="my-simple-editor" />`,
 })
 export class SimpleTextEditor implements ICellEditorAngularComp, AfterViewInit {
     private params!: ICellEditorParams;
@@ -15,6 +17,7 @@ export class SimpleTextEditor implements ICellEditorAngularComp, AfterViewInit {
     agInit(params: ICellEditorParams): void {
         this.params = params;
         this.value = this.getInitialValue(params);
+        console.log('AGI INIT', this.value);
     }
 
     getValue(): any {
