@@ -3,6 +3,7 @@ import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/cor
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 
@@ -12,6 +13,7 @@ ModuleRegistry.registerModules([
     FiltersToolPanelModule,
     RowGroupingModule,
     SideBarModule,
+    MenuModule,
 ]);
 
 var myIcons = {
@@ -91,6 +93,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     icons: {
         // use font awesome for menu icons
         menu: '<i class="fa fa-bath" style="width: 10px"/>',
+        menuAlt: '<i class="fa fa-bath" style="width: 10px"/>',
         filter: '<i class="fa fa-long-arrow-alt-down"/>',
         columns: '<i class="fa fa-handshake"/>',
         sortAscending: '<i class="fa fa-long-arrow-alt-down"/>',
@@ -120,7 +123,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         rowDrag: '<i class="fa fa-circle"/>',
     },
     rowSelection: 'multiple',
-    suppressMenuHide: true,
 };
 
 // setup the grid after the page has finished loading

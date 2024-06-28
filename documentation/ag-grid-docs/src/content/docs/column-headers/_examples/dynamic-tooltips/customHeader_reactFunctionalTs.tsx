@@ -40,7 +40,7 @@ export default (props: MyCustomHeaderProps) => {
     }, [refLabel]);
 
     let menu = null;
-    if (props.enableMenu) {
+    if (props.enableFilterButton) {
         menu = (
             <div ref={refButton} className="customHeaderMenuButton" onClick={() => onMenuClicked()}>
                 <i className={`fa ${props.menuIcon}`}></i>

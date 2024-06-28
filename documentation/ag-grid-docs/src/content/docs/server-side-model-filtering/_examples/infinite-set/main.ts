@@ -29,7 +29,6 @@ const columnDefs: ColDef[] = [
             valueFormatter: countryValueFormatter,
             comparator: countryComparator,
         },
-        menuTabs: ['filterMenuTab'],
     },
     {
         field: 'sport',
@@ -37,9 +36,8 @@ const columnDefs: ColDef[] = [
         filterParams: {
             values: getSportValuesAsync,
         },
-        menuTabs: ['filterMenuTab'],
     },
-    { field: 'athlete', menuTabs: undefined },
+    { field: 'athlete' },
 ];
 
 function countryCodeKeyCreator(params: KeyCreatorParams): string {
@@ -67,6 +65,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 150,
+        suppressHeaderMenuButton: true,
+        suppressHeaderContextMenu: true,
     },
     // use the server-side row model
     rowModelType: 'serverSide',

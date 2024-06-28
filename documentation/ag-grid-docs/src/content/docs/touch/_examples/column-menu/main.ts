@@ -26,6 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     suppressMenuHide: true,
+    columnMenu: 'legacy',
 };
 
 // setup the grid after the page has finished loading

@@ -41,7 +41,7 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             filter: true,
-            menuTabs: ['generalMenuTab'],
+            suppressHeaderFilterButton: true,
         };
     }, []);
 
@@ -81,7 +81,6 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     getMainMenuItems={getMainMenuItems}
-                    suppressMenuHide
                     onGridReady={onGridReady}
                 />
             </div>

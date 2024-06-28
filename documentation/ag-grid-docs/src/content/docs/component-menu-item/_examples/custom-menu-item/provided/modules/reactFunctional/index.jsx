@@ -109,7 +109,6 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getMainMenuItems={getMainMenuItems}
                     getContextMenuItems={getContextMenuItems}
-                    suppressMenuHide
                     onGridReady={onGridReady}
                 />
             </div>

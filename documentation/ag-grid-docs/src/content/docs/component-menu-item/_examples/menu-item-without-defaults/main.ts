@@ -33,13 +33,13 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
         filter: true,
-        menuTabs: ['generalMenuTab'],
+        suppressHeaderFilterButton: true,
     },
     columnDefs: columnDefs,
     rowData: null,
     getMainMenuItems: (params: GetMainMenuItemsParams) => {
         return [
-            ...params.defaultItems,
+            ...params.defaultItems.filter((item) => item !== 'columnFilter'),
             'separator',
             {
                 name: 'Filter',
@@ -50,7 +50,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             },
         ];
     },
-    suppressMenuHide: true,
 };
 
 // setup the grid after the page has finished loading
