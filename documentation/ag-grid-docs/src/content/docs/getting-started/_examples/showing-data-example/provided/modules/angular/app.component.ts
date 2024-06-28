@@ -53,7 +53,9 @@ export class AppComponent {
         { field: 'electric', flex: 1 },
         { field: 'button', cellRenderer: CustomButtonComponent, flex: 1 },
     ];
-    public themeClass: string = 'ag-theme-quartz';
+    public themeClass =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz' /** DARK MODE END **/;
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
