@@ -10,7 +10,7 @@ The grid is configure via Inputs on the `ag-grid-angular` component. Properties 
    // Callback
    [getRowHeight]="myGetRowHeight"
    // Event handlers
-   [onCellClicked]="onCellClicked"
+  (cellClicked)="onCellClicked($event)"
    />
 ```
 {% /if %}
