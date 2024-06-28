@@ -59,7 +59,9 @@ const VueExample = {
                 },
             ],
             gridApi: null,
-            themeClass: 'ag-theme-quartz',
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
             rowData: null,
         };
     },
