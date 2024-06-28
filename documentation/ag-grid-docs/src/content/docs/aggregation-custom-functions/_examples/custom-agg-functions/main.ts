@@ -47,7 +47,7 @@ const columnDefs: ColDef[] = [
     },
     // and these two use the built in sum func
     {
-        headerName: 'abc(silver)',
+        headerName: '123(silver)',
         field: 'silver',
         aggFunc: '123',
         enableValue: true,
