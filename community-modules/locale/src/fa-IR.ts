@@ -100,7 +100,7 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterValidationExtraEndBracket: 'براکت انتهایی زیادی وجود دارد',
     advancedFilterValidationMessage: 'عبارت حاوی یک خطاست. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'عبارت حاوی یک خطاست. ${variable} در پایان عبارت.',
-    advancedFilterBuilderTitle: 'فیلتر پیشرفته',
+    advancedFilterBuilderTitle: 'عنوان',
     advancedFilterBuilderApply: 'اعمال',
     advancedFilterBuilderCancel: 'لغو',
     advancedFilterBuilderAddButtonTooltip: 'افزودن فیلتر یا گروه',
