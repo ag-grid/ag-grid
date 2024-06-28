@@ -81,6 +81,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         // use font awesome for first col, with numbers for sort
         icons: {
             menu: '<i class="fa fa-shower"/>',
+            menuAlt: '<i class="fa fa-shower"/>',
             filter: '<i class="fa fa-long-arrow-alt-up"/>',
             columns: '<i class="fa fa-snowflake"/>',
             sortAscending: '<i class="fa fa-sort-alpha-up"/>',
