@@ -260,7 +260,7 @@ export const Changelog = () => {
                 headerName: 'Version',
                 filter: 'agSetColumnFilter',
                 width: 145,
-                sort: 'desc'
+                sort: 'desc',
             },
             IssueTypeColDef,
             {
