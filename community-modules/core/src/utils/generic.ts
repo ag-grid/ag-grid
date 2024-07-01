@@ -95,6 +95,14 @@ export function _jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
     return val1Json === val2Json;
 }
 
+function doQuickCompare<T>(a: T, b: T): number {
+    return a > b ? 1 : a < b ? -1 : 0;
+}
+
+function caseInsensitiveCompare(a: string, b: string): number {
+    return doQuickCompare(a.toLowerCase(), b.toLowerCase());
+}
+
 export function _defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
     const valueAMissing = valueA == null;
     const valueBMissing = valueB == null;
@@ -122,16 +130,12 @@ export function _defaultComparator(valueA: any, valueB: any, accentedCompare: bo
         return 1;
     }
 
-    function doQuickCompare<T>(a: T, b: T): number {
-        return a > b ? 1 : a < b ? -1 : 0;
-    }
-
     if (typeof valueA !== 'string') {
         return doQuickCompare(valueA, valueB);
     }
 
     if (!accentedCompare) {
-        return doQuickCompare(valueA, valueB);
+        return typeof valueB === 'string' ? caseInsensitiveCompare(valueA, valueB) : doQuickCompare(valueA, valueB);
     }
 
     try {
