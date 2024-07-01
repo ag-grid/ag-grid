@@ -42,3 +42,4 @@ git reset packages/ag-grid-vue3/dist
 git reset plugins/ag-grid-generate-code-reference-files/dist
 git reset plugins/ag-grid-task-autogen/dist
 git reset plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore
+git reset community-modules/locale/dist
