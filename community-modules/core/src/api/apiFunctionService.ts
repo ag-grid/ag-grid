@@ -43,7 +43,6 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         if (this.isFrameworkMethod(functionName)) {
             return undefined;
         }
-        this.beans.validationService?.warnMissingApiFunction(functionName);
         return undefined;
     }
 
