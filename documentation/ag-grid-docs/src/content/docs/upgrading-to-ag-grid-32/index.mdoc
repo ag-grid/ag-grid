@@ -223,7 +223,7 @@ The Grid API methods listed below have been removed. Please use Grid API methods
 ### Interfaces
 
 - `ChangeDetectionStategyType` removed without replacement.
-- `ICellRendererParams` removed, used `node.rowIndex` instead.
+- `ICellRendererParams.rowIndex` removed, used `ICellRendererParams.node.rowIndex` instead.
 - `Column`, `ColumnGroup` and `ProvidedColumnGroup` are now interfaces instead of classes. Some public methods that were part of the internal grid API were previously exposed on the classes, but are not exposed on the interfaces.
 - The `IProvidedColumn` interface has been removed in favour of `Column | ProvidedColumnGroup`. The `IHeaderColumn` interfaces has been removed in favour of `Column | ColumnGroup`. If previously using `instanceof` to differentiate, it is now possible to check the `isColumn` property, which can be used as a type differentiator.
 
