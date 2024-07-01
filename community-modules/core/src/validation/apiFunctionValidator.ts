@@ -319,6 +319,8 @@ const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
 /** Utility type to support adding params to a grid api method. */
 type StartsWithApiFunctionName = `${ApiFunctionName}${string}`;
 
+const functionWarningSafeList = ['then'];
+
 const deprecatedFunctions: {
     [name in ApiFunctionName]?: {
         version: string;
@@ -423,6 +425,10 @@ const deprecatedFunctions: {
 };
 
 export function warnMissingApiFunction(functionName: ApiFunctionName, gridId: string): void {
+    if(functionWarningSafeList.includes(functionName)) {
+        return;
+    }
+    
     const module = functionModules[functionName];
 
     if (module) {
