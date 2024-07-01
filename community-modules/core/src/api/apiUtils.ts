@@ -5,7 +5,15 @@ function createApi(context: Context): GridApi {
     const apiFunctionService = context.getBean('apiFunctionService');
     return new Proxy(apiFunctionService, {
         get(target, prop) {
-            return (...args: any[]) => target.callFunction(prop as any, args);
+            const func = target.functions[prop];
+     
+            if (func || target.isFrameworkMethod(prop)) {
+                return (...args: any[]) => target.callFunction(prop as any, args);
+            }
+            
+            target.beans?.validationService?.warnMissingApiFunction(prop);
+            
+            return undefined;
         },
     }) as any;
 }
