@@ -3,9 +3,9 @@
 .toolbar {
     width: 100%;
     position: relative;
+
     #{$selector-darkmode} & {
         background-color: var(--color-bg-primary);
-        border-bottom: 1px solid var(--color-border-primary);
     }
 }
 
