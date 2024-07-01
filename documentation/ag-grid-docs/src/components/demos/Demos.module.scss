@@ -27,7 +27,6 @@
     width: 100%;
     max-width: 325px;
     aspect-ratio: 16 / 9;
-    max-height: 140px;
     box-shadow: var(--shadow-sm);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -37,6 +36,10 @@
     &:hover {
         background-color: #c8cfd8;
         transition: all 0.5s ease-in-out;
+    }
+
+    @media screen and (min-width: 720px) {
+        max-height: 140px;
     }
 }
 
