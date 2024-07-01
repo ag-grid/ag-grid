@@ -11,7 +11,6 @@
 
 .showcaseItemTab {
     box-shadow: var(--shadow-sm);
-    border-radius: var(--radius-md);
 }
 
 #{$selector-darkmode} .tabWrapper {
@@ -27,6 +26,7 @@
     background-color: #e5e9ed;
     width: 100%;
     max-width: 325px;
+    aspect-ratio: 16 / 9;
     box-shadow: var(--shadow-sm);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -36,6 +36,10 @@
     &:hover {
         background-color: #c8cfd8;
         transition: all 0.5s ease-in-out;
+    }
+
+    @media screen and (min-width: 720px) {
+        max-height: 140px;
     }
 }
 
