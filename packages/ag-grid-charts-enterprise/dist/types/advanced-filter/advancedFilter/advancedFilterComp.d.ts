@@ -1,0 +1,33 @@
+import type { BeanCollection, ITooltipParams, WithoutGridCommon } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
+export declare class AdvancedFilterComp extends Component {
+    private advancedFilterService;
+    private advancedFilterExpressionService;
+    private filterManager?;
+    wireBeans(beans: BeanCollection): void;
+    private readonly eAutocomplete;
+    private readonly eApplyFilterButton;
+    private readonly eBuilderFilterButton;
+    private readonly eBuilderFilterButtonIcon;
+    private readonly eBuilderFilterButtonLabel;
+    private expressionParser;
+    private isApplyDisabled;
+    private builderOpen;
+    constructor();
+    postConstruct(): void;
+    refresh(): void;
+    setInputDisabled(disabled: boolean): void;
+    getTooltipParams(): WithoutGridCommon<ITooltipParams>;
+    private setupApplyButton;
+    private setupBuilderButton;
+    private onValueChanged;
+    private onValueConfirmed;
+    private onOptionSelected;
+    private validateValue;
+    private onValidChanged;
+    private generateAutocompleteListParams;
+    private updateExpression;
+    private forceLastSelection;
+    private openBuilder;
+    private closeBuilder;
+}

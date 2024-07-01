@@ -1,0 +1,11 @@
+import type { BeanCollection, IToolPanel, SideBarDef } from 'ag-grid-community';
+export declare function isSideBarVisible(beans: BeanCollection): boolean;
+export declare function setSideBarVisible(beans: BeanCollection, show: boolean): void;
+export declare function setSideBarPosition(beans: BeanCollection, position: 'left' | 'right'): void;
+export declare function openToolPanel(beans: BeanCollection, key: string): void;
+export declare function closeToolPanel(beans: BeanCollection): void;
+export declare function getOpenedToolPanel(beans: BeanCollection): string | null;
+export declare function refreshToolPanel(beans: BeanCollection): void;
+export declare function isToolPanelShowing(beans: BeanCollection): boolean;
+export declare function getToolPanelInstance<TToolPanel = IToolPanel>(beans: BeanCollection, id: string): TToolPanel | undefined;
+export declare function getSideBar(beans: BeanCollection): SideBarDef | undefined;

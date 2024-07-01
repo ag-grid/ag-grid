@@ -51,12 +51,12 @@ Translations are provided as an illustration only and are not guaranteed to be a
 
 ## Using a Provided Locale Module
 
-All of the provided locales listed above are available in the `ag-grid-locale` package. To use any of the provided locales in your application, follow these steps:
+All of the provided locales listed above are available in the `@ag-grid-community/locale` package. To use any of the provided locales in your application, follow these steps:
 
-First, import the desired locale module from the `ag-grid-locale` package. For example, to use the German locale, import `AG_GRID_LOCALE_DE`:
+First, import the desired locale module from the `@ag-grid-community/locale` package. For example, to use the German locale, import `AG_GRID_LOCALE_DE`:
 
 ```js
-import { AG_GRID_LOCALE_DE } from 'ag-grid-locale';
+import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
 ```
 
 Next, assign the imported locale object to the `localeText` property in your Grid Options:
@@ -67,11 +67,11 @@ const gridOptions = {
 };
 ```
 
-Finally, ensure the `ag-grid-locale` module is listed as a dependency in your application's package configuration:
+Finally, ensure the `@ag-grid-community/locale` module is listed as a dependency in your application's package configuration:
 
 ```js
 "dependencies": {
-    "ag-grid-locale": "~{% $agGridVersion %}",
+    "@ag-grid-community/locale": "~{% $agGridVersion %}",
     ...
 }
 ```
@@ -89,7 +89,7 @@ Some localisation variables have `${variable}` in them. When this occurs, it mea
 If you want to customise a provided locale, you can do so by creating a new object and merging the provided locale with your customisations.
 
 ```{% frameworkTransform=false %}
-import { AG_GRID_LOCALE_DE } from 'ag-grid-locale';
+import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
 
 const customGermanLocale = {
     ...AG_GRID_LOCALE_DE,
@@ -113,9 +113,9 @@ The grid uses the locale as it is needed. It does not refresh as the locale chan
 
 By default, the grid does not require a locale. If no locale is provided, the grid will default to English. If a locale is provided but is missing values, the default English will be used for the missing values.
 
-All locales provided are listed above, and are also available in the `ag-grid-locale` package.
+All locales provided are listed above, and are also available in the `@ag-grid-community/locale` package.
 
-To support other languages, the first step is to import the `ag-grid-locale` package and reference the locale you're interested in.
+To support other languages, the first step is to import the `@ag-grid-community/locale` package and reference the locale you're interested in.
 
 There is a single locale file which covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having a separate localisation file for each module would be harder to manage.
 

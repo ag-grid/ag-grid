@@ -45,7 +45,7 @@
             '@ag-grid-community/infinite-row-model': {
                 format: 'cjs',
             },
-            'ag-grid-locale': {
+            '@ag-grid-community/locale': {
                 format: 'cjs',
             },
             '@ag-grid-enterprise/advanced-filter': {

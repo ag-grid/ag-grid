@@ -22,7 +22,7 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 
-import { AG_GRID_LOCALE_DE } from 'ag-grid-locale';
+import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

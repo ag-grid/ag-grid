@@ -1,0 +1,31 @@
+import type { BeanCollection } from '../../../context/context';
+import type { FilterChangedEvent } from '../../../events';
+import type { IFloatingFilterParams } from '../../floating/floatingFilter';
+import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
+import type { ISimpleFilterModel } from '../iSimpleFilter';
+import type { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import type { DateFilter } from './dateFilter';
+export declare class DateFloatingFilter extends SimpleFloatingFilter {
+    private userComponentFactory;
+    private context;
+    wireBeans(beans: BeanCollection): void;
+    private readonly eReadOnlyText;
+    private readonly eDateWrapper;
+    private dateComp;
+    private params;
+    private filterParams;
+    private filterModelFormatter;
+    constructor();
+    protected getDefaultFilterOptions(): string[];
+    init(params: IFloatingFilterParams<DateFilter>): void;
+    onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void;
+    refresh(params: IFloatingFilterParams<DateFilter>): void;
+    private updateCompOnModelChange;
+    protected setEditable(editable: boolean): void;
+    onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void;
+    private onDateChanged;
+    private getDateComponentParams;
+    private createDateComponent;
+    private updateDateComponent;
+    protected getFilterModelFormatter(): SimpleFilterModelFormatter;
+}

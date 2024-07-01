@@ -1,0 +1,32 @@
+import { AgInputNumberField } from '../../../widgets/agInputNumberField';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
+import type { Comparator } from '../iScalarFilter';
+import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
+import { ScalarFilter } from '../scalarFilter';
+import type { NumberFilterModel, NumberFilterParams } from './iNumberFilter';
+export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
+    private readonly eValuesFrom;
+    private readonly eValuesTo;
+    private numberFilterParams;
+    private filterModelFormatter;
+    constructor();
+    refresh(params: NumberFilterParams): boolean;
+    protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number>;
+    protected getDefaultDebounceMs(): number;
+    protected comparator(): Comparator<number>;
+    protected setParams(params: NumberFilterParams): void;
+    protected getDefaultFilterOptions(): string[];
+    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null, fromFloatingFilter?: boolean): void;
+    protected createValueElement(): HTMLElement;
+    private createFromToElement;
+    protected removeValueElements(startPosition: number, deleteCount?: number): void;
+    protected getValues(position: number): Tuple<number>;
+    protected areSimpleModelsEqual(aSimple: NumberFilterModel, bSimple: NumberFilterModel): boolean;
+    protected getFilterType(): 'number';
+    private processValue;
+    private stringToFloat;
+    protected createCondition(position: number): NumberFilterModel;
+    protected getInputs(position: number): Tuple<AgInputTextField | AgInputNumberField>;
+    getModelAsString(model: ISimpleFilterModel): string;
+    protected hasInvalidInputs(): boolean;
+}

@@ -1,0 +1,35 @@
+import type { BeanCollection } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
+import type { ChartTranslationService } from '../../services/chartTranslationService';
+import type { ChartMenuContext } from '../chartMenuContext';
+export declare class ChartDataPanel extends Component {
+    private readonly chartMenuContext;
+    protected chartTranslationService: ChartTranslationService;
+    private chartService;
+    wireBeans(beans: BeanCollection): void;
+    private readonly chartController;
+    private chartType?;
+    private isSwitchCategorySeriesToggled;
+    private categoriesDataPanel?;
+    private seriesDataPanel?;
+    private seriesChartTypePanel?;
+    private chartSpecificPanel?;
+    private switchCategorySeriesToggle;
+    private restoreSwitchCategorySeriesToggleFocus;
+    private panels;
+    constructor(chartMenuContext: ChartMenuContext);
+    postConstruct(): void;
+    destroy(): void;
+    private updatePanels;
+    private canRefresh;
+    private recreatePanels;
+    private addPanelComponents;
+    private clearPanelComponents;
+    private getDataPanelDef;
+    private getCategoryGroupTitle;
+    private getCategoryGroupMultipleSelect;
+    private getSeriesGroupTitle;
+    private getSeriesGroupMultipleSelect;
+    private getSeriesGroupMaxSelection;
+    private createSwitchCategorySeriesToggle;
+}

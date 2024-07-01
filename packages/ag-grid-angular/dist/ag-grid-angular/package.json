@@ -1,0 +1,31 @@
+{
+  "name": "ag-grid-angular",
+  "version": "32.0.0",
+  "license": "MIT",
+  "peerDependencies": {
+    "ag-grid-community": "32.0.0",
+    "@angular/common": ">= 16.0.0",
+    "@angular/core": ">= 16.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "module": "fesm2022/ag-grid-angular.mjs",
+  "typings": "index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./index.d.ts",
+      "esm2022": "./esm2022/ag-grid-angular.mjs",
+      "esm": "./esm2022/ag-grid-angular.mjs",
+      "default": "./fesm2022/ag-grid-angular.mjs"
+    }
+  },
+  "sideEffects": false
+}

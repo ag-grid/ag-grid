@@ -1,0 +1,32 @@
+import type { NamedBean } from './context/bean';
+import { BeanStub } from './context/beanStub';
+import type { BeanCollection } from './context/context';
+import type { CellPosition } from './entities/cellPositionUtils';
+import type { RowPosition } from './entities/rowPositionUtils';
+export declare class CellNavigationService extends BeanStub implements NamedBean {
+    beanName: "cellNavigationService";
+    private visibleColsService;
+    private rowModel;
+    private rowRenderer;
+    private pinnedRowModel;
+    private paginationService?;
+    private pageBoundsService;
+    wireBeans(beans: BeanCollection): void;
+    getNextCellToFocus(key: string, focusedCell: CellPosition, ctrlPressed?: boolean): CellPosition | null;
+    private getNextCellToFocusWithCtrlPressed;
+    private getNextCellToFocusWithoutCtrlPressed;
+    private isCellGoodToFocusOn;
+    private getCellToLeft;
+    private getCellToRight;
+    getRowBelow(rowPosition: RowPosition): RowPosition | null;
+    private getNextStickyPosition;
+    private getCellBelow;
+    private isLastRowInContainer;
+    getRowAbove(rowPosition: RowPosition): RowPosition | null;
+    private getCellAbove;
+    private getLastBodyCell;
+    private getLastFloatingTopRow;
+    getNextTabbedCell(gridCell: CellPosition, backwards: boolean): CellPosition | null;
+    getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null;
+    getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null;
+}

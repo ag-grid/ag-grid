@@ -3719,12 +3719,13 @@ button[class^=ag-]:focus {
 }
 
 .ag-cell-wrapper.ag-row-group,
-.ag-cell-wrapper.ag-row-group-leaf-indent {
+.ag-cell-wrapper.ag-row-group-leaf-indent,
+.ag-cell-wrapper.ag-pivot-leaf-group {
   padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
 }
 
 .ag-pivot-leaf-group {
-  margin-left: var(--ag-row-group-indent-size);
+  margin-left: min(var(--ag-row-group-indent-size), var(--ag-row-group-indent-size) * var(--ag-indentation-level));
 }
 
 .ag-ltr .ag-row-group-leaf-indent {
@@ -3890,7 +3891,7 @@ button[class^=ag-]:focus {
   --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
   border: 1px solid transparent;
   line-height: min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
-  padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
+  padding-left: calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level));
   padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
   -webkit-font-smoothing: subpixel-antialiased;
 }

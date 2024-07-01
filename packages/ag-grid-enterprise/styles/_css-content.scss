@@ -3741,12 +3741,13 @@
         }
         
         .ag-cell-wrapper.ag-row-group,
-        .ag-cell-wrapper.ag-row-group-leaf-indent {
+        .ag-cell-wrapper.ag-row-group-leaf-indent,
+        .ag-cell-wrapper.ag-pivot-leaf-group {
           padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
         }
         
         .ag-pivot-leaf-group {
-          margin-left: var(--ag-row-group-indent-size);
+          margin-left: min(var(--ag-row-group-indent-size), var(--ag-row-group-indent-size) * var(--ag-indentation-level));
         }
         
         .ag-ltr .ag-row-group-leaf-indent {
@@ -3800,8 +3801,13 @@
           border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
         }
         
-        .ag-sticky-bottom .ag-row {
-          border-bottom: none;
+        .ag-sticky-bottom::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 1px;
           border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
         }
         
@@ -3907,7 +3913,7 @@
           --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
           border: 1px solid transparent;
           line-height: min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
-          padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
+          padding-left: calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level));
           padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
           -webkit-font-smoothing: subpixel-antialiased;
         }
@@ -9758,12 +9764,13 @@
         }
         
         .ag-cell-wrapper.ag-row-group,
-        .ag-cell-wrapper.ag-row-group-leaf-indent {
+        .ag-cell-wrapper.ag-row-group-leaf-indent,
+        .ag-cell-wrapper.ag-pivot-leaf-group {
           padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
         }
         
         .ag-pivot-leaf-group {
-          margin-left: var(--ag-row-group-indent-size);
+          margin-left: min(var(--ag-row-group-indent-size), var(--ag-row-group-indent-size) * var(--ag-indentation-level));
         }
         
         .ag-ltr .ag-row-group-leaf-indent {
@@ -9817,8 +9824,13 @@
           border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
         }
         
-        .ag-sticky-bottom .ag-row {
-          border-bottom: none;
+        .ag-sticky-bottom::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 1px;
           border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
         }
         
@@ -9924,7 +9936,7 @@
           --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
           border: 1px solid transparent;
           line-height: min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
-          padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
+          padding-left: calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level));
           padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
           -webkit-font-smoothing: subpixel-antialiased;
         }
