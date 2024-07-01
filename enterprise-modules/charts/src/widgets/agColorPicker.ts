@@ -58,6 +58,10 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
                 height: 250,
                 x: eGuiRect.right - parentRect.left - 190,
                 y: eGuiRect.top - parentRect.top - 250 - (this.config.pickerGap ?? 0),
+                postProcessPopupParams: {
+                    type: 'colorPicker',
+                    eventSource: this.eWrapper,
+                },
             })
         );
 

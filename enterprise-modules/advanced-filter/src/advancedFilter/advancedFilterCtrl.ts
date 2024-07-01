@@ -93,7 +93,8 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         this.eHeaderComp?.setInputDisabled(disabled);
     }
 
-    public toggleFilterBuilder(source: 'api' | 'ui', force?: boolean): void {
+    public toggleFilterBuilder(params: { source: 'api' | 'ui'; force?: boolean; eventSource?: HTMLElement }): void {
+        const { source, force, eventSource } = params;
         if ((force && this.eBuilderDialog) || (force === false && !this.eBuilderDialog)) {
             // state requested is already active
             return;
@@ -122,6 +123,10 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
                 closable: true,
                 minWidth,
                 afterGuiAttached: () => this.eBuilderComp?.afterGuiAttached(),
+                postProcessPopupParams: {
+                    type: 'advancedFilterBuilder',
+                    eventSource,
+                },
             })
         );
 

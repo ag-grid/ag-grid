@@ -463,7 +463,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private close(): void {
-        this.advancedFilterService.getCtrl().toggleFilterBuilder('ui');
+        this.advancedFilterService.getCtrl().toggleFilterBuilder({ source: 'ui' });
     }
 
     private validate(): void {

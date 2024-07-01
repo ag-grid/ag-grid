@@ -182,7 +182,9 @@ export class AdvancedFilterComp extends Component {
         }
         this.builderOpen = true;
         _setDisabled(this.eBuilderFilterButton, true);
-        this.advancedFilterService.getCtrl().toggleFilterBuilder('ui');
+        this.advancedFilterService
+            .getCtrl()
+            .toggleFilterBuilder({ source: 'ui', eventSource: this.eBuilderFilterButton });
     }
 
     private closeBuilder(): void {
