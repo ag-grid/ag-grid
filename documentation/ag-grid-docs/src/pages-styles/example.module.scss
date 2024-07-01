@@ -39,6 +39,14 @@ $nav-height: 340px;
         max-width: var(--layout-max-width);
     }
 
+    @media screen and (min-width: 720px) {
+        height: 244px;
+
+        > div:first-child {
+            width: 30%;
+        }
+    }
+
     p {
         color: var(--color-text-tertiary);
     }
