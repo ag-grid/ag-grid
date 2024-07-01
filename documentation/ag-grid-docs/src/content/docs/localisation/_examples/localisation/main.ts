@@ -22,12 +22,7 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 
-import { AG_GRID_LOCALE_EN } from 'ag-grid-locale';
-
-import { zzzLocale } from './locale';
-
-// Create a dummy locale based on english but prefix everything with zzz
-const AG_GRID_LOCALE_ZZZ: Record<string, string> = zzzLocale(AG_GRID_LOCALE_EN);
+import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -102,8 +97,6 @@ const columnDefs: ColDef[] = [
     { field: 'total', enableValue: true },
 ];
 
-var localeText = AG_GRID_LOCALE_ZZZ;
-
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -127,7 +120,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationPageSizeSelector: [100, 500, 1000],
     enableRangeSelection: true,
     enableCharts: true,
-    localeText: localeText,
+    localeText: AG_GRID_LOCALE_DE,
     rowSelection: 'multiple',
 };
 
@@ -135,7 +128,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));

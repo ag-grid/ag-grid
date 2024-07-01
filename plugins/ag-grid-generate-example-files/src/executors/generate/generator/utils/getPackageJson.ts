@@ -69,7 +69,7 @@ function addPackageJson(isEnterprise, isLocale, framework, importType) {
     const agGridLocaleVersion = getPackageJsonVersion('locale', false);
 
     if (isLocale) {
-        addDependency('ag-grid-locale', agGridLocaleVersion);
+        addDependency('@ag-grid-community/locale', agGridLocaleVersion);
     }
 
     if (importType === 'modules' && framework !== 'vanilla') {

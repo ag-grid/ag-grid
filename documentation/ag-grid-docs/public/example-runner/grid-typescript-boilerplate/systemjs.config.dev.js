@@ -58,7 +58,7 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-locale': {
+            '@ag-grid-community/locale': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',

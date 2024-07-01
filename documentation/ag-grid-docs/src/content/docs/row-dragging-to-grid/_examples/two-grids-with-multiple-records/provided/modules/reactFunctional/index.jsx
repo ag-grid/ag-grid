@@ -25,6 +25,7 @@ const leftColumns = [
         rowDrag: true,
         maxWidth: 50,
         suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -37,6 +38,7 @@ const leftColumns = [
         maxWidth: 50,
         checkboxSelection: true,
         suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
         headerCheckboxSelection: true,
     },
     { field: 'athlete' },
@@ -48,6 +50,7 @@ const rightColumns = [
         rowDrag: true,
         maxWidth: 50,
         suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -59,6 +62,7 @@ const rightColumns = [
     { field: 'sport' },
     {
         suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
         maxWidth: 50,
         cellRenderer: SportRenderer,
     },

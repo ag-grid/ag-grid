@@ -50,5 +50,5 @@ export const MasterDetailApiModule: Module = {
 export const MasterDetailModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.MasterDetailModule,
-    dependantModules: [MasterDetailCoreModule],
+    dependantModules: [MasterDetailCoreModule, MasterDetailApiModule],
 };

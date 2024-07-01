@@ -1,12 +1,19 @@
 import { IFilterAngularComp } from '@ag-grid-community/angular';
-import { IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
-import { Component } from '@angular/core';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
     standalone: true,
     template: ` <div class="year-filter">
         <label>
-            <input type="radio" name="isFilterActive" [checked]="!isActive" (change)="toggleFilter(false)" /> All
+            <input
+                #eFilterAll
+                type="radio"
+                name="isFilterActive"
+                [checked]="!isActive"
+                (change)="toggleFilter(false)"
+            />
+            All
         </label>
         <label>
             <input type="radio" name="isFilterActive" [checked]="isActive" (change)="toggleFilter(true)" /> After 2004
@@ -14,6 +21,8 @@ import { Component } from '@angular/core';
     </div>`,
 })
 export class YearFilter implements IFilterAngularComp {
+    @ViewChild('eFilterAll') eFilterAll!: ElementRef;
+
     params!: IFilterParams;
     isActive!: boolean;
 
@@ -46,5 +55,11 @@ export class YearFilter implements IFilterAngularComp {
 
     onFloatingFilterChanged(value: any): void {
         this.setModel(value);
+    }
+
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (!params?.suppressFocus) {
+            this.eFilterAll.nativeElement.focus();
+        }
     }
 }

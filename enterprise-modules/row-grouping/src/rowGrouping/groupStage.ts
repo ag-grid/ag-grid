@@ -427,7 +427,12 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
                     const shouldBeRemoved = groupShouldBeRemoved(rowNode);
-                    if (shouldBeRemoved && details.usingTreeData && details.getDataPath?.(rowNode.data)) {
+                    if (
+                        shouldBeRemoved &&
+                        details.usingTreeData &&
+                        rowNode.data &&
+                        details.getDataPath?.(rowNode.data)
+                    ) {
                         // This node has associated tree data so shouldn't be removed, but should no longer be
                         // marked as a group if it has no children.
                         rowNode.setGroup(

@@ -5,6 +5,8 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { createApp } from 'vue';
 
+import './style.css';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {

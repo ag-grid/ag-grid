@@ -150,7 +150,7 @@ function getImports(
 
     const localeImport = findLocaleImport(bindings.imports);
     if (localeImport) {
-        imports.push(`import { ${localeImport.imports[0]} } from 'ag-grid-locale';`);
+        imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
     }
 
     if (importType === 'packages') {

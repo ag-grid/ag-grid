@@ -1,7 +1,10 @@
 .grid-container {
+    display: flex;
+    flex-direction: column;
     height: 100%;
+    row-gap: 5px;
 }
 
 #myGrid {
-    height: calc(100% - 35px);
+    flex: 1 1 0px;
 }

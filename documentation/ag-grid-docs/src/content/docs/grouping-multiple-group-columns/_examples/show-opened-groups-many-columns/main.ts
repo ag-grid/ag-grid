@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { GridApi, GridOptions } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
@@ -29,6 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     groupDisplayType: 'multipleColumns',
     showOpenedGroup: true,
+    suppressGroupRowsSticky: true,
 };
 
 // setup the grid after the page has finished loading

@@ -25,7 +25,8 @@ var colDefAthlete: ColDef = {
     filterParams: {
         values: getAthletesAsync,
     },
-    menuTabs: ['filterMenuTab'],
+    suppressHeaderMenuButton: true,
+    suppressHeaderContextMenu: true,
 };
 var colDefAge: ColDef = { field: 'age' };
 var colDefSport: ColDef = { field: 'sport' };

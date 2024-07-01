@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, IAggFuncParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { ColDef, GridApi, GridOptions, IAggFuncParams } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -25,6 +25,22 @@ const columnDefs: ColDef[] = [
         aggFunc: avgAggFunction,
         enableValue: true,
         minWidth: 250,
+        comparator: (valueA: number | { value: number }, valueB: number | { value: number }) => {
+            let v1 = valueA;
+            let v2 = valueB;
+
+            if (valueA && typeof valueA === 'object') {
+                v1 = valueA.value;
+            }
+
+            if (valueB && typeof valueB === 'object') {
+                v2 = valueB.value;
+            }
+
+            if (v1 == v2) return 0;
+
+            return v1 > v2 ? 1 : -1;
+        },
     },
     {
         headerName: 'age using simpleAvg()',

@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'gold',
         filter: 'agNumberColumnFilter',
-        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
         floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             color: 'gold',
@@ -21,7 +21,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'silver',
         filter: 'agNumberColumnFilter',
-        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
         floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             color: 'silver',
@@ -31,7 +31,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'bronze',
         filter: 'agNumberColumnFilter',
-        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
         floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             color: '#CD7F32',
@@ -41,7 +41,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'total',
         filter: 'agNumberColumnFilter',
-        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
         floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             color: 'unset',

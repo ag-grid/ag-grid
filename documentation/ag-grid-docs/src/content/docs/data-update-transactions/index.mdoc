@@ -132,7 +132,7 @@ To perform update transactions and prevent the grid from automatically reprocess
 Note that this property is only used when transactions are applied that only have updates. If the transaction
 contains any adds or removes, the sorting, filtering and grouping will always be applied.
 
-To trigger the the Client-side Row Model to refresh, use the Grid API `refreshClientSideRowModel(startingStage)`. As the stages are sequential, the Client-side Row Model will refresh at the provided stage and then all the stages after it will also refresh. In order, these stages are: group, filter, pivot, aggregate, sort, and map.
+To trigger the the Client-side Row Model to refresh, use the Grid API `refreshClientSideRowModel(startingStage)`. As the stages are sequential, the Client-side Row Model will refresh at the provided stage and then all the stages after it will also refresh. In order, these stages are: group, filter, pivot, aggregate, sort, filter aggregates, and map.
 
 {% apiDocumentation source="grid-api/api.json" section="data" names=["refreshClientSideRowModel"] /%}
 

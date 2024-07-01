@@ -712,7 +712,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
     // edited cell).
     private restoreFocusedCell(cellPosition: CellPosition | null): void {
-        if (cellPosition) {
+        if (!cellPosition) {
+            return;
+        }
+
+        // this should be done asynchronously to work with React Renderers.
+        setTimeout(() => {
             // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
             // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
             // state
@@ -728,7 +733,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                     type: 'cellFocused',
                 })
             );
-        }
+        });
     }
 
     public stopEditing(cancel: boolean = false) {
@@ -788,22 +793,41 @@ export class RowRenderer extends BeanStub implements NamedBean {
             newData: false,
             suppressFlash: params.suppressFlash,
         };
-        this.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) =>
-            cellCtrl.refreshOrDestroyCell(refreshCellParams)
-        );
 
-        if (params.rowNodes) {
-            // refresh the full width rows too
-            this.getRowCtrls(params.rowNodes).forEach((rowCtrl) => {
-                if (!rowCtrl.isFullWidth()) {
-                    return;
-                }
-                const refreshed = rowCtrl.refreshFullWidth();
-                if (!refreshed) {
-                    this.redrawRow(rowCtrl.getRowNode(), true);
-                }
-            });
-            this.dispatchDisplayedRowsChanged(false);
+        for (const cellCtrl of this.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
+            cellCtrl.refreshOrDestroyCell(refreshCellParams);
+        }
+
+        // refresh the full width rows too
+        this.refreshFullWidth(params.rowNodes);
+    }
+
+    private refreshFullWidth(rowNodes?: IRowNode[]): void {
+        if (!rowNodes) {
+            return;
+        }
+
+        let cellFocused: CellPosition | null = null;
+
+        if (this.stickyRowFeature && _browserSupportsPreventScroll()) {
+            cellFocused = this.getCellToRestoreFocusToAfterRefresh() || null;
+        }
+
+        for (const rowCtrl of this.getRowCtrls(rowNodes)) {
+            if (!rowCtrl.isFullWidth()) {
+                continue;
+            }
+
+            const refreshed = rowCtrl.refreshFullWidth();
+            if (!refreshed) {
+                this.redrawRow(rowCtrl.getRowNode(), true);
+            }
+        }
+
+        this.dispatchDisplayedRowsChanged(false);
+
+        if (cellFocused) {
+            this.restoreFocusedCell(cellFocused);
         }
     }
 

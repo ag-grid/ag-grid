@@ -116,6 +116,7 @@ export class AppComponent {
             rowDrag: true,
             maxWidth: 50,
             suppressHeaderMenuButton: true,
+            suppressHeaderFilterButton: true,
             rowDragText: (params, dragItemCount) => {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
@@ -132,6 +133,7 @@ export class AppComponent {
             rowDrag: true,
             maxWidth: 50,
             suppressHeaderMenuButton: true,
+            suppressHeaderFilterButton: true,
             rowDragText: (params, dragItemCount) => {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
@@ -143,6 +145,7 @@ export class AppComponent {
         { field: 'sport' },
         {
             suppressHeaderMenuButton: true,
+            suppressHeaderFilterButton: true,
             maxWidth: 50,
             cellRenderer: SportRenderer,
         },

@@ -11,12 +11,12 @@ const { activeTab } = Astro.props;
             <a href={urlWithBaseUrl(`/example`)}>
                 <img
                     class={styles.showcaseItemTab}
-                    src={urlWithBaseUrl(`/example/grid-full.png`)}
+                    src={urlWithBaseUrl(`/example/performance.png`)}
                     alt="Grid illustration"
                 />
                 <img
                     class={`${styles.showcaseItemTab} ${styles.darkTab}`}
-                    src={urlWithBaseUrl(`/example/complete-dark.png`)}
+                    src={urlWithBaseUrl(`/example/performance-dark.png`)}
                     alt="Grid illustration"
                 />
             </a>
@@ -29,7 +29,7 @@ const { activeTab } = Astro.props;
             <a href={urlWithBaseUrl(`/example-finance`)}>
                 <img
                     class={styles.showcaseItemTab}
-                    src={urlWithBaseUrl(`/example/finance-grid.png`)}
+                    src={urlWithBaseUrl(`/example/finance.png`)}
                     alt="Grid illustration"
                 />
                 <img
@@ -44,14 +44,10 @@ const { activeTab } = Astro.props;
     <div>
         <div class:list={[styles.tabWrapper, activeTab === 'crm' && styles.tabActive]}>
             <a href={urlWithBaseUrl(`/example-hr`)}>
-                <img
-                    class={styles.showcaseItemTab}
-                    src={urlWithBaseUrl(`/example/crm-grid.png`)}
-                    alt="Grid illustration"
-                />
+                <img class={styles.showcaseItemTab} src={urlWithBaseUrl(`/example/hr.png`)} alt="Grid illustration" />
                 <img
                     class={`${styles.showcaseItemTab} ${styles.darkTab}`}
-                    src={urlWithBaseUrl(`/example/crm-dark.png`)}
+                    src={urlWithBaseUrl(`/example/hr-dark.png`)}
                     alt="Grid illustration"
                 />
             </a>
@@ -64,7 +60,7 @@ const { activeTab } = Astro.props;
             <a href={urlWithBaseUrl(`/example-inventory`)}>
                 <img
                     class={`${styles.showcaseItemTab}`}
-                    src={urlWithBaseUrl(`/example/grid-inventory.png`)}
+                    src={urlWithBaseUrl(`/example/inventory.png`)}
                     alt="Grid illustration"
                 />
                 <img
