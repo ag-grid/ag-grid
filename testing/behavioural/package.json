@@ -10,6 +10,7 @@
     "@ag-grid-community/core": "31.3.1",
     "@ag-grid-community/client-side-row-model": "31.3.1",
     "@ag-grid-community/react": "31.3.1",
+    "@ag-grid-enterprise/server-side-row-model": "31.3.1",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
