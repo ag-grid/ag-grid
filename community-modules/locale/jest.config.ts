@@ -37,7 +37,7 @@ export default {
     reporters,
     projects: [
         {
-            displayName: 'ag-grid-locale - unit',
+            displayName: '@ag-grid-community/locale - unit',
             ...commonConfig,
         },
     ],
