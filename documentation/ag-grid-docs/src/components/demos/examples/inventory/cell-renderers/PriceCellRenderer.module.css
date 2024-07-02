@@ -1,0 +1,13 @@
+.price {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.price span {
+    line-height: 100%;
+}
+
+.increase {
+    opacity: 0.7;
+}

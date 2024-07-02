@@ -57,7 +57,7 @@ const numberFormatter: ValueFormatterFunc = ({ value }) => {
     return value == null ? '' : formatter.format(value);
 };
 
-const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode = false }) => {
+export const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode = false }) => {
     const [rowData, setRowData] = useState(getData());
     const gridRef = useRef<AgGridReact>(null);
 
@@ -198,5 +198,3 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         </div>
     );
 };
-
-export default FinanceExample;

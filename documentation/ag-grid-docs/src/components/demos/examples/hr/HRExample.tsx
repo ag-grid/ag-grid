@@ -15,7 +15,7 @@ import { type FunctionComponent, useCallback, useMemo, useRef, useState } from '
 import styles from './HRExample.module.css';
 import { ContactCellRenderer } from './cell-renderers/ContactCellRenderer';
 import { EmployeeCellRenderer } from './cell-renderers/EmployeeCellRenderer';
-import { FlagRenderer } from './cell-renderers/FlagRenderer';
+import { FlagCellRenderer } from './cell-renderers/FlagCellRenderer';
 import { StatusCellRenderer } from './cell-renderers/StatusCellRenderer';
 import { TagCellRenderer } from './cell-renderers/TagCellRenderer';
 import { getData } from './data';
@@ -75,7 +75,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             field: 'location',
             width: 200,
-            cellRenderer: FlagRenderer,
+            cellRenderer: FlagCellRenderer,
             editable: true,
         },
         {
