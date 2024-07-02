@@ -4,6 +4,8 @@ import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 
 describe('ag-grid case insensitive sorting state', () => {
+    let consoleErrorSpy: jest.SpyInstance;
+
     function createMyGrid(gridOptions: GridOptions) {
         return createGrid(document.getElementById('myGrid')!, gridOptions);
     }
@@ -14,10 +16,10 @@ describe('ag-grid case insensitive sorting state', () => {
 
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, ServerSideRowModelModule]);
-
-        // stub out to avoid printing the no-license message
-        console.error = () => {};
+        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     });
+
+    afterAll(() => consoleErrorSpy.mockRestore());
 
     beforeEach(() => {
         resetGrids();
