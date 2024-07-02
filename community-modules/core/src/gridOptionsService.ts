@@ -476,6 +476,12 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return this.getRootNode().activeElement;
     }
 
+    public isNothingFocused(): boolean {
+        const eDocument = this.getDocument();
+        const activeEl = this.getActiveDomElement();
+        return activeEl === null || activeEl === eDocument.body;
+    }
+
     public getAsyncTransactionWaitMillis(): number | undefined {
         return _exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
     }

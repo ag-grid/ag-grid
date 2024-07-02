@@ -43,10 +43,14 @@ export class MenuUtils extends BeanStub implements NamedBean {
             return;
         }
 
-        const eDocument = this.gos.getDocument();
         const activeEl = this.gos.getActiveDomElement();
-        if (!eComp.contains(activeEl) && activeEl !== eDocument.body) {
-            // something else has focus, so don't return focus to the header
+        if (
+            // focus is outside of comp
+            !eComp.contains(activeEl) &&
+            // something else has focus
+            !this.gos.isNothingFocused()
+        ) {
+            // don't return focus to the header
             return;
         }
 
