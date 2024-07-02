@@ -16,8 +16,8 @@ export interface IRowDragItem extends DragItem {
 
 export class RowDragComp extends Component {
     private dragSource: DragSource | null = null;
-
     private beans: BeanCollection;
+    private mouseDownListener: (() => void) | undefined;
 
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
@@ -109,11 +109,23 @@ export class RowDragComp extends Component {
             this.removeDragSource();
         }
 
+        const eGui = this.getGui();
+
+        if (this.gos.get('enableCellTextSelection')) {
+            this.removeMouseDownListener();
+
+            this.mouseDownListener = this.addManagedElementListeners(eGui, {
+                mousedown: (e) => {
+                    e?.preventDefault();
+                },
+            })[0];
+        }
+
         const translate = this.localeService.getLocaleTextFunc();
 
         this.dragSource = {
             type: DragSourceType.RowDrag,
-            eElement: this.getGui(),
+            eElement: eGui,
             dragItemName: () => {
                 const dragItem = this.getDragItem();
                 const dragItemCount = dragItem.rowNodes?.length || 1;
@@ -137,14 +149,26 @@ export class RowDragComp extends Component {
 
     public override destroy(): void {
         this.removeDragSource();
+        this.removeMouseDownListener();
         super.destroy();
     }
 
     private removeDragSource() {
-        if (this.dragSource) {
-            this.beans.dragAndDropService.removeDragSource(this.dragSource);
+        if (!this.dragSource) {
+            return;
         }
+
+        this.beans.dragAndDropService.removeDragSource(this.dragSource);
         this.dragSource = null;
+    }
+
+    private removeMouseDownListener() {
+        if (!this.mouseDownListener) {
+            return;
+        }
+
+        this.mouseDownListener();
+        this.mouseDownListener = undefined;
     }
 }
 
