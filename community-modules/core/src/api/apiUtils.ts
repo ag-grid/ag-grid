@@ -5,6 +5,10 @@ function createApi(context: Context): GridApi {
     const apiFunctionService = context.getBean('apiFunctionService');
     return new Proxy(apiFunctionService, {
         get(target, prop) {
+            // allow api to work with async/await
+            if (prop === 'then') {
+                return;
+            }
             return (...args: any[]) => target.callFunction(prop as any, args);
         },
     }) as any;
