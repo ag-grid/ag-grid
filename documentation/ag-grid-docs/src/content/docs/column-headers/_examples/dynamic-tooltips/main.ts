@@ -7,16 +7,16 @@ import { CustomHeader } from './customHeader_typescript';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', headerName: "Athlete's Full Name", suppressHeaderMenuButton: true, minWidth: 120 },
+    { field: 'athlete', headerName: "Athlete's Full Name", suppressHeaderFilterButton: true, minWidth: 120 },
     {
         field: 'age',
         headerName: "Athlete's Age",
         sortable: false,
         headerComponentParams: { menuIcon: 'fa-external-link-alt' },
     },
-    { field: 'country', headerName: "Athlete's Country", suppressHeaderMenuButton: true, minWidth: 120 },
+    { field: 'country', headerName: "Athlete's Country", suppressHeaderFilterButton: true, minWidth: 120 },
     { field: 'year', headerName: 'Event Year', sortable: false },
-    { field: 'date', headerName: 'Event Date', suppressHeaderMenuButton: true },
+    { field: 'date', headerName: 'Event Date', suppressHeaderFilterButton: true },
     { field: 'sport', sortable: false },
     {
         field: 'gold',
@@ -25,7 +25,7 @@ const columnDefs: ColDef[] = [
         minWidth: 120,
     },
     { field: 'silver', headerName: 'Silver Medals', sortable: false },
-    { field: 'bronze', headerName: 'Bronze Medals', suppressHeaderMenuButton: true, minWidth: 120 },
+    { field: 'bronze', headerName: 'Bronze Medals', suppressHeaderFilterButton: true, minWidth: 120 },
     { field: 'total', headerName: 'Total Medals', sortable: false },
 ];
 
@@ -34,7 +34,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     rowData: null,
-    suppressMenuHide: true,
     components: {
         agColumnHeader: CustomHeader,
     },

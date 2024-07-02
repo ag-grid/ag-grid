@@ -20,3 +20,12 @@
     border-top: var(--ag-tool-panel-separator-border);
     border-bottom: var(--ag-tool-panel-separator-border);
 }
+
+:where(.ag-column-panel) .ag-column-drop-vertical {
+    min-height: 50px;
+    flex: 1 1 0px;
+
+    &:where(:not(.ag-last-column-drop)) {
+        border-bottom: var(--ag-tool-panel-separator-border);
+    }
+}

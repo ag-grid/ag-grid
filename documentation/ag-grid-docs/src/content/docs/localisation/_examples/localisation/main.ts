@@ -9,6 +9,7 @@ import {
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
+import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
@@ -21,13 +22,6 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-
-import { AG_GRID_LOCALE_EN } from 'ag-grid-locale';
-
-import { zzzLocale } from './locale';
-
-// Create a dummy locale based on english but prefix everything with zzz
-const AG_GRID_LOCALE_ZZZ: Record<string, string> = zzzLocale(AG_GRID_LOCALE_EN);
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -102,8 +96,6 @@ const columnDefs: ColDef[] = [
     { field: 'total', enableValue: true },
 ];
 
-var localeText = AG_GRID_LOCALE_ZZZ;
-
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -127,7 +119,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationPageSizeSelector: [100, 500, 1000],
     enableRangeSelection: true,
     enableCharts: true,
-    localeText: localeText,
+    localeText: AG_GRID_LOCALE_DE,
     rowSelection: 'multiple',
 };
 
@@ -135,7 +127,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));

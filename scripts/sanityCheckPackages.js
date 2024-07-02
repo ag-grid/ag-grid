@@ -15,7 +15,7 @@ const [exec, scriptPath, gridNewVersion, gridDependencyVersion, chartNewVersion,
 const allPackages = getPackageInformation();
 const packageNames = Object.keys(allPackages);
 packageNames
-    .filter((packageName) => packageName != 'update-algolia-indices')
+    .filter((packageName) => packageName != 'update-algolia-indices' && packageName !== 'ag-behavioural-testing')
     .forEach((packageName) => {
         const agPackage = allPackages[packageName];
         const {

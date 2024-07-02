@@ -701,12 +701,6 @@ ag-grid-aurelia {
     display: flex;
     flex-direction: column;
 
-    .ag-column-drop {
-        flex: unset;
-        border-bottom: 0;
-        min-height: unset;
-    }
-
     .ag-column-drop-list {
         padding: 0;
     }

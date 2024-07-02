@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, ICellRendererParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { GridApi, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 import { getData } from './data';
 
@@ -103,7 +103,13 @@ function quickFilterParser(quickFilter: string) {
 }
 
 function quickFilterMatcher(quickFilterParts: string[], rowQuickFilterAggregateText: string) {
-    return quickFilterParts.every((part) => rowQuickFilterAggregateText.match(part));
+    let result: boolean;
+    try {
+        result = quickFilterParts.every((part) => rowQuickFilterAggregateText.match(part));
+    } catch {
+        result = false;
+    }
+    return result;
 }
 
 // setup the grid after the page has finished loading

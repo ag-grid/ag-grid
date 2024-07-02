@@ -39,7 +39,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     sideBar: true,
-    suppressMenuHide: true,
 };
 
 // setup the grid after the page has finished loading

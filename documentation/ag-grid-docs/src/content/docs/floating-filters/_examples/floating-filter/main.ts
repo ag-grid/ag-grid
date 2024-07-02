@@ -37,9 +37,9 @@ var dateFilterParams: IDateFilterParams = {
 };
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', filter: 'agTextColumnFilter', suppressHeaderMenuButton: true },
-    { field: 'age', filter: 'agNumberColumnFilter', suppressHeaderMenuButton: true },
-    { field: 'country', filter: 'agSetColumnFilter', suppressHeaderMenuButton: true },
+    { field: 'athlete', filter: 'agTextColumnFilter' },
+    { field: 'age', filter: 'agNumberColumnFilter' },
+    { field: 'country', filter: 'agSetColumnFilter' },
     {
         field: 'year',
         maxWidth: 120,
@@ -51,16 +51,14 @@ const columnDefs: ColDef[] = [
         minWidth: 215,
         filter: 'agDateColumnFilter',
         filterParams: dateFilterParams,
-        suppressHeaderMenuButton: true,
     },
-    { field: 'sport', suppressHeaderMenuButton: true, filter: 'agTextColumnFilter' },
+    { field: 'sport', filter: 'agTextColumnFilter' },
     {
         field: 'gold',
         filter: 'agNumberColumnFilter',
         filterParams: {
             buttons: ['apply'],
         } as INumberFilterParams,
-        suppressHeaderMenuButton: true,
     },
     {
         field: 'silver',
@@ -86,6 +84,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 150,
         filter: true,
         floatingFilter: true,
+        suppressHeaderMenuButton: true,
     },
 };
 

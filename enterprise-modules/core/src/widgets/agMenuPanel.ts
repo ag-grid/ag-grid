@@ -4,10 +4,10 @@ import { KeyCode, TabGuardComp } from '@ag-grid-community/core';
 import type { AgMenuItemComponent } from './agMenuItemComponent';
 
 export class AgMenuPanel extends TabGuardComp {
-    constructor(private readonly wrappedComponent: IComponent<any>) {
+    constructor(wrappedComponent: IComponent<any>) {
         super();
 
-        this.setTemplateFromElement(wrappedComponent.getGui());
+        this.setTemplateFromElement(wrappedComponent.getGui(), undefined, undefined, true);
     }
 
     public postConstruct() {

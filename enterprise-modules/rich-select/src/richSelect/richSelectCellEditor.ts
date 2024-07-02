@@ -50,7 +50,9 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     }
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
-        this.params.stopEditing(!e.fromEnterKey);
+        // there is an issue with focus handling when we call `stopEditing` while the
+        // picker list is still collapsing, so we make this call async to guarantee that.
+        setTimeout(() => this.params.stopEditing(!e.fromEnterKey));
     }
 
     private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {

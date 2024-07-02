@@ -56,7 +56,7 @@ Below shows a more detailed example and also automatically shows the print dialo
 
 When the grid is in print layout, the grid does **not** use absolute positioning for the rows, rather the rows are laid out using normal flow. In other words normally the grid places each row using exact pixel positioning - this makes things such as row animation possible where the grid moves the row by changing absolute pixel position and uses CSS transition for the row to animate to the new location. This happens usually after filtering or sorting. When in print mode, the rows are laid out in the order they appear in the dom - this makes things such as page breaks possible but removes the possibility of animations.
 
-When in print layout the grid will redraw the entire grid any time there is a change to the rows. If just one row is added / removed, or a filter or sort is applied, the entire DOM is removed and all rows are inserted again from top to bottom. This makes print layout best for non-interactive grids (ie for printing) as you will loose animations and changes to the grid will be expensive (the grid redraws everything on every change).
+When in print layout the grid will redraw the entire grid any time there is a change to the rows. If just one row is added / removed, or a filter or sort is applied, the entire DOM is removed and all rows are inserted again from top to bottom. This makes print layout best for non-interactive grids (ie for printing) as you will lose animations and changes to the grid will be expensive (the grid redraws everything on every change).
 
 ## Don't Print Large Data
 

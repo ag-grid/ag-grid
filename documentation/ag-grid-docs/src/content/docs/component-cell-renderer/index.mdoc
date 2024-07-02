@@ -93,7 +93,8 @@ The Cell Component for a Column is set via `colDef.cellRenderer` and can be any 
 
 {% if isFramework("react") %}
 1. `String`: The name of a registered Cell Component.*
-1. `Class` / `Function`: Direct reference to a Cell Component.
+1. `Component`: Direct reference to a Cell Component.
+1. `Inlined Component`: An inlined Cell Component.
 {% /if %}
 
 \*If referenced by name then the Cell Component must [first be registered](./components/#registering-custom-components).
@@ -136,7 +137,7 @@ const gridOptions = {
             field: 'age',
             cellRenderer: 'agGroupCellRenderer',
         },
-        // 2 - Class - Provide your own Cell Component directly without registering.
+        // 2 - Component - Provide your own Cell Component directly without registering.
         {
             field: 'sport',
             cellRenderer: MyCustomCellRendererClass,
@@ -178,9 +179,9 @@ const gridOptions = {
 
 ### Dynamic Component Selection
 
-The `colDef.cellRendererSelector` function allows setting difference Cell Components for different Rows within a Column.
+The `colDef.cellRendererSelector` function allows setting different Cell Components for different Rows within a Column.
 
-The `params` passed to `cellRendererSelector` are the same as those passed to the [Cell Renderer Component](./component-cell-renderer/). Typically the selector will use this to check the rows contents and choose a renderer accordingly.
+The `params` passed to `cellRendererSelector` are the same as those passed to the [Cell Renderer Component](./component-cell-renderer/). Typically the selector will use this to check the row's contents and choose a renderer accordingly.
 
 The result is an object with `component` and `params` to use instead of `cellRenderer` and `cellRendererParams`.
 

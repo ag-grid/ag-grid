@@ -30,7 +30,6 @@ const VueExample = {
                 @grid-ready="onGridReady"
                 :defaultColDef="defaultColDef"
                 :rowData="rowData"
-                :suppressMenuHide="true"
                 :getMainMenuItems="getMainMenuItems">
             </ag-grid-vue>
         </div>
@@ -54,7 +53,7 @@ const VueExample = {
             flex: 1,
             minWidth: 100,
             filter: true,
-            menuTabs: ['generalMenuTab'],
+            suppressHeaderFilterButton: true,
         });
         const getMainMenuItems = ref(null);
         const rowData = ref(null);
@@ -62,7 +61,7 @@ const VueExample = {
         onBeforeMount(() => {
             getMainMenuItems.value = (params) => {
                 return [
-                    ...params.defaultItems,
+                    ...params.defaultItems.filter((item) => item !== 'columnFilter'),
                     'separator',
                     {
                         name: 'Filter',

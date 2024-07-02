@@ -45,7 +45,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 200,
         floatingFilter: true,
-        menuTabs: ['filterMenuTab'],
+        suppressHeaderMenuButton: true,
+        suppressHeaderContextMenu: true,
     },
 };
 

@@ -132,6 +132,8 @@ const coreDefaults = {
     tooltipBorder: true,
     columnDropCellBackgroundColor: transparentForeground(0.07),
     columnDropCellBorder: foregroundBorder(0.13),
+    selectCellBackgroundColor: transparentForeground(0.07),
+    selectCellBorder: foregroundBorder(0.13),
     advancedFilterBuilderButtonBarBorder: true,
     advancedFilterBuilderIndentSize: calc('gridSize * 2 + iconSize'),
     advancedFilterBuilderJoinPillColor: '#f08e8d',

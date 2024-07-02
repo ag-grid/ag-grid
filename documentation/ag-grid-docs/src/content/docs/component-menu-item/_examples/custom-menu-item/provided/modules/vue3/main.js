@@ -29,7 +29,6 @@ const VueExample = {
                 @grid-ready="onGridReady"
                 :defaultColDef="defaultColDef"
                 :rowData="rowData"
-                :suppressMenuHide="true"
                 :getMainMenuItems="getMainMenuItems"
                 :getContextMenuItems="getContextMenuItems"
             >

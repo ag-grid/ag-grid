@@ -98,7 +98,7 @@ export const Toolbar = ({
         }));
     }, [options]);
     const themeOption = useMemo(
-        () => themeOptions.find((o: { value: string }) => o.value === gridTheme) || dataSizeOptions[0],
+        () => themeOptions.find((o: { value: string }) => gridTheme.includes(o.value)) || dataSizeOptions[0],
         [themeOptions, gridTheme]
     );
 

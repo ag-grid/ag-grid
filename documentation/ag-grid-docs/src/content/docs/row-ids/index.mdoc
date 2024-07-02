@@ -31,9 +31,7 @@ The simplest way to update `rowData` is to pass a new array of data to the grid.
 
 ## Row IDs
 
-Providing a unique ID for each row allows the grid to work optimally across a range of features. It is strongly recommend to provide row IDs.
-
-Row IDs are provided by implementing the `getRowId()` callback.
+Providing a unique ID for each row allows the grid to work optimally across a range of features. It is strongly recommend to provide row IDs by passing a function that returns a string to the `getRowId` grid option. This function should always return the same string for a given row, and no two rows should share the same ID.
 
 {% apiDocumentation source="grid-options/properties.json" section="rowModels" names=["getRowId"] /%}
 

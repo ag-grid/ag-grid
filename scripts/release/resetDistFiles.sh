@@ -9,7 +9,6 @@ git reset community-modules/infinite-row-model/dist
 git reset community-modules/react/dist
 git reset community-modules/styles/*.css
 git reset community-modules/styles/_css-content.scss
-git reset community-modules/vue/dist
 git reset community-modules/vue3/dist
 git reset enterprise-modules/advanced-filter/dist
 git reset enterprise-modules/charts/dist
@@ -39,8 +38,8 @@ git reset packages/ag-grid-community/styles
 git reset packages/ag-grid-enterprise/dist
 git reset packages/ag-grid-enterprise/styles
 git reset packages/ag-grid-react/dist
-git reset packages/ag-grid-vue/dist
 git reset packages/ag-grid-vue3/dist
 git reset plugins/ag-grid-generate-code-reference-files/dist
 git reset plugins/ag-grid-task-autogen/dist
 git reset plugins/ag-grid-generate-code-reference-files/src/executors/generate/_copiedFromCore
+git reset community-modules/locale/dist

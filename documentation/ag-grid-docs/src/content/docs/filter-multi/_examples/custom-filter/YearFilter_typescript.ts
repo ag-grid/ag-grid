@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
 
 export class YearFilter implements IFilterComp {
     eGui!: HTMLDivElement;
@@ -55,6 +55,12 @@ export class YearFilter implements IFilterComp {
         } else {
             this.rbAllYears.checked = true;
             this.rbAfter2004.checked = false;
+        }
+    }
+
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (!params?.suppressFocus) {
+            this.rbAllYears.focus();
         }
     }
 }

@@ -7,30 +7,6 @@
     position: relative;
 }
 
-.ag-label-align-right {
-    .ag-label {
-        order: 1;
-    }
-    > * {
-        flex: none;
-    }
-}
-
-.ag-label-align-top {
-    flex-direction: column;
-    align-items: flex-start;
-    > * {
-        align-self: stretch;
-    }
-}
-
-.ag-label-ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
-}
-
 .ag-input-field {
     display: flex;
     flex-direction: row;
@@ -50,19 +26,6 @@
 .ag-input-field-input {
     width: 100%;
     min-width: 0;
-}
-
-.ag-label {
-    white-space: nowrap;
-    margin-right: var(--ag-grid-size);
-}
-
-.ag-label-align-top .ag-label {
-    margin-bottom: calc(var(--ag-grid-size) * 0.5);
-}
-
-.ag-label-align-right .ag-label {
-    margin-left: var(--ag-grid-size);
 }
 
 /* icon for search inputs */

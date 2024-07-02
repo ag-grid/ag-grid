@@ -2,7 +2,7 @@
 
 # dumb repetitive and basic - can rework post release
 
-excluded=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles" "theming")
+excluded=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles" "theming" "locale")
 
 for directory in `ls community-modules`;
 do
@@ -141,12 +141,18 @@ fi
 count=`ls -l packages/ag-grid-enterprise/dist/*.js | wc -l | tr -d ' '`
 if [[ $count -ne 4 ]]
 then
-  echo "!!!!! packages/ag-grid-community/dist should have 4 umd files"
+  echo "!!!!! packages/ag-grid-enterprise/dist should have 4 umd files"
   exit 1
 fi
 count=`ls -l packages/ag-grid-charts-enterprise/dist/*.js | wc -l | tr -d ' '`
 if [[ $count -ne 4 ]]
 then
-  echo "!!!!! packages/ag-grid-community/dist should have 4 umd files"
+  echo "!!!!! packages/ag-grid-charts-enterprise/dist should have 4 umd files"
+  exit 1
+fi
+count=`find "community-modules/locale/dist/" | wc -l | tr -d ' '`
+if [[ $count -ne 53 ]]
+then
+  echo "!!!!! community-modules/locale/dist should have 53 files"
   exit 1
 fi
