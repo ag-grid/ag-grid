@@ -75,7 +75,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
                 const { activeElement } = eDocument;
                 const restoreFocus = this.popupService.bringPopupToFront(eGui);
                 // if popup is brought to front, need to put focus back
-                if (restoreFocus && activeElement !== eDocument.body) {
+                if (restoreFocus && !this.gos.isNothingFocused()) {
                     (activeElement as HTMLElement)?.focus?.();
                 }
             },
