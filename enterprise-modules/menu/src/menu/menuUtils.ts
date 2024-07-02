@@ -73,10 +73,8 @@ export class MenuUtils extends BeanStub implements NamedBean {
         // this method only gets called when the menu was closed by selecting an option
         // in this case we focus the cell that was previously focused, otherwise the header
         const focusedCell = this.focusService.getFocusedCell();
-        const eDocument = this.gos.getDocument();
-        const activeEl = this.gos.getActiveDomElement();
 
-        if (!activeEl || activeEl === eDocument.body) {
+        if (this.gos.isNothingFocused()) {
             if (focusedCell) {
                 const { rowIndex, rowPinned, column } = focusedCell;
                 this.focusService.setFocusedCell({
