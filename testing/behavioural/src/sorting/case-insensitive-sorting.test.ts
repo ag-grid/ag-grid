@@ -29,20 +29,34 @@ describe('ag-grid case insensitive sorting state', () => {
         test('case insensitive sorting for alphanumeric characters', () => {
             const api = createMyGrid({
                 columnDefs: [{ field: 'label', sort: 'asc' }],
-                rowData: [{ label: 'ISIN' }, { label: 'Instrument ID' }, { label: 'AZ' }, { label: 'aa' }],
+                rowData: [
+                    { label: 'ISIN' },
+                    { label: 'Instrument ID' },
+                    { label: 'AZ' },
+                    { label: 'aa' },
+                    { label: 'AA' },
+                    { label: 'az' },
+                ],
             });
 
-            expect(api.getRenderedNodes().map((n) => n.data.label)).toEqual(['aa', 'AZ', 'Instrument ID', 'ISIN']);
+            expect(api.getRenderedNodes().map((n) => n.data.label)).toEqual([
+                'aa',
+                'AA',
+                'AZ',
+                'az',
+                'Instrument ID',
+                'ISIN',
+            ]);
         });
 
         test('case insensitive sorting for accented characters', () => {
             const api = createMyGrid({
                 columnDefs: [{ field: 'label', sort: 'asc' }],
-                rowData: [{ label: 'ISIN' }, { label: 'Instrument ID' }, { label: 'ÀZ' }, { label: 'àa' }],
+                rowData: [{ label: 'SS' }, { label: 'sz' }, { label: 'ß' }, { label: 'ÀZ' }, { label: 'àa' }],
                 accentedSort: true,
             });
 
-            expect(api.getRenderedNodes().map((n) => n.data.label)).toEqual(['àa', 'ÀZ', 'Instrument ID', 'ISIN']);
+            expect(api.getRenderedNodes().map((n) => n.data.label)).toEqual(['àa', 'ÀZ', 'SS', 'ß', 'sz']);
         });
     });
 
@@ -54,7 +68,14 @@ describe('ag-grid case insensitive sorting state', () => {
                 serverSideDatasource: {
                     getRows(params) {
                         params.success({
-                            rowData: [{ label: 'ISIN' }, { label: 'Instrument ID' }, { label: 'AZ' }, { label: 'aa' }],
+                            rowData: [
+                                { label: 'ISIN' },
+                                { label: 'Instrument ID' },
+                                { label: 'AZ' },
+                                { label: 'aa' },
+                                { label: 'AA' },
+                                { label: 'az' },
+                            ],
                         });
                     },
                 },
@@ -67,7 +88,14 @@ describe('ag-grid case insensitive sorting state', () => {
 
             await new Promise(process.nextTick);
 
-            expect(api.getRenderedNodes().map((n) => n.data.label)).toEqual(['aa', 'AZ', 'Instrument ID', 'ISIN']);
+            expect(api.getRenderedNodes().map((n) => n.data.label)).toEqual([
+                'aa',
+                'AA',
+                'AZ',
+                'az',
+                'Instrument ID',
+                'ISIN',
+            ]);
         });
 
         test('case insensitive sorting for accented characters', async () => {
@@ -78,7 +106,13 @@ describe('ag-grid case insensitive sorting state', () => {
                 serverSideDatasource: {
                     getRows(params) {
                         params.success({
-                            rowData: [{ label: 'ISIN' }, { label: 'Instrument ID' }, { label: 'ÀZ' }, { label: 'àa' }],
+                            rowData: [
+                                { label: 'SS' },
+                                { label: 'sz' },
+                                { label: 'ß' },
+                                { label: 'ÀZ' },
+                                { label: 'àa' },
+                            ],
                         });
                     },
                 },
@@ -91,7 +125,7 @@ describe('ag-grid case insensitive sorting state', () => {
 
             await new Promise(process.nextTick);
 
-            expect(api.getRenderedNodes().map((n) => n.data.label)).toEqual(['àa', 'ÀZ', 'Instrument ID', 'ISIN']);
+            expect(api.getRenderedNodes().map((n) => n.data.label)).toEqual(['àa', 'ÀZ', 'SS', 'ß', 'sz']);
         });
     });
 });
