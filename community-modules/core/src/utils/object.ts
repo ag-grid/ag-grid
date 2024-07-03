@@ -1,7 +1,7 @@
 import { _exists } from './generic';
 
 // Prevents the risk of prototype pollution
-export const SKIP_JS_BUILTINS = new Set(['__proto__', 'constructor', 'prototype']);
+export const SKIP_JS_BUILTINS = new Set<string>(['__proto__', 'constructor', 'prototype']);
 
 export function _iterateObject<T>(
     object: { [p: string]: T } | T[] | null | undefined,

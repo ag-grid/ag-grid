@@ -1,6 +1,6 @@
 import { deepMerge, set } from './object';
 
-fdescribe('object', () => {
+describe('object', () => {
     describe.each([
         { target: undefined, expression: 'a', value: 100, expected: undefined },
         { target: {}, expression: '', value: 100, expected: { '': 100 } },
@@ -27,9 +27,7 @@ fdescribe('object', () => {
         } catch (e) {
             console.error(e);
         }
-        // @ts-ignore
+        // @ts-expect-error polluted could be there
         expect(victim.polluted).toBeUndefined();
-        // @ts-ignore
-        delete Object.prototype.polluted;
     });
 });
