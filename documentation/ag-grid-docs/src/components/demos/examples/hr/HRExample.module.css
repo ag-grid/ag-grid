@@ -1,5 +1,10 @@
 :global(:root) {
     --layout-grid-header-height: 32px;
+    --layout-grid-margin: 32px;
+}
+
+:global(body) {
+    margin: 0;
 }
 
 :global(div.ag-theme-quartz),
@@ -107,5 +112,6 @@
 }
 
 .grid {
-    height: calc(100vh - var(--layout-grid-header-height));
+    height: calc(100vh - var(--layout-grid-header-height) - var(--layout-grid-margin));
+    margin: var(--layout-grid-margin);
 }

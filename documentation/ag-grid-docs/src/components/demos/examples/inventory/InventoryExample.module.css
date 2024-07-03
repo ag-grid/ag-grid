@@ -1,6 +1,11 @@
 :global(:root) {
     --layout-grid-header-height: 32px;
+    --layout-grid-margin: 32px;
     --ag-row-border: 1px solid #c41717;
+}
+
+:global(body) {
+    margin: 0;
 }
 
 @media screen and (max-width: 720px) {
@@ -130,8 +135,10 @@
 }
 
 .grid {
-    height: calc(100vh - var(--layout-grid-header-height) - 50px);
     --ag-header-background-color: transparent !important;
+
+    height: calc(100vh - var(--layout-grid-header-height) - 62px - var(--layout-grid-margin));
+    margin: 0 var(--layout-grid-margin) var(--layout-grid-margin);
 }
 
 .exampleHeader {
@@ -139,6 +146,7 @@
     justify-content: space-between;
     padding-bottom: 16px;
     padding-top: 8px;
+    margin: var(--layout-grid-margin) var(--layout-grid-margin) 0;
 }
 
 .exampleHeader {
