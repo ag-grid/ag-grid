@@ -78,6 +78,7 @@ $nav-height: 340px;
 
 .layout {
     --layout-grid-header-height: calc(var(--layout-site-header-height) + 276px);
+    --layout-grid-margin: 0px;
 
     @media screen and (max-width: 1900px) {
         padding-left: 24px;
