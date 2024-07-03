@@ -58,15 +58,17 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         };
 
         if (typeof state !== 'object') {
-            _errorOnce('The provided selection state should be an object.');
-            return;
+            return _errorOnce('The provided selection state should be an object.');
         }
 
-        if ('selectAll' in state && typeof state.selectAll === 'boolean') {
+        if (!('selectAll' in state)) {
+            return _errorOnce('State must conform to `IServerSideSelectionState`.');
+        }
+
+        if (typeof state.selectAll === 'boolean') {
             newState.selectAll = state.selectAll;
         } else {
-            _errorOnce('Select all status should be of boolean type.');
-            return;
+            return _errorOnce('selectAll must be of boolean type.');
         }
 
         if ('toggledNodes' in state && Array.isArray(state.toggledNodes)) {
@@ -78,8 +80,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 }
             });
         } else {
-            _warnOnce('`toggledNodes` must be an array of string ids.');
-            return;
+            return _warnOnce('`toggledNodes` must be an array of string ids.');
         }
 
         this.selectedState = newState;
