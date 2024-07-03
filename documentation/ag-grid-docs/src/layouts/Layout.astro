@@ -3,7 +3,7 @@ import { getEntry } from 'astro:content';
 import '@design-system/design-system.scss';
 import SiteHeader from '@ag-website-shared/components/site-header/SiteHeader.astro';
 import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
-import { getIsProduction, getIsStaging, getIsDev } from '@utils/env';
+import { getIsProduction, getIsArchive, getIsStaging, getIsDev } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Plausible from '@components/Plausible.astro';
 import { Footer } from '@ag-website-shared/components/footer/Footer';
@@ -27,6 +27,7 @@ const { data: footerItems } = await getEntry('footer', 'data');
 const apiPaths = getApiPaths(menuData);
 
 const isProduction = getIsProduction();
+const isArchive = getIsArchive();
 const isStaging = getIsStaging();
 const isDev = getIsDev();
 const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
@@ -56,7 +57,7 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
                 <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={icon} />
             ))
         }
-        {!isProduction && <meta name="robots" content="noindex" />}
+        {(!isProduction || isArchive) && <meta name="robots" content="noindex" />}
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         <link rel="canonical" href={canonicalUrl} />
