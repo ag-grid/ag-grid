@@ -187,17 +187,24 @@
     display: flex;
     border-radius: 8px;
     overflow: hidden;
-    background-color: var(--color-bg-secondary);
     padding: 4px;
-    border: 1px solid var(--color-border-secondary);
+    background-color: var(--color-bg-secondary, #f9fafb);
+    border: 1px solid var(--color-border-secondary, #eff0f1);
+    color: #39485d;
+    border-radius: 8px;
 }
 
 .tabButton {
+    appearance: none;
+    display: inline-block;
+    padding: 0.375em 1em 0.5em;
+    white-space: nowrap;
     font-size: 14px;
     font-weight: 500;
+    border-radius: 6px;
     border: none;
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text-seondary);
+    background-color: var(--color-bg-secondary, #f9fafb);
+    color: var(--color-text-secondary, #39485d);
     cursor: pointer;
     box-shadow: none;
     transition:
