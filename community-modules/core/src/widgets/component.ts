@@ -146,6 +146,14 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         }
     }
 
+    private getDataRefAttribute(element: Element): string | null {
+        if (element.getAttribute) {
+            return element.getAttribute('data-ref');
+        }
+        // Plain text nodes don't have attributes or getAttribute method
+        return null;
+    }
+
     private applyElementsToComponent(
         element: Element,
         elementRef?: string | null,
@@ -153,7 +161,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         newComponent: Component | null = null
     ) {
         if (elementRef === undefined) {
-            elementRef = element.getAttribute('data-ref');
+            elementRef = this.getDataRefAttribute(element);
         }
         if (elementRef) {
             // We store the reference to the element in the parent component under that same name
@@ -225,7 +233,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     ): Component | null {
         const key = element.nodeName;
 
-        const elementRef = element.getAttribute('data-ref');
+        const elementRef = this.getDataRefAttribute(element);
 
         const isAgGridComponent = key.indexOf('AG-') === 0;
         const componentSelector = isAgGridComponent ? this.componentSelectors.get(key as AgComponentSelector) : null;
