@@ -165,8 +165,13 @@
 }
 
 .inputWrapper input {
-    padding-left: 32px;
     font-size: 14px;
+    padding: 0.375em 0.75em 0.375em 2.4em;
+    line-height: 1.4;
+    border-radius: 6px;
+    border: 1px solid var(--color-input-border, #d0d5dd);
+    background-color: transparent;
+    outline: none;
 }
 
 .price {
