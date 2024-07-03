@@ -22,7 +22,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     rowData: null,
-    suppressMenuHide: true,
     defaultColDef: {
         filter: true,
         width: 150,

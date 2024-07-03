@@ -2,7 +2,7 @@
 title: "Touch"
 ---
 
-AG Grid is designed to work on touch devices. By default, browsers convert tap events to mouse click events. This means, for example, if you tap on a cell in AG Grid, the cell will get selected just like you clicked on the cell with a mouse. The remainder of this page explains touch gestured understood by the grid which are NOT simply the grid reacting to taps as mouse clicks. They are touch gestures coded into the grid.
+AG Grid is designed to work on touch devices. By default, browsers convert tap events to mouse click events. This means, for example, if you tap on a cell in AG Grid, the cell will get selected just like you clicked on the cell with a mouse. The remainder of this page explains touch gestures understood by the grid which are NOT simply the grid reacting to taps as mouse clicks. They are touch gestures coded into the grid.
 
 ## Touch Gestures for AG Grid Community
 
@@ -16,7 +16,7 @@ The following touch gestures are supported by AG Grid Community.
 
 ## Touch Gestures for AG Grid Enterprise
 
-The following touch gestures are support by AG Grid Enterprise - these are in addition to the AG Grid Community gestures mentioned above - they are are relevant to AG Grid Enterprise only features.
+The following touch gestures are support by AG Grid Enterprise - these are in addition to the AG Grid Community gestures mentioned above - they are relevant to AG Grid Enterprise only features.
 
 * Drag columns out of the tool panel using drag.
 * Drag columns out of the row group and pivot drop zones by dragging.
@@ -33,9 +33,11 @@ You can disable viewport zooming by setting the following tag at the top level p
 
 ## Column Menu Touch Configuration
 
-On non-touch devices, the column menu icon in the header is hidden by default (for the default column menu), and appears on mouseover. On touch devices, this mouseover behaviour is not possible.
+The column menu icon in the default column menu is always displayed. However, if you are using the legacy column menu, the column menu icon is hidden by default and only appears on mouseover. On touch devices, this mouseover behaviour is not possible so it is displayed via tap and hold on the column header.
 
-The column menu can still be displayed via tap and hold on the column header as described above. However there is no visual indicator to the user that a menu exists. This can be resolved by setting the grid option `suppressMenuHide = true`. Note that when this is enabled, the default tap and hold behaviour will no longer apply, and the column menu icon must be tapped instead.
+If you are using the legacy column menu and need a visual indicator to inform the user that a menu exists, you can set the grid option `suppressMenuHide = true`. Note that when this is enabled, the default tap and hold behaviour will no longer apply, and the column menu icon must be tapped instead.
+
+See [Legacy Column Menu](./column-menu/#legacy-tabbed-column-menu) for more information.
 
 This is demonstrated in the following example:
 

@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BeanCollection,
     ColumnNameService,
+    FilterDestroyedEvent,
     FilterManager,
     FuncColsService,
     IAfterGuiAttachedParams,
@@ -63,11 +64,23 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     }
 
     public init(params: IFilterParams): AgPromise<void> {
+        return this.updateParams(params).then(() => {
+            this.addManagedEventListeners({
+                columnRowGroupChanged: () => this.onColumnRowGroupChanged(),
+                filterDestroyed: (event) => this.onFilterDestroyed(event),
+            });
+        });
+    }
+
+    public refresh(params: IFilterParams): boolean {
+        this.updateParams(params);
+        return true;
+    }
+
+    private updateParams(params: IFilterParams): AgPromise<void> {
         this.params = params;
         this.validateParams();
-        return this.updateGroups().then(() => {
-            this.addManagedEventListeners({ columnRowGroupChanged: () => this.onColumnRowGroupChanged() });
-        });
+        return this.updateGroups();
     }
 
     private validateParams(): void {
@@ -272,6 +285,19 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
                 type: 'columnRowGroupChanged',
             });
         });
+    }
+
+    private onFilterDestroyed({ column: eventColumn, source }: FilterDestroyedEvent): void {
+        if (source === 'gridDestroyed') {
+            return;
+        }
+        const colId = eventColumn.getColId();
+        if (this.filterColumnPairs?.some(({ column }) => column.getColId() === colId)) {
+            // filter may already be getting recreated, so wait before updating
+            setTimeout(() => {
+                this.updateGroups();
+            });
+        }
     }
 
     private getFilterColumnPair(columnId: string | undefined): FilterColumnPair | undefined {

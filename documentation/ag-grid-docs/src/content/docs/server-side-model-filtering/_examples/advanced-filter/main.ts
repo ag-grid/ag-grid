@@ -37,7 +37,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
         filter: true,
-        menuTabs: ['filterMenuTab'],
+        suppressHeaderMenuButton: true,
+        suppressHeaderContextMenu: true,
     },
     // use the server-side row model
     rowModelType: 'serverSide',

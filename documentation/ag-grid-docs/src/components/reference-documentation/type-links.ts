@@ -24,7 +24,7 @@ const TYPE_LINKS: Record<string, string> = {
     CellRange: './range-selection/#range-selection-api',
     ChartModel: './integrated-charts-api-save-restore-charts/#api-reference',
     ColDef: './column-properties/',
-    ColGroupDef: './column-properties/',
+    ColGroupDef: './column-properties/#reference-columnGroups',
     AbstractColDef: './column-properties/',
     ColumnGroup: './column-object-group/',
     ProvidedColumnGroup: './column-object-group#reference-ProvidedColumnGroup',

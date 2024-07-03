@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-generate-code-reference-files",
-  "version": "31.3.1",
+  "version": "32.0.0",
   "private": true,
   "dependencies": {
     "glob": "8.0.3",

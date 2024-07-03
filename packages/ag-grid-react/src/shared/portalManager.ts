@@ -77,12 +77,7 @@ export class PortalManager {
             resolve(reactComponent);
         } else {
             if (Date.now() - startTime >= this.maxComponentCreationTimeMs! && !this.hasPendingPortalUpdate) {
-                _errorOnce(
-                    `React Component '${reactComponent.getReactComponentName()}' not created within ${this.maxComponentCreationTimeMs}ms.`
-                );
-                _errorOnce(
-                    '    If the component is using `forwardRef` but not `useImperativeHandle`, add the following: `useImperativeHandle(ref, () => ({}));`'
-                );
+                // either component returns null or hasn't been setup correctly
                 return;
             }
 

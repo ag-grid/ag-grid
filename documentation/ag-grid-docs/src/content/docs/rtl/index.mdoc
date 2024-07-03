@@ -12,7 +12,7 @@ Below shows an example of a grid using RTL. To make it look better we should rea
 
 ## Complex Example
 
-Below shows a more complex example. It's the same example as used on the AG Grid main demo page. To demonstrate all the edge cases of RTL, the tool panel and pinned areas are shown. This example is using AG Grid Enterprise - hence the tool panel and context menu's are active.
+Below shows a more complex example. It's the same example as used on the AG Grid main demo page. To demonstrate all the edge cases of RTL, the tool panel and pinned areas are shown. This example is using AG Grid Enterprise - hence the tool panel and context menus are active.
 
 {% gridExampleRunner title="RTL Complex" name="rtl-complex" typescriptOnly=true /%}
 
@@ -49,4 +49,4 @@ Under normal operation, when columns are pinned to the right, the vertical scrol
 
 ## Layout of Columns
 
-The grid normally lays the columns out from left to right. When doing RTL the columns go from the right to the left. If the grid was using normal HTML layout, then the columns would all reverse by themselves, however the grid used Column Visualisation, so it needs to know exactly where each column is. Hence there is a lot of math logic inside AG Grid that is tied with the scrolling. Not only is the scrolling inverted, all the maths logic is inverted also. All of this is taken care of for you inside AG Grid. Once `enableRtl=true` is set, the grid will know to use the RTL varient of all the calculations.
+The grid normally lays the columns out from left to right. When doing RTL the columns go from the right to the left. If the grid was using normal HTML layout, then the columns would all reverse by themselves, however the grid used Column Visualisation, so it needs to know exactly where each column is. Hence there is a lot of math logic inside AG Grid that is tied with the scrolling. Not only is the scrolling inverted, all the maths logic is inverted also. All of this is taken care of for you inside AG Grid. Once `enableRtl=true` is set, the grid will know to use the RTL variant of all the calculations.

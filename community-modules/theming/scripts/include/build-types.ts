@@ -101,17 +101,14 @@ const getDocsError = (key: string, docs: string | undefined): string | null => {
     if (!suffix) {
         return 'Ends with unrecognised suffix';
     }
-    if (/\b(?<!-)\bcolor\b/i.test(docs)) {
-        return "Contains the american spelling 'color'";
-    }
     if (suffix === 'size') {
         return /\b(sizes?|amounts?)\b/i.test(docs) ? null : "Should contain the term 'size' or 'amount'";
     }
     if (suffix === 'border') {
         return /\b(borders?|lines?)\b/i.test(docs) ? null : "Should contain the term 'border' or 'line'";
     }
-    const englishSuffix = suffix.replace(/\bcolor\b/g, 'colour').replace('scale', 'multiply');
-    for (const word of englishSuffix.split(' ')) {
+    const words = suffix.replace('scale', 'multiply').split(' ');
+    for (const word of words) {
         if (!docs.toLowerCase().includes(word)) {
             return `Does not contain the pattern "${word}"`;
         }

@@ -135,6 +135,11 @@
 .ag-chart-settings-next {
     position: relative;
     flex: none;
+
+    &:focus-within {
+        box-shadow: var(--ag-focus-shadow);
+        border-radius: 1px;
+    }
 }
 
 .ag-chart-settings-prev-button,
@@ -293,11 +298,17 @@
 }
 
 .ag-chart-mini-thumbnail {
-    border: 1px solid var(--ag-border-color);
+    border: solid 1px var(--ag-border-color);
     border-radius: 5px;
 
     &.ag-selected {
         border-color: var(--ag-accent-color);
+        border-width: 2px;
+    }
+
+    &:focus-visible {
+        border-color: var(--ag-accent-color);
+        box-shadow: var(--ag-focus-shadow);
     }
 }
 
@@ -395,7 +406,7 @@
         left: 0;
         right: 0;
         height: 16px;
-        background: linear-gradient(var(--ag-chrome-background-color), transparent);
+        background: linear-gradient(var(--ag-background-color), transparent);
     }
 }
 
@@ -483,7 +494,8 @@
 }
 
 .ag-charts-format-top-level-group-container > *,
-.ag-charts-format-sub-level-group-container > * {
+.ag-charts-format-sub-level-group-container > *,
+.ag-charts-format-sub-level-no-header-group-container > * {
     margin-bottom: var(--ag-widget-vertical-spacing);
 }
 

@@ -255,7 +255,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
         events.forEach((event) => {
             if (this.gridOptions.debug) {
-                _log(`Updated property ${event.type} from ${event.previousValue} to ${event.currentValue}`);
+                _log(`Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
             }
             this.propertyEventService.dispatchEvent(event);
         });
@@ -474,6 +474,12 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
     public getActiveDomElement(): Element | null {
         return this.getRootNode().activeElement;
+    }
+
+    public isNothingFocused(): boolean {
+        const eDocument = this.getDocument();
+        const activeEl = this.getActiveDomElement();
+        return activeEl === null || activeEl === eDocument.body;
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {

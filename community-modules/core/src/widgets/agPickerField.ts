@@ -201,7 +201,6 @@ export abstract class AgPickerField<
     }
 
     protected renderAndPositionPicker(): () => void {
-        const eDocument = this.gos.getDocument();
         const ePicker = this.pickerComponent!.getGui();
 
         if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
@@ -221,8 +220,7 @@ export abstract class AgPickerField<
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
-                const activeEl = this.gos.getActiveDomElement();
-                const shouldRestoreFocus = !activeEl || activeEl === eDocument.body;
+                const shouldRestoreFocus = this.gos.isNothingFocused();
                 this.beforeHidePicker();
 
                 if (shouldRestoreFocus && this.isAlive()) {

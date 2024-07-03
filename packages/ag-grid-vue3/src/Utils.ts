@@ -1,4 +1,5 @@
 import { ComponentUtil, _processOnChange } from 'ag-grid-community';
+import { markRaw, toRaw } from 'vue';
 
 export const kebabProperty = (property: string) => {
     return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -8,6 +9,8 @@ export const kebabNameToAttrEventName = (kebabName: string) => {
     // grid-ready for example would become onGrid-ready in Vue
     return `on${kebabName.charAt(0).toUpperCase()}${kebabName.substring(1, kebabName.length)}`;
 };
+
+export const convertToRaw = (value: any) => (value ? (Object.isFrozen(value) ? value : markRaw(toRaw(value))) : value);
 
 export interface Properties {
     [propertyName: string]: any;
@@ -52,8 +55,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
             deep: true,
         },
     };
-    let timeout: number | null = null;
-    let changes: { [key: string]: any } = {};
+
     ComponentUtil.ALL_PROPERTIES.filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
         .forEach((propertyName: string) => {
             props[propertyName] = {
@@ -62,13 +64,21 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
 
             watch[propertyName] = {
                 handler(currentValue: any, previousValue: any) {
-                    changes[propertyName] =
-                        currentValue === ComponentUtil.VUE_OMITTED_PROPERTY ? undefined : currentValue;
-                    if (timeout == null) {
-                        timeout = setTimeout(() => {
-                            _processOnChange(changes, this.api);
-                            timeout = null;
-                            changes = {};
+                    let currValue = currentValue;
+
+                    if (propertyName === 'rowData' && currentValue != ComponentUtil.VUE_OMITTED_PROPERTY) {
+                        // Prevent the grids internal edits from being reactive
+                        currValue = convertToRaw(currentValue);
+                    }
+
+                    this.batchChanges[propertyName] =
+                        currValue === ComponentUtil.VUE_OMITTED_PROPERTY ? undefined : currValue;
+                    if (this.batchTimeout == null) {
+                        this.batchTimeout = setTimeout(() => {
+                            // Clear the timeout before processing the changes in case processChanges triggers another change.
+                            this.batchTimeout = null;
+                            _processOnChange(this.batchChanges, this.api);
+                            this.batchChanges = markRaw({});
                         }, 0);
                     }
                 },

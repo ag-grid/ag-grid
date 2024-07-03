@@ -2,6 +2,7 @@ import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-a
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
 import GridInactive from '@ag-website-shared/images/inline-svgs/pricing/grid-inactive.svg?react';
+import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefix';
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
@@ -155,14 +156,21 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             >
                                 info@ag-grid.com
                             </InfoEmailLink>
+                        </div>
 
-                            <p className={styles.licenceKeyDocs}>
-                                Already have a licence and need to install your key?
-                                <br />
+                        <div className={styles.licenceKeyDocs}>
+                            <h3>Already have a licence and need to install your key?</h3>
+                            <p>
                                 Read our documentation on{' '}
-                                <a href={gridUrlWithPrefix({ framework, url: './license-install' })}>
-                                    Installing Your Licence Key
-                                </a>
+                                {defaultSelection === 'grid' ? (
+                                    <a href={gridUrlWithPrefix({ framework, url: './license-install' })}>
+                                        Installing Your Licence Key
+                                    </a>
+                                ) : (
+                                    <a href={chartsUrlWithPrefix({ framework, url: './license-install' })}>
+                                        Installing Your Licence Key
+                                    </a>
+                                )}
                                 .
                             </p>
                         </div>

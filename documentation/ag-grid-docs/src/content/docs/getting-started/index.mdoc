@@ -85,21 +85,21 @@ Load the AG Grid library and create a blank container div:
    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
  </head>
  <body>
-   <!-- Your grid container -->
+   <!-- Your Data Grid container -->
    <div id="myGrid"></div>
  </body>
 </html>
 ```
 
-**2. Instantiating the JavaScript Grid**
+**2. Instantiating the JavaScript Data Grid**
 
-Create the grid inside of your container div using `createGrid`.
+Create the Data Grid inside of your container div using `createGrid`.
 
 ```js
-// Grid Options: Contains all of the data grid configurations
+// Grid Options: Contains all of the Data Grid configurations
 const gridOptions = {};
 
-// Your Javascript code to create the data grid
+// Your Javascript code to create the Data Grid
 const myGridElement = document.querySelector('#myGrid');
 agGrid.createGrid(myGridElement, gridOptions);
 ```
@@ -107,7 +107,7 @@ agGrid.createGrid(myGridElement, gridOptions);
 **3. Define Rows and Columns**
 
 ```js
-// Grid Options: Contains all of the data grid configurations
+// Grid Options: Contains all of the Data Grid configurations
 const gridOptions = {
  // Row Data: The data to be displayed.
  rowData: [
@@ -125,12 +125,12 @@ const gridOptions = {
 };
 ```
 
-**4. Styling the JavaScript Grid**
+**4. Styling the JavaScript Data Grid**
 
-Add the `ag-theme-quartz` CSS class to your grid container div to apply the grid's theme.
+Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the Data Grid's theme.
 
 ```html
-<!-- Your grid container -->
+<!-- Your Data Grid container -->
 <div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
 ```
 {% /if %}
@@ -138,12 +138,12 @@ Add the `ag-theme-quartz` CSS class to your grid container div to apply the grid
 {% if isFramework("react") %}
 <!-- Create React -->
 
-**2. Import the React Grid**
+**2. Import the React Data Grid**
 
 ```js
 import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 ```
 
 **3. Define Rows and Columns**
@@ -170,7 +170,7 @@ const GridExample = () => {
 }
 ```
 
-**4. React Grid Component**
+**4. React Data Grid Component**
 
 The `AgGridReact` component is wrapped in a parent container `div`. Style is applied to the parent container.
 Rows and Columns are set as `AgGridReact` component attributes.
@@ -179,8 +179,8 @@ Rows and Columns are set as `AgGridReact` component attributes.
 return (
  // wrapping container with theme & size
  <div
-  className="ag-theme-quartz" // applying the grid theme
-  style={{ height: 500 }} // the grid will fill the size of the parent container
+  className="ag-theme-quartz" // applying the Data Grid theme
+  style={{ height: 500 }} // the Data Grid will fill the size of the parent container
  >
    <AgGridReact
        rowData={rowData}
@@ -193,7 +193,7 @@ return (
 
 {% if isFramework("angular") %}
 
-**2. Import the Angular Grid**
+**2. Import the Angular Data Grid**
 
 ```js
 import { Component } from '@angular/core';
@@ -230,7 +230,7 @@ export class AppComponent {
 }
 ```
 
-**4. Angular Grid Component**
+**4. Angular Data Grid Component**
 
 Rows and Columns are set as `ag-grid-angular` component attributes.
 
@@ -244,12 +244,12 @@ template:
 `
 ```
 
-**5. Styling the Grid**
+**5. Styling the Data Grid**
 
 Import the required dependencies into your `styles.css` file.
 
 ```js
-/* Core Grid CSS */
+/* Core Data Grid CSS */
 import 'ag-grid-community/styles/ag-grid.css';
 /* Quartz Theme Specific CSS */
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -268,15 +268,15 @@ Add the `class` and `style` props to the `ag-grid-angular` component.
 
 {% if isFramework("vue") %}
 
-**2. Import the Vue Grid**
+**2. Import the Vue Data Grid**
 
 ```html
 <template></template>
 
 <script>
 import { ref } from 'vue';
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
 
 export default {
@@ -315,7 +315,7 @@ setup() {
 },
 ```
 
-**4. Vue Grid Component**
+**4. Vue Data Grid Component**
 
 Rows and Columns are set as `ag-grid-vue` component attributes. Styling is applied through the class and style attributes.
 

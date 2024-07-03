@@ -321,6 +321,9 @@ export class GridChartComp extends Component {
             centered: true,
             closable: true,
             afterGuiAttached,
+            postProcessPopupParams: {
+                type: 'chart',
+            },
         });
 
         this.createBean(this.chartDialog);

@@ -1,7 +1,7 @@
 {
-  "name": "ag-grid-locale",
+  "name": "@ag-grid-community/locale",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "community-modules/ag-grid-locale/src",
+  "sourceRoot": "community-modules/@ag-grid-community/locale/src",
   "projectType": "library",
   "targets": {
     "build": {
@@ -37,7 +37,7 @@
       },
       "configurations": {
         "watch": {
-          "tsConfig": "community-modules/ag-grid-locale/tsconfig.types.watch.json"
+          "tsConfig": "community-modules/@ag-grid-community/locale/tsconfig.types.watch.json"
         },
         "production": {}
       }
@@ -102,7 +102,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist/umd",
-        "outputFileName": "ag-grid-locale",
+        "outputFileName": "@ag-grid-community/locale",
         "main": "{projectRoot}/dist/package/main.cjs.js",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",

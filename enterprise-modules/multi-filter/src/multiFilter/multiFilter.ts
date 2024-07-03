@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     ContainerType,
     FilterManager,
+    FocusService,
     IAfterGuiAttachedParams,
     IDoesFilterPassParams,
     IFilterComp,
@@ -31,10 +32,12 @@ import { AgGroupComponent, AgMenuItemComponent, AgMenuItemRenderer } from '@ag-g
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     private filterManager?: FilterManager;
     private userComponentFactory: UserComponentFactory;
+    private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.userComponentFactory = beans.userComponentFactory;
+        this.focusService = beans.focusService;
     }
 
     private params: MultiFilterParams;
@@ -374,34 +377,39 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             refreshPromise = AgPromise.resolve();
         }
 
+        const suppressFocus = params?.suppressFocus;
+
         refreshPromise.then(() => {
             const { filterDefs } = this;
-            let hasFocused = false;
+            // don't want to focus later if focus suppressed
+            let hasFocused = !!suppressFocus;
             if (filterDefs) {
                 _forEachReverse(filterDefs!, (filterDef, index) => {
                     const isFirst = index === 0;
-                    const suppressFocus =
-                        params?.suppressFocus || !isFirst || (filterDef.display && filterDef.display !== 'inline');
-                    const afterGuiAttachedParams = { ...(params ?? {}), suppressFocus };
+                    const notInlineDisplayType = filterDef.display && filterDef.display !== 'inline';
+                    const suppressFocusForFilter = suppressFocus || !isFirst || notInlineDisplayType;
+                    const afterGuiAttachedParams = { ...(params ?? {}), suppressFocus: suppressFocusForFilter };
                     const filter = this.filters?.[index];
                     if (filter) {
                         this.executeFunctionIfExistsOnFilter(filter, 'afterGuiAttached', afterGuiAttachedParams);
-                        if (isFirst) {
+                        if (isFirst && !suppressFocusForFilter) {
                             hasFocused = true;
                         }
                     }
-                    if (isFirst && suppressFocus) {
+                    if (!suppressFocus && isFirst && notInlineDisplayType) {
                         // focus the first filter container instead (accordion/sub menu)
                         const filterGui = this.filterGuis[index];
                         if (filterGui) {
-                            filterGui.focus();
+                            if (!this.focusService.focusInto(filterGui)) {
+                                // menu item contains no focusable elements but is focusable itself
+                                filterGui.focus();
+                            }
                             hasFocused = true;
                         }
                     }
                 });
             }
 
-            const eDocument = this.gos.getDocument();
             const activeEl = this.gos.getActiveDomElement();
 
             // if we haven't focused the first item in the filter, we might run into two scenarios:
@@ -409,7 +417,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             //     which means the document will have focus.
             // 2 - The focus will be somewhere inside the component due to auto focus
             // In both cases we need to force the focus somewhere valid but outside the filter.
-            if (!hasFocused && (!activeEl || activeEl === eDocument.body || this.getGui().contains(activeEl))) {
+            if (!hasFocused && (this.gos.isNothingFocused() || this.getGui().contains(activeEl))) {
                 // reset focus to the top of the container, and blur
                 this.forceFocusOutOfContainer(true);
             }
