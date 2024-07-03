@@ -1,6 +1,6 @@
-import { set } from './object';
+import { deepMerge, set } from './object';
 
-describe('object', () => {
+fdescribe('object', () => {
     describe.each([
         { target: undefined, expression: 'a', value: 100, expected: undefined },
         { target: {}, expression: '', value: 100, expected: { '': 100 } },
@@ -16,5 +16,20 @@ describe('object', () => {
             set(target, expression, value);
             expect(target).toEqual(expected);
         });
+    });
+
+    // test prototype pollution
+    test('deepMerge does not allow prototype pollution', () => {
+        const BAD_JSON = JSON.parse('{"__proto__":{"polluted":true}}');
+        const victim = {};
+        try {
+            deepMerge(victim, BAD_JSON);
+        } catch (e) {
+            console.error(e);
+        }
+        // @ts-ignore
+        expect(victim.polluted).toBeUndefined();
+        // @ts-ignore
+        delete Object.prototype.polluted;
     });
 });
