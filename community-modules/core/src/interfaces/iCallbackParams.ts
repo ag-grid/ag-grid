@@ -41,8 +41,11 @@ export interface PostProcessPopupParams<TData = any, TContext = any> extends AgG
     rowNode?: IRowNode<TData> | null;
     /** The popup we are showing */
     ePopup: HTMLElement;
-    /** The different types are:
-     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */
+    /**
+     * The different types are:
+     * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor', 'chart',
+     * 'advancedFilterBuilder', 'colorPicker', 'columnChooser'
+     */
     type: string;
     /** If the popup is as a result of a button click (eg menu button),
      *  this is the component that the user clicked */
