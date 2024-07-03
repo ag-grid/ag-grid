@@ -15,8 +15,11 @@
     --ag-odd-row-background-color: rgb(244, 246, 251);
     --ag-border-color: rgba(140, 140, 140, 0.147);
     --ag-row-border-color: var(--ag-border-color);
+}
 
-    @media screen and (max-width: 720px) {
+@media screen and (max-width: 720px) {
+    :global(div.ag-theme-quartz),
+    :global(div.ag-theme-quartz-dark) {
         --ag-font-size: 12px;
         --ag-grid-size: 6px;
     }
