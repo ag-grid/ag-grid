@@ -1,5 +1,8 @@
 import { _exists } from './generic';
 
+// Prevents the risk of prototype pollution
+export const SKIP_JS_BUILTINS = new Set(['__proto__', 'constructor', 'prototype']);
+
 export function _iterateObject<T>(
     object: { [p: string]: T } | T[] | null | undefined,
     callback: (key: string, value: T) => void
@@ -25,6 +28,10 @@ export function _cloneObject<T extends object>(object: T): T {
     const keys = Object.keys(object);
 
     for (let i = 0; i < keys.length; i++) {
+        if (SKIP_JS_BUILTINS.has(keys[i])) {
+            continue;
+        }
+
         const key = keys[i];
         const value = (object as any)[key];
         (copy as any)[key] = value;
@@ -46,7 +53,7 @@ export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | u
     const res: any = {};
 
     Object.keys(obj).forEach((key) => {
-        if (keysToSkip && keysToSkip.indexOf(key) >= 0) {
+        if ((keysToSkip && keysToSkip.indexOf(key) >= 0) || SKIP_JS_BUILTINS.has(key)) {
             return;
         }
 
@@ -93,6 +100,10 @@ export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCop
     }
 
     _iterateObject(source, (key: string, sourceValue: any) => {
+        if (SKIP_JS_BUILTINS.has(key)) {
+            return;
+        }
+
         let destValue: any = dest[key];
 
         if (destValue === sourceValue) {

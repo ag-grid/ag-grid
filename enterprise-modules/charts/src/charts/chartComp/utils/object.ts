@@ -45,14 +45,17 @@ function propertyIsOnObject(object: any, property: string) {
     }
 }
 
+// Prevents the risk of prototype pollution
+export const SKIP_JS_BUILTINS = new Set(['__proto__', 'constructor', 'prototype']);
 // Protects from prototype poisoning and unexpected merging up the prototype chain.
 function propertyIsUnsafe(target: any, key: string) {
     return (
-        propertyIsOnObject(target, key) && // Properties are safe to merge if they don't exist in the target yet,
-        !(
-            Object.hasOwnProperty.call(target, key) && // unsafe if they exist up the prototype chain,
-            Object.propertyIsEnumerable.call(target, key)
-        )
+        SKIP_JS_BUILTINS.has(key) ||
+        (propertyIsOnObject(target, key) && // Properties are safe to merge if they don't exist in the target yet,
+            !(
+                Object.hasOwnProperty.call(target, key) && // unsafe if they exist up the prototype chain,
+                Object.propertyIsEnumerable.call(target, key)
+            ))
     ); // and also unsafe if they're nonenumerable.
 }
 
