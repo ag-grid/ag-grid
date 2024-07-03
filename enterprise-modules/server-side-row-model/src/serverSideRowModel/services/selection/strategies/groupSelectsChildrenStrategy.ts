@@ -6,6 +6,7 @@ import type {
     IRowNode,
     ISelectionService,
     IServerSideGroupSelectionState,
+    IServerSideSelectionState,
     ISetNodesSelectedParams,
     RowNode,
     SelectionEventSourceType,
@@ -73,20 +74,26 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return recursivelySerializeState(this.selectedState, 0);
     }
 
-    public setSelectedState(state: IServerSideGroupSelectionState) {
+    public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
+        if ('selectAll' in state) {
+            return _errorOnce(
+                'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.'
+            );
+        }
+
         const recursivelyDeserializeState = (
             normalisedState: IServerSideGroupSelectionState,
             parentSelected: boolean
         ): SelectionState => {
             if (typeof normalisedState !== 'object') {
-                throw new Error('AG Grid: Each provided state object must be an object.');
+                throw new Error('Each provided state object must be an object.');
             }
             if ('selectAllChildren' in normalisedState && typeof normalisedState.selectAllChildren !== 'boolean') {
-                throw new Error('AG Grid: `selectAllChildren` must be a boolean value or undefined.');
+                throw new Error('`selectAllChildren` must be a boolean value or undefined.');
             }
             if ('toggledNodes' in normalisedState) {
                 if (!Array.isArray(normalisedState.toggledNodes)) {
-                    throw new Error('AG Grid: `toggledNodes` must be an array.');
+                    throw new Error('`toggledNodes` must be an array.');
                 }
                 const allHaveIds = normalisedState.toggledNodes.every(
                     (innerState) =>
@@ -95,7 +102,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                         typeof innerState.nodeId === 'string'
                 );
                 if (!allHaveIds) {
-                    throw new Error('AG Grid: Every `toggledNode` requires an associated string id.');
+                    throw new Error('Every `toggledNode` requires an associated string id.');
                 }
             }
             const isThisNodeSelected = normalisedState.selectAllChildren ?? !parentSelected;
@@ -109,7 +116,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             );
             if (doesRedundantStateExist) {
                 throw new Error(`
-                    AG Grid: AG Grid: Row selection state could not be parsed due to invalid data. Ensure all child state has toggledNodes or does not conform with the parent rule.
+                    Row selection state could not be parsed due to invalid data. Ensure all child state has toggledNodes or does not conform with the parent rule.
                     Please rebuild the selection state and reapply it.
                 `);
             }
