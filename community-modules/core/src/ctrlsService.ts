@@ -98,6 +98,12 @@ export class CtrlsService extends BeanStub implements NamedBean {
     public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {
         this.params[ctrlType] = ctrl;
         this.checkReady();
+
+        ctrl.addDestroyFunc(() => {
+            // Enables going back into waiting state during extra React StrictMode render.
+            this.params[ctrlType] = null!;
+            this.checkReady();
+        });
     }
 
     public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {

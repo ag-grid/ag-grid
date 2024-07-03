@@ -1,3 +1,4 @@
+import { version } from 'react';
 import ReactDOM from 'react-dom';
 
 export const classesList = (...list: (string | null | undefined)[]): string => {
@@ -47,11 +48,13 @@ export const isComponentStateless = (Component: any) => {
     );
 };
 
-// CreateRoot is only available from React 18, which if used requires us to use flushSync.
-const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && (ReactDOM as any).flushSync != null;
+const reactVersion = version.split('.')[0];
+// Note we don't do numerical comparison to enable experimental React versions to work.
+// See https://github.com/facebook/react/blob/main/ReactVersions.js
+const isReactVersion17Minus = reactVersion === '16' || reactVersion === '17';
 
 export function isReact17Minus(): boolean {
-    return !createRootAndFlushSyncAvailable;
+    return !isReactVersion17Minus;
 }
 
 let disableFlushSync = false;
@@ -73,7 +76,7 @@ export function runWithoutFlushSync<T>(func: () => T) {
  * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
 export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
-    if (createRootAndFlushSyncAvailable && useFlushSync && !disableFlushSync) {
+    if (!isReactVersion17Minus && useFlushSync && !disableFlushSync) {
         (ReactDOM as any).flushSync(fn);
     } else {
         fn();
