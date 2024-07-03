@@ -6,6 +6,7 @@ import type {
     IRowNode,
     ISelectionService,
     IServerSideGroupSelectionState,
+    IServerSideSelectionState,
     ISetNodesSelectedParams,
     RowNode,
     SelectionEventSourceType,
@@ -73,7 +74,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return recursivelySerializeState(this.selectedState, 0);
     }
 
-    public setSelectedState(state: IServerSideGroupSelectionState) {
+    public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
         const recursivelyDeserializeState = (
             normalisedState: IServerSideGroupSelectionState,
             parentSelected: boolean

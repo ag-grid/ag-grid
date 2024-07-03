@@ -1,6 +1,7 @@
 import type {
     BeanCollection,
     IRowModel,
+    IServerSideGroupSelectionState,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
     RowNode,
@@ -49,7 +50,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         };
     }
 
-    public setSelectedState(state: any) {
+    public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
         // fire selection changed event
         const newState: SelectedState = {
             selectAll: false,
