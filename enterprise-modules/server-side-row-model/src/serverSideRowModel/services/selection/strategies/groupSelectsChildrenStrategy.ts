@@ -76,10 +76,9 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
         if ('selectAll' in state) {
-            _errorOnce(
+            return _errorOnce(
                 'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.'
             );
-            return;
         }
 
         const recursivelyDeserializeState = (
