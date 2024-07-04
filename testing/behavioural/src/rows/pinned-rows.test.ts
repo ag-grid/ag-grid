@@ -1,6 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
+import type { GetRowIdParams, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import exp from 'constants';
 
 describe('pinned rows', () => {
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
@@ -53,9 +54,20 @@ describe('pinned rows', () => {
         });
 
         test('are shown then updated with getRowId', () => {
-            const api = createMyGrid({ columnDefs, pinnedTopRowData: topData, getRowId: (p) => p.data.athlete });
+            let getRowIdParams: GetRowIdParams | null = null;
+
+            const api = createMyGrid({
+                columnDefs,
+                pinnedTopRowData: topData,
+                getRowId: (p) => {
+                    getRowIdParams = p;
+                    return p.data.athlete;
+                },
+            });
 
             assertPinnedRowData(topData, 'top');
+            expect(getRowIdParams.data).toBe(topData[0]);
+            expect(getRowIdParams.rowPinned).toBe('top');
 
             const updatedTopData = [{ athlete: 'Updated Top Athlete', sport: 'Updated Top Sport', age: 33 }];
             api.setGridOption('pinnedTopRowData', updatedTopData);
@@ -81,7 +93,19 @@ describe('pinned rows', () => {
         });
 
         test('are shown then updated with getRowId', () => {
-            const api = createMyGrid({ columnDefs, pinnedBottomRowData: bottomData, getRowId: (p) => p.data.athlete });
+            let getRowIdParams: GetRowIdParams | null = null;
+
+            const api = createMyGrid({
+                columnDefs,
+                pinnedBottomRowData: bottomData,
+                getRowId: (p) => {
+                    getRowIdParams = p;
+                    return p.data.athlete;
+                },
+            });
+
+            expect(getRowIdParams.data).toBe(bottomData[0]);
+            expect(getRowIdParams.rowPinned).toBe('bottom');
 
             assertPinnedRowData(bottomData, 'bottom');
 
