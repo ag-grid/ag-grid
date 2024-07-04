@@ -12,7 +12,7 @@
             "description": "Row was selected or unselected.",
             "type": {
                 "arguments": {
-                    "event": "RowSelectedEvent"
+                    "event": "RowNodeSelectedEvent"
                 },
                 "returnType": "void"
             }
