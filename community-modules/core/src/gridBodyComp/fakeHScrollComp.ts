@@ -136,14 +136,14 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     public getScrollPosition(): number {
-        return _getScrollLeft(this.getViewport(), this.enableRtl);
+        return _getScrollLeft(this.getViewportElement(), this.enableRtl);
     }
 
     public setScrollPosition(value: number): void {
-        if (!_isVisible(this.getViewport())) {
+        if (!_isVisible(this.getViewportElement())) {
             this.attemptSettingScrollPosition(value);
         }
-        _setScrollLeft(this.getViewport(), value, this.enableRtl);
+        _setScrollLeft(this.getViewportElement(), value, this.enableRtl);
     }
 }
 

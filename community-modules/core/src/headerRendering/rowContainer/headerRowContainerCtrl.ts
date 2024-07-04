@@ -221,7 +221,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         return ctrl.focusHeader(column, event);
     }
 
-    public getViewport(): HTMLElement {
+    public getViewportElement(): HTMLElement {
         return this.eViewport;
     }
 
@@ -231,6 +231,10 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public setHorizontalScroll(offset: number): void {
         this.comp.setViewportScrollLeft(offset);
+    }
+
+    public onScrollCallback(fn: () => void): void {
+        this.addManagedElementListeners(this.getViewportElement(), { scroll: fn });
     }
 
     public override destroy(): void {

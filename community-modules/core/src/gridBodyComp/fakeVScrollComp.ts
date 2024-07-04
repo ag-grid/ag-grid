@@ -64,14 +64,14 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     }
 
     public getScrollPosition(): number {
-        return this.getViewport().scrollTop;
+        return this.getViewportElement().scrollTop;
     }
 
     public setScrollPosition(value: number, force?: boolean): void {
-        if (!force && !_isVisible(this.getViewport())) {
+        if (!force && !_isVisible(this.getViewportElement())) {
             this.attemptSettingScrollPosition(value);
         }
-        this.getViewport().scrollTop = value;
+        this.getViewportElement().scrollTop = value;
     }
 }
 

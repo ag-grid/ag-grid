@@ -96,7 +96,7 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     protected attemptSettingScrollPosition(value: number) {
-        const viewport = this.getViewport();
+        const viewport = this.getViewportElement();
         _waitUntil(
             () => _isVisible(viewport),
             () => this.setScrollPosition(value),
@@ -104,7 +104,7 @@ export abstract class AbstractFakeScrollComp extends Component {
         );
     }
 
-    protected getViewport(): HTMLElement {
+    public getViewportElement(): HTMLElement {
         return this.eViewport;
     }
 
@@ -113,6 +113,6 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     public onScrollCallback(fn: () => void): void {
-        this.addManagedElementListeners(this.getViewport(), { scroll: fn });
+        this.addManagedElementListeners(this.getViewportElement(), { scroll: fn });
     }
 }
