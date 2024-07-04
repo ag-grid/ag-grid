@@ -630,7 +630,7 @@ export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile
 }
 
 export function findLocaleImport(bindingImports) {
-    return bindingImports.find((bindingImport) => bindingImport.module.includes('ag-grid-local'));
+    return bindingImports.find((bindingImport) => bindingImport.module.includes('@ag-grid-community/locale'));
 }
 
 function getGenericInterface(tData) {
