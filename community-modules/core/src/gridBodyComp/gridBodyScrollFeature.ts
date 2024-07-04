@@ -176,23 +176,11 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private getViewportForSource(source: ScrollSource): HTMLElement {
-        let viewport: HTMLElement;
-
-        switch (source) {
-            case ScrollSource.FakeVScrollbar:
-            case ScrollSource.FakeHScrollbar:
-            case ScrollSource.Header:
-            case ScrollSource.PinnedTop:
-            case ScrollSource.PinnedBottom:
-            case ScrollSource.StickyTop:
-            case ScrollSource.StickyBottom:
-                viewport = this.ctrlsService.get(source).getViewportElement();
-                break;
-            default:
-                viewport = this.centerRowsCtrl.getViewportElement();
+        if (source === ScrollSource.Viewport) {
+            return this.centerRowsCtrl.getViewportElement();
         }
 
-        return viewport;
+        return this.ctrlsService.get(source).getViewportElement();
     }
 
     private isControllingScroll(source: ScrollSource, direction: ScrollDirection): boolean {
