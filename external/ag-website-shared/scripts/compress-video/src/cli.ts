@@ -1,8 +1,9 @@
-import { join, parse } from 'path';
+import { parse } from 'path';
 
 import { getContentFolder } from './utils/agFiles';
-import { copyFiles, deleteFile, exists, fileSize, getFilePathsRecursively } from './utils/files';
-import { getVideo, reduceVideo } from './utils/video';
+import { getFilePathsRecursively } from './utils/files';
+import { reduceVideos } from './utils/video';
+import type { Metadata, OnVideoProcessCompleteParams } from './utils/video';
 
 const VIDEO_EXTENSIONS = ['.mp4', '.avi', '.mov', '.webm'];
 const VIDEO_MAX_WIDTH = 1036;
@@ -29,37 +30,28 @@ async function main({
         return VIDEO_EXTENSIONS.includes(ext);
     });
 
-    videoFiles.map(async (source) => {
-        const originalFileSize = await fileSize(source);
-        const { video, metadata } = await getVideo({ source });
-        if (metadata.width > maxWidth || metadata.fps > maxFrameRate) {
-            const { name, dir, ext } = parse(source);
-            const destination = join(dir, `${name}-optimized${ext}`);
-
-            if (await exists(destination)) {
-                await deleteFile(destination);
-            }
-
-            const width = metadata.width > maxWidth ? maxWidth : metadata.width;
-            const frameRate = metadata.fps > maxFrameRate ? maxFrameRate : metadata.fps;
-            const { fileSize } = await reduceVideo({
-                video,
-                width,
-                frameRate,
-                destination,
-            });
-
-            if (!skipReplace) {
-                await copyFiles(destination, source);
-                await deleteFile(destination);
-            }
-
+    await reduceVideos({
+        videoFiles,
+        maxWidth,
+        maxFrameRate,
+        skipReplace,
+        condition: ({ metadata }: { metadata: Metadata }) => metadata.width > maxWidth || metadata.fps > maxFrameRate,
+        onVideoProcessComplete: ({
+            skipReplace,
+            source,
+            destination,
+            originalFileSize,
+            fileSize,
+            metadata,
+            width,
+            frameRate,
+        }: OnVideoProcessCompleteParams) => {
             if (log) {
                 console.log(
                     `Resized video: ${skipReplace ? destination : source} (${originalFileSize} -> ${fileSize}, width ${metadata.width} -> ${width}, fps ${metadata.fps} -> ${frameRate})`
                 );
             }
-        }
+        },
     });
 }
 

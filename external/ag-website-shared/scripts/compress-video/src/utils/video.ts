@@ -1,12 +1,25 @@
 import ffmpeg from 'ffmpeg';
+import { join, parse } from 'path';
 
-import { fileSize } from './files';
+import { copyFiles, deleteFile, exists, fileSize } from './files';
+
+export type Metadata = Record<string, any>;
+export interface OnVideoProcessCompleteParams {
+    skipReplace?: boolean;
+    source: string;
+    destination: string;
+    originalFileSize: string;
+    fileSize: string;
+    metadata: Metadata;
+    width: number;
+    frameRate: number;
+}
 
 export async function getVideo({ source }: { source: string }) {
     const process = new ffmpeg(source);
     const video = await process;
 
-    const metadata: Record<string, any> = {
+    const metadata: Metadata = {
         width: video.metadata.video.resolution.w,
         height: video.metadata.video.resolution.h,
         filename: video.metadata.filename,
@@ -40,7 +53,7 @@ export async function reduceVideo({
     frameRate?: number;
 }) {
     const processVideo = () =>
-        new Promise(async (resolve, reject) => {
+        new Promise((resolve, reject) => {
             if (width !== undefined) {
                 video.setVideoSize(`${width}x?`, true, true);
             }
@@ -63,4 +76,61 @@ export async function reduceVideo({
     return {
         fileSize: newFileSize,
     };
+}
+
+export async function reduceVideos({
+    videoFiles,
+    maxWidth,
+    maxFrameRate,
+    skipReplace,
+    condition,
+    onVideoProcessComplete,
+}: {
+    videoFiles: string[];
+    maxWidth: number;
+    maxFrameRate: number;
+    skipReplace?: boolean;
+    condition: (params: { metadata: Metadata }) => boolean;
+    onVideoProcessComplete: (params: OnVideoProcessCompleteParams) => void;
+}) {
+    return Promise.all(
+        videoFiles.map(async (source) => {
+            const originalFileSize = await fileSize(source);
+            const { video, metadata } = await getVideo({ source });
+            if (condition({ metadata })) {
+                const { name, dir, ext } = parse(source);
+                const destination = join(dir, `${name}-optimized${ext}`);
+
+                if (await exists(destination)) {
+                    await deleteFile(destination);
+                }
+
+                const width = metadata.width > maxWidth ? maxWidth : metadata.width;
+                const frameRate = metadata.fps > maxFrameRate ? maxFrameRate : metadata.fps;
+                const { fileSize } = await reduceVideo({
+                    video,
+                    width,
+                    frameRate,
+                    destination,
+                });
+
+                if (!skipReplace) {
+                    await copyFiles(destination, source);
+                    await deleteFile(destination);
+                }
+
+                onVideoProcessComplete &&
+                    onVideoProcessComplete({
+                        skipReplace,
+                        source,
+                        destination,
+                        originalFileSize,
+                        fileSize,
+                        metadata,
+                        width,
+                        frameRate,
+                    });
+            }
+        })
+    );
 }
