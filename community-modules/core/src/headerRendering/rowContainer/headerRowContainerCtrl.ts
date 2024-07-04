@@ -8,6 +8,7 @@ import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
 import { CenterWidthFeature } from '../../gridBodyComp/centerWidthFeature';
+import type { ScrollPartner } from '../../gridBodyComp/gridBodyScrollFeature';
 import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
@@ -27,7 +28,7 @@ export interface IHeaderRowContainerComp {
     setCtrls(ctrls: HeaderRowCtrl[]): void;
 }
 
-export class HeaderRowContainerCtrl extends BeanStub {
+export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
     private pinnedWidthService: PinnedWidthService;
