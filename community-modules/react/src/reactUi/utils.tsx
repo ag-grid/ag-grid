@@ -1,4 +1,4 @@
-import { version } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 
 export const classesList = (...list: (string | null | undefined)[]): string => {
@@ -48,13 +48,14 @@ export const isComponentStateless = (Component: any) => {
     );
 };
 
-const reactVersion = version.split('.')[0];
+const reactVersion = React.version?.split('.')[0];
 // Note we don't do numerical comparison to enable experimental React versions to work.
 // See https://github.com/facebook/react/blob/main/ReactVersions.js
+// We only want to disable flushSync and change rendering behaviour for React 16 and 17
 const isReactVersion17Minus = reactVersion === '16' || reactVersion === '17';
 
 export function isReact17Minus(): boolean {
-    return !isReactVersion17Minus;
+    return isReactVersion17Minus;
 }
 
 let disableFlushSync = false;
