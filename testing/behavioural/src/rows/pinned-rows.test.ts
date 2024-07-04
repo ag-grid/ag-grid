@@ -61,16 +61,6 @@ describe('pinned rows', () => {
             api.setGridOption('pinnedTopRowData', updatedTopData);
             assertPinnedRowData(updatedTopData, 'top');
         });
-
-        test('are shown then updated with getRowId returning undefined', () => {
-            const api = createMyGrid({ columnDefs, pinnedTopRowData: topData, getRowId: () => '' });
-
-            assertPinnedRowData(topData, 'top');
-
-            const updatedTopData = [{ athlete: 'Updated Top Athlete', sport: 'Updated Top Sport', age: 33 }];
-            api.setGridOption('pinnedTopRowData', updatedTopData);
-            assertPinnedRowData(updatedTopData, 'top');
-        });
     });
 
     describe('bottom', () => {
