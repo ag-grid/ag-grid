@@ -1,0 +1,60 @@
+@use 'design-system' as *;
+
+.videoOuter {
+    display: inline-block;
+    position: relative;
+
+    video {
+        max-width: 100%;
+    }
+}
+
+.isPaused .pauseButton {
+    opacity: 1;
+}
+
+.isPlaying .playButton {
+    opacity: 1;
+}
+
+.buttonsOuter {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+
+    .videoOuter:hover & {
+        opacity: 1;
+        transition: opacity 0.66s ease-in-out;
+    }
+}
+
+.playButton,
+.pauseButton {
+    --size: #{$spacing-size-16};
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    transform: translate(calc(var(--size) / -2), calc(var(--size) / -2));
+    background-color: color-mix(in srgb, var(--color-bg-primary) 50%, transparent);
+    opacity: 0;
+    transition: background-color $transition-default-timing;
+
+    :global(.icon) {
+        --icon-size: var(--size);
+
+        fill: var(--color-bg-brand-solid);
+        transform: scale(1.2);
+        transition: fill $transition-default-timing;
+    }
+
+    &:hover {
+        background-color: color-mix(in srgb, var(--color-bg-primary) 80%, transparent);
+
+        :global(.icon) {
+            fill: var(--color-button-primary-bg-hover);
+        }
+    }
+}

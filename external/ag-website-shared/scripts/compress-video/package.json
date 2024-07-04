@@ -1,0 +1,19 @@
+{
+  "name": "compress-video",
+  "version": "0.0.1",
+  "description": "Compress video",
+  "main": "src/cli.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ag-grid/ag-website-shared.git"
+  },
+  "scripts": {
+    "compressVideo": "tsx src/cli"
+  },
+  "author": "Tak Tran <contact@tutaktran.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "ffmpeg": "^0.0.4",
+    "tsx": "^4.7.2"
+  }
+}
