@@ -501,6 +501,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const pixelAfterThisStore = pixel >= this.topPx + this.heightPx;
         if (pixelAfterThisStore) {
             const lastRowNode = this.nodesAfterSort[this.nodesAfterSort.length - 1];
+            if (!lastRowNode) {
+                return null;
+            }
             const lastRowNodeBottomPx = lastRowNode.rowTop! + lastRowNode.rowHeight!;
 
             if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded) {
