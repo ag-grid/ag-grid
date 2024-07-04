@@ -115,7 +115,7 @@ export {
     RowHighlightPosition,
     RowPinnedType,
     IRowNode,
-    RowSelectedEvent,
+    RowNodeSelectedEvent,
     MouseEnterEvent,
     MouseLeaveEvent,
     HeightChangedEvent,
