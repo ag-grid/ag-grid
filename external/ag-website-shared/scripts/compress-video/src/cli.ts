@@ -69,11 +69,13 @@ async function main({
     defaultWidth,
     defaultFrameRate,
     defaultSkipReplace,
+    skipPrompts,
     log,
 }: {
     defaultWidth: number;
     defaultFrameRate: number;
     defaultSkipReplace?: boolean;
+    skipPrompts?: boolean;
     log?: boolean;
 }) {
     const contentFolder = getContentFolder();
@@ -93,18 +95,27 @@ async function main({
         return;
     } else {
         if (log) {
-            console.log(`Found ${videoFiles.length} video files`);
+            console.log(`Found ${videoFiles.length} video files in ${contentFolder}`);
         }
     }
 
-    const { hasCancelled, maxWidth, maxFrameRate, skipReplace } = await getPromptResults({
-        defaultWidth,
-        defaultFrameRate,
-        defaultSkipReplace,
-    });
+    let maxWidth = defaultWidth;
+    let maxFrameRate = defaultFrameRate;
+    let skipReplace = defaultSkipReplace;
+    if (!skipPrompts) {
+        const results = await getPromptResults({
+            defaultWidth,
+            defaultFrameRate,
+            defaultSkipReplace,
+        });
 
-    if (hasCancelled) {
-        return;
+        if (results.hasCancelled) {
+            return;
+        }
+
+        maxWidth = results.maxWidth;
+        maxFrameRate = results.maxFrameRate;
+        skipReplace = results.skipReplace;
     }
 
     const videosFromFiles = videoFiles.map(async (source) => {
@@ -132,6 +143,10 @@ async function main({
         message: `Would you like to update the ${videos.length} video files?`,
         initial: !defaultSkipReplace,
     });
+
+    if (!confirm) {
+        return;
+    }
 
     await reduceVideos({
         videos,
@@ -161,5 +176,6 @@ main({
     defaultWidth: VIDEO_MAX_WIDTH,
     defaultFrameRate: VIDEO_MAX_FRAMERATE,
     defaultSkipReplace: false,
+    skipPrompts: true,
     log: true,
 });
