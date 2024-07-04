@@ -14,6 +14,7 @@ export interface OnVideoProcessCompleteParams {
     width: number;
     frameRate: number;
 }
+export type Video = Awaited<ReturnType<typeof getVideo>>;
 
 export async function getVideo({ source }: { source: string }) {
     const process = new ffmpeg(source);
@@ -61,6 +62,14 @@ export async function reduceVideo({
                 video.setVideoFrameRate(frameRate);
             }
 
+            const videoExt = parse(video.metadata.filename).ext;
+            const destExt = parse(destination).ext;
+
+            if (videoExt !== destExt) {
+                const videoFormat = destExt.slice(1);
+                video.setVideoFormat(videoFormat);
+            }
+
             video.save(destination, function (error, file) {
                 if (error) {
                     return reject(new Error('Error saving video file: ' + file));
@@ -79,58 +88,63 @@ export async function reduceVideo({
 }
 
 export async function reduceVideos({
-    videoFiles,
+    videos,
     maxWidth,
     maxFrameRate,
     skipReplace,
-    condition,
     onVideoProcessComplete,
 }: {
-    videoFiles: string[];
+    videos: Video[];
     maxWidth: number;
     maxFrameRate: number;
     skipReplace?: boolean;
-    condition: (params: { metadata: Metadata }) => boolean;
     onVideoProcessComplete: (params: OnVideoProcessCompleteParams) => void;
 }) {
     return Promise.all(
-        videoFiles.map(async (source) => {
+        videos.map(async ({ video, metadata }) => {
+            const source = video.metadata.filename;
             const originalFileSize = await fileSize(source);
-            const { video, metadata } = await getVideo({ source });
-            if (condition({ metadata })) {
-                const { name, dir, ext } = parse(source);
-                const destination = join(dir, `${name}-optimized${ext}`);
 
-                if (await exists(destination)) {
-                    await deleteFile(destination);
-                }
+            const { name, dir, ext } = parse(source);
+            const convertToMp4 = ext !== '.mp4';
+            const destExt = convertToMp4 ? '.mp4' : ext;
+            const destination = convertToMp4
+                ? join(dir, `${name}${destExt}`)
+                : join(dir, `${name}-optimized${destExt}`);
 
-                const width = metadata.width > maxWidth ? maxWidth : metadata.width;
-                const frameRate = metadata.fps > maxFrameRate ? maxFrameRate : metadata.fps;
-                const { fileSize } = await reduceVideo({
-                    video,
-                    width,
-                    frameRate,
-                    destination,
-                });
+            if (await exists(destination)) {
+                await deleteFile(destination);
+            }
 
-                if (!skipReplace) {
+            const width = metadata.width > maxWidth ? maxWidth : metadata.width;
+            const frameRate = metadata.fps > maxFrameRate ? maxFrameRate : metadata.fps;
+            const { fileSize: videoFileSize } = await reduceVideo({
+                video,
+                width,
+                frameRate,
+                destination,
+            });
+
+            if (!skipReplace) {
+                if (convertToMp4) {
+                    await deleteFile(source);
+                } else {
                     await copyFiles(destination, source);
                     await deleteFile(destination);
                 }
-
-                onVideoProcessComplete &&
-                    onVideoProcessComplete({
-                        skipReplace,
-                        source,
-                        destination,
-                        originalFileSize,
-                        fileSize,
-                        metadata,
-                        width,
-                        frameRate,
-                    });
             }
+
+            onVideoProcessComplete &&
+                onVideoProcessComplete({
+                    skipReplace,
+                    source,
+                    destination,
+                    originalFileSize,
+                    fileSize: videoFileSize,
+                    metadata,
+                    width,
+                    frameRate,
+                });
         })
     );
 }

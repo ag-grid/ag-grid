@@ -4,8 +4,8 @@ import type { PromptObject } from 'prompts';
 
 import { getContentFolder } from './utils/agFiles';
 import { getFilePathsRecursively } from './utils/files';
-import { reduceVideos } from './utils/video';
-import type { Metadata, OnVideoProcessCompleteParams } from './utils/video';
+import { getVideo, reduceVideos } from './utils/video';
+import type { OnVideoProcessCompleteParams } from './utils/video';
 
 const VIDEO_EXTENSIONS = ['.mp4', '.avi', '.mov', '.webm'];
 const VIDEO_MAX_WIDTH = 1036;
@@ -107,14 +107,32 @@ async function main({
         return;
     }
 
+    const videosFromFiles = videoFiles.map(async (source) => {
+        const { video, metadata } = await getVideo({ source });
+
+        return { video, metadata };
+    });
+    const videos = (await Promise.all(videosFromFiles)).filter(({ metadata }) => {
+        return metadata.width > maxWidth || metadata.fps > maxFrameRate;
+    });
+
+    if (videos.length <= 0) {
+        if (log) {
+            console.log(`No video files requiring updates in ${contentFolder}`);
+        }
+        return;
+    } else {
+        if (log) {
+            console.log(`Updating ${videos.length} video files`);
+        }
+    }
+
     await reduceVideos({
-        videoFiles,
+        videos,
         maxWidth,
         maxFrameRate,
         skipReplace,
-        condition: ({ metadata }: { metadata: Metadata }) => metadata.width > maxWidth || metadata.fps > maxFrameRate,
         onVideoProcessComplete: ({
-            skipReplace,
             source,
             destination,
             originalFileSize,
@@ -124,8 +142,9 @@ async function main({
             frameRate,
         }: OnVideoProcessCompleteParams) => {
             if (log) {
+                const { base } = parse(destination);
                 console.log(
-                    `Resized video: ${skipReplace ? destination : source} (${originalFileSize} -> ${fileSize}, width ${metadata.width} -> ${width}, fps ${metadata.fps} -> ${frameRate})`
+                    `Resized video: ${source} -> ${base} (${originalFileSize} -> ${fileSize}, width ${metadata.width} -> ${width}, fps ${metadata.fps} -> ${frameRate})`
                 );
             }
         },
