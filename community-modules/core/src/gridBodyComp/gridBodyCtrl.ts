@@ -371,12 +371,15 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onFullWidthContainerWheel(e: WheelEvent, eCenterColsViewport: Element): void {
-        if (!e.deltaX || Math.abs(e.deltaY) > Math.abs(e.deltaX) || !this.mouseEventService.isEventFromThisGrid(e)) {
-            return;
-        }
+        const { deltaX, deltaY, shiftKey } = e;
+        const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
 
-        e.preventDefault();
-        eCenterColsViewport.scrollBy({ left: e.deltaX });
+        if (isHorizontalScroll && this.mouseEventService.isEventFromThisGrid(e)) {
+            e.preventDefault();
+            // if it is a horizontal scroll and deltaX is zero,
+            // it means the OS has flipped the axis and it's using deltaY
+            eCenterColsViewport.scrollBy({ left: deltaX || deltaY });
+        }
     }
 
     private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
@@ -432,6 +435,8 @@ export class GridBodyCtrl extends BeanStub {
     private onStickyWheel(e: WheelEvent): void {
         const { deltaX, deltaY } = e;
 
+        // we test for shift key because some devices will
+        // only change deltaY even when scrolling horizontally
         if (!e.shiftKey && Math.abs(deltaY) > Math.abs(deltaX)) {
             e.preventDefault();
             this.scrollVertically(deltaY);
