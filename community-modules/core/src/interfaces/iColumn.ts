@@ -51,6 +51,11 @@ interface IProvidedColumn {
     /** Returns whether this column should be shown when the group is open / closed or undefined if its always shown. */
     getColumnGroupShow(): ColumnGroupShowType | undefined;
 
+    /**
+     * Returns the parent column group, if this column is part of a column group.
+     */
+    getOriginalParent(): ProvidedColumnGroup | null;
+
     /** Returns the unique ID for the column. */
     getId(): string;
 }
@@ -309,13 +314,6 @@ export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColum
 }
 
 export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter<AgProvidedColumnGroupEvent> {
-    /**
-     * Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.
-     *
-     * Parent may contain a duplicate but not identical group when the group is split.
-     */
-    getOriginalParent(): ProvidedColumnGroup | null;
-
     /** Returns the level of this group. */
     getLevel(): number;
 
