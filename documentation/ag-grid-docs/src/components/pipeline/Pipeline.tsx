@@ -143,8 +143,7 @@ export const Pipeline = ({ location }) => {
     );
 
     return (
-        <div className={classnames('page-margin', styles.container)}>
-            <h1>AG Grid Pipeline</h1>
+        <div>
             <section className={styles.header}>
                 <Alert type="idea">
                     <p>

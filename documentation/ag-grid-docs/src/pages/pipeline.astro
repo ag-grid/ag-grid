@@ -5,6 +5,8 @@ import { PagesNavigationFromLocalStorage } from '@components/pages-navigation/co
 import { getDocsPages } from '../features/docs/utils/pageData';
 import type { Framework, MenuSection } from '@ag-grid-types';
 import { Pipeline } from '@components/pipeline/Pipeline';
+import styles from '@pages-styles/pipelineChangelog.module.scss';
+import classnames from 'classnames';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -25,7 +27,9 @@ const allMenuSections = menu.main.sections as MenuSection[];
 >
     <div class:list={['contentViewport layout-grid']}>
         <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
-
-        <Pipeline client:only="react" />
+        <div className={classnames('page-margin', styles.container)}>
+            <h1>AG Grid Pipeline</h1>
+            <Pipeline client:only="react" />
+        </div>
     </div>
 </Layout>
