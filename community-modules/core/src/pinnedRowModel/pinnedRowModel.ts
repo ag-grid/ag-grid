@@ -17,6 +17,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         this.beans = beans;
     }
 
+    private nextId = 0;
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];
 
@@ -117,7 +118,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
                 const rowNode = new RowNode(this.beans);
                 rowNode.data = dataItem;
 
-                rowNode.id = getRowId?.({ data: dataItem, level: 0 }) ?? idPrefix + index;
+                rowNode.id = getRowId?.({ data: dataItem, level: 0 }) ?? idPrefix + this.nextId++;
 
                 rowNode.rowPinned = isTop ? 'top' : 'bottom';
                 rowNode.setRowTop(nextRowTop);
