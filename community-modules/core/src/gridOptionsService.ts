@@ -607,7 +607,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             let id = getRowId(params);
 
             if (typeof id !== 'string') {
-                _warnOnce(`The getRowId callback must return a string. The ID ${id} is being cast to a string.`);
+                _warnOnce(`The getRowId callback must return a string. The ID `, id, ` is being cast to a string.`);
                 id = String(id);
             }
 
