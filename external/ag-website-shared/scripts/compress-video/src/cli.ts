@@ -121,11 +121,17 @@ async function main({
             console.log(`No video files requiring updates in ${contentFolder}`);
         }
         return;
-    } else {
-        if (log) {
-            console.log(`Updating ${videos.length} video files`);
-        }
     }
+
+    console.log(`Found the following video files to update:`);
+    console.log(videos.map(({ video }) => video.metadata.filename));
+
+    const { confirm } = await prompts({
+        type: 'confirm',
+        name: 'confirm',
+        message: `Would you like to update the ${videos.length} video files?`,
+        initial: !defaultSkipReplace,
+    });
 
     await reduceVideos({
         videos,
