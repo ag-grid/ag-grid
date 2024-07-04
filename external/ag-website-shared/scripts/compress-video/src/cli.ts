@@ -1,4 +1,6 @@
 import { parse } from 'path';
+import prompts from 'prompts';
+import type { PromptObject } from 'prompts';
 
 import { getContentFolder } from './utils/agFiles';
 import { getFilePathsRecursively } from './utils/files';
@@ -9,15 +11,69 @@ const VIDEO_EXTENSIONS = ['.mp4', '.avi', '.mov', '.webm'];
 const VIDEO_MAX_WIDTH = 1036;
 const VIDEO_MAX_FRAMERATE = 30;
 
-async function main({
-    maxWidth,
-    maxFrameRate,
-    skipReplace,
-    log,
+async function getPromptResults({
+    defaultWidth,
+    defaultFrameRate,
+    defaultSkipReplace,
 }: {
+    defaultWidth: number;
+    defaultFrameRate: number;
+    defaultSkipReplace?: boolean;
+}): Promise<{
+    hasCancelled: boolean;
     maxWidth: number;
     maxFrameRate: number;
     skipReplace?: boolean;
+}> {
+    const questions: PromptObject[] = [
+        {
+            type: 'number',
+            name: 'maxWidth',
+            message: 'What should the max width of the video be (px)?',
+            initial: defaultWidth,
+            min: 1,
+        },
+        {
+            type: 'number',
+            name: 'maxFrameRate',
+            message: 'What should the frame rate of the video be?',
+            initial: defaultFrameRate,
+            min: 1,
+            max: 120,
+        },
+        {
+            type: 'confirm',
+            name: 'replaceFiles',
+            message: 'Do you want to replace the existing files?',
+            initial: !defaultSkipReplace,
+        },
+    ];
+    let hasCancelled = false;
+    const { maxWidth, maxFrameRate, replaceFiles } = await prompts(questions, {
+        onCancel: () => {
+            hasCancelled = true;
+        },
+    });
+
+    const skipReplace = !replaceFiles;
+
+    return {
+        hasCancelled,
+        maxWidth,
+        maxFrameRate,
+        skipReplace,
+    };
+}
+
+async function main({
+    defaultWidth,
+    defaultFrameRate,
+    defaultSkipReplace,
+    log,
+}: {
+    defaultWidth: number;
+    defaultFrameRate: number;
+    defaultSkipReplace?: boolean;
     log?: boolean;
 }) {
     const contentFolder = getContentFolder();
@@ -29,6 +85,27 @@ async function main({
         const { ext } = parse(path);
         return VIDEO_EXTENSIONS.includes(ext);
     });
+
+    if (videoFiles.length <= 0) {
+        if (log) {
+            console.log(`No video files found in ${contentFolder}`);
+        }
+        return;
+    } else {
+        if (log) {
+            console.log(`Found ${videoFiles.length} video files`);
+        }
+    }
+
+    const { hasCancelled, maxWidth, maxFrameRate, skipReplace } = await getPromptResults({
+        defaultWidth,
+        defaultFrameRate,
+        defaultSkipReplace,
+    });
+
+    if (hasCancelled) {
+        return;
+    }
 
     await reduceVideos({
         videoFiles,
@@ -56,7 +133,8 @@ async function main({
 }
 
 main({
-    maxWidth: VIDEO_MAX_WIDTH,
-    maxFrameRate: VIDEO_MAX_FRAMERATE,
+    defaultWidth: VIDEO_MAX_WIDTH,
+    defaultFrameRate: VIDEO_MAX_FRAMERATE,
+    defaultSkipReplace: false,
     log: true,
 });

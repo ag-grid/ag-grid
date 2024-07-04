@@ -15,5 +15,9 @@
   "devDependencies": {
     "ffmpeg": "^0.0.4",
     "tsx": "^4.7.2"
+  },
+  "dependencies": {
+    "@types/prompts": "^2.4.9",
+    "prompts": "^2.4.2"
   }
 }
