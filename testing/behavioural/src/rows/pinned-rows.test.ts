@@ -1,7 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GetRowIdParams, GridOptions } from '@ag-grid-community/core';
+import type { GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
-import exp from 'constants';
 
 describe('pinned rows', () => {
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
@@ -54,24 +53,26 @@ describe('pinned rows', () => {
         });
 
         test('are shown then updated with getRowId', () => {
-            let getRowIdParams: GetRowIdParams | null = null;
+            const getRowId = jest.fn((p) => {
+                return p.data.athlete;
+            });
 
             const api = createMyGrid({
                 columnDefs,
                 pinnedTopRowData: topData,
-                getRowId: (p) => {
-                    getRowIdParams = p;
-                    return p.data.athlete;
-                },
+                getRowId,
             });
 
             assertPinnedRowData(topData, 'top');
-            expect(getRowIdParams.data).toBe(topData[0]);
-            expect(getRowIdParams.rowPinned).toBe('top');
+            expect(getRowId).toHaveBeenLastCalledWith(expect.objectContaining({ data: topData[0], rowPinned: 'top' }));
 
             const updatedTopData = [{ athlete: 'Updated Top Athlete', sport: 'Updated Top Sport', age: 33 }];
             api.setGridOption('pinnedTopRowData', updatedTopData);
             assertPinnedRowData(updatedTopData, 'top');
+
+            expect(getRowId).toHaveBeenLastCalledWith(
+                expect.objectContaining({ data: updatedTopData[0], rowPinned: 'top' })
+            );
         });
     });
 
@@ -93,25 +94,29 @@ describe('pinned rows', () => {
         });
 
         test('are shown then updated with getRowId', () => {
-            let getRowIdParams: GetRowIdParams | null = null;
+            const getRowId = jest.fn((p) => {
+                return p.data.athlete;
+            });
 
             const api = createMyGrid({
                 columnDefs,
                 pinnedBottomRowData: bottomData,
-                getRowId: (p) => {
-                    getRowIdParams = p;
-                    return p.data.athlete;
-                },
+                getRowId,
             });
 
-            expect(getRowIdParams.data).toBe(bottomData[0]);
-            expect(getRowIdParams.rowPinned).toBe('bottom');
+            expect(getRowId).toHaveBeenLastCalledWith(
+                expect.objectContaining({ data: bottomData[0], rowPinned: 'bottom' })
+            );
 
             assertPinnedRowData(bottomData, 'bottom');
 
             const updatedBottom = [{ athlete: 'Updated Bottom Athlete', sport: 'Updated Bottom Sport', age: 33 }];
             api.setGridOption('pinnedBottomRowData', updatedBottom);
             assertPinnedRowData(updatedBottom, 'bottom');
+
+            expect(getRowId).toHaveBeenLastCalledWith(
+                expect.objectContaining({ data: updatedBottom[0], rowPinned: 'bottom' })
+            );
         });
     });
 });
