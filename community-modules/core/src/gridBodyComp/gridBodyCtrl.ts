@@ -430,8 +430,11 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onStickyWheel(e: WheelEvent): void {
-        if (e.offsetY) {
-            this.scrollVertically(e.deltaY);
+        const { deltaX, deltaY } = e;
+
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+            e.preventDefault();
+            this.scrollVertically(deltaY);
         }
     }
 
