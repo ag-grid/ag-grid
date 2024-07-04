@@ -3,9 +3,15 @@
 .videoOuter {
     display: inline-block;
     position: relative;
+    margin-bottom: $spacing-size-6;
 
     video {
         max-width: 100%;
+    }
+
+    &.centered {
+        display: flex;
+        justify-content: center;
     }
 }
 

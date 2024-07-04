@@ -10,12 +10,19 @@ interface Props {
     darkModeVideoSrc?: string;
     autoplay?: boolean;
     showPlayPauseButtons?: boolean;
+    centered?: boolean;
 }
 
-export const Video = ({ videoSrc, darkModeVideoSrc, autoplay = true, showPlayPauseButtons = true }: Props) => {
+export const Video = ({
+    videoSrc,
+    darkModeVideoSrc,
+    autoplay = true,
+    showPlayPauseButtons = true,
+    centered,
+}: Props) => {
     const [darkMode] = useDarkmode();
     const [src, setSrc] = useState<string>(videoSrc);
-    const [isPlaying, setIsPlaying] = useState<Boolean>(autoplay);
+    const [isPlaying, setIsPlaying] = useState<boolean>(autoplay);
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
@@ -37,7 +44,13 @@ export const Video = ({ videoSrc, darkModeVideoSrc, autoplay = true, showPlayPau
     };
 
     return (
-        <div className={classnames(styles.videoOuter, isPlaying ? styles.isPaused : styles.isPlaying)}>
+        <div
+            className={classnames(styles.videoOuter, {
+                [styles.isPaused]: isPlaying,
+                [styles.isPlaying]: !isPlaying,
+                [styles.centered]: centered,
+            })}
+        >
             <video ref={videoRef} src={src} autoPlay={autoplay} muted loop></video>
 
             {showPlayPauseButtons && (

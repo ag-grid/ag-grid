@@ -7,5 +7,6 @@ export const video: Schema<Config, Render> = {
         videoSrc: { type: String },
         autoplay: { type: Boolean },
         showPlayPauseButtons: { type: Boolean },
+        centered: { type: Boolean },
     },
 };
