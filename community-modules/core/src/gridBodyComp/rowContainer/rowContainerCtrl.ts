@@ -10,6 +10,7 @@ import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
 import { _getInnerWidth, _getScrollLeft, _isHorizontalScrollShowing, _isInDOM, _setScrollLeft } from '../../utils/dom';
 import { CenterWidthFeature } from '../centerWidthFeature';
+import type { ScrollPartner } from '../gridBodyScrollFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
@@ -221,7 +222,7 @@ export interface IRowContainerComp {
     setOffsetTop(offset: string): void;
 }
 
-export class RowContainerCtrl extends BeanStub {
+export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private dragService: DragService;
     private ctrlsService: CtrlsService;
     private columnViewportService: ColumnViewportService;

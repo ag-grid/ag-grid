@@ -34,6 +34,11 @@ enum ScrollSource {
     StickyBottom = 'stickyBottomCenter',
 }
 
+export interface ScrollPartner {
+    getViewportElement(): HTMLElement;
+    onScrollCallback(fn: () => void): void;
+}
+
 export class GridBodyScrollFeature extends BeanStub {
     private ctrlsService: CtrlsService;
     private animationFrameService: AnimationFrameService;
@@ -117,7 +122,8 @@ export class GridBodyScrollFeature extends BeanStub {
             if (source === ScrollSource.Viewport || source === ScrollSource.FakeVScrollbar) {
                 continue;
             }
-            params[source].onScrollCallback(this.onHScroll.bind(this, source));
+            const scrollPartner: ScrollPartner = params[source];
+            this.registerScrollPartner(scrollPartner, this.onHScroll.bind(this, source));
         }
     }
 
@@ -133,7 +139,11 @@ export class GridBodyScrollFeature extends BeanStub {
             : this.onVScroll.bind(this, ScrollSource.FakeVScrollbar);
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
-        params.fakeVScrollComp.onScrollCallback(onFakeVScroll);
+        this.registerScrollPartner(params.fakeVScrollComp, onFakeVScroll);
+    }
+
+    private registerScrollPartner(comp: ScrollPartner, callback: () => void) {
+        comp.onScrollCallback(callback);
     }
 
     private onDisplayedColumnsWidthChanged(): void {

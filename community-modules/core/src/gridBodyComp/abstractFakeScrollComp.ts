@@ -4,8 +4,9 @@ import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../ut
 import { _isVisible } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
 import { Component, RefPlaceholder } from '../widgets/component';
+import type { ScrollPartner } from './gridBodyScrollFeature';
 
-export abstract class AbstractFakeScrollComp extends Component {
+export abstract class AbstractFakeScrollComp extends Component implements ScrollPartner {
     private animationFrameService: AnimationFrameService;
 
     public wireBeans(beans: BeanCollection): void {
