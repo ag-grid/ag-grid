@@ -3,7 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragService } from '../../dragAndDrop/dragService';
-import type { DisplayedRowsChangedEvent, StickyTopOffsetChangedEvent } from '../../events';
+import type { StickyTopOffsetChangedEvent } from '../../events';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -214,6 +214,7 @@ const allNoFW: RowContainerName[] = [
 
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
+    setHorizontalScroll(offset: number): void;
     setRowCtrls(params: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }): void;
     setDomOrder(domOrder: boolean): void;
     setContainerWidth(width: string): void;
@@ -298,7 +299,6 @@ export class RowContainerCtrl extends BeanStub {
         this.createManagedBean(new RowContainerEventsFeature(this.eContainer));
         this.addPreventScrollWhileDragging();
         this.listenOnDomOrder();
-        this.stopHScrollOnPinnedRows();
 
         this.forContainers(allLeft, () => {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer));
@@ -321,6 +321,10 @@ export class RowContainerCtrl extends BeanStub {
 
         this.addListeners();
         this.registerWithCtrlsService();
+    }
+
+    public onScrollCallback(fn: () => void): void {
+        this.addManagedElementListeners(this.getViewportElement(), { scroll: fn });
     }
 
     private addListeners(): void {
@@ -350,16 +354,6 @@ export class RowContainerCtrl extends BeanStub {
 
         this.addManagedPropertyListener('domLayout', listener);
         listener();
-    }
-
-    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
-    // scroll the column into view. we do not want this, the pinned sections should never scroll.
-    // so we listen to scrolls on these containers and reset the scroll if we find one.
-    private stopHScrollOnPinnedRows(): void {
-        this.forContainers(['topCenter', 'stickyTopCenter', 'bottomCenter', 'stickyBottomCenter'], () => {
-            const resetScrollLeft = () => (this.eViewport.scrollLeft = 0);
-            this.addManagedElementListeners(this.eViewport, { scroll: resetScrollLeft });
-        });
     }
 
     public onDisplayedColumnsChanged(): void {
@@ -425,8 +419,8 @@ export class RowContainerCtrl extends BeanStub {
         return this.eViewport;
     }
 
-    public setContainerTranslateX(amount: number): void {
-        this.eContainer.style.transform = `translateX(${amount}px)`;
+    public setHorizontalScroll(offset: number): void {
+        this.comp.setHorizontalScroll(offset);
     }
 
     public getHScrollPosition(): { left: number; right: number } {

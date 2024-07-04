@@ -209,7 +209,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
+        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewportElement()) {
             this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }
