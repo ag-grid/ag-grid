@@ -1,7 +1,8 @@
 import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
     addBindingImports,
-    addGenericInterfaceImport, findLocaleImport,
+    addGenericInterfaceImport,
+    findLocaleImport,
     getIntegratedDarkModeCode,
     removeModuleRegistration,
 } from './parser-utils';
