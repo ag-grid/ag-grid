@@ -252,12 +252,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
 
             this.clientSideRowModel.updateRowData({
-                add: rowNodes!.filter(
-                    (node) =>
-                        !this.clientSideRowModel.getRowNode(
-                            getRowIdFunc?.({ data: node.data, level: 0, rowPinned: node.rowPinned }) ?? node.data.id
-                        )
-                ),
+                add: rowNodes!
+                    .filter(
+                        (node) =>
+                            !this.clientSideRowModel.getRowNode(
+                                getRowIdFunc?.({ data: node.data, level: 0, rowPinned: node.rowPinned }) ?? node.data.id
+                            )
+                    )
+                    .map((node) => node.data),
                 addIndex,
             });
         }
