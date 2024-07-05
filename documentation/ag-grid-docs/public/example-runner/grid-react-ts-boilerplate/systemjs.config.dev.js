@@ -20,9 +20,9 @@
             css: 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // react
-            react: 'npm:react@119.0.0-rc-100dfd7dab-20240701/cjs/react.development.js',
-            'react-dom': 'npm:react-dom@119.0.0-rc-100dfd7dab-20240701/cjs/react-dom.development.js',
-            'react-dom/client': 'npm:react-dom@119.0.0-rc-100dfd7dab-20240701/cjs/react-dom-client.development.js',
+            react: 'npm:react@19.0.0-rc-100dfd7dab-20240701/cjs/react.development.js',
+            'react-dom': 'npm:react-dom@19.0.0-rc-100dfd7dab-20240701/cjs/react-dom.development.js',
+            'react-dom/client': 'npm:react-dom@19.0.0-rc-100dfd7dab-20240701/cjs/react-dom-client.development.js',
             scheduler: 'npm:scheduler@0.23.2/cjs/scheduler.development.js',
 
             ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
