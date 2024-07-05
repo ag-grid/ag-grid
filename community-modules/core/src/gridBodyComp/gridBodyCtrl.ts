@@ -23,6 +23,7 @@ import type { LongTapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import type { MouseEventService } from './mouseEventService';
+import { _getRowContainerOptions } from './rowContainer/rowContainerCtrl';
 import { RowDragFeature } from './rowDragFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
@@ -98,6 +99,12 @@ export class GridBodyCtrl extends BeanStub {
     private eTop: HTMLElement;
     private eBottom: HTMLElement;
     private eStickyTop: HTMLElement;
+
+    private eCenterColsViewport: HTMLElement;
+    private eFullWidthContainer: HTMLElement;
+    private eStickyTopFullWidthContainer: HTMLElement;
+    private eStickyBottomFullWidthContainer: HTMLElement;
+
     private stickyTopHeight: number = 0;
     private eStickyBottom: HTMLElement;
     private stickyBottomHeight: number = 0;
@@ -129,6 +136,19 @@ export class GridBodyCtrl extends BeanStub {
         this.eBottom = eBottom;
         this.eStickyTop = eStickyTop;
         this.eStickyBottom = eStickyBottom;
+
+        this.eCenterColsViewport = eBodyViewport.querySelector(
+            `.${_getRowContainerOptions('center').viewport}`
+        ) as HTMLElement;
+        this.eFullWidthContainer = eBodyViewport.querySelector(
+            `.${_getRowContainerOptions('fullWidth').container}`
+        ) as HTMLElement;
+        this.eStickyTopFullWidthContainer = eStickyTop.querySelector(
+            `.${_getRowContainerOptions('stickyTopFullWidth').container}`
+        ) as HTMLElement;
+        this.eStickyBottomFullWidthContainer = eStickyBottom.querySelector(
+            `.${_getRowContainerOptions('stickyBottomFullWidth').container}`
+        ) as HTMLElement;
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>
@@ -360,26 +380,45 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addFullWidthContainerWheelListener(): void {
-        const fullWidthContainer = this.eBodyViewport.querySelector('.ag-full-width-container');
-        const eCenterColsViewport = this.eBodyViewport.querySelector('.ag-center-cols-viewport');
-
-        if (fullWidthContainer && eCenterColsViewport) {
-            this.addManagedElementListeners(fullWidthContainer, {
-                wheel: (e: WheelEvent) => this.onFullWidthContainerWheel(e, eCenterColsViewport),
-            });
-        }
+        this.addManagedElementListeners(this.eFullWidthContainer, {
+            wheel: (e: WheelEvent) => this.onFullWidthContainerWheel(e),
+        });
     }
 
-    private onFullWidthContainerWheel(e: WheelEvent, eCenterColsViewport: Element): void {
+    private onFullWidthContainerWheel(e: WheelEvent): void {
         const { deltaX, deltaY, shiftKey } = e;
         const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
 
         if (isHorizontalScroll && this.mouseEventService.isEventFromThisGrid(e)) {
-            e.preventDefault();
-            // if it is a horizontal scroll and deltaX is zero,
-            // it means the OS has flipped the axis and it's using deltaY
-            eCenterColsViewport.scrollBy({ left: deltaX || deltaY });
+            this.scrollGridBodyToMatchEvent(e);
         }
+    }
+
+    private onStickyWheel(e: WheelEvent): void {
+        const { deltaX, deltaY, shiftKey } = e;
+
+        const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
+
+        // we test for shift key because some devices will
+        // only change deltaY even when scrolling horizontally
+        const target = e.target as HTMLElement;
+        if (!isHorizontalScroll) {
+            e.preventDefault();
+            this.scrollVertically(deltaY);
+        } else if (
+            this.eStickyTopFullWidthContainer.contains(target) ||
+            this.eStickyBottomFullWidthContainer.contains(target)
+        ) {
+            this.scrollGridBodyToMatchEvent(e);
+        }
+    }
+
+    private scrollGridBodyToMatchEvent(e: WheelEvent): void {
+        const { deltaX, deltaY } = e;
+        e.preventDefault();
+        // if it is a horizontal scroll and deltaX is zero,
+        // it means the OS has flipped the axis and it's using deltaY
+        this.eCenterColsViewport.scrollBy({ left: deltaX || deltaY });
     }
 
     private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
@@ -429,17 +468,6 @@ export class GridBodyCtrl extends BeanStub {
 
         if (this.popupService.hasAnchoredPopup()) {
             e.preventDefault();
-        }
-    }
-
-    private onStickyWheel(e: WheelEvent): void {
-        const { deltaX, deltaY } = e;
-
-        // we test for shift key because some devices will
-        // only change deltaY even when scrolling horizontally
-        if (!e.shiftKey && Math.abs(deltaY) > Math.abs(deltaX)) {
-            e.preventDefault();
-            this.scrollVertically(deltaY);
         }
     }
 
