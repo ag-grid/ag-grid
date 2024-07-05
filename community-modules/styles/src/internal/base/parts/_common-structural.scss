@@ -210,7 +210,13 @@
     }
 
     .ag-body-viewport,
-    .ag-center-cols-viewport {
+    .ag-center-cols-viewport,
+    .ag-header-viewport,
+    .ag-floating-top-viewport,
+    .ag-floating-bottom-viewport,
+    .ag-sticky-top-viewport,
+    .ag-sticky-bottom-viewport {
+        overflow-x: auto;
         &::-webkit-scrollbar {
             display: none !important;
         }
@@ -220,6 +226,7 @@
 
     .ag-body-viewport {
         display: flex;
+        overflow-x: hidden;
 
         &.ag-layout-normal {
             overflow-y: auto;
@@ -227,10 +234,18 @@
         }
     }
 
+    // the sticky containers need at least one 1px height
+    // so we can set the scrollLeft position when there are
+    // no rows within, otherwise scrollLeft will always be 0
+    // and then making a row sticky causes the grid to scroll.
+    .ag-sticky-top-container,
+    .ag-sticky-bottom-container {
+        min-height: 1px;
+    }
+
     .ag-center-cols-viewport {
         min-height: 100%;
         width: 100%;
-        overflow-x: auto;
     }
 
     .ag-body-horizontal-scroll-viewport {
@@ -1072,6 +1087,8 @@
         position: absolute;
         display: flex;
         width: 100%;
+        overflow: hidden;
+        height: 0px;
     }
 
     .ag-pinned-left-sticky-top,

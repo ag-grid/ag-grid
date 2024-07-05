@@ -153,10 +153,12 @@ export const getPageImages = async ({
 
     // NOTE: Can't use variable in glob parameter. Need to use a string literal as it
     // is compiled before runtime. Should be the same as `docsPath` variable
-    const images = import.meta.glob<{ default: ImageMetadata }>('../../../content/docs/**/*.{jpeg,jpg,png,gif,svg}');
+    const images = import.meta.glob<{ default: ImageMetadata }>(
+        '../../../content/docs/**/*.{jpeg,jpg,png,gif,svg,mp4}'
+    );
 
     if (!images[fullImagePath]) {
-        const errorMsg = `Page "${pageName}" image "${imagePath}" does not exist in glob: "${docsPath}**/*.{jpeg,jpg,png,gif,svg}" (fullImagePath = ${fullImagePath})`;
+        const errorMsg = `Page "${pageName}" image "${imagePath}" does not exist in glob: "${docsPath}**/*.{jpeg,jpg,png,gif,svg,mp4}" (fullImagePath = ${fullImagePath})`;
         if (getIsDev()) {
             console.error(errorMsg);
 
@@ -167,14 +169,16 @@ export const getPageImages = async ({
     }
 
     const image = await images[fullImagePath]();
-    const imageSrc = image.default.src;
+    const imageSrc = image.default.src || image.default;
 
     const splitName = fullImagePath.split('.');
     const extension = splitName.at(-1);
     const darkModeImagePath = imagePath.replace(`.${extension}`, `-dark.${extension}`);
     const fullDarkModeImagePath = path.join(docsPath, pageName, darkModeImagePath);
     const darkModeImage = images[fullDarkModeImagePath];
-    const darkModeImageSrc = darkModeImage ? (await darkModeImage()).default.src : undefined;
+    const darkModeImageSrc = darkModeImage
+        ? (await darkModeImage()).default.src || (await darkModeImage()).default
+        : undefined;
 
     const gifImages: Partial<PageImages> = {};
     if (extension === 'gif') {

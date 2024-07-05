@@ -2648,11 +2648,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/modules-building/', to: '/react-data-grid/modules/' },
     { from: '/vue-data-grid/modules-building/', to: '/vue-data-grid/modules/' },
 
-    { from: '/javascript-data-grid/drag-and-drop/', to: '/javascript-data-grid/row-dragging-to-external-dropzone/' },
-    { from: '/angular-data-grid/drag-and-drop/', to: '/angular-data-grid/row-dragging-to-external-dropzone/' },
-    { from: '/react-data-grid/drag-and-drop/', to: '/react-data-grid/row-dragging-to-external-dropzone/' },
-    { from: '/vue-data-grid/drag-and-drop/', to: '/vue-data-grid/row-dragging-to-external-dropzone/' },
-
     { from: '/javascript-data-grid/client-side-model/', to: '/javascript-data-grid/row-models/' },
     { from: '/angular-data-grid/client-side-model/', to: '/angular-data-grid/row-models/' },
     { from: '/react-data-grid/client-side-model/', to: '/react-data-grid/row-models/' },

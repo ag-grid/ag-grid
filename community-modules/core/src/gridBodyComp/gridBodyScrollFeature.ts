@@ -23,9 +23,29 @@ enum ScrollDirection {
     Horizontal,
 }
 
-enum ScrollSource {
-    Container,
-    FakeContainer,
+enum CommonSources {
+    Viewport = 'Viewport',
+}
+
+enum VerticalSources {
+    FakeVScrollbar = 'fakeVScrollComp',
+}
+
+enum HorizontalSources {
+    FakeHScrollbar = 'fakeHScrollComp',
+    Header = 'centerHeader',
+    PinnedTop = 'topCenter',
+    PinnedBottom = 'bottomCenter',
+    StickyTop = 'stickyTopCenter',
+    StickyBottom = 'stickyBottomCenter',
+}
+
+type VerticalScrollSource = CommonSources | VerticalSources;
+type HorizontalScrollSource = CommonSources | HorizontalSources;
+
+export interface ScrollPartner {
+    getViewportElement(): HTMLElement;
+    onScrollCallback(fn: () => void): void;
 }
 
 export class GridBodyScrollFeature extends BeanStub {
@@ -53,7 +73,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private enableRtl: boolean;
 
-    private lastScrollSource: (number | null)[] = [null, null];
+    private lastScrollSource: [VerticalScrollSource | null, HorizontalScrollSource | null] = [null, null];
 
     private eBodyViewport: HTMLElement;
 
@@ -97,22 +117,39 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addScrollListener() {
-        const { fakeHScrollComp, fakeVScrollComp } = this.ctrlsService.getParams();
+        this.addHorizontalScrollListeners();
+        this.addVerticalScrollListeners();
+    }
 
+    private addHorizontalScrollListeners(): void {
+        const params = this.ctrlsService.getParams();
         this.addManagedElementListeners(this.centerRowsCtrl.getViewportElement(), {
-            scroll: this.onHScroll.bind(this),
+            scroll: this.onHScroll.bind(this, CommonSources.Viewport),
         });
-        fakeHScrollComp.onScrollCallback(this.onFakeHScroll.bind(this));
 
+        for (const source of Object.values(HorizontalSources)) {
+            const scrollPartner: ScrollPartner = params[source];
+            this.registerScrollPartner(scrollPartner, this.onHScroll.bind(this, source));
+        }
+    }
+
+    private addVerticalScrollListeners(): void {
+        const params = this.ctrlsService.getParams();
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
-        const onVScroll = isDebounce ? _debounce(this.onVScroll.bind(this), 100) : this.onVScroll.bind(this);
+        const onVScroll = isDebounce
+            ? _debounce(this.onVScroll.bind(this, CommonSources.Viewport), 100)
+            : this.onVScroll.bind(this, CommonSources.Viewport);
         const onFakeVScroll = isDebounce
-            ? _debounce(this.onFakeVScroll.bind(this), 100)
-            : this.onFakeVScroll.bind(this);
+            ? _debounce(this.onVScroll.bind(this, VerticalSources.FakeVScrollbar), 100)
+            : this.onVScroll.bind(this, VerticalSources.FakeVScrollbar);
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
-        fakeVScrollComp.onScrollCallback(onFakeVScroll);
+        this.registerScrollPartner(params.fakeVScrollComp, onFakeVScroll);
+    }
+
+    private registerScrollPartner(comp: ScrollPartner, callback: () => void) {
+        comp.onScrollCallback(callback);
     }
 
     private onDisplayedColumnsWidthChanged(): void {
@@ -126,7 +163,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }
     }
 
-    public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
+    private horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
         // when doing RTL, this method gets called once prematurely
         const notYetInitialised = this.centerRowsCtrl == null;
         if (notYetInitialised) {
@@ -137,67 +174,57 @@ export class GridBodyScrollFeature extends BeanStub {
             scrollLeft = this.centerRowsCtrl.getCenterViewportScrollLeft();
         }
 
-        const offset = this.enableRtl ? scrollLeft : -scrollLeft;
-        const { topCenter, stickyTopCenter, stickyBottomCenter, centerHeader, bottomCenter, fakeHScrollComp } =
-            this.ctrlsService.getParams();
+        this.setScrollLeftForAllContainersExceptCurrent(Math.abs(scrollLeft));
+    }
 
-        centerHeader.setHorizontalScroll(-offset);
-        bottomCenter.setContainerTranslateX(offset);
-        topCenter.setContainerTranslateX(offset);
-        stickyTopCenter.setContainerTranslateX(offset);
-        stickyBottomCenter.setContainerTranslateX(offset);
+    private setScrollLeftForAllContainersExceptCurrent(scrollLeft: number): void {
+        for (const container of [...Object.values(HorizontalSources), CommonSources.Viewport]) {
+            if (this.lastScrollSource[ScrollDirection.Horizontal] === container) {
+                continue;
+            }
 
-        const centerViewport = this.centerRowsCtrl.getViewportElement();
-        const isCenterViewportLastHorizontal =
-            this.lastScrollSource[ScrollDirection.Horizontal] === ScrollSource.Container;
-
-        scrollLeft = Math.abs(scrollLeft);
-
-        if (isCenterViewportLastHorizontal) {
-            fakeHScrollComp.setScrollPosition(scrollLeft);
-        } else {
-            _setScrollLeft(centerViewport, scrollLeft, this.enableRtl);
+            const viewport = this.getViewportForSource(container);
+            _setScrollLeft(viewport, scrollLeft, this.enableRtl);
         }
     }
 
-    private isControllingScroll(source: ScrollSource, direction: ScrollDirection): boolean {
+    private getViewportForSource(source: VerticalScrollSource | HorizontalScrollSource): HTMLElement {
+        if (source === CommonSources.Viewport) {
+            return this.centerRowsCtrl.getViewportElement();
+        }
+
+        return this.ctrlsService.get(source).getViewportElement();
+    }
+
+    private isControllingScroll(
+        source: HorizontalScrollSource | VerticalScrollSource,
+        direction: ScrollDirection
+    ): boolean {
         if (this.lastScrollSource[direction] == null) {
-            this.lastScrollSource[direction] = source;
+            if (direction === ScrollDirection.Vertical) {
+                this.lastScrollSource[0] = source as VerticalScrollSource;
+            } else {
+                this.lastScrollSource[1] = source as HorizontalScrollSource;
+            }
+
             return true;
         }
 
         return this.lastScrollSource[direction] === source;
     }
 
-    private onFakeHScroll(): void {
-        if (!this.isControllingScroll(ScrollSource.FakeContainer, ScrollDirection.Horizontal)) {
+    private onHScroll(source: HorizontalScrollSource): void {
+        if (!this.isControllingScroll(source, ScrollDirection.Horizontal)) {
             return;
         }
-        this.onHScrollCommon(ScrollSource.FakeContainer);
-    }
 
-    private onHScroll(): void {
-        if (!this.isControllingScroll(ScrollSource.Container, ScrollDirection.Horizontal)) {
-            return;
-        }
-        this.onHScrollCommon(ScrollSource.Container);
-    }
-
-    private onHScrollCommon(source: ScrollSource): void {
         const centerContainerViewport = this.centerRowsCtrl.getViewportElement();
         const { scrollLeft } = centerContainerViewport;
 
         if (this.shouldBlockScrollUpdate(ScrollDirection.Horizontal, scrollLeft, true)) {
             return;
         }
-
-        let newScrollLeft: number;
-
-        if (source === ScrollSource.Container) {
-            newScrollLeft = _getScrollLeft(centerContainerViewport, this.enableRtl);
-        } else {
-            newScrollLeft = this.ctrlsService.get('fakeHScrollComp').getScrollPosition();
-        }
+        const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl);
 
         // we do Math.round() rather than Math.floor(), to mirror how scroll values are applied.
         // eg if a scale is applied (ie user has zoomed the browser), then applying scroll=200
@@ -209,24 +236,14 @@ export class GridBodyScrollFeature extends BeanStub {
         this.resetLastHScrollDebounced();
     }
 
-    private onFakeVScroll(): void {
-        if (!this.isControllingScroll(ScrollSource.FakeContainer, ScrollDirection.Vertical)) {
+    private onVScroll(source: VerticalScrollSource): void {
+        if (!this.isControllingScroll(source, ScrollDirection.Vertical)) {
             return;
         }
-        this.onVScrollCommon(ScrollSource.FakeContainer);
-    }
 
-    private onVScroll(): void {
-        if (!this.isControllingScroll(ScrollSource.Container, ScrollDirection.Vertical)) {
-            return;
-        }
-        this.onVScrollCommon(ScrollSource.Container);
-    }
-
-    private onVScrollCommon(source: ScrollSource): void {
         let scrollTop: number;
 
-        if (source === ScrollSource.Container) {
+        if (source === CommonSources.Viewport) {
             scrollTop = this.eBodyViewport.scrollTop;
         } else {
             scrollTop = this.ctrlsService.get('fakeVScrollComp').getScrollPosition();
@@ -238,7 +255,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.animationFrameService.setScrollTop(scrollTop);
         this.nextScrollTop = scrollTop;
 
-        if (source === ScrollSource.Container) {
+        if (source === CommonSources.Viewport) {
             this.ctrlsService.get('fakeVScrollComp').setScrollPosition(scrollTop);
         } else {
             this.eBodyViewport.scrollTop = scrollTop;
@@ -358,7 +375,7 @@ export class GridBodyScrollFeature extends BeanStub {
     // triggers a resize event, so notify listeners if the scroll position has changed
     public checkScrollLeft(): void {
         if (this.scrollLeft !== this.centerRowsCtrl.getCenterViewportScrollLeft()) {
-            this.onHScrollCommon(ScrollSource.Container);
+            this.onHScroll(CommonSources.Viewport);
         }
     }
 

@@ -132,6 +132,11 @@ function addPackageImports(
         addBindingImports(bImports, imports, true, true);
     }
 
+    const localeImport = findLocaleImport(bindings.imports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
+    }
+
     return imports;
 }
 
@@ -146,11 +151,6 @@ function getImports(
 
     if (bindings.data) {
         imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
-    }
-
-    const localeImport = findLocaleImport(bindings.imports);
-    if (localeImport) {
-        imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
     }
 
     if (importType === 'packages') {

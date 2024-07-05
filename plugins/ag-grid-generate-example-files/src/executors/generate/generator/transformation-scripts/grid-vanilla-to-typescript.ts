@@ -2,6 +2,7 @@ import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
     addBindingImports,
     addGenericInterfaceImport,
+    findLocaleImport,
     getIntegratedDarkModeCode,
     removeModuleRegistration,
 } from './parser-utils';
@@ -80,11 +81,20 @@ function getPackageImports(bindings: ParsedBindings): string[] {
 }
 
 function getImports(bindings: ParsedBindings, importType: ImportType): string[] {
-    if (importType === 'packages') {
-        return getPackageImports(bindings);
-    } else {
-        return getModuleImports(bindings);
+    const imports = [];
+
+    const localeImport = findLocaleImport(bindings.imports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
     }
+
+    if (importType === 'packages') {
+        imports.push(...getPackageImports(bindings));
+    } else {
+        imports.push(...getModuleImports(bindings));
+    }
+
+    return imports;
 }
 
 export function vanillaToTypescript(
