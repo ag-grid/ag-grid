@@ -25,8 +25,15 @@ const isRedirectPage = (page: string) => {
     );
 };
 
+/*
+ * Exclude specific pages
+ */
+const isNonPublicContent = (page: string) => {
+    return page.endsWith('/style-guide/');
+};
+
 const filterIgnoredPages = (page: string) => {
-    return !isExamplePage(page) && !isDebugPage(page) && !isRedirectPage(page);
+    return !isExamplePage(page) && !isDebugPage(page) && !isRedirectPage(page) && !isNonPublicContent(page);
 };
 
 export function getSitemapConfig() {
