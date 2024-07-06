@@ -502,7 +502,11 @@ export function addBindingImports(
     const workingImports = {};
     const namespacedImports = [];
 
-    bindingImports.forEach((i: BindingImport) => {
+    bindingImports
+        .filter((i: BindingImport) => {
+            return !i.module.includes('@ag-grid-community/locale')
+        })
+        .forEach((i: BindingImport) => {
         const path = convertImportPath(i.module, convertToPackage);
         if (!i.module.includes('_typescript') || !ignoreTsImports) {
             workingImports[path] = workingImports[path] || {
@@ -534,6 +538,7 @@ export function addBindingImports(
 
     [...new Set(namespacedImports)].forEach((ni) => imports.push(ni));
 
+    console.log(workingImports);
     let hasEnterpriseModules = false;
     Object.entries(workingImports).forEach(([k, v]: [string, { namedImport: string; imports: string[] }]) => {
         let unique = [...new Set(v.imports)].sort();
