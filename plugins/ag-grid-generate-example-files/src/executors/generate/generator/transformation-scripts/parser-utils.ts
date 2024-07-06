@@ -504,37 +504,37 @@ export function addBindingImports(
 
     bindingImports
         .filter((i: BindingImport) => {
-            return !i.module.includes('@ag-grid-community/locale')
+            return !i.module.includes('@ag-grid-community/locale');
         })
         .forEach((i: BindingImport) => {
-        const path = convertImportPath(i.module, convertToPackage);
-        if (!i.module.includes('_typescript') || !ignoreTsImports) {
-            workingImports[path] = workingImports[path] || {
-                namedImport: undefined,
-                imports: [],
-            };
-            if (i.isNamespaced) {
-                if (i.imports.length > 0) {
-                    namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
+            const path = convertImportPath(i.module, convertToPackage);
+            if (!i.module.includes('_typescript') || !ignoreTsImports) {
+                workingImports[path] = workingImports[path] || {
+                    namedImport: undefined,
+                    imports: [],
+                };
+                if (i.isNamespaced) {
+                    if (i.imports.length > 0) {
+                        namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
+                    } else {
+                        namespacedImports.push(`import ${path};`);
+                    }
                 } else {
-                    namespacedImports.push(`import ${path};`);
-                }
-            } else {
-                if (i.namedImport) {
-                    workingImports[path] = {
-                        ...workingImports[path],
-                        namedImport: i.namedImport,
-                    };
-                }
-                if (i.imports) {
-                    workingImports[path] = {
-                        ...workingImports[path],
-                        imports: [...workingImports[path].imports, ...i.imports],
-                    };
+                    if (i.namedImport) {
+                        workingImports[path] = {
+                            ...workingImports[path],
+                            namedImport: i.namedImport,
+                        };
+                    }
+                    if (i.imports) {
+                        workingImports[path] = {
+                            ...workingImports[path],
+                            imports: [...workingImports[path].imports, ...i.imports],
+                        };
+                    }
                 }
             }
-        }
-    });
+        });
 
     [...new Set(namespacedImports)].forEach((ni) => imports.push(ni));
 
