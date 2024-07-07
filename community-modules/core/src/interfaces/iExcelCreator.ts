@@ -505,6 +505,11 @@ export interface ExcelExportMultipleSheetParams {
      */
     fileName?: string | ExportFileNameGetter;
     /**
+     * The sheet to be marked as active by default.
+     * @default 0
+     */
+    activeSheet?: number;
+    /**
      * The default value for the font size of the Excel document.
      * @default 11
      */

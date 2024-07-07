@@ -465,6 +465,8 @@
         align-items: center;
         position: absolute;
         height: 100%;
+        // without this the ag-header-row becomes scrollable
+        overflow: hidden;
     }
 
     .ag-header-cell.ag-header-active .ag-header-cell-menu-button,
