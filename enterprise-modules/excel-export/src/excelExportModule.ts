@@ -1,4 +1,4 @@
-import type { _ExcelExportGridApi } from '@ag-grid-community/core';
+import type { ExcelExportGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { _CsvExportCoreModule } from '@ag-grid-community/csv-export';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
@@ -20,7 +20,7 @@ export const _ExcelExportCoreModule = _defineModule({
     dependantModules: [_CsvExportCoreModule, EnterpriseCoreModule],
 });
 
-export const _ExcelExportApiModule = _defineModule<_ExcelExportGridApi>({
+export const _ExcelExportApiModule = _defineModule<ExcelExportGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.ExcelExportModule}-api`,
     apiFunctions: {

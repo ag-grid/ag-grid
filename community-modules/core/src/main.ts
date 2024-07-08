@@ -597,7 +597,7 @@ export {
     ServerSideRowModelGridApi,
     MenuGridApi,
     MasterDetailGridApi,
-    _ExcelExportGridApi,
+    ExcelExportGridApi,
     ClipboardGridApi,
     GridChartsGridApi,
     AdvancedFilterGridApi,

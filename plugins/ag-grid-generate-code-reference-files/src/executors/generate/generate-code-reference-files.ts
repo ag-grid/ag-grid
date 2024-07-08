@@ -444,7 +444,7 @@ export function getColumnOptions(colDefFile: string, filterFile: string) {
 
 export function getGridApi(gridApiFile: string) {
     const srcFile = parseFile(gridApiFile);
-    const gridApi = findNode('GridApi', srcFile) as ts.InterfaceDeclaration;
+    const gridApi: ts.InterfaceDeclaration = findNode('GridApi', srcFile);
 
     // console.log(gridApi.heritageClauses);
 

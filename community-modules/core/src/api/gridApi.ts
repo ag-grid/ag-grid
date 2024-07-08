@@ -1079,7 +1079,7 @@ export interface MasterDetailGridApi {
     forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void): void;
 }
 
-export interface _ExcelExportGridApi {
+export interface ExcelExportGridApi {
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined;
 
@@ -1201,7 +1201,7 @@ export interface GridApi<TData = any>
         ServerSideRowModelGridApi,
         MenuGridApi,
         MasterDetailGridApi,
-        _ExcelExportGridApi,
+        ExcelExportGridApi,
         ClipboardGridApi,
         GridChartsGridApi,
         AdvancedFilterGridApi {
