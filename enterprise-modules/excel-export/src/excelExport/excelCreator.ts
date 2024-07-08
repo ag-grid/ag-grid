@@ -352,6 +352,7 @@ export class ExcelCreator
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gos.get('excelStyles') || [],
+            rightToLeft: params.rightToLeft ?? this.gos.get('enableRtl'),
             styleLinker: this.styleLinker.bind(this),
         };
 
