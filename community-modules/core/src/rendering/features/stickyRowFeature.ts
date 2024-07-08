@@ -252,8 +252,10 @@ export class StickyRowFeature extends BeanStub {
                 if (suppressFootersSticky === 'group' && row.level > -1) {
                     return false;
                 }
-                if (container === 'bottom') {
-                    // Footer rows should never stick to the bottom of the viewport
+                const isFooterFirstRowInGroup = row.sibling.rowIndex
+                    ? row.sibling.rowIndex + 1 === row.rowIndex
+                    : false;
+                if (container === 'bottom' && isFooterFirstRowInGroup) {
                     return false;
                 }
 
