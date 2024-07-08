@@ -175,13 +175,6 @@ export default defineUserConfig({
     // Handle everything else, including `import { createGrid } from "@my-org/my-grid"`
         return importName === agGridExportName;
     },
-
-    getCreateGridName({ importPath }) {
-        if (importPath === "@my-org/my-grid") {
-            return 'createGridWithCustomOption';
-        }
-        return null;
-    },
 });
 ```
 
