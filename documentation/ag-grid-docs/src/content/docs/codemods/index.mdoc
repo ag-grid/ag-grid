@@ -4,7 +4,8 @@ title: "Codemods"
 
 ## How to Upgrade AG Grid Version
 
-All major AG Grid releases from v31 onwards come with an accompanying Codemod to help automate the upgrade process. Codemods are small scripts that fix your project's source files to address the majority of breaking changes and deprecations when upgrading from an older version.
+All major AG Grid releases from v31 onwards come with an accompanying Codemod to help automate the upgrade process.
+Codemods are scripts that fix your project's source files to address the majority of breaking changes and deprecations when upgrading from an older version.
 
 This is the easiest way to make sure your projects stay up-to-date with the latest AG Grid changes.
 
@@ -29,3 +30,170 @@ Some points to bear in mind when using Codemods:
 * While we attempt to automate as many upgrade paths as possible, unusual use cases may still require some manual intervention.
 
 See the relevant migration documentation page for more information on the Codemod for a specific AG Grid version.
+
+
+## Usage
+
+Typically to run the migration you would run the following command, where `$FROM_VERSION` refers to your project's existing AG Grid version.
+
+```
+npx @ag-grid-devtools/cli@latest migrate --from=$FROM_VERSION
+```
+
+For example, to migrate from AG Grid v30 to v31, you would run:
+
+```
+npx @ag-grid-devtools/cli@latest migrate --from=30
+```
+
+
+### Arguments
+
+* `--from=<version>` _required_
+
+    AG Grid [semver](https://semver.org/) version to migrate from.
+
+    For example `--from=30` or `--from=30.0.0` 
+
+* `--to=<version>`
+
+    AG Grid [semver](https://semver.org/) version to migrate to (defaults to the latest)
+
+* `--num-threads=<number>`
+
+    Number of worker threads to spawn (defaults to the number of system cores).
+
+* `--dry-run`
+
+    Show a diff output of the changes that would be made, without writing any file.
+
+    Useful for reviewing the changes before applying them.
+
+* `--verbose`
+
+    Show additional log output.
+
+* `--help`
+
+    Show detailed usage instructions.
+
+To prevent accidental changes, the migrate command will only operate on a git repository and only if the working tree is clean.
+The following options can be used to override this behaviour:
+
+* `--allow-untracked`
+    Allow operating on files outside a git repository.
+    By default the application will terminate if you try to run it inside a non git directory.
+
+* `--allow-dirty`
+    Allow operating on repositories with uncommitted changes in the working tree
+    It is advisable to always commit before running the migration, but this option can be used to override the default behaviour.
+
+
+A custom list of input files can be passed to the `migrate` command:
+
+* [<file>...]
+    List of input files to operate on (defaults to all source files in the current working directory)
+    By default the Codemod runner will locate all source files within the current directory.
+    For projects with more specific requirements, pass a list of input files to the `migrate` command.
+
+A configuration file can also be used for advanced use cases:
+
+* `--config=<path>`
+
+    Loads a custom configuration file.
+    See the [Configuration file](#configuration-file) section for more information.
+
+### Configuration file
+
+A configuration file is a [commonJS](https://en.wikipedia.org/wiki/CommonJS) JavaScript or TypeScript module that exports a configuration object.
+- A JavaScript file, with extension `.cjs` - ```npx @ag-grid-devtools/cli migrate --config=./my-migration-config.cjs```
+- A [TypeScript](https://www.typescriptlang.org/) file with extension `.cts` - ```npx @ag-grid-devtools/cli migrate --config=./my-migration-config.cts```
+- A commonJS module from a package installed in node_modules with the `module:` prefix - ```npx @ag-grid-devtools/cli migrate --config=module:my-npm-package/my-grid-migration.cjs```
+
+my-migration-config.cjs
+```
+const { defineUserConfig } = require('@ag-grid-devtools/cli/user-config');
+
+module.exports = defineUserConfig({
+    /// ... configuration here
+});
+```
+
+my-migration-config.cts
+```ts
+import { defineUserConfig } from '@ag-grid-devtools/cli/user-config';
+
+export default defineUserConfig({
+    /// ... configuration here
+});
+```
+
+See [user-config.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/user-config.ts) and
+[ag-grid-export-name.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/ag-grid-export-name.ts) for the details
+on the configuration object.
+
+### Custom import paths and names
+
+In case your organization has custom grid wrappers, you can provide custom interceptors in the configuration file to
+handle the migration of these custom grid wrappers.
+
+Let's assume organization "my-org" has two custom grid wrappers packages `@my-org/my-grid-react` and `@my-org/my-grid-vanilla`:
+
+```
+// @my-org/my-grid-vanilla.ts
+import { createGrid, GridOptions } from '@ag-grid-community/core';
+export interface GridCustomOptions extends GridOptions { customOption: string; }
+export const createGridWithCustomOptions = (options: GridOptions) => {
+    console.log('Custom grid options', options.customOption);
+    return createGrid(options);
+}
+```
+
+```
+// @my-org/my-grid-react.tsx
+import { createGrid, AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
+export { createGrid };
+export interface MyGridReactProps extends AgGridReactProps { wrapperClassName?: string; }
+export const MyGridReact = ({wrapperClassName, ...gridProps}: AgGridReactProps) => 
+    <div className={wrapperClassName}><AgGridReact {...gridProps} /></div>;
+```
+
+Then the configuration file could be something like this:
+
+```ts
+// my-grid-migration-config.ts
+import { defineUserConfig } from '@ag-grid-devtools/cli/user-config';
+
+export default defineUserConfig({
+
+  matchGridImport({ importPath }): boolean {
+    // This must return true if the import path is a custom grid wrapper
+    // For example `import {...} from "@my-org/my-grid-react"`
+    return importPath === "@my-org/my-grid-vanilla" || importPath === "@my-org/my-grid-react";
+  },
+
+  matchGridImportName({ importPath, importName, agGridExportName }): boolean {
+    // Handle`import { MyGridReact } from "@my-org/my-grid-react"`
+    // This interceptor will be called only if a previous call to
+    // `matchGridImport` returned true for the same import path
+    if (importPath === "@my-org/my-grid-react" && agGridExportName === "AgGridReact") {
+      return importName === "MyGridReact";
+    }
+    if (importPath === "@my-org/my-grid-vanilla" && agGridExportName === "createGrid") {
+      return importName === "createGridWithCustomOptions";
+    }
+    // Handle everything else.
+    // for example import { createGrid } from "@my-org/my-grid-vanilla"
+    return agGridExportName === agGridExportName;
+  },
+});
+```
+
+To execute the migration with the custom configuration file:
+
+```
+npx @ag-grid-devtools/cli migrate --from=30 --config=./my-grid-migration-config.ts
+```
+
+See [user-config.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/user-config.ts) and
+[ag-grid-export-name.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/ag-grid-export-name.ts) for more technical details and more options.
