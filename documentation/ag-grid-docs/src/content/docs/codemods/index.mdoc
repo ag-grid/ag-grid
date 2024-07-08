@@ -139,11 +139,12 @@ Let's assume organization "my-org" has two custom grid wrapper in the package `@
 // @my-org/my-grid/index.ts
 import { createGrid, GridOptions } from '@ag-grid-community/core';
 export interface GridCustomOptions extends GridOptions { customOption: string; }
-export const createGridWithCustomOption = (options: GridOptions) => {
-    console.log('Custom grid option', options.customOption);
+export const createGridWithCustomOption = (myOptions: GridCustomOptions) => {
+    const { customOption, ...options } = myOptions;
+    console.log('Custom grid option', customOption);
     return createGrid(options);
 }
-export { createGrid }
+export { createGrid };
 ```
 
 Then the configuration file could be:
@@ -164,10 +165,10 @@ export default defineUserConfig({
         // This interceptor will be called only if a previous call to
         // `matchGridImport` returned true for the same import path
         if (importPath === "@my-org/my-grid" && agGridExportName === "createGrid") {
-            // Handle`import { createGridWithCustomOption } from "@my-org/my-grid"`
-            return importName === "createGridWithCustomOption";
+            // Handle`import { createGridWithCustomOption, createGrid } from "@my-org/my-grid"`
+            return importName === "createGridWithCustomOption" || importName === 'createGrid';
         }
-        // Handle everything else, including `import { createGrid } from "@my-org/my-grid"`
+        // Handle everything else (default case).
         return importName === agGridExportName;
     },
 });
@@ -248,17 +249,6 @@ export default defineUserConfig({
 {% if isFramework("vue") %}
 
 Let's assume organization "my-org" has a custom vue grid wrapper in the package `@my-org/my-grid-vue`
-
-```ts
-// @my-org/my-grid/index.ts
-import { createGrid, GridOptions } from '@ag-grid-community/core';
-export interface GridCustomOptions extends GridOptions { customOption: string; }
-export const createGridWithCustomOptions = (options: GridOptions) => {
-    console.log('Custom grid options', options.customOption);
-    return createGrid(options);
-}
-export { createGrid }
-```
 
 Then the configuration file could be:
 
