@@ -63,11 +63,6 @@ blockquote:where(:not(:last-child)) {
     margin-bottom: $spacing-size-5;
 }
 
-p:where(:not(:last-child)) {
-    margin-top: $spacing-size-2;
-    margin-bottom: $spacing-size-5;
-}
-
 %enterprise-icon {
     display: inline-block;
     background-image: url(urlWithBaseUrl('/images/enterprise.svg'));
