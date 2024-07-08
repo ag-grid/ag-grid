@@ -8,7 +8,9 @@ import type {
     SetFilterParams,
     ValueService,
 } from '@ag-grid-community/core';
-import { AgPromise, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
+import { AgPromise, _makeNull } from '@ag-grid-community/core';
+
+import { processDataPath } from './setFilter/setFilterUtils';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
@@ -116,13 +118,8 @@ export class ClientSideValuesExtractor<V> {
             dataPath = groupedCols.map((groupCol) => this.valueService.getKeyForNode(groupCol, node));
             dataPath.push(this.getValue(node) as any);
         }
-        if (dataPath) {
-            dataPath = dataPath.map((treeKey) => _toStringOrNull(_makeNull(treeKey))) as any;
-        }
-        if (!treeData && this.groupAllowUnbalanced && dataPath?.some((treeKey) => treeKey == null)) {
-            dataPath = dataPath.filter((treeKey) => treeKey != null);
-        }
-        addValue(this.createKey(dataPath as any), dataPath as any);
+        const processedDataPath = processDataPath(dataPath, treeData, this.groupAllowUnbalanced);
+        addValue(this.createKey(processedDataPath as any), processedDataPath as any);
     }
 
     private getValue(node: RowNode): V | null | undefined {
