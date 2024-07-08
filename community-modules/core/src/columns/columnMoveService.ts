@@ -93,8 +93,6 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
     private doesMovePassLockedPositions(proposedColumnOrder: AgColumn[]): boolean {
         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
-        let lastPlacement = 0;
-        let rulePassed = true;
         const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
             if (!position) {
                 // false or undefined
@@ -106,11 +104,21 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             return position === 'left' ? 0 : 2; // Otherwise 'right'
         };
 
+        const isRtl = this.gos.get('enableRtl');
+        let lastPlacement = isRtl ? 2 : 0;
+        let rulePassed = true;
         proposedColumnOrder.forEach((col) => {
             const placement = lockPositionToPlacement(col.getColDef().lockPosition);
-            if (placement < lastPlacement) {
-                // If placement goes down, we're not in the correct order
-                rulePassed = false;
+            if (isRtl) {
+                if (placement > lastPlacement) {
+                    // If placement goes up, we're not in the correct order
+                    rulePassed = false;
+                }
+            } else {
+                if (placement < lastPlacement) {
+                    // If placement goes down, we're not in the correct order
+                    rulePassed = false;
+                }
             }
             lastPlacement = placement;
         });
