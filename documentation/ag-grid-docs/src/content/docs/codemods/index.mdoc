@@ -169,10 +169,10 @@ export default defineUserConfig({
         // This interceptor will be called only if a previous call to
         // `matchGridImport` returned true for the same import path
         if (importPath === "@my-org/my-grid" && agGridExportName === "createGrid") {
-        // Handle`import { createGridWithCustomOption } from "@my-org/my-grid"`
-        return importName === "createGridWithCustomOption";
-    }
-    // Handle everything else, including `import { createGrid } from "@my-org/my-grid"`
+            // Handle`import { createGridWithCustomOption } from "@my-org/my-grid"`
+            return importName === "createGridWithCustomOption";
+        }
+        // Handle everything else, including `import { createGrid } from "@my-org/my-grid"`
         return importName === agGridExportName;
     },
 });
