@@ -173,7 +173,7 @@ export default defineUserConfig({
         return importName === "createGridWithCustomOption";
     }
     // Handle everything else, including `import { createGrid } from "@my-org/my-grid"`
-        return agGridExportName === agGridExportName;
+        return importName === agGridExportName;
     },
 
     getCreateGridName({ importPath }) {
@@ -219,7 +219,7 @@ export default defineUserConfig({
             return importName === "MyGrid";
         }
         // Handle everything else (default case).
-        return agGridExportName === agGridExportName;
+        return importName === agGridExportName;
     },
 });
 ```
@@ -250,7 +250,7 @@ export default defineUserConfig({
             return importName === "MyGrid";
         }
         // Handle everything else (default case).
-        return agGridExportName === agGridExportName;
+        return importName === agGridExportName;
     },
 });
 ```
