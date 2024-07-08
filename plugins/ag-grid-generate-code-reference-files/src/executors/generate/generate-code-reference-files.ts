@@ -446,8 +446,6 @@ export function getGridApi(gridApiFile: string) {
     const srcFile = parseFile(gridApiFile);
     const gridApi: ts.InterfaceDeclaration = findNode('GridApi', srcFile);
 
-    // console.log(gridApi.heritageClauses);
-
     let members = {};
 
     const errors: string[] = [];
