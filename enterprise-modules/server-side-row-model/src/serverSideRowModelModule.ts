@@ -1,10 +1,11 @@
-import type { Module } from '@ag-grid-community/core';
+import type { _ServerSideRowModelGridApi } from '@ag-grid-community/core';
 import {
     ModuleNames,
     RowModelHelperService,
     _CsrmSsrmSharedApiModule,
     _RowNodeBlockModule,
     _SsrmInfiniteSharedApiModule,
+    _defineModule,
 } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
@@ -34,7 +35,7 @@ import { StoreUtils } from './serverSideRowModel/stores/storeUtils';
 import { TransactionManager } from './serverSideRowModel/transactionManager';
 import { VERSION } from './version';
 
-export const ServerSideRowModelCoreModule: Module = {
+export const ServerSideRowModelCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.ServerSideRowModelModule}-core`,
     rowModel: 'serverSide',
@@ -54,9 +55,9 @@ export const ServerSideRowModelCoreModule: Module = {
         LazyBlockLoadingService,
     ],
     dependantModules: [EnterpriseCoreModule, _RowNodeBlockModule],
-};
+});
 
-export const ServerSideRowModelApiModule: Module = {
+export const ServerSideRowModelApiModule = _defineModule<_ServerSideRowModelGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.ServerSideRowModelModule}-api`,
     beans: [RowModelHelperService],
@@ -72,10 +73,10 @@ export const ServerSideRowModelApiModule: Module = {
         getServerSideGroupLevelState,
     },
     dependantModules: [ServerSideRowModelCoreModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
-};
+});
 
-export const ServerSideRowModelModule: Module = {
+export const ServerSideRowModelModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.ServerSideRowModelModule,
     dependantModules: [ServerSideRowModelCoreModule, ServerSideRowModelApiModule],
-};
+});

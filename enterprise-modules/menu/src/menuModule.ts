@@ -1,5 +1,5 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames, _CommunityMenuApiModule } from '@ag-grid-community/core';
+import type { _MenuGridApi } from '@ag-grid-community/core';
+import { ModuleNames, _CommunityMenuApiModule, _defineModule } from '@ag-grid-community/core';
 import { AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { ChartMenuItemMapper } from './menu/chartMenuItemMapper';
@@ -12,7 +12,7 @@ import { MenuItemMapper } from './menu/menuItemMapper';
 import { MenuUtils } from './menu/menuUtils';
 import { VERSION } from './version';
 
-export const MenuCoreModule: Module = {
+export const MenuCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.MenuModule}-core`,
     beans: [
@@ -31,9 +31,9 @@ export const MenuCoreModule: Module = {
             classImp: AgMenuItemRenderer,
         },
     ],
-};
+});
 
-export const MenuApiModule: Module = {
+export const MenuApiModule = _defineModule<_MenuGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.MenuModule}-api`,
     apiFunctions: {
@@ -42,10 +42,10 @@ export const MenuApiModule: Module = {
         hideColumnChooser,
     },
     dependantModules: [MenuCoreModule, _CommunityMenuApiModule],
-};
+});
 
-export const MenuModule: Module = {
+export const MenuModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.MenuModule,
     dependantModules: [MenuCoreModule, MenuApiModule],
-};
+});

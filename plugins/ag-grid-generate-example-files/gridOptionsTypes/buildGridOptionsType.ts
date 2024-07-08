@@ -4,7 +4,7 @@ import { writeJSONFile } from '../src/executors-utils';
 import { PropertyKeys } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
 
 function getTypes(node: ts.Node) {
-    let typesToInclude = [];
+    let typesToInclude: string[] = [];
     if (ts.isIdentifier(node)) {
         const typeName = node.getText();
         if (!['HTMLElement', 'Function', 'Partial', 'TData', 'TContext', 'TValue'].includes(typeName)) {
@@ -24,7 +24,6 @@ function getTypes(node: ts.Node) {
 
 function getTypeLookupFunc(fileName) {
     console.log('Generating gridOptions types');
-    let lookupType = (propName: string) => undefined;
     const program = ts.createProgram([fileName], {});
     program.getTypeChecker(); // does something important to make types work below
 
@@ -32,14 +31,16 @@ function getTypeLookupFunc(fileName) {
     if (optionsFile) {
         const gridOptionsInterface = optionsFile.statements.find(
             (i: ts.Node) => ts.isInterfaceDeclaration(i) && i.name.getText() == 'GridOptions'
-        ) as ts.InterfaceDeclaration;
+        );
 
-        lookupType = (propName: string) => {
-            const pop = gridOptionsInterface.members.find(
-                (m) => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName
-            ) as ts.PropertySignature | ts.MethodSignature;
-            if (pop && pop.type) {
-                return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
+        const lookupType = (propName: string) => {
+            if (gridOptionsInterface && ts.isInterfaceDeclaration(gridOptionsInterface)) {
+                const pop = gridOptionsInterface.members.find(
+                    (m) => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName
+                ) as ts.PropertySignature | ts.MethodSignature;
+                if (pop && pop.type) {
+                    return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
+                }
             }
             return undefined;
         };

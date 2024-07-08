@@ -1,5 +1,6 @@
-import type { Module } from '@ag-grid-community/core';
+import { _defineModule } from '@ag-grid-community/core';
 import { ModuleNames, RowModelHelperService, _CsrmSsrmSharedApiModule } from '@ag-grid-community/core';
+import type { _ClientSideRowModelGridApi } from '@ag-grid-community/core';
 
 import { ClientSideRowModel } from './clientSideRowModel/clientSideRowModel';
 import {
@@ -21,14 +22,14 @@ import { SortService } from './clientSideRowModel/sortService';
 import { SortStage } from './clientSideRowModel/sortStage';
 import { VERSION } from './version';
 
-export const ClientSideRowModelCoreModule: Module = {
+export const ClientSideRowModelCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.ClientSideRowModelModule}-core`,
     rowModel: 'clientSide',
     beans: [ClientSideRowModel, FilterStage, SortStage, FlattenStage, SortService, ImmutableService],
-};
+});
 
-export const ClientSideRowModelApiModule: Module = {
+export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.ClientSideRowModelModule}-api`,
     beans: [RowModelHelperService],
@@ -45,10 +46,10 @@ export const ClientSideRowModelApiModule: Module = {
         getBestCostNodeSelection,
     },
     dependantModules: [ClientSideRowModelCoreModule, _CsrmSsrmSharedApiModule],
-};
+});
 
-export const ClientSideRowModelModule: Module = {
+export const ClientSideRowModelModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.ClientSideRowModelModule,
     dependantModules: [ClientSideRowModelCoreModule, ClientSideRowModelApiModule],
-};
+});

@@ -1,9 +1,9 @@
 import { AlignedGridsService } from './alignedGridsService';
-import type { Module } from './interfaces/iModule';
+import { _defineModule } from './interfaces/iModule';
 import { VERSION } from './version';
 
-export const AlignedGridsModule: Module = {
+export const AlignedGridsModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/aligned-grid',
     beans: [AlignedGridsService],
-};
+});

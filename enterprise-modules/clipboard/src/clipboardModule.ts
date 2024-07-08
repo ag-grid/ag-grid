@@ -1,5 +1,5 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import type { _ClipboardGridApi } from '@ag-grid-community/core';
+import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
@@ -14,14 +14,14 @@ import {
 import { ClipboardService } from './clipboard/clipboardService';
 import { VERSION } from './version';
 
-export const ClipboardCoreModule: Module = {
+export const ClipboardCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.ClipboardModule}-core`,
     beans: [ClipboardService],
     dependantModules: [EnterpriseCoreModule, CsvExportModule],
-};
+});
 
-export const ClipboardApiModule: Module = {
+export const ClipboardApiModule = _defineModule<_ClipboardGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.ClipboardModule}-api`,
     apiFunctions: {
@@ -33,10 +33,10 @@ export const ClipboardApiModule: Module = {
         pasteFromClipboard,
     },
     dependantModules: [ClipboardCoreModule],
-};
+});
 
-export const ClipboardModule: Module = {
+export const ClipboardModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.ClipboardModule,
     dependantModules: [ClipboardCoreModule, ClipboardApiModule],
-};
+});
