@@ -62,7 +62,7 @@ Sorting values for Tree Lists is similar to [Sorting Filter Lists](./filter-set-
 A Comparator can be used to change the sort order of Tree Lists just like with [Sorting Filter Lists](./filter-set-filter-list/#sorting-filter-lists), with the same conditions applying. For Tree Lists, the Comparator is applied to the child values, sorting the entire tree in one pass rather than for each level. The Comparator will be provided the following:
 
 * The column value for `Date` objects and custom tree paths.
-* The tree path (`string[]` or `null`) for Tree Data and Grouping.
+* The tree path (`(string | null)[]` or `null`) for Tree Data and Grouping.
 
 The following example demonstrates changing the sorting of the Tree List. Note the following:
 
