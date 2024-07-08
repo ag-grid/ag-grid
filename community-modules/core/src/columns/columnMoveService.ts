@@ -12,6 +12,11 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColKey, ColumnModel } from './columnModel';
 
+enum Direction {
+    LEFT = -1,
+    NONE = 0,
+    RIGHT = 1,
+}
 export class ColumnMoveService extends BeanStub implements NamedBean {
     beanName = 'columnMoveService' as const;
 
@@ -92,20 +97,15 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     }
 
     private doesMovePassLockedPositions(proposedColumnOrder: AgColumn[]): boolean {
-        // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
         const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
             if (!position) {
-                // false or undefined
-                return 1;
+                return Direction.NONE;
             }
-            if (position === true) {
-                return 0;
-            }
-            return position === 'left' ? 0 : 2; // Otherwise 'right'
+            return position === 'left' || position === true ? Direction.LEFT : Direction.RIGHT;
         };
 
         const isRtl = this.gos.get('enableRtl');
-        let lastPlacement = isRtl ? 2 : 0;
+        let lastPlacement = isRtl ? Direction.RIGHT : Direction.LEFT;
         let rulePassed = true;
         proposedColumnOrder.forEach((col) => {
             const placement = lockPositionToPlacement(col.getColDef().lockPosition);
