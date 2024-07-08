@@ -153,4 +153,4 @@ export const getFileList = async ({ folderPath, fileList }: { folderPath: string
 };
 
 export const getIsEnterprise = ({ entryFile }: { entryFile: string }) => entryFile?.includes('ag-grid-enterprise');
-export const getIsLocale = ({ entryFile }: { entryFile: string }) => entryFile?.includes('ag-grid-locale');
+export const getIsLocale = ({ entryFile }: { entryFile: string }) => entryFile?.includes('@ag-grid-community/locale');

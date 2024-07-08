@@ -717,7 +717,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
-    /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.
+    /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks used by your application.
      * @initial
      */
     @Input() public context: any = undefined;
@@ -1565,7 +1565,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
     @Input() public getBusinessKeyForNode: ((node: IRowNode<TData>) => string) | undefined = undefined;
-    /** Allows setting the ID for a particular row node based on the data.
+    /** Provide a pure function that returns a string ID to uniquely identify a given row. This enables the grid to work optimally with data changes and updates.
      * @initial
      */
     @Input() public getRowId: GetRowIdFunc<TData> | undefined = undefined;

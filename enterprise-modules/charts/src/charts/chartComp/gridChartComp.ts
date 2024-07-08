@@ -63,6 +63,7 @@ export interface GridChartParams {
     chartType: ChartType;
     chartThemeName?: string;
     insideDialog: boolean;
+    focusDialogOnOpen?: boolean;
     suppressChartRanges?: boolean;
     switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
@@ -113,8 +114,8 @@ export class GridChartComp extends Component {
     private onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
-        super(/* html */ `<div class="ag-chart" tabindex="-1">
-            <div data-ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper ag-chart-menu-hidden">
+        super(/* html */ `<div class="ag-chart">
+            <div data-ref="eChartContainer" class="ag-chart-components-wrapper ag-chart-menu-hidden">
                 <div data-ref="eChart" class="ag-chart-canvas-wrapper"></div>
                 <div data-ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
@@ -305,6 +306,10 @@ export class GridChartComp extends Component {
 
         const { width, height } = this.getBestDialogSize();
 
+        const afterGuiAttached = this.params.focusDialogOnOpen
+            ? () => setTimeout(() => this.focusService.focusInto(this.getGui()))
+            : undefined;
+
         this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
@@ -315,6 +320,10 @@ export class GridChartComp extends Component {
             component: this,
             centered: true,
             closable: true,
+            afterGuiAttached,
+            postProcessPopupParams: {
+                type: 'chart',
+            },
         });
 
         this.createBean(this.chartDialog);
@@ -322,6 +331,14 @@ export class GridChartComp extends Component {
         this.chartDialog.addEventListener('destroyed', () => {
             this.destroy();
             this.chartMenuService.hideAdvancedSettings();
+            const lastFocusedCell = this.focusService.getFocusedCell();
+            setTimeout(() => {
+                if (lastFocusedCell) {
+                    this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
+                } else {
+                    this.focusService.focusGridInnerElement();
+                }
+            });
         });
     }
 

@@ -57,8 +57,8 @@ const numberFormatter: ValueFormatterFunc = ({ value }) => {
     return value == null ? '' : formatter.format(value);
 };
 
-const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode = false }) => {
-    const [rowData, setRowData] = useState(getData);
+export const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode = false }) => {
+    const [rowData, setRowData] = useState(getData());
     const gridRef = useRef<AgGridReact>(null);
 
     useEffect(() => {
@@ -85,18 +85,13 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
             {
                 field: 'ticker',
                 cellRenderer: TickerCellRenderer,
-            },
-            {
-                field: 'name',
-                cellDataType: 'text',
-                hide: true,
+                minWidth: 380,
             },
             {
                 field: 'instrument',
                 cellDataType: 'text',
-                rowGroup: true,
-                sort: 'desc',
-                hide: true,
+                type: 'rightAligned',
+                maxWidth: 180,
             },
             {
                 headerName: 'P&L',
@@ -119,27 +114,35 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
             {
                 field: 'quantity',
                 cellDataType: 'number',
-                maxWidth: 140,
                 type: 'rightAligned',
                 valueFormatter: numberFormatter,
+                maxWidth: 150,
             },
             {
+                headerName: 'Price',
                 field: 'purchasePrice',
                 cellDataType: 'number',
-                maxWidth: 140,
                 type: 'rightAligned',
                 valueFormatter: numberFormatter,
+                maxWidth: 150,
             },
             {
                 field: 'purchaseDate',
                 cellDataType: 'dateString',
                 type: 'rightAligned',
+                hide: true,
             },
             {
                 headerName: 'Last 24hrs',
                 field: 'last24',
-                maxWidth: 500,
                 cellRenderer: 'agSparklineCellRenderer',
+                cellRendererParams: {
+                    sparklineOptions: {
+                        line: {
+                            strokeWidth: 2,
+                        },
+                    },
+                },
             },
         ],
         []
@@ -148,10 +151,7 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
     const defaultColDef: ColDef = useMemo(
         () => ({
             flex: 1,
-            minWidth: 140,
-            maxWidth: 180,
             filter: true,
-            floatingFilter: true,
             enableRowGroup: true,
             enableValue: true,
         }),
@@ -198,5 +198,3 @@ const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDark
         </div>
     );
 };
-
-export default FinanceExample;

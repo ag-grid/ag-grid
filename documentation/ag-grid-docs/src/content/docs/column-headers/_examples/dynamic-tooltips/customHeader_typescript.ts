@@ -42,7 +42,7 @@ export class CustomHeader {
         this.eSortUpButton = div.querySelector('.customSortUpLabel');
         this.eSortRemoveButton = div.querySelector('.customSortRemoveLabel');
 
-        if (agParams.enableMenu) {
+        if (agParams.enableFilterButton) {
             this.onMenuClickListener = this.onMenuClick.bind(this);
             this.eMenuButton.addEventListener('click', this.onMenuClickListener);
         } else {

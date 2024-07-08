@@ -19,10 +19,10 @@ export function _log(message: string, ...args: any[]) {
 }
 
 export function _warnOnce(msg: string, ...args: any[]) {
-    _doOnce(() => console.warn('AG Grid: ' + msg, ...args), msg);
+    _doOnce(() => console.warn('AG Grid: ' + msg, ...args), msg + args?.join(''));
 }
 export function _errorOnce(msg: string, ...args: any[]) {
-    _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg);
+    _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg + args?.join(''));
 }
 
 export function _getFunctionName(funcConstructor: any) {

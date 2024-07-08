@@ -68,9 +68,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
             closedCallback: () => {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
-                const eDocument = this.gos.getDocument();
-                const activeEl = this.gos.getActiveDomElement();
-                if (!activeEl || activeEl === eDocument.body) {
+                if (this.gos.isNothingFocused()) {
                     eventSource.focus({ preventScroll: true });
                 }
             },

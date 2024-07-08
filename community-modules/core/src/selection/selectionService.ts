@@ -98,7 +98,9 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             const node = filteredNodes[0];
             const newSelectionValue = this.overrideSelectionValue(newValue, source);
 
-            if (this.selectionCtx.isInRange(node)) {
+            if (!this.isMultiselect()) {
+                // let the normal selection logic handle this
+            } else if (this.selectionCtx.isInRange(node)) {
                 const partition = this.selectionCtx.truncate(node);
 
                 // When we are selecting a range, we may need to de-select part of the previously

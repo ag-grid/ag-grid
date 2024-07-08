@@ -469,9 +469,8 @@ const AG_GRID_LOCALE_IR = {
     customCombo: 'ترکیب سفارشی',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. سطح ${variable}. برای ویرایش ENTER را فشار دهید.',
-    ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. سطح ${variable}. ${variable} برای ویرایش ENTER را فشار دهید.',
+    ariaAdvancedFilterBuilderItem: '${variable}. سطح ${variable}. برای ویرایش ENTER را فشار دهید',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. سطح ${variable}. ${variable} برای ویرایش ENTER را فشار دهید',
     ariaAdvancedFilterBuilderList: 'لیست سازنده فیلتر پیشرفته',
     ariaAdvancedFilterBuilderFilterItem: 'شرط فیلتر',
     ariaAdvancedFilterBuilderGroupItem: 'گروه فیلتر',

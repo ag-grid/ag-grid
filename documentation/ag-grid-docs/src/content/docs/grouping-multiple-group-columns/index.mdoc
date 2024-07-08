@@ -76,10 +76,10 @@ The following example demonstrates some of the available `autoGroupColumnDef` co
 ## Showing Open Groups
 
 Setting the grid property `showOpenedGroup=true` will show the name of the opened group inside the group column.
-This is useful when the user scrolls down through the children of the group, and the row showing what group
+This is useful when `suppressGroupRowsSticky=true` and the user scrolls down through the children of the group, and the row showing what group
 was opened is scrolled out of view.
 
-The following example uses `showOpenedGroup=true` with many group columns. The open groups are shown across all
+The following example uses `showOpenedGroup=true` and `suppressGroupRowsSticky=true` with many group columns. The open groups are shown across all
 group columns where the group is open for that column.
 
 {% gridExampleRunner title="Show Opened Groups Many Columns" name="show-opened-groups-many-columns"  exampleHeight=515 /%}

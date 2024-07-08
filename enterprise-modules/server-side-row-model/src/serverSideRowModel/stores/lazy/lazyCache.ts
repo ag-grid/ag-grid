@@ -98,11 +98,16 @@ export class LazyCache extends BeanStub {
      */
     private removedNodeCache = new Map<string, RowNode>();
 
-    constructor(store: LazyStore, numberOfRows: number, storeParams: ServerSideGroupLevelParams) {
+    constructor(
+        store: LazyStore,
+        numberOfRows: number,
+        isLastRowKnown: boolean,
+        storeParams: ServerSideGroupLevelParams
+    ) {
         super();
         this.store = store;
         this.numberOfRows = numberOfRows;
-        this.isLastRowKnown = false;
+        this.isLastRowKnown = isLastRowKnown;
         this.storeParams = storeParams;
     }
 

@@ -21,7 +21,7 @@ const GridExample = () => {
         {
             field: 'gold',
             filter: 'agNumberColumnFilter',
-            suppressHeaderMenuButton: true,
+            suppressHeaderFilterButton: true,
             floatingFilterComponent: NumberFloatingFilterComponent,
             floatingFilterComponentParams: {
                 color: 'gold',
@@ -31,7 +31,7 @@ const GridExample = () => {
         {
             field: 'silver',
             filter: 'agNumberColumnFilter',
-            suppressHeaderMenuButton: true,
+            suppressHeaderFilterButton: true,
             floatingFilterComponent: NumberFloatingFilterComponent,
             floatingFilterComponentParams: {
                 color: 'silver',
@@ -41,7 +41,7 @@ const GridExample = () => {
         {
             field: 'bronze',
             filter: 'agNumberColumnFilter',
-            suppressHeaderMenuButton: true,
+            suppressHeaderFilterButton: true,
             floatingFilterComponent: NumberFloatingFilterComponent,
             floatingFilterComponentParams: {
                 color: '#CD7F32',
@@ -51,7 +51,7 @@ const GridExample = () => {
         {
             field: 'total',
             filter: 'agNumberColumnFilter',
-            suppressHeaderMenuButton: true,
+            suppressHeaderFilterButton: true,
             floatingFilterComponent: NumberFloatingFilterComponent,
             floatingFilterComponentParams: {
                 color: 'unset',

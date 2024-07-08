@@ -17,6 +17,14 @@
     #{$selector-darkmode} & {
         min-height: calc(100vh - var(--layout-grid-header-height) - 2px);
     }
+
+    @media screen and (max-width: 720px) {
+        :global(div.ag-theme-quartz),
+        :global(div.ag-theme-quartz-dark) {
+            --ag-font-size: 12px;
+            --ag-grid-size: 6px;
+        }
+    }
 }
 
 #{$selector-darkmode} .starIcon {

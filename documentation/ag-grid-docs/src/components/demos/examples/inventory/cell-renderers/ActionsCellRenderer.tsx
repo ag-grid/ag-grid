@@ -25,10 +25,10 @@ export const ActionsCellRenderer: FunctionComponent<CustomCellRendererProps> = (
 
     return (
         <div className={styles.buttonCell}>
-            <button className={`button-secondary ${styles.removeButton}`} onClick={onRemoveClick}>
+            <button className={styles.removeButton} onClick={onRemoveClick}>
                 <img src={urlWithBaseUrl(`/example/inventory/delete.svg`)} alt="delete" />
             </button>
-            <button className={`button-secondary ${styles.buttonStopSelling}`} onClick={onStopSellingClick}>
+            <button className={styles.buttonStopSelling} onClick={onStopSellingClick}>
                 Hold Selling
             </button>
         </div>

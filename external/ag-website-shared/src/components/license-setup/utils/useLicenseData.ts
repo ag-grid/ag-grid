@@ -164,17 +164,22 @@ export const useLicenseData = ({ library }: { library: Library }) => {
     const updateIsIntegratedChartsWithUrlUpdate = useCallback(
         (isIntegrated: boolean) => {
             setIsIntegratedCharts(isIntegrated);
-            updateSearchParams({ integratedCharts: isIntegrated, importType });
+
+            if (library === 'grid') {
+                updateSearchParams({ integratedCharts: isIntegrated, importType });
+            }
         },
-        [importType]
+        [importType, library]
     );
     const updateImportTypeWithUrlUpdate = useCallback(
         (type: ImportType) => {
             setImportType(type);
 
-            updateSearchParams({ integratedCharts: isIntegratedCharts, importType: type });
+            if (library === 'grid') {
+                updateSearchParams({ integratedCharts: isIntegratedCharts, importType: type });
+            }
         },
-        [isIntegratedCharts]
+        [isIntegratedCharts, library]
     );
 
     /**

@@ -1,4 +1,12 @@
-import { type ParamType, corePart, getParamDocs, getParamType, getPartParams } from '@ag-grid-community/theming';
+import {
+    type ParamType,
+    corePart,
+    getParamDocs,
+    getParamType,
+    getPartParams,
+    inputStyleBase,
+    tabStyleBase,
+} from '@ag-grid-community/theming';
 import { useAtom, useAtomValue } from 'jotai';
 
 import type { PersistentAtom } from './JSONStorage';
@@ -29,7 +37,7 @@ const nonAdvancedParams = new Set([
     'headerFontSize',
     'headerFontWeight',
     'headerVerticalPaddingScale',
-    'dataColor',
+    'cellTextColor',
     'oddRowBackgroundColor',
     'rowVerticalPaddingScale',
     'cellHorizontalPaddingScale',
@@ -77,7 +85,7 @@ export const useParam = (model: ParamModel) => useAtomValue(model.valueAtom);
 const suppressParamEditingRegex = /^(sideButton.*|panel*|.*Image)$/;
 
 export const allParamModels = memoize(() =>
-    getPartParams(corePart)
+    [...getPartParams(corePart), ...getPartParams(inputStyleBase), ...getPartParams(tabStyleBase)]
         .map((param) => ParamModel.for(param))
         .filter((param) => !suppressParamEditingRegex.test(param.property))
         .sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()))

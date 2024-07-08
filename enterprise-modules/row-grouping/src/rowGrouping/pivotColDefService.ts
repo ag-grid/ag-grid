@@ -287,6 +287,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             const totalColDef = this.createColDef(valueColumn, headerName, groupDef.pivotKeys, true);
             totalColDef.pivotTotalColumnIds = colIds;
             totalColDef.aggFunc = valueColumn.getAggFunc();
+            totalColDef.columnGroupShow = this.gos.get('suppressExpandablePivotGroups') ? 'open' : undefined;
 
             // add total colDef to group and pivot colDefs array
             const children = (groupDef as ColGroupDef).children;

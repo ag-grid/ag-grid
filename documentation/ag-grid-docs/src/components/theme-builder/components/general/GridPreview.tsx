@@ -110,7 +110,9 @@ const GridPreview = () => {
                                     stateRef.current.rowSelection = api.getState().rowSelection || [];
                                 }}
                                 onRangeSelectionChanged={({ api }) => {
-                                    stateRef.current.rangeSelection = api.getState().rangeSelection;
+                                    stateRef.current.rangeSelection = config.showIntegratedChartPopup
+                                        ? undefined
+                                        : api.getState().rangeSelection;
                                 }}
                                 key={updateCount}
                                 {...gridOptions}

@@ -8,7 +8,7 @@ import type {
     ValueGetterParams,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact, type CustomCellRendererProps } from '@ag-grid-community/react';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
@@ -19,8 +19,10 @@ import { type ChangeEvent, type FunctionComponent, useCallback, useMemo, useRef,
 
 import styles from './InventoryExample.module.css';
 import { ActionsCellRenderer } from './cell-renderers/ActionsCellRenderer';
+import { PriceCellRenderer } from './cell-renderers/PriceCellRenderer';
 import { ProductCellRenderer } from './cell-renderers/ProductCellRenderer';
 import { StatusCellRenderer } from './cell-renderers/StatusCellRenderer';
+import { StockCellRenderer } from './cell-renderers/StockCellRenderer';
 import { getData } from './data';
 
 ModuleRegistry.registerModules([
@@ -71,12 +73,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
 
         {
             field: 'inventory',
-            cellRenderer: ({ data: { available, variants } }: CustomCellRendererProps) => (
-                <div className={styles.stock}>
-                    <span>{available}</span> <span className={styles.stockText}>Stock /</span>{' '}
-                    <span className={styles.variantsText}>{`${variants} Variants`}</span>
-                </div>
-            ),
+            cellRenderer: StockCellRenderer,
             headerClass: 'header-inventory',
             sortable: false,
         },
@@ -93,12 +90,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             field: 'price',
             width: 120,
             headerClass: 'header-price',
-            cellRenderer: ({ value, data: { priceIncrease } }: CustomCellRendererProps) => (
-                <div className={styles.price}>
-                    <span className={styles.priceAmount}>{'£' + value}</span>
-                    <span className={styles.increase}>{priceIncrease + '% increase'}</span>
-                </div>
-            ),
+            cellRenderer: PriceCellRenderer,
         },
         { field: 'sold', headerClass: 'header-calendar' },
         {
@@ -213,6 +205,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                         masterDetail
                         detailCellRendererParams={detailCellRendererParams}
                         quickFilterText={quickFilterText}
+                        detailRowAutoHeight
                     />
                 </div>
             </div>

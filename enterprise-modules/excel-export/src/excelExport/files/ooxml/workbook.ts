@@ -3,7 +3,7 @@ import type { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import sheetsFactory from './sheets';
 
 const workbookFactory: ExcelOOXMLTemplate = {
-    getTemplate(names: string[]) {
+    getTemplate(names: string[], activeTab: number) {
         return {
             name: 'workbook',
             properties: {
@@ -19,7 +19,22 @@ const workbookFactory: ExcelOOXMLTemplate = {
                     xmlns: 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
                 },
             },
-            children: [sheetsFactory.getTemplate(names)],
+            children: [
+                {
+                    name: 'bookViews',
+                    children: [
+                        {
+                            name: 'workbookView',
+                            properties: {
+                                rawMap: {
+                                    activeTab,
+                                },
+                            },
+                        },
+                    ],
+                },
+                sheetsFactory.getTemplate(names),
+            ],
         };
     },
 };

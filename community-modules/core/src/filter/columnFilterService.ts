@@ -489,7 +489,7 @@ export class ColumnFilterService extends BeanStub {
         return {
             filterPromise: () => {
                 const filterPromise = compDetails.newAgStackInstance();
-                if (filterPromise) {
+                if (filterPromise != null) {
                     filterPromise.then((r) => {
                         filterInstance = r!;
                         if (filterWrapper) {

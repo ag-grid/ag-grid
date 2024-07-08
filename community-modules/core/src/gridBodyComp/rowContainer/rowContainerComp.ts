@@ -53,6 +53,7 @@ export class RowContainerComp extends Component {
 
     public postConstruct(): void {
         const compProxy: IRowContainerComp = {
+            setHorizontalScroll: (offset: number) => (this.eViewport.scrollLeft = offset),
             setViewportHeight: (height) => (this.eViewport.style.height = height),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
             setDomOrder: (domOrder) => {

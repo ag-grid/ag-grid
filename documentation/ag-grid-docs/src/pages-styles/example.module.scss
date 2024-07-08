@@ -35,8 +35,20 @@ $nav-height: 340px;
         max-width: var(--layout-max-width);
     }
 
+    @media screen and (min-width: 720px) {
+        height: 244px;
+
+        > div:first-child {
+            width: 30%;
+        }
+    }
+
     p {
         color: var(--color-text-tertiary);
+    }
+
+    button {
+        padding-left: $spacing-size-3;
     }
 }
 
@@ -65,7 +77,8 @@ $nav-height: 340px;
 }
 
 .layout {
-    --layout-grid-header-height: calc(var(--layout-site-header-height) + 300px);
+    --layout-grid-header-height: calc(var(--layout-site-header-height) + 276px);
+    --layout-grid-margin: 0px;
 
     @media screen and (max-width: 1900px) {
         padding-left: 24px;

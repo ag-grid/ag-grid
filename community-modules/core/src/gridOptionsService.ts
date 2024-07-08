@@ -255,7 +255,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
         events.forEach((event) => {
             if (this.gridOptions.debug) {
-                _log(`Updated property ${event.type} from ${event.previousValue} to ${event.currentValue}`);
+                _log(`Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
             }
             this.propertyEventService.dispatchEvent(event);
         });
@@ -476,6 +476,12 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return this.getRootNode().activeElement;
     }
 
+    public isNothingFocused(): boolean {
+        const eDocument = this.getDocument();
+        const activeEl = this.getActiveDomElement();
+        return activeEl === null || activeEl === eDocument.body;
+    }
+
     public getAsyncTransactionWaitMillis(): number | undefined {
         return _exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
     }
@@ -601,7 +607,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             let id = getRowId(params);
 
             if (typeof id !== 'string') {
-                _warnOnce(`The getRowId callback must return a string. The ID ${id} is being cast to a string.`);
+                _warnOnce(`The getRowId callback must return a string. The ID `, id, ` is being cast to a string.`);
                 id = String(id);
             }
 

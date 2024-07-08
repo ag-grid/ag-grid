@@ -24,10 +24,13 @@ export const getGridEnterpriseScriptPath = (sitePrefix?: string) => {
 
 export const getGridLocaleScriptPath = (sitePrefix?: string) => {
     if (USE_PUBLISHED_PACKAGES) {
-        return PUBLISHED_UMD_URLS['ag-grid-locale'];
+        return PUBLISHED_UMD_URLS['@ag-grid-community/locale'];
     }
     const sitePrefixUrl = sitePrefix ? sitePrefix : '';
-    return pathJoin(sitePrefixUrl, `/files/ag-grid-locale/dist/umd/ag-grid-locale${getIsDev() ? '' : '.min'}.js`);
+    return pathJoin(
+        sitePrefixUrl,
+        `/files/@ag-grid-community/locale/dist/umd/@ag-grid-community/locale${getIsDev() ? '' : '.min'}.js`
+    );
 };
 
 export const getCacheBustingUrl = (url: string, timestamp: number) => `${url}?t=${timestamp}`;

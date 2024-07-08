@@ -11,7 +11,6 @@
 
 .showcaseItemTab {
     box-shadow: var(--shadow-sm);
-    border-radius: var(--radius-md);
 }
 
 #{$selector-darkmode} .tabWrapper {
@@ -27,21 +26,40 @@
     background-color: #e5e9ed;
     width: 100%;
     max-width: 325px;
+    aspect-ratio: 16 / 9;
     box-shadow: var(--shadow-sm);
     border-radius: var(--radius-lg);
     overflow: hidden;
     transition: all 0.5s ease-in-out;
     border: 1px solid var(--color-border-primary);
+
     &:hover {
         background-color: #c8cfd8;
         transition: all 0.5s ease-in-out;
+    }
+
+    @media screen and (min-width: 720px) {
+        max-height: 140px;
     }
 }
 
 .tabs {
     display: flex;
+    flex-wrap: wrap;
     height: 100%;
-    gap: 16px;
+    gap: $spacing-size-4;
+
+    > div {
+        max-width: calc(50% - #{$spacing-size-2});
+    }
+
+    @media screen and (min-width: 720px) {
+        flex-wrap: nowrap;
+
+        > div {
+            max-width: unset;
+        }
+    }
 }
 
 .showcaseItemTab {

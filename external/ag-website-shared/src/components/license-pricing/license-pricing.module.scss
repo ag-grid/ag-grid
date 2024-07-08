@@ -326,27 +326,12 @@
     text-align: center;
     margin-top: $spacing-size-20;
 }
-.contactSales {
+
+.contactSales,
+.licenceKeyDocs {
     text-align: center;
-    margin-top: $spacing-size-12;
-    padding-top: $spacing-size-24;
-    padding-bottom: $spacing-size-10;
     position: relative;
-
-    p {
-        max-width: 800px;
-        margin: $spacing-size-2 auto $spacing-size-10;
-    }
-
-    p a {
-        text-decoration: underline;
-    }
-
-    background-color: #fbfbfc;
-
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
-    }
+    background-color: var(--section-background-color);
 
     &::before,
     &::after {
@@ -355,13 +340,11 @@
         height: 100%;
         width: 100vw;
         top: 0;
-        background-color: #fbfbfc;
-        #{$selector-darkmode} & {
-            background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
-        }
+        background-color: var(--section-background-color);
         z-index: -1;
         pointer-events: none;
     }
+
     &::before {
         left: -100vw;
     }
@@ -370,8 +353,40 @@
         right: -100vw;
     }
 
-    .licenceKeyDocs {
-        margin-top: $spacing-size-20;
+    h3 {
+        margin-bottom: -$spacing-size-6;
+    }
+
+    p {
+        max-width: 800px;
+        margin: $spacing-size-8 auto;
+    }
+
+    p a {
+        text-decoration: underline;
+    }
+}
+
+.contactSales {
+    --section-background-color: #fbfbfc;
+
+    margin-top: $spacing-size-12;
+    padding-top: $spacing-size-24;
+    padding-bottom: $spacing-size-10;
+
+    #{$selector-darkmode} & {
+        --section-background-color: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
+    }
+}
+
+.licenceKeyDocs {
+    --section-background-color: var(--color-util-brand-50);
+
+    padding-top: $spacing-size-12;
+    padding-bottom: $spacing-size-6;
+
+    #{$selector-darkmode} & {
+        --section-background-color: var(--color-util-gray-100);
     }
 }
 

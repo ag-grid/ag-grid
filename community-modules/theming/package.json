@@ -1,12 +1,12 @@
 {
   "name": "@ag-grid-enterprise/theming",
-  "version": "31.3.1",
+  "version": "32.0.0",
   "private": true,
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "scripts": {
     "codegen:prod": "tsx scripts/codegen.ts",
     "codegen:dev": "tsx scripts/codegen.ts --dev --no-clean",
-    "codegen:watch": "chokidar 'src/**/*' --ignore '**/GENERATED-*' --command 'npm run codegen:dev'"
+    "codegen:watch": "chokidar 'src/**/*' 'scripts/**/*' --ignore '**/GENERATED-*' --command 'npm run codegen:dev'"
   },
   "dependencies": {
     "tslib": "^2.3.0"

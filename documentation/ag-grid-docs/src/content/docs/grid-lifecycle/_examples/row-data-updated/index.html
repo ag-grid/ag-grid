@@ -1,9 +1,9 @@
 <div class="test-container">
     <div class="test-header">
-        <div style="margin-bottom: 1rem" id="firstDataRendered">First Data Rendered: <span class="value">-</span></div>
-        <div style="margin-bottom: 1rem" id="rowDataUpdated">Row Data Updated: <span class="value">-</span></div>
-        <div style="margin-bottom: 1rem">
-            <button onclick="loadData()">Reload Data</button>
+        <div id="firstDataRendered">First Data Rendered: <span class="value">-</span></div>
+        <div id="rowDataUpdated">Row Data Updated: <span class="value">-</span></div>
+        <div>
+            <button id="btnReloadData" onclick="onBtnReloadData()">Reload Data</button>
         </div>
     </div>
     <div id="myGrid" style="height: 100%" class="ag-theme-quartz"></div>

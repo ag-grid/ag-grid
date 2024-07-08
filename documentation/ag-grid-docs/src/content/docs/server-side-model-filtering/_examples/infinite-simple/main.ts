@@ -31,7 +31,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        menuTabs: ['filterMenuTab'],
+        suppressHeaderMenuButton: true,
+        suppressHeaderContextMenu: true,
     },
     columnTypes: {
         number: { filter: 'agNumberColumnFilter' },

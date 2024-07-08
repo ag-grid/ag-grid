@@ -30,7 +30,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     rowSelection: 'multiple',
-    suppressMenuHide: true,
     isRowSelectable: (rowNode: IRowNode) => {
         return rowNode.data ? rowNode.data.year < 2007 : false;
     },

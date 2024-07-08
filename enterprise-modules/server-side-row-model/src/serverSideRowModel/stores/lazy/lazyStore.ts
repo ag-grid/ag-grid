@@ -80,7 +80,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 type: 'rowCountReady',
             });
         }
-        this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
+        this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
 
         const usingTreeData = this.gos.get('treeData');
 
@@ -567,9 +567,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
             const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
             if (!isClientSideSort) {
+                // if last row index was known, add a row back for lazy loading.
                 const oldCount = this.cache.getRowCount();
+                const lastKnown = this.cache.isLastRowIndexKnown();
                 this.destroyBean(this.cache);
-                this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
+                this.cache = this.createManagedBean(new LazyCache(this, oldCount, lastKnown, this.storeParams));
                 return;
             }
 
@@ -613,7 +615,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     refreshStore(purge: boolean) {
         if (purge) {
             this.destroyBean(this.cache);
-            this.cache = this.createManagedBean(new LazyCache(this, 1, this.storeParams));
+            this.cache = this.createManagedBean(new LazyCache(this, 1, false, this.storeParams));
             this.fireStoreUpdatedEvent();
             return;
         }

@@ -3,7 +3,10 @@
 }
 
 .ag-pivot-leaf-group {
-    margin-left: var(--ag-row-group-indent-size);
+    margin-left: min(
+        var(--ag-row-group-indent-size),
+        calc(var(--ag-row-group-indent-size) * var(--ag-indentation-level))
+    );
 }
 
 .ag-row-group-leaf-indent {
@@ -51,7 +54,7 @@
 
 .ag-row {
     background-color: var(--ag-background-color);
-    color: var(--ag-data-color);
+    color: var(--ag-cell-text-color);
     white-space: nowrap;
     width: 100%;
     height: var(--ag-row-height);
@@ -71,8 +74,13 @@
     --ag-internal-content-line-height: min(calc(var(--ag-row-height) - 1px), var(--ag-line-height, 1000px));
 }
 
-.ag-sticky-bottom .ag-row {
-    border-bottom: none;
+.ag-sticky-bottom::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
     border-top: var(--ag-row-border);
 }
 
@@ -204,7 +212,9 @@
 
 .ag-cell,
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
-    padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+    );
     padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
     -webkit-font-smoothing: subpixel-antialiased;
 }

@@ -1,15 +1,31 @@
 :global(:root) {
     --layout-grid-header-height: 32px;
+    --layout-grid-margin: 32px;
 }
+
+:global(body) {
+    margin: 0;
+}
+
 .grid {
-    height: calc(100vh - var(--layout-grid-header-height));
     --ag-value-change-value-highlight-background-color: #44ad4961;
     --ag-value-change-delta-down-color: rgb(255, 0, 92);
     --ag-value-change-delta-up-color: rgb(53, 182, 90);
+
+    height: calc(100vh - var(--layout-grid-header-height) - var(--layout-grid-margin));
+    margin: var(--layout-grid-margin);
 }
 
 :global(.ag-theme-quartz-dark) {
     --ag-row-hover-color: #323a46;
+}
+
+@media screen and (max-width: 720px) {
+    :global(div.ag-theme-quartz),
+    :global(div.ag-theme-quartz-dark) {
+        --ag-font-size: 12px;
+        --ag-grid-size: 6px;
+    }
 }
 
 :global(.ag-theme-quartz .ag-row-group),

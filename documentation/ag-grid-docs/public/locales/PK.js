@@ -469,8 +469,8 @@ const AG_GRID_LOCALE_PK = {
     customCombo: 'حسب ضرورت مجموعہ',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable}. سطح ${variable}. تدوین کے لئے ENTER دبائیں.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable}. سطح ${variable}. ${variable} تدوین کے لئے ENTER دبائیں.',
+    ariaAdvancedFilterBuilderItem: '${variable}. سطح ${variable}. تدوین کے لئے ENTER دبائیں',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. سطح ${variable}. ${variable} تدوین کے لئے ENTER دبائیں',
     ariaAdvancedFilterBuilderList: 'ایڈوانسڈ فلٹر بلڈر فہرست',
     ariaAdvancedFilterBuilderFilterItem: 'فلٹر شرط',
     ariaAdvancedFilterBuilderGroupItem: 'فلٹر گروپ',

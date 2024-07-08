@@ -90,7 +90,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 200,
-        menuTabs: ['filterMenuTab'],
+        suppressHeaderMenuButton: true,
+        suppressHeaderContextMenu: true,
     },
 };
 

@@ -169,7 +169,13 @@ ag-grid-aurelia {
 }
 
 .ag-body-viewport,
-.ag-center-cols-viewport {
+.ag-center-cols-viewport,
+.ag-header-viewport,
+.ag-floating-top-viewport,
+.ag-floating-bottom-viewport,
+.ag-sticky-top-viewport,
+.ag-sticky-bottom-viewport {
+    overflow-x: auto;
     &::-webkit-scrollbar {
         display: none !important;
     }
@@ -179,17 +185,22 @@ ag-grid-aurelia {
 
 .ag-body-viewport {
     display: flex;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
 
     &.ag-layout-normal {
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
+}
+
+.ag-sticky-top-container,
+.ag-sticky-bottom-container {
+    min-height: 1px;
 }
 
 .ag-center-cols-viewport {
     min-height: 100%;
     width: 100%;
-    overflow-x: auto;
 }
 
 .ag-body-horizontal-scroll-viewport {
@@ -564,6 +575,8 @@ ag-grid-aurelia {
     position: absolute;
     display: flex;
     width: 100%;
+    overflow: hidden;
+    height: 0px;
     background-color: var(--ag-background-color);
 }
 
@@ -700,12 +713,6 @@ ag-grid-aurelia {
 .ag-pill-select {
     display: flex;
     flex-direction: column;
-
-    .ag-column-drop {
-        flex: unset;
-        border-bottom: 0;
-        min-height: unset;
-    }
 
     .ag-column-drop-list {
         padding: 0;

@@ -3,6 +3,7 @@
   "version": "32.0.2",
   "license": "MIT",
   "scripts": {
+    "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
     "build-generators": "nx run-many -p ag-grid-generate-code-reference-files,ag-grid-task-autogen -t build && nx run @ag-grid-community/theming:codegen",
     "subrepo": "tsx external/ag-website-shared/scripts/subrepo",
     "postinstall": "patch-package && yarn run build-generators",

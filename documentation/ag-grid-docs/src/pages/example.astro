@@ -7,12 +7,13 @@ import DemoTabs from '@components/demos/DemosTabs.astro';
 import LogoMark from '@components/logo/LogoMark';
 ---
 
-<Layout title="Demo - Performance Grid" hideFooter={true}>
+<Layout title="Demo - Performance Grid" showSearchBar={true} hideFooter={true}>
     <div class={styles.topHeader}>
         <div>
             <h1 class={styles.headerHeading}>Performance</h1>
-            <p class={styles.headerDescription}>
-                See the grid's performance by&nbsp;varying the number rows and&nbsp;columns.
+            <p>
+                Example showcasing grid reporting features, with options to view performance by adjusting rows and
+                columns.
             </p>
             <a className={styles.videoTour} href="https://youtu.be/bcMvTUVbMvI" target="_blank" rel="noreferrer">
                 <button class="button-secondary">

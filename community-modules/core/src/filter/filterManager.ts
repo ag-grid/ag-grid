@@ -347,7 +347,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         if (!this.isAdvancedFilterEnabled()) {
             return;
         }
-        this.advancedFilterService.getCtrl().toggleFilterBuilder(source, show);
+        this.advancedFilterService.getCtrl().toggleFilterBuilder({ source, force: show });
     }
 
     private updateAdvancedFilterColumns(): void {

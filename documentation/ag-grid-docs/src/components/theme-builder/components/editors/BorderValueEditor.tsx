@@ -16,6 +16,7 @@ export const BorderValueEditor = ({ param, value, onChange }: ValueEditorProps) 
                 }
                 onChange(css);
             }}
+            useSwitch
         />
     );
 };

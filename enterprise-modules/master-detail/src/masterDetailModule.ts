@@ -50,5 +50,5 @@ export const MasterDetailApiModule = _defineModule<MasterDetailGridApi>({
 export const MasterDetailModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.MasterDetailModule,
-    dependantModules: [MasterDetailCoreModule],
+    dependantModules: [MasterDetailCoreModule, MasterDetailApiModule],
 });

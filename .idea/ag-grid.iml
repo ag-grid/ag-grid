@@ -2,8 +2,6 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.github" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/dist" />

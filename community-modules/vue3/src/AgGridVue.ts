@@ -12,7 +12,7 @@ import type { PropType } from 'vue';
 import { defineComponent, getCurrentInstance, h } from 'vue';
 
 import type { Properties } from './Utils';
-import { getAgGridProperties } from './Utils';
+import { convertToRaw, getAgGridProperties } from './Utils';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
 import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 
@@ -53,6 +53,8 @@ export const AgGridVue = defineComponent({
         isDestroyed: boolean;
         gridReadyFired: boolean;
         emitRowModel?: () => void | null;
+        batchTimeout: number | null;
+        batchChanges: { [key: string]: any };
     } {
         return {
             api: undefined,
@@ -60,6 +62,8 @@ export const AgGridVue = defineComponent({
             isDestroyed: false,
             gridReadyFired: false,
             emitRowModel: undefined,
+            batchTimeout: null,
+            batchChanges: markRaw({}),
         };
     },
     computed,
@@ -199,7 +203,7 @@ export const AgGridVue = defineComponent({
 
         const rowData = this.getRowDataBasedOnBindings();
         if (rowData !== ComponentUtil.VUE_OMITTED_PROPERTY) {
-            gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
+            gridOptions.rowData = convertToRaw(rowData);
         }
 
         const gridParams = {

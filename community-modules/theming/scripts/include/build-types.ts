@@ -1,12 +1,15 @@
 import { join } from 'path';
 
-import { type ParamType, type Part, getParamType } from '../../src/theme-types';
+import { getParamType } from '../../src/theme-types';
+import type { ParamType, Part } from '../../src/theme-types';
 import { DEV_MODE, fatalError, getProjectDir, writeTsFile } from './utils';
 
 export const generateDocsFile = async () => {
     const mainExports = await import('../../src/main');
     const { allParts } = await import('../../src/parts/parts');
     const { getParamDocs, getParamDocsKeys } = await import('../../src/metadata/docs');
+
+    validateDocs(getParamDocsKeys().map((key) => [key, getParamDocs(key)]));
 
     const exportedParts = new Set<Part>();
     for (const [exportName, exportValue] of Object.entries(mainExports)) {
@@ -79,6 +82,63 @@ const fatalErrorInProdOnly = (message: string) => {
         throw fatalError(message);
     }
 };
+
+const validateDocs = (paramDocs: [string, string | undefined][]) => {
+    for (const [param, docs] of paramDocs) {
+        const error = getDocsError(param, docs);
+        if (error) {
+            fatalErrorInProdOnly(`Issue with docs for param ${param}: ${error} (docs: "${docs}")`);
+        }
+    }
+};
+
+const getDocsError = (key: string, docs: string | undefined): string | null => {
+    if (docs == null) {
+        return 'No docs';
+    }
+    const keyWords = key.replace(/(?<=[a-z])(?=[A-Z])/g, ' ').toLowerCase();
+    const suffix = paramSuffixes.find((s) => keyWords.endsWith(s));
+    if (!suffix) {
+        return 'Ends with unrecognised suffix';
+    }
+    if (suffix === 'size') {
+        return /\b(sizes?|amounts?)\b/i.test(docs) ? null : "Should contain the term 'size' or 'amount'";
+    }
+    if (suffix === 'border') {
+        return /\b(borders?|lines?)\b/i.test(docs) ? null : "Should contain the term 'border' or 'line'";
+    }
+    const words = suffix.replace('scale', 'multiply').split(' ');
+    for (const word of words) {
+        if (!docs.toLowerCase().includes(word)) {
+            return `Does not contain the pattern "${word}"`;
+        }
+    }
+    return null;
+};
+
+const paramSuffixes = [
+    'background color',
+    'color scheme',
+    'color',
+    'scale',
+    'padding start',
+    'padding',
+    'spacing',
+    'size',
+    'width',
+    'height',
+    'radius',
+    'indent',
+    'border style',
+    'border',
+    'shadow',
+    'image',
+    'font family',
+    'font weight',
+    'transition duration',
+    'duration',
+    'display',
+];
 
 const paramExtraDocs: Record<ParamType, string[]> = {
     color: [
