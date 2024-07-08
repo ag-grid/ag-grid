@@ -29,9 +29,5 @@ export const imageCaption: Schema<Config, Render> = {
          * dark mode image manually
          */
         enableDarkModeFilter: { type: Boolean },
-        /**
-         * Autoplay gif
-         */
-        autoPlay: { type: Boolean },
     },
 };

@@ -24,12 +24,11 @@ const { pageName: propPageName, imagePath, alt, ...props } = Astro.props as Prop
 
 const pageName = propPageName ? propPageName : getPageNameFromPath(Astro.url.pathname);
 
-const { imageSrc, darkModeImageSrc, gifStillImageSrc, gifDarkModeStillImageSrc } = await getPageImages({
+const { imageSrc, darkModeImageSrc } = await getPageImages({
     pageName,
     imagePath,
 });
 const caption = await Astro.slots.render('default');
-const isGif = imagePath.endsWith('.gif');
 ---
 
 {
@@ -39,10 +38,7 @@ const isGif = imagePath.endsWith('.gif');
             imageSrc={imageSrc}
             alt={alt}
             darkModeImageSrc={darkModeImageSrc}
-            gifStillImageSrc={gifStillImageSrc}
-            gifDarkModeStillImageSrc={gifDarkModeStillImageSrc}
             captionHtml={caption}
-            isGif={isGif}
             {...props}
         />
     )
