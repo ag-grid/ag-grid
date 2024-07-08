@@ -1,4 +1,4 @@
-import type { StateGridApi } from '../../api/gridApi';
+import type { _StateGridApi } from '../../api/gridApi';
 import { _defineModule } from '../../interfaces/iModule';
 import { VERSION } from '../../version';
 import { getState } from './stateApi';
@@ -10,7 +10,7 @@ export const StateCoreModule = _defineModule({
     beans: [StateService],
 });
 
-export const StateApiModule = _defineModule<StateGridApi>({
+export const StateApiModule = _defineModule<_StateGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/state-api',
     apiFunctions: {

@@ -1,4 +1,4 @@
-import type { RangeSelectionGridApi } from '@ag-grid-community/core';
+import type { _RangeSelectionGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
@@ -14,7 +14,7 @@ export const RangeSelectionCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule],
 });
 
-export const RangeSelectionApiModule = _defineModule<RangeSelectionGridApi>({
+export const RangeSelectionApiModule = _defineModule<_RangeSelectionGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.RangeSelectionModule}-api`,
     apiFunctions: {

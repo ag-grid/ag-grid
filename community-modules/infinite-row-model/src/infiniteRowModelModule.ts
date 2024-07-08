@@ -1,4 +1,4 @@
-import type { InfiniteRowModelGridApi } from '@ag-grid-community/core';
+import type { _InfiniteRowModelGridApi } from '@ag-grid-community/core';
 import {
     ModuleNames,
     RowModelHelperService,
@@ -24,7 +24,7 @@ export const InfiniteRowModelCoreModule = _defineModule({
     dependantModules: [_RowNodeBlockModule],
 });
 
-export const InfiniteRowModelApiModule = _defineModule<InfiniteRowModelGridApi>({
+export const InfiniteRowModelApiModule = _defineModule<_InfiniteRowModelGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.InfiniteRowModelModule}-api`,
     beans: [RowModelHelperService],

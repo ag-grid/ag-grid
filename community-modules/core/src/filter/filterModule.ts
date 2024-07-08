@@ -1,4 +1,4 @@
-import type { ColumnFilterGridApi, FilterGridApi, QuickFilterGridApi } from '../api/gridApi';
+import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '../api/gridApi';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
@@ -33,7 +33,7 @@ export const FilterCoreModule = _defineModule({
     beans: [FilterManager],
 });
 
-export const FilterApiModule = _defineModule<FilterGridApi>({
+export const FilterApiModule = _defineModule<_FilterGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/filter-api',
     apiFunctions: {
@@ -50,7 +50,7 @@ export const ColumnFilterModule = _defineModule({
     dependantModules: [FilterCoreModule],
 });
 
-export const ColumnFilterApiModule = _defineModule<ColumnFilterGridApi>({
+export const ColumnFilterApiModule = _defineModule<_ColumnFilterGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/column-filter-api',
     apiFunctions: {
@@ -117,7 +117,7 @@ export const QuickFilterCoreModule = _defineModule({
     dependantModules: [FilterCoreModule],
 });
 
-export const QuickFilterApiModule = _defineModule<QuickFilterGridApi>({
+export const QuickFilterApiModule = _defineModule<_QuickFilterGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/quick-filter-api',
     apiFunctions: {

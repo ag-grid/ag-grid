@@ -1,4 +1,4 @@
-import type { CsvExportGridApi } from '@ag-grid-community/core';
+import type { _CsvExportGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 
 import { CsvCreator } from './csvExport/csvCreator';
@@ -12,7 +12,7 @@ export const CsvExportCoreModule = _defineModule({
     beans: [CsvCreator, GridSerializer],
 });
 
-export const CsvExportApiModule = _defineModule<CsvExportGridApi>({
+export const CsvExportApiModule = _defineModule<_CsvExportGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.CsvExportModule}-api`,
     apiFunctions: {

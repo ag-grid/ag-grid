@@ -1,4 +1,4 @@
-import type { RowGroupingGridApi } from '@ag-grid-community/core';
+import type { _RowGroupingGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _ColumnFilterModule, _FloatingFilterModule, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule, GroupCellRenderer, GroupCellRendererCtrl } from '@ag-grid-enterprise/core';
 
@@ -72,7 +72,7 @@ export const RowGroupingCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule],
 });
 
-export const RowGroupingApiModule = _defineModule<RowGroupingGridApi>({
+export const RowGroupingApiModule = _defineModule<_RowGroupingGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.RowGroupingModule}-api`,
     apiFunctions: {

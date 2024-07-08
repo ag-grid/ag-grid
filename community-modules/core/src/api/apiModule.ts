@@ -9,15 +9,15 @@ import { expireValueCache, getCellValue, getValue } from './cellApi';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
 import { addEventListener, addGlobalListener, removeEventListener, removeGlobalListener } from './eventApi';
 import type {
-    CellGridApi,
-    CommunityMenuGridApi,
-    CoreGridApi,
-    EventGridApi,
-    KeyboardNavigationGridApi,
-    RowGridApi,
-    RowSelectionGridApi,
-    ScrollGridApi,
-    SortGridApi,
+    _CellGridApi,
+    _CommunityMenuGridApi,
+    _CoreGridApi,
+    _EventGridApi,
+    _KeyboardNavigationGridApi,
+    _RowGridApi,
+    _RowSelectionGridApi,
+    _ScrollGridApi,
+    _SortGridApi,
 } from './gridApi';
 import {
     clearFocusedCell,
@@ -68,7 +68,7 @@ import {
 } from './scrollApi';
 import { onSortChanged } from './sortApi';
 
-export const CoreApiModule = _defineModule<CoreGridApi>({
+export const CoreApiModule = _defineModule<_CoreGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/core-api',
     apiFunctions: {
@@ -81,7 +81,7 @@ export const CoreApiModule = _defineModule<CoreGridApi>({
     },
 });
 
-export const RowSelectionApiModule = _defineModule<RowSelectionGridApi>({
+export const RowSelectionApiModule = _defineModule<_RowSelectionGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/row-selection-api',
     apiFunctions: {
@@ -97,7 +97,7 @@ export const RowSelectionApiModule = _defineModule<RowSelectionGridApi>({
     },
 });
 
-export const RowApiModule = _defineModule<RowGridApi>({
+export const RowApiModule = _defineModule<_RowGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/row-api',
     apiFunctions: {
@@ -117,7 +117,7 @@ export const RowApiModule = _defineModule<RowGridApi>({
     },
 });
 
-export const ScrollApiModule = _defineModule<ScrollGridApi>({
+export const ScrollApiModule = _defineModule<_ScrollGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/scroll-api',
     apiFunctions: {
@@ -129,7 +129,7 @@ export const ScrollApiModule = _defineModule<ScrollGridApi>({
     },
 });
 
-export const KeyboardNavigationApiModule = _defineModule<KeyboardNavigationGridApi>({
+export const KeyboardNavigationApiModule = _defineModule<_KeyboardNavigationGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/keyboard-navigation-api',
     apiFunctions: {
@@ -142,7 +142,7 @@ export const KeyboardNavigationApiModule = _defineModule<KeyboardNavigationGridA
     },
 });
 
-export const EventApiModule = _defineModule<EventGridApi>({
+export const EventApiModule = _defineModule<_EventGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/event-api',
     apiFunctions: {
@@ -153,7 +153,7 @@ export const EventApiModule = _defineModule<EventGridApi>({
     },
 });
 
-export const CellApiModule = _defineModule<CellGridApi>({
+export const CellApiModule = _defineModule<_CellGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/cell-api',
     apiFunctions: {
@@ -163,7 +163,7 @@ export const CellApiModule = _defineModule<CellGridApi>({
     },
 });
 
-export const CommunityMenuApiModule = _defineModule<CommunityMenuGridApi>({
+export const CommunityMenuApiModule = _defineModule<_CommunityMenuGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/menu-api',
     apiFunctions: {
@@ -174,7 +174,7 @@ export const CommunityMenuApiModule = _defineModule<CommunityMenuGridApi>({
     },
 });
 
-export const SortApiModule = _defineModule<SortGridApi>({
+export const SortApiModule = _defineModule<_SortGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/sort-api',
     apiFunctions: {

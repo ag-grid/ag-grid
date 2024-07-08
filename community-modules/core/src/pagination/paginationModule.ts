@@ -1,4 +1,4 @@
-import type { PaginationGridApi } from '../api/gridApi';
+import type { _PaginationGridApi } from '../api/gridApi';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
@@ -22,7 +22,7 @@ export const PaginationCoreModule = _defineModule({
     beans: [PaginationService, PaginationAutoPageSizeService],
 });
 
-export const PaginationApiModule = _defineModule<PaginationGridApi>({
+export const PaginationApiModule = _defineModule<_PaginationGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/pagination-api',
     dependantModules: [PaginationCoreModule],

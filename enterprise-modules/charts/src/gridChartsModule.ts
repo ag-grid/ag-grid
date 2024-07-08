@@ -1,4 +1,4 @@
-import type { GridChartsGridApi } from '@ag-grid-community/core';
+import type { _GridChartsGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
@@ -51,7 +51,7 @@ export const GridChartsCoreModule = _defineModule({
     dependantModules: [RangeSelectionModule, EnterpriseCoreModule],
 });
 
-export const GridChartsApiModule = _defineModule<GridChartsGridApi>({
+export const GridChartsApiModule = _defineModule<_GridChartsGridApi>({
     version: GRID_VERSION,
     moduleName: `${ModuleNames.GridChartsModule}-api`,
     apiFunctions: {

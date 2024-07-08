@@ -1,4 +1,4 @@
-import type { ClipboardGridApi } from '@ag-grid-community/core';
+import type { _ClipboardGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
@@ -21,7 +21,7 @@ export const ClipboardCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule, CsvExportModule],
 });
 
-export const ClipboardApiModule = _defineModule<ClipboardGridApi>({
+export const ClipboardApiModule = _defineModule<_ClipboardGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.ClipboardModule}-api`,
     apiFunctions: {

@@ -1,4 +1,4 @@
-import type { MenuGridApi } from '@ag-grid-community/core';
+import type { _MenuGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _CommunityMenuApiModule, _defineModule } from '@ag-grid-community/core';
 import { AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
@@ -33,7 +33,7 @@ export const MenuCoreModule = _defineModule({
     ],
 });
 
-export const MenuApiModule = _defineModule<MenuGridApi>({
+export const MenuApiModule = _defineModule<_MenuGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.MenuModule}-api`,
     apiFunctions: {

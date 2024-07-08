@@ -1,4 +1,4 @@
-import type { EditGridApi } from '../api/gridApi';
+import type { _EditGridApi } from '../api/gridApi';
 import { _defineModule } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
@@ -28,7 +28,7 @@ export const EditCoreModule = _defineModule({
     beans: [EditService],
 });
 
-export const EditApiModule = _defineModule<EditGridApi>({
+export const EditApiModule = _defineModule<_EditGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/edit-api',
     apiFunctions: {

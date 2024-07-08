@@ -1,4 +1,4 @@
-import type { StatusBarGridApi } from '@ag-grid-community/core';
+import type { _StatusBarGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
@@ -25,7 +25,7 @@ export const StatusBarCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule],
 });
 
-export const StatusBarApiModule = _defineModule<StatusBarGridApi>({
+export const StatusBarApiModule = _defineModule<_StatusBarGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.StatusBarModule}-api`,
     apiFunctions: {

@@ -1,4 +1,4 @@
-import type { ColumnGridApi } from '../api/gridApi';
+import type { _ColumnGridApi } from '../api/gridApi';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
@@ -54,7 +54,7 @@ export const DataTypeModule = _defineModule({
     beans: [DataTypeService],
 });
 
-export const ColumnApiModule = _defineModule<ColumnGridApi>({
+export const ColumnApiModule = _defineModule<_ColumnGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/column-api',
     apiFunctions: {

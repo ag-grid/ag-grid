@@ -1,4 +1,4 @@
-import type { RenderGridApi } from '../api/gridApi';
+import type { _RenderGridApi } from '../api/gridApi';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
@@ -12,7 +12,7 @@ import {
     setGridAriaProperty,
 } from './renderApi';
 
-export const RenderApiModule = _defineModule<RenderGridApi>({
+export const RenderApiModule = _defineModule<_RenderGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/render-api',
     apiFunctions: {

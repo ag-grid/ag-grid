@@ -90,7 +90,7 @@ export interface GetCellValueParams<TValue = any> {
     useFormatter?: boolean;
 }
 
-export interface CoreGridApi<TData = any> {
+export interface _CoreGridApi<TData = any> {
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
     getGridId(): string;
 
@@ -117,7 +117,7 @@ export interface CoreGridApi<TData = any> {
     updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
 }
 
-export interface RowSelectionGridApi<TData = any> {
+export interface _RowSelectionGridApi<TData = any> {
     /**
      * Set all of the provided nodes selection state to the provided value.
      */
@@ -170,7 +170,7 @@ export interface RowSelectionGridApi<TData = any> {
     getSelectedRows(): TData[];
 }
 
-export interface OverlayGridApi {
+export interface _OverlayGridApi {
     /**
      * Show the 'loading' overlay.
      * @deprecated v32 `showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).
@@ -184,7 +184,7 @@ export interface OverlayGridApi {
     hideOverlay(): void;
 }
 
-export interface RowGridApi<TData = any> {
+export interface _RowGridApi<TData = any> {
     /** Remove row(s) from the DOM and recreate them again from scratch. */
     redrawRows(params?: RedrawRowsParams<TData>): void;
 
@@ -251,7 +251,7 @@ export interface RowGridApi<TData = any> {
     getModel(): IRowModel;
 }
 
-export interface ScrollGridApi<TData = any> {
+export interface _ScrollGridApi<TData = any> {
     /**
      * Returns an object with two properties:
      *  - `top`: The top pixel position of the current scroll in the grid
@@ -298,7 +298,7 @@ export interface ScrollGridApi<TData = any> {
     ): void;
 }
 
-export interface KeyboardNavigationGridApi {
+export interface _KeyboardNavigationGridApi {
     /** Returns the focused cell (or the last focused cell if the grid lost focus). */
     getFocusedCell(): CellPosition | null;
 
@@ -318,7 +318,7 @@ export interface KeyboardNavigationGridApi {
     tabToPreviousCell(event?: KeyboardEvent): boolean;
 }
 
-export interface EventGridApi<TData = any> {
+export interface _EventGridApi<TData = any> {
     /**
      * Add an event listener for the specified `eventType`.
      * Listener will receive the `event` as a single parameter.
@@ -351,7 +351,7 @@ export interface EventGridApi<TData = any> {
     ): void;
 }
 
-export interface CellGridApi {
+export interface _CellGridApi {
     /** Expire the value cache. */
     expireValueCache(): void;
 
@@ -375,7 +375,7 @@ export interface CellGridApi {
     getCellValue<TValue = any>(params: GetCellValueParams<TValue>): string | TValue | null | undefined;
 }
 
-export interface CommunityMenuGridApi {
+export interface _CommunityMenuGridApi {
     /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
     showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void;
 
@@ -389,7 +389,7 @@ export interface CommunityMenuGridApi {
     hidePopupMenu(): void;
 }
 
-export interface SortGridApi {
+export interface _SortGridApi {
     /**
      * Gets the grid to act as if the sort was changed.
      * Useful if you update some values and want to get the grid to reorder them according to the new values.
@@ -397,7 +397,7 @@ export interface SortGridApi {
     onSortChanged(): void;
 }
 
-export interface ClientSideRowModelGridApi<TData = any> {
+export interface _ClientSideRowModelGridApi<TData = any> {
     /**
      * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
      * Typically called after updating the row node expanded state explicitly, i.e `rowNode.expanded = false`,
@@ -448,7 +448,7 @@ export interface ClientSideRowModelGridApi<TData = any> {
     getBestCostNodeSelection(): IRowNode<TData>[] | undefined;
 }
 
-export interface CsrmSsrmSharedGridApi {
+export interface _CsrmSsrmSharedGridApi {
     /** Expand all groups. */
     expandAll(): void;
 
@@ -459,7 +459,7 @@ export interface CsrmSsrmSharedGridApi {
     onRowHeightChanged(): void;
 }
 
-export interface SsrmInfiniteSharedGridApi {
+export interface _SsrmInfiniteSharedGridApi {
     /**
      * Sets the `rowCount` and `maxRowFound` properties.
      * The second parameter, `maxRowFound`, is optional and if left out, only `rowCount` is set.
@@ -475,7 +475,7 @@ export interface SsrmInfiniteSharedGridApi {
     getCacheBlockState(): any;
 }
 
-export interface ColumnGridApi<TData = any> {
+export interface _ColumnGridApi<TData = any> {
     getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
 
     /**
@@ -635,7 +635,7 @@ export interface ColumnGridApi<TData = any> {
     autoSizeAllColumns(skipHeader?: boolean): void;
 }
 
-export interface DragGridApi {
+export interface _DragGridApi {
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     addRowDropZone(params: RowDropZoneParams): void;
 
@@ -646,7 +646,7 @@ export interface DragGridApi {
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams;
 }
 
-export interface EditGridApi<TData = any> {
+export interface _EditGridApi<TData = any> {
     /** Reverts the last cell edit. */
     undoCellEditing(): void;
 
@@ -672,7 +672,7 @@ export interface EditGridApi<TData = any> {
     getCurrentRedoSize(): number;
 }
 
-export interface FilterGridApi {
+export interface _FilterGridApi {
     /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     isAnyFilterPresent(): boolean;
 
@@ -683,7 +683,7 @@ export interface FilterGridApi {
     onFilterChanged(source?: FilterChangedEventSourceType): void;
 }
 
-export interface ColumnFilterGridApi {
+export interface _ColumnFilterGridApi {
     /** Returns `true` if any column filter is set, otherwise `false`. */
     isColumnFilterPresent(): boolean;
 
@@ -736,7 +736,7 @@ export interface ColumnFilterGridApi {
     showColumnFilter(colKey: string | Column): void;
 }
 
-export interface QuickFilterGridApi {
+export interface _QuickFilterGridApi {
     /** Returns `true` if the Quick Filter is set, otherwise `false`. */
     isQuickFilterPresent(): boolean;
 
@@ -747,12 +747,12 @@ export interface QuickFilterGridApi {
     resetQuickFilter(): void;
 }
 
-export interface StateGridApi {
+export interface _StateGridApi {
     /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
     getState(): GridState;
 }
 
-export interface PaginationGridApi {
+export interface _PaginationGridApi {
     /**
      * Returns `true` when the last page is known.
      * This will always be `true` if you are using the Client-Side Row Model for pagination.
@@ -788,7 +788,7 @@ export interface PaginationGridApi {
     paginationGoToPage(page: number): void;
 }
 
-export interface PinnedRowGridApi {
+export interface _PinnedRowGridApi {
     /** Gets the number of top pinned rows. */
     getPinnedTopRowCount(): number;
 
@@ -801,7 +801,7 @@ export interface PinnedRowGridApi {
     getPinnedBottomRow(index: number): IRowNode | undefined;
 }
 
-export interface RenderGridApi<TData = any> {
+export interface _RenderGridApi<TData = any> {
     /**
      * Sets an ARIA property in the grid panel (element with `role=\"treegrid\"`), and removes an ARIA property when the value is null.
      *
@@ -835,7 +835,7 @@ export interface RenderGridApi<TData = any> {
     getCellRendererInstances(params?: GetCellRendererInstancesParams<TData>): ICellRenderer[];
 }
 
-export interface SideBarGridApi {
+export interface _SideBarGridApi {
     /** Returns `true` if the side bar is visible. */
     isSideBarVisible(): boolean;
 
@@ -871,12 +871,12 @@ export interface SideBarGridApi {
     getSideBar(): SideBarDef | undefined;
 }
 
-export interface StatusBarGridApi {
+export interface _StatusBarGridApi {
     /** Gets the status panel instance corresponding to the supplied `id`. */
     getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined;
 }
 
-export interface InfiniteRowModelGridApi {
+export interface _InfiniteRowModelGridApi {
     /**
      * Marks all the currently loaded blocks in the cache for reload.
      * If you have 10 blocks in the cache, all 10 will be marked for reload.
@@ -899,7 +899,7 @@ export interface InfiniteRowModelGridApi {
     isLastRowIndexKnown(): boolean | undefined;
 }
 
-export interface CsvExportGridApi {
+export interface _CsvExportGridApi {
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     getDataAsCsv(params?: CsvExportParams): string | undefined;
 
@@ -907,7 +907,7 @@ export interface CsvExportGridApi {
     exportDataAsCsv(params?: CsvExportParams): void;
 }
 
-export interface RowGroupingGridApi<TData = any> {
+export interface _RowGroupingGridApi<TData = any> {
     /** @deprecated v31.1 addAggFunc(key, func) is  deprecated, please use addAggFuncs({ key: func }) instead. */
     addAggFunc(key: string, aggFunc: IAggFunc): void;
 
@@ -993,7 +993,7 @@ export interface RowGroupingGridApi<TData = any> {
     getPivotResultColumns(): Column[] | null;
 }
 
-export interface RangeSelectionGridApi {
+export interface _RangeSelectionGridApi {
     /** Returns the list of selected cell ranges. */
     getCellRanges(): CellRange[] | null;
 
@@ -1004,7 +1004,7 @@ export interface RangeSelectionGridApi {
     clearRangeSelection(): void;
 }
 
-export interface ServerSideRowModelGridApi {
+export interface _ServerSideRowModelGridApi {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
@@ -1052,7 +1052,7 @@ export interface ServerSideRowModelGridApi {
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
 }
 
-export interface MenuGridApi {
+export interface _MenuGridApi {
     /**
      * Displays the AG Grid context menu
      */
@@ -1065,7 +1065,7 @@ export interface MenuGridApi {
     hideColumnChooser(): void;
 }
 
-export interface MasterDetailGridApi {
+export interface _MasterDetailGridApi {
     /** Register a detail grid with the master grid when it is created. */
     addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void;
 
@@ -1079,7 +1079,7 @@ export interface MasterDetailGridApi {
     forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void): void;
 }
 
-export interface ExcelExportGridApi {
+export interface _ExcelExportGridApi {
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined;
 
@@ -1096,7 +1096,7 @@ export interface ExcelExportGridApi {
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
 }
 
-export interface ClipboardGridApi {
+export interface _ClipboardGridApi {
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     copyToClipboard(params?: IClipboardCopyParams): void;
 
@@ -1116,7 +1116,7 @@ export interface ClipboardGridApi {
     pasteFromClipboard(): void;
 }
 
-export interface GridChartsGridApi {
+export interface _GridChartsGridApi {
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     getChartModels(): ChartModel[] | undefined;
 
@@ -1151,7 +1151,7 @@ export interface GridChartsGridApi {
     restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
 }
 
-export interface AdvancedFilterGridApi {
+export interface _AdvancedFilterGridApi {
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     getAdvancedFilterModel(): AdvancedFilterModel | null;
 
@@ -1169,41 +1169,41 @@ export interface AdvancedFilterGridApi {
 }
 
 export interface GridApi<TData = any>
-    extends CoreGridApi<TData>,
-        OverlayGridApi,
-        RowSelectionGridApi<TData>,
-        RowGridApi<TData>,
-        ScrollGridApi<TData>,
-        KeyboardNavigationGridApi,
-        EventGridApi<TData>,
-        CellGridApi,
-        CommunityMenuGridApi,
-        SortGridApi,
-        ClientSideRowModelGridApi<TData>,
-        CsrmSsrmSharedGridApi,
-        SsrmInfiniteSharedGridApi,
-        ColumnGridApi<TData>,
-        DragGridApi,
-        EditGridApi<TData>,
-        FilterGridApi,
-        ColumnFilterGridApi,
-        QuickFilterGridApi,
-        StateGridApi,
-        PaginationGridApi,
-        PinnedRowGridApi,
-        RenderGridApi<TData>,
-        SideBarGridApi,
-        StatusBarGridApi,
-        InfiniteRowModelGridApi,
-        CsvExportGridApi,
-        RowGroupingGridApi<TData>,
-        RangeSelectionGridApi,
-        ServerSideRowModelGridApi,
-        MenuGridApi,
-        MasterDetailGridApi,
-        ExcelExportGridApi,
-        ClipboardGridApi,
-        GridChartsGridApi,
-        AdvancedFilterGridApi {
+    extends _CoreGridApi<TData>,
+        _OverlayGridApi,
+        _RowSelectionGridApi<TData>,
+        _RowGridApi<TData>,
+        _ScrollGridApi<TData>,
+        _KeyboardNavigationGridApi,
+        _EventGridApi<TData>,
+        _CellGridApi,
+        _CommunityMenuGridApi,
+        _SortGridApi,
+        _ClientSideRowModelGridApi<TData>,
+        _CsrmSsrmSharedGridApi,
+        _SsrmInfiniteSharedGridApi,
+        _ColumnGridApi<TData>,
+        _DragGridApi,
+        _EditGridApi<TData>,
+        _FilterGridApi,
+        _ColumnFilterGridApi,
+        _QuickFilterGridApi,
+        _StateGridApi,
+        _PaginationGridApi,
+        _PinnedRowGridApi,
+        _RenderGridApi<TData>,
+        _SideBarGridApi,
+        _StatusBarGridApi,
+        _InfiniteRowModelGridApi,
+        _CsvExportGridApi,
+        _RowGroupingGridApi<TData>,
+        _RangeSelectionGridApi,
+        _ServerSideRowModelGridApi,
+        _MenuGridApi,
+        _MasterDetailGridApi,
+        _ExcelExportGridApi,
+        _ClipboardGridApi,
+        _GridChartsGridApi,
+        _AdvancedFilterGridApi {
     dispatchEvent(event: AgEvent): void;
 }

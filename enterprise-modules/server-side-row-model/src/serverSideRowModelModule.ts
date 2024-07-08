@@ -1,4 +1,4 @@
-import type { ServerSideRowModelGridApi } from '@ag-grid-community/core';
+import type { _ServerSideRowModelGridApi } from '@ag-grid-community/core';
 import {
     ModuleNames,
     RowModelHelperService,
@@ -57,7 +57,7 @@ export const ServerSideRowModelCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule, _RowNodeBlockModule],
 });
 
-export const ServerSideRowModelApiModule = _defineModule<ServerSideRowModelGridApi>({
+export const ServerSideRowModelApiModule = _defineModule<_ServerSideRowModelGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.ServerSideRowModelModule}-api`,
     beans: [RowModelHelperService],

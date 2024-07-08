@@ -1,4 +1,4 @@
-import type { SideBarGridApi } from '@ag-grid-community/core';
+import type { _SideBarGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
@@ -25,7 +25,7 @@ export const SideBarCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule],
 });
 
-export const SideBarApiModule = _defineModule<SideBarGridApi>({
+export const SideBarApiModule = _defineModule<_SideBarGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.SideBarModule}-api`,
     apiFunctions: {

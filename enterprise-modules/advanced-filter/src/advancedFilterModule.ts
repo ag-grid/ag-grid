@@ -1,4 +1,4 @@
-import type { AdvancedFilterGridApi } from '@ag-grid-community/core';
+import type { _AdvancedFilterGridApi } from '@ag-grid-community/core';
 import { ModuleNames, _FilterCoreModule, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
@@ -19,7 +19,7 @@ export const AdvancedFilterCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule, _FilterCoreModule],
 });
 
-export const AdvancedFilterApiModule = _defineModule<AdvancedFilterGridApi>({
+export const AdvancedFilterApiModule = _defineModule<_AdvancedFilterGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.AdvancedFilterModule}-api`,
     apiFunctions: {
