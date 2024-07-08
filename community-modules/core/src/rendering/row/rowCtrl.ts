@@ -77,6 +77,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private instanceId: RowCtrlInstanceId;
 
+    // Some cleanup is tied to the comp instead of the ctrl so we need to keep track of them
+    // so that we can clean them up when the comp is destroyed / double rendered in React StrictMode
+    private compDestroyFuncs: (() => void)[] = [];
     private readonly rowNode: RowNode;
     private readonly beans: BeanCollection;
     private tooltipFeature: TooltipFeature | undefined;
@@ -117,7 +120,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         fullWidth: false,
     };
 
-    private rowDragComps: RowDragComp[] = [];
+    private rowDragComps: { [key in RowContainerType]?: RowDragComp } | undefined;
 
     private readonly useAnimationFrameForCreate: boolean;
 
@@ -222,7 +225,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.allRowGuis.push(gui);
         this.updateGui(containerType, gui);
 
-        this.initialiseRowComp(gui);
+        this.compDestroyFuncs = this.initialiseRowComp(gui);
 
         // pinned rows render before the main grid body in the SSRM, only fire the event after the main body has rendered.
         if (this.rowType !== 'FullWidthLoading' && !this.rowNode.rowPinned) {
@@ -234,8 +237,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public unsetComp(containerType: RowContainerType): void {
+        if (!this.isAlive()) {
+            // if not alive everything will already have been cleaned up
+            return;
+        }
         this.allRowGuis = this.allRowGuis.filter((rowGui) => rowGui.containerType !== containerType);
         this.updateGui(containerType, undefined);
+        this.cleanupCompHandlers();
+    }
+
+    private cleanupCompHandlers(): void {
+        for (const cleanupFunc of this.compDestroyFuncs) {
+            cleanupFunc();
+        }
+        this.compDestroyFuncs = [];
     }
 
     public isCacheable(): boolean {
@@ -247,10 +262,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.allRowGuis.forEach((rg) => (rg.element.style.display = displayValue));
     }
 
-    private initialiseRowComp(gui: RowGui): void {
+    private initialiseRowComp(gui: RowGui): (() => void)[] {
         const gos = this.gos;
 
-        this.listenOnDomOrder(gui);
+        const domOrderUnset = this.listenOnDomOrder(gui);
         if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
             this.rowNode.checkAutoHeights();
         }
@@ -281,26 +296,31 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         // DOM DATA
         gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
-        this.addDestroyFunc(() => gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
+        const unsetDomData = () => gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null);
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
+        let unsetHoverFuncs: (() => void)[] = [];
         if (this.useAnimationFrameForCreate) {
             this.beans.animationFrameService.createTask(
-                this.addHoverFunctionality.bind(this, gui.element),
+                () => {
+                    // As this is run later we push it directly to the destroy functions
+                    this.compDestroyFuncs.push(...this.addHoverFunctionality(gui.element));
+                },
                 this.rowNode.rowIndex!,
                 'createTasksP2'
             );
         } else {
-            this.addHoverFunctionality(gui.element);
+            unsetHoverFuncs = this.addHoverFunctionality(gui.element);
         }
 
         if (this.isFullWidth()) {
             this.setupFullWidth(gui);
         }
 
+        let unsetRowDragger: () => void = () => {};
         if (gos.get('rowDragEntireRow')) {
-            this.addRowDraggerToRow(gui);
+            unsetRowDragger = this.addRowDraggerToRow(gui);
         }
 
         if (this.useAnimationFrameForCreate) {
@@ -319,6 +339,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         this.executeProcessRowPostCreateFunc();
+
+        return [...domOrderUnset, unsetDomData, unsetRowDragger, ...unsetHoverFuncs];
     }
 
     private setRowCompRowBusinessKey(comp: IRowComp): void {
@@ -365,7 +387,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             _warnOnce(
                 "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `enableRangeSelection: true`"
             );
-            return;
+            return () => {};
         }
         const translate = this.beans.localeService.getLocaleTextFunc();
         const rowDragComp = new RowDragComp(
@@ -377,7 +399,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             true
         );
         const rowDragBean = this.createBean(rowDragComp, this.beans.context);
-        this.rowDragComps.push(rowDragBean);
+        if (!this.rowDragComps) {
+            this.rowDragComps = {};
+        }
+
+        this.rowDragComps[gui.containerType] = rowDragBean;
+        return () => this.destroyRowDragComponents(gui.containerType);
     }
 
     private setupFullWidth(gui: RowGui): void {
@@ -617,13 +644,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return isEnsureDomOrder || this.gos.isDomLayout('print');
     }
 
-    private listenOnDomOrder(gui: RowGui): void {
+    private listenOnDomOrder(gui: RowGui) {
         const listener = () => {
             gui.rowComp.setDomOrder(this.getDomOrder());
         };
 
-        this.addManagedPropertyListener('domLayout', listener);
-        this.addManagedPropertyListener('ensureDomOrder', listener);
+        return this.addManagedPropertyListeners(['domLayout', 'ensureDomOrder'], listener);
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -725,12 +751,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
 
         this.addDestroyFunc(() => {
-            this.destroyBeans(this.rowDragComps, this.beans.context);
+            this.destroyRowDragComponents();
             if (this.tooltipFeature) {
                 this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
             }
         });
-        this.addManagedPropertyListeners(['rowDragEntireRow'], () => {
+        this.addManagedPropertyListener('rowDragEntireRow', () => {
             const useRowDragEntireRow = this.gos.get('rowDragEntireRow');
             if (useRowDragEntireRow) {
                 this.allRowGuis.forEach((gui) => {
@@ -738,10 +764,24 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 });
                 return;
             }
-            this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
+            this.destroyRowDragComponents();
         });
 
         this.addListenersForCellComps();
+    }
+
+    private destroyRowDragComponents(containerType?: RowContainerType): void {
+        if (!this.rowDragComps) return;
+
+        if (!containerType) {
+            // destroy all row drag components
+            this.destroyBeans(Object.values(this.rowDragComps), this.beans.context);
+            this.rowDragComps = undefined;
+        } else {
+            // destroy the row drag component for the specified container type
+            this.destroyBean(this.rowDragComps[containerType], this.beans.context);
+            delete this.rowDragComps[containerType];
+        }
     }
 
     private addListenersForCellComps(): void {
@@ -1421,11 +1461,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.ariaAnnouncementService.announceValue(label);
     }
 
-    public addHoverFunctionality(eRow: HTMLElement): void {
+    public addHoverFunctionality(eRow: HTMLElement): (() => void)[] {
         // because we use animation frames to do this, it's possible the row no longer exists
         // by the time we get to add it
         if (!this.active) {
-            return;
+            return [];
         }
 
         // because mouseenter and mouseleave do not propagate, we cannot listen on the gridPanel
@@ -1437,28 +1477,32 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // all are listening for event on the row node.
 
         const { rowNode, beans, gos } = this;
-        // step 1 - add listener, to set flag on row node
-        this.addManagedListeners(eRow, {
-            mouseenter: () => rowNode.onMouseEnter(),
-            mouseleave: () => rowNode.onMouseLeave(),
-        });
+        return [
+            // step 1 - add listener, to set flag on row node
 
-        // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addManagedListeners(rowNode, {
-            mouseEnter: () => {
-                // if hover turned off, we don't add the class. we do this here so that if the application
-                // toggles this property mid way, we remove the hover form the last row, but we stop
-                // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
-                if (!beans.dragService.isDragging() && !gos.get('suppressRowHoverHighlight')) {
-                    eRow.classList.add('ag-row-hover');
-                    rowNode.setHovered(true);
-                }
-            },
-            mouseLeave: () => {
-                eRow.classList.remove('ag-row-hover');
-                rowNode.setHovered(false);
-            },
-        });
+            ...this.addManagedListeners(eRow, {
+                mouseenter: () => rowNode.onMouseEnter(),
+                mouseleave: () => rowNode.onMouseLeave(),
+            }),
+
+            // step 2 - listen for changes on row node (which any eRow can trigger)
+
+            ...this.addManagedListeners(rowNode, {
+                mouseEnter: () => {
+                    // if hover turned off, we don't add the class. we do this here so that if the application
+                    // toggles this property mid way, we remove the hover form the last row, but we stop
+                    // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
+                    if (!beans.dragService.isDragging() && !gos.get('suppressRowHoverHighlight')) {
+                        eRow.classList.add('ag-row-hover');
+                        rowNode.setHovered(true);
+                    }
+                },
+                mouseLeave: () => {
+                    eRow.classList.remove('ag-row-hover');
+                    rowNode.setHovered(false);
+                },
+            }),
+        ];
     }
 
     // for animation, we don't want to animate entry or exit to a very far away pixel,
@@ -1555,6 +1599,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.dispatchLocalEvent(event);
         this.beans.eventService.dispatchEvent(event);
         super.destroy();
+
+        // running after super.destroy() as that will clear the destroyFuncs so that when this runs it will not
+        // have a performance hit of removing destroyFuncs from the array, like it has to when it is run
+        // as part of unSetting the rowComp
+        this.cleanupCompHandlers();
     }
 
     public destroySecondPass(): void {
