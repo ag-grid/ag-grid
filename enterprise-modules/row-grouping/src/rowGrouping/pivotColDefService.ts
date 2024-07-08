@@ -173,7 +173,6 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         if (this.gos.get('suppressExpandablePivotGroups') || this.gos.get('pivotColumnGroupTotals')) {
             return;
         }
-        console.log('how??');
 
         const recursivelyAddSubTotals = (
             groupDef: ColGroupDef | ColDef,
