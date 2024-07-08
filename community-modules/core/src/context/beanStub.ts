@@ -176,7 +176,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         listener: PropertyValueChangedListener<K>
     ): () => null {
         this.gos.addPropertyEventListener(event, listener);
-        const destroyFunc: () => null = () => {
+        const destroyFunc = () => {
             this.gos.removePropertyEventListener(event, listener);
             return null;
         };
@@ -218,9 +218,12 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
      * @param events Array of GridOption properties to listen for changes too.
      * @param listener Shared listener to run if any of the properties change
      */
-    public addManagedPropertyListeners(events: (keyof GridOptions)[], listener: PropertyChangedListener): void {
+    public addManagedPropertyListeners(
+        events: (keyof GridOptions)[],
+        listener: PropertyChangedListener
+    ): (() => null)[] {
         if (this.destroyed) {
-            return;
+            return [];
         }
 
         // Ensure each set of events can run for the same changeSetId
@@ -245,7 +248,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
             listener(propertiesChangeEvent);
         };
 
-        events.forEach((event) => this.setupGridOptionListener(event, wrappedListener));
+        return events.map((event) => this.setupGridOptionListener(event, wrappedListener));
     }
 
     public isAlive = (): boolean => !this.destroyed;
