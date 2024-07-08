@@ -603,6 +603,14 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         const parentGroup = this.findParentForNode(childNode, path, details, batchRemover, level);
 
         if (details.usingTreeData) {
+            const existingNode = parentGroup.childrenAfterGroup?.find((node) => node.key === childNode.key);
+            if (existingNode) {
+                _warnOnce(`duplicate group keys for row data, keys should be unique`, [
+                    existingNode.data,
+                    childNode.data,
+                ]);
+                return;
+            }
             const info = _last(path);
             childNode.parent = parentGroup;
             childNode.level = path.length;

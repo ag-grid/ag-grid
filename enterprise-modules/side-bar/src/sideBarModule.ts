@@ -1,5 +1,5 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import type { _SideBarGridApi } from '@ag-grid-community/core';
+import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { ToolPanelColDefService } from './sideBar/common/toolPanelColDefService';
@@ -18,14 +18,14 @@ import {
 import { SideBarService } from './sideBar/sideBarService';
 import { VERSION } from './version';
 
-export const SideBarCoreModule: Module = {
+export const SideBarCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.SideBarModule}-core`,
     beans: [ToolPanelColDefService, SideBarService],
     dependantModules: [EnterpriseCoreModule],
-};
+});
 
-export const SideBarApiModule: Module = {
+export const SideBarApiModule = _defineModule<_SideBarGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.SideBarModule}-api`,
     apiFunctions: {
@@ -41,10 +41,10 @@ export const SideBarApiModule: Module = {
         getSideBar,
     },
     dependantModules: [SideBarCoreModule],
-};
+});
 
-export const SideBarModule: Module = {
+export const SideBarModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.SideBarModule,
     dependantModules: [SideBarCoreModule, SideBarApiModule],
-};
+});

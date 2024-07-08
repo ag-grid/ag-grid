@@ -444,12 +444,46 @@ export function getColumnOptions(colDefFile: string, filterFile: string) {
 
 export function getGridApi(gridApiFile: string) {
     const srcFile = parseFile(gridApiFile);
-    const gridApi = findNode('GridApi', srcFile);
+    const gridApi: ts.InterfaceDeclaration = findNode('GridApi', srcFile);
 
     let members = {};
-    ts.forEachChild(gridApi, (n) => {
-        members = { ...members, ...extractTypesFromNode(n, srcFile, false) };
+
+    const errors: string[] = [];
+
+    const apiToTypeMap = new Map<string, string>();
+
+    const addType = (typeName: string, n: ts.Node) => {
+        const typesFromNode = extractTypesFromNode(n, srcFile, false);
+
+        for (const apiName of Object.keys(typesFromNode)) {
+            const apiTypeName = apiToTypeMap.get(apiName);
+            if (apiTypeName !== undefined && apiTypeName !== typeName) {
+                errors.push(`API ${apiName} already exists in both ${apiTypeName} and ${typeName}`);
+            } else {
+                apiToTypeMap.set(apiName, typeName);
+            }
+        }
+
+        members = { ...members, ...typesFromNode };
+    };
+
+    gridApi.heritageClauses.forEach((h) => {
+        h.types.forEach((t) => {
+            const typeName = formatNode(t.expression, srcFile);
+            const typeNode = findNode(typeName, srcFile);
+            if (!typeNode) {
+                errors.push(`Could not find base interface for ${typeName}`);
+            } else {
+                ts.forEachChild(typeNode, (n) => addType(typeName, n));
+            }
+        });
     });
+
+    ts.forEachChild(gridApi, (n) => addType('GridApi', n));
+
+    if (errors.length > 0) {
+        throw new Error('getGridApi validation failed:\n' + errors.join('\n'));
+    }
 
     return members;
 }

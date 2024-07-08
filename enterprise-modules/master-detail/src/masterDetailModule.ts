@@ -1,5 +1,5 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import type { _MasterDetailGridApi } from '@ag-grid-community/core';
+import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule, GroupCellRenderer, GroupCellRendererCtrl } from '@ag-grid-enterprise/core';
 
 import { DetailCellRenderer } from './masterDetail/detailCellRenderer';
@@ -13,7 +13,7 @@ import {
 } from './masterDetail/masterDetailApi';
 import { VERSION } from './version';
 
-export const MasterDetailCoreModule: Module = {
+export const MasterDetailCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.MasterDetailModule}-core`,
     userComponents: [
@@ -32,9 +32,9 @@ export const MasterDetailCoreModule: Module = {
         { name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl },
     ],
     dependantModules: [EnterpriseCoreModule],
-};
+});
 
-export const MasterDetailApiModule: Module = {
+export const MasterDetailApiModule = _defineModule<_MasterDetailGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.MasterDetailModule}-api`,
     beans: [DetailGridApiService],
@@ -45,10 +45,10 @@ export const MasterDetailApiModule: Module = {
         forEachDetailGridInfo,
     },
     dependantModules: [MasterDetailCoreModule],
-};
+});
 
-export const MasterDetailModule: Module = {
+export const MasterDetailModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.MasterDetailModule,
     dependantModules: [MasterDetailCoreModule, MasterDetailApiModule],
-};
+});

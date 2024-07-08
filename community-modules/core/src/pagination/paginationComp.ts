@@ -270,8 +270,10 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
             }
         }
 
+        const theoreticalEndRow = startRow + pageSize - 1;
+        const isLoadingPageSize = !maxRowFound && this.paginationService.getMasterRowCount() < theoreticalEndRow;
         this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
-        if (this.rowNodeBlockLoader?.isLoading()) {
+        if (isLoadingPageSize) {
             const translate = this.localeService.getLocaleTextFunc();
             this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         } else {

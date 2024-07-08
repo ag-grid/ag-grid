@@ -3,7 +3,7 @@ import { CommunityApiModule } from './api/apiModule';
 import { DataTypeModule } from './columns/columnModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
-import type { Module } from './interfaces/iModule';
+import { _defineModule } from './interfaces/iModule';
 import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
@@ -15,13 +15,13 @@ export const GridCoreModule = {
     moduleName: ModuleNames.CommunityCoreModule,
 };
 
-export const ValidationsModule = {
+export const ValidationsModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/core-validations',
     beans: [ValidationService],
-};
+});
 
-export const CommunityFeaturesModule: Module = {
+export const CommunityFeaturesModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/core-community-features',
     dependantModules: [
@@ -35,4 +35,4 @@ export const CommunityFeaturesModule: Module = {
         PaginationModule,
         CommunityApiModule,
     ],
-};
+});

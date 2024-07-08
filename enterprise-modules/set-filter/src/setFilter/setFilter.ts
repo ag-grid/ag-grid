@@ -45,6 +45,7 @@ import type {
 } from './setFilterListItem';
 import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
+import { processDataPath } from './setFilterUtils';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 
 /** @param V type of value in the Set Filter */
@@ -947,7 +948,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             // only perform checking on leaves. The core filtering logic for tree data won't work properly otherwise
             return false;
         }
-        return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(this.getDataPath!(data)) as any) as any);
+        return this.isInAppliedModel(
+            this.createKey(
+                processDataPath(this.getDataPath!(data), true, this.gos.get('groupAllowUnbalanced')) as any
+            ) as any
+        );
     }
 
     private doesFilterPassForGrouping(node: IRowNode): boolean {
@@ -955,20 +960,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             .getRowGroupColumns()
             .map((groupCol) => this.valueService.getKeyForNode(groupCol, node));
         dataPath.push(this.getValueFromNode(node));
-        return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(dataPath) as any) as any);
-    }
-
-    private checkMakeNullDataPath(dataPath: string[] | null): string[] | null {
-        if (dataPath) {
-            dataPath = dataPath.map((treeKey) => _toStringOrNull(_makeNull(treeKey))) as any;
-        }
-        if (dataPath?.some((treeKey) => treeKey == null)) {
-            if (this.gos.get('groupAllowUnbalanced') && _last(dataPath) != null) {
-                return dataPath.filter((treeKey) => treeKey != null);
-            }
-            return null;
-        }
-        return dataPath;
+        return this.isInAppliedModel(
+            this.createKey(processDataPath(dataPath, false, this.gos.get('groupAllowUnbalanced')) as any) as any
+        );
     }
 
     private isInAppliedModel(key: string | null): boolean {

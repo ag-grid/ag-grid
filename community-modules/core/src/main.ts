@@ -560,7 +560,26 @@ export { CellNavigationService } from './cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from './grid';
-export { GridApi, DetailGridInfo, StartEditingCellParams, GetCellValueParams } from './api/gridApi';
+export {
+    GridApi,
+    DetailGridInfo,
+    StartEditingCellParams,
+    GetCellValueParams,
+    _CsvExportGridApi,
+    _ClientSideRowModelGridApi,
+    _SideBarGridApi,
+    _RowGroupingGridApi,
+    _RangeSelectionGridApi,
+    _MenuGridApi,
+    _ServerSideRowModelGridApi,
+    _ExcelExportGridApi,
+    _ClipboardGridApi,
+    _InfiniteRowModelGridApi,
+    _GridChartsGridApi,
+    _MasterDetailGridApi,
+    _StatusBarGridApi,
+    _AdvancedFilterGridApi,
+} from './api/gridApi';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
 export { RowModelHelperService } from './api/rowModelHelperService';
 export {
@@ -901,7 +920,7 @@ export * from './interfaces/iChartOptions';
 export * from './interfaces/iSparklineCellRendererParams';
 
 // modules
-export { Module, ModuleValidationResult } from './interfaces/iModule';
+export { Module, ModuleValidationResult, _defineModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
 
