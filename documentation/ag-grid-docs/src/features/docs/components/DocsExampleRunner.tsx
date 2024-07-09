@@ -1,5 +1,5 @@
 import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
-import type { FileContents, GeneratedContents } from '@features/example-generator/types';
+import type { GeneratedContents } from '@features/example-generator/types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
@@ -86,10 +86,12 @@ const DocsExampleRunnerInner = ({
 
     const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
 
-    const importType = overrideImportType ?? useImportType();
+    const storeImportType = useImportType();
+    const importType = overrideImportType ?? storeImportType;
+    const storeInternalFramework = useStore($internalFramework);
     const internalFramework = typescriptOnly
         ? 'typescript'
-        : getInternalFramework(useStore($internalFramework), supportedFrameworks, importType);
+        : getInternalFramework(storeInternalFramework, supportedFrameworks, importType);
     const urlConfig: UrlParams = useMemo(
         () => ({ internalFramework, pageName, exampleName, importType }),
         [internalFramework, pageName, exampleName, importType]
