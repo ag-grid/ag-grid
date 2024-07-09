@@ -31,6 +31,7 @@
     padding-bottom: 0;
     margin-bottom: $spacing-size-2;
 }
+
 .pageSections article {
     > h2 {
         margin-top: $spacing-size-12;
@@ -39,6 +40,12 @@
     > h3,
     > h4 {
         margin-top: $spacing-size-12;
+    }
+
+    > h2 + h3,
+    > h2 + h4,
+    > h3 + h4 {
+        margin-top: $spacing-size-8;
     }
 
     p,
