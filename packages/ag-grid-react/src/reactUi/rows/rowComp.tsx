@@ -13,7 +13,7 @@ import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMe
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
-import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
+import { RenderSkipper, agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
@@ -45,6 +45,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         isDisplayed ? rowCtrl.getInitialTransform(containerType) : undefined
     );
 
+    const renderChecker = useRef(new RenderSkipper());
     const eGui = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
 
@@ -119,10 +120,16 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-
-        if (!eGui.current) {
+        if (!e) {
+            // Want to unset the component if the element is removed from the DOM
+            // We don't want to do this in the below check of !eGui.current because
+            // that can return null on the second render
             rowCtrl.unsetComp(containerType);
+        }
+
+        const shouldSkip = renderChecker.current.shouldSkip(e, eGui.current);
+        eGui.current = e;
+        if (!eGui.current) {
             return;
         }
 
@@ -133,7 +140,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
             return;
         }
 
-        rowCtrl.setComp(compProxy.current, eGui.current, containerType);
+        rowCtrl.setComp(compProxy.current, eGui.current, containerType, shouldSkip);
     }, []);
 
     useLayoutEffect(

@@ -10,7 +10,7 @@ import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMe
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { isComponentStateless } from '../utils';
+import { RenderSkipper, isComponentStateless } from '../utils';
 
 const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     const { ctrl } = props;
@@ -20,6 +20,7 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     const colId = isAlive ? ctrl.getColId() : undefined;
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
+    const renderChecker = useRef(new RenderSkipper());
     const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
     const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
@@ -47,15 +48,15 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     });
 
     const setRef = useCallback((e: HTMLDivElement) => {
+        const shouldSkip = renderChecker.current.shouldSkip(e, eGui.current);
         eGui.current = e;
-        if (!eGui.current || !isAlive) {
+        if (!eGui.current || !isAlive || shouldSkip) {
             return;
         }
 
         ctrl.setComp(compProxy.current, eGui.current, eResize.current!, eHeaderCompWrapper.current!);
 
         const selectAllGui = ctrl.getSelectAllGui();
-        // can be called multiple times but as long as the selectAllGui element is the same, it won't be added again
         eResize.current?.insertAdjacentElement('afterend', selectAllGui);
     }, []);
 

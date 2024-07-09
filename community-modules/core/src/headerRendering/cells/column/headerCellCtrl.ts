@@ -11,7 +11,7 @@ import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
-import { _getElementSize, _isSameElement } from '../../../utils/dom';
+import { _getElementSize } from '../../../utils/dom';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
@@ -64,10 +64,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         eHeaderCompWrapper: HTMLElement
     ): void {
         this.comp = comp;
-
-        if (_isSameElement(this.eGui, eGui)) {
-            return;
-        }
 
         this.setGui(eGui);
         this.updateState();

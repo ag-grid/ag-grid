@@ -17,7 +17,7 @@ import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
-import { isComponentStateless } from '../utils';
+import { RenderSkipper, isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 
@@ -191,6 +191,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     // useMemo as more then just accessing a boolean on the cellCtrl
     const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), [cellCtrl]);
     const cellAriaRole = useMemo(() => cellCtrl.getCellAriaRole(), [cellCtrl]);
+    const renderChecker = useRef(new RenderSkipper());
     const eGui = useRef<HTMLDivElement | null>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
@@ -433,8 +434,9 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     );
 
     const setRef = useCallback((ref: HTMLDivElement | null) => {
+        const shouldSkip = renderChecker.current.shouldSkip(ref, eGui.current);
         eGui.current = ref;
-        if (!eGui.current || !cellCtrl) {
+        if (!eGui.current || !cellCtrl || shouldSkip) {
             return;
         }
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;

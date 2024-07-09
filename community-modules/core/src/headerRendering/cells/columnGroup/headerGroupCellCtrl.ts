@@ -11,7 +11,6 @@ import type { HeaderColumnId } from '../../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _last, _removeFromArray } from '../../../utils/array';
-import { _isSameElement } from '../../../utils/dom';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
@@ -50,10 +49,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
         this.comp = comp;
-
-        if (_isSameElement(this.eGui, eGui)) {
-            return;
-        }
 
         this.setGui(eGui);
 

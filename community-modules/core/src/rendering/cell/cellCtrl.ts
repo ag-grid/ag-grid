@@ -13,7 +13,7 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _getElementSize, _isSameElement } from '../../utils/dom';
+import { _getElementSize } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
@@ -262,10 +262,6 @@ export class CellCtrl extends BeanStub {
         startEditing: boolean
     ): void {
         this.cellComp = comp;
-
-        if (_isSameElement(this.eGui, eGui)) {
-            return;
-        }
 
         this.eGui = eGui;
         this.printLayout = printLayout;

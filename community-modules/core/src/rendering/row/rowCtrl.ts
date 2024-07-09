@@ -28,7 +28,7 @@ import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
-import { _isElementChildOfClass, _isFocusableFormField, _isSameElement, _isVisible } from '../../utils/dom';
+import { _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
@@ -118,7 +118,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     };
 
     private rowDragComps: RowDragComp[] = [];
-    private lastRowGui: { [key in RowContainerType]?: RowGui } = {};
 
     private readonly useAnimationFrameForCreate: boolean;
 
@@ -230,17 +229,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
+    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType, shouldSkip = false): void {
         const gui: RowGui = { rowComp, element, containerType };
         this.allRowGuis.push(gui);
         this.updateGui(containerType, gui);
 
-        const lastGui = this.lastRowGui[containerType];
-        if (lastGui) {
-            this.lastRowGui[containerType] = undefined;
-            if (_isSameElement(lastGui.element, element)) {
-                return;
-            }
+        if (shouldSkip) {
+            // Used by React to skip duplicate rendering caused by StrictMode
+            // Would normally just live in React world but due to the unsetting of the comp logic we
+            // need to at least update the guis within setComp
+            return;
         }
 
         this.initialiseRowComp(gui);
@@ -255,7 +253,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public unsetComp(containerType: RowContainerType): void {
-        this.lastRowGui[containerType] = this.getGui(containerType);
         this.updateGui(containerType, undefined);
         this.allRowGuis = this.allRowGuis.filter((gui) => gui.containerType !== containerType);
     }

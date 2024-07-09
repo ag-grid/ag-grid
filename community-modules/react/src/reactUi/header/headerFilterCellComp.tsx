@@ -13,7 +13,7 @@ import type { CustomFloatingFilterCallbacks } from '../../shared/customComp/inte
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { CssClasses, isComponentStateless } from '../utils';
+import { CssClasses, RenderSkipper, isComponentStateless } from '../utils';
 
 const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     const { context, gos } = useContext(BeansContext);
@@ -29,6 +29,7 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails | null>();
     const [, setRenderKey] = useState<number>(1);
 
+    const renderChecker = useRef(new RenderSkipper());
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);
     const eButtonWrapper = useRef<HTMLDivElement>(null);
@@ -66,8 +67,9 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     const { ctrl } = props;
 
     const setRef = useCallback((e: HTMLDivElement) => {
+        const shouldSkip = renderChecker.current.shouldSkip(e, eGui.current);
         eGui.current = e;
-        if (!eGui.current) {
+        if (!eGui.current || shouldSkip) {
             return;
         }
 

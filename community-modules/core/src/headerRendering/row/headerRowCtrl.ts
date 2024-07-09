@@ -4,7 +4,6 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
-import { _isSameElement } from '../../utils/dom';
 import { _values } from '../../utils/generic';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
@@ -84,10 +83,6 @@ export class HeaderRowCtrl extends BeanStub {
      */
     public setComp(comp: IHeaderRowComp, eGui: HTMLElement, initCompState: boolean = true): void {
         this.comp = comp;
-
-        if (_isSameElement(this.eGui, eGui)) {
-            return;
-        }
 
         if (initCompState) {
             this.onRowHeightChanged();

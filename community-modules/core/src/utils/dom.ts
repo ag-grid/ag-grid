@@ -498,12 +498,3 @@ export function _bindCellRendererToHtmlElement(
         }
     });
 }
-
-/**
- * Used to avoid duplicating listeners and setup logic while React is running in StrictMode.
- * This is only required for the Components where the ctrl is managed by AG Grid and passed into the React component.
- * All the other React components create / destroy their own ctrl so StrictMode works as expected.
- */
-export function _isSameElement(a: HTMLElement, b: HTMLElement): boolean {
-    return a === b;
-}

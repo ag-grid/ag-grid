@@ -5,7 +5,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
-import { _isElementChildOfClass, _isSameElement } from '../../../utils/dom';
+import { _isElementChildOfClass } from '../../../utils/dom';
 import { _warnOnce } from '../../../utils/function';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -41,10 +41,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.comp = comp;
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
-
-        if (_isSameElement(this.eGui, eGui)) {
-            return;
-        }
 
         this.setGui(eGui);
         this.setupActive();

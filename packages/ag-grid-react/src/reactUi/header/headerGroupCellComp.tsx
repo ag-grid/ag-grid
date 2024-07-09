@@ -8,7 +8,7 @@ import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMe
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { CssClasses, isComponentStateless } from '../utils';
+import { CssClasses, RenderSkipper, isComponentStateless } from '../utils';
 
 const HeaderGroupCellComp = (props: { ctrl: HeaderGroupCellCtrl }) => {
     const { context } = useContext(BeansContext);
@@ -21,6 +21,7 @@ const HeaderGroupCellComp = (props: { ctrl: HeaderGroupCellCtrl }) => {
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
     const colId = useMemo(() => ctrl.getColId(), []);
 
+    const renderChecker = useRef(new RenderSkipper());
     const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeaderGroupComp>();
@@ -41,8 +42,9 @@ const HeaderGroupCellComp = (props: { ctrl: HeaderGroupCellCtrl }) => {
     });
 
     const setRef = useCallback((e: HTMLDivElement) => {
+        const shouldSkip = renderChecker.current.shouldSkip(e, eGui.current);
         eGui.current = e;
-        if (!eGui.current) {
+        if (!eGui.current || shouldSkip) {
             return;
         }
         ctrl.setComp(compProxy.current, eGui.current, eResize.current!);
