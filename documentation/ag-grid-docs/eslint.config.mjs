@@ -37,6 +37,19 @@ export default [
             es6: true,
         },
     },
+    // Test files
+    {
+        files: ['**/*.test.ts'],
+        languageOptions: {
+            globals: {
+                describe: 'readonly',
+                it: 'readonly',
+                expect: 'readonly',
+                test: 'readonly',
+                vi: 'readonly',
+            },
+        },
+    },
     // Root scripts
     {
         files: ['*.mjs', '*.cjs', 'markdoc.config.ts'],
