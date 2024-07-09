@@ -427,7 +427,27 @@ const addVmlDrawingRel = (currentSheet: number) => {
     };
 };
 
-const addSheetViews = (rtl: boolean = false) => {
+const getPane = (xSplit: number = 0, ySplit: number = 0) => {
+    const shouldSplit = xSplit > 0 || ySplit > 0;
+
+    return shouldSplit
+        ? [
+              {
+                  name: 'pane',
+                  properties: {
+                      rawMap: {
+                          state: shouldSplit ? 'frozen' : undefined,
+                          topLeftCell: shouldSplit ? `${getExcelColumnName(xSplit + 1)}${ySplit + 1}` : undefined,
+                          xSplit: xSplit === 0 ? undefined : xSplit,
+                          ySplit: ySplit === 0 ? undefined : ySplit,
+                      },
+                  },
+              },
+          ]
+        : undefined;
+};
+
+const addSheetViews = (rtl: boolean = false, xSplit?: number, ySplit?: number) => {
     return (params: ComposedWorksheetParams) => {
         params.children.push({
             name: 'sheetViews',
@@ -440,6 +460,7 @@ const addSheetViews = (rtl: boolean = false) => {
                             workbookViewId: '0',
                         },
                     },
+                    children: getPane(xSplit, ySplit),
                 },
             ],
         });
@@ -497,7 +518,15 @@ interface ComposedWorksheetParams {
 const worksheetFactory: ExcelOOXMLTemplate = {
     getTemplate(params: { worksheet: ExcelWorksheet; currentSheet: number; config: ExcelGridSerializingParams }) {
         const { worksheet, currentSheet, config } = params;
-        const { margins = {}, pageSetup, headerFooterConfig, suppressColumnOutline, rightToLeft } = config;
+        const {
+            margins = {},
+            pageSetup,
+            headerFooterConfig,
+            suppressColumnOutline,
+            rightToLeft,
+            frozenRowCount,
+            frozenColumnCount,
+        } = config;
 
         const { table } = worksheet;
         const { rows, columns } = table;
@@ -509,7 +538,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
 
         const createWorksheetChildren = _compose<ComposedWorksheetParams>(
             addSheetPr(),
-            addSheetViews(rightToLeft),
+            addSheetViews(rightToLeft, frozenColumnCount, frozenRowCount),
             addSheetFormatPr(rows),
             addColumns(columns),
             addSheetData(rows, currentSheet + 1),

@@ -75,6 +75,8 @@ export {
     ExcelExportMultipleSheetParams,
     ExcelSheetPageSetup,
     ExcelFont,
+    ExcelFreezeRowsGetter,
+    ExcelFreezeColumnsGetter,
     ExcelInterior,
     ExcelNumberFormat,
     ExcelOOXMLDataType,

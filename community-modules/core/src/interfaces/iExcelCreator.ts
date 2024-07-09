@@ -402,7 +402,7 @@ export type ExcelSheetNameGetter = (params?: ExcelSheetNameGetterParams) => stri
 
 export interface ExcelFreezeRowsGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Row node. */
-    node: IRowNode<TData>;
+    node?: IRowNode<TData>;
 }
 
 export interface ExcelFreezeColumnsGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -487,7 +487,7 @@ export interface ExcelWorksheetConfigParams {
      * Use this property to select to freeze rows at the top of the exported sheet.
      * - `headers`  - Freeze all grid headers at the top.
      * - `headersAndPinnedRows` - Freeze all headers and pinned top rows.
-     * - A callback function that will freeze rows until a value other than `true` is returned. After that, this callback will no longer be executed.
+     * - A callback function that will freeze rows until a value other than `true` is returned, after that, this callback will no longer be executed. Note that using a callback will automatically freeze all header rows.
      */
     freezeRows?: 'headers' | 'headersAndPinnedRows' | ExcelFreezeRowsGetter;
     /**
