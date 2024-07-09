@@ -1,4 +1,6 @@
 (function (global) {
+    // eslint-disable-next-line no-global-assign
+    process = { env: {} };
     System.config({
         transpiler: 'ts',
         typescriptOptions: {
