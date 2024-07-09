@@ -598,7 +598,7 @@ var StatusBarService = class extends BeanStub {
 };
 
 // enterprise-modules/status-bar/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/status-bar/src/statusBarModule.ts
 var StatusBarCoreModule = {

@@ -563,7 +563,7 @@ var GridLicenseManager = class extends BeanStub {
 };
 
 // enterprise-modules/core/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/core/src/widgets/agMenuItemRenderer.ts
 import {

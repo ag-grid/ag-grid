@@ -1,3 +1,4 @@
+export declare const SKIP_JS_BUILTINS: Set<string>;
 export declare function _iterateObject<T>(object: {
     [p: string]: T;
 } | T[] | null | undefined, callback: (key: string, value: T) => void): void;

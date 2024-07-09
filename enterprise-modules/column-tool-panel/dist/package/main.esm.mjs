@@ -1962,7 +1962,7 @@ var ModelItemUtils = class extends BeanStub2 {
 };
 
 // enterprise-modules/column-tool-panel/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/column-tool-panel/src/columnsToolPanelModule.ts
 var ColumnsToolPanelModule = {

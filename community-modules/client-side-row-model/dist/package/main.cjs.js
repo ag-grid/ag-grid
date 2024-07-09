@@ -1800,7 +1800,7 @@ var SortStage = class extends import_core8.BeanStub {
 };
 
 // community-modules/client-side-row-model/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // community-modules/client-side-row-model/src/clientSideRowModelModule.ts
 var ClientSideRowModelCoreModule = {

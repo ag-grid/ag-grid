@@ -4612,7 +4612,7 @@ var TransactionManager = class extends BeanStub16 {
 };
 
 // enterprise-modules/server-side-row-model/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/server-side-row-model/src/serverSideRowModelModule.ts
 var ServerSideRowModelCoreModule = {

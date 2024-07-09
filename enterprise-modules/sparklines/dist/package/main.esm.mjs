@@ -2110,7 +2110,7 @@ var SparklineTooltipSingleton = class extends BeanStub {
 };
 
 // enterprise-modules/sparklines/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/sparklines/src/sparklinesModule.ts
 var SparklinesModule = {

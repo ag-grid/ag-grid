@@ -3,7 +3,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { BuildEventTypeMap } from './iEventEmitter';
 export type RowNodeEventType = 'rowSelected' | 'selectableChanged' | 'displayedChanged' | 'dataChanged' | 'cellChanged' | 'masterChanged' | 'heightChanged' | 'topChanged' | 'groupChanged' | 'allChildrenCountChanged' | 'firstChildChanged' | 'lastChildChanged' | 'childIndexChanged' | 'rowIndexChanged' | 'expandedChanged' | 'hasChildrenChanged' | 'uiLevelChanged' | 'rowHighlightChanged' | 'mouseEnter' | 'mouseLeave' | 'draggingChanged';
 export type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<RowNodeEventType, {
-    rowSelected: RowSelectedEvent<TData>;
+    rowSelected: RowNodeSelectedEvent<TData>;
     selectableChanged: SelectableChangedEvent<TData>;
     displayedChanged: DisplayedChangedEvent<TData>;
     dataChanged: DataChangedEvent<TData>;
@@ -37,7 +37,7 @@ export interface SetSelectedParams {
 export interface RowNodeEvent<T extends RowNodeEventType, TData = any> extends AgEvent<T> {
     node: IRowNode<TData>;
 }
-export interface RowSelectedEvent<TData = any> extends RowNodeEvent<'rowSelected', TData> {
+export interface RowNodeSelectedEvent<TData = any> extends RowNodeEvent<'rowSelected', TData> {
 }
 export interface MouseEnterEvent<TData = any> extends RowNodeEvent<'mouseEnter', TData> {
 }

@@ -2520,7 +2520,7 @@ var SetFloatingFilterComp = class extends import_core7.Component {
 };
 
 // enterprise-modules/set-filter/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/set-filter/src/setFilterModule.ts
 var SetFilterCoreModule = {

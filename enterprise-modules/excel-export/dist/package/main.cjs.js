@@ -4021,7 +4021,7 @@ function exportMultipleSheetsAsExcel2(beans, params) {
 }
 
 // enterprise-modules/excel-export/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/excel-export/src/excelExportModule.ts
 var _ExcelExportCoreModule = {

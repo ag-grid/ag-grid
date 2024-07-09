@@ -4156,7 +4156,7 @@ var AdvancedFilterService = class extends BeanStub5 {
 };
 
 // enterprise-modules/advanced-filter/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/advanced-filter/src/advancedFilterModule.ts
 var AdvancedFilterCoreModule = {

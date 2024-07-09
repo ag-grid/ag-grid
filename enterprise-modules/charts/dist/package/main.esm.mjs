@@ -1885,7 +1885,7 @@ import { BeanStub as BeanStub15, _warnOnce as _warnOnce14 } from "@ag-grid-commu
 import { VERSION as CHARTS_VERSION, _ModuleSupport as _ModuleSupport4 } from "ag-charts-community";
 
 // enterprise-modules/charts/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.1";
 
 // enterprise-modules/charts/src/charts/chartComp/gridChartComp.ts
 import {
