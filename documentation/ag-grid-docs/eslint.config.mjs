@@ -18,7 +18,6 @@ export default [
             'no-eval': 'error',
             'no-console': 'error',
             'prefer-const': 'warn',
-            'no-prototype-builtins': 'warn',
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-this-alias': 'warn',
             '@typescript-eslint/ban-types': 'warn',
