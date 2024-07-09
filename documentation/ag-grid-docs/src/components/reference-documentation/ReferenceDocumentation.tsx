@@ -149,6 +149,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
         if (interfaceOverrides) {
             typeProps = Object.entries(interfaceOverrides);
         } else {
+            // eslint-disable-next-line no-console
             console.error(`Please provide an override for type alias: ${interfaceName}`);
         }
     } else {
@@ -591,9 +592,11 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
             const isDeprecated = gridParams.meta?.tags?.some((t) => t.name === 'deprecated');
             if (isDeprecated) {
+                // eslint-disable-next-line no-console
                 console.warn(
                     `<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`
                 );
+                // eslint-disable-next-line no-console
                 console.warn('<api-documentation>: ' + gridParams.meta?.all);
             }
 
@@ -797,6 +800,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
 const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, config }) => {
     if (typeof type == 'string') {
+        // eslint-disable-next-line no-console
         console.log('<api-documentation>: type is a string!', type);
     }
 

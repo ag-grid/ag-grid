@@ -16,7 +16,7 @@ export default [
     {
         rules: {
             'no-eval': 'error',
-            'no-console': 'warn',
+            'no-console': 'error',
             'prefer-const': 'warn',
             'no-constant-condition': 'warn',
             'no-prototype-builtins': 'warn',
@@ -66,6 +66,7 @@ export default [
         files: ['public/**/*[.js|.ts]'],
         rules: {
             '@typescript-eslint/no-unused-vars': 'warn',
+            'no-console': 'warn',
         },
     },
     // Root scripts

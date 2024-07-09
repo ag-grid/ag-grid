@@ -312,6 +312,7 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
     if (!definitionOrArray) return [];
 
     if (allDefs.length > 1000) {
+        // eslint-disable-next-line no-console
         console.warn('AG Charts - Possible recursion error on type: ', definitionOrArray, allDefs);
         return allDefs;
     }

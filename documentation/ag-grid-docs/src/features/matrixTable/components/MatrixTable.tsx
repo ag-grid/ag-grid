@@ -62,6 +62,7 @@ function CellValue({
     }
 
     if (typeof value === 'object') {
+        // eslint-disable-next-line no-console
         console.error(`Cannot render object for cell value of field "${field}": ${JSON.stringify(value)}`);
         return null;
     }

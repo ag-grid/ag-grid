@@ -47,6 +47,7 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
         const isEnabled = automatedExamplesEnabled[id];
 
         if (!automatedExample) {
+            // eslint-disable-next-line no-console
             console.error('Automated example not found:', id);
             return;
         } else if (!isEnabled) {
