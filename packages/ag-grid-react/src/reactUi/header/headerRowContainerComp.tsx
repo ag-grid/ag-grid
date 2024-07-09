@@ -12,7 +12,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
     const { context } = useContext(BeansContext);
     const eGui = useRef<HTMLDivElement | null>(null);
     const eCenterContainer = useRef<HTMLDivElement>(null);
-    const headerRowCtrlRef = useRef<HeaderRowContainerCtrl | null>(null);
+    const headerRowCtrlRef = useRef<HeaderRowContainerCtrl>();
 
     const pinnedLeft = props.pinned === 'left';
     const pinnedRight = props.pinned === 'right';
@@ -47,8 +47,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
         if (!eGui.current) {
-            context.destroyBean(headerRowCtrlRef.current);
-            headerRowCtrlRef.current = null;
+            headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
             return;
         }
 

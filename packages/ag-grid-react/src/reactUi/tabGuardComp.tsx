@@ -26,7 +26,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
 
     const topTabGuardRef = useRef<HTMLDivElement | null>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement | null>(null);
-    const tabGuardCtrlRef = useRef<TabGuardCtrl | null>();
+    const tabGuardCtrlRef = useRef<TabGuardCtrl>();
 
     const setTabIndex = (value?: string | null) => {
         const processedValue = value == null ? undefined : parseInt(value, 10).toString();
@@ -47,14 +47,15 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     }));
 
     const setupCtrl = useCallback(() => {
-        if (!topTabGuardRef.current && !bottomTabGuardRef.current) {
+        const topTabGuard = topTabGuardRef.current;
+        const bottomTabGuard = bottomTabGuardRef.current;
+        if (!topTabGuard && !bottomTabGuard) {
             // Clean up after both refs have been removed
-            context.destroyBean(tabGuardCtrlRef.current);
-            tabGuardCtrlRef.current = null;
+            tabGuardCtrlRef.current = context.destroyBean(tabGuardCtrlRef.current);
             return;
         }
 
-        if (topTabGuardRef.current && bottomTabGuardRef.current) {
+        if (topTabGuard && bottomTabGuard) {
             const compProxy: ITabGuard = {
                 setTabIndex,
             };
@@ -62,8 +63,8 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
             tabGuardCtrlRef.current = context.createBean(
                 new TabGuardCtrl({
                     comp: compProxy,
-                    eTopGuard: topTabGuardRef.current,
-                    eBottomGuard: bottomTabGuardRef.current,
+                    eTopGuard: topTabGuard,
+                    eBottomGuard: bottomTabGuard,
                     eFocusableElement: eFocusableElement,
                     onTabKeyDown: onTabKeyDown,
                     forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
