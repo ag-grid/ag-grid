@@ -103,27 +103,27 @@ export class CellMouseListenerFeature extends BeanStub {
     }
 
     private onCellDoubleClicked(mouseEvent: MouseEvent) {
-        const colDef = this.column.getColDef();
+        const { column, beans, cellCtrl } = this;
+        const { eventService, frameworkOverrides, gos } = beans;
+
+        const colDef = column.getColDef();
         // always dispatch event to eventService
-        const cellDoubleClickedEvent: CellDoubleClickedEvent = this.cellCtrl.createEvent(
-            mouseEvent,
-            'cellDoubleClicked'
-        );
-        this.beans.eventService.dispatchEvent(cellDoubleClickedEvent);
+        const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(mouseEvent, 'cellDoubleClicked');
+        eventService.dispatchEvent(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
             // to make the callback async, do in a timeout
             window.setTimeout(() => {
-                this.beans.frameworkOverrides.wrapOutgoing(() => {
+                frameworkOverrides.wrapOutgoing(() => {
                     (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent);
                 });
             }, 0);
         }
 
-        const editOnDoubleClick = !this.beans.gos.get('singleClickEdit') && !this.beans.gos.get('suppressClickEdit');
+        const editOnDoubleClick = !gos.get('singleClickEdit') && !gos.get('suppressClickEdit');
         if (editOnDoubleClick) {
-            this.cellCtrl.startRowOrCellEdit(null, mouseEvent);
+            cellCtrl.startRowOrCellEdit(null, mouseEvent);
         }
     }
 
@@ -131,7 +131,7 @@ export class CellMouseListenerFeature extends BeanStub {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
-        const { eventService, rangeService, focusService } = beans;
+        const { eventService, rangeService, focusService, gos } = beans;
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
@@ -141,10 +141,16 @@ export class CellMouseListenerFeature extends BeanStub {
         const ranges = rangeService && rangeService.getCellRanges().length != 0;
 
         if (!shiftKey || !ranges) {
-            // We only need to pass true to focusCell when the browser is Safari and we are trying
-            // to focus the cell itself. This should never be true if the mousedown was triggered
-            // due to a click on a cell editor for example.
-            const forceBrowserFocus = _isBrowserSafari() && !cellCtrl.isEditing() && !_isFocusableFormField(target);
+            const isEnableCellTextSelection = gos.get('enableCellTextSelection');
+            // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
+            // within the row dragger to block text selection while dragging, but the cell
+            // should still be selected/focused.
+            const shouldFocus = isEnableCellTextSelection && mouseEvent.defaultPrevented;
+            // however, this should never be true if the mousedown was triggered
+            // due to a click on a cell editor for example, otherwise cell selection within
+            // an editor would be blocked.
+            const forceBrowserFocus =
+                (_isBrowserSafari() || shouldFocus) && !cellCtrl.isEditing() && !_isFocusableFormField(target);
 
             cellCtrl.focusCell(forceBrowserFocus);
         }
