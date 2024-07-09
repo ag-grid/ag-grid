@@ -377,6 +377,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const setRef = useCallback((ref: HTMLDivElement | null) => {
         eGui.current = ref;
         if (!eGui.current) {
+            cellCtrl?.unsetComp();
             return;
         }
 

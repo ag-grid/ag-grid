@@ -37,6 +37,23 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     const userCompResolve = useRef<(value: IFloatingFilter) => void>();
     const userCompPromise = useRef<AgPromise<IFloatingFilter>>();
 
+    const compProxy = useRef<IHeaderFilterCellComp>({
+        addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+        addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses((prev) => prev.setClass(name, on)),
+        setButtonWrapperDisplayed: (displayed) => {
+            setButtonWrapperCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
+            setButtonWrapperAriaHidden(!displayed ? 'true' : 'false');
+        },
+        setWidth: (width) => {
+            if (eGui.current) {
+                eGui.current.style.width = width;
+            }
+        },
+        setCompDetails: (compDetails) => setUserCompDetails(compDetails),
+        getFloatingFilterComp: () => (userCompPromise.current ? userCompPromise.current : null),
+        setMenuIcon: (eIcon) => eButtonShowMainFilter.current?.appendChild(eIcon),
+    });
+
     const userCompRef = (value: IFloatingFilter) => {
         // We skip when it's un-setting
         if (value == null) {
@@ -58,24 +75,7 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
             userCompResolve.current = resolve;
         });
 
-        const compProxy: IHeaderFilterCellComp = {
-            addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
-            addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses((prev) => prev.setClass(name, on)),
-            setButtonWrapperDisplayed: (displayed) => {
-                setButtonWrapperCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
-                setButtonWrapperAriaHidden(!displayed ? 'true' : 'false');
-            },
-            setWidth: (width) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                }
-            },
-            setCompDetails: (compDetails) => setUserCompDetails(compDetails),
-            getFloatingFilterComp: () => (userCompPromise.current ? userCompPromise.current : null),
-            setMenuIcon: (eIcon) => eButtonShowMainFilter.current?.appendChild(eIcon),
-        };
-
-        ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
+        ctrl.setComp(compProxy.current, eGui.current, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
     }, []);
 
     // js comps

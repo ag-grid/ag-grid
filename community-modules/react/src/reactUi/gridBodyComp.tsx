@@ -69,16 +69,53 @@ const GridBodyComp = () => {
     useReactCommentEffect(' AG Sticky Top ', eStickyTop);
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
+    const compProxy = useRef<IGridBodyComp>({
+        setRowAnimationCssOnBodyViewport: setRowAnimationClass,
+        setColumnCount: (count: number) => {
+            if (eRoot.current) {
+                _setAriaColCount(eRoot.current, count);
+            }
+        },
+        setRowCount: (count: number) => {
+            if (eRoot.current) {
+                _setAriaRowCount(eRoot.current, count);
+            }
+        },
+        setTopHeight,
+        setBottomHeight,
+        setStickyTopHeight,
+        setStickyTopTop,
+        setStickyTopWidth,
+        setTopDisplay,
+        setBottomDisplay,
+        setColumnMovingCss: (cssClass: string, flag: boolean) =>
+            cssClassManager.current!.addOrRemoveCssClass(cssClass, flag),
+        updateLayoutClasses: setLayoutClass,
+        setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
+        setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
+        setCellSelectableCss: (cssClass: string, flag: boolean) => setCellSelectableCss(flag ? cssClass : null),
+        setBodyViewportWidth: (width: string) => {
+            if (eBodyViewport.current) {
+                eBodyViewport.current.style.width = width;
+            }
+        },
+        registerBodyViewportResizeListener: (listener: () => void) => {
+            if (eBodyViewport.current) {
+                const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
+                destroyFuncs.current.push(() => unsubscribeFromResize());
+            }
+        },
+        setStickyBottomHeight,
+        setStickyBottomBottom,
+        setStickyBottomWidth,
+    });
 
     const setRef = useCallback((e: HTMLDivElement) => {
         eRoot.current = e;
         if (!eRoot.current) {
-            context.destroyBeans(beansToDestroy.current);
+            beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
             destroyFuncs.current.forEach((f) => f());
-
-            beansToDestroy.current = [];
             destroyFuncs.current = [];
-
             return;
         }
 
@@ -106,51 +143,11 @@ const GridBodyComp = () => {
         if (eBody.current) {
             addComp(eBody.current, FakeVScrollComp, ' AG Fake Vertical Scroll ');
         }
-        const compProxy: IGridBodyComp = {
-            setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: (count: number) => {
-                if (eRoot.current) {
-                    _setAriaColCount(eRoot.current, count);
-                }
-            },
-            setRowCount: (count: number) => {
-                if (eRoot.current) {
-                    _setAriaRowCount(eRoot.current, count);
-                }
-            },
-            setTopHeight,
-            setBottomHeight,
-            setStickyTopHeight,
-            setStickyTopTop,
-            setStickyTopWidth,
-            setTopDisplay,
-            setBottomDisplay,
-            setColumnMovingCss: (cssClass: string, flag: boolean) =>
-                cssClassManager.current!.addOrRemoveCssClass(cssClass, flag),
-            updateLayoutClasses: setLayoutClass,
-            setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
-            setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: (cssClass: string, flag: boolean) => setCellSelectableCss(flag ? cssClass : null),
-            setBodyViewportWidth: (width: string) => {
-                if (eBodyViewport.current) {
-                    eBodyViewport.current.style.width = width;
-                }
-            },
-            registerBodyViewportResizeListener: (listener: () => void) => {
-                if (eBodyViewport.current) {
-                    const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
-                    destroyFuncs.current.push(() => unsubscribeFromResize());
-                }
-            },
-            setStickyBottomHeight,
-            setStickyBottomBottom,
-            setStickyBottomWidth,
-        };
 
         const ctrl = context.createBean(new GridBodyCtrl());
         beansToDestroy.current.push(ctrl);
         ctrl.setComp(
-            compProxy,
+            compProxy.current,
             eRoot.current,
             eBodyViewport.current!,
             eTop.current!,

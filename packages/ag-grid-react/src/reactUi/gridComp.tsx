@@ -62,11 +62,6 @@ const GridComp = ({ context }: GridCompProps) => {
             return;
         }
 
-        gridCtrlRef.current = context.createBean(new GridCtrl());
-        const gridCtrl = gridCtrlRef.current;
-
-        focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
-
         const compProxy: IGridComp = {
             destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass: setRtlClass,
@@ -95,6 +90,9 @@ const GridComp = ({ context }: GridCompProps) => {
             setUserSelect,
         };
 
+        gridCtrlRef.current = context.createBean(new GridCtrl());
+        const gridCtrl = gridCtrlRef.current;
+        focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
         gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
 
         setInitialised(true);

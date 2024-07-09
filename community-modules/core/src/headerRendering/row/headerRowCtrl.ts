@@ -4,6 +4,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
+import { _isSameElement } from '../../utils/dom';
 import { _values } from '../../utils/generic';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
@@ -29,6 +30,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private comp: IHeaderRowComp;
+    private eGui: HTMLElement;
     private rowIndex: number;
     private pinned: ColumnPinnedType;
     private type: HeaderRowType;
@@ -80,8 +82,12 @@ export class HeaderRowCtrl extends BeanStub {
      * @param comp Proxy to the actual component
      * @param initCompState Should the component be initialised with the current state of the controller. Default: true
      */
-    public setComp(comp: IHeaderRowComp, initCompState: boolean = true): void {
+    public setComp(comp: IHeaderRowComp, eGui: HTMLElement, initCompState: boolean = true): void {
         this.comp = comp;
+
+        if (_isSameElement(this.eGui, eGui)) {
+            return;
+        }
 
         if (initCompState) {
             this.onRowHeightChanged();

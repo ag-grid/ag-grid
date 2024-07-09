@@ -29,33 +29,31 @@ const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getHeaderCtrls());
 
     const eGui = useRef<HTMLDivElement | null>(null);
+    const compProxy = useRef<IHeaderRowComp>({
+        setHeight: (height: string) => setHeight(height),
+        setTop: (top: string) => setTop(top),
+        setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) => {
+            prevCellCtrlsRef.current = cellCtrlsRef.current;
+            cellCtrlsRef.current = ctrls;
+
+            const next = getNextValueIfDifferent(prevCellCtrlsRef.current, ctrls, forceOrder)!;
+            if (next !== prevCellCtrlsRef.current) {
+                agFlushSync(afterScroll, () => setCellCtrls(next));
+            }
+        },
+        setWidth: (width: string) => {
+            if (eGui.current) {
+                eGui.current.style.width = width;
+            }
+        },
+    });
 
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
         if (!e) {
             return;
         }
-
-        const compProxy: IHeaderRowComp = {
-            setHeight: (height: string) => setHeight(height),
-            setTop: (top: string) => setTop(top),
-            setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) => {
-                prevCellCtrlsRef.current = cellCtrlsRef.current;
-                cellCtrlsRef.current = ctrls;
-
-                const next = getNextValueIfDifferent(prevCellCtrlsRef.current, ctrls, forceOrder)!;
-                if (next !== prevCellCtrlsRef.current) {
-                    agFlushSync(afterScroll, () => setCellCtrls(next));
-                }
-            },
-            setWidth: (width: string) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                }
-            },
-        };
-
-        ctrl.setComp(compProxy, false);
+        ctrl.setComp(compProxy.current, eGui.current, false);
     }, []);
 
     const style = useMemo(

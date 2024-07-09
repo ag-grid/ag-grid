@@ -24,29 +24,28 @@ const HeaderGroupCellComp = (props: { ctrl: HeaderGroupCellCtrl }) => {
     const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeaderGroupComp>();
+    const compProxy = useRef<IHeaderGroupCellComp>({
+        setWidth: (width: string) => {
+            if (eGui.current) {
+                eGui.current.style.width = width;
+            }
+        },
+        addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+        setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
+        setResizableDisplayed: (displayed: boolean) => {
+            setResizableCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
+            setResizableAriaHidden(!displayed ? 'true' : 'false');
+        },
+        setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAriaExpanded(expanded),
+        getUserCompInstance: () => userCompRef.current || undefined,
+    });
 
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
         if (!eGui.current) {
             return;
         }
-        const compProxy: IHeaderGroupCellComp = {
-            setWidth: (width: string) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                }
-            },
-            addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
-            setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
-            setResizableDisplayed: (displayed: boolean) => {
-                setResizableCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
-                setResizableAriaHidden(!displayed ? 'true' : 'false');
-            },
-            setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAriaExpanded(expanded),
-            getUserCompInstance: () => userCompRef.current || undefined,
-        };
-
-        ctrl.setComp(compProxy, eGui.current, eResize.current!);
+        ctrl.setComp(compProxy.current, eGui.current, eResize.current!);
     }, []);
 
     // js comps

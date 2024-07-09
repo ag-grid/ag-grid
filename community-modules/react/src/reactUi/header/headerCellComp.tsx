@@ -29,31 +29,33 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     if (isAlive && !cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
+
+    const compProxy = useRef<IHeaderCellComp>({
+        setWidth: (width: string) => {
+            if (eGui.current) {
+                eGui.current.style.width = width;
+            }
+        },
+        addOrRemoveCssClass: (name: string, on: boolean) => cssClassManager.current!.addOrRemoveCssClass(name, on),
+        setAriaSort: (sort?: ColumnSortState) => {
+            if (eGui.current) {
+                sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
+            }
+        },
+        setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
+        getUserCompInstance: () => userCompRef.current || undefined,
+    });
+
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
         if (!eGui.current || !isAlive) {
             return;
         }
 
-        const compProxy: IHeaderCellComp = {
-            setWidth: (width: string) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                }
-            },
-            addOrRemoveCssClass: (name: string, on: boolean) => cssClassManager.current!.addOrRemoveCssClass(name, on),
-            setAriaSort: (sort?: ColumnSortState) => {
-                if (eGui.current) {
-                    sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
-                }
-            },
-            setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
-            getUserCompInstance: () => userCompRef.current || undefined,
-        };
-
-        ctrl.setComp(compProxy, eGui.current, eResize.current!, eHeaderCompWrapper.current!);
+        ctrl.setComp(compProxy.current, eGui.current, eResize.current!, eHeaderCompWrapper.current!);
 
         const selectAllGui = ctrl.getSelectAllGui();
+        // can be called multiple times but as long as the selectAllGui element is the same, it won't be added again
         eResize.current?.insertAdjacentElement('afterend', selectAllGui);
     }, []);
 
