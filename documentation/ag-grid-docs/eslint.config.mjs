@@ -21,7 +21,6 @@ export default [
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-this-alias': 'warn',
             '@typescript-eslint/ban-types': 'warn',
-            '@typescript-eslint/ban-ts-comment': 'warn',
             'import-x/consistent-type-specifier-style': 'off',
         },
     },
