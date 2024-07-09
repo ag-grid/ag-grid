@@ -1,5 +1,4 @@
 import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
-import breakpoints from '@design-system/breakpoint.module.scss';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useIsSmallScreenSize } from '@utils/hooks/useIsSmallScreenSize';
 import classnames from 'classnames';

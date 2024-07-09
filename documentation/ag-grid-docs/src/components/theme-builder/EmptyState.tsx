@@ -1,6 +1,3 @@
-import ThemePlaceholderDark from '@ag-website-shared/images/inline-svgs/theme-builder-dark.svg?react';
-import ThemePlaceholderLight from '@ag-website-shared/images/inline-svgs/theme-builder-light.svg?react';
-
 import styles from './EmptyState.module.scss';
 
 export const EmptyState = () => {

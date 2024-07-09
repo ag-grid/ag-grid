@@ -48,19 +48,24 @@ const log = (...args: any[]) => {
 
     if (prefix.startsWith && prefix.startsWith(INTEGRATED_CHARTS_ID)) {
         const messageConfig = getStyledConsoleMessageConfig(...args);
+        // eslint-disable-next-line no-console
         console.log(messageConfig, 'color: #222;background: #eee', ...args);
     } else if (prefix.startsWith && prefix.startsWith(ROW_GROUPING_ID)) {
         const messageConfig = getStyledConsoleMessageConfig(...args);
+        // eslint-disable-next-line no-console
         console.log(messageConfig, 'color: #eee; background: #000', ...args);
     } else if (prefix.startsWith && prefix.startsWith(AUTOMATED_EXAMPLE_MANAGER_ID)) {
         const messageConfig = getStyledConsoleMessageConfig(...args);
+        // eslint-disable-next-line no-console
         console.log(messageConfig, 'color: #222; background: #80bdff', ...args);
     } else {
+        // eslint-disable-next-line no-console
         console.log(...args);
     }
 };
 
 const errorLog = (...args: any[]) => {
+    // eslint-disable-next-line no-console
     console.error(...args);
 };
 

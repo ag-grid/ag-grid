@@ -20,6 +20,7 @@ const trackPlausible = ({ eventName, props }: { eventName: string; props?: objec
     const enableDebug = Boolean(searchParams.get('debug')) || localStorage.getItem('plausibleDebug') === 'true';
 
     if (enableDebug) {
+        // eslint-disable-next-line no-console
         console.log('Plausible:', eventName, props);
     }
 

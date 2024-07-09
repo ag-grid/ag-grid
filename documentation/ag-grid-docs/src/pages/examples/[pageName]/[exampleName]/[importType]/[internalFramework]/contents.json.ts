@@ -26,6 +26,7 @@ export async function GET(context: APIContext) {
             exampleName: exampleName!,
         });
     } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(`Error generating contents: ${error.message}`);
         return new Response(JSON.stringify({ error: 'Error generating contents.json file' }), {
             status: 400,

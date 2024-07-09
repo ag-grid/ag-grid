@@ -12321,6 +12321,11 @@ eslint-plugin-import-x@0.5.1:
     semver "^7.6.0"
     tslib "^2.6.2"
 
+eslint-plugin-react-hooks@^5.1.0-rc-df783f9ea1-20240708:
+  version "5.1.0-rc-df783f9ea1-20240708"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-5.1.0-rc-df783f9ea1-20240708.tgz#4c9d3ff4b77da3717d5eecc41bb3626fb28a58dd"
+  integrity sha512-5k5nsbbK2NigXkaLG6mwmL58xSVWf/YzYpK5JJJvoiASjZJWf+4y3TBwCszy25xmjjBJ4XZeOxDVII9Oz5g0Dw==
+
 eslint-scope@5.1.1, eslint-scope@^5.1.1:
   version "5.1.1"
   resolved "http://52.50.158.57:4873/eslint-scope/-/eslint-scope-5.1.1.tgz#e786e59a66cb92b3f6c1fb0d508aab174848f48c"

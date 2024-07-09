@@ -3,7 +3,6 @@ import { getIsDev, getIsProduction } from '@utils/env';
 import { pathJoin } from '@utils/pathJoin';
 import { getSitemapIgnorePaths } from '@utils/sitemapPages';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import type { APIContext } from 'astro';
 
 const disallowAllRobotsTxt = () => 'User-agent: * Disallow: /';
 
@@ -17,7 +16,7 @@ ${disallowPaths
 Sitemap: ${pathJoin(SITE_URL, urlWithBaseUrl('/sitemap-index.xml'))}
 `;
 
-export async function GET(context: APIContext) {
+export async function GET() {
     // NOTE: /archive is ignored in `ignorePaths` on production
     const disallowAll = !getIsDev() && !getIsProduction();
 

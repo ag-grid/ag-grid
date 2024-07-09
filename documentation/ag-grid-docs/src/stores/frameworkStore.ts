@@ -38,6 +38,7 @@ export const setInternalFramework = (internalFramework: InternalFramework) => {
     if (INTERNAL_FRAMEWORKS.includes(internalFramework)) {
         $internalFramework.set(internalFramework);
     } else {
+        // eslint-disable-next-line no-console
         console.error('Unsupported internal framework', internalFramework);
         $internalFramework.set(DEFAULT_INTERNAL_FRAMEWORK);
     }
@@ -52,6 +53,7 @@ export const setImportType = (importType: ImportType) => {
     } else if (importType === 'modules') {
         $frameworkContext.setKey('importType', importType);
     } else {
+        // eslint-disable-next-line no-console
         console.error('Unsupported import type', importType);
         $frameworkContext.setKey('importType', 'modules');
     }

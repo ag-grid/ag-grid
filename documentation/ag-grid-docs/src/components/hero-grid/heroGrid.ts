@@ -132,9 +132,7 @@ export function cleanUp() {
 /**
  * Clean up between hot module replacement on dev server
  */
-// @ts-ignore
 if (import.meta.hot) {
-    // @ts-ignore
     import.meta.hot.dispose(() => {
         cleanUp();
     });
