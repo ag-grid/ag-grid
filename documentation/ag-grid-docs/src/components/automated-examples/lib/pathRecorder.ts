@@ -1,7 +1,6 @@
 const MOUSE_POSITION_SELECTOR = '.mouse-position';
 
 const RECORDER_BUTTON_SELECTOR = '.recorder-button';
-const RECORDER_OUTPUT_SELECTOR = '.recorder-output';
 
 export interface PathItem<T> {
     time: string;
@@ -82,7 +81,7 @@ function initControls({ buttonSelector, recorder }) {
         button.textContent = recorder.getIsRecording() ? '🔴 Recording' : 'Start Recording';
     }
 
-    button.addEventListener('click', (event) => {
+    button.addEventListener('click', () => {
         recorder.toggleIsRecording();
     });
 
@@ -96,7 +95,7 @@ function initControls({ buttonSelector, recorder }) {
 
 export function initPathRecorderUI() {
     const recorder = createRecorder();
-    const { toggleIsRecording, getIsRecording } = recorder;
+    const { toggleIsRecording } = recorder;
 
     initControls({
         buttonSelector: RECORDER_BUTTON_SELECTOR,

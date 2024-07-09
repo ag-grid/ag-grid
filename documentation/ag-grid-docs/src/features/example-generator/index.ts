@@ -21,16 +21,13 @@ type DocsExampleParams = {
 };
 
 const getFolderPath = (params: GeneratedExampleParams) => {
-    const { exampleName, ignoreDarkMode = false, importType } = params;
+    const { exampleName, importType } = params;
 
     const contentRoot = getExampleRootFileUrl();
 
     const result = [contentRoot.pathname];
-    // TODO: Ignore darkMode for now
-    // const darkMode = ignoreDarkMode ? 'plain' : 'dark-mode';
     if (params.type === 'docs') {
         result.push(params.type, params.pageName, '_examples', exampleName);
-        // result.push(darkMode, params.framework);
         result.push(importType, params.framework);
     }
 

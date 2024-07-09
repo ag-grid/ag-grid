@@ -76,7 +76,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                 <footer className={styles.footer}>
                     <button
                         className={classnames(styles.previewCodeToggle, 'button-secondary')}
-                        onClick={(e) => {
+                        onClick={() => {
                             setShowCode(!showCode);
                         }}
                     >

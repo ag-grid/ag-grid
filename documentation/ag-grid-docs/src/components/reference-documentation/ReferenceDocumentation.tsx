@@ -400,8 +400,6 @@ const Section: React.FC<SectionProps> = ({
         });
     }
 
-    const wrap = !!config.maxLeftColumnWidth;
-
     return (
         <div className={styles.apiReferenceOuter}>
             {header}
@@ -635,8 +633,6 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             </tr>
         );
     }
-
-    const wrap = !!config.maxLeftColumnWidth;
 
     // Split display name on capital letter, add <wbr> to improve text splitting across lines
     let displayNameSplit: string;
