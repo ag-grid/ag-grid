@@ -469,13 +469,12 @@ export function getGridApi(gridApiFile: string) {
 
     const processedInterfaces = new Set<ts.InterfaceDeclaration>();
 
-    const processInterface = (declaration: ts.InterfaceDeclaration | undefined) => {
-        if (!declaration || processedInterfaces.has(declaration)) {
+    const processInterface = (declaration: ts.InterfaceDeclaration) => {
+        if (processedInterfaces.has(declaration)) {
             return;
         }
         processedInterfaces.add(declaration);
-
-        declaration.heritageClauses.forEach((h) => {
+        declaration.heritageClauses?.forEach((h) => {
             h.types.forEach((t) => {
                 const typeName = formatNode(t.expression, srcFile);
                 const typeNode = findNode(typeName, srcFile);
