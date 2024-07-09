@@ -538,7 +538,6 @@ export function addBindingImports(
 
     [...new Set(namespacedImports)].forEach((ni) => imports.push(ni));
 
-    console.log(workingImports);
     let hasEnterpriseModules = false;
     Object.entries(workingImports).forEach(([k, v]: [string, { namedImport: string; imports: string[] }]) => {
         let unique = [...new Set(v.imports)].sort();
