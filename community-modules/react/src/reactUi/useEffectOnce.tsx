@@ -32,9 +32,7 @@ export const useEffectOnce = (effect: () => void | (() => void)) => {
             }
 
             // otherwise this is not a dummy destroy, so call the destroy func
-            if (destroyFn.current) {
-                destroyFn.current();
-            }
+            destroyFn.current?.();
         };
     }, []);
 };

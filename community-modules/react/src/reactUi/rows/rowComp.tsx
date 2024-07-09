@@ -101,13 +101,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
     // child) after the fullWidthCompDetails is set.
     // I think this looping could be avoided if we use a ref Callback instead of useRef,
     useEffect(() => {
-        if (autoHeightSetup.current) {
-            return;
-        }
-        if (!fullWidthCompDetails) {
-            return;
-        }
-        if (autoHeightSetupAttempt > 10) {
+        if (autoHeightSetup.current || !fullWidthCompDetails || autoHeightSetupAttempt > 10) {
             return;
         }
 
