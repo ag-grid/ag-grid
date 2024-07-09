@@ -56,8 +56,8 @@ export default [
     {
         files: ['public/**/*[.js|.ts]'],
         rules: {
-            '@typescript-eslint/no-unused-vars': 'warn',
-            'no-console': 'warn',
+            '@typescript-eslint/no-unused-vars': 'off',
+            'no-console': 'off',
         },
     },
     // env.d.ts
