@@ -101,7 +101,7 @@ h3:where(:not(:last-child)),
 h4:where(:not(:last-child)),
 h5:where(:not(:last-child)),
 h6:where(:not(:last-child)) {
-    margin-bottom: $spacing-size-4;
+    margin-bottom: $spacing-size-2;
 }
 
 p:where(:not(:last-child)),

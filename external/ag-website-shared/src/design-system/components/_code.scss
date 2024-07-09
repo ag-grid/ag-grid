@@ -50,7 +50,8 @@ pre.code,
     --property-color: #2ea248;
 
     position: relative;
-    margin: 0 0 $spacing-size-4;
+    margin-top: $spacing-size-5;
+    margin-bottom: $spacing-size-5;
     padding: 0;
     border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
     background-color: var(--color-code-background);
