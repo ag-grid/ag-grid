@@ -38,6 +38,34 @@ const GridComp = ({ context }: GridCompProps) => {
     const paginationCompRef = useRef<JsTabGuardComp | undefined>();
     const focusableContainersRef = useRef<Component[]>([]);
 
+    const compProxy = useRef<IGridComp>({
+        destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
+        setRtlClass: setRtlClass,
+        forceFocusOutOfContainer: (up?: boolean) => {
+            if (!up && paginationCompRef.current?.isDisplayed()) {
+                paginationCompRef.current.forceFocusOutOfContainer(up);
+                return;
+            }
+            tabGuardRef.current?.forceFocusOutOfContainer(up);
+        },
+        updateLayoutClasses: setLayoutClass,
+        getFocusableContainers: () => {
+            const comps: FocusableContainer[] = [];
+            const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
+            if (gridBodyCompEl) {
+                comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
+            }
+            focusableContainersRef.current.forEach((comp) => {
+                if (comp.isDisplayed()) {
+                    comps.push(comp);
+                }
+            });
+            return comps;
+        },
+        setCursor,
+        setUserSelect,
+    });
+
     const onTabKeyDown = useCallback(() => undefined, []);
 
     const beans = useMemo(() => {
@@ -62,38 +90,10 @@ const GridComp = ({ context }: GridCompProps) => {
             return;
         }
 
-        const compProxy: IGridComp = {
-            destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
-            setRtlClass: setRtlClass,
-            forceFocusOutOfContainer: (up?: boolean) => {
-                if (!up && paginationCompRef.current?.isDisplayed()) {
-                    paginationCompRef.current.forceFocusOutOfContainer(up);
-                    return;
-                }
-                tabGuardRef.current?.forceFocusOutOfContainer(up);
-            },
-            updateLayoutClasses: setLayoutClass,
-            getFocusableContainers: () => {
-                const comps: FocusableContainer[] = [];
-                const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
-                if (gridBodyCompEl) {
-                    comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
-                }
-                focusableContainersRef.current.forEach((comp) => {
-                    if (comp.isDisplayed()) {
-                        comps.push(comp);
-                    }
-                });
-                return comps;
-            },
-            setCursor,
-            setUserSelect,
-        };
-
         gridCtrlRef.current = context.createBean(new GridCtrl());
         const gridCtrl = gridCtrlRef.current;
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
-        gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
+        gridCtrl.setComp(compProxy.current, eRootWrapperRef.current, eRootWrapperRef.current);
 
         setInitialised(true);
     }, []);

@@ -18,6 +18,32 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
     const pinnedRight = props.pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
+    const compProxy = useRef<IHeaderRowContainerComp>({
+        setDisplayed,
+        setCtrls: (ctrls) => setHeaderRowCtrls(ctrls),
+
+        // centre only
+        setCenterWidth: (width) => {
+            if (eCenterContainer.current) {
+                eCenterContainer.current.style.width = width;
+            }
+        },
+        setViewportScrollLeft: (left) => {
+            if (eGui.current) {
+                eGui.current.scrollLeft = left;
+            }
+        },
+
+        // pinned only
+        setPinnedContainerWidth: (width) => {
+            if (eGui.current) {
+                eGui.current.style.width = width;
+                eGui.current.style.minWidth = width;
+                eGui.current.style.maxWidth = width;
+            }
+        },
+    });
+
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
         if (!eGui.current) {
@@ -26,34 +52,8 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
             return;
         }
 
-        const compProxy: IHeaderRowContainerComp = {
-            setDisplayed,
-            setCtrls: (ctrls) => setHeaderRowCtrls(ctrls),
-
-            // centre only
-            setCenterWidth: (width) => {
-                if (eCenterContainer.current) {
-                    eCenterContainer.current.style.width = width;
-                }
-            },
-            setViewportScrollLeft: (left) => {
-                if (eGui.current) {
-                    eGui.current.scrollLeft = left;
-                }
-            },
-
-            // pinned only
-            setPinnedContainerWidth: (width) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                    eGui.current.style.minWidth = width;
-                    eGui.current.style.maxWidth = width;
-                }
-            },
-        };
-
         headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(props.pinned));
-        headerRowCtrlRef.current.setComp(compProxy, eGui.current);
+        headerRowCtrlRef.current.setComp(compProxy.current, eGui.current);
     }, []);
 
     const className = !displayed ? 'ag-hidden' : '';

@@ -210,6 +210,67 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const showTools = renderDetails != null && (includeSelection || includeDndSource || includeRowDrag);
     const showCellWrapper = forceWrapper || showTools;
 
+    const compProxy = useRef<ICellComp>({
+        addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
+        setUserStyles: (styles: CellStyle) => setUserStyles(styles),
+        getFocusableElement: () => eGui.current!,
+
+        setIncludeSelection: (include) => setIncludeSelection(include),
+        setIncludeRowDrag: (include) => setIncludeRowDrag(include),
+        setIncludeDndSource: (include) => setIncludeDndSource(include),
+
+        getCellEditor: () => cellEditorRef.current || null,
+        getCellRenderer: () => (cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current),
+        getParentOfValue: () =>
+            eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
+
+        setRenderDetails: (compDetails, value, force) => {
+            setRenderDetails((prev) => {
+                if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                    return {
+                        value,
+                        compDetails,
+                        force,
+                    };
+                } else {
+                    return prev;
+                }
+            });
+        },
+
+        setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
+            if (compDetails) {
+                let compProxy = undefined;
+                if (reactiveCustomComponents) {
+                    compProxy = new CellEditorComponentProxy(compDetails.params!, () =>
+                        setRenderKey((prev) => prev + 1)
+                    );
+                } else if (compDetails.componentFromFramework) {
+                    warnReactiveCustomComponents();
+                }
+                // start editing
+                setEditDetails({
+                    compDetails: compDetails!,
+                    popup,
+                    popupPosition,
+                    compProxy,
+                });
+                if (!popup) {
+                    setRenderDetails(undefined);
+                }
+            } else {
+                // stop editing
+                setEditDetails((editDetails) => {
+                    if (editDetails?.compProxy) {
+                        // if we're using the proxy, we have to manually clear the ref
+                        cellEditorRef.current = undefined;
+                    }
+                    return undefined;
+                });
+            }
+        },
+    });
+
     const setCellEditorRef = useCallback(
         (popup: boolean, cellEditor: ICellEditor | undefined) => {
             cellEditorRef.current = cellEditor;
@@ -371,83 +432,13 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]
     );
 
-    // we use layout effect here as we want to synchronously process setComp and it's side effects
-    // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
-
     const setRef = useCallback((ref: HTMLDivElement | null) => {
         eGui.current = ref;
-        if (!eGui.current) {
-            cellCtrl?.unsetComp();
+        if (!eGui.current || !cellCtrl) {
             return;
         }
-
-        if (!cellCtrl) {
-            return;
-        }
-
-        const compProxy: ICellComp = {
-            addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
-            setUserStyles: (styles: CellStyle) => setUserStyles(styles),
-            getFocusableElement: () => eGui.current!,
-
-            setIncludeSelection: (include) => setIncludeSelection(include),
-            setIncludeRowDrag: (include) => setIncludeRowDrag(include),
-            setIncludeDndSource: (include) => setIncludeDndSource(include),
-
-            getCellEditor: () => cellEditorRef.current || null,
-            getCellRenderer: () => (cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current),
-            getParentOfValue: () =>
-                eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
-
-            setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails((prev) => {
-                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
-                        return {
-                            value,
-                            compDetails,
-                            force,
-                        };
-                    } else {
-                        return prev;
-                    }
-                });
-            },
-
-            setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
-                if (compDetails) {
-                    let compProxy = undefined;
-                    if (reactiveCustomComponents) {
-                        compProxy = new CellEditorComponentProxy(compDetails.params!, () =>
-                            setRenderKey((prev) => prev + 1)
-                        );
-                    } else if (compDetails.componentFromFramework) {
-                        warnReactiveCustomComponents();
-                    }
-                    // start editing
-                    setEditDetails({
-                        compDetails: compDetails!,
-                        popup,
-                        popupPosition,
-                        compProxy,
-                    });
-                    if (!popup) {
-                        setRenderDetails(undefined);
-                    }
-                } else {
-                    // stop editing
-                    setEditDetails((editDetails) => {
-                        if (editDetails?.compProxy) {
-                            // if we're using the proxy, we have to manually clear the ref
-                            cellEditorRef.current = undefined;
-                        }
-                        return undefined;
-                    });
-                }
-            },
-        };
-
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
-        cellCtrl.setComp(compProxy, eGui.current, cellWrapperOrUndefined, printLayout, editingRow);
+        cellCtrl.setComp(compProxy.current, eGui.current, cellWrapperOrUndefined, printLayout, editingRow);
     }, []);
 
     const reactCellRendererStateless = useMemo(() => {
