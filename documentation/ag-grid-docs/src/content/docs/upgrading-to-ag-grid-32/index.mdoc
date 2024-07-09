@@ -57,6 +57,14 @@ componentDidMount() {
 ```
 {% /if %}
 
+{% if isFramework("angular") %}
+## Compatibility
+{% /if %}
+
+{% if isFramework("angular") %}
+The minimum version of Angular you can use with AG Grid is now Angular 16.
+{% /if %}
+
 ## Deprecations
 
 This release includes the following deprecations:
@@ -223,14 +231,13 @@ The Grid API methods listed below have been removed. Please use Grid API methods
 ### Interfaces
 
 - `ChangeDetectionStategyType` removed without replacement.
-- `ICellRendererParams.rowIndex` removed, used `ICellRendererParams.node.rowIndex` instead.
+- `ICellRendererParams` removed, used `node.rowIndex` instead.
 - `Column`, `ColumnGroup` and `ProvidedColumnGroup` are now interfaces instead of classes. Some public methods that were part of the internal grid API were previously exposed on the classes, but are not exposed on the interfaces.
 - The `IProvidedColumn` interface has been removed in favour of `Column | ProvidedColumnGroup`. The `IHeaderColumn` interfaces has been removed in favour of `Column | ColumnGroup`. If previously using `instanceof` to differentiate, it is now possible to check the `isColumn` property, which can be used as a type differentiator.
 
 ### Keyboard Navigation
 
-- Pressing the {% kbd "⇥ Tab" /%} key when focusing on a set filter list item or a column's tool panel list item takes focus out of the list. Navigating inside the list is possible with {% kbd "↑" /%}/{% kbd "↓" /%} Arrow keys.
-- The column menu is now opened by the {% kbd "⌥ Alt" /%}+{% kbd "↓" /%} keyboard combination, with the column filter opened by {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%}.
+Pressing the {% kbd "⇥ Tab" /%} key when focusing on a set filter list item or a column's tool panel list item takes focus out of the list. Navigating inside the list is possible with {% kbd "↑" /%}/{% kbd "↓" /%} Arrow keys.
 
 ### Localisation
 
