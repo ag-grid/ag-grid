@@ -15,6 +15,7 @@
     "@ag-grid-enterprise/core": "32.1.0",
     "@ag-grid-enterprise/row-grouping": "32.1.0",
     "@ag-grid-enterprise/server-side-row-model": "32.1.0",
+    "@ag-grid-enterprise/viewport-row-model": "^32.1.0",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
