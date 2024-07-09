@@ -18,7 +18,6 @@ export default [
             'no-eval': 'error',
             'no-console': 'warn',
             'prefer-const': 'warn',
-            'no-undef': 'warn',
             'no-constant-condition': 'warn',
             'no-prototype-builtins': 'warn',
             '@typescript-eslint/no-unused-vars': 'warn',
@@ -47,6 +46,19 @@ export default [
                 expect: 'readonly',
                 test: 'readonly',
                 vi: 'readonly',
+            },
+        },
+    },
+    // Example runner boilerplate files
+    {
+        files: ['public/example-runner/**/*[.js|.ts]'],
+        languageOptions: {
+            globals: {
+                System: 'readonly',
+                systemJsPaths: 'readonly',
+                boilerplatePath: 'readonly',
+                appLocation: 'readonly',
+                systemJsMap: 'readonly',
             },
         },
     },
