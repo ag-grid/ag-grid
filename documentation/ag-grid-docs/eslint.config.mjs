@@ -24,7 +24,6 @@ export default [
             '@typescript-eslint/no-this-alias': 'warn',
             '@typescript-eslint/ban-types': 'warn',
             '@typescript-eslint/ban-ts-comment': 'warn',
-            '@typescript-eslint/triple-slash-reference': 'warn',
             'import-x/consistent-type-specifier-style': 'off',
         },
     },
@@ -66,6 +65,13 @@ export default [
         rules: {
             '@typescript-eslint/no-unused-vars': 'warn',
             'no-console': 'warn',
+        },
+    },
+    // env.d.ts
+    {
+        files: ['src/env.d.ts'],
+        rules: {
+            '@typescript-eslint/triple-slash-reference': 'off',
         },
     },
     // Root scripts
