@@ -16,14 +16,18 @@
     @media (min-width: $breakpoint-docs-nav-large) {
         &.noLeftMenu .docPage {
             width: var(--layout-width-9-12);
+            margin-left: calc(var(--layout-width-3-12) + var(--layout-gap));
         }
     }
 
-    @media (min-width: $breakpoint-docs-nav-extra-large) {
+    @media (max-width: $breakpoint-docs-nav-extra-large) {
         &.noLeftMenu .docPage {
             width: var(--layout-width-6-12);
-            margin-left: calc(var(--layout-width-3-12) + var(--layout-gap));
         }
+    }
+
+    &.noLeftMenu .docPage {
+        width: 100%;
     }
 }
 
