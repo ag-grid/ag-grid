@@ -330,20 +330,8 @@ export class ExcelCreator
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
         const { columnModel, columnNameService, funcColsService, valueService, gos } = this;
 
-        let sheetName: string;
-        if (params.sheetName != null) {
-            const { sheetName: sheetNameParam } = params;
-            const sheetNameValue =
-                typeof sheetNameParam === 'function' ? sheetNameParam(this.gos.getGridCommonParams()) : sheetNameParam;
-
-            sheetName = String(sheetNameValue).substring(0, 31);
-        } else {
-            sheetName = 'ag-grid';
-        }
-
         const config: ExcelGridSerializingParams = {
             ...params,
-            sheetName,
             columnModel,
             columnNameService,
             funcColsService,

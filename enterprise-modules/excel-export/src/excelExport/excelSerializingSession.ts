@@ -3,18 +3,14 @@ import type {
     AgColumnGroup,
     Column,
     ColumnGroup,
-    ColumnWidthCallbackParams,
     ExcelCell,
     ExcelColumn,
-    ExcelHeaderFooterConfig,
     ExcelImage,
     ExcelOOXMLDataType,
     ExcelRow,
-    ExcelSheetMargin,
-    ExcelSheetPageSetup,
     ExcelStyle,
-    ExcelTableConfig,
     ExcelWorksheet,
+    ExcelWorksheetConfigParams,
     RowHeightCallbackParams,
     RowNode,
 } from '@ag-grid-community/core';
@@ -40,27 +36,9 @@ interface ExcelMixedStyle {
     result: ExcelStyle;
 }
 
-export interface ExcelGridSerializingParams extends GridSerializingParams {
-    autoConvertFormulas?: boolean;
+export interface ExcelGridSerializingParams extends ExcelWorksheetConfigParams, GridSerializingParams {
     baseExcelStyles: ExcelStyle[];
-    columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
-    headerFooterConfig?: ExcelHeaderFooterConfig;
-    headerRowHeight?: number | ((params: RowHeightCallbackParams) => number);
-    rowHeight?: number | ((params: RowHeightCallbackParams) => number);
-    margins?: ExcelSheetMargin;
-    pageSetup?: ExcelSheetPageSetup;
-    exportAsExcelTable?: boolean | ExcelTableConfig;
-    sheetName: string;
-    suppressColumnOutline?: boolean;
-    suppressRowOutline?: boolean;
-    rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
-    rightToLeft?: boolean;
     styleLinker: (params: StyleLinkerInterface) => string[];
-    addImageToCell?: (
-        rowIndex: number,
-        column: Column,
-        value: string
-    ) => { image: ExcelImage; value?: string } | undefined;
 }
 
 export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow[]> {
@@ -199,8 +177,21 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             this.cols.push(this.convertColumnToExcel(null, this.cols.length + 1));
         }
 
+        const { config } = this;
+
+        let name: string;
+        if (config.sheetName != null) {
+            const { sheetName } = config;
+            const sheetNameValue =
+                typeof sheetName === 'function' ? sheetName(this.gos.getGridCommonParams()) : sheetName;
+
+            name = String(sheetNameValue).substring(0, 31);
+        } else {
+            name = 'ag-grid';
+        }
+
         const data: ExcelWorksheet = {
-            name: this.config.sheetName,
+            name,
             table: {
                 columns: this.cols,
                 rows: this.rows,

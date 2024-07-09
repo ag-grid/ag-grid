@@ -89,6 +89,7 @@ export {
     ExcelTableConfig,
     ExcelSheetNameGetter,
     ExcelSheetNameGetterParams,
+    ExcelWorksheetConfigParams,
 } from './interfaces/iExcelCreator';
 
 // dragAndDrop
