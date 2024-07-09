@@ -500,7 +500,7 @@ const deprecatedFunctions: {
 export function warnMissingApiFunction(functionName: ApiFunctionName, gridId: string): void {
     const module = (functionModuleMap ??= makeFunctionModulesMap())[functionName];
 
-    if (module) {
+    if (typeof module === 'string') {
         if (ModuleRegistry.__assertRegistered(module, `api.${functionName}`, gridId)) {
             _warnOnce(`API function '${functionName}' not registered to module '${module}'`);
         }
