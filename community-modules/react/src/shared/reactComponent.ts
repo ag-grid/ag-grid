@@ -21,7 +21,6 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     private portalKey: string;
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
-    private params: any;
     protected instanceCreated: AgPromise<boolean> | AgPromise<false>;
     private resolveInstanceCreated?: (value: boolean) => void;
     private suppressFallbackMethods: boolean;
@@ -170,7 +169,6 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
 
     public init(params: any): AgPromise<void> {
         this.eParentElement = this.createParentElement(params);
-        this.params = params;
 
         this.createOrUpdatePortal(params);
 

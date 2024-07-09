@@ -28,7 +28,7 @@ const GridComp = ({ context }: GridCompProps) => {
     const [initialised, setInitialised] = useState<boolean>(false);
     const [tabGuardReady, setTabGuardReady] = useState<any>();
 
-    const gridCtrlRef = useRef<GridCtrl | null>(null);
+    const gridCtrlRef = useRef<GridCtrl>();
     const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
     const tabGuardRef = useRef<TabGuardCompCallback>();
     // eGridBodyParent is state as we use it in render
@@ -81,8 +81,7 @@ const GridComp = ({ context }: GridCompProps) => {
         eRootWrapperRef.current = e;
 
         if (!eRootWrapperRef.current) {
-            context.destroyBean(gridCtrlRef.current);
-            gridCtrlRef.current = null;
+            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
             return;
         }
 
@@ -100,11 +99,12 @@ const GridComp = ({ context }: GridCompProps) => {
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent || !eRootWrapperRef.current) {
+        const gridCtrl = gridCtrlRef.current;
+        const eRootWrapper = eRootWrapperRef.current;
+        if (!tabGuardReady || !beans || !gridCtrl || !eGridBodyParent || !eRootWrapper) {
             return;
         }
 
-        const gridCtrl = gridCtrlRef.current;
         const beansToDestroy: any[] = [];
 
         // these components are optional, so we check if they are registered before creating them
@@ -116,7 +116,6 @@ const GridComp = ({ context }: GridCompProps) => {
             gridHeaderDropZonesSelector,
         } = gridCtrl.getOptionalSelectors();
         const additionalEls: HTMLElement[] = [];
-        const eRootWrapper = eRootWrapperRef.current;
 
         if (gridHeaderDropZonesSelector) {
             const headerDropZonesComp = context.createBean(new gridHeaderDropZonesSelector.component());

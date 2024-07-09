@@ -28,7 +28,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const eCheckboxRef = useRef<HTMLElement>(null);
     const eExpandedRef = useRef<HTMLElement>(null);
     const eContractedRef = useRef<HTMLElement>(null);
-    const ctrlRef = useRef<IGroupCellRendererCtrl | null>();
+    const ctrlRef = useRef<IGroupCellRendererCtrl>();
 
     const [innerCompDetails, setInnerCompDetails] = useState<UserCompDetails>();
     const [childCount, setChildCount] = useState<string>();
@@ -37,6 +37,19 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(() => new CssClasses('ag-hidden'));
     const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(() => new CssClasses('ag-hidden'));
     const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(() => new CssClasses('ag-invisible'));
+
+    const compProxy = useRef<IGroupCellRenderer>({
+        setInnerRenderer: (details, valueToDisplay) => {
+            setInnerCompDetails(details);
+            setValue(valueToDisplay);
+        },
+        setChildCount: (count) => setChildCount(count),
+        addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+        setContractedDisplayed: (displayed) =>
+            setContractedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
+        setExpandedDisplayed: (displayed) => setExpandedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
+        setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
+    });
 
     useImperativeHandle(ref, () => {
         return {
@@ -54,29 +67,15 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const setRef = useCallback((ref: HTMLDivElement) => {
         eGui.current = ref;
         if (!eGui.current) {
-            context.destroyBean(ctrlRef.current);
-            ctrlRef.current = null;
+            ctrlRef.current = context.destroyBean(ctrlRef.current);
             return;
         }
-        const compProxy: IGroupCellRenderer = {
-            setInnerRenderer: (details, valueToDisplay) => {
-                setInnerCompDetails(details);
-                setValue(valueToDisplay);
-            },
-            setChildCount: (count) => setChildCount(count),
-            addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
-            setContractedDisplayed: (displayed) =>
-                setContractedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
-            setExpandedDisplayed: (displayed) =>
-                setExpandedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
-            setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
-        };
 
         const groupCellRendererCtrl = ctrlsFactory.getInstance('groupCellRendererCtrl') as IGroupCellRendererCtrl;
         if (groupCellRendererCtrl) {
             ctrlRef.current = context.createBean(groupCellRendererCtrl);
             ctrlRef.current.init(
-                compProxy,
+                compProxy.current,
                 eGui.current,
                 eCheckboxRef.current!,
                 eExpandedRef.current!,

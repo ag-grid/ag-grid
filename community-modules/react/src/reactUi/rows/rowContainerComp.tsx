@@ -20,7 +20,7 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
     const domOrderRef = useRef<boolean>(false);
-    const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
+    const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
     const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
         const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
@@ -85,8 +85,7 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
 
     const setRef = useCallback(() => {
         if (areElementsRemoved()) {
-            context.destroyBean(rowContainerCtrlRef.current);
-            rowContainerCtrlRef.current = null;
+            rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
         }
         if (areElementsReady()) {
             rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));

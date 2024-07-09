@@ -291,6 +291,15 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
     const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
     const gridClassName = useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
 
+    const compProxy = useRef<IDetailCellRenderer>({
+        addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+        addOrRemoveDetailGridCssClass: (name: string, on: boolean) =>
+            setGridCssClasses((prev) => prev.setClass(name, on)),
+        setDetailGrid: (gridOptions) => setDetailGridOptions(gridOptions),
+        setRowData: (rowData) => setDetailRowData(rowData),
+        getGui: () => eGuiRef.current!,
+    });
+
     if (ref) {
         useImperativeHandle(ref, () => ({
             refresh() {
@@ -316,22 +325,13 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
             return;
         }
 
-        const compProxy: IDetailCellRenderer = {
-            addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
-            addOrRemoveDetailGridCssClass: (name: string, on: boolean) =>
-                setGridCssClasses((prev) => prev.setClass(name, on)),
-            setDetailGrid: (gridOptions) => setDetailGridOptions(gridOptions),
-            setRowData: (rowData) => setDetailRowData(rowData),
-            getGui: () => eGuiRef.current!,
-        };
-
         const ctrl = ctrlsFactory.getInstance('detailCellRenderer') as IDetailCellRendererCtrl;
         if (!ctrl) {
             return;
         } // should never happen, means master/detail module not loaded
         context.createBean(ctrl);
 
-        ctrl.init(compProxy, props);
+        ctrl.init(compProxy.current, props);
 
         ctrlRef.current = ctrl;
 

@@ -51,7 +51,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
     const autoHeightSetup = useRef<boolean>(false);
     const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
 
-    const compProxyRef = useRef<IRowComp>({
+    const compProxy = useRef<IRowComp>({
         // the rowTop is managed by state, instead of direct style manipulation by rowCtrl (like all the other styles)
         // as we need to have an initial value when it's placed into he DOM for the first time, for animation to work.
         setTop,
@@ -139,7 +139,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
             return;
         }
 
-        rowCtrl.setComp(compProxyRef.current, eGui.current, containerType);
+        rowCtrl.setComp(compProxy.current, eGui.current, containerType);
     }, []);
 
     useLayoutEffect(
