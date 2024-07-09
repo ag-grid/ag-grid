@@ -53,7 +53,7 @@ tr#{$selector-exclude-grid} {
 
 th#{$selector-exclude-grid},
 td#{$selector-exclude-grid} {
-    padding: $spacing-size-2 $spacing-size-4;
+    padding: $spacing-size-2 0;
     text-align: left;
 }
 
