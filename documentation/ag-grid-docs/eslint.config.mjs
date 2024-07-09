@@ -17,10 +17,6 @@ export default [
         rules: {
             'no-eval': 'error',
             'no-console': 'error',
-            'prefer-const': 'warn',
-            '@typescript-eslint/no-explicit-any': 'warn',
-            '@typescript-eslint/no-this-alias': 'warn',
-            '@typescript-eslint/ban-types': 'warn',
             'import-x/consistent-type-specifier-style': 'off',
         },
     },
