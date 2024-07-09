@@ -19,7 +19,6 @@ export default [
             'no-console': 'error',
             'prefer-const': 'warn',
             'no-prototype-builtins': 'warn',
-            '@typescript-eslint/no-non-null-asserted-optional-chain': 'warn',
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-this-alias': 'warn',
             '@typescript-eslint/ban-types': 'warn',
