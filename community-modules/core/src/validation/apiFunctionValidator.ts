@@ -1,40 +1,19 @@
 import type {
     GridApi,
     _AdvancedFilterGridApi,
-    _CellGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
-    _ColumnFilterGridApi,
-    _ColumnGridApi,
-    _CommunityMenuGridApi,
-    _CoreGridApi,
-    _CsrmSsrmSharedGridApi,
+    _CoreModuleGridApi,
     _CsvExportGridApi,
-    _DragGridApi,
-    _EditGridApi,
-    _EventGridApi,
     _ExcelExportGridApi,
-    _FilterGridApi,
     _GridChartsGridApi,
     _InfiniteRowModelGridApi,
-    _KeyboardNavigationGridApi,
     _MasterDetailGridApi,
     _MenuGridApi,
-    _OverlayGridApi,
-    _PaginationGridApi,
-    _PinnedRowGridApi,
-    _QuickFilterGridApi,
     _RangeSelectionGridApi,
-    _RenderGridApi,
-    _RowGridApi,
     _RowGroupingGridApi,
-    _RowSelectionGridApi,
-    _ScrollGridApi,
     _ServerSideRowModelGridApi,
     _SideBarGridApi,
-    _SortGridApi,
-    _SsrmInfiniteSharedGridApi,
-    _StateGridApi,
     _StatusBarGridApi,
 } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
@@ -61,30 +40,6 @@ const serverSideRowModelModule = ModuleNames.ServerSideRowModelModule;
 const sideBarModule = ModuleNames.SideBarModule;
 const statusBarModule = ModuleNames.StatusBarModule;
 
-type CoreModuleGridApi = _CoreGridApi &
-    _StateGridApi &
-    _RowSelectionGridApi &
-    _RowGridApi &
-    _ScrollGridApi &
-    _KeyboardNavigationGridApi &
-    _EventGridApi &
-    _CellGridApi &
-    _CommunityMenuGridApi &
-    _SortGridApi &
-    _OverlayGridApi &
-    _PinnedRowGridApi &
-    _RenderGridApi &
-    _DragGridApi &
-    _ColumnGridApi &
-    _DragGridApi &
-    _EditGridApi &
-    _FilterGridApi &
-    _ColumnFilterGridApi &
-    _QuickFilterGridApi &
-    _PaginationGridApi &
-    _CsrmSsrmSharedGridApi &
-    _SsrmInfiniteSharedGridApi;
-
 const makeFunctionModulesMap = (): Record<keyof GridApi, ModuleNames> => {
     const mod = <TGridApi extends Partial<GridApi>>(
         moduleName: ModuleNames,
@@ -97,8 +52,8 @@ const makeFunctionModulesMap = (): Record<keyof GridApi, ModuleNames> => {
     };
 
     return {
-        dispatchEvent: coreModule,
-        ...mod<CoreModuleGridApi>(coreModule, {
+        ...mod<_CoreModuleGridApi>(coreModule, {
+            dispatchEvent: 0,
             destroy: 0,
             getGridId: 0,
             getGridOption: 0,
