@@ -11,6 +11,7 @@ import { note } from '@ag-website-shared/markdoc/tags/note';
 import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
 import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
 import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
+import { video } from '@ag-website-shared/markdoc/tags/video';
 import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { warning } from '@ag-website-shared/markdoc/tags/warning';
 import { Markdoc, component, defineMarkdocConfig } from '@astrojs/markdoc/config';
@@ -61,6 +62,7 @@ export default defineMarkdocConfig({
         idea,
         openInCTA,
         enterpriseIcon,
+        video,
         licenseSetup: {
             render: component('./src/components/license-setup/LicenseSetup.astro'),
         },

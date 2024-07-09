@@ -310,10 +310,8 @@ class ContextMenu extends Component<ContextMenuEvent> {
             this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)
         ) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
-            const doc = this.gos.getDocument();
-            const activeEl = this.gos.getActiveDomElement();
 
-            if (!activeEl || activeEl === doc.body) {
+            if (this.gos.isNothingFocused()) {
                 this.focusService.setFocusedCell({
                     rowIndex,
                     column,

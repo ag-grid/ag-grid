@@ -48,6 +48,7 @@
             "displayName": "Column Groups"
         },
         "getParent": {},
+        "getOriginalParent": {},
         "getColumnGroupShow": {},
         "getColumnGroupPaddingInfo": {},
         "isEmptyGroup": {}

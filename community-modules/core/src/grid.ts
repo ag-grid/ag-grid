@@ -337,11 +337,13 @@ export class GridCoreCreator {
     private registerModuleApiFunctions(context: Context, registeredModules: Module[]): void {
         const apiFunctionService = context.getBean('apiFunctionService');
         registeredModules.forEach((module) => {
-            const apiFunctions = module.apiFunctions ?? {};
-            const names = Object.keys(apiFunctions) as ApiFunctionName[];
-            names.forEach((name) => {
-                apiFunctionService?.addFunction(name, apiFunctions[name]!);
-            });
+            const apiFunctions = module.apiFunctions;
+            if (apiFunctions) {
+                const names = Object.keys(apiFunctions) as ApiFunctionName[];
+                names.forEach((name) => {
+                    apiFunctionService?.addFunction(name, apiFunctions[name]!);
+                });
+            }
         });
     }
 

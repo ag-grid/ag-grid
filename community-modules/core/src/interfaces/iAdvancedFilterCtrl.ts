@@ -5,5 +5,5 @@ export interface IAdvancedFilterCtrl {
 
     getHeaderHeight(): number;
 
-    toggleFilterBuilder(source: 'api' | 'ui', force?: boolean): void;
+    toggleFilterBuilder(params: { source: 'api' | 'ui'; force?: boolean; eventSource?: HTMLElement }): void;
 }

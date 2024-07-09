@@ -15,7 +15,7 @@ import { type FunctionComponent, useCallback, useMemo, useRef, useState } from '
 import styles from './HRExample.module.css';
 import { ContactCellRenderer } from './cell-renderers/ContactCellRenderer';
 import { EmployeeCellRenderer } from './cell-renderers/EmployeeCellRenderer';
-import { FlagRenderer } from './cell-renderers/FlagRenderer';
+import { FlagCellRenderer } from './cell-renderers/FlagCellRenderer';
 import { StatusCellRenderer } from './cell-renderers/StatusCellRenderer';
 import { TagCellRenderer } from './cell-renderers/TagCellRenderer';
 import { getData } from './data';
@@ -60,6 +60,8 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             field: 'department',
             width: 250,
+            minWidth: 250,
+            flex: 1,
             valueFormatter: departmentFormatter,
             cellRenderer: TagCellRenderer,
         },
@@ -67,6 +69,8 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             field: 'employmentType',
             editable: true,
             width: 180,
+            minWidth: 180,
+            flex: 1,
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: employmentType,
@@ -75,7 +79,9 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
         {
             field: 'location',
             width: 200,
-            cellRenderer: FlagRenderer,
+            minWidth: 200,
+            flex: 1,
+            cellRenderer: FlagCellRenderer,
             editable: true,
         },
         {

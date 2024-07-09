@@ -1,3 +1,4 @@
+import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, ControllerMeta, SingletonBean } from '../context/context';
 import type { RowModelType } from './iRowModel';
@@ -27,5 +28,19 @@ export interface Module {
     userComponents?: ComponentMeta[];
     rowModel?: RowModelType;
     dependantModules?: Module[];
-    apiFunctions?: { [T in ApiFunctionName]?: ApiFunction<T> };
+
+    apiFunctions?: { [K in ApiFunctionName]: ApiFunction<K> };
+}
+
+export function _defineModule(definition: Omit<Module, 'apiFunctions'>): Module;
+
+export function _defineModule<TGridApi extends Readonly<Partial<GridApi>>>(
+    definition: Omit<Module, 'apiFunctions'> &
+        (object extends TGridApi
+            ? { apiFunctions: never }
+            : { apiFunctions: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> } })
+): Module;
+
+export function _defineModule(definition: any): Module {
+    return definition;
 }

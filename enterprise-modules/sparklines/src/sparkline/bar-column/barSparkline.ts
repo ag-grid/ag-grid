@@ -1,4 +1,4 @@
-import { _Scale, _Scene, _Util } from 'ag-charts-community';
+import { _ModuleSupport, _Scale, _Util } from 'ag-charts-community';
 
 import type { Point } from '../sparkline';
 import type { RectNodeDatum } from './barColumnSparkline';
@@ -121,7 +121,7 @@ export class BarSparkline extends BarColumnSparkline {
                 labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
                 labelTextAlign = isPositiveY ? 'end' : 'start';
 
-                const textSize = _Scene.Text.getTextSize(labelText, labelFontFamily);
+                const textSize = _ModuleSupport.TextMeasurer.measureText(labelText, { font: labelFontFamily });
                 const textWidth = textSize.width || 20;
                 const positiveBoundary = yZero + textWidth;
                 const negativeBoundary = yZero - textWidth;

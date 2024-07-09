@@ -28,7 +28,7 @@ export type RowNodeEventType =
 export type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
     RowNodeEventType,
     {
-        rowSelected: RowSelectedEvent<TData>;
+        rowSelected: RowNodeSelectedEvent<TData>;
         selectableChanged: SelectableChangedEvent<TData>;
         displayedChanged: DisplayedChangedEvent<TData>;
         dataChanged: DataChangedEvent<TData>;
@@ -75,7 +75,7 @@ export interface RowNodeEvent<T extends RowNodeEventType, TData = any> extends A
     node: IRowNode<TData>;
 }
 
-export interface RowSelectedEvent<TData = any> extends RowNodeEvent<'rowSelected', TData> {}
+export interface RowNodeSelectedEvent<TData = any> extends RowNodeEvent<'rowSelected', TData> {}
 export interface MouseEnterEvent<TData = any> extends RowNodeEvent<'mouseEnter', TData> {}
 export interface MouseLeaveEvent<TData = any> extends RowNodeEvent<'mouseLeave', TData> {}
 export interface HeightChangedEvent<TData = any> extends RowNodeEvent<'heightChanged', TData> {}

@@ -1,11 +1,10 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames, _EditCoreModule } from '@ag-grid-community/core';
+import { ModuleNames, _EditCoreModule, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { RichSelectCellEditor } from './richSelect/richSelectCellEditor';
 import { VERSION } from './version';
 
-export const RichSelectModule: Module = {
+export const RichSelectModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.RichSelectModule,
     beans: [],
@@ -14,4 +13,4 @@ export const RichSelectModule: Module = {
         { name: 'agRichSelectCellEditor', classImp: RichSelectCellEditor },
     ],
     dependantModules: [EnterpriseCoreModule, _EditCoreModule],
-};
+});

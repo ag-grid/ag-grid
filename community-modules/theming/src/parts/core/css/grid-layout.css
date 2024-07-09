@@ -81,7 +81,7 @@
     left: 0;
     width: 100%;
     height: 1px;
-    border: var(--ag-row-border);
+    border-top: var(--ag-row-border);
 }
 
 .ag-group-expanded,

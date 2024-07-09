@@ -1,7 +1,9 @@
 import type {
+    AgColumn,
     BeanCollection,
     FocusService,
     FocusableContainer,
+    IRowNode,
     PopupService,
     ResizableStructure,
 } from '@ag-grid-community/core';
@@ -20,6 +22,14 @@ export type ResizableSides =
     | 'bottomLeft'
     | 'left';
 
+export interface DialogPostProcessPopupParams {
+    type: string;
+    eventSource?: HTMLElement | null;
+    mouseEvent?: MouseEvent | Touch | null;
+    column?: AgColumn | null;
+    rowNode?: IRowNode | null;
+}
+
 export interface DialogOptions extends PanelOptions {
     eWrapper?: HTMLElement;
     modal?: boolean;
@@ -28,6 +38,7 @@ export interface DialogOptions extends PanelOptions {
     maximizable?: boolean;
     afterGuiAttached?: () => void;
     closedCallback?: (event?: MouseEvent | TouchEvent | KeyboardEvent) => void;
+    postProcessPopupParams?: DialogPostProcessPopupParams;
 }
 
 export class AgDialog extends AgPanel<DialogOptions> implements FocusableContainer {
@@ -61,11 +72,16 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
 
     public override postConstruct() {
         const eGui = this.getGui();
-        const { movable, resizable, maximizable, modal } = this.config;
+        const { movable, resizable, maximizable, modal, postProcessPopupParams } = this.config;
 
         this.addCssClass('ag-dialog');
 
         super.postConstruct();
+
+        if (postProcessPopupParams) {
+            const { type, eventSource, column, mouseEvent, rowNode } = postProcessPopupParams;
+            this.popupService.callPostProcessPopup(type, eGui, eventSource, mouseEvent, column, rowNode);
+        }
 
         this.tabGuardFeature = this.createManagedBean(new TabGuardFeature(this));
         this.tabGuardFeature.initialiseTabGuard({
@@ -75,7 +91,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
                 const { activeElement } = eDocument;
                 const restoreFocus = this.popupService.bringPopupToFront(eGui);
                 // if popup is brought to front, need to put focus back
-                if (restoreFocus && activeElement !== eDocument.body) {
+                if (restoreFocus && !this.gos.isNothingFocused()) {
                     (activeElement as HTMLElement)?.focus?.();
                 }
             },

@@ -49,4 +49,26 @@ describe('ag-grid overlays state (react)', () => {
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
     });
+
+    test('react custom no rows overlay via overlayNoRowsTemplate', () => {
+        const noRowsOverlayTemplate = '<span>No Rows Span</span>';
+        const { getByText, rerender } = render(
+            <AgGridReact columnDefs={columnDefs} rowData={[]} overlayNoRowsTemplate={noRowsOverlayTemplate} />
+        );
+        expect(getByText('No Rows Span')).toBeTruthy();
+
+        rerender(<AgGridReact columnDefs={columnDefs} rowData={[{}]} overlayNoRowsTemplate={noRowsOverlayTemplate} />);
+        expect(hasNoRowsOverlay()).toBe(false);
+    });
+
+    test('react custom no rows overlay via overlayNoRowsTemplate - simple string', () => {
+        const noRowsOverlayTemplate = 'No Rows String';
+        const { getByText, rerender } = render(
+            <AgGridReact columnDefs={columnDefs} rowData={[]} overlayNoRowsTemplate={noRowsOverlayTemplate} />
+        );
+        expect(getByText('No Rows String')).toBeTruthy();
+
+        rerender(<AgGridReact columnDefs={columnDefs} rowData={[{}]} overlayNoRowsTemplate={noRowsOverlayTemplate} />);
+        expect(hasNoRowsOverlay()).toBe(false);
+    });
 });

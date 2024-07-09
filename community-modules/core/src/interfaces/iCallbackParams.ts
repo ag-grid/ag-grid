@@ -3,7 +3,7 @@ import type { HeaderPosition } from '../headerRendering/common/headerPosition';
 import type { ChartToolbarMenuItemOptions } from './iChartOptions';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
-import type { IRowNode } from './iRowNode';
+import type { IRowNode, RowPinnedType } from './iRowNode';
 import type { ServerSideTransaction } from './serverSideTransaction';
 
 export interface GetContextMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -41,8 +41,11 @@ export interface PostProcessPopupParams<TData = any, TContext = any> extends AgG
     rowNode?: IRowNode<TData> | null;
     /** The popup we are showing */
     ePopup: HTMLElement;
-    /** The different types are:
-     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */
+    /**
+     * The different types are:
+     * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor', 'chart',
+     * 'advancedFilterBuilder', 'colorPicker', 'columnChooser'
+     */
     type: string;
     /** If the popup is as a result of a button click (eg menu button),
      *  this is the component that the user clicked */
@@ -164,6 +167,8 @@ export interface IsApplyServerSideTransactionParams extends AgGridCommon<any, an
 export interface GetRowIdParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The data item provided to the grid for the row in question */
     data: TData;
+    /** Pinned state of the row */
+    rowPinned?: RowPinnedType;
     /** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */
     level: number;
     /** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */

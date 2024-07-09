@@ -476,6 +476,14 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
     /**
+     * Used to enable or disable RTL for the worksheet.
+     * - true: Enables RTL
+     * - false: Disables RTL
+     * - undefined: Exports the worksheet with the same value of `gridOptions.enableRtl`.
+     * @default undefined
+     */
+    rightToLeft?: boolean;
+    /**
      * The mimeType of the Excel file.
      * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
@@ -504,6 +512,11 @@ export interface ExcelExportMultipleSheetParams {
      * @default 'export.xlsx'
      */
     fileName?: string | ExportFileNameGetter;
+    /**
+     * The sheet to be marked as active by default.
+     * @default 0
+     */
+    activeSheet?: number;
     /**
      * The default value for the font size of the Excel document.
      * @default 11

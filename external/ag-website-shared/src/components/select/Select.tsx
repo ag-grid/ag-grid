@@ -2,7 +2,7 @@ import { Checkmark, ChevronUp } from '@carbon/icons-react';
 import * as RadixSelect from '@radix-ui/react-select';
 import classnames from 'classnames';
 import { ChevronDown } from 'lucide-react';
-import { type ReactElement, type ReactNode, forwardRef } from 'react';
+import { type ReactElement, type ReactNode, forwardRef, useCallback } from 'react';
 
 import styles from './Select.module.scss';
 
@@ -29,10 +29,7 @@ export function Select<O>({
     isPopper,
     isLarge,
 }: SelectProps<O>) {
-    const optionsByValue = new Map<string, O>();
-    const content: Record<string, ReactElement[]> = {};
-    for (const option of options) {
-        const group = getGroupLabel(option) || '';
+    const getOptionContent = useCallback((option: O) => {
         const key = getKey(option) || '';
         let label: string | undefined = getLabel?.(option);
         if (label == null) {
@@ -41,10 +38,24 @@ export function Select<O>({
         if (label == null) {
             label = key;
         }
+
+        const optionContent = renderItem ? renderItem(option) : label || key;
+
+        return {
+            key,
+            optionContent,
+        };
+    }, []);
+
+    const optionsByValue = new Map<string, O>();
+    const content: Record<string, ReactElement[]> = {};
+    for (const option of options) {
+        const group = getGroupLabel(option) || '';
+        const { key, optionContent } = getOptionContent(option);
         content[group] ||= [];
         content[group].push(
             <SelectItem key={key} value={key} isLarge={isLarge}>
-                {renderItem ? renderItem(option) : label || key}
+                {optionContent}
             </SelectItem>
         );
         optionsByValue.set(key, option);
@@ -61,7 +72,7 @@ export function Select<O>({
             }}
         >
             <RadixSelect.Trigger tabIndex={0} className={classnames(styles.trigger, { [styles.large]: isLarge })}>
-                <RadixSelect.Value placeholder="Choose..." />
+                <RadixSelect.Value placeholder="Choose...">{getOptionContent(value).optionContent}</RadixSelect.Value>
                 <RadixSelect.Icon>
                     <ChevronDown className={styles.chevronDown} />
                 </RadixSelect.Icon>

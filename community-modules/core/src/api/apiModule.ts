@@ -1,6 +1,6 @@
 import { ColumnApiModule } from '../columns/columnModule';
 import { DragApiModule } from '../dragAndDrop/dragModule';
-import type { Module } from '../interfaces/iModule';
+import { _defineModule } from '../interfaces/iModule';
 import { PinnedRowApiModule } from '../pinnedRowModel/pinnedRowModule';
 import { OverlayApiModule } from '../rendering/overlays/overlayModule';
 import { RenderApiModule } from '../rendering/renderModule';
@@ -8,6 +8,17 @@ import { VERSION } from '../version';
 import { expireValueCache, getCellValue, getValue } from './cellApi';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
 import { addEventListener, addGlobalListener, removeEventListener, removeGlobalListener } from './eventApi';
+import type {
+    _CellGridApi,
+    _CommunityMenuGridApi,
+    _CoreGridApi,
+    _EventGridApi,
+    _KeyboardNavigationGridApi,
+    _RowGridApi,
+    _RowSelectionGridApi,
+    _ScrollGridApi,
+    _SortGridApi,
+} from './gridApi';
 import {
     clearFocusedCell,
     getFocusedCell,
@@ -57,7 +68,7 @@ import {
 } from './scrollApi';
 import { onSortChanged } from './sortApi';
 
-export const CoreApiModule: Module = {
+export const CoreApiModule = _defineModule<_CoreGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/core-api',
     apiFunctions: {
@@ -68,9 +79,9 @@ export const CoreApiModule: Module = {
         setGridOption,
         updateGridOptions,
     },
-};
+});
 
-export const RowSelectionApiModule: Module = {
+export const RowSelectionApiModule = _defineModule<_RowSelectionGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/row-selection-api',
     apiFunctions: {
@@ -84,9 +95,9 @@ export const RowSelectionApiModule: Module = {
         getSelectedNodes,
         getSelectedRows,
     },
-};
+});
 
-export const RowApiModule: Module = {
+export const RowApiModule = _defineModule<_RowGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/row-api',
     apiFunctions: {
@@ -104,9 +115,9 @@ export const RowApiModule: Module = {
         getDisplayedRowCount,
         getModel,
     },
-};
+});
 
-export const ScrollApiModule: Module = {
+export const ScrollApiModule = _defineModule<_ScrollGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/scroll-api',
     apiFunctions: {
@@ -116,9 +127,9 @@ export const ScrollApiModule: Module = {
         ensureIndexVisible,
         ensureNodeVisible,
     },
-};
+});
 
-export const KeyboardNavigationApiModule: Module = {
+export const KeyboardNavigationApiModule = _defineModule<_KeyboardNavigationGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/keyboard-navigation-api',
     apiFunctions: {
@@ -129,9 +140,9 @@ export const KeyboardNavigationApiModule: Module = {
         tabToNextCell,
         tabToPreviousCell,
     },
-};
+});
 
-export const EventApiModule: Module = {
+export const EventApiModule = _defineModule<_EventGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/event-api',
     apiFunctions: {
@@ -140,9 +151,9 @@ export const EventApiModule: Module = {
         removeEventListener,
         removeGlobalListener,
     },
-};
+});
 
-export const CellApiModule: Module = {
+export const CellApiModule = _defineModule<_CellGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/cell-api',
     apiFunctions: {
@@ -150,9 +161,9 @@ export const CellApiModule: Module = {
         getValue,
         getCellValue,
     },
-};
+});
 
-export const CommunityMenuApiModule: Module = {
+export const CommunityMenuApiModule = _defineModule<_CommunityMenuGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/menu-api',
     apiFunctions: {
@@ -161,17 +172,17 @@ export const CommunityMenuApiModule: Module = {
         showColumnMenu,
         hidePopupMenu,
     },
-};
+});
 
-export const SortApiModule: Module = {
+export const SortApiModule = _defineModule<_SortGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/sort-api',
     apiFunctions: {
         onSortChanged,
     },
-};
+});
 
-export const CommunityApiModule: Module = {
+export const CommunityApiModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/api',
     dependantModules: [
@@ -190,4 +201,4 @@ export const CommunityApiModule: Module = {
         CommunityMenuApiModule,
         SortApiModule,
     ],
-};
+});

@@ -114,6 +114,11 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
                         );
                     }
                 },
+                postProcessPopupParams: {
+                    type: 'columnChooser',
+                    column,
+                    eventSource,
+                },
             })
         );
 

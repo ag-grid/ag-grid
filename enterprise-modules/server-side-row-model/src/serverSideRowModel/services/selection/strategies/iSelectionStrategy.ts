@@ -1,8 +1,15 @@
-import type { Bean, ISetNodesSelectedParams, RowNode, SelectionEventSourceType } from '@ag-grid-community/core';
+import type {
+    Bean,
+    IServerSideGroupSelectionState,
+    IServerSideSelectionState,
+    ISetNodesSelectedParams,
+    RowNode,
+    SelectionEventSourceType,
+} from '@ag-grid-community/core';
 
 export interface ISelectionStrategy extends Bean {
     getSelectedState(): any;
-    setSelectedState(state: any): void;
+    setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
     setNodesSelected(params: ISetNodesSelectedParams): number;
     isNodeSelected(node: RowNode): boolean | undefined;
     processNewRow(node: RowNode): void;

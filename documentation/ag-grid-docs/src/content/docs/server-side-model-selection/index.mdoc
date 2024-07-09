@@ -129,6 +129,10 @@ params.api.setServerSideSelectionState({
 });
 ```
 
+{% note %}
+The state being used here conforms to `IServerSideGroupSelectionState`, not `IServerSideSelectionState`. Invalid states will be ignored.
+{% /note %}
+
 In the example below, note the following;
 
 * The above snippet has been included inside of the `firstDataRendered` callback, which sets the initial selection state.

@@ -1,5 +1,5 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames, _FilterCoreModule } from '@ag-grid-community/core';
+import type { _AdvancedFilterGridApi } from '@ag-grid-community/core';
+import { ModuleNames, _FilterCoreModule, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import {
@@ -12,14 +12,14 @@ import { AdvancedFilterExpressionService } from './advancedFilter/advancedFilter
 import { AdvancedFilterService } from './advancedFilter/advancedFilterService';
 import { VERSION } from './version';
 
-export const AdvancedFilterCoreModule: Module = {
+export const AdvancedFilterCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.AdvancedFilterModule}-core`,
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
     dependantModules: [EnterpriseCoreModule, _FilterCoreModule],
-};
+});
 
-export const AdvancedFilterApiModule: Module = {
+export const AdvancedFilterApiModule = _defineModule<_AdvancedFilterGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.AdvancedFilterModule}-api`,
     apiFunctions: {
@@ -29,10 +29,10 @@ export const AdvancedFilterApiModule: Module = {
         hideAdvancedFilterBuilder,
     },
     dependantModules: [AdvancedFilterCoreModule],
-};
+});
 
-export const AdvancedFilterModule: Module = {
+export const AdvancedFilterModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.AdvancedFilterModule,
     dependantModules: [AdvancedFilterCoreModule, AdvancedFilterApiModule],
-};
+});

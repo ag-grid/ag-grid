@@ -5,8 +5,25 @@
 }
 
 .iconContainer button {
+    appearance: none;
+    display: inline-block;
     margin: 8px;
-    width: 24px;
+    width: 30px;
+    padding: 0.375em 1em 0.5em;
+    white-space: nowrap;
+    border-radius: 6px;
+    box-shadow:
+        0 0 0 4px transparent,
+        0 1px 2px 0 #0c111d11;
+    outline: none;
+    background-color: var(--ag-background-color);
+    border: 1px solid #d0d5dd;
+    cursor: pointer;
+}
+
+:global(.ag-theme-quartz-dark) .iconContainer button {
+    background-color: #141d2c;
+    border-color: #344054;
 }
 
 .iconLink {

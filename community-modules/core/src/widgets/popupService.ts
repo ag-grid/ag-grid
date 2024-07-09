@@ -328,7 +328,7 @@ export class PopupService extends BeanStub implements NamedBean {
         ePopup.classList.add(`ag-popup-positioned-${positioned}`);
     }
 
-    private callPostProcessPopup(
+    public callPostProcessPopup(
         type: string,
         ePopup: HTMLElement,
         eventSource?: HTMLElement | null,
@@ -339,12 +339,12 @@ export class PopupService extends BeanStub implements NamedBean {
         const callback = this.gos.getCallback('postProcessPopup');
         if (callback) {
             const params: WithoutGridCommon<PostProcessPopupParams> = {
-                column: column,
-                rowNode: rowNode,
-                ePopup: ePopup,
-                type: type,
-                eventSource: eventSource,
-                mouseEvent: mouseEvent,
+                column,
+                rowNode,
+                ePopup,
+                type,
+                eventSource,
+                mouseEvent,
             };
             callback(params);
         }

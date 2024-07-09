@@ -1,5 +1,4 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { AgMenuItemRenderer, EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
@@ -8,7 +7,7 @@ import { ColumnToolPanel } from './columnToolPanel/columnToolPanel';
 import { ModelItemUtils } from './columnToolPanel/modelItemUtils';
 import { VERSION } from './version';
 
-export const ColumnsToolPanelModule: Module = {
+export const ColumnsToolPanelModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.ColumnsToolPanelModule,
     beans: [ModelItemUtils],
@@ -20,4 +19,4 @@ export const ColumnsToolPanelModule: Module = {
         },
     ],
     dependantModules: [EnterpriseCoreModule, RowGroupingModule, SideBarModule],
-};
+});

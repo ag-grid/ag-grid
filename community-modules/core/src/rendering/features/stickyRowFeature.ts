@@ -261,6 +261,10 @@ export class StickyRowFeature extends BeanStub {
                 if (suppressGroupsSticky === true) {
                     return false;
                 }
+                if (container === 'bottom') {
+                    // Group rows should never stick to the bottom of the viewport
+                    return false;
+                }
                 const alreadySticking = newStickyRows.has(row);
                 return !alreadySticking && row.expanded;
             }

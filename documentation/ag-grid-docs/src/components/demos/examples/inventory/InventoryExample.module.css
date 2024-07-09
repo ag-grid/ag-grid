@@ -1,11 +1,16 @@
 :global(:root) {
     --layout-grid-header-height: 32px;
+    --layout-grid-margin: 32px;
     --ag-row-border: 1px solid #c41717;
 }
 
-:global(div.ag-theme-quartz),
-:global(div.ag-theme-quartz-dark) {
-    @media screen and (max-width: 720px) {
+:global(body) {
+    margin: 0;
+}
+
+@media screen and (max-width: 720px) {
+    :global(div.ag-theme-quartz),
+    :global(div.ag-theme-quartz-dark) {
         --ag-font-size: 12px;
         --ag-grid-size: 6px;
     }
@@ -30,19 +35,20 @@
 :global(.ag-theme-quartz-dark .ag-row:not(.ag-row-level-1)) {
     border-radius: 8px;
     overflow: hidden;
+}
 
-    /* Required to transition background color for row hover */
-    &::before {
-        content: '';
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        pointer-events: none;
-        transition: background-color 0.33s ease-in-out;
-    }
+/* Required to transition background color for row hover */
+:global(.ag-theme-quartz .ag-row:not(.ag-row-level-1)::before),
+:global(.ag-theme-quartz-dark .ag-row:not(.ag-row-level-1)::before) {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    transition: background-color 0.33s ease-in-out;
 }
 
 :global(.ag-theme-quartz .ag-cell-expandable),
@@ -56,16 +62,18 @@
 :global(.ag-theme-quartz-dark .ag-cell) {
     display: flex;
     align-items: center;
+}
 
-    &:first-child {
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-    }
+:global(.ag-theme-quartz .ag-cell:first-child),
+:global(.ag-theme-quartz-dark .ag-cell:first-child) {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
 
-    &:last-child {
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-    }
+:global(.ag-theme-quartz .ag-cell:last-child),
+:global(.ag-theme-quartz-dark .ag-cell:last-child) {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 :global(.ag-theme-quartz .ag-right-aligned-cell),
@@ -116,10 +124,10 @@
 
 :global(.ag-theme-quartz .ag-paging-panel) {
     height: 40px;
+}
 
-    > span:last-child {
-        margin-right: 0;
-    }
+:global(.ag-theme-quartz .ag-paging-panel > span:last-child) {
+    margin-right: 0;
 }
 
 :global(.ag-center-cols-viewport) {
@@ -127,8 +135,10 @@
 }
 
 .grid {
-    height: calc(100vh - var(--layout-grid-header-height) - 50px);
     --ag-header-background-color: transparent !important;
+
+    height: calc(100vh - var(--layout-grid-header-height) - 62px - var(--layout-grid-margin));
+    margin: 0 var(--layout-grid-margin) var(--layout-grid-margin);
 }
 
 .exampleHeader {
@@ -136,6 +146,7 @@
     justify-content: space-between;
     padding-bottom: 16px;
     padding-top: 8px;
+    margin: var(--layout-grid-margin) var(--layout-grid-margin) 0;
 }
 
 .exampleHeader {
@@ -162,8 +173,13 @@
 }
 
 .inputWrapper input {
-    padding-left: 32px;
     font-size: 14px;
+    padding: 0.375em 0.75em 0.375em 2.4em;
+    line-height: 1.4;
+    border-radius: 6px;
+    border: 1px solid var(--color-input-border, #d0d5dd);
+    background-color: transparent;
+    outline: none;
 }
 
 .price {
@@ -184,17 +200,24 @@
     display: flex;
     border-radius: 8px;
     overflow: hidden;
-    background-color: var(--color-bg-secondary);
     padding: 4px;
-    border: 1px solid var(--color-border-secondary);
+    background-color: var(--color-bg-secondary, #f9fafb);
+    border: 1px solid var(--color-border-secondary, #eff0f1);
+    color: #39485d;
+    border-radius: 8px;
 }
 
 .tabButton {
+    appearance: none;
+    display: inline-block;
+    padding: 0.375em 1em 0.5em;
+    white-space: nowrap;
     font-size: 14px;
     font-weight: 500;
+    border-radius: 6px;
     border: none;
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text-seondary);
+    background-color: var(--color-bg-secondary, #f9fafb);
+    color: var(--color-text-secondary, #39485d);
     cursor: pointer;
     box-shadow: none;
     transition:

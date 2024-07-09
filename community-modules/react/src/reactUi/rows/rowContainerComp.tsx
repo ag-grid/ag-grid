@@ -31,6 +31,11 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     };
 
     const compProxy = useRef<IRowContainerComp>({
+        setHorizontalScroll: (offset: number) => {
+            if (eViewport.current) {
+                eViewport.current.scrollLeft = offset;
+            }
+        },
         setViewportHeight: (height: string) => {
             if (eViewport.current) {
                 eViewport.current.style.height = height;

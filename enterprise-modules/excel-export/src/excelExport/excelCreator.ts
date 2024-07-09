@@ -133,8 +133,8 @@ const createExcelXmlTables = (): void => {
     }
 };
 
-const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number): void => {
-    ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
+const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number, activeTab: number): void => {
+    ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook(activeTab));
     ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(fontSize));
     ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
     ZipContainer.addFile('xl/theme/theme1.xml', ExcelXlsxFactory.createTheme());
@@ -151,6 +151,7 @@ const createExcelFileForExcel = (
         rowCount?: number;
         fontSize?: number;
         author?: string;
+        activeTab?: number;
     } = {}
 ): boolean => {
     if (!data || data.length === 0) {
@@ -159,12 +160,15 @@ const createExcelFileForExcel = (
         return false;
     }
 
-    const { fontSize = 11, author = 'AG Grid' } = options;
+    const { fontSize = 11, author = 'AG Grid', activeTab = 0 } = options;
+
+    const len = data.length;
+    const activeTabWithinBounds = Math.max(Math.min(activeTab, len - 1), 0);
 
     createExcelXMLCoreFolderStructure();
     createExcelXmlTables();
     createExcelXmlWorksheets(data);
-    createExcelXmlCoreSheets(fontSize, author, data.length);
+    createExcelXmlCoreSheets(fontSize, author, len, activeTabWithinBounds);
 
     ExcelXlsxFactory.resetFactory();
 
@@ -172,13 +176,14 @@ const createExcelFileForExcel = (
 };
 
 const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
-    const { data, fontSize, author } = params;
+    const { data, fontSize, author, activeSheet } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     if (
         !createExcelFileForExcel(data, {
             author,
             fontSize,
+            activeTab: activeSheet,
         })
     ) {
         return Promise.resolve(undefined);
@@ -188,13 +193,14 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
 };
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
-    const { data, fontSize, author } = params;
+    const { data, fontSize, author, activeSheet } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     if (
         !createExcelFileForExcel(data, {
             author,
             fontSize,
+            activeTab: activeSheet,
         })
     ) {
         return;
@@ -346,6 +352,7 @@ export class ExcelCreator
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gos.get('excelStyles') || [],
+            rightToLeft: params.rightToLeft ?? this.gos.get('enableRtl'),
             styleLinker: this.styleLinker.bind(this),
         };
 

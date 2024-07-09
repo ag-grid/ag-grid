@@ -378,6 +378,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                     data: this.data,
                     parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
                     level: this.level,
+                    rowPinned: this.rowPinned,
                 });
 
                 // make sure id provided doesn't start with 'row-group-' as this is reserved.

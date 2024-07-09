@@ -54,6 +54,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     suppressColumnOutline?: boolean;
     suppressRowOutline?: boolean;
     rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
+    rightToLeft?: boolean;
     styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (
         rowIndex: number,

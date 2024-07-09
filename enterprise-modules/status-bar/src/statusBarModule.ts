@@ -1,5 +1,5 @@
-import type { Module } from '@ag-grid-community/core';
-import { ModuleNames } from '@ag-grid-community/core';
+import type { _StatusBarGridApi } from '@ag-grid-community/core';
+import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { AggregationComp } from './statusBar/providedPanels/aggregationComp';
@@ -11,7 +11,7 @@ import { getStatusPanel } from './statusBar/statusBarApi';
 import { StatusBarService } from './statusBar/statusBarService';
 import { VERSION } from './version';
 
-export const StatusBarCoreModule: Module = {
+export const StatusBarCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.StatusBarModule}-core`,
     beans: [StatusBarService],
@@ -23,19 +23,19 @@ export const StatusBarCoreModule: Module = {
         { name: 'agTotalAndFilteredRowCountComponent', classImp: TotalAndFilteredRowsComp },
     ],
     dependantModules: [EnterpriseCoreModule],
-};
+});
 
-export const StatusBarApiModule: Module = {
+export const StatusBarApiModule = _defineModule<_StatusBarGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.StatusBarModule}-api`,
     apiFunctions: {
         getStatusPanel,
     },
     dependantModules: [StatusBarCoreModule],
-};
+});
 
-export const StatusBarModule: Module = {
+export const StatusBarModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.StatusBarModule,
     dependantModules: [StatusBarCoreModule, StatusBarApiModule],
-};
+});

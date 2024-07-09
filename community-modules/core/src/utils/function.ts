@@ -19,10 +19,10 @@ export function _log(message: string, ...args: any[]) {
 }
 
 export function _warnOnce(msg: string, ...args: any[]) {
-    _doOnce(() => console.warn('AG Grid: ' + msg, ...args), msg);
+    _doOnce(() => console.warn('AG Grid: ' + msg, ...args), msg + args?.join(''));
 }
 export function _errorOnce(msg: string, ...args: any[]) {
-    _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg);
+    _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg + args?.join(''));
 }
 
 export function _getFunctionName(funcConstructor: any) {
@@ -79,6 +79,7 @@ export function _debounce(func: (...args: any[]) => void, delay: number): (...ar
 
     // Calling debounce returns a new anonymous function
     return function (...args: any[]) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const context = this;
         window.clearTimeout(timeout);
 
@@ -98,6 +99,7 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
     let previousCall = 0;
 
     return function (...args: any[]) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const context = this;
         const currentCall = new Date().getTime();
 
@@ -145,7 +147,7 @@ export function _waitUntil(
     }
 }
 
-export function _compose<T>(...fns: ((...args: any[]) => any)[]) {
+export function _compose<T>(...fns: ((...args: T[]) => T)[]) {
     return (arg: T) => fns.reduce<T>((composed, f) => f(composed), arg);
 }
 
