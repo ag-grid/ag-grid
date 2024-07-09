@@ -1,7 +1,15 @@
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+
 import rootESLint from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
+    {
+        plugins: {
+            'react-hooks': reactHooksPlugin,
+        },
+        rules: reactHooksPlugin.configs.recommended.rules,
+    },
     {
         ignores: ['.astro/', '**/_examples/', 'scripts/showcase-github/tmp/', '**/.angular'],
     },
