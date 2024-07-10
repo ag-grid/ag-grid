@@ -409,8 +409,8 @@ export interface ExcelFreezeColumnsGetterParams<TData = any, TContext = any> ext
     column: Column;
 }
 
-export type ExcelFreezeRowsGetter = (params?: ExcelFreezeRowsGetterParams) => boolean;
-export type ExcelFreezeColumnsGetter = (params?: ExcelFreezeColumnsGetterParams) => boolean;
+export type ExcelFreezeRowsGetter = (params: ExcelFreezeRowsGetterParams) => boolean;
+export type ExcelFreezeColumnsGetter = (params: ExcelFreezeColumnsGetterParams) => boolean;
 
 export interface ColumnWidthCallbackParams {
     column: Column | null;
