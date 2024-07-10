@@ -126,6 +126,12 @@ export default defineUserConfig({
 });
 ```
 
+{% note %}
+The `defineUserConfig` function is only used to provide typing support for the configuration.
+Configuration can be a plain object with the same shape, like `module.exports = { ... }`.
+{% /note %}
+
+
 ### Custom Import Paths and Names
 
 In case of custom grid wrappers and custom libraries, it is possible to provide custom interceptors in the configuration file to
