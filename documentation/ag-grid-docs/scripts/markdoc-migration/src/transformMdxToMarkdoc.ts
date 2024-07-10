@@ -63,8 +63,8 @@ export async function transformMdxToMarkdoc({ contents }: { contents: string }) 
         return node.type === JSX_TYPE || node.type === JSX_TEXT_TYPE;
     });
     if (jsxTag) {
-        const startLine = jsxTag.position?.start.line!;
-        const endLine = jsxTag.position?.end.line!;
+        const startLine = jsxTag.position?.start.line;
+        const endLine = jsxTag.position?.end.line;
         const lines = extractLinesBetween({
             startLine,
             endLine,

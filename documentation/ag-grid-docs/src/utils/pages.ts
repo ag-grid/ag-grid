@@ -7,7 +7,6 @@ import { readFileSync } from 'node:fs';
 
 import { SITE_BASE_URL, USE_PACKAGES, USE_PUBLISHED_PACKAGES } from '../constants';
 import { type GlobConfig, createFilePathFinder } from './createFilePathFinder';
-import { getIsDev } from './env';
 import { pathJoin } from './pathJoin';
 import { urlWithBaseUrl } from './urlWithBaseUrl';
 
@@ -152,20 +151,20 @@ export const getExampleRootFileUrl = (): URL => {
 /**
  * The `ag-charts-website` root url where the monorepo exists
  */
-const getWebsiteRootUrl = ({ isDev = getIsDev() }: { isDev?: boolean } = { isDev: getIsDev() }): URL => {
+const getWebsiteRootUrl = (): URL => {
     // Relative to the folder of this file
     const root = '../../';
     return new URL(root, import.meta.url);
 };
 
-export const getContentRootFileUrl = ({ isDev }: { isDev?: boolean } = {}): URL => {
-    const websiteRoot = getWebsiteRootUrl({ isDev });
+export const getContentRootFileUrl = (): URL => {
+    const websiteRoot = getWebsiteRootUrl();
     const contentRoot = pathJoin(websiteRoot, 'src/content');
     return new URL(contentRoot, import.meta.url);
 };
 
-export const getDebugFolderUrl = ({ isDev }: { isDev?: boolean } = {}): URL => {
-    const websiteRoot = getWebsiteRootUrl({ isDev });
+export const getDebugFolderUrl = (): URL => {
+    const websiteRoot = getWebsiteRootUrl();
     const contentRoot = pathJoin(websiteRoot, 'src/pages/debug');
     return new URL(contentRoot, import.meta.url);
 };

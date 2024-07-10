@@ -2675,4 +2675,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/license-pricing.php', to: '/license-pricing' },
     { from: '/example.php', to: '/example' },
     { from: '/ag-grid-jobs-board.php', to: '/ag-grid-jobs-board' },
+
+    { from: '/react-data-grid/whats-new', to: '/whats-new' },
+    { from: '/vue-data-grid/whats-new', to: '/whats-new' },
+    { from: '/angular-data-grid/whats-new', to: '/whats-new' },
+    { from: '/javascript-data-grid/whats-new', to: '/whats-new' },
 ];

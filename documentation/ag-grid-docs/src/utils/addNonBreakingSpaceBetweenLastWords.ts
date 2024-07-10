@@ -4,6 +4,7 @@
  */
 export const addNonBreakingSpaceBetweenLastWords = (text: string) => {
     if (!text || !text.replace) {
+        // eslint-disable-next-line no-console
         console.log('Text supplied to addNonBreakingSpaceBetweenLastWords is null or undefined');
         return '';
     }

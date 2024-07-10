@@ -25,7 +25,6 @@ const allMenuSections = menu.main.sections as MenuSection[];
 >
     <div class:list={['contentViewport layout-grid']}>
         <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
-
-        <Pipeline client:only="react" />
+        <Pipeline client:load />
     </div>
 </Layout>

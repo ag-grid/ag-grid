@@ -135,6 +135,7 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
             });
         } catch (error) {
             if (SHOW_DEBUG_LOGS) {
+                // eslint-disable-next-line no-console
                 console.error('File not generated - ', (error as Error).message);
             }
             return [];

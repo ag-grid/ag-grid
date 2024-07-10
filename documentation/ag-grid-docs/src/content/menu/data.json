@@ -1327,6 +1327,11 @@
                                         "isEnterprise": true
                                     },
                                     {
+                                        "title": "Freezing Content",
+                                        "path": "excel-export-freeze",
+                                        "isEnterprise": true
+                                    },
+                                    {
                                         "title": "Data Types",
                                         "path": "excel-export-data-types",
                                         "isEnterprise": true

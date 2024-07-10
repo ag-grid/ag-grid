@@ -200,7 +200,7 @@ function createScriptAction({
         const scriptAction = action as AGAction;
         const params = {
             actionType: scriptAction.actionType,
-            // @ts-ignore
+            // @ts-expect-error actionParams can be empty
             actionParams: scriptAction.actionParams,
         };
 

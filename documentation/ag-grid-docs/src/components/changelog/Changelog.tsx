@@ -117,6 +117,7 @@ export const Changelog = () => {
                             setMarkdownContent(markdownContent);
                         })
                         .catch((error) => {
+                            // eslint-disable-next-line no-console
                             console.error('Error fetching Markdown content:', error);
                         });
                 } else {

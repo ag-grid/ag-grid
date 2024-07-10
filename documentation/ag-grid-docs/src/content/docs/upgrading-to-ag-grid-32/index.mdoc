@@ -90,6 +90,13 @@ The following interfaces are deprecated and replaced with the equivalent interfa
 
 ## Breaking Changes
 
+{% if isFramework("angular") %}
+### Compatibility
+{% /if %}
+
+{% if isFramework("angular") %}
+The minimum version of Angular you can use with AG Grid is now Angular 16.
+{% /if %}
 
 ### Column API
 
@@ -98,6 +105,14 @@ Column API is now removed. API methods previously available via Column API are n
 ### Column Menu
 
 The new (flat) format column menu is now enabled by default. The legacy tabbed column menu can be enabled via `columnMenu = 'legacy'`.
+
+{% if isFramework("react") %}
+### Custom Components
+{% /if %}
+
+{% if isFramework("react") %}
+`reactiveCustomComponents` now defaults to true. If custom components have been declared imperatively, they should be migrated as the imperative behaviour was deprecated in v31.1. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
+{% /if %}
 
 ### Events
 
@@ -235,14 +250,6 @@ The Grid API methods listed below have been removed. Please use Grid API methods
 ### Localisation
 
 Localisation key `autosizeThiscolumn` has been renamed to `autosizeThisColumn`
-
-{% if isFramework("react") %}
-### React
-{% /if %}
-
-{% if isFramework("react") %}
-`reactiveCustomComponents` now defaults to true. If custom components have been declared imperatively, they should be migrated as the imperative behaviour was deprecated in v31.1. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
-{% /if %}
 
 ### Row IDs
 

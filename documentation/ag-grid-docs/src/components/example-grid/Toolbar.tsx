@@ -1,4 +1,3 @@
-import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Select } from '@ag-website-shared/components/select/Select';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';

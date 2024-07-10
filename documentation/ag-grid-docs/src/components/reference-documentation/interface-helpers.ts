@@ -140,6 +140,7 @@ export const getSectionProperties = ({
             current.map((x) => {
                 const prop = x[key];
                 if (!prop) {
+                    // eslint-disable-next-line no-console
                     console.warn(`<api-documentation>: Could not find a prop ${key} under section ${section}!`);
                     throw new Error(`<api-documentation>: Could not find a prop ${key} under section ${section}!`); //spl todo
                 }
@@ -172,6 +173,7 @@ export const getAllSectionHeadingLinks = ({
             // No entries for the property, so it can be filtered out
             if (numNonMetaKeys === 0) {
                 if (SHOW_DEBUG_LOGS) {
+                    // eslint-disable-next-line no-console
                     console.warn(`Reference documentation '${key}' does not have any properties`);
                 }
                 return undefined;
