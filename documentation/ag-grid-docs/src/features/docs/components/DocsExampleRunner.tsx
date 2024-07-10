@@ -109,6 +109,12 @@ const DocsExampleRunnerInner = ({
                 fetch(getExampleContentsUrl(urlConfig))
                     .then((res) => res.json())
                     .then((json) => {
+                        if (json.error) {
+                            // eslint-disable-next-line no-console
+                            console.error('Error getting', getExampleContentsUrl(urlConfig));
+                            return {};
+                        }
+
                         const isTs =
                             internalFramework === 'reactFunctionalTs' ||
                             internalFramework === 'typescript' ||
