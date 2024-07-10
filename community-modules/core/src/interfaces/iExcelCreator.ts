@@ -545,10 +545,10 @@ export interface ExcelExportMultipleSheetParams extends ExcelFileParams {
      */
     data: string[];
     /**
-     * The sheet to be marked as active by default.
+     * The index of the sheet to be marked as active by default.
      * @default 0
      */
-    activeSheet?: number;
+    activeSheetIndex?: number;
 }
 
 export interface ExcelHeaderFooterConfig {
