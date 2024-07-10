@@ -541,7 +541,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             setExpanded(true);
             propertyRef.current?.scrollIntoView();
         }
-    }, []);
+    }, [idName]);
 
     if (
         !gridParams &&

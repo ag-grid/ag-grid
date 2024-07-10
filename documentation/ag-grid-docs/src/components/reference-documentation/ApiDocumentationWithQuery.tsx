@@ -19,8 +19,7 @@ type Props = Omit<ApiDocumentationProps, 'interfaceLookup'>;
 export function ApiDocumentationWithQuery(props: Props) {
     return (
         <QueryClientProvider client={queryClient}>
-            {' '}
-            <ApiDocumentationWithLookups {...props} />{' '}
+            <ApiDocumentationWithLookups {...props} />
         </QueryClientProvider>
     );
 }
