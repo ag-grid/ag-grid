@@ -14,7 +14,7 @@ const Videos = ({ videos }) => {
         <div>
             <div className={styles.container}>
                 <div className={styles.leftColumn}>
-                    <h1>{currentVideo.title}</h1>
+                    <h2>{currentVideo.title}</h2>
                     <p>{currentVideo.description}</p>
                 </div>
                 <div className={styles.rightColumn}>
