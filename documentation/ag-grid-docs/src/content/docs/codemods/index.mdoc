@@ -77,18 +77,22 @@ The following options can be used to override this behaviour:
 
 * `--allow-untracked`
     Allow operating on files outside a git repository.
+
     By default the application will terminate if run inside a non git directory.
 
 * `--allow-dirty`
-    Allow operating on repositories with uncommitted changes in the working tree
+    Allow operating on repositories with uncommitted changes in the working tree.
+
     It is advisable to always commit before running the migration, but this option can be used to override the default behaviour.
 
 
 A custom list of input files can be passed to the `migrate` command:
 
 * [<file>...]
-    List of input files to operate on (defaults to all source files in the current working directory)
+    List of input files to operate on (defaults to all source files in the current working directory).
+
     If not specified, the Codemod runner will locate all source files within the current directory, excluding all the patterns specified in the [.gitignore](https://git-scm.com/docs/gitignore) files.
+
     For projects with more specific requirements, pass a list of input files to the `migrate` command.
 
 A configuration file can also be used for advanced use cases:
@@ -96,6 +100,7 @@ A configuration file can also be used for advanced use cases:
 * `--config=<path>`
 
     Loads a custom configuration file.
+
     See the [Configuration file](#configuration-file) section for more information.
 
 ### Configuration File
@@ -143,6 +148,7 @@ Let's assume organization "my-org" has two custom grid wrapper in the package `@
 
 ```ts
 // @my-org/my-grid/index.ts
+
 import { createGrid, GridOptions } from '@ag-grid-community/core';
 export interface GridCustomOptions extends GridOptions { customOption: string; }
 export const createGridWithCustomOption = (myOptions: GridCustomOptions) => {
