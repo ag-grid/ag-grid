@@ -443,7 +443,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private setRowType(): void {
-        const isStub = this.rowNode.stub && !this.gos.get('suppressServerSideFullWidthLoadingRow');
+        // groupHideOpenParents implicitly disables full width loading
+        const isStub =
+            this.rowNode.stub &&
+            !this.gos.get('suppressServerSideFullWidthLoadingRow') &&
+            !this.gos.get('groupHideOpenParents');
         const isFullWidthCell = this.rowNode.isFullWidthCell();
         const isDetailCell = this.gos.get('masterDetail') && this.rowNode.detail;
         const pivotMode = this.beans.columnModel.isPivotMode();
