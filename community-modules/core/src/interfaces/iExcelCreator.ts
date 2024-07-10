@@ -498,9 +498,9 @@ export interface ExcelWorksheetConfigParams {
     freezeColumns?: 'pinned' | ExcelFreezeColumnsGetter;
     /**
      * Used to enable or disable RTL for the worksheet.
-     * - true: Enables RTL
-     * - false: Disables RTL
-     * - undefined: Exports the worksheet with the same value of `gridOptions.enableRtl`.
+     * - true: Sets the direction to right-to-left (RTL).
+     * - false:  Sets the direction to left-to-right (LTR).
+     * - undefined: Exports the worksheet according to the current direction of the grid as set by `gridOptions.enableRtl`.
      * @default undefined
      */
     rightToLeft?: boolean;
