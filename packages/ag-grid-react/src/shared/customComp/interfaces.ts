@@ -1,5 +1,6 @@
 import type {
     BaseCellEditor,
+    BaseCellRenderer,
     BaseDate,
     BaseDateParams,
     BaseFilter,
@@ -134,6 +135,9 @@ export interface CustomTooltipProps<TData = any, TValue = any, TContext = any>
 
 // *** Callbacks ***
 
+/** Callbacks for custom cell renderer components */
+export interface CustomCellRendererCallbacks extends BaseCellRenderer {}
+
 /** Callbacks for custom cell editor components */
 export interface CustomCellEditorCallbacks extends BaseCellEditor {}
 
@@ -154,6 +158,11 @@ export interface CustomMenuItemCallbacks extends BaseMenuItem {}
 function useGridCustomComponent<M>(methods: M): void {
     const { setMethods } = useContext(CustomContext);
     setMethods(methods);
+}
+
+/** Hook to allow custom cell renderer component callbacks to be provided to the grid */
+export function useGridCellRenderer(callbacks: CustomCellRendererCallbacks): void {
+    useGridCustomComponent(callbacks);
 }
 
 /** Hook to allow custom cell editor component callbacks to be provided to the grid */

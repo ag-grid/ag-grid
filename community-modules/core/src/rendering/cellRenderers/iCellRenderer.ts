@@ -52,6 +52,8 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
      * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
      */
     setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
+    /** Convenience function to focus this cell. */
+    focusCell(): void;
 }
 
 export interface ISetFilterCellRendererParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -70,7 +72,20 @@ export interface ISetFilterCellRendererParams<TData = any, TContext = any> exten
     setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
-export interface ICellRenderer<TData = any> {
+export interface BaseCellRenderer {
+    /**
+     * Called when the cell is clicked on.
+     * This happens for each of the `click`, `mousedown`, `touchstart` and `dblclick` events.
+     * This can therefore happen multiple times when clicking (e.g. `mousedown` then `click`).
+     * Return `true` to prevent the grid from performing any action
+     * (including focusing the cell, range selection, row selection, and starting editing).
+     * Returning `false` (or not implementing this method) will perform the default
+     * grid behaviour.
+     */
+    suppressGridClickHandling?(mouseEvent: MouseEvent): boolean;
+}
+
+export interface ICellRenderer<TData = any> extends BaseCellRenderer {
     /**
      * Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),
      * then the grid will refresh the cell for you.
