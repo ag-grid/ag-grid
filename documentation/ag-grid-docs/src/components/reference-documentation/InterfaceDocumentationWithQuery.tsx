@@ -19,8 +19,7 @@ type Props = Omit<InterfaceDocumentationProps, 'interfaceLookup' | 'codeLookup'>
 export function InterfaceDocumentationWithQuery(props: Props) {
     return (
         <QueryClientProvider client={queryClient}>
-            {' '}
-            <InterfaceDocumentationWithLookups {...props} />{' '}
+            <InterfaceDocumentationWithLookups {...props} />
         </QueryClientProvider>
     );
 }
