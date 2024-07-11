@@ -3,18 +3,14 @@ import type {
     AgColumnGroup,
     Column,
     ColumnGroup,
-    ColumnWidthCallbackParams,
     ExcelCell,
     ExcelColumn,
-    ExcelHeaderFooterConfig,
     ExcelImage,
     ExcelOOXMLDataType,
     ExcelRow,
-    ExcelSheetMargin,
-    ExcelSheetPageSetup,
     ExcelStyle,
-    ExcelTableConfig,
     ExcelWorksheet,
+    ExcelWorksheetConfigParams,
     RowHeightCallbackParams,
     RowNode,
 } from '@ag-grid-community/core';
@@ -40,27 +36,11 @@ interface ExcelMixedStyle {
     result: ExcelStyle;
 }
 
-export interface ExcelGridSerializingParams extends GridSerializingParams {
-    autoConvertFormulas?: boolean;
+export interface ExcelGridSerializingParams extends ExcelWorksheetConfigParams, GridSerializingParams {
     baseExcelStyles: ExcelStyle[];
-    columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
-    headerFooterConfig?: ExcelHeaderFooterConfig;
-    headerRowHeight?: number | ((params: RowHeightCallbackParams) => number);
-    rowHeight?: number | ((params: RowHeightCallbackParams) => number);
-    margins?: ExcelSheetMargin;
-    pageSetup?: ExcelSheetPageSetup;
-    exportAsExcelTable?: boolean | ExcelTableConfig;
-    sheetName: string;
-    suppressColumnOutline?: boolean;
-    suppressRowOutline?: boolean;
-    rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
-    rightToLeft?: boolean;
     styleLinker: (params: StyleLinkerInterface) => string[];
-    addImageToCell?: (
-        rowIndex: number,
-        column: Column,
-        value: string
-    ) => { image: ExcelImage; value?: string } | undefined;
+    frozenRowCount?: number;
+    frozenColumnCount?: number;
 }
 
 export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow[]> {
@@ -75,6 +55,10 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private rows: ExcelRow[] = [];
     private cols: ExcelColumn[];
     private columnsToExport: AgColumn[];
+    private frozenRowCount: number = 0;
+    private skipFrozenRows = false;
+    private frozenColumnCount: number = 0;
+    private skipFrozenColumns = false;
 
     constructor(config: ExcelGridSerializingParams) {
         super(config);
@@ -141,10 +125,17 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
         const currentCells: ExcelCell[] = [];
+        const { freezeRows, headerRowHeight } = this.config;
+
         this.rows.push({
             cells: currentCells,
-            height: getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight),
+            height: getHeightFromProperty(this.rows.length + 1, headerRowHeight),
         });
+
+        if (freezeRows) {
+            this.frozenRowCount++;
+        }
+
         return {
             onColumn: (
                 columnGroup: AgColumnGroup,
@@ -173,11 +164,33 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     public onNewHeaderRow(): RowAccumulator {
-        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
+        const { freezeRows, headerRowHeight } = this.config;
+
+        if (freezeRows) {
+            this.frozenRowCount++;
+        }
+
+        return this.onNewRow(this.onNewHeaderColumn, headerRowHeight);
     }
 
     public onNewBodyRow(node?: RowNode): RowAccumulator {
-        const rowAccumulator = this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+        const { freezeRows, rowHeight } = this.config;
+
+        if (!this.skipFrozenRows) {
+            if (freezeRows === 'headersAndPinnedRows' && node?.rowPinned === 'top') {
+                this.frozenRowCount++;
+            } else if (typeof freezeRows === 'function') {
+                if (freezeRows({ ...this.gos.getGridCommonParams(), node: node! })) {
+                    this.frozenRowCount++;
+                } else {
+                    this.skipFrozenRows = true;
+                }
+            } else {
+                this.skipFrozenRows = true;
+            }
+        }
+
+        const rowAccumulator = this.onNewRow(this.onNewBodyColumn, rowHeight);
 
         if (node) {
             this.addRowOutlineIfNecessary(node);
@@ -199,8 +212,21 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             this.cols.push(this.convertColumnToExcel(null, this.cols.length + 1));
         }
 
+        const { config } = this;
+
+        let name: string;
+        if (config.sheetName != null) {
+            const { sheetName } = config;
+            const sheetNameValue =
+                typeof sheetName === 'function' ? sheetName(this.gos.getGridCommonParams()) : sheetName;
+
+            name = String(sheetNameValue).substring(0, 31);
+        } else {
+            name = 'ag-grid';
+        }
+
         const data: ExcelWorksheet = {
-            name: this.config.sheetName,
+            name,
             table: {
                 columns: this.cols,
                 rows: this.rows,
@@ -301,11 +327,25 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         currentCells: ExcelCell[]
     ): (column: AgColumn, index: number, node: RowNode) => void {
         let skipCols = 0;
-
+        const { freezeColumns, rightToLeft } = this.config;
         return (column, index, node) => {
             if (skipCols > 0) {
                 skipCols -= 1;
                 return;
+            }
+
+            if (!this.skipFrozenColumns) {
+                const pinned = column.getPinned();
+                if (freezeColumns === 'pinned' && pinned && (pinned === 'left' || rightToLeft)) {
+                    this.frozenColumnCount++;
+                } else if (
+                    typeof freezeColumns === 'function' &&
+                    freezeColumns({ ...this.gos.getGridCommonParams(), column })
+                ) {
+                    this.frozenColumnCount++;
+                } else {
+                    this.skipFrozenColumns = true;
+                }
             }
 
             const { value: valueForCell, valueFormatted } = this.extractRowCellValue(
@@ -371,6 +411,14 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private createExcel(data: ExcelWorksheet): string {
         const { excelStyles, config } = this;
+
+        if (this.frozenColumnCount) {
+            config.frozenColumnCount = this.frozenColumnCount;
+        }
+
+        if (this.frozenRowCount) {
+            config.frozenRowCount = this.frozenRowCount;
+        }
 
         return ExcelXlsxFactory.createExcel(excelStyles, data, config);
     }

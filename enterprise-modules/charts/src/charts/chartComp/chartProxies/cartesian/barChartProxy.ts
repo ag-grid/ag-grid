@@ -2,7 +2,6 @@ import { _includes } from '@ag-grid-community/core';
 import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
 
 import { hexToRGBA } from '../../utils/color';
-import { deepMerge } from '../../utils/object';
 import { isStacked } from '../../utils/seriesTypeMapper';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
@@ -71,7 +70,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
         const updateFilteredOutSeries = (seriesOptions: AgBarSeriesOptions): AgBarSeriesOptions => {
             const yKey = seriesOptions.yKey + '-filtered-out';
             return {
-                ...deepMerge({}, seriesOptions),
+                ...seriesOptions,
                 yKey,
                 fill: hexToRGBA(seriesOptions.fill!, '0.3'),
                 stroke: hexToRGBA(seriesOptions.stroke!, '0.3'),
@@ -81,12 +80,12 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
 
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {
+            const originalSeries = series[i];
             // update primary series
-            const primarySeries = updatePrimarySeries(series[i], i);
-            allSeries.push(primarySeries);
+            allSeries.push(updatePrimarySeries(originalSeries, i));
 
             // add 'filtered-out' series
-            allSeries.push(updateFilteredOutSeries(primarySeries));
+            allSeries.push(updateFilteredOutSeries(updatePrimarySeries(originalSeries, i)));
         }
         return allSeries;
     }

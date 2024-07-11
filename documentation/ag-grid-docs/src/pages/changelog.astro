@@ -26,6 +26,6 @@ const allMenuSections = menu.main.sections as MenuSection[];
     <div class:list={['contentViewport layout-grid']}>
         <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
 
-        <Changelog client:only="react" />
+        <Changelog client:load />
     </div>
 </Layout>

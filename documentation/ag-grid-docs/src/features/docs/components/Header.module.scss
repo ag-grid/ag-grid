@@ -5,7 +5,7 @@
 }
 
 .docsPageTitle {
-    margin-bottom: $spacing-size-4;
+    margin-bottom: $spacing-size-1;
 
     span:nth-of-type(2) {
         letter-spacing: -1.2px;
@@ -58,29 +58,6 @@
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         display: block;
-    }
-}
-
-.headerVersion {
-    padding: $spacing-size-1 $spacing-size-2;
-    border-radius: var(--radius-2xl);
-    background-color: var(--color-util-brand-50);
-    font-size: var(--text-fs-xs);
-    font-weight: var(--text-bold);
-    color: color-mix(in srgb, var(--color-text-brand-primary) 90%, var(--color-util-gray-300));
-    transition: background-color $transition-default-timing;
-
-    &:hover {
-        background-color: var(--color-util-brand-100);
-    }
-
-    #{$selector-darkmode} & {
-        color: color-mix(in srgb, var(--color-text-brand-primary), var(--color-util-gray-400));
-        background-color: color-mix(in srgb, var(--color-util-gray-200), var(--color-util-gray-300));
-
-        &:hover {
-            background-color: var(--color-util-gray-300);
-        }
     }
 }
 

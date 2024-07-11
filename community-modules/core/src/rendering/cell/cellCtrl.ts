@@ -388,7 +388,9 @@ export class CellCtrl extends BeanStub {
         const valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
 
-        if (this.rowNode.stub) {
+        // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
+        const isSsrmLoading = this.rowNode.stub && this.rowNode.groupData?.[this.column.getId()] == null;
+        if (isSsrmLoading) {
             const params = this.createCellRendererParams();
             compDetails = this.beans.userComponentFactory.getLoadingCellRendererDetails(
                 this.column.getColDef(),

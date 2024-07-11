@@ -1,0 +1,71 @@
+---
+title: "Excel Export - Freezing Content"
+enterprise: true
+---
+
+Excel Export allows you to freeze parts of the exported content.
+
+By default, all rows and columns exported to Excel are scrollable. However, you can easily control the content you want to freeze to make them always visible.
+
+## Freezing Headers
+
+You can freeze all column headers and group column headers in the Excel export by setting the `freezeRows` property to `headers`.
+
+Note the following:
+
+* The exported sheet will have all column headers frozen in place.
+
+
+{% gridExampleRunner title="Excel Export - Freeze Headers" name="excel-export-freeze-headers" /%}
+
+## Freezing Pinned Rows
+
+[Grouped columns](./column-groups/) can be exported to Excel as grouped columns. However, there are a few points to keep in mind to configure this correctly:
+
+You can freeze all rows that are pinned to the top of the grid in the Excel export by setting the `freezeRows` property to `headersAndPinnedRows`.
+
+Note the following:
+
+* The exported sheet will have all headers and pinned top rows of the grid frozen in place.
+
+
+{% gridExampleRunner title="Excel Export - Freezing Pinned Rows" name="excel-export-freeze-pinned-rows" /%}
+
+
+## Freezing Pinned Columns
+
+You can freeze all pinned columns in the Excel export by setting the `freezeColumns` property to `pinned`.
+
+Note the following:
+
+* The exported sheet will have all columns pinned at the start (left) of the grid frozen in place.
+
+{% note %}
+If you are using [RTL - Right To Left](./rtl/), columns pinned to the `right` will be frozen in place.
+{% /note %}
+
+
+{% gridExampleRunner title="Excel Export - Freeze Pinned Columns" name="excel-export-freeze-pinned-columns" /%}
+
+## Freeze Callback
+
+For cases where you need to freeze more than just headers and pinned columns, both properties `freezeColumns` and `freezeRows` take a callback function. These callback function will be 
+called for each column and each rows of the grid content will be frozen in place as long as `true` is returned, once `false` is returned the function will no longer be called and content 
+will be scrollable.
+
+Note the following:
+
+* The top 20 rows are exported as frozen.
+* All columns until `gold` are exported as frozen.
+
+{% note %}
+The callback function for rows are only called for grid rows, which means that when using this feature, all headers are automatically frozen.
+{% /note %}
+
+
+{% gridExampleRunner title="Excel Export - Freeze Callback" name="excel-export-freeze-callback" /%}
+
+
+## Next Up
+
+Continue to the next section: [Data Types](./excel-export-data-types/).

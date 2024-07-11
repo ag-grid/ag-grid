@@ -2,7 +2,7 @@
   "name": "ag-grid-docs",
   "description": "Documentation for AG Grid",
   "type": "module",
-  "version": "32.0.0",
+  "version": "32.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
@@ -71,7 +71,7 @@
     "react-gif-player": "0.5.1",
     "react-instantsearch": "^7.7.0",
     "react-markdown": "5.0.3",
-    "react-query": "^3.39.3",
+    "@tanstack/react-query": "^5.51.1",
     "react-shadow": "^20.4.0",
     "sass": "^1.70.0",
     "typescript": "^5.3.3",

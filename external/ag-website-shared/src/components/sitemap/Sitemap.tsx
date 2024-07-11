@@ -1,5 +1,3 @@
-import classnames from 'classnames';
-
 import styles from './sitemap.module.scss';
 
 export type CategorizedSitemap = {
@@ -12,7 +10,7 @@ interface Props {
 
 export const Sitemap = (props: Props) => {
     return (
-        <div className={classnames('layout-max-width-small', styles.container)}>
+        <div className={styles.container}>
             {Object.keys(props.sitemap).map((category, categoryIndex) => (
                 <div className={styles.categoryContainer} key={categoryIndex}>
                     <h2 className={styles.categoryTitle}>{category}</h2>

@@ -20,6 +20,7 @@ import {
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _includes,
+    _mergeDeep,
     _removeFromParent,
     _setDisplayed,
     _warnOnce,
@@ -53,7 +54,6 @@ import type { ChartMenuService } from './services/chartMenuService';
 import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
 import { ChartOptionsService } from './services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
-import { deepMerge } from './utils/object';
 import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
 
 export interface GridChartParams {
@@ -407,10 +407,10 @@ export class GridChartComp extends Component {
         if (updatedChartType) this.createChart();
 
         // combine any provided theme overrides with any retained theme overrides from changing chart type
-        const updatedThemeOverrides =
-            persistedThemeOverrides && params?.chartThemeOverrides
-                ? deepMerge(persistedThemeOverrides, params.chartThemeOverrides)
-                : persistedThemeOverrides || params?.chartThemeOverrides;
+        if (persistedThemeOverrides && params?.chartThemeOverrides) {
+            _mergeDeep(persistedThemeOverrides, params.chartThemeOverrides);
+        }
+        const updatedThemeOverrides = persistedThemeOverrides ?? params?.chartThemeOverrides;
 
         // update chart options if chart type hasn't changed or if overrides are supplied
         this.updateChart(updatedThemeOverrides);

@@ -1,5 +1,14 @@
 ---
+import Layout from '../layouts/Layout.astro';
 import FrameworkRedirectPage from '@components/FrameworkRedirectPage.astro';
 ---
 
-<FrameworkRedirectPage redirectPageName="reference" />
+<Layout
+    title="AG Grid: API Reference"
+    description={'View the AG Grid API Reference Documentation - a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more.'}
+    showSearchBar={false}
+    showDocsNav={false}
+>
+    <h1>Redirecting to AG Grid API Reference...</h1>
+    <FrameworkRedirectPage redirectPageName="reference" />
+</Layout>

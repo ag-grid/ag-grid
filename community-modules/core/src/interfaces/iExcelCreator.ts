@@ -1,6 +1,7 @@
 import type { Column } from '../interfaces/iColumn';
 import type { ExportFileNameGetter, ExportParams } from './exportParams';
 import type { AgGridCommon } from './iCommon';
+import type { IRowNode } from './iRowNode';
 import type { XmlElement } from './iXmlFactory';
 
 // Excel Styles
@@ -399,6 +400,18 @@ export interface ExcelSheetNameGetterParams<TData = any, TContext = any> extends
 
 export type ExcelSheetNameGetter = (params?: ExcelSheetNameGetterParams) => string;
 
+export interface ExcelFreezeRowsGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** Row node. */
+    node?: IRowNode<TData>;
+}
+
+export interface ExcelFreezeColumnsGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    column: Column;
+}
+
+export type ExcelFreezeRowsGetter = (params: ExcelFreezeRowsGetterParams) => boolean;
+export type ExcelFreezeColumnsGetter = (params: ExcelFreezeColumnsGetterParams) => boolean;
+
 export interface ColumnWidthCallbackParams {
     column: Column | null;
     index: number;
@@ -408,12 +421,7 @@ export interface RowHeightCallbackParams {
     rowIndex: number;
 }
 
-export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
-    /**
-     * The author of the exported file.
-     * @default "AG Grid"
-     * */
-    author?: string;
+export interface ExcelWorksheetConfigParams {
     /**
      * If set to `true`, this will try to convert any cell that starts with `=` to a formula, instead of setting the cell value as regular string that starts with `=`.
      * @default false
@@ -423,11 +431,6 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * Defines the default column width. If no value is present, each column will have value currently set in the application with a min value of 75px. This property can also be supplied a callback function that returns a number.
      */
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
-    /**
-     * The default value for the font size of the Excel document.
-     * @default 11
-     */
-    fontSize?: number;
     /**
      * The height in pixels of header rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number.
      */
@@ -443,9 +446,17 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * @default 'ag-grid'
      */
     sheetName?: string | ExcelSheetNameGetter;
-    /** The Excel document page margins. Relevant for printing. */
+    /**
+     * The configuration for header and footers.
+     */
+    headerFooterConfig?: ExcelHeaderFooterConfig;
+    /**
+     * The Excel document page margins. Relevant for printing.
+     */
     margins?: ExcelSheetMargin;
-    /** Allows you to setup the page orientation and size. */
+    /**
+     * Allows you to setup the page orientation and size.
+     */
     pageSetup?: ExcelSheetPageSetup;
     /**
      * Used to add an Excel table to the spreadsheet.
@@ -454,8 +465,14 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * @default false
      **/
     exportAsExcelTable?: boolean | ExcelTableConfig;
-    /** The configuration for header and footers. */
-    headerFooterConfig?: ExcelHeaderFooterConfig;
+    /**
+     * The expand/collapse state of each row group in the Excel Document.
+     *  - expanded: All row groups will be expanded by default.
+     *  - collapsed: All row groups will be collapsed by default.
+     *  - match: The row groups will match their current state in the Grid.
+     * @default 'expanded'
+     */
+    rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
     /**
      * If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the Excel Document.
      * @default false.
@@ -466,29 +483,30 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * @default false.
      */
     suppressColumnOutline?: boolean;
-
     /**
-     * The expand/collapse state of each row group in the Excel Document.
-     *  - expanded: All row groups will be expanded by default.
-     *  - collapsed: All row groups will be collapsed by default.
-     *  - match: The row groups will match their current state in the Grid.
-     * @default 'expanded'
+     * Use this property to select to freeze rows at the top of the exported sheet.
+     * - `headers`  - Freeze all grid headers at the top.
+     * - `headersAndPinnedRows` - Freeze all headers and pinned top rows.
+     * - A callback function that will freeze rows until a value other than `true` is returned, after that, this callback will no longer be executed. Note that using a callback will automatically freeze all header rows.
      */
-    rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
+    freezeRows?: 'headers' | 'headersAndPinnedRows' | ExcelFreezeRowsGetter;
     /**
-     * Used to enable or disable RTL for the worksheet.
-     * - true: Enables RTL
-     * - false: Disables RTL
-     * - undefined: Exports the worksheet with the same value of `gridOptions.enableRtl`.
+     * Use this property to select to freeze columns at the start of the grid (this will be the columns at the right for RTL).
+     * - `pinned`  - Freeze all pinned left (right for RTL grids) columns.
+     * - A callback function that will freeze columns until a value other than `true` is returned. After that, this callback will no longer be executed.
+     */
+    freezeColumns?: 'pinned' | ExcelFreezeColumnsGetter;
+    /**
+     * Use to set the direction for the worksheet.
+     * - `true`: Sets the direction to right-to-left (RTL).
+     * - `false`:  Sets the direction to left-to-right (LTR).
+     * - `undefined`: Exports the worksheet according to the current direction of the grid as set by `gridOptions.enableRtl`.
      * @default undefined
      */
     rightToLeft?: boolean;
     /**
-     * The mimeType of the Excel file.
-     * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+     * Use to export an image for the gridCell in question.
      */
-    mimeType?: string;
-    /** Use to export an image for the gridCell in question. */
     addImageToCell?: (
         rowIndex: number,
         column: Column,
@@ -496,27 +514,17 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     ) => { image: ExcelImage; value?: string } | undefined;
 }
 
-export interface ExcelExportMultipleSheetParams {
-    /**
-     * The author of the exported file.
-     * @default 'AG Grid'
-     */
-    author?: string;
-    /**
-     * Array of strings containing the raw data for Excel workbook sheets.
-     * This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getSheetDataForExcel()`.
-     */
-    data: string[];
+interface ExcelFileParams {
     /**
      * String to use as the file name or a function that returns a string.
      * @default 'export.xlsx'
      */
     fileName?: string | ExportFileNameGetter;
     /**
-     * The sheet to be marked as active by default.
-     * @default 0
-     */
-    activeSheet?: number;
+     * The author of the exported file.
+     * @default "AG Grid"
+     * */
+    author?: string;
     /**
      * The default value for the font size of the Excel document.
      * @default 11
@@ -527,6 +535,20 @@ export interface ExcelExportMultipleSheetParams {
      * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
+}
+
+export interface ExcelExportParams extends ExcelFileParams, ExcelWorksheetConfigParams, ExportParams<ExcelRow[]> {}
+export interface ExcelExportMultipleSheetParams extends ExcelFileParams {
+    /**
+     * Array of strings containing the raw data for Excel workbook sheets.
+     * This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getSheetDataForExcel()`.
+     */
+    data: string[];
+    /**
+     * The index of the sheet to be marked as active by default.
+     * @default 0
+     */
+    activeSheetIndex?: number;
 }
 
 export interface ExcelHeaderFooterConfig {

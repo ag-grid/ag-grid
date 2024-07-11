@@ -27,17 +27,17 @@ export function createAgElementFinder({ containerEl = document.body }: CreateAgE
         }
         let element: HTMLElement | undefined;
 
-        if (agElementConfig.hasOwnProperty('selector')) {
+        if (Object.prototype.hasOwnProperty.call(agElementConfig, 'selector')) {
             const config = agElementConfig as AgElementBySelectorConfig;
             element = containerEl.querySelector(config.selector) as HTMLElement;
-        } else if (agElementConfig.hasOwnProperty('innerTextSelector')) {
+        } else if (Object.prototype.hasOwnProperty.call(agElementConfig, 'innerTextSelector')) {
             const config = agElementConfig as AgElementByInnerTextConfig;
             element = findElementWithInnerText({
                 containerEl,
                 selector: config.innerTextSelector,
                 text: targetParams.text,
             });
-        } else if (agElementConfig.hasOwnProperty('find')) {
+        } else if (Object.prototype.hasOwnProperty.call(agElementConfig, 'find')) {
             const config = agElementConfig as AgElementByFindConfig<any>;
             element = config.find({
                 getElement,

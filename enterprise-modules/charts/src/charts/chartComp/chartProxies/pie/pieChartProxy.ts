@@ -6,7 +6,6 @@ import type {
 } from 'ag-charts-community';
 
 import { changeOpacity } from '../../utils/color';
-import { deepMerge } from '../../utils/object';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
@@ -121,7 +120,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
 
         const filteredOutOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions, angleKey: string) => {
             return {
-                ...deepMerge({}, primaryOpts),
+                ...primaryOpts,
                 radiusKey: angleKey + '-filtered-out',
                 fills: changeOpacity(seriesOptions.fills ?? palette?.fills ?? [], 0.3),
                 strokes: changeOpacity(seriesOptions.strokes ?? palette?.strokes ?? [], 0.3),
@@ -136,7 +135,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         const angleKey = primarySeries.angleKey!;
         const primaryOpts = primaryOptions(primarySeries);
 
-        return [filteredOutOptions(primarySeries, angleKey), primaryOpts];
+        return [filteredOutOptions(primaryOptions(primarySeries), angleKey), primaryOpts];
     }
 
     private getFields(params: UpdateParams): FieldDefinition[] {

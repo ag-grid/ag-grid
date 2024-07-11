@@ -1,10 +1,4 @@
-import type {
-    ColDef,
-    SparklineColumnFormatter,
-    SparklineMarkerFormatter,
-    TooltipRendererParams,
-    TooltipRendererResult,
-} from 'ag-grid-community';
+import type { ColDef, TooltipRendererParams, TooltipRendererResult } from 'ag-grid-community';
 
 import { ChangeCellRenderer } from '../../utils/grid/changeCellRenderer';
 import { CurrentCellRenderer } from '../../utils/grid/currentCellRenderer';
@@ -30,59 +24,6 @@ const timelineTooltipRenderer = ({ xValue, yValue }: TooltipRendererParams): Too
         color: '#94b2d0',
         backgroundColor: '#07161b',
     };
-};
-
-const changesTooltipRenderer = ({ xValue, yValue }: TooltipRendererParams): TooltipRendererResult => {
-    return {
-        title: toTime({ value: xValue }),
-        content: toCurrency({ value: yValue }),
-    };
-};
-
-const positiveNegativeAreaFormatter: SparklineMarkerFormatter = (params) => {
-    const { yValue } = params;
-
-    return {
-        size: 3,
-        fill: yValue < 0 ? 'red' : 'green',
-        stroke: yValue < 0 ? 'red' : 'green',
-    };
-};
-
-const positiveNegativeColumnFormatter: SparklineColumnFormatter = (params) => {
-    const { yValue } = params;
-
-    return {
-        fill: yValue < 0 ? 'red' : 'green',
-        stroke: yValue < 0 ? 'red' : 'green',
-    };
-};
-
-interface ChangeValue {
-    value: Change;
-    prevValue: Change;
-    change: number;
-}
-const changeValueGetter = ({ data }) => {
-    const { timeline } = data as Stock;
-    const changes: ChangeValue[] = timeline.reduce((acc: ChangeValue[], value, index, array) => {
-        if (index <= 0) {
-            return acc;
-        }
-        const prevValue = array[index - 1];
-        const change = value.value - prevValue.value;
-        const item = {
-            value,
-            prevValue,
-            change,
-        };
-        return acc.concat(item);
-    }, []);
-
-    const changesOverTime = changes.map(({ value, change }) => {
-        return [value.time, change];
-    });
-    return changesOverTime;
 };
 
 function getLastValue(data: Stock): number {

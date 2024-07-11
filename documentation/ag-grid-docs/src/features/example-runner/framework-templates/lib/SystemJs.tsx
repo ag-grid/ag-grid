@@ -151,7 +151,7 @@ function getRelevantConfig(configuration: Configuration, framework: InternalFram
         Object.entries(config)
             .filter(filterOutChartWrapper)
             .filter(filterByFramework)
-            .sort(([k1, v1], [k2, v2]) => (k1 < k2 ? -1 : 1))
+            .sort(([k1], [k2]) => (k1 < k2 ? -1 : 1))
             .forEach(([k, v]) => {
                 valid[k] = v;
             });

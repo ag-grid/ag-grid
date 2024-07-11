@@ -3,7 +3,7 @@ import fs from 'fs';
 import { API_REFERENCE_DIR, API_SOURCE_DIR } from '../utils/constants';
 
 export interface APIPageData {
-    pagePath: `/${string}/`;
+    pagePath: `${string}/`;
     propertiesFileUrl: string;
     breadcrumbSuffix: string;
 }
@@ -27,7 +27,7 @@ export const getApiPageData = (): APIPageData[] => {
                     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                     .join(' ');
                 const config: APIPageData = {
-                    pagePath: `/${page.name}/`,
+                    pagePath: `${page.name}/`,
                     propertiesFileUrl: `${pagePath}/${file}`,
                     breadcrumbSuffix: pageName,
                 };

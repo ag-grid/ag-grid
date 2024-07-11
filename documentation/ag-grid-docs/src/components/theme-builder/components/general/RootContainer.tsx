@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
-import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { PresetSelector } from '../presets/PresetSelector';
 import { DownloadThemeButton } from './DownloadThemeButton';
 import { GridPreview } from './GridPreview';

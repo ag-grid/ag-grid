@@ -21,6 +21,7 @@ export const getPropertiesFromSource = async ({
         if (!fileEntry) {
             const message = `ApiDocumentation source not found: src/content/api-documentation/${fileName}.json`;
             if (getIsDev()) {
+                // eslint-disable-next-line no-console
                 console.error(message);
             } else {
                 throw new Error(message);
@@ -35,6 +36,7 @@ export const getPropertiesFromSource = async ({
         .map((p) => {
             const config = p['_config_'];
             if (!config) {
+                // eslint-disable-next-line no-console
                 console.warn(`ApiDocumentation: _config_ property missing from source ${sources.join()}.`);
             }
             return config;

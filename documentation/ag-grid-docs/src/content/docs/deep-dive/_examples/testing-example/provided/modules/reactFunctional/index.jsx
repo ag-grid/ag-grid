@@ -6,7 +6,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 // Core CSS
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { StrictMode, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -132,4 +132,8 @@ const GridExample = () => {
 
 // Render GridExample
 const root = createRoot(document.getElementById('root'));
-root.render(<GridExample />);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

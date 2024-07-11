@@ -282,10 +282,8 @@ export function cleanUp() {
 /**
  * Clean up between hot module replacement on dev server
  */
-// @ts-ignore
-if (import.meta.webpackHot) {
-    // @ts-ignore
-    import.meta.webpackHot.dispose(() => {
+if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
         cleanUp();
     });
 }

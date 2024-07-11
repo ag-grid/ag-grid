@@ -31,7 +31,7 @@ function HeaderRow({ framework, columns }: { framework: Framework; columns: Colu
         <tr>
             {Object.entries(columns).map(([column, columnName]) => (
                 <th key={`header-column-${column}`} scope="col">
-                    <CellValue value={columnName} />
+                    <CellValue framework={framework} value={columnName} />
                 </th>
             ))}
         </tr>
@@ -62,6 +62,7 @@ function CellValue({
     }
 
     if (typeof value === 'object') {
+        // eslint-disable-next-line no-console
         console.error(`Cannot render object for cell value of field "${field}": ${JSON.stringify(value)}`);
         return null;
     }
@@ -92,7 +93,6 @@ function getColumnField({ datum, columnField }) {
     }
 
     const field = columnFields.find((f) => datum[f]);
-    const isNegated = field?.startsWith('!');
     const value = getFieldValue({
         columnField: field,
         datum,
@@ -128,8 +128,6 @@ function TableRows({
     columns: Columns;
     cellRenderer: CellRendererDef;
 }) {
-    const columnFields = getAllColumnFields(columns);
-
     return data.map((datum: any) => {
         const { [LEVEL_FIELD]: level } = datum;
         return (
@@ -164,13 +162,7 @@ function TableRows({
     });
 }
 
-function columnsGroupRendererFields({
-    columns,
-    cellRenderer,
-}: {
-    columns: Columns;
-    cellRenderer?: CellRendererDef;
-}): boolean {
+function columnsGroupRendererFields({ columns }: { columns: Columns }) {
     const allFields = getAllColumnFields(columns);
 
     return allFields.filter((field) => {
@@ -249,7 +241,14 @@ export function MatrixTable({
                     <HeaderRow framework={framework} columns={columns} />
                 </thead>
                 <tbody>
-                    <TableRows framework={framework} data={tableData} columns={columns} cellRenderer={cellRenderer} />
+                    {cellRenderer && (
+                        <TableRows
+                            framework={framework}
+                            data={tableData}
+                            columns={columns}
+                            cellRenderer={cellRenderer}
+                        />
+                    )}
                 </tbody>
             </table>
         </div>

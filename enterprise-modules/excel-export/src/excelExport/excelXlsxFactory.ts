@@ -306,8 +306,8 @@ export class ExcelXlsxFactory {
         this.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
     }
 
-    public static createWorkbook(activeSheet: number): string {
-        return createXmlPart(workbookFactory.getTemplate(this.sheetNames, activeSheet));
+    public static createWorkbook(currentSheet: number): string {
+        return createXmlPart(workbookFactory.getTemplate(this.sheetNames, currentSheet));
     }
 
     public static createStylesheet(defaultFontSize: number): string {

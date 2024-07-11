@@ -252,6 +252,12 @@ export class StickyRowFeature extends BeanStub {
                 if (suppressFootersSticky === 'group' && row.level > -1) {
                     return false;
                 }
+                const isFooterFirstRowInGroup = row.sibling.rowIndex
+                    ? row.sibling.rowIndex + 1 === row.rowIndex
+                    : false;
+                if (container === 'bottom' && isFooterFirstRowInGroup) {
+                    return false;
+                }
 
                 const alreadySticking = newStickyRows.has(row);
                 return !alreadySticking;

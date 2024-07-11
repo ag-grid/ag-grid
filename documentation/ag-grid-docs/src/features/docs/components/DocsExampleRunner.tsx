@@ -1,13 +1,14 @@
 import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
-import type { FileContents, GeneratedContents } from '@features/example-generator/types';
+import type { GeneratedContents } from '@features/example-generator/types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
-import { $internalFramework } from '@stores/frameworkStore';
+import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
+import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
+import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { useImportType } from '@utils/hooks/useImportType';
 import { useEffect, useMemo, useState } from 'react';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
 import {
     type UrlParams,
@@ -29,17 +30,6 @@ interface Props {
     typescriptOnly?: boolean;
     overrideImportType?: ImportType;
 }
-
-// NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
-// loaded on the client side
-const queryClient = new QueryClient();
-
-const queryOptions = {
-    retry: false,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-};
 
 const getInternalFramework = (
     docsInternalFramework: InternalFramework,
@@ -86,22 +76,36 @@ const DocsExampleRunnerInner = ({
 
     const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
 
-    const importType = overrideImportType ?? useImportType();
+    const storeImportType = useImportType();
+    const importType = overrideImportType ?? storeImportType;
+    const storeInternalFramework = useStore($internalFramework);
+    const internalFrameworkState = useStore($internalFrameworkState);
     const internalFramework = typescriptOnly
         ? 'typescript'
-        : getInternalFramework(useStore($internalFramework), supportedFrameworks, importType);
+        : getInternalFramework(storeInternalFramework, supportedFrameworks, importType);
     const urlConfig: UrlParams = useMemo(
         () => ({ internalFramework, pageName, exampleName, importType }),
         [internalFramework, pageName, exampleName, importType]
     );
 
-    const { data: [contents] = [undefined, undefined], isError } = useQuery(
-        ['docsExampleContents', pageName, exampleName, internalFramework, importType],
-        () =>
-            Promise.all([
+    const { data: [contents] = [undefined, undefined], isError } = useQuery({
+        queryKey: ['docsExampleContents', pageName, exampleName, internalFramework, importType, internalFrameworkState],
+
+        queryFn: () => {
+            if (internalFrameworkState !== 'synced') {
+                return [];
+            }
+
+            return Promise.all([
                 fetch(getExampleContentsUrl(urlConfig))
                     .then((res) => res.json())
                     .then((json) => {
+                        if (json.error) {
+                            // eslint-disable-next-line no-console
+                            console.error('Error getting', getExampleContentsUrl(urlConfig));
+                            return {};
+                        }
+
                         const isTs =
                             internalFramework === 'reactFunctionalTs' ||
                             internalFramework === 'typescript' ||
@@ -114,9 +118,11 @@ const DocsExampleRunnerInner = ({
                         }
                         return json;
                     }),
-            ]) as Promise<[GeneratedContents]>,
-        queryOptions
-    );
+            ]) as Promise<[GeneratedContents]>;
+        },
+
+        ...defaultQueryOptions,
+    });
     const urls = {
         exampleRunnerExampleUrl: getExampleRunnerExampleUrl(urlConfig),
         exampleUrl: getExampleUrl(urlConfig),
@@ -174,6 +180,8 @@ const DocsExampleRunnerInner = ({
 };
 
 export const DocsExampleRunner = (props: Props) => {
+    const queryClient = useStore($queryClient);
+
     return (
         <QueryClientProvider client={queryClient}>
             <DocsExampleRunnerInner {...props} />

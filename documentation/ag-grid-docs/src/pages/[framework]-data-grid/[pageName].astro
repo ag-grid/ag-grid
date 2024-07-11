@@ -12,7 +12,7 @@ import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
 import { getFilteredMenuSections } from '@components/pages-navigation/utils/getFilteredMenuSections';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
-import styles from '@pages-styles/docs.module.scss';
+import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -95,7 +95,6 @@ const headings =
                 isEnterprise={enterprise}
                 path={path}
                 menuItems={menuSections as MenuItem[]}
-                version={version}
             />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}

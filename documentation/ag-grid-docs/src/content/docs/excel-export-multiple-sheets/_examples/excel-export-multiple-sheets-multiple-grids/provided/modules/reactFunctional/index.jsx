@@ -5,7 +5,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { StrictMode, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './styles.css';
@@ -209,4 +209,8 @@ const GridExample = () => {
 };
 
 const root = createRoot(document.getElementById('root'));
-root.render(<GridExample />);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);
