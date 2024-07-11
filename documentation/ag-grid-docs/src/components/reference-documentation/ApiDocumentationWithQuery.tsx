@@ -1,5 +1,5 @@
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { fetchExtraFile } from '@utils/client/fetchExtraFile';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
 import { ApiDocumentation, type ApiDocumentationProps } from './ReferenceDocumentation';
 

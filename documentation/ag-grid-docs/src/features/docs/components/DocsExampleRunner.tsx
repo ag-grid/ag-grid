@@ -5,9 +5,9 @@ import { ExternalLinks } from '@features/example-runner/components/ExternalLinks
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
 import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { useImportType } from '@utils/hooks/useImportType';
 import { useEffect, useMemo, useState } from 'react';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
 import {
     type UrlParams,
@@ -102,7 +102,7 @@ const DocsExampleRunnerInner = ({
         ['docsExampleContents', pageName, exampleName, internalFramework, importType, internalFrameworkState],
         () => {
             if (internalFrameworkState !== 'synced') {
-                return;
+                return [];
             }
 
             return Promise.all([
