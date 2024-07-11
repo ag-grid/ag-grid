@@ -477,4 +477,5 @@ export type BeanName =
     | 'valueCache'
     | 'valueService'
     | 'validationLogger'
-    | 'validationService';
+    | 'validationService'
+    | 'filterPanelTranslationService';

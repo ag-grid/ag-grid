@@ -48,12 +48,18 @@ export abstract class AgAbstractInputField<
 
         this.eInput.id = this.eInput.id || `ag-${this.getCompId()}-input`;
 
-        const { inputName, inputWidth } = this.config;
+        const { inputName, inputWidth, inputPlaceholder, autoComplete } = this.config;
         if (inputName != null) {
             this.setInputName(inputName);
         }
         if (inputWidth != null) {
             this.setInputWidth(inputWidth);
+        }
+        if (inputPlaceholder != null) {
+            this.setInputPlaceholder(inputPlaceholder);
+        }
+        if (autoComplete != null) {
+            this.setAutoComplete(autoComplete);
         }
 
         this.addInputListeners();

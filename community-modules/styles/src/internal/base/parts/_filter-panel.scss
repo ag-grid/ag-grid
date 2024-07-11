@@ -1,0 +1,80 @@
+@use 'ag';
+
+@mixin output {
+    .ag-filter-panel {
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        width: 100%;
+
+        & > *:not(:last-child) {
+            margin-bottom: var(--ag-widget-vertical-spacing);
+        }
+    }
+
+    .ag-filter-panel-search {
+        margin-bottom: var(--ag-widget-vertical-spacing);
+
+        .ag-input-wrapper::before {
+            position: absolute;
+            display: block;
+            @include ag.unthemed-rtl(
+                (
+                    margin-left: var(--ag-grid-size),
+                )
+            );
+            width: 12px;
+            height: 12px;
+            background-image: url('data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ij48cGF0aCBkPSJNNS4zIDlhMy43IDMuNyAwIDEgMCAwLTcuNSAzLjcgMy43IDAgMCAwIDAgNy41Wk0xMC41IDEwLjUgOC4zIDguMiIvPjwvc3ZnPg==');
+            background-position: 50% 50%;
+            background-size: contain;
+            opacity: 40%;
+            content: '';
+            filter: var(--ag-icon-filter);
+        }
+
+        &.ag-text-field .ag-text-field-input-wrapper input.ag-text-field-input {
+            @include ag.unthemed-rtl(
+                (
+                    padding-left: 26px,
+                )
+            );
+        }
+    }
+
+    .ag-filter-panel-container > *:not(:last-child) {
+        margin-bottom: var(--ag-widget-vertical-spacing);
+    }
+
+    .ag-filter-card {
+        padding: var(--ag-grid-size);
+        border: var(--ag-borders) var(--ag-border-color);
+    }
+
+    .ag-filter-card-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: var(--ag-grid-size);
+
+        & > *:not(:last-child) {
+            margin-right: var(--ag-grid-size);
+        }
+    }
+
+    .ag-filter-card-expand-icon,
+    .ag-filter-card-delete-icon {
+        cursor: pointer;
+    }
+
+    .ag-filter-card-title {
+        flex: 1;
+    }
+
+    .ag-filter-card-add {
+        padding: var(--ag-grid-size);
+
+        .ag-picker-field-wrapper {
+            border: 0;
+            background-color: transparent;
+        }
+    }
+}

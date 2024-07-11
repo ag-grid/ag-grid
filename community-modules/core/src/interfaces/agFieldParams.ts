@@ -42,6 +42,8 @@ export interface AgInputFieldParams extends AgFieldParams {
     inputName?: string;
     inputWidth?: number | 'flex';
     template?: string;
+    inputPlaceholder?: string;
+    autoComplete?: boolean;
 }
 
 export interface AgCheckboxParams extends AgInputFieldParams {
