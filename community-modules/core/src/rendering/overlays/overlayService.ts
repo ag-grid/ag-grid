@@ -47,6 +47,18 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.updateOverlayVisibility();
     }
 
+    public isExclusive(): boolean {
+        return this.state === OverlayServiceState.Loading;
+    }
+
+    public isVisible(): boolean {
+        return this.state !== OverlayServiceState.Hidden;
+    }
+
+    public getOverlayComponent(): OverlayWrapperComponent {
+        return this.overlayWrapperComp;
+    }
+
     public showLoadingOverlay(): void {
         this.showInitialOverlay = false;
 
