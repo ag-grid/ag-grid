@@ -1997,14 +1997,6 @@ var GroupStage = class extends import_core15.BeanStub {
     const level = details.usingTreeData ? path.length - 1 : void 0;
     const parentGroup = this.findParentForNode(childNode, path, details, batchRemover, level);
     if (details.usingTreeData) {
-      const existingNode = parentGroup.childrenAfterGroup?.find((node) => node.key === childNode.key);
-      if (existingNode) {
-        (0, import_core15._warnOnce)(`duplicate group keys for row data, keys should be unique`, [
-          existingNode.data,
-          childNode.data
-        ]);
-        return;
-      }
       const info = (0, import_core15._last)(path);
       childNode.parent = parentGroup;
       childNode.level = path.length;
@@ -2942,7 +2934,7 @@ var ShowRowGroupColsService = class extends import_core18.BeanStub {
 };
 
 // enterprise-modules/row-grouping/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/row-grouping/src/rowGroupingModule.ts
 var RowGroupingCoreModule = {

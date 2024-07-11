@@ -7,7 +7,6 @@ export declare class PinnedRowModel extends BeanStub implements NamedBean {
     beanName: "pinnedRowModel";
     private beans;
     wireBeans(beans: BeanCollection): void;
-    private nextId;
     private pinnedTopRows;
     private pinnedBottomRows;
     postConstruct(): void;

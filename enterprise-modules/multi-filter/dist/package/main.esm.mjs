@@ -566,7 +566,7 @@ var MultiFloatingFilterComp = class extends Component {
 };
 
 // enterprise-modules/multi-filter/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/multi-filter/src/multiFilterModule.ts
 var MultiFilterCoreModule = {

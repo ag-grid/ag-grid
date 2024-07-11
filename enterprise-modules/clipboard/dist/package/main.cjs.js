@@ -874,7 +874,7 @@ ${apiError("writeText")}`);
 };
 
 // enterprise-modules/clipboard/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/clipboard/src/clipboardModule.ts
 var ClipboardCoreModule = {

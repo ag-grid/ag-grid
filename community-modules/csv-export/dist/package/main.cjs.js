@@ -712,7 +712,7 @@ var GridSerializer = class extends import_core5.BeanStub {
 };
 
 // community-modules/csv-export/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // community-modules/csv-export/src/csvExportModule.ts
 var CsvExportCoreModule = {

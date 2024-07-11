@@ -1486,7 +1486,7 @@ var SelectionHandleFactory = class extends import_core5.BeanStub {
 };
 
 // enterprise-modules/range-selection/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/range-selection/src/rangeSelectionModule.ts
 var RangeSelectionCoreModule = {

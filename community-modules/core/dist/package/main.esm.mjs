@@ -615,7 +615,6 @@ function _values(object) {
 }
 
 // community-modules/core/src/utils/object.ts
-var SKIP_JS_BUILTINS = /* @__PURE__ */ new Set(["__proto__", "constructor", "prototype"]);
 function _iterateObject(object, callback) {
   if (object == null) {
     return;
@@ -634,9 +633,6 @@ function _cloneObject(object) {
   const copy = {};
   const keys = Object.keys(object);
   for (let i = 0; i < keys.length; i++) {
-    if (SKIP_JS_BUILTINS.has(keys[i])) {
-      continue;
-    }
     const key = keys[i];
     const value = object[key];
     copy[key] = value;
@@ -650,7 +646,7 @@ function _deepCloneDefinition(object, keysToSkip) {
   const obj = object;
   const res = {};
   Object.keys(obj).forEach((key) => {
-    if (keysToSkip && keysToSkip.indexOf(key) >= 0 || SKIP_JS_BUILTINS.has(key)) {
+    if (keysToSkip && keysToSkip.indexOf(key) >= 0) {
       return;
     }
     const value = obj[key];
@@ -684,9 +680,6 @@ function _mergeDeep(dest, source, copyUndefined = true, makeCopyOfSimpleObjects 
     return;
   }
   _iterateObject(source, (key, sourceValue) => {
-    if (SKIP_JS_BUILTINS.has(key)) {
-      return;
-    }
     let destValue = dest[key];
     if (destValue === sourceValue) {
       return;
@@ -1493,10 +1486,10 @@ function _log(message, ...args) {
   console.log("AG Grid: " + message, ...args);
 }
 function _warnOnce(msg, ...args) {
-  _doOnce(() => console.warn("AG Grid: " + msg, ...args), msg + args?.join(""));
+  _doOnce(() => console.warn("AG Grid: " + msg, ...args), msg);
 }
 function _errorOnce(msg, ...args) {
-  _doOnce(() => console.error("AG Grid: " + msg, ...args), msg + args?.join(""));
+  _doOnce(() => console.error("AG Grid: " + msg, ...args), msg);
 }
 function _isFunction(val) {
   return !!(val && val.constructor && val.call && val.apply);
@@ -3885,25 +3878,21 @@ var ColumnMoveService = class extends BeanStub {
     return proposedColumnOrder;
   }
   doesMovePassLockedPositions(proposedColumnOrder) {
+    let lastPlacement = 0;
+    let rulePassed = true;
     const lockPositionToPlacement = (position) => {
       if (!position) {
-        return 0 /* NONE */;
+        return 1;
       }
-      return position === "left" || position === true ? -1 /* LEFT */ : 1 /* RIGHT */;
+      if (position === true) {
+        return 0;
+      }
+      return position === "left" ? 0 : 2;
     };
-    const isRtl = this.gos.get("enableRtl");
-    let lastPlacement = isRtl ? 1 /* RIGHT */ : -1 /* LEFT */;
-    let rulePassed = true;
     proposedColumnOrder.forEach((col) => {
       const placement = lockPositionToPlacement(col.getColDef().lockPosition);
-      if (isRtl) {
-        if (placement > lastPlacement) {
-          rulePassed = false;
-        }
-      } else {
-        if (placement < lastPlacement) {
-          rulePassed = false;
-        }
+      if (placement < lastPlacement) {
+        rulePassed = false;
       }
       lastPlacement = placement;
     });
@@ -7250,15 +7239,9 @@ var Component = class _Component extends BeanStub {
       );
     }
   }
-  getDataRefAttribute(element) {
-    if (element.getAttribute) {
-      return element.getAttribute("data-ref");
-    }
-    return null;
-  }
   applyElementsToComponent(element, elementRef, paramsMap, newComponent = null) {
     if (elementRef === void 0) {
-      elementRef = this.getDataRefAttribute(element);
+      elementRef = element.getAttribute("data-ref");
     }
     if (elementRef) {
       const current = this[elementRef];
@@ -7303,7 +7286,7 @@ var Component = class _Component extends BeanStub {
   }
   createComponentFromElement(element, afterPreCreateCallback, paramsMap) {
     const key = element.nodeName;
-    const elementRef = this.getDataRefAttribute(element);
+    const elementRef = element.getAttribute("data-ref");
     const isAgGridComponent = key.indexOf("AG-") === 0;
     const componentSelector = isAgGridComponent ? this.componentSelectors.get(key) : null;
     let newComponent = null;
@@ -10515,11 +10498,9 @@ var RowDragFeature = class extends BeanStub {
         addIndex--;
       }
       this.clientSideRowModel.updateRowData({
-        add: rowNodes.filter(
-          (node) => !this.clientSideRowModel.getRowNode(
-            getRowIdFunc?.({ data: node.data, level: 0, rowPinned: node.rowPinned }) ?? node.data.id
-          )
-        ).map((node) => node.data),
+        add: rowNodes.map((node) => node.data).filter(
+          (data) => !this.clientSideRowModel.getRowNode(getRowIdFunc?.({ data, level: 0 }) ?? data.id)
+        ),
         addIndex
       });
     }
@@ -10994,19 +10975,10 @@ var RowDragComp = class extends Component {
     if (this.dragSource) {
       this.removeDragSource();
     }
-    const eGui = this.getGui();
-    if (this.gos.get("enableCellTextSelection")) {
-      this.removeMouseDownListener();
-      this.mouseDownListener = this.addManagedElementListeners(eGui, {
-        mousedown: (e) => {
-          e?.preventDefault();
-        }
-      })[0];
-    }
     const translate = this.localeService.getLocaleTextFunc();
     this.dragSource = {
       type: 2 /* RowDrag */,
-      eElement: eGui,
+      eElement: this.getGui(),
       dragItemName: () => {
         const dragItem = this.getDragItem();
         const dragItemCount = dragItem.rowNodes?.length || 1;
@@ -11024,22 +10996,13 @@ var RowDragComp = class extends Component {
   }
   destroy() {
     this.removeDragSource();
-    this.removeMouseDownListener();
     super.destroy();
   }
   removeDragSource() {
-    if (!this.dragSource) {
-      return;
+    if (this.dragSource) {
+      this.beans.dragAndDropService.removeDragSource(this.dragSource);
     }
-    this.beans.dragAndDropService.removeDragSource(this.dragSource);
     this.dragSource = null;
-  }
-  removeMouseDownListener() {
-    if (!this.mouseDownListener) {
-      return;
-    }
-    this.mouseDownListener();
-    this.mouseDownListener = void 0;
   }
 };
 var VisibilityStrategy = class extends BeanStub {
@@ -11275,8 +11238,7 @@ var _RowNode = class _RowNode {
         this.id = getRowIdFunc({
           data: this.data,
           parentKeys: parentKeys.length > 0 ? parentKeys : void 0,
-          level: this.level,
-          rowPinned: this.rowPinned
+          level: this.level
         });
         if (this.id.startsWith(_RowNode.ID_PREFIX_ROW_GROUP)) {
           _errorOnce(
@@ -16745,7 +16707,7 @@ var HeaderFilterCellCtrl = class extends AbstractHeaderCellCtrl {
 };
 
 // community-modules/core/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // community-modules/core/src/filter/columnFilterApi.ts
 function isColumnFilterPresent(beans) {
@@ -24135,36 +24097,35 @@ var CellMouseListenerFeature = class extends BeanStub {
     return res;
   }
   onCellDoubleClicked(mouseEvent) {
-    const { column, beans, cellCtrl } = this;
-    const { eventService, frameworkOverrides, gos } = beans;
-    const colDef = column.getColDef();
-    const cellDoubleClickedEvent = cellCtrl.createEvent(mouseEvent, "cellDoubleClicked");
-    eventService.dispatchEvent(cellDoubleClickedEvent);
+    const colDef = this.column.getColDef();
+    const cellDoubleClickedEvent = this.cellCtrl.createEvent(
+      mouseEvent,
+      "cellDoubleClicked"
+    );
+    this.beans.eventService.dispatchEvent(cellDoubleClickedEvent);
     if (typeof colDef.onCellDoubleClicked === "function") {
       window.setTimeout(() => {
-        frameworkOverrides.wrapOutgoing(() => {
+        this.beans.frameworkOverrides.wrapOutgoing(() => {
           colDef.onCellDoubleClicked(cellDoubleClickedEvent);
         });
       }, 0);
     }
-    const editOnDoubleClick = !gos.get("singleClickEdit") && !gos.get("suppressClickEdit");
+    const editOnDoubleClick = !this.beans.gos.get("singleClickEdit") && !this.beans.gos.get("suppressClickEdit");
     if (editOnDoubleClick) {
-      cellCtrl.startRowOrCellEdit(null, mouseEvent);
+      this.cellCtrl.startRowOrCellEdit(null, mouseEvent);
     }
   }
   onMouseDown(mouseEvent) {
     const { ctrlKey, metaKey, shiftKey } = mouseEvent;
     const target = mouseEvent.target;
     const { cellCtrl, beans } = this;
-    const { eventService, rangeService, focusService, gos } = beans;
+    const { eventService, rangeService, focusService } = beans;
     if (this.isRightClickInExistingRange(mouseEvent)) {
       return;
     }
     const ranges = rangeService && rangeService.getCellRanges().length != 0;
     if (!shiftKey || !ranges) {
-      const isEnableCellTextSelection = gos.get("enableCellTextSelection");
-      const shouldFocus = isEnableCellTextSelection && mouseEvent.defaultPrevented;
-      const forceBrowserFocus = (_isBrowserSafari() || shouldFocus) && !cellCtrl.isEditing() && !_isFocusableFormField(target);
+      const forceBrowserFocus = _isBrowserSafari() && !cellCtrl.isEditing() && !_isFocusableFormField(target);
       cellCtrl.focusCell(forceBrowserFocus);
     }
     if (shiftKey && ranges && !focusService.isCellFocused(cellCtrl.getCellPosition())) {
@@ -31824,7 +31785,6 @@ var PinnedRowModel = class extends BeanStub {
   constructor() {
     super(...arguments);
     this.beanName = "pinnedRowModel";
-    this.nextId = 0;
   }
   wireBeans(beans) {
     this.beans = beans;
@@ -31909,12 +31869,11 @@ var PinnedRowModel = class extends BeanStub {
       const getRowId = this.gos.getRowIdCallback();
       const idPrefix = isTop ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
       let nextRowTop = 0;
-      const pinned = isTop ? "top" : "bottom";
       allData.forEach((dataItem, index) => {
         const rowNode = new RowNode(this.beans);
         rowNode.data = dataItem;
-        rowNode.id = getRowId?.({ data: dataItem, level: 0, rowPinned: pinned }) ?? idPrefix + this.nextId++;
-        rowNode.rowPinned = pinned;
+        rowNode.id = getRowId?.({ data: dataItem, level: 0 }) ?? idPrefix + index;
+        rowNode.rowPinned = isTop ? "top" : "bottom";
         rowNode.setRowTop(nextRowTop);
         rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode).height);
         rowNode.setRowIndex(index);
@@ -33674,9 +33633,6 @@ function createApi(context) {
   const apiFunctionService = context.getBean("apiFunctionService");
   return new Proxy(apiFunctionService, {
     get(target, prop) {
-      if (prop === "then") {
-        return;
-      }
       return (...args) => target.callFunction(prop, args);
     }
   });
@@ -40397,7 +40353,7 @@ var _GridOptionsService = class _GridOptionsService extends BeanStub {
     return (params) => {
       let id = getRowId(params);
       if (typeof id !== "string") {
-        _warnOnce(`The getRowId callback must return a string. The ID `, id, ` is being cast to a string.`);
+        _warnOnce(`The getRowId callback must return a string. The ID ${id} is being cast to a string.`);
         id = String(id);
       }
       return id;

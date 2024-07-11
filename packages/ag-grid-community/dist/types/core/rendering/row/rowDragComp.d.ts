@@ -16,7 +16,6 @@ export declare class RowDragComp extends Component {
     private readonly suppressVisibilityChange?;
     private dragSource;
     private beans;
-    private mouseDownListener;
     wireBeans(beans: BeanCollection): void;
     constructor(cellValueFn: () => string, rowNode: RowNode, column?: AgColumn<any> | undefined, customGui?: HTMLElement | undefined, dragStartPixels?: number | undefined, suppressVisibilityChange?: boolean | undefined);
     isCustomGui(): boolean;
@@ -29,5 +28,4 @@ export declare class RowDragComp extends Component {
     private addDragSource;
     destroy(): void;
     private removeDragSource;
-    private removeMouseDownListener;
 }

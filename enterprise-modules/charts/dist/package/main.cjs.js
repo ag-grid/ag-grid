@@ -1910,7 +1910,7 @@ var import_core101 = require("@ag-grid-community/core");
 var import_ag_charts_community33 = require("ag-charts-community");
 
 // enterprise-modules/charts/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/charts/src/charts/chartComp/gridChartComp.ts
 var import_core99 = require("@ag-grid-community/core");

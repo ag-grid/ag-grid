@@ -1475,7 +1475,7 @@ var SelectionHandleFactory = class extends BeanStub2 {
 };
 
 // enterprise-modules/range-selection/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/range-selection/src/rangeSelectionModule.ts
 var RangeSelectionCoreModule = {

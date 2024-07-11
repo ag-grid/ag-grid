@@ -1944,7 +1944,7 @@ var ModelItemUtils = class extends import_core14.BeanStub {
 };
 
 // enterprise-modules/column-tool-panel/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/column-tool-panel/src/columnsToolPanelModule.ts
 var ColumnsToolPanelModule = {

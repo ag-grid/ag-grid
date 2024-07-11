@@ -615,7 +615,7 @@ var StatusBarService = class extends import_core9.BeanStub {
 };
 
 // enterprise-modules/status-bar/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/status-bar/src/statusBarModule.ts
 var StatusBarCoreModule = {

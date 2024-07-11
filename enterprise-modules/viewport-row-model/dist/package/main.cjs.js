@@ -28,7 +28,7 @@ var import_core2 = require("@ag-grid-community/core");
 var import_core3 = require("@ag-grid-enterprise/core");
 
 // enterprise-modules/viewport-row-model/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/viewport-row-model/src/viewportRowModel/viewportRowModel.ts
 var import_core = require("@ag-grid-community/core");

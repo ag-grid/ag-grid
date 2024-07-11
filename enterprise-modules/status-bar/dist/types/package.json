@@ -1,11 +1,11 @@
 {
   "name": "@ag-grid-enterprise/status-bar",
-  "version": "32.0.1",
+  "version": "32.0.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "dependencies": {
     "tslib": "^2.3.0",
-    "@ag-grid-community/core": "32.0.1",
-    "@ag-grid-enterprise/core": "32.0.1"
+    "@ag-grid-community/core": "32.0.0",
+    "@ag-grid-enterprise/core": "32.0.0"
   },
   "main": "./src/main.js",
   "types": "./dist/types/src/main.d.ts",

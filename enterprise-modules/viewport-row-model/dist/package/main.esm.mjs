@@ -3,7 +3,7 @@ import { ModuleNames } from "@ag-grid-community/core";
 import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
 
 // enterprise-modules/viewport-row-model/src/version.ts
-var VERSION = "32.0.1";
+var VERSION = "32.0.0";
 
 // enterprise-modules/viewport-row-model/src/viewportRowModel/viewportRowModel.ts
 import { BeanStub, RowNode, _iterateObject, _missing, _warnOnce } from "@ag-grid-community/core";
