@@ -159,7 +159,7 @@ export class GridCtrl extends BeanStub {
 
         const overlayService = this.overlayService;
         if (overlayService.isExclusive()) {
-            return this.focusContainer(overlayService.getOverlayComponent(), fromBottom);
+            return this.focusContainer(overlayService.getOverlayWrapper(), fromBottom);
         }
 
         const focusableContainers = this.getFocusableContainers();
@@ -215,19 +215,15 @@ export class GridCtrl extends BeanStub {
         const overlayService = this.overlayService;
 
         if (overlayService.isExclusive()) {
-            // When loading overlay is visible, focus should be on the overlay only
-            return [overlayService.getOverlayComponent()];
+            // An exclusive overlay takes precedence over all other focusable containers
+            return [overlayService.getOverlayWrapper()];
         }
 
-        const result = this.view.getFocusableContainers().slice();
-
-        for (const c of this.additionalFocusableContainers) {
-            result.push(c);
-        }
+        const result = [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
 
         if (overlayService.isVisible()) {
             // We allow focusing on the no-rows overlay
-            result.push(overlayService.getOverlayComponent());
+            result.push(overlayService.getOverlayWrapper());
         }
 
         return result;
