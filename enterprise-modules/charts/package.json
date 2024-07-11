@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/charts",
-  "version": "32.0.1",
+  "version": "32.0.2",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/src/main.d.ts",
@@ -13,10 +13,10 @@
   },
   "sideEffects": true,
   "dependencies": {
-    "@ag-grid-community/core": "32.0.1",
-    "@ag-grid-enterprise/core": "32.0.1",
-    "@ag-grid-enterprise/range-selection": "32.0.1",
-    "ag-charts-community": "10.0.2-beta.20240711"
+    "@ag-grid-community/core": "32.0.2",
+    "@ag-grid-enterprise/core": "32.0.2",
+    "@ag-grid-enterprise/range-selection": "32.0.2",
+    "ag-charts-community": "10.0.2-beta.20240711.1518"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
