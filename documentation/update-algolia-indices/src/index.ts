@@ -53,7 +53,7 @@ apiPages.forEach((page) => {
         const prefixedRecords = records.map(prefixPath(framework));
         writeResults(outputName, prefixedRecords);
         indices[framework].push(...prefixedRecords);
-    })
+    });
 });
 
 /**
