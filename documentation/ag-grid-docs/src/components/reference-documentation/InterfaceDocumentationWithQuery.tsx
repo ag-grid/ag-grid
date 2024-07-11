@@ -1,22 +1,15 @@
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { useStore } from '@nanostores/react';
+import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
+import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { fetchExtraFile } from '@utils/client/fetchExtraFile';
 
 import { InterfaceDocumentation, type InterfaceDocumentationProps } from './ReferenceDocumentation';
 
-// NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
-// loaded on the client side
-const queryClient = new QueryClient();
-
-const queryOptions = {
-    retry: false,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-};
-
 type Props = Omit<InterfaceDocumentationProps, 'interfaceLookup' | 'codeLookup'>;
 
 export function InterfaceDocumentationWithQuery(props: Props) {
+    const queryClient = useStore($queryClient);
+
     return (
         <QueryClientProvider client={queryClient}>
             <InterfaceDocumentationWithLookups {...props} />
@@ -26,7 +19,7 @@ export function InterfaceDocumentationWithQuery(props: Props) {
 
 function InterfaceDocumentationWithLookups(props: Props) {
     const { data: [interfaceLookup, codeLookup] = [] } = useQuery({
-        queryKey: ['resolved-interfaces'],
+        queryKey: ['resolved-interfaces-docs'],
 
         queryFn: async () => {
             return Promise.all([
@@ -35,7 +28,7 @@ function InterfaceDocumentationWithLookups(props: Props) {
             ]);
         },
 
-        ...queryOptions,
+        ...defaultQueryOptions,
     });
 
     return (
