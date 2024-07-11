@@ -1,9 +1,9 @@
 import { useStore } from '@nanostores/react';
-import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
-import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { fetchExtraFile } from '@utils/client/fetchExtraFile';
+import { $queryClient } from '@stores/queryClientStore';
+import { QueryClientProvider } from '@tanstack/react-query';
 
 import { ApiDocumentation, type ApiDocumentationProps } from './ReferenceDocumentation';
+import { useResolvedInterfaces } from './useResolvedInterfaces';
 
 type Props = Omit<ApiDocumentationProps, 'interfaceLookup'>;
 
@@ -18,16 +18,7 @@ export function ApiDocumentationWithQuery(props: Props) {
 }
 
 function ApiDocumentationWithLookups(props: Props) {
-    const { data: interfaceLookup } = useQuery({
-        queryKey: ['resolved-interfaces'],
-
-        queryFn: async () => {
-            const data = await fetchExtraFile('/reference/interfaces.AUTO.json');
-            return data;
-        },
-
-        ...defaultQueryOptions,
-    });
+    const interfaceLookup = useResolvedInterfaces();
 
     return interfaceLookup && <ApiDocumentation {...props} interfaceLookup={interfaceLookup} />;
 }

@@ -1,9 +1,9 @@
 import { useStore } from '@nanostores/react';
-import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
-import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { fetchExtraFile } from '@utils/client/fetchExtraFile';
+import { $queryClient } from '@stores/queryClientStore';
+import { QueryClientProvider } from '@tanstack/react-query';
 
 import { InterfaceDocumentation, type InterfaceDocumentationProps } from './ReferenceDocumentation';
+import { useResolvedDocInterfaces, useResolvedInterfaces } from './useResolvedInterfaces';
 
 type Props = Omit<InterfaceDocumentationProps, 'interfaceLookup' | 'codeLookup'>;
 
@@ -18,18 +18,8 @@ export function InterfaceDocumentationWithQuery(props: Props) {
 }
 
 function InterfaceDocumentationWithLookups(props: Props) {
-    const { data: [interfaceLookup, codeLookup] = [] } = useQuery({
-        queryKey: ['resolved-interfaces-docs'],
-
-        queryFn: async () => {
-            return Promise.all([
-                fetchExtraFile('/reference/interfaces.AUTO.json'),
-                fetchExtraFile('/reference/doc-interfaces.AUTO.json'),
-            ]);
-        },
-
-        ...defaultQueryOptions,
-    });
+    const interfaceLookup = useResolvedInterfaces();
+    const codeLookup = useResolvedDocInterfaces();
 
     return (
         interfaceLookup &&
