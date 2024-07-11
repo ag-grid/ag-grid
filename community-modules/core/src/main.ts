@@ -75,6 +75,8 @@ export {
     ExcelExportMultipleSheetParams,
     ExcelSheetPageSetup,
     ExcelFont,
+    ExcelFreezeRowsGetter,
+    ExcelFreezeColumnsGetter,
     ExcelInterior,
     ExcelNumberFormat,
     ExcelOOXMLDataType,
@@ -89,6 +91,7 @@ export {
     ExcelTableConfig,
     ExcelSheetNameGetter,
     ExcelSheetNameGetterParams,
+    ExcelWorksheetConfigParams,
 } from './interfaces/iExcelCreator';
 
 // dragAndDrop

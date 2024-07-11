@@ -24,7 +24,7 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
             label: getFrameworkDisplayText(framework),
             value: framework,
         }));
-    }, [FRAMEWORKS]);
+    }, []);
 
     const frameworkOption = useMemo(
         () => frameworkOptions.find((o: { value: string }) => o.value === currentFramework) || frameworkOptions[0],

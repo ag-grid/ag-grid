@@ -176,14 +176,14 @@ const createExcelFileForExcel = (
 };
 
 const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
-    const { data, fontSize, author, activeSheet } = params;
+    const { data, fontSize, author, activeSheetIndex } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     if (
         !createExcelFileForExcel(data, {
             author,
             fontSize,
-            activeTab: activeSheet,
+            activeTab: activeSheetIndex,
         })
     ) {
         return Promise.resolve(undefined);
@@ -193,14 +193,14 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
 };
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
-    const { data, fontSize, author, activeSheet } = params;
+    const { data, fontSize, author, activeSheetIndex } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     if (
         !createExcelFileForExcel(data, {
             author,
             fontSize,
-            activeTab: activeSheet,
+            activeTab: activeSheetIndex,
         })
     ) {
         return;
@@ -330,20 +330,8 @@ export class ExcelCreator
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
         const { columnModel, columnNameService, funcColsService, valueService, gos } = this;
 
-        let sheetName: string;
-        if (params.sheetName != null) {
-            const { sheetName: sheetNameParam } = params;
-            const sheetNameValue =
-                typeof sheetNameParam === 'function' ? sheetNameParam(this.gos.getGridCommonParams()) : sheetNameParam;
-
-            sheetName = String(sheetNameValue).substring(0, 31);
-        } else {
-            sheetName = 'ag-grid';
-        }
-
         const config: ExcelGridSerializingParams = {
             ...params,
-            sheetName,
             columnModel,
             columnNameService,
             funcColsService,
@@ -352,6 +340,7 @@ export class ExcelCreator
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gos.get('excelStyles') || [],
+            rightToLeft: params.rightToLeft ?? this.gos.get('enableRtl'),
             styleLinker: this.styleLinker.bind(this),
         };
 

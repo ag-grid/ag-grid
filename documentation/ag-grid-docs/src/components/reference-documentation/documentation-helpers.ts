@@ -1,5 +1,4 @@
 import type { Framework } from '@ag-grid-types';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 import { getTypeLink } from './type-links';
@@ -191,7 +190,7 @@ export function applyUndefinedUnionType(typeName) {
     }
 }
 
-const NEWLINE_DEFAULT_STRING = '<br> Default:';
+// const NEWLINE_DEFAULT_STRING = '<br> Default:';
 /** Handle correct placement of more link so that default is always at the end on a new line even if already included in JsDoc. */
 export function addMoreLink(description, seeMore) {
     // Get default string along with its value
@@ -313,6 +312,7 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
     if (!definitionOrArray) return [];
 
     if (allDefs.length > 1000) {
+        // eslint-disable-next-line no-console
         console.warn('AG Charts - Possible recursion error on type: ', definitionOrArray, allDefs);
         return allDefs;
     }
@@ -401,8 +401,8 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
                     } else {
                         const propertyTypes = Object.entries(interfaceType.type);
                         propertyTypes
-                            .filter(([k, v]) => !!v && typeof v == 'string')
-                            .filter(([k, v]) => {
+                            .filter(([, v]) => !!v && typeof v == 'string')
+                            .filter(([k]) => {
                                 const docs = interfaceType.docs && interfaceType.docs[k];
                                 return !docs || !docs.includes('@deprecated');
                             })

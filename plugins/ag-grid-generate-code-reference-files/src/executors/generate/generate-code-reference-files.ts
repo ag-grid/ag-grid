@@ -467,17 +467,30 @@ export function getGridApi(gridApiFile: string) {
         members = { ...members, ...typesFromNode };
     };
 
-    gridApi.heritageClauses.forEach((h) => {
-        h.types.forEach((t) => {
-            const typeName = formatNode(t.expression, srcFile);
-            const typeNode = findNode(typeName, srcFile);
-            if (!typeNode) {
-                errors.push(`Could not find base interface for ${typeName}`);
-            } else {
-                ts.forEachChild(typeNode, (n) => addType(typeName, n));
-            }
+    const processedInterfaces = new Set<ts.InterfaceDeclaration>();
+
+    const processInterface = (declaration: ts.InterfaceDeclaration) => {
+        if (processedInterfaces.has(declaration)) {
+            return;
+        }
+        processedInterfaces.add(declaration);
+        declaration.heritageClauses?.forEach((h) => {
+            h.types.forEach((t) => {
+                const typeName = formatNode(t.expression, srcFile);
+                const typeNode = findNode(typeName, srcFile);
+                if (!typeNode) {
+                    errors.push(`Could not find base interface for ${typeName}`);
+                } else {
+                    if (ts.isInterfaceDeclaration(typeNode)) {
+                        processInterface(typeNode);
+                    }
+                    ts.forEachChild(typeNode, (n) => addType(typeName, n));
+                }
+            });
         });
-    });
+    };
+
+    processInterface(gridApi);
 
     ts.forEachChild(gridApi, (n) => addType('GridApi', n));
 

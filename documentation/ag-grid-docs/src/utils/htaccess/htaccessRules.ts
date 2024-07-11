@@ -97,9 +97,11 @@ export const modRewriteRules = `
 ${SITE_301_REDIRECTS.map((redirect) => {
     const { from, fromPattern, to } = redirect as any;
     if (!to) {
+        // eslint-disable-next-line no-console
         console.warn('Missing `to` in redirect', redirect);
         return;
     } else if (!from && !fromPattern) {
+        // eslint-disable-next-line no-console
         console.warn('Missing `from` in redirect', redirect);
         return;
     }

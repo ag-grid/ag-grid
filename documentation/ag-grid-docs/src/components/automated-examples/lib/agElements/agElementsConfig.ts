@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { type GetElement } from '.';
 import {
     AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,

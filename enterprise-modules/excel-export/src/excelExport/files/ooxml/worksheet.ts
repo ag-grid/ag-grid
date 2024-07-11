@@ -148,81 +148,6 @@ const getPageSize = (pageSize?: string): number => {
     return pos === -1 ? 1 : pos + 1;
 };
 
-const addColumns = (columns: ExcelColumn[]) => {
-    return (params: ComposedWorksheetParams) => {
-        if (columns.length) {
-            params.children.push({
-                name: 'cols',
-                children: columns.map((column) => columnFactory.getTemplate(column)),
-            });
-        }
-        return params;
-    };
-};
-
-const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
-    return (params: ComposedWorksheetParams) => {
-        if (rows.length) {
-            params.children.push({
-                name: 'sheetData',
-                children: rows.map((row, idx) => rowFactory.getTemplate(row, idx, sheetNumber)),
-            });
-        }
-        return params;
-    };
-};
-
-const addMergeCells = (mergeCells: string[]) => {
-    return (params: ComposedWorksheetParams) => {
-        if (mergeCells.length) {
-            params.children.push({
-                name: 'mergeCells',
-                properties: {
-                    rawMap: {
-                        count: mergeCells.length,
-                    },
-                },
-                children: mergeCells.map((mergedCell) => mergeCellFactory.getTemplate(mergedCell)),
-            });
-        }
-        return params;
-    };
-};
-
-const addPageMargins = (margins: ExcelSheetMargin) => {
-    return (params: ComposedWorksheetParams) => {
-        const { top = 0.75, right = 0.7, bottom = 0.75, left = 0.7, header = 0.3, footer = 0.3 } = margins;
-
-        params.children.push({
-            name: 'pageMargins',
-            properties: {
-                rawMap: { bottom, footer, header, left, right, top },
-            },
-        });
-
-        return params;
-    };
-};
-
-const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
-    return (params: ComposedWorksheetParams) => {
-        if (pageSetup) {
-            params.children.push({
-                name: 'pageSetup',
-                properties: {
-                    rawMap: {
-                        horizontalDpi: 0,
-                        verticalDpi: 0,
-                        orientation: getPageOrientation(pageSetup.orientation),
-                        paperSize: getPageSize(pageSetup.pageSize),
-                    },
-                },
-            });
-        }
-        return params;
-    };
-};
-
 const replaceHeaderFooterTokens = (value: string): string => {
     const map = {
         '&[Page]': '&P',
@@ -342,6 +267,81 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
     return headersAndFooters;
 };
 
+const addColumns = (columns: ExcelColumn[]) => {
+    return (params: ComposedWorksheetParams) => {
+        if (columns.length) {
+            params.children.push({
+                name: 'cols',
+                children: columns.map((column) => columnFactory.getTemplate(column)),
+            });
+        }
+        return params;
+    };
+};
+
+const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
+    return (params: ComposedWorksheetParams) => {
+        if (rows.length) {
+            params.children.push({
+                name: 'sheetData',
+                children: rows.map((row, idx) => rowFactory.getTemplate(row, idx, sheetNumber)),
+            });
+        }
+        return params;
+    };
+};
+
+const addMergeCells = (mergeCells: string[]) => {
+    return (params: ComposedWorksheetParams) => {
+        if (mergeCells.length) {
+            params.children.push({
+                name: 'mergeCells',
+                properties: {
+                    rawMap: {
+                        count: mergeCells.length,
+                    },
+                },
+                children: mergeCells.map((mergedCell) => mergeCellFactory.getTemplate(mergedCell)),
+            });
+        }
+        return params;
+    };
+};
+
+const addPageMargins = (margins: ExcelSheetMargin) => {
+    return (params: ComposedWorksheetParams) => {
+        const { top = 0.75, right = 0.7, bottom = 0.75, left = 0.7, header = 0.3, footer = 0.3 } = margins;
+
+        params.children.push({
+            name: 'pageMargins',
+            properties: {
+                rawMap: { bottom, footer, header, left, right, top },
+            },
+        });
+
+        return params;
+    };
+};
+
+const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
+    return (params: ComposedWorksheetParams) => {
+        if (pageSetup) {
+            params.children.push({
+                name: 'pageSetup',
+                properties: {
+                    rawMap: {
+                        horizontalDpi: 0,
+                        verticalDpi: 0,
+                        orientation: getPageOrientation(pageSetup.orientation),
+                        paperSize: getPageSize(pageSetup.pageSize),
+                    },
+                },
+            });
+        }
+        return params;
+    };
+};
+
 const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
     return (params: ComposedWorksheetParams) => {
         if (!headerFooterConfig) {
@@ -427,8 +427,49 @@ const addVmlDrawingRel = (currentSheet: number) => {
     };
 };
 
+const getPane = (xSplit: number = 0, ySplit: number = 0) => {
+    const shouldSplit = xSplit > 0 || ySplit > 0;
+
+    return shouldSplit
+        ? [
+              {
+                  name: 'pane',
+                  properties: {
+                      rawMap: {
+                          state: shouldSplit ? 'frozen' : undefined,
+                          topLeftCell: shouldSplit ? `${getExcelColumnName(xSplit + 1)}${ySplit + 1}` : undefined,
+                          xSplit: xSplit === 0 ? undefined : xSplit,
+                          ySplit: ySplit === 0 ? undefined : ySplit,
+                      },
+                  },
+              },
+          ]
+        : undefined;
+};
+
+const addSheetViews = (rtl: boolean = false, xSplit?: number, ySplit?: number) => {
+    return (params: ComposedWorksheetParams) => {
+        params.children.push({
+            name: 'sheetViews',
+            children: [
+                {
+                    name: 'sheetView',
+                    properties: {
+                        rawMap: {
+                            rightToLeft: rtl === true ? '1' : '0',
+                            workbookViewId: '0',
+                        },
+                    },
+                    children: getPane(xSplit, ySplit),
+                },
+            ],
+        });
+        return params;
+    };
+};
+
 const addSheetPr = () => {
-    return (params: { children: XmlElement[] }) => {
+    return (params: ComposedWorksheetParams) => {
         params.children.push({
             name: 'sheetPr',
             children: [
@@ -469,15 +510,23 @@ const addSheetFormatPr = (rows: ExcelRow[]) => {
     };
 };
 
-type ComposedWorksheetParams = {
+interface ComposedWorksheetParams {
     children: XmlElement[];
     rIdCounter: number;
-};
+}
 
 const worksheetFactory: ExcelOOXMLTemplate = {
     getTemplate(params: { worksheet: ExcelWorksheet; currentSheet: number; config: ExcelGridSerializingParams }) {
         const { worksheet, currentSheet, config } = params;
-        const { margins = {}, pageSetup, headerFooterConfig, suppressColumnOutline } = config;
+        const {
+            margins = {},
+            pageSetup,
+            headerFooterConfig,
+            suppressColumnOutline,
+            rightToLeft,
+            frozenRowCount,
+            frozenColumnCount,
+        } = config;
 
         const { table } = worksheet;
         const { rows, columns } = table;
@@ -489,6 +538,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
 
         const createWorksheetChildren = _compose<ComposedWorksheetParams>(
             addSheetPr(),
+            addSheetViews(rightToLeft, frozenColumnCount, frozenRowCount),
             addSheetFormatPr(rows),
             addColumns(columns),
             addSheetData(rows, currentSheet + 1),

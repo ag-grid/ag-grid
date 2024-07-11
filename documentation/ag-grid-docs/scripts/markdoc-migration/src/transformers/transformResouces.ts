@@ -115,7 +115,7 @@ function transformDivImageCaption(ast: any) {
             styleValue
                 ?.split(';')
                 ?.map((property: string) => {
-                    const [_, name, value] = property.match(/([^:]*):(.*)/) || [];
+                    const [, name, value] = property.match(/([^:]*):(.*)/) || [];
 
                     return name && value ? [name.trim(), value.trim()] : undefined;
                 })

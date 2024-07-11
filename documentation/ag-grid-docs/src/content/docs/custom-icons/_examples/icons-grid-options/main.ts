@@ -122,6 +122,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         clipboardCut: '<<',
         clipboardPaste: '>>',
         rowDrag: '<i class="fa fa-circle"/>',
+        columnDrag: '<i class="fa fa-square"/>',
     },
     rowSelection: 'multiple',
 };

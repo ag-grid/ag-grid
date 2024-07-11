@@ -60,7 +60,7 @@ export async function clickOnContextMenuItem({
                     colIndex,
                     rowIndex,
                 })
-                ?.getPos()!,
+                ?.getPos(),
             clickType: 'right',
             scriptDebugger,
         });

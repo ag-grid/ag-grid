@@ -1168,30 +1168,36 @@ export interface _AdvancedFilterGridApi {
     hideAdvancedFilterBuilder(): void;
 }
 
-export interface GridApi<TData = any>
-    extends _CoreGridApi<TData>,
-        _OverlayGridApi,
-        _RowSelectionGridApi<TData>,
-        _RowGridApi<TData>,
-        _ScrollGridApi<TData>,
+export interface _CoreModuleGridApi
+    extends _CoreGridApi,
+        _StateGridApi,
+        _RowSelectionGridApi,
+        _RowGridApi,
+        _ScrollGridApi,
         _KeyboardNavigationGridApi,
-        _EventGridApi<TData>,
+        _EventGridApi,
         _CellGridApi,
         _CommunityMenuGridApi,
         _SortGridApi,
-        _ClientSideRowModelGridApi<TData>,
-        _CsrmSsrmSharedGridApi,
-        _SsrmInfiniteSharedGridApi,
-        _ColumnGridApi<TData>,
+        _OverlayGridApi,
+        _PinnedRowGridApi,
+        _RenderGridApi,
         _DragGridApi,
-        _EditGridApi<TData>,
+        _ColumnGridApi,
+        _DragGridApi,
+        _EditGridApi,
         _FilterGridApi,
         _ColumnFilterGridApi,
         _QuickFilterGridApi,
-        _StateGridApi,
         _PaginationGridApi,
-        _PinnedRowGridApi,
-        _RenderGridApi<TData>,
+        _CsrmSsrmSharedGridApi,
+        _SsrmInfiniteSharedGridApi {
+    dispatchEvent(event: AgEvent): void;
+}
+
+export interface GridApi<TData = any>
+    extends _CoreModuleGridApi,
+        _ClientSideRowModelGridApi<TData>,
         _SideBarGridApi,
         _StatusBarGridApi,
         _InfiniteRowModelGridApi,
@@ -1204,6 +1210,4 @@ export interface GridApi<TData = any>
         _ExcelExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,
-        _AdvancedFilterGridApi {
-    dispatchEvent(event: AgEvent): void;
-}
+        _AdvancedFilterGridApi {}

@@ -1,7 +1,7 @@
 import { fetchExtraFile } from '@utils/client/fetchExtraFile';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
-import { InterfaceDocumentation } from './ReferenceDocumentation';
+import { InterfaceDocumentation, type InterfaceDocumentationProps } from './ReferenceDocumentation';
 
 // NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
 // loaded on the client side
@@ -14,13 +14,12 @@ const queryOptions = {
     refetchOnReconnect: false,
 };
 
-type Props = Omit<ApiDocumentationProps, 'interfaceLookup' | 'codeLookup'>;
+type Props = Omit<InterfaceDocumentationProps, 'interfaceLookup' | 'codeLookup'>;
 
 export function InterfaceDocumentationWithQuery(props: Props) {
     return (
         <QueryClientProvider client={queryClient}>
-            {' '}
-            <InterfaceDocumentationWithLookups {...props} />{' '}
+            <InterfaceDocumentationWithLookups {...props} />
         </QueryClientProvider>
     );
 }

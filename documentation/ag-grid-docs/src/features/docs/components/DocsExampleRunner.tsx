@@ -1,10 +1,10 @@
 import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
-import type { FileContents, GeneratedContents } from '@features/example-generator/types';
+import type { GeneratedContents } from '@features/example-generator/types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
-import { $internalFramework } from '@stores/frameworkStore';
+import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
 import { useImportType } from '@utils/hooks/useImportType';
 import { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
@@ -86,22 +86,35 @@ const DocsExampleRunnerInner = ({
 
     const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
 
-    const importType = overrideImportType ?? useImportType();
+    const storeImportType = useImportType();
+    const importType = overrideImportType ?? storeImportType;
+    const storeInternalFramework = useStore($internalFramework);
+    const internalFrameworkState = useStore($internalFrameworkState);
     const internalFramework = typescriptOnly
         ? 'typescript'
-        : getInternalFramework(useStore($internalFramework), supportedFrameworks, importType);
+        : getInternalFramework(storeInternalFramework, supportedFrameworks, importType);
     const urlConfig: UrlParams = useMemo(
         () => ({ internalFramework, pageName, exampleName, importType }),
         [internalFramework, pageName, exampleName, importType]
     );
 
     const { data: [contents] = [undefined, undefined], isError } = useQuery(
-        ['docsExampleContents', pageName, exampleName, internalFramework, importType],
-        () =>
-            Promise.all([
+        ['docsExampleContents', pageName, exampleName, internalFramework, importType, internalFrameworkState],
+        () => {
+            if (internalFrameworkState !== 'synced') {
+                return;
+            }
+
+            return Promise.all([
                 fetch(getExampleContentsUrl(urlConfig))
                     .then((res) => res.json())
                     .then((json) => {
+                        if (json.error) {
+                            // eslint-disable-next-line no-console
+                            console.error('Error getting', getExampleContentsUrl(urlConfig));
+                            return {};
+                        }
+
                         const isTs =
                             internalFramework === 'reactFunctionalTs' ||
                             internalFramework === 'typescript' ||
@@ -114,7 +127,8 @@ const DocsExampleRunnerInner = ({
                         }
                         return json;
                     }),
-            ]) as Promise<[GeneratedContents]>,
+            ]) as Promise<[GeneratedContents]>;
+        },
         queryOptions
     );
     const urls = {

@@ -11,8 +11,8 @@
     border-radius: var(--radius-md);
     border: 1px solid var(--color-util-brand-100);
     color: var(--color-util-brand-700);
-    margin-top: $spacing-size-4;
-    margin-bottom: $spacing-size-4;
+    margin-top: $spacing-size-5;
+    margin-bottom: $spacing-size-8;
 
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-util-brand-50), var(--color-bg-primary) 60%);

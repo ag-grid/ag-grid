@@ -1,25 +1,22 @@
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+
 import rootESLint from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
+    {
+        plugins: {
+            'react-hooks': reactHooksPlugin,
+        },
+        rules: reactHooksPlugin.configs.recommended.rules,
+    },
     {
         ignores: ['.astro/', '**/_examples/', 'scripts/showcase-github/tmp/', '**/.angular'],
     },
     {
         rules: {
             'no-eval': 'error',
-            'no-console': 'warn',
-            'prefer-const': 'warn',
-            'no-undef': 'warn',
-            'no-constant-condition': 'warn',
-            'no-prototype-builtins': 'warn',
-            '@typescript-eslint/no-unused-vars': 'warn',
-            '@typescript-eslint/no-non-null-asserted-optional-chain': 'warn',
-            '@typescript-eslint/no-explicit-any': 'warn',
-            '@typescript-eslint/no-this-alias': 'warn',
-            '@typescript-eslint/ban-types': 'warn',
-            '@typescript-eslint/ban-ts-comment': 'warn',
-            '@typescript-eslint/triple-slash-reference': 'warn',
+            'no-console': 'error',
             'import-x/consistent-type-specifier-style': 'off',
         },
     },
@@ -27,6 +24,47 @@ export default [
         files: ['*-boilerplate/*'],
         env: {
             es6: true,
+        },
+    },
+    // Test files
+    {
+        files: ['**/*.test.ts'],
+        languageOptions: {
+            globals: {
+                describe: 'readonly',
+                it: 'readonly',
+                expect: 'readonly',
+                test: 'readonly',
+                vi: 'readonly',
+            },
+        },
+    },
+    // Example runner boilerplate files
+    {
+        files: ['public/example-runner/**/*[.js|.ts]'],
+        languageOptions: {
+            globals: {
+                System: 'readonly',
+                systemJsPaths: 'readonly',
+                boilerplatePath: 'readonly',
+                appLocation: 'readonly',
+                systemJsMap: 'readonly',
+            },
+        },
+    },
+    // Public files
+    {
+        files: ['public/**/*[.js|.ts]'],
+        rules: {
+            '@typescript-eslint/no-unused-vars': 'off',
+            'no-console': 'off',
+        },
+    },
+    // env.d.ts
+    {
+        files: ['src/env.d.ts'],
+        rules: {
+            '@typescript-eslint/triple-slash-reference': 'off',
         },
     },
     // Root scripts

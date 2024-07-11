@@ -226,7 +226,7 @@ export class Theme {
             inheritanceCss += `\t${inheritedVariable}: var(${variable});\n`;
         }
         let css = `.ag-root-wrapper, .ag-measurement-container, .ag-apply-theme-variables {\n${variablesCss}}\n`;
-        css += `:has(> .ag-root-wrapper) {\n${inheritanceCss}}\n`;
+        css += `:has(> .ag-root-wrapper), :has(> .ag-measurement-container), :has(> .ag-apply-theme-variables) {\n${inheritanceCss}}\n`;
         return {
             css,
             id: 'variables',

@@ -202,7 +202,7 @@ function MenuSectionNav({
     activeTopLevelMenuItem?: MenuItem;
     setActiveTopLevelMenuItem: (menuItem?: MenuItem) => void;
 }) {
-    const { title, items, type } = menuSection;
+    const { title, items } = menuSection;
     return (
         <>
             {title && <h5>{title}</h5>}

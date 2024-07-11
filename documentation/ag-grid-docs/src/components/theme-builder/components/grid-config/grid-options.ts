@@ -24,6 +24,7 @@ const debugConfigFields = [
     'loadingOverlay',
     'printLayout',
     'columnGroupsDeep',
+    'grandTotalRow',
 ] as const;
 
 export const allConfigFields = [...productionConfigFields, ...debugConfigFields] as const;
@@ -60,6 +61,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         editable: true,
         flex: 1,
         filter: true,
+        aggFunc: 'sum',
     };
     const columnDefs = buildSimpleColumnDefs();
     const sideBar: string[] = [];
@@ -86,6 +88,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
             headerCheckboxSelection: config.rowSelection,
             minWidth: 250,
         },
+        grandTotalRow: config.grandTotalRow ? 'bottom' : undefined,
     };
 
     if (config.advancedFilter) {
