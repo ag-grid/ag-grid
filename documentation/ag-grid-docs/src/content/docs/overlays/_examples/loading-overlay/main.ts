@@ -14,8 +14,6 @@ let gridApi: GridApi<IAthlete>;
 const gridOptions: GridOptions<IAthlete> = {
     loading: true,
     columnDefs: [{ field: 'athlete' }, { field: 'country' }],
-    overlayLoadingTemplate: '<button>loading</button>',
-    overlayNoRowsTemplate: '<button>no rows</button>',
 };
 
 function setLoading(value: boolean) {
@@ -34,16 +32,4 @@ function onBtnSetRowData() {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-});
-
-window.addEventListener('keydown', (e) => {
-    if (e.key === 'l') {
-        setLoading(true);
-    } else if (e.key === 'u') {
-        setLoading(false);
-    } else if (e.key === 'c') {
-        onBtnClearRowData();
-    } else if (e.key === 's') {
-        onBtnSetRowData();
-    }
 });
