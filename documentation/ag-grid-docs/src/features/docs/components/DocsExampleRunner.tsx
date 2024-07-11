@@ -98,9 +98,10 @@ const DocsExampleRunnerInner = ({
         [internalFramework, pageName, exampleName, importType]
     );
 
-    const { data: [contents] = [undefined, undefined], isError } = useQuery(
-        ['docsExampleContents', pageName, exampleName, internalFramework, importType, internalFrameworkState],
-        () => {
+    const { data: [contents] = [undefined, undefined], isError } = useQuery({
+        queryKey: ['docsExampleContents', pageName, exampleName, internalFramework, importType, internalFrameworkState],
+
+        queryFn: () => {
             if (internalFrameworkState !== 'synced') {
                 return [];
             }
@@ -129,8 +130,9 @@ const DocsExampleRunnerInner = ({
                     }),
             ]) as Promise<[GeneratedContents]>;
         },
-        queryOptions
-    );
+
+        ...queryOptions,
+    });
     const urls = {
         exampleRunnerExampleUrl: getExampleRunnerExampleUrl(urlConfig),
         exampleUrl: getExampleUrl(urlConfig),

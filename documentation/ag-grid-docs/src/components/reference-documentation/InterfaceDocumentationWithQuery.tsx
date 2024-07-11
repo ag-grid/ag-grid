@@ -25,16 +25,18 @@ export function InterfaceDocumentationWithQuery(props: Props) {
 }
 
 function InterfaceDocumentationWithLookups(props: Props) {
-    const { data: [interfaceLookup, codeLookup] = [] } = useQuery(
-        ['resolved-interfaces'],
-        async () => {
+    const { data: [interfaceLookup, codeLookup] = [] } = useQuery({
+        queryKey: ['resolved-interfaces'],
+
+        queryFn: async () => {
             return Promise.all([
                 fetchExtraFile('/reference/interfaces.AUTO.json'),
                 fetchExtraFile('/reference/doc-interfaces.AUTO.json'),
             ]);
         },
-        queryOptions
-    );
+
+        ...queryOptions,
+    });
 
     return (
         interfaceLookup &&
