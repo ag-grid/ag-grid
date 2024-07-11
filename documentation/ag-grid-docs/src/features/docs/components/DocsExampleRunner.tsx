@@ -5,9 +5,10 @@ import { ExternalLinks } from '@features/example-runner/components/ExternalLinks
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
 import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
+import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
+import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { useImportType } from '@utils/hooks/useImportType';
 import { useEffect, useMemo, useState } from 'react';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
 import {
     type UrlParams,
@@ -29,17 +30,6 @@ interface Props {
     typescriptOnly?: boolean;
     overrideImportType?: ImportType;
 }
-
-// NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
-// loaded on the client side
-const queryClient = new QueryClient();
-
-const queryOptions = {
-    retry: false,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-};
 
 const getInternalFramework = (
     docsInternalFramework: InternalFramework,
@@ -98,11 +88,12 @@ const DocsExampleRunnerInner = ({
         [internalFramework, pageName, exampleName, importType]
     );
 
-    const { data: [contents] = [undefined, undefined], isError } = useQuery(
-        ['docsExampleContents', pageName, exampleName, internalFramework, importType, internalFrameworkState],
-        () => {
+    const { data: [contents] = [undefined, undefined], isError } = useQuery({
+        queryKey: ['docsExampleContents', pageName, exampleName, internalFramework, importType, internalFrameworkState],
+
+        queryFn: () => {
             if (internalFrameworkState !== 'synced') {
-                return;
+                return [];
             }
 
             return Promise.all([
@@ -129,8 +120,9 @@ const DocsExampleRunnerInner = ({
                     }),
             ]) as Promise<[GeneratedContents]>;
         },
-        queryOptions
-    );
+
+        ...defaultQueryOptions,
+    });
     const urls = {
         exampleRunnerExampleUrl: getExampleRunnerExampleUrl(urlConfig),
         exampleUrl: getExampleUrl(urlConfig),
@@ -188,6 +180,8 @@ const DocsExampleRunnerInner = ({
 };
 
 export const DocsExampleRunner = (props: Props) => {
+    const queryClient = useStore($queryClient);
+
     return (
         <QueryClientProvider client={queryClient}>
             <DocsExampleRunnerInner {...props} />
