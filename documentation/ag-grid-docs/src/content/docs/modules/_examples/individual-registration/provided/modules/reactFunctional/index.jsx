@@ -8,7 +8,7 @@ import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './styles.css';
@@ -80,4 +80,8 @@ const GridExample = () => {
 };
 
 const root = createRoot(document.getElementById('root'));
-root.render(<GridExample />);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

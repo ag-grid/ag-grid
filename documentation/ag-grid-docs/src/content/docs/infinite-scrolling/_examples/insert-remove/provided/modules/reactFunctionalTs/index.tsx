@@ -13,7 +13,7 @@ import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
@@ -243,4 +243,8 @@ const GridExample = () => {
 };
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<GridExample />);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);
