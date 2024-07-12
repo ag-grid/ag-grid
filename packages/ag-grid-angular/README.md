@@ -168,22 +168,7 @@ We've created several demos to showcase AG Grid's rich feature set across differ
 
 ## ⚡️ Quick Start
 
-AG Grid is easy to set up - all you need to do is provide your data and define your column structure. Read on for vanilla JavaScript installation instructions, or refer to our framework-specific guides for
-<strong>
-<a href="https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github">
-<img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/react.svg?raw=true" height="16" width="16" alt="React Logo"> React
-</a>
-</strong>,
-<strong>
-<a href="https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github">
-<img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/angular.svg?raw=true" height="16" width="16" alt="Angular Logo"> Angular
-</a>
-</strong> and
-<strong>
-<a href="https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github">
-<img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/vue.svg?raw=true" height="16" width="16" alt="Vue Logo"> Vue.
-</a>
-</strong>
+AG Grid is easy to set up - all you need to do is provide your data and define your column structure.
 
 ### Installation
 
