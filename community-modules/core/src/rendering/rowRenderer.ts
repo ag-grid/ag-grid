@@ -1103,7 +1103,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         indexesToDraw.forEach((index) => (indexesToDrawMap[index] = true));
 
         const existingIndexes = Object.keys(this.rowCtrlsByRowIndex);
-        const indexesNotToDraw: string[] = existingIndexes.filter((index) => !indexesToDrawMap[index]);
+        const indexesNotToDraw = existingIndexes.filter((index) => !indexesToDrawMap[index]);
 
         this.removeRowCtrls(indexesNotToDraw, suppressAnimation);
     }
@@ -1130,7 +1130,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
         _iterateObject(rowsToRecycle, checkRowToDraw);
 
-        indexesToDraw.sort((a: number, b: number) => a - b);
+        indexesToDraw.sort((a, b) => a - b);
 
         const ret: number[] = [];
 
@@ -1297,7 +1297,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private destroyRowCtrls(rowCtrlsMap: RowCtrlIdMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
-        _iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
+        _iterateObject(rowCtrlsMap, (nodeId, rowCtrl) => {
             // if row was used, then it's null
             if (!rowCtrl) {
                 return;
