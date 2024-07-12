@@ -80,7 +80,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         if (exclusive && this.focusService.isGridFocused()) {
             const activeElement = this.gos.getActiveDomElement();
-            if (activeElement && 'focus' in activeElement) {
+            if (activeElement && !this.gos.isNothingFocused()) {
                 this.elToFocusAfter = activeElement as HTMLElement;
             }
         }
@@ -148,7 +148,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         _clearElement(this.eOverlayWrapper);
 
         // Focus the element that was focused before the exclusive overlay was shown
-        elementToFocus?.focus({ preventScroll: true });
+        elementToFocus?.focus?.({ preventScroll: true });
     }
 
     public hideOverlay(): void {
