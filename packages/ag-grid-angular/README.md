@@ -381,7 +381,7 @@ To apply a theme, add the relevant CSS Class to the Data Grid container. For exa
 
 ```js
 <ag-grid-angular
- class="ag-theme-quartz"
+ class="ag-theme-quartz" // Apply theme
  style="height: 500px;"
  ...
 />
