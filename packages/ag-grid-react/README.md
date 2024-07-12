@@ -51,25 +51,25 @@
   <summary><strong>Table of Contents</strong></summary>
 
 - [📖 Overview](#-overview)
-	- [Features](#features)
-	- [Examples](#examples)
+  - [Features](#features)
+  - [Examples](#examples)
 - [⚡️ Quick Start](#️-quick-start)
-	- [Installation](#installation)
-	- [Setup](#setup)
-	- [Seed Projects](#seed-projects)
+  - [Installation](#installation)
+  - [Setup](#setup)
+  - [Seed Projects](#seed-projects)
 - [🛠️ Customisations](#️-customisations)
-	- [Custom Components](#custom-components)
-	- [Themes](#themes)
-	- [Custom Themes](#custom-themes)
+  - [Custom Components](#custom-components)
+  - [Themes](#themes)
+  - [Custom Themes](#custom-themes)
 - [🌍 Community](#-community)
-	- [Tools \& Extensions](#tools--extensions)
-	- [Showcase](#showcase)
-	- [Stargazers](#stargazers)
+  - [Tools \& Extensions](#tools--extensions)
+  - [Showcase](#showcase)
+  - [Stargazers](#stargazers)
 - [🤝 Support](#-support)
-	- [Enterprise Support](#enterprise-support)
-	- [Bug Reports](#bug-reports)
-	- [Questions](#questions)
-	- [Contributing](#contributing)
+  - [Enterprise Support](#enterprise-support)
+  - [Bug Reports](#bug-reports)
+  - [Questions](#questions)
+  - [Contributing](#contributing)
 - [⚠️ License](#️-license)
 
 </details>
@@ -352,7 +352,15 @@ AG Grid has 4 [themes](https://ag-grid.com/vue-data-grid/global-style/?utm_sourc
 To apply a theme, add the relevant CSS Class to the Data Grid container. For example, to apply the Quartz theme, use the CSS class `ag-theme-quartz`:
 
 ```js
-<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-quartz"></div>
+<div
+  className="ag-theme-quartz" // Apply the theme to your React Data Grid
+  style={{ height: 500 }}
+>
+  <AgGridReact
+      rowData={rowData}
+      columnDefs={colDefs}
+  />
+</div>
 ```
 
 ### Custom Themes
