@@ -135,6 +135,47 @@ describe('pinned rows', () => {
                 expect.objectContaining({ data: updatedTop[1], rowPinned: 'top' })
             );
         });
+
+        test('remove and re-order rows', () => {
+            const getRowId = jest.fn((p) => p.data.id);
+            const pinnedTopRowData = [
+                { id: '3', athlete: 'Jake', sport: 'Top sport 0', age: 11 },
+                { id: '4', athlete: 'Peter', sport: 'Top sport 1', age: 12 },
+                { id: '5', athlete: 'Victor', sport: 'Top sport 2', age: 22 },
+            ];
+
+            const api = createMyGrid({
+                columnDefs,
+                pinnedTopRowData,
+                getRowId,
+            });
+
+            assertPinnedRowData(pinnedTopRowData, 'top');
+            expect(getRowId).toHaveBeenLastCalledWith(
+                expect.objectContaining({ data: pinnedTopRowData[2], rowPinned: 'top' })
+            );
+
+            const updatedTop = [
+                { id: '5', athlete: 'Charles', sport: 'new sport 0', age: 22 },
+                { id: '3', athlete: 'Jake', sport: 'new sport 1', age: 14 },
+            ];
+
+            api.setGridOption('pinnedTopRowData', updatedTop);
+
+            assertPinnedRowData(updatedTop, 'top');
+            expect(getRowId).toHaveBeenLastCalledWith(
+                expect.objectContaining({ data: updatedTop[1], rowPinned: 'top' })
+            );
+        });
+
+        test('rows are cleared on setting undefined rowData', () => {
+            const api = createMyGrid({ columnDefs, pinnedTopRowData: topData });
+
+            assertPinnedRowData(topData, 'top');
+
+            api.setGridOption('pinnedTopRowData', undefined);
+            assertPinnedRowData([], 'top');
+        });
     });
 
     describe('bottom', () => {
@@ -232,6 +273,47 @@ describe('pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
+        });
+
+        test('remove and re-order rows', () => {
+            const getRowId = jest.fn((p) => p.data.id);
+            const pinnedBottomRowData = [
+                { id: '3', athlete: 'Jake', sport: 'Bottom sport 0', age: 11 },
+                { id: '4', athlete: 'Peter', sport: 'Bottom sport 1', age: 12 },
+                { id: '5', athlete: 'Victor', sport: 'Bottom sport 2', age: 22 },
+            ];
+
+            const api = createMyGrid({
+                columnDefs,
+                pinnedBottomRowData,
+                getRowId,
+            });
+
+            assertPinnedRowData(pinnedBottomRowData, 'bottom');
+            expect(getRowId).toHaveBeenLastCalledWith(
+                expect.objectContaining({ data: pinnedBottomRowData[2], rowPinned: 'bottom' })
+            );
+
+            const updatedBottom = [
+                { id: '5', athlete: 'Charles', sport: 'new sport 0', age: 22 },
+                { id: '3', athlete: 'Jake', sport: 'new sport 1', age: 14 },
+            ];
+
+            api.setGridOption('pinnedBottomRowData', updatedBottom);
+
+            assertPinnedRowData(updatedBottom, 'bottom');
+            expect(getRowId).toHaveBeenLastCalledWith(
+                expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
+            );
+        });
+
+        test('rows are cleared on setting undefined rowData', () => {
+            const api = createMyGrid({ columnDefs, pinnedBottomRowData: bottomData });
+
+            assertPinnedRowData(bottomData, 'bottom');
+
+            api.setGridOption('pinnedBottomRowData', undefined);
+            assertPinnedRowData([], 'bottom');
         });
     });
 });
