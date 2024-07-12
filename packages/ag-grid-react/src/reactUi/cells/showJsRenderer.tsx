@@ -8,7 +8,7 @@ import type { RenderDetails } from './cellComp';
 const useJsCellRenderer = (
     showDetails: RenderDetails | undefined,
     showTools: boolean,
-    eCellValue: HTMLElement | undefined,
+    eCellValue: HTMLElement | undefined | null,
     cellValueVersion: number,
     jsCellRendererRef: MutableRefObject<ICellRendererComp | undefined>,
     eGui: MutableRefObject<any>

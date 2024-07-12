@@ -68,12 +68,11 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!eGui.current) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        if (!eRef) {
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current.length = 0;
-
             return;
         }
 
@@ -139,9 +138,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
                 const api = apiRef.current;
                 if (api) {
-                    if (props.setGridApi) {
-                        props.setGridApi(api);
-                    }
+                    props.setGridApi?.(api);
                 }
             });
         };
@@ -160,7 +157,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
         const gridCoreCreator = new GridCoreCreator();
         apiRef.current = gridCoreCreator.create(
-            eGui.current,
+            eRef,
             mergedGridOps,
             createUiCallback,
             acceptChangesCallback,
@@ -314,8 +311,8 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         );
     }
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGuiRef.current = e;
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGuiRef.current = eRef;
 
         if (!eGuiRef.current) {
             ctrlRef.current = context.destroyBean(ctrlRef.current);

@@ -75,14 +75,14 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     }, []);
 
     const setTopRef = useCallback(
-        (e: HTMLDivElement) => {
+        (e: HTMLDivElement | null) => {
             topTabGuardRef.current = e;
             setupCtrl();
         },
         [setupCtrl]
     );
     const setBottomRef = useCallback(
-        (e: HTMLDivElement) => {
+        (e: HTMLDivElement | null) => {
             bottomTabGuardRef.current = e;
             setupCtrl();
         },

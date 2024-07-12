@@ -119,20 +119,17 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
     if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!e) {
-            compBean.current = context.destroyBean(compBean.current);
-        }
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new EmptyBean()) : context.destroyBean(compBean.current);
 
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
-        if (!e || !rowCtrl.isAlive()) {
+        if (!eRef || !rowCtrl.isAlive()) {
             return;
         }
-        compBean.current = context.createBean(new EmptyBean());
-        rowCtrl.setComp(compProxy.current, eGui.current, containerType, compBean.current);
+        rowCtrl.setComp(compProxy.current, eRef, containerType, compBean.current!);
     }, []);
 
     useLayoutEffect(

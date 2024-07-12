@@ -99,14 +99,14 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     }, [areElementsReady, areElementsRemoved]);
 
     const setContainerRef = useCallback(
-        (e: HTMLDivElement) => {
+        (e: HTMLDivElement | null) => {
             eContainer.current = e;
             setRef();
         },
         [setRef]
     );
     const setViewportRef = useCallback(
-        (e: HTMLDivElement) => {
+        (e: HTMLDivElement | null) => {
             eViewport.current = e;
             setRef();
         },

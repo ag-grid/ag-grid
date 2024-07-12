@@ -19,15 +19,15 @@ const GridHeaderComp = () => {
         setHeightAndMinHeight: (height) => setHeight(height),
     });
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!e) {
-            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current!);
-            return;
-        }
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        gridCtrlRef.current = eRef
+            ? context.createBean(new GridHeaderCtrl())
+            : context.destroyBean(gridCtrlRef.current);
 
-        gridCtrlRef.current = context.createBean(new GridHeaderCtrl());
-        gridCtrlRef.current.setComp(compProxy.current, eGui.current, eGui.current);
+        if (!eRef) return;
+
+        gridCtrlRef.current?.setComp(compProxy.current, eRef, eRef);
     }, []);
 
     const className = useMemo(() => {

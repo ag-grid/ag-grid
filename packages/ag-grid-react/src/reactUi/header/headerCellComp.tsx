@@ -47,22 +47,19 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
         getUserCompInstance: () => userCompRef.current || undefined,
     });
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!e) {
-            compBean.current = context.destroyBean(compBean.current);
-        }
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new EmptyBean()) : context.destroyBean(compBean.current);
 
-        if (!e || !isAlive) {
+        if (!eRef || !isAlive) {
             return;
         }
 
-        compBean.current = context.createBean(new EmptyBean());
-        ctrl.setComp(compProxy.current, eGui.current, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
+        ctrl.setComp(compProxy.current, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current!);
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current?.insertAdjacentElement('afterend', selectAllGui);
-        compBean.current.addDestroyFunc(() => selectAllGui.remove()); // TODO: test that there is duplication without this line
+        compBean.current!.addDestroyFunc(() => selectAllGui.remove()); // TODO: test that there is duplication without this line
     }, []);
 
     // js comps

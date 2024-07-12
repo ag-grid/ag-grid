@@ -77,22 +77,17 @@ const GridComp = ({ context }: GridCompProps) => {
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eRootWrapperRef.current = e;
+    const setRef = useCallback((eGui: HTMLDivElement | null) => {
+        eRootWrapperRef.current = eGui;
+        gridCtrlRef.current = eGui ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
 
-        if (!eRootWrapperRef.current) {
-            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
+        if (!eGui || context.isDestroyed()) {
             return;
         }
 
-        if (context.isDestroyed()) {
-            return;
-        }
-
-        gridCtrlRef.current = context.createBean(new GridCtrl());
-        const gridCtrl = gridCtrlRef.current;
+        const gridCtrl = gridCtrlRef.current!;
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
-        gridCtrl.setComp(compProxy.current, eRootWrapperRef.current, eRootWrapperRef.current);
+        gridCtrl.setComp(compProxy.current, eGui, eGui);
 
         setInitialised(true);
     }, []);

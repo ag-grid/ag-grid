@@ -44,15 +44,17 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
         },
     });
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!eGui.current) {
-            headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        headerRowCtrlRef.current = eRef
+            ? context.createBean(new HeaderRowContainerCtrl(props.pinned))
+            : context.destroyBean(headerRowCtrlRef.current);
+
+        if (!eRef) {
             return;
         }
 
-        headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(props.pinned));
-        headerRowCtrlRef.current.setComp(compProxy.current, eGui.current);
+        headerRowCtrlRef.current?.setComp(compProxy.current, eRef);
     }, []);
 
     const className = !displayed ? 'ag-hidden' : '';
