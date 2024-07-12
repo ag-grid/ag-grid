@@ -88,4 +88,8 @@ const GridExample = () => {
 };
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<GridExample />);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

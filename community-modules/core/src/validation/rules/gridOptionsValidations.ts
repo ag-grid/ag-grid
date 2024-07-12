@@ -279,7 +279,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
         },
     },
     groupHideOpenParents: {
-        supportedRowModels: ['clientSide'],
+        supportedRowModels: ['clientSide', 'serverSide'],
         dependencies: {
             groupTotalRow: [undefined, 'bottom'],
         },
