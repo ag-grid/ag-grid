@@ -4,6 +4,16 @@
   "scripts": {
     "build": "./node_modules/.bin/ng build"
   },
+  "keywords": [
+    "angular data grid",
+    "angular table",
+    "angular-component",
+    "data",
+    "grid",
+    "table",
+    "angular",
+    "data grid"
+  ],
   "license": "MIT",
   "module": "./dist/ag-grid-angular/fesm2022/ag-grid-community-angular.mjs",
   "typings": "./dist/ag-grid-angular/index.d.ts",
