@@ -239,17 +239,9 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public override destroy(): void {
-        if (this.filtersRowCtrl) {
-            this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
-        }
-
-        if (this.columnsRowCtrl) {
-            this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
-        }
-
-        if (this.groupsRowCtrls && this.groupsRowCtrls.length) {
-            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
-        }
+        this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
+        this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
+        this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
 
         super.destroy();
     }

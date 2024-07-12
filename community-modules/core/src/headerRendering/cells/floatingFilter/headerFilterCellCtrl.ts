@@ -1,5 +1,6 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
+import { setupCompBean } from '../../../context/beanStub';
 import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -27,6 +28,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private userCompDetails?: UserCompDetails | null;
     private destroySyncListener: () => null;
     private destroyFilterChangedListener: () => null;
+    private compBeanCleanup?: () => void;
 
     constructor(column: AgColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
@@ -38,10 +40,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         eGui: HTMLElement,
         eButtonShowMainFilter: HTMLElement,
         eFloatingFilterBody: HTMLElement,
-        compBean: BeanStub<any>
+        compBean: BeanStub<any> | undefined
     ): void {
         this.comp = comp;
-        this.addDestroyFunc(() => this.destroyBean(compBean));
+        [compBean, this.compBeanCleanup] = setupCompBean(this, this.beans.context, compBean);
 
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
@@ -427,6 +429,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     public override destroy(): void {
+        this.compBeanCleanup?.();
+
         super.destroy();
 
         (this.eButtonShowMainFilter as any) = null;

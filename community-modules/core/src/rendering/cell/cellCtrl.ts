@@ -1,5 +1,5 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
-import { BeanStub } from '../../context/beanStub';
+import { BeanStub, setupCompBean } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
@@ -110,6 +110,7 @@ export class CellCtrl extends BeanStub {
     private customRowDragComp: RowDragComp;
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
+    private compBeanCleanup?: () => void;
 
     constructor(
         private readonly column: AgColumn,
@@ -260,9 +261,10 @@ export class CellCtrl extends BeanStub {
         eCellWrapper: HTMLElement | undefined,
         printLayout: boolean,
         startEditing: boolean,
-        compBean: BeanStub<any>
+        compBean: BeanStub<any> | undefined
     ): void {
         this.cellComp = comp;
+        [compBean, this.compBeanCleanup] = setupCompBean(this, this.beans.context, compBean);
 
         this.eGui = eGui;
         this.printLayout = printLayout;
@@ -1065,6 +1067,7 @@ export class CellCtrl extends BeanStub {
 
     public override destroy(): void {
         this.onCellCompAttachedFuncs = [];
+        this.compBeanCleanup?.();
         super.destroy();
     }
 

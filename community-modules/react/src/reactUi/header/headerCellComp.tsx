@@ -51,7 +51,7 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
         eGui.current = eRef;
         compBean.current = eRef ? context.createBean(new EmptyBean()) : context.destroyBean(compBean.current);
 
-        if (!eRef || !isAlive) {
+        if (!eRef || !ctrl.isAlive()) {
             return;
         }
 
@@ -59,7 +59,7 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current?.insertAdjacentElement('afterend', selectAllGui);
-        compBean.current!.addDestroyFunc(() => selectAllGui.remove()); // TODO: test that there is duplication without this line
+        compBean.current!.addDestroyFunc(() => selectAllGui.remove()); // TODO: test that there is duplications without this line
     }, []);
 
     // js comps

@@ -1,5 +1,5 @@
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
-import { BeanStub } from '../../context/beanStub';
+import { BeanStub, setupCompBean } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
@@ -119,7 +119,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     };
 
     private rowDragComps: RowDragComp[] = [];
-
+    private compBeanCleanup?: () => void;
     private readonly useAnimationFrameForCreate: boolean;
 
     private paginationPage: number;
@@ -222,8 +222,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         rowComp: IRowComp,
         element: HTMLElement,
         containerType: RowContainerType,
-        compBean: BeanStub<any>
+        compBean: BeanStub<any> | undefined
     ): void {
+        [compBean, this.compBeanCleanup] = setupCompBean(this, this.beans.context, compBean);
         const gui: RowGui = { rowComp, element, containerType, compBean };
         this.allRowGuis.push(gui);
         this.updateGui(containerType, gui);
@@ -1571,6 +1572,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
+        this.compBeanCleanup?.();
 
         // if we are editing, destroying the row will stop editing
         this.stopEditing();

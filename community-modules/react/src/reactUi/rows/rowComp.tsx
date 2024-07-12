@@ -121,6 +121,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
     }
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
+        console.log('RowComp -> setRef -> eRef', containerType);
         compBean.current = eRef ? context.createBean(new EmptyBean()) : context.destroyBean(compBean.current);
 
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can

@@ -57,7 +57,7 @@ const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
         if (!eRef || !props.ctrl.isAlive()) {
             return;
         }
-        ctrl.setComp(compProxy.current, eRef, false);
+        ctrl.setComp(compProxy.current, compBean.current, false);
     }, []);
 
     const style = useMemo(

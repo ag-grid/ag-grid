@@ -1,6 +1,7 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
+import { setupCompBean } from '../../../context/beanStub';
 import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
@@ -42,15 +43,21 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private expandable: boolean;
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
+    private compBeanCleanup?: () => void;
 
     constructor(columnGroup: AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, beans, parentRowCtrl);
         this.column = columnGroup;
     }
 
-    public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement, compBean: BeanStub<any>): void {
+    public setComp(
+        comp: IHeaderGroupCellComp,
+        eGui: HTMLElement,
+        eResize: HTMLElement,
+        compBean: BeanStub<any> | undefined
+    ): void {
         this.comp = comp;
-        this.addDestroyFunc(() => this.destroyBean(compBean));
+        [compBean, this.compBeanCleanup] = setupCompBean(this, this.beans.context, compBean);
 
         this.setGui(eGui, compBean);
 
@@ -455,5 +462,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const result = childSuppressesMoving || this.gos.get('suppressMovableColumns');
 
         return result;
+    }
+
+    public override destroy(): void {
+        this.compBeanCleanup?.();
+
+        super.destroy();
     }
 }

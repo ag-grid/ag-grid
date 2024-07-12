@@ -24,7 +24,9 @@ export type EventOrDestroyed<TEventType extends string> = TEventType | BeanStubE
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
 type AgEventHandlers = { [K in AgEventType]?: (event: AgEventTypeParams[K]) => void };
-
+(window as any).AG_DESTROY_FUNCS = {};
+(window as any).AG_DESTROY_FUNCS_COUNT = 0;
+let nextId = 0;
 export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     implements BaseBean<BeanCollection>, Bean, IEventEmitter<EventOrDestroyed<TEventType>>
 {
@@ -33,7 +35,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     private stubContext: Context; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
-
+    private stubIdd = nextId++;
     // for vue 3 - prevents Vue from trying to make this (and obviously any sub classes) from being reactive
     // prevents vue from creating proxies for created objects and prevents identity related issues
     public __v_skip = true;
@@ -43,6 +45,10 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     protected gos: GridOptionsService;
     protected localeService: LocaleService;
     protected gridId: string;
+    constructor() {
+        (window as any).AG_DESTROY_FUNCS[this.constructor.name] =
+            (window as any).AG_DESTROY_FUNCS[this.constructor.name] ?? 0;
+    }
 
     public preWireBeans(beans: BeanCollection): void {
         this.gridId = beans.context.getGridId();
@@ -76,6 +82,8 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     public destroy(): void {
         for (let i = 0; i < this.destroyFunctions.length; i++) {
             this.destroyFunctions[i]();
+            (window as any).AG_DESTROY_FUNCS[this.constructor.name]--;
+            (window as any).AG_DESTROY_FUNCS_COUNT--;
         }
         this.destroyFunctions.length = 0;
         this.destroyed = true;
@@ -156,11 +164,15 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         };
 
         this.destroyFunctions.push(destroyFunc);
+        (window as any).AG_DESTROY_FUNCS[this.constructor.name]++;
+        (window as any).AG_DESTROY_FUNCS_COUNT++;
 
         return () => {
             destroyFunc();
             // Only remove if manually called before bean is destroyed
             this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
+            (window as any).AG_DESTROY_FUNCS[this.constructor.name]--;
+            (window as any).AG_DESTROY_FUNCS_COUNT--;
             return null;
         };
     }
@@ -181,10 +193,13 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
             return null;
         };
         this.destroyFunctions.push(destroyFunc);
-
+        (window as any).AG_DESTROY_FUNCS[this.constructor.name]++;
+        (window as any).AG_DESTROY_FUNCS_COUNT++;
         return () => {
             destroyFunc();
             // Only remove if manually called before bean is destroyed
+            (window as any).AG_DESTROY_FUNCS[this.constructor.name]--;
+            (window as any).AG_DESTROY_FUNCS_COUNT--;
             this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
             return null;
         };
@@ -254,10 +269,13 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     public isAlive = (): boolean => !this.destroyed;
 
     public addDestroyFunc(func: () => void): void {
-        // if we are already destroyed, we execute the func now
         if (this.isAlive()) {
             this.destroyFunctions.push(func);
+            (window as any).AG_DESTROY_FUNCS[this.constructor.name] =
+                (window as any).AG_DESTROY_FUNCS[this.constructor.name] + 1;
+            (window as any).AG_DESTROY_FUNCS_COUNT++;
         } else {
+            // if we are already destroyed, we execute the func now
             func();
         }
     }
@@ -291,4 +309,23 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     protected destroyBeans<T extends Bean | null | undefined>(beans: T[], context?: Context): T[] {
         return (context || this.stubContext).destroyBeans(beans);
     }
+}
+
+/**
+ * Sets up the logic for managing the lifecycle of a compBean against a ctrl so that we always cleanup
+ * our listeners and destroy the compBean when the ctrl is destroyed no matter which is destroyed first.
+ * Closely related to React StrictMode as the compBean is provided from React so it can double render
+ * and correctly cleanup listeners from the first render.
+ * @param ctrl Ctrl that has setComp called against it
+ * @param ctx  Context to use to destroy the compBean
+ * @param compBean Optional compBean to use, if not provided, the ctrl will be used
+ * @returns The compBean if provided, otherwise the ctrl
+ */
+export function setupCompBean(
+    ctrl: BeanStub<any>,
+    ctx: Context,
+    compBean: BeanStub<any> | undefined
+): [BeanStub<any>, () => void] {
+    compBean ??= ctrl;
+    return [compBean, () => ctx.destroyBean(compBean)];
 }

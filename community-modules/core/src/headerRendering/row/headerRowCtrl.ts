@@ -1,5 +1,5 @@
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
+import { BeanStub, setupCompBean } from '../../context/beanStub';
+import type { BeanCollection, Context } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -29,12 +29,11 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private comp: IHeaderRowComp;
-    private eGui: HTMLElement;
     private rowIndex: number;
     private pinned: ColumnPinnedType;
     private type: HeaderRowType;
     private headerRowClass: string;
-
+    private compBeanCleanup?: () => void;
     private instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private headerCellCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl> | undefined;
@@ -81,8 +80,9 @@ export class HeaderRowCtrl extends BeanStub {
      * @param comp Proxy to the actual component
      * @param initCompState Should the component be initialised with the current state of the controller. Default: true
      */
-    public setComp(comp: IHeaderRowComp, eGui: HTMLElement, initCompState: boolean = true): void {
+    public setComp(comp: IHeaderRowComp, compBean: BeanStub<any> | undefined, initCompState: boolean = true): void {
         this.comp = comp;
+        [compBean, this.compBeanCleanup] = setupCompBean(this, this.beans.context, compBean);
 
         if (initCompState) {
             this.onRowHeightChanged();
@@ -91,7 +91,7 @@ export class HeaderRowCtrl extends BeanStub {
         // width is managed directly regardless of framework and so is not included in initCompState
         this.setWidth();
 
-        this.addEventListeners();
+        this.addEventListeners(compBean);
     }
 
     public getHeaderRowClass(): string {
@@ -101,9 +101,9 @@ export class HeaderRowCtrl extends BeanStub {
         return this.rowIndex + 1;
     }
 
-    private addEventListeners(): void {
+    private addEventListeners(compBean: BeanStub<any>): void {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
-        this.addManagedEventListeners({
+        compBean.addManagedEventListeners({
             columnResized: this.onColumnResized.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
@@ -113,10 +113,10 @@ export class HeaderRowCtrl extends BeanStub {
         });
 
         // when print layout changes, it changes what columns are in what section
-        this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
+        compBean.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        compBean.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
 
-        this.addManagedPropertyListeners(
+        compBean.addManagedPropertyListeners(
             [
                 'headerHeight',
                 'pivotHeaderHeight',
@@ -332,6 +332,14 @@ export class HeaderRowCtrl extends BeanStub {
             }
         }
 
+        if (this.headerCellCtrls.has(idOfChild)) {
+            console.log(
+                'HeaderRowCtrl: headerCellCtrls already has idOfChild',
+                idOfChild,
+                this.headerCellCtrls.get(idOfChild) === headerCtrl
+            );
+        }
+
         this.headerCellCtrls.set(idOfChild, headerCtrl);
     }
 
@@ -390,12 +398,11 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public override destroy(): void {
-        if (this.headerCellCtrls) {
-            this.headerCellCtrls.forEach((ctrl) => {
-                this.destroyBean(ctrl);
-            });
-        }
+        this.headerCellCtrls?.forEach((ctrl) => {
+            this.destroyBean(ctrl);
+        });
         this.headerCellCtrls = undefined;
+        this.compBeanCleanup?.();
         super.destroy();
     }
 }

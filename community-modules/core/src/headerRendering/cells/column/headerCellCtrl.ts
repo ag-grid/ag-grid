@@ -1,6 +1,7 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
+import { setupCompBean } from '../../../context/beanStub';
 import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
@@ -52,6 +53,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private userHeaderClasses: Set<string> = new Set();
     private ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
+    private compBeanCleanup?: () => void;
 
     constructor(column: AgColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
@@ -63,10 +65,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         eGui: HTMLElement,
         eResize: HTMLElement,
         eHeaderCompWrapper: HTMLElement,
-        compBean: BeanStub<any>
+        compBean: BeanStub<any> | undefined
     ): void {
         this.comp = comp;
-        this.addDestroyFunc(() => this.destroyBean(compBean));
+        [compBean, this.compBeanCleanup] = setupCompBean(this, this.beans.context, compBean);
 
         this.setGui(eGui, compBean);
         this.updateState();
@@ -80,7 +82,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.addColumnHoverListener(compBean);
         this.setupFilterClass(compBean);
         this.setupClassesFromColDef();
-        this.setupTooltip();
+        this.setupTooltip(compBean);
         this.addActiveHeaderMouseListeners(compBean);
         this.setupSelectAll(compBean);
         this.setupUserComp();
@@ -217,7 +219,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             },
             eGridHeader: this.getGui(),
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setupTooltip(value, shouldDisplayTooltip);
+                this.setupTooltip(undefined, value, shouldDisplayTooltip);
             },
         });
 
@@ -291,7 +293,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setActiveHeader(false);
     }
 
-    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
+    private setupTooltip(
+        compBean: BeanStub<any> | undefined,
+        value?: string,
+        shouldDisplayTooltip?: () => boolean
+    ): void {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
@@ -327,7 +333,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             shouldDisplayTooltip,
         };
 
-        const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl));
+        const tooltipFeature = (compBean ?? this).createManagedBean(new TooltipFeature(tooltipCtrl));
+        this.tooltipFeature = tooltipFeature;
         this.setRefreshFunction('tooltip', () => tooltipFeature.refreshToolTip());
     }
 
@@ -816,6 +823,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     public override destroy(): void {
+        this.compBeanCleanup?.();
+
         super.destroy();
 
         this.refreshFunctions = {};
