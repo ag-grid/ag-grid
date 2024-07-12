@@ -5,12 +5,12 @@ import type {
     IHeaderCellComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
+import { CssClassManager, EmptyBean, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { RenderSkipper, isComponentStateless } from '../utils';
+import { isComponentStateless } from '../utils';
 
 const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     const { ctrl } = props;
@@ -20,11 +20,11 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     const colId = isAlive ? ctrl.getColId() : undefined;
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
-    const renderChecker = useRef(new RenderSkipper());
     const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
     const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeader>();
+    const compBean = useRef<EmptyBean>();
 
     const cssClassManager = useRef<CssClassManager>();
     if (isAlive && !cssClassManager.current) {
@@ -48,16 +48,21 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
     });
 
     const setRef = useCallback((e: HTMLDivElement) => {
-        const shouldSkip = renderChecker.current.shouldSkip(e, eGui.current);
         eGui.current = e;
-        if (!eGui.current || !isAlive || shouldSkip) {
+        if (!e) {
+            compBean.current = context.destroyBean(compBean.current);
+        }
+
+        if (!e || !isAlive) {
             return;
         }
 
-        ctrl.setComp(compProxy.current, eGui.current, eResize.current!, eHeaderCompWrapper.current!);
+        compBean.current = context.createBean(new EmptyBean());
+        ctrl.setComp(compProxy.current, eGui.current, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current?.insertAdjacentElement('afterend', selectAllGui);
+        compBean.current.addDestroyFunc(() => selectAllGui.remove()); // TODO: test that there is duplication without this line
     }, []);
 
     // js comps

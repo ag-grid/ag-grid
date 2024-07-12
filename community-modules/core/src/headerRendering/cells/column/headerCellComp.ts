@@ -51,7 +51,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             getUserCompInstance: () => this.headerComp,
         };
 
-        this.ctrl.setComp(compProxy, this.getGui(), this.eResize, this.eHeaderCompWrapper);
+        this.ctrl.setComp(compProxy, this.getGui(), this.eResize, this.eHeaderCompWrapper, this.ctrl);
 
         const selectAllGui = this.ctrl.getSelectAllGui();
         this.eResize.insertAdjacentElement('afterend', selectAllGui);

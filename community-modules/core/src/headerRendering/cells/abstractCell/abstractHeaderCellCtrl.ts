@@ -1,3 +1,4 @@
+import type { EmptyBean } from '../../../components/emptyBean';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
@@ -105,14 +106,14 @@ export abstract class AbstractHeaderCellCtrl<
         return activeEl === this.eGui;
     }
 
-    protected setGui(eGui: HTMLElement): void {
+    protected setGui(eGui: HTMLElement, compBean: BeanStub<any>): void {
         this.eGui = eGui;
-        this.addDomData();
-        this.addManagedListeners(this.beans.eventService, {
+        this.addDomData(compBean);
+        compBean.addManagedListeners(this.beans.eventService, {
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
 
-        this.addManagedElementListeners(this.eGui, {
+        compBean.addManagedElementListeners(this.eGui, {
             focus: this.onGuiFocus.bind(this),
         });
 
@@ -149,12 +150,12 @@ export abstract class AbstractHeaderCellCtrl<
         _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
-    protected addResizeAndMoveKeyboardListeners(): void {
+    protected addResizeAndMoveKeyboardListeners(compBean: EmptyBean): void {
         if (!this.resizeFeature) {
             return;
         }
 
-        this.addManagedListeners(this.eGui, {
+        compBean.addManagedListeners(this.eGui, {
             keydown: this.onGuiKeyDown.bind(this),
             keyup: this.onGuiKeyUp.bind(this),
         });
@@ -278,10 +279,10 @@ export abstract class AbstractHeaderCellCtrl<
         }
     }
 
-    private addDomData(): void {
+    private addDomData(compBean: EmptyBean): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
         this.gos.setDomData(this.eGui, key, this);
-        this.addDestroyFunc(() => this.gos.setDomData(this.eGui, key, null));
+        compBean.addDestroyFunc(() => this.gos.setDomData(this.eGui, key, null));
     }
 
     public getGui(): HTMLElement {

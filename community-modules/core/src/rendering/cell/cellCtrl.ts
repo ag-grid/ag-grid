@@ -259,14 +259,15 @@ export class CellCtrl extends BeanStub {
         eGui: HTMLElement,
         eCellWrapper: HTMLElement | undefined,
         printLayout: boolean,
-        startEditing: boolean
+        startEditing: boolean,
+        compBean: BeanStub<any>
     ): void {
         this.cellComp = comp;
 
         this.eGui = eGui;
         this.printLayout = printLayout;
 
-        this.addDomData();
+        this.addDomData(compBean);
 
         this.onCellFocused(this.focusEventToRestore);
         this.applyStaticCssClasses();
@@ -277,19 +278,16 @@ export class CellCtrl extends BeanStub {
         this.onColumnHover();
         this.setupControlComps();
 
-        this.setupAutoHeight(eCellWrapper);
+        this.setupAutoHeight(eCellWrapper, compBean);
 
         this.refreshFirstAndLastStyles();
         this.refreshAriaColIndex();
 
-        this.cellPositionFeature?.setComp(eGui);
+        this.cellPositionFeature?.setComp(eGui, compBean);
         this.cellCustomStyleFeature?.setComp(comp);
         this.tooltipFeature?.refreshToolTip();
         this.cellKeyboardListenerFeature?.setComp(this.eGui);
-
-        if (this.cellRangeFeature) {
-            this.cellRangeFeature.setComp(comp, eGui);
-        }
+        this.cellRangeFeature?.setComp(comp, eGui);
 
         if (startEditing && this.isCellEditable()) {
             this.startEditing();
@@ -297,13 +295,15 @@ export class CellCtrl extends BeanStub {
             this.showValue();
         }
 
+        // Are we now going to get duplicated cellEditingStarted events?
+
         if (this.onCellCompAttachedFuncs.length) {
             this.onCellCompAttachedFuncs.forEach((func) => func());
-            this.onCellCompAttachedFuncs = [];
+            //this.onCellCompAttachedFuncs = []; // we don't clear this, as if React does a re-render, we need to re-run these on the new cellComp
         }
     }
 
-    private setupAutoHeight(eCellWrapper?: HTMLElement): void {
+    private setupAutoHeight(eCellWrapper: undefined | HTMLElement, compBean: BeanStub): void {
         this.isAutoHeight = this.column.isAutoHeight();
         if (!this.isAutoHeight || !eCellWrapper) {
             return;
@@ -357,7 +357,7 @@ export class CellCtrl extends BeanStub {
 
         const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
 
-        this.addDestroyFunc(() => {
+        compBean.addDestroyFunc(() => {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         });
@@ -749,11 +749,11 @@ export class CellCtrl extends BeanStub {
         return this.value;
     }
 
-    private addDomData(): void {
+    private addDomData(compBean: BeanStub): void {
         const element = this.getGui();
 
         this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
-        this.addDestroyFunc(() => this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
+        compBean.addDestroyFunc(() => this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
@@ -1101,7 +1101,7 @@ export class CellCtrl extends BeanStub {
         if (newComp) {
             this.customRowDragComp = newComp;
             this.addDestroyFunc(() => {
-                this.beans.context.destroyBean(newComp);
+                this.destroyBean(newComp, this.beans.context);
                 (this.customRowDragComp as any) = null;
             });
         }

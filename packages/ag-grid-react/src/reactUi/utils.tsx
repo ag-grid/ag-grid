@@ -161,38 +161,3 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
 
     return [...oldValues, ...newValues];
 }
-
-/**
- * Used to avoid duplicating listeners and setup logic while React is running in StrictMode.
- * This is only required for the Components where the ctrl is managed by AG Grid and passed into the React component.
- * All the other React components create / destroy their own ctrl so StrictMode works as expected.
- *
- * Alternative approach:
- *  - update all the Ctrls to handle a component being unmounted and then mounted again.
- *  - This would need to make sure that all listeners are removed when the component is unmounted.
- *  - This is doable but would require more changes to the Ctrls.
- *
- */
-export class RenderSkipper {
-    private lastElement: HTMLElement | null = null;
-
-    public shouldSkip<T extends HTMLElement>(e: T | null, eCurrent: T | null): boolean {
-        if (this.skip(e)) {
-            // Clear the last element as we are skipping this render
-            this.lastElement = null;
-            return true;
-        }
-
-        if (!e) {
-            // Element has been unmounted so lets record the last element for comparing on the next render
-            this.lastElement = eCurrent;
-        }
-        return false;
-    }
-
-    private skip(element: HTMLElement | null): boolean {
-        // Element is the same as the last element that was rendered but with an unmount in between
-        // lastElement is only set when the element is null
-        return !!element && element === this.lastElement;
-    }
-}

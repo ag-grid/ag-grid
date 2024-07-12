@@ -7,13 +7,13 @@ import type {
     RowStyle,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager } from 'ag-grid-community';
+import { CssClassManager, EmptyBean } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
-import { RenderSkipper, agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
+import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
@@ -45,7 +45,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         isDisplayed ? rowCtrl.getInitialTransform(containerType) : undefined
     );
 
-    const renderChecker = useRef(new RenderSkipper());
+    const compBean = useRef<EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
 
@@ -120,27 +120,19 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((e: HTMLDivElement) => {
-        if (!e) {
-            // Want to unset the component if the element is removed from the DOM
-            // We don't want to do this in the below check of !eGui.current because
-            // that can return null on the second render
-            rowCtrl.unsetComp(containerType);
-        }
-
-        const shouldSkip = renderChecker.current.shouldSkip(e, eGui.current);
         eGui.current = e;
-        if (!eGui.current) {
-            return;
+        if (!e) {
+            compBean.current = context.destroyBean(compBean.current);
         }
 
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
-        if (!rowCtrl.isAlive()) {
+        if (!e || !rowCtrl.isAlive()) {
             return;
         }
-
-        rowCtrl.setComp(compProxy.current, eGui.current, containerType, shouldSkip);
+        compBean.current = context.createBean(new EmptyBean());
+        rowCtrl.setComp(compProxy.current, eGui.current, containerType, compBean.current);
     }, []);
 
     useLayoutEffect(

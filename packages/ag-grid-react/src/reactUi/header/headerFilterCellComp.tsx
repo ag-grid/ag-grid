@@ -4,7 +4,7 @@ import type {
     IHeaderFilterCellComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { AgPromise } from 'ag-grid-community';
+import { AgPromise, EmptyBean } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CustomContext } from '../../shared/customComp/customContext';
@@ -13,7 +13,7 @@ import type { CustomFloatingFilterCallbacks } from '../../shared/customComp/inte
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { CssClasses, RenderSkipper, isComponentStateless } from '../utils';
+import { CssClasses, isComponentStateless } from '../utils';
 
 const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     const { context, gos } = useContext(BeansContext);
@@ -29,7 +29,7 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails | null>();
     const [, setRenderKey] = useState<number>(1);
 
-    const renderChecker = useRef(new RenderSkipper());
+    const compBean = useRef<EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);
     const eButtonWrapper = useRef<HTMLDivElement>(null);
@@ -67,9 +67,12 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
     const { ctrl } = props;
 
     const setRef = useCallback((e: HTMLDivElement) => {
-        const shouldSkip = renderChecker.current.shouldSkip(e, eGui.current);
         eGui.current = e;
-        if (!eGui.current || shouldSkip) {
+        if (!e) {
+            compBean.current = context.destroyBean(compBean.current);
+        }
+
+        if (!e || !props.ctrl.isAlive()) {
             return;
         }
 
@@ -77,7 +80,14 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
             userCompResolve.current = resolve;
         });
 
-        ctrl.setComp(compProxy.current, eGui.current, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
+        compBean.current = context.createBean(new EmptyBean());
+        ctrl.setComp(
+            compProxy.current,
+            eGui.current,
+            eButtonShowMainFilter.current!,
+            eFloatingFilterBody.current!,
+            compBean.current
+        );
     }, []);
 
     // js comps

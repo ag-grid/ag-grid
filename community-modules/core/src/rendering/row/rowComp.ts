@@ -57,10 +57,7 @@ export class RowComp extends Component {
             refreshFullWidth: (getUpdatedParams) => this.refreshFullWidth(getUpdatedParams),
         };
 
-        ctrl.setComp(compProxy, this.getGui(), containerType);
-        this.addDestroyFunc(() => {
-            ctrl.unsetComp(containerType);
-        });
+        ctrl.setComp(compProxy, this.getGui(), containerType, ctrl);
     }
 
     private getInitialStyle(containerType: RowContainerType): string {

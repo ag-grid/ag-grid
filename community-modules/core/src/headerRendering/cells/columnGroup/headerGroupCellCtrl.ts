@@ -1,6 +1,7 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
+import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
@@ -47,34 +48,35 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.column = columnGroup;
     }
 
-    public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
+    public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement, compBean: BeanStub<any>): void {
         this.comp = comp;
+        this.addDestroyFunc(() => this.destroyBean(compBean));
 
-        this.setGui(eGui);
+        this.setGui(eGui, compBean);
 
         this.displayName = this.beans.columnNameService.getDisplayNameForColumnGroup(this.column, 'header');
 
         this.addClasses();
-        this.setupMovingCss();
-        this.setupExpandable();
+        this.setupMovingCss(compBean);
+        this.setupExpandable(compBean);
         this.setupTooltip();
-        this.addDestroyFunc(() => {
+        compBean.addDestroyFunc(() => {
             if (this.tooltipFeature) {
                 this.tooltipFeature = this.destroyBean(this.tooltipFeature);
             }
         });
         this.setupUserComp();
-        this.addHeaderMouseListeners();
+        this.addHeaderMouseListeners(compBean);
 
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.column.getProvidedColumnGroup().getLeafColumns();
 
-        this.createManagedBean(new HoverFeature(leafCols, eGui));
-        this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
-        this.createManagedBean(new GroupWidthFeature(comp, this.column));
-        this.resizeFeature = this.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.column));
+        compBean.createManagedBean(new HoverFeature(leafCols, eGui));
+        compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
+        compBean.createManagedBean(new GroupWidthFeature(comp, this.column));
+        this.resizeFeature = compBean.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.column));
 
-        this.createManagedBean(
+        compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
                 shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
                 onTabKeyDown: () => undefined,
@@ -83,8 +85,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             })
         );
 
-        this.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
-        this.addResizeAndMoveKeyboardListeners();
+        compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
+        this.addResizeAndMoveKeyboardListeners(compBean);
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
@@ -203,14 +205,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.comp.setUserCompDetails(compDetails);
     }
 
-    private addHeaderMouseListeners(): void {
+    private addHeaderMouseListeners(compBean: BeanStub): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = () =>
             this.dispatchColumnMouseEvent('columnHeaderClicked', this.column.getProvidedColumnGroup());
         const contextMenuListener = (event: MouseEvent) =>
             this.handleContextMenuMouseEvent(event, undefined, this.column.getProvidedColumnGroup());
 
-        this.addManagedListeners(this.getGui(), {
+        compBean.addManagedListeners(this.getGui(), {
             mouseenter: listener,
             mouseleave: listener,
             click: clickListener,
@@ -264,13 +266,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.createManagedBean(new TooltipFeature(tooltipCtrl));
     }
 
-    private setupExpandable(): void {
+    private setupExpandable(compBean: BeanStub): void {
         const providedColGroup = this.column.getProvidedColumnGroup();
 
         this.refreshExpanded();
 
         const listener = this.refreshExpanded.bind(this);
-        this.addManagedListeners(providedColGroup, {
+        compBean.addManagedListeners(providedColGroup, {
             expandedChanged: listener,
             expandableChanged: listener,
         });
@@ -311,7 +313,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         classes.forEach((c) => this.comp.addOrRemoveCssClass(c, true));
     }
 
-    private setupMovingCss(): void {
+    private setupMovingCss(compBean: BeanStub): void {
         const providedColumnGroup = this.column.getProvidedColumnGroup();
         const leafColumns = providedColumnGroup.getLeafColumns();
 
@@ -321,7 +323,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
 
         leafColumns.forEach((col) => {
-            this.addManagedListeners(col, { movingChanged: listener });
+            compBean.addManagedListeners(col, { movingChanged: listener });
         });
 
         listener();

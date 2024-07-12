@@ -6,15 +6,17 @@ import type {
     HeaderRowCtrl,
     IHeaderRowComp,
 } from '@ag-grid-community/core';
-import { HeaderRowType } from '@ag-grid-community/core';
-import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { EmptyBean, HeaderRowType } from '@ag-grid-community/core';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import { RenderSkipper, agFlushSync, getNextValueIfDifferent } from '../utils';
+import { BeansContext } from '../beansContext';
+import { agFlushSync, getNextValueIfDifferent } from '../utils';
 import HeaderCellComp from './headerCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
+    const { context } = useContext(BeansContext);
     const { ctrl } = props;
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
@@ -28,7 +30,7 @@ const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
     const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getHeaderCtrls());
 
-    const renderChecker = useRef(new RenderSkipper());
+    const compBean = useRef<EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const compProxy = useRef<IHeaderRowComp>({
         setHeight: (height: string) => setHeight(height),
@@ -50,10 +52,14 @@ const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
     });
 
     const setRef = useCallback((e: HTMLDivElement) => {
-        const shouldSkip = renderChecker.current.shouldSkip(e, eGui.current);
         eGui.current = e;
-        if (!eGui.current || shouldSkip) return;
-
+        if (!e) {
+            compBean.current = context.destroyBean(compBean.current);
+        }
+        if (!e || !props.ctrl.isAlive()) {
+            return;
+        }
+        compBean.current = context.createBean(new EmptyBean());
         ctrl.setComp(compProxy.current, eGui.current, false);
     }, []);
 

@@ -34,23 +34,25 @@ export class CellPositionFeature extends BeanStub {
         this.rowNode = ctrl.getRowNode();
     }
 
-    private setupRowSpan(): void {
-        this.rowSpan = this.column.getRowSpan(this.rowNode);
-
-        this.addManagedListeners(this.beans.eventService, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
-    }
-
-    public setComp(eGui: HTMLElement): void {
+    public setComp(eGui: HTMLElement, compBean: BeanStub): void {
         this.eGui = eGui;
 
         // add event handlers only after GUI is attached,
         // so we don't get events before we are ready
-        this.setupColSpan();
-        this.setupRowSpan();
+        this.setupColSpan(compBean);
+        this.setupRowSpan(compBean);
 
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
+    }
+
+    private setupRowSpan(compBean: BeanStub): void {
+        this.rowSpan = this.column.getRowSpan(this.rowNode);
+
+        compBean.addManagedListeners(this.beans.eventService, {
+            newColumnsLoaded: () => this.onNewColumnsLoaded(),
+        });
     }
 
     private onNewColumnsLoaded(): void {
@@ -73,7 +75,7 @@ export class CellPositionFeature extends BeanStub {
         }
     }
 
-    private setupColSpan(): void {
+    private setupColSpan(compBean: BeanStub): void {
         // if no col span is active, then we don't set it up, as it would be wasteful of CPU
         if (this.column.getColDef().colSpan == null) {
             return;
@@ -81,7 +83,7 @@ export class CellPositionFeature extends BeanStub {
 
         this.colsSpanning = this.getColSpanningList();
 
-        this.addManagedListeners(this.beans.eventService, {
+        compBean.addManagedListeners(this.beans.eventService, {
             // because we are col spanning, a reorder of the cols can change what cols we are spanning over
             displayedColumnsChanged: this.onDisplayColumnsChanged.bind(this),
             // because we are spanning over multiple cols, we check for width any time any cols width changes.
