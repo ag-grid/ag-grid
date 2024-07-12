@@ -380,7 +380,11 @@ AG Grid has 4 [themes](https://ag-grid.com/vue-data-grid/global-style/?utm_sourc
 To apply a theme, add the relevant CSS Class to the Data Grid container. For example, to apply the Quartz theme, use the CSS class `ag-theme-quartz`:
 
 ```js
-<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-quartz"></div>
+<ag-grid-angular
+ class="ag-theme-quartz"
+ style="height: 500px;"
+ ...
+/>
 ```
 
 ### Custom Themes
