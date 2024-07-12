@@ -297,18 +297,29 @@ There are a number of different [Component Types](https://www.ag-grid.com/angula
 -   [Tooltip Component](https://www.ag-grid.com/angular-data-grid/tooltips/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github): For custom cell tooltip components.
 -   [Menu Item Component](https://www.ag-grid.com/angular-data-grid/component-menu-item/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github): To customise the menu items shown in the Column and Context Menus.
 
-To supply a custom cell renderer and filter components to the Grid, create a direct reference to your component within the `gridOptions.columnDefs` property:
+When registering an Angular Component by reference you simply pass the Component to the place you want it used (i.e. Cell Renderer, Filter etc):
 
 ```js
-gridOptions = {
-    columnDefs: [
-        {
-            field: 'country', // The column to add the component to
-            cellRenderer: CountryCellRenderer, // Your custom cell component
-            filter: CountryFilter, // Your custom filter component
-        },
-    ],
-};
+//...other imports
+import { Component } from '@angular/core';
+import { CubeComponent } from './cube.component';
+
+@Component({
+selector: 'app-root',
+template: `
+  <ag-grid-angular 
+    [columnDefs]="columnDefs"
+    ...other properties
+  />
+`
+})
+
+export class AppComponent {
+  columnDefs: [{
+          field: "cube",
+          cellRenderer: CubeComponent,     
+  }]
+}
 ```
 
 ### Themes
