@@ -77,7 +77,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         },
     ],
     defaultExcelExportParams: {
-        allColumns: true,
         freezeRows: 'headersAndPinnedRows',
     },
 };
