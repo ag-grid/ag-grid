@@ -51,16 +51,13 @@ const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
         },
     });
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!e) {
-            compBean.current = context.destroyBean(compBean.current);
-        }
-        if (!e || !props.ctrl.isAlive()) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new EmptyBean()) : context.destroyBean(compBean.current);
+        if (!eRef || !props.ctrl.isAlive()) {
             return;
         }
-        compBean.current = context.createBean(new EmptyBean());
-        ctrl.setComp(compProxy.current, eGui.current, false);
+        ctrl.setComp(compProxy.current, eRef, false);
     }, []);
 
     const style = useMemo(

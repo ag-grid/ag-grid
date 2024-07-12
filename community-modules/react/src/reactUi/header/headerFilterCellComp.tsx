@@ -66,13 +66,11 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
 
     const { ctrl } = props;
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!e) {
-            compBean.current = context.destroyBean(compBean.current);
-        }
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new EmptyBean()) : context.destroyBean(compBean.current);
 
-        if (!e || !props.ctrl.isAlive()) {
+        if (!eRef || !props.ctrl.isAlive()) {
             return;
         }
 
@@ -80,13 +78,12 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
             userCompResolve.current = resolve;
         });
 
-        compBean.current = context.createBean(new EmptyBean());
         ctrl.setComp(
             compProxy.current,
-            eGui.current,
+            eRef,
             eButtonShowMainFilter.current!,
             eFloatingFilterBody.current!,
-            compBean.current
+            compBean.current!
         );
     }, []);
 

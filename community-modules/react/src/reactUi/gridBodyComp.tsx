@@ -110,9 +110,9 @@ const GridBodyComp = () => {
         setStickyBottomWidth,
     });
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eRoot.current = e;
-        if (!eRoot.current) {
+    const setRef = useCallback((eGui: HTMLDivElement | null) => {
+        eRoot.current = eGui;
+        if (!eGui) {
             beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current = [];
@@ -137,8 +137,8 @@ const GridBodyComp = () => {
             attachToDom(eParent, newComp(compClass).getGui());
         };
 
-        addComp(eRoot.current, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
-        addComp(eRoot.current, OverlayWrapperComponent, ' AG Overlay Wrapper ');
+        addComp(eGui, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
+        addComp(eGui, OverlayWrapperComponent, ' AG Overlay Wrapper ');
 
         if (eBody.current) {
             addComp(eBody.current, FakeVScrollComp, ' AG Fake Vertical Scroll ');
@@ -148,7 +148,7 @@ const GridBodyComp = () => {
         beansToDestroy.current.push(ctrl);
         ctrl.setComp(
             compProxy.current,
-            eRoot.current,
+            eGui,
             eBodyViewport.current!,
             eTop.current!,
             eBottom.current!,

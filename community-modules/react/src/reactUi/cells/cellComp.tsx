@@ -197,13 +197,13 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<ICellEditor>();
 
-    const eCellWrapper = useRef<HTMLDivElement>();
+    const eCellWrapper = useRef<HTMLDivElement | null>();
     const cellWrapperDestroyFuncs = useRef<(() => void)[]>([]);
 
     // when setting the ref, we also update the state item to force a re-render
-    const eCellValue = useRef<HTMLDivElement>();
+    const eCellValue = useRef<HTMLDivElement | null>();
     const [cellValueVersion, setCellValueVersion] = useState(0);
-    const setCellValueRef = useCallback((ref: HTMLDivElement) => {
+    const setCellValueRef = useCallback((ref: HTMLDivElement | null) => {
         eCellValue.current = ref;
         setCellValueVersion((v) => v + 1);
     }, []);
@@ -396,10 +396,10 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
 
     // tool widgets effect
     const setCellWrapperRef = useCallback(
-        (ref: HTMLDivElement) => {
+        (ref: HTMLDivElement | null) => {
             eCellWrapper.current = ref;
 
-            if (!eCellWrapper.current) {
+            if (!ref) {
                 cellWrapperDestroyFuncs.current.forEach((f) => f());
                 cellWrapperDestroyFuncs.current = [];
                 return;
@@ -408,7 +408,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
             const addComp = (comp: Component | undefined) => {
                 if (comp) {
                     const eGui = comp.getGui();
-                    eCellWrapper.current?.insertAdjacentElement('afterbegin', eGui);
+                    ref?.insertAdjacentElement('afterbegin', eGui);
                     cellWrapperDestroyFuncs.current.push(() => {
                         context.destroyBean(comp);
                         _removeFromParent(eGui);
@@ -433,26 +433,15 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]
     );
 
-    const setRef = useCallback((ref: HTMLDivElement | null) => {
-        eGui.current = ref;
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new EmptyBean()) : context.destroyBean(compBean.current);
 
-        if (!ref) {
-            compBean.current = context.destroyBean(compBean.current);
-        }
-
-        if (!eGui.current || !cellCtrl || !cellCtrl.isAlive()) {
+        if (!eRef || !cellCtrl || !cellCtrl.isAlive()) {
             return;
         }
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
-        compBean.current = context.createBean(new EmptyBean());
-        cellCtrl.setComp(
-            compProxy.current,
-            eGui.current,
-            cellWrapperOrUndefined,
-            printLayout,
-            editingRow,
-            compBean.current
-        );
+        cellCtrl.setComp(compProxy.current, eRef, cellWrapperOrUndefined, printLayout, editingRow, compBean.current!);
     }, []);
 
     const reactCellRendererStateless = useMemo(() => {

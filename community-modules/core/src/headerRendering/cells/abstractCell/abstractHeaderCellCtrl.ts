@@ -1,4 +1,3 @@
-import type { EmptyBean } from '../../../components/emptyBean';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
@@ -150,7 +149,7 @@ export abstract class AbstractHeaderCellCtrl<
         _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
-    protected addResizeAndMoveKeyboardListeners(compBean: EmptyBean): void {
+    protected addResizeAndMoveKeyboardListeners(compBean: BeanStub): void {
         if (!this.resizeFeature) {
             return;
         }
@@ -279,7 +278,7 @@ export abstract class AbstractHeaderCellCtrl<
         }
     }
 
-    private addDomData(compBean: EmptyBean): void {
+    private addDomData(compBean: BeanStub): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
         this.gos.setDomData(this.eGui, key, this);
         compBean.addDestroyFunc(() => this.gos.setDomData(this.eGui, key, null));
