@@ -148,7 +148,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         _clearElement(this.eOverlayWrapper);
 
         // Focus the element that was focused before the exclusive overlay was shown
-        elementToFocus?.focus();
+        elementToFocus?.focus({ preventScroll: true });
     }
 
     public hideOverlay(): void {
