@@ -401,9 +401,9 @@ If you have found a bug, please report it in this repository's [issues](https://
 
 ### Questions
 
-Look for similar problems on [StackOverflow](https://stackoverflow.com/questions/tagged/ag-grid) using the `ag-grid` tag. If nothing seems related, post a new message there. Please do not use GitHub issues to ask questions.
+Look for similar problems on [StackOverflow](https://stackoverflow.com/questions/tagged/ag-grid-react) using the `ag-grid-react` tag. If nothing seems related, post a new message there. Please do not use GitHub issues to ask questions.
 
-<img src="https://img.shields.io/stackexchange/stackoverflow.com/t/ag-grid?style=for-the-badge&color=%233d8c40" alt="Stack Exchange questions" height="26">
+<img src="https://img.shields.io/stackexchange/stackoverflow.com/t/ag-grid-react?style=for-the-badge&color=%233d8c40" alt="Stack Exchange questions" height="26">
 
 ### Contributing
 
