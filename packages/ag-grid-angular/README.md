@@ -395,40 +395,7 @@ All AG Grid themes can be customised using [CSS variables](https://www.ag-grid.c
 
 ### Tools & Extensions
 
-AG Grid has a large and active community who have created an [ecosystem of 3rd party tools, extensions and utilities](https://www.ag-grid.com/community/tools-extensions/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) to help you build your next project with AG Grid, no matter which language or framework you use:
-
-<div>
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/react.svg?raw=true" align="center" width="16" height="16" alt="React Logo">&nbsp;React</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/angular.svg?raw=true" align="center" width="16" height="16" alt="Angular Logo">&nbsp;Angular</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/typescript.svg?raw=true" align="center" width="16" height="16" alt="TypeScript Logo">&nbsp;TypeScript</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/vue.svg?raw=true" align="center" width="16" height="16" alt="Vue Logo">&nbsp;Vue</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/python.svg?raw=true" align="center" width="16" height="16" alt="Python Logo">&nbsp;Python</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/svelte.svg?raw=true" align="center" width="16" height="16" alt="Svelte Logo">&nbsp;Svelte</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/solidjs.svg?raw=true" align="center" width="16" height="16" alt="SolidJS Logo">&nbsp;SolidJS</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/.net.svg?raw=true" align="center" width="16" height="16" alt=".NET Logo">&nbsp;.NET</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/rust.svg?raw=true" align="center" width="16" height="16" alt="Rust Logo">&nbsp;Rust</span>
-    </a> • 
-    <a href="https://www.ag-grid.com/community/tools-extensions/">
-        <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/laravel.svg?raw=true" align="center" width="16" height="16" alt="Laravel Logo">&nbsp;Laravel</span>
-    </a>
-</div>
+AG Grid has a large and active community who have created an [ecosystem of 3rd party tools, extensions and utilities](https://www.ag-grid.com/community/tools-extensions/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) to help you build your next project with AG Grid.
 
 ### Showcase
 
