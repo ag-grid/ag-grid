@@ -1,11 +1,18 @@
 /**
- * Automated Row Grouping demo
+ * Automated Integrated Charts demo
  */
-// NOTE: Only typescript types should be imported from the AG Grid packages
-// to prevent AG Grid from loading the code twice
 import { Easing, Group } from '@tweenjs/tween.js';
 
-import type { ColDef, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
+// NOTE: Only typescript types should be imported from the AG Grid packages
+// to prevent AG Grid from loading the code twice
+import type {
+    ColDef,
+    GridApi,
+    GridOptions,
+    ICellRendererParams,
+    MenuItemDef,
+    ValueFormatterParams,
+} from 'ag-grid-community';
 
 import { createPeopleData } from '../../data/createPeopleData';
 import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
@@ -18,7 +25,6 @@ import { type AutomatedExample } from '../../types.d';
 import { createScriptRunner } from './createScriptRunner';
 
 let scriptRunner: ScriptRunner;
-let restartScriptTimeout;
 
 interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
@@ -36,12 +42,13 @@ interface CreateAutomatedIntegratedChartsParams {
     darkMode: boolean;
 }
 
-function numberCellFormatter(params) {
+function numberCellFormatter(params: ValueFormatterParams) {
     return Math.floor(params.value)
         .toString()
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
+type CountryCodeKey = keyof typeof COUNTRY_CODES;
 const COUNTRY_CODES = {
     Ireland: 'ie',
     Luxembourg: 'lu',
@@ -84,13 +91,13 @@ const columnDefs: ColDef[] = [
         chartDataType: 'category',
         enableRowGroup: true,
         minWidth: 200,
-        cellRenderer: (params) => {
+        cellRenderer: (params: ICellRendererParams) => {
             if (params.node.group) {
                 return params.value;
             }
 
             // put the value in bold
-            return `<div class='country'><span class='flag'><img border="0" width="24" height="16" alt="${params.value} flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value]}.png"></span><span>${params.value}</span></div>`;
+            return `<div class='country'><span class='flag'><img border="0" width="24" height="16" alt="${params.value} flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value as CountryCodeKey]}.png"></span><span>${params.value}</span></div>`;
         },
     },
     { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true },
@@ -233,7 +240,6 @@ export function createAutomatedIntegratedCharts({
 }
 
 export function cleanUp() {
-    clearTimeout(restartScriptTimeout);
     if (scriptRunner) {
         scriptRunner.stop();
     }

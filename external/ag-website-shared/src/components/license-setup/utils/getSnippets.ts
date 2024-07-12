@@ -2,7 +2,7 @@ import type { Framework, ImportType, Library } from '@ag-grid-types';
 import { agLibraryVersion } from '@constants';
 
 import { getDependencies } from './getDependencies';
-import { GRID_LICENSE_TEMPLATES, getChartsTemplate } from './templates';
+import { CHARTS_LICENSE_TEMPLATES, GRID_LICENSE_TEMPLATES } from './templates';
 
 export const getDependenciesSnippet = ({
     library,
@@ -67,11 +67,13 @@ export const getBootstrapSnippet = ({
     charts: string;
 } => {
     const license = rawLicense?.trim();
-    const frameworkTemplate = GRID_LICENSE_TEMPLATES[framework];
-    const gridTemplate = frameworkTemplate[importType];
+    const gridFrameworkTemplate = GRID_LICENSE_TEMPLATES[framework];
+    const gridTemplate = gridFrameworkTemplate[importType];
+
+    const chartsTemplate = CHARTS_LICENSE_TEMPLATES[framework];
 
     return {
         grid: (gridTemplate && gridTemplate({ license, isIntegratedCharts })).trim() || '',
-        charts: getChartsTemplate({ license }),
+        charts: (chartsTemplate && chartsTemplate({ license }).trim()) || '',
     };
 };
