@@ -294,7 +294,7 @@ We also provide [Seed Projects](https://github.com/ag-grid/ag-grid-seed) to help
 
 ## 🛠️ Customisations
 
-AG Grid is fully customisable, both in terms of appearance and functionality. There are many ways in which the grid can be customised and a selection of tools to help create those customisations.
+AG Grid is fully customisable, both in terms of appearance and functionality. There are many ways in which the grid can be customised and we provide a selection of tools to help create those customisations.
 
 ### Custom Components
 
