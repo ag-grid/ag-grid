@@ -60,6 +60,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const whenReadyFuncs = useRef<(() => void)[]>([]);
     const prevProps = useRef<AgGridReactProps<any>>(props);
     const frameworkOverridesRef = useRef<ReactFrameworkOverrides>();
+    const gridIdRef = useRef<string | undefined>();
 
     const ready = useRef<boolean>(false);
 
@@ -156,6 +157,8 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         };
 
         const gridCoreCreator = new GridCoreCreator();
+        // We ensure that the gridId is stable even in StrictMode
+        mergedGridOps.gridId ??= gridIdRef.current;
         apiRef.current = gridCoreCreator.create(
             eRef,
             mergedGridOps,
@@ -163,6 +166,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             acceptChangesCallback,
             gridParams
         );
+        gridIdRef.current = apiRef.current.getGridId();
     }, []);
 
     const style = useMemo(() => {
