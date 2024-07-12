@@ -90,15 +90,18 @@ export class FilterStateService
         filterState: FilterState | undefined,
         id: string,
         key: K,
-        value: FilterState[K]
+        value: FilterState[K],
+        suppressEvent?: boolean
     ): void {
         if (filterState) {
             filterState[key] = value;
         }
-        this.dispatchLocalEvent({
-            type: 'filterStateChanged',
-            id,
-        });
+        if (!suppressEvent) {
+            this.dispatchLocalEvent({
+                type: 'filterStateChanged',
+                id,
+            });
+        }
     }
 
     private updateFilterStates(): void {
@@ -122,14 +125,41 @@ export class FilterStateService
         const promise = this.filterManager.getOrCreateFilterWrapper(column)?.filterPromise ?? AgPromise.resolve();
         return promise.then((filterComp) => {
             const id = column.getColId();
-            const filterState = {
+            const filterState: FilterState = {
                 id,
                 name: this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel') ?? id,
                 summary: this.getFilterSummary(filterComp),
-                detail: filterComp?.getGui(),
+                appliedModel: filterComp?.getModel() ?? null,
+                unappliedModel: filterComp?.getModel() ?? null,
+                expanded: true, // TODO - remove this later
+                simpleFilterParams: {
+                    // TODO - do properly
+                    options: (
+                        [
+                            'contains',
+                            'notContains',
+                            'equals',
+                            'notEqual',
+                            'startsWith',
+                            'endsWith',
+                            'blank',
+                            'notBlank',
+                        ] as const
+                    ).map((value) => ({ value, text: this.translationService.translate(value) })),
+                    defaultOption: 'contains',
+                    defaultJoinOperator: 'AND',
+                    maxNumConditions: 2,
+                    numAlwaysVisibleConditions: 2,
+                },
             };
             const listener = () => {
-                this.updateProvidedFilterState(filterState, id, 'summary', this.getFilterSummary(filterComp));
+                this.updateProvidedFilterState(filterState, id, 'summary', this.getFilterSummary(filterComp), true);
+                this.updateProvidedFilterState(filterState, id, 'appliedModel', filterComp?.getModel() ?? null, true);
+                this.updateProvidedFilterState(filterState, id, 'unappliedModel', filterComp?.getModel() ?? null, true);
+                this.dispatchLocalEvent({
+                    type: 'filterStateChanged',
+                    id,
+                });
             };
             column.addEventListener('filterChanged', listener);
             this.columnListenerDestroyFuncs.push(() => column.removeEventListener('filterChanged', listener));

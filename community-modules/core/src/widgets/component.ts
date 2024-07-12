@@ -469,6 +469,7 @@ export type AgComponentSelector =
     | 'AG-PRIMARY-COLS-HEADER'
     | 'AG-PRIMARY-COLS-LIST'
     | 'AG-PRIMARY-COLS'
+    | 'AG-RADIO-BUTTON'
     | 'AG-ROW-CONTAINER'
     | 'AG-SELECT'
     | 'AG-SIDE-BAR'

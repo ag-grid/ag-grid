@@ -334,8 +334,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
         this.filterPlaceholder = params.filterPlaceholder;
 
-        this.optionsFactory = new OptionsFactory();
-        this.optionsFactory.init(params, this.getDefaultFilterOptions());
+        this.optionsFactory = new OptionsFactory(params, this.getDefaultFilterOptions());
         this.createFilterListOptions();
 
         this.createOption();

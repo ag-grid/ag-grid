@@ -109,8 +109,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     private setSimpleParams(params: IFloatingFilterParams, update: boolean = true): void {
-        this.optionsFactory = new OptionsFactory();
-        this.optionsFactory.init(params.filterParams as ScalarFilterParams, this.getDefaultFilterOptions());
+        this.optionsFactory = new OptionsFactory(params.filterParams, this.getDefaultFilterOptions());
 
         // Initial call
         if (!update) {

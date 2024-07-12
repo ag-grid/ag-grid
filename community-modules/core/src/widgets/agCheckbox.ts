@@ -22,9 +22,12 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     public override postConstruct() {
         super.postConstruct();
 
-        const { readOnly, passive } = this.config;
+        const { readOnly, passive, name } = this.config;
         if (typeof readOnly === 'boolean') this.setReadOnly(readOnly);
         if (typeof passive === 'boolean') this.setPassive(passive);
+        if (name != null) {
+            this.setName(name);
+        }
     }
 
     protected override addInputListeners() {

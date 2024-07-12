@@ -186,6 +186,7 @@ export {
     ISimpleFilterParams,
     SimpleFilterParams,
     ISimpleFilterModel,
+    ISimpleFilterModelType,
     ICombinedSimpleModel,
     JoinOperator,
     IFilterPlaceholderFunctionParams,
@@ -475,7 +476,7 @@ export { RichSelectParams } from './interfaces/iRichCellEditorParams';
 export { AgAbstractField, FieldElement } from './widgets/agAbstractField';
 export { AgAbstractInputField } from './widgets/agAbstractInputField';
 export { AgCheckbox, AgCheckboxSelector } from './widgets/agCheckbox';
-export { AgRadioButton, AgRadioButtonParams } from './widgets/agRadioButton';
+export { AgRadioButton, AgRadioButtonParams, AgRadioButtonSelector } from './widgets/agRadioButton';
 export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './widgets/agToggleButton';
 export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './widgets/agInputTextField';
 export { AgInputTextArea } from './widgets/agInputTextArea';

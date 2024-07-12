@@ -36,6 +36,7 @@ export interface AgFieldParams extends AgLabelParams {
     value?: any;
     width?: number;
     onValueChange?: (value?: any) => void;
+    ariaLabel?: string | null;
 }
 
 export interface AgInputFieldParams extends AgFieldParams {
@@ -49,4 +50,5 @@ export interface AgInputFieldParams extends AgFieldParams {
 export interface AgCheckboxParams extends AgInputFieldParams {
     readOnly?: boolean;
     passive?: boolean;
+    name?: string;
 }

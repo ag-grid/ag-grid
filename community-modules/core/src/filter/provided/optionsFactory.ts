@@ -1,6 +1,5 @@
 import type { IFilterOptionDef } from '../../interfaces/iFilter';
 import { _warnOnce } from '../../utils/function';
-import type { ScalarFilterParams } from './iScalarFilter';
 import type { SimpleFilterParams } from './iSimpleFilter';
 
 /* Common logic for options, used by both filters and floating filters. */
@@ -9,7 +8,7 @@ export class OptionsFactory {
     protected filterOptions: (IFilterOptionDef | string)[];
     protected defaultOption: string;
 
-    public init(params: ScalarFilterParams, defaultOptions: string[]): void {
+    constructor(params: SimpleFilterParams, defaultOptions: string[]) {
         this.filterOptions = params.filterOptions || defaultOptions;
         this.mapCustomOptions();
         this.selectDefaultItem(params);

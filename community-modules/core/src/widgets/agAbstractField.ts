@@ -27,7 +27,7 @@ export abstract class AgAbstractField<
     public override postConstruct(): void {
         super.postConstruct();
 
-        const { width, value, onValueChange } = this.config;
+        const { width, value, onValueChange, ariaLabel } = this.config;
         if (width != null) {
             this.setWidth(width);
         }
@@ -36,6 +36,9 @@ export abstract class AgAbstractField<
         }
         if (onValueChange != null) {
             this.onValueChange(onValueChange);
+        }
+        if (ariaLabel != null) {
+            this.setAriaLabel(ariaLabel);
         }
 
         if (this.className) {
