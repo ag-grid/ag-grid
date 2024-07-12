@@ -109,22 +109,31 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         this.eventService.dispatchEvent(event);
     }
 
-    private updateNodesFromRowData(allData: any[] | undefined, container: NonNullable<RowPinnedType>): void {
-        const nodes = container === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
+    /**
+     * Updates existing RowNode instances and creates new ones if necessary
+     *
+     * Setting data as `undefined` will clear row nodes
+     */
+    private updateNodesFromRowData(allData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
+        const nodes = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
 
         if (allData === undefined) {
             nodes.clear();
             return;
         }
 
-        const nodesToRemove = nodes.getIds();
         const getRowId = this.gos.getRowIdCallback();
-        const idPrefix = container === 'top' ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
+        const idPrefix = floating === 'top' ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
 
+        // We'll want to remove all nodes that aren't matched to data
+        const nodesToRemove = nodes.getIds();
+
+        // Data that matches based on ID can nonetheless still appear in a different order than before
         const newOrder: string[] = [];
+
         let nextRowTop = 0;
         for (const [i, data] of allData.entries()) {
-            const id = getRowId?.({ data, level: 0, rowPinned: container }) ?? idPrefix + this.nextId++;
+            const id = getRowId?.({ data, level: 0, rowPinned: floating }) ?? idPrefix + this.nextId++;
 
             newOrder.push(id);
 
@@ -138,14 +147,14 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
                 existingNode.setRowIndex(i);
                 nextRowTop += existingNode.rowHeight!;
 
-                // don't want to remove these ones
+                // existing nodes that are re-used/updated shouldn't be deleted
                 nodesToRemove.delete(id);
             } else {
                 // new node
                 const rowNode = new RowNode(this.beans);
                 rowNode.id = id;
                 rowNode.data = data;
-                rowNode.rowPinned = container;
+                rowNode.rowPinned = floating;
                 rowNode.setRowTop(nextRowTop);
                 rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode).height);
                 rowNode.setRowIndex(i);
@@ -174,6 +183,10 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         return this.getTotalHeight(this.pinnedTopRows);
     }
 
+    public getPinnedBottomTotalHeight(): number {
+        return this.getTotalHeight(this.pinnedBottomRows);
+    }
+
     public getPinnedTopRowCount(): number {
         return this.pinnedTopRows.getSize();
     }
@@ -198,10 +211,6 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         this.pinnedBottomRows.forEach(callback);
     }
 
-    public getPinnedBottomTotalHeight(): number {
-        return this.getTotalHeight(this.pinnedBottomRows);
-    }
-
     private getTotalHeight(rowNodes: OrderedCache<RowNode>): number {
         const size = rowNodes.getSize();
         if (size === 0) {
@@ -217,6 +226,11 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
     }
 }
 
+/**
+ * Cache that maintains record of insertion order
+ *
+ * Allows lookup by key as well as insertion order (which is why we didn't use Map)
+ */
 class OrderedCache<T extends { id: string | undefined }> {
     private cache: Partial<Record<string, T>> = {};
     private ordering: string[] = [];

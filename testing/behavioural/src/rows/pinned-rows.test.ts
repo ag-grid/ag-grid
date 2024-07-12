@@ -21,6 +21,8 @@ describe('pinned rows', () => {
         expect(pinnedRows.length).toBe(data.length);
 
         Array.from(pinnedRows)
+            // Have to sort because DOM order of nodes is not necessarily the same as the logical
+            // order (because rows are positioned absolutely)
             .sort((a, b) => {
                 const rowIndexA = a.getAttribute('row-index').split('-')[1];
                 const rowIndexB = b.getAttribute('row-index').split('-')[1];
