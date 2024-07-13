@@ -192,9 +192,6 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
         }
 
-        // prevents the arrow key causing a scroll
-        event.preventDefault();
-
         if (nextHeader || !fromTab) {
             return this.focusService.focusHeaderPosition({
                 headerPosition: nextHeader,
