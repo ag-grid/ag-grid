@@ -2,7 +2,7 @@ import type { Group } from '@tweenjs/tween.js';
 
 import { type AgElementFinder } from '../agElements';
 import { type AgElementName } from '../agElements/agElementsConfig';
-import { AG_SCROLLABLE_CONTAINER_SELECTOR } from '../constants';
+import { AG_CHART_TAB, AG_SCROLLABLE_CONTAINER_SELECTOR } from '../constants';
 import { type Mouse } from '../createMouse';
 import { isInViewport } from '../dom';
 import { type ScriptDebugger } from '../scriptDebugger';
@@ -46,7 +46,9 @@ export async function moveToElementAndClick({
         throw new Error(`No element found: ${target}`);
     }
 
-    const scrollContainer = element.get()?.closest(AG_SCROLLABLE_CONTAINER_SELECTOR) as HTMLElement;
+    // Same logic as [tabbedChartMenu](https://github.com/ag-grid/ag-grid/blob/3d71e5b4e4c0fcba593d6783a7ba1f815c32e2f8/enterprise-modules/charts/src/charts/chartComp/menu/tabbedChartMenu.ts#L78)
+    const scrollContainer = (element.get()?.closest(AG_SCROLLABLE_CONTAINER_SELECTOR) ||
+        element.get()?.closest(AG_CHART_TAB)) as HTMLElement;
     if (scrollContainer && !isInViewport({ element: element.get()!, threshold: 0.5, scrollContainer })) {
         element.get()?.scrollIntoView({
             behavior: 'smooth',

@@ -47,6 +47,21 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.updateOverlayVisibility();
     }
 
+    /** Returns true if the overlay is visible. */
+    public isVisible(): boolean {
+        return this.state !== OverlayServiceState.Hidden;
+    }
+
+    /** Returns true if the overlay is visible and is exclusive (popup over the grid) */
+    public isExclusive(): boolean {
+        return this.state === OverlayServiceState.Loading;
+    }
+
+    /** Gets the overlay wrapper component */
+    public getOverlayWrapper(): OverlayWrapperComponent {
+        return this.overlayWrapperComp;
+    }
+
     public showLoadingOverlay(): void {
         this.showInitialOverlay = false;
 
@@ -133,6 +148,6 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
-        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, gridOption);
+        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, this.isExclusive(), gridOption);
     }
 }

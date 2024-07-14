@@ -336,7 +336,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
             if (!this.skipFrozenColumns) {
                 const pinned = column.getPinned();
-                if (freezeColumns === 'pinned' && pinned && (pinned === 'left' || rightToLeft)) {
+                const isPinnedLeft = pinned === true || pinned === 'left';
+
+                if (freezeColumns === 'pinned' && pinned && isPinnedLeft !== rightToLeft) {
                     this.frozenColumnCount++;
                 } else if (
                     typeof freezeColumns === 'function' &&

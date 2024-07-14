@@ -8,7 +8,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { getData } from './data.jsx';
@@ -169,4 +169,8 @@ const GridExample = () => {
 };
 
 const root = createRoot(document.getElementById('root'));
-root.render(<GridExample />);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

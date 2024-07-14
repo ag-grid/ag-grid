@@ -193,14 +193,14 @@ export const createScript = ({
         // Wait for chart toolbar pop up to show
         { type: 'wait', duration: 500 },
 
-        // Click on data tab
+        // Click on set up tab
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
                 target: 'chartToolPanelTab',
                 targetParams: {
-                    text: 'Data',
+                    text: 'Set Up',
                 },
             },
         },
@@ -291,7 +291,7 @@ export const createScript = ({
         },
         { type: 'wait', duration: 100 },
 
-        // Click on settings tab
+        // Click on chart tab
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
@@ -332,14 +332,14 @@ export const createScript = ({
         },
         { type: 'wait', duration: 500 },
 
-        // Click on format tab
+        // Click on customize tab
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
                 target: 'chartToolPanelTab',
                 targetParams: {
-                    text: 'Format',
+                    text: 'Customize',
                 },
             },
         },
@@ -363,14 +363,10 @@ export const createScript = ({
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartToolPanelCheckbox',
+                target: 'chartToolPanelToggle',
                 targetParams: {
                     groupTitle: 'Legend',
-                    checkboxLabel: 'Enabled',
-                    /**
-                     * There is a hidden checkbox, so need to check the first legend one
-                     */
-                    index: 0,
+                    toggleLabel: 'Enabled',
                 },
             },
         },
