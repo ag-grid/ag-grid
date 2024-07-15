@@ -66,12 +66,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addClasses();
         this.setupMovingCss(compBean);
         this.setupExpandable(compBean);
-        this.setupTooltip();
-        compBean.addDestroyFunc(() => {
-            if (this.tooltipFeature) {
-                this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-            }
-        });
+        this.setupTooltip(compBean);
         this.setupUserComp();
         this.addHeaderMouseListeners(compBean);
 
@@ -204,7 +199,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 );
             },
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setupTooltip(value, shouldDisplayTooltip);
+                this.setupTooltip(undefined, value, shouldDisplayTooltip);
             },
         });
 
@@ -238,7 +233,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.eventService.dispatchEvent(event);
     }
 
-    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
+    private setupTooltip(
+        compBean: BeanStub<any> | undefined,
+        value?: string,
+        shouldDisplayTooltip?: () => boolean
+    ): void {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
@@ -269,8 +268,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         if (colGroupDef) {
             tooltipCtrl.getColDef = () => colGroupDef;
         }
-
-        this.createManagedBean(new TooltipFeature(tooltipCtrl));
+        const tooltipFeature = (compBean ?? this).createManagedBean(new TooltipFeature(tooltipCtrl));
+        this.tooltipFeature = tooltipFeature;
     }
 
     private setupExpandable(compBean: BeanStub): void {

@@ -1,5 +1,5 @@
 import { BeanStub, setupCompBean } from '../../context/beanStub';
-import type { BeanCollection, Context } from '../../context/context';
+import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { BrandedType } from '../../interfaces/brandedType';
