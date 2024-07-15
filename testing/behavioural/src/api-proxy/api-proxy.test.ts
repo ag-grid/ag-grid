@@ -156,4 +156,67 @@ describe('ag-grid api proxy', () => {
 
         expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
     });
+
+    test('Object keys', () => {
+        const gridApi = createMyGrid({});
+
+        const unknownFn = (gridApi as any).unknownFn;
+        expect(unknownFn).toBeDefined();
+
+        const keys = Object.keys(gridApi);
+
+        expect(keys.includes('dispatchEvent')).toBe(true);
+        expect(keys.includes('getState')).toBe(true);
+
+        expect(keys.includes('toString')).toBe(false);
+        expect(keys.includes('unknownFn')).toBe(false);
+
+        (gridApi as any)['customPropX'] = 1;
+
+        keys.length = 0;
+        for (const name in gridApi) {
+            keys.push(name);
+        }
+
+        expect(keys.includes('dispatchEvent')).toBe(true);
+        expect(keys.includes('getState')).toBe(true);
+        expect(keys.includes('customPropX')).toBe(true);
+
+        expect(keys.includes('toString')).toBe(false);
+        expect(keys.includes('unknownFn')).toBe(false);
+    });
+
+    test('methods are bound to the gridApi, console.error works', () => {
+        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const gridApi = createMyGrid({});
+
+        const unknownFn = (gridApi as any).unknownFnX1;
+        unknownFn();
+
+        const dispatchEvent = gridApi.dispatchEvent;
+        dispatchEvent({ type: 'foo' });
+
+        expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('unknownFnX1'));
+    });
+
+    test('methods are bound to the gridApi, destroy console warning', () => {
+        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const gridApi = createMyGrid({});
+
+        gridApi.dispatchEvent({ type: 'foo' });
+
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(0);
+
+        gridApi.destroy();
+
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(0);
+
+        gridApi.dispatchEvent({ type: 'foo' });
+
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('destroyed'));
+        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('dispatchEvent'));
+    });
 });
