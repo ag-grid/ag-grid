@@ -480,12 +480,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param rowNodes The canonical list of row nodes that should have associated controllers
      */
     private refreshFloatingRows(rowCtrls: RowCtrl[], floating: NonNullable<RowPinnedType>): void {
+        const { pinnedRowModel, beans, printLayout } = this;
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.getRowNode().id!, ctrl]));
 
-        this.pinnedRowModel.forEachPinnedRow(floating, (node, i) => {
+        pinnedRowModel.forEachPinnedRow(floating, (node, i) => {
             const rowCtrl = rowCtrls[i];
             const rowCtrlDoesNotExist =
-                rowCtrl && this.pinnedRowModel.getPinnedRowById(rowCtrl.getRowNode().id!, floating) === undefined;
+                rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.getRowNode().id!, floating) === undefined;
 
             if (rowCtrlDoesNotExist) {
                 // ctrl not in new nodes list, destroy
@@ -499,14 +500,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 delete rowCtrlMap[node.id!];
             } else {
                 // ctrl doesn't exist, create it
-                rowCtrls[i] = new RowCtrl(node, this.beans, false, false, this.printLayout);
+                rowCtrls[i] = new RowCtrl(node, beans, false, false, printLayout);
             }
         });
 
         const rowNodeCount =
-            floating === 'top'
-                ? this.pinnedRowModel.getPinnedTopRowCount()
-                : this.pinnedRowModel.getPinnedBottomRowCount();
+            floating === 'top' ? pinnedRowModel.getPinnedTopRowCount() : pinnedRowModel.getPinnedBottomRowCount();
 
         // Truncate array if rowCtrls is longer than rowNodes
         rowCtrls.length = rowNodeCount;
