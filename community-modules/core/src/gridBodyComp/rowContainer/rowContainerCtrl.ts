@@ -320,6 +320,8 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             this.createManagedBean(new CenterWidthFeature((width) => this.comp.setContainerWidth(`${width}px`)))
         );
 
+        // Setup the initial visibility now that the pinned width features are ready
+        this.visible = this.isContainerVisible();
         this.addListeners();
         this.registerWithCtrlsService();
     }
