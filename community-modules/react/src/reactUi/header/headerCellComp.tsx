@@ -59,7 +59,7 @@ const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current?.insertAdjacentElement('afterend', selectAllGui);
-        compBean.current!.addDestroyFunc(() => selectAllGui.remove()); // TODO: test that there is duplications without this line
+        compBean.current!.addDestroyFunc(() => selectAllGui.remove());
     }, []);
 
     // js comps
