@@ -25,7 +25,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationService } from '../pagination/paginationService';
@@ -449,9 +449,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public refreshFloatingRowComps(): void {
-        this.refreshFloatingRows(this.topRowCtrls, this.pinnedRowModel.getPinnedTopRowNodes());
+        this.refreshFloatingRows(this.topRowCtrls, 'top');
 
-        this.refreshFloatingRows(this.bottomRowCtrls, this.pinnedRowModel.getPinnedBottomRowNodes());
+        this.refreshFloatingRows(this.bottomRowCtrls, 'bottom');
     }
 
     public getTopRowCtrls(): RowCtrl[] {
@@ -479,15 +479,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param rowCtrls The list of existing row controllers
      * @param rowNodes The canonical list of row nodes that should have associated controllers
      */
-    private refreshFloatingRows(rowCtrls: RowCtrl[], rowNodes: RowNode[]): void {
-        const nodeMap = Object.fromEntries(rowNodes.map((node) => [node.id!, node]));
+    private refreshFloatingRows(rowCtrls: RowCtrl[], floating: NonNullable<RowPinnedType>): void {
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.getRowNode().id!, ctrl]));
 
-        for (let i = 0; i < rowNodes.length; i++) {
-            const node = rowNodes[i];
+        this.pinnedRowModel.forEachPinnedRow(floating, (node, i) => {
             const rowCtrl = rowCtrls[i];
+            const rowCtrlDoesNotExist =
+                rowCtrl && this.pinnedRowModel.getPinnedRowById(rowCtrl.getRowNode().id!, floating) === undefined;
 
-            if (rowCtrl && nodeMap[rowCtrl.getRowNode().id!] === undefined) {
+            if (rowCtrlDoesNotExist) {
                 // ctrl not in new nodes list, destroy
                 rowCtrl.destroyFirstPass();
                 rowCtrl.destroySecondPass();
@@ -501,10 +501,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 // ctrl doesn't exist, create it
                 rowCtrls[i] = new RowCtrl(node, this.beans, false, false, this.printLayout);
             }
-        }
+        });
+
+        const rowNodeCount =
+            floating === 'top'
+                ? this.pinnedRowModel.getPinnedTopRowCount()
+                : this.pinnedRowModel.getPinnedBottomRowCount();
 
         // Truncate array if rowCtrls is longer than rowNodes
-        rowCtrls.length = rowNodes.length;
+        rowCtrls.length = rowNodeCount;
     }
 
     private onPinnedRowDataChanged(): void {

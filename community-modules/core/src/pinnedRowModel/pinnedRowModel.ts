@@ -138,14 +138,6 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         nodes.setOrder(newOrder);
     }
 
-    public getPinnedTopRowNodes(): RowNode[] {
-        return this.pinnedTopRows.asArray();
-    }
-
-    public getPinnedBottomRowNodes(): RowNode[] {
-        return this.pinnedBottomRows.asArray();
-    }
-
     public getPinnedTopTotalHeight(): number {
         return this.getTotalHeight(this.pinnedTopRows);
     }
@@ -170,12 +162,15 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         return this.pinnedBottomRows.getByIndex(index);
     }
 
-    public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number) => void): void {
-        this.pinnedTopRows.forEach(callback);
+    public getPinnedRowById(id: string, floating: NonNullable<RowPinnedType>): RowNode | undefined {
+        return floating === 'top' ? this.pinnedTopRows.getById(id) : this.pinnedBottomRows.getById(id);
     }
 
-    public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number) => void): void {
-        this.pinnedBottomRows.forEach(callback);
+    public forEachPinnedRow(
+        floating: NonNullable<RowPinnedType>,
+        callback: (node: RowNode, index: number) => void
+    ): void {
+        return floating === 'top' ? this.pinnedTopRows.forEach(callback) : this.pinnedBottomRows.forEach(callback);
     }
 
     private getTotalHeight(rowNodes: OrderedCache<RowNode>): number {
@@ -233,10 +228,6 @@ class OrderedCache<T extends { id: string | undefined }> {
             const node = this.cache[id];
             node && callback(node, index);
         });
-    }
-
-    public asArray(): T[] {
-        return this.ordering.map((id) => this.cache[id]!);
     }
 
     public clear(): void {
