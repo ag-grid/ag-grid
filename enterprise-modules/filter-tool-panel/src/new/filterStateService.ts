@@ -4,12 +4,15 @@ import type {
     ColumnModel,
     ColumnNameService,
     FilterManager,
+    ICombinedSimpleModel,
     IFilterComp,
+    JoinOperator,
+    TextFilterModel,
 } from '@ag-grid-community/core';
 import { AgPromise, BeanStub, _missingOrEmpty } from '@ag-grid-community/core';
 
 import type { FilterPanelTranslationService } from './filterPanelTranslationService';
-import type { FilterState } from './filterState';
+import type { FilterCondition, FilterState, SimpleFilterParams } from './filterState';
 import type { IFilterStateService } from './iFilterStateService';
 
 export class FilterStateService
@@ -130,32 +133,19 @@ export class FilterStateService
                 name: this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel') ?? id,
                 summary: this.getFilterSummary(filterComp),
                 appliedModel: filterComp?.getModel() ?? null,
-                unappliedModel: filterComp?.getModel() ?? null,
                 expanded: true, // TODO - remove this later
-                simpleFilterParams: {
-                    // TODO - do properly
-                    options: (
-                        [
-                            'contains',
-                            'notContains',
-                            'equals',
-                            'notEqual',
-                            'startsWith',
-                            'endsWith',
-                            'blank',
-                            'notBlank',
-                        ] as const
-                    ).map((value) => ({ value, text: this.translationService.translate(value) })),
-                    defaultOption: 'contains',
-                    defaultJoinOperator: 'AND',
-                    maxNumConditions: 2,
-                    numAlwaysVisibleConditions: 2,
-                },
+                simpleFilterParams: this.getSimpleFilterParams(filterComp?.getModel()),
             };
             const listener = () => {
                 this.updateProvidedFilterState(filterState, id, 'summary', this.getFilterSummary(filterComp), true);
                 this.updateProvidedFilterState(filterState, id, 'appliedModel', filterComp?.getModel() ?? null, true);
-                this.updateProvidedFilterState(filterState, id, 'unappliedModel', filterComp?.getModel() ?? null, true);
+                this.updateProvidedFilterState(
+                    filterState,
+                    id,
+                    'simpleFilterParams',
+                    this.getSimpleFilterParams(filterComp?.getModel()),
+                    true
+                );
                 this.dispatchLocalEvent({
                     type: 'filterStateChanged',
                     id,
@@ -181,6 +171,71 @@ export class FilterStateService
     private destroyColumnListeners(): void {
         this.columnListenerDestroyFuncs.forEach((func) => func());
         this.columnListenerDestroyFuncs.length = 0;
+    }
+
+    private getSimpleFilterParams(
+        model?: TextFilterModel | ICombinedSimpleModel<TextFilterModel> | null
+    ): SimpleFilterParams {
+        // TODO work out params
+        const maxNumConditions = 2;
+        const numVisibleConditions = 1;
+        let joinOperator: JoinOperator = 'AND';
+        let conditions: FilterCondition[] = [];
+        // TODO - find default option
+        const defaultOption = 'contains';
+        if (model) {
+            const mapModelCondition = (modelCondition: TextFilterModel): FilterCondition => {
+                const { type, filter: from } = modelCondition as TextFilterModel;
+                const option = type ?? defaultOption;
+                // TODO - lookup numberOfInputs based on type
+                const numberOfInputs = 1;
+                return {
+                    numberOfInputs,
+                    option,
+                    from,
+                };
+            };
+            const isCombined = (model as ICombinedSimpleModel<TextFilterModel>)?.operator;
+            if (isCombined) {
+                const { conditions: modelConditions, operator } = model as ICombinedSimpleModel<TextFilterModel>;
+                joinOperator = operator;
+                conditions = modelConditions.map((condition) => mapModelCondition(condition));
+            } else {
+                conditions.push(mapModelCondition(model as TextFilterModel));
+            }
+        }
+        conditions.push({
+            numberOfInputs: 1,
+            option: defaultOption,
+        });
+        conditions.splice(maxNumConditions);
+        for (let i = conditions.length; i < numVisibleConditions; i++) {
+            conditions.push({
+                numberOfInputs: 1,
+                option: defaultOption,
+                disabled: true,
+            });
+        }
+
+        return {
+            // TODO - do properly
+            conditions,
+            joinOperator: {
+                operator: joinOperator,
+            },
+            options: (
+                [
+                    'contains',
+                    'notContains',
+                    'equals',
+                    'notEqual',
+                    'startsWith',
+                    'endsWith',
+                    'blank',
+                    'notBlank',
+                ] as const
+            ).map((value) => ({ value, text: this.translationService.translate(value) })),
+        };
     }
 
     public override destroy(): void {

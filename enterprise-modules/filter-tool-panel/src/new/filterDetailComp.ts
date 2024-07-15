@@ -11,14 +11,14 @@ export class FilterDetailComp extends Component {
     }
 
     postConstruct(): void {
-        const filter = this.createManagedBean(new SimpleFilter(this.state));
+        const filter = this.createManagedBean(new SimpleFilter(this.state.simpleFilterParams));
         this.eFilter = filter;
         this.appendChild(filter.getGui());
     }
 
     public refresh(state: FilterState): void {
         this.state = state;
-        this.eFilter.refresh(state);
+        this.eFilter.refresh(state.simpleFilterParams);
     }
 
     public override destroy(): void {

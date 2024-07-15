@@ -1,43 +1,48 @@
-import type { TextFilterModel } from '@ag-grid-community/core';
 import { AgInputTextField, Component, _removeFromParent } from '@ag-grid-community/core';
 
-interface SimpleFilterBodyParams {
-    model?: TextFilterModel;
-    numberOfInputs: 1 | 2;
-    disabled?: boolean;
-}
+import type { FilterCondition } from '../filterState';
 
 export class SimpleFilterBody extends Component {
     private eFrom: AgInputTextField;
     private eTo?: AgInputTextField;
 
-    constructor(private params: SimpleFilterBodyParams) {
+    constructor(private condition: FilterCondition) {
         super(/* html */ `<div class="ag-filter-body"></div>`);
     }
 
     postConstruct(): void {
         this.eFrom = this.createFromToElement('from');
-        this.refresh(this.params);
+        this.refreshComp(undefined, this.condition);
     }
 
-    public refresh(params: SimpleFilterBodyParams): void {
-        this.params = params;
+    public refresh(condition: FilterCondition): void {
+        const oldCondition = this.condition;
+        this.condition = condition;
+        this.refreshComp(oldCondition, condition);
+    }
 
-        const { model: { filter, filterTo } = {}, numberOfInputs, disabled = false } = params;
+    private refreshComp(oldCondition: FilterCondition | undefined, newCondition: FilterCondition): void {
+        if (oldCondition === newCondition) {
+            return;
+        }
         const { eFrom } = this;
         let { eTo } = this;
-
-        eFrom.setValue(filter, true).setDisabled(disabled);
-
-        if (numberOfInputs === 2) {
+        const { numberOfInputs, disabled = false } = newCondition;
+        if (numberOfInputs === 1) {
+            const { from } = newCondition;
+            eFrom.setValue(from, true).setDisabled(disabled);
+            if (eTo) {
+                _removeFromParent(eTo.getGui());
+                this.eTo = this.destroyBean(eTo);
+            }
+        } else if (numberOfInputs === 2) {
+            const { from, to } = newCondition;
+            eFrom.setValue(from, true).setDisabled(disabled);
             if (!eTo) {
                 eTo = this.createFromToElement('to');
                 this.eTo = eTo;
             }
-            eTo.setValue(filterTo, true).setDisabled(disabled);
-        } else if (eTo) {
-            _removeFromParent(eTo.getGui());
-            this.eTo = this.destroyBean(eTo);
+            eTo.setValue(to, true).setDisabled(disabled);
         }
     }
 

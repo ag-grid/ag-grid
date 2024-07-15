@@ -1,7 +1,7 @@
-import type { ICombinedSimpleModel, JoinOperator, TextFilterModel } from '@ag-grid-community/core';
+import type { ListOption } from '@ag-grid-community/core';
 import { Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
 
-import type { FilterState } from '../filterState';
+import type { FilterCondition, SimpleFilterOperatorParams, SimpleFilterParams } from '../filterState';
 import { SimpleFilterJoin } from './simpleFilterJoin';
 import { SimpleFilterOption } from './simpleFilterOption';
 
@@ -11,49 +11,36 @@ export class SimpleFilter extends Component {
     private eOptions: SimpleFilterOption[] = [];
     private eJoinOperators: SimpleFilterJoin[] = [];
 
-    private currentOperator: JoinOperator;
-
-    constructor(private state: FilterState) {
+    constructor(private params: SimpleFilterParams) {
         super(/* html */ `<form class="ag-filter-wrapper">
             <div data-ref="eFilterBody" class="ag-filter-body-wrapper ag-simple-filter-body-wrapper"></div>
         </form>`);
     }
 
     public postConstruct(): void {
-        this.refresh(this.state);
+        this.refreshComp(undefined, this.params);
     }
 
-    public refresh(state: FilterState): void {
-        this.state = state;
-        const {
-            unappliedModel,
-            simpleFilterParams: { defaultJoinOperator, numAlwaysVisibleConditions },
-        } = state;
-        this.currentOperator = defaultJoinOperator;
-        if (!unappliedModel) {
-            this.createOrRefreshOption(0);
-        } else {
-            const isCombined = (unappliedModel as ICombinedSimpleModel<TextFilterModel>).operator;
-            if (isCombined) {
-                const { conditions, operator } = unappliedModel as ICombinedSimpleModel<TextFilterModel>;
-                this.currentOperator = operator;
-                conditions.forEach((condition, index) => {
-                    if (index !== 0) {
-                        this.createOrRefreshJoinOperator(index);
-                    }
-                    this.createOrRefreshOption(index, condition);
-                });
-            } else {
-                const simpleModel = unappliedModel as TextFilterModel;
-                this.createOrRefreshOption(0, simpleModel);
+    public refresh(params: SimpleFilterParams): void {
+        const oldParams = this.params;
+        this.params = params;
+        this.refreshComp(oldParams, params);
+    }
+
+    private refreshComp(oldParams: SimpleFilterParams | undefined, newParams: SimpleFilterParams): void {
+        if (oldParams === newParams) {
+            return;
+        }
+        const { conditions, joinOperator, options } = newParams;
+        const currentNumConditions = conditions.length;
+
+        conditions.forEach((condition, index) => {
+            if (index !== 0) {
+                this.createOrRefreshJoinOperator(index, joinOperator);
             }
-        }
-        let currentNumConditions = this.eOptions.length;
-        for (let i = currentNumConditions; i < numAlwaysVisibleConditions; i++) {
-            this.createOrRefreshJoinOperator(i);
-            this.createOrRefreshOption(i);
-        }
-        currentNumConditions = Math.max(currentNumConditions, numAlwaysVisibleConditions);
+            this.createOrRefreshOption(index, condition, options);
+        });
+
         this.eOptions.splice(currentNumConditions).forEach((eOption) => {
             eOption.removeFromGui();
             this.destroyBean(eOption);
@@ -64,13 +51,13 @@ export class SimpleFilter extends Component {
         });
     }
 
-    private createOrRefreshOption(index: number, model?: TextFilterModel): void {
-        const { state, eFilterBody, eOptions } = this;
+    private createOrRefreshOption(index: number, condition: FilterCondition, options: ListOption[]): void {
+        const { eFilterBody, eOptions } = this;
         const existingOption = eOptions[index];
         const params = {
-            state,
             eFilterBody,
-            model,
+            condition,
+            options,
         };
         if (existingOption) {
             existingOption.refresh(params);
@@ -81,16 +68,15 @@ export class SimpleFilter extends Component {
         eOptions.push(optionWrapper);
     }
 
-    private createOrRefreshJoinOperator(index: number, disabled?: boolean): void {
+    private createOrRefreshJoinOperator(index: number, operator: SimpleFilterOperatorParams): void {
         // first condition doesn't have a join operator
         const operatorIndex = index - 1;
         const existingJoinOperator = this.eJoinOperators[operatorIndex];
-        const params = { operator: this.currentOperator, disabled };
         if (existingJoinOperator) {
-            existingJoinOperator.refresh(params);
+            existingJoinOperator.refresh(operator);
             return;
         }
-        const eJoinOperator = this.createBean(new SimpleFilterJoin(params));
+        const eJoinOperator = this.createBean(new SimpleFilterJoin(operator));
         this.eFilterBody.appendChild(eJoinOperator.getGui());
         this.eJoinOperators.push(eJoinOperator);
     }

@@ -2,11 +2,7 @@ import type { AgRadioButton, AgRadioButtonParams, BeanCollection, JoinOperator }
 import { AgRadioButtonSelector, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { FilterPanelTranslationService } from '../filterPanelTranslationService';
-
-interface SimpleFilterJoinParams {
-    operator: JoinOperator;
-    disabled?: boolean;
-}
+import type { SimpleFilterOperatorParams } from '../filterState';
 
 export class SimpleFilterJoin extends Component {
     private readonly eRadioButtonAnd: AgRadioButton = RefPlaceholder;
@@ -14,7 +10,7 @@ export class SimpleFilterJoin extends Component {
 
     private translationService: FilterPanelTranslationService;
 
-    constructor(private params: SimpleFilterJoinParams) {
+    constructor(private params: SimpleFilterOperatorParams) {
         super();
     }
 
@@ -51,12 +47,23 @@ export class SimpleFilterJoin extends Component {
                 eRadioButtonOr: eRadioButtonOrParams,
             }
         );
-        this.refresh(this.params);
+        this.refreshComp(undefined, this.params);
     }
 
-    public refresh(params: SimpleFilterJoinParams): void {
+    public refresh(params: SimpleFilterOperatorParams): void {
+        const oldParams = this.params;
         this.params = params;
-        const { operator, disabled = false } = params;
+        this.refreshComp(oldParams, params);
+    }
+
+    private refreshComp(
+        oldParams: SimpleFilterOperatorParams | undefined,
+        newParams: SimpleFilterOperatorParams
+    ): void {
+        if (oldParams === newParams) {
+            return;
+        }
+        const { operator, disabled = false } = newParams;
         const isAnd = operator === 'AND';
         this.eRadioButtonAnd.setValue(isAnd, true).setDisabled(disabled);
         this.eRadioButtonOr.setValue(!isAnd, true).setDisabled(disabled);
