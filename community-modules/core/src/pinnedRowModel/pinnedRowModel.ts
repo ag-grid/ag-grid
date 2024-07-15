@@ -115,10 +115,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
                 if (existingNode.data !== data) {
                     existingNode.setData(data);
                 }
-                existingNode.setRowTop(nextRowTop);
-                existingNode.setRowHeight(this.gos.getRowHeightForNode(existingNode).height);
-                existingNode.setRowIndex(i);
-                nextRowTop += existingNode.rowHeight!;
+                nextRowTop += existingNode.setRowTopAndRowIndex(nextRowTop, i);
 
                 // existing nodes that are re-used/updated shouldn't be deleted
                 nodesToRemove.delete(id);
@@ -128,10 +125,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
                 rowNode.id = id;
                 rowNode.data = data;
                 rowNode.rowPinned = floating;
-                rowNode.setRowTop(nextRowTop);
-                rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode).height);
-                rowNode.setRowIndex(i);
-                nextRowTop += rowNode.rowHeight!;
+                nextRowTop += rowNode.setRowTopAndRowIndex(nextRowTop, i);
                 nodes.push(rowNode);
             }
         }
