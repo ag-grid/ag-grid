@@ -26,7 +26,11 @@ type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?
 type AgEventHandlers = { [K in AgEventType]?: (event: AgEventTypeParams[K]) => void };
 (window as any).AG_DESTROY_FUNCS = {};
 (window as any).AG_DESTROY_FUNCS_COUNT = 0;
-let nextId = 0;
+
+setInterval(() => {
+    console.log('BEAN_STUB', (window as any).AG_DESTROY_FUNCS, (window as any).AG_DESTROY_FUNCS_COUNT);
+}, 3_000);
+
 export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     implements BaseBean<BeanCollection>, Bean, IEventEmitter<EventOrDestroyed<TEventType>>
 {
@@ -35,7 +39,6 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     private stubContext: Context; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
-    private stubIdd = nextId++;
     // for vue 3 - prevents Vue from trying to make this (and obviously any sub classes) from being reactive
     // prevents vue from creating proxies for created objects and prevents identity related issues
     public __v_skip = true;
