@@ -70,9 +70,9 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
     public getRowNode(gridRow: RowPosition): RowNode | undefined {
         switch (gridRow.rowPinned) {
             case 'top':
-                return this.pinnedRowModel.getPinnedTopRowNodes()[gridRow.rowIndex];
+                return this.pinnedRowModel.getPinnedTopRow(gridRow.rowIndex);
             case 'bottom':
-                return this.pinnedRowModel.getPinnedBottomRowNodes()[gridRow.rowIndex];
+                return this.pinnedRowModel.getPinnedBottomRow(gridRow.rowIndex);
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }

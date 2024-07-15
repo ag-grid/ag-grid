@@ -271,12 +271,12 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         const index = rowPosition.rowIndex;
 
         if (pinned === 'top') {
-            const lastTopIndex = this.pinnedRowModel.getPinnedTopRowNodes().length - 1;
+            const lastTopIndex = this.pinnedRowModel.getPinnedTopRowCount() - 1;
             return lastTopIndex <= index;
         }
 
         if (pinned === 'bottom') {
-            const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowNodes().length - 1;
+            const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowCount() - 1;
             return lastBottomIndex <= index;
         }
 
@@ -350,7 +350,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     private getLastFloatingTopRow(): RowPosition {
-        const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowNodes().length - 1;
+        const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowCount() - 1;
 
         return { rowIndex: lastFloatingRow, rowPinned: 'top' } as RowPosition;
     }
