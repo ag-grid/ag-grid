@@ -22,12 +22,8 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
     public postConstruct(): void {
         this.setPinnedRowData(this.gos.get('pinnedTopRowData'), 'top');
         this.setPinnedRowData(this.gos.get('pinnedBottomRowData'), 'bottom');
-        this.addManagedPropertyListener('pinnedTopRowData', () =>
-            this.setPinnedRowData(this.gos.get('pinnedTopRowData'), 'top')
-        );
-        this.addManagedPropertyListener('pinnedBottomRowData', () =>
-            this.setPinnedRowData(this.gos.get('pinnedBottomRowData'), 'bottom')
-        );
+        this.addManagedPropertyListener('pinnedTopRowData', (e) => this.setPinnedRowData(e.currentValue, 'top'));
+        this.addManagedPropertyListener('pinnedBottomRowData', (e) => this.setPinnedRowData(e.currentValue, 'bottom'));
         this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanges.bind(this) });
     }
 
@@ -115,7 +111,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
                 if (existingNode.data !== data) {
                     existingNode.setData(data);
                 }
-                nextRowTop += existingNode.setRowTopAndRowIndex(nextRowTop, i);
+                nextRowTop += this.setRowTopAndRowIndex(existingNode, nextRowTop, i);
 
                 // existing nodes that are re-used/updated shouldn't be deleted
                 nodesToRemove.delete(id);
@@ -125,7 +121,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
                 rowNode.id = id;
                 rowNode.data = data;
                 rowNode.rowPinned = floating;
-                nextRowTop += rowNode.setRowTopAndRowIndex(nextRowTop, i);
+                nextRowTop += this.setRowTopAndRowIndex(rowNode, nextRowTop, i);
                 nodes.push(rowNode);
             }
         }
@@ -136,6 +132,13 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         nodes.removeAllById(nodesToRemove);
 
         nodes.setOrder(newOrder);
+    }
+
+    private setRowTopAndRowIndex(rowNode: RowNode, rowTop: number, rowIndex: number): number {
+        rowNode.setRowTop(rowTop);
+        rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode).height);
+        rowNode.setRowIndex(rowIndex);
+        return rowNode.rowHeight!;
     }
 
     public getPinnedTopTotalHeight(): number {

@@ -457,13 +457,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.setDisplayed(rowTop !== null);
     }
 
-    public setRowTopAndRowIndex(rowTop: number, rowIndex: number): number {
-        this.setRowTop(rowTop);
-        this.setRowHeight(this.beans.gos.getRowHeightForNode(this).height);
-        this.setRowIndex(rowIndex);
-        return this.rowHeight!;
-    }
-
     public clearRowTopAndRowIndex(): void {
         this.oldRowTop = null;
         this.setRowTop(null);
