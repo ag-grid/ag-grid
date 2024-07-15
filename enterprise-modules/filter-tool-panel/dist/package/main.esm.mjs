@@ -990,7 +990,7 @@ var FiltersToolPanel = class extends Component5 {
 };
 
 // enterprise-modules/filter-tool-panel/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.2";
 
 // enterprise-modules/filter-tool-panel/src/filtersToolPanelModule.ts
 var FiltersToolPanelModule = {

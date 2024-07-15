@@ -297,7 +297,7 @@ function forEachDetailGridInfo(beans, callback) {
 }
 
 // enterprise-modules/master-detail/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.2";
 
 // enterprise-modules/master-detail/src/masterDetailModule.ts
 var MasterDetailCoreModule = {

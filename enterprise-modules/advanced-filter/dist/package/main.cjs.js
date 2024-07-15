@@ -4134,7 +4134,7 @@ var AdvancedFilterService = class extends import_core24.BeanStub {
 };
 
 // enterprise-modules/advanced-filter/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.2";
 
 // enterprise-modules/advanced-filter/src/advancedFilterModule.ts
 var AdvancedFilterCoreModule = {

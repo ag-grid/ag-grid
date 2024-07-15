@@ -1834,7 +1834,7 @@ var MenuUtils = class extends import_core11.BeanStub {
 };
 
 // enterprise-modules/menu/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.2";
 
 // enterprise-modules/menu/src/menuModule.ts
 var MenuCoreModule = {

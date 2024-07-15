@@ -54,6 +54,7 @@ export declare class Component<TLocalEvent extends string = ComponentEvent> exte
         getColDef?(): ColDef | ColGroupDef;
         shouldDisplayTooltip?: () => boolean;
     }): void;
+    private getDataRefAttribute;
     private applyElementsToComponent;
     private createChildComponentsFromTags;
     private createComponentFromElement;

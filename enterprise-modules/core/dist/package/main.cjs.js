@@ -605,7 +605,7 @@ var GridLicenseManager = class extends import_core3.BeanStub {
 };
 
 // enterprise-modules/core/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.2";
 
 // enterprise-modules/core/src/widgets/agMenuItemRenderer.ts
 var import_core4 = require("@ag-grid-community/core");

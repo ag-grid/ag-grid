@@ -639,7 +639,7 @@ var GridLicenseManager = class extends BeanStub {
 };
 
 // enterprise-modules/core/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.2";
 
 // enterprise-modules/core/src/widgets/agMenuItemRenderer.ts
 import {
@@ -9109,7 +9109,7 @@ var AdvancedFilterService = class extends BeanStub52 {
     });
   }
 };
-var VERSION2 = "32.0.0";
+var VERSION2 = "32.0.2";
 var AdvancedFilterCoreModule = {
   version: VERSION2,
   moduleName: `${ModuleNames2.AdvancedFilterModule}-core`,
@@ -10598,7 +10598,7 @@ var SelectionHandleFactory = class extends BeanStub23 {
     return this.createBean(type === SelectionHandleType4.RANGE ? new AgRangeHandle() : new AgFillHandle());
   }
 };
-var VERSION3 = "32.0.0";
+var VERSION3 = "32.0.2";
 var RangeSelectionCoreModule = {
   version: VERSION3,
   moduleName: `${ModuleNames3.RangeSelectionModule}-core`,
@@ -12565,7 +12565,7 @@ _ChartTranslationService.DEFAULT_TRANSLATIONS = {
   avg: "Average"
 };
 var ChartTranslationService = _ChartTranslationService;
-var VERSION4 = "32.0.0";
+var VERSION4 = "32.0.2";
 var ALL_AXIS_TYPES = ["number", "category", "grouped-category", "log", "time"];
 function getLegacyAxisType(chartType) {
   switch (chartType) {
@@ -23718,7 +23718,7 @@ ${apiError("writeText")}`);
     return startRangeIndex - endRangeIndex + 1;
   }
 };
-var VERSION5 = "32.0.0";
+var VERSION5 = "32.0.2";
 var ClipboardCoreModule = {
   version: VERSION5,
   moduleName: `${ModuleNames5.ClipboardModule}-core`,
@@ -25707,6 +25707,14 @@ var GroupStage = class extends BeanStub63 {
     const level = details.usingTreeData ? path.length - 1 : void 0;
     const parentGroup = this.findParentForNode(childNode, path, details, batchRemover, level);
     if (details.usingTreeData) {
+      const existingNode = parentGroup.childrenAfterGroup?.find((node) => node.key === childNode.key);
+      if (existingNode) {
+        _warnOnce33(`duplicate group keys for row data, keys should be unique`, [
+          existingNode.data,
+          childNode.data
+        ]);
+        return;
+      }
       const info = _last23(path);
       childNode.parent = parentGroup;
       childNode.level = path.length;
@@ -26631,7 +26639,7 @@ var ShowRowGroupColsService = class extends BeanStub92 {
     return this.showRowGroupColsMap[id];
   }
 };
-var VERSION6 = "32.0.0";
+var VERSION6 = "32.0.2";
 var RowGroupingCoreModule = {
   version: VERSION6,
   moduleName: `${ModuleNames6.RowGroupingModule}-core`,
@@ -27673,7 +27681,7 @@ var SideBarService = class extends BeanStub19 {
 };
 
 // enterprise-modules/side-bar/src/version.ts
-var VERSION7 = "32.0.0";
+var VERSION7 = "32.0.2";
 
 // enterprise-modules/side-bar/src/sideBarModule.ts
 var SideBarCoreModule = {
@@ -29642,7 +29650,7 @@ var ModelItemUtils = class extends BeanStub26 {
     };
   }
 };
-var VERSION8 = "32.0.0";
+var VERSION8 = "32.0.2";
 var ColumnsToolPanelModule = {
   version: VERSION8,
   moduleName: ModuleNames23.ColumnsToolPanelModule,
@@ -33543,7 +33551,7 @@ function getMultipleSheetsAsExcel2(beans, params) {
 function exportMultipleSheetsAsExcel2(beans, params) {
   beans.excelCreator?.exportMultipleSheetsAsExcel(params);
 }
-var VERSION9 = "32.0.0";
+var VERSION9 = "32.0.2";
 var _ExcelExportCoreModule = {
   version: VERSION9,
   moduleName: `${ModuleNames10.ExcelExportModule}-core`,
@@ -34555,7 +34563,7 @@ var FiltersToolPanel = class extends Component55 {
     super.destroy();
   }
 };
-var VERSION10 = "32.0.0";
+var VERSION10 = "32.0.2";
 var FiltersToolPanelModule = {
   version: VERSION10,
   moduleName: ModuleNames11.FiltersToolPanelModule,
@@ -34850,7 +34858,7 @@ function getDetailGridInfo(beans, id) {
 function forEachDetailGridInfo(beans, callback) {
   beans.detailGridApiService?.forEachDetailGridInfo(callback);
 }
-var VERSION11 = "32.0.0";
+var VERSION11 = "32.0.2";
 var MasterDetailCoreModule = {
   version: VERSION11,
   moduleName: `${ModuleNames12.MasterDetailModule}-core`,
@@ -36702,7 +36710,7 @@ var MenuUtils = class extends BeanStub74 {
     }
   }
 };
-var VERSION12 = "32.0.0";
+var VERSION12 = "32.0.2";
 var MenuCoreModule = {
   version: VERSION12,
   moduleName: `${ModuleNames52.MenuModule}-core`,
@@ -37298,7 +37306,7 @@ var MultiFloatingFilterComp = class extends Component57 {
     });
   }
 };
-var VERSION13 = "32.0.0";
+var VERSION13 = "32.0.2";
 var MultiFilterCoreModule = {
   version: VERSION13,
   moduleName: `${ModuleNames14.MultiFilterModule}-core`,
@@ -37475,7 +37483,7 @@ var RichSelectCellEditor = class extends PopupComponent2 {
     return false;
   }
 };
-var VERSION14 = "32.0.0";
+var VERSION14 = "32.0.2";
 var RichSelectModule = {
   version: VERSION14,
   moduleName: ModuleNames15.RichSelectModule,
@@ -42030,7 +42038,7 @@ var TransactionManager = class extends BeanStub162 {
     }
   }
 };
-var VERSION15 = "32.0.0";
+var VERSION15 = "32.0.2";
 var ServerSideRowModelCoreModule = {
   version: VERSION15,
   moduleName: `${ModuleNames25.ServerSideRowModelModule}-core`,
@@ -44566,7 +44574,7 @@ var SetFloatingFilterComp = class extends Component214 {
     });
   }
 };
-var VERSION16 = "32.0.0";
+var VERSION16 = "32.0.2";
 var SetFilterCoreModule = {
   version: VERSION16,
   moduleName: `${ModuleNames17.SetFilterModule}-core`,
@@ -46652,7 +46660,7 @@ var SparklineTooltipSingleton = class extends BeanStub31 {
     super.destroy();
   }
 };
-var VERSION17 = "32.0.0";
+var VERSION17 = "32.0.2";
 var SparklinesModule = {
   version: VERSION17,
   moduleName: ModuleNames18.SparklinesModule,
@@ -47260,7 +47268,7 @@ var StatusBarService = class extends BeanStub37 {
 };
 
 // enterprise-modules/status-bar/src/version.ts
-var VERSION18 = "32.0.0";
+var VERSION18 = "32.0.2";
 
 // enterprise-modules/status-bar/src/statusBarModule.ts
 var StatusBarCoreModule = {
@@ -47293,7 +47301,7 @@ var StatusBarModule = {
 // enterprise-modules/viewport-row-model/dist/package/main.esm.mjs
 import { ModuleNames as ModuleNames20 } from "ag-grid-community";
 import { BeanStub as BeanStub38, RowNode as RowNode4, _iterateObject as _iterateObject6, _missing as _missing8, _warnOnce as _warnOnce50 } from "ag-grid-community";
-var VERSION19 = "32.0.0";
+var VERSION19 = "32.0.2";
 var ViewportRowModel = class extends BeanStub38 {
   constructor() {
     super(...arguments);

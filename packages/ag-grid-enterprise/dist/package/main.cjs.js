@@ -641,7 +641,7 @@ var GridLicenseManager = class extends import_core3.BeanStub {
 };
 
 // enterprise-modules/core/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.2";
 
 // enterprise-modules/core/src/widgets/agMenuItemRenderer.ts
 var import_core4 = require("ag-grid-community");
@@ -8940,7 +8940,7 @@ var AdvancedFilterService = class extends import_core28.BeanStub {
     });
   }
 };
-var VERSION2 = "32.0.0";
+var VERSION2 = "32.0.2";
 var AdvancedFilterCoreModule = {
   version: VERSION2,
   moduleName: `${import_core25.ModuleNames.AdvancedFilterModule}-core`,
@@ -10415,7 +10415,7 @@ var SelectionHandleFactory = class extends import_core54.BeanStub {
     return this.createBean(type === import_core54.SelectionHandleType.RANGE ? new AgRangeHandle() : new AgFillHandle());
   }
 };
-var VERSION3 = "32.0.0";
+var VERSION3 = "32.0.2";
 var RangeSelectionCoreModule = {
   version: VERSION3,
   moduleName: `${import_core51.ModuleNames.RangeSelectionModule}-core`,
@@ -12335,7 +12335,7 @@ _ChartTranslationService.DEFAULT_TRANSLATIONS = {
   avg: "Average"
 };
 var ChartTranslationService = _ChartTranslationService;
-var VERSION4 = "32.0.0";
+var VERSION4 = "32.0.2";
 var ALL_AXIS_TYPES = ["number", "category", "grouped-category", "log", "time"];
 function getLegacyAxisType(chartType) {
   switch (chartType) {
@@ -23488,7 +23488,7 @@ ${apiError("writeText")}`);
     return startRangeIndex - endRangeIndex + 1;
   }
 };
-var VERSION5 = "32.0.0";
+var VERSION5 = "32.0.2";
 var ClipboardCoreModule = {
   version: VERSION5,
   moduleName: `${import_core161.ModuleNames.ClipboardModule}-core`,
@@ -25450,6 +25450,14 @@ var GroupStage = class extends import_core180.BeanStub {
     const level = details.usingTreeData ? path.length - 1 : void 0;
     const parentGroup = this.findParentForNode(childNode, path, details, batchRemover, level);
     if (details.usingTreeData) {
+      const existingNode = parentGroup.childrenAfterGroup?.find((node) => node.key === childNode.key);
+      if (existingNode) {
+        (0, import_core180._warnOnce)(`duplicate group keys for row data, keys should be unique`, [
+          existingNode.data,
+          childNode.data
+        ]);
+        return;
+      }
       const info = (0, import_core180._last)(path);
       childNode.parent = parentGroup;
       childNode.level = path.length;
@@ -26374,7 +26382,7 @@ var ShowRowGroupColsService = class extends import_core183.BeanStub {
     return this.showRowGroupColsMap[id];
   }
 };
-var VERSION6 = "32.0.0";
+var VERSION6 = "32.0.2";
 var RowGroupingCoreModule = {
   version: VERSION6,
   moduleName: `${import_core164.ModuleNames.RowGroupingModule}-core`,
@@ -27398,7 +27406,7 @@ var SideBarService = class extends import_core193.BeanStub {
 };
 
 // enterprise-modules/side-bar/src/version.ts
-var VERSION7 = "32.0.0";
+var VERSION7 = "32.0.2";
 
 // enterprise-modules/side-bar/src/sideBarModule.ts
 var SideBarCoreModule = {
@@ -29323,7 +29331,7 @@ var ModelItemUtils = class extends import_core211.BeanStub {
     };
   }
 };
-var VERSION8 = "32.0.0";
+var VERSION8 = "32.0.2";
 var ColumnsToolPanelModule = {
   version: VERSION8,
   moduleName: import_core196.ModuleNames.ColumnsToolPanelModule,
@@ -33224,7 +33232,7 @@ function getMultipleSheetsAsExcel2(beans, params) {
 function exportMultipleSheetsAsExcel2(beans, params) {
   beans.excelCreator?.exportMultipleSheetsAsExcel(params);
 }
-var VERSION9 = "32.0.0";
+var VERSION9 = "32.0.2";
 var _ExcelExportCoreModule = {
   version: VERSION9,
   moduleName: `${import_core212.ModuleNames.ExcelExportModule}-core`,
@@ -34203,7 +34211,7 @@ var FiltersToolPanel = class extends import_core224.Component {
     super.destroy();
   }
 };
-var VERSION10 = "32.0.0";
+var VERSION10 = "32.0.2";
 var FiltersToolPanelModule = {
   version: VERSION10,
   moduleName: import_core222.ModuleNames.FiltersToolPanelModule,
@@ -34490,7 +34498,7 @@ function getDetailGridInfo(beans, id) {
 function forEachDetailGridInfo(beans, callback) {
   beans.detailGridApiService?.forEachDetailGridInfo(callback);
 }
-var VERSION11 = "32.0.0";
+var VERSION11 = "32.0.2";
 var MasterDetailCoreModule = {
   version: VERSION11,
   moduleName: `${import_core230.ModuleNames.MasterDetailModule}-core`,
@@ -36316,7 +36324,7 @@ var MenuUtils = class extends import_core247.BeanStub {
     }
   }
 };
-var VERSION12 = "32.0.0";
+var VERSION12 = "32.0.2";
 var MenuCoreModule = {
   version: VERSION12,
   moduleName: `${import_core235.ModuleNames.MenuModule}-core`,
@@ -36897,7 +36905,7 @@ var MultiFloatingFilterComp = class extends import_core252.Component {
     });
   }
 };
-var VERSION13 = "32.0.0";
+var VERSION13 = "32.0.2";
 var MultiFilterCoreModule = {
   version: VERSION13,
   moduleName: `${import_core248.ModuleNames.MultiFilterModule}-core`,
@@ -37074,7 +37082,7 @@ var RichSelectCellEditor = class extends import_core255.PopupComponent {
     return false;
   }
 };
-var VERSION14 = "32.0.0";
+var VERSION14 = "32.0.2";
 var RichSelectModule = {
   version: VERSION14,
   moduleName: import_core253.ModuleNames.RichSelectModule,
@@ -41603,7 +41611,7 @@ var TransactionManager = class extends import_core277.BeanStub {
     }
   }
 };
-var VERSION15 = "32.0.0";
+var VERSION15 = "32.0.2";
 var ServerSideRowModelCoreModule = {
   version: VERSION15,
   moduleName: `${import_core257.ModuleNames.ServerSideRowModelModule}-core`,
@@ -44104,7 +44112,7 @@ var SetFloatingFilterComp = class extends import_core286.Component {
     });
   }
 };
-var VERSION16 = "32.0.0";
+var VERSION16 = "32.0.2";
 var SetFilterCoreModule = {
   version: VERSION16,
   moduleName: `${import_core278.ModuleNames.SetFilterModule}-core`,
@@ -46190,7 +46198,7 @@ var SparklineTooltipSingleton = class extends import_core293.BeanStub {
     super.destroy();
   }
 };
-var VERSION17 = "32.0.0";
+var VERSION17 = "32.0.2";
 var SparklinesModule = {
   version: VERSION17,
   moduleName: import_core287.ModuleNames.SparklinesModule,
@@ -46790,7 +46798,7 @@ var StatusBarService = class extends import_core302.BeanStub {
 };
 
 // enterprise-modules/status-bar/src/version.ts
-var VERSION18 = "32.0.0";
+var VERSION18 = "32.0.2";
 
 // enterprise-modules/status-bar/src/statusBarModule.ts
 var StatusBarCoreModule = {
@@ -46823,7 +46831,7 @@ var StatusBarModule = {
 // enterprise-modules/viewport-row-model/dist/package/main.esm.mjs
 var import_core305 = require("ag-grid-community");
 var import_core307 = require("ag-grid-community");
-var VERSION19 = "32.0.0";
+var VERSION19 = "32.0.2";
 var ViewportRowModel = class extends import_core307.BeanStub {
   constructor() {
     super(...arguments);

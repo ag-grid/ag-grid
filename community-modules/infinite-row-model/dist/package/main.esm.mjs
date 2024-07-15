@@ -614,7 +614,7 @@ function isLastRowIndexKnown(beans) {
 }
 
 // community-modules/infinite-row-model/src/version.ts
-var VERSION = "32.0.0";
+var VERSION = "32.0.2";
 
 // community-modules/infinite-row-model/src/infiniteRowModelModule.ts
 var InfiniteRowModelCoreModule = {

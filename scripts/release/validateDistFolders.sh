@@ -137,22 +137,30 @@ if [[ $count -ne 4 ]]
 then
   echo "!!!!! packages/ag-grid-community/dist should have 4 umd files"
   exit 1
+else
+  echo "packages/ag-grid-community/dist has $count artefacts"
 fi
 count=`ls -l packages/ag-grid-enterprise/dist/*.js | wc -l | tr -d ' '`
 if [[ $count -ne 4 ]]
 then
   echo "!!!!! packages/ag-grid-enterprise/dist should have 4 umd files"
   exit 1
+else
+  echo "packages/ag-grid-enterprise/dist has $count artefacts"
 fi
 count=`ls -l packages/ag-grid-charts-enterprise/dist/*.js | wc -l | tr -d ' '`
 if [[ $count -ne 4 ]]
 then
   echo "!!!!! packages/ag-grid-charts-enterprise/dist should have 4 umd files"
   exit 1
+else
+  echo "packages/ag-grid-charts-enterprise/dist has $count artefacts"
 fi
 count=`find "community-modules/locale/dist/" | wc -l | tr -d ' '`
-if [[ $count -ne 53 ]]
+if [[ $count -ne 54 ]]
 then
   echo "!!!!! community-modules/locale/dist should have 53 files"
   exit 1
+else
+  echo "community-modules/locale/dist has $count artefacts"
 fi
