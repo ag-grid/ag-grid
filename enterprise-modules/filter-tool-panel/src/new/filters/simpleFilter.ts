@@ -5,7 +5,7 @@ import type { FilterCondition, SimpleFilterOperatorParams, SimpleFilterParams } 
 import { SimpleFilterJoin } from './simpleFilterJoin';
 import { SimpleFilterOption } from './simpleFilterOption';
 
-export class SimpleFilter extends Component {
+export class SimpleFilter extends Component<'filterChanged'> {
     private readonly eFilterBody: HTMLElement = RefPlaceholder;
 
     private eOptions: SimpleFilterOption[] = [];
@@ -64,6 +64,13 @@ export class SimpleFilter extends Component {
             return;
         }
         const optionWrapper = this.createBean(new SimpleFilterOption(params));
+        optionWrapper.addManagedListeners(optionWrapper, {
+            conditionChanged: ({ condition }) => {
+                const conditions = [...this.params.conditions];
+                conditions[index] = condition;
+                this.updateParams('conditions', conditions);
+            },
+        });
         optionWrapper.appendToGui();
         eOptions.push(optionWrapper);
     }
@@ -77,8 +84,21 @@ export class SimpleFilter extends Component {
             return;
         }
         const eJoinOperator = this.createBean(new SimpleFilterJoin(operator));
+        eJoinOperator.addManagedListeners(eJoinOperator, {
+            operatorChanged: ({ joinOperator }) => this.updateParams('joinOperator', joinOperator),
+        });
         this.eFilterBody.appendChild(eJoinOperator.getGui());
         this.eJoinOperators.push(eJoinOperator);
+    }
+
+    private updateParams<K extends keyof SimpleFilterParams>(key: K, value: SimpleFilterParams[K]): void {
+        this.dispatchLocalEvent({
+            type: 'filterChanged',
+            simpleFilterParams: {
+                ...this.params,
+                [key]: value,
+            },
+        });
     }
 
     public override destroy(): void {

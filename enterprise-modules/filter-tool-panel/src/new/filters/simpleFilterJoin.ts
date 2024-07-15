@@ -4,7 +4,7 @@ import { AgRadioButtonSelector, Component, RefPlaceholder } from '@ag-grid-commu
 import type { FilterPanelTranslationService } from '../filterPanelTranslationService';
 import type { SimpleFilterOperatorParams } from '../filterState';
 
-export class SimpleFilterJoin extends Component {
+export class SimpleFilterJoin extends Component<'operatorChanged'> {
     private readonly eRadioButtonAnd: AgRadioButton = RefPlaceholder;
     private readonly eRadioButtonOr: AgRadioButton = RefPlaceholder;
 
@@ -70,7 +70,12 @@ export class SimpleFilterJoin extends Component {
     }
 
     private updateOperator(operator: JoinOperator): void {
-        // TODO
-        operator;
+        this.dispatchLocalEvent({
+            type: 'operatorChanged',
+            joinOperator: {
+                ...this.params,
+                operator,
+            },
+        });
     }
 }

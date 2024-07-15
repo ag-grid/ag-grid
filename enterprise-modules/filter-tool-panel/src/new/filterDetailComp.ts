@@ -3,7 +3,7 @@ import { Component } from '@ag-grid-community/core';
 import type { FilterState } from './filterState';
 import { SimpleFilter } from './filters/simpleFilter';
 
-export class FilterDetailComp extends Component {
+export class FilterDetailComp extends Component<'filterChanged'> {
     private eFilter: SimpleFilter;
 
     constructor(private state: FilterState) {
@@ -12,6 +12,13 @@ export class FilterDetailComp extends Component {
 
     postConstruct(): void {
         const filter = this.createManagedBean(new SimpleFilter(this.state.simpleFilterParams));
+        this.addManagedListeners(filter, {
+            filterChanged: ({ simpleFilterParams }) =>
+                this.dispatchLocalEvent({
+                    type: 'filterChanged',
+                    simpleFilterParams,
+                }),
+        });
         this.eFilter = filter;
         this.appendChild(filter.getGui());
     }

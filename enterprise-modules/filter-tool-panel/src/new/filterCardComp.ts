@@ -1,7 +1,7 @@
 import { Component, RefPlaceholder, _clearElement, _createIcon, _removeFromParent } from '@ag-grid-community/core';
 
 import { FilterDetailComp } from './filterDetailComp';
-import type { FilterState } from './filterState';
+import type { FilterState, SimpleFilterParams } from './filterState';
 import { FilterSummaryComp } from './filterSummaryComp';
 import type { IFilterStateService } from './iFilterStateService';
 
@@ -57,7 +57,7 @@ export class FilterCardComp extends Component {
     }
 
     private refreshFilterComp(state: FilterState): void {
-        const removeComp = (comp?: Component) => {
+        const removeComp = (comp?: Component<any>) => {
             if (!comp) {
                 return;
             }
@@ -66,19 +66,27 @@ export class FilterCardComp extends Component {
         };
         const createOrRefreshComp = <C extends FilterDetailComp | FilterSummaryComp>(
             comp: C | undefined,
-            FilterComp: { new (state: FilterState): C }
+            FilterComp: { new (state: FilterState): C },
+            listener?: (params: { simpleFilterParams: SimpleFilterParams }) => void
         ) => {
             if (comp) {
                 comp.refresh(state);
                 return comp;
             }
             const newComp = this.createBean(new FilterComp(state));
+            if (listener) {
+                newComp.addManagedListeners(newComp, {
+                    filterChanged: listener,
+                });
+            }
             this.appendChild(newComp.getGui());
             return newComp;
         };
         if (state.expanded) {
             this.summaryComp = removeComp(this.summaryComp);
-            this.detailComp = createOrRefreshComp(this.detailComp, FilterDetailComp);
+            this.detailComp = createOrRefreshComp(this.detailComp, FilterDetailComp, ({ simpleFilterParams }) =>
+                this.filterStateService.updateSimpleFilterParams(this.id, simpleFilterParams)
+            );
         } else {
             this.detailComp = removeComp(this.detailComp);
             this.summaryComp = createOrRefreshComp(this.summaryComp, FilterSummaryComp);

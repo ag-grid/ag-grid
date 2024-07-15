@@ -2,7 +2,7 @@ import { AgInputTextField, Component, _removeFromParent } from '@ag-grid-communi
 
 import type { FilterCondition } from '../filterState';
 
-export class SimpleFilterBody extends Component {
+export class SimpleFilterBody extends Component<'filterChanged'> {
     private eFrom: AgInputTextField;
     private eTo?: AgInputTextField;
 
@@ -50,6 +50,13 @@ export class SimpleFilterBody extends Component {
         const eValue = this.createBean(new AgInputTextField());
         eValue.addCssClass(`ag-filter-${fromTo}`);
         eValue.addCssClass('ag-filter-filter');
+        eValue.onValueChange((value) =>
+            this.dispatchLocalEvent({
+                type: 'filterChanged',
+                key: fromTo,
+                value,
+            })
+        );
         this.appendChild(eValue.getGui());
         return eValue;
     }

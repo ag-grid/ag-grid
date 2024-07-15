@@ -11,7 +11,7 @@ interface SimpleFilterOptionParams {
     options: ListOption[];
 }
 
-export class SimpleFilterOption extends BeanStub {
+export class SimpleFilterOption extends BeanStub<'conditionChanged'> {
     private translationService: FilterPanelTranslationService;
 
     private eType: AgSelect;
@@ -30,10 +30,7 @@ export class SimpleFilterOption extends BeanStub {
             new AgSelect({
                 className: 'ag-select ag-filter-select',
                 ariaLabel: this.translationService.translate('ariaFilteringOperator'),
-                onValueChange: (value) => {
-                    // TODO
-                    value;
-                },
+                onValueChange: (option) => this.updateCondition('option', option),
             })
         );
         this.eType = eType;
@@ -71,6 +68,11 @@ export class SimpleFilterOption extends BeanStub {
         if (numberOfInputs != 0) {
             if (!eConditionBody) {
                 eConditionBody = this.createBean(new SimpleFilterBody(condition));
+                eConditionBody.addManagedListeners(eConditionBody, {
+                    filterChanged: ({ key, value }) => {
+                        this.updateCondition(key, value);
+                    },
+                });
                 this.eConditionBody = eConditionBody;
                 eFilterBody.appendChild(eConditionBody.getGui());
             } else {
@@ -80,6 +82,16 @@ export class SimpleFilterOption extends BeanStub {
             _removeFromParent(eConditionBody.getGui());
             this.eConditionBody = this.destroyBean(eConditionBody);
         }
+    }
+
+    private updateCondition<K extends keyof FilterCondition>(key: K, value: FilterCondition[K]): void {
+        this.dispatchLocalEvent({
+            type: 'conditionChanged',
+            condition: {
+                ...this.params.condition,
+                [key]: value,
+            },
+        });
     }
 
     public override destroy(): void {
