@@ -81,6 +81,11 @@
         border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
     }
 
+    .ag-sticky-bottom .ag-row {
+        border-bottom: none;
+        border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+    }
+
     .ag-row-highlight-above::after,
     .ag-row-highlight-below::after {
         content: '';
