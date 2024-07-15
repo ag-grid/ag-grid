@@ -20,10 +20,14 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
     private pinnedBottomRows = new OrderedCache<RowNode>();
 
     public postConstruct(): void {
-        this.setPinnedTopRowData();
-        this.setPinnedBottomRowData();
-        this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
-        this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
+        this.setPinnedRowData(this.gos.get('pinnedTopRowData'), 'top');
+        this.setPinnedRowData(this.gos.get('pinnedBottomRowData'), 'bottom');
+        this.addManagedPropertyListener('pinnedTopRowData', () =>
+            this.setPinnedRowData(this.gos.get('pinnedTopRowData'), 'top')
+        );
+        this.addManagedPropertyListener('pinnedBottomRowData', () =>
+            this.setPinnedRowData(this.gos.get('pinnedBottomRowData'), 'bottom')
+        );
         this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanges.bind(this) });
     }
 
@@ -70,18 +74,8 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         return anyChange;
     }
 
-    private setPinnedTopRowData(): void {
-        const rowData = this.gos.get('pinnedTopRowData');
-        this.updateNodesFromRowData(rowData, 'top');
-        const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
-            type: 'pinnedRowDataChanged',
-        };
-        this.eventService.dispatchEvent(event);
-    }
-
-    private setPinnedBottomRowData(): void {
-        const rowData = this.gos.get('pinnedBottomRowData');
-        this.updateNodesFromRowData(rowData, 'bottom');
+    private setPinnedRowData(rowData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
+        this.updateNodesFromRowData(rowData, floating);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
             type: 'pinnedRowDataChanged',
         };
