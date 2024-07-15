@@ -36,27 +36,6 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         return !this.isEmpty(floating);
     }
 
-    /** @deprecated */
-    public getRowAtPixel(pixel: number, floating: RowPinnedType): number {
-        const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (rows.isEmpty()) {
-            return 0; // this should never happen, just in case, 0 is graceful failure
-        }
-
-        let rowNumber = rows.getSize() - 1;
-
-        rows.forEach((rowNode, i) => {
-            const rowTopPixel = rowNode.rowTop! + rowNode.rowHeight! - 1;
-            // only need to range check against the top pixel, as we are going through the list
-            // in order, first row to hit the pixel wins
-            if (rowTopPixel >= pixel) {
-                rowNumber = Math.min(rowNumber, i);
-            }
-        });
-
-        return rowNumber;
-    }
-
     private onGridStylesChanges(e: CssVariablesChanged) {
         if (e.rowHeightChanged) {
             const estimateRowHeight = (rowNode: RowNode) => {
