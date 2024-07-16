@@ -644,22 +644,22 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
 
             if (selectionOpts.checkboxSelection?.enabled) {
                 const colDefs = go.columnDefs;
-                if (colDefs) {
+                if (colDefs && colDefs.length > 0) {
                     // Only set checkbox selection properties on the first column
-                    if ('checkboxSelection' in colDefs[0]) {
+                    if (!('children' in colDefs[0])) {
                         colDefs[0].checkboxSelection = selectionOpts.checkboxSelection.enabled;
                         colDefs[0].showDisabledCheckboxes =
                             selectionOpts.checkboxSelection.showDisabledCheckboxes ?? false;
                     }
                 }
-                selectionOpts.checkboxSelection;
             }
 
             if (selectionOpts.mode === 'multiRow') {
+                go.rowSelection = 'multiple';
                 const colDefs = go.columnDefs;
-                if (colDefs) {
+                if (colDefs && colDefs.length > 0) {
                     // Only set header checkbox selection properties on the first column
-                    if ('headerCheckboxSelection' in colDefs[0]) {
+                    if (!('children' in colDefs[0])) {
                         colDefs[0].headerCheckboxSelection = selectionOpts.enableHeaderCheckbox ?? false;
                         colDefs[0].headerCheckboxSelectionCurrentPageOnly =
                             selectionOpts.selectAllOptions?.currentPageOnly ?? false;
@@ -667,6 +667,8 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
                             selectionOpts.selectAllOptions?.filteredOnly ?? false;
                     }
                 }
+            } else {
+                go.rowSelection = 'single';
             }
         }
     }

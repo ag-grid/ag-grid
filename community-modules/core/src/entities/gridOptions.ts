@@ -2459,7 +2459,7 @@ export interface MultiRowSelectionOptions<TData, TValue> extends CommonRowSelect
 
 export type CheckboxSelectionOptions<TData, TValue> =
     | { enabled: false }
-    | { enabled: true | CheckboxSelectionCallback<TData, TValue>; showDisabledCheckboxes: boolean };
+    | { enabled: true | CheckboxSelectionCallback<TData, TValue>; showDisabledCheckboxes?: boolean };
 
 export type GroupSelectionOptions = 'none' | 'allChildren' | 'filteredChildren';
 
