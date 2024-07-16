@@ -1,4 +1,4 @@
-import { set } from './object';
+import { deepMerge, set } from './object';
 
 describe('object', () => {
     describe.each([
@@ -16,5 +16,18 @@ describe('object', () => {
             set(target, expression, value);
             expect(target).toEqual(expected);
         });
+    });
+
+    // test prototype pollution
+    test('deepMerge does not allow prototype pollution', () => {
+        const BAD_JSON = JSON.parse('{"__proto__":{"polluted":true}}');
+        const victim = {};
+        try {
+            deepMerge(victim, BAD_JSON);
+        } catch (e) {
+            console.error(e);
+        }
+        // @ts-expect-error polluted could be there
+        expect(victim.polluted).toBeUndefined();
     });
 });

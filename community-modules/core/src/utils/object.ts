@@ -1,7 +1,15 @@
 import { exists } from './generic';
 
-export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | undefined, callback: (key: string, value: T) => void) {
-    if (object == null) { return; }
+// Prevents the risk of prototype pollution
+export const SKIP_JS_BUILTINS = new Set<string>(['__proto__', 'constructor', 'prototype']);
+
+export function iterateObject<T>(
+    object: { [p: string]: T } | T[] | null | undefined,
+    callback: (key: string, value: T) => void
+) {
+    if (object == null) {
+        return;
+    }
 
     if (Array.isArray(object)) {
         for (let i = 0; i < object.length; i++) {
@@ -20,6 +28,10 @@ export function cloneObject<T extends {}>(object: T): T {
     const keys = Object.keys(object);
 
     for (let i = 0; i < keys.length; i++) {
+        if (SKIP_JS_BUILTINS.has(keys[i])) {
+            continue;
+        }
+
         const key = keys[i];
         const value = (object as any)[key];
         (copy as any)[key] = value;
@@ -38,9 +50,10 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | un
     const obj = object as any;
     const res: any = {};
 
-    Object.keys(obj).forEach(key => {
-
-        if (keysToSkip && keysToSkip.indexOf(key) >= 0) { return; }
+    Object.keys(obj).forEach((key) => {
+        if ((keysToSkip && keysToSkip.indexOf(key) >= 0) || SKIP_JS_BUILTINS.has(key)) {
+            return;
+        }
 
         const value = obj[key];
 
@@ -81,6 +94,10 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopy
     if (!exists(source)) { return; }
 
     iterateObject(source, (key: string, sourceValue: any) => {
+        if (SKIP_JS_BUILTINS.has(key)) {
+            return;
+        }
+
         let destValue: any = dest[key];
 
         if (destValue === sourceValue) { return; }
