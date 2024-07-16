@@ -11,15 +11,21 @@ export interface NoInputFilterCondition extends BaseFilterCondition {
     numberOfInputs: 0;
 }
 
-export interface SingleInputFilterCondition<TValue = string> extends BaseFilterCondition {
-    numberOfInputs: 1;
+interface FromFilterCondition<TValue> extends BaseFilterCondition {
     from?: TValue | null;
+    fromPlaceholder: string;
+    fromAriaLabel: string;
 }
 
-export interface DoubleInputFilterCondition<TValue = string> extends BaseFilterCondition {
+export interface SingleInputFilterCondition<TValue = string> extends FromFilterCondition<TValue> {
+    numberOfInputs: 1;
+}
+
+export interface DoubleInputFilterCondition<TValue = string> extends FromFilterCondition<TValue> {
     numberOfInputs: 2;
-    from?: TValue | null;
     to?: TValue | null;
+    toPlaceholder: string;
+    toAriaLabel: string;
 }
 
 export type FilterCondition<TValue = string> =

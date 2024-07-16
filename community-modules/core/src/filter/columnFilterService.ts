@@ -164,11 +164,19 @@ export class ColumnFilterService extends BeanStub {
     public getFilterModel(): FilterModel {
         const result: FilterModel = {};
 
-        this.allColumnFilters.forEach((filterWrapper, key) => {
+        const { allColumnFilters, initialFilterModel } = this;
+
+        allColumnFilters.forEach((filterWrapper, key) => {
             const model = this.getModelFromFilterWrapper(filterWrapper);
 
             if (_exists(model)) {
                 result[key] = model;
+            }
+        });
+
+        Object.entries(initialFilterModel).forEach(([colId, model]) => {
+            if (!allColumnFilters.has(colId) && _exists(model) && this.columnModel.getCol(colId)?.isFilterAllowed()) {
+                result[colId] = model;
             }
         });
 

@@ -25,6 +25,10 @@ const DEFAULT_TRANSLATIONS = {
     ariaFilteringOperator: 'Filtering operator',
     andCondition: 'AND',
     orCondition: 'OR',
+    filterOoo: 'Filter...',
+    ariaFilterFromValue: 'Filter from value',
+    ariaFilterToValue: 'Filter to value',
+    ariaFilterValue: 'Filter Value',
 } as const;
 
 export type FilterPanelTranslationKey = keyof typeof DEFAULT_TRANSLATIONS;

@@ -51,20 +51,19 @@ export class SimpleFilterBody extends Component<'filterChanged'> {
             this.eTo = this.checkRemove(eTo);
             eTo = undefined;
         }
-        const { inputHelper } = this;
         const { numberOfInputs, disabled = false } = condition;
         if (numberOfInputs === 1) {
-            const { from } = condition;
-            eFrom.setValue(inputHelper.parseValueForInput(from), true).setDisabled(disabled);
+            const { from, fromPlaceholder, fromAriaLabel } = condition;
+            this.refreshFromToElement(eFrom, from, disabled, fromPlaceholder, fromAriaLabel);
             this.eTo = this.checkRemove(eTo);
         } else if (numberOfInputs === 2) {
-            const { from, to } = condition;
-            eFrom.setValue(inputHelper.parseValueForInput(from), true).setDisabled(disabled);
+            const { from, to, fromPlaceholder, fromAriaLabel, toPlaceholder, toAriaLabel } = condition;
+            this.refreshFromToElement(eFrom, from, disabled, fromPlaceholder, fromAriaLabel);
             if (!eTo) {
                 eTo = this.createFromToElement('to');
                 this.eTo = eTo;
             }
-            eTo.setValue(inputHelper.parseValueForInput(to), true).setDisabled(disabled);
+            this.refreshFromToElement(eTo, to, disabled, toPlaceholder, toAriaLabel);
         }
     }
 
@@ -94,6 +93,20 @@ export class SimpleFilterBody extends Component<'filterChanged'> {
         );
         this.appendChild(eValue.getGui());
         return eValue;
+    }
+
+    private refreshFromToElement<TValue>(
+        element: AgInputTextField,
+        value: TValue | null | undefined,
+        disabled: boolean,
+        placeholder: string,
+        ariaLabel: string
+    ): void {
+        element
+            .setValue(this.inputHelper.parseValueForInput(value as any), true)
+            .setDisabled(disabled)
+            .setInputPlaceholder(placeholder)
+            .setInputAriaLabel(ariaLabel);
     }
 
     private createInputHelper<TValue>(filterType: 'text' | 'number' | 'date'): InputHelper<TValue> {

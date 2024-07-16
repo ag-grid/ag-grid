@@ -14,7 +14,7 @@ import { BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 import type { FilterPanelTranslationService } from './filterPanelTranslationService';
 import type { DoubleInputFilterCondition, FilterCondition, SimpleFilterParams } from './filterState';
 
-export interface FilterConfig {
+export interface SimpleFilterConfig {
     maxNumConditions: number;
     numAlwaysVisibleConditions: number;
     defaultJoinOperator: JoinOperator;
@@ -60,7 +60,7 @@ export class SimpleFilterService extends BeanStub {
     }
 
     public getSimpleFilterParams<M extends ISimpleFilterModel>(
-        filterConfig: FilterConfig,
+        filterConfig: SimpleFilterConfig,
         model?: M | ICombinedSimpleModel<M> | null
     ): SimpleFilterParams {
         const {
@@ -78,18 +78,8 @@ export class SimpleFilterService extends BeanStub {
             const mapModelCondition = (modelCondition: M): FilterCondition => {
                 const { type } = modelCondition;
                 const option = type ?? defaultOption;
-                if (modelCondition.filterType === 'date') {
-                    const { dateFrom, dateTo }: DateFilterModel = modelCondition as any;
-                    const parseDate = (value?: string | null) => {
-                        if (value == null) {
-                            return value;
-                        }
-                        return value.split(' ')[0];
-                    };
-                    return this.createFilterCondition(option, disabled, parseDate(dateFrom), parseDate(dateTo));
-                }
-                const { filter, filterTo }: TextFilterModel = modelCondition as any;
-                return this.createFilterCondition(option, disabled, filter, filterTo);
+                const { from, to } = this.getFilterValues(modelCondition);
+                return this.createFilterCondition<any>(option, disabled, from, to);
             };
             const isCombined = (model as ICombinedSimpleModel<M>)?.operator;
             if (isCombined) {
@@ -100,18 +90,10 @@ export class SimpleFilterService extends BeanStub {
                 conditions.push(mapModelCondition(model as M));
             }
         }
-        conditions.push({
-            numberOfInputs: 1,
-            option: defaultOption,
-            disabled,
-        });
+        conditions.push(this.createFilterCondition(defaultOption, disabled));
         conditions.splice(maxNumConditions);
         for (let i = conditions.length; i < numAlwaysVisibleConditions; i++) {
-            conditions.push({
-                numberOfInputs: 1,
-                option: defaultOption,
-                disabled: true,
-            });
+            conditions.push(this.createFilterCondition(defaultOption, true));
         }
 
         return {
@@ -131,7 +113,7 @@ export class SimpleFilterService extends BeanStub {
     public updateSimpleFilterParams(
         oldSimpleFilterParams: SimpleFilterParams | undefined,
         newSimpleFilterParams: SimpleFilterParams,
-        filterConfig: FilterConfig
+        filterConfig: SimpleFilterConfig
     ): SimpleFilterParams {
         if (!oldSimpleFilterParams) {
             return newSimpleFilterParams;
@@ -167,10 +149,7 @@ export class SimpleFilterService extends BeanStub {
             processedConditions.push(this.createFilterCondition(option, disabled, from, to));
         });
         if (processedConditions.length === lastCompleteCondition + 1 && processedConditions.length < maxNumConditions) {
-            processedConditions.push({
-                option: defaultOption,
-                numberOfInputs: this.getNumberOfInputs(defaultOption),
-            });
+            processedConditions.push(this.createFilterCondition(defaultOption));
         }
         return {
             ...newSimpleFilterParams,
@@ -178,7 +157,7 @@ export class SimpleFilterService extends BeanStub {
         };
     }
 
-    public getFilterConfig(column: AgColumn): FilterConfig {
+    public getFilterConfig(column: AgColumn): SimpleFilterConfig {
         const params = column.getColDef().filterParams ?? {};
         const { buttons, readOnly } = params;
         let { maxNumConditions, numAlwaysVisibleConditions, defaultJoinOperator, defaultOption } = params;
@@ -257,27 +236,29 @@ export class SimpleFilterService extends BeanStub {
         };
     }
 
-    public getSummary(model: TextFilterModel | ICombinedSimpleModel<TextFilterModel> | null): string {
+    public getSummary<M extends ISimpleFilterModel>(model: M | ICombinedSimpleModel<M> | null): string {
         if (model === null) {
             return this.translationService.translate('filterSummaryInactive');
         }
-        const isCombined = (model as ICombinedSimpleModel<TextFilterModel>).operator;
-        const getSummary = (model: TextFilterModel) => {
-            const { type, filter, filterTo } = model;
+        const isCombined = (model as ICombinedSimpleModel<M>).operator;
+        const getSummary = (model: M) => {
+            const { type } = model;
+            const { from, to } = this.getFilterValues(model);
             const translatedType = this.translationService.translate(type as ISimpleFilterModelType);
-            if (filterTo != null) {
-                return `${translatedType} '${filter}' '${filterTo}'`;
+            const numberOfInputs = this.getNumberOfInputs(type);
+            if (numberOfInputs === 2) {
+                return `${translatedType} '${from}' '${to}'`;
             }
-            if (filter != null) {
-                return `${translatedType} '${filter}'`;
+            if (numberOfInputs === 1) {
+                return `${translatedType} '${from}'`;
             }
             return translatedType;
         };
         if (isCombined) {
-            const combinedModel = model as ICombinedSimpleModel<TextFilterModel>;
+            const combinedModel = model as ICombinedSimpleModel<M>;
             return combinedModel.conditions.map((simpleModel) => getSummary(simpleModel)).join(combinedModel.operator);
         } else {
-            const simpleModel = model as TextFilterModel;
+            const simpleModel = model as M;
             return getSummary(simpleModel);
         }
     }
@@ -296,7 +277,7 @@ export class SimpleFilterService extends BeanStub {
 
     private createFilterCondition<TValue>(
         option: string,
-        disabled: boolean | undefined,
+        disabled?: boolean,
         from?: TValue | null,
         to?: TValue | null
     ): FilterCondition<TValue> {
@@ -305,13 +286,22 @@ export class SimpleFilterService extends BeanStub {
             option,
             disabled,
             numberOfInputs,
-        };
+        } as any;
 
         if (numberOfInputs !== 0) {
-            (condition as DoubleInputFilterCondition<TValue>).from = from;
-        }
-        if (numberOfInputs === 2) {
-            (condition as DoubleInputFilterCondition<TValue>).to = to;
+            const doubleCondition = condition as DoubleInputFilterCondition<TValue>;
+            doubleCondition.from = from;
+            if (numberOfInputs === 1) {
+                doubleCondition.fromPlaceholder = this.translationService.translate('filterOoo');
+                doubleCondition.fromAriaLabel = this.translationService.translate('ariaFilterValue');
+            }
+            if (numberOfInputs === 2) {
+                doubleCondition.to = to;
+                doubleCondition.fromPlaceholder = this.translationService.translate('inRangeStart');
+                doubleCondition.fromAriaLabel = this.translationService.translate('ariaFilterFromValue');
+                doubleCondition.toPlaceholder = this.translationService.translate('inRangeEnd');
+                doubleCondition.toAriaLabel = this.translationService.translate('ariaFilterToValue');
+            }
         }
         return condition;
     }
@@ -336,6 +326,29 @@ export class SimpleFilterService extends BeanStub {
                 return NUMBER_OPTIONS;
         }
         return TEXT_OPTIONS;
+    }
+
+    private getFilterValues<TValue, M extends ISimpleFilterModel>(
+        model: M
+    ): { from?: TValue | null; to?: TValue | null } {
+        if (model.filterType === 'date') {
+            const { dateFrom, dateTo }: DateFilterModel = model as any;
+            const parseDate = (value?: string | null) => {
+                if (value == null) {
+                    return value;
+                }
+                return value.split(' ')[0];
+            };
+            return {
+                from: parseDate(dateFrom),
+                to: parseDate(dateTo),
+            } as any;
+        }
+        const { filter: from, filterTo: to }: TextFilterModel = model as any;
+        return {
+            from,
+            to,
+        } as any;
     }
 
     private isConditionComplete(condition: FilterCondition): boolean {
