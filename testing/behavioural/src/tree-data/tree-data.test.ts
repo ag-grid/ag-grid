@@ -47,7 +47,7 @@ describe('ag-grid overlays state', () => {
     });
 
     afterEach(() => {
-        jest.restoreAllMocks();
+        consoleErrorSpy?.mockRestore();
     });
 
     describe('simple tree data', () => {
@@ -84,8 +84,6 @@ describe('ag-grid overlays state', () => {
             const allRows = getAllRows(api);
 
             expect(allRows.length).toBe(8);
-
-            // console.log(allRows);
 
             expect(allRows[0].data).toEqual(rowData[0]);
             expect(allRows[0].level).toBe(1);
