@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue3",
   "description": "AG Grid Vue 3 Component",
-  "version": "31.3.3",
+  "version": "31.3.4",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "./dist/package/main.cjs.js",
@@ -35,7 +35,7 @@
     "test:e2ex": "vue-cli-service test:e2e"
   },
   "dependencies": {
-    "ag-grid-community": "31.3.3",
+    "ag-grid-community": "31.3.4",
     "vue": "^3.0.0"
   },
   "devDependencies": {

@@ -19,6 +19,7 @@ export declare const _: {
     getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
     removeAllReferences<T_5>(obj: any, preserveKeys: (keyof T_5)[] | undefined, preDestroyLink: string): void;
     isNonNullObject(value: any): boolean;
+    SKIP_JS_BUILTINS: Set<string>;
     padStartWidthZeros(value: number, totalStringSize: number): string;
     createArrayOfNumbers(first: number, last: number): number[];
     cleanNumber(value: any): number | null;

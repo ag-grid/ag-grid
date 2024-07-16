@@ -799,7 +799,7 @@ __decorateClass([
 ], WatermarkComp.prototype, "postConstruct", 1);
 
 // enterprise-modules/core/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/core/src/agGridEnterpriseModule.ts
 var EnterpriseCoreModule = {
@@ -4435,7 +4435,7 @@ __decorateClass2([
 AdvancedFilterService = __decorateClass2([
   (0, import_core20.Bean)("advancedFilterService")
 ], AdvancedFilterService);
-var VERSION2 = "31.3.2";
+var VERSION2 = "31.3.4";
 var AdvancedFilterModule = {
   version: VERSION2,
   moduleName: import_core4.ModuleNames.AdvancedFilterModule,
@@ -5941,7 +5941,7 @@ var SelectionHandleFactory = class extends import_core27.BeanStub {
 SelectionHandleFactory = __decorateClass3([
   (0, import_core27.Bean)("selectionHandleFactory")
 ], SelectionHandleFactory);
-var VERSION3 = "31.3.2";
+var VERSION3 = "31.3.4";
 var RangeSelectionModule = {
   version: VERSION3,
   moduleName: import_core21.ModuleNames.RangeSelectionModule,
@@ -16782,7 +16782,7 @@ __decorateClass4([
   import_core31.PostConstruct
 ], _GridChartComp.prototype, "init", 1);
 var GridChartComp = _GridChartComp;
-var VERSION4 = "31.3.2";
+var VERSION4 = "31.3.4";
 var DEBUG = false;
 function upgradeChartModel(model) {
   const originalVersion = model.version;
@@ -19233,7 +19233,7 @@ __decorateClass5([
 ClipboardService = __decorateClass5([
   (0, import_core98.Bean)("clipboardService")
 ], ClipboardService);
-var VERSION5 = "31.3.2";
+var VERSION5 = "31.3.4";
 var ClipboardModule = {
   version: VERSION5,
   moduleName: import_core96.ModuleNames.ClipboardModule,
@@ -21441,7 +21441,7 @@ __decorateClass6([
 FilterAggregatesStage = __decorateClass6([
   (0, import_core111.Bean)("filterAggregatesStage")
 ], FilterAggregatesStage);
-var VERSION6 = "31.3.2";
+var VERSION6 = "31.3.4";
 var _GroupFilter = class _GroupFilter2 extends import_core112.TabGuardComp {
   constructor() {
     super(
@@ -22757,7 +22757,7 @@ __decorateClass7([
 ToolPanelColDefService = __decorateClass7([
   (0, import_core122.Bean)("toolPanelColDefService")
 ], ToolPanelColDefService);
-var VERSION7 = "31.3.2";
+var VERSION7 = "31.3.4";
 var SideBarService = class extends import_core123.BeanStub {
   registerSideBarComp(sideBarComp) {
     this.sideBarComp = sideBarComp;
@@ -24763,7 +24763,7 @@ __decorateClass8([
 ModelItemUtils = __decorateClass8([
   (0, import_core136.Bean)("modelItemUtils")
 ], ModelItemUtils);
-var VERSION8 = "31.3.2";
+var VERSION8 = "31.3.4";
 var ColumnsToolPanelModule = {
   version: VERSION8,
   moduleName: import_core124.ModuleNames.ColumnsToolPanelModule,
@@ -28529,7 +28529,7 @@ __decorateClass9([
 ExcelCreator = __decorateClass9([
   (0, import_core139.Bean)("excelCreator")
 ], ExcelCreator);
-var VERSION9 = "31.3.2";
+var VERSION9 = "31.3.4";
 var ExcelExportModule = {
   version: VERSION9,
   moduleName: import_core137.ModuleNames.ExcelExportModule,
@@ -29528,7 +29528,7 @@ __decorateClass10([
   (0, import_core152.RefSelector)("filtersToolPanelListPanel")
 ], _FiltersToolPanel.prototype, "filtersToolPanelListPanel", 2);
 var FiltersToolPanel = _FiltersToolPanel;
-var VERSION10 = "31.3.2";
+var VERSION10 = "31.3.4";
 var FiltersToolPanelModule = {
   version: VERSION10,
   moduleName: import_core146.ModuleNames.FiltersToolPanelModule,
@@ -29797,7 +29797,7 @@ __decorateClass11([
   (0, import_core155.RefSelector)("eDetailGrid")
 ], _DetailCellRenderer.prototype, "eDetailGrid", 2);
 var DetailCellRenderer = _DetailCellRenderer;
-var VERSION11 = "31.3.2";
+var VERSION11 = "31.3.4";
 var MasterDetailModule = {
   version: VERSION11,
   moduleName: import_core153.ModuleNames.MasterDetailModule,
@@ -30824,7 +30824,7 @@ __decorateClass12([
 MenuItemMapper = __decorateClass12([
   (0, import_core161.Bean)("menuItemMapper")
 ], MenuItemMapper);
-var VERSION12 = "31.3.2";
+var VERSION12 = "31.3.4";
 var ChartMenuItemMapper = class extends import_core162.BeanStub {
   getChartItems(key) {
     var _a, _b;
@@ -32159,7 +32159,7 @@ __decorateClass13([
 __decorateClass13([
   (0, import_core169.Autowired)("filterManager")
 ], MultiFloatingFilterComp.prototype, "filterManager", 2);
-var VERSION13 = "31.3.2";
+var VERSION13 = "31.3.4";
 var MultiFilterModule = {
   version: VERSION13,
   moduleName: import_core166.ModuleNames.MultiFilterModule,
@@ -32316,7 +32316,7 @@ var RichSelectCellEditor = class extends import_core172.PopupComponent {
     return false;
   }
 };
-var VERSION14 = "31.3.2";
+var VERSION14 = "31.3.4";
 var RichSelectModule = {
   version: VERSION14,
   moduleName: import_core170.ModuleNames.RichSelectModule,
@@ -36782,7 +36782,7 @@ __decorateClass14([
 ServerSideSelectionService = __decorateClass14([
   (0, import_core189.Bean)("selectionService")
 ], ServerSideSelectionService);
-var VERSION15 = "31.3.2";
+var VERSION15 = "31.3.4";
 var ServerSideExpansionService = class extends import_core192.ExpansionService {
   constructor() {
     super(...arguments);
@@ -39394,7 +39394,7 @@ __decorateClass15([
 __decorateClass15([
   (0, import_core200.Autowired)("columnModel")
 ], SetFloatingFilterComp.prototype, "columnModel", 2);
-var VERSION16 = "31.3.2";
+var VERSION16 = "31.3.4";
 var SetFilterModule = {
   version: VERSION16,
   moduleName: import_core193.ModuleNames.SetFilterModule,
@@ -41522,7 +41522,7 @@ __decorateClass16([
 SparklineTooltipSingleton = __decorateClass16([
   (0, import_core204.Bean)("sparklineTooltipSingleton")
 ], SparklineTooltipSingleton);
-var VERSION17 = "31.3.2";
+var VERSION17 = "31.3.4";
 var SparklinesModule = {
   version: VERSION17,
   moduleName: import_core201.ModuleNames.SparklinesModule,
@@ -42123,7 +42123,7 @@ __decorateClass([
 var AggregationComp = _AggregationComp;
 
 // enterprise-modules/status-bar/src/version.ts
-var VERSION18 = "31.3.2";
+var VERSION18 = "31.3.4";
 
 // enterprise-modules/status-bar/src/statusBarModule.ts
 var StatusBarModule = {
@@ -42160,7 +42160,7 @@ var __decorateClass17 = (decorators, target, key, kind) => {
     __defProp17(target, key, result);
   return result;
 };
-var VERSION19 = "31.3.2";
+var VERSION19 = "31.3.4";
 var ViewportRowModel = class extends import_core217.BeanStub {
   constructor() {
     super(...arguments);

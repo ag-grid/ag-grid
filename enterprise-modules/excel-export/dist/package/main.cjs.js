@@ -3878,7 +3878,7 @@ var import_csv_export4 = require("@ag-grid-community/csv-export");
 var import_csv_export5 = require("@ag-grid-community/csv-export");
 
 // enterprise-modules/excel-export/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/excel-export/src/excelExportModule.ts
 var ExcelExportModule = {

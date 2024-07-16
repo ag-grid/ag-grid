@@ -591,7 +591,7 @@ __decorateClass([
 ], MultiFloatingFilterComp.prototype, "filterManager", 2);
 
 // enterprise-modules/multi-filter/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/multi-filter/src/multiFilterModule.ts
 var MultiFilterModule = {

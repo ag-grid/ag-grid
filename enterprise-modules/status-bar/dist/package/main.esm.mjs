@@ -629,7 +629,7 @@ __decorateClass([
 var AggregationComp = _AggregationComp;
 
 // enterprise-modules/status-bar/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/status-bar/src/statusBarModule.ts
 var StatusBarModule = {

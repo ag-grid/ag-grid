@@ -15,7 +15,7 @@ import { ModuleNames } from "@ag-grid-community/core";
 import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
 
 // enterprise-modules/viewport-row-model/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/viewport-row-model/src/viewportRowModel/viewportRowModel.ts
 import {

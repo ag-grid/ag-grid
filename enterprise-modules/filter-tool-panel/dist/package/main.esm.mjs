@@ -1023,7 +1023,7 @@ var FiltersToolPanel = _FiltersToolPanel;
 import { SideBarModule } from "@ag-grid-enterprise/side-bar";
 
 // enterprise-modules/filter-tool-panel/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/filter-tool-panel/src/filtersToolPanelModule.ts
 var FiltersToolPanelModule = {

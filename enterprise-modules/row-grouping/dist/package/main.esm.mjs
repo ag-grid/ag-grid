@@ -2282,7 +2282,7 @@ FilterAggregatesStage = __decorateClass([
 ], FilterAggregatesStage);
 
 // enterprise-modules/row-grouping/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/row-grouping/src/rowGrouping/groupFilter/groupFilter.ts
 import {

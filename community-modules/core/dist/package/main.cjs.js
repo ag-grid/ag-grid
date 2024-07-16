@@ -406,6 +406,7 @@ var ColumnKeyCreator = class {
 // community-modules/core/src/utils/object.ts
 var object_exports = {};
 __export(object_exports, {
+  SKIP_JS_BUILTINS: () => SKIP_JS_BUILTINS,
   cloneObject: () => cloneObject,
   deepCloneDefinition: () => deepCloneDefinition,
   getAllValuesInObject: () => getAllValuesInObject,
@@ -415,6 +416,7 @@ __export(object_exports, {
   mergeDeep: () => mergeDeep,
   removeAllReferences: () => removeAllReferences
 });
+var SKIP_JS_BUILTINS = /* @__PURE__ */ new Set(["__proto__", "constructor", "prototype"]);
 function iterateObject(object, callback) {
   if (object == null) {
     return;
@@ -433,6 +435,9 @@ function cloneObject(object) {
   const copy = {};
   const keys2 = Object.keys(object);
   for (let i = 0; i < keys2.length; i++) {
+    if (SKIP_JS_BUILTINS.has(keys2[i])) {
+      continue;
+    }
     const key = keys2[i];
     const value = object[key];
     copy[key] = value;
@@ -446,7 +451,7 @@ function deepCloneDefinition(object, keysToSkip) {
   const obj = object;
   const res = {};
   Object.keys(obj).forEach((key) => {
-    if (keysToSkip && keysToSkip.indexOf(key) >= 0) {
+    if (keysToSkip && keysToSkip.indexOf(key) >= 0 || SKIP_JS_BUILTINS.has(key)) {
       return;
     }
     const value = obj[key];
@@ -480,6 +485,9 @@ function mergeDeep(dest, source, copyUndefined = true, makeCopyOfSimpleObjects =
     return;
   }
   iterateObject(source, (key, sourceValue) => {
+    if (SKIP_JS_BUILTINS.has(key)) {
+      return;
+    }
     let destValue = dest[key];
     if (destValue === sourceValue) {
       return;

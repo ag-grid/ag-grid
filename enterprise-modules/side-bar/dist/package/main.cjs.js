@@ -908,7 +908,7 @@ ToolPanelColDefService = __decorateClass([
 ], ToolPanelColDefService);
 
 // enterprise-modules/side-bar/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/side-bar/src/sideBar/sideBarService.ts
 var import_core7 = require("@ag-grid-community/core");

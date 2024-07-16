@@ -1051,7 +1051,7 @@ MenuItemMapper = __decorateClass([
 ], MenuItemMapper);
 
 // enterprise-modules/menu/src/version.ts
-var VERSION = "31.3.2";
+var VERSION = "31.3.4";
 
 // enterprise-modules/menu/src/menu/chartMenuItemMapper.ts
 import { Bean as Bean4, BeanStub as BeanStub4, ModuleNames as ModuleNames4, ModuleRegistry as ModuleRegistry4, Optional as Optional3, _ as _4 } from "@ag-grid-community/core";
