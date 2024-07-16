@@ -8,7 +8,7 @@ import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
-import { validateApiFunction, warnMissingApiFunction } from './apiFunctionValidator';
+import { validateApiFunction } from './apiFunctionValidator';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
@@ -34,10 +34,6 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public processColumnDefs(options: ColDef | ColGroupDef): void {
         this.processOptions(options, COL_DEF_VALIDATORS);
-    }
-
-    public warnMissingApiFunction(functionName: string): void {
-        warnMissingApiFunction(functionName, this.gridId);
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(

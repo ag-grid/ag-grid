@@ -1,8 +1,6 @@
-import { gridApiFunctionsMap } from '../api/gridApiFunctionNames';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { BeanCollection } from '../context/context';
 import type { RowModelType } from '../interfaces/iRowModel';
-import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _errorOnce, _warnOnce } from '../utils/function';
 
 const clientSide = 'clientSide';
@@ -145,19 +143,6 @@ const deprecatedFunctions: {
             '`showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).',
     },
 };
-
-export function warnMissingApiFunction(functionName: string, gridId: string): void {
-    const module = gridApiFunctionsMap[functionName as ApiFunctionName];
-
-    if (typeof module === 'string') {
-        if (ModuleRegistry.__assertRegistered(module, `api.${functionName}`, gridId)) {
-            _warnOnce(`API function '${functionName}' not registered to module '${module}'`);
-        }
-    } else {
-        // this shouldn't happen unless user has a typo in the api call
-        _errorOnce(`Unknown API function: '${functionName}' on GridApi.`);
-    }
-}
 
 export function validateApiFunction<TFunctionName extends ApiFunctionName>(
     functionName: TFunctionName,
