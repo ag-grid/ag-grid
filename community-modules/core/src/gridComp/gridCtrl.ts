@@ -204,7 +204,11 @@ export class GridCtrl extends BeanStub {
         this.additionalFocusableContainers.delete(container);
     }
 
-    private focusContainer(comp: FocusableContainer, up?: boolean): boolean {
+    private focusContainer(comp: FocusableContainer | undefined, up?: boolean): boolean {
+        if (!comp) {
+            return false;
+        }
+
         comp.setAllowFocus?.(true);
         const result = this.focusService.focusInto(comp.getGui(), up);
         comp.setAllowFocus?.(false);
@@ -213,17 +217,17 @@ export class GridCtrl extends BeanStub {
 
     private getFocusableContainers(): FocusableContainer[] {
         const overlayService = this.overlayService;
-
-        if (overlayService.isExclusive()) {
+        const overlayWrapper = overlayService.getOverlayWrapper();
+        if (overlayWrapper && overlayService.isExclusive()) {
             // An exclusive overlay takes precedence over all other focusable containers
-            return [overlayService.getOverlayWrapper()];
+            return [overlayWrapper];
         }
 
         const result = [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
 
-        if (overlayService.isVisible()) {
+        if (overlayWrapper && overlayService.isVisible()) {
             // We allow focusing on the no-rows overlay
-            result.push(overlayService.getOverlayWrapper());
+            result.push(overlayWrapper);
         }
 
         return result;
