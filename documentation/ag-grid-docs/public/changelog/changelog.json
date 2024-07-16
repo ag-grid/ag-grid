@@ -15,6 +15,19 @@
     {
         "key": "AG-5839",
         "issueType": "Bug",
+        "summary": "Placeholder for 31.3.2",
+        "versions": ["31.3.2"],
+        "status": "Done",
+        "resolution": "Done",
+        "features": null,
+        "moreInformation": null,
+        "deprecationNotes": null,
+        "breakingChangesNotes": null,
+        "documentationUrl": null
+    },
+    {
+        "key": "AG-5839",
+        "issueType": "Bug",
         "summary": "Placeholder for 31.3.1",
         "versions": ["31.3.1"],
         "status": "Done",
