@@ -36,7 +36,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         this.processOptions(options, COL_DEF_VALIDATORS);
     }
 
-    public warnMissingApiFunction(functionName: ApiFunctionName): void {
+    public warnMissingApiFunction(functionName: string): void {
         warnMissingApiFunction(functionName, this.gridId);
     }
 
