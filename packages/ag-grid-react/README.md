@@ -34,7 +34,7 @@
         <img src="https://img.shields.io/librariesio/dependents/npm/ag-grid-react" alt="Dependents (via libraries.io?style=for-the-badge)">
     </a>
     <br><br>
-    <p>AG Grid is a <strong>fully-featured</strong> and <strong>highly customizable</strong> React Data Grid / React Table. It delivers <strong>outstanding performance</strong> and has <strong>no third-party dependencies.</p>
+    <p>AG Grid is a <strong>fully-featured</strong> and <strong>highly customizable</strong> React Data Grid / React Table. It delivers <strong>outstanding performance</strong> and has <strong>no third-party dependencies.</strong></p>
     <br>
 </div>
 
