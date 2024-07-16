@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/core",
-  "version": "31.3.2",
+  "version": "31.3.3",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "dependencies": {
     "tslib": "^2.3.0"

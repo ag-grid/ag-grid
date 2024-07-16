@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue",
   "description": "AG Grid Vue 2 Component",
-  "version": "31.3.2",
+  "version": "31.3.3",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "./lib/main.cjs.js",
@@ -35,12 +35,12 @@
     "lint": "npx vue-cli-service lint"
   },
   "dependencies": {
-    "ag-grid-community": "31.3.2"
+    "ag-grid-community": "31.3.3"
   },
   "devDependencies": {
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
-    "@ag-grid-community/core": "31.3.2",
+    "@ag-grid-community/core": "31.3.3",
     "@types/node": "18.19.10",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",

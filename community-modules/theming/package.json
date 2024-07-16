@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/theming",
-  "version": "31.3.2",
+  "version": "31.3.3",
   "private": true,
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "scripts": {

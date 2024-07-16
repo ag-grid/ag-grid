@@ -2,7 +2,7 @@
   "name": "ag-grid-docs",
   "description": "Documentation for AG Grid",
   "type": "module",
-  "version": "31.3.2",
+  "version": "31.3.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
