@@ -24,7 +24,6 @@ const destroyed = {
 export class ApiFunctionService extends BeanStub implements NamedBean {
     beanName = 'apiFunctionService' as const;
 
-    private beans: BeanCollection | null = null;
     public readonly gridApi: GridApi;
 
     private functions: {
@@ -35,21 +34,22 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         dispatchEvent,
     };
 
-    private preDestroyLink: string;
+    private beans: BeanCollection | null = null;
+
+    private preDestroyLink: string = '';
 
     public constructor() {
         super();
 
-        const gridApi: Partial<GridApi> = {};
-        this.gridApi = gridApi as GridApi;
+        const gridApi = {} as GridApi;
+        this.gridApi = gridApi;
         for (const apiName of gridApiFunctionNames) {
             gridApi[apiName] = this.makeApi(apiName)[apiName];
         }
     }
 
-    public override preWireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
-        super.preWireBeans(beans);
     }
 
     public postConstruct(): void {
@@ -61,8 +61,8 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         func: ApiFunction<TFunctionName>
     ): void {
         if (this.functions !== destroyed) {
-            func = this.beans?.validationService?.validateApiFunction(functionName, func) ?? func;
-            this.functions[functionName] = func;
+            this.functions[functionName] =
+                this.beans?.validationService?.validateApiFunction(functionName, func) ?? func;
         }
     }
 
@@ -74,15 +74,15 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         return {
             [apiName]: (...args: any[]) => {
                 const {
-                    functions: { [apiName]: fn },
                     beans,
+                    functions: { [apiName]: fn },
                 } = this;
                 return fn ? fn(beans!, ...args) : this.apiNotFound(apiName);
             },
         };
     }
 
-    private apiNotFound(fnName: ApiFunctionName) {
+    private apiNotFound(fnName: ApiFunctionName): void {
         if (this.functions === destroyed) {
             _warnOnce(
                 `Grid API function ${fnName}() cannot be called as the grid has been destroyed.\n` +
@@ -95,8 +95,6 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
                 _warnOnce(`API function '${fnName}' not registered to module '${module}'`);
             }
         }
-
-        return undefined;
     }
 
     public override destroy(): void {
