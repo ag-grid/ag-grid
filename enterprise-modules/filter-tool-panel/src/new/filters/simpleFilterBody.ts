@@ -1,64 +1,140 @@
-import { AgInputTextField, Component, _removeFromParent } from '@ag-grid-community/core';
+import { AgInputNumberField, AgInputTextField, Component, _makeNull, _removeFromParent } from '@ag-grid-community/core';
 
 import type { FilterCondition } from '../filterState';
+
+interface SimpleFilterBodyParams {
+    condition: FilterCondition;
+    filterType: 'text' | 'number' | 'date';
+}
+
+interface InputHelper<TValue = string> {
+    createInput(): AgInputTextField;
+    parseValueForInput(value?: TValue | null): string | null | undefined;
+    parseValueFromInput(value?: string | null): TValue | null | undefined;
+}
 
 export class SimpleFilterBody extends Component<'filterChanged'> {
     private eFrom: AgInputTextField;
     private eTo?: AgInputTextField;
+    private inputHelper: InputHelper;
 
-    constructor(private condition: FilterCondition) {
+    constructor(private params: SimpleFilterBodyParams) {
         super(/* html */ `<div class="ag-filter-body"></div>`);
     }
 
     postConstruct(): void {
-        this.eFrom = this.createFromToElement('from');
-        this.refreshComp(undefined, this.condition);
+        const { filterType } = this.params;
+        this.inputHelper = this.createInputHelper(filterType);
+        this.createEFrom();
+        this.refreshComp(undefined, this.params);
     }
 
-    public refresh(condition: FilterCondition): void {
-        const oldCondition = this.condition;
-        this.condition = condition;
-        this.refreshComp(oldCondition, condition);
+    public refresh(params: SimpleFilterBodyParams): void {
+        const oldParams = this.params;
+        this.params = params;
+        this.refreshComp(oldParams, params);
     }
 
-    private refreshComp(oldCondition: FilterCondition | undefined, newCondition: FilterCondition): void {
-        if (oldCondition === newCondition) {
+    private refreshComp(oldParams: SimpleFilterBodyParams | undefined, newParams: SimpleFilterBodyParams): void {
+        if (oldParams === newParams) {
             return;
         }
         const { eFrom } = this;
         let { eTo } = this;
-        const { numberOfInputs, disabled = false } = newCondition;
+        const { condition, filterType } = newParams;
+        const { filterType: oldFilterType } = oldParams ?? {};
+        if (oldFilterType != null && oldFilterType !== filterType) {
+            this.inputHelper = this.createInputHelper(filterType);
+            _removeFromParent(eFrom.getGui());
+            this.destroyBean(eFrom);
+            this.createEFrom();
+            this.eTo = this.checkRemove(eTo);
+            eTo = undefined;
+        }
+        const { inputHelper } = this;
+        const { numberOfInputs, disabled = false } = condition;
         if (numberOfInputs === 1) {
-            const { from } = newCondition;
-            eFrom.setValue(from, true).setDisabled(disabled);
-            if (eTo) {
-                _removeFromParent(eTo.getGui());
-                this.eTo = this.destroyBean(eTo);
-            }
+            const { from } = condition;
+            eFrom.setValue(inputHelper.parseValueForInput(from), true).setDisabled(disabled);
+            this.eTo = this.checkRemove(eTo);
         } else if (numberOfInputs === 2) {
-            const { from, to } = newCondition;
-            eFrom.setValue(from, true).setDisabled(disabled);
+            const { from, to } = condition;
+            eFrom.setValue(inputHelper.parseValueForInput(from), true).setDisabled(disabled);
             if (!eTo) {
                 eTo = this.createFromToElement('to');
                 this.eTo = eTo;
             }
-            eTo.setValue(to, true).setDisabled(disabled);
+            eTo.setValue(inputHelper.parseValueForInput(to), true).setDisabled(disabled);
         }
     }
 
+    private checkRemove(element?: AgInputTextField): undefined {
+        if (element) {
+            _removeFromParent(element.getGui());
+            this.eTo = this.destroyBean(element);
+        }
+        return undefined;
+    }
+
+    private createEFrom(): void {
+        this.eFrom = this.createFromToElement('from');
+    }
+
     private createFromToElement(fromTo: 'from' | 'to'): AgInputTextField {
-        const eValue = this.createBean(new AgInputTextField());
+        const { inputHelper } = this;
+        const eValue = inputHelper.createInput();
         eValue.addCssClass(`ag-filter-${fromTo}`);
         eValue.addCssClass('ag-filter-filter');
         eValue.onValueChange((value) =>
             this.dispatchLocalEvent({
                 type: 'filterChanged',
                 key: fromTo,
-                value,
+                value: inputHelper.parseValueFromInput(value),
             })
         );
         this.appendChild(eValue.getGui());
         return eValue;
+    }
+
+    private createInputHelper<TValue>(filterType: 'text' | 'number' | 'date'): InputHelper<TValue> {
+        if (filterType === 'date') {
+            const inputHelper: InputHelper<string> = {
+                createInput: () => {
+                    const eInput = this.createBean(new AgInputTextField());
+                    eInput.getInputElement().type = 'date';
+                    return eInput;
+                },
+                parseValueForInput: (v) => v as any,
+                parseValueFromInput: (v) => {
+                    const value = _makeNull(v);
+                    if (value == null) {
+                        return value;
+                    }
+                    return value.split(' ')[0];
+                },
+            };
+            return inputHelper as any;
+        }
+        if (filterType === 'number') {
+            const inputHelper: InputHelper<number> = {
+                createInput: () => this.createBean(new AgInputNumberField()),
+                parseValueForInput: (v) => v as any,
+                parseValueFromInput: (v) => {
+                    const value = _makeNull(v);
+                    return value == null ? null : parseFloat(value);
+                },
+            };
+            return inputHelper as any;
+        }
+        const inputHelper: InputHelper<string> = {
+            createInput: () => this.createBean(new AgInputTextField()),
+            parseValueForInput: (v) => v as any,
+            parseValueFromInput: (v) => {
+                const value = _makeNull(v);
+                return value;
+            },
+        };
+        return inputHelper as any;
     }
 
     public override destroy(): void {

@@ -9,6 +9,7 @@ interface SimpleFilterOptionParams {
     eFilterBody: HTMLElement;
     condition: FilterCondition;
     options: ListOption[];
+    filterType: 'text' | 'number' | 'date';
 }
 
 export class SimpleFilterOption extends BeanStub<'conditionChanged'> {
@@ -58,25 +59,26 @@ export class SimpleFilterOption extends BeanStub<'conditionChanged'> {
         if (oldParams === newParams) {
             return;
         }
-        const { condition, eFilterBody, options } = newParams;
+        const { condition, options, filterType } = newParams;
 
         const { numberOfInputs, option, disabled = false } = condition;
 
         this.eType.clearOptions().addOptions(options).setValue(option, true).setDisabled(disabled);
 
         let { eConditionBody } = this;
+        const simpleFilterBodyParams = { condition, filterType };
         if (numberOfInputs != 0) {
             if (!eConditionBody) {
-                eConditionBody = this.createBean(new SimpleFilterBody(condition));
+                eConditionBody = this.createBean(new SimpleFilterBody(simpleFilterBodyParams));
                 eConditionBody.addManagedListeners(eConditionBody, {
                     filterChanged: ({ key, value }) => {
                         this.updateCondition(key, value);
                     },
                 });
                 this.eConditionBody = eConditionBody;
-                eFilterBody.appendChild(eConditionBody.getGui());
+                this.eType.getGui().insertAdjacentElement('afterend', eConditionBody.getGui());
             } else {
-                eConditionBody.refresh(condition);
+                eConditionBody.refresh(simpleFilterBodyParams);
             }
         } else if (numberOfInputs === 0 && eConditionBody) {
             _removeFromParent(eConditionBody.getGui());

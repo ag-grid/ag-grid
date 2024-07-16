@@ -52,12 +52,17 @@ export class SimpleFilter extends Component<'filterChanged'> {
     }
 
     private createOrRefreshOption(index: number, condition: FilterCondition, options: ListOption[]): void {
-        const { eFilterBody, eOptions } = this;
+        const {
+            eFilterBody,
+            eOptions,
+            params: { filterType },
+        } = this;
         const existingOption = eOptions[index];
         const params = {
             eFilterBody,
             condition,
             options,
+            filterType,
         };
         if (existingOption) {
             existingOption.refresh(params);
