@@ -161,7 +161,7 @@ import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
 import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { CellPosition } from './cellPositionUtils';
-import type { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
+import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {
@@ -1461,6 +1461,10 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressHeaderFocus?: boolean;
+    /**
+     * Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
+     */
+    selectionOptions?: SelectionOptions;
 
     /**
      * If `true`, only a single range can be selected.
@@ -2414,3 +2418,52 @@ export interface LoadingCellRendererSelectorResult {
 }
 
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
+
+export type SelectionOptions<TData = any, TValue = any> =
+    | RowSelectionOptions<TData, TValue>
+    | CellSelectionOptions<TData>;
+
+export interface CellSelectionOptions<TData> {
+    mode: 'cell';
+    fillHandleOptions?: FillHandleOptions<TData>;
+    suppressMultiRangeSelection?: boolean;
+    enableRangeHandle?: boolean;
+}
+
+export interface FillHandleOptions<TData> {
+    clearOnRangeReduction?: boolean;
+    direction?: 'x' | 'y' | 'xy';
+    setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
+}
+
+export type RowSelectionOptions<TData, TValue> =
+    | SingleRowSelectionOptions<TData, TValue>
+    | MultiRowSelectionOptions<TData, TValue>;
+
+export interface CommonRowSelectionOptions<TData, TValue> {
+    suppressRowDeselection?: boolean;
+    suppressRowClickSelection?: boolean;
+    groupSelection?: GroupSelectionOptions;
+    checkboxSelection?: CheckboxSelectionOptions<TData, TValue>;
+}
+
+export interface SingleRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
+    mode: 'singleRow';
+}
+
+export interface MultiRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
+    mode: 'multiRow';
+    selectAllOptions?: SelectAllOptions;
+    enableHeaderCheckbox?: boolean;
+}
+
+export type CheckboxSelectionOptions<TData, TValue> =
+    | { enabled: false }
+    | { enabled: true | CheckboxSelectionCallback<TData, TValue>; showDisabledCheckboxes: boolean };
+
+export type GroupSelectionOptions = 'none' | 'allChildren' | 'filteredChildren';
+
+export interface SelectAllOptions {
+    filteredOnly?: boolean;
+    currentPageOnly?: boolean;
+}

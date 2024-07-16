@@ -43,7 +43,7 @@ import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
 import { CommunityFeaturesModule } from './gridCoreModule';
 import { GridDestroyService } from './gridDestroyService';
-import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService';
+import { GridOptionsService, getCoercedGridOptions, normaliseGridOptions } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
@@ -233,7 +233,7 @@ export class GridCoreCreator {
         } else {
             mergedGridOps = providedOptions;
         }
-        const gridOptions = getCoercedGridOptions(mergedGridOps);
+        const gridOptions = normaliseGridOptions(getCoercedGridOptions(mergedGridOps));
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 

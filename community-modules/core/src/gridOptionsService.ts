@@ -615,3 +615,61 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         };
     }
 }
+
+export function normaliseGridOptions(go: GridOptions): GridOptions {
+    // If selection options are defined, map those values back onto the existing grid options
+    const selectionOpts = go.selectionOptions;
+    if (selectionOpts) {
+        if (selectionOpts.mode === 'cell') {
+            go.suppressMultiRangeSelection = selectionOpts.suppressMultiRangeSelection ?? false;
+            go.enableRangeHandle = selectionOpts.enableRangeHandle ?? false;
+            go.suppressClearOnFillReduction = selectionOpts.fillHandleOptions?.clearOnRangeReduction ?? true;
+            go.fillHandleDirection = selectionOpts.fillHandleOptions?.direction ?? 'xy';
+            go.fillOperation = selectionOpts.fillHandleOptions?.setFillValue;
+        } else {
+            go.suppressRowClickSelection = selectionOpts.suppressRowClickSelection ?? false;
+            go.suppressRowDeselection = selectionOpts.suppressRowDeselection ?? false;
+
+            switch (selectionOpts.groupSelection) {
+                case 'allChildren':
+                    go.groupSelectsChildren = true;
+                    break;
+                case 'filteredChildren':
+                    go.groupSelectsChildren = true;
+                    go.groupSelectsFiltered = true;
+                    break;
+                default:
+                    break;
+            }
+
+            if (selectionOpts.checkboxSelection?.enabled) {
+                const colDefs = go.columnDefs;
+                if (colDefs) {
+                    // Only set checkbox selection properties on the first column
+                    if ('checkboxSelection' in colDefs[0]) {
+                        colDefs[0].checkboxSelection = selectionOpts.checkboxSelection.enabled;
+                        colDefs[0].showDisabledCheckboxes =
+                            selectionOpts.checkboxSelection.showDisabledCheckboxes ?? false;
+                    }
+                }
+                selectionOpts.checkboxSelection;
+            }
+
+            if (selectionOpts.mode === 'multiRow') {
+                const colDefs = go.columnDefs;
+                if (colDefs) {
+                    // Only set header checkbox selection properties on the first column
+                    if ('headerCheckboxSelection' in colDefs[0]) {
+                        colDefs[0].headerCheckboxSelection = selectionOpts.enableHeaderCheckbox ?? false;
+                        colDefs[0].headerCheckboxSelectionCurrentPageOnly =
+                            selectionOpts.selectAllOptions?.currentPageOnly ?? false;
+                        colDefs[0].headerCheckboxSelectionFilteredOnly =
+                            selectionOpts.selectAllOptions?.filteredOnly ?? false;
+                    }
+                }
+            }
+        }
+    }
+
+    return go;
+}
