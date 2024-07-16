@@ -629,6 +629,7 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
         } else {
             go.suppressRowClickSelection = selectionOpts.suppressRowClickSelection ?? false;
             go.suppressRowDeselection = selectionOpts.suppressRowDeselection ?? false;
+            go.isRowSelectable = selectionOpts.isRowSelectable;
 
             switch (selectionOpts.groupSelection) {
                 case 'allChildren':
@@ -656,6 +657,8 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
 
             if (selectionOpts.mode === 'multiRow') {
                 go.rowSelection = 'multiple';
+                go.rowMultiSelectWithClick = selectionOpts.enableMultiSelectWithClick ?? false;
+
                 const colDefs = go.columnDefs;
                 if (colDefs && colDefs.length > 0) {
                     // Only set header checkbox selection properties on the first column

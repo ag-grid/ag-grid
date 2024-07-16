@@ -2445,6 +2445,7 @@ export interface CommonRowSelectionOptions<TData, TValue> {
     suppressRowClickSelection?: boolean;
     groupSelection?: GroupSelectionOptions;
     checkboxSelection?: CheckboxSelectionOptions<TData, TValue>;
+    isRowSelectable?: IsRowSelectable<TData>;
 }
 
 export interface SingleRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
@@ -2455,6 +2456,7 @@ export interface MultiRowSelectionOptions<TData, TValue> extends CommonRowSelect
     mode: 'multiRow';
     selectAllOptions?: SelectAllOptions;
     enableHeaderCheckbox?: boolean;
+    enableMultiSelectWithClick?: boolean;
 }
 
 export type CheckboxSelectionOptions<TData, TValue> =
