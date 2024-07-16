@@ -17,9 +17,6 @@ import type {
     _SideBarGridApi,
     _StatusBarGridApi,
 } from './gridApi';
-import type { ApiFunctionName } from './iApiFunction';
-
-export const gridApiFunctionNames: ApiFunctionName[] = [];
 
 const mod = <TGridApi extends Partial<GridApi>>(
     moduleName: ModuleNames,
@@ -27,7 +24,6 @@ const mod = <TGridApi extends Partial<GridApi>>(
 ): Record<keyof TGridApi, ModuleNames> => {
     for (const key in input) {
         (input as any)[key] = moduleName;
-        gridApiFunctionNames.push(key as ApiFunctionName);
     }
     return input as any;
 };

@@ -6,11 +6,8 @@ import type { AgEvent } from '../events';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import type { GridApi } from './gridApi';
-import { gridApiFunctionNames, gridApiFunctionsMap } from './gridApiFunctionNames';
+import { gridApiFunctionsMap } from './gridApiFunctions';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
-
-const dispatchEvent = (beans: BeanCollection, event: AgEvent<AgEventType>): void =>
-    beans.eventService.dispatchEvent(event);
 
 const destroyed = {
     isDestroyed: () => true,
@@ -21,16 +18,24 @@ const destroyed = {
     wireBeans() {},
 };
 
+const dispatchEvent = (beans: BeanCollection, event: AgEvent<AgEventType>): void =>
+    beans.eventService.dispatchEvent(event);
+
+// We use a class for AGGridApi so in stack traces calling grid.api.xxx() if an error is thrown it will print "GridApi.xxx"
+class _GridApi {}
+Reflect.defineProperty(_GridApi, 'name', { value: 'GridApi' });
+
 export class ApiFunctionService extends BeanStub implements NamedBean {
     beanName = 'apiFunctionService' as const;
 
-    public readonly gridApi: GridApi;
+    public readonly api: GridApi = new _GridApi() as GridApi;
 
-    private functions: {
+    private fns: {
         [key in ApiFunctionName]?: (beans: BeanCollection, ...args: any[]) => any;
     } = {
         ...destroyed,
-        // this is used by frameworks, also used by aligned grids to identify a grid api instance
+
+        // dispatchEvent is used by frameworks, also used by aligned grids to identify a grid api instance
         dispatchEvent,
     };
 
@@ -41,10 +46,9 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     public constructor() {
         super();
 
-        const gridApi = {} as GridApi;
-        this.gridApi = gridApi;
-        for (const apiName of gridApiFunctionNames) {
-            gridApi[apiName] = this.makeApi(apiName)[apiName];
+        const { api } = this;
+        for (const key in gridApiFunctionsMap) {
+            api[key as ApiFunctionName] = this.makeApi(key as ApiFunctionName)[key];
         }
     }
 
@@ -60,9 +64,9 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         functionName: TFunctionName,
         func: ApiFunction<TFunctionName>
     ): void {
-        if (this.functions !== destroyed) {
-            this.functions[functionName] =
-                this.beans?.validationService?.validateApiFunction(functionName, func) ?? func;
+        const { fns, beans } = this;
+        if (fns !== destroyed) {
+            fns[functionName] = beans?.validationService?.validateApiFunction(functionName, func) ?? func;
         }
     }
 
@@ -75,7 +79,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
             [apiName]: (...args: any[]) => {
                 const {
                     beans,
-                    functions: { [apiName]: fn },
+                    fns: { [apiName]: fn },
                 } = this;
                 return fn ? fn(beans!, ...args) : this.apiNotFound(apiName);
             },
@@ -83,15 +87,16 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     }
 
     private apiNotFound(fnName: ApiFunctionName): void {
-        if (this.functions === destroyed) {
+        const { beans, gridId, preDestroyLink } = this;
+        if (!beans) {
             _warnOnce(
                 `Grid API function ${fnName}() cannot be called as the grid has been destroyed.\n` +
                     `Either clear local references to the grid api, when it is destroyed, or check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.\n` +
-                    `To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${this.preDestroyLink}`
+                    `To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${preDestroyLink}`
             );
         } else {
             const module = gridApiFunctionsMap[fnName];
-            if (typeof module === 'string' && ModuleRegistry.__assertRegistered(module, `api.${fnName}`, this.gridId)) {
+            if (ModuleRegistry.__assertRegistered(module, `api.${fnName}`, gridId)) {
                 _warnOnce(`API function '${fnName}' not registered to module '${module}'`);
             }
         }
@@ -99,7 +104,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         super.destroy();
-        this.functions = destroyed;
+        this.fns = destroyed;
         this.beans = null;
     }
 }
