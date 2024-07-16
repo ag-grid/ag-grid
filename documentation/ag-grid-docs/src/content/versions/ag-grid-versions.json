@@ -1,5 +1,13 @@
 [
     {
+        "version": "32.0.2",
+        "date": "July 12th 2024"
+    },
+    {
+        "version": "32.0.1",
+        "date": "July 9th 2024"
+    },
+    {
         "version": "32.0.0",
         "date": "July 1st 2024",
         "highlights": [
@@ -24,6 +32,14 @@
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-32"
+    },
+    {
+        "version": "31.3.3",
+        "date": "July 16th 2024"
+    },
+    {
+        "version": "31.3.2",
+        "date": "May 15th 2024"
     },
     {
         "version": "31.3.1",
@@ -108,6 +124,18 @@
         "notesPath": "./upgrading-to-ag-grid-31-1"
     },
     {
+        "version": "31.0.3",
+        "date": "January 25th 2024"
+    },
+    {
+        "version": "31.0.2",
+        "date": "January 16th 2024"
+    },
+    {
+        "version": "31.0.1",
+        "date": "December 11th 2023"
+    },
+    {
         "version": "31.0.0",
         "date": "November 29th 2023",
         "highlights": [
@@ -133,6 +161,10 @@
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-31"
+    },
+    {
+        "version": "30.2.1",
+        "date": "November 2nd 2023"
     },
     {
         "version": "30.2.0",
@@ -184,6 +216,26 @@
                 "path": "./tooltips/#interactive-tooltips"
             }
         ]
+    },
+    {
+        "version": "30.0.6",
+        "date": "July 31st 2023"
+    },
+    {
+        "version": "30.0.5",
+        "date": "July 18th 2023"
+    },
+    {
+        "version": "30.0.3",
+        "date": "July 4th 2023"
+    },
+    {
+        "version": "30.0.2",
+        "date": "June 19th 2023"
+    },
+    {
+        "version": "30.0.1",
+        "date": "June 16th 2023"
     },
     {
         "version": "30.0.0",
