@@ -9,7 +9,7 @@ import type { GridApi } from './gridApi';
 import { gridApiFunctionsMap } from './gridApiFunctions';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
 
-const destroyed = {
+const defaultFns = {
     isDestroyed: () => true,
     destroy() {},
     preConstruct() {},
@@ -22,18 +22,18 @@ const dispatchEvent = (beans: BeanCollection, event: AgEvent<AgEventType>): void
     beans.eventService.dispatchEvent(event);
 
 // We use a class for AGGridApi so in stack traces calling grid.api.xxx() if an error is thrown it will print "GridApi.xxx"
-class _GridApi {}
-Reflect.defineProperty(_GridApi, 'name', { value: 'GridApi' });
+class GridApiClass {}
+Reflect.defineProperty(GridApiClass, 'name', { value: 'GridApi' });
 
 export class ApiFunctionService extends BeanStub implements NamedBean {
     beanName = 'apiFunctionService' as const;
 
-    public readonly api: GridApi = new _GridApi() as GridApi;
+    public readonly api: GridApi = new GridApiClass() as GridApi;
 
     private fns: {
         [key in ApiFunctionName]?: (beans: BeanCollection, ...args: any[]) => any;
     } = {
-        ...destroyed,
+        ...defaultFns,
 
         // dispatchEvent is used by frameworks, also used by aligned grids to identify a grid api instance
         dispatchEvent,
@@ -65,7 +65,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         func: ApiFunction<TFunctionName>
     ): void {
         const { fns, beans } = this;
-        if (fns !== destroyed) {
+        if (fns !== defaultFns) {
             fns[functionName] = beans?.validationService?.validateApiFunction(functionName, func) ?? func;
         }
     }
@@ -104,7 +104,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         super.destroy();
-        this.fns = destroyed;
+        this.fns = defaultFns;
         this.beans = null;
     }
 }
