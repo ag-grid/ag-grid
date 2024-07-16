@@ -155,6 +155,7 @@ export class GridHeaderCtrl extends BeanStub {
             this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             this.focusService.focusNextGridCoreContainer(e.shiftKey)
         ) {
+            // preventDefault so that the tab key doesn't cause focus to get lost
             e.preventDefault();
         }
     }
@@ -170,7 +171,10 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
-                this.headerNavigationService.navigateHorizontally(direction, false, e);
+                if (this.headerNavigationService.navigateHorizontally(direction, false, e)) {
+                    // preventDefault so that the arrow keys don't cause an extra scroll
+                    e.preventDefault();
+                }
                 break;
             }
             case KeyCode.UP:
@@ -181,6 +185,7 @@ export class GridHeaderCtrl extends BeanStub {
                     direction = HeaderNavigationDirection.DOWN;
                 }
                 if (this.headerNavigationService.navigateVertically(direction, null, e)) {
+                    // preventDefault so that the arrow keys don't cause an extra scroll
                     e.preventDefault();
                 }
                 break;

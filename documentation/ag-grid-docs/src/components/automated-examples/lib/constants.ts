@@ -25,6 +25,7 @@ export const AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR = '.ag-chart-menu-toolbar-but
 export const AG_POPUP_SELECTOR = '.ag-popup';
 export const AG_POPUP_DIALOG_SELECTOR = '.ag-popup [role="dialog"]';
 export const AG_SCROLLABLE_CONTAINER_SELECTOR = '.ag-scrollable-container';
+export const AG_CHART_TAB = '.ag-chart-tab';
 
 export const AG_CHART_SERIES_GROUP_TITLE_SELECTOR =
     '.ag-chart-settings-mini-wrapper:not(.ag-hidden) .ag-charts-settings-group-title';
@@ -40,6 +41,7 @@ export const AG_PICKER_FIELD_DISPLAY_SELECTOR = '.ag-picker-field-display';
 export const AG_PICKER_FIELD_WRAPPER_SELECTOR = '.ag-picker-field-wrapper';
 export const AG_LABEL_SELECTOR = '.ag-label';
 export const AG_CHECKBOX_LABEL_SELECTOR = '.ag-checkbox-label';
+export const AG_TOGGLE_LABEL_SELECTOR = '.ag-toggle-button-label';
 export const AG_SELECT_LIST_ITEM_SELECTOR = '.ag-select-list-item';
 export const AG_SLIDER_SELECTOR = '.ag-slider';
 export const AG_RANGE_FIELD_INPUT_SELECTOR = '.ag-range-field-input';

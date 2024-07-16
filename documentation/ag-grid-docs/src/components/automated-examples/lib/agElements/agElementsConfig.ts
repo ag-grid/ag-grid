@@ -4,7 +4,6 @@ import {
     AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
     AG_CHART_SERIES_GROUP_TITLE_SELECTOR,
     AG_CHART_TOOL_PANEL_TAB_SELECTOR,
-    AG_CHECKBOX_LABEL_SELECTOR,
     AG_COLUMN_DROP_SELECTOR,
     AG_GROUP_CONTRACTED,
     AG_GROUP_EXPANDED,
@@ -22,6 +21,7 @@ import {
     AG_RANGE_FIELD_INPUT_SELECTOR,
     AG_SELECT_LIST_ITEM_SELECTOR,
     AG_SLIDER_SELECTOR,
+    AG_TOGGLE_LABEL_SELECTOR,
 } from '../constants';
 import { findElementWithInnerText } from '../dom';
 
@@ -75,9 +75,9 @@ export interface AgElementsConfigItem {
         selectLabel: string;
         usePickerDisplayFieldSelector?: boolean;
     }>;
-    chartToolPanelCheckbox: AgElementByFindConfig<{
+    chartToolPanelToggle: AgElementByFindConfig<{
         groupTitle: string;
-        checkboxLabel: string;
+        toggleLabel: string;
         index?: number;
     }>;
     chartToolPanelSliderInput: AgElementByFindConfig<{
@@ -237,9 +237,9 @@ export const agElementsConfig: AgElementsConfigItem = {
             return picker || undefined;
         },
     },
-    chartToolPanelCheckbox: {
+    chartToolPanelToggle: {
         find: ({ getElement, params }) => {
-            const { groupTitle, checkboxLabel, index } = params;
+            const { groupTitle, toggleLabel, index } = params;
             const groupTitleEl = getElement('chartToolPanelGroupTitle', {
                 text: groupTitle,
             })?.get();
@@ -249,17 +249,17 @@ export const agElementsConfig: AgElementsConfigItem = {
                 return;
             }
 
-            const checkboxLabelEl = findElementWithInnerText({
+            const toggleLabelEl = findElementWithInnerText({
                 containerEl: groupEl,
-                selector: AG_CHECKBOX_LABEL_SELECTOR,
-                text: checkboxLabel,
+                selector: AG_TOGGLE_LABEL_SELECTOR,
+                text: toggleLabel,
                 index,
             });
-            if (!checkboxLabelEl) {
-                console.error(`No label title found: ${checkboxLabel}`);
+            if (!toggleLabelEl) {
+                console.error(`No label title found: ${toggleLabel}`);
                 return;
             }
-            const { id } = checkboxLabelEl;
+            const { id } = toggleLabelEl;
             const checkbox = document.querySelector(`[aria-labelledby=${id}]`) as HTMLElement;
 
             return checkbox || undefined;

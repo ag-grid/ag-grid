@@ -51,7 +51,7 @@ export const Video = ({
                 [styles.centered]: centered,
             })}
         >
-            <video ref={videoRef} src={src} autoPlay={autoplay} muted loop></video>
+            <video ref={videoRef} src={src} autoPlay={autoplay && isPlaying} muted loop></video>
 
             {showPlayPauseButtons && (
                 <span className={styles.buttonsOuter}>

@@ -735,6 +735,12 @@ export class FocusService extends BeanStub implements NamedBean {
         return true;
     }
 
+    /** Returns true if an element inside the grid has focus */
+    public isGridFocused(): boolean {
+        const activeEl = this.gos.getActiveDomElement();
+        return !!activeEl && this.eGridDiv.contains(activeEl);
+    }
+
     public focusNextGridCoreContainer(backwards: boolean, forceOut: boolean = false): boolean {
         if (!forceOut && this.gridCtrl.focusNextInnerContainer(backwards)) {
             return true;

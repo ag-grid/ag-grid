@@ -77,15 +77,21 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         let isSelected: boolean | undefined;
         let displayed = true;
         if (params.node.group && params.column) {
-            const colId = params.column.getColId();
-            if (colId.startsWith(GROUP_AUTO_COLUMN_ID)) {
-                // if we're grouping by this column then the value is a string and we need to parse it
-                isSelected =
-                    params.value == null || (params.value as any) === '' ? undefined : (params.value as any) === 'true';
-            } else if (params.node.aggData && params.node.aggData[colId] !== undefined) {
-                isSelected = params.value ?? undefined;
+            if (typeof params.value === 'boolean') {
+                isSelected = params.value;
             } else {
-                displayed = false;
+                const colId = params.column.getColId();
+                if (colId.startsWith(GROUP_AUTO_COLUMN_ID)) {
+                    // if we're grouping by this column then the value is a string and we need to parse it
+                    isSelected =
+                        params.value == null || (params.value as any) === ''
+                            ? undefined
+                            : (params.value as any) === 'true';
+                } else if (params.node.aggData && params.node.aggData[colId] !== undefined) {
+                    isSelected = params.value ?? undefined;
+                } else {
+                    displayed = false;
+                }
             }
         } else {
             isSelected = params.value ?? undefined;
