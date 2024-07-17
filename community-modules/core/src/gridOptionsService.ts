@@ -616,6 +616,13 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     }
 }
 
+/**
+ * Used to map the new selection API back onto the existing selection API.
+ *
+ * The values of the new selection grid options take precedence over the existing options.
+ *
+ * This is part of the migration path from the old API to the new API.
+ */
 export function normaliseGridOptions(go: GridOptions): GridOptions {
     // If selection options are defined, map those values back onto the existing grid options
     const selectionOpts = go.selectionOptions;
@@ -623,13 +630,12 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
         if (selectionOpts.mode === 'cell') {
             go.suppressMultiRangeSelection = selectionOpts.suppressMultiRangeSelection ?? false;
             go.enableRangeHandle = selectionOpts.enableRangeHandle ?? false;
-            go.suppressClearOnFillReduction = selectionOpts.fillHandleOptions?.clearOnRangeReduction ?? true;
+            go.suppressClearOnFillReduction = selectionOpts.fillHandleOptions?.suppressClearOnFillReduction ?? true;
             go.fillHandleDirection = selectionOpts.fillHandleOptions?.direction ?? 'xy';
             go.fillOperation = selectionOpts.fillHandleOptions?.setFillValue;
         } else {
             go.suppressRowClickSelection = selectionOpts.suppressRowClickSelection ?? false;
             go.suppressRowDeselection = selectionOpts.suppressRowDeselection ?? false;
-            go.isRowSelectable = selectionOpts.isRowSelectable;
 
             switch (selectionOpts.groupSelection) {
                 case 'allChildren':

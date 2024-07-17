@@ -161,7 +161,15 @@ import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
 import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { CellPosition } from './cellPositionUtils';
-import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
+import type {
+    CheckboxSelectionCallback,
+    ColDef,
+    ColGroupDef,
+    ColTypeDef,
+    HeaderCheckboxSelectionCallback,
+    IAggFunc,
+    SortDirection,
+} from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {
@@ -2419,53 +2427,140 @@ export interface LoadingCellRendererSelectorResult {
 
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
 
+/** Configuration options for selection */
 export type SelectionOptions<TData = any, TValue = any> =
     | RowSelectionOptions<TData, TValue>
     | CellSelectionOptions<TData>;
 
+/** Cell selection options */
 export interface CellSelectionOptions<TData> {
     mode: 'cell';
+    /**
+     * Configuration options for the fill handle
+     */
     fillHandleOptions?: FillHandleOptions<TData>;
+    /**
+     * If `true`, only a single range can be selected
+     *
+     * @default false
+     */
     suppressMultiRangeSelection?: boolean;
+    /**
+     * Set to `true` to enable the Range Handle
+     *
+     * @default false
+     */
     enableRangeHandle?: boolean;
 }
 
+/**
+ * Configuration options for the fill handle
+ */
 export interface FillHandleOptions<TData> {
-    clearOnRangeReduction?: boolean;
+    /**
+     * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
+     * @default false
+     */
+    suppressClearOnFillReduction?: boolean;
+    /**
+     * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
+     * @default 'xy'
+     */
     direction?: 'x' | 'y' | 'xy';
+    /**
+     * Callback to fill values instead of simply copying values or increasing number values using linear progression.
+     */
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
 
+/** Row selection options */
 export type RowSelectionOptions<TData, TValue> =
     | SingleRowSelectionOptions<TData, TValue>
     | MultiRowSelectionOptions<TData, TValue>;
 
+/** Selection options shared between single row selection and multiple row selection modes. */
 export interface CommonRowSelectionOptions<TData, TValue> {
+    /**
+     * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
+     * @default false
+     */
     suppressRowDeselection?: boolean;
+    /**
+     * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
+     * @default false
+     */
     suppressRowClickSelection?: boolean;
+    /** Determine group selection behaviour */
     groupSelection?: GroupSelectionOptions;
+    /** Determine checkbox selection behaviour */
     checkboxSelection?: CheckboxSelectionOptions<TData, TValue>;
-    isRowSelectable?: IsRowSelectable<TData>;
 }
 
+/**
+ * Determines selection behaviour when only a single row can be selected at a time.
+ */
 export interface SingleRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
     mode: 'singleRow';
 }
 
+/**
+ * Determines selection behaviour when multiple rows can be selected at once.
+ */
 export interface MultiRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
     mode: 'multiRow';
+    /**
+     * Determines how "select all" behaviour works both via the API (i.e. `selectAll`) and via header checkbox selection.
+     */
     selectAllOptions?: SelectAllOptions;
-    enableHeaderCheckbox?: boolean;
+    /**
+     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     * @default false
+     */
+    enableHeaderCheckbox?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
+    /**
+     * Set to `true` to allow multiple rows to be selected using single click.
+     * @default false
+     */
     enableMultiSelectWithClick?: boolean;
 }
 
+/**
+ * Determines whether checkboxes are displayed for selection
+ */
 export type CheckboxSelectionOptions<TData, TValue> =
     | { enabled: false }
-    | { enabled: true | CheckboxSelectionCallback<TData, TValue>; showDisabledCheckboxes?: boolean };
+    | {
+          /** Set to `true` (or return `true` from function) to render a selection checkbox in the first column. */
+          enabled: true | CheckboxSelectionCallback<TData, TValue>;
+          /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. */
+          showDisabledCheckboxes?: boolean;
+      };
 
+/**
+ * Determines the behaviour when selecting a group row.
+ *
+ * When `'none'`, selects only the group row itself.
+ * When `'allChildren'`, selecting a group row selects all its child rows.
+ * When `'filteredChildren'`, selecting a group row selects all child rows that satisfy the currently active filter.
+ *
+ * @default 'none'
+ */
 export type GroupSelectionOptions = 'none' | 'allChildren' | 'filteredChildren';
 
+/**
+ * Determines how "select all" behaviour works both via the API (i.e. `selectAll`) and via header checkbox selection.
+ */
 export interface SelectAllOptions {
+    /**
+     * When selecting all via either the API or a header checkbox, only those rows that satisfy the currently
+     * active filter will be selected.
+     * @default false
+     */
     filteredOnly?: boolean;
+    /**
+     * When selecting all via either the API or a header checkbox, only those rows on the current page will
+     * be selected.
+     * @default false
+     */
     currentPageOnly?: boolean;
 }
