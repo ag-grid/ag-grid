@@ -175,7 +175,7 @@ export class ColumnFilterService extends BeanStub {
         });
 
         Object.entries(initialFilterModel).forEach(([colId, model]) => {
-            if (!allColumnFilters.has(colId) && _exists(model) && this.columnModel.getCol(colId)?.isFilterAllowed()) {
+            if (_exists(model) && !allColumnFilters.has(colId) && this.columnModel.getCol(colId)?.isFilterAllowed()) {
                 result[colId] = model;
             }
         });

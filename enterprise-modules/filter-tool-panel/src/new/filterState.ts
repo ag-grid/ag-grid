@@ -1,6 +1,10 @@
-import type { ICombinedSimpleModel, JoinOperator, ListOption, TextFilterModel } from '@ag-grid-community/core';
-
-type FilterModel = TextFilterModel | ICombinedSimpleModel<TextFilterModel>;
+import type {
+    ICombinedSimpleModel,
+    ISimpleFilterModel,
+    JoinOperator,
+    ListOption,
+    SetFilterModel,
+} from '@ag-grid-community/core';
 
 interface BaseFilterCondition {
     option: string;
@@ -45,11 +49,28 @@ export interface SimpleFilterParams<TValue = string> {
     filterType: 'text' | 'number' | 'date';
 }
 
-export interface FilterState<TValue = string, M extends FilterModel = FilterModel> {
+export interface SetFilterParams<TValue = string> {
+    values: TValue[];
+}
+
+interface BaseFilterState {
     id: string;
     name: string;
     expanded?: boolean;
     summary?: string;
-    appliedModel: M | null;
-    simpleFilterParams: SimpleFilterParams<TValue>;
 }
+
+export interface SimpleFilterState<TValue = string, M extends ISimpleFilterModel = ISimpleFilterModel>
+    extends BaseFilterState {
+    type: 'simple';
+    appliedModel: M | ICombinedSimpleModel<M> | null;
+    filterParams: SimpleFilterParams<TValue>;
+}
+
+export interface SetFilterState<TValue = string> extends BaseFilterState {
+    type: 'set';
+    appliedModel: SetFilterModel | null;
+    filterParams: SetFilterParams<TValue>;
+}
+
+export type FilterState<TValue = string> = SimpleFilterState<TValue> | SetFilterState<TValue>;

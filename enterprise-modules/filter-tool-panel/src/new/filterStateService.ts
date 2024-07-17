@@ -5,19 +5,41 @@ import type {
     ColumnNameService,
     FilterManager,
     FilterModel,
+    ICombinedSimpleModel,
+    ISimpleFilterModel,
+    SetFilterModel,
 } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
-import type { FilterState, SimpleFilterParams } from './filterState';
+import type {
+    FilterState,
+    SetFilterParams,
+    SetFilterState,
+    SimpleFilterParams,
+    SimpleFilterState,
+} from './filterState';
 import type { IFilterStateService } from './iFilterStateService';
-import type { SimpleFilterConfig } from './simpleFilterService';
-import { SimpleFilterService } from './simpleFilterService';
+import type { FilterTypeService } from './iFilterTypeService';
+import type { SetFilterConfig } from './setFilter/setFilterConfig';
+import { SetFilterService } from './setFilter/setFilterService';
+import type { SimpleFilterConfig } from './simpleFilter/simpleFilterConfig';
+import { SimpleFilterService } from './simpleFilter/simpleFilterService';
 
-interface FilterStateWrapper {
-    state: FilterState;
+interface BaseFilterStateWrapper {
     column: AgColumn;
+}
+
+interface SimpleFilterStateWrapper extends BaseFilterStateWrapper {
+    state: SimpleFilterState;
     filterConfig: SimpleFilterConfig;
 }
+
+interface SetFilterStateWrapper extends BaseFilterStateWrapper {
+    state: SetFilterState;
+    filterConfig: SetFilterConfig;
+}
+
+type FilterStateWrapper = SimpleFilterStateWrapper | SetFilterStateWrapper;
 
 export class FilterStateService
     extends BeanStub<'filterStateChanged' | 'filterStatesChanged'>
@@ -28,6 +50,7 @@ export class FilterStateService
     private filterManager: FilterManager;
 
     private simpleFilterService: SimpleFilterService;
+    private setFilterService: SetFilterService;
 
     private columnListenerDestroyFuncs: (() => void)[] = [];
     private activeFilterStates: Map<string, FilterStateWrapper> = new Map();
@@ -40,6 +63,7 @@ export class FilterStateService
 
     public postConstruct(): void {
         this.simpleFilterService = this.createManagedBean(new SimpleFilterService());
+        this.setFilterService = this.createManagedBean(new SetFilterService());
         this.addManagedEventListeners({
             newColumnsLoaded: () => this.updateFilterStates(),
         });
@@ -89,23 +113,41 @@ export class FilterStateService
         this.updateProvidedFilterState(filterState, id, key, value);
     }
 
-    public updateSimpleFilterParams(id: string, simpleFilterParams: SimpleFilterParams): void {
+    public updateSimpleFilterParams(id: string, params: SimpleFilterParams): void {
+        this.updateParams({
+            id,
+            params,
+            service: this.simpleFilterService,
+        });
+    }
+
+    public updateSetFilterParams(id: string, params: SetFilterParams): void {
+        this.updateParams({
+            id,
+            params,
+            service: this.setFilterService,
+        });
+    }
+
+    private updateParams<P extends SimpleFilterParams | SetFilterParams, M>(params: {
+        id: string;
+        params: P;
+        service: FilterTypeService<P, M, SimpleFilterConfig | SetFilterConfig>;
+    }): void {
+        const { id, service, params: filterParams } = params;
         const filterStateWrapper = this.activeFilterStates.get(id);
         if (!filterStateWrapper) {
             return;
         }
-        const { state, filterConfig } = filterStateWrapper;
-        const updatedSimpleFilterParams = this.simpleFilterService.updateSimpleFilterParams(
-            state.simpleFilterParams,
-            simpleFilterParams,
-            filterConfig
-        );
+        const { filterConfig } = filterStateWrapper;
+        const { state } = filterStateWrapper;
+        const updatedParams = service.updateParams(state.filterParams as any, filterParams, filterConfig as any);
         const { applyOnChange } = filterConfig;
-        this.updateProvidedFilterState(state, id, 'simpleFilterParams', updatedSimpleFilterParams, applyOnChange);
+        this.updateProvidedFilterState(state, id, 'filterParams', updatedParams, applyOnChange);
         if (filterConfig.applyOnChange) {
-            const model = this.applyFilter(id, updatedSimpleFilterParams);
-            this.updateProvidedFilterState(state, id, 'summary', this.simpleFilterService.getSummary(model), true);
-            this.updateProvidedFilterState(state, id, 'appliedModel', model, true);
+            const model = this.applyFilter(id, service, updatedParams);
+            this.updateProvidedFilterState(state, id, 'summary', service.getSummary(model), true);
+            this.updateProvidedFilterState(state, id, 'appliedModel', model as any, true);
             this.dispatchLocalEvent({
                 type: 'filterStateChanged',
                 id,
@@ -113,11 +155,11 @@ export class FilterStateService
         }
     }
 
-    private updateProvidedFilterState<K extends keyof FilterState>(
-        filterState: FilterState | undefined,
+    private updateProvidedFilterState<K extends keyof S, S extends SetFilterState | SimpleFilterState>(
+        filterState: S | undefined,
         id: string,
         key: K,
-        value: FilterState[K],
+        value: S[K],
         suppressEvent?: boolean
     ): void {
         if (filterState) {
@@ -147,22 +189,64 @@ export class FilterStateService
         this.dispatchStatesUpdates();
     }
 
-    private createFilterState(column: AgColumn, model: any): FilterStateWrapper {
+    private createFilterState(
+        column: AgColumn,
+        model: ISimpleFilterModel | ICombinedSimpleModel<ISimpleFilterModel> | SetFilterModel | null,
+        expanded?: boolean
+    ): FilterStateWrapper {
+        let type: 'simple' | 'set';
+        if (model == null) {
+            type = 'set';
+        } else {
+            type = model.filterType === 'set' ? 'set' : 'simple';
+        }
+        return this.createFilterStateForType(type, column, model, expanded);
+    }
+
+    private createFilterStateForType(
+        type: 'simple' | 'set',
+        column: AgColumn,
+        model: ISimpleFilterModel | ICombinedSimpleModel<ISimpleFilterModel> | SetFilterModel | null,
+        expanded?: boolean
+    ): FilterStateWrapper {
+        const service = type === 'simple' ? this.simpleFilterService : this.setFilterService;
         const id = column.getColId();
-        const filterConfig = this.simpleFilterService.getFilterConfig(column);
+        const filterConfig = service.getFilterConfig(column);
         const state: FilterState = {
             id,
             name: this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel') ?? id,
-            summary: this.simpleFilterService.getSummary(model),
-            appliedModel: model,
-            expanded: true, // TODO - remove this later
-            simpleFilterParams: this.simpleFilterService.getSimpleFilterParams(filterConfig, model),
-        };
-        return { state, column, filterConfig };
+            summary: service.getSummary(model as any),
+            appliedModel: model as any,
+            expanded,
+            type,
+            filterParams: service.getParams(filterConfig as any, model as any),
+        } as any;
+        return { state, column, filterConfig } as any;
     }
 
-    private applyFilter(id: string, simpleFilterParams: SimpleFilterParams): any {
-        const model = this.simpleFilterService.getModel(simpleFilterParams);
+    private switchFilterState(
+        id: string,
+        type: 'simple' | 'set',
+        model: ISimpleFilterModel | ICombinedSimpleModel<ISimpleFilterModel> | SetFilterModel | null
+    ): void {
+        const oldFilterStateWrapper = this.activeFilterStates.get(id);
+        if (!oldFilterStateWrapper) {
+            return;
+        }
+        const {
+            column,
+            state: { expanded },
+        } = oldFilterStateWrapper;
+        const filterStateWrapper = this.createFilterStateForType(type, column, model, expanded);
+        this.activeFilterStates.set(id, filterStateWrapper);
+        this.dispatchLocalEvent({
+            type: 'filterStateChanged',
+            id,
+        });
+    }
+
+    private applyFilter<P, M, C>(id: string, service: FilterTypeService<P, M, C>, params: P): M | null {
+        const model = service.getModel(params);
         this.filterManager.setColumnFilterModel(id, model).then(() => this.filterManager.onFilterChanged());
         return model;
     }
@@ -174,8 +258,11 @@ export class FilterStateService
 
     private getFilterModel(): FilterModel {
         const model: FilterModel = {};
-        this.activeFilterStates.forEach(({ column, state: { simpleFilterParams } }) => {
-            const singleModel = this.simpleFilterService.getModel(simpleFilterParams);
+        this.activeFilterStates.forEach(({ column, state }) => {
+            const { type, filterParams } = state;
+            const singleModel = (type === 'simple' ? this.simpleFilterService : this.setFilterService).getModel(
+                filterParams as any
+            );
             if (singleModel != null) {
                 model[column.getColId()] = singleModel;
             }

@@ -11,19 +11,10 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 
-import type { FilterPanelTranslationService } from './filterPanelTranslationService';
-import type { DoubleInputFilterCondition, FilterCondition, SimpleFilterParams } from './filterState';
-
-export interface SimpleFilterConfig {
-    maxNumConditions: number;
-    numAlwaysVisibleConditions: number;
-    defaultJoinOperator: JoinOperator;
-    defaultOption: ISimpleFilterModelType;
-    options: readonly string[];
-    readOnly?: boolean;
-    filterType: 'text' | 'number' | 'date';
-    applyOnChange: boolean;
-}
+import type { FilterPanelTranslationService } from '../filterPanelTranslationService';
+import type { DoubleInputFilterCondition, FilterCondition, SimpleFilterParams } from '../filterState';
+import type { FilterTypeService } from '../iFilterTypeService';
+import type { SimpleFilterConfig } from './simpleFilterConfig';
 
 const TEXT_OPTIONS = [
     'contains',
@@ -50,7 +41,15 @@ const NUMBER_OPTIONS = [
 
 const DATE_OPTIONS = ['equals', 'notEqual', 'lessThan', 'greaterThan', 'inRange', 'blank', 'notBlank'] as const;
 
-export class SimpleFilterService extends BeanStub {
+export class SimpleFilterService
+    extends BeanStub
+    implements
+        FilterTypeService<
+            SimpleFilterParams,
+            ISimpleFilterModel | ICombinedSimpleModel<ISimpleFilterModel>,
+            SimpleFilterConfig
+        >
+{
     private translationService: FilterPanelTranslationService;
     private dataTypeService?: DataTypeService;
 
@@ -59,7 +58,7 @@ export class SimpleFilterService extends BeanStub {
         this.dataTypeService = beans.dataTypeService;
     }
 
-    public getSimpleFilterParams<M extends ISimpleFilterModel>(
+    public getParams<M extends ISimpleFilterModel>(
         filterConfig: SimpleFilterConfig,
         model?: M | ICombinedSimpleModel<M> | null
     ): SimpleFilterParams {
@@ -110,7 +109,7 @@ export class SimpleFilterService extends BeanStub {
         };
     }
 
-    public updateSimpleFilterParams(
+    public updateParams(
         oldSimpleFilterParams: SimpleFilterParams | undefined,
         newSimpleFilterParams: SimpleFilterParams,
         filterConfig: SimpleFilterConfig
