@@ -534,27 +534,22 @@
                                 "path": "accessing-data"
                             },
                             {
-                                "title": "Advanced",
+                                "title": "Row Dragging",
+                                "path": "row-dragging",
                                 "items": [
                                     {
-                                        "title": "Row Dragging",
-                                        "path": "row-dragging",
-                                        "items": [
-                                            {
-                                                "title": "External DropZone",
-                                                "path": "row-dragging-to-external-dropzone"
-                                            },
-                                            {
-                                                "title": "Grid to Grid",
-                                                "path": "row-dragging-to-grid"
-                                            }
-                                        ]
+                                        "title": "External DropZone",
+                                        "path": "row-dragging-to-external-dropzone"
                                     },
                                     {
-                                        "title": "Full Width Rows",
-                                        "path": "full-width-rows"
+                                        "title": "Grid to Grid",
+                                        "path": "row-dragging-to-grid"
                                     }
                                 ]
+                            },
+                            {
+                                "title": "Full Width Rows",
+                                "path": "full-width-rows"
                             }
                         ]
                     },
@@ -596,21 +591,16 @@
                                 "path": "tooltips"
                             },
                             {
-                                "title": "Advanced",
-                                "items": [
-                                    {
-                                        "title": "Expressions",
-                                        "path": "cell-expressions"
-                                    },
-                                    {
-                                        "title": "View Refresh",
-                                        "path": "view-refresh"
-                                    },
-                                    {
-                                        "title": "Reference Data",
-                                        "path": "reference-data"
-                                    }
-                                ]
+                                "title": "Expressions",
+                                "path": "cell-expressions"
+                            },
+                            {
+                                "title": "View Refresh",
+                                "path": "view-refresh"
+                            },
+                            {
+                                "title": "Reference Data",
+                                "path": "reference-data"
                             }
                         ]
                     },
@@ -1227,29 +1217,24 @@
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "See Also",
-                                        "items": [
-                                            {
-                                                "title": "Using Node.js & MySQL",
-                                                "path": "server-side-operations-nodejs",
-                                                "isEnterprise": true
-                                            },
-                                            {
-                                                "title": "Using GraphQL & MySQL",
-                                                "path": "server-side-operations-graphql",
-                                                "isEnterprise": true
-                                            },
-                                            {
-                                                "title": "Using Java & Oracle",
-                                                "path": "server-side-operations-oracle",
-                                                "isEnterprise": true
-                                            },
-                                            {
-                                                "title": "Using Java & Apache",
-                                                "path": "server-side-operations-spark",
-                                                "isEnterprise": true
-                                            }
-                                        ]
+                                        "title": "Example Node.js & MySQL",
+                                        "path": "server-side-operations-nodejs",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Example GraphQL & MySQL",
+                                        "path": "server-side-operations-graphql",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Example Java & Oracle",
+                                        "path": "server-side-operations-oracle",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Example Java & Apache",
+                                        "path": "server-side-operations-spark",
+                                        "isEnterprise": true
                                     }
                                 ]
                             },
@@ -1367,13 +1352,8 @@
                                 "path": "printing"
                             },
                             {
-                                "title": "See Also",
-                                "items": [
-                                    {
-                                        "title": "Import Excel",
-                                        "path": "excel-import"
-                                    }
-                                ]
+                                "title": "Import Excel",
+                                "path": "excel-import"
                             }
                         ]
                     },
