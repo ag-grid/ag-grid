@@ -1,5 +1,5 @@
 import { ApiFunctionService } from './api/apiFunctionService';
-import { createApiProxy } from './api/apiUtils';
+import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
@@ -255,7 +255,7 @@ export class GridCoreCreator {
             gridId: gridId,
             beanInitComparator: gridBeanInitComparator,
             beanDestroyComparator: gridBeanDestroyComparator,
-            derivedBeans: [createApiProxy],
+            derivedBeans: [createGridApi],
         };
 
         const context = new Context(contextParams);

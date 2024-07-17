@@ -1606,11 +1606,7 @@
     },
     "scrolling": {
         "meta": {
-            "displayName": "Scrolling",
-            "page": {
-                "name": "Scrolling",
-                "url": "./scrolling-scenarios/"
-            }
+            "displayName": "Scrolling"
         },
         "alwaysShowHorizontalScroll": {
             "description": "Set to `true` to always show the horizontal scrollbar. Windows and Mac OS both have settings to control scrollbar visibility. Depending on your browser, you may need to adjust the scrollbar settings in your OS to have this property take effect."

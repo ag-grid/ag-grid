@@ -7,7 +7,6 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { createApp } from 'vue';
 
 import CustomGroupCellRenderer from './customGroupCellRendererVue.js';
-import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
