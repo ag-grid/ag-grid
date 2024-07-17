@@ -6,7 +6,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { getRowsSnapshot } from './row-snapshot-test-utils';
 import type { RowSnapshot } from './row-snapshot-test-utils';
 
-describe('ag-grid grouping tree data', () => {
+describe('ag-grid grouping tree data with groupRows', () => {
     let consoleErrorSpy: jest.SpyInstance;
 
     function createMyGrid(gridOptions: GridOptions) {
@@ -55,15 +55,13 @@ describe('ag-grid grouping tree data', () => {
                     valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
                 },
             ],
-            autoGroupColumnDef: {
-                headerName: 'Organisation Hierarchy',
-                cellRendererParams: { suppressCount: true },
-            },
+            autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
             animateRows: true,
             groupDefaultExpanded: -1,
             rowData,
             getDataPath,
+            groupDisplayType: 'groupRows',
         };
 
         const api = createMyGrid(gridOptions);
@@ -97,7 +95,7 @@ describe('ag-grid grouping tree data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: true,
-                groupData: { 'ag-Grid-AutoColumn': 'A' },
+                groupData: {},
                 id: '0',
                 key: 'A',
                 lastChild: false,
@@ -125,7 +123,7 @@ describe('ag-grid grouping tree data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
-                groupData: { 'ag-Grid-AutoColumn': 'B' },
+                groupData: {},
                 id: '1',
                 key: 'B',
                 lastChild: true,
@@ -153,7 +151,7 @@ describe('ag-grid grouping tree data', () => {
                 firstChild: false,
                 footer: undefined,
                 group: true,
-                groupData: { 'ag-Grid-AutoColumn': 'C' },
+                groupData: {},
                 id: 'row-group-0-C',
                 key: 'C',
                 lastChild: false,
@@ -181,7 +179,7 @@ describe('ag-grid grouping tree data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
-                groupData: { 'ag-Grid-AutoColumn': 'D' },
+                groupData: {},
                 id: '2',
                 key: 'D',
                 lastChild: true,
@@ -209,7 +207,7 @@ describe('ag-grid grouping tree data', () => {
                 firstChild: false,
                 footer: undefined,
                 group: true,
-                groupData: { 'ag-Grid-AutoColumn': 'E' },
+                groupData: {},
                 id: 'row-group-0-E',
                 key: 'E',
                 lastChild: true,
@@ -237,7 +235,7 @@ describe('ag-grid grouping tree data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: true,
-                groupData: { 'ag-Grid-AutoColumn': 'F' },
+                groupData: {},
                 id: 'row-group-0-E-1-F',
                 key: 'F',
                 lastChild: true,
@@ -265,7 +263,7 @@ describe('ag-grid grouping tree data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: true,
-                groupData: { 'ag-Grid-AutoColumn': 'G' },
+                groupData: {},
                 id: 'row-group-0-E-1-F-2-G',
                 key: 'G',
                 lastChild: true,
@@ -293,7 +291,7 @@ describe('ag-grid grouping tree data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
-                groupData: { 'ag-Grid-AutoColumn': 'H' },
+                groupData: {},
                 id: '3',
                 key: 'H',
                 lastChild: true,

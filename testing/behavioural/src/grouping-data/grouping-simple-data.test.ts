@@ -3,7 +3,7 @@ import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { rowSnapshot } from './row-snapshot-test-utils';
+import { getRowsSnapshot } from './row-snapshot-test-utils';
 import type { RowSnapshot } from './row-snapshot-test-utils';
 
 describe('ag-grid grouping simple data', () => {
@@ -63,7 +63,7 @@ describe('ag-grid grouping simple data', () => {
 
         expect(rows.length).toBe(11);
 
-        const rowsSnapshot = rows.map(rowSnapshot);
+        const rowsSnapshot = getRowsSnapshot(rows);
 
         expect(rows[0].data).toBeUndefined();
         expect(rows[1].data).toBeUndefined();
@@ -91,6 +91,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: true,
+                groupData: { 'ag-Grid-AutoColumn': 'Ireland' },
                 id: 'row-group-country-Ireland',
                 key: 'Ireland',
                 lastChild: false,
@@ -118,6 +119,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: true,
+                groupData: { 'ag-Grid-AutoColumn': '2000' },
                 id: 'row-group-country-Ireland-year-2000',
                 key: '2000',
                 lastChild: false,
@@ -145,6 +147,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
+                groupData: undefined,
                 id: '0',
                 key: null,
                 lastChild: false,
@@ -172,6 +175,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: false,
                 footer: undefined,
                 group: false,
+                groupData: undefined,
                 id: '1',
                 key: null,
                 lastChild: true,
@@ -199,6 +203,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: false,
                 footer: undefined,
                 group: true,
+                groupData: { 'ag-Grid-AutoColumn': '2001' },
                 id: 'row-group-country-Ireland-year-2001',
                 key: '2001',
                 lastChild: true,
@@ -226,6 +231,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
+                groupData: undefined,
                 id: '2',
                 key: null,
                 lastChild: true,
@@ -253,6 +259,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: false,
                 footer: undefined,
                 group: true,
+                groupData: { 'ag-Grid-AutoColumn': 'Italy' },
                 id: 'row-group-country-Italy',
                 key: 'Italy',
                 lastChild: true,
@@ -280,6 +287,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: true,
+                groupData: { 'ag-Grid-AutoColumn': '2000' },
                 id: 'row-group-country-Italy-year-2000',
                 key: '2000',
                 lastChild: false,
@@ -307,6 +315,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
+                groupData: undefined,
                 id: '3',
                 key: null,
                 lastChild: true,
@@ -334,6 +343,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: false,
                 footer: undefined,
                 group: true,
+                groupData: { 'ag-Grid-AutoColumn': '2001' },
                 id: 'row-group-country-Italy-year-2001',
                 key: '2001',
                 lastChild: true,
@@ -361,6 +371,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
+                groupData: undefined,
                 id: '4',
                 key: null,
                 lastChild: true,

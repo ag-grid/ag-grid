@@ -4,7 +4,7 @@ function getRowKey<TData = any>(row: IRowNode<TData> | undefined): string | unde
     return row ? row.key : undefined;
 }
 
-export function rowSnapshot<TData = any>(row: IRowNode<TData>) {
+export function getRowSnapshot<TData = any>(row: IRowNode<TData>) {
     const {
         allChildrenCount,
         allLeafChildren,
@@ -18,6 +18,7 @@ export function rowSnapshot<TData = any>(row: IRowNode<TData>) {
         firstChild,
         footer,
         group,
+        groupData,
         id,
         key,
         lastChild,
@@ -46,6 +47,7 @@ export function rowSnapshot<TData = any>(row: IRowNode<TData>) {
         firstChild,
         footer,
         group,
+        groupData,
         id,
         key,
         lastChild,
@@ -62,4 +64,9 @@ export function rowSnapshot<TData = any>(row: IRowNode<TData>) {
     };
 }
 
-export type RowSnapshot<TData = any> = ReturnType<typeof rowSnapshot<TData>>;
+export function getRowsSnapshot(rows: IRowNode[]) {
+    const result = rows.map(getRowSnapshot);
+    return result;
+}
+
+export type RowSnapshot<TData = any> = ReturnType<typeof getRowSnapshot<TData>>;

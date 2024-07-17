@@ -3,7 +3,7 @@ import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { rowSnapshot } from './row-snapshot-test-utils';
+import { getRowsSnapshot } from './row-snapshot-test-utils';
 import type { RowSnapshot } from './row-snapshot-test-utils';
 
 describe('ag-grid grouping treeData is reactive', () => {
@@ -73,7 +73,7 @@ describe('ag-grid grouping treeData is reactive', () => {
             api.setGridOption('treeData', false);
 
             const groupRows = getAllRows(api);
-            const groupSnapshot = groupRows.map(rowSnapshot);
+            const groupSnapshot = getRowsSnapshot(groupRows);
             expect(groupRows.length).toBe(5);
 
             expect(groupRows[0].data).toEqual(undefined);
@@ -96,6 +96,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: true,
                     footer: undefined,
                     group: true,
+                    groupData: { 'ag-Grid-AutoColumn': 0 },
                     id: 'row-group-g-0',
                     key: '0',
                     lastChild: false,
@@ -123,6 +124,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: true,
                     footer: undefined,
                     group: false,
+                    groupData: undefined,
                     id: '0',
                     key: null,
                     lastChild: false,
@@ -150,6 +152,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: false,
                     footer: undefined,
                     group: false,
+                    groupData: undefined,
                     id: '2',
                     key: null,
                     lastChild: true,
@@ -177,6 +180,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: false,
                     footer: undefined,
                     group: true,
+                    groupData: { 'ag-Grid-AutoColumn': 1 },
                     id: 'row-group-g-1',
                     key: '1',
                     lastChild: true,
@@ -204,6 +208,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: true,
                     footer: undefined,
                     group: false,
+                    groupData: undefined,
                     id: '1',
                     key: null,
                     lastChild: true,
@@ -227,7 +232,7 @@ describe('ag-grid grouping treeData is reactive', () => {
             api.setGridOption('treeData', true);
 
             const treeRows = getAllRows(api);
-            const treeSnapshot = treeRows.map(rowSnapshot);
+            const treeSnapshot = getRowsSnapshot(treeRows);
             expect(treeRows.length).toBe(5);
 
             expect(treeRows[0].data).toEqual(rowData[0]);
@@ -250,6 +255,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: true,
                     footer: undefined,
                     group: true,
+                    groupData: { 'ag-Grid-AutoColumn': 'A' },
                     id: '0',
                     key: 'A',
                     lastChild: false,
@@ -277,6 +283,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: true,
                     footer: undefined,
                     group: true,
+                    groupData: { 'ag-Grid-AutoColumn': 'B' },
                     id: 'row-group-0-A-1-B',
                     key: 'B',
                     lastChild: true,
@@ -304,6 +311,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: true,
                     footer: undefined,
                     group: false,
+                    groupData: { 'ag-Grid-AutoColumn': 'C' },
                     id: '1',
                     key: 'C',
                     lastChild: true,
@@ -331,6 +339,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: false,
                     footer: undefined,
                     group: true,
+                    groupData: { 'ag-Grid-AutoColumn': 'D' },
                     id: 'row-group-0-D',
                     key: 'D',
                     lastChild: true,
@@ -358,6 +367,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     firstChild: true,
                     footer: undefined,
                     group: false,
+                    groupData: { 'ag-Grid-AutoColumn': 'E' },
                     id: '2',
                     key: 'E',
                     lastChild: true,
