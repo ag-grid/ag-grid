@@ -1217,22 +1217,22 @@
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Using Node.js & MySQL",
+                                        "title": "Example Node.js & MySQL",
                                         "path": "server-side-operations-nodejs",
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Using GraphQL & MySQL",
+                                        "title": "Example GraphQL & MySQL",
                                         "path": "server-side-operations-graphql",
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Using Java & Oracle",
+                                        "title": "Example Java & Oracle",
                                         "path": "server-side-operations-oracle",
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Using Java & Apache",
+                                        "title": "Example Java & Apache",
                                         "path": "server-side-operations-spark",
                                         "isEnterprise": true
                                     }
