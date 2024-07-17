@@ -90,7 +90,10 @@ export class GridBodyComp extends Component {
             setStickyTopHeight: (height) => (this.eStickyTop.style.height = height),
             setStickyTopTop: (top) => (this.eStickyTop.style.top = top),
             setStickyTopWidth: (width) => (this.eStickyTop.style.width = width),
-            setStickyBottomHeight: (height) => (this.eStickyBottom.style.height = height),
+            setStickyBottomHeight: (height) => {
+                this.eStickyBottom.style.height = height;
+                this.eStickyBottom.style.display = height === '0px' ? 'none' : 'block';
+            },
             setStickyBottomBottom: (bottom) => (this.eStickyBottom.style.bottom = bottom),
             setStickyBottomWidth: (width) => (this.eStickyBottom.style.width = width),
             setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(cssClass, flag),

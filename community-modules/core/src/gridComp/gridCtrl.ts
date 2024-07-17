@@ -7,6 +7,7 @@ import type { FocusService } from '../focusService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IWatermark } from '../interfaces/iWatermark';
+import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
@@ -32,12 +33,14 @@ export interface OptionalGridComponents {
 export class GridCtrl extends BeanStub {
     private beans: BeanCollection;
     private focusService: FocusService;
+    private overlayService: OverlayService;
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
+        this.overlayService = beans.overlayService;
     }
 
     private view: IGridComp;
@@ -149,14 +152,18 @@ export class GridCtrl extends BeanStub {
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
-        const focusableContainers = this.getFocusableContainers();
-        const allColumns = this.visibleColsService.getAllCols();
-
         const userCallbackFunction = this.gos.getCallback('focusGridInnerElement');
-
         if (userCallbackFunction && userCallbackFunction({ fromBottom: !!fromBottom })) {
             return true;
         }
+
+        const overlayService = this.overlayService;
+        if (overlayService.isExclusive()) {
+            return this.focusContainer(overlayService.getOverlayWrapper(), fromBottom);
+        }
+
+        const focusableContainers = this.getFocusableContainers();
+        const allColumns = this.visibleColsService.getAllCols();
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {
@@ -198,14 +205,28 @@ export class GridCtrl extends BeanStub {
     }
 
     private focusContainer(comp: FocusableContainer, up?: boolean): boolean {
-        comp?.setAllowFocus?.(true);
+        comp.setAllowFocus?.(true);
         const result = this.focusService.focusInto(comp.getGui(), up);
-        comp?.setAllowFocus?.(false);
+        comp.setAllowFocus?.(false);
         return result;
     }
 
     private getFocusableContainers(): FocusableContainer[] {
-        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers.values()];
+        const overlayService = this.overlayService;
+
+        if (overlayService.isExclusive()) {
+            // An exclusive overlay takes precedence over all other focusable containers
+            return [overlayService.getOverlayWrapper()];
+        }
+
+        const result = [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
+
+        if (overlayService.isVisible()) {
+            // We allow focusing on the no-rows overlay
+            result.push(overlayService.getOverlayWrapper());
+        }
+
+        return result;
     }
 
     public override destroy(): void {

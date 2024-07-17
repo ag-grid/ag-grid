@@ -1093,6 +1093,12 @@
         height: 0px;
     }
 
+    .ag-sticky-bottom {
+        border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+        box-sizing: content-box !important;
+        display: none;
+    }
+
     .ag-pinned-left-sticky-top,
     .ag-pinned-right-sticky-top {
         position: relative;
