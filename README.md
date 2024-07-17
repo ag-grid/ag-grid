@@ -1,3 +1,5 @@
+# JavaScript Data Grid | JavaScript Table
+
 <div align="center">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Dark-Theme.svg?raw=true"/>
