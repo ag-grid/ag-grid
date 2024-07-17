@@ -1,11 +1,15 @@
 /**
  * Automated Row Grouping demo
  */
-// NOTE: Only typescript types should be imported from the AG Grid packages
-// to prevent AG Grid from loading the code twice
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type { ColDef, GridApi, GridOptions, MenuItemDef } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { Easing, Group } from '@tweenjs/tween.js';
-
-import type { ColDef, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
 
 import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
 import { createDataWorker } from '../../data/createDataWorker';
@@ -25,6 +29,15 @@ const MESSAGE_FEQUENCY_1X = 200;
 let dataWorker;
 let scriptRunner: ScriptRunner;
 let restartScriptTimeout;
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    RowGroupingModule,
+    RangeSelectionModule,
+    MenuModule,
+    GridChartsModule,
+    SideBarModule,
+]);
 
 interface CreateAutomatedRowGroupingParams {
     gridClassname: string;
@@ -157,7 +170,7 @@ export function createAutomatedRowGrouping({
     getOverlay,
     additionalContextMenuItems,
     onStateChange,
-    onGridReady,
+    onDataReady,
     suppressUpdates,
     useStaticData,
     scriptDebuggerManager,
@@ -183,15 +196,16 @@ export function createAutomatedRowGrouping({
             gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
         }
         gridOptions.chartThemes = getDarkModeChartThemes(darkMode);
-        gridOptions.onGridReady = (params) => {
+        gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;
             }
 
-            onGridReady && onGridReady();
             initWorker();
             startWorkerMessages();
-
+        };
+        gridOptions.onFirstDataRendered = (params) => {
+            onDataReady && onDataReady();
             scriptDebugger = scriptDebuggerManager.add({
                 id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
@@ -227,7 +241,8 @@ export function createAutomatedRowGrouping({
                 defaultEasing: Easing.Quadratic.InOut,
             });
         };
-        api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
+
+        api = createGrid(gridDiv, gridOptions);
     };
     const updateDarkMode = (newDarkMode: boolean) => {
         // NOTE: Invert dark mode
@@ -245,7 +260,7 @@ export function createAutomatedRowGrouping({
     };
 
     const loadGrid = function () {
-        if (document.querySelector(gridSelector) && globalThis.agGrid) {
+        if (document.querySelector(gridSelector)) {
             init();
         } else {
             requestAnimationFrame(() => loadGrid());

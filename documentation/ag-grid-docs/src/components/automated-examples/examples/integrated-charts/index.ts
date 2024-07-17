@@ -1,10 +1,7 @@
 /**
  * Automated Integrated Charts demo
  */
-import { Easing, Group } from '@tweenjs/tween.js';
-
-// NOTE: Only typescript types should be imported from the AG Grid packages
-// to prevent AG Grid from loading the code twice
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type {
     ColDef,
     GridApi,
@@ -12,7 +9,14 @@ import type {
     ICellRendererParams,
     MenuItemDef,
     ValueFormatterParams,
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SideBarModule } from '@ag-grid-enterprise/side-bar';
+import { Easing, Group } from '@tweenjs/tween.js';
 
 import { createPeopleData } from '../../data/createPeopleData';
 import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
@@ -41,6 +45,15 @@ interface CreateAutomatedIntegratedChartsParams {
     visibilityThreshold: number;
     darkMode: boolean;
 }
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ClipboardModule,
+    GridChartsModule,
+    MenuModule,
+    RowGroupingModule,
+    SideBarModule,
+]);
 
 function numberCellFormatter(params: ValueFormatterParams) {
     return Math.floor(params.value)
@@ -210,14 +223,14 @@ export function createAutomatedIntegratedCharts({
             });
         };
 
-        api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
+        api = createGrid(gridDiv, gridOptions);
     };
     const updateDarkMode = (newDarkMode: boolean) => {
         api?.setGridOption('chartThemes', getDarkModeChartThemes(newDarkMode));
     };
 
     const loadGrid = function () {
-        if (document.querySelector(gridSelector) && globalThis.agGrid) {
+        if (document.querySelector(gridSelector)) {
             init();
         } else {
             requestAnimationFrame(() => loadGrid());
