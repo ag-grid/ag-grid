@@ -23,8 +23,8 @@
         <img alt="GitHub forks" src="https://img.shields.io/github/forks/ag-grid/ag-grid?style=for-the-badge">
     </a>
     <br><br>
-    <a href="https://sonarcloud.io/dashboard?id=ag-grid-enterprise">
-      <img src="https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status" alt="Quality Gate Status">
+    <a href="https://sonarcloud.io/dashboard?id=ag-grid-community">
+      <img src="https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status" alt="Quality Gate Status">
     </a>
     <a href="https://npm.io/package/ag-grid-community">
         <img src="https://img.shields.io/npms-io/maintenance-score/ag-grid-community" alt="npms.io Maintenance Score">
