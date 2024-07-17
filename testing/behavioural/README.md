@@ -8,10 +8,16 @@ Mocking is to be avoided as much as possible here, and the use of fakes is prefe
 
 ## Running tests
 
-To execute test, run in the root folder:
+To execute all test, run in the root folder:
 
 ```sh
 nx test ag-behavioural-testing
+```
+
+To execute a single test file
+
+```sh
+nx test ag-behavioural-testing --testFile=src/folder/filename.test.ts
 ```
 
 To pass arguments to jest, for example to execute only a specific test, use:
