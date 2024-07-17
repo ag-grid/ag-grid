@@ -56,7 +56,7 @@ export function rowSnapshot<TData = any>(row: IRowNode<TData>) {
         rowGroupIndex,
         rowPinned,
         selectable,
-        siblingIndex: getRowKey(sibling),
+        siblingKey: getRowKey(sibling),
         uiLevel,
         rowIndex,
     };
