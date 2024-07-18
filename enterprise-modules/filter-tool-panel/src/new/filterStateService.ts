@@ -1,10 +1,8 @@
 import type {
     AgColumn,
-    BeanCollection,
-    ColumnModel,
-    ColumnNameService,
-    FilterManager,
+    Column,
     FilterModel,
+    GridApi,
     ICombinedSimpleModel,
     ISimpleFilterModel,
     SetFilterModel,
@@ -45,9 +43,7 @@ export class FilterStateService
     extends BeanStub<'filterStateChanged' | 'filterStatesChanged'>
     implements IFilterStateService
 {
-    private columnModel: ColumnModel;
-    private columnNameService: ColumnNameService;
-    private filterManager: FilterManager;
+    private api: GridApi;
 
     private simpleFilterService: SimpleFilterService;
     private setFilterService: SetFilterService;
@@ -55,15 +51,11 @@ export class FilterStateService
     private columnListenerDestroyFuncs: (() => void)[] = [];
     private activeFilterStates: Map<string, FilterStateWrapper> = new Map();
 
-    public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
-        this.columnNameService = beans.columnNameService;
-        this.filterManager = beans.filterManager!;
-    }
-
     public postConstruct(): void {
-        this.simpleFilterService = this.createManagedBean(new SimpleFilterService());
-        this.setFilterService = this.createManagedBean(new SetFilterService());
+        const { api } = this.gos.getGridCommonParams();
+        this.api = api;
+        this.simpleFilterService = this.createManagedBean(new SimpleFilterService(api));
+        this.setFilterService = this.createManagedBean(new SetFilterService(api));
         this.addManagedEventListeners({
             newColumnsLoaded: () => this.updateFilterStates(),
             modelUpdated: ({ newData }) => {
@@ -79,19 +71,19 @@ export class FilterStateService
     }
 
     public getAvailableFilters(): { id: string; name: string }[] {
-        return this.columnModel
-            .getAllCols()
+        return this.api
+            .getAllGridColumns()
             .filter((col) => col.getColDef().filter && !this.activeFilterStates.get(col.getColId()))
             .map((col) => {
                 return {
                     id: col.getColId(),
-                    name: this.columnNameService.getDisplayNameForColumn(col, 'filterToolPanel') ?? col.getColId(),
+                    name: this.api.getDisplayNameForColumn(col, 'filterToolPanel') ?? col.getColId(),
                 };
             });
     }
 
     public addFilter(id: string): void {
-        const column = this.columnModel.getCol(id);
+        const column = this.api.getColumn(id);
         if (column) {
             const filterState = this.createFilterState(column, null);
             this.activeFilterStates.set(column.getColId(), filterState);
@@ -101,11 +93,11 @@ export class FilterStateService
 
     public removeFilter(id: string): void {
         this.activeFilterStates.delete(id);
-        const column = this.columnModel.getCol(id);
+        const column = this.api.getColumn(id);
         if (!column) {
             return;
         }
-        this.filterManager.destroyFilter(column);
+        this.api.destroyFilter(column);
         this.dispatchStatesUpdates();
     }
 
@@ -187,10 +179,10 @@ export class FilterStateService
     private updateFilterStates(): void {
         this.destroyColumnListeners();
         // TODO - maintain inactive states, expansion etc.
-        const filterModel = this.filterManager.getFilterModel();
+        const filterModel = this.api.getFilterModel();
         this.activeFilterStates.clear();
         Object.entries(filterModel).forEach(([colId, model]) => {
-            const column = this.columnModel.getCol(colId);
+            const column = this.api.getColumn(colId);
             if (!column) {
                 return;
             }
@@ -201,7 +193,7 @@ export class FilterStateService
     }
 
     private createFilterState(
-        column: AgColumn,
+        column: Column,
         model: ISimpleFilterModel | ICombinedSimpleModel<ISimpleFilterModel> | SetFilterModel | null,
         expanded?: boolean
     ): FilterStateWrapper {
@@ -216,7 +208,7 @@ export class FilterStateService
 
     private createFilterStateForType(
         type: 'simple' | 'set',
-        column: AgColumn,
+        column: Column,
         model: ISimpleFilterModel | ICombinedSimpleModel<ISimpleFilterModel> | SetFilterModel | null,
         expanded?: boolean
     ): FilterStateWrapper {
@@ -225,7 +217,7 @@ export class FilterStateService
         const filterConfig = service.getFilterConfig(column);
         const state: FilterState = {
             id,
-            name: this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel') ?? id,
+            name: this.api.getDisplayNameForColumn(column, 'filterToolPanel') ?? id,
             summary: service.getSummary(model as any),
             appliedModel: model as any,
             expanded,
@@ -266,12 +258,12 @@ export class FilterStateService
     }
 
     private applyColumnFilter(colId: string, model: any): void {
-        this.filterManager.setColumnFilterModel(colId, model).then(() => this.filterManager.onFilterChanged());
+        this.api.setColumnFilterModel(colId, model).then(() => this.api.onFilterChanged());
     }
 
     private applyFilters(): void {
         const model = this.getFilterModel();
-        this.filterManager.setFilterModel(model, 'columnFilter');
+        this.api.setFilterModel(model);
     }
 
     private getFilterModel(): FilterModel {

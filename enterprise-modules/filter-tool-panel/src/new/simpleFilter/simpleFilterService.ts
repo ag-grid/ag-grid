@@ -1,8 +1,8 @@
 import type {
-    AgColumn,
     BeanCollection,
-    DataTypeService,
+    Column,
     DateFilterModel,
+    GridApi,
     ICombinedSimpleModel,
     ISimpleFilterModel,
     ISimpleFilterModelType,
@@ -51,11 +51,13 @@ export class SimpleFilterService
         >
 {
     private translationService: FilterPanelTranslationService;
-    private dataTypeService?: DataTypeService;
+
+    constructor(private readonly api: GridApi) {
+        super();
+    }
 
     public wireBeans(beans: BeanCollection): void {
         this.translationService = beans.filterPanelTranslationService as FilterPanelTranslationService;
-        this.dataTypeService = beans.dataTypeService;
     }
 
     public getParams<M extends ISimpleFilterModel>(
@@ -165,7 +167,7 @@ export class SimpleFilterService
         };
     }
 
-    public getFilterConfig(column: AgColumn): SimpleFilterConfig {
+    public getFilterConfig(column: Column): SimpleFilterConfig {
         const params = column.getColDef().filterParams ?? {};
         const { buttons, readOnly } = params;
         let { maxNumConditions, numAlwaysVisibleConditions, defaultJoinOperator, defaultOption } = params;
@@ -322,8 +324,13 @@ export class SimpleFilterService
         return condition;
     }
 
-    private getFilterType(column: AgColumn): 'text' | 'number' | 'date' {
-        const baseDataType = this.dataTypeService?.getBaseDataType(column) ?? 'text';
+    private getFilterType(column: Column): 'text' | 'number' | 'date' {
+        const cellDataType = column.getColDef().cellDataType;
+        if (typeof cellDataType !== 'string') {
+            return 'text';
+        }
+        const baseDataType =
+            this.api.getGridOption('dataTypeDefinitions')?.[cellDataType]?.baseDataType ?? cellDataType;
         switch (baseDataType) {
             case 'number':
                 return 'number';

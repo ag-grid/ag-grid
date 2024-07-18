@@ -1,4 +1,4 @@
-import type { AgColumn, BeanCollection, IRowModel, SetFilterModel, ValueService } from '@ag-grid-community/core';
+import type { BeanCollection, Column, GridApi, KeyCreatorParams, SetFilterModel } from '@ag-grid-community/core';
 import { BeanStub, _makeNull, _toStringOrNull } from '@ag-grid-community/core';
 
 import type { FilterPanelTranslationService } from '../filterPanelTranslationService';
@@ -13,13 +13,13 @@ export class SetFilterService
     implements FilterTypeService<SetFilterParams, SetFilterModel, SetFilterConfig>
 {
     private translationService: FilterPanelTranslationService;
-    private rowModel: IRowModel;
-    private valueService: ValueService;
+
+    constructor(private readonly api: GridApi) {
+        super();
+    }
 
     public wireBeans(beans: BeanCollection): void {
         this.translationService = beans.filterPanelTranslationService as FilterPanelTranslationService;
-        this.rowModel = beans.rowModel;
-        this.valueService = beans.valueService;
     }
 
     public getParams(filterConfig: SetFilterConfig, model?: SetFilterModel | null): SetFilterParams {
@@ -159,16 +159,28 @@ export class SetFilterService
         return `${'in'} (${list})`;
     }
 
-    public getFilterConfig(column: AgColumn): SetFilterConfig {
+    public getFilterConfig(column: Column): SetFilterConfig {
         const valueMap: Map<string | null, any> = new Map();
         const values: { key: string | null; text: string }[] = [];
         const colDef = column.getColDef();
         const { readOnly: disabled } = colDef.filterParams ?? {};
-        const keyCreator = colDef.keyCreator ?? ((value: any) => _toStringOrNull(value));
-        this.rowModel.forEachNode((node) => {
-            const value = _makeNull(this.valueService.getValue(column, node));
-            const key = keyCreator(value);
-            valueMap.set(key, value);
+        const keyCreator =
+            colDef.filterParams?.keyCreator ??
+            colDef.keyCreator ??
+            (({ value }: KeyCreatorParams) => _toStringOrNull(value));
+        this.api.forEachNode((node) => {
+            const value = _makeNull(this.api.getCellValue({ colKey: column, rowNode: node }));
+            const formattedValue = this.api.getCellValue({ colKey: column, rowNode: node, useFormatter: true });
+            const key = keyCreator(
+                this.gos.addGridCommonParams({
+                    value,
+                    colDef,
+                    column,
+                    node,
+                    data: node?.data,
+                })
+            );
+            valueMap.set(key, formattedValue);
         });
         let hasBlanks = false;
         Array.from(valueMap.keys())
@@ -178,8 +190,7 @@ export class SetFilterService
                     hasBlanks = true;
                     return;
                 }
-                const value = valueMap.get(key);
-                const text = this.valueService.formatValue(column, null, value) ?? key;
+                const text = valueMap.get(key);
                 values.push({
                     key,
                     text,
