@@ -30,6 +30,36 @@ const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
     groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
+
+    enableFillHandle: { version: '32.1', message: 'Use `selectionOptions.fillHandleOptions` instead.' },
+    enableRangeHandle: { version: '32.1', message: 'Use `selectionOptions.enableRangeHandle` instead.' },
+    enableRangeSelection: { version: '32.1', message: 'Use `selectionOptions.mode = "cell"` instead.' },
+    rowSelection: { version: '32.1', message: 'Use `selectionOptions.mode = "row"` instead.' },
+    suppressMultiRangeSelection: {
+        version: '32.1',
+        message: 'Use `selectionOptions.suppressMultiRangeSelection` instead.',
+    },
+    suppressClearOnFillReduction: {
+        version: '32.1',
+        message: 'Use `selectionOptions.fillHandleOptions.suppressClearOnFillReduction` instead.',
+    },
+    fillHandleDirection: { version: '32.1', message: 'Use `selectionOptions.fillHandleOptions.direction` instead.' },
+    fillOperation: { version: '32.1', message: 'Use `selectionOptions.fillHandleOptions.setFillValue` instead.' },
+    suppressRowClickSelection: {
+        version: '32.1',
+        message: 'Use `selectionOptions.suppressRowClickSelection` instead.',
+    },
+    suppressRowDeselection: { version: '32.1', message: 'Use `selectionOptions.suppressRowDeselection` instead.' },
+    rowMultiSelectWithClick: { version: '32.1', message: 'Use `selectionOptions.rowMultiSelectWithClick` instead.' },
+    groupSelectsChildren: {
+        version: '32.1',
+        message: 'Use `selectionOptions.groupSelection = "allChildren"` instead.',
+    },
+    groupSelectsFiltered: {
+        version: '32.1',
+        message: 'Use `selectionOptions.groupSelection = "filteredChildren"` instead.',
+    },
+    isRowSelectable: { version: '32.1', message: 'Use `selectionOptions.isRowSelectable` instead.' },
 });
 
 // Leave untyped. so it can be inferred.
