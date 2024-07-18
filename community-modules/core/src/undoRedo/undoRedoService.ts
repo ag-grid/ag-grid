@@ -7,13 +7,9 @@ import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import type {
-    CellEditingStartedEvent,
-    CellEditingStoppedEvent,
     CellValueChangedEvent,
-    FillEndEvent,
     RedoEndedEvent,
     RedoStartedEvent,
-    RowEditingStartedEvent,
     UndoEndedEvent,
     UndoStartedEvent,
 } from '../events';
