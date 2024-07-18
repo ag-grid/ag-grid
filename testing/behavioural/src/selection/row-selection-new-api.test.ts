@@ -182,8 +182,11 @@ describe('ag-grid Selection State', () => {
                 const api = createMyGrid({
                     columnDefs,
                     rowData,
-                    selectionOptions: { mode: 'row', suppressMultipleRowSelection: true },
-                    isRowSelectable: (node) => node.data.sport !== 'football',
+                    selectionOptions: {
+                        mode: 'row',
+                        suppressMultipleRowSelection: true,
+                        isRowSelectable: (node) => node.data.sport !== 'football',
+                    },
                 });
 
                 clickRow(0);
@@ -196,8 +199,7 @@ describe('ag-grid Selection State', () => {
                 const api = createMyGrid({
                     columnDefs,
                     rowData,
-                    selectionOptions: { mode: 'row' },
-                    isRowSelectable: (node) => node.data.sport !== 'football',
+                    selectionOptions: { mode: 'row', isRowSelectable: (node) => node.data.sport !== 'football' },
                 });
 
                 clickRow(0);
@@ -560,8 +562,8 @@ describe('ag-grid Selection State', () => {
                     selectionOptions: {
                         mode: 'row',
                         checkboxSelection: { enabled: true },
+                        isRowSelectable: (node) => node.data.sport !== 'golf',
                     },
-                    isRowSelectable: (node) => node.data.sport !== 'golf',
                 });
 
                 toggleCheckbox(4);
@@ -972,8 +974,8 @@ describe('ag-grid Selection State', () => {
                     selectionOptions: {
                         mode: 'row',
                         enableHeaderCheckbox: true,
+                        isRowSelectable: (node) => node.data.sport !== 'football',
                     },
-                    isRowSelectable: (node) => node.data.sport !== 'football',
                 });
 
                 toggleHeaderCheckbox(0);
