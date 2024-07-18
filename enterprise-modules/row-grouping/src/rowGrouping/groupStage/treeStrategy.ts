@@ -12,15 +12,7 @@ import type {
     StageExecuteParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    RowNode,
-    _areEqual,
-    _existsAndNotEmpty,
-    _removeFromArray,
-    _sortRowNodesByOrder,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import { BeanStub, RowNode, _removeFromArray, _sortRowNodesByOrder, _warnOnce } from '@ag-grid-community/core';
 
 import { BatchRemover } from '../batchRemover';
 
@@ -63,7 +55,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.showRowGroupColsService = beans.showRowGroupColsService!;
     }
 
-    private oldGroupDisplayColIds: string;
+    private oldGroupDisplayColIds: string | undefined;
 
     /** Hierarchical node cache to speed up tree data node insertion */
     private cache: CacheTree = Object.create(null);
@@ -81,21 +73,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     private cacheTraverse(path: string[], level: number): CacheTree {
         let cache = this.cache;
-        let i = 0;
-
-        while (i <= level) {
+        for (let i = 0; i <= level; ++i) {
             const key = path[i];
-
             let node = cache[key];
             if (!node) {
                 node = { row: null, subtree: Object.create(null) };
                 cache[key] = node;
             }
             cache = node.subtree;
-
-            i++;
         }
-
         return cache;
     }
 
@@ -141,51 +127,51 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         // to consider how Filler Nodes would be impacted (it's possible that it can be easily
         // modified to work, however for now I don't have the brain energy to work it all out).
 
-        details.transactions.forEach((tran) => {
+        for (const { remove, update, add } of details.transactions) {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
-            if (_existsAndNotEmpty(tran.remove)) {
-                this.removeNodes(tran.remove as RowNode[], details);
+
+            if (remove?.length) {
+                this.removeNodes(remove as RowNode[], details);
             }
-            if (_existsAndNotEmpty(tran.update)) {
-                this.moveNodesInWrongPath(tran.update as RowNode[], details);
+            if (update?.length) {
+                this.moveNodesInWrongPath(update as RowNode[], details);
             }
-            if (_existsAndNotEmpty(tran.add)) {
-                this.insertNodes(tran.add as RowNode[], details);
+            if (add?.length) {
+                this.insertNodes(add as RowNode[], details);
             }
-        });
+        }
 
         if (details.rowNodeOrder) {
-            this.sortChildren(details);
+            // this is used when doing delta updates, eg Redux, keeps nodes in right order
+            details.changedPath.forEachChangedNodeDepthFirst(
+                (node) => {
+                    const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
+                    if (didSort) {
+                        details.changedPath.addParentNode(node);
+                    }
+                },
+                false,
+                true
+            );
         }
     }
 
-    // this is used when doing delta updates, eg Redux, keeps nodes in right order
-    private sortChildren(details: TreeGroupingDetails): void {
-        details.changedPath.forEachChangedNodeDepthFirst(
-            (node) => {
-                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
-                if (didSort) {
-                    details.changedPath.addParentNode(node);
-                }
-            },
-            false,
-            true
-        );
-    }
+    private isNodeInTheRightPath(node: RowNode, details: TreeGroupingDetails): boolean {
+        const newPath: string[] = this.getDataPath(node, details);
 
-    private getExistingPathForNode(node: RowNode, details: TreeGroupingDetails): string[] {
-        const res: string[] = [];
-
-        // the node is part of the path
+        // Traverse from the node to the root to get the old path and compare it with the new path
         let pointer: RowNode | null = node;
-        while (pointer && pointer !== details.rootNode) {
-            res.push(pointer.key!);
+        for (let i = newPath.length - 1; i >= 0; i--) {
+            if (!pointer || pointer.key !== newPath[i]) {
+                return false;
+            }
             pointer = pointer.parent;
         }
-        res.reverse();
-        return res;
+
+        // Ensure we have reached the root
+        return pointer === details.rootNode;
     }
 
     private moveNodesInWrongPath(childNodes: RowNode[], details: TreeGroupingDetails): void {
@@ -197,12 +183,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 details.changedPath.addParentNode(childNode.parent);
             }
 
-            const oldPath: string[] = this.getExistingPathForNode(childNode, details);
-            const newPath: string[] = this.getDataPath(childNode, details);
-
-            const nodeInCorrectPath = _areEqual(oldPath, newPath);
-
-            if (!nodeInCorrectPath) {
+            if (!this.isNodeInTheRightPath(childNode, details)) {
                 this.moveNode(childNode, details);
             }
         }
@@ -228,24 +209,33 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private removeNodes(leafRowNodes: RowNode[], details: TreeGroupingDetails): void {
+        const { changedPath } = details;
         this.removeNodesInStages(leafRowNodes, details);
-        if (details.changedPath.isActive()) {
-            leafRowNodes.forEach((rowNode) => details.changedPath.addParentNode(rowNode.parent));
+        if (changedPath.isActive()) {
+            for (const rowNode of leafRowNodes) {
+                changedPath.addParentNode(rowNode.parent);
+            }
         }
     }
 
     private removeNodesInStages(leafRowNodes: RowNode[], details: TreeGroupingDetails): void {
         const batchRemover = new BatchRemover();
 
-        leafRowNodes.forEach((nodeToRemove) => {
+        for (const nodeToRemove of leafRowNodes) {
             this.removeFromParent(nodeToRemove, batchRemover);
 
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
             // the ClientSideNodeManager is responsible for the Root Node.
-            this.forEachParentGroup(details, nodeToRemove.parent!, (parentNode) => {
-                batchRemover.removeFromAllLeafChildren(parentNode, nodeToRemove);
-            });
-        });
+
+            for (
+                let parent: RowNode | null = nodeToRemove.parent, grandParent: RowNode | null;
+                parent && parent !== details.rootNode;
+                parent = grandParent
+            ) {
+                grandParent = parent.parent;
+                batchRemover.removeFromAllLeafChildren(parent, nodeToRemove);
+            }
+        }
 
         batchRemover.flush();
 
@@ -254,63 +244,49 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.removeEmptyGroups(nodeParents, details);
     }
 
-    private forEachParentGroup(
-        details: TreeGroupingDetails,
-        group: RowNode,
-        callback: (parent: RowNode) => void
-    ): void {
-        let pointer: RowNode | null = group;
-        while (pointer && pointer !== details.rootNode) {
-            callback(pointer);
-            pointer = pointer.parent;
-        }
-    }
-
     private removeEmptyGroups(possibleEmptyGroups: RowNode[], details: TreeGroupingDetails): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
         let checkAgain = true;
 
-        const groupShouldBeRemoved = (rowNode: RowNode): boolean => {
-            // because of the while loop below, it's possible we already moved the node,
-            // so double check before trying to remove again.
-            const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
-            const parentRowNode = rowNode.parent;
-            const groupAlreadyRemoved = parentRowNode?.childrenMapped ? !parentRowNode.childrenMapped[mapKey] : true;
-
-            if (groupAlreadyRemoved) {
-                // if not linked, then group was already removed
-                return false;
-            }
-            // if still not removed, then we remove if this group is empty
-            return rowNode.isEmptyRowGroupNode();
-        };
-
         while (checkAgain) {
             checkAgain = false;
             const batchRemover = new BatchRemover();
-            possibleEmptyGroups.forEach((possibleEmptyGroup) => {
-                // remove empty groups
-                this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
-                    if (groupShouldBeRemoved(rowNode)) {
-                        if (rowNode.data && details.getDataPath?.(rowNode.data)) {
+
+            // remove empty groups
+
+            for (const possibleEmptyGroup of possibleEmptyGroups) {
+                for (
+                    let row: RowNode | null = possibleEmptyGroup, parent: RowNode | null;
+                    row && row !== details.rootNode;
+                    row = parent
+                ) {
+                    parent = row.parent;
+
+                    // it's possible we already moved the node, so double check before trying to remove again.
+                    const mapKey = this.getChildrenMappedKey(row.key!, row.rowGroupColumn);
+                    const parentRowNode = row.parent;
+                    const groupAlreadyRemoved = parentRowNode?.childrenMapped
+                        ? !parentRowNode.childrenMapped[mapKey]
+                        : true;
+
+                    if (!groupAlreadyRemoved && row.isEmptyRowGroupNode()) {
+                        if (row.data && details.getDataPath?.(row.data)) {
                             // This node has associated tree data so shouldn't be removed, but should no longer be
                             // marked as a group if it has no children.
-                            rowNode.setGroup(
-                                (rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0) ?? false
-                            );
+                            row.setGroup((row.childrenAfterGroup && row.childrenAfterGroup.length > 0) ?? false);
                         } else {
                             checkAgain = true;
 
-                            this.removeFromParent(rowNode, batchRemover);
+                            this.removeFromParent(row, batchRemover);
                             // we remove selection on filler nodes here, as the selection would not be removed
                             // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                            rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+                            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
                         }
                     }
-                });
-            });
+                }
+            }
             batchRemover.flush();
         }
     }
@@ -353,29 +329,26 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private checkAllGroupDataAfterColsChanged(details: TreeGroupingDetails): void {
-        const recurse = (rowNodes: RowNode[] | null) => {
-            if (!rowNodes) {
-                return;
-            }
-            rowNodes.forEach((rowNode) => {
-                const groupInfo: GroupInfo = {
-                    field: rowNode.field,
-                    key: rowNode.key!,
-                    rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: rowNode.allLeafChildren?.[0],
-                };
-                this.setGroupData(rowNode, groupInfo);
-                recurse(rowNode.childrenAfterGroup);
-            });
-        };
-
-        recurse(details.rootNode.childrenAfterGroup);
-    }
-
     private shotgunResetEverything(details: TreeGroupingDetails, afterColumnsChanged: boolean): void {
-        if (this.noChangeInGroupingColumns(details, afterColumnsChanged)) {
-            return;
+        if (afterColumnsChanged || this.oldGroupDisplayColIds === undefined) {
+            const newGroupDisplayColIds =
+                this.showRowGroupColsService
+                    .getShowRowGroupCols()
+                    ?.map((c) => c.getId())
+                    .join('-') ?? '';
+
+            if (afterColumnsChanged) {
+                // if the group display cols have changed, then we need to update rowNode.groupData
+                // (regardless of tree data or row grouping)
+                if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
+                    this.checkAllGroupDataAfterColsChanged(details.rootNode.childrenAfterGroup);
+                }
+
+                // WARNING: this assumes that an event with afterColumnsChange=true doesn't change the rows
+                return; // No further processing needed, rows didn't change
+            }
+
+            this.oldGroupDisplayColIds = newGroupDisplayColIds;
         }
 
         // groups are about to get disposed, so need to deselect any that are selected
@@ -400,32 +373,31 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.insertNodes(rootNode.allLeafChildren!, details);
     }
 
-    private noChangeInGroupingColumns(details: TreeGroupingDetails, afterColumnsChanged: boolean): boolean {
-        const groupDisplayColumns = this.showRowGroupColsService.getShowRowGroupCols();
-        const newGroupDisplayColIds = groupDisplayColumns ? groupDisplayColumns.map((c) => c.getId()).join('-') : '';
-
-        if (afterColumnsChanged) {
-            // if the group display cols have changed, then we need to update rowNode.groupData
-            // (regardless of tree data or row grouping)
-            if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
-                this.checkAllGroupDataAfterColsChanged(details);
-            }
+    private checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null): void {
+        if (!rowNodes) {
+            return;
         }
-
-        this.oldGroupDisplayColIds = newGroupDisplayColIds;
-
-        return afterColumnsChanged;
+        for (const rowNode of rowNodes) {
+            const groupInfo: GroupInfo = {
+                field: rowNode.field,
+                key: rowNode.key!,
+                rowGroupColumn: rowNode.rowGroupColumn,
+                leafNode: rowNode.allLeafChildren?.[0],
+            };
+            this.setGroupData(rowNode, groupInfo);
+            this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
+        }
     }
 
     private insertNodes(newRowNodes: RowNode[], details: TreeGroupingDetails): void {
         this.buildNodeCacheFromRows(newRowNodes, details);
 
-        newRowNodes.forEach((rowNode) => {
+        for (const rowNode of newRowNodes) {
             this.insertOneNode(rowNode, details, false);
             if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(rowNode.parent);
             }
-        });
+        }
     }
 
     private insertOneNode(
@@ -599,12 +571,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
         groupNode.groupData = {};
         const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
-        groupDisplayCols.forEach((col) => {
+        for (const col of groupDisplayCols) {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
 
             groupNode.groupData![col.getColId()] = groupInfo.key;
-        });
+        }
     }
 
     private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
@@ -651,10 +623,19 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
  */
 function topologicalSort(rowNodes: RowNode[], details: TreeGroupingDetails): RowNode[] {
     const sortedNodes: RowNode[] = [];
+
     // performance: create a cache of ids to make lookups during the search faster
-    const idLookup = Object.fromEntries(rowNodes.map<[string, number]>((node, i) => [node.id!, i]));
+    const idLookup = new Map<string, RowNode>();
+
     // performance: keep track of the nodes we haven't found yet so we can return early
-    const stillToFind = new Set(Object.keys(idLookup));
+    const stillToFind = new Set<string>();
+
+    for (let i = 0; i < rowNodes.length; i++) {
+        const row = rowNodes[i];
+        const id = row.id!;
+        idLookup.set(id, row);
+        stillToFind.add(id);
+    }
 
     const queue = [details.rootNode];
     let i = 0;
@@ -668,9 +649,12 @@ function topologicalSort(rowNodes: RowNode[], details: TreeGroupingDetails): Row
             continue;
         }
 
-        if (node.id && node.id in idLookup) {
-            sortedNodes.push(rowNodes[idLookup[node.id]]);
-            stillToFind.delete(node.id);
+        const { id, childrenAfterGroup } = node;
+
+        const found = id && idLookup.get(id);
+        if (found) {
+            sortedNodes.push(found);
+            stillToFind.delete(id);
         }
 
         // we can stop early if we've already found all the nodes
@@ -678,9 +662,10 @@ function topologicalSort(rowNodes: RowNode[], details: TreeGroupingDetails): Row
             return sortedNodes;
         }
 
-        const children = node.childrenAfterGroup ?? [];
-        for (let i = 0; i < children.length; i++) {
-            queue.push(children[i]);
+        if (childrenAfterGroup) {
+            for (let i = 0; i < childrenAfterGroup.length; i++) {
+                queue.push(childrenAfterGroup[i]);
+            }
         }
     }
 
