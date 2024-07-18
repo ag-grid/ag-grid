@@ -73,23 +73,22 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
+    private cacheUpsertNode(parent: TreeNode | null, key: string): TreeNode {
+        const cache = parent ? (parent.subtree ??= Object.create(null)) : this.cache;
+        let treeNode = cache[key];
+        if (!treeNode) {
+            treeNode = { row: null, subtree: null };
+            cache[key] = treeNode;
+        }
+        return treeNode;
+    }
+
     private cacheUpsert(path: string[], level: number, key: string): TreeNode {
-        let cache = this.cache;
+        let parent: TreeNode | null = null;
         for (let i = 0; i < level; ++i) {
-            const pathKey = path[i];
-            let node = cache[pathKey];
-            if (!node) {
-                node = { row: null, subtree: null };
-                cache[pathKey] = node;
-            }
-            cache = node.subtree ??= Object.create(null);
+            parent = this.cacheUpsertNode(parent, path[i]);
         }
-        let node = cache[key];
-        if (!node) {
-            node = { row: null, subtree: null };
-            cache[key] = node;
-        }
-        return node;
+        return this.cacheUpsertNode(parent, key);
     }
 
     private createGroupingDetails(params: StageExecuteParams): TreeGroupingDetails {
@@ -452,38 +451,27 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     /**
-     * Directly re-initialises the `TreeDataNodeCache`
+     * Directly re-initialises the tree cache
      */
-    private buildNodeCacheFromRows(rowNodes: RowNode[], details: TreeGroupingDetails): void {
-        let width = 0;
-        const paths = rowNodes.map((node) => {
-            const path = this.getDataPath(node, details);
-            if (width < path.length) {
-                width = path.length;
-            }
-            return path;
-        });
-
+    private buildNodeCacheFromRows(rows: RowNode[], details: TreeGroupingDetails): void {
         this.cache = objectCreate(null); // Clear the cache
 
-        // Iterate through the paths level-by-level, populating the cache with RowNode
-        // instances for all leaves of the hierarchy, and nulls otherwise (to be backfilled
-        // with filler nodes in the subsequent step)
-        for (let level = 0; level < width; level++) {
-            for (let rowIdx = 0; rowIdx < paths.length; rowIdx++) {
-                const path = paths[rowIdx];
-                const isLeaf = path[level + 1] === undefined;
+        // Populate the cache with the rows
+        // Fills the rows if the row is a leaf, leave null for filler rows.
+        // Filler rows will be filled in the next step (backfillGroups)
 
-                if (path[level] === undefined) {
-                    continue;
-                }
+        for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+            const row = rows[rowIdx];
+            const path = this.getDataPath(row, details);
+            let treeNode: TreeNode | null = null;
+            for (let level = 0; level < path.length; level++) {
+                const isLeaf = level === path.length - 1;
 
                 const key = path[level];
-
-                const treeNode = this.cacheUpsert(path, level, key);
+                treeNode = this.cacheUpsertNode(treeNode, key);
                 if (isLeaf) {
-                    treeNode.row = rowNodes[rowIdx];
-                    this.ensureRowNodeFields(rowNodes[rowIdx], key);
+                    treeNode.row = row;
+                    this.ensureRowNodeFields(row, key);
                 }
             }
         }
@@ -504,15 +492,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Walks the Tree recursively and backfills `null` entries with filler group nodes */
     private backfillGroups(cache: Subtree, parent: RowNode, level: number, details: TreeGroupingDetails): void {
         for (const key in cache) {
-            const value = cache[key];
-            if (value) {
-                let row = value.row;
+            const treeNode = cache[key];
+            if (treeNode) {
+                let row = treeNode.row;
                 if (!row) {
                     row = this.createGroup(key, parent, level, details);
-                    value.row = row;
+                    treeNode.row = row;
                 }
 
-                const subtree = value.subtree;
+                const subtree = treeNode.subtree;
                 if (subtree) {
                     this.backfillGroups(subtree, row, level + 1, details);
                 }
