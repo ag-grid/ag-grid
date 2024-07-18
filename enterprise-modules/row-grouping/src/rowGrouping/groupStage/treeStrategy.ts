@@ -46,8 +46,12 @@ interface GroupInfo {
     leafNode?: RowNode;
 }
 
-/** Hierarchical cache of RowNode or sentinel value indicating a filler group node is necessary */
-type InnerTreeDataNodeCache = Record<string, { node: null | RowNode; subtree: InnerTreeDataNodeCache }>;
+type CacheTree = Record<string, TreeNode | undefined>;
+
+interface TreeNode {
+    row: RowNode | null;
+    subtree: CacheTree;
+}
 
 export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private beans: BeanCollection;
@@ -63,19 +67,21 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string;
 
     /** Hierarchical node cache to speed up tree data node insertion */
-    private cache: InnerTreeDataNodeCache = Object.create(null);
+    private cache: CacheTree = Object.create(null);
 
-    private cacheTraverse(path: GroupInfo[], level: number): InnerTreeDataNodeCache {
+    private cacheTraverse(path: GroupInfo[], level: number): CacheTree {
         let cache = this.cache;
         let i = 0;
 
         while (i <= level) {
             const key = path[i].key;
 
-            if (!(key in cache)) {
-                cache[key] = { node: null, subtree: Object.create(null) };
+            let node = cache[key];
+            if (!node) {
+                node = { row: null, subtree: Object.create(null) };
+                cache[key] = node;
             }
-            cache = cache[key].subtree;
+            cache = node.subtree;
 
             i++;
         }
@@ -83,14 +89,20 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return cache;
     }
 
-    public cacheSet(path: GroupInfo[], level: number, key: string, value: null | RowNode) {
+    public cacheSet(path: GroupInfo[], level: number, key: string, row: null | RowNode): void {
         const cache = this.cacheTraverse(path, level - 1);
-        cache[key] = { node: value, subtree: Object.create(null) };
+        let node = cache[key];
+        if (!node) {
+            node = { row, subtree: Object.create(null) };
+            cache[key] = node;
+        } else if (row && row !== node.row) {
+            node.row = row;
+        }
     }
 
     public cacheGet(path: GroupInfo[], level: number, key: string): RowNode | null | undefined {
         const cache = this.cacheTraverse(path, level - 1);
-        return cache[key]?.node;
+        return cache[key]?.row;
     }
 
     public cacheClear(): void {
@@ -577,16 +589,14 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
                 const info = path[level];
 
-                if (this.cacheGet(path, level, info.key)) {
-                    continue;
+                if (isLeaf) {
+                    this.cacheSet(path, level, info.key, rowNodes[rowIdx]);
+                } else {
+                    this.cacheGet(path, level, info.key);
                 }
-
-                this.cacheSet(
-                    path,
-                    level,
-                    info.key,
-                    isLeaf ? this.ensureRowNodeFields(rowNodes[rowIdx], info.key) : null
-                );
+                if (isLeaf) {
+                    this.ensureRowNodeFields(rowNodes[rowIdx], info.key);
+                }
             }
         }
 
@@ -603,18 +613,16 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return rowNode;
     }
 
-    /** Walks the TreeDataNodeCache recursively and backfills `null` entries with filler group nodes */
-    private backfillGroups(
-        cache: InnerTreeDataNodeCache,
-        parent: RowNode,
-        level: number,
-        details: TreeGroupingDetails
-    ): void {
-        for (const [key, value] of Object.entries(cache)) {
-            if (value.node === null) {
-                value.node = this.createGroup({ key, rowGroupColumn: null, field: null }, parent, level, details);
+    /** Walks the Tree recursively and backfills `null` entries with filler group nodes */
+    private backfillGroups(cache: CacheTree, parent: RowNode, level: number, details: TreeGroupingDetails): void {
+        for (const key in cache) {
+            const value = cache[key];
+            if (value) {
+                if (value.row === null) {
+                    value.row = this.createGroup({ key, rowGroupColumn: null, field: null }, parent, level, details);
+                }
+                this.backfillGroups(value.subtree, value.row, level + 1, details);
             }
-            this.backfillGroups(value.subtree, value.node, level + 1, details);
         }
     }
 
@@ -711,10 +719,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     private getGroupInfo(rowNode: RowNode, details: TreeGroupingDetails): GroupInfo[] {
         const keys = details.getDataPath?.(rowNode.data);
-
-        if (keys === undefined || keys.length === 0) {
+        if (!keys?.length) {
             _warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
+            return [];
         }
-        return keys?.map((key) => ({ key, field: null, rowGroupColumn: null })) ?? [];
+        return keys.map((key) => ({ key, field: null, rowGroupColumn: null }));
     }
 }
