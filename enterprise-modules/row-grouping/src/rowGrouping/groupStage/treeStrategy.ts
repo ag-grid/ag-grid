@@ -73,34 +73,23 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private cacheTraverse(path: string[], level: number): Subtree {
+    private cacheUpsert(path: string[], level: number, key: string): TreeNode {
         let cache = this.cache;
-        for (let i = 0; i <= level; ++i) {
-            const key = path[i];
-            let node = cache[key];
+        for (let i = 0; i < level; ++i) {
+            const pathKey = path[i];
+            let node = cache[pathKey];
             if (!node) {
                 node = { row: null, subtree: null };
-                cache[key] = node;
+                cache[pathKey] = node;
             }
-            cache = node.subtree ??= objectCreate(null);
+            cache = node.subtree ??= Object.create(null);
         }
-        return cache;
-    }
-
-    public cacheGet(path: string[], level: number, key: string): RowNode | null | undefined {
-        const cache = this.cacheTraverse(path, level - 1);
-        return cache[key]?.row;
-    }
-
-    public cacheAdd(path: string[], level: number, key: string, row: RowNode | null): void {
-        const cache = this.cacheTraverse(path, level - 1);
         let node = cache[key];
         if (!node) {
-            node = { row, subtree: null };
+            node = { row: null, subtree: null };
             cache[key] = node;
-        } else if (row) {
-            node.row = row; // Override the row only if not null
         }
+        return node;
     }
 
     private createGroupingDetails(params: StageExecuteParams): TreeGroupingDetails {
@@ -307,9 +296,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 child.parent.updateHasChildren();
             }
         }
-        const mapKey = getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (child.parent?.childrenMapped != undefined) {
-            delete child.parent.childrenMapped[mapKey];
+        if (child.parent?.childrenMapped) {
+            delete child.parent.childrenMapped[getChildrenMappedKey(child.key!, child.rowGroupColumn)];
         }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
@@ -321,8 +309,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
     private addToParent(child: RowNode, parent: RowNode | null) {
-        const mapKey = getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (parent?.childrenMapped != null) {
+        if (parent?.childrenMapped) {
+            const mapKey = getChildrenMappedKey(child.key!, child.rowGroupColumn);
             if (parent?.childrenMapped?.[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
@@ -420,11 +408,13 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             let row = parentGroup?.childrenMapped?.[key];
 
             if (!row) {
-                row = this.cacheGet(path, level, key);
+                const treeNode = this.cacheUpsert(path, level, key);
+                row = treeNode.row;
                 if (row) {
                     row.parent = parentGroup;
                 } else {
                     row = this.createGroup(key, parentGroup, level, details);
+                    treeNode.row = row;
                 }
                 // attach the new group to the parent
                 this.addToParent(row, parentGroup);
@@ -490,8 +480,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
                 const key = path[level];
 
-                this.cacheAdd(path, level, key, isLeaf ? rowNodes[rowIdx] : null);
+                const treeNode = this.cacheUpsert(path, level, key);
                 if (isLeaf) {
+                    treeNode.row = rowNodes[rowIdx];
                     this.ensureRowNodeFields(rowNodes[rowIdx], key);
                 }
             }
