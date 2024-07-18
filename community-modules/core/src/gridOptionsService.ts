@@ -630,6 +630,7 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
         if (selectionOpts.mode === 'cell') {
             go.suppressMultiRangeSelection = selectionOpts.suppressMultiRangeSelection ?? false;
             go.enableRangeHandle = selectionOpts.enableRangeHandle ?? false;
+            go.enableFillHandle = selectionOpts.fillHandleOptions !== undefined;
             go.suppressClearOnFillReduction = selectionOpts.fillHandleOptions?.suppressClearOnFillReduction ?? false;
             go.fillHandleDirection = selectionOpts.fillHandleOptions?.direction ?? 'xy';
             go.fillOperation = selectionOpts.fillHandleOptions?.setFillValue;
