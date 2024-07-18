@@ -2515,6 +2515,10 @@ export interface RowSelectionOptions<TData, TValue> {
      * @default false
      */
     enableMultiSelectWithClick?: boolean;
+    /**
+     * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     */
+    isRowSelectable?: IsRowSelectable<TData>;
 }
 
 /**

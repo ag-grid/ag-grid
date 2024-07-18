@@ -637,6 +637,7 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
             go.suppressRowClickSelection = selectionOpts.suppressRowClickSelection ?? false;
             go.suppressRowDeselection = selectionOpts.suppressRowDeselection ?? false;
             go.rowMultiSelectWithClick = selectionOpts.enableMultiSelectWithClick ?? false;
+            go.isRowSelectable = selectionOpts.isRowSelectable;
 
             if (selectionOpts.suppressMultipleRowSelection) {
                 go.rowSelection = 'single';
