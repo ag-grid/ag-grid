@@ -37,14 +37,12 @@ interface GroupInfo {
     leafNode?: RowNode;
 }
 
+type Subtree = Map<string, TreeNode>;
+
 interface TreeNode {
     row: RowNode | null;
     subtree: Subtree | null;
 }
-
-type Subtree = Record<string, TreeNode | undefined>;
-
-const { create: objectCreate } = Object;
 
 export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private beans: BeanCollection;
@@ -60,7 +58,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string | undefined;
 
     /** Hierarchical node cache to speed up tree data node insertion */
-    private treeNodes: Subtree = objectCreate(null);
+    private treeNodes: Subtree = new Map();
 
     public execute(params: StageExecuteParams): void {
         const details = this.createGroupingDetails(params);
@@ -74,11 +72,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private upsertTreeNode(parent: TreeNode | null, key: string): TreeNode {
-        const subtree = parent ? (parent.subtree ??= Object.create(null)) : this.treeNodes;
-        let treeNode = subtree[key];
+        const subtree: Subtree = parent ? (parent.subtree ??= new Map()) : this.treeNodes;
+        let treeNode = subtree.get(key);
         if (!treeNode) {
             treeNode = { row: null, subtree: null };
-            subtree[key] = treeNode;
+            subtree.set(key, treeNode);
         }
         return treeNode;
     }
@@ -470,7 +468,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * Directly re-initialises the tree cache
      */
     private buildNodeCacheFromRows(rows: RowNode[], details: TreeGroupingDetails): void {
-        this.treeNodes = objectCreate(null); // Clear the cache
+        this.treeNodes.clear(); // Clear the cache
 
         // Populate the cache with the rows
         // Fills the rows if the row is a leaf, leave null for filler rows.
@@ -506,9 +504,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     /** Walks the Tree recursively and backfills `null` entries with filler group nodes */
-    private backfillGroups(cache: Subtree, parent: RowNode, level: number, details: TreeGroupingDetails): void {
-        for (const key in cache) {
-            const treeNode = cache[key];
+    private backfillGroups(subtree: Subtree, parent: RowNode, level: number, details: TreeGroupingDetails): void {
+        for (const key of subtree.keys()) {
+            const treeNode = subtree.get(key);
             if (treeNode) {
                 let row = treeNode.row;
                 if (!row) {
