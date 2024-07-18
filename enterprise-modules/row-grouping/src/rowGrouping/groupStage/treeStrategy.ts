@@ -88,11 +88,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         cache[key] = { node: value, subtree: Object.create(null) };
     }
 
-    public cacheHas(path: GroupInfo[], level: number, key: string): boolean {
-        const cache = this.cacheTraverse(path, level - 1);
-        return key in cache;
-    }
-
     public cacheGet(path: GroupInfo[], level: number, key: string): RowNode | null | undefined {
         const cache = this.cacheTraverse(path, level - 1);
         return cache[key]?.node;
@@ -543,8 +538,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         let nextNode = parentGroup?.childrenMapped?.[key];
 
         if (!nextNode) {
-            if (this.cacheHas(path, level, key)) {
-                nextNode = this.cacheGet(path, level, key);
+            nextNode = this.cacheGet(path, level, key);
+            if (nextNode) {
                 nextNode.parent = parentGroup;
             } else {
                 nextNode = this.createGroup(groupInfo, parentGroup, level, details);
@@ -574,17 +569,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         // with filler nodes in the subsequent step)
         for (let level = 0; level < width; level++) {
             for (const [rowIdx, path] of paths.entries()) {
-                const isDefined = path[level] !== undefined;
                 const isLeaf = path[level + 1] === undefined;
 
-                if (!isDefined) {
+                if (path[level] === undefined) {
                     continue;
                 }
 
                 const info = path[level];
 
-                const currentValue = this.cacheGet(path, level, info.key);
-                if (currentValue != null) {
+                if (this.cacheGet(path, level, info.key)) {
                     continue;
                 }
 
