@@ -20,7 +20,7 @@ import { LocalEventService } from './localEventService';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
-import { _log, _warnOnce } from './utils/function';
+import { _errorOnce, _log, _warnOnce } from './utils/function';
 import { _exists, _missing, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
@@ -633,9 +633,16 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
             go.suppressClearOnFillReduction = selectionOpts.fillHandleOptions?.suppressClearOnFillReduction ?? false;
             go.fillHandleDirection = selectionOpts.fillHandleOptions?.direction ?? 'xy';
             go.fillOperation = selectionOpts.fillHandleOptions?.setFillValue;
-        } else {
+        } else if (selectionOpts.mode === 'row') {
             go.suppressRowClickSelection = selectionOpts.suppressRowClickSelection ?? false;
             go.suppressRowDeselection = selectionOpts.suppressRowDeselection ?? false;
+            go.rowMultiSelectWithClick = selectionOpts.enableMultiSelectWithClick ?? false;
+
+            if (selectionOpts.suppressMultipleRowSelection) {
+                go.rowSelection = 'single';
+            } else {
+                go.rowSelection = 'multiple';
+            }
 
             switch (selectionOpts.groupSelection) {
                 case 'allChildren':
@@ -649,7 +656,7 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
                     break;
             }
 
-            if (selectionOpts.checkboxSelection?.enabled) {
+            if (selectionOpts.checkboxSelection) {
                 const colDefs = go.columnDefs;
                 if (colDefs && colDefs.length > 0) {
                     // Only set checkbox selection properties on the first column
@@ -661,24 +668,20 @@ export function normaliseGridOptions(go: GridOptions): GridOptions {
                 }
             }
 
-            if (selectionOpts.mode === 'multiRow') {
-                go.rowSelection = 'multiple';
-                go.rowMultiSelectWithClick = selectionOpts.enableMultiSelectWithClick ?? false;
-
-                const colDefs = go.columnDefs;
-                if (colDefs && colDefs.length > 0) {
-                    // Only set header checkbox selection properties on the first column
-                    if (!('children' in colDefs[0])) {
-                        colDefs[0].headerCheckboxSelection = selectionOpts.enableHeaderCheckbox ?? false;
-                        colDefs[0].headerCheckboxSelectionCurrentPageOnly =
-                            selectionOpts.selectAllOptions?.currentPageOnly ?? false;
-                        colDefs[0].headerCheckboxSelectionFilteredOnly =
-                            selectionOpts.selectAllOptions?.filteredOnly ?? false;
-                    }
+            const colDefs = go.columnDefs;
+            if (colDefs && colDefs.length > 0) {
+                // Only set header checkbox selection properties on the first column
+                if (!('children' in colDefs[0])) {
+                    colDefs[0].headerCheckboxSelection = selectionOpts.enableHeaderCheckbox ?? false;
+                    colDefs[0].headerCheckboxSelectionCurrentPageOnly =
+                        selectionOpts.selectAllOptions?.currentPageOnly ?? false;
+                    colDefs[0].headerCheckboxSelectionFilteredOnly =
+                        selectionOpts.selectAllOptions?.filteredOnly ?? false;
                 }
-            } else {
-                go.rowSelection = 'single';
             }
+        } else {
+            _errorOnce('Unrecognised selection mode', selectionOpts);
+            return go;
         }
     }
 

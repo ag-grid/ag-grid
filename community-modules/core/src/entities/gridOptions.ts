@@ -2441,13 +2441,11 @@ export interface CellSelectionOptions<TData> {
     fillHandleOptions?: FillHandleOptions<TData>;
     /**
      * If `true`, only a single range can be selected
-     *
      * @default false
      */
     suppressMultiRangeSelection?: boolean;
     /**
      * Set to `true` to enable the Range Handle
-     *
      * @default false
      */
     enableRangeHandle?: boolean;
@@ -2473,13 +2471,11 @@ export interface FillHandleOptions<TData> {
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
 
-/** Row selection options */
-export type RowSelectionOptions<TData, TValue> =
-    | SingleRowSelectionOptions<TData, TValue>
-    | MultiRowSelectionOptions<TData, TValue>;
-
-/** Selection options shared between single row selection and multiple row selection modes. */
-export interface CommonRowSelectionOptions<TData, TValue> {
+/**
+ * Determines selection behaviour when multiple rows can be selected at once.
+ */
+export interface RowSelectionOptions<TData, TValue> {
+    mode: 'row';
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
@@ -2490,24 +2486,21 @@ export interface CommonRowSelectionOptions<TData, TValue> {
      * @default false
      */
     suppressRowClickSelection?: boolean;
-    /** Determine group selection behaviour */
+    /**
+     * If `true`, only a single row can be selected at a time. Selecting a row will de-select any other rows.
+     * @default false
+     */
+    suppressMultipleRowSelection?: boolean;
+    /**
+     * Determine group selection behaviour
+     * @default 'none'
+     */
     groupSelection?: GroupSelectionOptions;
-    /** Determine checkbox selection behaviour */
+    /**
+     * Determine checkbox selection behaviour
+     * @default false
+     */
     checkboxSelection?: CheckboxSelectionOptions<TData, TValue>;
-}
-
-/**
- * Determines selection behaviour when only a single row can be selected at a time.
- */
-export interface SingleRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
-    mode: 'singleRow';
-}
-
-/**
- * Determines selection behaviour when multiple rows can be selected at once.
- */
-export interface MultiRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
-    mode: 'multiRow';
     /**
      * Determines how "select all" behaviour works both via the API (i.e. `selectAll`) and via header checkbox selection.
      */
@@ -2528,7 +2521,7 @@ export interface MultiRowSelectionOptions<TData, TValue> extends CommonRowSelect
  * Determines whether checkboxes are displayed for selection
  */
 export type CheckboxSelectionOptions<TData, TValue> =
-    | { enabled: false }
+    | false
     | {
           /** Set to `true` (or return `true` from function) to render a selection checkbox in the first column. */
           enabled: true | CheckboxSelectionCallback<TData, TValue>;
