@@ -57,6 +57,10 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     private localEventsAsync = false;
 
     public wireBeans(beans: BeanCollection) {
+        // React could be running in StrictMode, which results in the ctrlService being ready twice.
+        // The first time after the first render cycle, and the second time after the second render cycle which is only done in StrictMode.
+        // By making the local events async, we effectively debounce the first ready event until after the second render cycle has completed.
+        // This means that the ready logic across the grid will run against the currently rendered components and controllers.
         this.localEventsAsync = beans.frameworkOverrides.renderingEngine === 'react';
     }
 

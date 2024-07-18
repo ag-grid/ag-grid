@@ -99,17 +99,25 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     // The typing of AgEventListener<any, any, any> is not ideal, but it's the best we can do at the moment to enable
     // eventService to have the best typing at the expense of BeanStub local events
     /** Add a local event listener against this BeanStub */
-    public addEventListener<T extends TEventType>(eventType: T, listener: AgEventListener<any, any, any>): void {
+    public addEventListener<T extends TEventType>(
+        eventType: T,
+        listener: AgEventListener<any, any, any>,
+        async?: boolean
+    ): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
-        this.localEventService!.addEventListener(eventType, listener);
+        this.localEventService!.addEventListener(eventType, listener, async);
     }
 
     /** Remove a local event listener from this BeanStub */
-    public removeEventListener<T extends TEventType>(eventType: T, listener: AgEventListener<any, any, any>): void {
+    public removeEventListener<T extends TEventType>(
+        eventType: T,
+        listener: AgEventListener<any, any, any>,
+        async?: boolean
+    ): void {
         if (this.localEventService) {
-            this.localEventService.removeEventListener(eventType, listener);
+            this.localEventService.removeEventListener(eventType, listener, async);
         }
     }
 
