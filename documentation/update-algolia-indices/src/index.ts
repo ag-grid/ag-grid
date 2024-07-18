@@ -42,18 +42,18 @@ const prefixPath = (framework) => (record) => ({ ...record, path: `/${framework}
  * First scrape docs for APIs and generate Algolia records
  */
 const apiPages = getApiPageData();
+
 apiPages.forEach((page) => {
     const records = parseApiPageData(page);
 
     const normalizedText = page.breadcrumbSuffix.replace(/ /g, '-').toLowerCase();
-    const outputName = `api/${normalizedText}.json`;
 
-    writeResults(outputName, records);
-
-    indices.react.push(...records.map(prefixPath('react')));
-    indices.angular.push(...records.map(prefixPath('angular')));
-    indices.vue.push(...records.map(prefixPath('vue')));
-    indices.javascript.push(...records.map(prefixPath('javascript')));
+    SUPPORTED_FRAMEWORKS.forEach((framework) => {
+        const outputName = `api/${framework}/${normalizedText}.json`;
+        const prefixedRecords = records.map(prefixPath(framework));
+        writeResults(outputName, prefixedRecords);
+        indices[framework].push(...prefixedRecords);
+    });
 });
 
 /**

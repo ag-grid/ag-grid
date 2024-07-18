@@ -1,4 +1,5 @@
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import React from 'react';
 
@@ -21,7 +22,7 @@ export default function FrameworkSelector({ data, currentFramework, isFullWidth,
 
                 return (
                     <a
-                        href={`${framework.url}getting-started`}
+                        href={urlWithPrefix({ url: './getting-started', framework: framework.name })}
                         key={framework.name}
                         className={classnames(styles.option, {
                             [styles.selected]: isSelected,

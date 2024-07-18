@@ -47,6 +47,10 @@ The grid comes with some Cell Components out of the box. These Provided Cell Com
 
 ## Custom Components
 
+{% if isFramework("angular") %}
+{% metaTag tags=["ICellRendererAngularComp"] /%}
+{% /if %}
+
 {% partial file="./_component-interface-angular.mdoc" /%}
 {% partial file="./_component-interface-javascript.mdoc" /%}
 {% partial file="./_component-interface-react.mdoc" /%}

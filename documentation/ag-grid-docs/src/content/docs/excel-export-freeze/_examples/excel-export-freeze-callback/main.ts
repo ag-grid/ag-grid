@@ -57,13 +57,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     rowData: null,
     defaultExcelExportParams: {
-        allColumns: true,
         freezeRows: (params) => {
             const node = params.node;
-            if (node == null || !node.rowIndex) {
+            if (node == null) {
                 return true;
             }
-            return node.rowIndex < 20;
+            return node.rowIndex! < 20;
         },
         freezeColumns: (params) => params.column.getColId() !== 'gold',
     },

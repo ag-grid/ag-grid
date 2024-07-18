@@ -80,11 +80,8 @@ export class DragService extends BeanStub implements NamedBean {
                 if (_isFocusableFormField(touchEvent.target as HTMLElement)) {
                     return;
                 }
-                if (touchEvent.cancelable) {
-                    touchEvent.preventDefault();
-                    if (stopPropagationForTouch) {
-                        touchEvent.stopPropagation();
-                    }
+                if (stopPropagationForTouch) {
+                    touchEvent.stopPropagation();
                 }
                 this.onTouchStart(params, touchEvent);
             };

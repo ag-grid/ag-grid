@@ -228,7 +228,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .map((position) => this.pinnedRowModel.getPinnedTopRow(position.rowIndex))
                     .forEach(processRow);
             } else {
-                this.pinnedRowModel.forEachPinnedTopRow(processRow);
+                this.pinnedRowModel.forEachPinnedRow('top', processRow);
             }
             return gridSerializingSession;
         };
@@ -348,7 +348,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .map((position) => this.pinnedRowModel.getPinnedBottomRow(position.rowIndex))
                     .forEach(processRow);
             } else {
-                this.pinnedRowModel.forEachPinnedBottomRow(processRow);
+                this.pinnedRowModel.forEachPinnedRow('bottom', processRow);
             }
             return gridSerializingSession;
         };

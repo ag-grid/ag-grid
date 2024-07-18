@@ -1,41 +1,25 @@
-import { fetchExtraFile } from '@utils/client/fetchExtraFile';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { useStore } from '@nanostores/react';
+import { $queryClient } from '@stores/queryClientStore';
+import { QueryClientProvider } from '@tanstack/react-query';
 
-import { InterfaceDocumentation } from './ReferenceDocumentation';
+import { InterfaceDocumentation, type InterfaceDocumentationProps } from './ReferenceDocumentation';
+import { useResolvedDocInterfaces, useResolvedInterfaces } from './useResolvedInterfaces';
 
-// NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
-// loaded on the client side
-const queryClient = new QueryClient();
-
-const queryOptions = {
-    retry: false,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-};
-
-type Props = Omit<ApiDocumentationProps, 'interfaceLookup' | 'codeLookup'>;
+type Props = Omit<InterfaceDocumentationProps, 'interfaceLookup' | 'codeLookup'>;
 
 export function InterfaceDocumentationWithQuery(props: Props) {
+    const queryClient = useStore($queryClient);
+
     return (
         <QueryClientProvider client={queryClient}>
-            {' '}
-            <InterfaceDocumentationWithLookups {...props} />{' '}
+            <InterfaceDocumentationWithLookups {...props} />
         </QueryClientProvider>
     );
 }
 
 function InterfaceDocumentationWithLookups(props: Props) {
-    const { data: [interfaceLookup, codeLookup] = [] } = useQuery(
-        ['resolved-interfaces'],
-        async () => {
-            return Promise.all([
-                fetchExtraFile('/reference/interfaces.AUTO.json'),
-                fetchExtraFile('/reference/doc-interfaces.AUTO.json'),
-            ]);
-        },
-        queryOptions
-    );
+    const interfaceLookup = useResolvedInterfaces();
+    const codeLookup = useResolvedDocInterfaces();
 
     return (
         interfaceLookup &&

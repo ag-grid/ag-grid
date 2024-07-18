@@ -336,7 +336,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/angular/range-selection-handle/', to: '/angular-data-grid/range-selection-handle/' },
     { from: '/documentation/angular/range-selection/', to: '/angular-data-grid/range-selection/' },
     { from: '/documentation/angular/reference-data/', to: '/angular-data-grid/reference-data/' },
-    { from: '/documentation/angular/rendering-api/', to: '/angular-data-grid/rendering-api/' },
+    { from: '/documentation/angular/rendering-api/', to: '/angular-data-grid/dom-virtualisation/' },
     { from: '/documentation/angular/row-animation/', to: '/angular-data-grid/row-animation/' },
     {
         from: '/documentation/angular/row-dragging-to-external-dropzone/',
@@ -661,7 +661,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/javascript/range-selection-handle/', to: '/javascript-data-grid/range-selection-handle/' },
     { from: '/documentation/javascript/range-selection/', to: '/javascript-data-grid/range-selection/' },
     { from: '/documentation/javascript/reference-data/', to: '/javascript-data-grid/reference-data/' },
-    { from: '/documentation/javascript/rendering-api/', to: '/javascript-data-grid/rendering-api/' },
+    { from: '/documentation/javascript/rendering-api/', to: '/javascript-data-grid/dom-virtualisation/' },
     { from: '/documentation/javascript/row-animation/', to: '/javascript-data-grid/row-animation/' },
     {
         from: '/documentation/javascript/row-dragging-to-external-dropzone/',
@@ -943,7 +943,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/react/redux-integration-pt1/', to: '/react-data-grid/getting-started/' },
     { from: '/documentation/react/redux-integration-pt2/', to: '/react-data-grid/getting-started/' },
     { from: '/documentation/react/reference-data/', to: '/react-data-grid/reference-data/' },
-    { from: '/documentation/react/rendering-api/', to: '/react-data-grid/rendering-api/' },
+    { from: '/documentation/react/rendering-api/', to: '/react-data-grid/dom-virtualisation/' },
     { from: '/documentation/react/row-animation/', to: '/react-data-grid/row-animation/' },
     {
         from: '/documentation/react/row-dragging-to-external-dropzone/',
@@ -1184,7 +1184,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/vue/range-selection-handle/', to: '/vue-data-grid/range-selection-handle/' },
     { from: '/documentation/vue/range-selection/', to: '/vue-data-grid/range-selection/' },
     { from: '/documentation/vue/reference-data/', to: '/vue-data-grid/reference-data/' },
-    { from: '/documentation/vue/rendering-api/', to: '/vue-data-grid/rendering-api/' },
+    { from: '/documentation/vue/rendering-api/', to: '/vue-data-grid/dom-virtualisation/' },
     { from: '/documentation/vue/row-animation/', to: '/vue-data-grid/row-animation/' },
     {
         from: '/documentation/vue/row-dragging-to-external-dropzone/',
@@ -1412,7 +1412,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid-reference-data/', to: '/javascript-data-grid/reference-data/' },
     { from: '/javascript-grid-reference-overview/', to: '/javascript-data-grid/grid-interface/' },
     { from: '/javascript-grid-refresh/', to: '/javascript-data-grid/view-refresh/' },
-    { from: '/javascript-grid-rendering-api/', to: '/javascript-data-grid/rendering-api/' },
+    { from: '/javascript-grid-rendering-api/', to: '/javascript-data-grid/dom-virtualisation/' },
     { from: '/javascript-grid-rendering-flow/', to: '/javascript-data-grid/cell-content/' },
     { from: '/javascript-grid-resizing/', to: '/javascript-data-grid/column-sizing/' },
     {
@@ -1643,7 +1643,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid/range-selection-fill-handle/', to: '/javascript-data-grid/range-selection-fill-handle/' },
     { from: '/javascript-grid/range-selection-handle/', to: '/javascript-data-grid/range-selection-handle/' },
     { from: '/javascript-grid/reference-data/', to: '/javascript-data-grid/reference-data/' },
-    { from: '/javascript-grid/rendering-api/', to: '/javascript-data-grid/rendering-api/' },
+    { from: '/javascript-grid/rendering-api/', to: '/javascript-data-grid/dom-virtualisation/' },
     { from: '/javascript-grid/row-animation/', to: '/javascript-data-grid/row-animation/' },
     { from: '/javascript-grid/row-dragging/', to: '/javascript-data-grid/row-dragging/' },
     {
@@ -1895,7 +1895,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-grid/range-selection-fill-handle/', to: '/angular-data-grid/range-selection-fill-handle/' },
     { from: '/angular-grid/range-selection-handle/', to: '/angular-data-grid/range-selection-handle/' },
     { from: '/angular-grid/reference-data/', to: '/angular-data-grid/reference-data/' },
-    { from: '/angular-grid/rendering-api/', to: '/angular-data-grid/rendering-api/' },
+    { from: '/angular-grid/rendering-api/', to: '/angular-data-grid/dom-virtualisation/' },
     { from: '/angular-grid/row-animation/', to: '/angular-data-grid/row-animation/' },
     { from: '/angular-grid/row-dragging/', to: '/angular-data-grid/row-dragging/' },
     {
@@ -2124,7 +2124,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/redux-integration-pt1/', to: '/react-data-grid/getting-started/' },
     { from: '/react-grid/redux-integration-pt2/', to: '/react-data-grid/getting-started/' },
     { from: '/react-grid/reference-data/', to: '/react-data-grid/reference-data/' },
-    { from: '/react-grid/rendering-api/', to: '/react-data-grid/rendering-api/' },
+    { from: '/react-grid/rendering-api/', to: '/react-data-grid/dom-virtualisation/' },
     { from: '/react-grid/row-animation/', to: '/react-data-grid/row-animation/' },
     { from: '/react-grid/row-dragging/', to: '/react-data-grid/row-dragging/' },
     {
@@ -2341,7 +2341,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-grid/range-selection-fill-handle/', to: '/vue-data-grid/range-selection-fill-handle/' },
     { from: '/vue-grid/range-selection-handle/', to: '/vue-data-grid/range-selection-handle/' },
     { from: '/vue-grid/reference-data/', to: '/vue-data-grid/reference-data/' },
-    { from: '/vue-grid/rendering-api/', to: '/vue-data-grid/rendering-api/' },
+    { from: '/vue-grid/rendering-api/', to: '/vue-data-grid/dom-virtualisation/' },
     { from: '/vue-grid/row-animation/', to: '/vue-data-grid/row-animation/' },
     { from: '/vue-grid/row-dragging/', to: '/vue-data-grid/row-dragging/' },
     { from: '/vue-grid/row-dragging-to-external-dropzone/', to: '/vue-data-grid/row-dragging-to-external-dropzone/' },
@@ -2657,6 +2657,11 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/grouping-footers/', to: '/angular-data-grid/total-rows/' },
     { from: '/react-data-grid/grouping-footers/', to: '/react-data-grid/total-rows/' },
     { from: '/vue-data-grid/grouping-footers/', to: '/vue-data-grid/total-rows/' },
+
+    { from: '/javascript-data-grid/scrolling-scenarios/', to: '/javascript-data-grid/scrolling-performance/' },
+    { from: '/angular-data-grid/scrolling-scenarios/', to: '/angular-data-grid/scrolling-performance/' },
+    { from: '/react-data-grid/scrolling-scenarios/', to: '/react-data-grid/scrolling-performance/' },
+    { from: '/vue-data-grid/scrolling-scenarios/', to: '/vue-data-grid/scrolling-performance/' },
 
     { from: '/angular-data-grid/angular-compatibility/', to: '/angular-data-grid/compatibility/' },
     { from: '/react-data-grid/react-compatibility/', to: '/react-data-grid/compatibility/' },

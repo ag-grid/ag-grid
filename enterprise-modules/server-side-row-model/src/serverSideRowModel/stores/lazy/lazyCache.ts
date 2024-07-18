@@ -158,6 +158,19 @@ export class LazyCache extends BeanStub {
             return node;
         }
 
+        const hideOpenGroups = this.gos.get('groupHideOpenParents');
+        if (hideOpenGroups) {
+            // if hiding open groups, the first node in this expanded store may not be
+            // the first displayed node, as it could be hidden, so need to DFS first.
+            const nextParent = this.nodeMap.find(
+                (lazyNode) => !!lazyNode.node.childStore?.isDisplayIndexInStore(displayIndex)
+            );
+            // if belongs to child store, search that first
+            if (nextParent) {
+                return nextParent.node.childStore?.getRowUsingDisplayIndex(displayIndex);
+            }
+        }
+
         // next check if this is the first row, if so return a stub node
         // this is a performance optimisation, as it is the most common scenario
         // and enables the node - 1 check to kick in more often.
@@ -229,6 +242,13 @@ export class LazyCache extends BeanStub {
             node.setRowTop(rowBounds!.rowTop);
             this.nodeDisplayIndexMap.set(displayIndex, node);
         });
+        // if group hide open parents we need to populate with the parent group data for the first stub node
+        if (storeIndex === 0 && this.gos.get('groupHideOpenParents')) {
+            const parentGroupData = this.store.getParentNode().groupData;
+            for (const key in parentGroupData) {
+                newNode.setGroupValue(key, parentGroupData[key]);
+            }
+        }
         this.lazyBlockLoadingService.queueLoadCheck();
         return newNode;
     }
@@ -286,9 +306,21 @@ export class LazyCache extends BeanStub {
             const numberOfRowsToSkip = numericIndex - 1 - lastIndex;
             this.skipDisplayIndexes(numberOfRowsToSkip, displayIndexSeq, nextRowTop);
 
+            const isFirstChild = numericIndex === 0;
+            node.setFirstChild(isFirstChild);
+            // if hiding open parents, then the first node should inherit the group values
+            if (isFirstChild && this.gos.get('groupHideOpenParents')) {
+                const parentGroupData = this.store.getParentNode().groupData;
+                for (const key in parentGroupData) {
+                    node.setGroupValue(key, isFirstChild ? parentGroupData[key] : undefined);
+                }
+            }
+
             // set this nodes index and row top
             this.blockUtils.setDisplayIndex(node, displayIndexSeq, nextRowTop);
-            this.nodeDisplayIndexMap.set(node.rowIndex!, node);
+            if (node.rowIndex != null) {
+                this.nodeDisplayIndexMap.set(node.rowIndex, node);
+            }
 
             // store this index for skipping after this
             lastIndex = numericIndex;

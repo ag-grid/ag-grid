@@ -228,6 +228,7 @@ export abstract class AgPickerField<
                 }
             },
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
+            anchorToElement: this.eDisplayField,
         };
 
         const addPopupRes = this.popupService.addPopup(popupParams);
