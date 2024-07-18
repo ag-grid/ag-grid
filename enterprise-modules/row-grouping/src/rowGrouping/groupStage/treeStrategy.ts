@@ -17,7 +17,6 @@ import {
     RowNode,
     _areEqual,
     _existsAndNotEmpty,
-    _last,
     _removeFromArray,
     _sortRowNodesByOrder,
     _warnOnce,
@@ -69,12 +68,23 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Hierarchical node cache to speed up tree data node insertion */
     private cache: CacheTree = Object.create(null);
 
-    private cacheTraverse(path: GroupInfo[], level: number): CacheTree {
+    public execute(params: StageExecuteParams): void {
+        const details = this.createGroupingDetails(params);
+
+        if (details.transactions) {
+            this.handleTransaction(details);
+        } else {
+            const afterColsChanged = params.afterColumnsChanged === true;
+            this.shotgunResetEverything(details, afterColsChanged);
+        }
+    }
+
+    private cacheTraverse(path: string[], level: number): CacheTree {
         let cache = this.cache;
         let i = 0;
 
         while (i <= level) {
-            const key = path[i].key;
+            const key = path[i];
 
             let node = cache[key];
             if (!node) {
@@ -89,35 +99,20 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return cache;
     }
 
-    public cacheSet(path: GroupInfo[], level: number, key: string, row: null | RowNode): void {
+    public cacheAdd(path: string[], level: number, key: string, row: RowNode | null): void {
         const cache = this.cacheTraverse(path, level - 1);
         let node = cache[key];
         if (!node) {
             node = { row, subtree: Object.create(null) };
             cache[key] = node;
-        } else if (row && row !== node.row) {
-            node.row = row;
+        } else if (row) {
+            node.row = row; // Override the row only if not null
         }
     }
 
-    public cacheGet(path: GroupInfo[], level: number, key: string): RowNode | null | undefined {
+    public cacheGet(path: string[], level: number, key: string): RowNode | null | undefined {
         const cache = this.cacheTraverse(path, level - 1);
         return cache[key]?.row;
-    }
-
-    public cacheClear(): void {
-        this.cache = Object.create(null);
-    }
-
-    public execute(params: StageExecuteParams): void {
-        const details = this.createGroupingDetails(params);
-
-        if (details.transactions) {
-            this.handleTransaction(details);
-        } else {
-            const afterColsChanged = params.afterColumnsChanged === true;
-            this.shotgunResetEverything(details, afterColsChanged);
-        }
     }
 
     private createGroupingDetails(params: StageExecuteParams): TreeGroupingDetails {
@@ -180,85 +175,37 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         );
     }
 
-    private getExistingPathForNode(node: RowNode, details: TreeGroupingDetails): GroupInfo[] {
-        const res: GroupInfo[] = [];
+    private getExistingPathForNode(node: RowNode, details: TreeGroupingDetails): string[] {
+        const res: string[] = [];
 
         // the node is part of the path
         let pointer: RowNode | null = node;
         while (pointer && pointer !== details.rootNode) {
-            res.push({
-                key: pointer.key!,
-                rowGroupColumn: pointer.rowGroupColumn,
-                field: pointer.field,
-            });
+            res.push(pointer.key!);
             pointer = pointer.parent;
         }
         res.reverse();
         return res;
     }
 
-    /**
-     * Topological sort of the given row nodes based on the grouping hierarchy, where parents come before children.
-     * Used to ensure tree data is moved in the correct order (see AG-11678)
-     */
-    private topoSort(rowNodes: RowNode[], details: TreeGroupingDetails): RowNode[] {
-        const sortedNodes: RowNode[] = [];
-        // performance: create a cache of ids to make lookups during the search faster
-        const idLookup = Object.fromEntries(rowNodes.map<[string, number]>((node, i) => [node.id!, i]));
-        // performance: keep track of the nodes we haven't found yet so we can return early
-        const stillToFind = new Set(Object.keys(idLookup));
-
-        const queue = [details.rootNode];
-        let i = 0;
-
-        // BFS for nodes in the hierarchy that match IDs of the given nodes
-        while (i < queue.length) {
-            // performance: indexing into the array instead of using e.g. `.shift` is _much_ faster
-            const node = queue[i];
-            i++;
-            if (node === undefined) {
-                continue;
-            }
-
-            if (node.id && node.id in idLookup) {
-                sortedNodes.push(rowNodes[idLookup[node.id]]);
-                stillToFind.delete(node.id);
-            }
-
-            // we can stop early if we've already found all the nodes
-            if (stillToFind.size === 0) {
-                return sortedNodes;
-            }
-
-            const children = node.childrenAfterGroup ?? [];
-            for (let i = 0; i < children.length; i++) {
-                queue.push(children[i]);
-            }
-        }
-
-        return sortedNodes;
-    }
-
     private moveNodesInWrongPath(childNodes: RowNode[], details: TreeGroupingDetails): void {
-        const sorted = this.topoSort(childNodes, details);
-
-        sorted.forEach((childNode) => {
+        const sorted = topologicalSort(childNodes, details);
+        for (const childNode of sorted) {
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
             if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(childNode.parent);
             }
 
-            const infoToKeyMapper = (item: GroupInfo) => item.key;
-            const oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
-            const newPath: string[] = this.getGroupInfo(childNode, details).map(infoToKeyMapper);
+            const oldPath: string[] = this.getExistingPathForNode(childNode, details);
+            const newPath: string[] = this.getDataPath(childNode, details);
 
             const nodeInCorrectPath = _areEqual(oldPath, newPath);
 
             if (!nodeInCorrectPath) {
                 this.moveNode(childNode, details);
             }
-        });
+        }
     }
 
     private moveNode(childNode: RowNode, details: TreeGroupingDetails): void {
@@ -487,80 +434,56 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         isMove: boolean,
         batchRemover?: BatchRemover
     ): void {
-        const path: GroupInfo[] = this.getGroupInfo(childNode, details);
+        const path = this.getDataPath(childNode, details);
         const level = path.length - 1;
+        const key = path[level];
 
-        const parentGroup = this.findParentForNode(childNode, path, details, batchRemover, level);
+        let parentGroup = details.rootNode;
+        for (let level = 0, stopLevel = path.length - 1; level < stopLevel; ++level) {
+            const key = path[level];
 
+            let row = parentGroup?.childrenMapped?.[key];
+
+            if (!row) {
+                row = this.cacheGet(path, level, key);
+                if (row) {
+                    row.parent = parentGroup;
+                } else {
+                    row = this.createGroup(key, parentGroup, level, details);
+                }
+                // attach the new group to the parent
+                this.addToParent(row, parentGroup);
+            }
+
+            parentGroup = row;
+
+            // node gets added to all group nodes.
+            // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
+
+            if (!batchRemover?.isRemoveFromAllLeafChildren(parentGroup, childNode)) {
+                parentGroup.allLeafChildren!.push(childNode);
+            } else {
+                // if this node is about to be removed, prevent that
+                batchRemover?.preventRemoveFromAllLeafChildren(parentGroup, childNode);
+            }
+        }
+
+        // todo fix this slow path
         const existingNode = parentGroup.childrenAfterGroup?.find((node) => node.key === childNode.key);
         if (existingNode) {
             _warnOnce(`duplicate group keys for row data, keys should be unique`, [existingNode.data, childNode.data]);
             return;
         }
-        const info = _last(path);
+
         childNode.parent = parentGroup;
-        childNode.level = path.length;
-        this.ensureRowNodeFields(childNode, info.key);
-        this.setGroupData(childNode, info);
+        childNode.level = level + 1;
+        this.ensureRowNodeFields(childNode, key);
+        this.setGroupData(childNode, { key, field: null, rowGroupColumn: null });
         // AG-3441 - only set initial value if node is not being moved
         if (!isMove) {
             this.setExpandedInitialValue(details, childNode);
         }
         this.addToParent(childNode, parentGroup);
-    }
-
-    private findParentForNode(
-        childNode: RowNode,
-        path: GroupInfo[],
-        details: TreeGroupingDetails,
-        batchRemover?: BatchRemover,
-        stopLevel?: number
-    ): RowNode {
-        let nextNode: RowNode = details.rootNode;
-
-        path.forEach((groupInfo, level) => {
-            // in some cases (i.e. tree data) the given path includes the child node, so we need to exclude it
-            if (stopLevel !== undefined && level >= stopLevel) {
-                return;
-            }
-
-            nextNode = this.getOrCreateNextNode(nextNode, path, groupInfo, level, details);
-            // node gets added to all group nodes.
-            // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
-
-            if (!batchRemover?.isRemoveFromAllLeafChildren(nextNode, childNode)) {
-                nextNode.allLeafChildren!.push(childNode);
-            } else {
-                // if this node is about to be removed, prevent that
-                batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);
-            }
-        });
-
-        return nextNode;
-    }
-
-    private getOrCreateNextNode(
-        parentGroup: RowNode,
-        path: GroupInfo[],
-        groupInfo: GroupInfo,
-        level: number,
-        details: TreeGroupingDetails
-    ): RowNode {
-        const key = groupInfo.key;
-        let nextNode = parentGroup?.childrenMapped?.[key];
-
-        if (!nextNode) {
-            nextNode = this.cacheGet(path, level, key);
-            if (nextNode) {
-                nextNode.parent = parentGroup;
-            } else {
-                nextNode = this.createGroup(groupInfo, parentGroup, level, details);
-            }
-            // attach the new group to the parent
-            this.addToParent(nextNode, parentGroup);
-        }
-
-        return nextNode;
     }
 
     /**
@@ -569,33 +492,32 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private buildNodeCacheFromRows(rowNodes: RowNode[], details: TreeGroupingDetails): void {
         let width = 0;
         const paths = rowNodes.map((node) => {
-            const info = this.getGroupInfo(node, details);
-            width = Math.max(width, info.length);
-            return info;
+            const path = this.getDataPath(node, details);
+            if (width < path.length) {
+                width = path.length;
+            }
+            return path;
         });
 
-        this.cacheClear();
+        this.cache = Object.create(null); // Clear the cache
 
         // Iterate through the paths level-by-level, populating the cache with RowNode
         // instances for all leaves of the hierarchy, and nulls otherwise (to be backfilled
         // with filler nodes in the subsequent step)
         for (let level = 0; level < width; level++) {
-            for (const [rowIdx, path] of paths.entries()) {
+            for (let rowIdx = 0; rowIdx < paths.length; rowIdx++) {
+                const path = paths[rowIdx];
                 const isLeaf = path[level + 1] === undefined;
 
                 if (path[level] === undefined) {
                     continue;
                 }
 
-                const info = path[level];
+                const key = path[level];
 
+                this.cacheAdd(path, level, key, isLeaf ? rowNodes[rowIdx] : null);
                 if (isLeaf) {
-                    this.cacheSet(path, level, info.key, rowNodes[rowIdx]);
-                } else {
-                    this.cacheGet(path, level, info.key);
-                }
-                if (isLeaf) {
-                    this.ensureRowNodeFields(rowNodes[rowIdx], info.key);
+                    this.ensureRowNodeFields(rowNodes[rowIdx], key);
                 }
             }
         }
@@ -619,23 +541,30 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             const value = cache[key];
             if (value) {
                 if (value.row === null) {
-                    value.row = this.createGroup({ key, rowGroupColumn: null, field: null }, parent, level, details);
+                    value.row = this.createGroup(key, parent, level, details);
                 }
                 this.backfillGroups(value.subtree, value.row, level + 1, details);
             }
         }
     }
 
-    private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: TreeGroupingDetails): RowNode {
+    private createGroup(key: string, parent: RowNode, level: number, details: TreeGroupingDetails): RowNode {
         const groupNode = new RowNode(this.beans);
 
         groupNode.group = true;
-        groupNode.field = groupInfo.field;
+        groupNode.field = null;
 
-        this.setGroupData(groupNode, groupInfo);
+        this.setGroupData(groupNode, {
+            key,
+            field: null,
+            rowGroupColumn: null,
+        });
 
-        groupNode.key = groupInfo.key;
-        groupNode.id = this.createGroupId(groupNode, parent, level);
+        groupNode.key = key;
+
+        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
+        // for top pinned and bottom pinned rows.
+        groupNode.id = RowNode.ID_PREFIX_ROW_GROUP + this.createGroupIdEnd(groupNode, parent, level);
 
         groupNode.level = level;
         groupNode.leafGroup = false;
@@ -659,22 +588,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return groupNode;
     }
 
-    private createGroupId(node: RowNode, parent: RowNode, level: number): string {
-        const createGroupId: (node: RowNode, parent: RowNode | null, level: number) => string | null = (
-            node,
-            parent,
-            level
-        ) => {
-            if (level < 0) {
-                return null;
-            } // root node
-            const parentId = parent ? createGroupId(parent, parent.parent, level - 1) : null;
-            return `${parentId == null ? '' : parentId + '-'}${level}-${node.key}`;
-        };
-
-        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
-        // for top pinned and bottom pinned rows.
-        return RowNode.ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
+    private createGroupIdEnd(node: RowNode, parent: RowNode | null, level: number): string | null {
+        if (level < 0) {
+            return null;
+        } // root node
+        const parentId = parent ? this.createGroupIdEnd(parent, parent.parent, level - 1) : null;
+        return `${parentId == null ? '' : parentId + '-'}${level}-${node.key}`;
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
@@ -717,12 +636,53 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         groupNode.expanded = groupNode.level < details.expandByDefault;
     }
 
-    private getGroupInfo(rowNode: RowNode, details: TreeGroupingDetails): GroupInfo[] {
-        const keys = details.getDataPath?.(rowNode.data);
-        if (!keys?.length) {
-            _warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
-            return [];
+    private getDataPath({ data }: RowNode, { getDataPath }: TreeGroupingDetails): string[] {
+        const keys = getDataPath?.(data) || [];
+        if (!keys.length) {
+            _warnOnce(`getDataPath() should not return an empty path for data ${data}`);
         }
-        return keys.map((key) => ({ key, field: null, rowGroupColumn: null }));
+        return keys;
     }
+}
+
+/**
+ * Topological sort of the given row nodes based on the grouping hierarchy, where parents come before children.
+ * Used to ensure tree data is moved in the correct order (see AG-11678)
+ */
+function topologicalSort(rowNodes: RowNode[], details: TreeGroupingDetails): RowNode[] {
+    const sortedNodes: RowNode[] = [];
+    // performance: create a cache of ids to make lookups during the search faster
+    const idLookup = Object.fromEntries(rowNodes.map<[string, number]>((node, i) => [node.id!, i]));
+    // performance: keep track of the nodes we haven't found yet so we can return early
+    const stillToFind = new Set(Object.keys(idLookup));
+
+    const queue = [details.rootNode];
+    let i = 0;
+
+    // BFS for nodes in the hierarchy that match IDs of the given nodes
+    while (i < queue.length) {
+        // performance: indexing into the array instead of using e.g. `.shift` is _much_ faster
+        const node = queue[i];
+        i++;
+        if (node === undefined) {
+            continue;
+        }
+
+        if (node.id && node.id in idLookup) {
+            sortedNodes.push(rowNodes[idLookup[node.id]]);
+            stillToFind.delete(node.id);
+        }
+
+        // we can stop early if we've already found all the nodes
+        if (stillToFind.size === 0) {
+            return sortedNodes;
+        }
+
+        const children = node.childrenAfterGroup ?? [];
+        for (let i = 0; i < children.length; i++) {
+            queue.push(children[i]);
+        }
+    }
+
+    return sortedNodes;
 }
