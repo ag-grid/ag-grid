@@ -34,7 +34,7 @@ export class SyncService extends BeanStub implements NamedBean {
 
     public start(): void {
         // we wait until the UI has finished initialising before setting in columns and rows
-        this.ctrlsService.whenReady(() => {
+        this.ctrlsService.whenReady(this, () => {
             const columnDefs = this.gos.get('columnDefs');
             if (columnDefs) {
                 this.setColumnsAndData(columnDefs);

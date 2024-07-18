@@ -125,7 +125,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         this.registerKeyboardFocusEvents();
 
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
     }

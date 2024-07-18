@@ -42,7 +42,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     private currentHeaderRowWithoutSpan: number = -1;
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
 

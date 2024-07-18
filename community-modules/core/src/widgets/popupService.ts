@@ -111,7 +111,7 @@ export class PopupService extends BeanStub implements NamedBean {
     private popupList: AgPopup[] = [];
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
         this.addManagedEventListeners({ gridStylesChanged: this.handleThemeChange.bind(this) });

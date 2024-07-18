@@ -24,7 +24,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
     private isBodyRendered: boolean;
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             this.centerRowsCtrl = p.center;
 
             const listener = this.checkPageSize.bind(this);

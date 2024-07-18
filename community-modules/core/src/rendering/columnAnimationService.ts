@@ -24,7 +24,7 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
     private animationThreadCount = 0;
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady((p) => (this.gridBodyCtrl = p.gridBodyCtrl));
+        this.ctrlsService.whenReady(this, (p) => (this.gridBodyCtrl = p.gridBodyCtrl));
     }
 
     public isActive(): boolean {

@@ -1,5 +1,6 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
+import type { BeanCollection } from './context/context';
 import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
@@ -47,12 +48,30 @@ interface ReadyParams {
 
 type CtrlType = keyof ReadyParams;
 
-export class CtrlsService extends BeanStub implements NamedBean {
+export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsService' as const;
 
     private params: ReadyParams = {} as ReadyParams;
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
+    private localEventsAsync = false;
+
+    public wireBeans(beans: BeanCollection) {
+        this.localEventsAsync = beans.frameworkOverrides.renderingEngine === 'react';
+    }
+
+    public postConstruct() {
+        this.addEventListener(
+            'ready',
+            () => {
+                if (this.ready) {
+                    this.readyCallbacks.forEach((c) => c(this.params));
+                    this.readyCallbacks.length = 0;
+                }
+            },
+            this.localEventsAsync
+        );
+    }
 
     private checkReady(): void {
         const params = this.params;
@@ -82,17 +101,23 @@ export class CtrlsService extends BeanStub implements NamedBean {
             params.gridHeaderCtrl != null;
 
         if (this.ready) {
-            this.readyCallbacks.forEach((c) => c(params));
-            this.readyCallbacks.length = 0;
+            this.dispatchLocalEvent({ type: 'ready' });
         }
     }
 
-    public whenReady(callback: (p: ReadyParams) => void): void {
+    public whenReady(caller: BeanStub<any>, callback: (p: ReadyParams) => void): void {
         if (this.ready) {
             callback(this.params);
         } else {
             this.readyCallbacks.push(callback);
         }
+        caller.addDestroyFunc(() => {
+            // remove the callback
+            const index = this.readyCallbacks.indexOf(callback);
+            if (index >= 0) {
+                this.readyCallbacks.splice(index, 1);
+            }
+        });
     }
 
     public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {

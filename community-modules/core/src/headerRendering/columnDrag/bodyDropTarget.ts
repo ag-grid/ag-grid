@@ -49,7 +49,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     }
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             switch (this.pinned) {
                 case 'left':
                     this.eSecondaryContainers = [
