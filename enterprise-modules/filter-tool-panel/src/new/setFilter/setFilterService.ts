@@ -23,51 +23,127 @@ export class SetFilterService
     }
 
     public getParams(filterConfig: SetFilterConfig, model?: SetFilterModel | null): SetFilterParams {
-        const selectedValues = new Set(model?.values ?? []);
-        const { values, disabled } = filterConfig;
-        let items: SetFilterItem[];
-        if (model == null) {
-            items = [];
-        } else {
-            items = values.map(({ value, text }) => ({
-                text,
-                value,
-                disabled,
-                selected: selectedValues.has(value),
-            }));
+        const { values, disabled, selectAllItem } = filterConfig;
+        const allItems: SetFilterItem[] = values.map(({ key, text }) => ({
+            text,
+            key,
+            disabled,
+        }));
+        const selectedItemKeys = new Set(model == null ? allItems.map(({ key }) => key) : model.values);
+        const isSelectAll = allItems.length === selectedItemKeys.size;
+        if (isSelectAll) {
+            selectedItemKeys.add(SELECT_ALL);
         }
-        items.unshift({
-            value: SELECT_ALL,
-            text: this.translationService.translate('selectAll'),
-        });
+        const displayedItems = [selectAllItem, ...allItems];
 
         return {
-            items,
-            areItemsEqual: (item1, item2) => item1.value === item2.value,
+            model: {
+                selectedItemKeys,
+            },
+            isSelectAll,
+            allItems,
+            displayedItems,
+            areItemsEqual: (item1, item2) => item1.key === item2.key,
         };
-        // TODO
     }
 
     public updateParams(
-        oldSetFilterParams: SetFilterParams | undefined,
-        newSetFilterParams: SetFilterParams,
-        setFilterConfig: any
+        oldParams: SetFilterParams | undefined,
+        newParams: SetFilterParams,
+        filterConfig: SetFilterConfig
     ): SetFilterParams {
-        return {
-            items: [],
-            areItemsEqual: (item1, item2) => item1 === item2,
-        };
-        // TODO
+        const { miniFilter, allItems, model, displayedItems } = newParams;
+        const { selectedItemKeys } = model;
+        const { miniFilter: oldMiniFilter, model: oldModel, isSelectAll: wasSelectAll } = oldParams ?? {};
+        const { selectAllItem } = filterConfig;
+        if (miniFilter !== oldMiniFilter) {
+            const lowerCaseMiniFilter = miniFilter?.toLocaleLowerCase();
+            const newDisplayedItems = [selectAllItem];
+            let allDisplayedItemsSelected = true;
+            for (const item of allItems) {
+                if (lowerCaseMiniFilter == null || item.text.toLocaleLowerCase().includes(lowerCaseMiniFilter)) {
+                    newDisplayedItems.push(item);
+                    if (!selectedItemKeys.has(item.key)) {
+                        allDisplayedItemsSelected = false;
+                    }
+                }
+            }
+            const hasSelectAll = selectedItemKeys.has(SELECT_ALL);
+            let newModel = model;
+            if (allDisplayedItemsSelected !== hasSelectAll) {
+                if (allDisplayedItemsSelected) {
+                    selectedItemKeys.add(SELECT_ALL);
+                } else {
+                    selectedItemKeys.delete(SELECT_ALL);
+                }
+                newModel = {
+                    ...model,
+                    selectedItemKeys,
+                };
+            }
+            return {
+                ...newParams,
+                displayedItems: newDisplayedItems,
+                model: newModel,
+                isSelectAll: allDisplayedItemsSelected,
+            };
+        }
+        if (model !== oldModel) {
+            let isSelectAll: boolean;
+            const hasSelectAll = selectedItemKeys.has(SELECT_ALL);
+            if (hasSelectAll !== wasSelectAll) {
+                isSelectAll = hasSelectAll;
+                const operation = hasSelectAll ? 'add' : 'delete';
+                for (const item of displayedItems) {
+                    selectedItemKeys[operation](item.key);
+                }
+            } else {
+                const allDisplayedItemsSelected = displayedItems.every(
+                    ({ key }) => key === SELECT_ALL || selectedItemKeys.has(key)
+                );
+                isSelectAll = allDisplayedItemsSelected;
+                const operation = allDisplayedItemsSelected ? 'add' : 'delete';
+                selectedItemKeys[operation](SELECT_ALL);
+            }
+            return {
+                ...newParams,
+                model: {
+                    ...model,
+                    selectedItemKeys,
+                },
+                isSelectAll,
+            };
+        }
+        return newParams;
+    }
+
+    public hasModelChanged(oldParams: SetFilterParams, newParams: SetFilterParams): boolean {
+        return oldParams.model !== newParams.model;
     }
 
     public getModel(params: SetFilterParams): SetFilterModel | null {
-        const { items } = params;
-        if (items.length === 0) {
+        const {
+            model: { selectedItemKeys },
+            allItems,
+            displayedItems,
+        } = params;
+        // include select all
+        const allItemsLength = allItems.length + 1;
+        if (
+            (allItemsLength === displayedItems.length && selectedItemKeys.has(SELECT_ALL)) ||
+            selectedItemKeys.size == allItemsLength
+        ) {
             return null;
         }
+        const values: (string | null)[] = [];
+        selectedItemKeys.forEach((key) => {
+            if (key !== SELECT_ALL) {
+                values.push(key);
+            }
+        });
         return {
             filterType: 'set',
-            values: items.map(({ value }) => value),
+            values,
         };
     }
 
@@ -85,8 +161,10 @@ export class SetFilterService
 
     public getFilterConfig(column: AgColumn): SetFilterConfig {
         const valueMap: Map<string | null, any> = new Map();
-        const values: { value: string | null; text: string }[] = [];
-        const keyCreator = column.getColDef().keyCreator ?? ((value: any) => _toStringOrNull(value));
+        const values: { key: string | null; text: string }[] = [];
+        const colDef = column.getColDef();
+        const { readOnly: disabled } = colDef.filterParams ?? {};
+        const keyCreator = colDef.keyCreator ?? ((value: any) => _toStringOrNull(value));
         this.rowModel.forEachNode((node) => {
             const value = _makeNull(this.valueService.getValue(column, node));
             const key = keyCreator(value);
@@ -103,19 +181,25 @@ export class SetFilterService
                 const value = valueMap.get(key);
                 const text = this.valueService.formatValue(column, null, value) ?? key;
                 values.push({
-                    value: key,
+                    key,
                     text,
                 });
             });
         if (hasBlanks) {
             values.unshift({
-                value: null,
+                key: null,
                 text: this.translationService.translate('blanks'),
             });
         }
+        const selectAllItem: SetFilterItem = {
+            key: SELECT_ALL,
+            text: this.translationService.translate('selectAll'),
+        };
         // TODO
         return {
             values,
+            disabled,
+            selectAllItem,
             applyOnChange: true,
         };
     }

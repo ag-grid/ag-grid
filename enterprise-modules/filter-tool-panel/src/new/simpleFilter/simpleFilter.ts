@@ -41,7 +41,10 @@ export class SimpleFilter extends Component<'filterChanged'> {
         if (oldParams === newParams) {
             return;
         }
-        const { conditions, joinOperator, options } = newParams;
+        const {
+            model: { conditions, joinOperator },
+            options,
+        } = newParams;
         const currentNumConditions = conditions.length;
 
         conditions.forEach((condition, index) => {
@@ -81,9 +84,10 @@ export class SimpleFilter extends Component<'filterChanged'> {
         const optionWrapper = this.createBean(new SimpleFilterOption(params));
         optionWrapper.addManagedListeners(optionWrapper, {
             conditionChanged: ({ condition }) => {
-                const conditions = [...this.params.conditions];
+                const { model } = this.params;
+                const conditions = [...model.conditions];
                 conditions[index] = condition;
-                this.updateParams('conditions', conditions);
+                this.updateParams('model', { ...model, conditions });
             },
         });
         optionWrapper.appendToGui();
@@ -100,7 +104,7 @@ export class SimpleFilter extends Component<'filterChanged'> {
         }
         const eJoinOperator = this.createBean(new SimpleFilterJoin(operator));
         eJoinOperator.addManagedListeners(eJoinOperator, {
-            operatorChanged: ({ joinOperator }) => this.updateParams('joinOperator', joinOperator),
+            operatorChanged: ({ joinOperator }) => this.updateParams('model', { ...this.params.model, joinOperator }),
         });
         this.eFilterBody.appendChild(eJoinOperator.getGui());
         this.eJoinOperators.push(eJoinOperator);

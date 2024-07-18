@@ -150,10 +150,12 @@ export class FilterStateService
         }
         const { filterConfig } = filterStateWrapper;
         const { state } = filterStateWrapper;
+        const { filterParams: oldFilterParams } = state;
         const updatedParams = service.updateParams(state.filterParams as any, filterParams, filterConfig as any);
         const { applyOnChange } = filterConfig;
-        this.updateProvidedFilterState(state, id, 'filterParams', updatedParams, applyOnChange);
-        if (filterConfig.applyOnChange) {
+        const applyModel = applyOnChange && service.hasModelChanged(oldFilterParams as any, updatedParams);
+        this.updateProvidedFilterState(state, id, 'filterParams', updatedParams, applyModel);
+        if (applyModel) {
             const model = this.applyFilter(id, service, updatedParams);
             this.updateProvidedFilterState(state, id, 'summary', service.getSummary(model), true);
             this.updateProvidedFilterState(state, id, 'appliedModel', model as any, true);
@@ -244,10 +246,13 @@ export class FilterStateService
         }
         const {
             column,
-            state: { expanded },
+            state: { expanded, appliedModel },
         } = oldFilterStateWrapper;
         const filterStateWrapper = this.createFilterStateForType(type, column, model, expanded);
         this.activeFilterStates.set(id, filterStateWrapper);
+        if (appliedModel != null) {
+            this.applyColumnFilter(id, null);
+        }
         this.dispatchLocalEvent({
             type: 'filterStateChanged',
             id,
@@ -256,8 +261,12 @@ export class FilterStateService
 
     private applyFilter<P, M, C>(id: string, service: FilterTypeService<P, M, C>, params: P): M | null {
         const model = service.getModel(params);
-        this.filterManager.setColumnFilterModel(id, model).then(() => this.filterManager.onFilterChanged());
+        this.applyColumnFilter(id, model);
         return model;
+    }
+
+    private applyColumnFilter(colId: string, model: any): void {
+        this.filterManager.setColumnFilterModel(colId, model).then(() => this.filterManager.onFilterChanged());
     }
 
     private applyFilters(): void {

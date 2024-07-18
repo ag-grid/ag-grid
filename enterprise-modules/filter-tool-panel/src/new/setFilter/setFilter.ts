@@ -1,4 +1,4 @@
-import type { AgInputTextFieldParams, BeanCollection } from '@ag-grid-community/core';
+import type { AgInputTextField, AgInputTextFieldParams, BeanCollection } from '@ag-grid-community/core';
 import { AgInputTextFieldSelector, Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
 import type { VirtualListModel } from '@ag-grid-enterprise/core';
 import { VirtualList } from '@ag-grid-enterprise/core';
@@ -7,14 +7,15 @@ import type { FilterPanelTranslationService } from '../filterPanelTranslationSer
 import type { SetFilterItem, SetFilterParams } from '../filterState';
 import { SetFilterListItem } from './setFilterListItem';
 
-export class SetFilter<TValue = string> extends Component<'filterChanged'> {
+export class SetFilter extends Component<'filterChanged'> {
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;
+    private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
 
     private translationService: FilterPanelTranslationService;
 
     private virtualList: VirtualList;
 
-    constructor(private params: SetFilterParams<TValue>) {
+    constructor(private params: SetFilterParams) {
         super(/* html */ `<div>Set Filter</div>`);
     }
 
@@ -26,10 +27,7 @@ export class SetFilter<TValue = string> extends Component<'filterChanged'> {
         const eMiniFilterParams: AgInputTextFieldParams = {
             inputPlaceholder: this.translationService.translate('searchOoo'),
             ariaLabel: this.translationService.translate('ariaSearchFilterValues'),
-            onValueChange: (value) => {
-                // TODO
-                value;
-            },
+            onValueChange: (value) => (value === '' ? undefined : this.updateParams('miniFilter', value)),
         };
         this.setTemplate(
             /* html */ `<div class="ag-set-filter">
@@ -44,10 +42,10 @@ export class SetFilter<TValue = string> extends Component<'filterChanged'> {
             }
         );
         this.createVirtualList();
-        this.refreshComp();
+        this.refreshComp(undefined, this.params);
     }
 
-    public refresh(params: SetFilterParams<TValue>): void {
+    public refresh(params: SetFilterParams): void {
         const oldParams = params;
         this.params = params;
         if ((oldParams.isTree ?? false) !== (params.isTree ?? false)) {
@@ -55,17 +53,18 @@ export class SetFilter<TValue = string> extends Component<'filterChanged'> {
             this.destroyBean(this.virtualList);
             this.createVirtualList();
         }
-        // TODO
-        this.refreshComp();
+        this.refreshComp(oldParams, params);
     }
 
-    private refreshComp(): void {
+    private refreshComp(oldParams: SetFilterParams | undefined, newParams: SetFilterParams): void {
+        const { miniFilter } = newParams;
+        this.eMiniFilter.setValue(miniFilter, true);
         this.virtualList.refresh(true);
     }
 
     private createVirtualList(): void {
         const {
-            params: { isTree, cellHeight, items, areItemsEqual },
+            params: { isTree, cellHeight, areItemsEqual },
             eSetFilterList,
             translationService,
         } = this;
@@ -86,30 +85,61 @@ export class SetFilter<TValue = string> extends Component<'filterChanged'> {
             virtualList.setRowHeight(cellHeight);
         }
 
-        const componentCreator = (item: SetFilterItem<TValue>, listItemElement: HTMLElement) =>
+        const componentCreator = (item: SetFilterItem, listItemElement: HTMLElement) =>
             this.createSetListItem(item, isTree, listItemElement);
         virtualList.setComponentCreator(componentCreator);
 
-        const componentUpdater = (item: SetFilterItem<TValue>, component: SetFilterListItem<TValue>) =>
-            component.refresh(item);
+        const componentUpdater = (item: SetFilterItem, component: SetFilterListItem) => {
+            const {
+                model: { selectedItemKeys },
+            } = this.params;
+            component.refresh(item, selectedItemKeys.has(item.key));
+        };
         virtualList.setComponentUpdater(componentUpdater);
 
         const model: VirtualListModel = {
-            getRowCount: () => items.length,
-            getRow: (index) => items[index],
+            getRowCount: () => this.params.displayedItems.length,
+            getRow: (index) => this.params.displayedItems[index],
             areRowsEqual: areItemsEqual,
         };
         virtualList.setModel(model);
     }
 
     private createSetListItem(
-        item: SetFilterItem<TValue>,
+        item: SetFilterItem,
         isTree: boolean | undefined,
         listItemElement: HTMLElement
-    ): SetFilterListItem<TValue> {
+    ): SetFilterListItem {
         // TODO
         listItemElement;
-        return this.createBean(new SetFilterListItem(item, isTree));
+        const {
+            model: { selectedItemKeys },
+        } = this.params;
+        const { key } = item;
+        const listItem = this.createBean(new SetFilterListItem(item, selectedItemKeys.has(key), isTree));
+        listItem.addManagedListeners(listItem, {
+            selectedChanged: ({ selected }) => {
+                if (selected) {
+                    selectedItemKeys.add(key);
+                } else {
+                    selectedItemKeys.delete(key);
+                }
+                this.updateParams('model', {
+                    selectedItemKeys,
+                });
+            },
+        });
+        return listItem;
+    }
+
+    private updateParams<K extends keyof SetFilterParams>(key: K, value: SetFilterParams[K]): void {
+        this.dispatchLocalEvent({
+            type: 'filterChanged',
+            setFilterParams: {
+                ...this.params,
+                [key]: value,
+            },
+        });
     }
 
     public override destroy(): void {

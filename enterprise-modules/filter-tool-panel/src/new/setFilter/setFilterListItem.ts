@@ -1,24 +1,27 @@
-import type { AgCheckboxParams } from '@ag-grid-community/core';
-import { AgCheckboxSelector, Component } from '@ag-grid-community/core';
+import type { AgCheckbox, AgCheckboxParams } from '@ag-grid-community/core';
+import { AgCheckboxSelector, Component, RefPlaceholder } from '@ag-grid-community/core';
 
 import type { SetFilterItem } from '../filterState';
 
-export class SetFilterListItem<TValue> extends Component {
+export class SetFilterListItem extends Component<'selectedChanged'> {
+    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
     constructor(
-        private params: SetFilterItem<TValue>,
+        private item: SetFilterItem,
+        private selected?: boolean,
         private isTree?: boolean
     ) {
         super();
     }
 
     public postConstruct(): void {
-        const { text: label, selected: value, disabled } = this.params;
         const eCheckboxParams: AgCheckboxParams = {
             labelEllipsis: true,
-            value,
-            disabled,
             tabIndex: -1,
-            label,
+            onValueChange: (newValue) =>
+                this.dispatchLocalEvent({
+                    type: 'selectedChanged',
+                    selected: newValue,
+                }),
         };
         this.setTemplate(
             /* html */ `<div class="ag-set-filter-item">
@@ -29,10 +32,15 @@ export class SetFilterListItem<TValue> extends Component {
                 eCheckbox: eCheckboxParams,
             }
         );
+        this.refreshComp(this.item, this.selected);
     }
 
-    public refresh(params: SetFilterItem<TValue>): void {
-        // TODO
-        params;
+    public refresh(item: SetFilterItem, selected?: boolean): void {
+        this.refreshComp(item, selected);
+    }
+
+    private refreshComp(item: SetFilterItem, selected?: boolean): void {
+        const { disabled = false, text } = item;
+        this.eCheckbox.setValue(selected, true).setDisabled(disabled).setLabel(text);
     }
 }

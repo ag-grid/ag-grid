@@ -96,10 +96,12 @@ export class SimpleFilterService
         }
 
         return {
-            conditions,
-            joinOperator: {
-                operator: joinOperator,
-                disabled,
+            model: {
+                conditions,
+                joinOperator: {
+                    operator: joinOperator,
+                    disabled,
+                },
             },
             options: options.map((value: ISimpleFilterModelType) => ({
                 value,
@@ -110,15 +112,19 @@ export class SimpleFilterService
     }
 
     public updateParams(
-        oldSimpleFilterParams: SimpleFilterParams | undefined,
-        newSimpleFilterParams: SimpleFilterParams,
+        oldParams: SimpleFilterParams | undefined,
+        newParams: SimpleFilterParams,
         filterConfig: SimpleFilterConfig
     ): SimpleFilterParams {
-        if (!oldSimpleFilterParams) {
-            return newSimpleFilterParams;
+        if (!oldParams) {
+            return newParams;
         }
-        const { conditions } = newSimpleFilterParams;
-        const { conditions: oldConditions } = oldSimpleFilterParams;
+        const {
+            model: { conditions },
+        } = newParams;
+        const {
+            model: { conditions: oldConditions },
+        } = oldParams;
         const { maxNumConditions, numAlwaysVisibleConditions, defaultOption } = filterConfig;
         let lastCompleteCondition = -1;
         conditions.forEach((condition, index) => {
@@ -151,8 +157,11 @@ export class SimpleFilterService
             processedConditions.push(this.createFilterCondition(defaultOption));
         }
         return {
-            ...newSimpleFilterParams,
-            conditions: processedConditions,
+            ...newParams,
+            model: {
+                ...newParams.model,
+                conditions: processedConditions,
+            },
         };
     }
 
@@ -196,10 +205,16 @@ export class SimpleFilterService
         };
     }
 
+    public hasModelChanged(oldParams: SimpleFilterParams, newParams: SimpleFilterParams): boolean {
+        return oldParams.model !== newParams.model;
+    }
+
     public getModel<M extends ISimpleFilterModel>(params: SimpleFilterParams): M | ICombinedSimpleModel<M> | null {
         const {
-            conditions,
-            joinOperator: { operator },
+            model: {
+                conditions,
+                joinOperator: { operator },
+            },
             filterType,
         } = params;
         const processedConditions: M[] = [];

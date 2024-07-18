@@ -9,5 +9,7 @@ export interface FilterTypeService<P, M, C> {
 
     getModel(params: P): M | null;
 
+    hasModelChanged(oldParams: P, newParams: P): boolean;
+
     getSummary(model: M | null): string;
 }

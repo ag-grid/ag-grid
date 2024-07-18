@@ -43,22 +43,29 @@ export interface SimpleFilterOperatorParams {
 }
 
 export interface SimpleFilterParams<TValue = string> {
-    conditions: FilterCondition<TValue>[];
-    joinOperator: SimpleFilterOperatorParams;
+    model: {
+        conditions: FilterCondition<TValue>[];
+        joinOperator: SimpleFilterOperatorParams;
+    };
     options: ListOption[];
     filterType: 'text' | 'number' | 'date';
 }
 
-export interface SetFilterItem<TValue = string> {
-    value: TValue | null;
-    selected?: boolean;
+export interface SetFilterItem {
+    key: string | null;
     text: string;
     disabled?: boolean;
 }
 
-export interface SetFilterParams<TValue = string> {
-    items: SetFilterItem<TValue>[];
-    areItemsEqual: (item1: SetFilterItem<TValue>, item2: SetFilterItem<TValue>) => boolean;
+export interface SetFilterParams {
+    model: {
+        selectedItemKeys: Set<string | null>;
+    };
+    isSelectAll: boolean;
+    miniFilter?: string;
+    allItems: SetFilterItem[];
+    displayedItems: SetFilterItem[];
+    areItemsEqual: (item1: SetFilterItem, item2: SetFilterItem) => boolean;
     isTree?: boolean;
     cellHeight?: number;
 }
@@ -77,10 +84,10 @@ export interface SimpleFilterState<TValue = string, M extends ISimpleFilterModel
     filterParams: SimpleFilterParams<TValue>;
 }
 
-export interface SetFilterState<TValue = string> extends BaseFilterState {
+export interface SetFilterState extends BaseFilterState {
     type: 'set';
     appliedModel: SetFilterModel | null;
-    filterParams: SetFilterParams<TValue>;
+    filterParams: SetFilterParams;
 }
 
-export type FilterState<TValue = string> = SimpleFilterState<TValue> | SetFilterState<TValue>;
+export type FilterState<TValue = string> = SimpleFilterState<TValue> | SetFilterState;
