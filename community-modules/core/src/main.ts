@@ -591,7 +591,7 @@ export {
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
 export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
-export { AgEventType } from './eventTypes';
+export { AgEventType, AgPublicEventType } from './eventTypes';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
 export { LocalEventService } from './localEventService';

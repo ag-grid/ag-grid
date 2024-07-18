@@ -2658,6 +2658,11 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/grouping-footers/', to: '/react-data-grid/total-rows/' },
     { from: '/vue-data-grid/grouping-footers/', to: '/vue-data-grid/total-rows/' },
 
+    { from: '/javascript-data-grid/scrolling-scenarios/', to: '/javascript-data-grid/scrolling-performance/' },
+    { from: '/angular-data-grid/scrolling-scenarios/', to: '/angular-data-grid/scrolling-performance/' },
+    { from: '/react-data-grid/scrolling-scenarios/', to: '/react-data-grid/scrolling-performance/' },
+    { from: '/vue-data-grid/scrolling-scenarios/', to: '/vue-data-grid/scrolling-performance/' },
+
     { from: '/angular-data-grid/angular-compatibility/', to: '/angular-data-grid/compatibility/' },
     { from: '/react-data-grid/react-compatibility/', to: '/react-data-grid/compatibility/' },
 

@@ -25,6 +25,7 @@
     display: flex;
     position: relative;
     align-items: center;
+    justify-content: center;
     min-width: $spacing-size-12;
     padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
     text-decoration: none;
