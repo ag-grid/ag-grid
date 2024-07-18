@@ -99,6 +99,8 @@ const columnDefs: ColDef[] = [
 let api: GridApi;
 const gridOptions: GridOptions = {
     columnDefs,
+    loading: false,
+    suppressNoRowsOverlay: true,
     defaultColDef: {
         flex: 1,
         minWidth: 150,
