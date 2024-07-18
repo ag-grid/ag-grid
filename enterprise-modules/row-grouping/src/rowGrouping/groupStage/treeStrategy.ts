@@ -41,8 +41,10 @@ type CacheTree = Record<string, TreeNode | undefined>;
 
 interface TreeNode {
     row: RowNode | null;
-    subtree: CacheTree;
+    subtree: CacheTree | null;
 }
+
+const { create: objectCreate } = Object;
 
 export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private beans: BeanCollection;
@@ -58,7 +60,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string | undefined;
 
     /** Hierarchical node cache to speed up tree data node insertion */
-    private cache: CacheTree = Object.create(null);
+    private cache: CacheTree = objectCreate(null);
 
     public execute(params: StageExecuteParams): void {
         const details = this.createGroupingDetails(params);
@@ -77,28 +79,28 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             const key = path[i];
             let node = cache[key];
             if (!node) {
-                node = { row: null, subtree: Object.create(null) };
+                node = { row: null, subtree: null };
                 cache[key] = node;
             }
-            cache = node.subtree;
+            cache = node.subtree ??= objectCreate(null);
         }
         return cache;
+    }
+
+    public cacheGet(path: string[], level: number, key: string): RowNode | null | undefined {
+        const cache = this.cacheTraverse(path, level - 1);
+        return cache[key]?.row;
     }
 
     public cacheAdd(path: string[], level: number, key: string, row: RowNode | null): void {
         const cache = this.cacheTraverse(path, level - 1);
         let node = cache[key];
         if (!node) {
-            node = { row, subtree: Object.create(null) };
+            node = { row, subtree: null };
             cache[key] = node;
         } else if (row) {
             node.row = row; // Override the row only if not null
         }
-    }
-
-    public cacheGet(path: string[], level: number, key: string): RowNode | null | undefined {
-        const cache = this.cacheTraverse(path, level - 1);
-        return cache[key]?.row;
     }
 
     private createGroupingDetails(params: StageExecuteParams): TreeGroupingDetails {
@@ -265,7 +267,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                     parent = row.parent;
 
                     // it's possible we already moved the node, so double check before trying to remove again.
-                    const mapKey = this.getChildrenMappedKey(row.key!, row.rowGroupColumn);
+                    const mapKey = getChildrenMappedKey(row.key!, row.rowGroupColumn);
                     const parentRowNode = row.parent;
                     const groupAlreadyRemoved = parentRowNode?.childrenMapped
                         ? !parentRowNode.childrenMapped[mapKey]
@@ -305,7 +307,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 child.parent.updateHasChildren();
             }
         }
-        const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
+        const mapKey = getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (child.parent?.childrenMapped != undefined) {
             delete child.parent.childrenMapped[mapKey];
         }
@@ -319,7 +321,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
     private addToParent(child: RowNode, parent: RowNode | null) {
-        const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
+        const mapKey = getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (parent?.childrenMapped != null) {
             if (parent?.childrenMapped?.[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
@@ -355,6 +357,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
 
         const { rootNode } = details;
+
         // set .leafGroup always to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
         rootNode.leafGroup = false;
@@ -471,7 +474,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             return path;
         });
 
-        this.cache = Object.create(null); // Clear the cache
+        this.cache = objectCreate(null); // Clear the cache
 
         // Iterate through the paths level-by-level, populating the cache with RowNode
         // instances for all leaves of the hierarchy, and nulls otherwise (to be backfilled
@@ -512,10 +515,16 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         for (const key in cache) {
             const value = cache[key];
             if (value) {
-                if (value.row === null) {
-                    value.row = this.createGroup(key, parent, level, details);
+                let row = value.row;
+                if (!row) {
+                    row = this.createGroup(key, parent, level, details);
+                    value.row = row;
                 }
-                this.backfillGroups(value.subtree, value.row, level + 1, details);
+
+                const subtree = value.subtree;
+                if (subtree) {
+                    this.backfillGroups(subtree, row, level + 1, details);
+                }
             }
         }
     }
@@ -579,10 +588,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
-        return rowGroupColumn ? rowGroupColumn.getId() + '-' + key : key;
-    }
-
     private setExpandedInitialValue(details: TreeGroupingDetails, groupNode: RowNode): void {
         // use callback if exists
         const userCallback = details.isGroupOpenByDefault;
@@ -615,6 +620,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
         return keys;
     }
+}
+
+function getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
+    return rowGroupColumn ? rowGroupColumn.getId() + '-' + key : key;
 }
 
 /**
