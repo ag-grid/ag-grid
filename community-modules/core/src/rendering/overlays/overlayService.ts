@@ -18,6 +18,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private userComponentFactory: UserComponentFactory;
     private rowModel: IRowModel;
+    private isClientSide: boolean;
     private columnModel: ColumnModel;
 
     private state: OverlayServiceState = OverlayServiceState.Hidden;
@@ -32,11 +33,17 @@ export class OverlayService extends BeanStub implements NamedBean {
     private overlayWrapperComp: OverlayWrapperComponent;
 
     public postConstruct(): void {
+        this.isClientSide = this.gos.isRowModelType('clientSide');
         const updateOverlayVisibility = () => this.updateOverlayVisibility();
 
         this.addManagedEventListeners({
             newColumnsLoaded: updateOverlayVisibility,
             rowDataUpdated: updateOverlayVisibility,
+            rowCountReady: () => {
+                // Support hiding the initial overlay when data is set via transactions.
+                this.showInitialOverlay = false;
+                this.updateOverlayVisibility();
+            },
         });
 
         this.addManagedPropertyListener('loading', updateOverlayVisibility);
@@ -100,7 +107,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             loading =
                 !this.gos.get('columnDefs') ||
                 !this.columnModel.isReady() ||
-                (!this.gos.get('rowData') && this.gos.isRowModelType('clientSide'));
+                (!this.gos.get('rowData') && this.isClientSide);
         }
 
         if (loading) {
@@ -109,11 +116,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             }
         } else {
             this.showInitialOverlay = false;
-            if (
-                this.rowModel.isEmpty() &&
-                !this.gos.get('suppressNoRowsOverlay') &&
-                this.gos.isRowModelType('clientSide')
-            ) {
+            if (this.rowModel.isEmpty() && !this.gos.get('suppressNoRowsOverlay') && this.isClientSide) {
                 if (this.state !== OverlayServiceState.NoRows) {
                     this.doShowNoRowsOverlay();
                 }
