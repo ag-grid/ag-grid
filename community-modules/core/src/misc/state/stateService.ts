@@ -297,6 +297,7 @@ export class StateService extends BeanStub implements NamedBean {
         const columnSizes: ColumnSizeState[] = [];
         const columns: string[] = [];
 
+        let defaultSortIndex = 0;
         const columnState = this.columnGetStateService.getColumnState();
         for (let i = 0; i < columnState.length; i++) {
             const {
@@ -315,7 +316,7 @@ export class StateService extends BeanStub implements NamedBean {
             } = columnState[i];
             columns.push(colId);
             if (sort) {
-                sortColumns[sortIndex ?? 0] = { colId, sort };
+                sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort };
             }
             if (rowGroup) {
                 groupColIds[rowGroupIndex ?? 0] = colId;
