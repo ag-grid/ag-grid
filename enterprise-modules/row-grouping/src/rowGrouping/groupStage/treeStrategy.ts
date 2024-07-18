@@ -60,7 +60,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string | undefined;
 
     /** Hierarchical node cache to speed up tree data node insertion */
-    private cache: Subtree = objectCreate(null);
+    private treeNodes: Subtree = objectCreate(null);
 
     public execute(params: StageExecuteParams): void {
         const details = this.createGroupingDetails(params);
@@ -73,22 +73,35 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private cacheUpsertNode(parent: TreeNode | null, key: string): TreeNode {
-        const cache = parent ? (parent.subtree ??= Object.create(null)) : this.cache;
-        let treeNode = cache[key];
+    private upsertTreeNode(parent: TreeNode | null, key: string): TreeNode {
+        const subtree = parent ? (parent.subtree ??= Object.create(null)) : this.treeNodes;
+        let treeNode = subtree[key];
         if (!treeNode) {
             treeNode = { row: null, subtree: null };
-            cache[key] = treeNode;
+            subtree[key] = treeNode;
         }
         return treeNode;
     }
 
-    private cacheUpsert(path: string[], level: number, key: string): TreeNode {
-        let parent: TreeNode | null = null;
-        for (let i = 0; i < level; ++i) {
-            parent = this.cacheUpsertNode(parent, path[i]);
+    private setTreeNodeRow(treeNode: TreeNode, row: RowNode): boolean {
+        const oldRow = treeNode.row;
+        if (oldRow === row) {
+            return true;
         }
-        return this.cacheUpsertNode(parent, key);
+
+        if (oldRow?.data) {
+            if (!row.data) {
+                return false; // filler node, so we don't want to overwrite the real node
+            }
+
+            if (oldRow.id !== row.id) {
+                _warnOnce(`duplicate group keys for row data, keys should be unique`, [oldRow.data, row.data]);
+                return false;
+            }
+        }
+
+        treeNode.row = row;
+        return true;
     }
 
     private createGroupingDetails(params: StageExecuteParams): TreeGroupingDetails {
@@ -400,23 +413,28 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const level = path.length - 1;
         const key = path[level];
 
+        let treeNode: TreeNode | null = null;
         let parentGroup = details.rootNode;
+
         for (let level = 0, stopLevel = path.length - 1; level < stopLevel; ++level) {
             const key = path[level];
+
+            treeNode = this.upsertTreeNode(treeNode, key);
 
             let row = parentGroup?.childrenMapped?.[key];
 
             if (!row) {
-                const treeNode = this.cacheUpsert(path, level, key);
                 row = treeNode.row;
                 if (row) {
                     row.parent = parentGroup;
                 } else {
                     row = this.createGroup(key, parentGroup, level, details);
-                    treeNode.row = row;
+                    this.setTreeNodeRow(treeNode, row);
                 }
                 // attach the new group to the parent
                 this.addToParent(row, parentGroup);
+            } else {
+                this.setTreeNodeRow(treeNode, row);
             }
 
             parentGroup = row;
@@ -432,13 +450,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
 
-        // todo fix this slow path
         const existingNode = parentGroup.childrenAfterGroup?.find((node) => node.key === childNode.key);
         if (existingNode) {
             _warnOnce(`duplicate group keys for row data, keys should be unique`, [existingNode.data, childNode.data]);
             return;
         }
-
         childNode.parent = parentGroup;
         childNode.level = level + 1;
         this.ensureRowNodeFields(childNode, key);
@@ -454,7 +470,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * Directly re-initialises the tree cache
      */
     private buildNodeCacheFromRows(rows: RowNode[], details: TreeGroupingDetails): void {
-        this.cache = objectCreate(null); // Clear the cache
+        this.treeNodes = objectCreate(null); // Clear the cache
 
         // Populate the cache with the rows
         // Fills the rows if the row is a leaf, leave null for filler rows.
@@ -468,15 +484,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 const isLeaf = level === path.length - 1;
 
                 const key = path[level];
-                treeNode = this.cacheUpsertNode(treeNode, key);
+                treeNode = this.upsertTreeNode(treeNode, key);
                 if (isLeaf) {
-                    treeNode.row = row;
+                    this.setTreeNodeRow(treeNode, row);
                     this.ensureRowNodeFields(row, key);
                 }
             }
         }
 
-        this.backfillGroups(this.cache, details.rootNode, 0, details);
+        this.backfillGroups(this.treeNodes, details.rootNode, 0, details);
     }
 
     private ensureRowNodeFields(rowNode: RowNode, key?: string): RowNode {
@@ -497,7 +513,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 let row = treeNode.row;
                 if (!row) {
                     row = this.createGroup(key, parent, level, details);
-                    treeNode.row = row;
+                    this.setTreeNodeRow(treeNode, row);
                 }
 
                 const subtree = treeNode.subtree;
