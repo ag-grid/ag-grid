@@ -3,8 +3,8 @@ import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { getRowsSnapshot } from './row-snapshot-test-utils';
-import type { RowSnapshot } from './row-snapshot-test-utils';
+import { getRowsSnapshot } from '../row-snapshot-test-utils';
+import type { RowSnapshot } from '../row-snapshot-test-utils';
 
 describe('ag-grid grouping simple data', () => {
     let consoleErrorSpy: jest.SpyInstance;
