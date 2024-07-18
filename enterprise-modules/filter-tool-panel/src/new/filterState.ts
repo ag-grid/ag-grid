@@ -49,8 +49,18 @@ export interface SimpleFilterParams<TValue = string> {
     filterType: 'text' | 'number' | 'date';
 }
 
+export interface SetFilterItem<TValue = string> {
+    value: TValue | null;
+    selected?: boolean;
+    text: string;
+    disabled?: boolean;
+}
+
 export interface SetFilterParams<TValue = string> {
-    values: TValue[];
+    items: SetFilterItem<TValue>[];
+    areItemsEqual: (item1: SetFilterItem<TValue>, item2: SetFilterItem<TValue>) => boolean;
+    isTree?: boolean;
+    cellHeight?: number;
 }
 
 interface BaseFilterState {

@@ -13,4 +13,5 @@ export interface IFilterStateService extends IEventEmitter<FilterStateEvent> {
     updateFilterState<K extends keyof FilterState>(id: string, key: K, value: FilterState[K]): void;
     updateSimpleFilterParams(id: string, simpleFilterParams: SimpleFilterParams): void;
     updateSetFilterParams(id: string, setFilterParams: SetFilterParams): void;
+    updateFilterType(id: string, type: 'simple' | 'set'): void;
 }

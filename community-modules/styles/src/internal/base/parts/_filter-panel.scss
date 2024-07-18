@@ -45,15 +45,44 @@
     }
 
     .ag-filter-card {
-        padding: var(--ag-grid-size);
+        padding-top: var(--ag-widget-container-vertical-padding);
+        padding-bottom: var(--ag-widget-container-vertical-padding);
         border: var(--ag-borders) var(--ag-border-color);
+
+        .ag-simple-filter-body-wrapper {
+            padding-top: 0;
+            padding-bottom: 0;
+            padding-left: var(--ag-widget-container-horizontal-padding);
+            padding-right: var(--ag-widget-container-horizontal-padding);
+        }
+
+        .ag-mini-filter {
+            margin-top: 0;
+            margin-left: var(--ag-widget-container-horizontal-padding);
+            margin-right: var(--ag-widget-container-horizontal-padding);
+        }
+
+        .ag-set-filter-item {
+            @include ag.unthemed-rtl(
+                (
+                    padding-left:
+                        calc(
+                            var(--ag-widget-container-horizontal-padding) + var(--ag-indentation-level) *
+                                var(--ag-set-filter-indent-size)
+                        ),
+                    padding-right: var(--ag-widget-container-horizontal-padding),
+                )
+            );
+        }
     }
 
     .ag-filter-card-header {
         display: flex;
         flex-direction: row;
         align-items: center;
-        margin-bottom: var(--ag-grid-size);
+        padding-left: var(--ag-widget-horizontal-spacing);
+        padding-right: var(--ag-widget-horizontal-spacing);
+        margin-bottom: var(--ag-widget-container-vertical-padding);
 
         & > *:not(:last-child) {
             margin-right: var(--ag-grid-size);
@@ -67,6 +96,23 @@
 
     .ag-filter-card-title {
         flex: 1;
+    }
+
+    .ag-filter-card-summary {
+        margin-left: var(--ag-widget-container-horizontal-padding);
+        margin-right: var(--ag-widget-container-horizontal-padding);
+    }
+
+    .ag-filter-type-select {
+        margin-bottom: var(--ag-widget-vertical-spacing);
+        margin-left: var(--ag-widget-container-horizontal-padding);
+        margin-right: var(--ag-widget-container-horizontal-padding);
+    }
+
+    .ag-simple-filter-header {
+        margin-bottom: var(--ag-widget-vertical-spacing);
+        margin-left: var(--ag-widget-container-horizontal-padding);
+        margin-right: var(--ag-widget-container-horizontal-padding);
     }
 
     .ag-filter-card-add {

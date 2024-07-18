@@ -29,6 +29,16 @@ const DEFAULT_TRANSLATIONS = {
     ariaFilterFromValue: 'Filter from value',
     ariaFilterToValue: 'Filter to value',
     ariaFilterValue: 'Filter Value',
+    setFilterType: 'Basic Filtering',
+    simpleFilterType: 'Advanced Filtering',
+    simpleFilterHeader: 'Item:',
+    loadingOoo: 'Loading...',
+    noMatches: 'No matches.',
+    ariaFilterList: 'Filter List',
+    searchOoo: 'Search...',
+    ariaSearchFilterValues: 'Search filter values',
+    blanks: '(Blanks)',
+    selectAll: '(Select All)',
 } as const;
 
 export type FilterPanelTranslationKey = keyof typeof DEFAULT_TRANSLATIONS;

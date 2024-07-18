@@ -48,7 +48,7 @@ export abstract class AgAbstractInputField<
 
         this.eInput.id = this.eInput.id || `ag-${this.getCompId()}-input`;
 
-        const { inputName, inputWidth, inputPlaceholder, autoComplete } = this.config;
+        const { inputName, inputWidth, inputPlaceholder, autoComplete, tabIndex } = this.config;
         if (inputName != null) {
             this.setInputName(inputName);
         }
@@ -63,7 +63,7 @@ export abstract class AgAbstractInputField<
         }
 
         this.addInputListeners();
-        this.activateTabIndex([this.eInput]);
+        this.activateTabIndex([this.eInput], tabIndex);
     }
 
     protected addInputListeners() {

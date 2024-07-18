@@ -8,6 +8,7 @@ export interface AgLabelParams {
     labelSeparator?: string;
     labelAlignment?: LabelAlignment;
     disabled?: boolean;
+    labelEllipsis?: boolean;
 }
 
 export interface AgPickerFieldParams extends AgFieldParams {
@@ -45,6 +46,7 @@ export interface AgInputFieldParams extends AgFieldParams {
     template?: string;
     inputPlaceholder?: string;
     autoComplete?: boolean;
+    tabIndex?: number;
 }
 
 export interface AgCheckboxParams extends AgInputFieldParams {

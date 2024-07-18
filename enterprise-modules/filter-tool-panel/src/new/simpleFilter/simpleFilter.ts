@@ -1,23 +1,33 @@
-import type { ListOption } from '@ag-grid-community/core';
+import type { BeanCollection, ListOption } from '@ag-grid-community/core';
 import { Component, RefPlaceholder, _removeFromParent } from '@ag-grid-community/core';
 
+import type { FilterPanelTranslationService } from '../filterPanelTranslationService';
 import type { FilterCondition, SimpleFilterOperatorParams, SimpleFilterParams } from '../filterState';
 import { SimpleFilterJoin } from './simpleFilterJoin';
 import { SimpleFilterOption } from './simpleFilterOption';
 
 export class SimpleFilter extends Component<'filterChanged'> {
     private readonly eFilterBody: HTMLElement = RefPlaceholder;
+    private readonly eFilterHeader: HTMLElement = RefPlaceholder;
+
+    private translationService: FilterPanelTranslationService;
 
     private eOptions: SimpleFilterOption[] = [];
     private eJoinOperators: SimpleFilterJoin[] = [];
 
     constructor(private params: SimpleFilterParams) {
         super(/* html */ `<form class="ag-filter-wrapper">
+            <div data-ref="eFilterHeader" class="ag-simple-filter-header"></div>
             <div data-ref="eFilterBody" class="ag-filter-body-wrapper ag-simple-filter-body-wrapper"></div>
         </form>`);
     }
 
+    public wireBeans(beans: BeanCollection): void {
+        this.translationService = beans.filterPanelTranslationService as FilterPanelTranslationService;
+    }
+
     public postConstruct(): void {
+        this.eFilterHeader.textContent = this.translationService.translate('simpleFilterHeader');
         this.refreshComp(undefined, this.params);
     }
 

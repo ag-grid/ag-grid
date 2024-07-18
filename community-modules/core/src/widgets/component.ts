@@ -265,8 +265,8 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }
 
-    protected activateTabIndex(elements?: Element[]): void {
-        const tabIndex = this.gos.get('tabIndex');
+    protected activateTabIndex(elements?: Element[], overrideTabIndex?: number): void {
+        const tabIndex = overrideTabIndex ?? this.gos.get('tabIndex');
 
         if (!elements) {
             elements = [];

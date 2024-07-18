@@ -1,7 +1,7 @@
 import { Component, RefPlaceholder, _clearElement, _createIcon, _removeFromParent } from '@ag-grid-community/core';
 
 import { FilterDetailComp } from './filterDetailComp';
-import type { FilterState, SetFilterParams, SimpleFilterParams } from './filterState';
+import type { FilterState } from './filterState';
 import { FilterSummaryComp } from './filterSummaryComp';
 import type { IFilterStateService } from './iFilterStateService';
 
@@ -67,31 +67,28 @@ export class FilterCardComp extends Component {
         const createOrRefreshComp = <C extends FilterDetailComp | FilterSummaryComp>(
             comp: C | undefined,
             FilterComp: { new (state: FilterState): C },
-            simpleFilterListener?: (params: { simpleFilterParams: SimpleFilterParams }) => void,
-            setFilterListener?: (params: { setFilterParams: SetFilterParams }) => void
+            postCreateFunc?: (comp: C) => void
         ) => {
             if (comp) {
                 comp.refresh(state);
                 return comp;
             }
             const newComp = this.createBean(new FilterComp(state));
-            if (simpleFilterListener) {
-                newComp.addManagedListeners(newComp, {
-                    simpleFilterChanged: simpleFilterListener,
-                    setFilterChanged: setFilterListener,
-                });
-            }
+            postCreateFunc?.(newComp);
             this.appendChild(newComp.getGui());
             return newComp;
         };
         if (state.expanded) {
             this.summaryComp = removeComp(this.summaryComp);
-            this.detailComp = createOrRefreshComp(
-                this.detailComp,
-                FilterDetailComp,
-                ({ simpleFilterParams }) =>
-                    this.filterStateService.updateSimpleFilterParams(this.id, simpleFilterParams),
-                ({ setFilterParams }) => this.filterStateService.updateSetFilterParams(this.id, setFilterParams)
+            this.detailComp = createOrRefreshComp(this.detailComp, FilterDetailComp, (comp) =>
+                comp.addManagedListeners(comp, {
+                    simpleFilterChanged: ({ simpleFilterParams }) =>
+                        this.filterStateService.updateSimpleFilterParams(this.id, simpleFilterParams),
+                    setFilterChanged: ({ setFilterParams }) =>
+                        this.filterStateService.updateSetFilterParams(this.id, setFilterParams),
+                    filterTypeChanged: ({ filterType }) =>
+                        this.filterStateService.updateFilterType(this.id, filterType),
+                })
             );
         } else {
             this.detailComp = removeComp(this.detailComp);

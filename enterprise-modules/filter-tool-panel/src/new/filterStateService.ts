@@ -66,6 +66,11 @@ export class FilterStateService
         this.setFilterService = this.createManagedBean(new SetFilterService());
         this.addManagedEventListeners({
             newColumnsLoaded: () => this.updateFilterStates(),
+            modelUpdated: ({ newData }) => {
+                if (newData) {
+                    this.updateFilterStates();
+                }
+            },
         });
     }
 
@@ -111,6 +116,10 @@ export class FilterStateService
     public updateFilterState<K extends keyof FilterState>(id: string, key: K, value: FilterState[K]): void {
         const filterState = this.activeFilterStates.get(id)?.state;
         this.updateProvidedFilterState(filterState, id, key, value);
+    }
+
+    public updateFilterType(id: string, type: 'simple' | 'set'): void {
+        this.switchFilterState(id, type, null);
     }
 
     public updateSimpleFilterParams(id: string, params: SimpleFilterParams): void {

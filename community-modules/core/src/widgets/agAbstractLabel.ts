@@ -27,7 +27,7 @@ export abstract class AgAbstractLabel<
         this.addCssClass('ag-labeled');
         this.eLabel.classList.add('ag-label');
 
-        const { labelSeparator, label, labelWidth, labelAlignment, disabled } = this.config;
+        const { labelSeparator, label, labelWidth, labelAlignment, disabled, labelEllipsis } = this.config;
 
         if (disabled != null) {
             this.setDisabled(disabled);
@@ -43,6 +43,10 @@ export abstract class AgAbstractLabel<
 
         if (labelWidth != null) {
             this.setLabelWidth(labelWidth);
+        }
+
+        if (labelEllipsis != null) {
+            this.setLabelEllipsis(labelEllipsis);
         }
 
         this.setLabelAlignment(labelAlignment || this.labelAlignment);

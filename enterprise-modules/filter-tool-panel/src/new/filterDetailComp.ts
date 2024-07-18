@@ -1,18 +1,41 @@
-import { Component, _removeFromParent } from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection } from '@ag-grid-community/core';
+import { AgSelectSelector, Component, _removeFromParent } from '@ag-grid-community/core';
 
+import type { FilterPanelTranslationService } from './filterPanelTranslationService';
 import type { FilterState } from './filterState';
 import { SetFilter } from './setFilter/setFilter';
 import { SimpleFilter } from './simpleFilter/simpleFilter';
 
-export class FilterDetailComp extends Component<'simpleFilterChanged' | 'setFilterChanged'> {
+export class FilterDetailComp extends Component<'simpleFilterChanged' | 'setFilterChanged' | 'filterTypeChanged'> {
+    private translationService: FilterPanelTranslationService;
+
     private eSimpleFilter?: SimpleFilter;
     private eSetFilter?: SetFilter;
 
     constructor(private state: FilterState) {
-        super(/* html */ `<div class="ag-filter"></div>`);
+        super();
     }
 
-    postConstruct(): void {
+    public wireBeans(beans: BeanCollection): void {
+        this.translationService = beans.filterPanelTranslationService as FilterPanelTranslationService;
+    }
+
+    public postConstruct(): void {
+        const eFilterTypeParams: AgSelectParams<'set' | 'simple'> = {
+            options: (['set', 'simple'] as const).map((value) => ({
+                value,
+                text: this.translationService.translate(`${value}FilterType`),
+            })),
+            value: this.state.type,
+            onValueChange: (filterType) => this.dispatchLocalEvent({ type: 'filterTypeChanged', filterType }),
+        };
+        this.setTemplate(
+            /* html */ `<div class="ag-filter">
+                <ag-select class="ag-filter-type-select" data-ref="eFilterType"></ag-select>
+            </div>`,
+            [AgSelectSelector],
+            { eFilterType: eFilterTypeParams }
+        );
         this.refreshComp(undefined, this.state);
     }
 
@@ -21,6 +44,7 @@ export class FilterDetailComp extends Component<'simpleFilterChanged' | 'setFilt
         this.state = state;
         this.refreshComp(oldState, state);
     }
+
     private refreshComp(oldState: FilterState | undefined, newState: FilterState): void {
         const { type, filterParams } = newState;
         if (type === oldState?.type) {

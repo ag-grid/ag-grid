@@ -255,7 +255,9 @@ export class SimpleFilterService
         };
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<M>;
-            return combinedModel.conditions.map((simpleModel) => getSummary(simpleModel)).join(combinedModel.operator);
+            return combinedModel.conditions
+                .map((simpleModel) => getSummary(simpleModel))
+                .join(` ${combinedModel.operator} `);
         } else {
             const simpleModel = model as M;
             return getSummary(simpleModel);
