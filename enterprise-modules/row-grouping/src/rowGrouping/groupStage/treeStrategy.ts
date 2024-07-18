@@ -37,12 +37,12 @@ interface GroupInfo {
     leafNode?: RowNode;
 }
 
-type CacheTree = Record<string, TreeNode | undefined>;
-
 interface TreeNode {
     row: RowNode | null;
-    subtree: CacheTree | null;
+    subtree: Subtree | null;
 }
+
+type Subtree = Record<string, TreeNode | undefined>;
 
 const { create: objectCreate } = Object;
 
@@ -60,7 +60,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string | undefined;
 
     /** Hierarchical node cache to speed up tree data node insertion */
-    private cache: CacheTree = objectCreate(null);
+    private cache: Subtree = objectCreate(null);
 
     public execute(params: StageExecuteParams): void {
         const details = this.createGroupingDetails(params);
@@ -73,7 +73,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private cacheTraverse(path: string[], level: number): CacheTree {
+    private cacheTraverse(path: string[], level: number): Subtree {
         let cache = this.cache;
         for (let i = 0; i <= level; ++i) {
             const key = path[i];
@@ -511,7 +511,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     /** Walks the Tree recursively and backfills `null` entries with filler group nodes */
-    private backfillGroups(cache: CacheTree, parent: RowNode, level: number, details: TreeGroupingDetails): void {
+    private backfillGroups(cache: Subtree, parent: RowNode, level: number, details: TreeGroupingDetails): void {
         for (const key in cache) {
             const value = cache[key];
             if (value) {
