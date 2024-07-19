@@ -567,8 +567,11 @@ export class ColumnFilterService extends BeanStub {
             this.disposeColumnListener(colId);
         });
 
+        const allFiltersAreGroupFilters = columns.every(
+            (column) => column.getColDef().filter === 'agGroupColumnFilter'
+        );
         // don't call `onFilterChanged` if only group column filter is present as it has no model
-        if (columns.length > 0 && !columns.every((column) => column.getColDef().filter === 'agGroupColumnFilter')) {
+        if (columns.length > 0 && !allFiltersAreGroupFilters) {
             // When a filter changes as a side effect of a column changes,
             // we report 'api' as the source, so that the client can distinguish
             this.filterManager?.onFilterChanged({ columns, source: 'api' });
