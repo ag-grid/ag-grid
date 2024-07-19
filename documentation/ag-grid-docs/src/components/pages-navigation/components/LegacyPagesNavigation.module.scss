@@ -136,13 +136,13 @@ button.sectionHeader {
         top: -1px;
         fill: var(--color-util-gray-400);
 
-        #{$selector-darkmode} & {
-            fill: var(--color-fg-primary);
-        }
-
         transition:
             transform 0.33s ease-in-out,
             fill $transition-default-timing;
+
+        #{$selector-darkmode} & {
+            fill: var(--color-fg-primary);
+        }
 
         &.active {
             transform: rotate(90deg);
