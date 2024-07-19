@@ -39,10 +39,13 @@ interface GroupInfo {
 type TreeMap = Map<string, TreeNode>;
 
 class TreeNode {
+    /** The key of this tree node */
     public readonly key: string;
 
+    /** Tree node children */
     public map: TreeMap | null = null;
 
+    /** The RowNode associated to this tree node */
     public row: RowNode | null = null;
 
     public constructor(key: string) {
@@ -85,8 +88,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     public execute(params: StageExecuteParams): void {
         const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
-        this.root.row = rowNode;
-
         const details: TreeGroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),
             rowNodeOrder: rowNodeOrder!,
@@ -99,6 +100,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             getDataPath: this.gos.get('getDataPath'),
         };
 
+        const oldRootRow = this.root.row;
+        if (oldRootRow !== rowNode) {
+            this.root.row = rowNode;
+            if (oldRootRow) {
+                // The root node changed? This should not happen, but if it does, clear cache
+                this.root.map?.clear();
+            }
+        }
+
         if (details.transactions) {
             this.handleTransaction(details);
         } else {
@@ -107,25 +117,20 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private setTreeNodeRow(treeNode: TreeNode, row: RowNode): boolean {
+    private setTreeNodeRow(treeNode: TreeNode, row: RowNode): void {
         const oldRow = treeNode.row;
         if (oldRow === row) {
-            return true;
+            return;
         }
 
         if (oldRow?.data) {
             if (!row.data) {
-                return false; // filler node, so we don't want to overwrite the real node
-            }
-
-            if (oldRow.id !== row.id) {
-                _warnOnce(`duplicate group keys for row data, keys should be unique`, [oldRow.data, row.data]);
-                return false;
+                return; // filler node, so we don't overwrite the real node
             }
         }
 
         treeNode.row = row;
-        return true;
+        return;
     }
 
     private handleTransaction(details: TreeGroupingDetails): void {
@@ -326,10 +331,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
     private addToParent(child: RowNode, parent: RowNode | null) {
-        if (parent?.childrenMapped) {
+        const childrenMapped = parent?.childrenMapped;
+        if (childrenMapped) {
             const mapKey = getChildrenMappedKey(child.key!, child.rowGroupColumn);
-            if (parent?.childrenMapped?.[mapKey] !== child) {
-                parent.childrenMapped[mapKey] = child;
+            if (childrenMapped[mapKey] !== child) {
+                childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
                 parent.setGroup(true); // calls `.updateHasChildren` internally
             }
@@ -423,7 +429,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         for (let level = 0, stopLevel = path.length - 1; level < stopLevel; ++level) {
             const key = path[level];
-
             treeNode = treeNode.upsert(key);
 
             let row = parentGroup?.childrenMapped?.[key];
