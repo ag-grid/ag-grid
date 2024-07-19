@@ -32,6 +32,10 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 });
 
+/**
+ * These properties are used to validate options in a separate step because they should trigger
+ * warnings only in the case that the user has set them directly. They are still used internally.
+ */
 const GRID_OPTION_LEGACY_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     enableFillHandle: { version: '32.1', message: 'Use `selectionOptions.fillHandleOptions` instead.' },
     enableRangeHandle: { version: '32.1', message: 'Use `selectionOptions.enableRangeHandle` instead.' },

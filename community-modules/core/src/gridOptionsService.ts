@@ -227,7 +227,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
-
         Object.entries(options).forEach(([key, value]) => {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
                 _warnOnce(`${key} is an initial property and cannot be updated.`);
@@ -627,7 +626,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
  * the existing/"legacy" selection API is removed.
  */
 export function backfillLegacyGridOptions(go: GridOptions): void {
-    // If selection options are defined, map those values back onto the existing grid options
     const selectionOpts = go.selectionOptions;
 
     function port(target: keyof GridOptions, source: any) {
