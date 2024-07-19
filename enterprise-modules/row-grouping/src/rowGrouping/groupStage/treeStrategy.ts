@@ -36,12 +36,34 @@ interface GroupInfo {
     leafNode?: RowNode;
 }
 
-type Subtree = Map<string, TreeNode>;
+type TreeMap = Map<string, TreeNode>;
 
-interface TreeNode {
-    key: string;
-    row: RowNode | null;
-    subtree: Subtree | null;
+class TreeNode {
+    public readonly key: string;
+
+    public map: TreeMap | null = null;
+
+    public row: RowNode | null = null;
+
+    public constructor(key: string) {
+        this.key = key;
+    }
+
+    public upsert(key: string): TreeNode {
+        let child: TreeNode | undefined;
+        let map = this.map;
+        if (map) {
+            child = map.get(key);
+        } else {
+            map = new Map();
+            this.map = map;
+        }
+        if (!child) {
+            child = new TreeNode(key);
+            map.set(key, child);
+        }
+        return child;
+    }
 }
 
 export class TreeStrategy extends BeanStub implements IRowNodeStage {
@@ -58,7 +80,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string | undefined;
 
     /** Hierarchical node cache to speed up tree data node insertion */
-    private root: TreeNode = { key: '', row: null, subtree: null };
+    private root: TreeNode = new TreeNode('');
 
     public execute(params: StageExecuteParams): void {
         const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
@@ -83,16 +105,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             const afterColsChanged = params.afterColumnsChanged === true;
             this.shotgunResetEverything(details, afterColsChanged);
         }
-    }
-
-    private upsertTreeNode(parent: TreeNode, key: string): TreeNode {
-        const subtree: Subtree = (parent.subtree ??= new Map());
-        let child = subtree.get(key);
-        if (!child) {
-            child = { key, row: null, subtree: null };
-            subtree.set(key, child);
-        }
-        return child;
     }
 
     private setTreeNodeRow(treeNode: TreeNode, row: RowNode): boolean {
@@ -412,7 +424,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         for (let level = 0, stopLevel = path.length - 1; level < stopLevel; ++level) {
             const key = path[level];
 
-            treeNode = this.upsertTreeNode(treeNode, key);
+            treeNode = treeNode.upsert(key);
 
             let row = parentGroup?.childrenMapped?.[key];
 
@@ -463,7 +475,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * Directly re-initialises the tree cache
      */
     private buildNodeCacheFromRows(rows: RowNode[], details: TreeGroupingDetails): void {
-        this.root.subtree?.clear(); // Clear the cache
+        this.root.map?.clear(); // Clear the cache
 
         // Populate the cache with the rows
         // Fills the rows if the row is a leaf, leave null for filler rows.
@@ -477,7 +489,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 const isLeaf = level === path.length - 1;
 
                 const key = path[level];
-                treeNode = this.upsertTreeNode(treeNode, key);
+                treeNode = treeNode.upsert(key);
                 if (isLeaf) {
                     this.setTreeNodeRow(treeNode, row);
                     this.ensureRowNodeFields(row, key);
@@ -500,7 +512,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Walks the Tree recursively and backfills `null` entries with filler group nodes */
     private backfillGroups(parent: TreeNode, level: number, details: TreeGroupingDetails): void {
-        const subtree = parent.subtree;
+        const subtree = parent.map;
         if (!subtree) {
             return;
         }
@@ -511,7 +523,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 this.setTreeNodeRow(child, row);
             }
 
-            const subtree = child.subtree;
+            const subtree = child.map;
             if (subtree) {
                 this.backfillGroups(child, level + 1, details);
             }
