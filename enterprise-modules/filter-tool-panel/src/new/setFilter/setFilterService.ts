@@ -12,6 +12,8 @@ export class SetFilterService
     extends BeanStub
     implements FilterTypeService<SetFilterParams, SetFilterModel, SetFilterConfig>
 {
+    public readonly type = 'set';
+
     private translationService: FilterPanelTranslationService;
 
     constructor(private readonly api: GridApi) {
@@ -152,6 +154,10 @@ export class SetFilterService
             return this.translationService.translate('filterSummaryInactive');
         }
         let list = model.values.join(', ');
+        if (list.length === 0) {
+            // TODO
+            return `is (None)`;
+        }
         if (list.length > 100) {
             list = list.slice(0, 100) + '...';
         }

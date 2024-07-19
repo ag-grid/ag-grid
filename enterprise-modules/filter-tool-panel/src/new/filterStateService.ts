@@ -4,6 +4,7 @@ import type {
     FilterModel,
     GridApi,
     ICombinedSimpleModel,
+    IMultiFilterModel,
     ISimpleFilterModel,
     SetFilterModel,
 } from '@ag-grid-community/core';
@@ -238,12 +239,12 @@ export class FilterStateService
         }
         const {
             column,
-            state: { expanded, appliedModel },
+            state: { expanded, appliedModel, type: oldType },
         } = oldFilterStateWrapper;
         const filterStateWrapper = this.createFilterStateForType(type, column, model, expanded);
         this.activeFilterStates.set(id, filterStateWrapper);
         if (appliedModel != null) {
-            this.applyColumnFilter(id, null);
+            this.applyColumnFilter(id, oldType, null);
         }
         this.dispatchLocalEvent({
             type: 'filterStateChanged',
@@ -253,12 +254,14 @@ export class FilterStateService
 
     private applyFilter<P, M, C>(id: string, service: FilterTypeService<P, M, C>, params: P): M | null {
         const model = service.getModel(params);
-        this.applyColumnFilter(id, model);
+        this.applyColumnFilter(id, service.type, model);
         return model;
     }
 
-    private applyColumnFilter(colId: string, model: any): void {
-        this.api.setColumnFilterModel(colId, model).then(() => this.api.onFilterChanged());
+    private applyColumnFilter(colId: string, type: 'simple' | 'set', model: any): void {
+        this.api
+            .setColumnFilterModel(colId, this.getMultiFilterModel(type, model))
+            .then(() => this.api.onFilterChanged());
     }
 
     private applyFilters(): void {
@@ -274,10 +277,20 @@ export class FilterStateService
                 filterParams as any
             );
             if (singleModel != null) {
-                model[column.getColId()] = singleModel;
+                model[column.getColId()] = this.getMultiFilterModel(type, model);
             }
         });
         return model;
+    }
+
+    private getMultiFilterModel(type: 'simple' | 'set', model: any): IMultiFilterModel | null {
+        const isSimple = type === 'simple';
+        return model == null
+            ? null
+            : {
+                  filterType: 'multi',
+                  filterModels: [isSimple ? model : null, isSimple ? null : model],
+              };
     }
 
     private dispatchStatesUpdates(): void {

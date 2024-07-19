@@ -1,6 +1,8 @@
 import type { Column } from '@ag-grid-community/core';
 
 export interface FilterTypeService<P, M, C> {
+    readonly type: 'simple' | 'set';
+
     getParams(filterConfig: C, model?: M | null): P;
 
     updateParams(oldParams: P | undefined, newParams: P, filterConfig: C): P;

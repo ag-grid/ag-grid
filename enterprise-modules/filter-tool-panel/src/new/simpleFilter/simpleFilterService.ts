@@ -50,6 +50,8 @@ export class SimpleFilterService
             SimpleFilterConfig
         >
 {
+    public readonly type = 'simple';
+
     private translationService: FilterPanelTranslationService;
 
     constructor(private readonly api: GridApi) {
