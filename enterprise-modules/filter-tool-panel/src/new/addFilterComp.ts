@@ -1,13 +1,12 @@
-import type { AgSelectParams, BeanCollection } from '@ag-grid-community/core';
+import type { AgSelectParams, BeanCollection, ListOption } from '@ag-grid-community/core';
 import { AgSelectSelector, Component } from '@ag-grid-community/core';
 
 import type { FilterPanelTranslationService } from './filterPanelTranslationService';
-import type { IFilterStateService } from './iFilterStateService';
 
-export class AddFilterComp extends Component {
+export class AddFilterComp extends Component<'filterSelected'> {
     private translationService: FilterPanelTranslationService;
 
-    constructor(private readonly filterStateService: IFilterStateService) {
+    constructor(private readonly options: ListOption[]) {
         super();
     }
 
@@ -17,11 +16,13 @@ export class AddFilterComp extends Component {
 
     public postConstruct(): void {
         const selectParams: AgSelectParams<string> = {
-            options: this.filterStateService
-                .getAvailableFilters()
-                .map(({ id: value, name: text }) => ({ value, text })),
+            options: this.options,
             placeholder: this.translationService.translate('addFilter'),
-            onValueChange: (value) => this.filterStateService.addFilter(value),
+            onValueChange: (id) =>
+                this.dispatchLocalEvent({
+                    type: 'filterSelected',
+                    id,
+                }),
         };
         this.setTemplate(
             /* html */ `<div class="ag-filter-card ag-filter-card-add">

@@ -87,8 +87,18 @@ export class FilterPanel extends Component {
 
         this.applySearch();
 
-        this.addFilterComp = this.createManagedBean(new AddFilterComp(filterStateService));
-        eContainer.appendChild(this.addFilterComp.getGui());
+        const addFilterOptions = this.filterStateService
+            .getAvailableFilters()
+            .map(({ id: value, name: text }) => ({ value, text }));
+
+        if (addFilterOptions.length) {
+            const addFilterComp = this.createBean(new AddFilterComp(addFilterOptions));
+            this.addFilterComp = addFilterComp;
+            addFilterComp.addManagedListeners(addFilterComp, {
+                filterSelected: ({ id }) => filterStateService.addFilter(id),
+            });
+            eContainer.appendChild(addFilterComp.getGui());
+        }
     }
 
     private applySearch(): void {
@@ -115,6 +125,7 @@ export class FilterPanel extends Component {
     }
 
     public override destroy(): void {
+        this.destroyBean(this.addFilterComp);
         this.destroyFilters(this.filters);
         this.filters.clear();
         super.destroy();
