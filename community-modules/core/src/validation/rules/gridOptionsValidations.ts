@@ -10,7 +10,7 @@ import { COL_DEF_VALIDATORS } from './colDefValidations';
  *
  * If the property was simply renamed, use the `renamed` property. The value will be implicitly copied to the new property.
  */
-const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
+const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.' },
     suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.' },
 
@@ -30,7 +30,9 @@ const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
     groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
+});
 
+const GRID_OPTION_LEGACY_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     enableFillHandle: { version: '32.1', message: 'Use `selectionOptions.fillHandleOptions` instead.' },
     enableRangeHandle: { version: '32.1', message: 'Use `selectionOptions.enableRangeHandle` instead.' },
     enableRangeSelection: { version: '32.1', message: 'Use `selectionOptions.mode = "cell"` instead.' },
@@ -367,5 +369,14 @@ export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () =
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),
+    validations: GRID_OPTION_VALIDATIONS(),
+});
+
+export const GRID_OPTIONS_LEGACY_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
+    objectName: 'gridOptions',
+    allProperties: [...PropertyKeys.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS],
+    propertyExceptions: ['api'],
+    docsUrl: 'grid-options/',
+    deprecations: GRID_OPTION_LEGACY_DEPRECATIONS(),
     validations: GRID_OPTION_VALIDATIONS(),
 });

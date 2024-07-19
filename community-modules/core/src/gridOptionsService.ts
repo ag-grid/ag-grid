@@ -20,7 +20,7 @@ import { LocalEventService } from './localEventService';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _getScrollbarWidth } from './utils/browser';
-import { _errorOnce, _log, _warnOnce } from './utils/function';
+import { _log, _warnOnce } from './utils/function';
 import { _exists, _missing, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
@@ -228,9 +228,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
 
-        // map new selection API back onto old grid options for updates.
-        const modified = normaliseGridOptions(options);
-
         Object.entries(options).forEach(([key, value]) => {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
                 _warnOnce(`${key} is an initial property and cannot be updated.`);
@@ -252,7 +249,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             }
         });
 
-        this.validationService?.processGridOptions(this.gridOptions, modified);
+        this.validationService?.processGridOptions(this.gridOptions);
+        this.validationService?.processLegacyOptions(options);
 
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);
@@ -625,89 +623,56 @@ export class GridOptionsService extends BeanStub implements NamedBean {
  *
  * The values of the new selection grid options take precedence over the existing options.
  *
- * This is part of the migration path from the old API to the new API.
+ * This is part of the migration path from the old API to the new API, and can be removed once
+ * the existing/"legacy" selection API is removed.
  */
-export function normaliseGridOptions(go: GridOptions): Set<string> {
+export function backfillLegacyGridOptions(go: GridOptions): void {
     // If selection options are defined, map those values back onto the existing grid options
     const selectionOpts = go.selectionOptions;
 
-    const modified = new Set<string>();
+    function port(target: keyof GridOptions, source: any) {
+        if (go[target] !== source) {
+            go[target] = source;
+        }
+    }
 
     if (selectionOpts?.mode === 'cell') {
-        if (go.suppressMultiRangeSelection !== selectionOpts.suppressMultiRangeSelection) {
-            go.suppressMultiRangeSelection = selectionOpts.suppressMultiRangeSelection;
-            modified.add('suppressMultiRangeSelection');
-        }
-        if (go.enableRangeHandle !== selectionOpts.enableRangeHandle) {
-            go.enableRangeHandle = selectionOpts.enableRangeHandle;
-            modified.add('enableRangeHandle');
-        }
-        if (go.enableFillHandle !== !!selectionOpts.fillHandleOptions) {
-            go.enableFillHandle = !!selectionOpts.fillHandleOptions;
-            modified.add('enableFillHandle');
-        }
-        if (go.suppressClearOnFillReduction !== selectionOpts.fillHandleOptions?.suppressClearOnFillReduction) {
-            go.suppressClearOnFillReduction = selectionOpts.fillHandleOptions?.suppressClearOnFillReduction;
-            modified.add('suppressClearOnFillReduction');
-        }
-        if (go.fillHandleDirection !== selectionOpts.fillHandleOptions?.direction) {
-            go.fillHandleDirection = selectionOpts.fillHandleOptions?.direction;
-            modified.add('fillHandleDirection');
-        }
-        if (go.fillOperation !== selectionOpts.fillHandleOptions?.setFillValue) {
-            go.fillOperation = selectionOpts.fillHandleOptions?.setFillValue;
-            modified.add('fillOperation');
-        }
+        port('suppressMultiRangeSelection', selectionOpts.suppressMultiRangeSelection);
+        port('enableRangeHandle', selectionOpts.enableRangeHandle);
+        port('enableFillHandle', !!selectionOpts.fillHandleOptions);
+        port('suppressClearOnFillReduction', selectionOpts.fillHandleOptions?.suppressClearOnFillReduction);
+        port('fillHandleDirection', selectionOpts.fillHandleOptions?.direction);
+        port('fillOperation', selectionOpts.fillHandleOptions?.setFillValue);
     } else if (selectionOpts?.mode === 'row') {
-        if (go.suppressRowClickSelection !== selectionOpts.suppressRowClickSelection) {
-            go.suppressRowClickSelection = selectionOpts.suppressRowClickSelection;
-            modified.add('suppressRowClickSelection');
-        }
-        if (go.suppressRowDeselection !== selectionOpts.suppressRowDeselection) {
-            go.suppressRowDeselection = selectionOpts.suppressRowDeselection;
-            modified.add('suppressRowDeselection');
-        }
-        if (go.rowMultiSelectWithClick !== selectionOpts.enableMultiSelectWithClick) {
-            go.rowMultiSelectWithClick = selectionOpts.enableMultiSelectWithClick;
-            modified.add('rowMultiSelectWithClick');
-        }
-        if (go.isRowSelectable !== selectionOpts.isRowSelectable) {
-            go.isRowSelectable = selectionOpts.isRowSelectable;
-            modified.add('isRowSelectable');
-        }
+        port('suppressRowClickSelection', selectionOpts.suppressRowClickSelection);
+        port('suppressRowDeselection', selectionOpts.suppressRowDeselection);
+        port('rowMultiSelectWithClick', selectionOpts.enableMultiSelectWithClick);
+        port('isRowSelectable', selectionOpts.isRowSelectable);
 
-        if (selectionOpts.suppressMultipleRowSelection) {
-            go.rowSelection = 'single';
-        } else {
-            go.rowSelection = 'multiple';
-        }
-        modified.add('rowSelection');
+        port('rowSelection', selectionOpts.suppressMultipleRowSelection ? 'single' : 'multiple');
 
         switch (selectionOpts.groupSelection) {
             case 'allChildren':
-                go.groupSelectsChildren = true;
-                delete go.groupSelectsFiltered;
-                modified.add('groupSelectsChildren');
+                port('groupSelectsChildren', true);
+                port('groupSelectsFiltered', undefined);
                 break;
             case 'filteredChildren':
-                go.groupSelectsChildren = true;
-                go.groupSelectsFiltered = true;
-                modified.add('groupSelectsChildren');
-                modified.add('groupSelectsFiltered');
+                port('groupSelectsChildren', true);
+                port('groupSelectsFiltered', true);
                 break;
             case 'none':
-                delete go.groupSelectsChildren;
-                delete go.groupSelectsFiltered;
+                port('groupSelectsChildren', undefined);
+                port('groupSelectsFiltered', undefined);
                 break;
             default:
                 break;
         }
 
-        if (selectionOpts.checkboxSelection) {
-            const colDefs = go.columnDefs;
-            if (colDefs && colDefs.length > 0) {
-                // Only set checkbox selection properties on the first column
-                if (!('children' in colDefs[0])) {
+        const colDefs = go.columnDefs;
+        if (colDefs && colDefs.length > 0) {
+            if (!('children' in colDefs[0])) {
+                if (selectionOpts.checkboxSelection) {
+                    // Only set checkbox selection properties on the first column
                     if (colDefs[0].checkboxSelection !== selectionOpts.checkboxSelection.enabled) {
                         colDefs[0].checkboxSelection = selectionOpts.checkboxSelection.enabled;
                     }
@@ -715,13 +680,8 @@ export function normaliseGridOptions(go: GridOptions): Set<string> {
                         colDefs[0].showDisabledCheckboxes = selectionOpts.checkboxSelection.showDisabledCheckboxes;
                     }
                 }
-            }
-        }
 
-        const colDefs = go.columnDefs;
-        if (colDefs && colDefs.length > 0) {
-            // Only set header checkbox selection properties on the first column
-            if (!('children' in colDefs[0])) {
+                // Only set header checkbox selection properties on the first column
                 if (colDefs[0].headerCheckboxSelection !== selectionOpts.enableHeaderCheckbox) {
                     colDefs[0].headerCheckboxSelection = selectionOpts.enableHeaderCheckbox;
                 }
@@ -737,6 +697,4 @@ export function normaliseGridOptions(go: GridOptions): Set<string> {
             }
         }
     }
-
-    return modified;
 }
