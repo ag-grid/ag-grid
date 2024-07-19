@@ -34,4 +34,9 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         this.selectableService.updateSelectableAfterGrouping();
     }
+
+    public override destroy(): void {
+        this.destroyBean(this.strategy);
+        super.destroy();
+    }
 }
