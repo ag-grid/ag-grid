@@ -233,7 +233,8 @@ export class GridCoreCreator {
         } else {
             mergedGridOps = providedOptions;
         }
-        const gridOptions = normaliseGridOptions(getCoercedGridOptions(mergedGridOps));
+        const gridOptions = getCoercedGridOptions(mergedGridOps);
+        normaliseGridOptions(gridOptions);
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 

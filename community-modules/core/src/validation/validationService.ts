@@ -28,8 +28,8 @@ export class ValidationService extends BeanStub implements NamedBean {
         this.processGridOptions(this.gridOptions);
     }
 
-    public processGridOptions(options: GridOptions): void {
-        this.processOptions(options, GRID_OPTIONS_VALIDATORS());
+    public processGridOptions(options: GridOptions, ignore = new Set()): void {
+        this.processOptions(options, GRID_OPTIONS_VALIDATORS(), ignore);
     }
 
     public processColumnDefs(options: ColDef | ColGroupDef): void {
@@ -43,7 +43,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         return validateApiFunction(functionName, apiFunction, this.beans);
     }
 
-    private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
+    private processOptions<T extends object>(options: T, validator: OptionsValidator<T>, ignore = new Set()): void {
         const { validations, deprecations, allProperties, propertyExceptions, objectName, docsUrl } = validator;
 
         if (allProperties && this.gridOptions.suppressPropertyNamesCheck !== true) {
@@ -58,7 +58,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
         const warnings = new Set<string>();
 
-        const optionKeys = Object.keys(options) as (keyof T)[];
+        const optionKeys = Object.keys(options).filter((k) => !ignore.has(k)) as (keyof T)[];
         optionKeys.forEach((key: keyof T) => {
             const deprecation = deprecations[key];
             if (deprecation) {

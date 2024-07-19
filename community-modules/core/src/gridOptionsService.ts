@@ -227,6 +227,10 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
+
+        // map new selection API back onto old grid options for updates.
+        const modified = normaliseGridOptions(options);
+
         Object.entries(options).forEach(([key, value]) => {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
                 _warnOnce(`${key} is an initial property and cannot be updated.`);
@@ -248,7 +252,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             }
         });
 
-        this.validationService?.processGridOptions(this.gridOptions);
+        this.validationService?.processGridOptions(this.gridOptions, modified);
 
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);
@@ -623,69 +627,116 @@ export class GridOptionsService extends BeanStub implements NamedBean {
  *
  * This is part of the migration path from the old API to the new API.
  */
-export function normaliseGridOptions(go: GridOptions): GridOptions {
+export function normaliseGridOptions(go: GridOptions): Set<string> {
     // If selection options are defined, map those values back onto the existing grid options
     const selectionOpts = go.selectionOptions;
-    if (selectionOpts) {
-        if (selectionOpts.mode === 'cell') {
-            go.suppressMultiRangeSelection = selectionOpts.suppressMultiRangeSelection ?? false;
-            go.enableRangeHandle = selectionOpts.enableRangeHandle ?? false;
-            go.enableFillHandle = selectionOpts.fillHandleOptions !== undefined;
-            go.suppressClearOnFillReduction = selectionOpts.fillHandleOptions?.suppressClearOnFillReduction ?? false;
-            go.fillHandleDirection = selectionOpts.fillHandleOptions?.direction ?? 'xy';
+
+    const modified = new Set<string>();
+
+    if (selectionOpts?.mode === 'cell') {
+        if (go.suppressMultiRangeSelection !== selectionOpts.suppressMultiRangeSelection) {
+            go.suppressMultiRangeSelection = selectionOpts.suppressMultiRangeSelection;
+            modified.add('suppressMultiRangeSelection');
+        }
+        if (go.enableRangeHandle !== selectionOpts.enableRangeHandle) {
+            go.enableRangeHandle = selectionOpts.enableRangeHandle;
+            modified.add('enableRangeHandle');
+        }
+        if (go.enableFillHandle !== !!selectionOpts.fillHandleOptions) {
+            go.enableFillHandle = !!selectionOpts.fillHandleOptions;
+            modified.add('enableFillHandle');
+        }
+        if (go.suppressClearOnFillReduction !== selectionOpts.fillHandleOptions?.suppressClearOnFillReduction) {
+            go.suppressClearOnFillReduction = selectionOpts.fillHandleOptions?.suppressClearOnFillReduction;
+            modified.add('suppressClearOnFillReduction');
+        }
+        if (go.fillHandleDirection !== selectionOpts.fillHandleOptions?.direction) {
+            go.fillHandleDirection = selectionOpts.fillHandleOptions?.direction;
+            modified.add('fillHandleDirection');
+        }
+        if (go.fillOperation !== selectionOpts.fillHandleOptions?.setFillValue) {
             go.fillOperation = selectionOpts.fillHandleOptions?.setFillValue;
-        } else if (selectionOpts.mode === 'row') {
-            go.suppressRowClickSelection = selectionOpts.suppressRowClickSelection ?? false;
-            go.suppressRowDeselection = selectionOpts.suppressRowDeselection ?? false;
-            go.rowMultiSelectWithClick = selectionOpts.enableMultiSelectWithClick ?? false;
+            modified.add('fillOperation');
+        }
+    } else if (selectionOpts?.mode === 'row') {
+        if (go.suppressRowClickSelection !== selectionOpts.suppressRowClickSelection) {
+            go.suppressRowClickSelection = selectionOpts.suppressRowClickSelection;
+            modified.add('suppressRowClickSelection');
+        }
+        if (go.suppressRowDeselection !== selectionOpts.suppressRowDeselection) {
+            go.suppressRowDeselection = selectionOpts.suppressRowDeselection;
+            modified.add('suppressRowDeselection');
+        }
+        if (go.rowMultiSelectWithClick !== selectionOpts.enableMultiSelectWithClick) {
+            go.rowMultiSelectWithClick = selectionOpts.enableMultiSelectWithClick;
+            modified.add('rowMultiSelectWithClick');
+        }
+        if (go.isRowSelectable !== selectionOpts.isRowSelectable) {
             go.isRowSelectable = selectionOpts.isRowSelectable;
+            modified.add('isRowSelectable');
+        }
 
-            if (selectionOpts.suppressMultipleRowSelection) {
-                go.rowSelection = 'single';
-            } else {
-                go.rowSelection = 'multiple';
-            }
+        if (selectionOpts.suppressMultipleRowSelection) {
+            go.rowSelection = 'single';
+        } else {
+            go.rowSelection = 'multiple';
+        }
+        modified.add('rowSelection');
 
-            switch (selectionOpts.groupSelection) {
-                case 'allChildren':
-                    go.groupSelectsChildren = true;
-                    break;
-                case 'filteredChildren':
-                    go.groupSelectsChildren = true;
-                    go.groupSelectsFiltered = true;
-                    break;
-                default:
-                    break;
-            }
+        switch (selectionOpts.groupSelection) {
+            case 'allChildren':
+                go.groupSelectsChildren = true;
+                delete go.groupSelectsFiltered;
+                modified.add('groupSelectsChildren');
+                break;
+            case 'filteredChildren':
+                go.groupSelectsChildren = true;
+                go.groupSelectsFiltered = true;
+                modified.add('groupSelectsChildren');
+                modified.add('groupSelectsFiltered');
+                break;
+            case 'none':
+                delete go.groupSelectsChildren;
+                delete go.groupSelectsFiltered;
+                break;
+            default:
+                break;
+        }
 
-            if (selectionOpts.checkboxSelection) {
-                const colDefs = go.columnDefs;
-                if (colDefs && colDefs.length > 0) {
-                    // Only set checkbox selection properties on the first column
-                    if (!('children' in colDefs[0])) {
+        if (selectionOpts.checkboxSelection) {
+            const colDefs = go.columnDefs;
+            if (colDefs && colDefs.length > 0) {
+                // Only set checkbox selection properties on the first column
+                if (!('children' in colDefs[0])) {
+                    if (colDefs[0].checkboxSelection !== selectionOpts.checkboxSelection.enabled) {
                         colDefs[0].checkboxSelection = selectionOpts.checkboxSelection.enabled;
-                        colDefs[0].showDisabledCheckboxes =
-                            selectionOpts.checkboxSelection.showDisabledCheckboxes ?? false;
+                    }
+                    if (colDefs[0].showDisabledCheckboxes !== selectionOpts.checkboxSelection.showDisabledCheckboxes) {
+                        colDefs[0].showDisabledCheckboxes = selectionOpts.checkboxSelection.showDisabledCheckboxes;
                     }
                 }
             }
+        }
 
-            const colDefs = go.columnDefs;
-            if (colDefs && colDefs.length > 0) {
-                // Only set header checkbox selection properties on the first column
-                if (!('children' in colDefs[0])) {
-                    colDefs[0].headerCheckboxSelection = selectionOpts.enableHeaderCheckbox ?? false;
-                    colDefs[0].headerCheckboxSelectionCurrentPageOnly =
-                        selectionOpts.selectAllOptions?.currentPageOnly ?? false;
-                    colDefs[0].headerCheckboxSelectionFilteredOnly =
-                        selectionOpts.selectAllOptions?.filteredOnly ?? false;
+        const colDefs = go.columnDefs;
+        if (colDefs && colDefs.length > 0) {
+            // Only set header checkbox selection properties on the first column
+            if (!('children' in colDefs[0])) {
+                if (colDefs[0].headerCheckboxSelection !== selectionOpts.enableHeaderCheckbox) {
+                    colDefs[0].headerCheckboxSelection = selectionOpts.enableHeaderCheckbox;
+                }
+                if (
+                    colDefs[0].headerCheckboxSelectionCurrentPageOnly !==
+                    selectionOpts.selectAllOptions?.currentPageOnly
+                ) {
+                    colDefs[0].headerCheckboxSelectionCurrentPageOnly = selectionOpts.selectAllOptions?.currentPageOnly;
+                }
+                if (colDefs[0].headerCheckboxSelectionFilteredOnly !== selectionOpts.selectAllOptions?.filteredOnly) {
+                    colDefs[0].headerCheckboxSelectionFilteredOnly = selectionOpts.selectAllOptions?.filteredOnly;
                 }
             }
-        } else {
-            _errorOnce('Unrecognised selection mode', selectionOpts);
-            return go;
         }
     }
 
-    return go;
+    return modified;
 }
