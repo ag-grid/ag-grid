@@ -6,12 +6,16 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import type { ComponentSelector } from '../../../widgets/component';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
+function makeSpan(dataRef: string, className: string) {
+    return /* html */ `<span data-ref="${dataRef}" class="ag-sort-indicator-icon ${className} ag-hidden" aria-hidden="true"></span>`;
+}
+
 const SortIndicatorTemplate = /* html */ `<span class="ag-sort-indicator-container">
-        <span data-ref="eSortOrder" class="ag-sort-indicator-icon ag-sort-order ag-hidden" aria-hidden="true"></span>
-        <span data-ref="eSortAsc" class="ag-sort-indicator-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"></span>
-        <span data-ref="eSortDesc" class="ag-sort-indicator-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"></span>
-        <span data-ref="eSortMixed" class="ag-sort-indicator-icon ag-sort-mixed-icon ag-hidden" aria-hidden="true"></span>
-        <span data-ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
+        ${makeSpan('eSortOrder', 'ag-sort-order')}
+        ${makeSpan('eSortAsc', 'ag-sort-ascending-icon')}
+        ${makeSpan('eSortDesc', 'ag-sort-descending-icon')}
+        ${makeSpan('eSortMixed', 'ag-sort-mixed-icon')}
+        ${makeSpan('eSortNone', 'ag-sort-none-icon')}
     </span>`;
 export class SortIndicatorComp extends Component {
     private sortController: SortController;
@@ -65,13 +69,15 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortDescending', this.eSortDesc, column);
         this.addInIcon('sortUnSort', this.eSortNone, column);
 
-        this.addManagedPropertyListener('unSortIcon', () => this.updateIcons());
+        const updateIcons = this.updateIcons.bind(this);
+        const sortUpdated = this.onSortChanged.bind(this);
+        this.addManagedPropertyListener('unSortIcon', updateIcons);
         this.addManagedEventListeners({
-            newColumnsLoaded: this.updateIcons.bind(this),
+            newColumnsLoaded: updateIcons,
             // Watch global events, as row group columns can effect their display column.
-            sortChanged: this.onSortChanged.bind(this),
+            sortChanged: sortUpdated,
             // when grouping changes so can sort indexes and icons
-            columnRowGroupChanged: this.onSortChanged.bind(this),
+            columnRowGroupChanged: sortUpdated,
         });
 
         this.onSortChanged();

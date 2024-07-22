@@ -614,23 +614,23 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public validateColDef(colDef: ColDef): void {
+        const warning = (property: 'Formatter' | 'Parser') =>
+            _warnOnce(
+                `Cell data type is "object" but no value ${property} has been provided. Please either provide an object data type definition with a value ${property}, or set "colDef.value${property}"`
+            );
         if (colDef.cellDataType === 'object') {
             if (
                 colDef.valueFormatter === this.dataTypeDefinitions.object.groupSafeValueFormatter &&
                 !this.hasObjectValueFormatter
             ) {
-                _warnOnce(
-                    'Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"'
-                );
+                warning('Formatter');
             }
             if (
                 colDef.editable &&
                 colDef.valueParser === this.dataTypeDefinitions.object.valueParser &&
                 !this.hasObjectValueParser
             ) {
-                _warnOnce(
-                    'Cell data type is "object" but no value parser has been provided. Please either provide an object data type definition with a value parser, or set "colDef.valueParser"'
-                );
+                warning('Parser');
             }
         }
     }
