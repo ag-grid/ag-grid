@@ -1,15 +1,20 @@
 /**
  * Hero Grid demo
  */
-// NOTE: Only typescript types should be imported from the AG Grid packages
-// to prevent AG Grid from loading the code twice
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type { GetRowIdParams, GridApi, GridOptions, GridSizeChangedEvent, ISetFilter } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { createGenerator } from '@utils/grid/generator-utils';
-
-import type { GetRowIdParams, GridApi, GridOptions, GridSizeChangedEvent, ISetFilter } from 'ag-grid-community';
 
 import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
 import { columnDefs, generateStockUpdate, generateStocks } from './data';
 import { fixtureData } from './rowDataFixture';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, SparklinesModule, SetFilterModule]);
 
 let api: GridApi;
 const rowData = generateStocks();
@@ -89,7 +94,7 @@ export function initGrid({
     useStaticData?: boolean;
 }) {
     const init = () => {
-        const gridDiv = document.querySelector(selector);
+        const gridDiv = document.querySelector(selector) as HTMLElement;
         if (!gridDiv) {
             return;
         }
@@ -105,13 +110,13 @@ export function initGrid({
 
             generator.start();
         };
-        api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
+        api = createGrid(gridDiv, gridOptions);
 
         gridDiv.classList.add('loaded');
     };
 
     const loadGrid = function () {
-        if (document.querySelector(selector) && globalThis.agGrid) {
+        if (document.querySelector(selector)) {
             init();
         } else {
             requestAnimationFrame(() => loadGrid());

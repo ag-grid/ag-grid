@@ -195,7 +195,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     cellDataType?: boolean | string;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
-    /** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    /** A function or expression to format a value, should return a string. */
     valueFormatter?: string | ValueFormatterFunc<TData, TValue>;
     /** Provided a reference data map to be used to map column values to their respective value from the map. */
     refData?: { [key: string]: string };

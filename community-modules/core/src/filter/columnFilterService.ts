@@ -87,7 +87,7 @@ export class ColumnFilterService extends BeanStub {
         }
 
         const allPromises: AgPromise<void>[] = [];
-        const previousModel = this.getFilterModel();
+        const previousModel = this.getFilterModel(true);
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
@@ -130,7 +130,7 @@ export class ColumnFilterService extends BeanStub {
         }
 
         AgPromise.all(allPromises).then(() => {
-            const currentModel = this.getFilterModel();
+            const currentModel = this.getFilterModel(true);
 
             const columns: AgColumn[] = [];
             this.allColumnFilters.forEach((filterWrapper, colId) => {
@@ -161,16 +161,30 @@ export class ColumnFilterService extends BeanStub {
         });
     }
 
-    public getFilterModel(): FilterModel {
+    public getFilterModel(excludeInitialState?: boolean): FilterModel {
         const result: FilterModel = {};
 
-        this.allColumnFilters.forEach((filterWrapper, key) => {
+        const { allColumnFilters, initialFilterModel } = this;
+
+        allColumnFilters.forEach((filterWrapper, key) => {
             const model = this.getModelFromFilterWrapper(filterWrapper);
 
             if (_exists(model)) {
                 result[key] = model;
             }
         });
+
+        if (!excludeInitialState) {
+            Object.entries(initialFilterModel).forEach(([colId, model]) => {
+                if (
+                    _exists(model) &&
+                    !allColumnFilters.has(colId) &&
+                    this.columnModel.getCol(colId)?.isFilterAllowed()
+                ) {
+                    result[colId] = model;
+                }
+            });
+        }
 
         return result;
     }
@@ -553,7 +567,11 @@ export class ColumnFilterService extends BeanStub {
             this.disposeColumnListener(colId);
         });
 
-        if (columns.length > 0) {
+        const allFiltersAreGroupFilters = columns.every(
+            (column) => column.getColDef().filter === 'agGroupColumnFilter'
+        );
+        // don't call `onFilterChanged` if only group column filter is present as it has no model
+        if (columns.length > 0 && !allFiltersAreGroupFilters) {
             // When a filter changes as a side effect of a column changes,
             // we report 'api' as the source, so that the client can distinguish
             this.filterManager?.onFilterChanged({ columns, source: 'api' });

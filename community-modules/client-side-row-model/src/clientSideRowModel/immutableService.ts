@@ -87,8 +87,8 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
             // if update, push to 'update'
             // if not changed, do not include in the transaction
             rowData.forEach((data: any, index: number) => {
-                const id: string = getRowIdFunc({ data, level: 0 });
-                const existingNode: RowNode | undefined = existingNodesMap[id];
+                const id = getRowIdFunc({ data, level: 0 });
+                const existingNode = existingNodesMap[id];
 
                 if (orderMap) {
                     orderMap[id] = index;
@@ -110,7 +110,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
         }
 
         // at this point, all rows that are left, should be removed
-        _iterateObject(existingNodesMap, (id: string, rowNode: RowNode) => {
+        _iterateObject(existingNodesMap, (id, rowNode) => {
             if (rowNode) {
                 transaction.remove!.push(rowNode.data);
             }

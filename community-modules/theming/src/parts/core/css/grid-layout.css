@@ -74,14 +74,10 @@
     --ag-internal-content-line-height: min(calc(var(--ag-row-height) - 1px), var(--ag-line-height, 1000px));
 }
 
-.ag-sticky-bottom::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
+.ag-sticky-bottom {
     border-top: var(--ag-row-border);
+    box-sizing: content-box !important;
+    display: none;
 }
 
 .ag-group-expanded,

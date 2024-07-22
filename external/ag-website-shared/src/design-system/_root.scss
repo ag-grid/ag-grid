@@ -9,14 +9,6 @@
     --layout-site-header-height: 64px;
     --layout-scroll-offset: 80px;
 
-    body[data-scroll-locked] {
-        margin-right: 0px !important; // fixes scroll on select menu in framework selector
-    }
-
-    @media screen and (min-width: $breakpoint-horizontal-margins-large) {
-        --layout-horizontal-margins: #{$spacing-size-5};
-    }
-
     --layout-width-1-4: calc((100% - var(--layout-gap) * (4 / 1 - 1)) / 4 * 1);
     --layout-width-2-4: calc((100% - var(--layout-gap) * (4 / 2 - 1)) / 4 * 2);
     --layout-width-3-4: calc((100% - var(--layout-gap) * (4 / 3 - 1)) / 4 * 3);
@@ -271,6 +263,14 @@
 
     // TODO: Find a way to use base url here. Moved to Layout for now
     // --dark-icon: url(urlWithBaseUrl('/images/moon.svg'));
+
+    body[data-scroll-locked] {
+        margin-right: 0px !important; // fixes scroll on select menu in framework selector
+    }
+
+    @media screen and (min-width: $breakpoint-horizontal-margins-large) {
+        --layout-horizontal-margins: #{$spacing-size-5};
+    }
 }
 
 html[data-dark-mode='true'] {
