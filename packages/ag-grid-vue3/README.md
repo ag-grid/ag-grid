@@ -463,7 +463,7 @@ AG Grid has a large and active community who have created an [ecosystem of 3rd p
 
 ### Showcase
 
-AG Grid is used by 100,000's of developers across the world, from almost every industry. Whilst most of these projects are private, we've curated a selection of open-source projects from different industries where household names rely on AG Grid, including **J.P.Morgan**, **MongoDB** and **NASA**. Visit our [Community Showcase](https://www.ag-grid.com/community/showcase/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github) page to learn more.
+AG Grid is used by 100,000's of developers across the world, from almost every industry. Whilst most of these projects are private, we've curated a selection of open-source projects from different industries where household names use AG Grid, including **J.P.Morgan**, **MongoDB** and **NASA**. Visit our [Community Showcase](https://www.ag-grid.com/community/showcase/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github) page to learn more.
 
 ### Stargazers
 
