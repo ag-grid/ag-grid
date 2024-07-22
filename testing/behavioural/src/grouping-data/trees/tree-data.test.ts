@@ -3,10 +3,11 @@ import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { getRowsSnapshot } from './row-snapshot-test-utils';
-import type { RowSnapshot } from './row-snapshot-test-utils';
+import { getRowsSnapshot } from '../row-snapshot-test-utils';
+import type { RowSnapshot } from '../row-snapshot-test-utils';
+import { simpleHierarchyRowSnapshot } from './tree-data-snapshots';
 
-describe('ag-grid grouping tree data', () => {
+describe('ag-grid tree data', () => {
     let consoleErrorSpy: jest.SpyInstance;
 
     function createMyGrid(gridOptions: GridOptions) {
@@ -38,7 +39,7 @@ describe('ag-grid grouping tree data', () => {
         consoleErrorSpy?.mockRestore();
     });
 
-    test('tree grouping rows snapshot', async () => {
+    test('ag-grid tree data', async () => {
         const rowData = [
             { orgHierarchy: ['A'] },
             { orgHierarchy: ['A', 'B'] },
@@ -83,7 +84,50 @@ describe('ag-grid grouping tree data', () => {
         expect(rows[6].data).toEqual(undefined);
         expect(rows[7].data).toEqual(rowData[3]);
 
-        const expectedRowsSnapshots: RowSnapshot[] = [
+        expect(rowsSnapshot).toMatchObject(simpleHierarchyRowSnapshot());
+    });
+
+    test('ag-grid tree data with inverted order', async () => {
+        const rowData = [
+            { orgHierarchy: ['A', 'B'] },
+            { orgHierarchy: ['C', 'D', 'E'] },
+            { orgHierarchy: ['A'] },
+            { orgHierarchy: ['C', 'D'] },
+        ];
+
+        const getDataPath = (data: any) => data.orgHierarchy;
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'groupType',
+                    valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
+                },
+            ],
+            autoGroupColumnDef: {
+                headerName: 'Organisation Hierarchy',
+                cellRendererParams: { suppressCount: true },
+            },
+            treeData: true,
+            animateRows: true,
+            groupDefaultExpanded: -1,
+            rowData,
+            getDataPath,
+        };
+
+        const api = createMyGrid(gridOptions);
+
+        const rows = getAllRows(api);
+
+        const rowsSnapshot = getRowsSnapshot(rows);
+
+        expect(rows[0].data).toEqual(rowData[2]);
+        expect(rows[1].data).toEqual(rowData[0]);
+        expect(rows[2].data).toEqual(undefined);
+        expect(rows[3].data).toEqual(rowData[3]);
+        expect(rows[4].data).toEqual(rowData[1]);
+
+        const expectedSnapshot: RowSnapshot[] = [
             {
                 allChildrenCount: 1,
                 allLeafChildren: ['B'],
@@ -93,16 +137,16 @@ describe('ag-grid grouping tree data', () => {
                 childrenAfterSort: ['B'],
                 detail: undefined,
                 displayed: true,
-                expanded: true,
+                expanded: false,
                 firstChild: true,
                 footer: undefined,
                 group: true,
-                groupData: { 'ag-Grid-AutoColumn': 'A' },
-                id: '0',
+                groupData: undefined,
+                id: '2',
                 key: 'A',
                 lastChild: false,
                 leafGroup: undefined,
-                level: 1,
+                level: 0,
                 master: false,
                 parentKey: null,
                 rowGroupIndex: undefined,
@@ -120,13 +164,13 @@ describe('ag-grid grouping tree data', () => {
                 childrenAfterGroup: [],
                 childrenAfterSort: [],
                 detail: undefined,
-                displayed: true,
+                displayed: false,
                 expanded: true,
                 firstChild: true,
                 footer: undefined,
                 group: false,
                 groupData: { 'ag-Grid-AutoColumn': 'B' },
-                id: '1',
+                id: '0',
                 key: 'B',
                 lastChild: true,
                 leafGroup: undefined,
@@ -137,12 +181,12 @@ describe('ag-grid grouping tree data', () => {
                 rowPinned: undefined,
                 selectable: true,
                 siblingKey: undefined,
-                uiLevel: 1,
-                rowIndex: 1,
+                uiLevel: undefined,
+                rowIndex: null,
             },
             {
-                allChildrenCount: 1,
-                allLeafChildren: ['D'],
+                allChildrenCount: 2,
+                allLeafChildren: ['E', 'D'],
                 childIndex: 1,
                 childrenAfterFilter: ['D'],
                 childrenAfterGroup: ['D'],
@@ -156,7 +200,7 @@ describe('ag-grid grouping tree data', () => {
                 groupData: { 'ag-Grid-AutoColumn': 'C' },
                 id: 'row-group-0-C',
                 key: 'C',
-                lastChild: false,
+                lastChild: true,
                 leafGroup: false,
                 level: 0,
                 master: undefined,
@@ -166,6 +210,34 @@ describe('ag-grid grouping tree data', () => {
                 selectable: true,
                 siblingKey: undefined,
                 uiLevel: 0,
+                rowIndex: 1,
+            },
+            {
+                allChildrenCount: 1,
+                allLeafChildren: ['E'],
+                childIndex: 0,
+                childrenAfterFilter: ['E'],
+                childrenAfterGroup: ['E'],
+                childrenAfterSort: ['E'],
+                detail: undefined,
+                displayed: true,
+                expanded: false,
+                firstChild: true,
+                footer: undefined,
+                group: true,
+                groupData: undefined,
+                id: '3',
+                key: 'D',
+                lastChild: true,
+                leafGroup: undefined,
+                level: 0,
+                master: false,
+                parentKey: 'C',
+                rowGroupIndex: undefined,
+                rowPinned: undefined,
+                selectable: true,
+                siblingKey: undefined,
+                uiLevel: 1,
                 rowIndex: 2,
             },
             {
@@ -176,140 +248,28 @@ describe('ag-grid grouping tree data', () => {
                 childrenAfterGroup: [],
                 childrenAfterSort: [],
                 detail: undefined,
-                displayed: true,
+                displayed: false,
                 expanded: true,
                 firstChild: true,
                 footer: undefined,
                 group: false,
-                groupData: { 'ag-Grid-AutoColumn': 'D' },
-                id: '2',
-                key: 'D',
-                lastChild: true,
-                leafGroup: undefined,
-                level: 2,
-                master: false,
-                parentKey: 'C',
-                rowGroupIndex: undefined,
-                rowPinned: undefined,
-                selectable: true,
-                siblingKey: undefined,
-                uiLevel: 1,
-                rowIndex: 3,
-            },
-            {
-                allChildrenCount: 3,
-                allLeafChildren: ['H'],
-                childIndex: 2,
-                childrenAfterFilter: ['F'],
-                childrenAfterGroup: ['F'],
-                childrenAfterSort: ['F'],
-                detail: undefined,
-                displayed: true,
-                expanded: true,
-                firstChild: false,
-                footer: undefined,
-                group: true,
                 groupData: { 'ag-Grid-AutoColumn': 'E' },
-                id: 'row-group-0-E',
+                id: '1',
                 key: 'E',
                 lastChild: true,
-                leafGroup: false,
-                level: 0,
-                master: undefined,
-                parentKey: null,
-                rowGroupIndex: null,
-                rowPinned: undefined,
-                selectable: true,
-                siblingKey: undefined,
-                uiLevel: 0,
-                rowIndex: 4,
-            },
-            {
-                allChildrenCount: 2,
-                allLeafChildren: ['H'],
-                childIndex: 0,
-                childrenAfterFilter: ['G'],
-                childrenAfterGroup: ['G'],
-                childrenAfterSort: ['G'],
-                detail: undefined,
-                displayed: true,
-                expanded: true,
-                firstChild: true,
-                footer: undefined,
-                group: true,
-                groupData: { 'ag-Grid-AutoColumn': 'F' },
-                id: 'row-group-0-E-1-F',
-                key: 'F',
-                lastChild: true,
-                leafGroup: false,
-                level: 1,
-                master: undefined,
-                parentKey: 'E',
-                rowGroupIndex: null,
-                rowPinned: undefined,
-                selectable: true,
-                siblingKey: undefined,
-                uiLevel: 1,
-                rowIndex: 5,
-            },
-            {
-                allChildrenCount: 1,
-                allLeafChildren: ['H'],
-                childIndex: 0,
-                childrenAfterFilter: ['H'],
-                childrenAfterGroup: ['H'],
-                childrenAfterSort: ['H'],
-                detail: undefined,
-                displayed: true,
-                expanded: true,
-                firstChild: true,
-                footer: undefined,
-                group: true,
-                groupData: { 'ag-Grid-AutoColumn': 'G' },
-                id: 'row-group-0-E-1-F-2-G',
-                key: 'G',
-                lastChild: true,
-                leafGroup: false,
-                level: 2,
-                master: undefined,
-                parentKey: 'F',
-                rowGroupIndex: null,
-                rowPinned: undefined,
-                selectable: true,
-                siblingKey: undefined,
-                uiLevel: 2,
-                rowIndex: 6,
-            },
-            {
-                allChildrenCount: null,
-                allLeafChildren: [],
-                childIndex: 0,
-                childrenAfterFilter: [],
-                childrenAfterGroup: [],
-                childrenAfterSort: [],
-                detail: undefined,
-                displayed: true,
-                expanded: true,
-                firstChild: true,
-                footer: undefined,
-                group: false,
-                groupData: { 'ag-Grid-AutoColumn': 'H' },
-                id: '3',
-                key: 'H',
-                lastChild: true,
                 leafGroup: undefined,
-                level: 4,
+                level: 3,
                 master: false,
-                parentKey: 'G',
+                parentKey: 'D',
                 rowGroupIndex: undefined,
                 rowPinned: undefined,
                 selectable: true,
                 siblingKey: undefined,
-                uiLevel: 3,
-                rowIndex: 7,
+                uiLevel: undefined,
+                rowIndex: null,
             },
         ];
 
-        expect(rowsSnapshot).toMatchObject(expectedRowsSnapshots);
+        expect(rowsSnapshot).toMatchObject(expectedSnapshot);
     });
 });

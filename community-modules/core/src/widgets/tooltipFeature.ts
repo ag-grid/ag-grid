@@ -110,19 +110,19 @@ export class TooltipFeature extends BeanStub {
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const ctrl = this.ctrl;
-        const column = ctrl.getColumn ? ctrl.getColumn() : undefined;
-        const colDef = ctrl.getColDef ? ctrl.getColDef() : undefined;
-        const rowNode = ctrl.getRowNode ? ctrl.getRowNode() : undefined;
+        const column = ctrl.getColumn?.();
+        const colDef = ctrl.getColDef?.();
+        const rowNode = ctrl.getRowNode?.();
 
         return {
             location: ctrl.getLocation(), //'cell',
             colDef: colDef,
             column: column,
-            rowIndex: ctrl.getRowIndex ? ctrl.getRowIndex() : undefined,
+            rowIndex: ctrl.getRowIndex?.(),
             node: rowNode,
-            data: rowNode ? rowNode.data : undefined,
+            data: rowNode?.data,
             value: this.getTooltipText(),
-            valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
+            valueFormatted: ctrl.getValueFormatted?.(),
             hideTooltipCallback: () => this.tooltipManager?.hideTooltip(true),
         };
     }

@@ -176,16 +176,17 @@ export class StateService extends BeanStub implements NamedBean {
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
 
+        const onUpdate = (state: keyof GridState) => () => this.updateColumnState([state]);
         this.addManagedEventListeners({
-            columnValueChanged: () => this.updateColumnState(['aggregation']),
-            columnMoved: () => this.updateColumnState(['columnOrder']),
-            columnPinned: () => this.updateColumnState(['columnPinning']),
-            columnResized: () => this.updateColumnState(['columnSizing']),
-            columnVisible: () => this.updateColumnState(['columnVisibility']),
-            columnPivotChanged: () => this.updateColumnState(['pivot']),
-            columnPivotModeChanged: () => this.updateColumnState(['pivot']),
-            columnRowGroupChanged: () => this.updateColumnState(['rowGroup']),
-            sortChanged: () => this.updateColumnState(['sort']),
+            columnValueChanged: onUpdate('aggregation'),
+            columnMoved: onUpdate('columnOrder'),
+            columnPinned: onUpdate('columnPinning'),
+            columnResized: onUpdate('columnSizing'),
+            columnVisible: onUpdate('columnVisibility'),
+            columnPivotChanged: onUpdate('pivot'),
+            columnPivotModeChanged: onUpdate('pivot'),
+            columnRowGroupChanged: onUpdate('rowGroup'),
+            sortChanged: onUpdate('sort'),
             newColumnsLoaded: () =>
                 this.updateColumnState([
                     'aggregation',
@@ -227,10 +228,22 @@ export class StateService extends BeanStub implements NamedBean {
         this.updateCachedState('rowSelection', this.getRowSelectionState());
         this.updateCachedState('pagination', this.getPaginationState());
 
+        const updateRowGroupExpansionState = () =>
+            this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
         this.addManagedEventListeners({
             filterChanged: () => this.updateCachedState('filter', this.getFilterState()),
             rowGroupOpened: () => this.onRowGroupOpenedDebounced(),
-            expandOrCollapseAll: () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()),
+            expandOrCollapseAll: updateRowGroupExpansionState,
+            // `groupDefaultExpanded` updates expansion state without an expansion event
+            columnRowGroupChanged: updateRowGroupExpansionState,
+            rowDataUpdated: () => {
+                if (this.gos.get('groupDefaultExpanded') !== 0) {
+                    setTimeout(() => {
+                        // once rows are loaded, they may be expanded
+                        updateRowGroupExpansionState();
+                    });
+                }
+            },
             selectionChanged: () => {
                 this.staleStateKeys.add('rowSelection');
                 this.onRowSelectedDebounced();

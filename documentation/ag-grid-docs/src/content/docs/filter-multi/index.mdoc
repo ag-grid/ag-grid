@@ -101,16 +101,12 @@ The `filterType` will always be set to `'multi'`. The models array is the same l
 
 For example, if the Multi Filter has the default Text Filter and Set Filter, and the Set Filter is active, the Multi Filter model might look something like this:
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        {
-            filterType: 'multi',
-            filterModels: [
-                null,
-                { filterType: 'set', values: ['A', 'B', 'C'] }
-            ]
-        }
+```{% frameworkTransform=false %}
+const filterModel = {
+    filterType: 'multi',
+    filterModels: [
+        null,
+        { filterType: 'set', values: ['A', 'B', 'C'] }
     ]
 }
 ```
