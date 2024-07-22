@@ -6,19 +6,19 @@ import { _getAbsoluteHeight, _getAbsoluteWidth, _isVisible, _setFixedHeight, _se
 import type { PopupService } from '../../widgets/popupService';
 
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
-const makeDiv = (dataRef: string, className: string) =>
-    `<div data-ref="${dataRef}" class="ag-resizer ${className}"></div>`;
+const makeDiv = (dataRefPrefix: string, classSuffix: string) =>
+    `<div data-ref="${dataRefPrefix}Resizer" class="ag-resizer ag-resizer-${classSuffix}"></div>`;
 const RESIZE_TEMPLATE =
     /* html */
     `<div class="${RESIZE_CONTAINER_STYLE}">
-        ${makeDiv('eTopLeftResizer', 'ag-resizer-topLeft')}
-        ${makeDiv('eTopResizer', 'ag-resizer-top')}
-        ${makeDiv('eTopRightResizer', 'ag-resizer-topRight')}
-        ${makeDiv('eRightResizer', 'ag-resizer-right')}
-        ${makeDiv('eBottomRightResizer', 'ag-resizer-bottomRight')}
-        ${makeDiv('eBottomResizer', 'ag-resizer-bottom')}
-        ${makeDiv('eBottomLeftResizer', 'ag-resizer-bottomLeft')}
-        ${makeDiv('eLeftResizer', 'ag-resizer-left')}
+        ${makeDiv('eTopLeft', 'topLeft')}
+        ${makeDiv('eTop', 'top')}
+        ${makeDiv('eTopRight', 'topRight')}
+        ${makeDiv('eRight', 'right')}
+        ${makeDiv('eBottomRight', 'bottomRight')}
+        ${makeDiv('eBottom', 'bottom')}
+        ${makeDiv('eBottomLeft', 'bottomLeft')}
+        ${makeDiv('eLeft', 'left')}
     </div>`;
 
 export interface PositionableOptions {

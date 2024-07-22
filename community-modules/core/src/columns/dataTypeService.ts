@@ -616,7 +616,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     public validateColDef(colDef: ColDef): void {
         const warning = (property: 'Formatter' | 'Parser') =>
             _warnOnce(
-                `Cell data type is "object" but no value ${property} has been provided. Please either provide an object data type definition with a value ${property}, or set "colDef.value${property}"`
+                `Cell data type is "object" but no Value ${property} has been provided. Please either provide an object data type definition with a Value ${property}, or set "colDef.value${property}"`
             );
         if (colDef.cellDataType === 'object') {
             if (

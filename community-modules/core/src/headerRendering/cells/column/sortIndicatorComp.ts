@@ -6,16 +6,16 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import type { ComponentSelector } from '../../../widgets/component';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
-function makeSpan(dataRef: string, className: string) {
-    return /* html */ `<span data-ref="${dataRef}" class="ag-sort-indicator-icon ${className} ag-hidden" aria-hidden="true"></span>`;
+function makeSpan(dataRefSuffix: string, classSuffix: string) {
+    return /* html */ `<span data-ref="eSort${dataRefSuffix}" class="ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden" aria-hidden="true"></span>`;
 }
 
 const SortIndicatorTemplate = /* html */ `<span class="ag-sort-indicator-container">
-        ${makeSpan('eSortOrder', 'ag-sort-order')}
-        ${makeSpan('eSortAsc', 'ag-sort-ascending-icon')}
-        ${makeSpan('eSortDesc', 'ag-sort-descending-icon')}
-        ${makeSpan('eSortMixed', 'ag-sort-mixed-icon')}
-        ${makeSpan('eSortNone', 'ag-sort-none-icon')}
+        ${makeSpan('Order', 'order')}
+        ${makeSpan('Asc', 'ascending-icon')}
+        ${makeSpan('Desc', 'descending-icon')}
+        ${makeSpan('Mixed', 'mixed-icon')}
+        ${makeSpan('None', 'none-icon')}
     </span>`;
 export class SortIndicatorComp extends Component {
     private sortController: SortController;
