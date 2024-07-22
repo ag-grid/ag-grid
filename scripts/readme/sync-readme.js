@@ -1,12 +1,5 @@
 // Framework Code Snippets
-const {
-    financialChartsAngular,
-    financialChartsReact,
-    financialChartsVue3,
-    quickStartReact,
-    quickStartAngular,
-    quickStartVue3,
-} = require('./readme-framework-content');
+const { quickStartReact, quickStartAngular, quickStartVue3 } = require('./readme-framework-content');
 
 // README Files
 const patterns = [
