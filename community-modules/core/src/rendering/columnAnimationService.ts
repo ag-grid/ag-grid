@@ -19,7 +19,7 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
     private executeLaterFuncs: ((...args: any[]) => any)[] = [];
 
     private active = false;
-    // this.activeNext starts with this.active but it is reset earlier after the nextFuncs are cleared
+    // activeNext starts with active but it is reset earlier after the nextFuncs are cleared
     // to prevent calls made to executeNextVMTurn from queuing functions after executeNextFuncs has already been flushed,
     private activeNext = false;
     private suppressAnimation = false;
