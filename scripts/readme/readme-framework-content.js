@@ -1,5 +1,5 @@
 const quickStartReact = `
-1. Import the React Data Grid
+**1. Import the React Data Grid**
 
 \`\`\`js
 import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
@@ -7,7 +7,7 @@ import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the 
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 \`\`\`
 
-2. Define Rows and Columns
+**2. Define Rows and Columns**
 
 \`\`\`js
 const GridExample = () => {
@@ -31,7 +31,7 @@ const GridExample = () => {
 }
 \`\`\`
 
-3. React Data Grid Component
+**3. React Data Grid Component**
 
 \`\`\`js
 return (
@@ -50,7 +50,7 @@ return (
 `;
 
 const quickStartAngular = `
-1. Import the Angular Data Grid
+**1. Import the Angular Data Grid**
 
 \`\`\`js
 import { Component } from '@angular/core';
@@ -58,7 +58,7 @@ import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 \`\`\`
 
-2. Define Rows and Columns
+**2. Define Rows and Columns**
 
 \`\`\`js
 @Component({
@@ -87,7 +87,7 @@ colDefs: ColDef[] = [
 }
 \`\`\`
 
-3. Create the Angular Data Grid Component
+**3. Create the Angular Data Grid Component**
 
 \`\`\`js
 template:
@@ -99,7 +99,7 @@ template:
 \`
 \`\`\`
 
-4. Styling the Data Grid
+**4. Styling the Data Grid**
 
 Import the required dependencies into your styles.css file.
 
@@ -122,7 +122,7 @@ style="height: 500px;"
 `;
 
 const quickStartVue3 = `
-1. Import the Vue Data Grid
+**1. Import the Vue Data Grid**
 
 \`\`\`js
 <template></template>
@@ -143,7 +143,7 @@ export default {
 </script>
 \`\`\`
 
-2. Define Rows and Columns
+**2. Define Rows and Columns**
 
 \`\`\`js
 setup() {
@@ -169,7 +169,7 @@ setup() {
 },
 \`\`\`
 
-3. Vue Data Grid Component
+**3. Vue Data Grid Component**
 
 Rows and Columns are set as ag-grid-vue component attributes. Styling is applied through the class and style attributes.
 
