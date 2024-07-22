@@ -1170,7 +1170,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         // we don't copy these properties as they cause the footer node
         // to have properties which should be unique to the row.
-        const ignoredProperties = new Set(['eventService', '__objectId', 'sticky']);
+        const ignoredProperties = new Set(['localEventService', '__objectId', 'sticky']);
         const footerNode = new RowNode(this.beans);
 
         Object.keys(this).forEach((key) => {
