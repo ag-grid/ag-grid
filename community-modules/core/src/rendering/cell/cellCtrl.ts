@@ -911,12 +911,11 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public onSuppressCellFocusChanged(value: boolean): void {
+    public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
         if (!this.eGui) {
             return;
         }
-        const tabIndex = value ? undefined : -1;
-        _addOrRemoveAttribute(this.eGui, 'tabindex', tabIndex);
+        _addOrRemoveAttribute(this.eGui, 'tabindex', suppressCellFocus ? undefined : -1);
     }
 
     public onFirstRightPinnedChanged(): void {
