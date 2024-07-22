@@ -2,9 +2,12 @@ const quickStartReact = `
 **1. Import the React Data Grid**
 
 \`\`\`js
-import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+// Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-grid.css"; 
+// Optional Theme applied to the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; 
+// React Data Grid Component
+import { AgGridReact } from 'ag-grid-react'; 
 \`\`\`
 
 **2. Define Rows and Columns**
@@ -54,8 +57,10 @@ const quickStartAngular = `
 
 \`\`\`js
 import { Component } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
-import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
+// Angular Data Grid Component
+import { AgGridAngular } from 'ag-grid-angular'; 
+// Column Definition Type Interface
+import { ColDef } from 'ag-grid-community'; 
 \`\`\`
 
 **2. Define Rows and Columns**
