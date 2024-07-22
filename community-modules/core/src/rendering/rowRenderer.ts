@@ -256,7 +256,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private onCellFocusChanged(event?: CellFocusedEvent) {
-        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellFocused(event));
+        this.forAllCellCtrls((cellCtrl) => cellCtrl.onCellFocused(event));
         this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onFullWidthRowFocused(event));
     }
 
@@ -270,13 +270,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
             },
             cellFocusCleared: () => this.onCellFocusChanged(),
             flashCells: (event) => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onFlashCells(event));
+                this.forAllCellCtrls((cellCtrl) => cellCtrl.onFlashCells(event));
             },
             columnHoverChanged: () => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onColumnHover());
+                this.forAllCellCtrls((cellCtrl) => cellCtrl.onColumnHover());
             },
             displayedColumnsChanged: () => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onDisplayedColumnsChanged());
+                this.forAllCellCtrls((cellCtrl) => cellCtrl.onDisplayedColumnsChanged());
             },
             displayedColumnsWidthChanged: () => {
                 // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
@@ -285,7 +285,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
                 // in different containers so doesn't impact.
                 if (this.printLayout) {
-                    this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onLeftChanged());
+                    this.forAllCellCtrls((cellCtrl) => cellCtrl.onLeftChanged());
                 }
             },
         });
@@ -304,11 +304,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private setupRangeSelectionListeners = () => {
         const onRangeSelectionChanged = () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRangeSelectionChanged());
+            this.forAllCellCtrls((cellCtrl) => cellCtrl.onRangeSelectionChanged());
         };
 
         const onColumnMovedPinnedVisible = () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.updateRangeBordersIfRangeCount());
+            this.forAllCellCtrls((cellCtrl) => cellCtrl.updateRangeBordersIfRangeCount());
         };
 
         const addRangeSelectionListeners = () => {
@@ -356,7 +356,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         cols.forEach((col) => {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
-                this.getAllCellCtrls().forEach((cellCtrl) => {
+                this.forAllCellCtrls((cellCtrl) => {
                     if (cellCtrl.getColumn() === col) {
                         callback(cellCtrl);
                     }
@@ -746,8 +746,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         });
     }
 
-    public getAllCellCtrls(): CellCtrl[] {
-        const res: CellCtrl[] = [];
+    public forAllCellCtrls(func: (cell: CellCtrl) => void) {
         const rowCtrls = this.getAllRowCtrls();
         const rowCtrlsLength = rowCtrls.length;
 
@@ -756,11 +755,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
             const cellCtrlsLength = cellCtrls.length;
 
             for (let j = 0; j < cellCtrlsLength; j++) {
-                res.push(cellCtrls[j]);
+                func(cellCtrls[j]);
             }
         }
-
-        return res;
     }
 
     private getAllRowCtrls(): RowCtrl[] {
@@ -884,7 +881,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public getEditingCells(): CellPosition[] {
         const res: CellPosition[] = [];
 
-        this.getAllCellCtrls().forEach((cellCtrl) => {
+        this.forAllCellCtrls((cellCtrl) => {
             if (cellCtrl.isEditing()) {
                 const cellPosition = cellCtrl.getCellPosition();
                 res.push(cellPosition);

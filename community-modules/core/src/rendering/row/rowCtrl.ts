@@ -751,10 +751,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private addListenersForCellComps(): void {
         this.addManagedListeners(this.rowNode, {
             rowIndexChanged: () => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
+                this.forEachAllCellCtrls((cellCtrl) => cellCtrl.onRowIndexChanged());
             },
             cellChanged: (event) => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
+                this.forEachAllCellCtrls((cellCtrl) => cellCtrl.onCellChanged(event));
             },
         });
     }
@@ -779,7 +779,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.getAllCellCtrls().forEach((cellCtrl) =>
+        this.forEachAllCellCtrls((cellCtrl) =>
             cellCtrl.refreshCell({
                 suppressFlash: !event.update,
                 newData: !event.update,
@@ -1299,6 +1299,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.rowEditService?.startEditing(this, key, sourceRenderedCell, event);
     }
 
+    public forEachAllCellCtrls(func: (cellCtrl: CellCtrl) => void): void {
+        if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
+            this.centerCellCtrls.list.forEach(func);
+        } else {
+            this.centerCellCtrls.list.forEach(func);
+            this.leftCellCtrls.list.forEach(func);
+            this.rightCellCtrls.list.forEach(func);
+        }
+    }
+
     public getAllCellCtrls(): CellCtrl[] {
         if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
             return this.centerCellCtrls.list;
@@ -1703,7 +1713,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public getCellCtrl(column: AgColumn): CellCtrl | null {
         // first up, check for cell directly linked to this column
         let res: CellCtrl | null = null;
-        this.getAllCellCtrls().forEach((cellCtrl) => {
+        this.forEachAllCellCtrls((cellCtrl) => {
             if (cellCtrl.getColumn() == column) {
                 res = cellCtrl;
             }
@@ -1718,7 +1728,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // more expensive, as spanning cols is a
         // infrequently used feature so we don't need to do this most
         // of the time
-        this.getAllCellCtrls().forEach((cellCtrl) => {
+        this.forEachAllCellCtrls((cellCtrl) => {
             if (cellCtrl.getColSpanningList().indexOf(column) >= 0) {
                 res = cellCtrl;
             }
