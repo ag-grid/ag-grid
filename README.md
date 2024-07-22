@@ -36,7 +36,9 @@
         <img src="https://img.shields.io/librariesio/dependents/npm/ag-grid-community" alt="Dependents (via libraries.io?style=for-the-badge)">
     </a>
     <br><br>
+    <!-- START MAIN DESCRIPTION -->
     <p>AG Grid is a <strong>fully-featured</strong> and <strong>highly customizable</strong> JavaScript Data Grid. It delivers <strong>outstanding performance</strong>, has <strong>no third-party dependencies</strong> and comes with support for <strong><a href="https://github.com/ag-grid/ag-grid/tree/latest/packages/ag-grid-react"><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/react.svg?raw=true" height="16" width="16" alt="React Logo"> React</a></strong>, <strong><a href="https://github.com/ag-grid/ag-grid/tree/latest/packages/ag-grid-angular"><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/angular.svg?raw=true" height="16" width="16" alt="Angular Logo"> Angular</a></strong> and <strong><a href="https://github.com/ag-grid/ag-grid/tree/latest/packages/ag-grid-vue"><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/vue.svg?raw=true" height="16" width="16" alt="Vue Logo"> Vue</a></strong>.</p>
+    <!-- END MAIN DESCRIPTION -->
     <br>
 </div>
 
@@ -78,37 +80,37 @@
 
 AG Grid is available in two versions: Community & Enterprise.
 
--   `ag-grid-community` is free, available under the MIT license, and comes with all of the core features expected from a JavaScript Data Grid, including Sorting, Filtering, Pagination, Editing, Custom Components, Theming and more.
--   `ag-grid-enterprise` is available under a commercial license and comes with advanced features, like Integrated Charting, Row Grouping, Aggregation, Pivoting, Master/Detail, Server-side Row Model, and Exporting in addition to dedicated support from our Engineering team.
+-   `ag-grid-community` is free, available under the MIT license, and comes with all of the core features expected from a JavaScript Data Grid, including [Sorting](https://www.ag-grid.com/javascript-data-grid/row-sorting/#sorting?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Filtering](https://www.ag-grid.com/javascript-data-grid/filtering/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Pagination](https://www.ag-grid.com/javascript-data-grid/row-pagination/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Editing](https://www.ag-grid.com/javascript-data-grid/cell-editing/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Custom Components](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Theming](https://www.ag-grid.com/javascript-data-grid/themes/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) and more.
+-   `ag-grid-enterprise` is available under a commercial license and comes with advanced features, like [Integrated Charting](https://www.ag-grid.com/javascript-data-grid/integrated-charts/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Row Grouping](https://www.ag-grid.com/javascript-data-grid/grouping/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Aggregation](https://www.ag-grid.com/javascript-data-grid/grouping/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Pivoting](https://www.ag-grid.com/javascript-data-grid/pivoting/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Master/Detail](https://www.ag-grid.com/javascript-data-grid/master-detail/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), [Server-side Row Model](https://www.ag-grid.com/javascript-data-grid/server-side-model/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), and [Exporting](https://www.ag-grid.com/javascript-data-grid/excel-export/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) in addition to dedicated support from our Engineering team.
 
 ### Features
 
-| Feature                      | AG Grid Community | AG Grid Enterprise |
-| ---------------------------- | ----------------- | ------------------ |
-| Filtering                    | ✅                | ✅ (Advanced)      |
-| Sorting                      | ✅                | ✅                 |
-| Cell Editing                 | ✅                | ✅                 |
-| CSV Export                   | ✅                | ✅                 |
-| Drag & Drop                  | ✅                | ✅                 |
-| Themes and Styling           | ✅                | ✅                 |
-| Selection                    | ✅                | ✅                 |
-| Accessibility                | ✅                | ✅                 |
-| Infinite Scrolling           | ✅                | ✅                 |
-| Pagination                   | ✅                | ✅                 |
-| Server-Side Data             | ✅                | ✅ (Advanced)      |
-| Custom Components            | ✅                | ✅                 |
-| Integrated Charting          | ❌                | ✅                 |
-| Range Selection              | ❌                | ✅                 |
-| Row Grouping and Aggregation | ❌                | ✅                 |
-| Pivoting                     | ❌                | ✅                 |
-| Excel Export                 | ❌                | ✅                 |
-| Clipboard Operations         | ❌                | ✅                 |
-| Master/Detail                | ❌                | ✅                 |
-| Tree Data                    | ❌                | ✅                 |
-| Column Menu                  | ❌                | ✅                 |
-| Context Menu                 | ❌                | ✅                 |
-| Tool Panels                  | ❌                | ✅                 |
-| Support                      | ❌                | ✅                 |
+| Feature                                                                                                                                                        | AG Grid Community | AG Grid Enterprise |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------------------ |
+| [Filtering](https://www.ag-grid.com/javascript-data-grid/filtering/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                       | ✅                | ✅ (Advanced)      |
+| [Sorting](https://www.ag-grid.com/javascript-data-grid/row-sorting/#sorting?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)               | ✅                | ✅                 |
+| [Cell Editing](https://www.ag-grid.com/javascript-data-grid/cell-editing/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ✅                | ✅                 |
+| [CSV Export](https://www.ag-grid.com/javascript-data-grid/csv-export/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                     | ✅                | ✅                 |
+| [Drag & Drop](https://www.ag-grid.com/javascript-data-grid/drag-and-drop/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ✅                | ✅                 |
+| [Themes and Styling](https://www.ag-grid.com/javascript-data-grid/themes/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ✅                | ✅                 |
+| [Selection](https://www.ag-grid.com/javascript-data-grid/row-selection/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                   | ✅                | ✅                 |
+| [Accessibility](https://www.ag-grid.com/javascript-data-grid/accessibility/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)               | ✅                | ✅                 |
+| [Infinite Scrolling](https://www.ag-grid.com/javascript-data-grid/infinite-scrolling/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)     | ✅                | ✅                 |
+| [Pagination](https://www.ag-grid.com/javascript-data-grid/row-pagination/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ✅                | ✅                 |
+| [Server-Side Data](https://www.ag-grid.com/javascript-data-grid/server-side-model/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)        | ✅                | ✅ (Advanced)      |
+| [Custom Components](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) | ✅                | ✅                 |
+| [Integrated Charting](https://www.ag-grid.com/javascript-data-grid/integrated-charts/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)     | ❌                | ✅                 |
+| [Range Selection](https://www.ag-grid.com/javascript-data-grid/range-selection/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)           | ❌                | ✅                 |
+| [Row Grouping and Aggregation](https://www.ag-grid.com/javascript-data-grid/grouping/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)     | ❌                | ✅                 |
+| [Pivoting](https://www.ag-grid.com/javascript-data-grid/pivoting/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                         | ❌                | ✅                 |
+| [Excel Export](https://www.ag-grid.com/javascript-data-grid/excel-export/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ❌                | ✅                 |
+| [Clipboard Operations](https://www.ag-grid.com/javascript-data-grid/clipboard/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)            | ❌                | ✅                 |
+| [Master/Detail](https://www.ag-grid.com/javascript-data-grid/master-detail/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)               | ❌                | ✅                 |
+| [Tree Data](https://www.ag-grid.com/javascript-data-grid/tree-data/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                       | ❌                | ✅                 |
+| [Column Menu](https://www.ag-grid.com/javascript-data-grid/column-menu/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                   | ❌                | ✅                 |
+| [Context Menu](https://www.ag-grid.com/javascript-data-grid/context-menu/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ❌                | ✅                 |
+| [Tool Panels](https://www.ag-grid.com/javascript-data-grid/tool-panel/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                    | ❌                | ✅                 |
+| [Support](https://ag-grid.zendesk.com/hc/en-us?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                                            | ❌                | ✅                 |
 
 > [!IMPORTANT]
 > Visit the [Pricing](https://www.ag-grid.com/license-pricing/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) page for a full comparison.
@@ -164,22 +166,11 @@ We've created several demos to showcase AG Grid's rich feature set across differ
 
 ## ⚡️ Quick Start
 
-AG Grid is easy to set up - all you need to do is provide your data and define your column structure. Read on for vanilla JavaScript installation instructions, or refer to our framework-specific guides for
-<strong>
-<a href="https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">
-<img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/react.svg?raw=true" height="16" width="16" alt="React Logo"> React
-</a>
-</strong>,
-<strong>
-<a href="https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">
-<img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/angular.svg?raw=true" height="16" width="16" alt="Angular Logo"> Angular
-</a>
-</strong> and
-<strong>
-<a href="https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">
-<img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/vue.svg?raw=true" height="16" width="16" alt="Vue Logo"> Vue.
-</a>
-</strong>
+<!-- START QUICK START DESCRIPTION -->
+
+AG Grid is easy to set up - all you need to do is provide your data and define your column structure. Read on for vanilla JavaScript installation instructions, or refer to our framework-specific guides for<strong><a href="https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github"><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/react.svg?raw=true" height="16" width="16" alt="React Logo"> React</a></strong>,<strong><a href="https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github"><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/angular.svg?raw=true" height="16" width="16" alt="Angular Logo"> Angular</a></strong> and<strong><a href="https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github"><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/vue.svg?raw=true" height="16" width="16" alt="Vue Logo"> Vue.</a></strong>
+
+<!-- END QUICK START DESCRIPTION -->
 
 ### Installation
 
@@ -189,21 +180,39 @@ $ npm install --save ag-grid-community
 
 ### Setup
 
-1. Add a placeholder to HTML
+**1. Provide a Container**
+
+<!-- Create JavaScript -->
+
+Load the AG Grid library and create a blank container div:
 
 ```html
-<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-quartz"></div>
+<html lang="en">
+    <head>
+        <!-- Includes all JS & CSS for the JavaScript Data Grid -->
+        <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    </head>
+    <body>
+        <!-- Your Data Grid container -->
+        <div id="myGrid"></div>
+    </body>
+</html>
 ```
 
-2. Import the grid and styles
+**2. Instantiating the JavaScript Data Grid**
+
+Create the Data Grid inside of your container div using `createGrid`.
 
 ```js
-import { createGrid } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
+// Grid Options: Contains all of the Data Grid configurations
+const gridOptions = {};
+
+// Your Javascript code to create the Data Grid
+const myGridElement = document.querySelector('#myGrid');
+agGrid.createGrid(myGridElement, gridOptions);
 ```
 
-3. Set configuration
+**3. Define Rows and Columns**
 
 ```js
 // Grid Options: Contains all of the Data Grid configurations
@@ -219,11 +228,13 @@ const gridOptions = {
 };
 ```
 
-4. Initialise the grid
+**4. Styling the JavaScript Data Grid**
 
-```js
-const eGridDiv = document.querySelector('#myGrid');
-const api = createGrid(eGridDiv, gridOptions);
+Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the Data Grid's theme.
+
+```html
+<!-- Your Data Grid container -->
+<div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
 ```
 
 > [!IMPORTANT]
