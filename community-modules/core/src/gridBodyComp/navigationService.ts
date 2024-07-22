@@ -401,6 +401,9 @@ export class NavigationService extends BeanStub implements NamedBean {
             // to the normal tabbing so user can exit the grid.
             if (movedToNextCell) {
                 keyboardEvent.preventDefault();
+            } else if (movedToNextCell === null) {
+                // want to let browser handle, however some of the containers prevent browser focus
+                this.focusService.allowFocusForNextGridCoreContainer(backwards);
             }
             return;
         }

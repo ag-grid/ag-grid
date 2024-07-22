@@ -118,6 +118,9 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
                 // because some functions being executed later
                 // check if this service is `active`.
                 callback();
+                // Make sure we clear any next funcs that were added after they were cleared initially
+                // but before we ran the callback to set active to false. Can happen in React.
+                runFuncs(this.executeNextFuncs);
                 runFuncs(this.executeLaterFuncs);
             }, 200);
         });
