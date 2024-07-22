@@ -180,67 +180,54 @@ $ npm install --save ag-grid-react
 
 ### Setup
 
-**1. Provide a Container**
+<!-- START SETUP -->
 
-<!-- Create React -->
-
-Load the AG Grid library and create a blank container div:
-
-```html
-<html lang="en">
-    <head>
-        <!-- Includes all JS & CSS for the React Data Grid -->
-        <script src="https://cdn.jsdelivr.net/npm/ag-grid-react/dist/ag-grid-react.min.js"></script>
-    </head>
-    <body>
-        <!-- Your Data Grid container -->
-        <div id="myGrid"></div>
-    </body>
-</html>
-```
-
-**2. Instantiating the React Data Grid**
-
-Create the Data Grid inside of your container div using `createGrid`.
+**1. Import the React Data Grid**
 
 ```js
-// Grid Options: Contains all of the Data Grid configurations
-const gridOptions = {};
-
-// Your Javascript code to create the Data Grid
-const myGridElement = document.querySelector('#myGrid');
-agGrid.createGrid(myGridElement, gridOptions);
+import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
+import 'ag-grid-community/styles/ag-grid.css'; // Mandatory CSS required by the Data Grid
+import 'ag-grid-community/styles/ag-theme-quartz.css'; // Optional Theme applied to the Data Grid
 ```
 
-**3. Define Rows and Columns**
+**2. Define Rows and Columns**
 
 ```js
-// Grid Options: Contains all of the Data Grid configurations
-const gridOptions = {
+const GridExample = () => {
     // Row Data: The data to be displayed.
-    rowData: [
+    const [rowData, setRowData] = useState([
         { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
         { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
         { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
-    ],
+    ]);
+
     // Column Definitions: Defines the columns to be displayed.
-    columnDefs: [
+    const [colDefs, setColDefs] = useState([
         { field: 'make' },
         { field: 'model' },
         { field: 'price' },
         { field: 'electric' },
-    ],
+    ]);
+
+    // ...
 };
 ```
 
-**4. Styling the React Data Grid**
+**3. React Data Grid Component**
 
-Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the Data Grid's theme.
-
-```html
-<!-- Your Data Grid container -->
-<div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
+```js
+return (
+    // wrapping container with theme & size
+    <div
+        className="ag-theme-quartz" // applying the Data Grid theme
+        style={{ height: 500 }} // the Data Grid will fill the size of the parent container
+    >
+        <AgGridReact rowData={rowData} columnDefs={colDefs} />
+    </div>
+);
 ```
+
+<!-- END SETUP -->
 
 > [!IMPORTANT]
 > For more information on building Data Grids with AG Grid, refer to our [Documentation](https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github).

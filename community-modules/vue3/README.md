@@ -180,67 +180,73 @@ $ npm install --save ag-grid-vue3
 
 ### Setup
 
-**1. Provide a Container**
+<!-- START SETUP -->
 
-<!-- Create Vue3 -->
-
-Load the AG Grid library and create a blank container div:
-
-```html
-<html lang="en">
-    <head>
-        <!-- Includes all JS & CSS for the Vue3 Data Grid -->
-        <script src="https://cdn.jsdelivr.net/npm/ag-grid-vue3/dist/ag-grid-vue3.min.js"></script>
-    </head>
-    <body>
-        <!-- Your Data Grid container -->
-        <div id="myGrid"></div>
-    </body>
-</html>
-```
-
-**2. Instantiating the Vue3 Data Grid**
-
-Create the Data Grid inside of your container div using `createGrid`.
+**1. Import the Vue Data Grid**
 
 ```js
-// Grid Options: Contains all of the Data Grid configurations
-const gridOptions = {};
+<template></template>
 
-// Your Javascript code to create the Data Grid
-const myGridElement = document.querySelector('#myGrid');
-agGrid.createGrid(myGridElement, gridOptions);
-```
+<script>
+import { ref } from 'vue';
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
 
-**3. Define Rows and Columns**
-
-```js
-// Grid Options: Contains all of the Data Grid configurations
-const gridOptions = {
-    // Row Data: The data to be displayed.
-    rowData: [
-        { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
-        { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
-        { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
-    ],
-    // Column Definitions: Defines the columns to be displayed.
-    columnDefs: [
-        { field: 'make' },
-        { field: 'model' },
-        { field: 'price' },
-        { field: 'electric' },
-    ],
+export default {
+ name: "App",
+ components: {
+   AgGridVue, // Add Vue Data Grid component
+ },
+ setup() {},
 };
+</script>
 ```
 
-**4. Styling the Vue3 Data Grid**
+**2. Define Rows and Columns**
 
-Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the Data Grid's theme.
+```js
+setup() {
+ // Row Data: The data to be displayed.
+ const rowData = ref([
+   { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+   { make: "Ford", model: "F-Series", price: 33850, electric: false },
+   { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+ ]);
 
-```html
-<!-- Your Data Grid container -->
-<div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
+ // Column Definitions: Defines the columns to be displayed.
+ const colDefs = ref([
+   { field: "make" },
+   { field: "model" },
+   { field: "price" },
+   { field: "electric" }
+ ]);
+
+ return {
+   rowData,
+   colDefs,
+ };
+},
 ```
+
+**3. Vue Data Grid Component**
+
+Rows and Columns are set as ag-grid-vue component attributes. Styling is applied through the class and style attributes.
+
+```js
+<template>
+ <!-- The AG Grid component -->
+ <ag-grid-vue
+   :rowData="rowData"
+   :columnDefs="colDefs"
+   style="height: 500px"
+   class="ag-theme-quartz"
+ >
+ </ag-grid-vue>
+</template>
+```
+
+<!-- END SETUP -->
 
 > [!IMPORTANT]
 > For more information on building Data Grids with AG Grid, refer to our [Documentation](https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=ag-grid-vue3-readme&utm_medium=repository&utm_campaign=github).

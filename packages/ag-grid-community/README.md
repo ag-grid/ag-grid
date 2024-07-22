@@ -180,6 +180,8 @@ $ npm install --save ag-grid-community
 
 ### Setup
 
+<!-- START SETUP -->
+
 **1. Provide a Container**
 
 <!-- Create JavaScript -->
@@ -241,6 +243,8 @@ Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the
 <!-- Your Data Grid container -->
 <div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
 ```
+
+<!-- END SETUP -->
 
 > [!IMPORTANT]
 > For more information on building Data Grids with AG Grid, refer to our [Documentation](https://www.ag-grid.com/javascript-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).

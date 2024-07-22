@@ -180,67 +180,78 @@ $ npm install --save ag-grid-angular
 
 ### Setup
 
-**1. Provide a Container**
+<!-- START SETUP -->
 
-<!-- Create Angular -->
-
-Load the AG Grid library and create a blank container div:
-
-```html
-<html lang="en">
-    <head>
-        <!-- Includes all JS & CSS for the Angular Data Grid -->
-        <script src="https://cdn.jsdelivr.net/npm/ag-grid-angular/dist/ag-grid-angular.min.js"></script>
-    </head>
-    <body>
-        <!-- Your Data Grid container -->
-        <div id="myGrid"></div>
-    </body>
-</html>
-```
-
-**2. Instantiating the Angular Data Grid**
-
-Create the Data Grid inside of your container div using `createGrid`.
+**1. Import the Angular Data Grid**
 
 ```js
-// Grid Options: Contains all of the Data Grid configurations
-const gridOptions = {};
-
-// Your Javascript code to create the Data Grid
-const myGridElement = document.querySelector('#myGrid');
-agGrid.createGrid(myGridElement, gridOptions);
+import { Component } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
+import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 ```
 
-**3. Define Rows and Columns**
+**2. Define Rows and Columns**
 
 ```js
-// Grid Options: Contains all of the Data Grid configurations
-const gridOptions = {
-    // Row Data: The data to be displayed.
-    rowData: [
-        { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
-        { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
-        { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
-    ],
-    // Column Definitions: Defines the columns to be displayed.
-    columnDefs: [
-        { field: 'make' },
-        { field: 'model' },
-        { field: 'price' },
-        { field: 'electric' },
-    ],
-};
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [AgGridAngular], // Add Angular Data Grid Component
+  styleUrls: ['./app.component.css'],
+  template: ``
+})
+
+export class AppComponent {
+// Row Data: The data to be displayed.
+rowData = [
+  { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+  { make: "Ford", model: "F-Series", price: 33850, electric: false },
+  { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+];
+
+// Column Definitions: Defines the columns to be displayed.
+colDefs: ColDef[] = [
+  { field: "make" },
+  { field: "model" },
+  { field: "price" },
+  { field: "electric" }
+];
+}
 ```
 
-**4. Styling the Angular Data Grid**
+**3. Create the Angular Data Grid Component**
 
-Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the Data Grid's theme.
-
-```html
-<!-- Your Data Grid container -->
-<div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
+```js
+template: `
+<!-- The AG Grid component -->
+<ag-grid-angular
+  [rowData]="rowData"
+  [columnDefs]="colDefs" />
+`;
 ```
+
+**4. Styling the Data Grid**
+
+Import the required dependencies into your styles.css file.
+
+```js
+/* Core Data Grid CSS */
+import 'ag-grid-community/styles/ag-grid.css';
+/* Quartz Theme Specific CSS */
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+```
+
+Add the class and style props to the ag-grid-angular component.
+
+```js
+<ag-grid-angular
+class="ag-theme-quartz"
+style="height: 500px;"
+...
+/>
+```
+
+<!-- END SETUP -->
 
 > [!IMPORTANT]
 > For more information on building Data Grids with AG Grid, refer to our [Documentation](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github).
