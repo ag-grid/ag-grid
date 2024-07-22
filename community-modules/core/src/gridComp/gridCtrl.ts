@@ -210,6 +210,8 @@ export class GridCtrl extends BeanStub {
         }
         const comp = coreContainers[nextIndex];
         comp.setAllowFocus?.(true);
+        // we're letting the browser handle the focus here, so need to wait for focus to move into the container before disabling focus again.
+        // can't do this via event, as the container may not have anything focusable. In which case, the focus will just go out of the grid.
         setTimeout(() => {
             comp.setAllowFocus?.(false);
         });
