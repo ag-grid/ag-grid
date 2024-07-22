@@ -126,7 +126,11 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
                 // run the callback before executeLaterFuncs
                 // because some functions being executed later
                 // check if this service is `active`.
+<<<<<<< HEAD
                 callbackLater();
+=======
+                callback();
+>>>>>>> latest
                 runFuncs(this.executeLaterFuncs);
             }, 200);
         });
