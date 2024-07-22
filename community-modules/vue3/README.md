@@ -33,7 +33,7 @@
         <img src="https://img.shields.io/github/commit-activity/m/ag-grid/ag-grid" alt="GitHub commit activity">
     </a>
     <a href="https://github.com/ag-grid/ag-grid/network/dependents">
-        <img src="https://img.shields.io/librariesio/dependents/npm/ag-grid-vue3" alt="Dependents (via libraries.io?style=for-the-badge)">
+        <img src="https://img.shields.io/librariesio/dependents/npm/ag-grid-vue3" alt="Dependents">
     </a>
     <br><br>
     <!-- START MAIN DESCRIPTION -->

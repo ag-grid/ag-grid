@@ -33,7 +33,7 @@
         <img src="https://img.shields.io/github/commit-activity/m/ag-grid/ag-grid" alt="GitHub commit activity">
     </a>
     <a href="https://github.com/ag-grid/ag-grid/network/dependents">
-        <img src="https://img.shields.io/librariesio/dependents/npm/ag-grid-community" alt="Dependents (via libraries.io?style=for-the-badge)">
+        <img src="https://img.shields.io/librariesio/dependents/npm/ag-grid-community" alt="Dependents">
     </a>
     <br><br>
     <!-- START MAIN DESCRIPTION -->
@@ -500,7 +500,13 @@ If you've made it this far, you may be interested in our latest project: [AG Cha
 
 Initially built to power [Integrated Charts](https://www.ag-grid.com/javascript-data-grid/integrated-charts/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) in AG Grid, we open-sourced this project in 2018. Having seen the steady rise in popularity since then, we have decided to invest in AG Charts with a dedicated Enterprise version (`ag-charts-enterprise`) in addition to our continued support of `ag-charts-community`.
 
-Learn more at [AG-Charts.com](https://charts.ag-grid.com/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ag-grid/ag-charts/blob/2ee85f286ccc151cb5e4517f711bafd03366db3c/packages/ag-charts-website/public/images/readme-assets/gallery-dark.gif"/>
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/ag-grid/ag-charts/blob/2ee85f286ccc151cb5e4517f711bafd03366db3c/packages/ag-charts-website/public/images/readme-assets/gallery.gif"/>
+    <img width="100%" alt="Preview of AG Charts JavaScript Charting Examples" src="https://github.com/ag-grid/ag-charts/blob/2ee85f286ccc151cb5e4517f711bafd03366db3c/packages/ag-charts-website/public/images/readme-assets/gallery-dark.gif"/>
+</picture>
+
+Learn more at [ag-charts.com](https://charts.ag-grid.com/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 
 <div align="center">
     
