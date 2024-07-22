@@ -44,12 +44,14 @@ export class FilterManager extends BeanStub implements NamedBean {
     private advancedFilterModelUpdateQueue: (AdvancedFilterModel | null | undefined)[] = [];
 
     public postConstruct(): void {
+        const refreshFiltersForAggregations = this.refreshFiltersForAggregations.bind(this);
+        const updateAdvancedFilterColumns = this.updateAdvancedFilterColumns.bind(this);
         this.addManagedEventListeners({
-            columnValueChanged: this.refreshFiltersForAggregations.bind(this),
-            columnPivotChanged: this.refreshFiltersForAggregations.bind(this),
-            columnPivotModeChanged: this.refreshFiltersForAggregations.bind(this),
-            newColumnsLoaded: this.updateAdvancedFilterColumns.bind(this),
-            columnVisible: this.updateAdvancedFilterColumns.bind(this),
+            columnValueChanged: refreshFiltersForAggregations,
+            columnPivotChanged: refreshFiltersForAggregations,
+            columnPivotModeChanged: refreshFiltersForAggregations,
+            newColumnsLoaded: updateAdvancedFilterColumns,
+            columnVisible: updateAdvancedFilterColumns,
             advancedFilterEnabledChanged: ({ enabled }) => this.onAdvancedFilterEnabledChanged(enabled),
             dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });

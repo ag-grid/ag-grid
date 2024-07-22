@@ -162,8 +162,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // could overlap with the old id's, so the cache would return old values for new columns.
         this.valueCache.expire();
 
-        const oldCols = this.colDefCols && this.colDefCols.list;
-        const oldTree = this.colDefCols && this.colDefCols.tree;
+        const oldCols = this.colDefCols?.list;
+        const oldTree = this.colDefCols?.tree;
         const newTree = this.columnFactory.createColumnTree(this.colDefs, true, oldTree, source);
 
         destroyColumnTree(this.context, this.colDefCols?.tree, newTree.columnTree);

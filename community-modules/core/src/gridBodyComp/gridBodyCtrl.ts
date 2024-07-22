@@ -179,11 +179,12 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addEventListeners(): void {
+        const setFloatingHeights = this.setFloatingHeights.bind(this);
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
-            pinnedRowDataChanged: this.setFloatingHeights.bind(this),
-            pinnedHeightChanged: this.setFloatingHeights.bind(this),
+            pinnedRowDataChanged: setFloatingHeights,
+            pinnedHeightChanged: setFloatingHeights,
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
         });
     }

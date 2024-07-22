@@ -174,16 +174,17 @@ export class StateService extends BeanStub implements NamedBean {
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
 
+        const onUpdate = (state: keyof GridState) => () => this.updateColumnState([state]);
         this.addManagedEventListeners({
-            columnValueChanged: () => this.updateColumnState(['aggregation']),
-            columnMoved: () => this.updateColumnState(['columnOrder']),
-            columnPinned: () => this.updateColumnState(['columnPinning']),
-            columnResized: () => this.updateColumnState(['columnSizing']),
-            columnVisible: () => this.updateColumnState(['columnVisibility']),
-            columnPivotChanged: () => this.updateColumnState(['pivot']),
-            columnPivotModeChanged: () => this.updateColumnState(['pivot']),
-            columnRowGroupChanged: () => this.updateColumnState(['rowGroup']),
-            sortChanged: () => this.updateColumnState(['sort']),
+            columnValueChanged: onUpdate('aggregation'),
+            columnMoved: onUpdate('columnOrder'),
+            columnPinned: onUpdate('columnPinning'),
+            columnResized: onUpdate('columnSizing'),
+            columnVisible: onUpdate('columnVisibility'),
+            columnPivotChanged: onUpdate('pivot'),
+            columnPivotModeChanged: onUpdate('pivot'),
+            columnRowGroupChanged: onUpdate('rowGroup'),
+            sortChanged: onUpdate('sort'),
             newColumnsLoaded: () =>
                 this.updateColumnState([
                     'aggregation',
