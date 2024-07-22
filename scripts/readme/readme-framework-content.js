@@ -57,6 +57,7 @@ const quickStartAngular = `
 
 \`\`\`js
 import { Component } from '@angular/core';
+
 // Angular Data Grid Component
 import { AgGridAngular } from 'ag-grid-angular'; 
 // Column Definition Type Interface
