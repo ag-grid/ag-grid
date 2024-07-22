@@ -112,6 +112,7 @@ Import the required dependencies into your styles.css file.
 \`\`\`js
 /* Core Data Grid CSS */
 import 'ag-grid-community/styles/ag-grid.css';
+
 /* Quartz Theme Specific CSS */
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 \`\`\`
