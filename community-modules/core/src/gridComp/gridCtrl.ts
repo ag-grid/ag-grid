@@ -129,16 +129,14 @@ export class GridCtrl extends BeanStub {
 
     public focusNextInnerContainer(backwards: boolean): boolean {
         const focusableContainers = this.getFocusableContainers();
-        const activeEl = this.gos.getActiveDomElement();
-        const idxWithFocus = focusableContainers.findIndex((container) => container.getGui().contains(activeEl));
-        const nextIdx = idxWithFocus + (backwards ? -1 : 1);
+        const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(focusableContainers, backwards);
 
-        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
+        if (nextIndex < 0 || nextIndex >= focusableContainers.length) {
             return false;
         }
 
-        if (nextIdx === 0) {
-            if (idxWithFocus > 0) {
+        if (nextIndex === 0) {
+            if (indexWithFocus > 0) {
                 const allColumns = this.visibleColsService.getAllCols();
                 const lastColumn = _last(allColumns);
                 if (this.focusService.focusGridView(lastColumn, true)) {
@@ -148,7 +146,7 @@ export class GridCtrl extends BeanStub {
             return false;
         }
 
-        return this.focusContainer(focusableContainers[nextIdx], backwards);
+        return this.focusContainer(focusableContainers[nextIndex], backwards);
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
@@ -202,6 +200,37 @@ export class GridCtrl extends BeanStub {
 
     public removeFocusableContainer(container: FocusableContainer): void {
         this.additionalFocusableContainers.delete(container);
+    }
+
+    public allowFocusForNextCoreContainer(up?: boolean): void {
+        const coreContainers = this.view.getFocusableContainers();
+        const { nextIndex, indexWithFocus } = this.getNextFocusableIndex(coreContainers, up);
+        if (indexWithFocus === -1 || nextIndex < 0 || nextIndex >= coreContainers.length) {
+            return;
+        }
+        const comp = coreContainers[nextIndex];
+        comp.setAllowFocus?.(true);
+        // we're letting the browser handle the focus here, so need to wait for focus to move into the container before disabling focus again.
+        // can't do this via event, as the container may not have anything focusable. In which case, the focus will just go out of the grid.
+        setTimeout(() => {
+            comp.setAllowFocus?.(false);
+        });
+    }
+
+    private getNextFocusableIndex(
+        focusableContainers: FocusableContainer[],
+        backwards?: boolean
+    ): {
+        indexWithFocus: number;
+        nextIndex: number;
+    } {
+        const activeEl = this.gos.getActiveDomElement();
+        const indexWithFocus = focusableContainers.findIndex((container) => container.getGui().contains(activeEl));
+        const nextIndex = indexWithFocus + (backwards ? -1 : 1);
+        return {
+            indexWithFocus,
+            nextIndex,
+        };
     }
 
     private focusContainer(comp: FocusableContainer, up?: boolean): boolean {

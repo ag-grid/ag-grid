@@ -789,4 +789,8 @@ export class FocusService extends BeanStub implements NamedBean {
     public focusGridInnerElement(fromBottom?: boolean): boolean {
         return this.gridCtrl.focusInnerElement(fromBottom);
     }
+
+    public allowFocusForNextGridCoreContainer(up?: boolean): void {
+        this.gridCtrl.allowFocusForNextCoreContainer(up);
+    }
 }
