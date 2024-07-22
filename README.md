@@ -110,7 +110,7 @@ AG Grid is available in two versions: Community & Enterprise.
 | [Column Menu](https://www.ag-grid.com/javascript-data-grid/column-menu/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                   | ❌                | ✅                 |
 | [Context Menu](https://www.ag-grid.com/javascript-data-grid/context-menu/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ❌                | ✅                 |
 | [Tool Panels](https://www.ag-grid.com/javascript-data-grid/tool-panel/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                    | ❌                | ✅                 |
-| [Support](https://ag-grid.zendesk.com/hc/en-us?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                                            | ❌                | ✅                 |
+| [Support](https://ag-grid.zendesk.com/hc/en-us)                                                                                                                | ❌                | ✅                 |
 
 > [!IMPORTANT]
 > Visit the [Pricing](https://www.ag-grid.com/license-pricing/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) page for a full comparison.
