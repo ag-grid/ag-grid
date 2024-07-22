@@ -1,3 +1,4 @@
+import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
@@ -17,8 +18,8 @@ export default function FrameworkSelector({ data, currentFramework, isFullWidth,
         >
             {data.map((framework) => {
                 const isSelected = showSelectedFramework && framework.name === currentFramework;
-                const frameworkCapitalised = framework.name.charAt(0).toUpperCase() + framework.name.slice(1);
-                const alt = `${frameworkCapitalised} Data Grid`;
+                const frameworkDisplay = FRAMEWORK_DISPLAY_TEXT[framework.name];
+                const alt = `${frameworkDisplay} Data Grid`;
 
                 return (
                     <a
@@ -29,7 +30,7 @@ export default function FrameworkSelector({ data, currentFramework, isFullWidth,
                         })}
                     >
                         <img src={urlWithBaseUrl(`/${fwLogos}${framework.name}.svg`)} alt={alt} />
-                        <span>{frameworkCapitalised}</span>
+                        <span>{frameworkDisplay}</span>
                     </a>
                 );
             })}

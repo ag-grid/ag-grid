@@ -17,8 +17,8 @@ export const RootContainer = () => {
     }, [theme]);
 
     return (
-        <Container className="ag-apply-theme-variables">
-            <Menu>
+        <Container>
+            <Menu className="ag-apply-theme-variables">
                 <EditorScroller>
                     <EditorPanel />
                 </EditorScroller>

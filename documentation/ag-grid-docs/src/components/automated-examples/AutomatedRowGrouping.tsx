@@ -118,7 +118,7 @@ export function AutomatedRowGrouping({
                     automatedExampleManager.errored(exampleId);
                 }
             },
-            onGridReady() {
+            onDataReady() {
                 setGridIsReady(true);
             },
             visibilityThreshold,

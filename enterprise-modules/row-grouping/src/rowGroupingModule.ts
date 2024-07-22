@@ -9,7 +9,7 @@ import { ColumnDropZoneService } from './rowGrouping/columnDropZones/columnDropZ
 import { FilterAggregatesStage } from './rowGrouping/filterAggregatesStage';
 import { GroupFilter } from './rowGrouping/groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './rowGrouping/groupFilter/groupFloatingFilter';
-import { GroupStage } from './rowGrouping/groupStage';
+import { GroupStage } from './rowGrouping/groupStage/groupStage';
 import { PivotColDefService } from './rowGrouping/pivotColDefService';
 import { PivotStage } from './rowGrouping/pivotStage';
 import {

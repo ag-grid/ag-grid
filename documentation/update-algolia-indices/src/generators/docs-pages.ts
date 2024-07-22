@@ -1,8 +1,8 @@
 import fs from 'fs';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
-import { DIST_DIR, MENU_FILE_PATH, SUPPORTED_FRAMEWORKS } from '../utils/constants';
-import { logWarning, writeResults } from '../utils/output';
+import { DIST_DIR, MENU_FILE_PATH } from '../utils/constants';
+import { logWarning } from '../utils/output';
 
 const virtualConsole = new VirtualConsole();
 // this ignores console errors, this is because JSDOM does not have comprehensive
@@ -11,10 +11,12 @@ virtualConsole.on('error', () => {});
 
 let pageRank = 0;
 export const getAllDocPages = () => {
-    const menu = getMenuData();
+    const docsMenu = getDocsMenuData();
+    const apiMenu = getApiMenuData();
     pageRank = 0;
-    const flattenedMenuItems = getFlattenedMenuItems(menu.sections);
-    return flattenedMenuItems;
+    const flattenedDocMenuItems = getFlattenedMenuItems(docsMenu.sections);
+    const flattenedApiMenuItems = getFlattenedMenuItems(apiMenu.sections);
+    return [...flattenedApiMenuItems, ...flattenedDocMenuItems];
 };
 
 export const parseDocPage = async (item: FlattenedMenuItem) => {
@@ -133,10 +135,16 @@ interface MenuItem {
     items?: MenuItem[];
 }
 
-const getMenuData = () => {
+const getDocsMenuData = () => {
     const file = fs.readFileSync(MENU_FILE_PATH, null);
     const { main } = JSON.parse(file);
     return main;
+};
+
+const getApiMenuData = () => {
+    const file = fs.readFileSync(MENU_FILE_PATH, null);
+    const { api } = JSON.parse(file);
+    return api;
 };
 
 interface FlattenedMenuItem {
