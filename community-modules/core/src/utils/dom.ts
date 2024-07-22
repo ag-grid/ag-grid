@@ -458,8 +458,8 @@ export function _iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, 
     }
 }
 
-export function _addOrRemoveAttribute(element: HTMLElement, name: string, value: any) {
-    if (value == null) {
+export function _addOrRemoveAttribute(element: HTMLElement, name: string, value: string | number | null | undefined) {
+    if (value == null || value === '') {
         element.removeAttribute(name);
     } else {
         element.setAttribute(name, value.toString());
