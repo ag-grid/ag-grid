@@ -1041,6 +1041,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         this.valueModel.refreshValues().then(() => {
+            this.hardRefreshVirtualList = true;
             this.checkAndRefreshVirtualList();
             this.onUiChanged();
         });
