@@ -1,0 +1,54 @@
+@use 'design-system' as *;
+
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0px $spacing-size-32;
+    margin-bottom: $spacing-size-12;
+
+    .heading {
+        font-size: 48px;
+        font-weight: var(--text-bold);
+    }
+
+    .subHeading {
+        font-size: var(--text-fs-lg);
+        text-align: center;
+    }
+}
+
+.examplesContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cardsContainer {
+    display: flex;
+    overflow-x: scroll !important;
+    gap: $spacing-size-4;
+    padding-bottom: $spacing-size-6;
+    width: 100%; /* Adjust based on your layout */
+}
+
+.card {
+    flex: 1;
+    min-width: 300px;
+    margin: 0 10px;
+    border-radius: 5px;
+    background: var(--color-bg-secondary);
+}
+
+.cardImage {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    object-position: left top;
+}
+
+.cardDetails {
+    padding: $spacing-size-4;
+}

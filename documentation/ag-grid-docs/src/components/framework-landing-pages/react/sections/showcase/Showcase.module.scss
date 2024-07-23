@@ -1,0 +1,101 @@
+@use 'design-system' as *;
+
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: $spacing-size-12;
+    padding: 0px $spacing-size-32;
+    gap: $spacing-size-8;
+
+    .heading {
+        font-size: 48px;
+        font-weight: var(--text-bold);
+    }
+
+    .subHeading {
+        font-size: var(--text-fs-lg);
+        text-align: center;
+    }
+}
+
+.columnContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.column {
+    width: var(--layout-width-2-4);
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+
+    .button {
+        background: var(--color-util-gray-200);
+        margin: 0px $spacing-size-12;
+        padding: $spacing-size-4;
+        border-radius: var(--radius-xl);
+    }
+
+    .buttonTitleContainer {
+        display: flex;
+        justify-content: space-between;
+
+        .buttonTitle {
+            font-size: var(--text-fs-xl);
+            font-weight: var(--text-bold);
+        }
+
+        .buttonIcon {
+            padding: $spacing-size-2;
+            fill: var(--color-fg-primary);
+        }
+    }
+
+    .buttonDetail {
+        margin: $spacing-size-12 0px;
+    }
+
+    .buttonFooter {
+        display: flex;
+        justify-content: flex-end;
+        gap: $spacing-size-4;
+    }
+}
+
+.imageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+
+    .imageTitle {
+        width: 100%;
+        background: var(--color-util-gray-200);
+        text-align: center;
+        font-family: 'Courier New', Courier, monospace;
+        padding: $spacing-size-1;
+        border-top-right-radius: var(--radius-xl);
+        border-top-left-radius: var(--radius-xl);
+    }
+
+    .stackedImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-bottom-right-radius: var(--radius-xl);
+        border-bottom-left-radius: var(--radius-xl);
+    }
+}
+
+.communityCta {
+    display: flex;
+    justify-content: center;
+    margin-top: $spacing-size-16;
+}

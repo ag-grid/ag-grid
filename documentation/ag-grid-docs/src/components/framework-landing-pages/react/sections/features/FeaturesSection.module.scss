@@ -1,0 +1,33 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.tabContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-12;
+
+    .tab {
+        width: 150px;
+        height: 50px;
+        border-radius: var(--radius-4xl);
+        background: var(--color-button-secondary-bg);
+        color: var(--color-fg-primary);
+        border: none;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .activeTab {
+        width: 150px;
+        height: 50px;
+        border-radius: var(--radius-4xl);
+        border: none;
+        box-shadow: var(--shadow-lg);
+    }
+}

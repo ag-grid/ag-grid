@@ -1,0 +1,94 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-size-8;
+}
+
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: $spacing-size-16;
+    padding: 0px $spacing-size-48;
+
+    .versionTagContainer {
+        display: flex;
+        border: 1px solid var(--color-gray-600);
+        border-radius: var(--radius-xl);
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        align-self: center;
+
+        .version {
+            border: 2px solid var(--color-util-brand-400);
+            background: var(--color-util-brand-400);
+            border-radius: var(--radius-xl);
+            padding: $spacing-size-1 $spacing-size-2;
+            font-size: var(--text-fs-sm);
+            font-weight: var(--text-base);
+            color: white;
+        }
+
+        .featureHighlight {
+            padding: 0px $spacing-size-2;
+            font-size: var(--text-fs-sm);
+            font-weight: var(--text-base);
+            color: white;
+        }
+
+        .featureArrow {
+            height: 16px;
+            width: 16px;
+            margin-left: $spacing-size-2;
+            fill: white;
+        }
+    }
+
+    .heading {
+        font-size: 72px;
+        text-align: center;
+        font-weight: var(--text-bold);
+    }
+
+    .subHeading {
+        text-align: center;
+        font-size: var(--text-fs-xl);
+        padding: 0px $spacing-size-32;
+    }
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-size-4;
+
+    .cta1 {
+        // TBC
+    }
+
+    .cta2 {
+        display: flex;
+        align-items: center;
+        padding: $spacing-size-2;
+        gap: $spacing-size-2;
+        background-color: var(--color-gray-800);
+        color: var(--color-fg-primary);
+        border: 1px solid var(--color-util-brand-400);
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    .installText {
+        font-size: var(--text-fs-base);
+        font-weight: var(--text-bold);
+        color: var(--color-white);
+    }
+
+    .icon svg {
+        fill: var(--color-white);
+        padding: 6px;
+    }
+}

@@ -1,0 +1,29 @@
+@use 'design-system' as *;
+
+.divider {
+    z-index: -1;
+}
+
+.divider svg {
+    position: relative;
+    width: calc(300% + 1.3px);
+    height: 175px;
+}
+
+.divider .fill {
+    fill: var(--color-bg-disabled_subtle);
+}
+
+.dividerLight {
+    background: var(--color-bg-disabled_subtle);
+}
+
+.dividerLight svg {
+    position: relative;
+    width: calc(300% + 1.3px);
+    height: 175px;
+}
+
+.dividerLight .fillLight {
+    fill: var(--color-bg-primary);
+}

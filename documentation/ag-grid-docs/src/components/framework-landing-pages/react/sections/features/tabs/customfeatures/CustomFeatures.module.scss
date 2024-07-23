@@ -1,0 +1,64 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.columnContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.column {
+    width: var(--layout-width-2-4);
+}
+
+.featureContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-4;
+
+    .title {
+        font-size: var(--text-fs-2xl);
+    }
+
+    .feature {
+        display: flex;
+        flex-direction: column;
+
+        .featureHeading {
+            display: flex;
+            flex-grow: 1;
+            font-size: var(--text-xl);
+            margin-bottom: $spacing-size-2;
+        }
+
+        .featureDetail {
+            font-size: var(--text-fs-md);
+            margin-bottom: $spacing-size-2;
+        }
+    }
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-size-2;
+
+    .featureNavButton {
+        appearance: none;
+        padding: 0;
+        text-align: left;
+        font-weight: var(--text-regular);
+        border: none;
+        background-color: transparent;
+        box-shadow: none;
+    }
+
+    .featureNavIcon {
+        fill: var(--color-fg-primary);
+    }
+}

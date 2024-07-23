@@ -1,0 +1,47 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-size-12 0px;
+}
+
+.sectionContent {
+    padding: 0px $spacing-size-48;
+}
+
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: $spacing-size-12;
+    gap: $spacing-size-2;
+
+    .tag {
+        font-weight: var(--text-semibold);
+        color: var(--color-util-brand-500);
+        margin-bottom: 0px;
+    }
+
+    .heading {
+        font-size: 48px;
+        font-weight: var(--text-bold);
+        margin: 0px $spacing-size-24;
+        margin-bottom: 0px;
+    }
+
+    .subHeading {
+        font-size: var(--text-fs-lg);
+        font-weight: var(--text-base);
+        margin: 0px $spacing-size-48;
+        text-align: center;
+        margin-bottom: 0px;
+    }
+}
+
+.sectionOdd {
+    padding: 0px $spacing-size-48;
+    background-color: var(--color-bg-disabled_subtle);
+}
