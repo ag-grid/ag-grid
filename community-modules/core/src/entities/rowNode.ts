@@ -22,6 +22,16 @@ import { _debounce, _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import type { AgColumn } from './agColumn';
 
+/**
+ * When creating sibling nodes (e.g. footers), we don't copy these properties as they
+ * cause the sibling to have properties which should be unique to the row.
+ */
+const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>([
+    'localEventService',
+    '__objectId',
+    'sticky',
+]);
+
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
     public static ID_PREFIX_TOP_PINNED = 't-';
@@ -1168,13 +1178,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return;
         }
 
-        // we don't copy these properties as they cause the footer node
-        // to have properties which should be unique to the row.
-        const ignoredProperties = new Set(['localEventService', '__objectId', 'sticky']);
         const footerNode = new RowNode(this.beans);
 
-        Object.keys(this).forEach((key) => {
-            if (ignoredProperties.has(key)) {
+        Object.keys(this).forEach((key: keyof RowNode) => {
+            if (IGNORED_SIBLING_PROPERTIES.has(key)) {
                 return;
             }
             (footerNode as any)[key] = (this as any)[key];
