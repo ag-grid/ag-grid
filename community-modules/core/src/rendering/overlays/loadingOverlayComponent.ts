@@ -1,5 +1,6 @@
-import { OverlayComponent } from './overlayComponent';
+import { _makeNull } from '../../utils/generic';
 import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
+import { OverlayComponent } from './overlayComponent';
 
 export interface ILoadingOverlayParams<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
 
@@ -14,7 +15,7 @@ export class LoadingOverlayComponent
     implements ILoadingOverlayComp<any, any>
 {
     public init(): void {
-        const customTemplate = this.gos.get('overlayLoadingTemplate');
+        const customTemplate = _makeNull(this.gos.get('overlayLoadingTemplate')?.trim());
 
         this.setTemplate(
             customTemplate ??
