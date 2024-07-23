@@ -238,9 +238,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         this.valueModel?.updateOnParamsChange(params).then(() => {
-            if (this.valueModel?.hasSelections()) {
-                this.refreshFilterValues();
-            }
+            this.refreshFilterValues();
         });
 
         return true;
