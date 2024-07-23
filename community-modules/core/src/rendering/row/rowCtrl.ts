@@ -167,7 +167,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowStyles = this.processStylesFromGridOptions();
 
         // calls to `isFullWidth()` only work after `setRowType` has been called.
-        if (this.isFullWidth() && !this.gos.get('suppressCellFocus')) {
+        if (this.isFullWidth() && !beans.focusService.isCellFocusSuppressed()) {
             this.tabIndex = -1;
         }
 

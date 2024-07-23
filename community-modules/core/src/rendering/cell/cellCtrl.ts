@@ -123,7 +123,7 @@ export class CellCtrl extends BeanStub {
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
 
         this.colIdSanitised = _escapeString(this.column.getId())!;
-        if (!beans.gos.get('suppressCellFocus')) {
+        if (!beans.focusService.isCellFocusSuppressed()) {
             this.tabIndex = -1;
         }
 
@@ -933,7 +933,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (this.beans.gos.get('suppressCellFocus')) {
+        if (this.beans.focusService.isCellFocusSuppressed()) {
             return;
         }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);

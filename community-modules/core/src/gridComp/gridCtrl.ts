@@ -7,7 +7,6 @@ import type { FocusService } from '../focusService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IWatermark } from '../interfaces/iWatermark';
-import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
@@ -33,14 +32,12 @@ export interface OptionalGridComponents {
 export class GridCtrl extends BeanStub {
     private beans: BeanCollection;
     private focusService: FocusService;
-    private overlayService: OverlayService;
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
-        this.overlayService = beans.overlayService;
     }
 
     private view: IGridComp;
@@ -155,11 +152,6 @@ export class GridCtrl extends BeanStub {
             return true;
         }
 
-        const overlayService = this.overlayService;
-        if (overlayService.isExclusive()) {
-            return this.focusContainer(overlayService.getOverlayWrapper(), fromBottom);
-        }
-
         const focusableContainers = this.getFocusableContainers();
         const allColumns = this.visibleColsService.getAllCols();
 
@@ -174,7 +166,7 @@ export class GridCtrl extends BeanStub {
             }
         }
 
-        if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
+        if (this.gos.get('headerHeight') === 0 || this.focusService.isHeaderFocusSuppressed()) {
             if (this.focusService.focusGridView(allColumns[0])) {
                 return true;
             }
@@ -203,7 +195,7 @@ export class GridCtrl extends BeanStub {
     }
 
     public allowFocusForNextCoreContainer(up?: boolean): void {
-        const coreContainers = this.view.getFocusableContainers();
+        const coreContainers = this.getFocusableContainers(false);
         const { nextIndex, indexWithFocus } = this.getNextFocusableIndex(coreContainers, up);
         if (indexWithFocus === -1 || nextIndex < 0 || nextIndex >= coreContainers.length) {
             return;
@@ -240,19 +232,28 @@ export class GridCtrl extends BeanStub {
         return result;
     }
 
-    private getFocusableContainers(): FocusableContainer[] {
-        const overlayService = this.overlayService;
+    private getFocusableContainers(additionalContainers = true): FocusableContainer[] {
+        const result: FocusableContainer[] = [];
+        const { overlayService } = this.beans;
 
-        if (overlayService.isExclusive()) {
-            // An exclusive overlay takes precedence over all other focusable containers
-            return [overlayService.getOverlayWrapper()];
+        const fromView = this.view.getFocusableContainers();
+
+        if (fromView.length > 0) {
+            result.push(fromView[0]);
+
+            const overlayComp =
+                overlayService.isVisible() && !overlayService.isExclusive() && overlayService.getOverlayWrapper();
+            if (overlayComp) {
+                result.push(overlayComp);
+            }
         }
 
-        const result = [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
+        for (let i = 1; i < fromView.length; i++) {
+            result.push(fromView[i]);
+        }
 
-        if (overlayService.isVisible()) {
-            // We allow focusing on the no-rows overlay
-            result.push(overlayService.getOverlayWrapper());
+        if (additionalContainers) {
+            result.push(...this.additionalFocusableContainers);
         }
 
         return result;

@@ -1,3 +1,4 @@
+import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { FocusService } from '../../focusService';
@@ -37,6 +38,31 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             </div>`);
     }
 
+    private handleKeyDown(e: KeyboardEvent): void {
+        if (!this.isDisplayed()) {
+            return;
+        }
+
+        if (e.key !== KeyCode.TAB || !e.shiftKey) {
+            return;
+        }
+
+        // If we are pressing shift+tab on the first first focusable element in the overlay, we need to move focus outside
+        const activeElement = document.activeElement;
+        if (activeElement) {
+            if (activeElement === this.focusService.findFocusableElements(this.eOverlayWrapper)[0]) {
+                if (this.focusService.focusGridView(undefined, true, false)) {
+                    e.preventDefault();
+                    return;
+                }
+                if (this.focusService.focusNextGridCoreContainer(true)) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+        }
+    }
+
     public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
         const overlayWrapperClassList = this.eOverlayWrapper.classList;
         overlayWrapperClassList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
@@ -49,6 +75,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setDisplayed(false, { skipAriaHidden: true });
 
         this.overlayService.registerOverlayWrapperComp(this);
+        this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
     }
 
     private setWrapperTypeClass(overlayWrapperCssClass: string): void {

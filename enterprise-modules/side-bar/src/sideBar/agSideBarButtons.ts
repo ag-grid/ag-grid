@@ -6,7 +6,7 @@ import type {
     ToolPanelDef,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { Component, KeyCode, _clearElement, _last } from '@ag-grid-community/core';
+import { Component, KeyCode, _clearElement, _last, _stopPropagationForAgGrid } from '@ag-grid-community/core';
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 
@@ -39,11 +39,16 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
             return;
         }
 
-        const lastColumn = _last(this.visibleColsService.getAllCols());
-
-        if (this.focusService.focusGridView(lastColumn, true)) {
+        if (
+            this.focusService.focusOverlay(true) ||
+            this.focusService.focusGridView(_last(this.visibleColsService.getAllCols()), true)
+        ) {
             e.preventDefault();
+            return;
         }
+
+        // Prevent the tab to go in an loop without exit inside the sidebar
+        _stopPropagationForAgGrid(e);
     }
 
     public setActiveButton(id: string | undefined): void {
