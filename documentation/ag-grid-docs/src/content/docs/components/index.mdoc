@@ -18,9 +18,12 @@ You can create your own Custom Components to customise the behaviour of the grid
 {% /videoSection %}
 {% /if %}
 
+{% if isFramework("javascript", "react", "angular") %}
 {% metaTag tags=["frameworkComponents", "cellRendererFramework"] /%}
+{% /if %}
+
 {% if isFramework("vue") %}
-{% metaTag tags=["slot"] /%}
+{% metaTag tags=["slot", "frameworkComponents", "cellRendererFramework"] /%}
 {% /if %}
 
 The full list of component types you can provide in the grid are as follows:
