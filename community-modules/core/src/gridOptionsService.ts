@@ -641,16 +641,22 @@ export function backfillLegacyGridOptions(go: GridOptions): void {
         port('suppressClearOnFillReduction', selectionOpts.fillHandleOptions?.suppressClearOnFillReduction);
         port('fillHandleDirection', selectionOpts.fillHandleOptions?.direction);
         port('fillOperation', selectionOpts.fillHandleOptions?.setFillValue);
-    } else if (selectionOpts?.mode === 'row') {
+    } else if (selectionOpts?.mode === 'singleRow') {
+        port('suppressRowClickSelection', selectionOpts.suppressRowClickSelection);
+        port('suppressRowDeselection', selectionOpts.suppressRowDeselection);
+        port('isRowSelectable', selectionOpts.isRowSelectable);
+
+        port('rowSelection', 'single');
+    } else if (selectionOpts?.mode === 'multiRow') {
         port('suppressRowClickSelection', selectionOpts.suppressRowClickSelection);
         port('suppressRowDeselection', selectionOpts.suppressRowDeselection);
         port('rowMultiSelectWithClick', selectionOpts.enableMultiSelectWithClick);
         port('isRowSelectable', selectionOpts.isRowSelectable);
 
-        port('rowSelection', selectionOpts.suppressMultipleRowSelection ? 'single' : 'multiple');
+        port('rowSelection', 'multiple');
 
         switch (selectionOpts.groupSelection) {
-            case 'allChildren':
+            case 'children':
                 port('groupSelectsChildren', true);
                 port('groupSelectsFiltered', undefined);
                 break;
@@ -658,7 +664,7 @@ export function backfillLegacyGridOptions(go: GridOptions): void {
                 port('groupSelectsChildren', true);
                 port('groupSelectsFiltered', true);
                 break;
-            case 'none':
+            case 'self':
                 port('groupSelectsChildren', undefined);
                 port('groupSelectsFiltered', undefined);
                 break;

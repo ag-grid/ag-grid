@@ -2471,11 +2471,11 @@ export interface FillHandleOptions<TData> {
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
 
-/**
- * Determines selection behaviour when multiple rows can be selected at once.
- */
-export interface RowSelectionOptions<TData, TValue> {
-    mode: 'row';
+export type RowSelectionOptions<TData, TValue> =
+    | SingleRowSelectionOptions<TData, TValue>
+    | MultiRowSelectionOptions<TData, TValue>;
+
+interface CommonRowSelectionOptions<TData, TValue> {
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
@@ -2487,20 +2487,30 @@ export interface RowSelectionOptions<TData, TValue> {
      */
     suppressRowClickSelection?: boolean;
     /**
-     * If `true`, only a single row can be selected at a time. Selecting a row will de-select any other rows.
-     * @default false
-     */
-    suppressMultipleRowSelection?: boolean;
-    /**
-     * Determine group selection behaviour
-     * @default 'none'
-     */
-    groupSelection?: GroupSelectionOptions;
-    /**
      * Determine checkbox selection behaviour
      * @default false
      */
     checkboxSelection?: CheckboxSelectionOptions<TData, TValue>;
+    /**
+     * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     */
+    isRowSelectable?: IsRowSelectable<TData>;
+}
+
+export interface SingleRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
+    mode: 'singleRow';
+}
+
+/**
+ * Determines selection behaviour when multiple rows can be selected at once.
+ */
+export interface MultiRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
+    mode: 'multiRow';
+    /**
+     * Determine group selection behaviour
+     * @default 'none'
+     */
+    groupSelection?: GroupSelectionMode;
     /**
      * Determines how "select all" behaviour works both via the API (i.e. `selectAll`) and via header checkbox selection.
      */
@@ -2515,10 +2525,6 @@ export interface RowSelectionOptions<TData, TValue> {
      * @default false
      */
     enableMultiSelectWithClick?: boolean;
-    /**
-     * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     */
-    isRowSelectable?: IsRowSelectable<TData>;
 }
 
 /**
@@ -2536,13 +2542,13 @@ export type CheckboxSelectionOptions<TData, TValue> =
 /**
  * Determines the behaviour when selecting a group row.
  *
- * When `'none'`, selects only the group row itself.
- * When `'allChildren'`, selecting a group row selects all its child rows.
+ * When `'self'`, selects only the group row itself.
+ * When `'children'`, selecting a group row selects all its child rows.
  * When `'filteredChildren'`, selecting a group row selects all child rows that satisfy the currently active filter.
  *
- * @default 'none'
+ * @default 'self'
  */
-export type GroupSelectionOptions = 'none' | 'allChildren' | 'filteredChildren';
+export type GroupSelectionMode = 'self' | 'children' | 'filteredChildren';
 
 /**
  * Determines how "select all" behaviour works both via the API (i.e. `selectAll`) and via header checkbox selection.
