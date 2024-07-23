@@ -159,6 +159,21 @@ button.sectionHeader {
     font-weight: var(--text-semibold);
     -webkit-font-smoothing: antialiased;
 
+    ul a,
+    ul .groupLabel {
+        padding-left: calc(var(--first-indent-size) + var(--indent-size));
+    }
+
+    ul ul a,
+    ul ul .groupLabel {
+        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
+    }
+
+    ul ul ul a,
+    ul ul ul .groupLabel {
+        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 3);
+    }
+
     .enterpriseIcon {
         --icon-size: 1.15em;
         --color-icon: var(--color-enterprise-icon);
