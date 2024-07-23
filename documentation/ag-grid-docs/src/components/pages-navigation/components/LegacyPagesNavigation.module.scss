@@ -159,21 +159,6 @@ button.sectionHeader {
     font-weight: var(--text-semibold);
     -webkit-font-smoothing: antialiased;
 
-    ul a,
-    ul .groupLabel {
-        padding-left: calc(var(--first-indent-size) + var(--indent-size));
-    }
-
-    ul ul a,
-    ul ul .groupLabel {
-        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
-    }
-
-    ul ul ul a,
-    ul ul ul .groupLabel {
-        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 3);
-    }
-
     .enterpriseIcon {
         --icon-size: 1.15em;
         --color-icon: var(--color-enterprise-icon);
@@ -267,23 +252,4 @@ button.sectionHeader {
     padding-top: 7px;
     padding-bottom: 7px;
     border-left: 1px solid var(--color-border-primary);
-}
-
-.menuGroup .groupLabel {
-    display: block;
-    margin-left: var(--first-indent-size);
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: $spacing-size-4 + 2px;
-    border-left: 1px solid var(--color-border-primary);
-    color: var(--color-util-gray-400);
-    transition: color $transition-default-timing;
-
-    #{$selector-darkmode} & {
-        color: var(--color-util-gray-500);
-    }
-
-    &.activeItemParent {
-        color: var(--color-util-gray-400);
-    }
 }
