@@ -1,11 +1,16 @@
 ---
-import { POST_INIT_MESSAGE_START, POST_INIT_MESSAGE_END } from '@features/example-runner/constants';
+import {
+    POST_INIT_MESSAGE_START,
+    POST_INIT_MESSAGE_END,
+    LIBRARY_INIT_SELECTOR,
+} from '@features/example-runner/constants';
 interface Props {
     pageName: string;
     exampleName: string;
 }
 
 const { pageName, exampleName } = Astro.props as Props;
+const initSelector = LIBRARY_INIT_SELECTOR;
 ---
 
 <Fragment set:html={POST_INIT_MESSAGE_START} />
@@ -13,13 +18,22 @@ const { pageName, exampleName } = Astro.props as Props;
     define:vars={{
         pageName,
         exampleName,
+        initSelector,
     }}
 >
-    const loadedEvent = {
-        type: 'init',
-        pageName,
-        exampleName,
+    const checkInit = function () {
+        if (document.querySelector(initSelector)) {
+            const loadedEvent = {
+                type: 'init',
+                pageName,
+                exampleName,
+            };
+            window.parent?.postMessage(loadedEvent);
+        } else {
+            requestAnimationFrame(() => checkInit());
+        }
     };
-    window.parent?.postMessage(loadedEvent);
+
+    checkInit();
 </script>
 <Fragment set:html={POST_INIT_MESSAGE_END} />
