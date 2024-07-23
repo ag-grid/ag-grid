@@ -1275,7 +1275,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.rowEditService?.stopEditing(this, cancel);
     }
 
-    public setInlineEditingCss(editing: boolean): void {
+    public setInlineEditingCss(): void {
+        const editing = this.editingRow || this.getAllCellCtrls().some((cellCtrl) => cellCtrl.isEditing());
         this.allRowGuis.forEach((gui) => {
             gui.rowComp.addOrRemoveCssClass('ag-row-inline-editing', editing);
             gui.rowComp.addOrRemoveCssClass('ag-row-not-inline-editing', !editing);

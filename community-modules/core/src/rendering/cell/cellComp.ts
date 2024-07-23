@@ -478,7 +478,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
         this.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
 
-        this.rowCtrl?.setInlineEditingCss(editing);
+        this.rowCtrl?.setInlineEditingCss();
     }
 
     private addInCellEditor(): void {
