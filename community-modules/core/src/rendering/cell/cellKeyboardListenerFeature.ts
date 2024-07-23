@@ -178,12 +178,12 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (!this.cellCtrl.isEditing() && gos.isRowSelection()) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
-            if (newSelection || !gos.get('suppressRowDeselection')) {
-                const groupSelectsFiltered = this.beans.gos.get('groupSelectsFiltered');
+            if (newSelection || !gos.getLegacySelectionOption('suppressRowDeselection')) {
+                const groupSelectsFiltered = this.beans.gos.getLegacySelectionOption('groupSelectsFiltered');
                 const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,
-                    groupSelectsFiltered: groupSelectsFiltered,
+                    groupSelectsFiltered,
                     event,
                     source: 'spaceKey',
                 });
@@ -191,7 +191,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                     this.rowNode.setSelectedParams({
                         newValue: false,
                         rangeSelect: event.shiftKey,
-                        groupSelectsFiltered: groupSelectsFiltered,
+                        groupSelectsFiltered,
                         event,
                         source: 'spaceKey',
                     });

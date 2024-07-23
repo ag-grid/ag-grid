@@ -30,13 +30,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
-});
 
-/**
- * These properties are used to validate options in a separate step because they should trigger
- * warnings only in the case that the user has set them directly. They are still used internally.
- */
-const GRID_OPTION_LEGACY_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     enableFillHandle: { version: '32.1', message: 'Use `selectionOptions.fillHandleOptions` instead.' },
     enableRangeHandle: { version: '32.1', message: 'Use `selectionOptions.enableRangeHandle` instead.' },
     enableRangeSelection: { version: '32.1', message: 'Use `selectionOptions.mode = "cell"` instead.' },
@@ -373,14 +367,5 @@ export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () =
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),
-    validations: GRID_OPTION_VALIDATIONS(),
-});
-
-export const GRID_OPTIONS_LEGACY_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
-    objectName: 'gridOptions',
-    allProperties: [...PropertyKeys.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS],
-    propertyExceptions: ['api'],
-    docsUrl: 'grid-options/',
-    deprecations: GRID_OPTION_LEGACY_DEPRECATIONS(),
     validations: GRID_OPTION_VALIDATIONS(),
 });

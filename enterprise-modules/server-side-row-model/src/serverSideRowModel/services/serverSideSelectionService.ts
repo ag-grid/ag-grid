@@ -29,19 +29,32 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     private selectionStrategy: ISelectionStrategy;
 
     public postConstruct(): void {
-        const groupSelectsChildren = this.gos.get('groupSelectsChildren');
-        this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
-            this.destroyBean(this.selectionStrategy);
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'selectionOptions'], () => {
+            const groupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
 
-            const Strategy = !propChange.currentValue ? DefaultStrategy : GroupSelectsChildrenStrategy;
-            this.selectionStrategy = this.createManagedBean(new Strategy());
+            const Strategy =
+                groupSelectsChildren && this.selectionStrategy instanceof DefaultStrategy
+                    ? GroupSelectsChildrenStrategy
+                    : !groupSelectsChildren && this.selectionStrategy instanceof GroupSelectsChildrenStrategy
+                      ? DefaultStrategy
+                      : undefined;
 
-            this.shotgunResetNodeSelectionState();
-            this.dispatchSelectionChanged('api');
+            if (Strategy) {
+                this.destroyBean(this.selectionStrategy);
+
+                this.selectionStrategy = this.createManagedBean(new Strategy());
+
+                this.shotgunResetNodeSelectionState();
+                this.dispatchSelectionChanged('api');
+            }
         });
 
-        this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
+        this.addManagedPropertyListeners(['rowSelection', 'selectionOptions'], () => {
+            // TODO - only reset selection when selection mode changes, not just any part of selection options
+            this.deselectAllRowNodes({ source: 'api' });
+        });
 
+        const groupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
         const Strategy = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new Strategy());
     }
@@ -66,7 +79,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const { nodes, ...otherParams } = params;
 
-        const rowSelection = this.gos.get('rowSelection');
+        const rowSelection = this.gos.getLegacySelectionOption('rowSelection');
         if (nodes.length > 1 && rowSelection !== 'multiple') {
             _warnOnce(`cannot multi select while rowSelection='single'`);
             return 0;

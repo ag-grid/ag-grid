@@ -35,11 +35,11 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
     public postConstruct(): void {
         this.selectionCtx.init(this.rowModel);
-        this.rowSelection = this.gos.get('rowSelection');
-        this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
-            this.groupSelectsChildren = this.gos.get('groupSelectsChildren');
-            this.rowSelection = this.gos.get('rowSelection');
+        this.rowSelection = this.gos.getLegacySelectionOption('rowSelection');
+        this.groupSelectsChildren = !!this.gos.getLegacySelectionOption('groupSelectsChildren');
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection', 'selectionOptions'], () => {
+            this.groupSelectsChildren = !!this.gos.getLegacySelectionOption('groupSelectsChildren');
+            this.rowSelection = this.gos.getLegacySelectionOption('rowSelection');
             this.deselectAllRowNodes({ source: 'api' });
         });
 

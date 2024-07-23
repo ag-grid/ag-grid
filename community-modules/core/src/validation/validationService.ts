@@ -3,13 +3,12 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import { backfillLegacyGridOptions } from '../gridOptionsService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
-import { GRID_OPTIONS_LEGACY_VALIDATORS, GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
+import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
@@ -25,16 +24,10 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.processGridOptions(this.gridOptions);
-        this.processLegacyOptions(this.gridOptions);
     }
 
     public processGridOptions(options: GridOptions): void {
         this.processOptions(options, GRID_OPTIONS_VALIDATORS());
-    }
-
-    public processLegacyOptions(options: GridOptions): void {
-        this.processOptions(options, GRID_OPTIONS_LEGACY_VALIDATORS());
-        backfillLegacyGridOptions(this.gridOptions);
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(

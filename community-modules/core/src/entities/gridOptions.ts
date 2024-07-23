@@ -2428,12 +2428,12 @@ export interface LoadingCellRendererSelectorResult {
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
 
 /** Configuration options for selection */
-export type SelectionOptions<TData = any, TValue = any> =
+export type SelectionOptions<TData = unknown, TValue = unknown> =
     | RowSelectionOptions<TData, TValue>
     | CellSelectionOptions<TData>;
 
 /** Cell selection options */
-export interface CellSelectionOptions<TData> {
+export interface CellSelectionOptions<TData = unknown> {
     mode: 'cell';
     /**
      * Configuration options for the fill handle
@@ -2471,7 +2471,7 @@ export interface FillHandleOptions<TData> {
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
 
-export type RowSelectionOptions<TData, TValue> =
+export type RowSelectionOptions<TData = unknown, TValue = unknown> =
     | SingleRowSelectionOptions<TData, TValue>
     | MultiRowSelectionOptions<TData, TValue>;
 
@@ -2497,14 +2497,16 @@ interface CommonRowSelectionOptions<TData, TValue> {
     isRowSelectable?: IsRowSelectable<TData>;
 }
 
-export interface SingleRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
+export interface SingleRowSelectionOptions<TData = unknown, TValue = unknown>
+    extends CommonRowSelectionOptions<TData, TValue> {
     mode: 'singleRow';
 }
 
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData, TValue> extends CommonRowSelectionOptions<TData, TValue> {
+export interface MultiRowSelectionOptions<TData = unknown, TValue = unknown>
+    extends CommonRowSelectionOptions<TData, TValue> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
@@ -2567,3 +2569,6 @@ export interface SelectAllOptions {
      */
     currentPageOnly?: boolean;
 }
+
+export type RowSelectionModes = RowSelectionOptions['mode'];
+export type SelectionModes = SelectionOptions['mode'];
