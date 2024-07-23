@@ -671,34 +671,5 @@ export function backfillLegacyGridOptions(go: GridOptions): void {
             default:
                 break;
         }
-
-        const colDefs = go.columnDefs;
-        if (colDefs && colDefs.length > 0) {
-            if (!('children' in colDefs[0])) {
-                if (selectionOpts.checkboxSelection) {
-                    // Only set checkbox selection properties on the first column
-                    if (colDefs[0].checkboxSelection !== selectionOpts.checkboxSelection.enabled) {
-                        colDefs[0].checkboxSelection = selectionOpts.checkboxSelection.enabled;
-                    }
-                    if (colDefs[0].showDisabledCheckboxes !== selectionOpts.checkboxSelection.showDisabledCheckboxes) {
-                        colDefs[0].showDisabledCheckboxes = selectionOpts.checkboxSelection.showDisabledCheckboxes;
-                    }
-                }
-
-                // Only set header checkbox selection properties on the first column
-                if (colDefs[0].headerCheckboxSelection !== selectionOpts.enableHeaderCheckbox) {
-                    colDefs[0].headerCheckboxSelection = selectionOpts.enableHeaderCheckbox;
-                }
-                if (
-                    colDefs[0].headerCheckboxSelectionCurrentPageOnly !==
-                    selectionOpts.selectAllOptions?.currentPageOnly
-                ) {
-                    colDefs[0].headerCheckboxSelectionCurrentPageOnly = selectionOpts.selectAllOptions?.currentPageOnly;
-                }
-                if (colDefs[0].headerCheckboxSelectionFilteredOnly !== selectionOpts.selectAllOptions?.filteredOnly) {
-                    colDefs[0].headerCheckboxSelectionFilteredOnly = selectionOpts.selectAllOptions?.filteredOnly;
-                }
-            }
-        }
     }
 }
