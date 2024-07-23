@@ -19,6 +19,9 @@ You can create your own Custom Components to customise the behaviour of the grid
 {% /if %}
 
 {% metaTag tags=["frameworkComponents", "cellRendererFramework"] /%}
+{% if isFramework("vue") %}
+{% metaTag tags=["slot"] /%}
+{% /if %}
 
 The full list of component types you can provide in the grid are as follows:
 
