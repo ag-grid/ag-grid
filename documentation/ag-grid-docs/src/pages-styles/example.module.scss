@@ -40,7 +40,7 @@ $nav-height: 200px;
         height: 200px;
 
         > div:first-child {
-            width: 30%;
+            width: auto;
         }
     }
 
@@ -84,7 +84,8 @@ $nav-height: 200px;
 }
 
 .layout {
-    --layout-grid-header-height: calc(var(--layout-site-header-height) + 220px);
+    --layout-top-header-height: 230px;
+    --layout-grid-header-height: calc(var(--layout-site-header-height) + var(--layout-top-header-height));
     --layout-grid-margin: 0px;
 
     @media screen and (max-width: 1900px) {
@@ -95,6 +96,29 @@ $nav-height: 200px;
     @media screen and (min-width: (1800px + 48px * 2)) {
         width: var(--layout-max-width);
         margin: 0 auto;
+    }
+
+    @media screen and (max-height: 728px) {
+        --layout-top-header-height: 160px;
+    }
+}
+
+.topHeader {
+    @media screen and (max-height: 728px) {
+        height: 100%;
+        padding-top: $spacing-size-4;
+
+        .headerHeading {
+            font-size: var(--text-fs-xl);
+        }
+
+        p {
+            font-size: var(--text-fs-sm);
+        }
+
+        .tabWrapper {
+            height: 80px;
+        }
     }
 }
 

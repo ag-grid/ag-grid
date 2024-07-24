@@ -41,6 +41,10 @@
     @media screen and (min-width: 720px) {
         max-height: 140px;
     }
+
+    @media screen and (max-height: 728px) {
+        height: 80px;
+    }
 }
 
 .tabs {
