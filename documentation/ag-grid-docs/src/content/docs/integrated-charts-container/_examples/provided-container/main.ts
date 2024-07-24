@@ -1,6 +1,16 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ChartRef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import {
+    ChartRef,
+    ChartRefParams,
+    ColDef,
+    ColGroupDef,
+    GridApi,
+    GridOptions,
+    ModuleRegistry,
+    createGrid,
+} from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
@@ -24,53 +34,48 @@ const gridOptions: GridOptions = {
     createChartContainer,
 };
 
-// Function for creating the chart container
-function createChartContainer(chartRef: ChartRef): void {
-    const eChart = chartRef.chartElement;
+function updateChart(chartRef: ChartRef | undefined) {
+    const eParent = document.querySelector('#chartParent') as HTMLElement;
     const themeName = document.documentElement?.getAttribute('data-default-theme') || 'ag-theme-quartz';
-    const eParent = document.querySelector('#container') as HTMLElement;
+    eParent.classList.add(themeName);
+    eParent.innerHTML = ''; // Clear existing content
+    const placeHolder = `<div class="chart-placeholder ${themeName}">Chart will be displayed here.</div>`;
 
-    const chartWrapperHTML = `
+    if (chartRef) {
+        const chartWrapperHTML = `
     <div class="chart-wrapper ${themeName}">
       <div class="chart-wrapper-top">
-        <h2 class="chart-wrapper-title">Chart created ${getFormattedDate()}</h2>
+        <h2 class="chart-wrapper-title">Chart created ${new Date().toLocaleString()}</h2>
         <button class="chart-wrapper-close">Destroy Chart</button>
       </div>
       <div class="chart-wrapper-body"></div>
     </div>
   `;
+        eParent.insertAdjacentHTML('beforeend', chartWrapperHTML);
+        const eChartWrapper = eParent.lastElementChild as HTMLElement;
 
-    eParent.insertAdjacentHTML('beforeend', chartWrapperHTML);
-    const eChartWrapper = eParent.lastElementChild as HTMLElement;
-
-    eChartWrapper.querySelector('.chart-wrapper-body')!.appendChild(eChart);
-    eChartWrapper.querySelector('.chart-wrapper-close')!.addEventListener('click', () => {
-        chartRef.destroyChart();
-        eParent.removeChild(eChartWrapper);
-    });
+        eChartWrapper.querySelector('.chart-wrapper-body')!.appendChild(chartRef.chartElement);
+        eChartWrapper.querySelector('.chart-wrapper-close')!.addEventListener('click', () => {
+            chartRef.destroyChart();
+            eParent.innerHTML = placeHolder;
+        });
+    } else {
+        eParent.innerHTML = placeHolder;
+    }
 }
 
-function getFormattedDate(): string {
-    return new Intl.DateTimeFormat('en', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: true,
-        timeZone: 'UTC',
-    }).format(new Date());
+// Function for creating the chart container
+function createChartContainer(chartRef: ChartRef): void {
+    updateChart(chartRef);
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+gridApi = createGrid(gridDiv, gridOptions);
+updateChart(undefined);
 
-    fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
-        .then((response) => response.json())
-        .then(function (data) {
-            gridApi!.setGridOption('rowData', data);
-        });
-});
+fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
+    .then((response) => response.json())
+    .then(function (data) {
+        gridApi!.setGridOption('rowData', data);
+    });

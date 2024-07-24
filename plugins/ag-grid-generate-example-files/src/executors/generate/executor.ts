@@ -215,7 +215,7 @@ export async function generateFiles(options: ExecutorOptions) {
                     }
 
                     // Add Dark Mode code to the provided files if they are an integrated example
-                    if (isIntegratedCharts && fileName === entryFileName) {
+                    if (isIntegratedCharts && fileName === mainFileName) {
                         const code = getIntegratedDarkModeCode(
                             folderPath,
                             TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)
