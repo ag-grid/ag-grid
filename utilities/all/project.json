@@ -16,7 +16,11 @@
     },
     "lint": {
       "executor": "nx:noop",
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "inputs": [
+        {
+          "externalDependencies": ["npm:typescript"]
+        }
+      ],
       "dependsOn": ["^lint"],
       "configurations": {
         "fix": {}
@@ -24,7 +28,11 @@
     },
     "test": {
       "executor": "nx:noop",
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "inputs": [
+        {
+          "externalDependencies": ["npm:typescript"]
+        }
+      ],
       "dependsOn": ["^test"],
       "configurations": {
         "update": {}
@@ -32,7 +40,8 @@
     },
     "pack": {
       "executor": "nx:noop",
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "inputs": [],
+      "outputs": [],
       "dependsOn": ["^pack"],
       "configurations": {
         "production": {}
@@ -40,7 +49,8 @@
     },
     "pack:extract": {
       "executor": "nx:noop",
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "inputs": [],
+      "outputs": [],
       "dependsOn": ["^pack:extract"],
       "configurations": {
         "production": {}
@@ -48,7 +58,8 @@
     },
     "pack:verify": {
       "executor": "nx:noop",
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "inputs": [],
+      "outputs": [],
       "dependsOn": ["^pack:verify"],
       "configurations": {
         "production": {}
@@ -145,7 +156,11 @@
     "generate-examples": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-example"],
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "inputs": [
+        {
+          "externalDependencies": ["npm:typescript"]
+        }
+      ],
       "outputs": [],
       "batch": true,
       "cache": true,
@@ -165,7 +180,11 @@
     "generate-doc-references": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-doc-references"],
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "inputs": [
+        {
+          "externalDependencies": ["npm:typescript"]
+        }
+      ],
       "outputs": [],
       "cache": false,
       "configurations": {
