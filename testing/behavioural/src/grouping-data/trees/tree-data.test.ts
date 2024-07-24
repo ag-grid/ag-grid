@@ -5,7 +5,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
-import { simpleHierarchyRowSnapshot } from './tree-data-snapshots';
+import { checkTreeDiagram, simpleHierarchyRowData, simpleHierarchyRowSnapshot } from './tree-test-utils';
 
 describe('ag-grid tree data', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -40,12 +40,7 @@ describe('ag-grid tree data', () => {
     });
 
     test('ag-grid tree data', async () => {
-        const rowData = [
-            { orgHierarchy: ['A'] },
-            { orgHierarchy: ['A', 'B'] },
-            { orgHierarchy: ['C', 'D'] },
-            { orgHierarchy: ['E', 'F', 'G', 'H'] },
-        ];
+        const rowData = simpleHierarchyRowData();
 
         const getDataPath = (data: any) => data.orgHierarchy;
 
@@ -68,6 +63,8 @@ describe('ag-grid tree data', () => {
         };
 
         const api = createMyGrid(gridOptions);
+
+        expect(checkTreeDiagram(api)).toBe(true);
 
         const rows = getAllRows(api);
 
@@ -118,6 +115,8 @@ describe('ag-grid tree data', () => {
         const api = createMyGrid(gridOptions);
 
         const rows = getAllRows(api);
+
+        expect(checkTreeDiagram(api)).toBe(true);
 
         const rowsSnapshot = getRowsSnapshot(rows);
 
@@ -174,7 +173,7 @@ describe('ag-grid tree data', () => {
                 key: 'B',
                 lastChild: true,
                 leafGroup: undefined,
-                level: 2,
+                level: 1,
                 master: false,
                 parentKey: 'A',
                 rowGroupIndex: undefined,
@@ -230,7 +229,7 @@ describe('ag-grid tree data', () => {
                 key: 'D',
                 lastChild: true,
                 leafGroup: undefined,
-                level: 0,
+                level: 1,
                 master: false,
                 parentKey: 'C',
                 rowGroupIndex: undefined,
@@ -258,7 +257,7 @@ describe('ag-grid tree data', () => {
                 key: 'E',
                 lastChild: true,
                 leafGroup: undefined,
-                level: 3,
+                level: 2,
                 master: false,
                 parentKey: 'D',
                 rowGroupIndex: undefined,
