@@ -40,10 +40,14 @@ export const getApiPageData = (): APIPageData[] => {
     return result;
 };
 
-interface APIRefMeta {
-    meta?: { displayName: string; page: { name: string; url: string } };
+interface Link {
+    name: string;
+    url: string;
 }
-type APIProperties = Record<string, { description: string; more: { name: string; url: string } }>;
+interface APIRefMeta {
+    meta?: { displayName: string; page: Link };
+}
+type APIProperties = Record<string, { description: string; more: Link; addFieldsToDepth?: number }>;
 type APIRefSection = APIProperties & APIRefMeta;
 
 /**
@@ -70,7 +74,7 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
         const { meta, ...properties } = section;
 
         Object.entries(properties).forEach(([propertyKey, property]) => {
-            const { description } = property; // more can include a link to a page with more info
+            const { description, addFieldsToDepth = 0 } = property; // more can include a link to a page with more info
 
             const data = apiPropertiesSourceFile[propertyKey];
 
@@ -90,6 +94,10 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
                 path: path,
                 rank: position++,
             });
+
+            if (addFieldsToDepth !== 0) {
+                console.log(data);
+            }
         });
     });
 

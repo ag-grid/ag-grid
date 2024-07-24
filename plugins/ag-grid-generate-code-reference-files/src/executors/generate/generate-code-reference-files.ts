@@ -48,6 +48,79 @@ function toCamelCase(value) {
     return value[0].toLowerCase() + value.substring(1);
 }
 
+function silentFindNode(text, srcFile) {
+    let typeRef;
+    try {
+        typeRef = findNode(text, srcFile);
+    } catch (error) {
+        try {
+            typeRef = findNode(text, srcFile, 'TypeAliasDeclaration');
+        } catch (error) {
+            console.warn(`Could not find node named ${text}`);
+        }
+    }
+    return typeRef;
+}
+
+function extractNestedTypes<T extends ts.Node>(
+    node: T,
+    srcFile: ts.SourceFile,
+    includeQuestionMark: boolean,
+    results: Record<string, any>
+): void {
+    if (ts.isTypeReferenceNode(node)) {
+        const typeRef = silentFindNode(node.typeName.getText(), srcFile);
+        if (typeRef === undefined) {
+            return;
+        }
+
+        extractNestedTypes(typeRef, srcFile, includeQuestionMark, results);
+        return;
+    }
+
+    if (ts.isTypeAliasDeclaration(node)) {
+        extractNestedTypes(node.type, srcFile, includeQuestionMark, results);
+        return;
+    }
+
+    if (ts.isInterfaceDeclaration(node)) {
+        node.heritageClauses?.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results));
+        node.members.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results));
+        return;
+    }
+
+    if (ts.isHeritageClause(node)) {
+        node.types.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results));
+        return;
+    }
+
+    if (ts.isUnionTypeNode(node)) {
+        node.types.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results));
+        return;
+    }
+
+    if (ts.isExpressionWithTypeArguments(node)) {
+        extractNestedTypes(node.expression, srcFile, includeQuestionMark, results);
+    }
+
+    if (ts.isPropertySignature(node)) {
+        results[node.name.getText()] = true;
+        node.type && extractNestedTypes(node.type, srcFile, includeQuestionMark, results);
+        return;
+    }
+
+    if (ts.isIdentifier(node)) {
+        const ref = findNode(node.escapedText, srcFile);
+        extractNestedTypes(ref, srcFile, includeQuestionMark, results);
+        return;
+    }
+
+    if (ts.isTypeLiteralNode(node)) {
+        node.members.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results));
+        return;
+    }
+}
+
 function extractTypesFromNode(node, srcFile, includeQuestionMark) {
     const nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
@@ -416,6 +489,10 @@ export function getGridOptions(gridOpsFile: string) {
     ts.forEachChild(gridOptionsNode, (n) => {
         gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile, false) };
     });
+
+    const res = {};
+    extractNestedTypes(gridOptionsNode, srcFile, false, res);
+    console.log(res);
 
     return gridOpsMembers;
 }
