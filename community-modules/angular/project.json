@@ -24,7 +24,7 @@
     "pack": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
-      "inputs": ["{projectRoot}/dist/ag-grid-angular/"],
+      "inputs": ["allTransitiveOutputs"],
       "outputs": ["{workspaceRoot}/dist/artifacts/{projectRoot}.tgz"],
       "options": {
         "cwd": "{projectRoot}/dist/ag-grid-angular",
@@ -39,7 +39,7 @@
     "pack:extract": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack"],
-      "inputs": ["{workspaceRoot}/dist/artifacts/{projectRoot}.tgz"],
+      "inputs": ["allOutputs"],
       "outputs": ["{workspaceRoot}/dist/artifacts/contents/{projectRoot}"],
       "options": {
         "command": "scripts/package/extract-contents.sh {projectRoot}"
@@ -48,7 +48,7 @@
     "pack:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
-      "inputs": ["{workspaceRoot}/dist/packages/artifacts/modules/contents/{projectRoot}"],
+      "inputs": ["allOutputs"],
       "options": {
         "commands": [
           "node scripts/package/sanity-check-package.js --allowed-ext map -- dist/artifacts/contents/{projectRoot}/package"
