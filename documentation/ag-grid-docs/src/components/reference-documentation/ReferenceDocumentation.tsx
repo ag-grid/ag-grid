@@ -35,14 +35,36 @@ import {
 import type {
     ChildDocEntry,
     Config,
-    DocEntryMap,
     FunctionCode,
     ICallSignature,
+    MetaTag,
     ObjectCode,
     Overrides,
     PropertyCall,
-    SectionProps,
 } from './types';
+
+export type DocEntryMap = {
+    meta?: MetaTag;
+} & {
+    [key in string]: DocEntry | ChildDocEntry;
+};
+type DocEntry = {
+    meta?: MetaTag;
+    options?: never;
+    more?: never;
+    type?: never;
+} & {
+    [key: string]: DocEntryMap | ChildDocEntry;
+};
+
+type SectionProps = {
+    framework: Framework;
+    title: string;
+    properties: DocEntryMap | DocEntry | ChildDocEntry;
+    config: Config;
+    breadcrumbs?: Record<string, string>;
+    names?: string[];
+};
 
 export interface InterfaceDocumentationProps {
     interfaceName: string;
