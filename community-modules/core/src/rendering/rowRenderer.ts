@@ -170,9 +170,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
+        this.addManagedPropertyListener('suppressCellFocus', (e) => this.onSuppressCellFocusChanged(e.currentValue));
         this.addManagedPropertyListeners(
             [
-                'suppressCellFocus',
                 'getBusinessKeyForNode',
                 'fullWidthCellRenderer',
                 'fullWidthCellRendererParams',
@@ -258,6 +258,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private onCellFocusChanged(event?: CellFocusedEvent) {
         this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellFocused(event));
         this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onFullWidthRowFocused(event));
+    }
+
+    private onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
+        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onSuppressCellFocusChanged(suppressCellFocus));
+        this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onSuppressCellFocusChanged(suppressCellFocus));
     }
 
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
@@ -720,12 +725,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
+        this.focusService.setRestoreFocusedCell(cellPosition);
         // this should be done asynchronously to work with React Renderers.
         setTimeout(() => {
             // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
-            // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
-            // state
-            this.focusService.setRestoreFocusedCell(cellPosition);
+            // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
 
             this.onCellFocusChanged(
                 this.gos.addGridCommonParams<CellFocusedEvent>({

@@ -14,7 +14,7 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, RowNode, _removeFromArray, _sortRowNodesByOrder, _warnOnce } from '@ag-grid-community/core';
 
-import { BatchRemover } from '../batchRemover';
+import { BatchRemover } from '../../batchRemover';
 
 interface TreeGroupingDetails {
     expandByDefault: number;
@@ -426,6 +426,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         let treeNode = this.root;
         let parentGroup = this.root.row!;
+        let rowThatNeedsLevelUpdate: RowNode | null = null;
 
         for (let level = 0, stopLevel = path.length - 1; level < stopLevel; ++level) {
             const key = path[level];
@@ -448,6 +449,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
 
             parentGroup = row;
+            if (row.level !== level) {
+                row.level = level;
+                rowThatNeedsLevelUpdate = row;
+            }
 
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
@@ -466,7 +471,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             return;
         }
         childNode.parent = parentGroup;
-        childNode.level = level + 1;
+        childNode.level = level;
         this.ensureRowNodeFields(childNode, key);
         this.setGroupData(childNode, { key, field: null, rowGroupColumn: null });
         // AG-3441 - only set initial value if node is not being moved
@@ -474,6 +479,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.setExpandedInitialValue(details, childNode);
         }
         this.addToParent(childNode, parentGroup);
+
+        if (rowThatNeedsLevelUpdate) {
+            this.fixLevels(rowThatNeedsLevelUpdate, rowThatNeedsLevelUpdate.level);
+        }
+    }
+
+    private fixLevels(rowNode: RowNode, level: number): void {
+        rowNode.level = level;
+        rowNode.childrenAfterGroup?.forEach((child) => this.fixLevels(child, level + 1));
     }
 
     /**
