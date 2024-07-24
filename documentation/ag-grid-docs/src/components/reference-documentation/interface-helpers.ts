@@ -3,6 +3,9 @@ import { SHOW_DEBUG_LOGS } from '@constants';
 import { extractInterfaces } from './documentation-helpers';
 import type { Config, DocEntryMap, InterfaceEntry, PropertyType } from './types';
 
+/**
+ * @deprecated
+ */
 export const getInterfacesToWrite = (name, definition, config) => {
     let interfacesToWrite = [];
     if (typeof definition === 'string') {
