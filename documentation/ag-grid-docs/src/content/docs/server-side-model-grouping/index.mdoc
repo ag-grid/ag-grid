@@ -102,6 +102,19 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 
 {% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" /%}
 
+## Hide Open Parents
+
+In some configurations it may be desired for the group row to be hidden when expanded, this can be achieved by setting the `groupHideOpenParents` property to true.
+
+The example below has been styled in a way that demonstrates the behaviour of the groups. Note how upon expanding a group, the group row is replaced by the first
+of its children, and only when collapsed is the group row is shown again.
+
+{% gridExampleRunner title="Hide Open Parents" name="hide-open-parents" /%}
+
+{% note %}
+When `groupHideOpenParents=true` the Grid automatically disables the [Sticky Groups](./server-side-model-grouping/#suppressing-sticky-groups) behaviour of the rows as well as [Full Width Loading](./component-loading-cell-renderer/#skeleton-loading).
+{% /note %}
+
 ## Expand All / Collapse All
 
 It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's.

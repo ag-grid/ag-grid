@@ -25,7 +25,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationService } from '../pagination/paginationService';
@@ -170,9 +170,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
+        this.addManagedPropertyListener('suppressCellFocus', (e) => this.onSuppressCellFocusChanged(e.currentValue));
         this.addManagedPropertyListeners(
             [
-                'suppressCellFocus',
                 'getBusinessKeyForNode',
                 'fullWidthCellRenderer',
                 'fullWidthCellRendererParams',
@@ -258,6 +258,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private onCellFocusChanged(event?: CellFocusedEvent) {
         this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellFocused(event));
         this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onFullWidthRowFocused(event));
+    }
+
+    private onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
+        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onSuppressCellFocusChanged(suppressCellFocus));
+        this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onSuppressCellFocusChanged(suppressCellFocus));
     }
 
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
@@ -449,9 +454,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public refreshFloatingRowComps(): void {
-        this.refreshFloatingRows(this.topRowCtrls, this.pinnedRowModel.getPinnedTopRowNodes());
+        this.refreshFloatingRows(this.topRowCtrls, 'top');
 
-        this.refreshFloatingRows(this.bottomRowCtrls, this.pinnedRowModel.getPinnedBottomRowNodes());
+        this.refreshFloatingRows(this.bottomRowCtrls, 'bottom');
     }
 
     public getTopRowCtrls(): RowCtrl[] {
@@ -479,15 +484,16 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param rowCtrls The list of existing row controllers
      * @param rowNodes The canonical list of row nodes that should have associated controllers
      */
-    private refreshFloatingRows(rowCtrls: RowCtrl[], rowNodes: RowNode[]): void {
-        const nodeMap = Object.fromEntries(rowNodes.map((node) => [node.id!, node]));
+    private refreshFloatingRows(rowCtrls: RowCtrl[], floating: NonNullable<RowPinnedType>): void {
+        const { pinnedRowModel, beans, printLayout } = this;
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.getRowNode().id!, ctrl]));
 
-        for (let i = 0; i < rowNodes.length; i++) {
-            const node = rowNodes[i];
+        pinnedRowModel.forEachPinnedRow(floating, (node, i) => {
             const rowCtrl = rowCtrls[i];
+            const rowCtrlDoesNotExist =
+                rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.getRowNode().id!, floating) === undefined;
 
-            if (rowCtrl && nodeMap[rowCtrl.getRowNode().id!] === undefined) {
+            if (rowCtrlDoesNotExist) {
                 // ctrl not in new nodes list, destroy
                 rowCtrl.destroyFirstPass();
                 rowCtrl.destroySecondPass();
@@ -499,12 +505,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 delete rowCtrlMap[node.id!];
             } else {
                 // ctrl doesn't exist, create it
-                rowCtrls[i] = new RowCtrl(node, this.beans, false, false, this.printLayout);
+                rowCtrls[i] = new RowCtrl(node, beans, false, false, printLayout);
             }
-        }
+        });
+
+        const rowNodeCount =
+            floating === 'top' ? pinnedRowModel.getPinnedTopRowCount() : pinnedRowModel.getPinnedBottomRowCount();
 
         // Truncate array if rowCtrls is longer than rowNodes
-        rowCtrls.length = rowNodes.length;
+        rowCtrls.length = rowNodeCount;
     }
 
     private onPinnedRowDataChanged(): void {
@@ -716,12 +725,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
+        this.focusService.setRestoreFocusedCell(cellPosition);
         // this should be done asynchronously to work with React Renderers.
         setTimeout(() => {
             // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
-            // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
-            // state
-            this.focusService.setRestoreFocusedCell(cellPosition);
+            // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
 
             this.onCellFocusChanged(
                 this.gos.addGridCommonParams<CellFocusedEvent>({
@@ -1103,7 +1111,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         indexesToDraw.forEach((index) => (indexesToDrawMap[index] = true));
 
         const existingIndexes = Object.keys(this.rowCtrlsByRowIndex);
-        const indexesNotToDraw: string[] = existingIndexes.filter((index) => !indexesToDrawMap[index]);
+        const indexesNotToDraw = existingIndexes.filter((index) => !indexesToDrawMap[index]);
 
         this.removeRowCtrls(indexesNotToDraw, suppressAnimation);
     }
@@ -1130,7 +1138,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
         _iterateObject(rowsToRecycle, checkRowToDraw);
 
-        indexesToDraw.sort((a: number, b: number) => a - b);
+        indexesToDraw.sort((a, b) => a - b);
 
         const ret: number[] = [];
 
@@ -1297,7 +1305,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private destroyRowCtrls(rowCtrlsMap: RowCtrlIdMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
-        _iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
+        _iterateObject(rowCtrlsMap, (nodeId, rowCtrl) => {
             // if row was used, then it's null
             if (!rowCtrl) {
                 return;

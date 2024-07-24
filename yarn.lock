@@ -2018,7 +2018,7 @@
   dependencies:
     regenerator-runtime "^0.12.0"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.16.3", "@babel/runtime@^7.18.3", "@babel/runtime@^7.22.6", "@babel/runtime@^7.23.8", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.16.3", "@babel/runtime@^7.18.3", "@babel/runtime@^7.22.6", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4":
   version "7.24.5"
   resolved "http://52.50.158.57:4873/@babel/runtime/-/runtime-7.24.5.tgz#230946857c053a36ccc66e1dd03b17dd0c4ed02c"
   integrity sha512-Nms86NXrsaeU9vbBJKni6gXiEXZ4CVpYVzEjDH9Sb8vmZ3UljyA1GSOJl/6LGPO8EHLuSF9H+IxNXHPX8QHJ4g==
@@ -5622,6 +5622,18 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
+"@tanstack/query-core@5.51.1":
+  version "5.51.1"
+  resolved "http://52.50.158.57:4873/@tanstack/query-core/-/query-core-5.51.1.tgz#55049ef0252c7d29de05e8219fd19b679509270e"
+  integrity sha512-fJBMQMpo8/KSsWW5ratJR5+IFr7YNJ3K2kfP9l5XObYHsgfVy1w3FJUWU4FT2fj7+JMaEg33zOcNDBo0LMwHnw==
+
+"@tanstack/react-query@^5.51.1":
+  version "5.51.1"
+  resolved "http://52.50.158.57:4873/@tanstack/react-query/-/react-query-5.51.1.tgz#e483b9c9011e079b89cf73ce447b2e06340b3f41"
+  integrity sha512-s47HKFnQ4HOJAHoIiXcpna/roMMPZJPy6fJ6p4ZNVn8+/onlLBEDd1+xc8OnDuwgvecqkZD7Z2mnSRbcWefrKw==
+  dependencies:
+    "@tanstack/query-core" "5.51.1"
+
 "@testing-library/dom@^10.1.0":
   version "10.1.0"
   resolved "http://52.50.158.57:4873/@testing-library/dom/-/dom-10.1.0.tgz#2d073e49771ad614da999ca48f199919e5176fb6"
@@ -7297,48 +7309,48 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-angular@10.0.1-beta.20240708:
-  version "10.0.1-beta.20240708"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-10.0.1-beta.20240708.tgz#80ade69915ebe290a13f6cd034b63ea033a59fe8"
-  integrity sha512-VHb8izpKAl8y9y/mJK9BuZ1tuAehw89TnZznDvzMoMbs7x/VbpWZzBir6zUa5y45XG/LWW9NnslHU9Ysli4LuQ==
+ag-charts-angular@10.0.2-beta.20240721:
+  version "10.0.2-beta.20240721"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-10.0.2-beta.20240721.tgz#53bb25e027444db216cfef1ea56c741ca8544f19"
+  integrity sha512-ChMQ2ROV14TDLItmp4yYCWHGH/fpvWdc8sPWeZncGdxiPQVzz8wSm/e8r3xv31do7lsc99NjqK4Pmj2LQ3WR4w==
   dependencies:
-    ag-charts-community "10.0.1-beta.20240708"
+    ag-charts-community "10.0.2-beta.20240721"
     tslib "^2.3.0"
 
-ag-charts-community@10.0.1-beta.20240708:
-  version "10.0.1-beta.20240708"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-10.0.1-beta.20240708.tgz#f02dea2f6865f06d1d3aac1b006d3469440bdcbb"
-  integrity sha512-6lAD6yXFxWQx5/lPDFw4dLZMHKXKiwGVGl+hPBDiexHHScT9h8sGzri1zGdskSZgnJlSnGcus2vrBqa9EMsv4A==
+ag-charts-community@10.0.2-beta.20240721:
+  version "10.0.2-beta.20240721"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-10.0.2-beta.20240721.tgz#df942471c9198ad0c9c378a76485c664bdc0dfe8"
+  integrity sha512-C2qTmkYfaqvkRVZ3EyKTkj1NjydC+wc7Rr86sYqo3w7RZ51iCXpgWwEI+vJZKQHQHcrTGqZJYX9MeMdHYdC+Ww==
   dependencies:
-    ag-charts-locale "10.0.1-beta.20240708"
-    ag-charts-types "10.0.1-beta.20240708"
+    ag-charts-locale "10.0.2-beta.20240721"
+    ag-charts-types "10.0.2-beta.20240721"
 
-ag-charts-enterprise@10.0.1-beta.20240708:
-  version "10.0.1-beta.20240708"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-10.0.1-beta.20240708.tgz#3543e3faa75fa61643e6bae5bd6b745c609cb74c"
-  integrity sha512-+fgyj7XJZzaqsqUo62b3K7VYDL+e+e9jG6AE22intSucZl1irb3Jw9DLSYLiwpVC7lZi5wEj9/0RK0XKOSE+ZA==
+ag-charts-enterprise@10.0.2-beta.20240721:
+  version "10.0.2-beta.20240721"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-10.0.2-beta.20240721.tgz#bfd7567dbaca1c716a06edf936c2ca02c57a3740"
+  integrity sha512-lsU1IYpBZG+uYLOezLML+CBJmZL/dZjkFFeEHebPOkqUhUwyaYU0yEOyBxl5j0xJ2uR8qgSp91IJMLAcgBayKA==
   dependencies:
-    ag-charts-community "10.0.1-beta.20240708"
+    ag-charts-community "10.0.2-beta.20240721"
 
-ag-charts-locale@10.0.1-beta.20240708:
-  version "10.0.1-beta.20240708"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-10.0.1-beta.20240708.tgz#ba70a6c31e8f86357ddd5132a3f15064229ac26c"
-  integrity sha512-yXng6pj8NueRKtruW+gQg2YSNfxYb9B3XcaIHT8MOoTBbzmxo07GQS57oOusQgAxjHaowN487r8xRBxFdNOQEw==
+ag-charts-locale@10.0.2-beta.20240721:
+  version "10.0.2-beta.20240721"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-10.0.2-beta.20240721.tgz#d0136bd5c193925566c4270e7c18c32db040fe04"
+  integrity sha512-BB6VeJmLzyTjrRRcTpXzrgi4jR4LzHNnDWe3itGV8Eg7e06NhP3g3cwLmkDb8OoVQ7uKAQSKAowaxAKmHwevzw==
 
-ag-charts-react@10.0.1-beta.20240708:
-  version "10.0.1-beta.20240708"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-10.0.1-beta.20240708.tgz#42433404910e8a3aa4e1397ad110e96af5f3a5a1"
-  integrity sha512-lulVTnWggg/mm4ToLhwktzS71BpZc1mbW0fk3HxfL3Yl9N6AYGeYzJXza1jVECImlLzmPbUuhPPDKcVqMp3pVQ==
+ag-charts-react@10.0.2-beta.20240721:
+  version "10.0.2-beta.20240721"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-10.0.2-beta.20240721.tgz#e19a158b4374979d4e67af2c8b43c5f3ceeb42b3"
+  integrity sha512-QP2V5FCNu7+huLlbCYJFwWL3lFfaJMdpT6U8wfwlEbkK6/qXfccrzwj9pRrrL5+ewDbQq5294VsHWb52NeR5Xw==
 
-ag-charts-types@10.0.1-beta.20240708:
-  version "10.0.1-beta.20240708"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-10.0.1-beta.20240708.tgz#dc457320bcb709b67b77ed13468f6d5a45a82097"
-  integrity sha512-TebNXAjcYwDzcgf27iVAWi6wat1EmkDclqMM7EsdVSH6boftxc+hjZUTkj0DIzqPlGyzhxmTM/jSS3+18Efi3w==
+ag-charts-types@10.0.2-beta.20240721:
+  version "10.0.2-beta.20240721"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-10.0.2-beta.20240721.tgz#f13f94a60eec8cc3bf39252dc4247e61c7760038"
+  integrity sha512-eSlEJPs1yWGSRqE6Nz1C0wkRNLEerSsqwFpQRkmZyrvPYWrFWWiZCM1O74ABEgWyXKGulmzWCa4gmBOvd/n8QQ==
 
-ag-charts-vue3@10.0.1-beta.20240708:
-  version "10.0.1-beta.20240708"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-10.0.1-beta.20240708.tgz#6abb1c0e4af383496d5a83e07e736ac6bb8e787b"
-  integrity sha512-REsk2Dc5BH8gkZ07InwL/FdgLWzXrMcL4O0F+lLlzQUqfvjrn1JrRwtvWeIi/9GhDZnGTOP6TQ5jU2r+WPXZEA==
+ag-charts-vue3@10.0.2-beta.20240721:
+  version "10.0.2-beta.20240721"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-10.0.2-beta.20240721.tgz#aee6ffae9d98a28d75ea2313ee82242d0e4e1b02"
+  integrity sha512-Y/p/LEVH11SQ7QBwXo8iPCLoZDfSKeLX6Gd8Eg1MEsmWfaeDVOTG38FwNYs4g+7bND4rK5oPbYeG5G66OZwjDA==
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
@@ -8525,11 +8537,6 @@ before-after-hook@^2.2.0:
   resolved "http://52.50.158.57:4873/before-after-hook/-/before-after-hook-2.2.3.tgz#c51e809c81a4e354084422b9b26bad88249c517c"
   integrity sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==
 
-big-integer@^1.6.16:
-  version "1.6.52"
-  resolved "http://52.50.158.57:4873/big-integer/-/big-integer-1.6.52.tgz#60a887f3047614a8e1bffe5d7173490a97dc8c85"
-  integrity sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==
-
 big.js@^5.2.2:
   version "5.2.2"
   resolved "http://52.50.158.57:4873/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
@@ -8724,20 +8731,6 @@ braces@^3.0.2, braces@~3.0.2:
   integrity sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==
   dependencies:
     fill-range "^7.0.1"
-
-broadcast-channel@^3.4.1:
-  version "3.7.0"
-  resolved "http://52.50.158.57:4873/broadcast-channel/-/broadcast-channel-3.7.0.tgz#2dfa5c7b4289547ac3f6705f9c00af8723889937"
-  integrity sha512-cIAKJXAxGJceNZGTZSBzMxzyOn72cVgPnKx4dc6LRjQgbaJUQqhy5rzL3zbMxkMWsGKkv2hSFkPRMEXfoMZ2Mg==
-  dependencies:
-    "@babel/runtime" "^7.7.2"
-    detect-node "^2.1.0"
-    js-sha3 "0.8.0"
-    microseconds "0.2.0"
-    nano-time "1.0.0"
-    oblivious-set "1.0.0"
-    rimraf "3.0.2"
-    unload "2.2.0"
 
 brorand@^1.0.1, brorand@^1.1.0:
   version "1.1.0"
@@ -11348,7 +11341,7 @@ detect-node-es@^1.1.0:
   resolved "http://52.50.158.57:4873/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-detect-node@^2.0.4, detect-node@^2.1.0:
+detect-node@^2.0.4:
   version "2.1.0"
   resolved "http://52.50.158.57:4873/detect-node/-/detect-node-2.1.0.tgz#c9c70775a49c3d03bc2c06d9a73be550f978f8b1"
   integrity sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==
@@ -17399,11 +17392,6 @@ js-message@1.0.7:
   resolved "http://52.50.158.57:4873/js-message/-/js-message-1.0.7.tgz#fbddd053c7a47021871bb8b2c95397cc17c20e47"
   integrity sha512-efJLHhLjIyKRewNS9EGZ4UpI8NguuL6fKkhRxVuMmrGV2xN/0APGdQYwLFky5w9naebSZ0OwAGp0G6/2Cg90rA==
 
-js-sha3@0.8.0:
-  version "0.8.0"
-  resolved "http://52.50.158.57:4873/js-sha3/-/js-sha3-0.8.0.tgz#b9b7a5da73afad7dedd0f8c463954cbde6818840"
-  integrity sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==
-
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "http://52.50.158.57:4873/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -18505,14 +18493,6 @@ markdown-table@^3.0.0:
   resolved "http://52.50.158.57:4873/markdown-table/-/markdown-table-3.0.3.tgz#e6331d30e493127e031dd385488b5bd326e4a6bd"
   integrity sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==
 
-match-sorter@^6.0.2:
-  version "6.3.4"
-  resolved "http://52.50.158.57:4873/match-sorter/-/match-sorter-6.3.4.tgz#afa779d8e922c81971fbcb4781c7003ace781be7"
-  integrity sha512-jfZW7cWS5y/1xswZo8VBOdudUiSd9nifYRWphc9M5D/ee4w4AoXLgBEdRbgVaxbMuagBPeUC5y2Hi8DO6o9aDg==
-  dependencies:
-    "@babel/runtime" "^7.23.8"
-    remove-accents "0.5.0"
-
 matchdep@^2.0.0:
   version "2.0.0"
   resolved "http://52.50.158.57:4873/matchdep/-/matchdep-2.0.0.tgz#c6f34834a0d8dbc3b37c27ee8bbcb27c7775582e"
@@ -19106,11 +19086,6 @@ micromatch@^4.0.0, micromatch@^4.0.2, micromatch@^4.0.4, micromatch@^4.0.5:
     braces "^3.0.2"
     picomatch "^2.3.1"
 
-microseconds@0.2.0:
-  version "0.2.0"
-  resolved "http://52.50.158.57:4873/microseconds/-/microseconds-0.2.0.tgz#233b25f50c62a65d861f978a4a4f8ec18797dc39"
-  integrity sha512-n7DHHMjR1avBbSpsTBj6fmMGh2AGrifVV4e+WYc3Q9lO+xnSZ3NyhcBND3vzzatt05LFhoKFRxrIyklmLlUtyA==
-
 miller-rabin@^4.0.0:
   version "4.0.1"
   resolved "http://52.50.158.57:4873/miller-rabin/-/miller-rabin-4.0.1.tgz#f080351c865b0dc562a8462966daa53543c78a4d"
@@ -19589,13 +19564,6 @@ nan@^2.12.1, nan@^2.14.2, nan@^2.17.0:
   version "2.19.0"
   resolved "http://52.50.158.57:4873/nan/-/nan-2.19.0.tgz#bb58122ad55a6c5bc973303908d5b16cfdd5a8c0"
   integrity sha512-nO1xXxfh/RWNxfd/XPfbIfFk5vgLsAxUR9y5O0cHMJu/AW9U95JLXqthYHjEp+8gQ5p96K9jUp8nbVOxCdRbtw==
-
-nano-time@1.0.0:
-  version "1.0.0"
-  resolved "http://52.50.158.57:4873/nano-time/-/nano-time-1.0.0.tgz#b0554f69ad89e22d0907f7a12b0993a5d96137ef"
-  integrity sha512-flnngywOoQ0lLQOTRNexn2gGSNuM9bKj9RZAWSzhQ+UJYaAFG9bac4DW9VHjUAzrOaIcajHybCTHe/bkvozQqA==
-  dependencies:
-    big-integer "^1.6.16"
 
 nanoid@^2.1.0:
   version "2.1.11"
@@ -20335,11 +20303,6 @@ object.values@^1.1.1, object.values@^1.1.7:
     call-bind "^1.0.7"
     define-properties "^1.2.1"
     es-object-atoms "^1.0.0"
-
-oblivious-set@1.0.0:
-  version "1.0.0"
-  resolved "http://52.50.158.57:4873/oblivious-set/-/oblivious-set-1.0.0.tgz#c8316f2c2fb6ff7b11b6158db3234c49f733c566"
-  integrity sha512-z+pI07qxo4c2CulUHCDf9lcqDlMSo72N/4rLUpRXf6fu+q8vjt8y0xS+Tlf8NTJDdTXHbdeO1n3MlbctwEoXZw==
 
 obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"
@@ -22664,15 +22627,6 @@ react-markdown@5.0.3:
     unist-util-visit "^2.0.0"
     xtend "^4.0.1"
 
-react-query@^3.39.3:
-  version "3.39.3"
-  resolved "http://52.50.158.57:4873/react-query/-/react-query-3.39.3.tgz#4cea7127c6c26bdea2de5fb63e51044330b03f35"
-  integrity sha512-nLfLz7GiohKTJDuT4us4X3h/8unOh+00MLb2yJoGTPjxKs2bc1iDhkNx2bd5MKklXnOD3NrVZ+J2UXujA5In4g==
-  dependencies:
-    "@babel/runtime" "^7.5.5"
-    broadcast-channel "^3.4.1"
-    match-sorter "^6.0.2"
-
 react-refresh@^0.14.0:
   version "0.14.2"
   resolved "http://52.50.158.57:4873/react-refresh/-/react-refresh-0.14.2.tgz#3833da01ce32da470f1f936b9d477da5c7028bf9"
@@ -23136,11 +23090,6 @@ remote-origin-url@^0.5.1:
   integrity sha512-crQ7Xk1m/F2IiwBx5oTqk/c0hjoumrEz+a36+ZoVupskQRE/q7pAwHKsTNeiZ31sbSTELvVlVv4h1W0Xo5szKg==
   dependencies:
     parse-git-config "^1.1.1"
-
-remove-accents@0.5.0:
-  version "0.5.0"
-  resolved "http://52.50.158.57:4873/remove-accents/-/remove-accents-0.5.0.tgz#77991f37ba212afba162e375b627631315bed687"
-  integrity sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==
 
 remove-bom-buffer@^3.0.0:
   version "3.0.0"
@@ -23771,10 +23720,19 @@ sass@1.64.1:
     immutable "^4.0.0"
     source-map-js ">=0.6.2 <2.0.0"
 
-sass@^1.42.1, sass@^1.54.4, sass@^1.55.0, sass@^1.70.0, sass@^1.71.1:
+sass@^1.42.1, sass@^1.54.4, sass@^1.55.0, sass@^1.71.1:
   version "1.76.0"
   resolved "http://52.50.158.57:4873/sass/-/sass-1.76.0.tgz#fe15909500735ac154f0dc7386d656b62b03987d"
   integrity sha512-nc3LeqvF2FNW5xGF1zxZifdW3ffIz5aBb7I7tSvOoNu7z1RQ6pFt9MBuiPtjgaI62YWrM/txjWlOCFiGtf2xpw==
+  dependencies:
+    chokidar ">=3.0.0 <4.0.0"
+    immutable "^4.0.0"
+    source-map-js ">=0.6.2 <2.0.0"
+
+sass@^1.77.8:
+  version "1.77.8"
+  resolved "http://52.50.158.57:4873/sass/-/sass-1.77.8.tgz#9f18b449ea401759ef7ec1752a16373e296b52bd"
+  integrity sha512-4UHg6prsrycW20fqLGPShtEvo/WyHRVRHwOP4DzkUrObWoWI05QBSfzU71TVB7PFaL104TwNaHpjlWXAZbQiNQ==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
@@ -26458,14 +26416,6 @@ universalify@^2.0.0:
   version "2.0.1"
   resolved "http://52.50.158.57:4873/universalify/-/universalify-2.0.1.tgz#168efc2180964e6386d061e094df61afe239b18d"
   integrity sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==
-
-unload@2.2.0:
-  version "2.2.0"
-  resolved "http://52.50.158.57:4873/unload/-/unload-2.2.0.tgz#ccc88fdcad345faa06a92039ec0f80b488880ef7"
-  integrity sha512-B60uB5TNBLtN6/LsgAf3udH9saB5p7gqJwcFfbOEZ8BcBHnGwCf6G/TGiEqkRAxX7zAFIUtzdrXQSdL3Q/wqNA==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    detect-node "^2.0.4"
 
 unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"

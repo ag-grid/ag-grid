@@ -44,17 +44,16 @@ $content-animation-time: 200ms;
 }
 
 .overlay {
-    #{$selector-darkmode} & {
-        background-color: color-mix(in srgb, var(--color-black), var(--color-bg-primary) 35%);
-        opacity: 0.8;
-    }
-
     background-color: color-mix(in srgb, var(--color-black), var(--color-black) 45%);
     z-index: 1000;
     position: fixed;
     inset: 0;
     opacity: 0.8;
 
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-black), var(--color-bg-primary) 35%);
+        opacity: 0.8;
+    }
     &[data-state='open'] {
         animation: fadeIn $overlay-animation-time ease-in;
     }
@@ -77,11 +76,11 @@ $content-animation-time: 200ms;
     max-width: 464px;
     max-height: 85vh;
     z-index: 1000;
+    overflow: hidden;
+
     &:focus {
         outline: none;
     }
-    overflow: hidden;
-
     &[data-state='open'] {
         animation: scaleFadeInUp $content-animation-time cubic-bezier(0.4, 0, 1, 1);
     }

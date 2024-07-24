@@ -60,7 +60,7 @@ where `30` in this example refers to the project's existing AG Grid version.
 
 * `--dry-run`
 
-    Show a diff output of the changes that would be made, without writing any file.
+    Show a comparison of the changes that would be made, without writing any file.
 
     Useful for reviewing the changes before applying them.
 
@@ -77,18 +77,22 @@ The following options can be used to override this behaviour:
 
 * `--allow-untracked`
     Allow operating on files outside a git repository.
+
     By default the application will terminate if run inside a non git directory.
 
 * `--allow-dirty`
-    Allow operating on repositories with uncommitted changes in the working tree
+    Allow operating on repositories with uncommitted changes in the working tree.
+
     It is advisable to always commit before running the migration, but this option can be used to override the default behaviour.
 
 
 A custom list of input files can be passed to the `migrate` command:
 
 * [<file>...]
-    List of input files to operate on (defaults to all source files in the current working directory)
-    By default the Codemod runner will locate all source files within the current directory.
+    List of input files to operate on (defaults to all source files in the current working directory).
+
+    If not specified, the Codemod runner will locate all source files within the current directory, excluding all the patterns specified in the [.gitignore](https://git-scm.com/docs/gitignore) files.
+
     For projects with more specific requirements, pass a list of input files to the `migrate` command.
 
 A configuration file can also be used for advanced use cases:
@@ -96,16 +100,18 @@ A configuration file can also be used for advanced use cases:
 * `--config=<path>`
 
     Loads a custom configuration file.
+
     See the [Configuration file](#configuration-file) section for more information.
 
-### Configuration file
+### Configuration File
 
 A configuration file is a [commonJS](https://en.wikipedia.org/wiki/CommonJS) JavaScript or TypeScript module that exports a configuration object.
-- A JavaScript file, with extension `.cjs` - ```npx @ag-grid-devtools/cli migrate --config=./my-migration-config.cjs```
-- A [TypeScript](https://www.typescriptlang.org/) file with extension `.cts` - ```npx @ag-grid-devtools/cli migrate --config=./my-migration-config.cts```
 
-my-migration-config.cjs
-```
+JavaScript file with extension `.cjs` - ```npx @ag-grid-devtools/cli migrate --from=30 --config=./my-migration-config.cjs```
+
+```js
+// my-migration-config.cjs
+
 const { defineUserConfig } = require('@ag-grid-devtools/cli/user-config');
 
 module.exports = defineUserConfig({
@@ -113,8 +119,11 @@ module.exports = defineUserConfig({
 });
 ```
 
-my-migration-config.cts
+[TypeScript](https://www.typescriptlang.org/) file with extension `.cts` - ```npx @ag-grid-devtools/cli migrate --from=30 --config=./my-migration-config.cts```
+
 ```ts
+// my-migration-config.cts
+
 import { defineUserConfig } from '@ag-grid-devtools/cli/user-config';
 
 export default defineUserConfig({
@@ -122,11 +131,13 @@ export default defineUserConfig({
 });
 ```
 
-See [user-config.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/user-config.ts) and
-[ag-grid-export-name.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/ag-grid-export-name.ts) for the details
-on the configuration object.
+{% note %}
+The `defineUserConfig` function is only used to provide typing support for the configuration.
+Configuration can be a plain object with the same shape, like `module.exports = { ... }`.
+{% /note %}
 
-### Custom import paths and names
+
+### Custom Import Paths and Names
 
 In case of custom grid wrappers and custom libraries, it is possible to provide custom interceptors in the configuration file to
 handle the migration of these custom grid wrappers.
@@ -137,6 +148,7 @@ Let's assume organization "my-org" has two custom grid wrapper in the package `@
 
 ```ts
 // @my-org/my-grid/index.ts
+
 import { createGrid, GridOptions } from '@ag-grid-community/core';
 export interface GridCustomOptions extends GridOptions { customOption: string; }
 export const createGridWithCustomOption = (myOptions: GridCustomOptions) => {
@@ -151,6 +163,7 @@ Then the configuration file could be:
 
 ```ts
 // my-grid-migration-config.ts
+
 import { defineUserConfig } from '@ag-grid-devtools/cli/user-config';
 
 export default defineUserConfig({
@@ -181,7 +194,8 @@ export default defineUserConfig({
 Let's assume organization "my-org" has a react grid wrapper in the package `@my-org/my-grid-react`
 
 ```ts
-// @my-org/my-grid-react.tsx
+// @my-org/my-grid-react/index.tsx
+
 import { AgGridReact, AgGridReactProps } from '@ag-grid-community/react';
 export interface MyGridReactProps extends AgGridReactProps { wrapperClassName?: string; }
 export const MyGrid = ({wrapperClassName, ...gridProps}: AgGridReactProps) => 
@@ -192,6 +206,7 @@ Then the configuration file could be:
 
 ```ts
 // my-grid-migration-config.ts
+
 import { defineUserConfig } from '@ag-grid-devtools/cli/user-config';
 
 export default defineUserConfig({
@@ -223,6 +238,7 @@ Then the configuration file could be:
 
 ```ts
 // my-grid-migration-config.ts
+
 import { defineUserConfig } from '@ag-grid-devtools/cli/user-config';
 
 export default defineUserConfig({
@@ -254,6 +270,7 @@ Then the configuration file could be:
 
 ```ts
 // my-grid-migration-config.ts
+
 import { defineUserConfig } from '@ag-grid-devtools/cli/user-config';
 
 export default defineUserConfig({
@@ -283,5 +300,7 @@ To execute the migration with the custom configuration file:
 npx @ag-grid-devtools/cli migrate --from=30 --config=./my-grid-migration-config.ts
 ```
 
-See [user-config.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/user-config.ts) and
-[ag-grid-export-name.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/ag-grid-export-name.ts) for more technical details and more options.
+### Configuration API
+
+To see the full list of options available, see [user-config.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/user-config.ts) and
+[ag-grid-export-name.ts](https://github.com/ag-grid/devtools/blob/develop/packages/types/src/ag-grid-export-name.ts) source code.

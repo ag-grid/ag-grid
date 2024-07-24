@@ -248,10 +248,16 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public setDisplayIndex(rowNode: RowNode, displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void {
-        // set this row
-        rowNode.setRowIndex(displayIndexSeq.next());
-        rowNode.setRowTop(nextRowTop.value);
-        nextRowTop.value += rowNode.rowHeight!;
+        const isHiddenOpenGroup = this.gos.get('groupHideOpenParents') && rowNode.group && rowNode.expanded;
+        if (isHiddenOpenGroup) {
+            rowNode.setRowIndex(null);
+            rowNode.setRowTop(null);
+        } else {
+            // set this row
+            rowNode.setRowIndex(displayIndexSeq.next());
+            rowNode.setRowTop(nextRowTop.value);
+            nextRowTop.value += rowNode.rowHeight!;
+        }
 
         if (rowNode.footer) {
             return;

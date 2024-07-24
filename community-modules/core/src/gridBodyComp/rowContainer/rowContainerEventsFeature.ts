@@ -329,7 +329,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = rowModel.getRowCount() - 1;
             } else {
                 floatingEnd = 'bottom';
-                rowEnd = pinnedRowModel.getPinnedBottomRowNodes().length - 1;
+                rowEnd = pinnedRowModel.getPinnedBottomRowCount() - 1;
             }
 
             const allDisplayedColumns = this.visibleColsService.getAllCols();

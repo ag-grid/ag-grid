@@ -18,6 +18,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private userComponentFactory: UserComponentFactory;
     private rowModel: IRowModel;
+    private isClientSide: boolean;
     private columnModel: ColumnModel;
 
     private state: OverlayServiceState = OverlayServiceState.Hidden;
@@ -32,11 +33,17 @@ export class OverlayService extends BeanStub implements NamedBean {
     private overlayWrapperComp: OverlayWrapperComponent;
 
     public postConstruct(): void {
+        this.isClientSide = this.gos.isRowModelType('clientSide');
         const updateOverlayVisibility = () => this.updateOverlayVisibility();
 
         this.addManagedEventListeners({
             newColumnsLoaded: updateOverlayVisibility,
             rowDataUpdated: updateOverlayVisibility,
+            rowCountReady: () => {
+                // Support hiding the initial overlay when data is set via transactions.
+                this.showInitialOverlay = false;
+                this.updateOverlayVisibility();
+            },
         });
 
         this.addManagedPropertyListener('loading', updateOverlayVisibility);
@@ -45,6 +52,21 @@ export class OverlayService extends BeanStub implements NamedBean {
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
         this.updateOverlayVisibility();
+    }
+
+    /** Returns true if the overlay is visible. */
+    public isVisible(): boolean {
+        return this.state !== OverlayServiceState.Hidden;
+    }
+
+    /** Returns true if the overlay is visible and is exclusive (popup over the grid) */
+    public isExclusive(): boolean {
+        return this.state === OverlayServiceState.Loading;
+    }
+
+    /** Gets the overlay wrapper component */
+    public getOverlayWrapper(): OverlayWrapperComponent {
+        return this.overlayWrapperComp;
     }
 
     public showLoadingOverlay(): void {
@@ -85,7 +107,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             loading =
                 !this.gos.get('columnDefs') ||
                 !this.columnModel.isReady() ||
-                (!this.gos.get('rowData') && this.gos.isRowModelType('clientSide'));
+                (!this.gos.get('rowData') && this.isClientSide);
         }
 
         if (loading) {
@@ -94,11 +116,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             }
         } else {
             this.showInitialOverlay = false;
-            if (
-                this.rowModel.isEmpty() &&
-                !this.gos.get('suppressNoRowsOverlay') &&
-                this.gos.isRowModelType('clientSide')
-            ) {
+            if (this.rowModel.isEmpty() && !this.gos.get('suppressNoRowsOverlay') && this.isClientSide) {
                 if (this.state !== OverlayServiceState.NoRows) {
                     this.doShowNoRowsOverlay();
                 }
@@ -133,6 +151,6 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
-        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, gridOption);
+        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, this.isExclusive(), gridOption);
     }
 }

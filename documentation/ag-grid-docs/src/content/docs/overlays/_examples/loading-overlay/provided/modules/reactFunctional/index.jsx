@@ -5,7 +5,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useState } from 'react';
+import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './styles.css';
@@ -47,4 +47,8 @@ const GridExample = () => {
 };
 
 const root = createRoot(document.getElementById('root'));
-root.render(<GridExample />);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

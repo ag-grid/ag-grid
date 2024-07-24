@@ -789,7 +789,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Show or hide the loading overlay.
      */
     @Input() public loading: boolean | undefined = undefined;
-    /** Provide a HTML string to override the default loading overlay.
+    /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
@@ -805,7 +805,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
-    /** Provide a HTML string to override the default no-rows overlay.
+    /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no-rows overlay component.

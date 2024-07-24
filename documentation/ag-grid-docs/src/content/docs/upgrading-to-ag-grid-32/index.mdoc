@@ -90,13 +90,9 @@ The following interfaces are deprecated and replaced with the equivalent interfa
 
 ## Breaking Changes
 
-{% if isFramework("angular") %}
-### Compatibility
-{% /if %}
+### Build Output
 
-{% if isFramework("angular") %}
-The minimum version of Angular you can use with AG Grid is now Angular 16.
-{% /if %}
+The TSConfig target has been set to ES2020.
 
 ### Column API
 
@@ -105,6 +101,14 @@ Column API is now removed. API methods previously available via Column API are n
 ### Column Menu
 
 The new (flat) format column menu is now enabled by default. The legacy tabbed column menu can be enabled via `columnMenu = 'legacy'`.
+
+### Compatibility
+
+The minimum version of TypeScript you can use with AG Grid is now 5.1.
+
+{% if isFramework("angular") %}
+The minimum version of Angular you can use with AG Grid is now Angular 16.
+{% /if %}
 
 {% if isFramework("react") %}
 ### Custom Components

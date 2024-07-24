@@ -1,4 +1,6 @@
+import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import React from 'react';
 
@@ -16,19 +18,19 @@ export default function FrameworkSelector({ data, currentFramework, isFullWidth,
         >
             {data.map((framework) => {
                 const isSelected = showSelectedFramework && framework.name === currentFramework;
-                const frameworkCapitalised = framework.name.charAt(0).toUpperCase() + framework.name.slice(1);
-                const alt = `${frameworkCapitalised} Data Grid`;
+                const frameworkDisplay = FRAMEWORK_DISPLAY_TEXT[framework.name];
+                const alt = `${frameworkDisplay} Data Grid`;
 
                 return (
                     <a
-                        href={`${framework.url}getting-started`}
+                        href={urlWithPrefix({ url: './getting-started', framework: framework.name })}
                         key={framework.name}
                         className={classnames(styles.option, {
                             [styles.selected]: isSelected,
                         })}
                     >
                         <img src={urlWithBaseUrl(`/${fwLogos}${framework.name}.svg`)} alt={alt} />
-                        <span>{frameworkCapitalised}</span>
+                        <span>{frameworkDisplay}</span>
                     </a>
                 );
             })}

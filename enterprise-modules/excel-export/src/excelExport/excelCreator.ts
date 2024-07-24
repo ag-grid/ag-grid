@@ -176,14 +176,14 @@ const createExcelFileForExcel = (
 };
 
 const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
-    const { data, fontSize, author, activeSheet } = params;
+    const { data, fontSize, author, activeSheetIndex } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     if (
         !createExcelFileForExcel(data, {
             author,
             fontSize,
-            activeTab: activeSheet,
+            activeTab: activeSheetIndex,
         })
     ) {
         return Promise.resolve(undefined);
@@ -193,14 +193,14 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
 };
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
-    const { data, fontSize, author, activeSheet } = params;
+    const { data, fontSize, author, activeSheetIndex } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     if (
         !createExcelFileForExcel(data, {
             author,
             fontSize,
-            activeTab: activeSheet,
+            activeTab: activeSheetIndex,
         })
     ) {
         return;

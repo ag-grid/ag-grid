@@ -8,9 +8,7 @@ import ChartsLogo from '@ag-website-shared/images/inline-svgs/ag-charts-logo.svg
 import HeroGrid from '@components/hero-grid/HeroGrid.astro';
 import { AutomatedExamples } from '@components/automated-examples/AutomatedExamples';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { agGridVersion } from '@constants';
 import { Image } from 'astro:assets';
-import { enterpriseGridUrl } from '@utils/server/enterpriseGridUrl';
 
 const frameworksData = [
     {
@@ -45,9 +43,6 @@ const frameworksData = [
     href={urlWithBaseUrl('/images/ag-grid-customer-logos.webp')}
     type="image/webp"
 />
-
-<!-- Load AG Grid library -->
-<script defer src={enterpriseGridUrl}></script>
 
 <Layout
     title="AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"
@@ -128,7 +123,7 @@ const frameworksData = [
         </div>
     </div>
 
-    <AutomatedExamples client:only="react" />
+    <AutomatedExamples client:visible />
 
     <div class={styles.homepageSponsorship}>
         <section class:list={[styles.sponsorshipInner, 'layout-max-width-small']}>

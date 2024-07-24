@@ -773,7 +773,7 @@ export interface GridOptions<TData = any> {
     loading?: boolean;
 
     /**
-     * Provide a HTML string to override the default loading overlay.
+     * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      */
     overlayLoadingTemplate?: string;
     /**
@@ -794,7 +794,7 @@ export interface GridOptions<TData = any> {
     suppressLoadingOverlay?: boolean;
 
     /**
-     * Provide a HTML string to override the default no-rows overlay.
+     * Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
      */
     overlayNoRowsTemplate?: string;
     /**
