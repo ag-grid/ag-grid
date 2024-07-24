@@ -2,6 +2,10 @@ import type { GridApi, IRowNode } from '@ag-grid-community/core';
 
 import type { RowSnapshot } from '../row-snapshot-test-utils';
 
+const log = console.log;
+const warn = console.warn;
+const info = console.info;
+
 const isGridApi = (node: unknown): node is GridApi =>
     typeof node === 'object' && node !== null && typeof (node as GridApi).setGridOption === 'function';
 
@@ -32,19 +36,26 @@ export function printTreeDiagram(
         root = findTreeRootNode(root);
     }
     if (!root) {
-        console.warn('* Empty tree');
-        return;
+        console.warn('* No root found');
+        return false;
     }
     let diagram = '';
-    let errors = 0;
+    let errorsCount = 0;
     const recurse = (node: IRowNode, parent: IRowNode | null, branch: string, level: number): void => {
         const children = node.childrenAfterGroup;
+        diagram += `${branch}${branch.length ? (children.length !== 0 ? '┬ ' : '─ ') : ''}${node.key ?? node.id} ${node.data ? 'LEAF' : 'filler'} level:${level} `;
         const errs = [];
-        if (level !== node.level) errs.push('❌LEVEL!');
-        if (parent !== node.parent) errs.push('❌PARENT!');
-        errors += errs.length;
-        diagram += `${branch}${branch.length ? (children.length !== 0 ? '┬ ' : '─ ') : ''}${node.key ?? node.id} ${node.data ? 'LEAF' : 'filler'} level:${level} node.level:${node.level} id:${node.id} ${errs.join(',')}`;
+        if (level !== node.level) {
+            diagram += `node.level:${node.level} `;
+            errs.push('❌LEVEL!');
+        }
+        if (parent !== node.parent) {
+            errs.push('❌PARENT!');
+        }
+        errorsCount += errs.length;
+        diagram += `id:${node.id} `;
         if (nodeToString) diagram += ' ' + nodeToString(node);
+        diagram += ' ' + errs.join(' ');
         diagram += '\n';
         if (branch.length) branch = branch.slice(0, -2) + (branch.slice(-2) === '└─' ? '  ' : '│ ');
         children.forEach((child: IRowNode, i: number) =>
@@ -53,18 +64,15 @@ export function printTreeDiagram(
     };
     recurse(root, root.parent, '', -1);
     if (!printOnlyOnError) {
-        console.log(diagram);
+        log(diagram);
     }
-    if (errors) {
-        let message = '❌ TREE HAS ' + errors + ' ERRORS';
-        if (printOnlyOnError) {
-            message = diagram + '\n' + message;
-        }
-        console.error(message);
+    if (errorsCount > 0) {
+        const message = '❌ TREE HAS ' + errorsCount + ' ERRORS';
+        warn(printOnlyOnError ? diagram + '\n\n' + message : message);
         return false;
     }
     if (!printOnlyOnError) {
-        console.info('👌 Tree is OK.');
+        info('👌 Tree is OK.');
     }
     return true;
 }
