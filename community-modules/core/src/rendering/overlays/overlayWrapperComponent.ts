@@ -7,6 +7,7 @@ import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layout
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _last } from '../../utils/array';
 import { _clearElement } from '../../utils/dom';
+import { _isStopPropagationForAgGrid } from '../../utils/event';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
@@ -43,27 +44,24 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (!this.isDisplayed() || !this.eOverlayWrapper || e.defaultPrevented) {
+        if (e.key !== KeyCode.TAB || e.defaultPrevented || _isStopPropagationForAgGrid(e)) {
             return;
         }
 
-        if (e.key !== KeyCode.TAB) {
+        const nextEl = this.focusService.findNextFocusableElement(this.eOverlayWrapper, false, e.shiftKey);
+        if (nextEl) {
             return;
         }
 
-        // If we are pressing shift+tab on the first or last (if backwards) focusable element in the overlay, we need to move focus outside
-        const activeElement = this.gos.getActiveDomElement();
-        if (activeElement && this.eOverlayWrapper.contains(activeElement)) {
-            const focusable = this.focusService.findFocusableElements(this.eOverlayWrapper);
-            if (activeElement === focusable[0] && e.shiftKey) {
-                if (this.focusService.focusGridView(_last(this.visibleColsService.getAllCols()), true, false)) {
-                    e.preventDefault();
-                }
-            } else if (activeElement === _last(focusable) && !e.shiftKey) {
-                if (this.focusService.focusNextGridCoreContainer(false)) {
-                    e.preventDefault();
-                }
-            }
+        let isFocused = false;
+        if (e.shiftKey) {
+            isFocused = this.focusService.focusGridView(_last(this.visibleColsService.getAllCols()), true, false);
+        } else {
+            isFocused = this.focusService.focusNextGridCoreContainer(false);
+        }
+
+        if (isFocused) {
+            e.preventDefault();
         }
     }
 

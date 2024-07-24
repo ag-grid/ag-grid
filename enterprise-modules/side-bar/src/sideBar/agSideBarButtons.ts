@@ -6,7 +6,7 @@ import type {
     ToolPanelDef,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { Component, KeyCode, _clearElement, _last, _stopPropagationForAgGrid } from '@ag-grid-community/core';
+import { Component, KeyCode, _clearElement, _stopPropagationForAgGrid } from '@ag-grid-community/core';
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 

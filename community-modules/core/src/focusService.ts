@@ -713,6 +713,11 @@ export class FocusService extends BeanStub implements NamedBean {
         return !!overlayGui && this.focusInto(overlayGui, backwards);
     }
 
+    private focusGridViewFailed(backwards: boolean, canFocusOverlay: boolean): boolean {
+        const overlayFocused = canFocusOverlay && this.focusOverlay(backwards);
+        return overlayFocused || (backwards && this.focusLastHeader());
+    }
+
     public focusGridView(column?: AgColumn, backwards: boolean = false, canFocusOverlay = true): boolean {
         if (this.overlayService.isExclusive()) {
             return canFocusOverlay && this.focusOverlay(backwards);
@@ -737,37 +742,34 @@ export class FocusService extends BeanStub implements NamedBean {
 
         const nextRow = backwards ? this.rowPositionUtils.getLastRow() : this.rowPositionUtils.getFirstRow();
 
-        if (!nextRow) {
-            return backwards
-                ? (canFocusOverlay && this.focusOverlay(backwards)) || this.focusLastHeader()
-                : canFocusOverlay && this.focusOverlay(backwards);
+        if (nextRow) {
+            const { rowIndex, rowPinned } = nextRow;
+            column ??= this.getFocusedHeader()?.column as AgColumn;
+            if (column && rowIndex !== undefined && rowIndex !== null) {
+                this.navigationService.ensureCellVisible({ rowIndex, column, rowPinned });
+
+                this.setFocusedCell({
+                    rowIndex,
+                    column,
+                    rowPinned: _makeNull(rowPinned),
+                    forceBrowserFocus: true,
+                });
+
+                this.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
+
+                return true;
+            }
         }
 
-        const { rowIndex, rowPinned } = nextRow;
-        const focusedHeader = this.getFocusedHeader();
-
-        if (!column && focusedHeader) {
-            column = focusedHeader.column as AgColumn;
+        if (canFocusOverlay && this.focusOverlay(backwards)) {
+            return true;
         }
 
-        if (rowIndex == null || !column) {
-            return backwards
-                ? (canFocusOverlay && this.focusOverlay(backwards)) || this.focusLastHeader()
-                : canFocusOverlay && this.focusOverlay(backwards);
+        if (backwards && this.focusLastHeader()) {
+            return true;
         }
 
-        this.navigationService.ensureCellVisible({ rowIndex, column, rowPinned });
-
-        this.setFocusedCell({
-            rowIndex,
-            column,
-            rowPinned: _makeNull(rowPinned),
-            forceBrowserFocus: true,
-        });
-
-        this.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
-
-        return true;
+        return false;
     }
 
     /** Returns true if an element inside the grid has focus */
