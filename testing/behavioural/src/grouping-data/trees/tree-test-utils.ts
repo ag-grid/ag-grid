@@ -15,11 +15,11 @@ export function findTreeRootNode(gridApi: GridApi) {
     return root;
 }
 
-export function checkTreeDiagram(
-    root: IRowNode | GridApi,
-    { printOnlyOnError, ...options }: PrintTreeDiagramOptions = {}
-): boolean {
-    return printTreeDiagram(root, { ...options, printOnlyOnError: printOnlyOnError ?? true });
+export function checkTreeDiagram(root: IRowNode | GridApi, options: PrintTreeDiagramOptions | boolean = {}): boolean {
+    return printTreeDiagram(
+        root,
+        typeof options === 'boolean' ? { printOnlyOnError: !options } : { printOnlyOnError: true, ...options }
+    );
 }
 
 export interface PrintTreeDiagramOptions {

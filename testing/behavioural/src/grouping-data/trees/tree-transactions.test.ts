@@ -4,7 +4,7 @@ import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { checkTreeDiagram, simpleHierarchyRowSnapshot } from './tree-test-utils';
+import { checkTreeDiagram, printTreeDiagram, simpleHierarchyRowSnapshot } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -41,8 +41,10 @@ describe('ag-grid tree transactions', () => {
     test('ag-grid tree transactions', async () => {
         const rowA = { id: '0', orgHierarchy: ['A'] };
 
-        const rowZ1 = { id: '99', orgHierarchy: ['X', 'Y', 'Z'] };
-        const rowZ2 = { id: '99', orgHierarchy: ['A', 'Y', 'Z'] };
+        const rowZ1 = { id: '88', orgHierarchy: ['X', 'Y', 'Z'] };
+        const rowW = { id: '99', orgHierarchy: ['X', 'Y', 'Z', 'W'] };
+
+        const rowZ2 = { id: '88', orgHierarchy: ['A', 'Y', 'Z'] };
 
         const rowB = { id: '1', orgHierarchy: ['A', 'B'] };
         const rowD = { id: '2', orgHierarchy: ['C', 'D'] };
@@ -75,15 +77,21 @@ describe('ag-grid tree transactions', () => {
         const api = createMyGrid(gridOptions);
 
         api.applyTransaction({
-            add: [rowB, rowD],
-            update: [rowZ2],
+            add: [rowW],
         });
 
         expect(checkTreeDiagram(api)).toBe(true);
 
         api.applyTransaction({
-            add: [rowH1],
+            update: [rowZ2],
+            add: [rowB, rowD],
+        });
+
+        expect(checkTreeDiagram(api)).toBe(true);
+
+        api.applyTransaction({
             remove: [rowZ2],
+            add: [rowH1],
         });
 
         expect(checkTreeDiagram(api)).toBe(true);
