@@ -14,7 +14,7 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, RowNode, _removeFromArray, _sortRowNodesByOrder, _warnOnce } from '@ag-grid-community/core';
 
-import { BatchRemover } from '../batchRemover';
+import { BatchRemover } from '../../batchRemover';
 
 interface TreeGroupingDetails {
     expandByDefault: number;
@@ -448,6 +448,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
 
             parentGroup = row;
+            row.level = level;
 
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
@@ -466,7 +467,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             return;
         }
         childNode.parent = parentGroup;
-        childNode.level = level + 1;
+        childNode.level = level;
         this.ensureRowNodeFields(childNode, key);
         this.setGroupData(childNode, { key, field: null, rowGroupColumn: null });
         // AG-3441 - only set initial value if node is not being moved

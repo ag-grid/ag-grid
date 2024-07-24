@@ -4,7 +4,7 @@ import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { simpleHierarchyRowSnapshot } from './tree-data-snapshots';
+import { checkTreeDiagram, simpleHierarchyRowSnapshot } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -54,9 +54,7 @@ describe('ag-grid tree transactions', () => {
 
         const gridOptions: GridOptions = {
             columnDefs: [
-                {
-                    field: 'x',
-                },
+                { field: 'x' },
                 {
                     field: 'groupType',
                     valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
@@ -81,14 +79,20 @@ describe('ag-grid tree transactions', () => {
             update: [rowZ2],
         });
 
+        expect(checkTreeDiagram(api)).toBe(true);
+
         api.applyTransaction({
             add: [rowH1],
             remove: [rowZ2],
         });
 
+        expect(checkTreeDiagram(api)).toBe(true);
+
         api.applyTransaction({
             update: [rowH2],
         });
+
+        expect(checkTreeDiagram(api)).toBe(true);
 
         const rows = getAllRows(api);
 

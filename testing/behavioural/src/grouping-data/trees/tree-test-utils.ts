@@ -1,4 +1,82 @@
+import type { GridApi, IRowNode } from '@ag-grid-community/core';
+
 import type { RowSnapshot } from '../row-snapshot-test-utils';
+
+const isGridApi = (node: unknown): node is GridApi =>
+    typeof node === 'object' && node !== null && typeof (node as GridApi).setGridOption === 'function';
+
+export function findTreeRootNode(gridApi: GridApi) {
+    let root: IRowNode = null;
+    gridApi.forEachNode((node) => (root ??= node.parent && !node.parent.parent ? node.parent : null));
+    return root;
+}
+
+export function checkTreeDiagram(
+    root: IRowNode | GridApi,
+    { printOnlyOnError, ...options }: PrintTreeDiagramOptions = {}
+): boolean {
+    return printTreeDiagram(root, { ...options, printOnlyOnError: printOnlyOnError ?? true });
+}
+
+export interface PrintTreeDiagramOptions {
+    nodeToString?: (node: IRowNode) => string;
+    printOnlyOnError?: boolean;
+}
+
+/** Utility debug function that prints a tree diagram to the console. */
+export function printTreeDiagram(
+    root: IRowNode | GridApi,
+    { nodeToString, printOnlyOnError }: PrintTreeDiagramOptions = {}
+): boolean {
+    if (isGridApi(root)) {
+        root = findTreeRootNode(root);
+    }
+    if (!root) {
+        console.warn('* Empty tree');
+        return;
+    }
+    let diagram = '';
+    let errors = 0;
+    const recurse = (node: IRowNode, parent: IRowNode | null, branch: string, level: number): void => {
+        const children = node.childrenAfterGroup;
+        const errs = [];
+        if (level !== node.level) errs.push('❌LEVEL!');
+        if (parent !== node.parent) errs.push('❌PARENT!');
+        errors += errs.length;
+        diagram += `${branch}${branch.length ? (children.length !== 0 ? '┬ ' : '─ ') : ''}${node.key ?? node.id} ${node.data ? 'LEAF' : 'filler'} level:${level} node.level:${node.level} id:${node.id} ${errs.join(',')}`;
+        if (nodeToString) diagram += ' ' + nodeToString(node);
+        diagram += '\n';
+        if (branch.length) branch = branch.slice(0, -2) + (branch.slice(-2) === '└─' ? '  ' : '│ ');
+        children.forEach((child: IRowNode, i: number) =>
+            recurse(child, node, i === children.length - 1 ? branch + '└─' : branch + '├─', level + 1)
+        );
+    };
+    recurse(root, root.parent, '', -1);
+    if (!printOnlyOnError) {
+        console.log(diagram);
+    }
+    if (errors) {
+        let message = '❌ TREE HAS ' + errors + ' ERRORS';
+        if (printOnlyOnError) {
+            message = diagram + '\n' + message;
+        }
+        console.error(message);
+        return false;
+    }
+    if (!printOnlyOnError) {
+        console.info('👌 Tree is OK.');
+    }
+    return true;
+}
+
+export function simpleHierarchyRowData() {
+    return [
+        { orgHierarchy: ['A'] },
+        { orgHierarchy: ['A', 'B'] },
+        { orgHierarchy: ['C', 'D'] },
+        { orgHierarchy: ['E', 'F', 'G', 'H'] },
+    ];
+}
 
 export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
     return [
@@ -20,7 +98,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             key: 'A',
             lastChild: false,
             leafGroup: undefined,
-            level: 1,
+            level: 0,
             master: false,
             parentKey: null,
             rowGroupIndex: undefined,
@@ -48,7 +126,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             key: 'B',
             lastChild: true,
             leafGroup: undefined,
-            level: 2,
+            level: 1,
             master: false,
             parentKey: 'A',
             rowGroupIndex: undefined,
@@ -104,7 +182,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             key: 'D',
             lastChild: true,
             leafGroup: undefined,
-            level: 2,
+            level: 1,
             master: false,
             parentKey: 'C',
             rowGroupIndex: undefined,
@@ -216,7 +294,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             key: 'H',
             lastChild: true,
             leafGroup: undefined,
-            level: 4,
+            level: 3,
             master: false,
             parentKey: 'G',
             rowGroupIndex: undefined,
