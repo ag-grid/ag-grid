@@ -149,6 +149,8 @@
     align-items: center;
     justify-content: center;
     height: $spacing-size-40;
+    padding-left: $spacing-size-4;
+    padding-right: $spacing-size-4;
     border-top: 1px solid var(--color-border-primary);
     color: var(--color-text-tertiary);
 
@@ -158,6 +160,10 @@
         opacity: 0.7;
 
         margin-bottom: $spacing-size-2;
+    }
+
+    span {
+        text-align: center;
     }
 }
 
