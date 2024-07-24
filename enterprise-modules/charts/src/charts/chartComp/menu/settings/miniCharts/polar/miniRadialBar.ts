@@ -22,7 +22,6 @@ export class MiniRadialBar extends MiniChartWithPolarAxes {
         const radius = (this.size - this.padding) / 2;
         const innerRadiusRatio = 0.4;
         const innerRadius = radius * innerRadiusRatio;
-        const totalRadius = radius + innerRadius;
 
         const radiusScale = new _Scene.BandScale();
         radiusScale.domain = this.data[0].map((_, index) => index);
@@ -47,8 +46,8 @@ export class MiniRadialBar extends MiniChartWithPolarAxes {
             const seriesSectors = series.map((datum: number, i: number) => {
                 const previousDatum = previousSeries?.[i] ?? 0;
 
-                const innerRadius = totalRadius - radiusScale.convert(i);
-                const outerRadius = innerRadius + bandwidth;
+                const outerRadius = radiusScale.convert(i);
+                const innerRadius = outerRadius - bandwidth;
                 const startAngle = angleScale.convert(previousDatum);
                 const endAngle = angleScale.convert(datum);
 
