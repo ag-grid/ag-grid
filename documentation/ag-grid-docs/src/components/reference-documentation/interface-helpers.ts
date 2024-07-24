@@ -54,8 +54,9 @@ export function isCallSig(gridProp: InterfaceEntry): boolean | undefined {
 
 /**
  * Property type is the small blue text that tells you the type of the given property
+ * @deprecated
  */
-export function getPropertyType(type: string | PropertyType, config: Config) {
+export function getPropertyTypeLegacy(type: string | PropertyType, config: Config) {
     let propertyType = '';
     if (type) {
         if (typeof type == 'string') {
