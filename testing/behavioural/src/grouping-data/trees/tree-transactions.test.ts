@@ -4,7 +4,7 @@ import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { simpleHierarchyRowSnapshot } from './tree-data-snapshots';
+import { checkTreeDiagram, printTreeDiagram, simpleHierarchyRowSnapshot } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -41,8 +41,10 @@ describe('ag-grid tree transactions', () => {
     test('ag-grid tree transactions', async () => {
         const rowA = { id: '0', orgHierarchy: ['A'] };
 
-        const rowZ1 = { id: '99', orgHierarchy: ['X', 'Y', 'Z'] };
-        const rowZ2 = { id: '99', orgHierarchy: ['A', 'Y', 'Z'] };
+        const rowZ1 = { id: '88', orgHierarchy: ['X', 'Y', 'Z'] };
+        const rowW = { id: '99', orgHierarchy: ['X', 'Y', 'Z', 'W'] };
+
+        const rowZ2 = { id: '88', orgHierarchy: ['A', 'Y', 'Z'] };
 
         const rowB = { id: '1', orgHierarchy: ['A', 'B'] };
         const rowD = { id: '2', orgHierarchy: ['C', 'D'] };
@@ -54,9 +56,7 @@ describe('ag-grid tree transactions', () => {
 
         const gridOptions: GridOptions = {
             columnDefs: [
-                {
-                    field: 'x',
-                },
+                { field: 'x' },
                 {
                     field: 'groupType',
                     valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
@@ -77,18 +77,30 @@ describe('ag-grid tree transactions', () => {
         const api = createMyGrid(gridOptions);
 
         api.applyTransaction({
-            add: [rowB, rowD],
-            update: [rowZ2],
+            add: [rowW],
         });
 
+        expect(checkTreeDiagram(api)).toBe(true);
+
         api.applyTransaction({
-            add: [rowH1],
-            remove: [rowZ2],
+            update: [rowZ2],
+            add: [rowB, rowD],
         });
+
+        expect(checkTreeDiagram(api)).toBe(true);
+
+        api.applyTransaction({
+            remove: [rowZ2],
+            add: [rowH1],
+        });
+
+        expect(checkTreeDiagram(api)).toBe(true);
 
         api.applyTransaction({
             update: [rowH2],
         });
+
+        expect(checkTreeDiagram(api)).toBe(true);
 
         const rows = getAllRows(api);
 

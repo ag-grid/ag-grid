@@ -167,7 +167,6 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const { context } = useContext(BeansContext);
     const { cellCtrl, printLayout, editingRow } = props;
 
-    const tabIndex = cellCtrl.getTabIndex();
     const colId = cellCtrl.getColumnIdSanitised();
     const cellInstanceId = cellCtrl.getInstanceId();
 
@@ -467,7 +466,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         cssClassManager.current!.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
         cssClassManager.current!.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
         cssClassManager.current!.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
-        cellCtrl.getRowCtrl()?.setInlineEditingCss(!!editDetails);
+        cellCtrl.getRowCtrl()?.setInlineEditingCss();
 
         if (cellCtrl.shouldRestoreFocus() && !cellCtrl.isEditing()) {
             // Restore focus to the cell if it was focused before and not editing.
@@ -501,7 +500,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     );
 
     return (
-        <div ref={setRef} style={userStyles} tabIndex={tabIndex} role={cellAriaRole} col-id={colId}>
+        <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colId}>
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
                     {showContents()}

@@ -98,10 +98,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         _setAriaRole(eGui, cellCtrl.getCellAriaRole());
         setAttribute('col-id', cellCtrl.getColumnIdSanitised());
-        const tabIndex = cellCtrl.getTabIndex();
-        if (tabIndex !== undefined) {
-            setAttribute('tabindex', tabIndex.toString());
-        }
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
@@ -478,7 +474,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
         this.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
 
-        this.rowCtrl?.setInlineEditingCss(editing);
+        this.rowCtrl?.setInlineEditingCss();
     }
 
     private addInCellEditor(): void {
