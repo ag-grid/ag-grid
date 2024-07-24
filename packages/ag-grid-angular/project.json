@@ -23,7 +23,7 @@
         "cwd": "packages/ag-grid-angular"
       }
     },
-    "pack": {
+    "packx": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "inputs": ["{projectRoot}/dist/ag-grid-angular/"],
@@ -34,7 +34,7 @@
         "commands": ["mkdir -p ../../../../dist/packages", "yarn pack -f ../../../../dist/{projectRoot}.tgz"]
       }
     },
-    "pack:extract": {
+    "packx:extract": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack"],
       "inputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
@@ -47,7 +47,7 @@
         ]
       }
     },
-    "pack:verify": {
+    "packx:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
       "inputs": ["{workspaceRoot}/dist/packages/contents/ag-charts-angular/"],

@@ -117,7 +117,7 @@
         "jestConfig": "packages/ag-grid-react/jest.config.ts"
       }
     },
-    "pack": {
+    "packx": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "inputs": ["production", "{projectRoot}/dist"],
@@ -128,7 +128,7 @@
         "commands": ["mkdir -p ../../dist/packages", "yarn pack -f ../../dist/packages/ag-grid-react.tgz"]
       }
     },
-    "pack:extract": {
+    "packx:extract": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack"],
       "inputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
@@ -141,7 +141,7 @@
         ]
       }
     },
-    "pack:verify": {
+    "packx:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
       "inputs": ["{workspaceRoot}/dist/packages/contents/community/react/react/"],
