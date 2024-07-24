@@ -26,7 +26,7 @@ import {
     formatJson,
     getAllSectionPropertyEntries,
     getInterfaceName,
-    getInterfacesToWrite,
+    getInterfacesToWriteLegacy,
     getPropertyTypeLegacy,
     getSectionProperties,
     isCallSig,
@@ -114,7 +114,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
     const li = interfaceLookup[interfaceName];
 
     if (config.asCode) {
-        const interfacesToWrite = getInterfacesToWrite(interfaceName, interfaceName, config);
+        const interfacesToWrite = getInterfacesToWriteLegacy(interfaceName, interfaceName, config);
         if (interfacesToWrite.length < 1) {
             return (
                 <h2 style={{ color: 'red' }}>
@@ -884,22 +884,22 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
                 const { meta, ...type } = args[key];
                 interfacesToWrite = [
                     ...interfacesToWrite,
-                    ...getInterfacesToWrite(getArgumentTypeName(key, { meta }), type, config),
+                    ...getInterfacesToWriteLegacy(getArgumentTypeName(key, { meta }), type, config),
                 ];
             });
     } else if (args) {
         Object.entries(args).forEach(([key, type]) => {
             interfacesToWrite = [
                 ...interfacesToWrite,
-                ...getInterfacesToWrite(getArgumentTypeName(key, type), type, config),
+                ...getInterfacesToWriteLegacy(getArgumentTypeName(key, type), type, config),
             ];
         });
     }
 
     if (returnTypeIsObject) {
-        interfacesToWrite = [...interfacesToWrite, ...getInterfacesToWrite(returnTypeName, returnType, config)];
+        interfacesToWrite = [...interfacesToWrite, ...getInterfacesToWriteLegacy(returnTypeName, returnType, config)];
     } else if (returnTypeHasInterface) {
-        interfacesToWrite = [...interfacesToWrite, ...getInterfacesToWrite(returnType, returnType, config)];
+        interfacesToWrite = [...interfacesToWrite, ...getInterfacesToWriteLegacy(returnType, returnType, config)];
     }
 
     lines.push(...writeAllInterfaces(interfacesToWrite, framework));
