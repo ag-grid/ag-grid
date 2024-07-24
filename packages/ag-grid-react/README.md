@@ -342,7 +342,7 @@ gridOptions = {
 
 ### Themes
 
-AG Grid has 4 [themes](https://ag-grid.com/vue-data-grid/global-style/?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github), each available in `light` & `dark` modes. We also supply each theme with an `auto` mode that can toggle the theme based on the users' system preferences:
+AG Grid has 4 [themes](https://ag-grid.com/react-data-grid/global-style/?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github), each available in `light` & `dark` modes. We also supply each theme with an `auto` mode that can toggle the theme based on the users' system preferences:
 
 <table>
     <tr>
