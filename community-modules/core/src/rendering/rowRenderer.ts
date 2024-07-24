@@ -721,11 +721,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
 
         // this should be done asynchronously to work with React Renderers.
+        this.focusService.setRestoreFocusedCell(cellPosition);
         setTimeout(() => {
             // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
             // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
             // state
-            this.focusService.setRestoreFocusedCell(cellPosition);
 
             this.onCellFocusChanged(
                 this.gos.addGridCommonParams<CellFocusedEvent>({
