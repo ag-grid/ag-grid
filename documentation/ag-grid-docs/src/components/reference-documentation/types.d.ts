@@ -14,13 +14,8 @@ interface MetaTag {
     /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
     suppressMissingPropCheck?: true;
 }
-export type DocEntryMap = {
-    meta?: MetaTag;
-} & {
-    [key in string]: DocEntry | ChildDocEntry;
-};
+export type DocEntryMap = Record<string, DocEntry | ChildDocEntry>;
 type DocEntry = {
-    meta?: MetaTag;
     options?: never;
     more?: never;
     type?: never;
@@ -141,12 +136,8 @@ export interface Config {
     showSnippets?: boolean;
     lookupRoot?: string;
     lookups?: {
-        codeLookup: {
-            [key: string]: CodeEntry;
-        };
-        interfaces: {
-            [key: string]: InterfaceEntry;
-        };
+        codeLookup: Record<string, CodeEntry>;
+        interfaces: Record<string, InterfaceEntry>;
     };
     codeSrcProvided: string[];
     gridOpProp?: InterfaceEntry;
@@ -193,15 +184,16 @@ export interface Config {
     /** Show the description of what an initial property is against initial properties */
     showInitialDescription?: boolean;
 }
+
+export type Properties = DocEntryMap | DocEntry | ChildDocEntry;
 export type SectionProps = {
-    framework: Framework;
     title: string;
-    properties: DocEntryMap | DocEntry | ChildDocEntry;
-    config: Config;
-    breadcrumbs?: {
-        [key in string]: string;
-    };
+    framework: Framework;
     names?: string[];
+    properties: Properties;
+    config: Config;
+    breadcrumbs?: Record<string, string>;
+    meta: MetaTag;
 };
 export type PropertyCall = {
     framework: Framework;
@@ -216,3 +208,8 @@ export type FunctionCode = {
     type: PropertyType | string;
     config: Config;
 };
+
+export interface DocModel {
+    properties: Properties;
+    meta: MetaTag;
+}

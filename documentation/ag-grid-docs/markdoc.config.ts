@@ -96,7 +96,6 @@ export default defineMarkdocConfig({
                 overrideSrc: { type: String },
                 names: { type: Array },
                 exclude: { type: Array },
-                wrapNamesAt: { type: Number },
                 config: { type: Object },
             },
         },
