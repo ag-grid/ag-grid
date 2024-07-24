@@ -1,5 +1,6 @@
-import { OverlayComponent } from './overlayComponent';
+import { _makeNull } from '../../utils/generic';
 import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
+import { OverlayComponent } from './overlayComponent';
 
 export interface INoRowsOverlayParams<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
 
@@ -13,7 +14,7 @@ export class NoRowsOverlayComponent
     implements INoRowsOverlayComp<any, any>
 {
     public init(): void {
-        const customTemplate = this.gos.get('overlayNoRowsTemplate');
+        const customTemplate = _makeNull(this.gos.get('overlayNoRowsTemplate')?.trim());
 
         this.setTemplate(customTemplate ?? /* html */ `<span class="ag-overlay-no-rows-center"></span>`);
 

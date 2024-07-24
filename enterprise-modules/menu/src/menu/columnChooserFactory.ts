@@ -96,7 +96,9 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
                 centered: true,
                 closable: true,
                 afterGuiAttached: () => {
-                    this.focusService.findNextFocusableElement(columnSelectPanel.getGui())?.focus();
+                    this.focusService.findNextFocusableElement(columnSelectPanel.getGui())?.focus({
+                        preventScroll: true,
+                    });
                     this.dispatchVisibleChangedEvent(true, column);
                 },
                 closedCallback: (event) => {
