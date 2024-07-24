@@ -289,6 +289,16 @@ export const About = () => {
                             <img
                                 height={250}
                                 width={250}
+                                src={'/images/team/ava.jpg'}
+                                alt="Ava Uutting, Technical Product Analyst"
+                            />
+                            <h3>Ava Uutting</h3>
+                            <p>Technical Product Analyst</p>
+                        </div>
+                        <div>
+                            <img
+                                height={250}
+                                width={250}
                                 src={'/images/team/viqas.jpg'}
                                 alt="Viqas Hussain, Lead Developer"
                             />
@@ -552,6 +562,30 @@ export const About = () => {
                                 alt="Adam Mulcahy, Customer Experience Manager"
                             />
                             <h3>Adam Mulcahy</h3>
+                            <p>Customer Experience Manager</p>
+                        </div>
+                        <div>
+                            <img
+                                height={250}
+                                width={250}
+                                src={'/images/team/felicity.jpg'}
+                                alt="Felicity Van Der Straaten, Customer Experience Manager"
+                            />
+                            <h3>
+                                Felicity
+                                <br />
+                                Van Der Straaten
+                            </h3>
+                            <p>Customer Experience Manager</p>
+                        </div>
+                        <div>
+                            <img
+                                height={250}
+                                width={250}
+                                src={'/images/team/sahib.jpg'}
+                                alt="Sahib Singh, Customer Experience Manager"
+                            />
+                            <h3>Sahib Singh</h3>
                             <p>Customer Experience Manager</p>
                         </div>
                         <div>
