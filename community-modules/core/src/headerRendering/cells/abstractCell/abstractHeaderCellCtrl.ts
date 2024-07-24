@@ -161,7 +161,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private refreshTabIndex(): void {
-        const suppressHeaderFocus = this.gos.get('suppressHeaderFocus');
+        const suppressHeaderFocus = this.focusService.isHeaderFocusSuppressed();
         if (suppressHeaderFocus) {
             this.eGui.removeAttribute('tabindex');
         } else {
