@@ -27,7 +27,7 @@ import {
     getAllSectionPropertyEntries,
     getInterfaceName,
     getInterfacesToWrite,
-    getPropertyType,
+    getPropertyTypeLegacy,
     getSectionProperties,
     isCallSig,
     isGridOptionEvent,
@@ -618,7 +618,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         }
     }
 
-    const propertyType = getPropertyType(type, config);
+    const propertyType = getPropertyTypeLegacy(type, config);
     const typeUrl = isObject
         ? `#reference-${id}.${name}`
         : propertyType !== 'Function'
