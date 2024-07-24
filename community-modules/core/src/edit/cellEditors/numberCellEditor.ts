@@ -1,4 +1,5 @@
 import { KeyCode } from '../../constants/keyCode';
+import { _isBrowserSafari } from '../../utils/browser';
 import { _exists } from '../../utils/generic';
 import type { AgInputNumberField } from '../../widgets/agInputNumberField';
 import { AgInputNumberFieldSelector } from '../../widgets/agInputNumberField';
@@ -67,6 +68,15 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
     public getStartValue(): string | null | undefined {
         return this.params.value as any;
+    }
+
+    public setCaret(): void {
+        if (_isBrowserSafari()) {
+            // If not safari, input is already focused.
+            // For safari we need to focus only for this use case to avoid AG-3238,
+            // but still ensure the input has focus.
+            this.eInput.getInputElement().focus({ preventScroll: true });
+        }
     }
 }
 
