@@ -39,10 +39,7 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
             return;
         }
 
-        if (
-            this.focusService.focusOverlay(true) ||
-            this.focusService.focusGridView(_last(this.visibleColsService.getAllCols()), true)
-        ) {
+        if (this.focusService.focusNextGridCoreContainer(true)) {
             e.preventDefault();
             return;
         }

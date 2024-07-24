@@ -723,26 +723,24 @@ export class FocusService extends BeanStub implements NamedBean {
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
         if (this.isCellFocusSuppressed()) {
             if (backwards) {
-                if (canFocusOverlay && this.focusOverlay()) {
-                    return true;
-                }
                 if (!this.isHeaderFocusSuppressed()) {
                     return this.focusLastHeader();
                 }
-                return this.focusNextGridCoreContainer(true, true);
+            }
+
+            if (canFocusOverlay && this.focusOverlay(backwards)) {
+                return true;
             }
 
             return this.focusNextGridCoreContainer(false);
         }
 
-        if (backwards && canFocusOverlay && this.focusOverlay()) {
-            return true;
-        }
-
         const nextRow = backwards ? this.rowPositionUtils.getLastRow() : this.rowPositionUtils.getFirstRow();
 
         if (!nextRow) {
-            return backwards && ((canFocusOverlay && this.focusOverlay()) || this.focusLastHeader());
+            return backwards
+                ? (canFocusOverlay && this.focusOverlay(backwards)) || this.focusLastHeader()
+                : canFocusOverlay && this.focusOverlay(backwards);
         }
 
         const { rowIndex, rowPinned } = nextRow;
@@ -753,7 +751,9 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         if (rowIndex == null || !column) {
-            return backwards && ((canFocusOverlay && this.focusOverlay()) || this.focusLastHeader());
+            return backwards
+                ? (canFocusOverlay && this.focusOverlay(backwards)) || this.focusLastHeader()
+                : canFocusOverlay && this.focusOverlay(backwards);
         }
 
         this.navigationService.ensureCellVisible({ rowIndex, column, rowPinned });

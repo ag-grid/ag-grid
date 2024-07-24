@@ -1,9 +1,11 @@
+import type { VisibleColsService } from '../../columns/visibleColsService';
 import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { FocusService } from '../../focusService';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
+import { _last } from '../../utils/array';
 import { _clearElement } from '../../utils/dom';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
@@ -18,6 +20,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public wireBeans(beans: BeanCollection): void {
         this.overlayService = beans.overlayService;
         this.focusService = beans.focusService;
+        this.visibleColsService = beans.visibleColsService;
     }
 
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
@@ -27,6 +30,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private updateListenerDestroyFunc: (() => null) | null = null;
     private activeOverlayWrapperCssClass: string | null = null;
     private elToFocusAfter: HTMLElement | null = null;
+    private visibleColsService: VisibleColsService;
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
@@ -39,25 +43,25 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (!this.isDisplayed()) {
+        if (!this.isDisplayed() || !this.eOverlayWrapper || e.defaultPrevented) {
             return;
         }
 
-        if (e.key !== KeyCode.TAB || !e.shiftKey) {
+        if (e.key !== KeyCode.TAB) {
             return;
         }
 
-        // If we are pressing shift+tab on the first first focusable element in the overlay, we need to move focus outside
-        const activeElement = document.activeElement;
-        if (activeElement) {
-            if (activeElement === this.focusService.findFocusableElements(this.eOverlayWrapper)[0]) {
-                if (this.focusService.focusGridView(undefined, true, false)) {
+        // If we are pressing shift+tab on the first or last (if backwards) focusable element in the overlay, we need to move focus outside
+        const activeElement = this.gos.getActiveDomElement();
+        if (activeElement && this.eOverlayWrapper.contains(activeElement)) {
+            const focusable = this.focusService.findFocusableElements(this.eOverlayWrapper);
+            if (activeElement === focusable[0] && e.shiftKey) {
+                if (this.focusService.focusGridView(_last(this.visibleColsService.getAllCols()), true, false)) {
                     e.preventDefault();
-                    return;
                 }
-                if (this.focusService.focusNextGridCoreContainer(true)) {
+            } else if (activeElement === _last(focusable) && !e.shiftKey) {
+                if (this.focusService.focusNextGridCoreContainer(false)) {
                     e.preventDefault();
-                    return;
                 }
             }
         }

@@ -429,7 +429,10 @@ export class NavigationService extends BeanStub implements NamedBean {
                 previous.focusCell(true);
             }
 
-            if (this.focusService.focusNextGridCoreContainer(backwards)) {
+            if (
+                (!backwards && this.focusService.focusOverlay(false)) ||
+                this.focusService.focusNextGridCoreContainer(backwards)
+            ) {
                 keyboardEvent.preventDefault();
             }
         }

@@ -195,7 +195,7 @@ export class GridCtrl extends BeanStub {
     }
 
     public allowFocusForNextCoreContainer(up?: boolean): void {
-        const coreContainers = this.getFocusableContainers(false);
+        const coreContainers = this.view.getFocusableContainers();
         const { nextIndex, indexWithFocus } = this.getNextFocusableIndex(coreContainers, up);
         if (indexWithFocus === -1 || nextIndex < 0 || nextIndex >= coreContainers.length) {
             return;
@@ -232,31 +232,8 @@ export class GridCtrl extends BeanStub {
         return result;
     }
 
-    private getFocusableContainers(additionalContainers = true): FocusableContainer[] {
-        const result: FocusableContainer[] = [];
-        const { overlayService } = this.beans;
-
-        const fromView = this.view.getFocusableContainers();
-
-        if (fromView.length > 0) {
-            result.push(fromView[0]);
-
-            const overlayComp =
-                overlayService.isVisible() && !overlayService.isExclusive() && overlayService.getOverlayWrapper();
-            if (overlayComp) {
-                result.push(overlayComp);
-            }
-        }
-
-        for (let i = 1; i < fromView.length; i++) {
-            result.push(fromView[i]);
-        }
-
-        if (additionalContainers) {
-            result.push(...this.additionalFocusableContainers);
-        }
-
-        return result;
+    private getFocusableContainers(): FocusableContainer[] {
+        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
     }
 
     public override destroy(): void {
