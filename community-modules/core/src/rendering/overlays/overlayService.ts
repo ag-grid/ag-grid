@@ -24,6 +24,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private state: OverlayServiceState = OverlayServiceState.Hidden;
     private showInitialOverlay: boolean = true;
+    private exclusive?: boolean;
 
     public wireBeans(beans: BeanCollection): void {
         this.userComponentFactory = beans.userComponentFactory;
@@ -137,6 +138,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             'ag-overlay-loading-wrapper',
             'loadingOverlayComponentParams'
         );
+        this.updateExclusive();
     }
 
     private doShowNoRowsOverlay(): void {
@@ -146,15 +148,27 @@ export class OverlayService extends BeanStub implements NamedBean {
             'ag-overlay-no-rows-wrapper',
             'noRowsOverlayComponentParams'
         );
+        this.updateExclusive();
     }
 
     private doHideOverlay(): void {
         this.state = OverlayServiceState.Hidden;
         this.overlayWrapperComp.hideOverlay();
+        this.updateExclusive();
     }
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
         this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, this.isExclusive(), gridOption);
+    }
+
+    private updateExclusive(): void {
+        const wasExclusive = this.exclusive;
+        this.exclusive = this.isExclusive();
+        if (this.exclusive !== wasExclusive) {
+            this.eventService.dispatchEvent({
+                type: 'overlayExclusiveChanged',
+            });
+        }
     }
 }
