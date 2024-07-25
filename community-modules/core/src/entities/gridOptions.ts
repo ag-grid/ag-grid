@@ -2494,7 +2494,7 @@ interface CommonRowSelectionOptions<TData, TValue> {
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
      */
-    isSelectable?: IsRowSelectable<TData>;
+    isRowSelectable?: IsRowSelectable<TData>;
 }
 
 export interface SingleRowSelectionOptions<TData = unknown, TValue = unknown>

@@ -667,7 +667,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             case 'suppressRowDeselection':
                 return rowOptionWithFallback(option, (opts) => opts.suppressDeselection);
             case 'isRowSelectable':
-                return rowOptionWithFallback(option, (opts) => opts.isSelectable);
+                return rowOptionWithFallback(option, (opts) => opts.isRowSelectable);
             case 'rowSelection':
                 return rowOptionWithFallback(option, (opts) => (opts.mode === 'multiRow' ? 'multiple' : 'single'));
             case 'rowMultiSelectWithClick':
