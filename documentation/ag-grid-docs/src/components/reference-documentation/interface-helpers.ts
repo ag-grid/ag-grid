@@ -1,7 +1,7 @@
 import { SHOW_DEBUG_LOGS } from '@constants';
 
 import { extractInterfaces } from './documentation-helpers';
-import type { Config, DocEntryMap, InterfaceEntry, PropertyType } from './types';
+import type { Config, DocEntryMap, InterfaceEntry, InterfaceHierarchyOverrides, PropertyType } from './types';
 
 /**
  * @deprecated
@@ -30,6 +30,12 @@ export const getInterfacesToWrite = ({
     interfaceLookup,
     gridOpProp,
     interfaceHierarchyOverrides,
+}: {
+    name: string;
+    definition: any;
+    interfaceLookup: Record<string, InterfaceEntry>;
+    gridOpProp?: InterfaceEntry;
+    interfaceHierarchyOverrides?: InterfaceHierarchyOverrides;
 }) => {
     let interfacesToWrite = [];
     if (typeof definition === 'string') {

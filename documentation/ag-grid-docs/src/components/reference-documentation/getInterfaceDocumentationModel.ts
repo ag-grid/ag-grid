@@ -1,4 +1,5 @@
 import type { Framework } from '@ag-grid-types';
+import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 
 import {
     escapeGenericCode,
@@ -18,7 +19,17 @@ import {
     isCallSig,
     isGridOptionEvent,
 } from './interface-helpers';
-import type { ChildDocEntry, DocEntryMap, DocModel, ICallSignature, Overrides } from './types';
+import type {
+    ChildDocEntry,
+    Config,
+    DocCode,
+    DocEntryMap,
+    DocModel,
+    DocProperties,
+    ICallSignature,
+    InterfaceEntry,
+    Overrides,
+} from './types';
 
 interface Params {
     interfaceName: string;
@@ -261,7 +272,7 @@ function getProperties({
     exclude,
     codeData,
     config,
-}) {
+}): DocProperties {
     const props: any = {};
     let interfaceOverrides: Overrides = {};
     if (Object.keys(overrides).length) {
@@ -356,7 +367,48 @@ function getProperties({
         ...interfaceOverrides.meta,
     };
 
-    return { properties, meta };
+    return { type: 'properties', properties, meta };
+}
+
+function getDocCode({
+    interfaceName,
+    framework,
+    exclude,
+    interfaceLookup,
+    config,
+}: {
+    interfaceName: string;
+    framework: Framework;
+    exclude: string[];
+    interfaceLookup: Record<string, InterfaceEntry>;
+    config: Config;
+}): DocCode {
+    const interfacesToWrite = getInterfacesToWrite({
+        name: interfaceName,
+        definition: interfaceName,
+        interfaceLookup,
+    });
+
+    if (interfacesToWrite.length < 1) {
+        throwDevWarning({
+            message: `Could not find interface ${interfaceName} for interface-documentation component!`,
+        });
+    }
+    const lines = [];
+    lines.push(
+        ...writeAllInterfaces(interfacesToWrite.slice(0, 1), framework, {
+            lineBetweenProps: config.lineBetweenProps ?? true,
+            hideName: config.hideName,
+            exclude,
+            applyOptionalOrdering: true,
+        })
+    );
+    const code = escapeGenericCode(lines);
+
+    return {
+        type: 'code',
+        code,
+    };
 }
 
 export function getInterfaceDocumentationModel({
@@ -369,17 +421,26 @@ export function getInterfaceDocumentationModel({
     interfaceLookup,
     codeLookup,
 }: Params): DocModel {
-    const { properties, meta } = getProperties({
-        framework,
-        interfaceName,
-        interfaceData: interfaceLookup[interfaceName],
-        interfaceLookup,
-        overrides,
-        names,
-        exclude,
-        codeData: codeLookup[interfaceName],
-        config,
-    });
+    const codeData = codeLookup[interfaceName];
+    const model = config.asCode
+        ? getDocCode({
+              interfaceName,
+              framework,
+              exclude,
+              interfaceLookup,
+              config,
+          })
+        : getProperties({
+              framework,
+              interfaceName,
+              interfaceData: interfaceLookup[interfaceName],
+              interfaceLookup,
+              overrides,
+              names,
+              exclude,
+              codeData,
+              config,
+          });
 
-    return { properties, meta };
+    return model;
 }
