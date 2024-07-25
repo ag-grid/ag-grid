@@ -10,9 +10,6 @@ import type {
     GridOptions,
     MultiRowSelectionOptions,
     RowSelectionOptions,
-    SelectionModes,
-    SelectionOptions,
-    SingleRowSelectionOptions,
 } from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEventType } from './eventTypes';
@@ -654,7 +651,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
         switch (option) {
             case 'suppressMultiRangeSelection':
-                return cellOptionWithFallback(option, (opts) => opts.suppressMultiRangeSelection);
+                return cellOptionWithFallback(option, (opts) => opts.suppressMultiRanges);
             case 'enableRangeHandle':
                 return cellOptionWithFallback(option, (opts) => opts.enableRangeHandle);
             case 'enableFillHandle':
@@ -666,19 +663,19 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             case 'fillOperation':
                 return cellOptionWithFallback(option, (opts) => opts.fillHandleOptions?.setFillValue);
             case 'suppressRowClickSelection':
-                return rowOptionWithFallback(option, (opts) => opts.suppressRowClickSelection);
+                return rowOptionWithFallback(option, (opts) => opts.suppressClickSelection);
             case 'suppressRowDeselection':
-                return rowOptionWithFallback(option, (opts) => opts.suppressRowDeselection);
+                return rowOptionWithFallback(option, (opts) => opts.suppressDeselection);
             case 'isRowSelectable':
-                return rowOptionWithFallback(option, (opts) => opts.isRowSelectable);
+                return rowOptionWithFallback(option, (opts) => opts.isSelectable);
             case 'rowSelection':
                 return rowOptionWithFallback(option, (opts) => (opts.mode === 'multiRow' ? 'multiple' : 'single'));
             case 'rowMultiSelectWithClick':
                 return multiRowOptionWithFallback(option, (opts) => opts.enableMultiSelectWithClick);
             case 'groupSelectsChildren':
-                return multiRowOptionWithFallback(option, (opts) => opts.groupSelection !== 'self');
+                return multiRowOptionWithFallback(option, (opts) => opts.groupSelects !== 'self');
             case 'groupSelectsFiltered':
-                return multiRowOptionWithFallback(option, (opts) => opts.groupSelection === 'filteredChildren');
+                return multiRowOptionWithFallback(option, (opts) => opts.groupSelects === 'filteredChildren');
             default:
                 return;
         }

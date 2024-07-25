@@ -2443,7 +2443,7 @@ export interface CellSelectionOptions<TData = unknown> {
      * If `true`, only a single range can be selected
      * @default false
      */
-    suppressMultiRangeSelection?: boolean;
+    suppressMultiRanges?: boolean;
     /**
      * Set to `true` to enable the Range Handle
      * @default false
@@ -2480,12 +2480,12 @@ interface CommonRowSelectionOptions<TData, TValue> {
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
      */
-    suppressRowDeselection?: boolean;
+    suppressDeselection?: boolean;
     /**
      * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
      */
-    suppressRowClickSelection?: boolean;
+    suppressClickSelection?: boolean;
     /**
      * Determine checkbox selection behaviour
      * @default false
@@ -2494,7 +2494,7 @@ interface CommonRowSelectionOptions<TData, TValue> {
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
      */
-    isRowSelectable?: IsRowSelectable<TData>;
+    isSelectable?: IsRowSelectable<TData>;
 }
 
 export interface SingleRowSelectionOptions<TData = unknown, TValue = unknown>
@@ -2512,9 +2512,9 @@ export interface MultiRowSelectionOptions<TData = unknown, TValue = unknown>
      * Determine group selection behaviour
      * @default 'none'
      */
-    groupSelection?: GroupSelectionMode;
+    groupSelects?: GroupSelectionMode;
     /**
-     * Determines how "select all" behaviour works both via the API (i.e. `selectAll`) and via header checkbox selection.
+     * Determines how "select all" behaviour works via header checkbox selection.
      */
     selectAllOptions?: SelectAllOptions;
     /**
@@ -2533,10 +2533,10 @@ export interface MultiRowSelectionOptions<TData = unknown, TValue = unknown>
  * Determines whether checkboxes are displayed for selection
  */
 export type CheckboxSelectionOptions<TData, TValue> =
-    | false
+    | boolean
     | {
-          /** Set to `true` (or return `true` from function) to render a selection checkbox in the first column. */
-          enabled: true | CheckboxSelectionCallback<TData, TValue>;
+          /** Return `true` from function to render a selection checkbox in the first column. */
+          displayCheckbox?: CheckboxSelectionCallback<TData, TValue>;
           /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. */
           showDisabledCheckboxes?: boolean;
       };
