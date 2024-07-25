@@ -3,8 +3,6 @@ import type {
     AgColumn,
     BeanCollection,
     ColumnModel,
-    ColumnPanelItemDragEndEvent,
-    ColumnPanelItemDragStartEvent,
     DragAndDropService,
     DragItem,
     DragSource,
