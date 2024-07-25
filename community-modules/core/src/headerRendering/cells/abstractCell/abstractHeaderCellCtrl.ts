@@ -131,10 +131,9 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected setupAutoHeight(params: {
         wrapperElement: HTMLElement;
-        setHeaderHeight: (height: number) => void;
         checkMeasuringCallback?: (callback: () => void) => void;
     }) {
-        const { wrapperElement, setHeaderHeight, checkMeasuringCallback } = params;
+        const { wrapperElement, checkMeasuringCallback } = params;
         const { resizeObserverService } = this.beans;
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive()) {
@@ -162,8 +161,7 @@ export abstract class AbstractHeaderCellCtrl<
                     return;
                 }
             }
-
-            setHeaderHeight(autoHeight);
+            this.beans.columnModel.setColHeaderHeight(this.column, autoHeight);
         };
 
         let isMeasuring = false;

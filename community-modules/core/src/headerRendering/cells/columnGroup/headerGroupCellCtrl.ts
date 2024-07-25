@@ -70,8 +70,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.setupAutoHeight({
             wrapperElement: eHeaderCompWrapper,
-            setHeaderHeight: (height) => '',
         });
+
         this.setupUserComp();
         this.addHeaderMouseListeners();
 

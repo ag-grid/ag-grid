@@ -76,7 +76,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         this.setupAutoHeight({
             wrapperElement: eHeaderCompWrapper,
-            setHeaderHeight: (height) => this.beans.columnModel.setColHeaderHeight(this.column, height),
             checkMeasuringCallback: (checkMeasuring) => this.addRefreshFunction(checkMeasuring),
         });
 

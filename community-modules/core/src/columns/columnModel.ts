@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
@@ -916,11 +917,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.autoCols?.list || null;
     }
 
-    public setColHeaderHeight(col: AgColumn, height: number): void {
+    public setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
         const changed = col.setAutoHeaderHeight(height);
 
         if (changed) {
-            this.eventDispatcher.headerHeight(col);
+            if (col.isColumn) {
+                this.eventDispatcher.headerHeight(col);
+            } else {
+                this.eventDispatcher.groupHeaderHeight(col);
+            }
         }
     }
 
