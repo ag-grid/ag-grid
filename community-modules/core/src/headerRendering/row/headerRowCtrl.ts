@@ -106,6 +106,7 @@ export class HeaderRowCtrl extends BeanStub {
             columnResized: this.onColumnResized.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
+            columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
             gridStylesChanged: onHeightChanged,
             advancedFilterEnabledChanged: onHeightChanged,
@@ -189,7 +190,7 @@ export class HeaderRowCtrl extends BeanStub {
         const groupHeadersHeight = columnModel.getGroupRowsHeight();
         const headerHeight = columnModel.getColumnHeaderRowHeight();
 
-        sizes.push(groupHeadersHeight);
+        sizes.push(...groupHeadersHeight);
         sizes.push(headerHeight);
 
         if (filterManager?.hasFloatingFilters()) {

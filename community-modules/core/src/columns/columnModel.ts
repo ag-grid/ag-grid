@@ -934,8 +934,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    public getGroupRowsHeight(): number {
-        let groupHeight = 0;
+    public getGroupRowsHeight(): number[] {
+        const heights: number[] = [];
         const groupRowCount = this.ctrlsService.getHeaderRowContainerCtrl()?.getGroupRowCount() || 0;
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl();
 
@@ -943,14 +943,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
             const headerRowCtrl = headerRowContainerCtrl?.getGroupRowCtrlAtIndex(i);
 
             if (headerRowCtrl) {
-                groupHeight += this.getColumnGroupHeaderRowHeight(headerRowCtrl);
+                heights.push(this.getColumnGroupHeaderRowHeight(headerRowCtrl));
             }
         }
 
-        return groupHeight;
+        return heights;
     }
 
-    private getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
+    public getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
         const defaultHeight: number = (
             this.isPivotMode() ? this.getPivotGroupHeaderHeight() : this.getGroupHeaderHeight()
         ) as number;

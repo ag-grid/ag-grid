@@ -161,6 +161,7 @@ export abstract class AbstractHeaderCellCtrl<
                     return;
                 }
             }
+
             this.beans.columnModel.setColHeaderHeight(this.column, autoHeight);
         };
 
