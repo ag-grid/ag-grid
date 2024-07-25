@@ -44,7 +44,7 @@ export const logWarning = (warning: any) => {
     }
 };
 
-export const updateAlgolia = async (indexName: string, records: any) => {
+export const updateAlgolia = async (indexName: string, records: Record<string, any>[]) => {
     if (printMode) {
         return;
     }

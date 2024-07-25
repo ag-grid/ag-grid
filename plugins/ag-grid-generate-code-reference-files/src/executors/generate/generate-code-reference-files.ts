@@ -48,17 +48,15 @@ function toCamelCase(value) {
     return value[0].toLowerCase() + value.substring(1);
 }
 
-function silentFindNode(text: string, srcFile: ts.SourceFile, node?: string): ts.Node | undefined {
+function silentFindNode(text: string, srcFile: ts.SourceFile): ts.Node | undefined {
     let typeRef: ts.Node | undefined = undefined;
     try {
         typeRef = findNode(text, srcFile);
-    } catch (error) {
+    } catch {
         try {
             typeRef = findNode(text, srcFile, 'TypeAliasDeclaration');
-        } catch (error) {
-            // if (text !== 'TData') {
-            //     console.warn(`Could not find node named ${text} from ${node}`);
-            // }
+        } catch {
+            // Do nothing
         }
     }
     return typeRef;
@@ -114,7 +112,7 @@ function extractNestedTypes<T extends ts.Node>(
     }
 
     if (ts.isPropertySignature(node)) {
-        results[node.name.getText()] = true;
+        results[node.name.getText()] = getJsDoc(node);
         node.type && extractNestedTypes(node.type, srcFile, includeQuestionMark, results, visited);
         return;
     }

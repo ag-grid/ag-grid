@@ -47,8 +47,21 @@ interface Link {
 interface APIRefMeta {
     meta?: { displayName: string; page: Link };
 }
-type APIProperties = Record<string, { description: string; more: Link; addFieldsToDepth?: number }>;
+type APIProperties = Record<string, { description: string; more: Link; addNestedFields?: boolean }>;
 type APIRefSection = APIProperties & APIRefMeta;
+interface APIPropertyRefSource {
+    meta: {
+        all: string;
+        comment: string;
+        tags: string[];
+    };
+    type: {
+        returnType: string;
+        nested?: Record<string, APIPropertyRefSource['meta']>;
+    };
+}
+
+const IGNORE_FIELDS = new Set(['enable', 'enabled', 'mode']);
 
 /**
  * Parse the API files to retrieve the index data
@@ -65,7 +78,7 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
     if (!codeSrc) return []; // if no src, wrong type of file.
 
     const referenceFile = fs.readFileSync(`${API_REFERENCE_DIR}/${codeSrc}`, 'utf8');
-    const apiPropertiesSourceFile = JSON.parse(referenceFile);
+    const apiPropertiesSourceFile = JSON.parse(referenceFile) as Record<string, APIPropertyRefSource>;
 
     let position = 0;
     // load the defined sections for the API docs
@@ -74,7 +87,7 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
         const { meta, ...properties } = section;
 
         Object.entries(properties).forEach(([propertyKey, property]) => {
-            const { description, addFieldsToDepth = 0 } = property; // more can include a link to a page with more info
+            const { description, addNestedFields = false } = property; // more can include a link to a page with more info
 
             const data = apiPropertiesSourceFile[propertyKey];
 
@@ -95,8 +108,22 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
                 rank: position++,
             });
 
-            if (addFieldsToDepth !== 0) {
-                console.log(data);
+            if (addNestedFields) {
+                for (const key in data.type.nested ?? {}) {
+                    if (IGNORE_FIELDS.has(key)) {
+                        continue;
+                    }
+                    records.push({
+                        source: 'api',
+                        objectID: path,
+                        title: breadcrumbSuffix,
+                        heading: key,
+                        text: data.type.nested?.[key].comment ?? '',
+                        breadcrumb,
+                        path,
+                        rank: position++,
+                    });
+                }
             }
         });
     });

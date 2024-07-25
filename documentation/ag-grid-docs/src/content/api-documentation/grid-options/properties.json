@@ -1656,7 +1656,7 @@
                 "name": "Row Selection",
                 "url": "./row-selection"
             },
-            "addFieldsToDepth": -1
+            "addNestedFields": true
         },
         "rowSelection": {
             "more": {
