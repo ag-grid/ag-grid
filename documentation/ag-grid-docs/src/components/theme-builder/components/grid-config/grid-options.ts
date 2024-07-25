@@ -25,6 +25,7 @@ const debugConfigFields = [
     'printLayout',
     'columnGroupsDeep',
     'grandTotalRow',
+    'popupParentIsBody',
 ] as const;
 
 export const allConfigFields = [...productionConfigFields, ...debugConfigFields] as const;
@@ -88,6 +89,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
             headerCheckboxSelection: config.rowSelection,
             minWidth: 250,
         },
+        popupParent: config.popupParentIsBody ? document.body : undefined,
         grandTotalRow: config.grandTotalRow ? 'bottom' : undefined,
     };
 
