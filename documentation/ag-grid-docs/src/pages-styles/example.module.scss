@@ -12,6 +12,18 @@ $nav-height: 200px;
     font-size: var(--text-fs-2xl);
 }
 
+.headerTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-size-3;
+    padding-bottom: $spacing-size-1;
+
+    a {
+        padding-left: $spacing-size-2;
+    }
+}
+
 .topHeader {
     margin: 0 auto;
     padding-top: $spacing-size-8;
@@ -37,7 +49,7 @@ $nav-height: 200px;
     }
 
     @media screen and (min-width: 720px) {
-        height: 200px;
+        height: 148px;
 
         > div:first-child {
             width: auto;
@@ -56,6 +68,17 @@ $nav-height: 200px;
 
     span {
         font-size: var(--text-fs-sm);
+    }
+}
+
+.topHeaderTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-size-3;
+
+    h1 {
+        line-height: var(--text-lh-1xl);
     }
 }
 
@@ -84,7 +107,7 @@ $nav-height: 200px;
 }
 
 .layout {
-    --layout-top-header-height: 230px;
+    --layout-top-header-height: 180px;
     --layout-grid-header-height: calc(var(--layout-site-header-height) + var(--layout-top-header-height));
     --layout-grid-margin: 0px;
 
@@ -99,13 +122,13 @@ $nav-height: 200px;
     }
 
     @media screen and (max-height: 728px) {
-        --layout-top-header-height: 160px;
+        --layout-top-header-height: 125px;
     }
 }
 
 .topHeader {
     @media screen and (max-height: 728px) {
-        height: 100%;
+        height: 100px;
         padding-top: $spacing-size-4;
 
         .headerHeading {
