@@ -1,7 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from '@layouts/Layout.astro';
 import { LICENSE_INSTALL_REDIRECT_PAGE } from '@features/docs/constants';
-import FrameworkRedirectPage from '@components/FrameworkRedirectPage.astro';
+import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
 ---
 
 <Layout
@@ -10,6 +10,7 @@ import FrameworkRedirectPage from '@components/FrameworkRedirectPage.astro';
     showSearchBar={false}
     showDocsNav={false}
 >
-    <h1>Redirecting to AG Grid Install License page...</h1>
-    <FrameworkRedirectPage redirectPageName={LICENSE_INSTALL_REDIRECT_PAGE} />
+    <FrameworkRedirectPage redirectPageName={LICENSE_INSTALL_REDIRECT_PAGE}>
+        <h1>Redirecting to AG Grid Install License page...</h1>
+    </FrameworkRedirectPage>
 </Layout>
