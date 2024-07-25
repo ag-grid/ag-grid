@@ -1,6 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
@@ -10,6 +11,8 @@ import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
+import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
@@ -51,6 +54,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'columnModel' as const;
 
     private context: Context;
+    private ctrlsService: CtrlsService;
     private columnFactory: ColumnFactory;
     private columnSizeService: ColumnSizeService;
     private visibleColsService: VisibleColsService;
@@ -72,6 +76,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
+        this.ctrlsService = beans.ctrlsService;
         this.columnFactory = beans.columnFactory;
         this.columnSizeService = beans.columnSizeService;
         this.visibleColsService = beans.visibleColsService;
@@ -929,11 +934,40 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    public getColumnGroupHeaderRowHeight(): number {
-        if (this.isPivotMode()) {
-            return this.getPivotGroupHeaderHeight() as number;
+    public getGroupRowsHeight(): number {
+        let groupHeight = 0;
+        const groupRowCount = this.ctrlsService.getHeaderRowContainerCtrl()?.getGroupRowCount() || 0;
+        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl();
+
+        for (let i = 0; i < groupRowCount; i++) {
+            const headerRowCtrl = headerRowContainerCtrl?.getGroupRowCtrlAtIndex(i);
+
+            if (headerRowCtrl) {
+                groupHeight += this.getColumnGroupHeaderRowHeight(headerRowCtrl);
+            }
         }
-        return this.getGroupHeaderHeight() as number;
+
+        return groupHeight;
+    }
+
+    private getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
+        const defaultHeight: number = (
+            this.isPivotMode() ? this.getPivotGroupHeaderHeight() : this.getGroupHeaderHeight()
+        ) as number;
+
+        let displayedHeights = 0;
+        const headerRowCellCtrls = headerRowCtrl.getHeaderCtrls() as HeaderGroupCellCtrl[];
+        for (const headerCellCtrl of headerRowCellCtrls) {
+            const column = headerCellCtrl.getColumn();
+            if (column.isAutoHeaderHeight()) {
+                const height = column.getAutoHeaderHeight();
+                if (height != null && height > displayedHeights) {
+                    displayedHeights = height;
+                }
+            }
+        }
+
+        return Math.max(defaultHeight, displayedHeights);
     }
 
     public getColumnHeaderRowHeight(): number {

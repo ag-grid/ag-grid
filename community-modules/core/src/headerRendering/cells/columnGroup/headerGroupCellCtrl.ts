@@ -96,6 +96,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addResizeAndMoveKeyboardListeners();
     }
 
+    public getColumn(): AgColumnGroup {
+        return this.column;
+    }
+
     protected resizeHeader(delta: number, shiftKey: boolean): void {
         // check to avoid throwing when a component has not been setup yet (React 18)
         if (!this.resizeFeature) {

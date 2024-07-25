@@ -509,11 +509,8 @@ export class FocusService extends BeanStub implements NamedBean {
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
-        const focusSuccess = headerRowContainerCtrl.focusHeader(
-            headerPosition.headerRowIndex,
-            column as AgColumn,
-            event
-        );
+        const focusSuccess =
+            headerRowContainerCtrl?.focusHeader(headerPosition.headerRowIndex, column as AgColumn, event) || false;
 
         if (focusSuccess && (rowWithoutSpanValue != null || fromCell)) {
             this.headerNavigationService.setCurrentHeaderRowWithoutSpan(rowWithoutSpanValue ?? -1);

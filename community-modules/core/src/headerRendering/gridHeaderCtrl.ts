@@ -113,7 +113,7 @@ export class GridHeaderCtrl extends BeanStub {
             numberOfFloating = 1;
         }
 
-        const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
+        const groupHeight = this.columnModel.getGroupRowsHeight();
         const headerHeight = this.columnModel.getColumnHeaderRowHeight();
 
         const numberOfNonGroups = 1 + numberOfFloating;
@@ -222,7 +222,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewportElement()) {
+        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl()?.getViewportElement()) {
             this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }
