@@ -5,6 +5,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { IRowModel } from '../../interfaces/iRowModel';
+import { _warnOnce } from '../../utils/function';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
 const enum OverlayServiceState {
@@ -94,6 +95,9 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.showInitialOverlay = false;
 
         if (this.gos.get('loading')) {
+            _warnOnce(
+                'Since v32, `api.hideOverlay()` does not hide the loading overlay when `loading=true`. Set `loading=false` instead.'
+            );
             return;
         }
 

@@ -12,4 +12,8 @@ tsconfig.watch.json
 dist/**/*.test.*
 project.json
 jest.config.js
+jest.jsdom-env.cjs
 *.map
+eslint.config.mjs
+jest.setup.js
+

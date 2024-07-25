@@ -154,11 +154,13 @@ export class GridHeaderCtrl extends BeanStub {
 
     protected onTabKeyDown(e: KeyboardEvent): void {
         const isRtl = this.gos.get('enableRtl');
-        const direction = e.shiftKey !== isRtl ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT;
+        const backwards = e.shiftKey;
+        const direction = backwards !== isRtl ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT;
 
         if (
             this.headerNavigationService.navigateHorizontally(direction, true, e) ||
-            this.focusService.focusNextGridCoreContainer(e.shiftKey)
+            (!backwards && this.focusService.focusOverlay(false)) ||
+            this.focusService.focusNextGridCoreContainer(backwards)
         ) {
             // preventDefault so that the tab key doesn't cause focus to get lost
             e.preventDefault();
