@@ -935,7 +935,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (this.beans.gos.get('suppressCellFocus')) {
+        if (this.beans.focusService.isCellFocusSuppressed()) {
             return;
         }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);

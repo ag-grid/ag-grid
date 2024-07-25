@@ -9,3 +9,6 @@ webpack.config.js
 main.d.ts.src
 updateMainTsWithCoreExports.js
 *.map
+webpackBuild.sh
+eslint.config.mjs
+gulpfile.js

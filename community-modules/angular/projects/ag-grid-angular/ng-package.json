@@ -3,5 +3,6 @@
     "dest": "../../dist/ag-grid-angular",
     "lib": {
         "entryFile": "src/public-api.ts"
-    }
+    },
+    "assets": ["./LICENSE.txt"]
 }
