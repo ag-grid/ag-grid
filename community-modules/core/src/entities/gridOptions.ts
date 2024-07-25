@@ -2510,18 +2510,19 @@ export interface MultiRowSelectionOptions<TData = unknown, TValue = unknown>
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
-     * @default 'none'
+     * @default 'self'
      */
     groupSelects?: GroupSelectionMode;
     /**
-     * Determines how "select all" behaviour works via header checkbox selection.
+     * Determines how "select all" behaviour works. This controls both header checkbox selection and CTRL+A behaviour.
+     * @default 'all'
      */
-    selectAllOptions?: SelectAllOptions;
+    selectAll?: SelectAllMode;
     /**
      * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
      * @default false
      */
-    enableHeaderCheckbox?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
+    headerCheckbox?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
@@ -2547,28 +2548,17 @@ export type CheckboxSelectionOptions<TData, TValue> =
  * When `'self'`, selects only the group row itself.
  * When `'children'`, selecting a group row selects all its child rows.
  * When `'filteredChildren'`, selecting a group row selects all child rows that satisfy the currently active filter.
- *
- * @default 'self'
  */
 export type GroupSelectionMode = 'self' | 'children' | 'filteredChildren';
 
 /**
- * Determines how "select all" behaviour works both via the API (i.e. `selectAll`) and via header checkbox selection.
+ * Determines how "select all" behaviour works.
+ *
+ * When `'all'`, selects all rows, regardless of filter and pagination settings.
+ * When `'filtered'`, selects all rows that satisfy the currently active filter.
+ * When `'filteredOnCurrentPage'`, selects all rows that satisfy the currently active filter on the current page.
  */
-export interface SelectAllOptions {
-    /**
-     * When selecting all via either the API or a header checkbox, only those rows that satisfy the currently
-     * active filter will be selected.
-     * @default false
-     */
-    filteredOnly?: boolean;
-    /**
-     * When selecting all via either the API or a header checkbox, only those rows on the current page will
-     * be selected.
-     * @default false
-     */
-    currentPageOnly?: boolean;
-}
+export type SelectAllMode = 'all' | 'filtered' | 'filteredOnCurrentPage';
 
 export type RowSelectionModes = RowSelectionOptions['mode'];
 export type SelectionModes = SelectionOptions['mode'];
