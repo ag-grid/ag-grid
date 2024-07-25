@@ -477,16 +477,7 @@ const Section: FunctionComponent<SectionProps> = ({
     const showHeader = !config.isSubset;
     const breadcrumbKeys = Object.keys(breadcrumbs);
     const id = breadcrumbKeys.join('.');
-    const pattern = new RegExp(config.namePattern || '.*');
     const displayName = meta?.displayName || title;
-    // TODO: processed
-    const rowData = Object.entries(properties)
-        .sort((a, b) => {
-            return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0;
-        })
-        .filter(([name]) => {
-            return !(names.length > 0 && !names.includes(name)) || !pattern.test(name);
-        });
 
     return (
         <div className={styles.apiReferenceOuter}>
@@ -513,7 +504,7 @@ const Section: FunctionComponent<SectionProps> = ({
                     <col></col>
                 </colgroup>
                 <tbody>
-                    {rowData.map(
+                    {Object.entries(properties).map(
                         ([
                             name,
                             { definition, gridOpProp, interfaceHierarchyOverrides, detailsCode, propertyType },
