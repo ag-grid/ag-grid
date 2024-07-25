@@ -75,6 +75,10 @@
         color: #044b93;
         padding-left: 12px;
         pointer-events: none;
+
+        #{$selector-darkmode} & {
+            background: linear-gradient(358deg, var(--color-bg-secondary) 30%, transparent);
+        }
     }
 }
 
@@ -97,18 +101,23 @@
         opacity: 1;
         transition: all 0.4s ease-in-out;
     }
+
+    #{$selector-darkmode} & {
+        display: none;
+    }
 }
 
 .tabActive {
     outline: 2px solid #044b93;
     border-radius: var(--radius-lg);
+
     span {
         color: #044b93;
     }
-}
 
-#{$selector-darkmode} .tabActive {
-    outline: 2px solid var(--color-link);
+    #{$selector-darkmode} & {
+        outline: 2px solid var(--color-link);
+    }
 }
 
 .tabs a div {
@@ -127,13 +136,10 @@
 
 .showcaseItemTab.darkTab {
     display: none;
-}
-#{$selector-darkmode} .showcaseItemTab {
-    display: none;
-}
 
-#{$selector-darkmode} .showcaseItemTab.darkTab {
-    display: block;
+    #{$selector-darkmode} & {
+        display: block;
+    }
 }
 
 .tabs span {
@@ -141,20 +147,16 @@
     display: flex;
     padding-top: $spacing-size-4;
     color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 100%);
-}
 
-#{$selector-darkmode} span {
-    color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 50%);
+    #{$selector-darkmode} & {
+        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 50%);
+    }
 }
 
 .tabs .spanActive {
     color: #044b93;
-}
 
-#{$selector-darkmode} .tabs .spanActive {
-    color: var(--color-link);
-}
-
-#{$selector-darkmode} .tabs span {
-    background: linear-gradient(358deg, var(--color-bg-secondary) 30%, transparent);
+    #{$selector-darkmode} & {
+        color: var(--color-link);
+    }
 }
