@@ -56,9 +56,9 @@ function silentFindNode(text: string, srcFile: ts.SourceFile, node?: string): ts
         try {
             typeRef = findNode(text, srcFile, 'TypeAliasDeclaration');
         } catch (error) {
-            if (text !== 'TData') {
-                console.warn(`Could not find node named ${text} from ${node}`);
-            }
+            // if (text !== 'TData') {
+            //     console.warn(`Could not find node named ${text} from ${node}`);
+            // }
         }
     }
     return typeRef;
