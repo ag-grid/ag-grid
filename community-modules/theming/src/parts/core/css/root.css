@@ -1,27 +1,26 @@
-.ag-root-wrapper {
+.ag-root-wrapper,
+.ag-popup {
     line-height: normal;
     cursor: default;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
     white-space: normal;
     -webkit-font-smoothing: antialiased;
     font-family: var(--ag-font-family);
     font-size: var(--ag-font-size);
     color-scheme: var(--ag-color-scheme);
+    color: var(--ag-text-color);
+    background-color: var(--ag-background-color);
+    --ag-indentation-level: 0;
+}
+
+.ag-root-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: var(--ag-wrapper-border);
+    border-radius: var(--ag-wrapper-border-radius);
 
     &.ag-layout-normal {
         height: 100%;
     }
-
-    color: var(--ag-text-color);
-    background-color: var(--ag-background-color);
-    border: var(--ag-wrapper-border);
-    border-radius: var(--ag-wrapper-border-radius);
-}
-
-.ag-root-wrapper,
-.ag-popup {
-    --ag-indentation-level: 0;
 }
