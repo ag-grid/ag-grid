@@ -60,6 +60,14 @@ export interface AbstractColDef<TData = any, TValue = any> {
      * Context property that can be used to associate arbitrary application data with this column definition.
      */
     context?: any;
+
+    /** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */
+    wrapHeaderText?: boolean;
+    /** If enabled then the column header row will automatically adjust height to accommodate the size of the header cell.
+     * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.
+     * @default false
+     */
+    autoHeaderHeight?: boolean;
 }
 
 /** Configuration options for column groups in AG Grid.  */
@@ -364,15 +372,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressFloatingFilterButton?: boolean;
 
     // *** Column Headers *** //
-
-    /** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */
-    wrapHeaderText?: boolean;
-    /** If enabled then the column header row will automatically adjust height to accommodate the size of the header cell.
-     * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.
-     * @default false
-     */
-    autoHeaderHeight?: boolean;
-
     /**
      * The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
      * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.

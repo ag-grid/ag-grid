@@ -556,6 +556,12 @@
         "headerName": {},
         "headerClass": {},
         "headerTooltip": {},
+        "autoHeaderHeight": {
+            "more": {
+                "name": "Auto Header Height",
+                "url": "./column-groups/"
+            }
+        },
         "headerGroupComponent": {
             "description": "The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.",
             "more": {

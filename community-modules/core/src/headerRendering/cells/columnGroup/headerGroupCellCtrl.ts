@@ -47,7 +47,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.column = columnGroup;
     }
 
-    public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
+    public setComp(
+        comp: IHeaderGroupCellComp,
+        eGui: HTMLElement,
+        eResize: HTMLElement,
+        eHeaderCompWrapper: HTMLElement
+    ): void {
         this.comp = comp;
         this.setGui(eGui);
 
@@ -61,6 +66,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             if (this.tooltipFeature) {
                 this.tooltipFeature = this.destroyBean(this.tooltipFeature);
             }
+        });
+
+        this.setupAutoHeight({
+            wrapperElement: eHeaderCompWrapper,
+            setHeaderHeight: (height) => '',
         });
         this.setupUserComp();
         this.addHeaderMouseListeners();
@@ -305,6 +315,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             }
         } else {
             classes.push('ag-header-group-cell-with-group');
+            if (colGroupDef?.wrapHeaderText) {
+                classes.push('ag-header-cell-wrap-text');
+            }
         }
 
         classes.forEach((c) => this.comp.addOrRemoveCssClass(c, true));
