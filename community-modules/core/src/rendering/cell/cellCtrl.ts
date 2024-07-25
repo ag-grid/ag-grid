@@ -133,6 +133,11 @@ export class CellCtrl extends BeanStub {
         return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
     }
 
+    public onFocusOut(): void {
+        // Used in React
+        this.beans.focusService.clearRestoreFocus();
+    }
+
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
         this.addDestroyFunc(() => {
