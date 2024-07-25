@@ -56,6 +56,11 @@ $nav-height: 200px;
         }
     }
 
+    @media screen and (max-width: 1000px) {
+        flex-direction: column;
+        height: auto;
+    }
+
     p {
         color: var(--color-text-tertiary);
         padding-top: $spacing-size-1;
