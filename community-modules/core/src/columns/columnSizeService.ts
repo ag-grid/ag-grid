@@ -7,7 +7,6 @@ import type { ColumnEventType } from '../events';
 import type { Column } from '../interfaces/iColumn';
 import { _removeFromArray, _removeFromUnorderedArray } from '../utils/array';
 import { _errorOnce } from '../utils/function';
-import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';

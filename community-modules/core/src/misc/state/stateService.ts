@@ -9,12 +9,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
-import type {
-    NewColumnsLoadedEvent,
-    PaginationChangedEvent,
-    RangeSelectionChangedEvent,
-    StateUpdatedEvent,
-} from '../../events';
+import type { StateUpdatedEvent } from '../../events';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
