@@ -137,6 +137,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             'ag-overlay-loading-wrapper',
             'loadingOverlayComponentParams'
         );
+        this.dispatchExclusiveChangedEvent();
     }
 
     private doShowNoRowsOverlay(): void {
@@ -146,15 +147,23 @@ export class OverlayService extends BeanStub implements NamedBean {
             'ag-overlay-no-rows-wrapper',
             'noRowsOverlayComponentParams'
         );
+        this.dispatchExclusiveChangedEvent();
     }
 
     private doHideOverlay(): void {
         this.state = OverlayServiceState.Hidden;
         this.overlayWrapperComp.hideOverlay();
+        this.dispatchExclusiveChangedEvent();
     }
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
         this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, this.isExclusive(), gridOption);
+    }
+
+    private dispatchExclusiveChangedEvent(): void {
+        this.eventService.dispatchEvent({
+            type: 'overlayExclusiveChanged',
+        });
     }
 }
