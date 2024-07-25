@@ -175,7 +175,10 @@ const GridBodyComp = () => {
     const bodyClasses = useMemo(() => classesList('ag-body', layoutClass), [layoutClass]);
     const topClasses = useMemo(() => classesList('ag-floating-top', cellSelectableCss), [cellSelectableCss]);
     const stickyTopClasses = useMemo(() => classesList('ag-sticky-top', cellSelectableCss), [cellSelectableCss]);
-    const stickyBottomClasses = useMemo(() => classesList('ag-sticky-bottom', cellSelectableCss), [cellSelectableCss]);
+    const stickyBottomClasses = useMemo(
+        () => classesList('ag-sticky-bottom', stickyBottomHeight === '0px' ? 'ag-hidden' : null, cellSelectableCss),
+        [cellSelectableCss, stickyBottomHeight]
+    );
     const bottomClasses = useMemo(() => classesList('ag-floating-bottom', cellSelectableCss), [cellSelectableCss]);
 
     const topStyle: React.CSSProperties = useMemo(
@@ -199,7 +202,6 @@ const GridBodyComp = () => {
 
     const stickyBottomStyle: React.CSSProperties = useMemo(
         () => ({
-            display: stickyBottomHeight === '0px' ? 'none' : 'block',
             height: stickyBottomHeight,
             bottom: stickyBottomBottom,
             width: stickyBottomWidth,

@@ -28,6 +28,18 @@
         "transitive": false
       }
     ],
+    "allOutputs": [
+      {
+        "dependentTasksOutputFiles": "**/*",
+        "transitive": false
+      }
+    ],
+    "allTransitiveOutputs": [
+      {
+        "dependentTasksOutputFiles": "**/*",
+        "transitive": true
+      }
+    ],
     "tsDefaults": [
       "{projectRoot}/package.json",
       "{projectRoot}/src/**/*",
@@ -82,13 +94,7 @@
       "cache": true
     },
     "pack": {
-      "inputs": [
-        "{projectRoot}/dist/**",
-        "{projectRoot}/.npmignore",
-        "{projectRoot}/README.md",
-        "{projectRoot}/LICENSE*",
-        "{projectRoot}/package.json"
-      ],
+      "inputs": ["allTransitiveOutputs"],
       "cache": true
     },
     "@nx/jest:jest": {
