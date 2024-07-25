@@ -1049,7 +1049,7 @@ export class CellCtrl extends BeanStub {
         const colDef = this.column.getColDef();
         const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, 'cellContextMenu');
 
-        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
+        this.beans.eventService.dispatchEvent<'cellContextMenu'>(cellContextMenuEvent);
 
         if (colDef.onCellContextMenu) {
             // to make the callback async, do in a timeout

@@ -4,7 +4,6 @@ import type {
     Bean,
     BeanCollection,
     ColumnMenuTab,
-    ColumnMenuVisibleChangedEvent,
     ComponentEvent,
     ContainerType,
     CtrlsService,
@@ -17,7 +16,6 @@ import type {
     PopupEventParams,
     PopupService,
     VisibleColsService,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     AgPromise,
@@ -296,7 +294,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         column?: AgColumn,
         defaultTab?: string
     ): void {
-        const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
+        this.eventService.dispatchEvent<'columnMenuVisibleChanged'>({
             type: 'columnMenuVisibleChanged',
             visible,
             switchingTab,
@@ -304,8 +302,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
                 defaultTab ??
                 (this.menuService.isLegacyMenuEnabled() ? TAB_GENERAL : 'columnMenu')) as any,
             column: column ?? null,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public isMenuEnabled(column: AgColumn): boolean {

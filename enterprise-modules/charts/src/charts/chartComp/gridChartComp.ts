@@ -1,7 +1,5 @@
 import type {
     BeanCollection,
-    ChartCreatedEvent,
-    ChartDestroyedEvent,
     ChartModel,
     ChartToolPanelName,
     ChartType,
@@ -11,7 +9,6 @@ import type {
     PopupService,
     SeriesChartType,
     UpdateChartParams,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     Component,
@@ -595,26 +592,22 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartCreatedEvent(): void {
-        const event: WithoutGridCommon<ChartCreatedEvent> = {
-            type: 'chartCreated',
-            chartId: this.chartController.getChartId(),
-        };
-
         this.chartProxy
             .getChart()
             .waitForUpdate()
             .then(() => {
-                this.eventService.dispatchEvent(event);
+                this.eventService.dispatchEvent<'chartCreated'>({
+                    type: 'chartCreated',
+                    chartId: this.chartController.getChartId(),
+                });
             });
     }
 
     private raiseChartDestroyedEvent(): void {
-        const event: WithoutGridCommon<ChartDestroyedEvent> = {
+        this.eventService.dispatchEvent<'chartDestroyed'>({
             type: 'chartDestroyed',
             chartId: this.chartController.getChartId(),
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public override destroy(): void {

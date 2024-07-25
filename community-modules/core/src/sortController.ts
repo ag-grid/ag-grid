@@ -119,7 +119,7 @@ export class SortController extends BeanStub implements NamedBean {
         if (columns) {
             event.columns = columns;
         }
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent<'sortChanged'>(event);
     }
 
     private clearSortBarTheseColumns(columnsToSkip: AgColumn[], source: ColumnEventType): AgColumn[] {

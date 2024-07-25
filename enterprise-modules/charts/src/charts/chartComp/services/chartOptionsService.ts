@@ -1,4 +1,4 @@
-import type { ChartOptionsChangedEvent, ChartType, WithoutGridCommon } from '@ag-grid-community/core';
+import type { ChartType } from '@ag-grid-community/core';
 import { BeanStub, _errorOnce } from '@ag-grid-community/core';
 import type {
     AgBaseThemeableChartOptions,
@@ -638,15 +638,13 @@ export class ChartOptionsService extends BeanStub {
     private raiseChartOptionsChangedEvent(): void {
         const chartModel = this.chartController.getChartModel();
 
-        const event: WithoutGridCommon<ChartOptionsChangedEvent> = {
+        this.eventService.dispatchEvent<'chartOptionsChanged'>({
             type: 'chartOptionsChanged',
             chartId: chartModel.chartId,
             chartType: chartModel.chartType,
             chartThemeName: this.chartController.getChartThemeName(),
             chartOptions: chartModel.chartOptions,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public override destroy(): void {

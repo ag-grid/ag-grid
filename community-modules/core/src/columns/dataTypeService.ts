@@ -18,10 +18,9 @@ import type {
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
-import type { AgGridEvent, DataTypesInferredEvent } from '../events';
+import type { AgGridEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { Column, ColumnEventName } from '../interfaces/iColumn';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -498,10 +497,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 if (columnTypeOverridesExist) {
                     this.columnModel.processResizeOperations();
                 }
-                const dataTypesInferredEvent: WithoutGridCommon<DataTypesInferredEvent> = {
+                this.eventService.dispatchEvent<'dataTypesInferred'>({
                     type: 'dataTypesInferred',
-                };
-                this.eventService.dispatchEvent(dataTypesInferredEvent);
+                });
             },
         });
     }

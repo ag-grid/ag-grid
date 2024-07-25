@@ -4,11 +4,9 @@ import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { AgColumn } from '../../../entities/agColumn';
-import type { ColumnMenuVisibleChangedEvent } from '../../../events';
 import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
 import type { FocusService } from '../../../focusService';
 import type { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import type { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import type { MenuService } from '../../../misc/menuService';
 import { _setAriaRole } from '../../../utils/aria';
@@ -202,14 +200,13 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
-        const displayedEvent: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
+        this.eventService.dispatchEvent<'columnMenuVisibleChanged'>({
             type: 'columnMenuVisibleChanged',
             visible,
             switchingTab: false,
             key: containerType as 'columnMenu' | 'columnFilter' | 'floatingFilter',
             column: column ?? null,
-        };
-        this.eventService.dispatchEvent(displayedEvent);
+        });
     }
 
     public isMenuEnabled(column: AgColumn): boolean {

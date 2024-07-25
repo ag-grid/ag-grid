@@ -19,7 +19,7 @@ const defaultFns = {
 };
 
 const dispatchEvent = (beans: BeanCollection, event: AgEvent<AgEventType>): void =>
-    beans.eventService.dispatchEvent(event);
+    beans.eventService.dispatchEvent<AgEventType>(event);
 
 // We use a class for AGGridApi so in stack traces calling grid.api.xxx() if an error is thrown it will print "GridApi.xxx"
 class GridApiClass {}

@@ -2,8 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
-import type { CssVariablesChanged, PinnedHeightChangedEvent, PinnedRowDataChangedEvent } from '../events';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { CssVariablesChanged } from '../events';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 
 export class PinnedRowModel extends BeanStub implements NamedBean {
@@ -62,20 +61,18 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         rowTop = 0;
         this.pinnedTopRows?.forEach(updateRowHeight);
 
-        const event: WithoutGridCommon<PinnedHeightChangedEvent> = {
+        this.eventService.dispatchEvent<'pinnedHeightChanged'>({
             type: 'pinnedHeightChanged',
-        };
-        this.eventService.dispatchEvent(event);
+        });
 
         return anyChange;
     }
 
     private setPinnedRowData(rowData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
         this.updateNodesFromRowData(rowData, floating);
-        const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
+        this.eventService.dispatchEvent<'pinnedRowDataChanged'>({
             type: 'pinnedRowDataChanged',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     /**

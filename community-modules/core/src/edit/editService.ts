@@ -6,7 +6,6 @@ import type { CoreBeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowNode } from '../entities/rowNode';
-import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../events';
 import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
@@ -46,8 +45,7 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl.setEditing(true, compDetails);
         cellCtrl.getComp().setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
 
-        const e: CellEditingStartedEvent = cellCtrl.createEvent(event, 'cellEditingStarted');
-        this.eventService.dispatchEvent(e);
+        this.eventService.dispatchEvent<'cellEditingStarted'>(cellCtrl.createEvent(event, 'cellEditingStarted'));
     }
 
     public stopEditing(cellCtrl: CellCtrl, cancel: boolean): boolean {
@@ -68,13 +66,12 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl.updateAndFormatValue(false);
         cellCtrl.refreshCell({ forceRefresh: true, suppressFlash: true });
 
-        const event: CellEditingStoppedEvent = {
+        this.eventService.dispatchEvent<'cellEditingStopped'>({
             ...cellCtrl.createEvent(null, 'cellEditingStopped'),
             oldValue,
             newValue,
             valueChanged,
-        };
-        this.eventService.dispatchEvent(event);
+        });
 
         return valueChanged;
     }

@@ -2,13 +2,11 @@ import type {
     AgColumn,
     BeanCollection,
     ColumnChooserParams,
-    ColumnMenuVisibleChangedEvent,
     FocusService,
     IColumnChooserFactory,
     NamedBean,
     ShowColumnChooserParams,
     VisibleColsService,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 import { AgPrimaryCols } from '@ag-grid-enterprise/column-tool-panel';
@@ -134,13 +132,12 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, column?: AgColumn | null): void {
-        const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
+        this.eventService.dispatchEvent<'columnMenuVisibleChanged'>({
             type: 'columnMenuVisibleChanged',
             visible,
             switchingTab: false,
             key: 'columnChooser',
             column: column ?? null,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 }

@@ -133,7 +133,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.postSortFunc = this.gos.getCallback('postSortRows');
 
         if (userInitialRowCount != null) {
-            this.eventService.dispatchEventOnce({
+            this.eventService.dispatchEventOnce<'rowCountReady'>({
                 type: 'rowCountReady',
             });
         }
@@ -275,7 +275,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
 
         if (this.level === 0) {
-            this.eventService.dispatchEventOnce({
+            this.eventService.dispatchEventOnce<'rowCountReady'>({
                 type: 'rowCountReady',
             });
         }
@@ -647,11 +647,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 source: 'rowDataChanged',
             });
 
-            const event: WithoutGridCommon<SelectionChangedEvent> = {
+            this.eventService.dispatchEvent<'selectionChanged'>({
                 type: 'selectionChanged',
                 source: 'rowDataChanged',
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 
@@ -810,10 +809,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private fireStoreUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        const event: WithoutGridCommon<StoreUpdatedEvent> = {
+        this.eventService.dispatchEvent<'storeUpdated'>({
             type: 'storeUpdated',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public getRowCount(): number {

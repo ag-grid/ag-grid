@@ -1,9 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { DragStartedEvent, DragStoppedEvent } from '../events';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _isBrowserSafari } from '../utils/browser';
 import { _isFocusableFormField } from '../utils/dom';
@@ -241,11 +239,10 @@ export class DragService extends BeanStub implements NamedBean {
             }
 
             this.dragging = true;
-            const event: WithoutGridCommon<DragStartedEvent> = {
+            this.eventService.dispatchEvent<'dragStarted'>({
                 type: 'dragStarted',
                 target: el,
-            };
-            this.eventService.dispatchEvent(event);
+            });
 
             this.currentDragParams!.onDragStart(startEvent);
             // we need ONE drag action at the startEvent, so that we are guaranteed the drop target
@@ -342,11 +339,10 @@ export class DragService extends BeanStub implements NamedBean {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams!.onDragStop(eventOrTouch);
-            const event: WithoutGridCommon<DragStoppedEvent> = {
+            this.eventService.dispatchEvent<'dragStopped'>({
                 type: 'dragStopped',
                 target: el,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
 
         this.mouseStartEvent = null;

@@ -309,7 +309,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             if (scrollbarWidth != null) {
                 this.scrollbarWidth = scrollbarWidth;
 
-                this.eventService.dispatchEvent({
+                this.eventService.dispatchEvent<'scrollbarWidthChanged'>({
                     type: 'scrollbarWidthChanged',
                 });
             }

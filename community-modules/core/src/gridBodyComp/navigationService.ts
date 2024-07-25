@@ -882,16 +882,14 @@ export class NavigationService extends BeanStub implements NamedBean {
         const fromBelow =
             currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
 
-        const focusEvent: WithoutGridCommon<FullWidthRowFocusedEvent> = {
+        this.eventService.dispatchEvent<'fullWidthRowFocused'>({
             type: 'fullWidthRowFocused',
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned,
             column: cellPosition.column,
             isFullWidthCell: true,
             fromBelow,
-        };
-
-        this.eventService.dispatchEvent(focusEvent);
+        });
 
         return true;
     }

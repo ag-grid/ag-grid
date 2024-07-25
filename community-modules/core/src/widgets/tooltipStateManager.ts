@@ -303,11 +303,10 @@ export class TooltipStateManager extends BeanStub {
             TooltipStateManager.lastTooltipHideTime = new Date().getTime();
         }
 
-        const event: WithoutGridCommon<TooltipHideEvent> = {
+        this.eventService.dispatchEvent<'tooltipHide'>({
             type: 'tooltipHide',
             parentGui: this.parentComp.getGui(),
-        };
-        this.eventService.dispatchEvent(event);
+        });
 
         if (forceHide) {
             this.isInteractingWithTooltip = false;
@@ -378,12 +377,11 @@ export class TooltipStateManager extends BeanStub {
             }
         }
 
-        const event: WithoutGridCommon<TooltipShowEvent> = {
+        this.eventService.dispatchEvent<'tooltipShow'>({
             type: 'tooltipShow',
             tooltipGui: eGui,
             parentGui: this.parentComp.getGui(),
-        };
-        this.eventService.dispatchEvent(event);
+        });
 
         this.startHideTimeout();
     }

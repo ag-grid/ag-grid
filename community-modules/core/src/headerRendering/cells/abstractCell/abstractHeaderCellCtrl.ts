@@ -8,12 +8,10 @@ import type { AgColumn } from '../../../entities/agColumn';
 import { isColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
-import type { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent, HeaderFocusedEvent } from '../../../events';
 import type { FocusService } from '../../../focusService';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import type { MenuService } from '../../../misc/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _getInnerWidth } from '../../../utils/dom';
@@ -125,12 +123,10 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private onGuiFocus(): void {
-        const event: WithoutGridCommon<HeaderFocusedEvent> = {
+        this.eventService.dispatchEvent<'headerFocused'>({
             type: 'headerFocused',
             column: this.column,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     protected onDisplayedColumnsChanged(): void {
@@ -350,12 +346,10 @@ export abstract class AbstractHeaderCellCtrl<
         eventType: 'columnHeaderContextMenu' | 'columnHeaderClicked',
         column: AgColumn | AgProvidedColumnGroup
     ): void {
-        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
+        this.eventService.dispatchEvent<'columnHeaderContextMenu' | 'columnHeaderClicked'>({
             type: eventType,
             column,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public override destroy(): void {

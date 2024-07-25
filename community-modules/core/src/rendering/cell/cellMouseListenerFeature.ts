@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent } from '../../events';
+import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
 import { _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
@@ -67,7 +67,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(mouseEvent, 'cellClicked');
-        eventService.dispatchEvent(cellClickedEvent);
+        eventService.dispatchEvent<'cellClicked'>(cellClickedEvent);
 
         const colDef = this.column.getColDef();
 
@@ -109,7 +109,7 @@ export class CellMouseListenerFeature extends BeanStub {
         const colDef = column.getColDef();
         // always dispatch event to eventService
         const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(mouseEvent, 'cellDoubleClicked');
-        eventService.dispatchEvent(cellDoubleClickedEvent);
+        eventService.dispatchEvent<'cellDoubleClicked'>(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
@@ -200,7 +200,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
+        eventService.dispatchEvent<'cellMouseDown'>(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
     }
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
@@ -227,8 +227,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (this.mouseStayingInsideCell(mouseEvent)) {
             return;
         }
-        const cellMouseOutEvent: CellMouseOutEvent = this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut');
-        this.beans.eventService.dispatchEvent(cellMouseOutEvent);
+        this.beans.eventService.dispatchEvent<'cellMouseOut'>(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
         this.beans.columnHoverService.clearMouseOver();
     }
 
@@ -236,8 +235,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (this.mouseStayingInsideCell(mouseEvent)) {
             return;
         }
-        const cellMouseOverEvent: CellMouseOverEvent = this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver');
-        this.beans.eventService.dispatchEvent(cellMouseOverEvent);
+        this.beans.eventService.dispatchEvent<'cellMouseOver'>(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
         this.beans.columnHoverService.setMouseOver([this.column]);
     }
 

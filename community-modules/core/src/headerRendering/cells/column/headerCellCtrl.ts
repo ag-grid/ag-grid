@@ -6,8 +6,6 @@ import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
-import type { ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
@@ -787,14 +785,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private handleMouseOverChange(isMouseOver: boolean): void {
         this.setActiveHeader(isMouseOver);
-        const eventType = isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave';
 
-        const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
-            type: eventType,
+        this.eventService.dispatchEvent<'columnHeaderMouseOver' | 'columnHeaderMouseLeave'>({
+            type: isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave',
             column: this.column,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private setActiveHeader(active: boolean): void {

@@ -7,7 +7,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropIcon, DragAndDropService, DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { RowNode } from '../entities/rowNode';
-import type { AgEventType } from '../eventTypes';
 import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
@@ -40,6 +39,8 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
     /** A callback method that returns the DropZone HTMLElement. */
     getContainer: () => HTMLElement;
 }
+
+type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd';
 
 export class RowDragFeature extends BeanStub implements DropTarget {
     private dragAndDropService: DragAndDropService;
@@ -378,7 +379,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         } as RowDropZoneParams;
     }
 
-    private draggingToRowDragEvent<T extends AgEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
+    private draggingToRowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
         const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const mouseIsPastLastRow = yNormalised > this.pageBoundsService.getCurrentPageHeight();
 
@@ -418,10 +419,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return event;
     }
 
-    private dispatchGridEvent<T extends AgEventType>(type: T, draggingEvent: DraggingEvent): void {
+    private dispatchGridEvent(type: RowDragEventType, draggingEvent: DraggingEvent): void {
         const event = this.draggingToRowDragEvent(type, draggingEvent);
 
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent<RowDragEventType>(event);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {

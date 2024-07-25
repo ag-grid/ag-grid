@@ -8,12 +8,7 @@ import type { BeanCollection, BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import type {
-    ColumnEventType,
-    FilterChangedEventSourceType,
-    FilterDestroyedEvent,
-    FilterModifiedEvent,
-} from '../events';
+import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -695,24 +690,21 @@ export class ColumnFilterService extends BeanStub {
 
             this.allColumnFilters.delete(filterWrapper.column.getColId());
 
-            const event: WithoutGridCommon<FilterDestroyedEvent> = {
+            this.eventService.dispatchEvent<'filterDestroyed'>({
                 type: 'filterDestroyed',
                 source,
                 column: filterWrapper.column,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         });
     }
 
     private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: AgColumn<any>) {
         return () => {
-            const event: WithoutGridCommon<FilterModifiedEvent> = {
+            this.eventService.dispatchEvent<'filterModified'>({
                 type: 'filterModified',
                 column,
                 filterInstance: filter,
-            };
-
-            this.eventService.dispatchEvent(event);
+            });
         };
     }
 

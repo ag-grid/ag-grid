@@ -1,5 +1,4 @@
 import type {
-    AdvancedFilterEnabledChangedEvent,
     AdvancedFilterModel,
     BeanCollection,
     ColumnModel,
@@ -10,7 +9,6 @@ import type {
     NamedBean,
     NewColumnsLoadedEvent,
     ValueService,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, _exists, _warnOnce } from '@ag-grid-community/core';
 
@@ -165,11 +163,10 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         }
         this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {
-            const event: WithoutGridCommon<AdvancedFilterEnabledChangedEvent> = {
+            this.eventService.dispatchEvent<'advancedFilterEnabledChanged'>({
                 type: 'advancedFilterEnabledChanged',
                 enabled: this.enabled,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 

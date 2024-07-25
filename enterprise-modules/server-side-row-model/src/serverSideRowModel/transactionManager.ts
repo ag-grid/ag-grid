@@ -1,12 +1,10 @@
 import type {
-    AsyncTransactionsFlushed,
     BeanCollection,
     IServerSideTransactionManager,
     NamedBean,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
 
@@ -112,15 +110,14 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
 
         if (atLeastOneTransactionApplied) {
             this.valueCache.onDataChanged();
-            this.eventService.dispatchEvent({ type: 'storeUpdated' });
+            this.eventService.dispatchEvent<'storeUpdated'>({ type: 'storeUpdated' });
         }
 
         if (resultsForEvent.length > 0) {
-            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {
+            this.eventService.dispatchEvent<'asyncTransactionsFlushed'>({
                 type: 'asyncTransactionsFlushed',
                 results: resultsForEvent,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 
@@ -148,7 +145,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
                 this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
             }
 
-            this.eventService.dispatchEvent({ type: 'storeUpdated' });
+            this.eventService.dispatchEvent<'storeUpdated'>({ type: 'storeUpdated' });
             return res;
         } else {
             return { status: ServerSideTransactionResultStatus.StoreNotFound };

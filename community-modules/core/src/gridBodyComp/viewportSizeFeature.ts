@@ -6,7 +6,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { BodyHeightChangedEvent } from '../events';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -182,10 +181,9 @@ export class ViewportSizeFeature extends BeanStub {
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
-            const event: WithoutGridCommon<BodyHeightChangedEvent> = {
+            this.eventService.dispatchEvent<'bodyHeightChanged'>({
                 type: 'bodyHeightChanged',
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 

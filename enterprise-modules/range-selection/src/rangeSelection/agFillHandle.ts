@@ -5,9 +5,7 @@ import type {
     CellNavigationService,
     CellPosition,
     CellRange,
-    FillEndEvent,
     FillOperationParams,
-    FillStartEvent,
     NavigationService,
     RowNode,
     RowPosition,
@@ -146,12 +144,18 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         if (finalRange) {
             // raising fill events for undo / redo
-            this.raiseFillStartEvent();
+            this.eventService.dispatchEvent<'fillStart'>({
+                type: 'fillStart',
+            });
 
             this.handleValueChanged(initialRange, finalRange, e);
             this.rangeService.setCellRanges([finalRange]);
 
-            this.raiseFillEndEvent(initialRange, finalRange);
+            this.eventService.dispatchEvent<'fillEnd'>({
+                type: 'fillEnd',
+                initialRange: initialRange,
+                finalRange: finalRange,
+            });
         }
     }
 
@@ -168,22 +172,6 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         return direction;
-    }
-
-    private raiseFillStartEvent() {
-        const fillStartEvent: WithoutGridCommon<FillStartEvent> = {
-            type: 'fillStart',
-        };
-        this.eventService.dispatchEvent(fillStartEvent);
-    }
-
-    private raiseFillEndEvent(initialRange: CellRange, finalRange: CellRange) {
-        const fillEndEvent: WithoutGridCommon<FillEndEvent> = {
-            type: 'fillEnd',
-            initialRange: initialRange,
-            finalRange: finalRange,
-        };
-        this.eventService.dispatchEvent(fillEndEvent);
     }
 
     private handleValueChanged(initialRange: CellRange, finalRange: CellRange, e: MouseEvent) {

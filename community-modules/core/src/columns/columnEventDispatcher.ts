@@ -2,24 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { AgEventType } from '../eventTypes';
-import type {
-    ColumnEvent,
-    ColumnEventType,
-    ColumnEverythingChangedEvent,
-    ColumnGroupOpenedEvent,
-    ColumnMovedEvent,
-    ColumnPinnedEvent,
-    ColumnPivotModeChangedEvent,
-    ColumnResizedEvent,
-    ColumnRowGroupChangedEvent,
-    ColumnVisibleEvent,
-    DisplayedColumnsChangedEvent,
-    GridColumnsChangedEvent,
-    NewColumnsLoadedEvent,
-    VirtualColumnsChangedEvent,
-} from '../events';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ColumnEventType } from '../events';
 
 /* 
 Created this class to:
@@ -30,89 +13,81 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
     beanName = 'columnEventDispatcher' as const;
 
     public visibleCols(): void {
-        const event: WithoutGridCommon<DisplayedColumnsChangedEvent> = {
+        this.eventService.dispatchEvent<'displayedColumnsChanged'>({
             type: 'displayedColumnsChanged',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public gridColumns(): void {
-        const event: WithoutGridCommon<GridColumnsChangedEvent> = {
+        this.eventService.dispatchEvent<'gridColumnsChanged'>({
             type: 'gridColumnsChanged',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public headerHeight(col: AgColumn): void {
-        const event: WithoutGridCommon<ColumnEvent> = {
+        this.eventService.dispatchEvent<'columnHeaderHeightChanged'>({
             type: 'columnHeaderHeightChanged',
             column: col,
             columns: [col],
             source: 'autosizeColumnHeaderHeight',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public groupOpened(impactedGroups: AgProvidedColumnGroup[]): void {
-        const event: WithoutGridCommon<ColumnGroupOpenedEvent> = {
+        this.eventService.dispatchEvent<'columnGroupOpened'>({
             type: 'columnGroupOpened',
             columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
             columnGroups: impactedGroups,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public rowGroupChanged(impactedColumns: AgColumn[], source: ColumnEventType): void {
-        const event: WithoutGridCommon<ColumnRowGroupChangedEvent> = {
+        this.eventService.dispatchEvent<'columnRowGroupChanged'>({
             type: 'columnRowGroupChanged',
             columns: impactedColumns,
             column: impactedColumns.length === 1 ? impactedColumns[0] : null,
             source: source,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
-    public genericColumnEvent(eventType: string, masterList: AgColumn[], source: ColumnEventType): void {
-        const event: WithoutGridCommon<ColumnEvent> = {
+    public genericColumnEvent(
+        eventType: 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged',
+        masterList: AgColumn[],
+        source: ColumnEventType
+    ): void {
+        this.eventService.dispatchEvent<'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged'>({
             type: eventType,
             columns: masterList,
             column: masterList.length === 1 ? masterList[0] : null,
             source: source,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public pivotModeChanged(): void {
-        const event: WithoutGridCommon<ColumnPivotModeChangedEvent> = {
+        this.eventService.dispatchEvent<'columnPivotModeChanged'>({
             type: 'columnPivotModeChanged',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public virtualColumnsChanged(afterScroll: boolean): void {
-        const event: WithoutGridCommon<VirtualColumnsChangedEvent> = {
+        this.eventService.dispatchEvent<'virtualColumnsChanged'>({
             type: 'virtualColumnsChanged',
             afterScroll,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public newColumnsLoaded(source: ColumnEventType): void {
-        const newColumnsLoadedEvent: WithoutGridCommon<NewColumnsLoadedEvent> = {
+        this.eventService.dispatchEvent<'newColumnsLoaded'>({
             type: 'newColumnsLoaded',
             source,
-        };
-        this.eventService.dispatchEvent(newColumnsLoadedEvent);
+        });
     }
 
     public everythingChanged(source: ColumnEventType): void {
-        const eventEverythingChanged: WithoutGridCommon<ColumnEverythingChangedEvent> = {
+        this.eventService.dispatchEvent<'columnEverythingChanged'>({
             type: 'columnEverythingChanged',
             source,
-        };
-        this.eventService.dispatchEvent(eventEverythingChanged);
+        });
     }
 
     public columnMoved(params: {
@@ -123,16 +98,14 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
     }): void {
         const { movedColumns, source, toIndex, finished } = params;
 
-        const event: WithoutGridCommon<ColumnMovedEvent> = {
+        this.eventService.dispatchEvent<'columnMoved'>({
             type: 'columnMoved',
             columns: movedColumns,
             column: movedColumns && movedColumns.length === 1 ? movedColumns[0] : null,
             toIndex,
             finished,
             source,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public columnPinned(changedColumns: AgColumn[], source: ColumnEventType) {
@@ -146,16 +119,14 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         // only include visible if it's common in all columns
         const pinned = this.getCommonValue(changedColumns, (col) => col.getPinned());
 
-        const event: WithoutGridCommon<ColumnPinnedEvent> = {
+        this.eventService.dispatchEvent<'columnPinned'>({
             type: 'columnPinned',
             // mistake in typing, 'undefined' should be allowed, as 'null' means 'not pinned'
             pinned: pinned != null ? pinned : null,
             columns: changedColumns,
             column,
             source: source,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public columnVisible(changedColumns: AgColumn[], source: ColumnEventType) {
@@ -169,15 +140,13 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         // only include visible if it's common in all columns
         const visible = this.getCommonValue(changedColumns, (col) => col.isVisible());
 
-        const event: WithoutGridCommon<ColumnVisibleEvent> = {
+        this.eventService.dispatchEvent<'columnVisible'>({
             type: 'columnVisible',
             visible,
             columns: changedColumns,
             column,
             source: source,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private getCommonValue<T>(cols: AgColumn[], valueGetter: (col: AgColumn) => T): T | undefined {
@@ -197,14 +166,17 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         return firstValue;
     }
 
-    public columnChanged<T extends AgEventType>(type: T, columns: AgColumn[], source: ColumnEventType): void {
-        const event: WithoutGridCommon<ColumnEvent<T>> = {
+    public columnChanged<T extends 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged'>(
+        type: T,
+        columns: AgColumn[],
+        source: ColumnEventType
+    ): void {
+        this.eventService.dispatchEvent<'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged'>({
             type: type,
             columns: columns,
             column: columns && columns.length == 1 ? columns[0] : null,
             source: source,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public columnResized(
@@ -214,15 +186,14 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         flexColumns: AgColumn[] | null = null
     ): void {
         if (columns && columns.length) {
-            const event: WithoutGridCommon<ColumnResizedEvent> = {
+            this.eventService.dispatchEvent<'columnResized'>({
                 type: 'columnResized',
                 columns: columns,
                 column: columns.length === 1 ? columns[0] : null,
                 flexColumns: flexColumns,
                 finished: finished,
                 source: source,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 }

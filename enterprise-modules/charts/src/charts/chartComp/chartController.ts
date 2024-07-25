@@ -4,8 +4,6 @@ import type {
     CellRangeParams,
     ChartModel,
     ChartModelType,
-    ChartOptionsChangedEvent,
-    ChartRangeSelectionChangedEvent,
     ChartType,
     IAggFunc,
     IRangeService,
@@ -15,7 +13,6 @@ import type {
     UpdateChartParams,
     UpdateCrossFilterChartParams,
     UpdateRangeChartParams,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-community';
@@ -647,26 +644,23 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
     private raiseChartOptionsChangedEvent(): void {
         const { chartId, chartType } = this.getChartModel();
-        const event: WithoutGridCommon<ChartOptionsChangedEvent> = {
+
+        this.eventService.dispatchEvent<'chartOptionsChanged'>({
             type: 'chartOptionsChanged',
             chartId,
             chartType,
             chartThemeName: this.getChartThemeName(),
             chartOptions: this.chartProxy.getChartThemeOverrides(),
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private raiseChartRangeSelectionChangedEvent(): void {
-        const event: WithoutGridCommon<ChartRangeSelectionChangedEvent> = {
+        this.eventService.dispatchEvent<'chartRangeSelectionChanged'>({
             type: 'chartRangeSelectionChanged',
             id: this.model.chartId,
             chartId: this.model.chartId,
             cellRange: this.getCellRangeParams(),
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public override destroy(): void {

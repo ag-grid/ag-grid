@@ -4,9 +4,8 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { DEFAULT_COLUMN_MIN_WIDTH } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
-import type { ColumnEvent, ColumnEventType } from '../events';
+import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { SortController } from '../sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
@@ -524,7 +523,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
             // dispatches generic ColumnEvents where all columns are returned rather than what has changed
             const dispatchWhenListsDifferent = (
-                eventType: string,
+                eventType: 'columnPivotChanged' | 'columnRowGroupChanged',
                 colsBefore: AgColumn[],
                 colsAfter: AgColumn[],
                 idMapper: (column: AgColumn) => string
@@ -548,14 +547,12 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
                 const changesArr = [...changes];
 
-                const event: WithoutGridCommon<ColumnEvent> = {
+                this.eventService.dispatchEvent<'columnPivotChanged' | 'columnRowGroupChanged'>({
                     type: eventType,
                     columns: changesArr,
                     column: changesArr.length === 1 ? changesArr[0] : null,
                     source: source,
-                };
-
-                this.eventService.dispatchEvent(event);
+                });
             };
 
             // determines which columns have changed according to supplied predicate

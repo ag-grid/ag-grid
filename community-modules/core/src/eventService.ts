@@ -2,7 +2,8 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgEventType } from './eventTypes';
-import type { AgEvent, AgEventListener, AgGlobalEventListener } from './events';
+import type { AgEventListener, AgEventTypeParams, AgGlobalEventListener } from './events';
+import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
@@ -59,11 +60,15 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
         // only the destroy event from BeanStub should flow through here
     }
 
-    public dispatchEvent(event: AgEvent<AgEventType>): void {
+    public dispatchEvent<TEventType extends AgEventType = never>(
+        event: WithoutGridCommon<AgEventTypeParams[TEventType]>
+    ): void {
         this.globalEventService.dispatchEvent(this.gos.addGridCommonParams<any>(event));
     }
 
-    public dispatchEventOnce(event: AgEvent<AgEventType>): void {
+    public dispatchEventOnce<TEventType extends AgEventType = never>(
+        event: WithoutGridCommon<AgEventTypeParams[TEventType]>
+    ): void {
         this.globalEventService.dispatchEventOnce(this.gos.addGridCommonParams<any>(event));
     }
 }

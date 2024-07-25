@@ -32,12 +32,12 @@ export class PinnedWidthService extends BeanStub implements NamedBean {
 
         if (newLeftWidth != this.leftWidth) {
             this.leftWidth = newLeftWidth;
-            this.eventService.dispatchEvent({ type: 'leftPinnedWidthChanged' });
+            this.eventService.dispatchEvent<'leftPinnedWidthChanged'>({ type: 'leftPinnedWidthChanged' });
         }
 
         if (newRightWidth != this.rightWidth) {
             this.rightWidth = newRightWidth;
-            this.eventService.dispatchEvent({ type: 'rightPinnedWidthChanged' });
+            this.eventService.dispatchEvent<'rightPinnedWidthChanged'>({ type: 'rightPinnedWidthChanged' });
         }
     }
 

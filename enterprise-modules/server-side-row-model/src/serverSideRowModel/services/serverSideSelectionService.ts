@@ -5,11 +5,9 @@ import type {
     ISetNodesSelectedParams,
     NamedBean,
     RowNode,
-    SelectionChangedEvent,
     SelectionEventSourceType,
     ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 
@@ -229,11 +227,10 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     }
 
     private dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
+        this.eventService.dispatchEvent<'selectionChanged'>({
             type: 'selectionChanged',
             source,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 }
 function validateSelectionParameters(params: {

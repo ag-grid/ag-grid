@@ -13,7 +13,6 @@ import type {
     IServerSideRowModel,
     IServerSideStore,
     LoadSuccessParams,
-    ModelUpdatedEvent,
     NamedBean,
     PivotResultColsService,
     RefreshServerSideParams,
@@ -24,7 +23,6 @@ import type {
     SortController,
     SortModelItem,
     StoreRefreshAfterParams,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     BeanStub,
@@ -418,14 +416,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private dispatchModelUpdated(reset = false): void {
-        const modelUpdatedEvent: WithoutGridCommon<ModelUpdatedEvent> = {
+        this.eventService.dispatchEvent<'modelUpdated'>({
             type: 'modelUpdated',
             animate: !reset,
             keepRenderedRows: !reset,
             newPage: false,
             newData: false,
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        });
     }
 
     private onStoreUpdated(): void {

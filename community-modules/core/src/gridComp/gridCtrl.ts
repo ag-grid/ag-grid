@@ -2,9 +2,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { DragSourceType } from '../dragAndDrop/dragAndDropService';
-import type { GridSizeChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
@@ -95,12 +93,11 @@ export class GridCtrl extends BeanStub {
     }
 
     private onGridSizeChanged(): void {
-        const event: WithoutGridCommon<GridSizeChangedEvent> = {
+        this.eventService.dispatchEvent<'gridSizeChanged'>({
             type: 'gridSizeChanged',
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private addRtlSupport(): void {

@@ -1,7 +1,5 @@
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
-import type { CellEditingStartedEvent, CellEditingStoppedEvent } from '../../events';
-import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import { _stopPropagationForAgGrid } from '../../utils/event';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
@@ -114,7 +112,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
 
     private onCheckboxChanged(isSelected?: boolean): void {
         const { column, node, value } = this.params;
-        const eventStarted: WithoutGridCommon<CellEditingStartedEvent> = {
+        this.eventService.dispatchEvent<'cellEditingStarted'>({
             type: 'cellEditingStarted',
             column: column!,
             colDef: column?.getColDef()!,
@@ -123,12 +121,11 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             rowIndex: node.rowIndex,
             rowPinned: node.rowPinned,
             value,
-        };
-        this.eventService.dispatchEvent(eventStarted);
+        });
 
         const valueChanged = this.params.node.setDataValue(this.params.column!, isSelected, 'edit');
 
-        const eventStopped: WithoutGridCommon<CellEditingStoppedEvent> = {
+        this.eventService.dispatchEvent<'cellEditingStopped'>({
             type: 'cellEditingStopped',
             column: column!,
             colDef: column?.getColDef()!,
@@ -140,7 +137,6 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             oldValue: value,
             newValue: isSelected,
             valueChanged,
-        };
-        this.eventService.dispatchEvent(eventStopped);
+        });
     }
 }
