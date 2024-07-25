@@ -675,7 +675,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             case 'groupSelectsChildren':
                 return multiRowOptionWithFallback(option, (opts) => opts.groupSelects !== 'self');
             case 'groupSelectsFiltered':
-                return multiRowOptionWithFallback(option, (opts) => opts.groupSelects === 'filteredChildren');
+                return multiRowOptionWithFallback(option, (opts) => opts.groupSelects === 'filteredDescendants');
             default:
                 return;
         }

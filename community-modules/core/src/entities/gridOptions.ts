@@ -2537,7 +2537,7 @@ export type CheckboxSelectionOptions<TData, TValue> =
     | boolean
     | {
           /** Return `true` from function to render a selection checkbox in the first column. */
-          displayCheckbox?: CheckboxSelectionCallback<TData, TValue>;
+          displayCheckbox?: boolean | CheckboxSelectionCallback<TData, TValue>;
           /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. */
           showDisabledCheckboxes?: boolean;
       };
@@ -2546,10 +2546,10 @@ export type CheckboxSelectionOptions<TData, TValue> =
  * Determines the behaviour when selecting a group row.
  *
  * When `'self'`, selects only the group row itself.
- * When `'children'`, selecting a group row selects all its child rows.
- * When `'filteredChildren'`, selecting a group row selects all child rows that satisfy the currently active filter.
+ * When `'descendants'`, selecting a group row selects all its child rows.
+ * When `'filteredDescendants'`, selecting a group row selects all child rows that satisfy the currently active filter.
  */
-export type GroupSelectionMode = 'self' | 'children' | 'filteredChildren';
+export type GroupSelectionMode = 'self' | 'descendants' | 'filteredDescendants';
 
 /**
  * Determines how "select all" behaviour works.
