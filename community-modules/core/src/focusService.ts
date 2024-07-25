@@ -80,6 +80,8 @@ export class FocusService extends BeanStub implements NamedBean {
     private static keyboardModeActive: boolean = false;
     private static instanceCount: number = 0;
 
+    private awaitRestoreFocusedCell: boolean;
+
     private static addKeyboardModeEvents(doc: Document): void {
         if (this.instanceCount > 0) {
             return;
@@ -234,6 +236,26 @@ export class FocusService extends BeanStub implements NamedBean {
             return true;
         }
         return false;
+    }
+
+    public clearRestoreFocus(): void {
+        this.restoredFocusedCellPosition = null;
+        this.awaitRestoreFocusedCell = false;
+    }
+
+    public restoreFocusedCell(cellPosition: CellPosition, setFocusCallback: () => void): void {
+        this.awaitRestoreFocusedCell = true;
+
+        // this should be done asynchronously to work with React Renderers.
+        setTimeout(() => {
+            // if the cell has lost focus (react events are async), we don't want to restore
+            if (!this.awaitRestoreFocusedCell) {
+                return;
+            }
+            this.setRestoreFocusedCell(cellPosition);
+
+            setFocusCallback();
+        });
     }
 
     private isCellRestoreFocused(cellPosition: CellPosition): boolean {

@@ -156,6 +156,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         chartTitleEdit: ChartTitleEditEvent<TData, TContext>;
         recalculateRowBounds: RecalculateRowBoundsEvent<TData, TContext>;
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
+        overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
     }
 >;
 

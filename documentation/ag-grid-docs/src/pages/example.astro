@@ -15,14 +15,16 @@ import LogoMark from '@components/logo/LogoMark';
 >
     <div class={styles.topHeader}>
         <div>
-            <h1 class={styles.headerHeading}>Performance</h1>
+            <div class={styles.headerTitle}>
+                <h1 class={styles.headerHeading}>Performance</h1>
+                <a className={styles.videoTour} href="https://youtu.be/bcMvTUVbMvI" target="_blank" rel="noreferrer">
+                    <button class="button-secondary">
+                        <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
+                        <span>See the video tour</span>
+                    </button>
+                </a>
+            </div>
             <p>Reporting and view performance by adjusting rows and columns</p>
-            <a className={styles.videoTour} href="https://youtu.be/bcMvTUVbMvI" target="_blank" rel="noreferrer">
-                <button class="button-secondary">
-                    <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
-                    <span>Take the video tour</span>
-                </button>
-            </a>
         </div>
 
         <DemoTabs activeTab="complete" />

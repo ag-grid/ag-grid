@@ -1,0 +1,35 @@
+---
+import type { Framework } from '@ag-grid-types';
+
+interface Props {
+    framework?: Framework;
+    redirectPageName: string;
+}
+
+const frameworkOverride = Astro.props.framework;
+const redirectUrl = `./${Astro.props.redirectPageName}`;
+---
+
+<div class="layout-grid">
+    <slot />
+</div>
+
+<!-- 
+    Redirect page to framework page based on stored internal framework
+
+    NOTE: Need to put var into data attribute as Astro can't pass directly into build time JavaScript
+-->
+<div id="redirectUrl" data-framework-override={frameworkOverride} data-redirect-url={redirectUrl}></div>
+<script>
+    import { $internalFramework } from '@stores/frameworkStore';
+    import { getFrameworkFromInternalFramework } from '@utils/framework';
+    import { urlWithPrefix } from '@utils/urlWithPrefix';
+
+    const data = document.getElementById('redirectUrl')?.dataset;
+    const dataAttrFrameworkOverride = data.frameworkOverride;
+    const dataAttrUrl = data.redirectUrl;
+    const framework = dataAttrFrameworkOverride ?? getFrameworkFromInternalFramework($internalFramework.get());
+    const redirectUrl = urlWithPrefix({ framework, url: dataAttrUrl });
+
+    window.location.replace(redirectUrl);
+</script>
