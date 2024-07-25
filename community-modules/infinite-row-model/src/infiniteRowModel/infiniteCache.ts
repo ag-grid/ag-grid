@@ -9,7 +9,7 @@ import type {
     StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, NumberSequence, _exists, _getAllValuesInObject, _log, _missing } from '@ag-grid-community/core';
+import { BeanStub, NumberSequence, _exists, _getAllValuesInObject, _log } from '@ag-grid-community/core';
 
 import { InfiniteBlock } from './infiniteBlock';
 
