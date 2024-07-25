@@ -527,16 +527,6 @@ const Section: FunctionComponent<SectionProps> = ({
                     )}
                 </tbody>
             </table>
-            {/* {Object.entries(objectProperties).map(([name, definition]) => (
-                <Section
-                    key={name}
-                    framework={framework}
-                    title={name}
-                    properties={definition}
-                    config={{ ...config, isSubset: false }}
-                    breadcrumbs={{ ...breadcrumbs }}
-                />
-            ))} */}
         </div>
     );
 };
