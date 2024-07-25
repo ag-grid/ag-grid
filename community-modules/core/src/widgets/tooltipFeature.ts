@@ -6,6 +6,7 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
+import { _addOrRemoveAttribute } from '../utils/dom';
 import type { TooltipParentComp } from './tooltipStateManager';
 import { TooltipStateManager } from './tooltipStateManager';
 
@@ -54,18 +55,13 @@ export class TooltipFeature extends BeanStub {
     }
 
     private setBrowserTooltip(tooltip: string | null) {
-        const name = 'title';
         const eGui = this.ctrl.getGui();
 
         if (!eGui) {
             return;
         }
 
-        if (tooltip != null && tooltip != '') {
-            eGui.setAttribute(name, tooltip);
-        } else {
-            eGui.removeAttribute(name);
-        }
+        _addOrRemoveAttribute(eGui, 'title', tooltip);
     }
 
     private updateTooltipText(): void {

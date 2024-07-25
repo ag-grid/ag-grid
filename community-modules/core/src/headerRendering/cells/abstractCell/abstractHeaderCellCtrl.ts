@@ -16,7 +16,7 @@ import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import type { MenuService } from '../../../misc/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
-import { _getInnerWidth } from '../../../utils/dom';
+import { _addOrRemoveAttribute, _getInnerWidth } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
@@ -100,9 +100,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected getWrapperHasFocus(): boolean {
-        const activeEl = this.gos.getActiveDomElement();
-
-        return activeEl === this.eGui;
+        return this.gos.getActiveDomElement() === this.eGui;
     }
 
     protected setGui(eGui: HTMLElement): void {
@@ -161,12 +159,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private refreshTabIndex(): void {
-        const suppressHeaderFocus = this.focusService.isHeaderFocusSuppressed();
-        if (suppressHeaderFocus) {
-            this.eGui.removeAttribute('tabindex');
-        } else {
-            this.eGui.setAttribute('tabindex', '-1');
-        }
+        _addOrRemoveAttribute(this.eGui, 'tabindex', this.focusService.isHeaderFocusSuppressed() ? null : '-1');
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
