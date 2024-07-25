@@ -34,6 +34,10 @@ export interface PropertyType {
     /** True if property is defined with ? i.e pinned?: boolean Currently only applied to doc-interfaces.AUTO */
     optional?: boolean;
 }
+export interface InterfaceHierarchyOverrides {
+    exclude?: string[];
+    include?: string[];
+}
 export interface ChildDocEntry {
     meta?: never;
     more?: {
@@ -46,10 +50,7 @@ export interface ChildDocEntry {
     options?: string[];
     default?: string;
     type: PropertyType | string;
-    interfaceHierarchyOverrides: {
-        exclude?: string[];
-        include?: string[];
-    };
+    interfaceHierarchyOverrides: InterfaceHierarchyOverrides;
     /** We check for properties that are not present in the source code. Set this to true to allow this property to be include
      * even though there is no matching code property for it.
      */
@@ -209,7 +210,14 @@ export type FunctionCode = {
     config: Config;
 };
 
-export interface DocModel {
+export interface DocProperties {
+    type: 'properties';
     properties: Properties;
     meta: MetaTag;
 }
+export interface DocCode {
+    type: 'code';
+    code: string;
+}
+
+export type DocModel = DocProperties | DocCode;

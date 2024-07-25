@@ -17,11 +17,11 @@ import {
     removeDefaultValue,
 } from './documentation-helpers';
 import { formatJson, getInterfaceName } from './interface-helpers';
-import type { Config, DocModel, ObjectCode, SectionProps } from './types';
+import type { Config, DocProperties, ObjectCode, SectionProps } from './types';
 
 interface Props {
     framework: Framework;
-    model: DocModel;
+    model: DocProperties;
     config: Config;
 }
 
@@ -542,8 +542,6 @@ const Section: FunctionComponent<SectionProps> = ({
 };
 
 export const InterfaceDocumentation: FunctionComponent<Props> = ({ framework, model, config }) => {
-    // config.asCode
-
     return Object.entries(model.properties).map(([key, properties]) => (
         <Section
             key={key}
