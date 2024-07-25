@@ -13,7 +13,7 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _getElementSize } from '../../utils/dom';
+import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
@@ -101,7 +101,6 @@ export class CellCtrl extends BeanStub {
     private includeDndSource: boolean;
     private includeRowDrag: boolean;
     private colIdSanitised: string;
-    private tabIndex: number | undefined;
     private isAutoHeight: boolean;
 
     private suppressRefreshCell = false;
@@ -124,9 +123,6 @@ export class CellCtrl extends BeanStub {
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
 
         this.colIdSanitised = _escapeString(this.column.getId())!;
-        if (!beans.gos.get('suppressCellFocus')) {
-            this.tabIndex = -1;
-        }
 
         this.createCellPosition();
         this.addFeatures();
@@ -271,6 +267,8 @@ export class CellCtrl extends BeanStub {
 
         this.addDomData(compBean);
 
+        this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
+
         this.onCellFocused(this.focusEventToRestore);
         this.applyStaticCssClasses();
         this.setWrapText();
@@ -374,9 +372,6 @@ export class CellCtrl extends BeanStub {
     }
     public getColumnIdSanitised(): string {
         return this.colIdSanitised;
-    }
-    public getTabIndex(): number | undefined {
-        return this.tabIndex;
     }
     public isCellRenderer(): boolean {
         const colDef = this.column.getColDef();
@@ -919,6 +914,13 @@ export class CellCtrl extends BeanStub {
         }
     }
 
+    public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
+        if (!this.eGui) {
+            return;
+        }
+        _addOrRemoveAttribute(this.eGui, 'tabindex', suppressCellFocus ? undefined : -1);
+    }
+
     public onFirstRightPinnedChanged(): void {
         if (!this.cellComp) {
             return;
@@ -936,7 +938,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (this.beans.gos.get('suppressCellFocus')) {
+        if (this.beans.focusService.isCellFocusSuppressed()) {
             return;
         }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);

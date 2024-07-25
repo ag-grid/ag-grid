@@ -268,22 +268,3 @@ button.sectionHeader {
     padding-bottom: 7px;
     border-left: 1px solid var(--color-border-primary);
 }
-
-.menuGroup .groupLabel {
-    display: block;
-    margin-left: var(--first-indent-size);
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: $spacing-size-4 + 2px;
-    border-left: 1px solid var(--color-border-primary);
-    color: var(--color-util-gray-400);
-    transition: color $transition-default-timing;
-
-    #{$selector-darkmode} & {
-        color: var(--color-util-gray-500);
-    }
-
-    &.activeItemParent {
-        color: var(--color-util-gray-400);
-    }
-}

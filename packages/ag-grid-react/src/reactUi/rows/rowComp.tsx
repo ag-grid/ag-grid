@@ -19,7 +19,6 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
     const { context, gos } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
 
-    const tabIndex = rowCtrl.getTabIndex();
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
 
@@ -190,7 +189,6 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
             row-index={rowIndex}
             row-id={rowId}
             row-business-key={rowBusinessKey}
-            tabIndex={tabIndex}
         >
             {showCells && showCellsJsx()}
             {showFullWidthFramework && showFullWidthFrameworkJsx()}

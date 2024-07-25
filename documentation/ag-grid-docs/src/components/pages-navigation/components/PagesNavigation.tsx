@@ -106,25 +106,9 @@ function MenuGroup({
 }) {
     const { title, path, url, icon, isEnterprise, items } = menuItem;
     const linkUrl = getLinkUrl({ framework, path, url });
-    const nonLinkSubGroup = !path && !url && depth > 1;
 
     let heading;
-    if (nonLinkSubGroup) {
-        const isActiveParent = items ? items.includes(activeMenuItem as any) : false;
-        heading = (
-            <span
-                className={classnames(
-                    gridStyles.groupLabel,
-                    {
-                        [gridStyles.activeItemParent]: isActiveParent,
-                    },
-                    'text-secondary'
-                )}
-            >
-                {title}
-            </span>
-        );
-    } else if (items && !hideCollapsibleButton) {
+    if (items && !hideCollapsibleButton) {
         heading = (
             <button
                 onClick={toggleActive}

@@ -7,7 +7,6 @@ import type { FocusService } from '../focusService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IWatermark } from '../interfaces/iWatermark';
-import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
@@ -33,14 +32,12 @@ export interface OptionalGridComponents {
 export class GridCtrl extends BeanStub {
     private beans: BeanCollection;
     private focusService: FocusService;
-    private overlayService: OverlayService;
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
-        this.overlayService = beans.overlayService;
     }
 
     private view: IGridComp;
@@ -129,16 +126,14 @@ export class GridCtrl extends BeanStub {
 
     public focusNextInnerContainer(backwards: boolean): boolean {
         const focusableContainers = this.getFocusableContainers();
-        const activeEl = this.gos.getActiveDomElement();
-        const idxWithFocus = focusableContainers.findIndex((container) => container.getGui().contains(activeEl));
-        const nextIdx = idxWithFocus + (backwards ? -1 : 1);
+        const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(focusableContainers, backwards);
 
-        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
+        if (nextIndex < 0 || nextIndex >= focusableContainers.length) {
             return false;
         }
 
-        if (nextIdx === 0) {
-            if (idxWithFocus > 0) {
+        if (nextIndex === 0) {
+            if (indexWithFocus > 0) {
                 const allColumns = this.visibleColsService.getAllCols();
                 const lastColumn = _last(allColumns);
                 if (this.focusService.focusGridView(lastColumn, true)) {
@@ -148,18 +143,13 @@ export class GridCtrl extends BeanStub {
             return false;
         }
 
-        return this.focusContainer(focusableContainers[nextIdx], backwards);
+        return this.focusContainer(focusableContainers[nextIndex], backwards);
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
         const userCallbackFunction = this.gos.getCallback('focusGridInnerElement');
         if (userCallbackFunction && userCallbackFunction({ fromBottom: !!fromBottom })) {
             return true;
-        }
-
-        const overlayService = this.overlayService;
-        if (overlayService.isExclusive()) {
-            return this.focusContainer(overlayService.getOverlayWrapper(), fromBottom);
         }
 
         const focusableContainers = this.getFocusableContainers();
@@ -176,7 +166,7 @@ export class GridCtrl extends BeanStub {
             }
         }
 
-        if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
+        if (this.gos.get('headerHeight') === 0 || this.focusService.isHeaderFocusSuppressed()) {
             if (this.focusService.focusGridView(allColumns[0])) {
                 return true;
             }
@@ -204,6 +194,37 @@ export class GridCtrl extends BeanStub {
         this.additionalFocusableContainers.delete(container);
     }
 
+    public allowFocusForNextCoreContainer(up?: boolean): void {
+        const coreContainers = this.view.getFocusableContainers();
+        const { nextIndex, indexWithFocus } = this.getNextFocusableIndex(coreContainers, up);
+        if (indexWithFocus === -1 || nextIndex < 0 || nextIndex >= coreContainers.length) {
+            return;
+        }
+        const comp = coreContainers[nextIndex];
+        comp.setAllowFocus?.(true);
+        // we're letting the browser handle the focus here, so need to wait for focus to move into the container before disabling focus again.
+        // can't do this via event, as the container may not have anything focusable. In which case, the focus will just go out of the grid.
+        setTimeout(() => {
+            comp.setAllowFocus?.(false);
+        });
+    }
+
+    private getNextFocusableIndex(
+        focusableContainers: FocusableContainer[],
+        backwards?: boolean
+    ): {
+        indexWithFocus: number;
+        nextIndex: number;
+    } {
+        const activeEl = this.gos.getActiveDomElement();
+        const indexWithFocus = focusableContainers.findIndex((container) => container.getGui().contains(activeEl));
+        const nextIndex = indexWithFocus + (backwards ? -1 : 1);
+        return {
+            indexWithFocus,
+            nextIndex,
+        };
+    }
+
     private focusContainer(comp: FocusableContainer | undefined, up?: boolean): boolean {
         if (!comp) {
             return false;
@@ -216,21 +237,7 @@ export class GridCtrl extends BeanStub {
     }
 
     private getFocusableContainers(): FocusableContainer[] {
-        const overlayService = this.overlayService;
-        const overlayWrapper = overlayService.getOverlayWrapper();
-        if (overlayWrapper && overlayService.isExclusive()) {
-            // An exclusive overlay takes precedence over all other focusable containers
-            return [overlayWrapper];
-        }
-
-        const result = [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
-
-        if (overlayWrapper && overlayService.isVisible()) {
-            // We allow focusing on the no-rows overlay
-            result.push(overlayWrapper);
-        }
-
-        return result;
+        return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
     }
 
     public override destroy(): void {

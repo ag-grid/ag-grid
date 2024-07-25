@@ -4,7 +4,7 @@ import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { simpleHierarchyRowSnapshot } from './tree-data-snapshots';
+import { checkTreeDiagram, simpleHierarchyRowData, simpleHierarchyRowSnapshot } from './tree-test-utils';
 
 describe('ag-grid grouping tree data with groupRows', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -39,12 +39,7 @@ describe('ag-grid grouping tree data with groupRows', () => {
     });
 
     test('tree grouping rows snapshot', async () => {
-        const rowData = [
-            { orgHierarchy: ['A'] },
-            { orgHierarchy: ['A', 'B'] },
-            { orgHierarchy: ['C', 'D'] },
-            { orgHierarchy: ['E', 'F', 'G', 'H'] },
-        ];
+        const rowData = simpleHierarchyRowData();
 
         const getDataPath = (data: any) => data.orgHierarchy;
 
@@ -65,6 +60,8 @@ describe('ag-grid grouping tree data with groupRows', () => {
         };
 
         const api = createMyGrid(gridOptions);
+
+        expect(checkTreeDiagram(api)).toBe(true);
 
         const rows = getAllRows(api);
 
