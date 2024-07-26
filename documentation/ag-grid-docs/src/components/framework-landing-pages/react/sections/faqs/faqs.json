@@ -1,0 +1,30 @@
+[
+    {
+        "question": "What is the difference between AG Grid Community vs. AG Grid Enterprise?",
+        "answer": "AG Grid Community is the free version with basic features, while AG Grid Enterprise offers additional advanced features and support."
+    },
+    {
+        "question": "Can I create a React Table for free?",
+        "answer": "Yes, you can create a React Table for free using various open-source libraries such as AG Grid Community."
+    },
+    {
+        "question": "Will my React Tables be compatible with AG Charts React Charts?",
+        "answer": "Yes, AG Grid is designed to be compatible with AG Charts, allowing seamless integration between tables and charts."
+    },
+    {
+        "question": "Can I customise the React Table?",
+        "answer": "Yes, AG Grid provides extensive customization options to tailor the React Table to your specific needs."
+    },
+    {
+        "question": "AG Grid vs. MUI",
+        "answer": "AG Grid is a feature-rich data grid offering advanced capabilities, while MUI (Material-UI) provides a simpler table component as part of its UI library."
+    },
+    {
+        "question": "Why use AG Grid over React Table?",
+        "answer": "AG Grid offers more features, better performance, and comprehensive support compared to the React Table."
+    },
+    {
+        "question": "More TBC",
+        "answer": "Additional FAQs will be added soon. Stay tuned for updates."
+    }
+]
