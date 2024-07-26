@@ -8,7 +8,7 @@ import styles from './Customers.module.scss';
 const Customers: React.FC = () => {
     return (
         <div className={styles.container}>
-            <div className={styles.statsContainer}>
+            {/* <div className={styles.statsContainer}>
                 <div className={styles.stat1}>
                     <div className={styles.stat}>90%</div>
                     <div className={styles.statName}>of Fortune 500</div>
@@ -21,7 +21,7 @@ const Customers: React.FC = () => {
                     <div className={styles.stat}>12K</div>
                     <div className={styles.statName}>GitHub Stars</div>
                 </div>
-            </div>
+            </div> */}
             <div className={styles.quotesContainer}>
                 <Quotes data={quotesData} />
             </div>

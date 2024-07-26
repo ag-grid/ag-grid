@@ -38,6 +38,7 @@
 }
 
 .quotesContainer {
+    margin: $spacing-size-6 $spacing-size-6;
     blockquote {
         --quote-background-color: var(--color-util-gray-100);
     }
@@ -45,19 +46,16 @@
 
 .customerLogos {
     --overflow-width: 10vw;
-
     position: relative;
     width: calc(100% + var(--overflow-width) * 2);
     height: 107px;
     margin-left: calc(var(--overflow-width) * -1);
-    // NOTE: This image is also prefetched on the page
     background-image: url(urlWithBaseUrl('/images/ag-grid-customer-logos.webp'));
     background-size: auto 107px;
     animation-name: customerMarquee;
     animation-duration: 1600s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-
     @media screen and (min-width: $breakpoint-grid-homepage-medium) {
         animation-duration: 400s;
     }
