@@ -7,16 +7,17 @@ import { HR } from '@components/demos/examples/hr';
 import LogoMark from '@components/logo/LogoMark';
 ---
 
-<DemosLayout title="Demo - HR Management">
+<DemosLayout title="Demo - HR Management" description="HR data example showing hierarchical employee data.">
     <div class={styles.topHeader}>
         <div>
-            <h1 class={styles.headerHeading}>HR</h1>
-            <p>HR data example showing hierarchical employee data.</p>
-
-            <a class="button-secondary" href="https://github.com/ag-grid/ag-grid-demos/tree/main/hr">
-                <Icon name="github" svgClasses={styles.githubIcon} />
-                <span>See on Github</span>
-            </a>
+            <div class={styles.headerTitle}>
+                <h1 class={styles.headerHeading}>HR</h1>
+                <a class="button-secondary" href="https://github.com/ag-grid/ag-grid-demos/tree/main/hr">
+                    <Icon name="github" svgClasses={styles.githubIcon} />
+                    <span>See on Github</span>
+                </a>
+            </div>
+            <p>Example showing HR hierarchical employee data.</p>
         </div>
 
         <DemoTabs activeTab="crm" />

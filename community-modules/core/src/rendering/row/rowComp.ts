@@ -37,10 +37,6 @@ export class RowComp extends Component {
         const style = eGui.style;
         this.domOrder = this.rowCtrl.getDomOrder();
         _setAriaRole(eGui, 'row');
-        const tabIndex = this.rowCtrl.getTabIndex();
-        if (tabIndex != null) {
-            eGui.setAttribute('tabindex', tabIndex.toString());
-        }
 
         const compProxy: IRowComp = {
             setDomOrder: (domOrder) => (this.domOrder = domOrder),

@@ -1,0 +1,16 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { LICENSE_INSTALL_REDIRECT_PAGE } from '@features/docs/constants';
+import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
+---
+
+<Layout
+    title="AG Grid: Licensing"
+    description={'Installing Your Licence Key'}
+    showSearchBar={false}
+    showDocsNav={false}
+>
+    <FrameworkRedirectPage redirectPageName={LICENSE_INSTALL_REDIRECT_PAGE}>
+        <h1>Redirecting to AG Grid Install License page...</h1>
+    </FrameworkRedirectPage>
+</Layout>

@@ -53,7 +53,7 @@ export abstract class AgPickerField<
                 /* html */ `
             <div class="ag-picker-field" role="presentation">
                 <div data-ref="eLabel"></div>
-                    <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
+                <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
                     <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
                     <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                 </div>
@@ -228,7 +228,7 @@ export abstract class AgPickerField<
                 }
             },
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
-            anchorToElement: this.eDisplayField,
+            anchorToElement: this.eWrapper,
         };
 
         const addPopupRes = this.popupService.addPopup(popupParams);
