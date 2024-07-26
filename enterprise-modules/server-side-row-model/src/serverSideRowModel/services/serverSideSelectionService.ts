@@ -27,11 +27,13 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     }
 
     private selectionStrategy: ISelectionStrategy;
+    private selectionMode?: 'single' | 'multiple';
 
     public postConstruct(): void {
         this.addManagedPropertyListeners(['groupSelectsChildren', 'selectionOptions'], () => {
             const groupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
 
+            // Only switch strategies when value of groupSelectsChildren actually changes, not just any part of selection options
             const Strategy =
                 groupSelectsChildren && this.selectionStrategy instanceof DefaultStrategy
                     ? GroupSelectsChildrenStrategy
@@ -49,11 +51,17 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
             }
         });
 
-        this.addManagedPropertyListeners(['rowSelection', 'selectionOptions'], () => {
-            // TODO - only reset selection when selection mode changes, not just any part of selection options
-            this.deselectAllRowNodes({ source: 'api' });
+        this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
+        this.addManagedPropertyListener('selectionOptions', () => {
+            // Only reset selection when selection mode changes, not just any part of selection options
+            const rowSelection = this.gos.getLegacySelectionOption('rowSelection');
+            if (rowSelection !== this.selectionMode) {
+                this.selectionMode = rowSelection;
+                this.deselectAllRowNodes({ source: 'api' });
+            }
         });
 
+        this.selectionMode = this.gos.getLegacySelectionOption('rowSelection');
         const groupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
         const Strategy = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new Strategy());
