@@ -1,0 +1,30 @@
+[
+    {
+        "img": "quick-start.png",
+        "title": "Quick Start",
+        "content": "Create your first React Table and learn the basics in just a few minutes.",
+        "docs": "https://www.ag-grid.com/react-data-grid/getting-started",
+        "demo": "https://www.ag-grid.com/examples/getting-started/working-with-data-example/modules/reactFunctionalTs"
+    },
+    {
+        "img": "beginner-tutorial.png",
+        "title": "Beginner Tutorial",
+        "content": "Learn key concepts by building a react table with common functionality & customisations.",
+        "docs": "https://www.ag-grid.com/react-data-grid/deep-dive/",
+        "demo": "https://www.ag-grid.com/examples/deep-dive/testing-example/modules/reactFunctionalTs"
+    },
+    {
+        "img": "custom-themes.png",
+        "title": "Custom Styles",
+        "content": "Customise your react table using CSS variables to create a unique theme for your brand.",
+        "docs": "https://www.ag-grid.com/react-data-grid/global-style/",
+        "demo": "https://www.ag-grid.com/examples/global-style-customisation-colours/colour-customisation/modules/reactFunctionalTs"
+    },
+    {
+        "img": "integrated-charts.png",
+        "title": "Integrated Charts",
+        "content": "Build & style charts programatically, or let users create their own from the table.",
+        "docs": "https://localhost:4610/react-data-grid/integrated-charts/",
+        "demo": "https://www.ag-grid.com/examples/integrated-charts-chart-tool-panels/chart-tool-panels/modules/reactFunctionalTs"
+    }
+]
