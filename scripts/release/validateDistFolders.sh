@@ -3,156 +3,155 @@
 # dumb repetitive and basic - can rework post release
 
 excluded=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles" "theming" "locale")
+frameworks=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular")
 
-for directory in `ls community-modules`;
-do
-  if [[ ! ${excluded[@]} =~ $directory ]]
+validatePackageJsonExists()
+{
+  local directory=$1
+
+  if [[ ! -s $directory/package.json  ]]
   then
-    if [[ ! -d "community-modules/$directory/dist" ]]
-    then
-      echo "!!!!! community-modules/$directory/dist doesn't exist"
-      exit 1
-    fi
-
-    count=`ls -l "community-modules/$directory/dist/package" | wc -l | tr -d ' '`;
-    if [[ $count -ne 8 ]]
-    then
-      echo "!!!!! community-modules/$directory/dist/package should have 10 artefacts"
-      exit 1
-    else
-      echo "community-modules/$directory/dist/package has $count artefacts"
-    fi
-
-    count=`tree "community-modules/$directory/dist/types" | grep .d.ts | wc -l | tr -d ' '`;
-    if [[ $count -le 5 ]]
-    then
-      echo "!!!!! community-modules/$directory/dist/types should have at least 5 artefacts"
-      exit 1
-    else
-      echo "community-modules/$directory/dist/types has $count artefacts"
-    fi
+    echo "ERROR: $directory/package.json empty or does not exist"
+    exit 1
   fi
-done
+}
 
-for directory in `ls enterprise-modules`;
-do
-  if [[ ! ${excluded[@]} =~ $directory ]]
+validateExpectedDirs()
+{
+  local directory=$1
+  local expected_count=$2
+
+  local count=`find $directory -maxdepth 1 | wc -l | tr -d ' '`;
+
+  if [[ $count -ne $expected_count ]]
   then
-    if [[ ! -d "enterprise-modules/$directory/dist" ]]
-    then
-      echo "!!!!! enterprise-modules/$directory/dist doesn't exist"
-      exit 1
-    fi
-
-    count=`ls -l "enterprise-modules/$directory/dist/package" | wc -l | tr -d ' '`;
-    if [[ $count -ne 8 ]]
-    then
-      echo "!!!!! enterprise-modules/$directory/dist/package should have 10 artefacts"
-      exit 1
-    else
-      echo "enterprise-modules/$directory/dist/package has $count artefacts"
-    fi
-
-    count=`tree "enterprise-modules/$directory/dist/types" | grep .d.ts | wc -l | tr -d ' '`;
-    if [[ $count -lt 3 ]]
-    then
-      echo "!!!!! enterprise-modules/$directory/dist/types should have at least 3 artefacts"
-      exit 1
-    else
-      echo "enterprise-modules/$directory/dist/types has $count artefacts"
-    fi
+    echo "ERROR: Expected $directory to have $expected_count directories but it only has $count"
+    exit 1
   fi
-done
+}
 
-for directory in `ls packages`;
-do
-  if [[ ! ${excluded[@]} =~ $directory ]]
+validateCommonDist()
+{
+  local directory=$1
+
+  if [[ ! -d "$directory" ]]
   then
-    if [[ ! -d "packages/$directory/dist" ]]
-    then
-      echo "packages/$directory/dist doesn't exist"
-      exit 1
-    fi
-
-    count=`ls -l "packages/$directory/dist/package" | wc -l | tr -d ' '`;
-    if [[ $count -ne 8 ]]
-    then
-      echo "!!!!! packages/$directory/dist/package should have 10 artefacts"
-      exit 1
-    else
-      echo "packages/$directory/dist/package has $count artefacts"
-    fi
-
-    count=`tree "packages/$directory/dist/types" | grep .d.ts | wc -l | tr -d ' '`;
-    if [[ $count -le 5 ]]
-    then
-      echo "!!!!! packages/$directory/dist/types should have at least 5 artefacts"
-      exit 1
-    else
-      echo "packages/$directory/dist/types has $count artefacts"
-    fi
-  fi
-done
-
-frameworks=("react" "vue3" "angular")
-for framework in "${frameworks[@]}"
-do
-  if [[ ! -d "community-modules/$framework/dist" ]]
-  then
-    echo "community-modules/$framework/dist doesn't exist"
+    echo "ERROR: $directory doesn't exist"
     exit 1
   fi
 
-  count=`tree "community-modules/$framework/dist" | grep .d.ts | wc -l | tr -d ' '`;
-  if [[ $count -le 5 ]]
-  then
-    echo "!!!!! community-modules/$framework/dist should have at least 5 artefacts"
-    exit 1
-  else
-    echo "community-modules/$framework/dist has $count artefacts"
-  fi
-done
+  validatePackageJsonExists $directory
 
-frameworks=("ag-grid-react" "ag-grid-vue3" "ag-grid-angular")
-for framework in "${frameworks[@]}"
-do
-  if [[ ! -d "packages/$framework/dist" ]]
+  if [[ ! -d "$directory/dist" ]]
   then
-    echo "packages/$framework/dist doesn't exist"
+    echo "ERROR: $directory/dist doesn't exist"
     exit 1
   fi
 
-  count=`tree "packages/$framework/dist" | grep .d.ts | wc -l | tr -d ' '`;
-  if [[ $count -le 5 ]]
+  local expected_count=5
+  local count=`find "$directory/dist/package" -type f | wc -l | tr -d ' '`;
+  if [[ $count -ne $expected_count ]]
   then
-    echo "!!!!! packages/$framework/dist should have at least 5 artefacts"
+    echo "ERROR: $directory/dist/package should have $expected_count artefacts but has $count"
     exit 1
-  else
-    echo "packages/$framework/dist has $count artefacts"
   fi
-done
 
-count=`ls -l packages/ag-grid-community/dist/*.js | wc -l | tr -d ' '`
-if [[ $count -ne 4 ]]
-then
-  echo "!!!!! packages/ag-grid-community/dist should have 4 umd files"
-  exit 1
-fi
-count=`ls -l packages/ag-grid-enterprise/dist/*.js | wc -l | tr -d ' '`
-if [[ $count -ne 4 ]]
-then
-  echo "!!!!! packages/ag-grid-enterprise/dist should have 4 umd files"
-  exit 1
-fi
-count=`ls -l packages/ag-grid-charts-enterprise/dist/*.js | wc -l | tr -d ' '`
-if [[ $count -ne 4 ]]
-then
-  echo "!!!!! packages/ag-grid-charts-enterprise/dist should have 4 umd files"
-  exit 1
-fi
-count=`find "community-modules/locale/dist/" | wc -l | tr -d ' '`
-if [[ $count -ne 53 ]]
-then
-  echo "!!!!! community-modules/locale/dist should have 53 files"
-  exit 1
-fi
+  local count=`find "$directory/dist/types" -type f | grep .d.ts | wc -l | tr -d ' '`;
+  if [[ $count -eq 0 ]]
+  then
+    echo "ERROR: $directory/dist/types should have at type files - none found"
+    exit 1
+  fi
+}
+
+validateModules()
+{
+  local packagesDir=$1
+
+  for directory in `ls $packagesDir`;
+  do
+    if [[ ! ${excluded[@]} =~ $directory ]]
+    then
+      # a core modules
+      validateCommonDist "$packagesDir/$directory/package"
+    elif [[ ${frameworks[@]} =~ $directory ]]
+    then
+      # a framework
+      package_dir=$packagesDir/$directory/package
+
+      validatePackageJsonExists $package_dir
+
+      count=`tree $package_dir | grep .d.ts | wc -l | tr -d ' '`;
+      if [[ $count -le 5 ]]
+      then
+        echo "ERROR: $package_dir should have at least 5 artefacts"
+        exit 1
+      fi
+    fi
+  done
+}
+
+validatePackages()
+{
+  local packagesDir=$1
+
+  for directory in `ls $packagesDir`;
+  do
+    if [[ ! ${excluded[@]} =~ $directory ]]
+    then
+      # a core package
+      current_root_dir="$packagesDir/$directory/package"
+      validateCommonDist "$current_root_dir"
+
+      current_dist=$current_root_dir/dist
+      count=`find $current_dist -name *.js -maxdepth 1 | wc -l | tr -d ' '`
+      if [[ $count -ne 4 ]]
+      then
+        echo "ERROR: $current_dist should have 4 umd files"
+        exit 1
+      fi
+    elif [[ ${frameworks[@]} =~ $directory ]]
+    then
+      # a framework - here we're just checking there are files in the package as a sanity check
+      package_dir=$packagesDir/$directory/package
+
+      validatePackageJsonExists $package_dir
+
+      count=`tree $package_dir | grep .d.ts | wc -l | tr -d ' '`;
+      if [[ $count -le 5 ]]
+      then
+        echo "ERROR: $package_dir should have at least 5 artefacts"
+        exit 1
+      fi
+    fi
+  done
+}
+
+validateLocale()
+{
+  local directory=$1
+  validatePackageJsonExists $directory
+
+  count=`find "$directory/dist" | wc -l | tr -d ' '`
+  if [[ $count -le 30 ]] # just checking files exist
+  then
+    echo "ERROR: $directory/dist should have files"
+    exit 1
+  fi
+}
+
+# check all expected modules & packages are there
+validateExpectedDirs "dist/artifacts/contents/community-modules" 10
+validateExpectedDirs "dist/artifacts/contents/enterprise-modules" 21
+validateExpectedDirs "dist/artifacts/contents/packages" 7
+
+validateExpectedDirs "dist/artifacts/community-modules" 10
+validateExpectedDirs "dist/artifacts/enterprise-modules" 21
+validateExpectedDirs "dist/artifacts/packages" 7
+
+validateModules "dist/artifacts/contents/community-modules"
+validateModules "dist/artifacts/contents/enterprise-modules"
+validatePackages "dist/artifacts/contents/packages"
+
+validateLocale "dist/artifacts/contents/community-modules/locale/package"
+

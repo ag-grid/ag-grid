@@ -5,6 +5,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { IRowModel } from '../../interfaces/iRowModel';
+import { _warnOnce } from '../../utils/function';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
 const enum OverlayServiceState {
@@ -23,6 +24,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private state: OverlayServiceState = OverlayServiceState.Hidden;
     private showInitialOverlay: boolean = true;
+    private exclusive?: boolean;
 
     public wireBeans(beans: BeanCollection): void {
         this.userComponentFactory = beans.userComponentFactory;
@@ -94,6 +96,9 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.showInitialOverlay = false;
 
         if (this.gos.get('loading')) {
+            _warnOnce(
+                'Since v32, `api.hideOverlay()` does not hide the loading overlay when `loading=true`. Set `loading=false` instead.'
+            );
             return;
         }
 
@@ -133,6 +138,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             'ag-overlay-loading-wrapper',
             'loadingOverlayComponentParams'
         );
+        this.updateExclusive();
     }
 
     private doShowNoRowsOverlay(): void {
@@ -142,15 +148,27 @@ export class OverlayService extends BeanStub implements NamedBean {
             'ag-overlay-no-rows-wrapper',
             'noRowsOverlayComponentParams'
         );
+        this.updateExclusive();
     }
 
     private doHideOverlay(): void {
         this.state = OverlayServiceState.Hidden;
         this.overlayWrapperComp.hideOverlay();
+        this.updateExclusive();
     }
 
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
         this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, this.isExclusive(), gridOption);
+    }
+
+    private updateExclusive(): void {
+        const wasExclusive = this.exclusive;
+        this.exclusive = this.isExclusive();
+        if (this.exclusive !== wasExclusive) {
+            this.eventService.dispatchEvent({
+                type: 'overlayExclusiveChanged',
+            });
+        }
     }
 }

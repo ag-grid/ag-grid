@@ -16,11 +16,14 @@
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
   "keywords": [
+    "react data grid",
+    "react table",
     "react-component",
-    "grid",
     "data",
+    "grid",
     "table",
-    "react"
+    "react",
+    "data grid"
   ],
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "license": "MIT",

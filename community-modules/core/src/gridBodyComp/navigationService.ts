@@ -414,7 +414,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             const { rowIndex, rowPinned } = previous.getRowPosition();
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.pageBoundsService.getFirstRow();
             if (firstRow) {
-                if (this.gos.get('headerHeight') === 0 || this.gos.get('suppressHeaderFocus')) {
+                if (this.gos.get('headerHeight') === 0 || this.focusService.isHeaderFocusSuppressed()) {
                     this.focusService.focusNextGridCoreContainer(true, true);
                 } else {
                     keyboardEvent.preventDefault();
@@ -429,7 +429,10 @@ export class NavigationService extends BeanStub implements NamedBean {
                 previous.focusCell(true);
             }
 
-            if (this.focusService.focusNextGridCoreContainer(backwards)) {
+            if (
+                (!backwards && this.focusService.focusOverlay(false)) ||
+                this.focusService.focusNextGridCoreContainer(backwards)
+            ) {
                 keyboardEvent.preventDefault();
             }
         }

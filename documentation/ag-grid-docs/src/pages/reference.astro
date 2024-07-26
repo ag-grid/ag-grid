@@ -1,6 +1,6 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import FrameworkRedirectPage from '@components/FrameworkRedirectPage.astro';
+import Layout from '@layouts/Layout.astro';
+import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
 ---
 
 <Layout
@@ -9,6 +9,7 @@ import FrameworkRedirectPage from '@components/FrameworkRedirectPage.astro';
     showSearchBar={false}
     showDocsNav={false}
 >
-    <h1>Redirecting to AG Grid API Reference...</h1>
-    <FrameworkRedirectPage redirectPageName="reference" />
+    <FrameworkRedirectPage redirectPageName="reference">
+        <h1>Redirecting to AG Grid API Reference...</h1>
+    </FrameworkRedirectPage>
 </Layout>

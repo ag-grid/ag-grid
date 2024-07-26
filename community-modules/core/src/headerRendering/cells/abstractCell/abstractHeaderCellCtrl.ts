@@ -90,7 +90,11 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     public postConstruct(): void {
-        this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
+        const refreshTabIndex = this.refreshTabIndex.bind(this);
+        this.addManagedPropertyListeners(['suppressHeaderFocus'], refreshTabIndex);
+        this.addManagedEventListeners({
+            overlayExclusiveChanged: refreshTabIndex,
+        });
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
@@ -161,7 +165,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private refreshTabIndex(): void {
-        const suppressHeaderFocus = this.gos.get('suppressHeaderFocus');
+        const suppressHeaderFocus = this.focusService.isHeaderFocusSuppressed();
         if (suppressHeaderFocus) {
             this.eGui.removeAttribute('tabindex');
         } else {

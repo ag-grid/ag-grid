@@ -59,6 +59,15 @@ The following is captured in the grid state:
 * [Side Bar](./side-bar/)
 * [Sort](./row-sorting/)
 
-Note that all the state properties are optional, so a property can be excluded if you do not want to restore it.
+{% note %}
+When restoring current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/)
+additional configuration is required:
+
+* For the Server Side Row Model - set the `serverSideInitialRowCount` property to a value which includes the rows to be shown.
+* For the Infinite Row Model - set the `infiniteInitialRowCount` property to a value which includes the rows to be shown.
+
+{% /note %}
+
+All state properties are optional, so a property can be excluded if you do not want to restore it.
 
 {% interfaceDocumentation interfaceName="GridState" /%}

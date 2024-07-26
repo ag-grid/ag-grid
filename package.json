@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "32.0.2",
+  "version": "32.0.1",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -111,5 +111,6 @@
       "**/vue-template-compiler",
       "**/vue-class-component"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.21"
 }

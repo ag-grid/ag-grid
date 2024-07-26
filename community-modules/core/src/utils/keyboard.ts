@@ -22,7 +22,7 @@ export function _isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
 
     // if key is length 1, eg if it is 'a' for the a key, or '2' for the '2' key.
     // non-printable characters have names, eg 'Enter' or 'Backspace'.
-    const printableCharacter = event.key.length === 1;
+    const printableCharacter = event.key?.length === 1;
 
     return printableCharacter;
 }
