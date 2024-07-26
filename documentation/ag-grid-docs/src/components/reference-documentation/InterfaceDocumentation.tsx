@@ -17,7 +17,16 @@ import {
     removeDefaultValue,
 } from './documentation-helpers';
 import { formatJson, getInterfaceName } from './interface-helpers';
-import type { Config, DocProperties, ObjectCode, SectionProps } from './types';
+import type {
+    ChildDocEntry,
+    Config,
+    DocProperties,
+    ICallSignature,
+    InterfaceEntry,
+    ObjectCode,
+    Properties,
+    SectionProps,
+} from './types';
 
 interface Props {
     framework: Framework;
@@ -25,7 +34,7 @@ interface Props {
     config: Config;
 }
 
-function getDisplayNameSplit({ name, definition }) {
+function getDisplayNameSplit({ name, definition }: { name: string; definition: ChildDocEntry }) {
     let displayName = name;
     if (definition.isRequired) {
         displayName += `&nbsp;<span class="${styles.required}" title="Required">&ast;</span>`;
@@ -54,10 +63,19 @@ function getDisplayNameSplit({ name, definition }) {
     return displayNameSplit;
 }
 
-function getDescription({ definition, gridOpProp, framework }) {
-    let description = '';
+function getDescription({
+    definition,
+    gridOpProp,
+    framework,
+}: {
+    definition: ChildDocEntry;
+    gridOpProp: InterfaceEntry;
+    framework: Framework;
+}) {
+    let description: string | undefined = '';
     let isObject: boolean = false;
-    let propDescription: string = definition.description || (gridOpProp && gridOpProp.meta?.comment) || undefined;
+    let propDescription: string | undefined =
+        definition.description || (gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.comment) || undefined;
 
     if (propDescription) {
         propDescription = formatJsDocString(propDescription);
@@ -79,7 +97,23 @@ function getDescription({ definition, gridOpProp, framework }) {
 }
 
 // Use the type definition if manually specified in config
-function getDefinitionTypeUrl({ id, framework, definition, propertyType, gridOpProp, isObject, config }) {
+function getDefinitionTypeUrl({
+    id,
+    framework,
+    definition,
+    propertyType,
+    gridOpProp,
+    isObject,
+    config,
+}: {
+    id: string;
+    framework: Framework;
+    definition: ChildDocEntry;
+    propertyType: string;
+    gridOpProp: InterfaceEntry;
+    isObject: boolean;
+    config: Config;
+}) {
     let type: any = definition.type;
     if (!type) {
         // No type specified in the doc config file so check the GridOptions property
@@ -116,7 +150,7 @@ function getDefinitionTypeUrl({ id, framework, definition, propertyType, gridOpP
     return typeUrl;
 }
 
-function getTagsData({ definition, gridOpProp }) {
+function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gridOpProp: InterfaceEntry }) {
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
     const tags = gridOpProp?.meta?.tags ?? definition?.tags ?? [];
     const jsdocDefault = tags.find((t) => t.name === 'default');
@@ -136,7 +170,7 @@ function getTagsData({ definition, gridOpProp }) {
     };
 }
 
-const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs, properties }) => {
+const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs = {}, properties }) => {
     const lines = [];
     let indentationLevel = 0;
 
@@ -197,25 +231,16 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs, pr
     return <Code code={escapedLines} keepMarkup={true} />;
 };
 
-const Property: FunctionComponent = ({
-    id,
-    name,
-    framework,
-    definition,
-    gridOpProp,
-    detailsCode,
-    propertyType,
-    config,
-}: {
+const Property: FunctionComponent<{
     id: string;
     name: string;
     framework: Framework;
-    definition: any;
-    gridOpProp: any;
+    definition: ChildDocEntry;
+    gridOpProp: InterfaceEntry;
     detailsCode: string;
     propertyType: string;
-    config: any;
-}) => {
+    config: Config;
+}> = ({ id, name, framework, definition, gridOpProp, detailsCode, propertyType, config }) => {
     const idName = `reference-${id}-${name}`;
     const displayNameSplit = getDisplayNameSplit({ name, definition });
     const { isObject, description } = getDescription({ definition, gridOpProp, framework });
@@ -433,13 +458,14 @@ const SectionHeader = ({
     headerLevel?: number;
     hideHeader?: boolean;
     showSnippets?: boolean;
-    properties: any;
+    properties: Properties;
 }) => {
     breadcrumbs[title] = displayName;
     const breadcrumbKeys = Object.keys(breadcrumbs);
     const id = breadcrumbKeys.join('.');
     const headerTagLevel = headerLevel || breadcrumbKeys.length + 1;
     const HeaderTag = `h${headerTagLevel}` as any;
+    const descriptionDisplay = convertMarkdown(description, framework);
 
     return (
         <>
@@ -452,7 +478,7 @@ const SectionHeader = ({
                 </HeaderTag>
             )}
             <Breadcrumbs breadcrumbs={breadcrumbs} />
-            {description && <p dangerouslySetInnerHTML={{ __html: convertMarkdown(description, framework) }}></p>}
+            {descriptionDisplay && <p dangerouslySetInnerHTML={{ __html: descriptionDisplay }}></p>}
             {page && (
                 <p>
                     See <a href={urlWithPrefix({ url: page.url, framework })}>{page.name}</a> for more information.
@@ -470,7 +496,7 @@ const Section: FunctionComponent<SectionProps> = ({
     framework,
     names = [],
     properties,
-    config = {},
+    config = {} as Config,
     breadcrumbs = {},
     meta,
 }) => {
@@ -504,27 +530,21 @@ const Section: FunctionComponent<SectionProps> = ({
                     <col></col>
                 </colgroup>
                 <tbody>
-                    {Object.entries(properties).map(
-                        ([
-                            name,
-                            { definition, gridOpProp, interfaceHierarchyOverrides, detailsCode, propertyType },
-                        ]) => {
-                            return (
-                                <Property
-                                    key={name}
-                                    id={id}
-                                    name={name}
-                                    framework={framework}
-                                    definition={definition}
-                                    gridOpProp={gridOpProp}
-                                    interfaceHierarchyOverrides={interfaceHierarchyOverrides}
-                                    detailsCode={detailsCode}
-                                    propertyType={propertyType}
-                                    config={config}
-                                />
-                            );
-                        }
-                    )}
+                    {Object.entries(properties).map(([name, { definition, gridOpProp, detailsCode, propertyType }]) => {
+                        return (
+                            <Property
+                                key={name}
+                                id={id}
+                                name={name}
+                                framework={framework}
+                                definition={definition}
+                                gridOpProp={gridOpProp}
+                                detailsCode={detailsCode}
+                                propertyType={propertyType}
+                                config={config}
+                            />
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

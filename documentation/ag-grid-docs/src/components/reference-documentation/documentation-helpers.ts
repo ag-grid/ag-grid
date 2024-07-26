@@ -2,6 +2,7 @@ import type { Framework } from '@ag-grid-types';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 import { getTypeLink } from './type-links';
+import type { InterfaceEntry, Properties, PropertyType } from './types';
 
 export const inferType = (value: any): string | null => {
     if (value == null) {
@@ -18,7 +19,8 @@ export const inferType = (value: any): string | null => {
 /**
  * Converts a subset of Markdown so that it can be used in JSON files.
  */
-export const convertMarkdown = (content: string, framework: Framework) =>
+export const convertMarkdown = (content: string | undefined, framework: Framework) =>
+    content &&
     content
         .replace(/`(.*?)`/g, '<code>$1</code>')
         .replace(
@@ -27,7 +29,7 @@ export const convertMarkdown = (content: string, framework: Framework) =>
         )
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
-export function escapeGenericCode(lines) {
+export function escapeGenericCode(lines: string[]) {
     // When you have generic parameters such as ChartOptions<any>
     // the <any> gets removed as the code formatter thinks its a invalid tag.
 
@@ -39,7 +41,7 @@ export function escapeGenericCode(lines) {
     return escapedLines;
 }
 
-export function getTypeUrl(type, framework) {
+export function getTypeUrl(type: string | PropertyType, framework: Framework): string | undefined {
     if (typeof type === 'string') {
         if (type.includes('|')) {
             const linkedTypes = type
@@ -51,7 +53,7 @@ export function getTypeUrl(type, framework) {
                 return linkedTypes[0];
             }
 
-            return null;
+            return undefined;
         } else if (type.endsWith('[]')) {
             type = type.replace(/\[\]/g, '');
         }
@@ -70,7 +72,7 @@ export function getTypeUrl(type, framework) {
     return undefined;
 }
 
-export function getLinkedType(type, framework) {
+export function getLinkedType(type: string | string[], framework: Framework) {
     if (!Array.isArray(type)) {
         if (typeof type === 'string') {
             type = [...type.split('|')];
@@ -111,7 +113,7 @@ export function getLinkedType(type, framework) {
     return formattedTypes.join(' | ');
 }
 
-export function sortAndFilterProperties(properties, framework, applyOptionalOrdering = false) {
+export function sortAndFilterProperties(properties: Properties, framework: Framework, applyOptionalOrdering?: boolean) {
     properties.sort(([p1], [p2]) => {
         if (applyOptionalOrdering) {
             // Push mandatory props to the top
@@ -128,11 +130,17 @@ export function sortAndFilterProperties(properties, framework, applyOptionalOrde
     return properties;
 }
 
-export function getInterfaceWithGenericParams(name, meta) {
+export function getInterfaceWithGenericParams(name: string, meta: any) {
     return `${name}${meta?.typeParams?.length > 0 ? `&lt;${meta.typeParams.join(', ')}&gt;` : ''}`;
 }
 
-export function appendInterface(name, interfaceType, framework, allLines, printConfig = {}) {
+export function appendInterface(
+    name: string,
+    interfaceType: any,
+    framework: Framework,
+    allLines: string[],
+    printConfig: any = {}
+) {
     const toExclude = printConfig.exclude || [];
     const interfaceDeclaration = getInterfaceWithGenericParams(name, interfaceType.meta);
     const lines = [`interface ${printConfig.hideName ? '' : interfaceDeclaration} {`];
@@ -156,7 +164,7 @@ export function appendInterface(name, interfaceType, framework, allLines, printC
     allLines.push(...lines);
 }
 
-export function addDocLines(docs, lines) {
+export function addDocLines(docs: string, lines: string[]) {
     if (!docs || docs.length === 0) {
         return;
     }
@@ -177,7 +185,7 @@ export function addDocLines(docs, lines) {
  *  e.g isExternalFilterPresent: (() => boolean) | undefined = undefined;
  *  Without the brackets this changes the return type!
  */
-export function applyUndefinedUnionType(typeName) {
+export function applyUndefinedUnionType(typeName: string) {
     const trimmed = typeName.trim();
     if (trimmed === 'any') {
         // Don't union type with any
@@ -192,7 +200,7 @@ export function applyUndefinedUnionType(typeName) {
 
 // const NEWLINE_DEFAULT_STRING = '<br> Default:';
 /** Handle correct placement of more link so that default is always at the end on a new line even if already included in JsDoc. */
-export function addMoreLink(description, seeMore) {
+export function addMoreLink(description: string, seeMore: string) {
     // Get default string along with its value
     //  var defaultReg = new RegExp(NEWLINE_DEFAULT_STRING + '(.*)', "g");
     //  const hasDefault = description.match(defaultReg);
@@ -202,14 +210,14 @@ export function addMoreLink(description, seeMore) {
     return description + seeMore;
 }
 
-export function removeDefaultValue(docString) {
+export function removeDefaultValue(docString: string) {
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
     const defaultReg = /@default .*\n/g;
 
     return docString.replace(defaultReg, '');
 }
 
-export function formatJsDocString(docString) {
+export function formatJsDocString(docString: string) {
     if (!docString || docString.length === 0) {
         return;
     }
@@ -232,7 +240,7 @@ export function formatJsDocString(docString) {
     return formatted;
 }
 
-export function appendCallSignature(name, interfaceType, framework, allLines) {
+export function appendCallSignature(name: string, interfaceType: any, framework: Framework, allLines: string[]) {
     const interfaceDeclaration = getInterfaceWithGenericParams(name, interfaceType.meta);
     const lines = [`interface ${interfaceDeclaration} {`];
     const args = Object.entries(interfaceType.type.arguments);
@@ -244,7 +252,7 @@ export function appendCallSignature(name, interfaceType, framework, allLines) {
     allLines.push(...lines);
 }
 
-export function appendEnum(name, interfaceType, allLines) {
+export function appendEnum(name: string, interfaceType: any, allLines: string[]) {
     const lines = [`enum ${name} {`];
     const properties = interfaceType.type;
     const docs = interfaceType.docs;
@@ -258,7 +266,7 @@ export function appendEnum(name, interfaceType, allLines) {
     allLines.push(...lines);
 }
 
-export function appendTypeAlias(name, interfaceType, allLines) {
+export function appendTypeAlias(name: string, interfaceType: any, allLines: string[]) {
     const shouldMultiLine = interfaceType.type.length > 20;
 
     const split = interfaceType.type.split('|');
@@ -287,9 +295,9 @@ export function appendTypeAlias(name, interfaceType, allLines) {
     allLines.push(`type ${name} = ${multiLine}`);
 }
 
-export function writeAllInterfaces(interfacesToWrite, framework, printConfig) {
-    const allLines = [];
-    const alreadyWritten = {};
+export function writeAllInterfaces(interfacesToWrite: any[], framework: Framework, printConfig?: any) {
+    const allLines: string[] = [];
+    const alreadyWritten: Record<string, boolean> = {};
     interfacesToWrite.forEach(({ name, interfaceType }) => {
         if (!alreadyWritten[name]) {
             allLines.push('');
@@ -308,7 +316,12 @@ export function writeAllInterfaces(interfacesToWrite, framework, printConfig) {
     return allLines;
 }
 
-export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIncludeInterfaceFunc, allDefs = []) {
+export function extractInterfaces(
+    definitionOrArray: string[],
+    interfaceLookup: Record<string, InterfaceEntry>,
+    overrideIncludeInterfaceFunc: any,
+    allDefs: string[] = []
+) {
     if (!definitionOrArray) return [];
 
     if (allDefs.length > 1000) {
@@ -438,7 +451,7 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIn
     return allDefs;
 }
 
-export function getLongestNameLength(nameWithBreaks) {
+export function getLongestNameLength(nameWithBreaks: string) {
     const splitNames = nameWithBreaks.split(/<br(.*)\/>/);
     splitNames.sort((a, b) => (a.length > b.length ? 1 : -1));
     return splitNames[0].length;

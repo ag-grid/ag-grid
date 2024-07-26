@@ -21,14 +21,18 @@ import {
 } from './interface-helpers';
 import type {
     ChildDocEntry,
+    CodeEntry,
     Config,
     DocCode,
+    DocEntry,
     DocEntryMap,
     DocModel,
     DocProperties,
     ICallSignature,
     InterfaceEntry,
+    InterfaceHierarchyOverrides,
     Overrides,
+    PropertyType,
 } from './types';
 
 interface Params {
@@ -42,7 +46,15 @@ interface Params {
     codeLookup: Record<string, any>;
 }
 
-function getShowAdditionalDetails({ definition, gridOpProp, interfaceLookup }) {
+function getShowAdditionalDetails({
+    definition,
+    gridOpProp,
+    interfaceLookup,
+}: {
+    definition: DocEntry | ChildDocEntry;
+    gridOpProp: InterfaceEntry;
+    interfaceLookup: Record<string, InterfaceEntry>;
+}) {
     let type: any = definition.type;
     let showAdditionalDetails = typeof type == 'object';
     if (!type) {
@@ -76,7 +88,17 @@ function getShowAdditionalDetails({ definition, gridOpProp, interfaceLookup }) {
 }
 
 // Use the type definition if manually specified in config
-function getDefinitionType({ definition, gridOpProp, interfaceLookup, config }) {
+function getDefinitionType({
+    definition,
+    gridOpProp,
+    interfaceLookup,
+    config,
+}: {
+    definition: DocEntry | ChildDocEntry;
+    gridOpProp: InterfaceEntry;
+    interfaceLookup: Record<string, InterfaceEntry>;
+    config: Config;
+}) {
     let type: any = definition.type;
     if (!type) {
         // No type specified in the doc config file so check the GridOptions property
@@ -117,7 +139,23 @@ function getDefinitionType({ definition, gridOpProp, interfaceLookup, config }) 
     };
 }
 
-function getDetailsCode({ framework, name, type, gridOpProp, interfaceLookup, interfaceHierarchyOverrides, isApi }) {
+function getDetailsCode({
+    framework,
+    name,
+    type,
+    gridOpProp,
+    interfaceLookup,
+    interfaceHierarchyOverrides,
+    isApi,
+}: {
+    framework: Framework;
+    name: string;
+    type: string | PropertyType;
+    gridOpProp: InterfaceEntry;
+    interfaceLookup: Record<string, InterfaceEntry>;
+    interfaceHierarchyOverrides: InterfaceHierarchyOverrides;
+    isApi: boolean;
+}) {
     if (typeof type == 'string') {
         // eslint-disable-next-line no-console
         console.log('<api-documentation>: type is a string!', type);
@@ -160,7 +198,7 @@ function getDetailsCode({ framework, name, type, gridOpProp, interfaceLookup, in
     }
 
     let shouldUseNewline = false;
-    const argumentDefinitions = [];
+    const argumentDefinitions: string[] = [];
 
     const getArgumentTypeName = (key, type) => {
         if (!Array.isArray(type) && typeof type === 'object') {
@@ -190,7 +228,7 @@ function getDetailsCode({ framework, name, type, gridOpProp, interfaceLookup, in
             ? `function ${functionName}(${functionArguments}):`
             : `${functionName} = (${functionArguments}) =>`;
 
-    const lines = [];
+    const lines: string[] = [];
     if (typeof type != 'string' && (type.parameters || type.arguments || isCallSig)) {
         lines.push(
             `${functionPrefix} ${returnTypeIsObject ? returnTypeName : getLinkedType(returnType || 'void', framework)};`
@@ -199,7 +237,7 @@ function getDetailsCode({ framework, name, type, gridOpProp, interfaceLookup, in
         lines.push(`${name}: ${returnType};`);
     }
 
-    let interfacesToWrite = [];
+    let interfacesToWrite: any[] = [];
     if (type.parameters) {
         Object.keys(args)
             .filter((key) => !Array.isArray(args[key]) && typeof args[key] === 'object')
@@ -272,6 +310,16 @@ function getProperties({
     exclude,
     codeData,
     config,
+}: {
+    framework: Framework;
+    interfaceName: string;
+    interfaceData: InterfaceEntry;
+    interfaceLookup: Record<string, InterfaceEntry>;
+    overrides: Overrides;
+    names: string[];
+    exclude: string[];
+    codeData: CodeEntry;
+    config: Config;
 }): DocProperties {
     const props: any = {};
     let interfaceOverrides: Overrides = {};
@@ -312,7 +360,7 @@ function getProperties({
     });
 
     const orderedProps = {};
-    const ordered = Object.entries(props).sort(([, v1], [, v2]) => {
+    const ordered = Object.entries<ChildDocEntry>(props).sort(([, v1], [, v2]) => {
         // Put required props at the top as likely to be the most important
         if ((v1 as ChildDocEntry).isRequired == (v2 as ChildDocEntry).isRequired) {
             return 0;
@@ -346,7 +394,6 @@ function getProperties({
             definition,
             detailsCode,
             gridOpProp,
-            interfaceHierarchyOverrides,
             propertyType,
         };
     });
