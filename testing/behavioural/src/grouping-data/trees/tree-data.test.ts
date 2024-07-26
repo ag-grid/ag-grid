@@ -9,6 +9,7 @@ import { checkTreeDiagram, simpleHierarchyRowData, simpleHierarchyRowSnapshot } 
 
 describe('ag-grid tree data', () => {
     let consoleErrorSpy: jest.SpyInstance;
+    let consoleWarnSpy: jest.SpyInstance;
 
     function createMyGrid(gridOptions: GridOptions) {
         return createGrid(document.getElementById('myGrid')!, gridOptions);
@@ -37,6 +38,7 @@ describe('ag-grid tree data', () => {
 
     afterEach(() => {
         consoleErrorSpy?.mockRestore();
+        consoleWarnSpy?.mockRestore();
     });
 
     test('ag-grid tree data', async () => {
@@ -268,5 +270,44 @@ describe('ag-grid tree data', () => {
         ];
 
         expect(rowsSnapshot).toMatchObject(expectedSnapshot);
+    });
+
+    test('duplicate group keys warning', async () => {
+        const rowData = [
+            { orgHierarchy: ['A', 'B'], x: 1 },
+            { orgHierarchy: ['A', 'B'], x: 2 },
+        ];
+
+        const getDataPath = (data: any) => data.orgHierarchy;
+
+        const gridOptions: GridOptions = {
+            columnDefs: [],
+            treeData: true,
+            animateRows: true,
+            groupDefaultExpanded: -1,
+            rowData,
+            getDataPath,
+        };
+
+        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = createMyGrid(gridOptions);
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            'AG Grid: duplicate group keys for row data, keys should be unique',
+            [
+                { orgHierarchy: ['A', 'B'], x: 1 },
+                { orgHierarchy: ['A', 'B'], x: 2 },
+            ]
+        );
+        consoleWarnSpy?.mockRestore();
+
+        expect(checkTreeDiagram(api)).toBe(true);
+
+        const rows = getAllRows(api);
+
+        expect(rows.length).toBe(2);
+        expect(rows[0].data).toEqual(undefined);
+        expect(rows[1].data).toEqual(rowData[0]);
     });
 });

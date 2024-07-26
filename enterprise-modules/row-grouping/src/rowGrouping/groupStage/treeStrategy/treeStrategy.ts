@@ -147,7 +147,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             if (level < stopLevel) {
                 parent = this.treeManager.upsertNode(parent, key);
             } else {
-                return this.handleInsertError(this.treeManager.updateParent(node, parent, key), parent.row, node.row);
+                return this.handleInsertError(this.treeManager.updateParent(node, parent, key), parent, node);
             }
         }
     }
@@ -187,16 +187,19 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private handleInsertError(result: Result, parentRow: RowNode | null, row: RowNode | null) {
+    private handleInsertError(result: Result, parent: TreeNode | null, node: TreeNode | null) {
         switch (result) {
             case RESULT_KEY_ALREADY_EXISTS:
-                _warnOnce(`duplicate group keys for row data, keys should be unique`, warnDetails(parentRow, row));
+                _warnOnce(
+                    `duplicate group keys for row data, keys should be unique`,
+                    warnDetails((node ? parent?.map?.get(node.key) : null) ?? parent, node)
+                );
                 return RESULT_NOOP;
             case RESULT_INVALID_OPERATION:
-                _warnOnce(`cannot insert node into group`, warnDetails(parentRow, row));
+                _warnOnce(`cannot insert node into group`, warnDetails(parent, node));
                 return RESULT_NOOP;
             case RESULT_CYCLE_DETECTED:
-                _warnOnce(`cycle detected in row data`, warnDetails(parentRow, row));
+                _warnOnce(`cycle detected in row data`, warnDetails(parent, node));
                 return RESULT_NOOP;
         }
         return RESULT_OK;
@@ -311,6 +314,6 @@ function topologicalSort(rootRow: RowNode, rowNodes: RowNode[]): RowNode[] {
     return sortedNodes;
 }
 
-function warnDetails(parentRow: RowNode | null, row: RowNode | null): string[] {
-    return [parentRow?.data ?? parentRow?.key, row?.data ?? row?.key];
+function warnDetails(parent: TreeNode | null, node: TreeNode | null): string[] {
+    return [parent?.row?.data ?? parent?.key, node?.row?.data ?? node?.key];
 }
