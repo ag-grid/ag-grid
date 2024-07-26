@@ -1,7 +1,7 @@
 import { SHOW_DEBUG_LOGS } from '@constants';
 
+import type { Config, DocEntryMap, InterfaceEntry, InterfaceHierarchyOverrides, PropertyType } from '../types';
 import { extractInterfaces } from './documentation-helpers';
-import type { Config, DocEntryMap, InterfaceEntry, InterfaceHierarchyOverrides, PropertyType } from './types';
 
 /**
  * @deprecated

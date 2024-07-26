@@ -2,8 +2,8 @@ import { useStore } from '@nanostores/react';
 import { $queryClient } from '@stores/queryClientStore';
 import { QueryClientProvider } from '@tanstack/react-query';
 
+import { useResolvedDocInterfaces, useResolvedInterfaces } from '../utils/useResolvedInterfaces';
 import { InterfaceDocumentation, type InterfaceDocumentationProps } from './ReferenceDocumentation';
-import { useResolvedDocInterfaces, useResolvedInterfaces } from './useResolvedInterfaces';
 
 type Props = Omit<InterfaceDocumentationProps, 'interfaceLookup' | 'codeLookup'>;
 

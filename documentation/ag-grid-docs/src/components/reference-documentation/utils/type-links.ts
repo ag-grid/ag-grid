@@ -1,4 +1,4 @@
-import type { PropertyType } from './types';
+import type { PropertyType } from '../types';
 
 /**
  * These are used to create links from types to relevant documentation.

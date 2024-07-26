@@ -1,6 +1,21 @@
 import type { Framework } from '@ag-grid-types';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 
+import type {
+    ChildDocEntry,
+    CodeEntry,
+    Config,
+    DocCode,
+    DocEntry,
+    DocEntryMap,
+    DocModel,
+    DocProperties,
+    ICallSignature,
+    InterfaceEntry,
+    InterfaceHierarchyOverrides,
+    Overrides,
+    PropertyType,
+} from '../types';
 import {
     escapeGenericCode,
     extractInterfaces,
@@ -19,21 +34,6 @@ import {
     isCallSig,
     isGridOptionEvent,
 } from './interface-helpers';
-import type {
-    ChildDocEntry,
-    CodeEntry,
-    Config,
-    DocCode,
-    DocEntry,
-    DocEntryMap,
-    DocModel,
-    DocProperties,
-    ICallSignature,
-    InterfaceEntry,
-    InterfaceHierarchyOverrides,
-    Overrides,
-    PropertyType,
-} from './types';
 
 interface Params {
     interfaceName: string;

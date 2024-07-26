@@ -6,7 +6,16 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, type ReactElement, useEffect, useRef, useState } from 'react';
 
-import styles from './ApiReference.module.scss';
+import type {
+    ChildDocEntry,
+    Config,
+    FunctionCode,
+    ICallSignature,
+    MetaTag,
+    ObjectCode,
+    Overrides,
+    PropertyCall,
+} from '../types';
 import {
     convertMarkdown,
     escapeGenericCode,
@@ -20,7 +29,7 @@ import {
     removeDefaultValue,
     sortAndFilterProperties,
     writeAllInterfaces,
-} from './documentation-helpers';
+} from '../utils/documentation-helpers';
 import {
     applyInterfaceInclusions,
     formatJson,
@@ -31,17 +40,8 @@ import {
     getSectionProperties,
     isCallSig,
     isGridOptionEvent,
-} from './interface-helpers';
-import type {
-    ChildDocEntry,
-    Config,
-    FunctionCode,
-    ICallSignature,
-    MetaTag,
-    ObjectCode,
-    Overrides,
-    PropertyCall,
-} from './types';
+} from '../utils/interface-helpers';
+import styles from './ApiReference.module.scss';
 
 export type DocEntryMap = {
     meta?: MetaTag;
