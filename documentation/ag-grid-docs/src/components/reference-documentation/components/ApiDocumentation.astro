@@ -1,7 +1,7 @@
 ---
-import { ApiDocumentationWithQuery } from './ApiDocumentationWithQuery';
+import { ApiDocumentationWithQuery } from '../components/ApiDocumentationWithQuery';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
-import { getPropertiesFromSource } from './getPropertiesFromSource';
+import { getPropertiesFromSource } from '../utils/getPropertiesFromSource';
 
 const { names, config, source, sources: sourcesProp, section } = Astro.props;
 

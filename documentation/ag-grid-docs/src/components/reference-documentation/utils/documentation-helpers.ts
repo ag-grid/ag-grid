@@ -1,8 +1,8 @@
 import type { Framework } from '@ag-grid-types';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
+import type { InterfaceEntry, Properties, PropertyType } from '../types';
 import { getTypeLink } from './type-links';
-import type { InterfaceEntry, Properties, PropertyType } from './types';
 
 export const inferType = (value: any): string | null => {
     if (value == null) {

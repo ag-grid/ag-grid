@@ -77,7 +77,7 @@ export default defineMarkdocConfig({
             },
         },
         apiDocumentation: {
-            render: component('./src/components/reference-documentation/ApiDocumentation.astro'),
+            render: component('./src/components/reference-documentation/components/ApiDocumentation.astro'),
             attributes: {
                 source: { type: String },
                 sources: { type: Array },
@@ -90,7 +90,7 @@ export default defineMarkdocConfig({
             },
         },
         interfaceDocumentation: {
-            render: component('./src/components/reference-documentation/InterfaceDocumentation.astro'),
+            render: component('./src/components/reference-documentation/components/InterfaceDocumentation.astro'),
             attributes: {
                 interfaceName: { type: String, required: true },
                 overrideSrc: { type: String },
