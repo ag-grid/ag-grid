@@ -653,15 +653,34 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             case 'suppressMultiRangeSelection':
                 return cellOptionWithFallback(option, (opts) => opts.suppressMultiRanges);
             case 'enableRangeHandle':
-                return cellOptionWithFallback(option, (opts) => opts.enableRangeHandle);
+                return cellOptionWithFallback(
+                    option,
+                    (opts) => opts.handle === true || (opts.handle && opts.handle?.mode === 'range')
+                );
             case 'enableFillHandle':
-                return cellOptionWithFallback(option, (opts) => !!opts.fillHandleOptions);
+                return cellOptionWithFallback(
+                    option,
+                    (opts) => typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill'
+                );
             case 'suppressClearOnFillReduction':
-                return cellOptionWithFallback(option, (opts) => opts.fillHandleOptions?.suppressClearOnFillReduction);
+                return cellOptionWithFallback(
+                    option,
+                    (opts) =>
+                        typeof opts.handle !== 'boolean' &&
+                        opts.handle?.mode === 'fill' &&
+                        opts.handle.suppressClearOnFillReduction
+                );
             case 'fillHandleDirection':
-                return cellOptionWithFallback(option, (opts) => opts.fillHandleOptions?.direction);
+                return cellOptionWithFallback(
+                    option,
+                    (opts) => typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill' && opts.handle?.direction
+                );
             case 'fillOperation':
-                return cellOptionWithFallback(option, (opts) => opts.fillHandleOptions?.setFillValue);
+                return cellOptionWithFallback(
+                    option,
+                    (opts) =>
+                        typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill' && opts.handle?.setFillValue
+                );
             case 'suppressRowClickSelection':
                 return rowOptionWithFallback(option, (opts) => opts.suppressClickSelection);
             case 'suppressRowDeselection':

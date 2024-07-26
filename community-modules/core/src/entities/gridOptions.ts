@@ -2428,33 +2428,37 @@ export interface LoadingCellRendererSelectorResult {
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
 
 /** Configuration options for selection */
-export type SelectionOptions<TData = unknown, TValue = unknown> =
+export type SelectionOptions<TData = any, TValue = any> =
     | RowSelectionOptions<TData, TValue>
     | CellSelectionOptions<TData>;
 
 /** Cell selection options */
-export interface CellSelectionOptions<TData = unknown> {
+export interface CellSelectionOptions<TData = any> {
     mode: 'cell';
-    /**
-     * Configuration options for the fill handle
-     */
-    fillHandleOptions?: FillHandleOptions<TData>;
     /**
      * If `true`, only a single range can be selected
      * @default false
      */
     suppressMultiRanges?: boolean;
     /**
-     * Set to `true` to enable the Range Handle
-     * @default false
+     * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
+     * Set to `true` to enable the range handle with default configuration.
      */
-    enableRangeHandle?: boolean;
+    handle?: boolean | RangeHandleOptions | FillHandleOptions<TData>;
+}
+
+/**
+ * Configuration options for the range handle
+ */
+export interface RangeHandleOptions {
+    mode: 'range';
 }
 
 /**
  * Configuration options for the fill handle
  */
-export interface FillHandleOptions<TData> {
+export interface FillHandleOptions<TData = any> {
+    mode: 'fill';
     /**
      * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
      * @default false
@@ -2471,11 +2475,11 @@ export interface FillHandleOptions<TData> {
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
 
-export type RowSelectionOptions<TData = unknown, TValue = unknown> =
+export type RowSelectionOptions<TData = any, TValue = any> =
     | SingleRowSelectionOptions<TData, TValue>
     | MultiRowSelectionOptions<TData, TValue>;
 
-interface CommonRowSelectionOptions<TData, TValue> {
+interface CommonRowSelectionOptions<TData = any, TValue = any> {
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
@@ -2497,16 +2501,17 @@ interface CommonRowSelectionOptions<TData, TValue> {
     isRowSelectable?: IsRowSelectable<TData>;
 }
 
-export interface SingleRowSelectionOptions<TData = unknown, TValue = unknown>
-    extends CommonRowSelectionOptions<TData, TValue> {
+/**
+ * Determines selection behaviour when only a single row can be selected at a time
+ */
+export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
     mode: 'singleRow';
 }
 
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = unknown, TValue = unknown>
-    extends CommonRowSelectionOptions<TData, TValue> {
+export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
@@ -2556,9 +2561,6 @@ export type GroupSelectionMode = 'self' | 'descendants' | 'filteredDescendants';
  *
  * When `'all'`, selects all rows, regardless of filter and pagination settings.
  * When `'filtered'`, selects all rows that satisfy the currently active filter.
- * When `'filteredOnCurrentPage'`, selects all rows that satisfy the currently active filter on the current page.
+ * When `'currentPage'`, selects all rows that satisfy the currently active filter on the current page.
  */
-export type SelectAllMode = 'all' | 'filtered' | 'filteredOnCurrentPage';
-
-export type RowSelectionModes = RowSelectionOptions['mode'];
-export type SelectionModes = SelectionOptions['mode'];
+export type SelectAllMode = 'all' | 'filtered' | 'currentPage';
