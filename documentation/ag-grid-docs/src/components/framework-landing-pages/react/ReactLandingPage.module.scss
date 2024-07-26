@@ -3,7 +3,11 @@
 .container {
     display: flex;
     flex-direction: column;
-    padding: $spacing-size-12 0px;
+}
+
+.sectionContent:last-child,
+.sectionOdd:last-child {
+    padding-bottom: $spacing-size-12;
 }
 
 .sectionContent {
@@ -21,7 +25,7 @@
 
     .tag {
         font-weight: var(--text-semibold);
-        color: var(--color-util-brand-500);
+        color: var(--color-util-brand-600);
         margin-bottom: 0px;
     }
 
@@ -44,4 +48,18 @@
 .sectionOdd {
     padding: 0px $spacing-size-48;
     background-color: var(--color-bg-disabled_subtle);
+}
+
+.highlight a {
+    padding: 2px;
+    border-bottom: 2px solid var(--color-util-brand-500);
+    color: #eaeaea;
+    padding: 0.2em;
+    border-radius: 0.2em;
+    transition: background-color 0.3s ease;
+    font-weight: var(--text-bold);
+}
+
+.highlight:hover {
+    cursor: pointer;
 }
