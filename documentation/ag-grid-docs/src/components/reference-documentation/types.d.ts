@@ -57,12 +57,10 @@ export interface ChildDocEntry {
     overrideMissingPropCheck?: true;
 }
 export interface ObjectCode {
-    framework?: string;
-    id?: string;
-    breadcrumbs?: {
-        [key in string]: string;
-    };
-    properties: DocEntryMap;
+    framework: Framework;
+    id: string;
+    breadcrumbs?: Record<string, string>;
+    properties: Properties;
 }
 interface CodeEntry {
     description?: string;

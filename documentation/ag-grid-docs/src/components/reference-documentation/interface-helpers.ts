@@ -58,8 +58,14 @@ export const getInterfacesToWrite = ({
     return interfacesToWrite;
 };
 
-export function applyInterfaceInclusions({ gridOpProp, interfaceHierarchyOverrides }) {
-    return (typeName) => {
+export function applyInterfaceInclusions({
+    gridOpProp,
+    interfaceHierarchyOverrides,
+}: {
+    gridOpProp: InterfaceEntry;
+    interfaceHierarchyOverrides: InterfaceHierarchyOverrides;
+}) {
+    return (typeName: string) => {
         if (interfaceHierarchyOverrides) {
             // If definition includes overrides apply them
             if ((interfaceHierarchyOverrides.exclude || []).includes(typeName)) {
@@ -78,7 +84,7 @@ export function isGridOptionEvent(gridProp: InterfaceEntry) {
     return gridProp && gridProp.meta && gridProp.meta.isEvent;
 }
 
-export const getInterfaceName = (name) => `${name.substring(0, 1).toUpperCase()}${name.substring(1)}`;
+export const getInterfaceName = (name: string) => `${name.substring(0, 1).toUpperCase()}${name.substring(1)}`;
 
 export const formatJson = (value: string) =>
     JSON.stringify(value, undefined, 2)
@@ -184,7 +190,7 @@ export function getPropertyType({
     return propertyType;
 }
 
-export const mergeObjects = (objects) => {
+export const mergeObjects = (objects: any[]) => {
     return objects.reduce((result, value) => Object.assign(result, value), {});
 };
 
@@ -204,7 +210,7 @@ export const getAllSectionPropertyEntries = ({
     propertiesFromFiles,
     suppressSort,
 }: {
-    propertiesFromFiles: unknown;
+    propertiesFromFiles: any[];
     suppressSort: boolean;
 }) => {
     const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
