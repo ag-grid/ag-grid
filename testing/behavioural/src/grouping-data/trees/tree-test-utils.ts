@@ -11,7 +11,7 @@ const isGridApi = (node: unknown): node is GridApi =>
 
 export function findTreeRootNode(gridApi: GridApi) {
     let root: IRowNode = null;
-    gridApi.forEachNode((node) => (root ??= node.parent && !node.parent.parent ? node.parent : null));
+    gridApi.forEachNode((row) => (root ??= row.parent && !row.parent.parent ? row.parent : null));
     return root;
 }
 
@@ -23,14 +23,14 @@ export function checkTreeDiagram(root: IRowNode | GridApi, options: PrintTreeDia
 }
 
 export interface PrintTreeDiagramOptions {
-    nodeToString?: (node: IRowNode) => string;
+    rowToString?: (row: IRowNode) => string;
     printOnlyOnError?: boolean;
 }
 
 /** Utility debug function that prints a tree diagram to the console. */
 export function printTreeDiagram(
     root: IRowNode | GridApi,
-    { nodeToString, printOnlyOnError }: PrintTreeDiagramOptions = {}
+    { rowToString, printOnlyOnError }: PrintTreeDiagramOptions = {}
 ): boolean {
     if (isGridApi(root)) {
         root = findTreeRootNode(root);
@@ -41,25 +41,31 @@ export function printTreeDiagram(
     }
     let diagram = '';
     let errorsCount = 0;
-    const recurse = (node: IRowNode, parent: IRowNode | null, branch: string, level: number): void => {
-        const children = node.childrenAfterGroup;
-        diagram += `${branch}${branch.length ? (children.length !== 0 ? '┬ ' : '─ ') : ''}${node.key ?? node.id} ${node.data ? 'LEAF' : 'filler'} level:${level} `;
+    const recurse = (row: IRowNode, parent: IRowNode | null, branch: string, level: number): void => {
         const errs = [];
-        if (level !== node.level) {
-            diagram += `node.level:${node.level} `;
+        let children = row.childrenAfterGroup;
+        if (!children) {
+            children = [];
+            errs.push('❌NULL_CHILDREN!');
+        }
+        const type = row.level === -1 && row === root ? 'ROOT' : row.data ? 'LEAF' : 'filler';
+        diagram += `${branch}${branch.length ? (children.length !== 0 ? '┬ ' : '─ ') : ''}${row.key ?? row.id} ${type} level:${level} `;
+        if (level !== row.level) {
+            diagram += `row.level:${row.level} `;
             errs.push('❌LEVEL!');
         }
-        if (parent !== node.parent) {
+        if (parent !== row.parent) {
             errs.push('❌PARENT!');
+            diagram += `row.parent:${row.parent ? row.parent?.id : 'null'} `;
         }
         errorsCount += errs.length;
-        diagram += `id:${node.id} `;
-        if (nodeToString) diagram += ' ' + nodeToString(node);
+        diagram += `id:${row.id} `;
+        if (rowToString) diagram += ' ' + rowToString(row);
         diagram += ' ' + errs.join(' ');
         diagram += '\n';
         if (branch.length) branch = branch.slice(0, -2) + (branch.slice(-2) === '└─' ? '  ' : '│ ');
         children.forEach((child: IRowNode, i: number) =>
-            recurse(child, node, i === children.length - 1 ? branch + '└─' : branch + '├─', level + 1)
+            recurse(child, row, i === children.length - 1 ? branch + '└─' : branch + '├─', level + 1)
         );
     };
     recurse(root, root.parent, '', -1);

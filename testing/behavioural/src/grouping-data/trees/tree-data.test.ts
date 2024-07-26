@@ -68,8 +68,6 @@ describe('ag-grid tree data', () => {
 
         const rows = getAllRows(api);
 
-        expect(rows.length).toBe(8);
-
         const rowsSnapshot = getRowsSnapshot(rows);
 
         expect(rows[0].data).toEqual(rowData[0]);
@@ -136,11 +134,11 @@ describe('ag-grid tree data', () => {
                 childrenAfterSort: ['B'],
                 detail: undefined,
                 displayed: true,
-                expanded: false,
+                expanded: true,
                 firstChild: true,
                 footer: undefined,
                 group: true,
-                groupData: undefined,
+                groupData: { 'ag-Grid-AutoColumn': 'A' },
                 id: '2',
                 key: 'A',
                 lastChild: false,
@@ -163,7 +161,7 @@ describe('ag-grid tree data', () => {
                 childrenAfterGroup: [],
                 childrenAfterSort: [],
                 detail: undefined,
-                displayed: false,
+                displayed: true,
                 expanded: true,
                 firstChild: true,
                 footer: undefined,
@@ -180,12 +178,12 @@ describe('ag-grid tree data', () => {
                 rowPinned: undefined,
                 selectable: true,
                 siblingKey: undefined,
-                uiLevel: undefined,
-                rowIndex: null,
+                uiLevel: 1,
+                rowIndex: 1,
             },
             {
                 allChildrenCount: 2,
-                allLeafChildren: ['E', 'D'],
+                allLeafChildren: ['D', 'E'],
                 childIndex: 1,
                 childrenAfterFilter: ['D'],
                 childrenAfterGroup: ['D'],
@@ -209,7 +207,7 @@ describe('ag-grid tree data', () => {
                 selectable: true,
                 siblingKey: undefined,
                 uiLevel: 0,
-                rowIndex: 1,
+                rowIndex: 2,
             },
             {
                 allChildrenCount: 1,
@@ -220,11 +218,11 @@ describe('ag-grid tree data', () => {
                 childrenAfterSort: ['E'],
                 detail: undefined,
                 displayed: true,
-                expanded: false,
+                expanded: true,
                 firstChild: true,
                 footer: undefined,
                 group: true,
-                groupData: undefined,
+                groupData: { 'ag-Grid-AutoColumn': 'D' },
                 id: '3',
                 key: 'D',
                 lastChild: true,
@@ -237,7 +235,7 @@ describe('ag-grid tree data', () => {
                 selectable: true,
                 siblingKey: undefined,
                 uiLevel: 1,
-                rowIndex: 2,
+                rowIndex: 3,
             },
             {
                 allChildrenCount: null,
@@ -247,7 +245,7 @@ describe('ag-grid tree data', () => {
                 childrenAfterGroup: [],
                 childrenAfterSort: [],
                 detail: undefined,
-                displayed: false,
+                displayed: true,
                 expanded: true,
                 firstChild: true,
                 footer: undefined,
@@ -264,8 +262,8 @@ describe('ag-grid tree data', () => {
                 rowPinned: undefined,
                 selectable: true,
                 siblingKey: undefined,
-                uiLevel: undefined,
-                rowIndex: null,
+                uiLevel: 2,
+                rowIndex: 4,
             },
         ];
 

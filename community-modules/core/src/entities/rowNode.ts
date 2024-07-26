@@ -158,7 +158,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public allChildrenCount: number | null;
 
     /** Children mapped by the pivot columns. */
-    public childrenMapped: { [key: string]: any } | null = {};
+    public childrenMapped: { [key: string]: any } | null = null;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;
