@@ -1,4 +1,3 @@
-import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
 import React from 'react';
