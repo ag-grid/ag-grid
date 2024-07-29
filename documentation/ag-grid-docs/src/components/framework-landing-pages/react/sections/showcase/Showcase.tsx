@@ -47,7 +47,7 @@ const Showcase: React.FC = () => {
                             if (expanded === index) {
                                 return (
                                     <React.Fragment key={index}>
-                                        <a>
+                                        <a href={item.url} target="_blank">
                                             <div
                                                 className={styles.imageTitle}
                                                 style={{
@@ -56,7 +56,7 @@ const Showcase: React.FC = () => {
                                                     alignItems: 'center',
                                                 }}
                                             >
-                                                <span style={{ flex: 1, textAlign: 'center' }}>{item.preview}</span>
+                                                <span style={{ flex: 1, textAlign: 'center' }}>{item.site}</span>
                                                 <Icon svgClasses={styles.newTabIcon} name={'newTab'} />
                                             </div>
                                             <img
