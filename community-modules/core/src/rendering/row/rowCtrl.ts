@@ -1419,7 +1419,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`
         );
 
-        this.beans.ariaAnnouncementService.announceValue(label);
+        this.beans.ariaAnnouncementService.announceValue(label, 'rowSelection');
     }
 
     public addHoverFunctionality(eRow: HTMLElement): void {
