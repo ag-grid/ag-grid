@@ -2,72 +2,60 @@
 
 .container {
     display: flex;
-    width: 100%;
+    justify-content: space-between;
+    padding: 20px;
+    border-radius: 8px;
 }
 
-.faqItem {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #ccc;
-    margin: 10px 0;
-    padding: 10px;
-    cursor: pointer;
-    background-color: var(--color-gray-800);
-    border: 1px solid var(--color-util-gray-300);
-
-    &.active .faqAnswer {
-        max-height: 500px; // adjust as necessary
-    }
-}
-
-.imageContainer,
-.listContainer {
+.column {
     flex: 1;
-}
-
-.imageContainer {
-    .image {
-        width: 100%;
-        height: auto;
-        padding: $spacing-size-6;
-    }
-}
-
-.divider {
-    height: 100%;
-    width: 2px;
-    color: red;
-    background-color: red;
+    box-sizing: border-box;
+    padding: 20px;
+    max-width: 48%;
 }
 
 .questionContainer {
+    cursor: pointer;
     display: flex;
-
-    .questionIndex {
-        flex: 0 1 auto;
-        font-weight: bold;
-    }
-
-    .detailsContainer {
-        flex: 1;
-        padding-left: $spacing-size-12;
-    }
-
-    .questionText {
-        flex: 1;
-        font-weight: bold;
-    }
-
-    .questionIcon {
-        flex: 0 1 auto;
-        font-weight: bold;
-    }
+    flex-direction: column;
+    margin-bottom: 20px;
 }
 
-.answersContainer {
-    .faqAnswer {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-    }
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    word-wrap: break-word;
+    padding: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.titleContainer:hover {
+    border-color: #bbb;
+}
+
+.question {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-fg-secondary);
+}
+
+.expandIcon {
+    fill: var(--color-fg-secondary);
+    padding: $spacing-size-2;
+    transition: transform 0.3s ease;
+}
+
+.iconRotate {
+    transform: rotate(180deg);
+}
+
+.answerContainer {
+    padding: 10px;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--color-util-gray-400);
+    margin: $spacing-size-4 0;
 }
