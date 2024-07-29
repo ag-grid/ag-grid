@@ -74,7 +74,7 @@ const Showcase: React.FC = () => {
                 </div>
             </div>
             <div className={styles.communityCta}>
-                <button>View More</button>
+                <button onClick={() => (window.location.href = './community/showcase')}>View More</button>
             </div>
         </div>
     );
