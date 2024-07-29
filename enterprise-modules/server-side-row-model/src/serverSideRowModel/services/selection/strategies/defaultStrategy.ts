@@ -5,9 +5,7 @@ import type {
     IServerSideSelectionState,
     ISetNodesSelectedParams,
     RowNode,
-    SelectionChangedEvent,
     SelectionEventSourceType,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, _errorOnce, _last, _warnOnce, isSelectionUIEvent } from '@ag-grid-community/core';
 
@@ -239,11 +237,10 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             }
         });
 
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'selectionChanged',
             source,
-        };
-        this.eventService.dispatchEvent(event);
+        });
 
         return clearedRows;
     }

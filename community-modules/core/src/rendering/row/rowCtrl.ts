@@ -1010,9 +1010,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource('rowDoubleClicked', mouseEvent);
-
-        this.beans.eventService.dispatchEvent(agEvent);
+        this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowDoubleClicked', mouseEvent));
     }
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
@@ -1053,9 +1051,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const agEvent: RowClickedEvent = this.createRowEventWithSource('rowClicked', mouseEvent);
-
-        this.beans.eventService.dispatchEvent(agEvent);
+        this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowClicked', mouseEvent));
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
