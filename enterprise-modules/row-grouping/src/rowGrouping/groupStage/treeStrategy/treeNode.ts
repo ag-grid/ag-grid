@@ -1,6 +1,9 @@
 import type { RowNode } from '@ag-grid-community/core';
 
 export class TreeNode {
+    /** Is true if this node is the root */
+    public root!: boolean;
+
     /** The children of the tree, where the key is the node key and the value is the child node */
     public map: Map<string, TreeNode> | null = null;
 
@@ -14,18 +17,30 @@ export class TreeNode {
 
     public parent: TreeNode | null;
 
-    public level: number;
-
     public key: string;
 
-    public constructor(parent: TreeNode | null, level: number, key: string, flags: number) {
+    public childrenAfterGroup: RowNode[] = [];
+    public allLeafChildren: RowNode[] = [];
+
+    public constructor(parent: TreeNode | null, key: string, flags: number) {
         this.parent = parent;
-        this.level = level;
         this.key = key;
         this.flags = flags;
     }
 
-    /** Recursively add every node to its parent.updates set */
+    /** Traverse from the node to the root to get the old path and compare it with the new path */
+    public nodePathEquals(path: string[]): boolean {
+        let node: TreeNode | null = this;
+        for (let i = path.length - 1; i >= 0; --i) {
+            if (!node || node.key !== path[i]) {
+                return false;
+            }
+            node = node.parent;
+        }
+        return !!node?.root; // The path is equal if we reached the root
+    }
+
+    /** Recursively add every node to node.parent.updates set */
     public invalidate(): void {
         let current: TreeNode | null = this;
         let parent = this.parent;
@@ -43,3 +58,5 @@ export class TreeNode {
         }
     }
 }
+
+TreeNode.prototype.root = false; // Default value

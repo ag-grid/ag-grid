@@ -279,14 +279,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (rootRow && (!oldRoot || oldRoot.row !== rootRow)) {
-            const root = new TreeNode(null, -1, '', FLAG_CHILDREN_CHANGED);
+            const root = new TreeNode(null, '', FLAG_CHILDREN_CHANGED);
+            root.root = true;
             root.row = rootRow;
-
             this.root = root;
             this.rowsToNodes = new WeakMap<RowNode, TreeNode>().set(rootRow, root);
 
             // set .leafGroup always to false for tree data, as .leafGroup is only used when pivoting, and pivoting
             // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
+            rootRow.level = -1;
             rootRow.leafGroup = false;
             rootRow.childrenAfterGroup = [];
             rootRow.updateHasChildren();
@@ -302,7 +303,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private addEmptyNode(parent: TreeNode, key: string): TreeNode {
-        const node = new TreeNode(parent, parent.level + 1, key, FLAG_NEW | FLAG_GROUP_DATA_CHANGED);
+        const node = new TreeNode(parent, key, FLAG_NEW | FLAG_GROUP_DATA_CHANGED);
         (parent.map ??= new Map()).set(key, node);
         parent.flags |= FLAG_CHILDREN_CHANGED;
         node.invalidate();
@@ -352,7 +353,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
             newRow.parent = parent?.row ?? null;
-            newRow.level = node.level;
 
             node.row = newRow;
             node.flags |= FLAG_PATH_CHANGED | FLAG_CHILDREN_CHANGED | FLAG_ROW_CHANGED;
@@ -393,7 +393,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         newRow.key = newKey;
         newRow.parent = parent?.row ?? null;
-        newRow.level = node.level;
     }
 
     /** Entry point to delete a single row */
@@ -424,9 +423,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             if (row.data) {
                 const { childrenAfterGroup, allLeafChildren } = row;
                 if (childrenAfterGroup) childrenAfterGroup.length = 0;
-                if (allLeafChildren && node.level >= 0) allLeafChildren.length = 0;
+                if (allLeafChildren && !node.root) allLeafChildren.length = 0;
                 row.parent = null;
-            } else if (node.level >= 0) {
+            } else if (!node.root) {
                 this.nodeRemoved(node);
             }
         }
@@ -516,7 +515,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         if (root) {
             if (root.updates?.size) {
                 for (const node of root.updates) {
-                    this.commitNode(details, node, root);
+                    this.commitNode(details, node, 0);
                 }
                 root.updates = null;
 
@@ -531,7 +530,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private commitNode(details: TreeGroupingDetails, node: TreeNode, parent: TreeNode): void {
+    private commitNode(details: TreeGroupingDetails, node: TreeNode, level: number): void {
+        const parent = node.parent!;
         let row = node.row;
 
         if (!row?.data && !node.map?.size) {
@@ -540,19 +540,23 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (!row) {
-            row = this.createFillerNode(node, parent);
+            row = this.createFillerNode(node);
+            // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
+            // for top pinned and bottom pinned rows.
+            row.id = this.makeRowId(node, level);
             node.row = row;
-        } else {
-            row.parent = parent.row;
-            row.level = node.level;
         }
+
+        row.parent = parent.row;
+        row.level = level;
 
         row.allLeafChildren ??= [];
         row.childrenAfterGroup ??= [];
 
         if (node.updates) {
+            const childLevel = level + 1;
             for (const child of node.updates) {
-                this.commitNode(details, child, node);
+                this.commitNode(details, child, childLevel);
             }
             node.updates = null;
         }
@@ -604,19 +608,13 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         node.flags &= ~COMMITTED_FLAGS_TO_REMOVE;
     }
 
-    private createFillerNode(node: TreeNode, parent: TreeNode): RowNode {
+    private createFillerNode(node: TreeNode): RowNode {
         const row = new RowNode(this.beans);
         row.group = true;
         row.field = null;
         row.key = node.key;
-        row.parent = parent.row;
-        row.level = node.level;
         row.leafGroup = false;
         row.rowGroupIndex = null;
-
-        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
-        // for top pinned and bottom pinned rows.
-        row.id = this.makeRowId(node);
 
         this.rowsToNodes!.set(row, node);
 
@@ -628,10 +626,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return row;
     }
 
-    private makeRowId(node: TreeNode): string {
-        let result = node.level + '-' + node.key;
+    private makeRowId(node: TreeNode, level: number): string {
+        let result = level + '-' + node.key;
         for (let p = node.parent; p?.parent; p = p.parent) {
-            result = `${p.level}-${p.key}-${result}`;
+            result = `${--level}-${p.key}-${result}`;
         }
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's.
         // we also use 't-' and 'b-' for top pinned and bottom pinned rows.
