@@ -8,9 +8,8 @@ import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
-import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
+import type { ColumnEventType } from '../../../events';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _last, _removeFromArray } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -223,14 +222,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {
-        const eventType = isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave';
-
-        const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
-            type: eventType,
+        this.eventService.dispatchEvent({
+            type: isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave',
             column: this.column.getProvidedColumnGroup(),
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private setupTooltip(

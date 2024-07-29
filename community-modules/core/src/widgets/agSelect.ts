@@ -119,6 +119,13 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
             case KeyCode.ESCAPE:
                 super.onKeyDown(e);
                 break;
+            case KeyCode.SPACE:
+                if (this.isPickerDisplayed) {
+                    e.preventDefault();
+                } else {
+                    super.onKeyDown(e);
+                }
+                break;
         }
     }
 

@@ -134,6 +134,11 @@ export class CellCtrl extends BeanStub {
         return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
     }
 
+    public onFocusOut(): void {
+        // Used in React
+        this.beans.focusService.clearRestoreFocus();
+    }
+
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
         this.addDestroyFunc(() => {
@@ -653,18 +658,22 @@ export class CellCtrl extends BeanStub {
         if (!this.cellComp) {
             return;
         }
-
-        const fullName = `ag-cell-${cssName}`;
-        const animationFullName = `ag-cell-${cssName}-animation`;
         const { gos } = this.beans;
 
         if (!flashDuration) {
             flashDuration = gos.get('cellFlashDuration');
         }
 
+        if (flashDuration === 0) {
+            return;
+        }
+
         if (!_exists(fadeDuration)) {
             fadeDuration = gos.get('cellFadeDuration');
         }
+
+        const fullName = `ag-cell-${cssName}`;
+        const animationFullName = `ag-cell-${cssName}-animation`;
 
         // we want to highlight the cells, without any animation
         this.cellComp.addOrRemoveCssClass(fullName, true);

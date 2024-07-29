@@ -9,7 +9,7 @@ import type { AgColumnGroup } from './entities/agColumnGroup';
 import type { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPositionUtils } from './entities/rowPositionUtils';
-import type { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
+import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import type { NavigationService } from './gridBodyComp/navigationService';
 import type { GridCtrl } from './gridComp/gridCtrl';
@@ -79,6 +79,8 @@ export class FocusService extends BeanStub implements NamedBean {
 
     private static keyboardModeActive: boolean = false;
     private static instanceCount: number = 0;
+
+    private awaitRestoreFocusedCell: boolean;
 
     private static addKeyboardModeEvents(doc: Document): void {
         if (this.instanceCount > 0) {
@@ -236,6 +238,26 @@ export class FocusService extends BeanStub implements NamedBean {
         return false;
     }
 
+    public clearRestoreFocus(): void {
+        this.restoredFocusedCellPosition = null;
+        this.awaitRestoreFocusedCell = false;
+    }
+
+    public restoreFocusedCell(cellPosition: CellPosition, setFocusCallback: () => void): void {
+        this.awaitRestoreFocusedCell = true;
+
+        // this should be done asynchronously to work with React Renderers.
+        setTimeout(() => {
+            // if the cell has lost focus (react events are async), we don't want to restore
+            if (!this.awaitRestoreFocusedCell) {
+                return;
+            }
+            this.setRestoreFocusedCell(cellPosition);
+
+            setFocusCallback();
+        });
+    }
+
     private isCellRestoreFocused(cellPosition: CellPosition): boolean {
         if (this.restoredFocusedCellPosition == null) {
             return false;
@@ -277,14 +299,12 @@ export class FocusService extends BeanStub implements NamedBean {
             return;
         }
 
-        const event: WithoutGridCommon<CellFocusClearedEvent> = {
-            type: 'cellFocusCleared',
-            ...this.getFocusEventParams(),
-        };
-
         this.focusedCellPosition = null;
 
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent({
+            type: 'cellFocusCleared',
+            ...this.getFocusEventParams(),
+        });
     }
 
     public setFocusedCell(params: CellFocusedParams): void {
@@ -308,14 +328,12 @@ export class FocusService extends BeanStub implements NamedBean {
               }
             : null;
 
-        const event: WithoutGridCommon<CellFocusedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'cellFocused',
             ...this.getFocusEventParams(),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {

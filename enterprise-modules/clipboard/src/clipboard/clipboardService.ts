@@ -7,9 +7,6 @@ import type {
     CellRange,
     CsvExportParams,
     CtrlsService,
-    CutEndEvent,
-    CutStartEvent,
-    FlashCellsEvent,
     FocusService,
     FuncColsService,
     GridCtrl,
@@ -22,15 +19,12 @@ import type {
     IRowModel,
     ISelectionService,
     NamedBean,
-    PasteEndEvent,
-    PasteStartEvent,
     ProcessCellForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
     RowPosition,
     RowPositionUtils,
     RowRenderer,
-    RowValueChangedEvent,
     ValueService,
     VisibleColsService,
     WithoutGridCommon,
@@ -320,7 +314,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.eventService.dispatchEvent({
             type: 'pasteStart',
             source,
-        } as WithoutGridCommon<PasteStartEvent>);
+        });
 
         let changedPath: ChangedPath | undefined;
 
@@ -356,11 +350,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
         this.refocusLastFocusedCell();
-        const event: WithoutGridCommon<PasteEndEvent> = {
+        this.eventService.dispatchEvent({
             type: 'pasteEnd',
             source,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private pasteIntoActiveRange(
@@ -595,15 +588,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         rowNodes.forEach((rowNode) => {
-            const event: WithoutGridCommon<RowValueChangedEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'rowValueChanged',
                 node: rowNode,
                 data: rowNode.data,
                 rowIndex: rowNode.rowIndex!,
                 rowPinned: rowNode.rowPinned,
-            };
-
-            this.eventService.dispatchEvent(event);
+            });
         });
     }
 
@@ -711,19 +702,17 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        const startEvent: WithoutGridCommon<CutStartEvent> = {
+        this.eventService.dispatchEvent({
             type: 'cutStart',
             source,
-        };
-        this.eventService.dispatchEvent(startEvent);
+        });
 
         this.copyOrCutToClipboard(params, true);
 
-        const endEvent: WithoutGridCommon<CutEndEvent> = {
+        this.eventService.dispatchEvent({
             type: 'cutEnd',
             source,
-        };
-        this.eventService.dispatchEvent(endEvent);
+        });
     }
 
     private copyOrCutToClipboard(params: IClipboardCopyParams, cut?: boolean): void {
@@ -1090,12 +1079,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     // eslint-disable-next-line @typescript-eslint/ban-types
     private dispatchFlashCells(cellsToFlash: {}): void {
         window.setTimeout(() => {
-            const event: WithoutGridCommon<FlashCellsEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'flashCells',
                 cells: cellsToFlash,
-            };
-
-            this.eventService.dispatchEvent(event);
+            });
         }, 0);
     }
 

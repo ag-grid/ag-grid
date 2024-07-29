@@ -4,7 +4,6 @@ import type {
     IDatasource,
     IInfiniteRowModel,
     ISelectionService,
-    ModelUpdatedEvent,
     NamedBean,
     RowBounds,
     RowModelType,
@@ -12,7 +11,6 @@ import type {
     RowNodeBlockLoader,
     RowRenderer,
     SortController,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, NumberSequence, _jsonEquals, _warnOnce } from '@ag-grid-community/core';
 
@@ -183,8 +181,8 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         this.resetCache();
     }
 
-    private createModelUpdatedEvent(): WithoutGridCommon<ModelUpdatedEvent> {
-        return {
+    private dispatchModelUpdatedEvent() {
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             // not sure if these should all be false - noticed if after implementing,
             // maybe they should be true?
@@ -193,7 +191,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
             newData: false,
             keepRenderedRows: true,
             animate: false,
-        };
+        });
     }
 
     private resetCache(): void {
@@ -236,8 +234,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
             type: 'rowCountReady',
         });
 
-        const event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
+        this.dispatchModelUpdatedEvent();
     }
 
     private updateRowHeights() {
@@ -246,8 +243,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
             node.setRowTop(this.rowHeight * node.rowIndex!);
         });
 
-        const event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
+        this.dispatchModelUpdatedEvent();
     }
 
     private destroyCache(): void {
@@ -257,8 +253,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     private onCacheUpdated(): void {
-        const event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
+        this.dispatchModelUpdatedEvent();
     }
 
     public getRow(rowIndex: number): RowNode | undefined {

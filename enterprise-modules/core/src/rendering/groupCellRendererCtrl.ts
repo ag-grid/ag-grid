@@ -192,7 +192,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         const listener = () => {
             // for react, we don't use JSX, as setting attributes via jsx is slower
-            _setAriaExpanded(eGridCell, !!node.expanded);
+            _setAriaExpanded(eGridCell, this.showingValueForOpenedParent || !!node.expanded);
         };
 
         [this.expandListener] = this.addManagedListeners(node, { expandedChanged: listener }) || null;

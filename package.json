@@ -111,5 +111,6 @@
       "**/vue-template-compiler",
       "**/vue-class-component"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.21"
 }
