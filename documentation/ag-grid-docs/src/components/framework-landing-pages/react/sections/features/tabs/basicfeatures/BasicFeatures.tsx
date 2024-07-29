@@ -43,9 +43,9 @@ const BasicFeatures: React.FC = () => {
                         <div className={styles.feature}>
                             <h5 className={styles.featureHeading}>100s of Features</h5>
                             <span className={styles.featureDetail}>
-                                Every feature your can imagine, all in one place: <a>Sorting</a>, <a>Filtering</a>,{' '}
-                                <a>Cell Editing</a>, and more. Upgrade to enterprise for Advanced Features, like{' '}
-                                <a>Integrated Charting</a>, <a>Pivoting</a>, and <a>Row Grouping</a>.
+                                Enable complex features with single properties, including: <a>Sorting</a>,{' '}
+                                <a>Filtering</a>, <a>Cell Editing</a>, <a>CSV Export</a>, <a>Pagination</a>,{' '}
+                                <a>Row Selection</a>, <a>Server Side Data</a>, and <a>Accessibility</a>.
                             </span>
                         </div>
                     </div>

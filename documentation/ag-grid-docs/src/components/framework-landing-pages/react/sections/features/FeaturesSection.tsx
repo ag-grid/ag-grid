@@ -10,7 +10,11 @@ const FeaturesSection: React.FC = () => {
     const [activeTab, setActiveTab] = React.useState(0);
 
     const handleTabClick = (index: number) => {
-        setActiveTab(index);
+        if (index > 2) {
+            setActiveTab(2);
+        } else if (index < 0) {
+            setActiveTab(0);
+        } else setActiveTab(index);
     };
 
     const renderTabContent = () => {
@@ -53,12 +57,16 @@ const FeaturesSection: React.FC = () => {
                 </div>
                 <div className={styles.contentContainer}>{renderTabContent()}</div>
                 <div className={styles.buttonContainer}>
-                    <button className={styles.featureNavButton} onClick={() => null}>
-                        <Icon svgClasses={styles.featureNavIcon} name="arrowLeft" />
-                    </button>
-                    <button className={styles.featureNavButton} onClick={() => null}>
-                        <Icon svgClasses={styles.featureNavIcon} name="arrowRight" />
-                    </button>
+                    <Icon
+                        onClick={() => handleTabClick(activeTab - 1)}
+                        svgClasses={`${activeTab === 0 ? styles.featureNavIconDisabled : styles.featureNavIcon}`}
+                        name="arrowLeft"
+                    />
+                    <Icon
+                        onClick={() => handleTabClick(activeTab + 1)}
+                        svgClasses={`${activeTab === 2 ? styles.featureNavIconDisabled : styles.featureNavIcon}`}
+                        name="arrowRight"
+                    />
                 </div>
             </div>
         </>
