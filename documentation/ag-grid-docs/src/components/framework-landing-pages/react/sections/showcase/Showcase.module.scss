@@ -57,13 +57,18 @@
     }
 
     .buttonDetail {
-        margin: $spacing-size-12 0px;
+        margin: $spacing-size-24 0px;
     }
 
     .buttonFooter {
         display: flex;
+        margin-top: $spacing-size-4;
         justify-content: flex-end;
         gap: $spacing-size-4;
+
+        .secondaryCta {
+            color: var(--color-util-brand-400);
+        }
     }
 }
 
