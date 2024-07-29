@@ -192,7 +192,7 @@ export type SectionProps = {
     properties: Properties;
     config: Config;
     breadcrumbs?: Record<string, string>;
-    meta: MetaTag;
+    meta?: MetaTag;
 };
 export type PropertyCall = {
     framework: Framework;
@@ -219,3 +219,25 @@ export interface DocCode {
 }
 
 export type InterfaceDocumentationModel = DocProperties | DocCode;
+
+export interface SingleApiModel {
+    type: 'single';
+    title: string;
+    properties: Properties;
+    config: Config;
+    meta: MetaTag;
+}
+
+export interface MultipleApiModel {
+    type: 'multiple';
+    entries: [
+        string,
+        {
+            properties: ChildDocEntry | DocEntry;
+            meta: MetaTag;
+        },
+    ][];
+    config: Config;
+}
+
+export type ApiDocumentationModel = SingleApiModel | MultipleApiModel;

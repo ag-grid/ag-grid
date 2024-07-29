@@ -1,26 +1,32 @@
 ---
-import { ApiDocumentationWithQuery } from '../components/ApiDocumentationWithQuery';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import { getPropertiesFromSource } from '../utils/getPropertiesFromSource';
+import { getApiDocumentationModel } from '../utils/getApiDocumentationModel';
+import { ApiDocumentation } from './ApiDocumentation';
+import { getJsonFile } from '@utils/pages';
 
 const { names, config, source, sources: sourcesProp, section } = Astro.props;
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
+const interfaceLookup = getJsonFile('reference/interfaces.AUTO.json');
+
 const { sources, propertiesFromFiles, propertyConfigs, codeConfigs } = await getPropertiesFromSource({
     source,
     sources: sourcesProp,
 });
+
+const model = getApiDocumentationModel({
+    framework,
+    sources,
+    section,
+    names,
+    config,
+    propertiesFromFiles,
+    propertyConfigs,
+    interfaceLookup,
+    codeConfigs,
+});
 ---
 
-<ApiDocumentationWithQuery
-    client:load
-    framework={framework}
-    sources={sources}
-    section={section}
-    names={names}
-    config={config}
-    propertiesFromFiles={propertiesFromFiles}
-    propertyConfigs={propertyConfigs}
-    codeConfigs={codeConfigs}
-/>
+<ApiDocumentation client:load framework={framework} model={model} />
