@@ -16,7 +16,7 @@
 
     .versionTagContainer {
         display: flex;
-        border: 1px solid var(--color-gray-600);
+        border: 1px solid var(--color-gray-700);
         border-radius: var(--radius-xl);
         justify-content: center;
         align-items: center;
@@ -24,20 +24,20 @@
         align-self: center;
 
         .version {
-            border: 2px solid var(--color-util-brand-400);
-            background: var(--color-util-brand-400);
+            border: 2px solid var(--color-util-brand-200);
+            background: var(--color-util-brand-200);
             border-radius: var(--radius-xl);
             padding: $spacing-size-1 $spacing-size-2;
             font-size: var(--text-fs-sm);
             font-weight: var(--text-base);
-            color: white;
+            color: var(--color-fg-primary);
         }
 
         .featureHighlight {
             padding: 0px $spacing-size-2;
             font-size: var(--text-fs-sm);
             font-weight: var(--text-base);
-            color: white;
+            color: var(--color-fg-primary);
         }
 
         .featureArrow {
@@ -75,20 +75,20 @@
         align-items: center;
         padding: $spacing-size-2;
         gap: $spacing-size-2;
-        background-color: var(--color-gray-800);
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
         color: var(--color-fg-primary);
-        border: 1px solid var(--color-util-brand-400);
+        border: 1px solid var(--color-gray-900);
         font-family: 'Courier New', Courier, monospace;
     }
 
     .installText {
         font-size: var(--text-fs-base);
         font-weight: var(--text-bold);
-        color: var(--color-white);
+        color: var(--color-fg-primary);
     }
 
     .icon svg {
-        fill: var(--color-white);
+        fill: var(--color-fg-secondary);
         padding: 6px;
 
         &:hover {

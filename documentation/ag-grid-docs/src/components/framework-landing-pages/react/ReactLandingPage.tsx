@@ -97,7 +97,7 @@ export const ReactLandingPage = () => {
                 </div>
                 <Examples />
             </div>
-            <Divider odd={getIsOdd()} />
+            {/* <Divider odd={getIsOdd()} />
             <div className={isOdd ? styles.sectionOdd : styles.sectionContent}>
                 <div className={styles.headingContainer}>
                     <h2 className={styles.tag}>How Does AG Grid Compare to Competition?</h2>
@@ -107,7 +107,7 @@ export const ReactLandingPage = () => {
                     </h4>
                 </div>
                 <Benchmarks />
-            </div>
+            </div> */}
             <Divider odd={getIsOdd()} />
             {/* FAQs - Community vs. Enterprise,  etc... */}
             <div className={isOdd ? styles.sectionOdd : styles.sectionContent}>

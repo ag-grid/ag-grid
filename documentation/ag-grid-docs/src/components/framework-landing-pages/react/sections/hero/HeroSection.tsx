@@ -49,7 +49,7 @@ const MyComponent: React.FC<Props> = () => {
                         $ npm install ag-grid-react
                     </span>
                     <span className={styles.icon} onClick={copyToClipboard}>
-                        {isCopied ? <Icon name="tick" /> : <Icon name="copy" />}
+                        <Icon svgClasses={styles.icon} name={isCopied ? 'tick' : 'copy'} />
                     </span>
                 </div>
             </div>
