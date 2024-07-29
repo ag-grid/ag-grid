@@ -936,14 +936,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public getGroupRowsHeight(): number[] {
         const heights: number[] = [];
-        const groupRowCount = this.ctrlsService.getHeaderRowContainerCtrl()?.getGroupRowCount() || 0;
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl();
 
-        for (let i = 0; i < groupRowCount; i++) {
-            const headerRowCtrl = headerRowContainerCtrl?.getGroupRowCtrlAtIndex(i);
+        if (headerRowContainerCtrl) {
+            const groupRowCount = headerRowContainerCtrl.getGroupRowCount() || 0;
 
-            if (headerRowCtrl) {
-                heights.push(this.getColumnGroupHeaderRowHeight(headerRowCtrl));
+            for (let i = 0; i < groupRowCount; i++) {
+                const headerRowCtrl = headerRowContainerCtrl.getGroupRowCtrlAtIndex(i);
+
+                if (headerRowCtrl) {
+                    heights.push(this.getColumnGroupHeaderRowHeight(headerRowCtrl));
+                }
             }
         }
 
