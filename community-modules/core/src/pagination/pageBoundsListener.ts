@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { ModelUpdatedEvent, PaginationChangedEvent } from '../events';
+import type { ModelUpdatedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { PageBoundsService } from './pageBoundsService';
@@ -32,15 +32,14 @@ export class PageBoundsListener extends BeanStub implements NamedBean {
     private onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
         this.calculatePages();
 
-        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'paginationChanged',
-            animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
-            newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
-            newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
-            newPageSize: modelUpdatedEvent ? modelUpdatedEvent.newPageSize : false,
-            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false,
-        };
-        this.eventService.dispatchEvent(paginationChangedEvent);
+            animate: modelUpdatedEvent?.animate ?? false,
+            newData: modelUpdatedEvent?.newData ?? false,
+            newPage: modelUpdatedEvent?.newPage ?? false,
+            newPageSize: modelUpdatedEvent?.newPageSize ?? false,
+            keepRenderedRows: modelUpdatedEvent?.keepRenderedRows ?? false,
+        });
     }
 
     private calculatePages(): void {

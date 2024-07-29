@@ -14,8 +14,6 @@ import type {
     ServerSideTransaction,
     ServerSideTransactionResult,
     StoreRefreshAfterParams,
-    StoreRefreshedEvent,
-    StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, NumberSequence, ServerSideTransactionResultStatus, _warnOnce } from '@ag-grid-community/core';
@@ -710,19 +708,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public fireStoreUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        const event: WithoutGridCommon<StoreUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'storeUpdated',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     // gets called when row data updated, and no more refreshing needed
     public fireRefreshFinishedEvent(): void {
-        const event: WithoutGridCommon<StoreRefreshedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'storeRefreshed',
             route: this.parentRowNode.getRoute(),
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public getBlockStates() {

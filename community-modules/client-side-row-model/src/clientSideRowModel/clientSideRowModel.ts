@@ -1,28 +1,22 @@
 import type {
-    AsyncTransactionsFlushed,
     BeanCollection,
     ClientSideRowModelStep,
     ColumnModel,
     CssVariablesChanged,
     Environment,
-    ExpandOrCollapseAllEvent,
     FilterChangedEvent,
     FuncColsService,
     GridOptions,
     IClientSideRowModel,
     IRowNodeStage,
     ISelectionService,
-    ModelUpdatedEvent,
     NamedBean,
     RefreshModelParams,
     RowBounds,
     RowDataTransaction,
-    RowDataUpdatedEvent,
     RowModelType,
     RowNodeTransaction,
-    SelectionChangedEvent,
     ValueCache,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     BeanStub,
@@ -731,15 +725,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.isRefreshingModel = false;
 
-        const event: WithoutGridCommon<ModelUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
             newPage: false,
             keepUndoRedoStack: params.keepUndoRedoStack,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public isEmpty(): boolean {
@@ -1069,12 +1062,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.refreshModel({ step: ClientSideRowModelSteps.MAP });
 
-        const eventSource = expand ? 'expandAll' : 'collapseAll';
-        const event: WithoutGridCommon<ExpandOrCollapseAllEvent> = {
+        this.eventService.dispatchEvent({
             type: 'expandOrCollapseAll',
-            source: eventSource,
-        };
-        this.eventService.dispatchEvent(event);
+            source: expand ? 'expandAll' : 'collapseAll',
+        });
     }
 
     private doSort(rowNodeTransactions: RowNodeTransaction[] | undefined, changedPath: ChangedPath) {
@@ -1114,11 +1105,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 );
 
                 if (selectionChanged) {
-                    const event: WithoutGridCommon<SelectionChangedEvent> = {
+                    this.eventService.dispatchEvent({
                         type: 'selectionChanged',
                         source: 'rowGroupChanged',
-                    };
-                    this.eventService.dispatchEvent(event);
+                    });
                 }
             }
         } else {
@@ -1189,10 +1179,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private dispatchUpdateEventsAndRefresh(): void {
         // this event kicks off:
         // - shows 'no rows' overlay if needed
-        const rowDataUpdatedEvent: WithoutGridCommon<RowDataUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
-        };
-        this.eventService.dispatchEvent(rowDataUpdatedEvent);
+        });
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
@@ -1254,11 +1243,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (rowNodeTrans.length > 0) {
-            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {
+            this.eventService.dispatchEvent({
                 type: 'asyncTransactionsFlushed',
                 results: rowNodeTrans,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
 
         this.rowDataTransactionBatch = null;
@@ -1317,10 +1305,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowNodeOrder = this.createRowNodeOrder();
         }
 
-        const event: WithoutGridCommon<RowDataUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
-        };
-        this.eventService.dispatchEvent(event);
+        });
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
