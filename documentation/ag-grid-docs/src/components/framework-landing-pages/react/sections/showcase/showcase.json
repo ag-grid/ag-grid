@@ -1,0 +1,44 @@
+[
+    {
+        "title": "Finance",
+        "detail": "Analyse complex financial data, perform calculations and visualise the data in AG Grid, with standalone charts from AG Charts.",
+        "preview": "open.bb",
+        "image": "/landing-pages/showcase/openbb.png",
+        "alt": "OpenBB Terminal Pro Landing Page with React Table",
+        "links": ["Preview", "Source Code"]
+    },
+    {
+        "title": "ML/AI",
+        "detail": "Build models and generative AI apps on a unified, end-to-end, MLOps platform which uses AG Grid to powers the tables in its dashboard",
+        "preview": "mlflow.org",
+        "image": "/landing-pages/showcase/mlflow.png",
+        "alt": "MLFlow Landing Page with React Table",
+        "links": ["Preview", "Source Code"]
+    },
+    {
+        "title": "Developer Platforms",
+        "detail": "Open-source developer platform and workflow engine who use AG Grid as part of their drag & drop UI builder.",
+        "preview": "windmill.dev",
+        "image": "/landing-pages/showcase/windmill.png",
+        "imageLight": "/landing-pages/showcase/windmill-light.png",
+        "alt": "Windmill Landing Page with React Table",
+        "links": ["Preview", "Source Code"]
+    },
+    {
+        "title": "Data Modelling",
+        "detail": "Planning, scheduling, and sequencing tools for modern space missions. AG Grid is used throughout to help visualise mission data.",
+        "preview": "nasa.ammos.io",
+        "image": "/landing-pages/showcase/nasa-aerie.png",
+        "imageLight": "/landing-pages/showcase/nasa-aerie-light.png",
+        "alt": "NASA Aerie Admin Landing Page with React Table",
+        "links": ["Preview", "Source Code"]
+    },
+    {
+        "title": "Dashboards",
+        "detail": "An open source React library for building dashboards, with AG Grid enterprise support for building React tables with advanced features.",
+        "preview": "marmelab.com/react-admin",
+        "image": "/landing-pages/showcase/react-admin.png",
+        "alt": "React Admin Landing Page with React Table",
+        "links": ["Preview", "Source Code"]
+    }
+]
