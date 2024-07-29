@@ -1,6 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -31,6 +32,14 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
             column: col,
             columns: [col],
             source: 'autosizeColumnHeaderHeight',
+        });
+    }
+
+    public groupHeaderHeight(col: AgColumnGroup): void {
+        this.eventService.dispatchEvent({
+            type: 'columnGroupHeaderHeightChanged',
+            columnGroup: col,
+            source: 'autosizeColumnGroupHeaderHeight',
         });
     }
 

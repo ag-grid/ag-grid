@@ -29,6 +29,9 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     // depends on the open/closed state of the group, only displaying columns are stored here
     private displayedChildren: (AgColumn | AgColumnGroup)[] | null = [];
 
+    // The measured height of this column's header when autoHeaderHeight is enabled
+    private autoHeaderHeight: number | null = null;
+
     private readonly groupId: string;
     private readonly partId: number;
     private readonly providedColumnGroup: AgProvidedColumnGroup;
@@ -213,6 +216,21 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     public setExpanded(expanded: boolean): void {
         this.providedColumnGroup.setExpanded(expanded);
+    }
+
+    public isAutoHeaderHeight(): boolean {
+        return !!this.getColGroupDef()?.autoHeaderHeight;
+    }
+
+    public getAutoHeaderHeight(): number | null {
+        return this.autoHeaderHeight;
+    }
+
+    /** Returns true if the header height has changed */
+    public setAutoHeaderHeight(height: number): boolean {
+        const changed = height !== this.autoHeaderHeight;
+        this.autoHeaderHeight = height;
+        return changed;
     }
 
     private addDisplayedLeafColumns(leafColumns: AgColumn[]): void {
