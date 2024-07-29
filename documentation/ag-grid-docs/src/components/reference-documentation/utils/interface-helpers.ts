@@ -194,7 +194,7 @@ export const mergeObjects = (objects: any[]) => {
     return objects.reduce((result, value) => Object.assign(result, value), {});
 };
 
-function getPropertyEntries({ properties, suppressSort }: { properties: DocEntryMap; suppressSort: boolean }) {
+function getPropertyEntries({ properties, suppressSort }: { properties: DocEntryMap; suppressSort?: boolean }) {
     const entries = Object.entries(properties).filter(([key]) => key !== '_config_');
     if (!suppressSort) {
         entries.sort(([k1, v1], [k2, v2]) => {
@@ -211,7 +211,7 @@ export const getAllSectionPropertyEntries = ({
     suppressSort,
 }: {
     propertiesFromFiles: any[];
-    suppressSort: boolean;
+    suppressSort?: boolean;
 }) => {
     const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
     const entries = getPropertyEntries({

@@ -6,34 +6,23 @@ import type {
     CodeEntry,
     Config,
     DocCode,
-    DocEntry,
     DocEntryMap,
-    DocModel,
     DocProperties,
-    ICallSignature,
+    InterfaceDocumentationModel,
     InterfaceEntry,
-    InterfaceHierarchyOverrides,
     Overrides,
-    PropertyType,
 } from '../types';
 import {
     escapeGenericCode,
-    extractInterfaces,
     formatJsDocString,
     getInterfaceWithGenericParams,
-    getLinkedType,
-    inferType,
     sortAndFilterProperties,
     writeAllInterfaces,
 } from './documentation-helpers';
-import {
-    applyInterfaceInclusions,
-    getInterfaceName,
-    getInterfacesToWrite,
-    getPropertyType,
-    isCallSig,
-    isGridOptionEvent,
-} from './interface-helpers';
+import { getDefinitionType } from './getDefinitionType';
+import { getDetailsCode } from './getDetailsCode';
+import { getShowAdditionalDetails } from './getShowAdditionalDetails';
+import { getInterfacesToWrite } from './interface-helpers';
 
 interface Params {
     interfaceName: string;
@@ -46,261 +35,7 @@ interface Params {
     codeLookup: Record<string, any>;
 }
 
-function getShowAdditionalDetails({
-    definition,
-    gridOpProp,
-    interfaceLookup,
-}: {
-    definition: DocEntry | ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    interfaceLookup: Record<string, InterfaceEntry>;
-}) {
-    let type: any = definition.type;
-    let showAdditionalDetails = typeof type == 'object';
-    if (!type) {
-        // No type specified in the doc config file so check the GridOptions property
-        if (gridOpProp && gridOpProp.type) {
-            type = gridOpProp.type;
-
-            const isDeprecated = gridOpProp.meta?.tags?.some((t) => t.name === 'deprecated');
-            if (isDeprecated) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                    `<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`
-                );
-                // eslint-disable-next-line no-console
-                console.warn('<api-documentation>: ' + gridOpProp.meta?.all);
-            }
-
-            const anyInterfaces = extractInterfaces(
-                gridOpProp.type,
-                interfaceLookup,
-                applyInterfaceInclusions({
-                    gridOpProp,
-                    interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides,
-                })
-            );
-            showAdditionalDetails = isCallSig(gridOpProp) || type.arguments || anyInterfaces.length > 0;
-        }
-    }
-
-    return showAdditionalDetails;
-}
-
-// Use the type definition if manually specified in config
-function getDefinitionType({
-    definition,
-    gridOpProp,
-    interfaceLookup,
-    config,
-}: {
-    definition: DocEntry | ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    interfaceLookup: Record<string, InterfaceEntry>;
-    config: Config;
-}) {
-    let type: any = definition.type;
-    if (!type) {
-        // No type specified in the doc config file so check the GridOptions property
-        if (gridOpProp && gridOpProp.type) {
-            type = gridOpProp.type;
-
-            const isDeprecated = gridOpProp.meta?.tags?.some((t) => t.name === 'deprecated');
-            if (isDeprecated) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                    `<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`
-                );
-                // eslint-disable-next-line no-console
-                console.warn('<api-documentation>: ' + gridOpProp.meta?.all);
-            }
-        } else {
-            if (type == null && config.codeSrcProvided?.length > 0) {
-                throw new Error(
-                    `We could not find a type for "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo?`
-                );
-            }
-
-            // If a codeSrc is not provided as a last resort try and infer the type
-            type = inferType(definition.default);
-        }
-    }
-
-    const propertyType = getPropertyType({
-        type,
-        isEvent: config.isEvent,
-        interfaceLookup,
-        gridOpProp,
-    });
-
-    return {
-        type,
-        propertyType,
-    };
-}
-
-function getDetailsCode({
-    framework,
-    name,
-    type,
-    gridOpProp,
-    interfaceLookup,
-    interfaceHierarchyOverrides,
-    isApi,
-}: {
-    framework: Framework;
-    name: string;
-    type: string | PropertyType;
-    gridOpProp: InterfaceEntry;
-    interfaceLookup: Record<string, InterfaceEntry>;
-    interfaceHierarchyOverrides: InterfaceHierarchyOverrides;
-    isApi: boolean;
-}) {
-    if (typeof type == 'string') {
-        // eslint-disable-next-line no-console
-        console.log('<api-documentation>: type is a string!', type);
-    }
-
-    type = type || {};
-    let returnType = typeof type == 'string' ? undefined : type.returnType;
-    const returnTypeIsObject = !!returnType && typeof returnType === 'object';
-    const extracted = extractInterfaces(
-        returnType,
-        interfaceLookup,
-        applyInterfaceInclusions({ gridOpProp, interfaceHierarchyOverrides })
-    );
-    const returnTypeInterface = interfaceLookup[returnType];
-    const isCallSig = returnTypeInterface && returnTypeInterface.meta.isCallSignature;
-    const returnTypeHasInterface = extracted.length > 0;
-
-    let functionName = name.replace(/\([^)]*\)/g, '');
-    if (isGridOptionEvent(gridOpProp)) {
-        functionName = 'on' + getInterfaceName(functionName);
-    }
-
-    let args = {};
-    if (typeof type !== 'string') {
-        if (type.parameters) {
-            args = {
-                params: {
-                    meta: { name: `${getInterfaceName(functionName)}Params` },
-                    ...type.parameters,
-                },
-            };
-        } else if (type.arguments) {
-            args = type.arguments;
-        } else if (isCallSig) {
-            // Required to handle call signature interfaces so we can flatten out the interface to make it clearer
-            const callSigInterface = returnTypeInterface as ICallSignature;
-            args = callSigInterface.type.arguments;
-            returnType = callSigInterface.type.returnType;
-        }
-    }
-
-    let shouldUseNewline = false;
-    const argumentDefinitions: string[] = [];
-
-    const getArgumentTypeName = (key, type) => {
-        if (!Array.isArray(type) && typeof type === 'object') {
-            return (type.meta && type.meta.name) || getInterfaceName(key);
-        }
-
-        return type;
-    };
-
-    Object.entries(args).forEach(([key, type]) => {
-        const typeName = getArgumentTypeName(key, type);
-
-        argumentDefinitions.push(`${key}: ${getLinkedType(typeName, framework)}`);
-
-        if (argumentDefinitions.length > 1 || (key + typeName).length > 20) {
-            shouldUseNewline = true;
-        }
-    });
-
-    const functionArguments = shouldUseNewline
-        ? `\n    ${argumentDefinitions.join(',\n    ')}\n`
-        : argumentDefinitions.join('');
-
-    const returnTypeName = getInterfaceName(functionName).replace(/^get/, '');
-    const functionPrefix =
-        name.includes('(') || isApi
-            ? `function ${functionName}(${functionArguments}):`
-            : `${functionName} = (${functionArguments}) =>`;
-
-    const lines: string[] = [];
-    if (typeof type != 'string' && (type.parameters || type.arguments || isCallSig)) {
-        lines.push(
-            `${functionPrefix} ${returnTypeIsObject ? returnTypeName : getLinkedType(returnType || 'void', framework)};`
-        );
-    } else {
-        lines.push(`${name}: ${returnType};`);
-    }
-
-    let interfacesToWrite: any[] = [];
-    if (type.parameters) {
-        Object.keys(args)
-            .filter((key) => !Array.isArray(args[key]) && typeof args[key] === 'object')
-            .forEach((key) => {
-                const { meta, ...definition } = args[key];
-                const name = getArgumentTypeName(key, { meta });
-                interfacesToWrite = [
-                    ...interfacesToWrite,
-                    ...getInterfacesToWrite({
-                        name,
-                        definition,
-                        interfaceLookup,
-                        gridOpProp,
-                        interfaceHierarchyOverrides,
-                    }),
-                ];
-            });
-    } else if (args) {
-        Object.entries(args).forEach(([key, definition]) => {
-            const name = getArgumentTypeName(key, definition);
-            interfacesToWrite = [
-                ...interfacesToWrite,
-                ...getInterfacesToWrite({
-                    name,
-                    definition,
-                    interfaceLookup,
-                    gridOpProp,
-                    interfaceHierarchyOverrides,
-                }),
-            ];
-        });
-    }
-
-    if (returnTypeIsObject) {
-        interfacesToWrite = [
-            ...interfacesToWrite,
-            ...getInterfacesToWrite({
-                name: returnTypeName,
-                definition: returnType,
-                interfaceLookup,
-                gridOpProp,
-                interfaceHierarchyOverrides,
-            }),
-        ];
-    } else if (returnTypeHasInterface) {
-        interfacesToWrite = [
-            ...interfacesToWrite,
-            ...getInterfacesToWrite({
-                name: returnType,
-                definition: returnType,
-                interfaceLookup,
-                gridOpProp,
-                interfaceHierarchyOverrides,
-            }),
-        ];
-    }
-
-    lines.push(...writeAllInterfaces(interfacesToWrite, framework));
-
-    return escapeGenericCode(lines);
-}
-
-function getProperties({
+export function getProperties({
     framework,
     interfaceName,
     interfaceData,
@@ -467,7 +202,7 @@ export function getInterfaceDocumentationModel({
     config = {},
     interfaceLookup,
     codeLookup,
-}: Params): DocModel {
+}: Params): InterfaceDocumentationModel {
     const codeData = codeLookup[interfaceName];
     const model = config.asCode
         ? getDocCode({

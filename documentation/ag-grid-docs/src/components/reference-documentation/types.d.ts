@@ -218,4 +218,4 @@ export interface DocCode {
     code: string;
 }
 
-export type DocModel = DocProperties | DocCode;
+export type InterfaceDocumentationModel = DocProperties | DocCode;
