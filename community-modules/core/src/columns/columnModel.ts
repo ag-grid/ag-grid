@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { AgColumn } from '../entities/agColumn';
+import { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
@@ -106,6 +106,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // group auto columns
     private autoCols: ColumnCollections | null;
+
+    private controlCols: ColumnCollections | null;
 
     // [providedCols OR pivotResultCols] PLUS autoGroupCols.
     // this cols.list maintains column order.
@@ -235,6 +237,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.createAutoCols();
         this.addAutoCols();
+
+        this.createControlCols();
+        this.addControlCols();
 
         this.restoreColOrder();
 
@@ -380,6 +385,38 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.lastOrder = putAutocolsFirstInList(this.lastOrder);
         this.lastPivotOrder = putAutocolsFirstInList(this.lastPivotOrder);
+    }
+
+    private createControlCols(): void {
+        const colDef: ColDef = {
+            colId: 'CONTROL_AUTO_COLUMN',
+            checkboxSelection: true,
+            headerCheckboxSelection: true,
+            suppressMovable: true,
+            lockPosition: 'left',
+            suppressHeaderMenuButton: true,
+            sortable: false,
+            width: 50,
+            pinned: 'left',
+            lockPinned: true,
+        };
+        const col = new AgColumn(colDef, null, colDef.colId!, false);
+        this.createBean(col);
+        this.controlCols = {
+            list: [col],
+            tree: [col],
+            treeDepth: 1,
+            map: { [colDef.colId!]: col },
+        };
+    }
+
+    private addControlCols(): void {
+        if (this.controlCols == null) {
+            return;
+        }
+        this.cols.list = this.controlCols.list.concat(this.cols.list);
+        this.cols.tree = this.controlCols.tree.concat(this.cols.tree);
+        updateColsMap(this.cols);
     }
 
     // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
