@@ -138,7 +138,7 @@ export class CellPositionFeature extends BeanStub {
         if (!this.eGui) {
             return;
         }
-        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
+        const left = this.getCellLeft();
         this.eGui.style.left = left + 'px';
     }
 
@@ -151,7 +151,7 @@ export class CellPositionFeature extends BeanStub {
             mostLeftCol = this.column;
         }
 
-        return mostLeftCol.getLeft();
+        return this.modifyLeftForPrintLayout(mostLeftCol.getLeft());
     }
 
     private modifyLeftForPrintLayout(leftPosition: number | null): number | null {

@@ -307,7 +307,7 @@ export class LazyCache extends BeanStub {
             this.skipDisplayIndexes(numberOfRowsToSkip, displayIndexSeq, nextRowTop);
 
             const isFirstChild = numericIndex === 0;
-            node.setFirstChild(isFirstChild);
+            node.setChildIndex(node.childIndex, isFirstChild, node.lastChild);
             // if hiding open parents, then the first node should inherit the group values
             if (isFirstChild && this.gos.get('groupHideOpenParents')) {
                 const parentGroupData = this.store.getParentNode().groupData;

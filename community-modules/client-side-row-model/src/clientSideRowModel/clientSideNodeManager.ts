@@ -98,6 +98,12 @@ export class ClientSideNodeManager {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
+            // const nodes = Array(rowData.length);
+            // for (let i = 0; i < rowData.length; i++) {
+            //     nodes[i] = this.createNode(rowData[i], rootNode, TOP_LEVEL);
+            // }
+            // rootNode.allLeafChildren = nodes;
+
             rootNode.allLeafChildren = rowData.map((dataItem) => this.createNode(dataItem, this.rootNode, TOP_LEVEL));
         } else {
             rootNode.allLeafChildren = [];

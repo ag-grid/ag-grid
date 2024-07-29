@@ -122,6 +122,15 @@ export function _pushAll<T>(target: T[], source: T[]): void {
     source.forEach((value) => target.push(value));
 }
 
+export function _forEach<T>(list: T[], action: (value: T, index: number) => void): void {
+    if (list == null) {
+        return;
+    }
+    for (let i = 0; i < list.length; i++) {
+        action(list[i], i);
+    }
+}
+
 export function _forEachReverse<T>(list: T[], action: (value: T, index: number) => void): void {
     if (list == null) {
         return;

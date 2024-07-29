@@ -2,8 +2,11 @@ import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { AgEventType } from '../eventTypes';
 import type { CellEditRequestEvent, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
+import type { GridOptionsService } from '../gridOptionsService';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
+import type { GetRowIdParams } from '../interfaces/iCallbackParams';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type {
     AgRowNodeEventListener,
@@ -11,10 +14,12 @@ import type {
     DataChangedEvent,
     IRowNode,
     RowHighlightPosition,
+    RowNodeEvent,
     RowNodeEventType,
     RowPinnedType,
     SetSelectedParams,
 } from '../interfaces/iRowNode';
+import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
@@ -183,6 +188,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      */
     public displayed: boolean = false;
 
+    public __toBeDisplayed: boolean | undefined;
+
     /** The row top position in pixels. */
     public rowTop: number | null = null;
 
@@ -229,11 +236,17 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     private frameworkEventListenerService: FrameworkEventListenerService<any, any> | null;
 
     private beans: BeanCollection;
+    private gos: GridOptionsService;
+    private selectionService: ISelectionService;
 
     private checkAutoHeightsDebounced: () => void;
+    getRowIdFunc: ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined;
 
     constructor(beans: BeanCollection) {
         this.beans = beans;
+        this.gos = beans.gos;
+        this.getRowIdFunc = beans.gos.getRowIdCallback();
+        this.selectionService = beans.selectionService;
     }
 
     /**
@@ -335,15 +348,13 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.updateDataOnDetailNode();
         this.setId(id);
         this.checkRowSelectable();
-        this.beans.selectionService.syncInRowNode(this, oldNode);
+        this.selectionService.syncInRowNode(this, oldNode);
 
-        const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, false);
-
-        this.localEventService?.dispatchEvent(event);
+        this.localEventService?.dispatchEvent(this.createDataChangedEvent(data, oldData, false));
     }
 
     private checkRowSelectable() {
-        const isRowSelectableFunc = this.beans.gos.get('isRowSelectable');
+        const isRowSelectableFunc = this.gos.get('isRowSelectable');
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
@@ -356,7 +367,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 return;
             }
 
-            const isGroupSelectsChildren = this.beans.gos.get('groupSelectsChildren');
+            const isGroupSelectsChildren = this.gos.get('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
                 this.setSelectedParams({
@@ -378,9 +389,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = this.beans.gos.getRowIdCallback();
-
-        if (getRowIdFunc) {
+        if (this.getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
             // this is important for virtual pagination and viewport, where empty rows exist.
             if (this.data) {
@@ -389,7 +398,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 // data via transaction on SSRM, we are getting key to look up the
                 // RowNode, don't have the RowNode yet, thus no way to get the current key)
                 const parentKeys = this.getGroupKeys(true);
-                this.id = getRowIdFunc({
+                this.id = this.getRowIdFunc({
                     data: this.data,
                     parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
                     level: this.level,
@@ -438,38 +447,48 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     private updateIfDifferent<T extends keyof RowNode>(key: T, value: RowNode[T], eventName: RowNodeEventType): void {
-        if (this[key] === value) {
-            return;
+        if (this.localEventService) {
+            if (this[key] === value) {
+                return;
+            }
+            (this as RowNode)[key] = value;
+
+            // performance optimization, only dispatch if event service is present
+            this.dispatchRowEvent(eventName);
+        } else {
+            (this as RowNode)[key] = value;
         }
-        (this as RowNode)[key] = value;
-
-        this.dispatchRowEvent(eventName);
     }
 
-    public setFirstChild(firstChild: boolean): void {
-        this.updateIfDifferent('firstChild', firstChild, 'firstChildChanged');
-    }
-
-    public setLastChild(lastChild: boolean): void {
-        this.updateIfDifferent('lastChild', lastChild, 'lastChildChanged');
-    }
-
-    public setChildIndex(childIndex: number): void {
-        this.updateIfDifferent('childIndex', childIndex, 'childIndexChanged');
+    public setChildIndex(childIndex: number, firstChild: boolean, lastChild: boolean): void {
+        if (this.localEventService) {
+            // Only need to do the update if there is a localEventService otherwise we can just set the values
+            this.updateIfDifferent('firstChild', firstChild, 'firstChildChanged');
+            this.updateIfDifferent('lastChild', lastChild, 'lastChildChanged');
+            this.updateIfDifferent('childIndex', childIndex, 'childIndexChanged');
+        } else {
+            this.childIndex = childIndex;
+            this.firstChild = firstChild;
+            this.lastChild = lastChild;
+        }
     }
 
     public setRowTop(rowTop: number | null): void {
         this.oldRowTop = this.rowTop;
+        if (this.localEventService) {
+            if (this.rowTop === rowTop) {
+                return;
+            }
 
-        if (this.rowTop === rowTop) {
-            return;
+            this.rowTop = rowTop;
+
+            this.dispatchRowEvent('topChanged');
+
+            this.setDisplayed(rowTop !== null);
+        } else {
+            this.rowTop = rowTop;
+            this.displayed = rowTop !== null;
         }
-
-        this.rowTop = rowTop;
-
-        this.dispatchRowEvent('topChanged');
-
-        this.setDisplayed(rowTop !== null);
     }
 
     public clearRowTopAndRowIndex(): void {
@@ -623,7 +642,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         // means more rows fit in) which looks crap. so best ignore small values and assume
         // we are still waiting for values to render.
         if (nonePresent || newRowHeight < 10) {
-            newRowHeight = this.beans.gos.getRowHeightForNode(this).height;
+            newRowHeight = this.gos.getRowHeightForNode(this).height;
         }
 
         if (newRowHeight == this.rowHeight) {
@@ -639,11 +658,19 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public setRowIndex(rowIndex: number | null): void {
-        this.updateIfDifferent('rowIndex', rowIndex, 'rowIndexChanged');
+        if (this.localEventService) {
+            this.updateIfDifferent('rowIndex', rowIndex, 'rowIndexChanged');
+        } else {
+            this.rowIndex = rowIndex;
+        }
     }
 
     public setUiLevel(uiLevel: number): void {
-        this.updateIfDifferent('uiLevel', uiLevel, 'uiLevelChanged');
+        if (this.localEventService) {
+            this.updateIfDifferent('uiLevel', uiLevel, 'uiLevelChanged');
+        } else {
+            this.uiLevel = uiLevel;
+        }
     }
 
     /**
@@ -669,7 +696,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     private createGlobalRowEvent<T extends AgEventType>(type: T): RowEvent<T, TData> {
-        return this.beans.gos.addGridCommonParams({
+        return this.gos.addGridCommonParams({
             type: type,
             node: this,
             data: this.data,
@@ -693,6 +720,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             if (typeof colKey !== 'string') {
                 return colKey;
             }
+
             // if in pivot mode, grid columns wont include primary columns
             return this.beans.columnModel.getCol(colKey) ?? this.beans.columnModel.getColDefCol(colKey);
         };
@@ -703,7 +731,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const column = getColumnFromKey()!;
         const oldValue = this.getValueFromValueService(column);
 
-        if (this.beans.gos.get('readOnlyEdit')) {
+        if (this.gos.get('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
             return false;
         }
@@ -727,18 +755,17 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         let includeFooter = false;
         // are we showing group footers
-        const groupIncludeFooterOpt = this.beans.gos.get('groupTotalRow') ?? this.beans.gos.get('groupIncludeFooter');
+        const groupIncludeFooterOpt = this.gos.get('groupTotalRow') ?? this.gos.get('groupIncludeFooter');
         if (typeof groupIncludeFooterOpt !== 'function') {
             includeFooter = !!groupIncludeFooterOpt;
         } else {
             const groupIncludeFooterCb: any =
-                this.beans.gos.getCallback('groupTotalRow' as any) ??
-                this.beans.gos.getCallback('groupIncludeFooter' as any);
+                this.gos.getCallback('groupTotalRow' as any) ?? this.gos.getCallback('groupIncludeFooter' as any);
             includeFooter = !!groupIncludeFooterCb({ node: this });
         }
 
         // if doing footers, we normally don't show agg data at group level when group is open
-        const groupAlwaysShowAggData = this.beans.gos.get('groupSuppressBlankHeader');
+        const groupAlwaysShowAggData = this.gos.get('groupSuppressBlankHeader');
 
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
@@ -755,7 +782,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         newValue: any,
         eventSource?: string
     ): void {
-        const event: CellEditRequestEvent = this.beans.gos.addGridCommonParams({
+        const event: CellEditRequestEvent = this.gos.addGridCommonParams({
             type: 'cellEditRequest',
             event: null,
             rowIndex: this.rowIndex!,
@@ -829,13 +856,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     public updateHasChildren(): void {
         // in CSRM, the group property will be set before the childrenAfterGroup property, check both to prevent flickering
-        let newValue: boolean | null =
-            (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        let newValue: boolean | null = (this.group && !this.footer) || (this.childrenAfterGroup?.length ?? 0) > 0;
 
-        const isSsrm = this.beans.gos.isRowModelType('serverSide');
+        const isSsrm = this.gos.isRowModelType('serverSide');
         if (isSsrm) {
-            const isTreeData = this.beans.gos.get('treeData');
-            const isGroupFunc = this.beans.gos.get('isServerSideGroup');
+            const isTreeData = this.gos.get('treeData');
+            const isGroupFunc = this.gos.get('isServerSideGroup');
             // stubs and footers can never have children, as they're grid rows. if tree data the presence of children
             // is determined by the isServerSideGroup callback, if not tree data then the rows group property will be set.
             newValue =
@@ -849,7 +875,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public hasChildren(): boolean {
-        if (this.__hasChildren == null) {
+        if (this.__hasChildren === undefined) {
             this.updateHasChildren();
         }
         return this.__hasChildren;
@@ -977,11 +1003,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
-        const event = {
+        this.localEventService?.dispatchEvent({
             type: type,
             node: this,
-        };
-        this.localEventService?.dispatchEvent(event);
+        } as RowNodeEvent<T>);
     }
 
     public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
@@ -1049,7 +1074,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return 0;
         }
 
-        return this.beans.selectionService.setNodesSelected({ ...params, nodes: [this.footer ? this.sibling : this] });
+        return this.selectionService.setNodesSelected({ ...params, nodes: [this.footer ? this.sibling : this] });
     }
 
     /**
@@ -1150,7 +1175,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return true;
         }
 
-        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
+        const isFullWidthCellFunc = this.gos.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }
 

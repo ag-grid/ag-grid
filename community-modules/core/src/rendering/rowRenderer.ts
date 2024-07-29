@@ -998,7 +998,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private removeAllRowComps(): void {
         const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
-        this.removeRowCtrls(rowIndexesToRemove);
+        this.removeRowCtrls(rowIndexesToRemove, true);
 
         if (this.stickyRowFeature) {
             this.stickyRowFeature.destroyStickyCtrls();
@@ -1372,6 +1372,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 const { pageFirstPixel, pageLastPixel } = this.pageBoundsService.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
+                // If this can read the appropriate scroll position, then it would avoid forcing a reflow
                 const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
                 const bodyTopPixel = bodyVRange.top;
                 const bodyBottomPixel = bodyVRange.bottom;

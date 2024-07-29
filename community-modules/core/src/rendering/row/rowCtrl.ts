@@ -464,6 +464,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
+    public getCellCtrlsNow(rowType: RowContainerType): CellCtrl[] {
+        if (!this.isAlive()) {
+            console.error('RowCtrl is not alive, but making cells');
+        }
+        this.createAllCellCtrls();
+
+        return this.getCellCtrlsForContainer(rowType);
+    }
+
     private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
         if (this.isFullWidth()) {
             return;

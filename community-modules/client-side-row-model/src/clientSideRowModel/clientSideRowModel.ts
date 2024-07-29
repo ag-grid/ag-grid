@@ -33,6 +33,7 @@ import {
     _debounce,
     _errorOnce,
     _exists,
+    _forEach,
     _insertIntoArray,
     _last,
     _missing,
@@ -341,7 +342,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return res;
     }
 
-    private setRowTopAndRowIndex(): Set<string> {
+    private setRowTopAndRowIndex() {
         const defaultRowHeight = this.environment.getDefaultRowHeight();
         let nextRowTop = 0;
 
@@ -349,18 +350,21 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // clearRowTopAndRowIndex(), and given we are looping through this.rowsToDisplay here,
         // we create the map here for performance reasons, so we don't loop a second time
         // in clearRowTopAndRowIndex()
-        const displayedRowsMapped = new Set<string>();
+        // const displayedRowsMapped = new Set<string>();
 
         // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
         // with these two layouts.
         const allowEstimate = this.gos.isDomLayout('normal');
 
-        for (let i = 0; i < this.rowsToDisplay.length; i++) {
-            const rowNode = this.rowsToDisplay[i];
+        const rows = this.rowsToDisplay;
+        const length = rows.length;
+        for (let i = 0; i < length; i++) {
+            const rowNode = rows[i];
 
-            if (rowNode.id != null) {
-                displayedRowsMapped.add(rowNode.id);
-            }
+            rowNode.__toBeDisplayed = rowNode.id != null;
+            // if (rowNode.id != null) {
+            //     displayedRowsMapped.add(rowNode.id);
+            // }
 
             if (rowNode.rowHeight == null) {
                 const rowHeight = this.gos.getRowHeightForNode(rowNode, allowEstimate, defaultRowHeight);
@@ -372,15 +376,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             nextRowTop += rowNode.rowHeight!;
         }
 
-        return displayedRowsMapped;
+        // return displayedRowsMapped;
     }
 
-    private clearRowTopAndRowIndex(changedPath: ChangedPath, displayedRowsMapped: Set<string>): void {
+    private clearRowTopAndRowIndex(changedPath: ChangedPath): void {
         const changedPathActive = changedPath.isActive();
 
         const clearIfNotDisplayed = (rowNode: RowNode) => {
-            if (rowNode && rowNode.id != null && !displayedRowsMapped.has(rowNode.id)) {
-                rowNode.clearRowTopAndRowIndex();
+            if (rowNode) {
+                if (rowNode.id != null && rowNode.__toBeDisplayed === false) {
+                    rowNode.clearRowTopAndRowIndex();
+                }
+                rowNode.__toBeDisplayed = undefined;
             }
         };
 
@@ -400,7 +407,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     // as expanded=undefined for root node
                     const skipChildren = changedPathActive && !isRootNode && !rowNode.expanded;
                     if (!skipChildren) {
-                        rowNode.childrenAfterGroup.forEach(recurse);
+                        _forEach(rowNode.childrenAfterGroup, recurse);
+                        // rowNode.childrenAfterGroup.forEach(recurse);
                     }
                 }
             }
@@ -718,8 +726,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // set all row tops to null, then set row tops on all visible rows. if we don't
         // do this, then the algorithm below only sets row tops, old row tops from old rows
         // will still lie around
-        const displayedNodesMapped = this.setRowTopAndRowIndex();
-        this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
+        this.setRowTopAndRowIndex();
+        this.clearRowTopAndRowIndex(changedPath);
 
         this.isRefreshingModel = false;
 

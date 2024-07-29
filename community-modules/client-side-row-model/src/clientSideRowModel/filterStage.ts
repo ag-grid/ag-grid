@@ -31,9 +31,9 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     private filterNodes(filterActive: boolean, changedPath: ChangedPath): void {
         const filterCallback = (rowNode: RowNode, includeChildNodes: boolean) => {
             // recursively get all children that are groups to also filter
-            if (rowNode.hasChildren()) {
+            if (filterActive && rowNode.hasChildren()) {
                 // result of filter for this node. when filtering tree data, includeChildNodes = true when parent passes
-                if (filterActive && !includeChildNodes) {
+                if (includeChildNodes) {
                     rowNode.childrenAfterFilter = rowNode.childrenAfterGroup!.filter((childNode) => {
                         // a group is included in the result if it has any children of it's own.
                         // by this stage, the child groups are already filtered
@@ -50,10 +50,10 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
                         return passBecauseChildren || passBecauseDataPasses;
                     });
                 } else {
-                    // if not filtering, the result is the original list
                     rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
                 }
             } else {
+                // if not filtering, the result is the original list
                 rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
             }
 

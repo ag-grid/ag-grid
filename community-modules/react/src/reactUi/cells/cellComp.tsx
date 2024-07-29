@@ -13,97 +13,17 @@ import type { MutableRefObject } from 'react';
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
-import { CustomContext } from '../../shared/customComp/customContext';
-import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { isComponentStateless } from '../utils';
-import PopupEditorComp from './popupEditorComp';
+import type { EditDetails } from './cellEditor';
+import { jsxEditValue } from './cellEditor';
 import useJsCellRenderer from './showJsRenderer';
 
 export enum CellCompState {
     ShowValue,
     EditValue,
 }
-
-const jsxEditorProxy = (
-    editDetails: EditDetails,
-    CellEditorClass: any,
-    setRef: (cellEditor: ICellEditor | undefined) => void
-) => {
-    const { compProxy } = editDetails;
-    setRef(compProxy);
-
-    const props = compProxy!.getProps();
-
-    const isStateless = isComponentStateless(CellEditorClass);
-
-    return (
-        <CustomContext.Provider
-            value={{
-                setMethods: (methods: CustomCellEditorCallbacks) => compProxy!.setMethods(methods),
-            }}
-        >
-            {isStateless && <CellEditorClass {...props} />}
-            {!isStateless && <CellEditorClass {...props} ref={(ref: any) => compProxy!.setRef(ref)} />}
-        </CustomContext.Provider>
-    );
-};
-
-const jsxEditor = (
-    editDetails: EditDetails,
-    CellEditorClass: any,
-    setRef: (cellEditor: ICellEditor | undefined) => void
-) => {
-    const newFormat = editDetails.compProxy;
-
-    return (
-        <>
-            {!newFormat && <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />}
-            {newFormat && jsxEditorProxy(editDetails, CellEditorClass, setRef)}
-        </>
-    );
-};
-
-const jsxEditValue = (
-    editDetails: EditDetails,
-    setInlineCellEditorRef: (cellEditor: ICellEditor | undefined) => void,
-    setPopupCellEditorRef: (cellEditor: ICellEditor | undefined) => void,
-    eGui: HTMLElement,
-    cellCtrl: CellCtrl,
-    jsEditorComp: ICellEditorComp | undefined
-) => {
-    const compDetails = editDetails.compDetails;
-    const CellEditorClass = compDetails.componentClass;
-
-    const reactInlineEditor = compDetails.componentFromFramework && !editDetails.popup;
-    const reactPopupEditor = compDetails.componentFromFramework && editDetails.popup;
-    const jsPopupEditor = !compDetails.componentFromFramework && editDetails.popup;
-
-    return (
-        <>
-            {reactInlineEditor && jsxEditor(editDetails, CellEditorClass, setInlineCellEditorRef)}
-
-            {reactPopupEditor && (
-                <PopupEditorComp
-                    editDetails={editDetails}
-                    cellCtrl={cellCtrl}
-                    eParentCell={eGui}
-                    wrappedContent={jsxEditor(editDetails, CellEditorClass, setPopupCellEditorRef)}
-                />
-            )}
-
-            {jsPopupEditor && jsEditorComp && (
-                <PopupEditorComp
-                    editDetails={editDetails}
-                    cellCtrl={cellCtrl}
-                    eParentCell={eGui}
-                    jsChildComp={jsEditorComp}
-                />
-            )}
-        </>
-    );
-};
 
 const jsxShowValue = (
     showDetails: RenderDetails,
@@ -125,7 +45,7 @@ const jsxShowValue = (
     // like the aggregation functions avg and count, which return objects and depend on toString()
     // getting called.
     const valueForNoCellRenderer = value?.toString ? value.toString() : value;
-
+    // console.log(valueForNoCellRenderer);
     const bodyJsxFunc = () => (
         <>
             {noCellRenderer && <>{valueForNoCellRenderer}</>}
@@ -155,12 +75,6 @@ export interface RenderDetails {
     compDetails: UserCompDetails | undefined;
     value?: any;
     force?: boolean;
-}
-export interface EditDetails {
-    compDetails: UserCompDetails;
-    popup?: boolean;
-    popupPosition?: 'over' | 'under';
-    compProxy?: CellEditorComponentProxy;
 }
 
 const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow: boolean }) => {
@@ -379,7 +293,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
             return;
         }
 
-        if (!cellCtrl) {
+        if (!cellCtrl || !cellCtrl.isAlive()) {
             return;
         }
 
@@ -475,29 +389,33 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         }
     });
 
-    const showContents = () => (
-        <>
-            {renderDetails != null &&
-                jsxShowValue(
-                    renderDetails,
-                    renderKey,
-                    cellInstanceId,
-                    cellRendererRef,
-                    showCellWrapper,
-                    reactCellRendererStateless,
-                    setCellValueRef
-                )}
-            {editDetails != null &&
-                jsxEditValue(
-                    editDetails,
-                    setInlineCellEditorRef,
-                    setPopupCellEditorRef,
-                    eGui.current!,
-                    cellCtrl,
-                    jsEditorComp
-                )}
-        </>
-    );
+    const showContents = () => {
+        const content = (
+            <>
+                {renderDetails != null &&
+                    jsxShowValue(
+                        renderDetails,
+                        renderKey,
+                        cellInstanceId,
+                        cellRendererRef,
+                        showCellWrapper,
+                        reactCellRendererStateless,
+                        setCellValueRef
+                    )}
+                {editDetails != null &&
+                    jsxEditValue(
+                        editDetails,
+                        setInlineCellEditorRef,
+                        setPopupCellEditorRef,
+                        eGui.current!,
+                        cellCtrl,
+                        jsEditorComp
+                    )}
+            </>
+        );
+
+        return content;
+    };
 
     const onBlur = useCallback(() => cellCtrl.onFocusOut(), []);
 

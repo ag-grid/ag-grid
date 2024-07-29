@@ -206,13 +206,10 @@ export class SortService extends BeanStub implements NamedBean {
         }
 
         const listToSort = rowNode.childrenAfterSort;
+        const lastChildIndex = rowNode.childrenAfterSort.length - 1;
+
         for (let i = 0; i < listToSort.length; i++) {
-            const child = listToSort[i];
-            const firstChild = i === 0;
-            const lastChild = i === rowNode.childrenAfterSort.length - 1;
-            child.setFirstChild(firstChild);
-            child.setLastChild(lastChild);
-            child.setChildIndex(i);
+            listToSort[i].setChildIndex(i, i === 0, i === lastChildIndex);
         }
     }
 

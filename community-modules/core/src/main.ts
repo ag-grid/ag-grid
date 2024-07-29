@@ -863,6 +863,7 @@ export {
     _shallowCompare,
     _flatten,
     _forEachReverse,
+    _forEach,
     _areEqual,
     _existsAndNotEmpty,
     _removeRepeatsFromArray,
