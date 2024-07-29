@@ -159,10 +159,12 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
     }
 >;
 
+/** Internal Interface for AG Grid Events */
 export type AllEventsWithoutGridCommon<TData = any, TContext = any> = {
     [K in keyof AgEventTypeParams<TData, TContext>]: WithoutGridCommon<AgEventTypeParams<TData, TContext>[K]>;
 }[keyof AgEventTypeParams];
 
+/** Union Type of all AG Grid Events */
 export type AllEvents<TData = any, TContext = any> = {
     [K in keyof AgEventTypeParams<TData, TContext>]: AgEventTypeParams<TData, TContext>[K];
 }[keyof AgEventTypeParams];
