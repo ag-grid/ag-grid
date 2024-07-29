@@ -9,7 +9,6 @@ import type { SortDirection } from '../../../entities/colDef';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
-import { _getElementSize } from '../../../utils/dom';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
@@ -593,13 +592,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
 
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
+        const groupHeaderHeight = this.beans.columnModel.getGroupRowsHeight();
 
-        const pivotMode = columnModel.isPivotMode();
-        const groupHeaderHeight = pivotMode
-            ? columnModel.getPivotGroupHeaderHeight()
-            : columnModel.getGroupHeaderHeight();
+        let extraHeight = 0;
 
-        const extraHeight = numberOfParents * groupHeaderHeight;
+        for (let i = 0; i < numberOfParents; i++) {
+            extraHeight += groupHeaderHeight[groupHeaderHeight.length - 1 - i];
+        }
 
         eGui.style.setProperty('top', `${-extraHeight}px`);
         eGui.style.setProperty('height', `${headerHeight + extraHeight}px`);
