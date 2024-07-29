@@ -1,3 +1,4 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import React from 'react';
 
 import styles from './FeaturesSection.module.scss';
@@ -51,6 +52,14 @@ const FeaturesSection: React.FC = () => {
                     </button>
                 </div>
                 <div className={styles.contentContainer}>{renderTabContent()}</div>
+                <div className={styles.buttonContainer}>
+                    <button className={styles.featureNavButton} onClick={() => null}>
+                        <Icon svgClasses={styles.featureNavIcon} name="arrowLeft" />
+                    </button>
+                    <button className={styles.featureNavButton} onClick={() => null}>
+                        <Icon svgClasses={styles.featureNavIcon} name="arrowRight" />
+                    </button>
+                </div>
             </div>
         </>
     );

@@ -31,3 +31,24 @@
         box-shadow: var(--shadow-lg);
     }
 }
+
+.buttonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-size-2;
+
+    .featureNavButton {
+        appearance: none;
+        padding: 0;
+        text-align: left;
+        font-weight: var(--text-regular);
+        border: none;
+        background-color: transparent;
+        box-shadow: none;
+    }
+
+    .featureNavIcon {
+        fill: var(--color-fg-primary);
+    }
+}

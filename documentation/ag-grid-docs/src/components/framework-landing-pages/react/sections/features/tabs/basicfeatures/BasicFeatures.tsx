@@ -1,4 +1,3 @@
-import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import React from 'react';
 
@@ -44,9 +43,9 @@ const BasicFeatures: React.FC = () => {
                         <div className={styles.feature}>
                             <h5 className={styles.featureHeading}>100s of Features</h5>
                             <span className={styles.featureDetail}>
-                                Every feature your can imagine, all in one place: <a>Sorting</a>, <a>filtering</a>,{' '}
-                                <a>pagination</a>, and more. Upgrade to enterprise for Advanced Features, like{' '}
-                                <a>Integrated Charting</a>, <a>Pivoting</a>, and more.
+                                Every feature your can imagine, all in one place: <a>Sorting</a>, <a>Filtering</a>,{' '}
+                                <a>Cell Editing</a>, and more. Upgrade to enterprise for Advanced Features, like{' '}
+                                <a>Integrated Charting</a>, <a>Pivoting</a>, and <a>Row Grouping</a>.
                             </span>
                         </div>
                     </div>
@@ -56,14 +55,6 @@ const BasicFeatures: React.FC = () => {
                         <Snippet framework={'react'} language={'js'} content={codeExample} transform={false} />
                     </div>
                 </div>
-            </div>
-            <div className={styles.buttonContainer}>
-                <button className={styles.featureNavButton}>
-                    <Icon svgClasses={styles.featureNavIcon} name="arrowLeft" />
-                </button>
-                <button className={styles.featureNavButton}>
-                    <Icon svgClasses={styles.featureNavIcon} name="arrowRight" />
-                </button>
             </div>
         </div>
     );

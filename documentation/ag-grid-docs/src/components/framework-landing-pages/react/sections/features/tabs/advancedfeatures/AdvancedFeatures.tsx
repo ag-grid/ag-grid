@@ -28,25 +28,25 @@ const AdvancedFeatures: React.FC = () => {
                     <div className={styles.featureContainer}>
                         <h3 className={styles.title}>Expand</h3>
                         <div className={styles.feature}>
-                            <h5 className={styles.featureHeading}>Get Started in Minutes</h5>
+                            <h5 className={styles.featureHeading}>Advanced Features</h5>
                             <span className={styles.featureDetail}>
-                                Add a React Table with less than 20 lines of code. Choose a <a>theme</a>, add your data,
-                                and define your column structure. View the <a>Quick Start</a> to learn more.
+                                Build charts directly from your react table. Perform intensive data analysis with row
+                                grouping, pivoting and master/detail. Easily access all features with our accessory
+                                panels.
                             </span>
                         </div>
                         <div className={styles.feature}>
-                            <h5 className={styles.featureHeading}>Handle Millions of Cells</h5>
+                            <h5 className={styles.featureHeading}>Dedicated Support</h5>
                             <span className={styles.featureDetail}>
-                                Easily handle millions of rows with our <a>Client-Side Row Model</a> or upgrade to
-                                enterprise for <a>Infinite Scrolling</a> with our <a>Server-Side Row Model</a>.
+                                Access dedicated support via Zendesk, monitored by our support teams 365 days a year, to
+                                help build your perfect react table.
                             </span>
                         </div>
                         <div className={styles.feature}>
-                            <h5 className={styles.featureHeading}>100s of Features</h5>
+                            <h5 className={styles.featureHeading}>AG Charts</h5>
                             <span className={styles.featureDetail}>
-                                Every feature your can imagine, all in one place: <a>Sorting</a>, <a>filtering</a>,{' '}
-                                <a>pagination</a>, and more. Upgrade to enterprise for Advanced Features, like{' '}
-                                <a>Integrated Charting</a>, <a>Pivoting</a>, and more.
+                                Purchase a discounted bundle licence to access all of the advanced features and
+                                additional series types available in <a>AG Charts Enterprise</a>
                             </span>
                         </div>
                     </div>
@@ -56,14 +56,6 @@ const AdvancedFeatures: React.FC = () => {
                         <Snippet framework={'react'} language={'js'} content={codeExample} transform={false} />
                     </div>
                 </div>
-            </div>
-            <div className={styles.buttonContainer}>
-                <button className={styles.featureNavButton}>
-                    <Icon svgClasses={styles.featureNavIcon} name="arrowLeft" />
-                </button>
-                <button className={styles.featureNavButton}>
-                    <Icon svgClasses={styles.featureNavIcon} name="arrowRight" />
-                </button>
             </div>
         </div>
     );

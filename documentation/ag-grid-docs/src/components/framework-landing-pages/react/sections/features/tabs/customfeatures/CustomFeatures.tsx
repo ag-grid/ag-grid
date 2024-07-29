@@ -28,25 +28,25 @@ const CustomFeatures: React.FC = () => {
                     <div className={styles.featureContainer}>
                         <h3 className={styles.title}>Customise</h3>
                         <div className={styles.feature}>
-                            <h5 className={styles.featureHeading}>Get Started in Minutes</h5>
+                            <h5 className={styles.featureHeading}>100+ CSS Variables</h5>
                             <span className={styles.featureDetail}>
-                                Add a React Table with less than 20 lines of code. Choose a <a>theme</a>, add your data,
-                                and define your column structure. View the <a>Quick Start</a> to learn more.
+                                Customise every part of your react table with over <a>100 CSS variables</a> or create
+                                your own theme entirely with our <a>Theme Builder</a> or <a>Figma Design System</a>.
                             </span>
                         </div>
                         <div className={styles.feature}>
-                            <h5 className={styles.featureHeading}>Handle Millions of Cells</h5>
+                            <h5 className={styles.featureHeading}>4 Default Themes</h5>
                             <span className={styles.featureDetail}>
-                                Easily handle millions of rows with our <a>Client-Side Row Model</a> or upgrade to
-                                enterprise for <a>Infinite Scrolling</a> with our <a>Server-Side Row Model</a>.
+                                Choose from four themes, each available in light and dark modes, including our new{' '}
+                                <a>Quartz</a> and <a>Material Dark</a> themes.
                             </span>
                         </div>
                         <div className={styles.feature}>
-                            <h5 className={styles.featureHeading}>100s of Features</h5>
+                            <h5 className={styles.featureHeading}>Custom Components</h5>
                             <span className={styles.featureDetail}>
-                                Every feature your can imagine, all in one place: <a>Sorting</a>, <a>filtering</a>,{' '}
-                                <a>pagination</a>, and more. Upgrade to enterprise for Advanced Features, like{' '}
-                                <a>Integrated Charting</a>, <a>Pivoting</a>, and more.
+                                Override the default rendering of any part of the grid with your own{' '}
+                                <a>React Components</a>. Add buttons to cells, define your own filtering logic, and add
+                                custom functionality.
                             </span>
                         </div>
                     </div>
@@ -56,14 +56,6 @@ const CustomFeatures: React.FC = () => {
                         <Snippet framework={'react'} language={'js'} content={codeExample} transform={false} />
                     </div>
                 </div>
-            </div>
-            <div className={styles.buttonContainer}>
-                <button className={styles.featureNavButton}>
-                    <Icon svgClasses={styles.featureNavIcon} name="arrowLeft" />
-                </button>
-                <button className={styles.featureNavButton}>
-                    <Icon svgClasses={styles.featureNavIcon} name="arrowRight" />
-                </button>
             </div>
         </div>
     );
