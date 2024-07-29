@@ -346,11 +346,7 @@ describe('ag-grid tree data', () => {
             · └── D LEAF level:1 id:1 label:3-v1
         `);
 
-        const oldRoot = findTreeRootNode(api);
-
         api.setGridOption('rowData', rowData2);
-
-        console.log(findTreeRootNode(api) == oldRoot);
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID

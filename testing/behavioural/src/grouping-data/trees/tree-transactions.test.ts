@@ -76,6 +76,14 @@ describe('ag-grid tree transactions', () => {
             { update: [rowH2] },
         ];
 
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            ├── A LEAF level:0 id:0
+            └─┬ X filler level:0 id:row-group-0-X
+            · └─┬ Y filler level:1 id:row-group-0-X-1-Y
+            · · └── Z LEAF level:2 id:88
+        `);
+
         if (mode === 'async') {
             const promises: Promise<void>[] = [];
             for (const transaction of transactions) {
@@ -108,7 +116,8 @@ describe('ag-grid tree transactions', () => {
                 │ │ └── Z LEAF level:2 id:88
                 │ └── B LEAF level:1 id:1
                 └─┬ C filler level:0 id:row-group-0-C
-                · └── D LEAF level:1 id:2`);
+                · └── D LEAF level:1 id:2
+            `);
 
             api.applyTransaction(transactions[2]);
 
