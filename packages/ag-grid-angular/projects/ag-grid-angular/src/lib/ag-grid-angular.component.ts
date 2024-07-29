@@ -4,7 +4,7 @@ import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     AlignedGrid,
-    AsyncTransactionsFlushed,
+    AsyncTransactionsFlushedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
     CellClickedEvent,
@@ -315,7 +315,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             const fireEmitter = () => this.angularFrameworkOverrides.runInsideAngular(() => emitter.emit(event));
 
             if (this._holdEvents) {
-                // if the user is listening events, wait for ngAfterViewInit to fire first, then emit the grid events
+                // if the user is listening to events, wait for ngAfterViewInit to fire first, then emit the grid events
                 this._fullyReady.then(() => fireEmitter());
             } else {
                 fireEmitter();
@@ -1941,8 +1941,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     >();
     /** Async transactions have been applied. Contains a list of all transaction results.
      */
-    @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<
-        AsyncTransactionsFlushed<TData>
+    @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushedEvent<TData>> = new EventEmitter<
+        AsyncTransactionsFlushedEvent<TData>
     >();
     /** A server side store has finished refreshing.
      */
