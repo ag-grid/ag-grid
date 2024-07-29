@@ -528,13 +528,11 @@
         },
         "groupId": {},
         "marryChildren": {},
-        "suppressStickyLabel": {},
         "openByDefault": {},
         "columnGroupShow": {},
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},
         "suppressFiltersToolPanel": {},
-        "suppressSpanHeaderHeight": {},
         "tooltipComponent": {
             "description": "Provide your own tooltip component for the column group.",
             "more": {
@@ -569,6 +567,8 @@
                 "url": "./column-headers/"
             }
         },
-        "headerGroupComponentParams": {}
+        "headerGroupComponentParams": {},
+        "suppressSpanHeaderHeight": {},
+        "suppressStickyLabel": {}
     }
 }
