@@ -5,21 +5,21 @@ import React from 'react';
 import styles from './CustomFeatures.module.scss';
 
 const CustomFeatures: React.FC = () => {
-    const codeExample = `const GridExample = () => {
-    const [rowData, setRowData] = getRowDataJson();
-    const [colDefs, setColDefs] = useState<ColDef<IRow>[]>([
-        { field: "make" }, { field: "model" },
-        { field: "price" }, { field: "electric" }
-    ]);
-    
-    return (
-        <div className={"ag-theme-quartz-dark"}>
-            <AgGridReact 
-                rowData={rowData}
-                columnDefs={colDefs}
-            />
-        </div>
-    );`;
+    const codeExample = `.ag-theme-quartz {
+    /* Colours */
+    --ag-foreground-color: rgb(126, 46, 132);
+    --ag-background-color: rgb(249, 245, 227);
+    /* Fonts */
+    --ag-font-size: 17px;
+    --ag-font-family: monospace;
+    /* Sizing */
+    --ag-grid-size: 3px; /* very compact */
+    --ag-header-height: 30px;
+    /* Borders */
+    --ag-borders: none;
+    --ag-row-border-style: dashed;
+}
+`;
 
     return (
         <div className={styles.container}>
@@ -53,7 +53,13 @@ const CustomFeatures: React.FC = () => {
                 </div>
                 <div className={styles.column}>
                     <div className={styles.gridContainer}>
-                        <Snippet framework={'react'} language={'js'} content={codeExample} transform={false} />
+                        <Snippet
+                            framework={'react'}
+                            language={'css'}
+                            content={codeExample}
+                            transform={false}
+                            copyToClipboard
+                        />
                     </div>
                 </div>
             </div>

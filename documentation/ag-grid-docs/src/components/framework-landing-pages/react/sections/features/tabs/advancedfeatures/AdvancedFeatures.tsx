@@ -5,21 +5,20 @@ import React from 'react';
 import styles from './AdvancedFeatures.module.scss';
 
 const AdvancedFeatures: React.FC = () => {
-    const codeExample = `const GridExample = () => {
-    const [rowData, setRowData] = getRowDataJson();
-    const [colDefs, setColDefs] = useState<ColDef<IRow>[]>([
-        { field: "make" }, { field: "model" },
-        { field: "price" }, { field: "electric" }
-    ]);
-    
-    return (
-        <div className={"ag-theme-quartz-dark"}>
-            <AgGridReact 
-                rowData={rowData}
-                columnDefs={colDefs}
-            />
-        </div>
-    );`;
+    const codeExample = `const [colDefs, setColDefs] = useState<ColDef<IRow>[]>([
+    { field: "make", pivot: true, rowGroup: true, aggFunc: 'sum' },
+]);
+
+<AgGridReact 
+    rowData={rowData}
+    columnDefs={colDefs}
+    enableCharts={true}
+    enableRangeSelection={true}
+    masterDetail={true}
+    enableAdvancedFilter={true}
+    rowGroupPanelShow={true}
+    sideBar={true}
+/>`;
 
     return (
         <div className={styles.container}>
@@ -53,7 +52,13 @@ const AdvancedFeatures: React.FC = () => {
                 </div>
                 <div className={styles.column}>
                     <div className={styles.gridContainer}>
-                        <Snippet framework={'react'} language={'js'} content={codeExample} transform={false} />
+                        <Snippet
+                            framework={'react'}
+                            language={'jsx'}
+                            content={codeExample}
+                            transform={false}
+                            copyToClipboard
+                        />
                     </div>
                 </div>
             </div>

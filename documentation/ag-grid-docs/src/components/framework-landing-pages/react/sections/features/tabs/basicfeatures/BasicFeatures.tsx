@@ -13,12 +13,12 @@ const BasicFeatures: React.FC = () => {
     
     return (
         <div className={"ag-theme-quartz-dark"}>
-            <AgGridReact 
-                rowData={rowData}
-                columnDefs={colDefs}
+            <AgGridReact rowData={rowData} columnDefs={colDefs}
             />
         </div>
-    );`;
+    );
+}
+`;
 
     return (
         <div className={styles.container}>
@@ -52,7 +52,13 @@ const BasicFeatures: React.FC = () => {
                 </div>
                 <div className={styles.column}>
                     <div className={styles.gridContainer}>
-                        <Snippet framework={'react'} language={'js'} content={codeExample} transform={false} />
+                        <Snippet
+                            framework={'react'}
+                            language={'js'}
+                            content={codeExample}
+                            transform={false}
+                            copyToClipboard
+                        />
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@
     },
     {
         "question": "Can I create a React Table for free?",
-        "answer": "Yes, you can create a React Table for free using various open-source libraries such as AG Grid Community."
+        "answer": "Yes, you can create a React Table for free using our open-source library, AG Grid Community."
     },
     {
         "question": "Will my React Tables be compatible with AG Charts React Charts?",
@@ -24,7 +24,15 @@
         "answer": "AG Grid offers more features, better performance, and comprehensive support compared to the React Table."
     },
     {
-        "question": "More TBC",
+        "question": "How Many Rows Can AG Grid Handle?",
         "answer": "Additional FAQs will be added soon. Stay tuned for updates."
+    },
+    {
+        "question": "What is AG Grid Enterprise?",
+        "answer": "AG Grid Community is the free version with basic features, while AG Grid Enterprise offers additional advanced features and support."
+    },
+    {
+        "question": "What is an AG Grid licence?",
+        "answer": "An AG Grid licence is required for using AG Grid Enterprise. Try it for free, or request a trail licence at info@ag-grid.com to remove the watermark & console messages."
     }
 ]

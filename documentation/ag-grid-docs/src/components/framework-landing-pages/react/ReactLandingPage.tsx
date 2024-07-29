@@ -25,7 +25,7 @@ export const ReactLandingPage = () => {
             <Divider odd={getIsOdd()} />
             <div className={isOdd ? styles.sectionOdd : styles.sectionOdd}>
                 <div className={styles.headingContainer}>
-                    <h2 className={styles.tag}>Why Choose AG Grid?</h2>
+                    <h2 className={styles.tag}>Why Use AG Grid?</h2>
                     <h3 className={styles.heading}>Amazingly Fast, Fully Customisable and Unbeatable Features</h3>
                     <h4 className={styles.subHeading}>
                         Get started in minutes and access 1000s of features without compromising on performance.
