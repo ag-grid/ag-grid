@@ -121,7 +121,9 @@ export class BarSparkline extends BarColumnSparkline {
                 labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
                 labelTextAlign = isPositiveY ? 'end' : 'start';
 
-                const textSize = _ModuleSupport.TextMeasurer.measureText(labelText, { font: labelFontFamily });
+                const textSize = _ModuleSupport.CachedTextMeasurerPool.measureText(labelText, {
+                    font: labelFontFamily,
+                });
                 const textWidth = textSize.width || 20;
                 const positiveBoundary = yZero + textWidth;
                 const negativeBoundary = yZero - textWidth;
