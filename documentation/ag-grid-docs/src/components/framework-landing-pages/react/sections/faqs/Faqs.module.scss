@@ -12,6 +12,8 @@
     margin: 10px 0;
     padding: 10px;
     cursor: pointer;
+    background-color: var(--color-gray-800);
+    border: 1px solid var(--color-util-gray-300);
 
     &.active .faqAnswer {
         max-height: 500px; // adjust as necessary
@@ -31,6 +33,13 @@
     }
 }
 
+.divider {
+    height: 100%;
+    width: 2px;
+    color: red;
+    background-color: red;
+}
+
 .questionContainer {
     display: flex;
 
@@ -39,13 +48,13 @@
         font-weight: bold;
     }
 
-    .questionDivider {
-        flex: 0 1 auto;
+    .detailsContainer {
+        flex: 1;
+        padding-left: $spacing-size-12;
     }
 
     .questionText {
         flex: 1;
-        padding-left: $spacing-size-12;
         font-weight: bold;
     }
 

@@ -27,11 +27,14 @@ const Faqs: React.FC = () => {
                     >
                         <div className={styles.questionContainer}>
                             <div className={styles.questionIndex}>0{index + 1}</div>
-                            <div className={styles.questionText}>{faq.question}</div>
+                            <div className={styles.divider}></div>
+                            <div className={styles.detailsContainer}>
+                                <div className={styles.questionText}>{faq.question}</div>
+                                <div className={styles.answersContainer}>
+                                    <div className={styles.faqAnswer}>{faq.answer}</div>
+                                </div>
+                            </div>
                             <div className={styles.questionIcon}>{activeIndex === index ? '-' : '+'}</div>
-                        </div>
-                        <div className={styles.answersContainer}>
-                            <div className={styles.faqAnswer}>{faq.answer}</div>
                         </div>
                     </div>
                 ))}
