@@ -9,8 +9,6 @@ import type {
     SideBarDef,
     SideBarState,
     ToolPanelDef,
-    ToolPanelVisibleChangedEvent,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     Component,
@@ -25,9 +23,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
+import type { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
 import { AgSideBarButtonsSelector } from './agSideBarButtons';
-import type { SideBarButtonClickedEvent } from './agSideBarButtons';
-import type { AgSideBarButtons } from './agSideBarButtons';
 import { parseSideBarDef } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
@@ -239,7 +236,7 @@ export class AgSideBar extends Component implements ISideBar {
             wrapper.setResizerSizerSide(resizerSide);
         });
 
-        this.eventService.dispatchEvent({ type: 'sideBarUpdated' });
+        this.dispatchSideBarUpdated();
 
         return this;
     }
@@ -249,7 +246,7 @@ export class AgSideBar extends Component implements ISideBar {
         options?: { skipAriaHidden?: boolean | undefined } | undefined
     ): void {
         super.setDisplayed(displayed, options);
-        this.eventService.dispatchEvent({ type: 'sideBarUpdated' });
+        this.dispatchSideBarUpdated();
     }
 
     public getState(): SideBarState {
@@ -336,7 +333,7 @@ export class AgSideBar extends Component implements ISideBar {
 
             wrapper.setToolPanelDef(def, {
                 initialState,
-                onStateUpdated: () => this.eventService.dispatchEvent({ type: 'sideBarUpdated' }),
+                onStateUpdated: () => this.dispatchSideBarUpdated(),
             });
         }
         wrapper.setDisplayed(false);
@@ -393,24 +390,22 @@ export class AgSideBar extends Component implements ISideBar {
     ): void {
         const switchingToolPanel = !!key && !!previousKey;
         if (previousKey) {
-            const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'toolPanelVisibleChanged',
                 source,
                 key: previousKey,
                 visible: false,
                 switchingToolPanel,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
         if (key) {
-            const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'toolPanelVisibleChanged',
                 source,
                 key,
                 visible: true,
                 switchingToolPanel,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 
@@ -454,7 +449,7 @@ export class AgSideBar extends Component implements ISideBar {
                 }
                 const params = this.gos.addGridCommonParams<IToolPanelParams>({
                     ...(toolPanelDef.toolPanelParams ?? {}),
-                    onStateUpdated: () => this.eventService.dispatchEvent({ type: 'sideBarUpdated' }),
+                    onStateUpdated: () => this.dispatchSideBarUpdated(),
                 });
                 const hasRefreshed = toolPanelWrapper.getToolPanelInstance()?.refresh(params);
                 if (hasRefreshed !== true) {
@@ -470,6 +465,10 @@ export class AgSideBar extends Component implements ISideBar {
 
         // don't re-assign initial state
         this.setSideBarDef({ sideBarDef, existingToolPanelWrappers });
+    }
+
+    private dispatchSideBarUpdated(): void {
+        this.eventService.dispatchEvent({ type: 'sideBarUpdated' });
     }
 
     private destroyToolPanelWrappers(): void {

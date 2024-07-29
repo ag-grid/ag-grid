@@ -1,6 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { RowEditingStartedEvent, RowEditingStoppedEvent, RowValueChangedEvent } from '../events';
+import type { RowEditingStartedEvent, RowEditingStoppedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
@@ -47,8 +47,7 @@ export class RowEditService extends BeanStub implements NamedBean {
         }
 
         if (fireRowEditEvent) {
-            const event: RowValueChangedEvent = rowCtrl.createRowEvent('rowValueChanged');
-            this.eventService.dispatchEvent(event);
+            this.eventService.dispatchEvent(rowCtrl.createRowEvent('rowValueChanged'));
         }
 
         if (isRowEdit) {

@@ -1,14 +1,13 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { isColumn } from '../entities/agColumn';
 import type { AgColumn } from '../entities/agColumn';
+import { isColumn } from '../entities/agColumn';
 import { AgColumnGroup, createUniqueColumnGroupId, isColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { RowNode } from '../entities/rowNode';
-import type { ColumnContainerWidthChanged, ColumnEventType, DisplayedColumnsWidthChangedEvent } from '../events';
+import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _last, _removeAllFromUnorderedArray } from '../utils/array';
 import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
@@ -104,17 +103,15 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
             // this event is fired to allow the grid viewport to resize before the
             // scrollbar tries to update its visibility.
-            const evt: WithoutGridCommon<ColumnContainerWidthChanged> = {
+            this.eventService.dispatchEvent({
                 type: 'columnContainerWidthChanged',
-            };
-            this.eventService.dispatchEvent(evt);
+            });
 
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportPosition()
-            const event: WithoutGridCommon<DisplayedColumnsWidthChangedEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'displayedColumnsWidthChanged',
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 

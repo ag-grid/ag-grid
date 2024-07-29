@@ -465,11 +465,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
 
-        const existingNode = parentGroup.childrenAfterGroup?.find((node) => node.key === childNode.key);
-        if (existingNode) {
-            _warnOnce(`duplicate group keys for row data, keys should be unique`, [existingNode.data, childNode.data]);
-            return;
-        }
         childNode.parent = parentGroup;
         childNode.level = level;
         this.ensureRowNodeFields(childNode, key);

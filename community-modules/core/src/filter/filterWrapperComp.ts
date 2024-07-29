@@ -1,9 +1,8 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { FilterDestroyedEvent, FilterOpenedEvent } from '../events';
+import type { FilterDestroyedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IFilterComp } from '../interfaces/iFilter';
 import { _clearElement } from '../utils/dom';
 import { _warnOnce } from '../utils/function';
@@ -77,13 +76,12 @@ export class FilterWrapperComp extends Component {
 
             this.appendChild(guiFromFilter);
             if (init) {
-                const event: WithoutGridCommon<FilterOpenedEvent> = {
+                this.eventService.dispatchEvent({
                     type: 'filterOpened',
                     column,
                     source,
                     eGui: this.getGui(),
-                };
-                this.eventService.dispatchEvent(event);
+                });
             }
         });
     }
