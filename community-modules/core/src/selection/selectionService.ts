@@ -645,7 +645,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     }
 
     private dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        this.eventService.dispatchEvent<'selectionChanged'>({
+        this.eventService.dispatchEvent({
             type: 'selectionChanged',
             source,
         });

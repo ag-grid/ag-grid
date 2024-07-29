@@ -239,7 +239,7 @@ export class DragService extends BeanStub implements NamedBean {
             }
 
             this.dragging = true;
-            this.eventService.dispatchEvent<'dragStarted'>({
+            this.eventService.dispatchEvent({
                 type: 'dragStarted',
                 target: el,
             });
@@ -339,7 +339,7 @@ export class DragService extends BeanStub implements NamedBean {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams!.onDragStop(eventOrTouch);
-            this.eventService.dispatchEvent<'dragStopped'>({
+            this.eventService.dispatchEvent({
                 type: 'dragStopped',
                 target: el,
             });

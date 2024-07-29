@@ -301,7 +301,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         this.focusedCellPosition = null;
 
-        this.eventService.dispatchEvent<'cellFocusCleared'>({
+        this.eventService.dispatchEvent({
             type: 'cellFocusCleared',
             ...this.getFocusEventParams(),
         });
@@ -328,7 +328,7 @@ export class FocusService extends BeanStub implements NamedBean {
               }
             : null;
 
-        this.eventService.dispatchEvent<'cellFocused'>({
+        this.eventService.dispatchEvent({
             type: 'cellFocused',
             ...this.getFocusEventParams(),
             forceBrowserFocus,

@@ -2,7 +2,8 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColumnEventType } from '../events';
+import type { ColumnEvent, ColumnEventType } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 
 /* 
 Created this class to:
@@ -13,19 +14,19 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
     beanName = 'columnEventDispatcher' as const;
 
     public visibleCols(): void {
-        this.eventService.dispatchEvent<'displayedColumnsChanged'>({
+        this.eventService.dispatchEvent({
             type: 'displayedColumnsChanged',
         });
     }
 
     public gridColumns(): void {
-        this.eventService.dispatchEvent<'gridColumnsChanged'>({
+        this.eventService.dispatchEvent({
             type: 'gridColumnsChanged',
         });
     }
 
     public headerHeight(col: AgColumn): void {
-        this.eventService.dispatchEvent<'columnHeaderHeightChanged'>({
+        this.eventService.dispatchEvent({
             type: 'columnHeaderHeightChanged',
             column: col,
             columns: [col],
@@ -34,7 +35,7 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
     }
 
     public groupOpened(impactedGroups: AgProvidedColumnGroup[]): void {
-        this.eventService.dispatchEvent<'columnGroupOpened'>({
+        this.eventService.dispatchEvent({
             type: 'columnGroupOpened',
             columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
             columnGroups: impactedGroups,
@@ -42,7 +43,7 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
     }
 
     public rowGroupChanged(impactedColumns: AgColumn[], source: ColumnEventType): void {
-        this.eventService.dispatchEvent<'columnRowGroupChanged'>({
+        this.eventService.dispatchEvent({
             type: 'columnRowGroupChanged',
             columns: impactedColumns,
             column: impactedColumns.length === 1 ? impactedColumns[0] : null,
@@ -55,36 +56,36 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         masterList: AgColumn[],
         source: ColumnEventType
     ): void {
-        this.eventService.dispatchEvent<'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged'>({
+        this.eventService.dispatchEvent({
             type: eventType,
             columns: masterList,
             column: masterList.length === 1 ? masterList[0] : null,
             source: source,
-        });
+        } as WithoutGridCommon<ColumnEvent>);
     }
 
     public pivotModeChanged(): void {
-        this.eventService.dispatchEvent<'columnPivotModeChanged'>({
+        this.eventService.dispatchEvent({
             type: 'columnPivotModeChanged',
         });
     }
 
     public virtualColumnsChanged(afterScroll: boolean): void {
-        this.eventService.dispatchEvent<'virtualColumnsChanged'>({
+        this.eventService.dispatchEvent({
             type: 'virtualColumnsChanged',
             afterScroll,
         });
     }
 
     public newColumnsLoaded(source: ColumnEventType): void {
-        this.eventService.dispatchEvent<'newColumnsLoaded'>({
+        this.eventService.dispatchEvent({
             type: 'newColumnsLoaded',
             source,
         });
     }
 
     public everythingChanged(source: ColumnEventType): void {
-        this.eventService.dispatchEvent<'columnEverythingChanged'>({
+        this.eventService.dispatchEvent({
             type: 'columnEverythingChanged',
             source,
         });
@@ -98,7 +99,7 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
     }): void {
         const { movedColumns, source, toIndex, finished } = params;
 
-        this.eventService.dispatchEvent<'columnMoved'>({
+        this.eventService.dispatchEvent({
             type: 'columnMoved',
             columns: movedColumns,
             column: movedColumns && movedColumns.length === 1 ? movedColumns[0] : null,
@@ -119,7 +120,7 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         // only include visible if it's common in all columns
         const pinned = this.getCommonValue(changedColumns, (col) => col.getPinned());
 
-        this.eventService.dispatchEvent<'columnPinned'>({
+        this.eventService.dispatchEvent({
             type: 'columnPinned',
             // mistake in typing, 'undefined' should be allowed, as 'null' means 'not pinned'
             pinned: pinned != null ? pinned : null,
@@ -140,7 +141,7 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         // only include visible if it's common in all columns
         const visible = this.getCommonValue(changedColumns, (col) => col.isVisible());
 
-        this.eventService.dispatchEvent<'columnVisible'>({
+        this.eventService.dispatchEvent({
             type: 'columnVisible',
             visible,
             columns: changedColumns,
@@ -171,12 +172,12 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         columns: AgColumn[],
         source: ColumnEventType
     ): void {
-        this.eventService.dispatchEvent<'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged'>({
+        this.eventService.dispatchEvent({
             type: type,
             columns: columns,
             column: columns && columns.length == 1 ? columns[0] : null,
             source: source,
-        });
+        } as WithoutGridCommon<ColumnEvent>);
     }
 
     public columnResized(
@@ -186,7 +187,7 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         flexColumns: AgColumn[] | null = null
     ): void {
         if (columns && columns.length) {
-            this.eventService.dispatchEvent<'columnResized'>({
+            this.eventService.dispatchEvent({
                 type: 'columnResized',
                 columns: columns,
                 column: columns.length === 1 ? columns[0] : null,

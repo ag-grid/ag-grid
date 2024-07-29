@@ -64,7 +64,7 @@ export class StickyRowFeature extends BeanStub {
             return;
         }
         this.extraTopHeight = offset;
-        this.eventService.dispatchEvent<'stickyTopOffsetChanged'>({
+        this.eventService.dispatchEvent({
             type: 'stickyTopOffsetChanged',
             offset,
         });

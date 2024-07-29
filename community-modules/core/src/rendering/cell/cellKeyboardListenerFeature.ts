@@ -95,7 +95,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             return;
         }
 
-        eventService.dispatchEvent<'keyShortcutChangedCellStart'>({ type: 'keyShortcutChangedCellStart' });
+        eventService.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
         if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
             if (rangeService && gos.get('enableRangeSelection')) {
@@ -111,7 +111,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             cellCtrl.startRowOrCellEdit(key, event);
         }
 
-        eventService.dispatchEvent<'keyShortcutChangedCellEnd'>({ type: 'keyShortcutChangedCellEnd' });
+        eventService.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {

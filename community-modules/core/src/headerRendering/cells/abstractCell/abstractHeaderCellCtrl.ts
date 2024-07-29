@@ -123,7 +123,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private onGuiFocus(): void {
-        this.eventService.dispatchEvent<'headerFocused'>({
+        this.eventService.dispatchEvent({
             type: 'headerFocused',
             column: this.column,
         });
@@ -346,7 +346,7 @@ export abstract class AbstractHeaderCellCtrl<
         eventType: 'columnHeaderContextMenu' | 'columnHeaderClicked',
         column: AgColumn | AgProvidedColumnGroup
     ): void {
-        this.eventService.dispatchEvent<'columnHeaderContextMenu' | 'columnHeaderClicked'>({
+        this.eventService.dispatchEvent({
             type: eventType,
             column,
         });

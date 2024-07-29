@@ -163,7 +163,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         }
         this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {
-            this.eventService.dispatchEvent<'advancedFilterEnabledChanged'>({
+            this.eventService.dispatchEvent({
                 type: 'advancedFilterEnabledChanged',
                 enabled: this.enabled,
             });

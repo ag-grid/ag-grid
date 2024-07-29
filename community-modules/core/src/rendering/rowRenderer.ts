@@ -1189,7 +1189,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
-        this.eventService.dispatchEvent<'displayedRowsChanged'>({
+        this.eventService.dispatchEvent({
             type: 'displayedRowsChanged',
             afterScroll,
         });
@@ -1424,7 +1424,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.firstRenderedRow = newFirst;
             this.lastRenderedRow = newLast;
 
-            this.eventService.dispatchEvent<'viewportChanged'>({
+            this.eventService.dispatchEvent({
                 type: 'viewportChanged',
                 firstRow: newFirst,
                 lastRow: newLast,
@@ -1445,7 +1445,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // See AG-7018
         window.requestAnimationFrame(() => {
-            this.beans.eventService.dispatchEvent<'firstDataRendered'>({
+            this.beans.eventService.dispatchEvent({
                 type: 'firstDataRendered',
                 firstRow: this.firstRenderedRow,
                 lastRow: this.lastRenderedRow,
@@ -1467,7 +1467,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.pageBoundsService.getLastRow()
         );
         if (rowModelHeightsChanged || stickyHeightsChanged) {
-            this.eventService.dispatchEvent<'recalculateRowBounds'>({
+            this.eventService.dispatchEvent({
                 type: 'recalculateRowBounds',
             });
         }

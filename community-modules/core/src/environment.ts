@@ -171,7 +171,7 @@ export class Environment extends BeanStub implements NamedBean {
     }
 
     private fireGridStylesChangedEvent(change: ChangeKey): void {
-        this.eventService.dispatchEvent<'gridStylesChanged'>({
+        this.eventService.dispatchEvent({
             type: 'gridStylesChanged',
             [change]: true,
         });

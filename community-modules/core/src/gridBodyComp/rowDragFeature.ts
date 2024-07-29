@@ -422,7 +422,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private dispatchGridEvent(type: RowDragEventType, draggingEvent: DraggingEvent): void {
         const event = this.draggingToRowDragEvent(type, draggingEvent);
 
-        this.eventService.dispatchEvent<RowDragEventType>(event);
+        this.eventService.dispatchEvent(event);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {

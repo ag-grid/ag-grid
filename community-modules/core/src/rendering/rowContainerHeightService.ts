@@ -95,7 +95,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
     private setUiContainerHeight(height: number | null): void {
         if (height !== this.uiContainerHeight) {
             this.uiContainerHeight = height;
-            this.eventService.dispatchEvent<'rowContainerHeightChanged'>({ type: 'rowContainerHeightChanged' });
+            this.eventService.dispatchEvent({ type: 'rowContainerHeightChanged' });
         }
     }
 
@@ -113,7 +113,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
         }
 
         this.divStretchOffset = newOffsetFloor!;
-        this.eventService.dispatchEvent<'heightScaleChanged'>({ type: 'heightScaleChanged' });
+        this.eventService.dispatchEvent({ type: 'heightScaleChanged' });
     }
 
     public setModelHeight(modelHeight: number | null): void {

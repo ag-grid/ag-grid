@@ -76,7 +76,7 @@ export class FilterWrapperComp extends Component {
 
             this.appendChild(guiFromFilter);
             if (init) {
-                this.eventService.dispatchEvent<'filterOpened'>({
+                this.eventService.dispatchEvent({
                     type: 'filterOpened',
                     column,
                     source,

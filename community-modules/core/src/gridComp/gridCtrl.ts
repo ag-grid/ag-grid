@@ -93,7 +93,7 @@ export class GridCtrl extends BeanStub {
     }
 
     private onGridSizeChanged(): void {
-        this.eventService.dispatchEvent<'gridSizeChanged'>({
+        this.eventService.dispatchEvent({
             type: 'gridSizeChanged',
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight,

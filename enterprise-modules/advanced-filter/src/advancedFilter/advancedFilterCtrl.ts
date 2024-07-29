@@ -144,7 +144,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     }
 
     private dispatchFilterBuilderVisibleChangedEvent(source: 'api' | 'ui', visible: boolean): void {
-        this.eventService.dispatchEvent<'advancedFilterBuilderVisibleChanged'>({
+        this.eventService.dispatchEvent({
             type: 'advancedFilterBuilderVisibleChanged',
             source,
             visible,
@@ -171,7 +171,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     private updateComps(): void {
         this.setAdvancedFilterComp();
         this.setHeaderCompEnabled();
-        this.eventService.dispatchEvent<'headerHeightChanged'>({
+        this.eventService.dispatchEvent({
             type: 'headerHeightChanged',
         });
     }

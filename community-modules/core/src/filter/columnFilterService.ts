@@ -690,7 +690,7 @@ export class ColumnFilterService extends BeanStub {
 
             this.allColumnFilters.delete(filterWrapper.column.getColId());
 
-            this.eventService.dispatchEvent<'filterDestroyed'>({
+            this.eventService.dispatchEvent({
                 type: 'filterDestroyed',
                 source,
                 column: filterWrapper.column,
@@ -700,7 +700,7 @@ export class ColumnFilterService extends BeanStub {
 
     private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: AgColumn<any>) {
         return () => {
-            this.eventService.dispatchEvent<'filterModified'>({
+            this.eventService.dispatchEvent({
                 type: 'filterModified',
                 column,
                 filterInstance: filter,

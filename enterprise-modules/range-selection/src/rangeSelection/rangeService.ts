@@ -389,7 +389,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const { cellEventSource = 'rangeService', dispatchWrapperEvents, wrapperEventSource = 'deleteKey' } = params;
 
         if (dispatchWrapperEvents) {
-            this.eventService.dispatchEvent<'rangeDeleteStart'>({
+            this.eventService.dispatchEvent({
                 type: 'rangeDeleteStart',
                 source: wrapperEventSource,
             });
@@ -419,7 +419,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         });
 
         if (dispatchWrapperEvents) {
-            this.eventService.dispatchEvent<'rangeDeleteEnd'>({
+            this.eventService.dispatchEvent({
                 type: 'rangeDeleteEnd',
                 source: wrapperEventSource,
             });
@@ -923,7 +923,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
-        this.eventService.dispatchEvent<'rangeSelectionChanged'>({
+        this.eventService.dispatchEvent({
             type: 'rangeSelectionChanged',
             started,
             finished,

@@ -166,7 +166,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         const wasExclusive = this.exclusive;
         this.exclusive = this.isExclusive();
         if (this.exclusive !== wasExclusive) {
-            this.eventService.dispatchEvent<'overlayExclusiveChanged'>({
+            this.eventService.dispatchEvent({
                 type: 'overlayExclusiveChanged',
             });
         }

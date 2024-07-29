@@ -74,7 +74,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
 
-            this.eventService.dispatchEventOnce<'rowCountReady'>({
+            this.eventService.dispatchEventOnce({
                 type: 'rowCountReady',
             });
         }
@@ -708,14 +708,14 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public fireStoreUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        this.eventService.dispatchEvent<'storeUpdated'>({
+        this.eventService.dispatchEvent({
             type: 'storeUpdated',
         });
     }
 
     // gets called when row data updated, and no more refreshing needed
     public fireRefreshFinishedEvent(): void {
-        this.eventService.dispatchEvent<'storeRefreshed'>({
+        this.eventService.dispatchEvent({
             type: 'storeRefreshed',
             route: this.parentRowNode.getRoute(),
         });

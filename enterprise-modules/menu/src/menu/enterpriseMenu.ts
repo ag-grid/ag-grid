@@ -294,7 +294,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         column?: AgColumn,
         defaultTab?: string
     ): void {
-        this.eventService.dispatchEvent<'columnMenuVisibleChanged'>({
+        this.eventService.dispatchEvent({
             type: 'columnMenuVisibleChanged',
             visible,
             switchingTab,

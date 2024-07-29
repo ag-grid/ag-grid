@@ -227,7 +227,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     }
 
     private dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        this.eventService.dispatchEvent<'selectionChanged'>({
+        this.eventService.dispatchEvent({
             type: 'selectionChanged',
             source,
         });

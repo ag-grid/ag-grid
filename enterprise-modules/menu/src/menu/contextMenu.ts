@@ -230,7 +230,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, source: 'api' | 'ui' = 'ui'): void {
-        this.eventService.dispatchEvent<'contextMenuVisibleChanged'>({
+        this.eventService.dispatchEvent({
             type: 'contextMenuVisibleChanged',
             visible,
             source,

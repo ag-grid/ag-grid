@@ -144,7 +144,7 @@ export class ClientSideNodeManager {
     }
 
     private dispatchRowDataUpdateStartedEvent(rowData?: any[] | null): void {
-        this.eventService.dispatchEvent<'rowDataUpdateStarted'>({
+        this.eventService.dispatchEvent({
             type: 'rowDataUpdateStarted',
             firstRowData: rowData?.length ? rowData[0] : null,
         });
@@ -168,7 +168,7 @@ export class ClientSideNodeManager {
         this.selectionService.updateGroupsFromChildrenSelections(source);
 
         if (selectionChanged) {
-            this.eventService.dispatchEvent<'selectionChanged'>({
+            this.eventService.dispatchEvent({
                 type: 'selectionChanged',
                 source: source,
             });

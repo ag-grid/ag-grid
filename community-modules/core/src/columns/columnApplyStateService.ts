@@ -4,8 +4,9 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { DEFAULT_COLUMN_MIN_WIDTH } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
+import type { ColumnEvent, ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { SortController } from '../sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
@@ -547,12 +548,12 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
                 const changesArr = [...changes];
 
-                this.eventService.dispatchEvent<'columnPivotChanged' | 'columnRowGroupChanged'>({
+                this.eventService.dispatchEvent({
                     type: eventType,
                     columns: changesArr,
                     column: changesArr.length === 1 ? changesArr[0] : null,
                     source: source,
-                });
+                } as WithoutGridCommon<ColumnEvent>);
             };
 
             // determines which columns have changed according to supplied predicate

@@ -78,7 +78,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             this.horizontalScrollShowing = params.horizontalScrollShowing;
             this.verticalScrollShowing = params.verticalScrollShowing;
 
-            this.eventService.dispatchEvent<'scrollVisibilityChanged'>({
+            this.eventService.dispatchEvent({
                 type: 'scrollVisibilityChanged',
             });
         }

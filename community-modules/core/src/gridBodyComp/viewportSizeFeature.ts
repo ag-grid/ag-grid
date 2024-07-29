@@ -181,7 +181,7 @@ export class ViewportSizeFeature extends BeanStub {
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
-            this.eventService.dispatchEvent<'bodyHeightChanged'>({
+            this.eventService.dispatchEvent({
                 type: 'bodyHeightChanged',
             });
         }

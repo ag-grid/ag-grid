@@ -226,7 +226,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             node.setRowTop(this.rowHeight * node.rowIndex!);
         });
 
-        this.eventService.dispatchEvent<'modelUpdated'>({
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             newData: false,
             newPage: false,
@@ -326,11 +326,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
         this.rowCount = rowCount;
 
-        this.eventService.dispatchEventOnce<'rowCountReady'>({
+        this.eventService.dispatchEventOnce({
             type: 'rowCountReady',
         });
 
-        this.eventService.dispatchEvent<'modelUpdated'>({
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             newData: false,
             newPage: false,

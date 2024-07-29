@@ -704,7 +704,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const oldValue = this.getValueFromValueService(column);
 
         if (this.beans.gos.get('readOnlyEdit')) {
-            this.beans.eventService.dispatchEvent<'cellEditRequest'>({
+            this.beans.eventService.dispatchEvent({
                 type: 'cellEditRequest',
                 event: null,
                 rowIndex: this.rowIndex!,
@@ -993,7 +993,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             sibling.dispatchRowEvent('rowSelected');
         }
 
-        this.beans.eventService.dispatchEvent<'rowSelected'>({
+        this.beans.eventService.dispatchEvent({
             ...this.createGlobalRowEvent('rowSelected'),
             event: e || null,
             source,

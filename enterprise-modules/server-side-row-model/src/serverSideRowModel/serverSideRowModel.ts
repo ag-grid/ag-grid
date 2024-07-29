@@ -416,7 +416,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private dispatchModelUpdated(reset = false): void {
-        this.eventService.dispatchEvent<'modelUpdated'>({
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             animate: !reset,
             keepRenderedRows: !reset,

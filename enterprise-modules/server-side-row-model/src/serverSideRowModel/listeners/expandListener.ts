@@ -40,7 +40,7 @@ export class ExpandListener extends BeanStub implements NamedBean {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
-        this.eventService.dispatchEvent<'storeUpdated'>({ type: 'storeUpdated' });
+        this.eventService.dispatchEvent({ type: 'storeUpdated' });
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {

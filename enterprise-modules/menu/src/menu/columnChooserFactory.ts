@@ -132,7 +132,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, column?: AgColumn | null): void {
-        this.eventService.dispatchEvent<'columnMenuVisibleChanged'>({
+        this.eventService.dispatchEvent({
             type: 'columnMenuVisibleChanged',
             visible,
             switchingTab: false,

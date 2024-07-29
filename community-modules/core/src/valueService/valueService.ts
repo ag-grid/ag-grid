@@ -302,7 +302,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         params.newValue = this.getValue(column, rowNode);
 
-        this.eventService.dispatchEvent<'cellValueChanged'>({
+        this.eventService.dispatchEvent({
             type: 'cellValueChanged',
             event: null,
             rowIndex: rowNode.rowIndex!,

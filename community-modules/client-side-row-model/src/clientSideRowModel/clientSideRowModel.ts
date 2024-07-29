@@ -717,7 +717,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.isRefreshingModel = false;
 
-        this.eventService.dispatchEvent<'modelUpdated'>({
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
@@ -1054,7 +1054,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.refreshModel({ step: ClientSideRowModelSteps.MAP });
 
-        this.eventService.dispatchEvent<'expandOrCollapseAll'>({
+        this.eventService.dispatchEvent({
             type: 'expandOrCollapseAll',
             source: expand ? 'expandAll' : 'collapseAll',
         });
@@ -1097,7 +1097,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 );
 
                 if (selectionChanged) {
-                    this.eventService.dispatchEvent<'selectionChanged'>({
+                    this.eventService.dispatchEvent({
                         type: 'selectionChanged',
                         source: 'rowGroupChanged',
                     });
@@ -1114,7 +1114,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (this.nodeManager.isRowCountReady()) {
             // only if row data has been set
             this.rowCountReady = true;
-            this.eventService.dispatchEventOnce<'rowCountReady'>({
+            this.eventService.dispatchEventOnce({
                 type: 'rowCountReady',
             });
         }
@@ -1171,7 +1171,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private dispatchUpdateEventsAndRefresh(): void {
         // this event kicks off:
         // - shows 'no rows' overlay if needed
-        this.eventService.dispatchEvent<'rowDataUpdated'>({
+        this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
         });
 
@@ -1235,7 +1235,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (rowNodeTrans.length > 0) {
-            this.eventService.dispatchEvent<'asyncTransactionsFlushed'>({
+            this.eventService.dispatchEvent({
                 type: 'asyncTransactionsFlushed',
                 results: rowNodeTrans,
             });
@@ -1297,7 +1297,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowNodeOrder = this.createRowNodeOrder();
         }
 
-        this.eventService.dispatchEvent<'rowDataUpdated'>({
+        this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
         });
 

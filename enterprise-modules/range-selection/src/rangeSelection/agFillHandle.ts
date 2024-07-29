@@ -144,14 +144,14 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         if (finalRange) {
             // raising fill events for undo / redo
-            this.eventService.dispatchEvent<'fillStart'>({
+            this.eventService.dispatchEvent({
                 type: 'fillStart',
             });
 
             this.handleValueChanged(initialRange, finalRange, e);
             this.rangeService.setCellRanges([finalRange]);
 
-            this.eventService.dispatchEvent<'fillEnd'>({
+            this.eventService.dispatchEvent({
                 type: 'fillEnd',
                 initialRange: initialRange,
                 finalRange: finalRange,

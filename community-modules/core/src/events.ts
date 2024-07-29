@@ -8,7 +8,7 @@ import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
-import type { AgGridCommon } from './interfaces/iCommon';
+import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
 import type { IFilterComp } from './interfaces/iFilter';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
@@ -158,6 +158,14 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
     }
 >;
+
+export type AllEventsWithoutGridCommon<TData = any, TContext = any> = {
+    [K in keyof AgEventTypeParams<TData, TContext>]: WithoutGridCommon<AgEventTypeParams<TData, TContext>[K]>;
+}[keyof AgEventTypeParams];
+
+export type AllEvents<TData = any, TContext = any> = {
+    [K in keyof AgEventTypeParams<TData, TContext>]: AgEventTypeParams<TData, TContext>[K];
+}[keyof AgEventTypeParams];
 
 export interface AgEvent<TEventType extends string = string> {
     /** Event identifier */

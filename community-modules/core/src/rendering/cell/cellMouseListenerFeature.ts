@@ -67,7 +67,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(mouseEvent, 'cellClicked');
-        eventService.dispatchEvent<'cellClicked'>(cellClickedEvent);
+        eventService.dispatchEvent(cellClickedEvent);
 
         const colDef = this.column.getColDef();
 
@@ -109,7 +109,7 @@ export class CellMouseListenerFeature extends BeanStub {
         const colDef = column.getColDef();
         // always dispatch event to eventService
         const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(mouseEvent, 'cellDoubleClicked');
-        eventService.dispatchEvent<'cellDoubleClicked'>(cellDoubleClickedEvent);
+        eventService.dispatchEvent(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
@@ -200,7 +200,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        eventService.dispatchEvent<'cellMouseDown'>(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
+        eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
     }
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
@@ -227,7 +227,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (this.mouseStayingInsideCell(mouseEvent)) {
             return;
         }
-        this.beans.eventService.dispatchEvent<'cellMouseOut'>(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
+        this.beans.eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
         this.beans.columnHoverService.clearMouseOver();
     }
 
@@ -235,7 +235,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (this.mouseStayingInsideCell(mouseEvent)) {
             return;
         }
-        this.beans.eventService.dispatchEvent<'cellMouseOver'>(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
+        this.beans.eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
         this.beans.columnHoverService.setMouseOver([this.column]);
     }
 

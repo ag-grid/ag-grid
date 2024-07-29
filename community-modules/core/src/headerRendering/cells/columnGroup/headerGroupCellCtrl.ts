@@ -217,7 +217,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {
-        this.eventService.dispatchEvent<'columnHeaderMouseOver' | 'columnHeaderMouseLeave'>({
+        this.eventService.dispatchEvent({
             type: isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave',
             column: this.column.getProvidedColumnGroup(),
         });

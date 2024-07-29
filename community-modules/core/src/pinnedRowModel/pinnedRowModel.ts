@@ -61,7 +61,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         rowTop = 0;
         this.pinnedTopRows?.forEach(updateRowHeight);
 
-        this.eventService.dispatchEvent<'pinnedHeightChanged'>({
+        this.eventService.dispatchEvent({
             type: 'pinnedHeightChanged',
         });
 
@@ -70,7 +70,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
 
     private setPinnedRowData(rowData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
         this.updateNodesFromRowData(rowData, floating);
-        this.eventService.dispatchEvent<'pinnedRowDataChanged'>({
+        this.eventService.dispatchEvent({
             type: 'pinnedRowDataChanged',
         });
     }

@@ -1,8 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { AgEventType } from '../eventTypes';
-import type { AgEvent } from '../events';
+import type { AllEvents } from '../events';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import type { GridApi } from './gridApi';
@@ -18,8 +17,7 @@ const defaultFns = {
     wireBeans() {},
 };
 
-const dispatchEvent = (beans: BeanCollection, event: AgEvent<AgEventType>): void =>
-    beans.eventService.dispatchEvent<AgEventType>(event);
+const dispatchEvent = (beans: BeanCollection, event: AllEvents): void => beans.eventService.dispatchEvent(event);
 
 // We use a class for AGGridApi so in stack traces calling grid.api.xxx() if an error is thrown it will print "GridApi.xxx"
 class GridApiClass {}

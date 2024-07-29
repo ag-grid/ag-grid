@@ -200,7 +200,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
-        this.eventService.dispatchEvent<'columnMenuVisibleChanged'>({
+        this.eventService.dispatchEvent({
             type: 'columnMenuVisibleChanged',
             visible,
             switchingTab: false,

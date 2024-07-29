@@ -775,7 +775,7 @@ export class StateService extends BeanStub implements NamedBean {
     private dispatchQueuedStateUpdateEvents(): void {
         const sources = Array.from(this.queuedUpdateSources);
         this.queuedUpdateSources.clear();
-        this.eventService.dispatchEvent<'stateUpdated'>({
+        this.eventService.dispatchEvent({
             type: 'stateUpdated',
             sources,
             state: this.cachedState,

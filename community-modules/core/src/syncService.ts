@@ -57,7 +57,7 @@ export class SyncService extends BeanStub implements NamedBean {
     }
 
     private dispatchGridReadyEvent(): void {
-        this.eventService.dispatchEvent<'gridReady'>({
+        this.eventService.dispatchEvent({
             type: 'gridReady',
         });
     }

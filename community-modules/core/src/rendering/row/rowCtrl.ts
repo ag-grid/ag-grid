@@ -1010,7 +1010,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.beans.eventService.dispatchEvent<'rowDoubleClicked'>(
+        this.beans.eventService.dispatchEvent(
             this.createRowEventWithSource('rowDoubleClicked', mouseEvent)
         );
     }
@@ -1053,7 +1053,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.beans.eventService.dispatchEvent<'rowClicked'>(this.createRowEventWithSource('rowClicked', mouseEvent));
+        this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowClicked', mouseEvent));
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
@@ -1556,7 +1556,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const event: VirtualRowRemovedEvent = this.createRowEvent('virtualRowRemoved');
 
         this.dispatchLocalEvent(event);
-        this.beans.eventService.dispatchEvent<'virtualRowRemoved'>(event);
+        this.beans.eventService.dispatchEvent(event);
         super.destroy();
     }
 
