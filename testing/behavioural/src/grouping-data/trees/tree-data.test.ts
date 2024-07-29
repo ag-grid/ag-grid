@@ -1,11 +1,14 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
+import type { GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { getAllRows } from '../../test-utils';
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
-import { checkTreeDiagram, simpleHierarchyRowData, simpleHierarchyRowSnapshot } from './tree-test-utils';
+import { TreeDiagram, findTreeRootNode, simpleHierarchyRowData, simpleHierarchyRowSnapshot } from './tree-test-utils';
+
+const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -13,14 +16,6 @@ describe('ag-grid tree data', () => {
 
     function createMyGrid(gridOptions: GridOptions) {
         return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function getAllRows(api: GridApi) {
-        const rows: IRowNode<any>[] = [];
-        api.forEachNode((node) => {
-            rows.push(node);
-        });
-        return rows;
     }
 
     function resetGrids() {
@@ -44,8 +39,6 @@ describe('ag-grid tree data', () => {
     test('ag-grid tree data', async () => {
         const rowData = simpleHierarchyRowData();
 
-        const getDataPath = (data: any) => data.orgHierarchy;
-
         const gridOptions: GridOptions = {
             columnDefs: [
                 {
@@ -66,11 +59,18 @@ describe('ag-grid tree data', () => {
 
         const api = createMyGrid(gridOptions);
 
-        expect(checkTreeDiagram(api)).toBe(true);
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            ├─┬ A LEAF level:0 id:0
+            │ └── B LEAF level:1 id:1
+            ├─┬ C filler level:0 id:row-group-0-C
+            │ └── D LEAF level:1 id:2
+            └─┬ E filler level:0 id:row-group-0-E
+            · └─┬ F filler level:1 id:row-group-0-E-1-F
+            · · └─┬ G filler level:2 id:row-group-0-E-1-F-2-G
+            · · · └── H LEAF level:3 id:3`);
 
         const rows = getAllRows(api);
-
-        const rowsSnapshot = getRowsSnapshot(rows);
 
         expect(rows[0].data).toEqual(rowData[0]);
         expect(rows[1].data).toEqual(rowData[1]);
@@ -81,6 +81,7 @@ describe('ag-grid tree data', () => {
         expect(rows[6].data).toEqual(undefined);
         expect(rows[7].data).toEqual(rowData[3]);
 
+        const rowsSnapshot = getRowsSnapshot(rows);
         expect(rowsSnapshot).toMatchObject(simpleHierarchyRowSnapshot());
     });
 
@@ -92,8 +93,6 @@ describe('ag-grid tree data', () => {
             { orgHierarchy: ['C', 'D'] },
         ];
 
-        const getDataPath = (data: any) => data.orgHierarchy;
-
         const gridOptions: GridOptions = {
             columnDefs: [
                 {
@@ -116,7 +115,13 @@ describe('ag-grid tree data', () => {
 
         const rows = getAllRows(api);
 
-        expect(checkTreeDiagram(api)).toBe(true);
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            ├─┬ A LEAF level:0 id:2
+            │ └── B LEAF level:1 id:0
+            └─┬ C filler level:0 id:row-group-0-C
+            · └─┬ D LEAF level:1 id:3
+            · · └── E LEAF level:2 id:1`);
 
         const rowsSnapshot = getRowsSnapshot(rows);
 
@@ -185,7 +190,7 @@ describe('ag-grid tree data', () => {
             },
             {
                 allChildrenCount: 2,
-                allLeafChildren: ['D', 'E'],
+                allLeafChildren: ['E'],
                 childIndex: 1,
                 childrenAfterFilter: ['D'],
                 childrenAfterGroup: ['D'],
@@ -272,13 +277,11 @@ describe('ag-grid tree data', () => {
         expect(rowsSnapshot).toMatchObject(expectedSnapshot);
     });
 
-    test('duplicate group keys warning', async () => {
+    test('duplicate group keys', async () => {
         const rowData = [
-            { orgHierarchy: ['A', 'B'], x: 1 },
-            { orgHierarchy: ['A', 'B'], x: 2 },
+            { orgHierarchy: ['A', 'B'], x: 1, _diagramLabel: '1' },
+            { orgHierarchy: ['A', 'B'], x: 2, _diagramLabel: '2' },
         ];
-
-        const getDataPath = (data: any) => data.orgHierarchy;
 
         const gridOptions: GridOptions = {
             columnDefs: [],
@@ -295,19 +298,112 @@ describe('ag-grid tree data', () => {
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
             'AG Grid: duplicate group keys for row data, keys should be unique',
-            [
-                { orgHierarchy: ['A', 'B'], x: 1 },
-                { orgHierarchy: ['A', 'B'], x: 2 },
-            ]
+            [rowData[0], rowData[1]]
         );
         consoleWarnSpy?.mockRestore();
 
-        expect(checkTreeDiagram(api)).toBe(true);
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            └─┬ A filler level:0 id:row-group-0-A
+            · └── B LEAF level:1 id:1 label:2
+        `);
 
         const rows = getAllRows(api);
 
         expect(rows.length).toBe(2);
         expect(rows[0].data).toEqual(undefined);
-        expect(rows[1].data).toEqual(rowData[0]);
+        expect(rows[1].data).toEqual(rowData[1]);
+    });
+
+    test('tree data swtRowData without id keeps the structure correct', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [],
+            treeData: true,
+            animateRows: true,
+            groupDefaultExpanded: -1,
+            getDataPath,
+        };
+
+        const rowData1 = [
+            { orgHierarchy: ['A', 'B'], _diagramLabel: '1-v1' },
+            { orgHierarchy: ['C', 'D'], _diagramLabel: '3-v1' },
+        ];
+
+        const rowData2 = [
+            { orgHierarchy: ['D', 'E', 'F'], x: 2, _diagramLabel: '1-v2' },
+            { orgHierarchy: ['D', 'E'], x: 3, _diagramLabel: '2-v1' },
+        ];
+
+        const api = createMyGrid(gridOptions);
+
+        api.setGridOption('rowData', rowData1);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            ├─┬ A filler level:0 id:row-group-0-A
+            │ └── B LEAF level:1 id:0 label:1-v1
+            └─┬ C filler level:0 id:row-group-0-C
+            · └── D LEAF level:1 id:1 label:3-v1
+        `);
+
+        const oldRoot = findTreeRootNode(api);
+
+        api.setGridOption('rowData', rowData2);
+
+        console.log(findTreeRootNode(api) == oldRoot);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            └─┬ D filler level:0 id:row-group-0-D
+            · └─┬ E LEAF level:1 id:1 label:2-v1
+            · · └── F LEAF level:2 id:0 label:1-v2
+        `);
+    });
+
+    test('tree data setRowData with id maintains selection and expanded state', async () => {
+        const rowData1 = [
+            { id: '1', orgHierarchy: ['A', 'B'], _diagramLabel: '1-v1' },
+            { id: '3', orgHierarchy: ['C', 'D'], _diagramLabel: '3-v1' },
+        ];
+
+        const rowData2 = [
+            { id: '1', orgHierarchy: ['D', 'E', 'F'], x: 2, _diagramLabel: '1-v2' },
+            { id: '2', orgHierarchy: ['D', 'E'], x: 3, _diagramLabel: '2-v1' },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [],
+            autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+            treeData: true,
+            animateRows: true,
+            groupDefaultExpanded: -1,
+            rowData: [],
+            getDataPath,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = createMyGrid(gridOptions);
+
+        api.setGridOption('rowData', rowData1);
+
+        api.setRowNodeExpanded(api.getRowNode('1'), false);
+        api.selectAll();
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            ├─┬ A filler level:0 selected id:row-group-0-A
+            │ └── B LEAF level:1 selected !expanded id:1 label:1-v1
+            └─┬ C filler level:0 selected id:row-group-0-C
+            · └── D LEAF level:1 selected id:3 label:3-v1
+        `);
+
+        api.setGridOption('rowData', rowData2);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            └─┬ D filler level:0 id:row-group-0-D
+            · └─┬ E LEAF level:1 id:2 label:2-v1
+            · · └── F LEAF level:2 selected !expanded id:1 label:1-v2
+        `);
     });
 });

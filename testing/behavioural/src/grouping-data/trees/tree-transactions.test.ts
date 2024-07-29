@@ -1,24 +1,17 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
+import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { getAllRows } from '../../test-utils';
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { checkTreeDiagram, simpleHierarchyRowSnapshot } from './tree-test-utils';
+import { TreeDiagram, simpleHierarchyRowSnapshot } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
 
     function createMyGrid(gridOptions: GridOptions) {
         return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function getAllRows(api: GridApi) {
-        const rows: IRowNode<any>[] = [];
-        api.forEachNode((node) => {
-            rows.push(node);
-        });
-        return rows;
     }
 
     function resetGrids() {
@@ -38,7 +31,7 @@ describe('ag-grid tree transactions', () => {
         consoleErrorSpy?.mockRestore();
     });
 
-    test('ag-grid tree transactions', async () => {
+    test.each(['sync', 'async'])('ag-grid tree %s transaction', async (mode = 'sync') => {
         const rowA = { id: '0', orgHierarchy: ['A'] };
 
         const rowZ1 = { id: '88', orgHierarchy: ['X', 'Y', 'Z'] };
@@ -76,37 +69,77 @@ describe('ag-grid tree transactions', () => {
 
         const api = createMyGrid(gridOptions);
 
-        api.applyTransaction({
-            add: [rowW],
-        });
+        const transactions: RowDataTransaction[] = [
+            { add: [rowW] },
+            { update: [rowZ2], add: [rowB, rowD] },
+            { remove: [rowZ2], add: [rowH1] },
+            { update: [rowH2] },
+        ];
 
-        expect(checkTreeDiagram(api)).toBe(true);
+        if (mode === 'async') {
+            const promises: Promise<void>[] = [];
+            for (const transaction of transactions) {
+                promises.push(
+                    new Promise((resolve) => {
+                        api.applyTransactionAsync(transaction, () => resolve());
+                    })
+                );
+            }
 
-        api.applyTransaction({
-            update: [rowZ2],
-            add: [rowB, rowD],
-        });
+            api.flushAsyncTransactions();
+            await Promise.all(promises);
+        } else {
+            api.applyTransaction(transactions[0]);
 
-        expect(checkTreeDiagram(api)).toBe(true);
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+                ├── A LEAF level:0 id:0
+                └─┬ X filler level:0 id:row-group-0-X
+                · └─┬ Y filler level:1 id:row-group-0-X-1-Y
+                · · └─┬ Z LEAF level:2 id:88
+                · · · └── W LEAF level:3 id:99`);
 
-        api.applyTransaction({
-            remove: [rowZ2],
-            add: [rowH1],
-        });
+            api.applyTransaction(transactions[1]);
 
-        expect(checkTreeDiagram(api)).toBe(true);
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+                ├─┬ A LEAF level:0 id:0
+                │ ├─┬ Y filler level:1 id:row-group-0-A-1-Y
+                │ │ └── Z LEAF level:2 id:88
+                │ └── B LEAF level:1 id:1
+                └─┬ C filler level:0 id:row-group-0-C
+                · └── D LEAF level:1 id:2`);
 
-        api.applyTransaction({
-            update: [rowH2],
-        });
+            api.applyTransaction(transactions[2]);
 
-        expect(checkTreeDiagram(api)).toBe(true);
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+                ├─┬ A LEAF level:0 id:0
+                │ └── B LEAF level:1 id:1
+                ├─┬ C filler level:0 id:row-group-0-C
+                │ └── D LEAF level:1 id:2
+                └─┬ X filler level:0 id:row-group-0-X
+                · └─┬ Y filler level:1 id:row-group-0-X-1-Y
+                · · └─┬ Z filler level:2 id:row-group-0-X-1-Y-2-Z
+                · · · └── H LEAF level:3 id:3`);
+
+            api.applyTransaction(transactions[3]);
+        }
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            ├─┬ A LEAF level:0 id:0
+            │ └── B LEAF level:1 id:1
+            ├─┬ C filler level:0 id:row-group-0-C
+            │ └── D LEAF level:1 id:2
+            └─┬ E filler level:0 id:row-group-0-E
+            · └─┬ F filler level:1 id:row-group-0-E-1-F
+            · · └─┬ G filler level:2 id:row-group-0-E-1-F-2-G
+            · · · └── H LEAF level:3 id:3`);
 
         const rows = getAllRows(api);
 
         expect(rows.length).toBe(8);
-
-        const rowsSnapshot = getRowsSnapshot(rows);
 
         expect(rows[0].data).toEqual(rowA);
         expect(rows[1].data).toEqual(rowB);
@@ -117,6 +150,7 @@ describe('ag-grid tree transactions', () => {
         expect(rows[6].data).toEqual(undefined);
         expect(rows[7].data).toEqual(rowH2);
 
+        const rowsSnapshot = getRowsSnapshot(rows);
         expect(rowsSnapshot).toMatchObject(simpleHierarchyRowSnapshot());
     });
 });

@@ -1,86 +1,261 @@
 import type { GridApi, IRowNode } from '@ag-grid-community/core';
 
+import { isGridApi } from '../../test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
 
 const log = console.log;
-const warn = console.warn;
 const info = console.info;
 
-const isGridApi = (node: unknown): node is GridApi =>
-    typeof node === 'object' && node !== null && typeof (node as GridApi).setGridOption === 'function';
-
-export function findTreeRootNode(gridApi: GridApi) {
-    let root: IRowNode = null;
-    gridApi.forEachNode((row) => (root ??= row.parent && !row.parent.parent ? row.parent : null));
-    return root;
+function rowKey(row: IRowNode | null | undefined): string {
+    return row?.key ?? row?.id ?? 'null';
 }
 
-export function checkTreeDiagram(root: IRowNode | GridApi, options: PrintTreeDiagramOptions | boolean = {}): boolean {
-    return printTreeDiagram(
-        root,
-        typeof options === 'boolean' ? { printOnlyOnError: !options } : { printOnlyOnError: true, ...options }
-    );
-}
-
-export interface PrintTreeDiagramOptions {
-    rowToString?: (row: IRowNode) => string;
-    printOnlyOnError?: boolean;
-}
-
-/** Utility debug function that prints a tree diagram to the console. */
-export function printTreeDiagram(
-    root: IRowNode | GridApi,
-    { rowToString, printOnlyOnError }: PrintTreeDiagramOptions = {}
-): boolean {
-    if (isGridApi(root)) {
-        root = findTreeRootNode(root);
+function findTreeRootNodes(gridApi: GridApi | IRowNode[]): IRowNode[] {
+    const set = new Set<IRowNode>();
+    const processNode = (row: IRowNode) => row.parent && !row.parent.parent && set.add(row.parent);
+    if (Array.isArray(gridApi)) {
+        gridApi.forEach(processNode);
+    } else {
+        gridApi.forEachNode(processNode);
     }
-    if (!root) {
-        console.warn('* No root found');
-        return false;
-    }
-    let diagram = '';
-    let errorsCount = 0;
-    const recurse = (row: IRowNode, parent: IRowNode | null, branch: string, level: number): void => {
-        const errs = [];
-        let children = row.childrenAfterGroup;
-        if (!children) {
-            children = [];
-            errs.push('❌NULL_CHILDREN!');
+    return Array.from(set);
+}
+
+export function findTreeRootNode(gridApi: GridApi | IRowNode[]): IRowNode | null {
+    const rootNodes = findTreeRootNodes(gridApi);
+    if (rootNodes.length === 0) return null;
+    if (rootNodes.length !== 1)
+        throw new Error(
+            'Expected one root node, but found ' + rootNodes.length + '. ' + rootNodes.map((n) => n.key).join(', ')
+        );
+    return rootNodes[0];
+}
+
+export class TreeDiagram {
+    public root: IRowNode | null = null;
+    public diagram: string = '';
+    public hasErrors = false;
+    public readonly uniqueNodes = new Set<IRowNode>();
+
+    private rowErrors: string[];
+    private errorsCount: number = 0;
+    private rowIdxCounter: number = 0;
+
+    /** optional overridable method */
+    public rowToString?: (row: IRowNode) => string;
+
+    public constructor(root: IRowNode | IRowNode[] | GridApi) {
+        this.diagram += '\n';
+        const rootNodes = isGridApi(root) || Array.isArray(root) ? findTreeRootNodes(root) : [root];
+        if (rootNodes.length === 0) {
+            this.diagram += '❌ No tree root in\n';
+            this.errorsCount = 1;
+            return this;
         }
-        const type = row.level === -1 && row === root ? 'ROOT' : row.data ? 'LEAF' : 'filler';
-        diagram += `${branch}${branch.length ? (children.length !== 0 ? '┬ ' : '─ ') : ''}${row.key ?? row.id} ${type} level:${level} `;
+        this.uniqueNodes.clear();
+        for (const root of rootNodes) {
+            this.root = root;
+            this.recurseRow(root, root.parent, '', -1, -1);
+        }
+    }
+
+    private recurseRow(row: IRowNode, parent: IRowNode | null, branch: string, level: number, idx: number) {
+        if (level < 0) this.rowIdxCounter = -1;
+
+        const isDuplicate = this.uniqueNodes.has(row);
+        const children = row.childrenAfterGroup;
+        const type = row.level === -1 && row === this.root ? 'ROOT' : row.data ? 'LEAF' : 'filler';
+        this.diagram += `${branch}${branch.length ? (children.length !== 0 ? '┬ ' : '─ ') : ''}${rowKey(row)} ${type} level:${level} `;
+        if (row.isSelected()) this.diagram += 'selected ';
+        if (row.level >= 0 && !row.expanded) this.diagram += '!expanded ';
+        this.rowErrors = [];
+        if (isDuplicate) {
+            this.rowErrors.push('DUPLICATE!');
+        } else {
+            this.uniqueNodes.add(row);
+            this.checkRow(row, level, parent, idx);
+        }
+        this.errorsCount += this.rowErrors.length;
+        this.hasErrors ||= this.errorsCount > 0;
+        this.diagram += `id:${row.id} `;
+        if (row.data?._diagramLabel) {
+            this.diagram += 'label:' + row.data._diagramLabel + ' ';
+        }
+        if (this.rowToString) this.diagram += ' ' + this.rowToString(row);
+        this.diagram += ' ' + this.rowErrors.map((err) => '❌' + err).join(' ');
+        this.diagram += '\n';
+        if (branch.length) branch = branch.slice(0, -2) + (branch.slice(-2) === '└─' ? '· ' : '│ ');
+
+        ++this.rowIdxCounter;
+
+        if (!isDuplicate && children) {
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+                this.recurseRow(child, row, i === children.length - 1 ? branch + '└─' : branch + '├─', level + 1, i);
+            }
+        }
+    }
+
+    private checkRow(row: IRowNode<any>, level: number, parent: IRowNode<any>, idx: number) {
+        if (row === this.root) {
+            if (row.id !== 'ROOT_NODE_ID') this.rowErrors.push('ROOT_NODE_ID!');
+            if (row.key) this.rowErrors.push('ROOT_NODE_KEY!');
+        }
+        if (!row.childrenAfterGroup) {
+            this.rowErrors.push('childrenAfterGroup=null');
+        }
+        if (!row.allLeafChildren) {
+            this.rowErrors.push('allLeafChildren=null!');
+        }
         if (level !== row.level) {
-            diagram += `row.level:${row.level} `;
-            errs.push('❌LEVEL!');
+            this.diagram += `row.level:${row.level} `;
+            this.rowErrors.push('LEVEL!');
         }
         if (parent !== row.parent) {
-            errs.push('❌PARENT!');
-            diagram += `row.parent:${row.parent ? row.parent?.id : 'null'} `;
+            this.rowErrors.push(`PARENT!=${rowKey(row.parent)}`);
+            this.diagram += `row.parent:${rowKey(row.parent)} `;
         }
-        errorsCount += errs.length;
-        diagram += `id:${row.id} `;
-        if (rowToString) diagram += ' ' + rowToString(row);
-        diagram += ' ' + errs.join(' ');
-        diagram += '\n';
-        if (branch.length) branch = branch.slice(0, -2) + (branch.slice(-2) === '└─' ? '  ' : '│ ');
-        children.forEach((child: IRowNode, i: number) =>
-            recurse(child, row, i === children.length - 1 ? branch + '└─' : branch + '├─', level + 1)
-        );
+
+        // TODO: handle sorting properly for childIndex
+        if (row.childIndex !== (level === -1 ? undefined : idx)) {
+            this.rowErrors.push('CHILD_INDEX!');
+            this.diagram += `row.childIndex:${row.childIndex} `;
+        }
+        if (row.firstChild !== (level === -1 ? undefined : idx === 0)) {
+            this.rowErrors.push('FIRST_CHILD!');
+            this.diagram += `row.firstChild:${row.firstChild} `;
+        }
+        if (parent && row.lastChild !== (idx === parent.childrenAfterGroup.length - 1)) {
+            this.rowErrors.push('LAST_CHILD!');
+            this.diagram += `row.lastChild:${row.lastChild} `;
+        }
+
+        const expectedLeafGroup = row.data ? undefined : false; // legacy behaviour, no idea why is undefined
+        if (row.leafGroup !== expectedLeafGroup) {
+            this.rowErrors.push('LEAF_GROUP!=' + expectedLeafGroup);
+            this.diagram += 'row.leafGroup:' + row.leafGroup + ' ';
+        }
+
+        const builtChildren = buildChildren(row);
+
+        const expectedAllChildrenCount = builtChildren.allChildrenCount || null;
+        if (row.allChildrenCount !== expectedAllChildrenCount) {
+            this.rowErrors.push('ALL_CHILDREN_COUNT!=' + expectedAllChildrenCount);
+            this.diagram += 'row.allChildrenCount:' + row.allChildrenCount + ' ';
+        }
+
+        const leafChildrenErrors = level >= 0 && compareRowsSet(builtChildren.allLeafs, row.allLeafChildren);
+        if (leafChildrenErrors) {
+            this.rowErrors.push('LEAF_CHILDREN[' + leafChildrenErrors + ']');
+            this.diagram += 'row.allLeafChildren:' + row.allLeafChildren.map(rowKey).join(',') + ' ';
+        }
+
+        // rowGroupIndex seems to be null for fillers and undefined otherwise in the original implementation
+        const expectedRowGroupIndex = level < 0 || row.data ? undefined : null;
+        if (row.rowGroupIndex !== expectedRowGroupIndex) {
+            this.rowErrors.push('ROW_GROUP_INDEX!=' + expectedRowGroupIndex);
+            this.diagram += `row.rowGroupIndex:${row.rowGroupIndex} `;
+        }
+
+        // TODO: we need to handle the case for filters, collapsed groups and sorting
+        const expectedRowIndex = level < 0 ? null : this.rowIdxCounter >= 0 ? this.rowIdxCounter : null;
+        if (row.rowIndex !== expectedRowIndex) {
+            this.rowErrors.push('ROW_INDEX!=' + expectedRowIndex);
+            this.diagram += 'rowIdx:' + row.rowIndex + ' ';
+        }
+
+        const expectedGroup = level < 0 || !!row.childrenAfterGroup?.length;
+        if (row.group !== expectedGroup) {
+            this.rowErrors.push('group!=' + expectedGroup);
+            this.diagram += 'row.group:' + row.group + ' ';
+        }
+
+        if (level < 0 && row.expanded) {
+            this.rowErrors.push('ROOT_EXPANDED!');
+        }
+    }
+
+    public print(): this {
+        log(this.diagram);
+        return this;
+    }
+
+    public toString(): string {
+        let result = this.diagram;
+        if (this.errorsCount) {
+            result += '\n❌ TREE HAS ' + this.errorsCount + ' ERRORS\n';
+        }
+        return result;
+    }
+
+    public check(diagramSnapshot?: string | string[] | true): void {
+        try {
+            if (diagramSnapshot !== undefined && diagramSnapshot !== true) {
+                expect(normalizeDiagram(this.diagram)).toEqual(normalizeDiagram(diagramSnapshot));
+            }
+            if (this.hasErrors) {
+                throw new Error('');
+            }
+        } catch (e) {
+            e.message += '\n' + this.toString();
+            Error.captureStackTrace(e, this.check);
+            throw e;
+        }
+
+        if (diagramSnapshot === true) {
+            info(this.toString());
+        }
+    }
+}
+
+function normalizeDiagram(diagram: string | string[]) {
+    let lines = Array.isArray(diagram) ? diagram : diagram.split('\n');
+    lines = lines.filter((line) => line.trim().length > 0).map((line) => line.trimEnd());
+    const minIndent = Math.min(...lines.map((line) => line.match(/^\s*/)[0].length ?? 0));
+    if (minIndent > 0) lines = lines.map((line) => line.slice(minIndent));
+    return lines.join('\n');
+}
+
+function buildChildren(row: IRowNode) {
+    const allLeafs: IRowNode[] = [];
+    let allChildrenCount = 0;
+    const recurse = (row: IRowNode) => {
+        if (row.childrenAfterGroup) {
+            allChildrenCount += row.childrenAfterGroup.length;
+            for (const child of row.childrenAfterGroup) {
+                if (!child.childrenAfterGroup?.length) {
+                    allLeafs.push(child);
+                }
+                recurse(child);
+            }
+        }
     };
-    recurse(root, root.parent, '', -1);
-    if (!printOnlyOnError) {
-        log(diagram);
-    }
-    if (errorsCount > 0) {
-        const message = '❌ TREE HAS ' + errorsCount + ' ERRORS';
-        warn(printOnlyOnError ? diagram + '\n\n' + message : message);
-        return false;
-    }
-    if (!printOnlyOnError) {
-        info('👌 Tree is OK.');
-    }
-    return true;
+    recurse(row);
+    return { allLeafs, allChildrenCount };
+}
+
+function compareRowsSet(
+    expected: Set<IRowNode> | IRowNode[] | null | undefined,
+    actual: Set<IRowNode> | IRowNode[] | null | undefined
+): string {
+    const errors: string[] = [];
+    const makeSet = (x: Set<IRowNode> | IRowNode[]): Set<IRowNode> => {
+        if (!Array.isArray(x)) {
+            if (!x) errors.push('[NULL]');
+            return x ?? new Set();
+        }
+        const result = new Set<IRowNode>();
+        for (const row of x) {
+            if (result.has(row)) errors.push('[DUP]' + rowKey(row));
+            result.add(row);
+        }
+        return result;
+    };
+    expected = makeSet(expected);
+    actual = makeSet(actual);
+    for (const row of expected) if (!actual.has(row)) errors.push('-' + rowKey(row));
+    for (const row of actual) if (!expected.has(row)) errors.push('+' + rowKey(row));
+    return errors.join(' ');
 }
 
 export function simpleHierarchyRowData() {
