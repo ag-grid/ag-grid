@@ -54,7 +54,14 @@ export class MenuUtils extends BeanStub implements NamedBean {
             return;
         }
 
-        this.focusHeaderCell(restoreFocusParams);
+        // requires async for react applications
+        setTimeout(() => {
+            const { column } = restoreFocusParams;
+            if (column && !column.isAlive()) {
+                return;
+            }
+            this.focusHeaderCell(restoreFocusParams);
+        });
     }
 
     public closePopupAndRestoreFocusOnSelect(
