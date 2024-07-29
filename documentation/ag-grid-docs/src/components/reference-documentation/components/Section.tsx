@@ -179,13 +179,13 @@ export const Section: FunctionComponent<SectionProps> = ({
             {showHeader && (
                 <SectionHeader
                     title={title}
-                    description={meta.description}
-                    page={meta.page}
+                    description={meta?.description}
+                    page={meta?.page}
                     framework={framework}
                     breadcrumbs={breadcrumbs}
                     displayName={displayName}
                     headerLevel={config.headerLevel}
-                    hideHeader={config.hideHeader ?? true}
+                    hideHeader={config.hideHeader}
                     showSnippets={config.showSnippets && names.length < 1}
                     properties={properties}
                 />

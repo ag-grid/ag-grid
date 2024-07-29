@@ -34,7 +34,7 @@ const model = getInterfaceDocumentationModel({
             interfaceName={interfaceName}
             framework={framework}
             model={model}
-            config={config}
+            config={{ ...config, hideHeader: config?.hideHeader ?? true }}
         />
     )
 }
