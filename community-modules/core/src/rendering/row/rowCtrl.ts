@@ -1010,9 +1010,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.beans.eventService.dispatchEvent(
-            this.createRowEventWithSource('rowDoubleClicked', mouseEvent)
-        );
+        this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowDoubleClicked', mouseEvent));
     }
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
