@@ -90,5 +90,10 @@
     .icon svg {
         fill: var(--color-white);
         padding: 6px;
+
+        &:hover {
+            cursor: pointer;
+            fill: var(--color-util-brand-400);
+        }
     }
 }

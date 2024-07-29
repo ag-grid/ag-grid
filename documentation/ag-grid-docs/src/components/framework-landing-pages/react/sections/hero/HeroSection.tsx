@@ -1,5 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 import Example from '../../demos/kitchensink/KitchenSink';
 import CustomerLogos from '../../utils/CustomerLogos';
@@ -14,13 +14,23 @@ const MyComponent: React.FC<Props> = () => {
         window.open(path, '_blank');
     };
 
+    const [isCopied, setIsCopied] = useState(false);
+    const installTextRef = useRef(null);
+    const copyToClipboard = () => {
+        const text = installTextRef?.current.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        });
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.headingContainer}>
                 <div onClick={() => handleClick('/whats-new')} className={styles.versionTagContainer}>
-                    <span className={styles.version}>AG Grid v31.3.1</span>
+                    <span className={styles.version}>AG Grid v32.0.0</span>
                     <span className={styles.featureHighlight}>
-                        New sticky group and grand total rows feature
+                        15% reduction in bundle size (1st iteration)
                         <Icon svgClasses={styles.featureArrow} name="arrowRight" />
                     </span>
                 </div>
@@ -31,11 +41,15 @@ const MyComponent: React.FC<Props> = () => {
                 </p>
             </div>
             <div className={styles.buttonContainer}>
-                <button className={styles.cta1}>Get Started</button>
+                <button className={styles.cta1} onClick={() => handleClick('/react-data-grid/getting-started/')}>
+                    Get Started
+                </button>
                 <div className={styles.cta2}>
-                    <span className={styles.installText}>$ npm install ag-grid-react</span>
-                    <span className={styles.icon}>
-                        <Icon name="copy" />
+                    <span ref={installTextRef} className={styles.installText}>
+                        $ npm install ag-grid-react
+                    </span>
+                    <span className={styles.icon} onClick={copyToClipboard}>
+                        {isCopied ? <Icon name="tick" /> : <Icon name="copy" />}
                     </span>
                 </div>
             </div>
