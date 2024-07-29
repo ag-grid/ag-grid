@@ -5,7 +5,6 @@ import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackPar
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import { _setAriaDisabled } from '../utils/aria';
 import { _addFocusableContainerListener } from '../utils/focus';
 import { _createIconNoSpan } from '../utils/icon';
@@ -18,13 +17,11 @@ import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorCom
 import type { PaginationService } from './paginationService';
 
 export class PaginationComp extends TabGuardComp implements FocusableContainer {
-    private rowNodeBlockLoader?: RowNodeBlockLoader;
     private rowModel: IRowModel;
     private paginationService: PaginationService;
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
         this.rowModel = beans.rowModel;
         this.paginationService = beans.paginationService!;
         this.focusService = beans.focusService;

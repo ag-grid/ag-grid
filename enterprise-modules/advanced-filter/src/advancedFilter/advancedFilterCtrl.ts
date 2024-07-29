@@ -1,11 +1,9 @@
 import type {
-    AdvancedFilterBuilderVisibleChangedEvent,
     BeanCollection,
     CtrlsService,
     Environment,
     IAdvancedFilterCtrl,
     PopupService,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
@@ -146,12 +144,11 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     }
 
     private dispatchFilterBuilderVisibleChangedEvent(source: 'api' | 'ui', visible: boolean): void {
-        const event: WithoutGridCommon<AdvancedFilterBuilderVisibleChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'advancedFilterBuilderVisibleChanged',
             source,
             visible,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private getBuilderDialogSize(): { width: number; height: number; minWidth: number } {

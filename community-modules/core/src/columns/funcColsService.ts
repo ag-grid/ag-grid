@@ -320,7 +320,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         actionIsAdd: boolean,
         autoGroupsNeedBuilding: boolean,
         columnCallback: (column: AgColumn) => void,
-        eventType: string,
+        eventType: 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged',
         source: ColumnEventType
     ) {
         if (!keys || _missingOrEmpty(keys)) {

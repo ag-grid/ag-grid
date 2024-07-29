@@ -1,8 +1,6 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import type { CssVariablesChanged } from './events';
-import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { ResizeObserverService } from './misc/resizeObserverService';
 import { _warnOnce } from './utils/function';
 
@@ -173,11 +171,10 @@ export class Environment extends BeanStub implements NamedBean {
     }
 
     private fireGridStylesChangedEvent(change: ChangeKey): void {
-        const event: WithoutGridCommon<CssVariablesChanged> = {
+        this.eventService.dispatchEvent({
             type: 'gridStylesChanged',
             [change]: true,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private setUpThemeClassObservers() {

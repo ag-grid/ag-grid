@@ -1,9 +1,4 @@
-import type {
-    Component,
-    RichSelectListRowSelectedEvent,
-    RichSelectParams,
-    WithoutGridCommon,
-} from '@ag-grid-community/core';
+import type { Component, RichSelectParams } from '@ag-grid-community/core';
 import { KeyCode, _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
@@ -327,13 +322,11 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private dispatchValueSelected(): void {
-        const event: WithoutGridCommon<RichSelectListRowSelectedEvent> = {
+        this.dispatchLocalEvent({
             type: 'richSelectListRowSelected',
             fromEnterKey: false,
             value: this.selectedItems,
-        };
-
-        this.dispatchLocalEvent(event);
+        });
     }
 
     public override destroy(): void {
