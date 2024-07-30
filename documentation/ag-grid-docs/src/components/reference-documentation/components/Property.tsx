@@ -196,11 +196,13 @@ export const Property: FunctionComponent<{
         }
     }, [idName]);
 
+    const isExpandable = detailsCode || formattedDefaultValue != null || isInitial;
+
     return (
         <>
             <tr ref={propertyRef}>
                 <td className={styles.propertyNameDscription}>
-                    <div className={styles.collapsedPropertyContent}>
+                    <div className={classnames(styles.collapsedPropertyContent, { [styles.expandable]: isExpandable })}>
                         <div role="presentation" className={styles.leftColumn}>
                             <div className={styles.propertyName}>
                                 <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
@@ -333,8 +335,7 @@ export const Property: FunctionComponent<{
                         )}
                         {more != null && more.url && !config.hideMore && (
                             <span className={styles.seeMoreLink}>
-                                <Icon name={'link'} />
-                                <span className="text-secondary"></span>{' '}
+                                <span className="text-secondary">See: </span>{' '}
                                 <a
                                     href={urlWithPrefix({
                                         url: more.url,
