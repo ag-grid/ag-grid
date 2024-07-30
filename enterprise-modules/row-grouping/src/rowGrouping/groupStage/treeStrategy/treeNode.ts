@@ -46,6 +46,9 @@ export class TreeNode {
 
     public parent: TreeNode | null;
 
+    /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
+    public oldRow: RowNode | null = null;
+
     public key: string;
 
     public childrenAfterGroup: RowNode[] = [];
