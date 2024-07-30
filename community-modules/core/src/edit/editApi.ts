@@ -54,8 +54,17 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     if (!cell) {
         return;
     }
-    if (!beans.focusService.isCellFocused(cellPosition)) {
-        beans.focusService.setFocusedCell(cellPosition);
+    const { focusService, gos } = beans;
+    const isFocusWithinCell = () => {
+        const activeElement = gos.getActiveDomElement();
+        const eCell = cell.getGui();
+        return activeElement !== eCell && eCell.contains(activeElement);
+    };
+    if (gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell()) {
+        // force focus back on the cell so it doesn't get lost
+        focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
+    } else if (!focusService.isCellFocused(cellPosition)) {
+        focusService.setFocusedCell(cellPosition);
     }
     cell.startRowOrCellEdit(params.key);
 }
