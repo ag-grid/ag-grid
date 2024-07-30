@@ -67,7 +67,7 @@ async function validateRelease() {
     }
 }
 
-async function createRelease() {
+async function createGitHubReleaseAttachArtifacts() {
     console.log(`Creating GitHub Release ${ghReleaseVersion}`);
 
     const creationResult = await octokit.request('POST /repos/ag-grid/ag-grid/releases', {
@@ -151,5 +151,5 @@ async function uploadArtifactsForRelease(release) {
 }
 
 await validateRelease();
-const release = await createRelease();
+const release = await createGitHubReleaseAttachArtifacts();
 await uploadArtifactsForRelease(release);
