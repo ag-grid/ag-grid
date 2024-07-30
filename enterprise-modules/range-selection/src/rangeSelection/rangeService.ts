@@ -15,15 +15,11 @@ import type {
     NamedBean,
     PartialCellRange,
     PinnedRowModel,
-    RangeDeleteEndEvent,
-    RangeDeleteStartEvent,
-    RangeSelectionChangedEvent,
     RowPinnedType,
     RowPosition,
     RowPositionUtils,
     ValueService,
     VisibleColsService,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     AutoScrollService,
@@ -393,11 +389,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const { cellEventSource = 'rangeService', dispatchWrapperEvents, wrapperEventSource = 'deleteKey' } = params;
 
         if (dispatchWrapperEvents) {
-            const startEvent: WithoutGridCommon<RangeDeleteStartEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'rangeDeleteStart',
                 source: wrapperEventSource,
-            };
-            this.eventService.dispatchEvent(startEvent);
+            });
         }
 
         if (!cellRanges) {
@@ -424,11 +419,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         });
 
         if (dispatchWrapperEvents) {
-            const endEvent: WithoutGridCommon<RangeDeleteEndEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'rangeDeleteEnd',
                 source: wrapperEventSource,
-            };
-            this.eventService.dispatchEvent(endEvent);
+            });
         }
     }
 
@@ -929,14 +923,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
-        const event: WithoutGridCommon<RangeSelectionChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'rangeSelectionChanged',
             started,
             finished,
             id,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private calculateColumnsBetween(columnFrom: AgColumn, columnTo: AgColumn): AgColumn[] | undefined {

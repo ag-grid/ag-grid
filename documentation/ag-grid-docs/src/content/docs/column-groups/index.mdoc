@@ -87,6 +87,21 @@ If you grab the group resize bar, it resizes each child in the group evenly dist
 
 {% imageCaption imagePath="resources/header-resize.png" alt="Header Resize" centered=true constrained=true width="30rem" /%}
 
+
+## Auto Header Height
+
+The column groups header row can have its height set automatically based on the content of the group header cells. This is most useful when using the `wrapHeaderText` column group property.
+
+To enable this, set `autoHeaderHeight=true` on the column group definition you want to adjust the height for. If more than one column group has this property enabled, then the header row will be sized to the maximum of these
+column group's header cells to avoid content overflow.
+
+The example below demonstrates using the `autoHeaderHeight` property in conjunction with the `wrapHeaderText` property, so that long column group names are fully displayed.
+
+* Note that the long column group header names wrap onto another line
+* Try making a column group smaller by dragging the resize handle on the column group header or child column headers, observe that the group header will expand so the full content is still visible.
+
+{% gridExampleRunner title="Auto Header Height" name="auto-height" /%}
+
 ## Colouring Groups
 
 The grid doesn't colour the groups for you. However you can use the column definition `headerClass` for this purpose. The `headerClass` attribute is available on both columns and column groups.

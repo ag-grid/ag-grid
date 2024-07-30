@@ -16,10 +16,12 @@ export class AriaAnnouncementService extends BeanStub implements NamedBean {
 
     private descriptionContainer: HTMLElement | null = null;
 
+    private pendingAnnouncements: Map<string, string> = new Map();
+
     constructor() {
         super();
 
-        this.announceValue = _debounce(this.announceValue.bind(this), 200);
+        this.updateAnnouncement = _debounce(this.updateAnnouncement.bind(this), 200);
     }
 
     public postConstruct(): void {
@@ -34,13 +36,24 @@ export class AriaAnnouncementService extends BeanStub implements NamedBean {
         this.eGridDiv.appendChild(div);
     }
 
-    public announceValue(value: string): void {
+    /**
+     * @param key used for debouncing calls
+     */
+    public announceValue(value: string, key: string): void {
+        this.pendingAnnouncements.set(key, value);
+        this.updateAnnouncement();
+    }
+
+    private updateAnnouncement(): void {
         if (!this.descriptionContainer) {
             return;
         }
+
+        const value = Array.from(this.pendingAnnouncements.values()).join('. ');
+        this.pendingAnnouncements.clear();
         // screen readers announce a change in content, so we set it to an empty value
         // and then use a setTimeout to force the Screen Reader announcement
-        this.descriptionContainer!.textContent = '';
+        this.descriptionContainer.textContent = '';
         setTimeout(() => {
             if (this.isAlive() && this.descriptionContainer) {
                 this.descriptionContainer.textContent = value;
@@ -61,5 +74,6 @@ export class AriaAnnouncementService extends BeanStub implements NamedBean {
         }
         this.descriptionContainer = null;
         (this.eGridDiv as any) = null;
+        this.pendingAnnouncements.clear();
     }
 }

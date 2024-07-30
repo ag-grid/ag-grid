@@ -3,6 +3,7 @@ import type { UserCompDetails, UserComponentFactory } from '../../components/fra
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import { _warnOnce } from '../../utils/function';
@@ -19,17 +20,20 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private userComponentFactory: UserComponentFactory;
     private rowModel: IRowModel;
+    private ctrlsService: CtrlsService;
     private isClientSide: boolean;
     private columnModel: ColumnModel;
 
     private state: OverlayServiceState = OverlayServiceState.Hidden;
     private showInitialOverlay: boolean = true;
     private exclusive?: boolean;
+    private wrapperPadding: number = 0;
 
     public wireBeans(beans: BeanCollection): void {
         this.userComponentFactory = beans.userComponentFactory;
         this.rowModel = beans.rowModel;
         this.columnModel = beans.columnModel;
+        this.ctrlsService = beans.ctrlsService;
     }
 
     private overlayWrapperComp: OverlayWrapperComponent;
@@ -41,6 +45,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             newColumnsLoaded: updateOverlayVisibility,
             rowDataUpdated: updateOverlayVisibility,
+            gridSizeChanged: this.onGridSizeChanged.bind(this),
             rowCountReady: () => {
                 // Support hiding the initial overlay when data is set via transactions.
                 this.showInitialOverlay = false;
@@ -160,6 +165,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
         this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, this.isExclusive(), gridOption);
+        this.refreshWrapperPadding();
     }
 
     private updateExclusive(): void {
@@ -170,5 +176,29 @@ export class OverlayService extends BeanStub implements NamedBean {
                 type: 'overlayExclusiveChanged',
             });
         }
+    }
+
+    private onGridSizeChanged(): void {
+        this.refreshWrapperPadding();
+    }
+
+    private refreshWrapperPadding(): void {
+        let newPadding: number = 0;
+
+        if (this.state === OverlayServiceState.NoRows) {
+            const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
+            const headerHeight = headerCtrl?.getHeaderHeight() || 0;
+
+            newPadding = headerHeight;
+        } else if (this.wrapperPadding !== 0) {
+            newPadding = 0;
+        }
+
+        if (this.wrapperPadding === newPadding) {
+            return;
+        }
+
+        this.wrapperPadding = newPadding;
+        this.overlayWrapperComp.updateOverlayWrapperPaddingTop(newPadding);
     }
 }

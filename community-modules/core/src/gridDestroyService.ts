@@ -1,8 +1,6 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import type { GridPreDestroyedEvent } from './events';
-import type { WithoutGridCommon } from './interfaces/iCommon';
 
 export class GridDestroyService extends BeanStub implements NamedBean {
     beanName = 'gridDestroyService' as const;
@@ -21,11 +19,10 @@ export class GridDestroyService extends BeanStub implements NamedBean {
             return;
         }
 
-        const event: WithoutGridCommon<GridPreDestroyedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'gridPreDestroyed',
             state: this.beans.stateService?.getState() ?? {},
-        };
-        this.eventService.dispatchEvent(event);
+        });
 
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;
