@@ -333,6 +333,7 @@ export const Property: FunctionComponent<{
                         )}
                         {more != null && more.url && !config.hideMore && (
                             <span className={styles.seeMoreLink}>
+                                <Icon name={'link'} />
                                 <span className="text-secondary"></span>{' '}
                                 <a
                                     href={urlWithPrefix({
