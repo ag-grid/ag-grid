@@ -160,7 +160,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private getFillHandleDirection(): 'x' | 'y' | 'xy' {
-        const direction = this.gos.get('fillHandleDirection');
+        const direction = this.gos.getLegacySelectionOption('fillHandleDirection');
 
         if (!direction) {
             return 'xy';
@@ -183,7 +183,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gos.get('suppressClearOnFillReduction')) {
+        if (this.isReduce && !this.gos.getLegacySelectionOption('suppressClearOnFillReduction')) {
             const columns = (
                 isVertical
                     ? initialRange.columns

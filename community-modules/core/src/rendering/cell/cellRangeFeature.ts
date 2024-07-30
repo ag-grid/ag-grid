@@ -209,8 +209,9 @@ export class CellRangeFeature {
 
         const cellRange = _last(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
-        const isFillHandleAvailable = gos.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
-        const isRangeHandleAvailable = gos.get('enableRangeHandle');
+        const isFillHandleAvailable =
+            !!gos.getLegacySelectionOption('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
+        const isRangeHandleAvailable = !!gos.getLegacySelectionOption('enableRangeHandle');
 
         let handleIsAvailable =
             rangesLen === 1 && !this.cellCtrl.isEditing() && (isFillHandleAvailable || isRangeHandleAvailable);

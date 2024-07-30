@@ -724,6 +724,7 @@ export {
 export { DataTypeService } from './columns/dataTypeService';
 export {
     GridOptions,
+    SelectionOptions,
     IsApplyServerSideTransaction,
     GetContextMenuItems,
     GetDataPath,

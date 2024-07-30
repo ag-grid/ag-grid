@@ -93,7 +93,7 @@ export class CheckboxSelectionComponent extends Component {
                 // would possibly get selected twice
                 _stopPropagationForAgGrid(event);
 
-                const groupSelectsFiltered = this.gos.get('groupSelectsFiltered');
+                const groupSelectsFiltered = !!this.gos.getLegacySelectionOption('groupSelectsFiltered');
                 const isSelected = this.eCheckbox.getValue();
 
                 if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
@@ -116,7 +116,7 @@ export class CheckboxSelectionComponent extends Component {
             selectableChanged: this.onSelectableChanged.bind(this),
         });
 
-        const isRowSelectableFunc = this.gos.get('isRowSelectable');
+        const isRowSelectableFunc = this.gos.getLegacySelectionOption('isRowSelectable');
         const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {

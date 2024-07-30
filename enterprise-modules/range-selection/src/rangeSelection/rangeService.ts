@@ -215,7 +215,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const suppressMultiRangeSelections = this.gos.get('suppressMultiRangeSelection');
+        const suppressMultiRangeSelections = this.gos.getLegacySelectionOption('suppressMultiRangeSelection');
 
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _missing(this.cellRanges)) {
@@ -685,7 +685,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !this.gos.get('suppressMultiRangeSelection');
+        const allowMulti = !this.gos.getLegacySelectionOption('suppressMultiRangeSelection');
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && _existsAndNotEmpty(this.cellRanges);
 
@@ -746,7 +746,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (fromMouseClick && this.dragging) {
             return;
         }
-        if (this.gos.get('suppressMultiRangeSelection')) {
+        if (this.gos.getLegacySelectionOption('suppressMultiRangeSelection')) {
             return;
         }
         if (this.isEmpty()) {

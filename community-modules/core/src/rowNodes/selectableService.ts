@@ -31,14 +31,14 @@ export class SelectableService extends BeanStub implements NamedBean {
     }
 
     private updateSelectable(skipLeafNodes = false) {
-        const isRowSelecting = !!this.gos.get('rowSelection');
-        const isRowSelectable = this.gos.get('isRowSelectable');
+        const isRowSelecting = !!this.gos.getLegacySelectionOption('rowSelection');
+        const isRowSelectable = this.gos.getLegacySelectionOption('isRowSelectable');
 
         if (!isRowSelecting || !isRowSelectable) {
             return;
         }
 
-        const isGroupSelectsChildren = this.gos.get('groupSelectsChildren');
+        const isGroupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
 
         const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
 
@@ -56,7 +56,7 @@ export class SelectableService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const rowSelectable = isRowSelectable ? isRowSelectable(node) : true;
+            const rowSelectable = isRowSelectable?.(node) ?? true;
             node.setRowSelectable(rowSelectable, true);
 
             if (!rowSelectable && node.isSelected()) {

@@ -145,6 +145,7 @@ import type {
     RowStyle,
     RowValueChangedEvent,
     SelectionChangedEvent,
+    SelectionOptions,
     SendToClipboardParams,
     ServerSideGroupLevelParams,
     SideBarDef,
@@ -1321,6 +1322,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressHeaderFocus: boolean | undefined = undefined;
+    /** Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
+     */
+    @Input() public selectionOptions: SelectionOptions | undefined = undefined;
     /** If `true`, only a single range can be selected.
      * @default false
      */
