@@ -514,6 +514,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             adjustedIndex -= 1;
         }
 
+        // if last row is footer, return this rows index.
+        const lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+        if (lastRow.footer && adjustedIndex >= this.rootNode.childrenAfterSort!.length) {
+            return lastRow.rowIndex!;
+        }
+
         let rowNode = this.rootNode.childrenAfterSort![adjustedIndex];
 
         if (this.gos.get('groupHideOpenParents')) {
@@ -523,6 +529,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         }
 
+        console.log(rowNode, rowNode.rowIndex);
         return rowNode.rowIndex!;
     }
 
