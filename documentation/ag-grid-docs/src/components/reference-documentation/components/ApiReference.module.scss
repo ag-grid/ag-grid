@@ -190,6 +190,7 @@
 .metaLabel {
     font-size: var(--text-fs-sm);
     color: var(--color-fg-secondary);
+    opacity: 0.8;
 }
 
 .metaValue {
@@ -242,15 +243,10 @@ a.metaValue {
 
 .seeMoreLink {
     svg {
-        --icon-size: 1.5em;
+        --icon-size: 1.25em;
         fill: var(--color-link);
     }
     font-size: var(--text-fs-base);
-
-    a:after {
-        content: ' ↗';
-        opacity: 0.85;
-    }
 }
 
 button.seeMore {
