@@ -8,7 +8,7 @@ export interface IServerSideStore extends Bean {
     clearDisplayIndexes(): void;
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;
-    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void;
+    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void;
     forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeepAfterFilterAndSort(

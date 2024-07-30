@@ -143,6 +143,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             ],
             resetListener
         );
+        this.addManagedPropertyListener('groupAllowUnbalanced', () => this.onStoreUpdated());
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
@@ -456,7 +457,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (!rootStore) {
             return;
         }
-        rootStore.setDisplayIndexes(new NumberSequence(), { value: 0 });
+        rootStore.setDisplayIndexes(new NumberSequence(), { value: 0 }, 0);
     }
 
     public retryLoads(): void {
