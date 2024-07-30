@@ -55,6 +55,8 @@
         @container (max-width: #{$breakpoint-table-small}) {
             display: block;
         }
+        display: table-cell;
+        width: 100%;
     }
 
     tr {
@@ -62,6 +64,12 @@
             display: flex;
             flex-direction: column;
         }
+        display: flex;
+        flex-direction: row;
+        padding-top: $spacing-size-2;
+        padding-bottom: $spacing-size-2;
+        border-top: 1px solid color-mix(in srgb, var(--color-border-primary), var(--color-border-secondary) 70%);
+        justify-content: space-between;
     }
 
     pre:global(.code) {
@@ -71,6 +79,9 @@
     .linkIcon {
         font-size: var(--text-fs-lg);
     }
+}
+.apiReference {
+    border-bottom: none;
 }
 
 .propertyRow {
@@ -100,7 +111,7 @@
 
 .leftColumn {
     flex-shrink: 0;
-    width: 40%;
+    width: 100%;
     padding: $spacing-size-2 $spacing-size-4 $spacing-size-2 calc(var(--nested-path-depth, 0) * $spacing-size-2);
 
     @container (max-width: #{$breakpoint-table-small}) {
@@ -110,8 +121,7 @@
 }
 
 .rightColumn {
-    width: 60%;
-    padding: $spacing-size-2 0 $spacing-size-2 $spacing-size-4;
+    width: 100%;
 
     &:not(td) {
         display: flex;
@@ -122,6 +132,7 @@
         width: 100%;
         padding-left: calc(var(--nested-path-depth, 0) * $spacing-size-2);
     }
+    margin-bottom: $spacing-size-3;
 }
 
 .name {
@@ -133,15 +144,14 @@
     position: relative;
     display: inline-block;
     margin-top: $spacing-size-1;
-    padding-right: $spacing-size-6;
+    padding-right: $spacing-size-2;
     font-family: var(--text-monospace-font-family);
     font-size: var(--text-fs-lg);
     font-weight: var(--text-bold);
-    line-height: var(--text-lh-xs);
-    margin-bottom: $spacing-size-2;
+    margin-bottom: 0;
 
     @container (min-width: #{$breakpoint-table-small}) {
-        font-size: var(--text-fs-base);
+        font-size: var(--text-fs-sm);
     }
 
     :hover .linkIcon {
@@ -188,6 +198,9 @@
 
 a.metaValue {
     color: var(--color-link);
+    text-decoration: underline;
+
+    background-color: color-mix(in srgb, var(--color-link), var(--color-bg-primary) 90%);
 
     &:hover {
         color: var(--color-link-hover);
@@ -214,7 +227,9 @@ button.seeMore {
     min-width: 10.5ch;
     color: var(--color-link);
     transition: color $transition-default-timing;
-
+    justify-content: center;
+    display: flex;
+    align-items: center;
     &:hover {
         color: var(--color-link-hover);
 
@@ -227,7 +242,7 @@ button.seeMore {
         --icon-size: 1em;
 
         margin: -0.1em 0 0;
-        fill: var(--color-link);
+        fill: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 60%);
         transition: fill $transition-default-timing;
     }
 }
@@ -301,9 +316,40 @@ button.seeMore {
 }
 
 .expandedContent {
-    border-top: none;
+    border-top: 1px solid var(--color-bg-primary) !important;
 }
 
 .expandedContent > td {
     padding: 0 0 $spacing-size-4;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.propertyName {
+    display: flex;
+    align-items: center;
+}
+
+.metaValue {
+    background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 90%);
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: var(--radius-sm, 0.375rem);
+}
+
+.propertyNameDescription {
+    display: flex;
+    flex-direction: column;
+}
+
+td {
+    // background-color: rgba(255, 0, 0, 0.105);
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    cursor: pointer;
 }
