@@ -103,13 +103,26 @@ export function getProperties({
         return (v1 as ChildDocEntry).isRequired ? -1 : 1;
     });
 
+    const interfaceDeclaration = getInterfaceWithGenericParams(interfaceName, interfaceData.meta);
+    const description =
+        config.description == null
+            ? `Properties available on the \`${interfaceDeclaration}\` interface.`
+            : config.description;
+    const meta = {
+        displayName: interfaceName,
+        description,
+        ...interfaceOverrides.meta,
+    };
+
     ordered.forEach(([name, definition]) => {
         const gridOpProp = codeData[name];
         const showAdditionalDetails = getShowAdditionalDetails({ definition, gridOpProp, interfaceLookup });
+
         const { type, propertyType } = getDefinitionType({
             definition,
             gridOpProp,
             interfaceLookup,
+            isEvent: meta.isEvent,
             config,
         });
         const { interfaceHierarchyOverrides } = definition;
@@ -137,16 +150,6 @@ export function getProperties({
         [interfaceName]: {
             ...orderedProps,
         },
-    };
-    const interfaceDeclaration = getInterfaceWithGenericParams(interfaceName, interfaceData.meta);
-    const description =
-        config.description == null
-            ? `Properties available on the \`${interfaceDeclaration}\` interface.`
-            : config.description;
-    const meta = {
-        displayName: interfaceName,
-        description,
-        ...interfaceOverrides.meta,
     };
 
     return { type: 'properties', properties, meta };

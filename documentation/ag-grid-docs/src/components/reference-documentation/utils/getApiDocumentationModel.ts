@@ -59,6 +59,7 @@ function getResolvedProperties({
                 definition,
                 gridOpProp,
                 interfaceLookup,
+                isEvent: meta?.isEvent,
                 config,
             });
             const { interfaceHierarchyOverrides } = definition;

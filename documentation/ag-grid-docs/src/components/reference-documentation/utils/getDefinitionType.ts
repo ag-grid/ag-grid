@@ -7,11 +7,13 @@ export function getDefinitionType({
     definition,
     gridOpProp,
     interfaceLookup,
+    isEvent,
     config,
 }: {
     definition: DocEntry | ChildDocEntry;
     gridOpProp: InterfaceEntry;
     interfaceLookup: Record<string, InterfaceEntry>;
+    isEvent: boolean;
     config: Config;
 }) {
     let type: any = definition.type;
@@ -43,7 +45,7 @@ export function getDefinitionType({
 
     const propertyType = getPropertyType({
         type,
-        isEvent: config.isEvent,
+        isEvent,
         interfaceLookup,
         gridOpProp,
     });
