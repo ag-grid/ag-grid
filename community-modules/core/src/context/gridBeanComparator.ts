@@ -64,6 +64,7 @@ const orderedCoreBeans: BeanName[] = [
     'columnAnimationService',
     'selectableService',
     'autoColService',
+    'controlColService',
     'changeDetectionService',
     'animationFrameService',
     'undoRedoService',

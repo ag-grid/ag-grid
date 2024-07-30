@@ -33,6 +33,7 @@ import type { ColumnSizeService } from './columnSizeService';
 import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
+import type { IControlColService } from './controlColService';
 import type { FuncColsService } from './funcColsService';
 import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
@@ -62,6 +63,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private pivotResultColsService: PivotResultColsService;
     private columnAnimationService: ColumnAnimationService;
     private autoColService?: IAutoColService;
+    private controlColService?: IControlColService;
     private valueCache: ValueCache;
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
@@ -388,26 +390,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private createControlCols(): void {
-        const colDef: ColDef = {
-            colId: 'CONTROL_AUTO_COLUMN',
-            checkboxSelection: true,
-            headerCheckboxSelection: true,
-            suppressMovable: true,
-            lockPosition: 'left',
-            suppressHeaderMenuButton: true,
-            sortable: false,
-            width: 50,
-            pinned: 'left',
-            lockPinned: true,
-        };
-        const col = new AgColumn(colDef, null, colDef.colId!, false);
-        this.createBean(col);
-        this.controlCols = {
-            list: [col],
-            tree: [col],
-            treeDepth: 1,
-            map: { [colDef.colId!]: col },
-        };
+        const cols = this.controlColService?.createControlCols();
+        if (cols) {
+            this.controlCols = {
+                list: cols,
+                tree: cols,
+                treeDepth: 1,
+                map: Object.fromEntries(cols.map((c) => [c.getColId(), c])),
+            };
+        }
     }
 
     private addControlCols(): void {

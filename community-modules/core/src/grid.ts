@@ -15,6 +15,7 @@ import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
+import { ControlColService } from './columns/controlColService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
@@ -471,6 +472,7 @@ export class GridCoreCreator {
             ColumnNameService,
             ColumnViewportService,
             PivotResultColsService,
+            ControlColService,
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => (module.beans ? module.beans : []));
