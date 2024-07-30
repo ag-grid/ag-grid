@@ -14,34 +14,21 @@ import type {
 import { BeanStub, _sortRowNodesByOrder, _warnOnce } from '@ag-grid-community/core';
 import { RowNode } from '@ag-grid-community/core';
 
-import { TreeNode } from './treeNode';
+import {
+    TreeNode,
+    getExpandedInitialized,
+    getTreeNode,
+    makeFillerRowId,
+    setExpandedInitialized,
+    setTreeNode,
+} from './treeNode';
 
-const FLAG_NEW = 0x0001;
-const FLAG_CHILDREN_CHANGED = 0x0002;
-const FLAG_LEAFS_CHANGED = 0x0004;
-const FLAG_PATH_CHANGED = 0x0008;
-const FLAG_GROUP_DATA_CHANGED = 0x0010;
-const FLAG_ROW_CHANGED = 0x0020;
-export const FLAG_NEEDS_SET_DATA = 0x0040;
+const FLAG_DATA_UPDATED = 0x1;
+const FLAG_ROW_CHANGED = 0x2;
+const FLAG_LEAFS_CHANGED = 0x4;
+const FLAG_PATH_CHANGED = 0x8;
 
-const COMMITTED_FLAGS_TO_REMOVE =
-    FLAG_NEW |
-    FLAG_GROUP_DATA_CHANGED |
-    FLAG_CHILDREN_CHANGED |
-    FLAG_LEAFS_CHANGED |
-    FLAG_PATH_CHANGED |
-    FLAG_NEEDS_SET_DATA |
-    FLAG_ROW_CHANGED;
-
-interface TreeRow extends RowNode {
-    [EXPANDED_INITIALIZED_SYM]?: unknown;
-}
-
-/**
- * We need this to mark a row as expanded value already precomputed.
- * A row can be reinserted after a rowData replacement, and we want to maintain the expanded state.
- */
-const EXPANDED_INITIALIZED_SYM = Symbol('expandedInitialized');
+const COMMITTED_FLAGS_TO_REMOVE = FLAG_LEAFS_CHANGED | FLAG_PATH_CHANGED | FLAG_DATA_UPDATED | FLAG_ROW_CHANGED;
 
 export interface TreeGroupingDetails {
     expandByDefault: number;
@@ -61,18 +48,18 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private showRowGroupColsService: IShowRowGroupColsService;
     private beans: BeanCollection;
     private oldGroupDisplayColIds: string | undefined;
-    private rowsToNodes: WeakMap<RowNode, TreeNode> | null = null;
-    private root: TreeNode | null = null;
+
+    private readonly root: TreeNode = new TreeNode(null, '');
+
+    private maybeDeletedRows: Set<RowNode> | null = null;
 
     public wireBeans(beans: BeanCollection) {
         this.selectionService = beans.selectionService;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
         this.beans = beans;
-        this.beans = beans;
     }
 
     public override destroy(): void {
-        this.setRoot(null);
         super.destroy();
         this.beans = null!;
     }
@@ -97,8 +84,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         if (details.transactions) {
             this.handleTransaction(details);
         } else {
-            const afterColsChanged = params.afterColumnsChanged === true;
-            this.shotgunResetEverything(details, afterColsChanged);
+            this.shotgunResetEverything(details, params.afterColumnsChanged === true);
         }
     }
 
@@ -114,7 +100,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 // if the group display cols have changed, then we need to update rowNode.groupData
                 // (regardless of tree data or row grouping)
                 if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
-                    this.checkAllGroupDataAfterColsChanged(this.root?.row?.childrenAfterGroup);
+                    this.checkAllGroupDataAfterColsChanged(this.root.row?.childrenAfterGroup);
                 }
 
                 // WARNING: this assumes that an event with afterColumnsChange=true doesn't change the rows
@@ -127,11 +113,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         // groups are about to get disposed, so need to deselect any that are selected
         this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
 
-        this.destroyTree(this.root);
+        this.addOrUpdateRows(this.root.row?.allLeafChildren, details, false);
 
-        this.addRows(this.root?.row?.allLeafChildren, details);
-
-        this.commitRoot(details);
+        this.commitTree(details);
     }
 
     private handleTransaction(details: TreeGroupingDetails): void {
@@ -147,11 +131,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             // transaction.
 
             this.removeRows(remove as RowNode[] | null);
-            this.updateRows(update as RowNode[] | null, details);
-            this.addRows(add as RowNode[] | null, details);
+            this.addOrUpdateRows(update as RowNode[] | null, details, true);
+            this.addOrUpdateRows(add as RowNode[] | null, details, false);
         }
 
-        this.commitRoot(details);
+        this.commitTree(details);
 
         // TODO: move this on commit
         if (details.rowNodeOrder) {
@@ -183,67 +167,40 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private removeRows(rows: RowNode[] | null | undefined): void {
         if (rows) {
             for (let i = 0, len = rows.length; i < len; i++) {
-                this.removeRow(rows[i]);
+                const node = getTreeNode(rows[i]);
+                if (node) {
+                    this.overwriteNodeRow(node, null);
+                }
             }
         }
     }
 
-    /** Transactional update */
-    private updateRows(rows: RowNode[] | null | undefined, details: TreeGroupingDetails): void {
+    /** Transactional update or insert */
+    private addOrUpdateRows(rows: RowNode[] | null | undefined, details: TreeGroupingDetails, updated: boolean): void {
         for (const row of new Set(rows)) {
-            const node = this.getTreeNode(row);
-            if (!node) {
-                continue; // row was removed or not found, cannot move
-            }
+            const node = this.addOrMoveRow(row, this.getDataPath(row, details));
+            if (updated && node?.parent) {
+                // hack: we need to execute the commit stage because we need to call row.setData(row.data)
+                // if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
+                // refreshed into the gui.
+                node.flags |= FLAG_DATA_UPDATED;
 
-            // hack: we need to execute the commit stage because we need to call row.setData(row.data)
-            // if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
-            // refreshed into the gui.
-            node.flags |= FLAG_NEEDS_SET_DATA;
-            node.invalidate();
-
-            // we add node, even if parent has not changed, as the data could have
-            // changed, hence aggregations will be wrong
-            if (node.parent) {
+                // we mark the node as changed even if parent has not changed,
+                // as the data could have changed, hence aggregations will be wrong
                 node.parent.flags |= FLAG_PATH_CHANGED;
-            }
 
-            const newPath: string[] = this.getDataPath(row, details);
-            if (!this.isNodeInTheRightPath(node, newPath)) {
-                this.addOrMoveRow(row, newPath);
+                node.invalidate();
             }
         }
     }
 
-    /** Transactional insertion */
-    private addRows(rows: RowNode[] | null | undefined, details: TreeGroupingDetails): void {
-        if (rows) {
-            for (let i = 0, len = rows.length; i < len; ++i) {
-                const row = rows[i];
-                this.addOrMoveRow(row, this.getDataPath(row, details));
-            }
-        }
-    }
-
-    /** Traverse from the node to the root to get the old path and compare it with the new path */
-    private isNodeInTheRightPath(row: TreeNode, newPath: string[]): boolean {
-        let pointer: TreeNode | null = row;
-        for (let i = newPath.length - 1; i >= 0; --i) {
-            if (!pointer || pointer.key !== newPath[i]) {
-                return false;
-            }
-            pointer = pointer.parent;
-        }
-        return pointer === this.root; // Ensure we have reached the root
-    }
-
-    private addOrMoveRow(row: RowNode, path: string[]) {
-        let parent = this.root!;
-        for (let level = 0, stopLevel = path.length - 1; level <= stopLevel; ++level) {
+    private addOrMoveRow(row: RowNode, path: string[]): TreeNode | null {
+        for (let level = 0, parent = this.root, stopLevel = path.length - 1; ; ++level) {
             const key = path[level];
-            const node = this.upsertNode(parent, key);
+            const node = this.upsertNodeByKey(parent!, key);
             if (level >= stopLevel) {
-                this.setNodeRow(node, row, key);
+                this.overwriteNodeRow(node, row);
+                return node;
             }
             parent = node;
         }
@@ -267,233 +224,83 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     ///// TREE MANAGER
 
     private setRoot(rootRow: RowNode | null) {
-        const oldRoot = this.root;
-
-        if (!rootRow) {
-            this.destroyTree(oldRoot);
+        const rootNode = this.root;
+        const oldRootRow = rootNode.row;
+        if (oldRootRow === rootRow) {
+            return; // Nothing to do
         }
 
-        if (oldRoot && oldRoot.row !== rootRow) {
-            this.rowsToNodes = null;
-            this.root = null;
+        if (oldRootRow) {
+            oldRootRow.childrenAfterGroup = [];
+            setTreeNode(oldRootRow, null);
         }
 
-        if (rootRow && (!oldRoot || oldRoot.row !== rootRow)) {
-            const root = new TreeNode(null, '', FLAG_CHILDREN_CHANGED);
-            root.root = true;
-            root.row = rootRow;
-            this.root = root;
-            this.rowsToNodes = new WeakMap<RowNode, TreeNode>().set(rootRow, root);
-
-            // set .leafGroup always to false for tree data, as .leafGroup is only used when pivoting, and pivoting
-            // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
+        if (rootRow) {
             rootRow.level = -1;
-            rootRow.leafGroup = false;
-            rootRow.childrenAfterGroup = [];
+            rootRow.leafGroup = false; // no pivoting with tree data
+            rootRow.childrenAfterGroup = rootNode.childrenAfterGroup;
             rootRow.updateHasChildren();
+            setTreeNode(rootRow, rootNode);
+            rootNode.row = rootRow;
+
             const sibling = rootRow.sibling;
             if (sibling) {
                 sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
+                sibling.childrenMapped = rootRow.childrenMapped;
             }
         }
     }
 
-    private getTreeNode(row: RowNode): TreeNode | null {
-        return this.rowsToNodes?.get(row) ?? null;
-    }
-
-    private addEmptyNode(parent: TreeNode, key: string): TreeNode {
-        const node = new TreeNode(parent, key, FLAG_NEW | FLAG_GROUP_DATA_CHANGED);
-        (parent.map ??= new Map()).set(key, node);
-        parent.flags |= FLAG_CHILDREN_CHANGED;
-        node.invalidate();
-        return node;
-    }
-
-    private upsertNode(parent: TreeNode, key: string): TreeNode {
-        return parent.map?.get(key) ?? this.addEmptyNode(parent, key);
-    }
-
-    /** Overwrites the row property of a node, preparing the tree correctly for commit. */
-    private setNodeRow(node: TreeNode, newRow: RowNode, newKey: string | undefined): void {
+    /** Overwrites the row property of a non-root node, preparing the tree correctly for the commit. */
+    private overwriteNodeRow(node: TreeNode, newRow: RowNode | null): void {
         const { parent, row: oldRow } = node;
 
-        let keyChanged = false;
-        if (newKey === undefined) {
-            newKey = node.key;
-        } else if (newKey !== node.key) {
-            keyChanged = true;
+        if (oldRow === newRow) {
+            return; // nothing to do
         }
 
-        if (oldRow === newRow && !keyChanged) {
-            return; // nothing to do, node is already in the right spot
+        const prevNode = newRow && getTreeNode(newRow);
+        if (prevNode !== node && prevNode) {
+            this.overwriteNodeRow(prevNode, null); // The row is somewhere else in the tree
         }
 
-        if (keyChanged && parent) {
-            const existing = parent.map?.get(newKey);
-            if (existing !== node) {
-                (parent.map ??= new Map<string, TreeNode>()).set(newKey, node);
-                if (existing) {
-                    if (existing.row?.data) {
-                        this.duplicateGroupKeysWarning(existing.row, newRow);
-                    }
-                    // Key is changed and another node already exists with the new key
-                    // We need to delete the existing node and update the current node with the new key
-                    this.removeNode(existing);
-                }
-            }
+        node.flags |= FLAG_ROW_CHANGED;
+
+        if (oldRow) {
+            oldRow.parent = null;
+            oldRow.childrenAfterGroup = null;
+            oldRow.allLeafChildren = null;
+            setTreeNode(oldRow, null);
+            (this.maybeDeletedRows ??= new Set()).add(oldRow);
         }
 
-        if (oldRow !== newRow) {
-            const oldNode = this.rowsToNodes?.get(newRow);
-            if (oldNode !== node) {
-                this.rowsToNodes?.set(newRow, node);
-                if (oldNode) {
-                    this.nodeDetached(oldNode);
-                }
-            }
-            newRow.parent = parent?.row ?? null;
-
+        if (newRow) {
             node.row = newRow;
-            node.flags |= FLAG_PATH_CHANGED | FLAG_CHILDREN_CHANGED | FLAG_ROW_CHANGED;
-
-            if (oldRow) {
-                // Move old allLeafChildren and childrenAfterGroup to the new row
-                if (newRow) {
-                    newRow.childrenAfterGroup = oldRow.childrenAfterGroup;
-                    newRow.allLeafChildren = oldRow.allLeafChildren;
-                }
-
-                // We replaced the previous row with a new one, and we need to delete the old one
-                this.rowRemoved(oldRow, node.flags & FLAG_NEW);
-
-                oldRow.childrenAfterGroup = [];
-                oldRow.allLeafChildren = [];
-            }
-
-            if (parent) {
-                if (oldRow?.data) {
-                    this.duplicateGroupKeysWarning(oldRow, newRow);
-                }
-            }
+            newRow.parent = parent?.row ?? null;
+            newRow.childrenAfterGroup = node.childrenAfterGroup;
+            newRow.allLeafChildren = node.allLeafChildren;
+            setTreeNode(newRow, node);
+        } else {
+            node.row = null;
         }
 
-        if (parent) {
-            parent.flags |=
-                newRow?.data || oldRow?.data
-                    ? FLAG_CHILDREN_CHANGED | FLAG_PATH_CHANGED | FLAG_LEAFS_CHANGED
-                    : FLAG_CHILDREN_CHANGED | FLAG_PATH_CHANGED;
+        // if (parent) parent.flags |= FLAG_CHILDREN_CHANGED;
+
+        if (oldRow?.data && newRow?.data) {
+            this.duplicateGroupKeysWarning(oldRow, newRow);
+        }
+
+        node.invalidate();
+    }
+
+    private upsertNodeByKey(parent: TreeNode, key: string): TreeNode {
+        let node = parent.map?.get(key);
+        if (!node) {
+            node = new TreeNode(parent, key);
+            (parent.map ??= new Map()).set(key, node);
             node.invalidate();
         }
-
-        if (keyChanged) {
-            node.key = newKey;
-            node.flags |= FLAG_GROUP_DATA_CHANGED;
-        }
-
-        newRow.key = newKey;
-        newRow.parent = parent?.row ?? null;
-    }
-
-    /** Entry point to delete a single row */
-    private removeRow(row: RowNode | null) {
-        const node = row && this.getTreeNode(row);
-        if (node) {
-            this.removeNode(node);
-        }
-    }
-
-    /** Entry point to delete a single node */
-    private removeNode(node: TreeNode) {
-        const parent = node.parent;
-        if (parent) {
-            parent.updates?.delete(node);
-            parent.invalidate();
-        }
-        this.nodeRemoved(node);
-    }
-
-    private destroyTree(node: TreeNode | null) {
-        if (!node) {
-            return;
-        }
-
-        const { row, map } = node;
-        if (row) {
-            if (row.data) {
-                const { childrenAfterGroup, allLeafChildren } = row;
-                if (childrenAfterGroup) childrenAfterGroup.length = 0;
-                if (allLeafChildren && !node.root) allLeafChildren.length = 0;
-                row.parent = null;
-            } else if (!node.root) {
-                this.nodeRemoved(node);
-            }
-        }
-
-        // Just detach this node
-
-        node.flags = FLAG_NEW | FLAG_CHILDREN_CHANGED | FLAG_LEAFS_CHANGED;
-        node.updates = null;
-        node.parent = null;
-
-        if (map) {
-            node.map = null;
-            for (const child of map.values()) {
-                this.destroyTree(child);
-            }
-        }
-    }
-
-    /** Called when the node need to be detached from the parent */
-    private nodeDetached(node: TreeNode) {
-        const parent = node.parent;
-        if (parent) {
-            node.parent = null;
-            parent.updates?.delete(node);
-            parent.map?.delete(node.key);
-            let parentFlags = parent.flags;
-            if (!(node.flags & FLAG_NEW)) {
-                parentFlags |= FLAG_PATH_CHANGED;
-            }
-            if (node.row?.data || node.flags & FLAG_LEAFS_CHANGED) {
-                parentFlags |= FLAG_LEAFS_CHANGED;
-            }
-            parent.flags = parentFlags | FLAG_CHILDREN_CHANGED;
-        }
-    }
-
-    /** Called when the node is removed from the tree */
-    private nodeRemoved(node: TreeNode) {
-        const { row, flags } = node;
-        this.nodeDetached(node);
-        if (row) {
-            node.row = null;
-            this.rowRemoved(row, flags & FLAG_NEW);
-        }
-    }
-
-    /** Called when the row is removed from the tree */
-    private rowRemoved(row: RowNode, isNew: boolean | number) {
-        const { childrenAfterGroup, allLeafChildren } = row;
-        if (childrenAfterGroup) childrenAfterGroup.length = 0;
-        if (allLeafChildren) allLeafChildren.length = 0;
-        row.parent = null;
-
-        this.rowsToNodes?.delete(row);
-
-        if (!isNew || row.data) {
-            row.setRowIndex(null);
-
-            // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
-            // remove, if rowTop is still present, the rowComp thinks it's just moved position.
-            row.setRowTop(null);
-
-            if (!row.data) {
-                // we remove selection on filler nodes here, as the selection would not be removed
-                // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
-            }
-        }
+        return node;
     }
 
     private setGroupData(row: RowNode): void {
@@ -510,67 +317,80 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private commitRoot(details: TreeGroupingDetails) {
+    private commitTree(details: TreeGroupingDetails) {
         const root = this.root;
-        if (root) {
-            if (root.updates?.size) {
-                for (const node of root.updates) {
-                    this.commitNode(details, node, 0);
+        let rowsChanged = false;
+        if (root.updates?.size) {
+            for (const child of root.updates) {
+                this.commitNode(details, child, root, 0);
+                if (child.flags & FLAG_ROW_CHANGED) {
+                    rowsChanged = true;
                 }
-                root.updates = null;
+            }
+            root.updates = null;
 
+            if (rowsChanged) {
                 this.rebuildChildrenAfterGroup(root);
             }
-
-            if (root.flags & FLAG_PATH_CHANGED && details.changedPath.isActive()) {
-                details.changedPath.addParentNode(root.row);
-            }
-
-            root.flags &= ~COMMITTED_FLAGS_TO_REMOVE;
         }
+
+        if (root.flags & FLAG_PATH_CHANGED && details.changedPath.isActive()) {
+            details.changedPath.addParentNode(root.row);
+        }
+
+        root.flags &= ~COMMITTED_FLAGS_TO_REMOVE;
+
+        this.removeDeletedRows();
     }
 
-    private commitNode(details: TreeGroupingDetails, node: TreeNode, level: number): void {
-        const parent = node.parent!;
-        let row = node.row;
-
-        if (!row?.data && !node.map?.size) {
-            this.nodeRemoved(node);
-            return;
-        }
-
-        if (!row) {
-            row = this.createFillerNode(node);
-            // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
-            // for top pinned and bottom pinned rows.
-            row.id = this.makeRowId(node, level);
-            node.row = row;
-        }
-
-        row.parent = parent.row;
-        row.level = level;
-
-        row.allLeafChildren ??= [];
-        row.childrenAfterGroup ??= [];
+    private commitNode(details: TreeGroupingDetails, node: TreeNode, parent: TreeNode, level: number): void {
+        let childrenChanged = false;
 
         if (node.updates) {
             const childLevel = level + 1;
             for (const child of node.updates) {
-                this.commitNode(details, child, childLevel);
+                this.commitNode(details, child, node, childLevel);
+                if (!childrenChanged && child.flags & FLAG_ROW_CHANGED) {
+                    childrenChanged = true;
+                }
+                if (child.flags & FLAG_LEAFS_CHANGED) {
+                    node.flags |= FLAG_LEAFS_CHANGED;
+                }
+                child.flags &= ~COMMITTED_FLAGS_TO_REMOVE;
             }
             node.updates = null;
         }
 
-        if (!row.data && !node.map?.size) {
-            this.nodeRemoved(node);
+        if (this.removeEmptyFillerNode(node, parent)) {
             return;
         }
 
-        if (node.flags & FLAG_GROUP_DATA_CHANGED) {
-            this.setGroupData(row);
+        const row = this.getOrCreateRow(node);
+
+        row.parent = parent.row; // By now, we have the parent row
+        row.level = level;
+
+        this.maybeDeletedRows?.delete(row);
+
+        const keyChanged = row.key !== node.key;
+        if (keyChanged) {
+            if (row.key) {
+                node.flags |= FLAG_DATA_UPDATED;
+            }
+            row.key = node.key;
+            parent.flags |= FLAG_PATH_CHANGED;
         }
 
-        const childrenChanged = node.flags & FLAG_CHILDREN_CHANGED && this.rebuildChildrenAfterGroup(node);
+        if (node.flags & FLAG_ROW_CHANGED && node.map) {
+            // We need to update children parents, as the row changed
+            for (const { row: childRow } of node.map.values()) {
+                if (childRow) {
+                    childRow.parent = row;
+                }
+            }
+        }
+
+        childrenChanged &&= this.rebuildChildrenAfterGroup(node);
 
         if (childrenChanged || node.flags & FLAG_LEAFS_CHANGED) {
             if (this.rebuildLeafChildren(node)) {
@@ -578,15 +398,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
 
-        if (node.flags & FLAG_ROW_CHANGED) {
-            // We need to update children parents
-            const children = row.childrenAfterGroup!;
-            for (let i = 0, len = children.length; i < len; i++) {
-                children[i].parent = row;
-            }
+        if (row.id === undefined && !row.data) {
+            row.id = makeFillerRowId(node, level);
         }
 
-        if (node.flags & FLAG_NEEDS_SET_DATA) {
+        if (keyChanged || !row.groupData) {
+            this.setGroupData(row);
+        }
+
+        if (node.flags & FLAG_DATA_UPDATED) {
             // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
             // refreshed into the gui.
             // this is needed to kick off the event that rowComp listens to for refresh. this in turn
@@ -595,122 +415,145 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             row.setData(row.data);
         }
 
-        this.recomputeRowGroupState(row);
-
-        if (node.flags & FLAG_NEW && !(EXPANDED_INITIALIZED_SYM in row)) {
-            this.setExpandedInitialValue(details, row);
+        if (childrenChanged || keyChanged || node.flags & (FLAG_ROW_CHANGED | FLAG_DATA_UPDATED)) {
+            parent.flags |= FLAG_PATH_CHANGED;
         }
 
-        if (node.flags & FLAG_PATH_CHANGED && details.changedPath.isActive()) {
+        const hasChildren = node.childrenAfterGroup.length > 0;
+        const group = hasChildren || !row.data;
+        if (row.group !== group) {
+            const oldExpanded = row.expanded;
+            row.setGroup(group); // Internally calls updateHasChildren
+            if (!group) {
+                // hack: restore expanded state, it seems to be lost after setGroup(false)
+                // We don't want to lose expanded state when a group becomes a leaf
+                row.expanded = oldExpanded;
+            }
+        } else if (row.hasChildren() !== hasChildren) {
+            row.updateHasChildren();
+        }
+
+        if (!getExpandedInitialized(row)) {
+            setExpandedInitialized(row, true);
+            row.expanded = this.getExpandedInitialValue(details, row);
+        }
+
+        if ((childrenChanged || node.flags & FLAG_PATH_CHANGED) && details.changedPath.isActive()) {
             details.changedPath.addParentNode(node.row);
         }
-
-        node.flags &= ~COMMITTED_FLAGS_TO_REMOVE;
     }
 
-    private createFillerNode(node: TreeNode): RowNode {
-        const row = new RowNode(this.beans);
-        row.group = true;
-        row.field = null;
-        row.key = node.key;
-        row.leafGroup = false;
-        row.rowGroupIndex = null;
+    /** Called during commit only to remove a filler node that has no children */
+    private removeEmptyFillerNode(node: TreeNode, parent: TreeNode): boolean {
+        if (node.row?.data || node.map?.size) {
+            return false; // Not an empty filler node
+        }
+        this.overwriteNodeRow(node, null);
+        parent.flags |= node.flags & (FLAG_LEAFS_CHANGED | FLAG_PATH_CHANGED);
+        parent.map?.delete(node.key);
+        node.parent = null;
+        return true; // Empty and removed.
+    }
 
-        this.rowsToNodes!.set(row, node);
+    private removeDeletedRows() {
+        const rows = this.maybeDeletedRows;
+        if (rows) {
+            this.maybeDeletedRows = null;
+            for (const row of rows) {
+                if (!row.parent) {
+                    this.rowDeleted(row);
+                }
+            }
+        }
+    }
 
-        // why is this done here? we are not updating the children count as we go,
-        // i suspect this is updated in the filter stage
-        row.setAllChildrenCount(0);
+    private rowDeleted(row: RowNode) {
+        row.childrenAfterGroup = [];
+        row.allLeafChildren = [];
 
-        row.updateHasChildren();
+        row.setRowIndex(null);
+
+        // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
+        // remove, if rowTop is still present, the rowComp thinks it's just moved position.
+        row.setRowTop(null);
+
+        if (!row.data) {
+            // we remove selection on filler nodes here, as the selection would not be removed
+            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+        }
+    }
+
+    /** Called during commit to get the row, or create a filler row if the node has no row as late as possible */
+    private getOrCreateRow(node: TreeNode): RowNode {
+        let row = node.row;
+        if (!row) {
+            row = new RowNode(this.beans); // Create a filler node
+            row.group = true;
+            row.field = null;
+            row.key = node.key;
+            row.leafGroup = false;
+            row.rowGroupIndex = null;
+            row.parent = node.parent ? this.getOrCreateRow(node.parent) : null;
+            this.overwriteNodeRow(node, row);
+
+            // why is this done here? we are not updating the children count as we go,
+            // i suspect this is updated in the filter stage
+            row.setAllChildrenCount(0);
+        }
         return row;
     }
 
-    private makeRowId(node: TreeNode, level: number): string {
-        let result = level + '-' + node.key;
-        for (let p = node.parent; p?.parent; p = p.parent) {
-            result = `${--level}-${p.key}-${result}`;
-        }
-        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's.
-        // we also use 't-' and 'b-' for top pinned and bottom pinned rows.
-        return RowNode.ID_PREFIX_ROW_GROUP + result;
-    }
-
-    private setExpandedInitialValue(details: TreeGroupingDetails, row: RowNode): void {
-        (row as TreeRow)[EXPANDED_INITIALIZED_SYM] = true;
-
-        // use callback if exists
-        const userCallback = details.isGroupOpenByDefault;
-        if (userCallback) {
-            const params: WithoutGridCommon<IsGroupOpenByDefaultParams> = {
-                rowNode: row,
-                field: row.field!,
-                key: row.key!,
-                level: row.level,
-                rowGroupColumn: row.rowGroupColumn!,
-            };
-            row.expanded = userCallback(params) == true;
-        } else if (details.expandByDefault === -1) {
-            row.expanded = true; // use expandByDefault if exists
-        } else {
-            row.expanded = row.level < details.expandByDefault;
-        }
-    }
-
     private rebuildChildrenAfterGroup(node: TreeNode): boolean {
-        const { row, map } = node;
-        let result = false;
-        const childrenAfterGroup = (row!.childrenAfterGroup ??= []);
+        const { map, childrenAfterGroup } = node;
         const oldCount = childrenAfterGroup.length;
         let count = 0;
+        let changed = false;
         if (map) {
             childrenAfterGroup.length = map.size;
             for (const child of map.values()) {
-                if (childrenAfterGroup[count] !== child.row) {
-                    childrenAfterGroup[count] = child.row!;
-                    result = true;
+                const row = this.getOrCreateRow(child);
+                if (childrenAfterGroup[count] !== row) {
+                    childrenAfterGroup[count] = row;
+                    changed = true;
                 }
                 ++count;
             }
         }
         if (count !== oldCount) {
             childrenAfterGroup.length = count;
-            result = true;
+            changed = true;
         }
 
         // TODO: investigate how to do and maintain _sortRowNodesByOrder here
 
-        return result;
+        return changed;
     }
 
     private rebuildLeafChildren(node: TreeNode): boolean {
-        const { row, map } = node;
-        const childrenAfterGroup = row!.childrenAfterGroup!;
-        const allLeafChildren = (row!.allLeafChildren ??= []);
+        const { childrenAfterGroup, allLeafChildren } = node;
         const oldCount = allLeafChildren!.length;
         let count = 0;
         let changed = false;
-        if (map?.size) {
-            for (let i = 0, iLen = childrenAfterGroup.length; i < iLen; i++) {
-                const childRow = childrenAfterGroup[i];
-                const childAllLeafChildren = childRow.allLeafChildren!;
-                const jLen = childAllLeafChildren.length;
-                if (jLen > 0) {
-                    for (let j = 0, jLen = childAllLeafChildren.length; j < jLen; j++) {
-                        const leaf = childAllLeafChildren[j];
-                        if (count >= oldCount || allLeafChildren[count] !== leaf) {
-                            allLeafChildren[count] = leaf;
-                            changed = true;
-                        }
-                        ++count;
-                    }
-                } else {
-                    if (count >= oldCount || allLeafChildren[count] !== childRow) {
-                        allLeafChildren[count] = childRow;
+        for (let i = 0, iLen = childrenAfterGroup.length; i < iLen; i++) {
+            const childRow = childrenAfterGroup[i];
+            const childAllLeafChildren = childRow.allLeafChildren!;
+            const jLen = childAllLeafChildren.length;
+            if (jLen > 0) {
+                for (let j = 0, jLen = childAllLeafChildren.length; j < jLen; j++) {
+                    const leaf = childAllLeafChildren[j];
+                    if (count >= oldCount || allLeafChildren[count] !== leaf) {
+                        allLeafChildren[count] = leaf;
                         changed = true;
                     }
                     ++count;
                 }
+            } else {
+                if (count >= oldCount || allLeafChildren[count] !== childRow) {
+                    allLeafChildren[count] = childRow;
+                    changed = true;
+                }
+                ++count;
             }
         }
         if (count !== oldCount) {
@@ -720,12 +563,19 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return changed;
     }
 
-    private recomputeRowGroupState(row: RowNode, hasChildren: boolean = !!row.childrenAfterGroup?.length) {
-        const group = hasChildren || !row.data;
-        if (row.group !== group) {
-            row.setGroup(group); // Internally calls updateHasChildren
-        } else if (row.hasChildren() !== hasChildren) {
-            row.updateHasChildren();
+    private getExpandedInitialValue(details: TreeGroupingDetails, row: RowNode): boolean {
+        const userCallback = details.isGroupOpenByDefault;
+        if (userCallback) {
+            return (
+                userCallback({
+                    rowNode: row,
+                    field: row.field!,
+                    key: row.key!,
+                    level: row.level,
+                    rowGroupColumn: row.rowGroupColumn!,
+                }) == true
+            );
         }
+        return details.expandByDefault === -1 || row.level < details.expandByDefault;
     }
 }

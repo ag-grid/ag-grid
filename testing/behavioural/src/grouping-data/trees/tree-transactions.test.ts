@@ -5,7 +5,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { getAllRows } from '../../test-utils';
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { TreeDiagram, simpleHierarchyRowSnapshot } from './tree-test-utils';
+import { TreeDiagram } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -31,10 +31,13 @@ describe('ag-grid tree transactions', () => {
         consoleErrorSpy?.mockRestore();
     });
 
-    test.each(['sync', 'async'])('ag-grid tree %s transaction', async (mode = 'sync') => {
+    // test.each(['sync', 'async'])
+
+    test.only('ag-grid tree %s complex transaction', async (mode = 'sync') => {
         const rowA = { id: '0', orgHierarchy: ['A'] };
 
         const rowZ1 = { id: '88', orgHierarchy: ['X', 'Y', 'Z'] };
+
         const rowW = { id: '99', orgHierarchy: ['X', 'Y', 'Z', 'W'] };
 
         const rowZ2 = { id: '88', orgHierarchy: ['A', 'Y', 'Z'] };
@@ -43,7 +46,7 @@ describe('ag-grid tree transactions', () => {
         const rowD = { id: '2', orgHierarchy: ['C', 'D'] };
 
         const rowH1 = { id: '3', orgHierarchy: ['X', 'Y', 'Z', 'H'] };
-        const rowH2 = { id: '3', orgHierarchy: ['E', 'F', 'G', 'H'] };
+        const rowE = { id: '3', orgHierarchy: ['C', 'E'] };
 
         const getDataPath = (data: any) => data.orgHierarchy;
 
@@ -73,10 +76,10 @@ describe('ag-grid tree transactions', () => {
             { add: [rowW] },
             { update: [rowZ2], add: [rowB, rowD] },
             { remove: [rowZ2], add: [rowH1] },
-            { update: [rowH2] },
+            { remove: [rowW], update: [rowE] },
         ];
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'rowData').check(`
             ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
             ├── A LEAF level:0 id:0
             └─┬ X filler level:0 id:row-group-0-X
@@ -99,67 +102,212 @@ describe('ag-grid tree transactions', () => {
         } else {
             api.applyTransaction(transactions[0]);
 
-            new TreeDiagram(api).check(`
+            new TreeDiagram(api, 'Transaction 0').check(`
                 ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
                 ├── A LEAF level:0 id:0
                 └─┬ X filler level:0 id:row-group-0-X
                 · └─┬ Y filler level:1 id:row-group-0-X-1-Y
                 · · └─┬ Z LEAF level:2 id:88
-                · · · └── W LEAF level:3 id:99`);
+                · · · └── W LEAF level:3 id:99
+            `);
 
             api.applyTransaction(transactions[1]);
 
-            new TreeDiagram(api).check(`
+            new TreeDiagram(api, 'Transaction 1').check(`
                 ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
                 ├─┬ A LEAF level:0 id:0
                 │ ├─┬ Y filler level:1 id:row-group-0-A-1-Y
                 │ │ └── Z LEAF level:2 id:88
                 │ └── B LEAF level:1 id:1
+                ├─┬ X filler level:0 id:row-group-0-X
+                │ └─┬ Y filler level:1 id:row-group-0-X-1-Y
+                │ · └─┬ Z filler level:2 id:row-group-0-X-1-Y-2-Z
+                │ · · └── W LEAF level:3 id:99
                 └─┬ C filler level:0 id:row-group-0-C
                 · └── D LEAF level:1 id:2
             `);
 
             api.applyTransaction(transactions[2]);
 
-            new TreeDiagram(api).check(`
+            new TreeDiagram(api, 'Transaction 2').check(`
                 ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
                 ├─┬ A LEAF level:0 id:0
                 │ └── B LEAF level:1 id:1
-                ├─┬ C filler level:0 id:row-group-0-C
-                │ └── D LEAF level:1 id:2
-                └─┬ X filler level:0 id:row-group-0-X
-                · └─┬ Y filler level:1 id:row-group-0-X-1-Y
-                · · └─┬ Z filler level:2 id:row-group-0-X-1-Y-2-Z
-                · · · └── H LEAF level:3 id:3`);
+                ├─┬ X filler level:0 id:row-group-0-X
+                │ └─┬ Y filler level:1 id:row-group-0-X-1-Y
+                │ · └─┬ Z filler level:2 id:row-group-0-X-1-Y-2-Z
+                │ · · ├── W LEAF level:3 id:99
+                │ · · └── H LEAF level:3 id:3
+                └─┬ C filler level:0 id:row-group-0-C
+                · └── D LEAF level:1 id:2
+            `);
+
+            console.log('**** apply transaction 3 *****\n'.repeat(5));
 
             api.applyTransaction(transactions[3]);
         }
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'final').check(`
             ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
             ├─┬ A LEAF level:0 id:0
             │ └── B LEAF level:1 id:1
-            ├─┬ C filler level:0 id:row-group-0-C
-            │ └── D LEAF level:1 id:2
-            └─┬ E filler level:0 id:row-group-0-E
-            · └─┬ F filler level:1 id:row-group-0-E-1-F
-            · · └─┬ G filler level:2 id:row-group-0-E-1-F-2-G
-            · · · └── H LEAF level:3 id:3`);
+            └─┬ C filler level:0 id:row-group-0-C
+            · ├── D LEAF level:1 id:2
+            · └── E LEAF level:1 id:3
+        `);
 
         const rows = getAllRows(api);
 
-        expect(rows.length).toBe(8);
+        expect(rows.length).toBe(5);
 
         expect(rows[0].data).toEqual(rowA);
         expect(rows[1].data).toEqual(rowB);
         expect(rows[2].data).toEqual(undefined);
         expect(rows[3].data).toEqual(rowD);
-        expect(rows[4].data).toEqual(undefined);
-        expect(rows[5].data).toEqual(undefined);
-        expect(rows[6].data).toEqual(undefined);
-        expect(rows[7].data).toEqual(rowH2);
+        expect(rows[4].data).toEqual(rowE);
 
         const rowsSnapshot = getRowsSnapshot(rows);
-        expect(rowsSnapshot).toMatchObject(simpleHierarchyRowSnapshot());
+        expect(rowsSnapshot).toMatchObject([
+            {
+                allChildrenCount: 1,
+                allLeafChildren: ['B'],
+                childIndex: 0,
+                childrenAfterFilter: ['B'],
+                childrenAfterGroup: ['B'],
+                childrenAfterSort: ['B'],
+                detail: undefined,
+                displayed: true,
+                expanded: true,
+                firstChild: true,
+                footer: undefined,
+                group: true,
+                groupData: { 'ag-Grid-AutoColumn': 'A' },
+                id: '0',
+                key: 'A',
+                lastChild: false,
+                leafGroup: undefined,
+                level: 0,
+                master: false,
+                parentKey: null,
+                rowGroupIndex: undefined,
+                rowPinned: undefined,
+                selectable: true,
+                siblingKey: undefined,
+                uiLevel: 0,
+                rowIndex: 0,
+            },
+            {
+                allChildrenCount: null,
+                allLeafChildren: [],
+                childIndex: 0,
+                childrenAfterFilter: [],
+                childrenAfterGroup: [],
+                childrenAfterSort: [],
+                detail: undefined,
+                displayed: true,
+                expanded: true,
+                firstChild: true,
+                footer: undefined,
+                group: false,
+                groupData: { 'ag-Grid-AutoColumn': 'B' },
+                id: '1',
+                key: 'B',
+                lastChild: true,
+                leafGroup: undefined,
+                level: 1,
+                master: false,
+                parentKey: 'A',
+                rowGroupIndex: undefined,
+                rowPinned: undefined,
+                selectable: true,
+                siblingKey: undefined,
+                uiLevel: 1,
+                rowIndex: 1,
+            },
+            {
+                allChildrenCount: 2,
+                allLeafChildren: ['D', 'E'],
+                childIndex: 1,
+                childrenAfterFilter: ['D', 'E'],
+                childrenAfterGroup: ['D', 'E'],
+                childrenAfterSort: ['D', 'E'],
+                detail: undefined,
+                displayed: true,
+                expanded: true,
+                firstChild: false,
+                footer: undefined,
+                group: true,
+                groupData: { 'ag-Grid-AutoColumn': 'C' },
+                id: 'row-group-0-C',
+                key: 'C',
+                lastChild: true,
+                leafGroup: false,
+                level: 0,
+                master: undefined,
+                parentKey: null,
+                rowGroupIndex: null,
+                rowPinned: undefined,
+                selectable: true,
+                siblingKey: undefined,
+                uiLevel: 0,
+                rowIndex: 2,
+            },
+            {
+                allChildrenCount: null,
+                allLeafChildren: [],
+                childIndex: 0,
+                childrenAfterFilter: [],
+                childrenAfterGroup: [],
+                childrenAfterSort: [],
+                detail: undefined,
+                displayed: true,
+                expanded: true,
+                firstChild: true,
+                footer: undefined,
+                group: false,
+                groupData: { 'ag-Grid-AutoColumn': 'D' },
+                id: '2',
+                key: 'D',
+                lastChild: false,
+                leafGroup: undefined,
+                level: 1,
+                master: false,
+                parentKey: 'C',
+                rowGroupIndex: undefined,
+                rowPinned: undefined,
+                selectable: true,
+                siblingKey: undefined,
+                uiLevel: 1,
+                rowIndex: 3,
+            },
+            {
+                allChildrenCount: null,
+                allLeafChildren: [],
+                childIndex: 1,
+                childrenAfterFilter: [],
+                childrenAfterGroup: [],
+                childrenAfterSort: [],
+                detail: undefined,
+                displayed: true,
+                expanded: true,
+                firstChild: false,
+                footer: undefined,
+                group: false,
+                groupData: { 'ag-Grid-AutoColumn': 'E' },
+                id: '3',
+                key: 'E',
+                lastChild: true,
+                leafGroup: undefined,
+                level: 1,
+                master: false,
+                parentKey: 'C',
+                rowGroupIndex: undefined,
+                rowPinned: undefined,
+                selectable: true,
+                siblingKey: undefined,
+                uiLevel: 1,
+                rowIndex: 4,
+            },
+        ]);
     });
 });

@@ -32,10 +32,12 @@ export function findTreeRootNode(gridApi: GridApi | IRowNode[]): IRowNode | null
 }
 
 export class TreeDiagram {
+    public label: string;
     public root: IRowNode | null = null;
     public diagram: string = '';
     public hasErrors = false;
-    public readonly uniqueNodes = new Set<IRowNode>();
+    public readonly uniqueNodeParents = new Map<IRowNode, IRowNode | null>();
+    private readonly uniqueChildrenAfterGroupArrays = new Map<IRowNode[], string>();
 
     private rowErrors: string[];
     private errorsCount: number = 0;
@@ -44,15 +46,15 @@ export class TreeDiagram {
     /** optional overridable method */
     public rowToString?: (row: IRowNode) => string;
 
-    public constructor(root: IRowNode | IRowNode[] | GridApi) {
-        this.diagram += '\n';
+    public constructor(root: IRowNode | IRowNode[] | GridApi, label: string = '') {
+        this.label = label;
+        this.diagram = '\n';
         const rootNodes = isGridApi(root) || Array.isArray(root) ? findTreeRootNodes(root) : [root];
         if (rootNodes.length === 0) {
             this.diagram += '❌ No tree root in\n';
             this.errorsCount = 1;
             return this;
         }
-        this.uniqueNodes.clear();
         for (const root of rootNodes) {
             this.root = root;
             this.recurseRow(root, root.parent, '', -1, -1);
@@ -62,18 +64,18 @@ export class TreeDiagram {
     private recurseRow(row: IRowNode, parent: IRowNode | null, branch: string, level: number, idx: number) {
         if (level < 0) this.rowIdxCounter = -1;
 
-        const isDuplicate = this.uniqueNodes.has(row);
+        const duplicateParent = this.uniqueNodeParents.get(row);
         const children = row.childrenAfterGroup;
         const type = row.level === -1 && row === this.root ? 'ROOT' : row.data ? 'LEAF' : 'filler';
-        this.diagram += `${branch}${branch.length ? (children.length !== 0 ? '┬ ' : '─ ') : ''}${rowKey(row)} ${type} level:${level} `;
+        this.diagram += `${branch}${branch.length ? (children?.length ? '┬ ' : '─ ') : ''}${rowKey(row)} ${type} level:${level} `;
         if (row.isSelected()) this.diagram += 'selected ';
         if (row.level >= 0 && !row.expanded) this.diagram += '!expanded ';
         this.rowErrors = [];
-        if (isDuplicate) {
-            this.rowErrors.push('DUPLICATE!');
+        if (duplicateParent !== undefined) {
+            this.rowErrors.push('DUPLICATE in ' + rowKey(duplicateParent));
         } else {
-            this.uniqueNodes.add(row);
-            this.checkRow(row, level, parent, idx);
+            this.uniqueNodeParents.set(row, parent);
+            this.checkRow(row, level, parent!, idx);
         }
         this.errorsCount += this.rowErrors.length;
         this.hasErrors ||= this.errorsCount > 0;
@@ -88,7 +90,7 @@ export class TreeDiagram {
 
         ++this.rowIdxCounter;
 
-        if (!isDuplicate && children) {
+        if (!duplicateParent && children) {
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
                 this.recurseRow(child, row, i === children.length - 1 ? branch + '└─' : branch + '├─', level + 1, i);
@@ -96,7 +98,7 @@ export class TreeDiagram {
         }
     }
 
-    private checkRow(row: IRowNode<any>, level: number, parent: IRowNode<any>, idx: number) {
+    private checkRow(row: IRowNode<any>, level: number, parent: IRowNode<any> | null, idx: number) {
         if (row === this.root) {
             if (row.id !== 'ROOT_NODE_ID') this.rowErrors.push('ROOT_NODE_ID!');
             if (row.key) this.rowErrors.push('ROOT_NODE_KEY!');
@@ -112,7 +114,7 @@ export class TreeDiagram {
             this.rowErrors.push('LEVEL!');
         }
         if (parent !== row.parent) {
-            this.rowErrors.push(`PARENT!=${rowKey(row.parent)}`);
+            this.rowErrors.push(`PARENT!=${rowKey(parent)}`);
             this.diagram += `row.parent:${rowKey(row.parent)} `;
         }
 
@@ -125,7 +127,7 @@ export class TreeDiagram {
             this.rowErrors.push('FIRST_CHILD!');
             this.diagram += `row.firstChild:${row.firstChild} `;
         }
-        if (parent && row.lastChild !== (idx === parent.childrenAfterGroup.length - 1)) {
+        if (parent && row.lastChild !== (idx === (parent.childrenAfterGroup?.length ?? 0) - 1)) {
             this.rowErrors.push('LAST_CHILD!');
             this.diagram += `row.lastChild:${row.lastChild} `;
         }
@@ -147,7 +149,7 @@ export class TreeDiagram {
         const leafChildrenErrors = level >= 0 && compareRowsSet(builtChildren.allLeafs, row.allLeafChildren);
         if (leafChildrenErrors) {
             this.rowErrors.push('LEAF_CHILDREN[' + leafChildrenErrors + ']');
-            this.diagram += 'row.allLeafChildren:' + row.allLeafChildren.map(rowKey).join(',') + ' ';
+            this.diagram += 'row.allLeafChildren:' + row.allLeafChildren?.map(rowKey).join(',') + ' ';
         }
 
         // rowGroupIndex seems to be null for fillers and undefined otherwise in the original implementation
@@ -171,21 +173,21 @@ export class TreeDiagram {
         }
 
         if (level < 0 && row.expanded) {
-            this.rowErrors.push('ROOT_EXPANDED!');
+            this.rowErrors.push('ROOT_EXPANDED');
+        }
+
+        if (row.childrenAfterGroup) {
+            const found = row.childrenAfterGroup.find((child) => child.parent !== row);
+            if (found !== undefined) {
+                this.rowErrors.push('DUPLICATE_CHILDREN_AFTER_GROUP_ARRAY_INSTANCE=' + rowKey(found));
+            }
+            this.uniqueChildrenAfterGroupArrays.set(row.childrenAfterGroup, rowKey(row));
         }
     }
 
     public print(): this {
         log(this.diagram);
         return this;
-    }
-
-    public toString(): string {
-        let result = this.diagram;
-        if (this.errorsCount) {
-            result += '\n❌ TREE HAS ' + this.errorsCount + ' ERRORS\n';
-        }
-        return result;
     }
 
     public check(diagramSnapshot?: string | string[] | true): void {
@@ -206,12 +208,20 @@ export class TreeDiagram {
             info(this.toString());
         }
     }
+
+    public toString(): string {
+        return (
+            (this.label ? '\n🧪 ' + this.label + '\n' : '') +
+            this.diagram +
+            (this.errorsCount ? '\n❌ TREE HAS ' + this.errorsCount + ' ERRORS\n' : '')
+        );
+    }
 }
 
 function normalizeDiagram(diagram: string | string[]) {
     let lines = Array.isArray(diagram) ? diagram : diagram.split('\n');
     lines = lines.filter((line) => line.trim().length > 0).map((line) => line.trimEnd());
-    const minIndent = Math.min(...lines.map((line) => line.match(/^\s*/)[0].length ?? 0));
+    const minIndent = Math.min(...lines.map((line) => line.match(/^\s*/)?.[0].length ?? 0));
     if (minIndent > 0) lines = lines.map((line) => line.slice(minIndent));
     return lines.join('\n');
 }
@@ -239,7 +249,7 @@ function compareRowsSet(
     actual: Set<IRowNode> | IRowNode[] | null | undefined
 ): string {
     const errors: string[] = [];
-    const makeSet = (x: Set<IRowNode> | IRowNode[]): Set<IRowNode> => {
+    const makeSet = (x: Set<IRowNode> | IRowNode[] | null | undefined): Set<IRowNode> => {
         if (!Array.isArray(x)) {
             if (!x) errors.push('[NULL]');
             return x ?? new Set();

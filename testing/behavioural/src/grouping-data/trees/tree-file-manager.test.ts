@@ -34,7 +34,7 @@ describe('ag-grid tree transactions', () => {
 
         api.getRowNode('2')!.setSelected(true);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'initial').check(`
             ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
             ├─┬ Documents LEAF level:0 id:1
             │ ├─┬ txt LEAF level:1 selected id:2
@@ -56,7 +56,7 @@ describe('ag-grid tree transactions', () => {
 
         function getRowsToUpdate(node: IRowNode, parentPath: string[]) {
             let res: IRowNode[] = [];
-            const newPath = parentPath.concat([node.key]);
+            const newPath = parentPath.concat([node.key!]);
             if (node.data) {
                 node.data.filePath = newPath; // groups without data, i.e. 'filler groups' don't need path updated
             }
@@ -70,13 +70,13 @@ describe('ag-grid tree transactions', () => {
         function moveSelectedNodeToTarget(targetRowId) {
             const selectedNode = api.getSelectedNodes()[0]; // single selection
             const targetNode = api.getRowNode(targetRowId);
-            api.applyTransaction({ update: getRowsToUpdate(selectedNode, targetNode.data.filePath) });
+            api.applyTransaction({ update: getRowsToUpdate(selectedNode, targetNode!.data.filePath) });
         }
 
         // Move 'txt' into 'stuff'
         moveSelectedNodeToTarget('9');
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'move Documents/txt to Documents/stuff/').check(`
             ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
             ├─┬ Documents LEAF level:0 id:1
             │ ├─┬ pdf LEAF level:1 id:4
@@ -96,23 +96,22 @@ describe('ag-grid tree transactions', () => {
             └── temp.txt LEAF level:0 id:12
         `);
 
-        // Move "xls" into "Documents/stuff/var/xxx"
-        api.applyTransaction({ update: [{ id: '7', filePath: ['Documents', 'stuff', 'var', 'xxx'] }] });
+        api.applyTransaction({ update: [{ id: '7', filePath: ['Documents', 'stuff', 'var', 'xls-renamed'] }] });
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'rename "Documents/xls" to "Documents/stuff/var/xls-renamed"').check(`
             ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
             ├─┬ Documents LEAF level:0 id:1
             │ ├─┬ pdf LEAF level:1 id:4
             │ │ ├── book.pdf LEAF level:2 id:5
             │ │ └── cv.pdf LEAF level:2 id:6
-            │ ├─┬ stuff LEAF level:1 id:9
-            │ │ ├── xyz.txt LEAF level:2 id:10
-            │ │ └─┬ txt LEAF level:2 selected id:2
-            │ │ · └── notes.txt LEAF level:3 id:3
-            │ └─┬ txt filler level:1 id:row-group-0-Documents-1-txt
-            │ · └─┬ stuff filler level:2 id:row-group-0-Documents-1-txt-2-stuff
-            │ · · └─┬ xxx LEAF level:3 id:7
-            │ · · · └── accounts.xls LEAF level:4 id:8
+            │ ├─┬ xls filler level:1 id:row-group-0-Documents-1-xls
+            │ │ └── accounts.xls LEAF level:2 id:8
+            │ └─┬ stuff LEAF level:1 id:9
+            │ · ├── xyz.txt LEAF level:2 id:10
+            │ · ├─┬ txt LEAF level:2 selected id:2
+            │ · │ └── notes.txt LEAF level:3 id:3
+            │ · └─┬ var filler level:2 id:row-group-0-Documents-1-stuff-2-var
+            │ · · └── xls-renamed LEAF level:3 id:7
             ├─┬ Music filler level:0 id:row-group-0-Music
             │ └─┬ mp3 filler level:1 id:row-group-0-Music-1-mp3
             │ · ├─┬ pop LEAF level:2 id:11
