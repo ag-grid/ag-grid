@@ -100,7 +100,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             })
         );
 
-        this.addResizeAndMoveKeyboardListeners();
+        this.addResizeAndMoveKeyboardListeners(eGui);
 
         this.addManagedPropertyListeners(
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'],
