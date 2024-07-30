@@ -138,11 +138,18 @@ export class CellCtrl extends BeanStub {
         this.beans.focusService.clearRestoreFocus();
     }
 
+    getCellWidth(): string | undefined {
+        return this.cellPositionFeature?.currWidth;
+    }
+    getCellLeft(): string | undefined {
+        return this.cellPositionFeature?.currLeft;
+    }
+
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
         this.addDestroyFunc(() => {
-            this.cellPositionFeature?.destroy();
-            this.cellPositionFeature = null;
+            // this.cellPositionFeature?.destroy();
+            // this.cellPositionFeature = null;
         });
 
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);

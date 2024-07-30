@@ -24,6 +24,9 @@ export class CellPositionFeature extends BeanStub {
 
     private beans: BeanCollection;
 
+    public currWidth: string;
+    public currLeft: string;
+
     constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
 
@@ -32,6 +35,13 @@ export class CellPositionFeature extends BeanStub {
 
         this.column = ctrl.getColumn();
         this.rowNode = ctrl.getRowNode();
+
+        this.setupColSpan();
+        this.setupRowSpan();
+
+        this.onLeftChanged();
+        this.onWidthChanged();
+        this.applyRowSpan();
     }
 
     private setupRowSpan(): void {
@@ -45,12 +55,12 @@ export class CellPositionFeature extends BeanStub {
 
         // add event handlers only after GUI is attached,
         // so we don't get events before we are ready
-        this.setupColSpan();
-        this.setupRowSpan();
+        // this.setupColSpan();
+        // this.setupRowSpan();
 
-        this.onLeftChanged();
-        this.onWidthChanged();
-        this.applyRowSpan();
+        // this.onLeftChanged();
+        // this.onWidthChanged();
+        // this.applyRowSpan();
     }
 
     private onNewColumnsLoaded(): void {
@@ -93,11 +103,14 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        if (!this.eGui) {
-            return;
-        }
+        // if (!this.eGui) {
+        //     return;
+        // }
         const width = this.getCellWidth();
-        this.eGui.style.width = `${width}px`;
+        this.currWidth = `${width}px`;
+        if (this.eGui) {
+            this.eGui.style.width = `${width}px`;
+        }
     }
 
     private getCellWidth(): number {
@@ -135,11 +148,12 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.eGui) {
-            return;
-        }
+        // return;
         const left = this.getCellLeft();
-        this.eGui.style.left = left + 'px';
+        this.currLeft = left + 'px';
+        if (this.eGui) {
+            this.eGui.style.left = left + 'px';
+        }
     }
 
     private getCellLeft(): number | null {

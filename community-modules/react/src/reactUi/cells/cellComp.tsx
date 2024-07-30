@@ -93,7 +93,11 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const [editDetails, setEditDetails] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
-    const [userStyles, setUserStyles] = useState<CellStyle>();
+    const [userStyles, setUserStyles] = useState<CellStyle>({
+        width: cellCtrl.getCellWidth()!,
+        left: cellCtrl.getCellLeft()!,
+        position: 'absolute',
+    });
 
     const [includeSelection, setIncludeSelection] = useState<boolean>(false);
     const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
@@ -420,7 +424,14 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const onBlur = useCallback(() => cellCtrl.onFocusOut(), []);
 
     return (
-        <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colId} onBlur={onBlur}>
+        <div
+            ref={setRef}
+            className="ag-cell-not-inline-editing ag-cell"
+            style={userStyles}
+            role={cellAriaRole}
+            col-id={colId}
+            onBlur={onBlur}
+        >
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
                     {showContents()}

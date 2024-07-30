@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 
 import { BeansContext } from '../beansContext';
 import { useEffectOnce } from '../useEffectOnce';
-import type { EditDetails } from './cellComp';
+import type { EditDetails } from './cellEditor';
 
 const PopupEditorComp = (props: {
     editDetails: EditDetails;

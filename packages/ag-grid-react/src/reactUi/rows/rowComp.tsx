@@ -18,6 +18,7 @@ import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../u
 const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
+    const isAlive = rowCtrl.isAlive();
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
@@ -32,9 +33,9 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.getRowStyles());
     const cellCtrlsRef = useRef<CellCtrl[] | null>(null);
     const prevCellCtrlsRef = useRef<CellCtrl[] | null>(null);
-    const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(() => null);
+    const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(() => null); //rowCtrl.getCellCtrlsNow(containerType)
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
-
+    const setCompCalled = useRef(false);
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
     const [top, setTop] = useState<string | undefined>(() =>
@@ -92,6 +93,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
         if (!rowCtrl.isAlive()) {
+            console.warn('ag-Grid: row is dead');
             return;
         }
 
@@ -139,6 +141,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
             },
         };
         rowCtrl.setComp(compProxy, eGui.current, containerType);
+        setCompCalled.current = true;
     }, []);
 
     useLayoutEffect(
@@ -190,7 +193,15 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
             </>
         );
     };
-
+    if (!isAlive || !showCells || !cellCtrls || !cellCtrls.length) {
+        console.debug(
+            'RowComp',
+            isAlive,
+            setCompCalled.current,
+            showCells,
+            cellCtrls?.map((c: any) => c.value).join(',')
+        );
+    }
     return (
         <div
             ref={setRef}
@@ -200,8 +211,11 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
             row-id={rowId}
             row-business-key={rowBusinessKey}
         >
-            {showCells && showCellsJsx()}
-            {showFullWidthFramework && showFullWidthFrameworkJsx()}
+            {
+                /* {isAlive */
+                showCells ? showCellsJsx() : showFullWidthFramework ? showFullWidthFrameworkJsx() : null
+                /* : null} */
+            }
         </div>
     );
 };
