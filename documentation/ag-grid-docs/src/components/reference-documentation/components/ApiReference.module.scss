@@ -52,28 +52,29 @@
     }
 
     tbody {
+        display: table-cell;
+        width: 100%;
         @container (max-width: #{$breakpoint-table-small}) {
             display: block;
         }
-        display: table-cell;
-        width: 100%;
     }
 
     tr {
-        @container (max-width: #{$breakpoint-table-small}) {
-            display: flex;
-            flex-direction: column;
-        }
         display: flex;
         flex-direction: row;
         padding-top: $spacing-size-2;
         padding-bottom: $spacing-size-2;
         border-top: 1px solid color-mix(in srgb, var(--color-border-primary), var(--color-bg-primary) 60%);
         justify-content: space-between;
+        @container (max-width: #{$breakpoint-table-small}) {
+            display: flex;
+            flex-direction: column;
+        }
     }
 
     pre:global(.code) {
         margin-bottom: $spacing-size-2;
+        margin-top: 0;
     }
 
     .linkIcon {
@@ -122,6 +123,7 @@
 
 .rightColumn {
     width: 100%;
+    margin-bottom: $spacing-size-3;
 
     &:not(td) {
         display: flex;
@@ -132,7 +134,6 @@
         width: 100%;
         padding-left: calc(var(--nested-path-depth, 0) * $spacing-size-2);
     }
-    margin-bottom: $spacing-size-3;
 }
 
 .name {
@@ -143,15 +144,15 @@
 
     position: relative;
     display: inline-block;
-    margin-top: $spacing-size-1;
+    margin-top: 0;
     padding-right: $spacing-size-2;
     font-family: var(--text-monospace-font-family);
-    font-size: var(--text-fs-lg);
+    font-size: 15px;
     font-weight: var(--text-bold);
     margin-bottom: 0;
 
     @container (min-width: #{$breakpoint-table-small}) {
-        font-size: var(--text-fs-sm);
+        font-size: 15px;
     }
 
     :hover .linkIcon {
@@ -174,6 +175,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-size-2 $spacing-size-6;
+    padding-bottom: $spacing-size-3;
 
     h1 + & {
         margin-top: 16px;
@@ -242,11 +244,11 @@ a.metaValue {
 }
 
 .seeMoreLink {
+    font-size: var(--text-fs-base);
     svg {
         --icon-size: 1.25em;
         fill: var(--color-link);
     }
-    font-size: var(--text-fs-base);
 }
 
 button.seeMore {
@@ -256,20 +258,19 @@ button.seeMore {
     justify-content: right;
     display: flex;
     align-items: center;
-    &:hover {
-        color: var(--color-link-hover);
-
-        svg {
-            fill: var(--color-link-hover);
-        }
-    }
-
     svg {
         --icon-size: 1em;
 
         margin: -0.1em 0 0;
         fill: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 55%);
         transition: fill $transition-default-timing;
+    }
+    &:hover {
+        color: var(--color-link-hover);
+
+        svg {
+            fill: var(--color-link-hover);
+        }
     }
 }
 
@@ -347,7 +348,6 @@ button.seeMore {
 
 .expandedContent > td {
     padding: 0 0 $spacing-size-4;
-
     display: flex;
     flex-direction: column;
 }
@@ -377,5 +377,8 @@ td {
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
+}
+
+.expandable {
     cursor: pointer;
 }
