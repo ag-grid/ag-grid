@@ -529,7 +529,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         }
 
-        console.log(rowNode, rowNode.rowIndex);
         return rowNode.rowIndex!;
     }
 
