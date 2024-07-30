@@ -174,10 +174,6 @@ blockquote:where(:not(:last-child)) {
     ul li > p {
         margin-bottom: 0.25rem;
     }
-
-    code {
-        font-size: 0.8em;
-    }
 }
 
 // Align two column markdown tables
