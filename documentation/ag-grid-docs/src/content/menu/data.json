@@ -161,7 +161,9 @@
                             {
                                 "title": "React Best Practices",
                                 "path": "react-hooks",
-                                "frameworks": ["react"]
+                                "frameworks": [
+                                    "react"
+                                ]
                             }
                         ]
                     },
@@ -179,7 +181,9 @@
                             {
                                 "title": "Testing Async",
                                 "path": "testing-async",
-                                "frameworks": ["angular"]
+                                "frameworks": [
+                                    "angular"
+                                ]
                             },
                             {
                                 "title": "Compatibility",
@@ -196,7 +200,9 @@
                             {
                                 "title": "Installation",
                                 "path": "installation",
-                                "frameworks": ["javascript"]
+                                "frameworks": [
+                                    "javascript"
+                                ]
                             }
                         ]
                     }
@@ -601,6 +607,10 @@
                             {
                                 "title": "Reference Data",
                                 "path": "reference-data"
+                            },
+                            {
+                                "title": "Cell Text Selection",
+                                "path": "cell-text-selection"
                             }
                         ]
                     },
@@ -719,7 +729,13 @@
                             },
                             {
                                 "title": "Row Selection",
-                                "path": "row-selection"
+                                "path": "row-selection",
+                                "items": [
+                                    {
+                                        "title": "Legacy API",
+                                        "path": "row-selection-legacy"
+                                    }
+                                ]
                             },
                             {
                                 "title": "Range Selection",
@@ -895,7 +911,6 @@
                                             }
                                         ]
                                     },
-
                                     {
                                         "title": "Group Cell Component",
                                         "path": "group-expand-collapse-comp",
@@ -1383,7 +1398,9 @@
                             {
                                 "title": "NgZone",
                                 "path": "angular-ngzone",
-                                "frameworks": ["angular"]
+                                "frameworks": [
+                                    "angular"
+                                ]
                             }
                         ]
                     }
@@ -1447,12 +1464,16 @@
                             {
                                 "title": "Best Practices",
                                 "path": "framework-data-flow",
-                                "frameworks": ["vue"]
+                                "frameworks": [
+                                    "vue"
+                                ]
                             },
                             {
                                 "title": "Vue2 Tutorial",
                                 "path": "vue2",
-                                "frameworks": ["vue"]
+                                "frameworks": [
+                                    "vue"
+                                ]
                             },
                             {
                                 "title": "Aligned Grids",

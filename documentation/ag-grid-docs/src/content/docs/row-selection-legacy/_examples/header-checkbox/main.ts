@@ -1,6 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { createGrid } from '@ag-grid-community/core';
+import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -46,5 +45,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
