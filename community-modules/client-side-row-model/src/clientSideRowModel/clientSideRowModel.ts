@@ -516,7 +516,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // if last row is footer, return this rows index.
         const lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
-        if (lastRow.footer && adjustedIndex >= this.rootNode.childrenAfterSort!.length) {
+        const indexOutsideGroupBounds = adjustedIndex >= this.rootNode.childrenAfterSort!.length;
+        if (lastRow.footer && indexOutsideGroupBounds) {
             return lastRow.rowIndex!;
         }
 
