@@ -258,7 +258,7 @@ export const Property: FunctionComponent<{
                         </div>
                         {more != null && more.url && !config.hideMore && (
                             <span className={styles.seeMoreLink}>
-                                <span className="text-secondary">See:</span>{' '}
+                                <span className="text-secondary"></span>{' '}
                                 <a
                                     href={urlWithPrefix({
                                         url: more.url,
@@ -307,7 +307,9 @@ export const Property: FunctionComponent<{
                             {formattedDefaultValue != null && (
                                 <div className={styles.metaItem}>
                                     <span className={styles.metaLabel}>Default</span>
-                                    <span className={styles.metaValue}>{formattedDefaultValue}</span>
+                                    <span className={classnames(styles.metaValue, styles.defaultValue)}>
+                                        {formattedDefaultValue}
+                                    </span>
                                 </div>
                             )}
                             {isInitial && (
