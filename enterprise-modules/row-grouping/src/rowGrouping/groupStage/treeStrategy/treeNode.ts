@@ -49,6 +49,9 @@ export class TreeNode {
     /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
     public oldRow: RowNode | null = null;
 
+    /** We set this to true if a update transaction happened on this row, is set to false during commit. */
+    public rowUpdate: boolean = false;
+
     public key: string;
 
     public childrenAfterGroup: RowNode[] = [];

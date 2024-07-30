@@ -23,11 +23,10 @@ import {
     setTreeNode,
 } from './treeNode';
 
-const FLAG_DATA_UPDATED = 0x1;
-const FLAG_LEAFS_CHANGED = 0x2;
-const FLAG_PATH_CHANGED = 0x4;
+const FLAG_LEAFS_CHANGED = 0x1;
+const FLAG_PATH_CHANGED = 0x2;
 
-const COMMITTED_FLAGS_TO_REMOVE = FLAG_LEAFS_CHANGED | FLAG_PATH_CHANGED | FLAG_DATA_UPDATED;
+const COMMITTED_FLAGS_TO_REMOVE = FLAG_LEAFS_CHANGED | FLAG_PATH_CHANGED;
 
 export interface TreeGroupingDetails {
     expandByDefault: number;
@@ -112,7 +111,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         // groups are about to get disposed, so need to deselect any that are selected
         this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
 
-        this.addOrUpdateRows(this.root.row?.allLeafChildren, details, false);
+        this.addRows(details, this.root.row?.allLeafChildren);
 
         this.commitTree(details);
     }
@@ -130,8 +129,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             // transaction.
 
             this.removeRows(remove as RowNode[] | null);
-            this.addOrUpdateRows(update as RowNode[] | null, details, true);
-            this.addOrUpdateRows(add as RowNode[] | null, details, false);
+            this.updateRows(details, update as RowNode[] | null);
+            this.addRows(details, add as RowNode[] | null);
         }
 
         this.commitTree(details);
@@ -174,26 +173,27 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    /** Transactional update or insert */
-    private addOrUpdateRows(rows: RowNode[] | null | undefined, details: TreeGroupingDetails, updated: boolean): void {
+    /** Transactional update */
+    private updateRows(details: TreeGroupingDetails, rows: RowNode[] | null | undefined): void {
         for (const row of new Set(rows)) {
-            const node = this.addOrMoveRow(row, this.getDataPath(row, details));
-            if (updated && node?.parent) {
-                // hack: we need to execute the commit stage because we need to call row.setData(row.data)
-                // if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
-                // refreshed into the gui.
-                node.flags |= FLAG_DATA_UPDATED;
-
-                // we mark the node as changed even if parent has not changed,
-                // as the data could have changed, hence aggregations will be wrong
-                node.parent.flags |= FLAG_PATH_CHANGED;
-
+            const node = this.setRowPath(row, this.getDataPath(row, details));
+            if (node) {
+                node.rowUpdate = true;
                 node.invalidate();
             }
         }
     }
 
-    private addOrMoveRow(row: RowNode, path: string[]): TreeNode | null {
+    /** Transactional insert */
+    private addRows(details: TreeGroupingDetails, rows: RowNode[] | null | undefined): void {
+        for (let i = 0, len = rows?.length ?? 0; i < len; i++) {
+            const row = rows![i];
+            this.setRowPath(row, this.getDataPath(row, details));
+        }
+    }
+
+    /** Sets the path of a row. It insert the row if it does not exists, or, moves it. The missing nodes will be filler nodes. */
+    private setRowPath(row: RowNode, path: string[]): TreeNode | null {
         for (let level = 0, parent = this.root, stopLevel = path.length - 1; ; ++level) {
             const key = path[level];
             const node = this.upsertNodeByKey(parent!, key);
@@ -252,9 +252,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Overwrites the row property of a non-root node, preparing the tree correctly for the commit. */
     private overwriteNodeRow(node: TreeNode, newRow: RowNode | null): void {
-        const { parent, row: oldRow } = node;
-
-        if (oldRow === newRow) {
+        const { parent, row } = node;
+        if (row === newRow) {
             return; // nothing to do
         }
 
@@ -263,12 +262,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.overwriteNodeRow(prevNode, null); // The row is somewhere else in the tree
         }
 
-        if (oldRow) {
-            oldRow.parent = null;
-            oldRow.childrenAfterGroup = null;
-            oldRow.allLeafChildren = null;
-            setTreeNode(oldRow, null);
-            (this.maybeDeletedRows ??= new Set()).add(oldRow);
+        if (row) {
+            row.parent = null;
+            row.childrenAfterGroup = null;
+            row.allLeafChildren = null;
+            setTreeNode(row, null);
+            (this.maybeDeletedRows ??= new Set()).add(row);
         }
 
         if (newRow) {
@@ -281,10 +280,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             node.row = null;
         }
 
-        // if (parent) parent.flags |= FLAG_CHILDREN_CHANGED;
-
-        if (oldRow?.data && newRow?.data) {
-            this.duplicateGroupKeysWarning(oldRow, newRow);
+        if (row?.data && newRow?.data) {
+            this.duplicateGroupKeysWarning(row, newRow);
         }
 
         node.invalidate();
@@ -368,11 +365,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
             const keyChanged = row.key !== node.key;
             if (keyChanged) {
-                if (row.key) {
-                    node.flags |= FLAG_DATA_UPDATED;
-                }
+                node.rowUpdate ||= !row.key;
                 row.key = node.key;
-                parent.flags |= FLAG_PATH_CHANGED;
             }
 
             if (node.oldRow !== node.row && node.map) {
@@ -402,7 +396,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 this.setGroupData(row);
             }
 
-            if (node.flags & FLAG_DATA_UPDATED) {
+            if (node.rowUpdate) {
                 // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
                 // refreshed into the gui.
                 // this is needed to kick off the event that rowComp listens to for refresh. this in turn
@@ -411,7 +405,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 row.setData(row.data);
             }
 
-            if (keyChanged || node.oldRow !== node.row || node.flags & FLAG_DATA_UPDATED) {
+            if (keyChanged || node.oldRow !== node.row || node.rowUpdate) {
                 parent.flags |= FLAG_PATH_CHANGED;
             }
 
@@ -440,6 +434,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         node.oldRow = node.row;
+        node.rowUpdate = false;
     }
 
     /** Called during commit to remove an empty filler node */

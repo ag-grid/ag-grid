@@ -142,8 +142,6 @@ describe('ag-grid tree transactions', () => {
                 · └── D LEAF level:1 id:2
             `);
 
-            console.log('**** apply transaction 3 *****\n'.repeat(5));
-
             api.applyTransaction(transactions[3]);
         }
 
