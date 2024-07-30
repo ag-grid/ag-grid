@@ -14,7 +14,7 @@ This page documents the new selection configuration API. For documentation on th
 
 Row selection is configured with the `selectionOptions` grid property. Setting `selectionOptions.mode` to either `"multiRow"` or `"singleRow"` will allow you to select rows by clicking.
 
-<!-- {% apiDocumentation source="grid-api/api.json" section="selection" names=["selectionOptions"] /%} -->
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionOptions"] /%}
 
 The following example illustrates a basic row selection configuration.
 
@@ -41,14 +41,12 @@ The range can also be truncated in the same way: by {% kbd "⇧ Shift" /%}-click
 
 {% kbd "⇧ Shift" /%}-clicking a row above the selection root will invert the selection: all rows below the selection root are deselected. All rows between the clicked row and the selection root are selected.
 
-<!-- example -->
-
 ### Bulk Deselection
 Typically, rows are deselected individually by {% kbd "^ Ctrl" /%}-clicking the row. Users may also deselect multiple rows at once by using a {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}-click. 
 For example, deselecting a single row with {% kbd "^ Ctrl" /%}-click, then deselecting another row with {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}-click will deselect all rows between the two. 
 Note that this deselection occurs whether or not the row is within the original range of selected rows. Use the example below to explore this behaviour.
 
-<!-- example -->
+{% gridExampleRunner title="Bulk deselection" name="bulk-deselection" /%}
 
 ## Checkbox Selection
 
@@ -65,6 +63,9 @@ selectionOptions: {
 }
 ```
 The function will be invoked for a given row to determine whether or not that row should display a checkbox.
+
+
+
 Note that when using a function in `selectionOptions.checkboxSelection`, the checkbox column will appear even if the function returns `false` for all rows. To be explicit:
 
 | Value of `checkboxSelection.displayCheckbox` | Checkbox column rendered | Checkbox visible |

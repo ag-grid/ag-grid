@@ -23,8 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    rowSelection: 'multiple',
-    rowData: null,
+    selectionOptions: { mode: 'multiRow' },
     onRowSelected: onRowSelected,
     onSelectionChanged: onSelectionChanged,
 };

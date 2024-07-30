@@ -23,7 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    rowSelection: 'single',
+    selectionOptions: { mode: 'singleRow' },
     onSelectionChanged: onSelectionChanged,
 };
 

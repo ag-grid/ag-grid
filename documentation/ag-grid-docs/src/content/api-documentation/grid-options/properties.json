@@ -1231,7 +1231,7 @@
         "groupSelectsChildren": {
             "more": {
                 "name": "Group Selection",
-                "url": "./row-selection/#group-selection"
+                "url": "./row-selection-legacy/#group-selection"
             }
         },
         "groupLockGroupColumns": {
@@ -1262,7 +1262,7 @@
         "groupSelectsFiltered": {
             "more": {
                 "name": "Group Selection",
-                "url": "./row-selection/#group-selection"
+                "url": "./row-selection-legacy/#group-selection"
             }
         },
         "showOpenedGroup": {
@@ -1662,32 +1662,38 @@
             "more": {
                 "name": "Row Selection",
                 "url": "./row-selection"
+            }
+        },
+        "rowSelection": {
+            "more": {
+                "name": "Row Selection",
+                "url": "./row-selection-legacy"
             },
             "description": "Type of Row Selection."
         },
         "rowMultiSelectWithClick": {
             "more": {
                 "name": "Multi Select Single Click",
-                "url": "./row-selection/#multi-select-with-click"
+                "url": "./row-selection-legacy/#multi-select-with-click"
             }
         },
         "isRowSelectable": {
             "more": {
                 "name": "Specify Selectable Rows",
-                "url": "./row-selection/#specify-selectable-rows"
+                "url": "./row-selection-legacy/#specify-selectable-rows"
             }
         },
         "suppressRowDeselection": {
             "more": {
                 "name": "Row Selection",
-                "url": "./row-selection"
+                "url": "./row-selection-legacy"
             },
             "description": "If `true`, rows will not be deselected if you hold down <kbd>^ Ctrl</kbd> and click the row or press <kbd>␣ Space</kbd>. Default: `false`"
         },
         "suppressRowClickSelection": {
             "more": {
                 "name": "Row Selection",
-                "url": "./row-selection"
+                "url": "./row-selection-legacy"
             }
         },
         "suppressCellFocus": {

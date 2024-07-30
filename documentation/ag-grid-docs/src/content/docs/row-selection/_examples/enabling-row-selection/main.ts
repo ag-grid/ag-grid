@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
+import type { GridApi, GridOptions, SelectionOptions } from '@ag-grid-community/core';
 import { createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
@@ -10,7 +10,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 
 let gridApi: GridApi<IOlympicData>;
 
-const selectionOptions = {
+const selectionOptions: SelectionOptions = {
     mode: 'singleRow',
     suppressDeselection: false,
     suppressClickSelection: false,
@@ -34,7 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    rowSelection: 'single',
+    selectionOptions,
 };
 
 // setup the grid after the page has finished loading
@@ -49,6 +49,33 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#input-selection-mode')?.addEventListener('change', (e) => {
         //@ts-ignore
         selectionOptions.mode = e.target!.value;
-        // gridApi.setGridOption('selectionOptions', selectionOptions);
+        gridApi.setGridOption('selectionOptions', selectionOptions);
+    });
+
+    document.querySelector('#input-suppress-deselection')?.addEventListener('change', (e) => {
+        //@ts-ignore
+        selectionOptions.suppressDeselection = e.target!.checked;
+        gridApi.setGridOption('selectionOptions', selectionOptions);
+    });
+
+    document.querySelector('#input-suppress-click-selection')?.addEventListener('change', (e) => {
+        //@ts-ignore
+        selectionOptions.suppressClickSelection = e.target!.checked;
+        gridApi.setGridOption('selectionOptions', selectionOptions);
+    });
+
+    document.querySelector('#input-enable-multi-select-with-click')?.addEventListener('change', (e) => {
+        //@ts-ignore
+        if (selectionOptions.mode === 'multiRow') {
+            //@ts-ignore
+            selectionOptions.enableMultiSelectWithClick = e.target!.checked;
+        }
+        gridApi.setGridOption('selectionOptions', selectionOptions);
+    });
+
+    document.querySelector('#input-checkbox-selection')?.addEventListener('change', (e) => {
+        //@ts-ignore
+        selectionOptions.checkboxSelection = e.target!.checked;
+        gridApi.setGridOption('selectionOptions', selectionOptions);
     });
 });

@@ -966,6 +966,11 @@
                                         ]
                                     },
                                     {
+                                        "title": "Selecting Groups",
+                                        "path": "grouping-row-selection",
+                                        "isEnterprise": true
+                                    },
+                                    {
                                         "title": "Opening Groups",
                                         "path": "grouping-opening-groups",
                                         "isEnterprise": true
