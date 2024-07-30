@@ -14,22 +14,40 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
     beanName = 'controlColService' as const;
 
     public createControlCols(): AgColumn[] {
-        // enable only if selectionOptions.headerCheckbox or selectionOptions.checkboxSelection
-        const colDef: ColDef = {
-            colId: 'CONTROL_AUTO_COLUMN',
-            checkboxSelection: true,
-            headerCheckboxSelection: true,
-            suppressMovable: true,
-            lockPosition: 'left',
-            suppressHeaderMenuButton: true,
-            sortable: false,
-            width: 50,
-            pinned: 'left',
-            lockPinned: true,
-        };
-        const col = new AgColumn(colDef, null, colDef.colId!, false);
-        this.createBean(col);
-        return [col];
+        const so = this.gos.get('selectionOptions');
+        const enableRTL = this.gos.get('enableRtl');
+
+        if (!so) {
+            return [];
+        }
+
+        if (so.mode === 'cell') {
+            return [];
+        }
+
+        if (so.checkboxSelection || (so.mode === 'multiRow' && so.headerCheckbox)) {
+            const checkboxSelection =
+                typeof so.checkboxSelection === 'boolean'
+                    ? so.checkboxSelection
+                    : so.checkboxSelection?.displayCheckbox;
+
+            const headerCheckbox = so.mode === 'multiRow' && so.headerCheckbox ? so.headerCheckbox : undefined;
+
+            const colDef: ColDef = {
+                colId: 'CONTROL_AUTO_COLUMN',
+                checkboxSelection,
+                headerCheckboxSelection: headerCheckbox,
+                suppressMovable: true,
+                lockPosition: enableRTL ? 'right' : 'left',
+                sortable: false,
+                width: 50,
+            };
+            const col = new AgColumn(colDef, null, colDef.colId!, false);
+            this.createBean(col);
+            return [col];
+        }
+
+        return [];
     }
 
     updateControlCols(autoGroupCols: AgColumn<any>[], source: ColumnEventType): void {}

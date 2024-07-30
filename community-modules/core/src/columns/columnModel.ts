@@ -86,6 +86,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.pivotResultColsService = beans.pivotResultColsService;
         this.columnAnimationService = beans.columnAnimationService;
         this.autoColService = beans.autoColService;
+        this.controlColService = beans.controlColService;
         this.valueCache = beans.valueCache;
         this.columnDefFactory = beans.columnDefFactory;
         this.columnApplyStateService = beans.columnApplyStateService;
