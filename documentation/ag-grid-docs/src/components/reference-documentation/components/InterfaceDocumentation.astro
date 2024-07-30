@@ -10,7 +10,7 @@ const { interfaceName, overrideSrc, names, exclude, config } = Astro.props;
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
-const overrides = getOverrides(overrideSrc);
+const overrides = await getOverrides(overrideSrc);
 const interfaceLookup = getJsonFile('reference/interfaces.AUTO.json');
 const codeLookup = getJsonFile('reference/doc-interfaces.AUTO.json');
 const model = getInterfaceDocumentationModel({
