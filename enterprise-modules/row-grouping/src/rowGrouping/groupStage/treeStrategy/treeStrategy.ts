@@ -23,10 +23,20 @@ import {
     setTreeNode,
 } from './treeNode';
 
-const FLAG_LEAFS_CHANGED = 0x1;
-const FLAG_PATH_CHANGED = 0x2;
+/** Indicates that the node row changed since last commit, so the parent need to rebuild childrenAfterGroup array */
+const COMMIT_FLAG_ROW = 0x01;
 
-const COMMITTED_FLAGS_TO_REMOVE = FLAG_LEAFS_CHANGED | FLAG_PATH_CHANGED;
+/** Indicates that the node leaf children changed since last commit, so the parent need to recompute the leafs too */
+const COMMIT_FLAG_LEAFS = 0x02;
+
+/** Indicates that the node path changed since last commit, and we need to call changedPath.addParentNode */
+const COMMIT_FLAG_PATH = 0x04;
+
+/**
+ * Result of committing a node, is a bitmask that indicates what changed so the parent can update things
+ * We use a bitmask as a result and not an object with boolean values to avoid unnecessary object creation.
+ */
+type CommitFlags = number;
 
 export interface TreeGroupingDetails {
     expandByDefault: number;
@@ -178,7 +188,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         for (const row of new Set(rows)) {
             const node = this.setRowPath(row, this.getDataPath(row, details));
             if (node) {
-                node.rowUpdate = true;
+                node.rowUpdated = true;
                 node.invalidate();
             }
         }
@@ -312,49 +322,38 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private commitTree(details: TreeGroupingDetails) {
-        const root = this.root;
-        let childrenRowsChanged = false;
-        if (root.updates?.size) {
-            for (const child of root.updates) {
-                const oldRow = child.oldRow;
-                this.commitNode(details, child, root, 0);
-                childrenRowsChanged ||= oldRow !== child.row;
-            }
-            root.updates = null;
-
-            if (childrenRowsChanged) {
-                this.rebuildChildrenAfterGroup(root);
-            }
-        }
-
-        if ((childrenRowsChanged || root.flags & FLAG_PATH_CHANGED) && details.changedPath.isActive()) {
-            details.changedPath.addParentNode(root.row);
-        }
-
-        root.flags &= ~COMMITTED_FLAGS_TO_REMOVE;
-
+        this.commitNode(details, this.root, null, -1);
         this.removeDeletedRows();
     }
 
-    private commitNode(details: TreeGroupingDetails, node: TreeNode, parent: TreeNode, level: number): void {
-        let childrenRowsChanged = false;
+    private commitNode(
+        details: TreeGroupingDetails,
+        node: TreeNode,
+        parent: TreeNode | null,
+        level: number
+    ): CommitFlags {
+        let childrenFlags: CommitFlags = 0;
 
         if (node.updates) {
             const childLevel = level + 1;
             for (const child of node.updates) {
-                const childOldRow = child.oldRow;
-                this.commitNode(details, child, node, childLevel);
-                childrenRowsChanged ||= childOldRow !== child.row;
-                if (child.flags & FLAG_LEAFS_CHANGED) {
-                    node.flags |= FLAG_LEAFS_CHANGED;
-                }
-                child.flags &= ~COMMITTED_FLAGS_TO_REMOVE;
+                childrenFlags |= this.commitNode(details, child, node, childLevel);
             }
             node.updates = null;
         }
 
-        if (!node.row?.data && !node.map?.size) {
-            this.emptyFillerNodeRemoved(node, parent);
+        let flags: CommitFlags = 0;
+        let childrenChanged = false;
+
+        if (!parent) {
+            // This is the root node
+            childrenChanged = childrenFlags & COMMIT_FLAG_ROW ? this.rebuildChildrenAfterGroup(node) : false;
+        } else if (!node.row?.data && !node.map?.size) {
+            // This is a filler node, remove it
+            this.overwriteNodeRow(node, null);
+            parent.map?.delete(node.key);
+            node.parent = null;
+            flags |= childrenFlags & COMMIT_FLAG_LEAFS; // propagate leafs changes up
         } else {
             const row = this.getOrCreateRow(node);
 
@@ -365,8 +364,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
             const keyChanged = row.key !== node.key;
             if (keyChanged) {
-                node.rowUpdate ||= !row.key;
+                if (row.key) {
+                    node.rowUpdated = true;
+                }
                 row.key = node.key;
+                flags |= COMMIT_FLAG_PATH;
+            }
+
+            if (keyChanged || !row.groupData) {
+                this.setGroupData(row);
             }
 
             if (node.oldRow !== node.row && node.map) {
@@ -378,35 +384,23 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
 
-            if (childrenRowsChanged) {
-                childrenRowsChanged = this.rebuildChildrenAfterGroup(node);
-            }
-
-            if (childrenRowsChanged || node.flags & FLAG_LEAFS_CHANGED) {
-                if (this.rebuildLeafChildren(node)) {
-                    parent.flags |= FLAG_LEAFS_CHANGED; // propagate up
-                }
-            }
-
             if (row.id === undefined && !row.data) {
                 row.id = makeFillerRowId(node, level);
             }
 
-            if (keyChanged || !row.groupData) {
-                this.setGroupData(row);
+            childrenChanged = childrenFlags & COMMIT_FLAG_ROW ? this.rebuildChildrenAfterGroup(node) : false;
+
+            if ((childrenChanged || childrenFlags & COMMIT_FLAG_LEAFS) && this.rebuildLeafChildren(node)) {
+                flags |= COMMIT_FLAG_LEAFS;
             }
 
-            if (node.rowUpdate) {
+            if (node.rowUpdated) {
                 // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
                 // refreshed into the gui.
                 // this is needed to kick off the event that rowComp listens to for refresh. this in turn
                 // then will get each cell in the row to refresh - which is what we need as we don't know which
                 // columns will be displaying the rowNode.key info.
                 row.setData(row.data);
-            }
-
-            if (keyChanged || node.oldRow !== node.row || node.rowUpdate) {
-                parent.flags |= FLAG_PATH_CHANGED;
             }
 
             const hasChildren = node.childrenAfterGroup.length > 0;
@@ -427,22 +421,22 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 setExpandedInitialized(row, true);
                 row.expanded = this.getExpandedInitialValue(details, row);
             }
-
-            if ((childrenRowsChanged || node.flags & FLAG_PATH_CHANGED) && details.changedPath.isActive()) {
-                details.changedPath.addParentNode(node.row);
-            }
         }
 
-        node.oldRow = node.row;
-        node.rowUpdate = false;
-    }
+        if (node.oldRow !== node.row) {
+            node.oldRow = node.row;
+            flags |= COMMIT_FLAG_ROW | COMMIT_FLAG_PATH;
+        }
+        if (node.rowUpdated) {
+            node.rowUpdated = false;
+            flags |= COMMIT_FLAG_PATH;
+        }
 
-    /** Called during commit to remove an empty filler node */
-    private emptyFillerNodeRemoved(node: TreeNode, parent: TreeNode) {
-        this.overwriteNodeRow(node, null);
-        parent.flags |= node.flags & (FLAG_LEAFS_CHANGED | FLAG_PATH_CHANGED);
-        parent.map?.delete(node.key);
-        node.parent = null;
+        if ((childrenChanged || childrenFlags & COMMIT_FLAG_PATH) && details.changedPath.isActive()) {
+            details.changedPath.addParentNode(node.row);
+        }
+
+        return flags;
     }
 
     private removeDeletedRows() {

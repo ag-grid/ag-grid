@@ -42,15 +42,13 @@ export class TreeNode {
     /** List of direct children to update in the commit stage */
     public updates: Set<TreeNode> | null = null;
 
-    public flags: number = 0;
-
     public parent: TreeNode | null;
 
     /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
     public oldRow: RowNode | null = null;
 
     /** We set this to true if a update transaction happened on this row, is set to false during commit. */
-    public rowUpdate: boolean = false;
+    public rowUpdated: boolean = false;
 
     public key: string;
 
