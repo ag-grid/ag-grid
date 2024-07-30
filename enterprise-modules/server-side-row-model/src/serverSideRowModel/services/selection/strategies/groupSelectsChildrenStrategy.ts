@@ -207,7 +207,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         const onlyThisNode = clearSelection && newValue && !rangeSelect;
-        if (this.gos.get('rowSelection') !== 'multiple' || onlyThisNode) {
+        if (this.gos.getLegacySelectionOption('rowSelection') !== 'multiple' || onlyThisNode) {
             if (nodes.length > 1) {
                 throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
             }

@@ -141,7 +141,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkSelectionType(feature: string): boolean {
-        const isMultiSelect = this.gos.get('rowSelection') === 'multiple';
+        const isMultiSelect = this.gos.getLegacySelectionOption('rowSelection') === 'multiple';
 
         if (!isMultiSelect) {
             _warnOnce(`${feature} is only available if using 'multiple' rowSelection.`);

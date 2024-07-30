@@ -3,7 +3,14 @@ import { ComponentUtil } from './components/componentUtil';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import type { DomLayoutType, GetRowIdFunc, GridOptions } from './entities/gridOptions';
+import type {
+    CellSelectionOptions,
+    DomLayoutType,
+    GetRowIdFunc,
+    GridOptions,
+    MultiRowSelectionOptions,
+    RowSelectionOptions,
+} from './entities/gridOptions';
 import type { Environment } from './environment';
 import type { AgEventType } from './eventTypes';
 import type { AgEvent } from './events';
@@ -331,7 +338,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     }
 
     public isRowSelection() {
-        return this.gridOptions.rowSelection === 'single' || this.gridOptions.rowSelection === 'multiple';
+        const rowSelection = this.getLegacySelectionOption('rowSelection');
+        return rowSelection === 'single' || rowSelection === 'multiple';
     }
 
     public useAsyncEvents() {
@@ -613,5 +621,82 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
             return id;
         };
+    }
+
+    public getLegacySelectionOption<T extends keyof GridOptions>(option: T): GridOptions[T] {
+        const go = this.gridOptions;
+        const so = go.selectionOptions;
+        const useNewAPI = so !== undefined;
+
+        function cellOptionWithFallback(
+            option: T,
+            getter: (selectionOpts: CellSelectionOptions) => GridOptions[T]
+        ): GridOptions[T] {
+            return useNewAPI ? (so.mode === 'cell' ? getter(so) : undefined) : go[option];
+        }
+
+        function rowOptionWithFallback(
+            option: T,
+            getter: (selectionOpts: RowSelectionOptions) => GridOptions[T]
+        ): GridOptions[T] {
+            return useNewAPI ? (so.mode === 'cell' ? undefined : getter(so)) : go[option];
+        }
+
+        function multiRowOptionWithFallback(
+            option: T,
+            getter: (selectionOpts: MultiRowSelectionOptions) => GridOptions[T]
+        ): GridOptions[T] {
+            return useNewAPI ? (so.mode === 'multiRow' ? getter(so) : undefined) : go[option];
+        }
+
+        switch (option) {
+            case 'suppressMultiRangeSelection':
+                return cellOptionWithFallback(option, (opts) => opts.suppressMultiRanges);
+            case 'enableRangeHandle':
+                return cellOptionWithFallback(
+                    option,
+                    (opts) => opts.handle === true || (opts.handle && opts.handle?.mode === 'range')
+                );
+            case 'enableFillHandle':
+                return cellOptionWithFallback(
+                    option,
+                    (opts) => typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill'
+                );
+            case 'suppressClearOnFillReduction':
+                return cellOptionWithFallback(
+                    option,
+                    (opts) =>
+                        typeof opts.handle !== 'boolean' &&
+                        opts.handle?.mode === 'fill' &&
+                        opts.handle.suppressClearOnFillReduction
+                );
+            case 'fillHandleDirection':
+                return cellOptionWithFallback(
+                    option,
+                    (opts) => typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill' && opts.handle?.direction
+                );
+            case 'fillOperation':
+                return cellOptionWithFallback(
+                    option,
+                    (opts) =>
+                        typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill' && opts.handle?.setFillValue
+                );
+            case 'suppressRowClickSelection':
+                return rowOptionWithFallback(option, (opts) => opts.suppressClickSelection);
+            case 'suppressRowDeselection':
+                return rowOptionWithFallback(option, (opts) => opts.suppressDeselection);
+            case 'isRowSelectable':
+                return rowOptionWithFallback(option, (opts) => opts.isRowSelectable);
+            case 'rowSelection':
+                return rowOptionWithFallback(option, (opts) => (opts.mode === 'multiRow' ? 'multiple' : 'single'));
+            case 'rowMultiSelectWithClick':
+                return multiRowOptionWithFallback(option, (opts) => opts.enableMultiSelectWithClick);
+            case 'groupSelectsChildren':
+                return multiRowOptionWithFallback(option, (opts) => opts.groupSelects !== 'self');
+            case 'groupSelectsFiltered':
+                return multiRowOptionWithFallback(option, (opts) => opts.groupSelects === 'filteredDescendants');
+            default:
+                return;
+        }
     }
 }

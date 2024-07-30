@@ -161,7 +161,15 @@ import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
 import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { CellPosition } from './cellPositionUtils';
-import type { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
+import type {
+    CheckboxSelectionCallback,
+    ColDef,
+    ColGroupDef,
+    ColTypeDef,
+    HeaderCheckboxSelectionCallback,
+    IAggFunc,
+    SortDirection,
+} from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {
@@ -1462,6 +1470,10 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressHeaderFocus?: boolean;
+    /**
+     * Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
+     */
+    selectionOptions?: SelectionOptions;
 
     /**
      * If `true`, only a single range can be selected.
@@ -2415,3 +2427,141 @@ export interface LoadingCellRendererSelectorResult {
 }
 
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
+
+/** Configuration options for selection */
+export type SelectionOptions<TData = any, TValue = any> =
+    | RowSelectionOptions<TData, TValue>
+    | CellSelectionOptions<TData>;
+
+/** Cell selection options */
+export interface CellSelectionOptions<TData = any> {
+    mode: 'cell';
+    /**
+     * If `true`, only a single range can be selected
+     * @default false
+     */
+    suppressMultiRanges?: boolean;
+    /**
+     * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
+     * Set to `true` to enable the range handle with default configuration.
+     */
+    handle?: boolean | RangeHandleOptions | FillHandleOptions<TData>;
+}
+
+/**
+ * Configuration options for the range handle
+ */
+export interface RangeHandleOptions {
+    mode: 'range';
+}
+
+/**
+ * Configuration options for the fill handle
+ */
+export interface FillHandleOptions<TData = any> {
+    mode: 'fill';
+    /**
+     * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
+     * @default false
+     */
+    suppressClearOnFillReduction?: boolean;
+    /**
+     * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
+     * @default 'xy'
+     */
+    direction?: 'x' | 'y' | 'xy';
+    /**
+     * Callback to fill values instead of simply copying values or increasing number values using linear progression.
+     */
+    setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
+}
+
+export type RowSelectionOptions<TData = any, TValue = any> =
+    | SingleRowSelectionOptions<TData, TValue>
+    | MultiRowSelectionOptions<TData, TValue>;
+
+interface CommonRowSelectionOptions<TData = any, TValue = any> {
+    /**
+     * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
+     * @default false
+     */
+    suppressDeselection?: boolean;
+    /**
+     * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
+     * @default false
+     */
+    suppressClickSelection?: boolean;
+    /**
+     * Determine checkbox selection behaviour
+     * @default false
+     */
+    checkboxSelection?: CheckboxSelectionOptions<TData, TValue>;
+    /**
+     * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     */
+    isRowSelectable?: IsRowSelectable<TData>;
+}
+
+/**
+ * Determines selection behaviour when only a single row can be selected at a time
+ */
+export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+    mode: 'singleRow';
+}
+
+/**
+ * Determines selection behaviour when multiple rows can be selected at once.
+ */
+export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+    mode: 'multiRow';
+    /**
+     * Determine group selection behaviour
+     * @default 'self'
+     */
+    groupSelects?: GroupSelectionMode;
+    /**
+     * Determines how "select all" behaviour works. This controls both header checkbox selection and CTRL+A behaviour.
+     * @default 'all'
+     */
+    selectAll?: SelectAllMode;
+    /**
+     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     * @default false
+     */
+    headerCheckbox?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
+    /**
+     * Set to `true` to allow multiple rows to be selected using single click.
+     * @default false
+     */
+    enableMultiSelectWithClick?: boolean;
+}
+
+/**
+ * Determines whether checkboxes are displayed for selection
+ */
+export type CheckboxSelectionOptions<TData, TValue> =
+    | boolean
+    | {
+          /** Return `true` from function to render a selection checkbox in the first column. */
+          displayCheckbox?: boolean | CheckboxSelectionCallback<TData, TValue>;
+          /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. */
+          showDisabledCheckboxes?: boolean;
+      };
+
+/**
+ * Determines the behaviour when selecting a group row.
+ *
+ * When `'self'`, selects only the group row itself.
+ * When `'descendants'`, selecting a group row selects all its child rows.
+ * When `'filteredDescendants'`, selecting a group row selects all child rows that satisfy the currently active filter.
+ */
+export type GroupSelectionMode = 'self' | 'descendants' | 'filteredDescendants';
+
+/**
+ * Determines how "select all" behaviour works.
+ *
+ * When `'all'`, selects all rows, regardless of filter and pagination settings.
+ * When `'filtered'`, selects all rows that satisfy the currently active filter.
+ * When `'currentPage'`, selects all rows that satisfy the currently active filter on the current page.
+ */
+export type SelectAllMode = 'all' | 'filtered' | 'currentPage';
