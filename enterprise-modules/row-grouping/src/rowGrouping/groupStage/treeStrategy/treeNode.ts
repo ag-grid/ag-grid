@@ -33,7 +33,8 @@ export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
 };
 
 /**
- * A TreeNode contains a RowNode and the children nodes.
+ * We keep a secondary tree data structure together with the nodes.
+ * We associate a node with a TreeNode, both storing the row in node.row and by storing the TreeNode in a hidden field in the row.
  *
  * TreeStrategy uses a two stage approach both for first time creation and updates.
  * Multiple updates interact with the tree, and a commit stage commits all updates reducing expensive computations.
@@ -47,7 +48,7 @@ export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
  *
  * During commit, the childrenAfterGroup and allLeafChildren arrays are rebuilt, and the updates are applied.
  * The filler nodes without children are recursively removed.
- * Before commit those arrays are NOT representing the truth.
+ * Before commit those arrays are NOT representing the truth, so they should not be used.
  *
  * Deletion and moving subtrees should be performed only by setting rows with TreeStrategy.setRowPath and not by
  * moving node around.
