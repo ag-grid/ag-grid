@@ -22,3 +22,11 @@ The following example demonstrates:
 When not using unbalanced groups, the grid will, by default, create a (Blanks) group and populate it with any rows without a valid group value. The following example demonstrates this default behaviour:
 
 {% gridExampleRunner title="Balanced Groups" name="balanced-groups"  exampleHeight=570 /%}
+
+## Custom Unbalanced Group Sorting
+
+When using unbalanced groups, the grid will sort the ungrouped rows to the top of the grid, due to these rows having a `null` value for the sorted column. 
+
+In the example below note how an `autoGroupColumnDef.comparator` has been provided, which disables the linked sorting behaviour of groups, instead using a custom sort which enables the unbalanced rows to be sorted amongst the groups.
+
+{% gridExampleRunner title="Sorting Unbalanced Groups" name="sorting-unbalanced-groups"  exampleHeight=570 /%}
