@@ -14,7 +14,7 @@ import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { MenuService } from '../../../misc/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
-import { _getElementSize, _getInnerWidth } from '../../../utils/dom';
+import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
@@ -109,7 +109,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
-        this.addDomData();
+        this.addDomData(eGui);
         this.addManagedListeners(this.beans.eventService, {
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
@@ -219,31 +219,20 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected onDisplayedColumnsChanged(): void {
-        if (!this.comp || !this.column) {
+        const { comp, column, beans, eGui } = this;
+        if (!comp || !column || !eGui) {
             return;
         }
-        this.refreshFirstAndLastStyles();
-        this.refreshAriaColIndex();
-    }
-
-    private refreshFirstAndLastStyles(): void {
-        const { comp, column, beans } = this;
         refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
+        _setAriaColIndex(eGui, beans.visibleColsService.getAriaColIndex(column)); // for react, we don't use JSX, as it slowed down column moving
     }
 
-    private refreshAriaColIndex(): void {
-        const { beans, column } = this;
-
-        const colIdx = beans.visibleColsService.getAriaColIndex(column);
-        _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
-    }
-
-    protected addResizeAndMoveKeyboardListeners(): void {
+    protected addResizeAndMoveKeyboardListeners(eGui: HTMLElement): void {
         if (!this.resizeFeature) {
             return;
         }
 
-        this.addManagedListeners(this.eGui, {
+        this.addManagedListeners(eGui, {
             keydown: this.onGuiKeyDown.bind(this),
             keyup: this.onGuiKeyUp.bind(this),
         });
@@ -251,10 +240,8 @@ export abstract class AbstractHeaderCellCtrl<
 
     private refreshTabIndex(): void {
         const suppressHeaderFocus = this.focusService.isHeaderFocusSuppressed();
-        if (suppressHeaderFocus) {
-            this.eGui.removeAttribute('tabindex');
-        } else {
-            this.eGui.setAttribute('tabindex', '-1');
+        if (this.eGui) {
+            _addOrRemoveAttribute(this.eGui, 'tabindex', suppressHeaderFocus ? null : '-1');
         }
     }
 
@@ -367,10 +354,10 @@ export abstract class AbstractHeaderCellCtrl<
         }
     }
 
-    private addDomData(): void {
+    private addDomData(eGui: HTMLElement): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
-        this.gos.setDomData(this.eGui, key, this);
-        this.addDestroyFunc(() => this.gos.setDomData(this.eGui, key, null));
+        this.gos.setDomData(eGui, key, this);
+        this.addDestroyFunc(() => this.gos.setDomData(eGui, key, null));
     }
 
     public getGui(): HTMLElement {

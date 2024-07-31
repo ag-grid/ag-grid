@@ -398,7 +398,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         return displayIndex >= this.displayIndexStart! && displayIndex < this.displayIndexEnd!;
     }
 
-    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void {
+    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void {
         this.displayIndexStart = displayIndexSeq.peek();
         this.topPx = nextRowTop.value;
 
@@ -406,7 +406,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         // set on all visible nodes
         this.nodesAfterSort.forEach((rowNode) => {
-            this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop);
+            this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop, uiLevel);
             visibleNodeIds[rowNode.id!] = true;
         });
 

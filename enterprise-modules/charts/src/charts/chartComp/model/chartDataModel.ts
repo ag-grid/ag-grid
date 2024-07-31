@@ -235,8 +235,8 @@ export class ChartDataModel extends BeanStub {
         return this.dimensionColState.filter((cs) => cs.selected);
     }
 
-    public getColDisplayName(col: AgColumn): string | null {
-        return this.chartColumnService.getColDisplayName(col);
+    public getColDisplayName(col: AgColumn, includePath?: boolean): string | null {
+        return this.chartColumnService.getColDisplayName(col, includePath);
     }
 
     public isPivotMode(): boolean {

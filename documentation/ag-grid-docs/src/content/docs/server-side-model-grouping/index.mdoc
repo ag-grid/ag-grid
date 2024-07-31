@@ -115,6 +115,17 @@ of its children, and only when collapsed is the group row is shown again.
 When `groupHideOpenParents=true` the Grid automatically disables the [Sticky Groups](./server-side-model-grouping/#suppressing-sticky-groups) behaviour of the rows as well as [Full Width Loading](./component-loading-cell-renderer/#skeleton-loading).
 {% /note %}
 
+## Unbalanced Groups
+
+To enable unbalanced groups in the SSRM, set the `groupAllowUnbalanced` property to true. This causes any group with a key of `''` to behave as if it is always expanded, and the group row to always be hidden.
+
+{% gridExampleRunner title="Unbalanced Groups" name="unbalanced-groups" /%}
+
+{% note %}
+When using `groupAllowUnbalanced=true` it is important to remember that a row group still exists to contain the unbalanced nodes, this can be an important consideration when working with selection state, refreshing, or group paths.
+This also means that there will be additional requests and delays in loading these unbalanced rows, as they do not belong to the parent row.
+{% /note %}
+
 ## Expand All / Collapse All
 
 It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's.
