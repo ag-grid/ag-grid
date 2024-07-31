@@ -64,5 +64,5 @@ switch (command) {
         await transitionIssues(PENDING_RC_ISSUES_FILTER, 'READY TO VERIFY');
         break;
     default:
-        console.error('Invalid option. Possible options are [REVIEWED_TO_PENDING_RC|PENDING_RC_TO_READY_FOR_REVIEW]');
+        console.error('Invalid option. Possible options are [REVIEWED_TO_PENDING_RC|PENDING_RC_TO_READY_TO_VERIFY]');
 }
