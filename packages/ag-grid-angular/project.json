@@ -55,6 +55,9 @@
         "commands": [
           "node scripts/package/sanity-check-package.js --allowed-ext map -- dist/artifacts/contents/{projectRoot}/package"
         ]
+      },
+      "configurations": {
+        "production": {}
       }
     }
   },
