@@ -460,7 +460,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    /** Updates node childrenAfterGroup. Returns true if the leaf children changed. */
+    /** Updates node childrenAfterGroup. Returns true if the children changed. */
     private rebuildChildrenAfterGroup(node: TreeNode): boolean {
         const { map, childrenAfterGroup } = node;
         const oldCount = childrenAfterGroup.length;
