@@ -62,7 +62,8 @@
       "outputs": [],
       "dependsOn": ["^pack:verify"],
       "configurations": {
-        "production": {}
+        "production": {},
+        "archive": {}
       }
     },
     "build:core:modules": {

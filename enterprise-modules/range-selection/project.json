@@ -108,6 +108,10 @@
       "inputs": ["allOutputs"],
       "options": {
         "commands": ["node scripts/package/sanity-check-package.js dist/artifacts/contents/{projectRoot}/package"]
+      },
+      "configurations": {
+        "production": {},
+        "archive": {}
       }
     },
     "lint": {

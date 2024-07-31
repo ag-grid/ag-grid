@@ -20,8 +20,8 @@ if (fs.lstatSync(genKeyPath).isDirectory()) {
     process.exit(1);
 }
 
-const newLicenseKey = execSync(`node ${genKeyPath} release`).toString();
-if (!newLicenseKey || newLicenseKey.length !== 21) {
+const newLicenseKey = execSync(`node ${genKeyPath} release`).toString().trim();
+if (!newLicenseKey || newLicenseKey.length !== 20) {
     console.error(`ERROR: license key generated invalid - incorrect key length: ${newLicenseKey}`);
     process.exit(1);
 }
