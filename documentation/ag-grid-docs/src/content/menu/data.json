@@ -738,18 +738,18 @@
                                 ]
                             },
                             {
-                                "title": "Range Selection",
-                                "path": "range-selection",
+                                "title": "Cell Selection",
+                                "path": "cell-selection",
                                 "isEnterprise": true,
                                 "items": [
                                     {
                                         "title": "Range Handle",
-                                        "path": "range-selection-handle",
+                                        "path": "cell-selection-handle",
                                         "isEnterprise": true
                                     },
                                     {
                                         "title": "Fill Handle",
-                                        "path": "range-selection-fill-handle",
+                                        "path": "cell-selection-fill-handle",
                                         "isEnterprise": true
                                     }
                                 ]
