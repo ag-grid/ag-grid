@@ -11,7 +11,9 @@ import type {
 import { BeanStub, RowNode, _doOnce, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
 
 import type { NodeManager } from '../nodeManager';
+import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
+import type { StoreFactory } from '../stores/storeFactory';
 
 export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
 
@@ -23,6 +25,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
     private nodeManager: NodeManager;
     private beans: BeanCollection;
     private expansionService: ServerSideExpansionService;
+    private serverSideRowModel: ServerSideRowModel;
+    private storeFactory: StoreFactory;
 
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
@@ -30,6 +34,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.beans = beans;
         this.expansionService = beans.expansionService as ServerSideExpansionService;
+        this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
     }
 
     public createRowNode(params: {
@@ -108,6 +114,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     private setRowGroupInfo(rowNode: RowNode): void {
         rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
+
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
                 _warnOnce(`null and undefined values are not allowed for server side row model keys`);
@@ -116,6 +123,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
                 }
                 _warnOnce(`data is ` + rowNode.data);
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
+        }
+
+        const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.key === '';
+        if (isUnbalancedGroup) {
+            const storeParams = this.serverSideRowModel.getParams();
+            rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
         }
 
         const getGroupIncludeFooter = this.beans.gos.getGroupTotalRowCallback();
@@ -247,9 +260,15 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
-    public setDisplayIndex(rowNode: RowNode, displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void {
+    public setDisplayIndex(
+        rowNode: RowNode,
+        displayIndexSeq: NumberSequence,
+        nextRowTop: { value: number },
+        uiLevel: number
+    ): void {
+        const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.group && rowNode.key === '';
         const isHiddenOpenGroup = this.gos.get('groupHideOpenParents') && rowNode.group && rowNode.expanded;
-        if (isHiddenOpenGroup) {
+        if (isHiddenOpenGroup || isUnbalancedGroup) {
             rowNode.setRowIndex(null);
             rowNode.setRowTop(null);
         } else {
@@ -258,6 +277,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight!;
         }
+        rowNode.setUiLevel(uiLevel);
 
         if (rowNode.footer) {
             return;
@@ -279,8 +299,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const hasChildStore = rowNode.hasChildren() && _exists(rowNode.childStore);
         if (hasChildStore) {
             const childStore = rowNode.childStore;
-            if (rowNode.expanded) {
-                childStore!.setDisplayIndexes(displayIndexSeq, nextRowTop);
+            // unbalanced group always behaves as if it was expanded
+            if (rowNode.expanded || isUnbalancedGroup) {
+                childStore!.setDisplayIndexes(displayIndexSeq, nextRowTop, isUnbalancedGroup ? uiLevel : uiLevel + 1);
             } else {
                 // we need to clear the row tops, as the row renderer depends on
                 // this to know if the row should be faded out

@@ -1,9 +1,4 @@
-import type {
-    BeanCollection,
-    HorizontalResizeService,
-    ToolPanelSizeChangedEvent,
-    WithoutGridCommon,
-} from '@ag-grid-community/core';
+import type { BeanCollection, HorizontalResizeService } from '@ag-grid-community/core';
 import { Component } from '@ag-grid-community/core';
 
 export class AgHorizontalResize extends Component {
@@ -41,13 +36,12 @@ export class AgHorizontalResize extends Component {
     }
 
     private dispatchResizeEvent(start: boolean, end: boolean, width: number) {
-        const event: WithoutGridCommon<ToolPanelSizeChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'toolPanelSizeChanged',
             width: width,
             started: start,
             ended: end,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private onResizeStart(): void {

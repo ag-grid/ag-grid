@@ -99,7 +99,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     }
 
     // common logic across all the fire methods
-    private fireEvent(event: AgEvent): void {
+    private fireEvent(event: WithoutGridCommon<AlignedGridColumnEvent | AlignedGridScrollEvent>): void {
         // if we are already consuming, then we are acting on an event from a master,
         // so we don't cause a cyclic firing of events
         if (this.consuming) {
@@ -123,22 +123,20 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     }
 
     private fireColumnEvent(columnEvent: ColumnEvent): void {
-        const event: WithoutGridCommon<AlignedGridColumnEvent> = {
+        this.fireEvent({
             type: 'alignedGridColumn',
             event: columnEvent,
-        };
-        this.fireEvent(event);
+        });
     }
 
     private fireScrollEvent(scrollEvent: BodyScrollEvent): void {
         if (scrollEvent.direction !== 'horizontal') {
             return;
         }
-        const event: WithoutGridCommon<AlignedGridScrollEvent> = {
+        this.fireEvent({
             type: 'alignedGridScroll',
             event: scrollEvent,
-        };
-        this.fireEvent(event);
+        });
     }
 
     private onScrollEvent(event: BodyScrollEvent): void {

@@ -10,14 +10,23 @@ const pipe =
 const ROOT_PACKAGE_JSON = '../../package.json';
 const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages;
 
-if (process.argv.length < 5) {
-    console.log('Usage: node scripts/release/versionModules.js [New Version] [Dependency Version] [charts version]');
-    console.log('For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0 1.0.0');
+if (process.argv.length < 4) {
+    console.log('Usage: node scripts/release/versionModules.js [Grid Version] [Charts Version]');
+    console.log('For example: node scripts/release/versionModules.js 19.1.0 1.0.0');
     console.log('Note: This script should be run from the root of the monorepo');
     process.exit(1);
 }
 
-const [exec, scriptPath, gridNewVersion, dependencyVersion, chartsDependencyVersion] = process.argv;
+const [exec, scriptPath, gridNewVersion, chartsDependencyVersion] = process.argv;
+
+if (!gridNewVersion || !chartsDependencyVersion) {
+    console.error('ERROR: Invalid grid or charts version supplied');
+    process.exit(1);
+}
+
+console.log('************************************************************************************************');
+console.log(`Setting Grid Version to ${gridNewVersion} and Charts Version to ${chartsDependencyVersion}      `);
+console.log('************************************************************************************************');
 
 function main() {
     updatePackageJsonFiles();
@@ -91,15 +100,15 @@ function updateVersion(packageJson) {
 }
 
 function updateDependencies(fileContents) {
-    return updateDependency(fileContents, 'dependencies', dependencyVersion, chartsDependencyVersion);
+    return updateDependency(fileContents, 'dependencies', gridNewVersion, chartsDependencyVersion);
 }
 
 function updateDevDependencies(fileContents) {
-    return updateDependency(fileContents, 'devDependencies', dependencyVersion, chartsDependencyVersion);
+    return updateDependency(fileContents, 'devDependencies', gridNewVersion, chartsDependencyVersion);
 }
 
 function updatePeerDependencies(fileContents) {
-    return updateDependency(fileContents, 'peerDependencies', dependencyVersion, chartsDependencyVersion);
+    return updateDependency(fileContents, 'peerDependencies', gridNewVersion, chartsDependencyVersion);
 }
 
 function updateDependency(fileContents, property, dependencyVersion, chartsDependencyVersion) {

@@ -1,12 +1,10 @@
 import type {
-    AsyncTransactionsFlushed,
     BeanCollection,
     IServerSideTransactionManager,
     NamedBean,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, ServerSideTransactionResultStatus } from '@ag-grid-community/core';
 
@@ -116,11 +114,10 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         }
 
         if (resultsForEvent.length > 0) {
-            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {
+            this.eventService.dispatchEvent({
                 type: 'asyncTransactionsFlushed',
                 results: resultsForEvent,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 

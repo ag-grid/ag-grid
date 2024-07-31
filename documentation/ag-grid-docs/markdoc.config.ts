@@ -208,9 +208,6 @@ export default defineMarkdocConfig({
                 showHeader: { type: Boolean },
             },
         },
-        figmaPreview: {
-            render: component('./src/components/figma-preview/FigmaPreview.astro'),
-        },
         figmaCommunityButton: {
             render: component('./src/components/figma-community-button/FigmaCommunityButton.astro'),
         },

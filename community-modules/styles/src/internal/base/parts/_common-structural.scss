@@ -501,13 +501,16 @@
     .ag-header-group-text {
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .ag-header-cell-text {
         overflow: hidden;
         text-overflow: ellipsis;
         word-break: break-word;
+    }
+
+    .ag-header-group-cell .ag-header-cell-comp-wrapper {
+        display: flex;
     }
 
     .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
@@ -520,6 +523,7 @@
         width: 100%;
     }
 
+    // wrap header height for Headers and Group Headers
     .ag-header-cell-wrap-text .ag-header-cell-comp-wrapper {
         white-space: normal;
     }
@@ -1563,6 +1567,10 @@
         align-items: center;
         height: 100%;
         width: 100%;
+    }
+
+    .ag-header-group-cell-label,
+    .ag-cell-label-container {
         padding: 5px 0px;
     }
 

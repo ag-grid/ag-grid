@@ -96,6 +96,13 @@ const {
      * A comma separated list of pages to build to make it run faster
      */
     QUICK_BUILD_PAGES,
+
+    /*
+     * Disable example runner from rendering
+     *
+     * Useful for visual regression testing
+     */
+    DISABLE_EXAMPLE_RUNNER,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -112,6 +119,7 @@ console.log(
             HTACCESS,
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
+            DISABLE_EXAMPLE_RUNNER,
         },
         null,
         2

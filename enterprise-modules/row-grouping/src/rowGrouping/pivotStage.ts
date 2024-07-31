@@ -8,12 +8,10 @@ import type {
     GridOptions,
     IRowNodeStage,
     NamedBean,
-    PivotMaxColumnsExceededEvent,
     PivotResultColsService,
     RowNode,
     StageExecuteParams,
     ValueService,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, _iterateObject, _missing } from '@ag-grid-community/core';
 
@@ -91,11 +89,10 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
             // message is checked rather than inheritance as the build seems to break instanceof
             if (e.message === EXCEEDED_MAX_UNIQUE_VALUES) {
                 this.pivotResultColsService.setPivotResultCols([], 'rowModelUpdated');
-                const event: WithoutGridCommon<PivotMaxColumnsExceededEvent> = {
+                this.eventService.dispatchEvent({
                     type: 'pivotMaxColumnsExceeded',
                     message: e.message,
-                };
-                this.eventService.dispatchEvent(event);
+                });
                 this.lastTimeFailed = true;
                 return;
             }
