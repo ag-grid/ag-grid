@@ -274,8 +274,8 @@ export class FocusService extends BeanStub implements NamedBean {
         }
     }
 
-    private getFocusEventParams(): CommonCellFocusParams {
-        const { rowIndex, rowPinned, column } = this.focusedCellPosition!;
+    private getFocusEventParams(focusedCellPosition: CellPosition): CommonCellFocusParams {
+        const { rowIndex, rowPinned, column } = focusedCellPosition;
 
         const params: CommonCellFocusParams = {
             rowIndex: rowIndex,
@@ -299,11 +299,13 @@ export class FocusService extends BeanStub implements NamedBean {
             return;
         }
 
+        const focusEventParams = this.getFocusEventParams(this.focusedCellPosition);
+
         this.focusedCellPosition = null;
 
         this.eventService.dispatchEvent({
             type: 'cellFocusCleared',
-            ...this.getFocusEventParams(),
+            ...focusEventParams,
         });
     }
 
@@ -320,17 +322,15 @@ export class FocusService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.focusedCellPosition = gridColumn
-            ? {
-                  rowIndex: rowIndex!,
-                  rowPinned: _makeNull(rowPinned),
-                  column: gridColumn,
-              }
-            : null;
+        this.focusedCellPosition = {
+            rowIndex: rowIndex!,
+            rowPinned: _makeNull(rowPinned),
+            column: gridColumn,
+        };
 
         this.eventService.dispatchEvent({
             type: 'cellFocused',
-            ...this.getFocusEventParams(),
+            ...this.getFocusEventParams(this.focusedCellPosition),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
         });

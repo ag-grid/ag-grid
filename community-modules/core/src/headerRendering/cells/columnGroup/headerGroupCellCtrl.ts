@@ -92,7 +92,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         );
 
         this.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
-        this.addResizeAndMoveKeyboardListeners();
+        this.addResizeAndMoveKeyboardListeners(eGui);
     }
 
     public getColumn(): AgColumnGroup {

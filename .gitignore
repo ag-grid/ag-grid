@@ -6,6 +6,8 @@
 /.idea/atlassian-ide-plugin.xml
 .vscode
 
+./.env.production
+
 .DS_Store
 lerna-debug.log
 npm-debug.log

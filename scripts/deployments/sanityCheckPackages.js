@@ -2,15 +2,30 @@
 
 const getPackageInformation = require('./utils/utils').getPackageInformation;
 
-if (process.argv.length < 6) {
-    console.log(
-        'Usage: node scripts/sanityCheckPackages.js [Grid Version] [Grid Dependency Version] [Chart Version] [Chart Dependency Version]'
-    );
+if (process.argv.length < 4) {
+    console.log('Usage: node scripts/sanityCheckPackages.js [Grid Version] [Chart Version]');
     console.log('For example: node scripts/validateAgPackageAndDeps.js 23.0.0 23.0.0 1.0.0 1.0.0');
     console.log('Note: This script should be run from the root of the monorepo');
     process.exit(1);
 }
-const [exec, scriptPath, gridNewVersion, gridDependencyVersion, chartNewVersion, chartDependencyVersion] = process.argv;
+const [exec, scriptPath, gridNewVersion, chartNewVersion] = process.argv;
+
+if (!gridNewVersion || !chartNewVersion) {
+    console.error('ERROR: Invalid grid or charts version supplied');
+    process.exit(1);
+}
+
+console.log(
+    '******************************************************************************************************************************'
+);
+console.log(
+    `Verify Grid Version ${gridNewVersion} and Charts Version ${chartNewVersion} are the dependencies used in package.json         `
+);
+console.log(
+    '******************************************************************************************************************************'
+);
+
+let errorFound = false;
 
 const allPackages = getPackageInformation();
 const packageNames = Object.keys(allPackages);
@@ -31,21 +46,23 @@ packageNames
 
         function checkDependency(dependencyName, currentVersion, expectedVersion) {
             if (currentVersion !== expectedVersion) {
-                console.log(
+                console.error(
                     `${dependencyName} in ${projectRoot}/package.json has ${currentVersion} but we expect it to be ${expectedVersion}`
                 );
+
+                errorFound = true;
             }
         }
 
         checkDependency(packageName, version, isGridPackage ? gridNewVersion : chartNewVersion);
         Object.keys(agPackage.agGridDeps).forEach((dependencyName) =>
-            checkDependency(dependencyName, agGridDeps[dependencyName], gridDependencyVersion)
+            checkDependency(dependencyName, agGridDeps[dependencyName], gridNewVersion)
         );
         Object.keys(agPackage.agGridPeerDeps).forEach((dependencyName) =>
-            checkDependency(dependencyName, agPackage.agGridPeerDeps[dependencyName], gridDependencyVersion)
+            checkDependency(dependencyName, agPackage.agGridPeerDeps[dependencyName], gridNewVersion)
         );
         Object.keys(agPackage.agChartDeps).forEach((dependencyName) =>
-            checkDependency(dependencyName, agChartDeps[dependencyName], chartDependencyVersion)
+            checkDependency(dependencyName, agChartDeps[dependencyName], chartNewVersion)
         );
 
         if (agSubAngularVersion) {
@@ -54,12 +71,17 @@ packageNames
 
         if (agSubAngularGridDeps) {
             Object.keys(agSubAngularGridDeps).forEach((dependencyName) =>
-                checkDependency(dependencyName, agSubAngularGridDeps[dependencyName], gridDependencyVersion)
+                checkDependency(dependencyName, agSubAngularGridDeps[dependencyName], gridNewVersion)
             );
         }
         if (agSubAngularChartDeps) {
             Object.keys(agSubAngularChartDeps).forEach((dependencyName) =>
-                checkDependency(dependencyName, agSubAngularChartDeps[dependencyName], chartDependencyVersion)
+                checkDependency(dependencyName, agSubAngularChartDeps[dependencyName], chartNewVersion)
             );
         }
     });
+
+if (errorFound) {
+    console.error('ERROR: One more errors found - please see messages above');
+    process.exit(1);
+}

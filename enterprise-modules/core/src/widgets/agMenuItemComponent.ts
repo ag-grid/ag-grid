@@ -480,6 +480,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
+        this.menuItemComp?.destroy?.();
         super.destroy();
     }
 }
