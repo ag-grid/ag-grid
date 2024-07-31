@@ -5,8 +5,11 @@ export class CssClassManager {
     // there, or removing one that wasn't present, all takes CPU.
     private cssClassStates: { [cssClass: string]: boolean } = {};
 
-    constructor(getGui: () => HTMLElement | undefined | null) {
+    constructor(getGui: () => HTMLElement | undefined | null, initialClasses: string[] = []) {
         this.getGui = getGui;
+        for (let i = 0; i < initialClasses.length; i++) {
+            this.cssClassStates[initialClasses[i]] = true;
+        }
     }
 
     public addCssClass(className: string): void {
@@ -44,6 +47,14 @@ export class CssClassManager {
 
             this.cssClassStates[className] = false;
         }
+    }
+
+    public getClassesStr() {
+        // maybe update this on write instead of creating on read
+        return Object.entries(this.cssClassStates)
+            .filter(([key, on]) => on)
+            .map(([key]) => key)
+            .join(' ');
     }
 
     public containsCssClass(className: string): boolean {

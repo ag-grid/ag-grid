@@ -102,6 +102,9 @@ export class CellCtrl extends BeanStub {
     private includeRowDrag: boolean;
     private colIdSanitised: string;
     private isAutoHeight: boolean;
+    private initialStyles: any;
+    private userStyles: any;
+    private staticCssClassesStr: string;
 
     private suppressRefreshCell = false;
 
@@ -126,6 +129,11 @@ export class CellCtrl extends BeanStub {
         this.createCellPosition();
         this.addFeatures();
         this.updateAndFormatValue(false);
+        this.staticCssClassesStr = [
+            CSS_CELL,
+            CSS_CELL_NOT_INLINE_EDITING,
+            this.column.isAutoHeight() ? CSS_AUTO_HEIGHT : CSS_NORMAL_HEIGHT,
+        ].join(' ');
     }
 
     public shouldRestoreFocus(): boolean {
@@ -141,12 +149,16 @@ export class CellCtrl extends BeanStub {
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
         this.addDestroyFunc(() => {
+            // Persist initial styles before destroying incase React renders against the destroyed cellCtrl
+            // This can happen under heavy load and being able to position the cell at least gives stability
+            this.getInitialStyles();
             this.cellPositionFeature?.destroy();
             this.cellPositionFeature = null;
         });
 
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
         this.addDestroyFunc(() => {
+            this.getUserStyles();
             this.cellCustomStyleFeature?.destroy();
             this.cellCustomStyleFeature = null;
         });
@@ -363,6 +375,19 @@ export class CellCtrl extends BeanStub {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         });
+    }
+
+    public getInitialStyles() {
+        if (this.cellPositionFeature) {
+            this.initialStyles = this.cellPositionFeature.getStyles();
+        }
+        return this.initialStyles;
+    }
+    public getUserStyles() {
+        if (this.cellCustomStyleFeature) {
+            this.userStyles = this.cellCustomStyleFeature.getUserStyles();
+        }
+        return this.userStyles;
     }
 
     public getCellAriaRole(): string {
@@ -803,7 +828,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onDisplayedColumnsChanged(): void {
-        if (!this.eGui) {
+        if (!this.cellComp) {
             return;
         }
         this.refreshAriaColIndex();
@@ -994,6 +1019,10 @@ export class CellCtrl extends BeanStub {
             rowPinned: _makeNull(this.rowNode.rowPinned),
             column: this.column,
         };
+    }
+
+    public getStaticCssClasses(): string {
+        return this.staticCssClassesStr;
     }
 
     // CSS Classes that only get applied once, they never change

@@ -16,6 +16,7 @@ export class CellCustomStyleFeature extends BeanStub {
     private cellComp: ICellComp;
 
     private cellClassRules?: CellClassRules;
+    private cellStyle?: CellStyle | null;
 
     constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
@@ -25,6 +26,8 @@ export class CellCustomStyleFeature extends BeanStub {
 
         this.column = ctrl.getColumn();
         this.rowNode = ctrl.getRowNode();
+
+        this.applyUserStyles();
     }
 
     public setComp(comp: ICellComp): void {
@@ -58,6 +61,10 @@ export class CellCustomStyleFeature extends BeanStub {
         this.cellClassRules = cellClassRules;
     }
 
+    public getUserStyles() {
+        return this.cellStyle;
+    }
+
     public applyUserStyles() {
         const colDef = this.column.getColDef();
 
@@ -82,9 +89,10 @@ export class CellCustomStyleFeature extends BeanStub {
             styles = colDef.cellStyle;
         }
 
-        if (styles) {
+        if (styles && this.cellComp) {
             this.cellComp.setUserStyles(styles);
         }
+        this.cellStyle = styles;
     }
 
     public applyClassesFromColDef() {

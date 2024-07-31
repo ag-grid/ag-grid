@@ -25,6 +25,17 @@ export enum CellCompState {
     ShowValue,
     EditValue,
 }
+export interface RenderDetails {
+    compDetails: UserCompDetails | undefined;
+    value?: any;
+    force?: boolean;
+}
+export interface EditDetails {
+    compDetails: UserCompDetails;
+    popup?: boolean;
+    popupPosition?: 'over' | 'under';
+    compProxy?: CellEditorComponentProxy;
+}
 
 const jsxEditorProxy = (
     editDetails: EditDetails,
@@ -151,18 +162,6 @@ const jsxShowValue = (
     );
 };
 
-export interface RenderDetails {
-    compDetails: UserCompDetails | undefined;
-    value?: any;
-    force?: boolean;
-}
-export interface EditDetails {
-    compDetails: UserCompDetails;
-    popup?: boolean;
-    popupPosition?: 'over' | 'under';
-    compProxy?: CellEditorComponentProxy;
-}
-
 const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow: boolean }) => {
     const { context } = useContext(BeansContext);
     const { cellCtrl, printLayout, editingRow } = props;
@@ -179,6 +178,10 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const [editDetails, setEditDetails] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
+    const cellStyles = useRef<CellStyle>({ ...cellCtrl.getInitialStyles(), ...cellCtrl.getUserStyles() });
+
+    // Initial styles are used to give stability to the cell position before setComp is called.
+    // const [initialStyles, setInitialStyles] = useState<CellStyle | undefined>(() => cellCtrl.getInitialStyles());
     const [userStyles, setUserStyles] = useState<CellStyle>();
 
     const [includeSelection, setIncludeSelection] = useState<boolean>(false);
@@ -236,10 +239,11 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         [setCellEditorRef]
     );
 
+    const staticCssClassesStr = cellCtrl.getStaticCssClasses();
     const cssClassManager = useRef<CssClassManager>();
 
     if (!cssClassManager.current) {
-        cssClassManager.current = new CssClassManager(() => eGui.current);
+        cssClassManager.current = new CssClassManager(() => eGui.current, staticCssClassesStr.split(' '));
     }
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
@@ -369,7 +373,6 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         },
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]
     );
-
     // we use layout effect here as we want to synchronously process setComp and it's side effects
     // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
 
@@ -379,13 +382,17 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
             return;
         }
 
-        if (!cellCtrl) {
+        if (!cellCtrl || !cellCtrl.isAlive()) {
             return;
         }
 
         const compProxy: ICellComp = {
+            getGui: () => eGui.current,
             addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
-            setUserStyles: (styles: CellStyle) => setUserStyles(styles),
+            setUserStyles: (styles: CellStyle) => {
+                cellStyles.current = { ...cellStyles.current, ...styles };
+                setUserStyles(styles); // just to trigger a re-render
+            },
             getFocusableElement: () => eGui.current!,
 
             setIncludeSelection: (include) => setIncludeSelection(include),
@@ -502,7 +509,14 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const onBlur = useCallback(() => cellCtrl.onFocusOut(), []);
 
     return (
-        <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colId} onBlur={onBlur}>
+        <div
+            ref={setRef}
+            className={cssClassManager.current.getClassesStr()}
+            style={cellStyles.current}
+            role={cellAriaRole}
+            col-id={colId}
+            onBlur={onBlur}
+        >
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
                     {showContents()}

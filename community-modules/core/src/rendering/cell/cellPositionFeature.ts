@@ -6,6 +6,13 @@ import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
 import type { CellCtrl } from './cellCtrl';
 
+export interface CellPositionStyles {
+    left?: string;
+    width?: string;
+    height?: string;
+    zIndex?: string;
+}
+
 /**
  * Takes care of:
  *  #) Cell Width (including when doing cell spanning, which makes width cover many columns)
@@ -22,6 +29,11 @@ export class CellPositionFeature extends BeanStub {
     private colsSpanning: AgColumn[];
     private rowSpan: number;
 
+    private left: string;
+    private width: string;
+    private height: string;
+    private zIndex: string;
+
     private beans: BeanCollection;
 
     constructor(ctrl: CellCtrl, beans: BeanCollection) {
@@ -32,25 +44,27 @@ export class CellPositionFeature extends BeanStub {
 
         this.column = ctrl.getColumn();
         this.rowNode = ctrl.getRowNode();
-    }
 
-    private setupRowSpan(): void {
-        this.rowSpan = this.column.getRowSpan(this.rowNode);
+        this.setupColSpan();
+        this.setupRowSpan();
 
-        this.addManagedListeners(this.beans.eventService, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
+        // Work out the initial values before we have the GUI so they can be used in the first React Render
+        this.onLeftChanged();
+        this.onWidthChanged();
+        this.applyRowSpan();
     }
 
     public setComp(eGui: HTMLElement): void {
         this.eGui = eGui;
 
-        // add event handlers only after GUI is attached,
-        // so we don't get events before we are ready
-        this.setupColSpan();
-        this.setupRowSpan();
-
+        // Now we have the GUI, we set the properties
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
+    }
+
+    public getStyles(): CellPositionStyles {
+        return { left: this.left, width: this.width, height: this.height, zIndex: this.zIndex };
     }
 
     private onNewColumnsLoaded(): void {
@@ -92,12 +106,17 @@ export class CellPositionFeature extends BeanStub {
         });
     }
 
+    private setupRowSpan(): void {
+        this.rowSpan = this.column.getRowSpan(this.rowNode);
+
+        this.addManagedListeners(this.beans.eventService, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
+    }
+
     public onWidthChanged(): void {
-        if (!this.eGui) {
-            return;
+        this.width = `${this.getCellWidth()}px`;
+        if (this.eGui) {
+            this.eGui.style.width = this.width;
         }
-        const width = this.getCellWidth();
-        this.eGui.style.width = `${width}px`;
     }
 
     private getCellWidth(): number {
@@ -135,34 +154,30 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.eGui) {
-            return;
+        this.left = this.modifyLeftForPrintLayout(this.getCellLeft()) + 'px';
+        if (this.eGui) {
+            this.eGui.style.left = this.left;
         }
-        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.eGui.style.left = left + 'px';
     }
 
     private getCellLeft(): number | null {
-        let mostLeftCol: AgColumn;
-
-        if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
-            mostLeftCol = _last(this.colsSpanning);
-        } else {
-            mostLeftCol = this.column;
-        }
+        const mostLeftCol =
+            this.colsSpanning && this.beans.gos.get('enableRtl') ? _last(this.colsSpanning) : this.column;
 
         return mostLeftCol.getLeft();
     }
 
     private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
-        if (!this.cellCtrl.isPrintLayout() || this.column.getPinned() === 'left') {
+        const { column, beans } = this;
+        const pinned = column.getPinned();
+        if (!this.cellCtrl.isPrintLayout() || pinned === 'left') {
             return leftPosition;
         }
+        const visibleColsService = beans.visibleColsService;
+        const leftWidth = visibleColsService.getColsLeftWidth();
 
-        const leftWidth = this.beans.visibleColsService.getColsLeftWidth();
-
-        if (this.column.getPinned() === 'right') {
-            const bodyWidth = this.beans.visibleColsService.getBodyContainerWidth();
+        if (pinned === 'right') {
+            const bodyWidth = visibleColsService.getBodyContainerWidth();
             return leftWidth + bodyWidth + (leftPosition || 0);
         }
 
@@ -178,8 +193,13 @@ export class CellPositionFeature extends BeanStub {
         const singleRowHeight = this.beans.gos.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
-        this.eGui.style.height = `${totalRowHeight}px`;
-        this.eGui.style.zIndex = '1';
+        this.height = `${totalRowHeight}px`;
+        this.zIndex = '1';
+
+        if (this.eGui) {
+            this.eGui.style.height = this.height;
+            this.eGui.style.zIndex = this.zIndex;
+        }
     }
 
     // overriding to make public, as we don't dispose this bean via context
