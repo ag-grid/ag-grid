@@ -24,8 +24,8 @@ echo "########### Creating and switching to new branch $NEW_BRANCH ###########"
 
 echo "########################################################################"
 echo "#################### Updating LicenseManager ###########################"
-if [ -f $GEN_KEY_DEFAULT_LOCATION ]; then
-    node scripts/release/updateLicenseManager.js `node $GEN_KEY_DEFAULT_LOCATION release`
+if [ -f "$GEN_KEY_DEFAULT_LOCATION" ]; then
+    node scripts/release/updateLicenseManager.js `node "$GEN_KEY_DEFAULT_LOCATION" release`
 else
     echo "ERROR: $GEN_KEY_DEFAULT_LOCATION does not exist."
     exit 1
