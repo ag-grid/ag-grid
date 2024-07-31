@@ -2,6 +2,7 @@ import {
     ColDef,
     GridApi,
     GridOptions,
+    IMultiFilter,
     IServerSideDatasource,
     ISetFilter,
     KeyCreatorParams,
@@ -32,10 +33,24 @@ const columnDefs: ColDef[] = [
     },
     {
         field: 'sport',
-        filter: 'agSetColumnFilter',
+        filter: 'agMultiColumnFilter',
         filterParams: {
-            values: getSportValuesAsync,
+            filters: [
+                {
+                    filter: 'agTextColumnFilter',
+                    filterParams: {
+                        defaultOption: 'startsWith',
+                    },
+                },
+                {
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        values: getSportValuesAsync,
+                    },
+                },
+            ],
         },
+        menuTabs: ['filterMenuTab'],
     },
     { field: 'athlete' },
 ];
@@ -82,17 +97,24 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 var fakeServer: any;
 var selectedCountries: string[] | null = null;
+var textFilterStored: string[] | null = null;
 
 function onFilterChanged() {
     var countryFilterModel = gridApi!.getFilterModel()['country'];
+    var sportFilterModel = gridApi!.getFilterModel()['sport'];
     var selected = countryFilterModel && countryFilterModel.values;
+    var textFilter = sportFilterModel?.filterModels[0] ? sportFilterModel.filterModels[0] : null;
 
-    if (!areEqual(selectedCountries, selected)) {
+    if (!areEqual(selectedCountries, selected) || !areEqual(textFilterStored, textFilter)) {
         selectedCountries = selected;
+        textFilterStored = textFilter;
 
         console.log('Refreshing sports filter');
-        gridApi!.getColumnFilterInstance<ISetFilter>('sport').then((sportFilter) => {
-            sportFilter!.refreshFilterValues();
+        gridApi.getColumnFilterInstance<IMultiFilter>('sport').then((filter) => {
+            filter!.getChildFilterInstance(1).refreshFilterValues();
+        });
+        gridApi.getColumnFilterInstance<ISetFilter>('country').then((filter) => {
+            filter!.refreshFilterValues();
         });
     }
 }
@@ -114,7 +136,8 @@ function areEqual(a: null | string[], b: null | string[]) {
 }
 
 function getCountryValuesAsync(params: SetFilterValuesFuncParams) {
-    var countries = fakeServer.getCountries();
+    var sportFilterModel = gridApi!.getFilterModel()['sport'];
+    var countries = fakeServer.getCountries(sportFilterModel);
 
     // simulating real server call with a 500ms delay
     setTimeout(() => {
@@ -123,7 +146,8 @@ function getCountryValuesAsync(params: SetFilterValuesFuncParams) {
 }
 
 function getSportValuesAsync(params: SetFilterValuesFuncParams) {
-    var sports = fakeServer.getSports(selectedCountries);
+    var sportFilterModel = gridApi!.getFilterModel()['sport'];
+    var sports = fakeServer.getSports(selectedCountries, sportFilterModel);
 
     // simulating real server call with a 500ms delay
     setTimeout(() => {
