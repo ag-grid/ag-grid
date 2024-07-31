@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# dumb repetitive and basic - can rework post release
-
 excluded=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles" "theming" "locale")
 frameworks=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular")
 
