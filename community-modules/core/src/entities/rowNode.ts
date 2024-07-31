@@ -1,7 +1,7 @@
 import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { AgEventType } from '../eventTypes';
-import type { CellEditRequestEvent, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
+import type { RowEvent, SelectionEventSourceType } from '../events';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -704,7 +704,20 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const oldValue = this.getValueFromValueService(column);
 
         if (this.beans.gos.get('readOnlyEdit')) {
-            this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
+            this.beans.eventService.dispatchEvent({
+                type: 'cellEditRequest',
+                event: null,
+                rowIndex: this.rowIndex!,
+                rowPinned: this.rowPinned,
+                column: column,
+                colDef: column.getColDef(),
+                data: this.data,
+                node: this,
+                oldValue,
+                newValue,
+                value: newValue,
+                source: eventSource,
+            });
             return false;
         }
 
@@ -747,30 +760,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const value = this.beans.valueService.getValue(column, this, false, ignoreAggData);
 
         return value;
-    }
-
-    private dispatchEventForSaveValueReadOnly(
-        column: AgColumn,
-        oldValue: any,
-        newValue: any,
-        eventSource?: string
-    ): void {
-        const event: CellEditRequestEvent = this.beans.gos.addGridCommonParams({
-            type: 'cellEditRequest',
-            event: null,
-            rowIndex: this.rowIndex!,
-            rowPinned: this.rowPinned,
-            column: column,
-            colDef: column.getColDef(),
-            data: this.data,
-            node: this,
-            oldValue,
-            newValue,
-            value: newValue,
-            source: eventSource,
-        });
-
-        this.beans.eventService.dispatchEvent(event);
     }
 
     public setGroupValue(colKey: string | AgColumn, newValue: any): void {
@@ -1004,13 +993,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             sibling.dispatchRowEvent('rowSelected');
         }
 
-        const event: RowSelectedEvent = {
+        this.beans.eventService.dispatchEvent({
             ...this.createGlobalRowEvent('rowSelected'),
             event: e || null,
             source,
-        };
-
-        this.beans.eventService.dispatchEvent(event);
+        });
 
         return true;
     }

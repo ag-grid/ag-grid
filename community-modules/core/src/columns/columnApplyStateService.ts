@@ -524,7 +524,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
             // dispatches generic ColumnEvents where all columns are returned rather than what has changed
             const dispatchWhenListsDifferent = (
-                eventType: string,
+                eventType: 'columnPivotChanged' | 'columnRowGroupChanged',
                 colsBefore: AgColumn[],
                 colsAfter: AgColumn[],
                 idMapper: (column: AgColumn) => string
@@ -548,14 +548,12 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
                 const changesArr = [...changes];
 
-                const event: WithoutGridCommon<ColumnEvent> = {
+                this.eventService.dispatchEvent({
                     type: eventType,
                     columns: changesArr,
                     column: changesArr.length === 1 ? changesArr[0] : null,
                     source: source,
-                };
-
-                this.eventService.dispatchEvent(event);
+                } as WithoutGridCommon<ColumnEvent>);
             };
 
             // determines which columns have changed according to supplied predicate

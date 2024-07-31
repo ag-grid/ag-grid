@@ -5,7 +5,7 @@ import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
-    AsyncTransactionsFlushed,
+    AsyncTransactionsFlushedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
     CellClickedEvent,
@@ -2190,7 +2190,7 @@ export interface GridOptions<TData = any> {
     /**
      * Async transactions have been applied. Contains a list of all transaction results.
      */
-    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;
+    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushedEvent<TData>): void;
 
     // *** Row Model: Server Side ***//
     /**

@@ -9,12 +9,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
-import type {
-    NewColumnsLoadedEvent,
-    PaginationChangedEvent,
-    RangeSelectionChangedEvent,
-    StateUpdatedEvent,
-} from '../../events';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
@@ -40,7 +34,6 @@ import type {
     SideBarState,
     SortState,
 } from '../../interfaces/gridState';
-import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IExpansionService } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { IRowModel } from '../../interfaces/iRowModel';
@@ -782,12 +775,11 @@ export class StateService extends BeanStub implements NamedBean {
     private dispatchQueuedStateUpdateEvents(): void {
         const sources = Array.from(this.queuedUpdateSources);
         this.queuedUpdateSources.clear();
-        const event: WithoutGridCommon<StateUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'stateUpdated',
             sources,
             state: this.cachedState,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {

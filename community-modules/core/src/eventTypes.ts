@@ -123,6 +123,7 @@ export const INTERNAL_EVENTS = [
     'rightPinnedWidthChanged',
     'rowContainerHeightChanged',
     'headerHeightChanged',
+    'columnGroupHeaderHeightChanged',
     'columnHeaderHeightChanged',
     'gridStylesChanged',
     'storeUpdated',

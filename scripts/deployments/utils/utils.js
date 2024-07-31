@@ -85,7 +85,7 @@ const extractSubAngularProjectDependencies = (packageDirectory) => {
     return { agSubAngularVersion, agSubAngularGridDeps, agSubAngularChartDeps };
 };
 
-const ROOT_PACKAGE_JSON = '../../package.json';
+const ROOT_PACKAGE_JSON = '../../../package.json';
 const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages;
 
 const getPackageInformation = () => {

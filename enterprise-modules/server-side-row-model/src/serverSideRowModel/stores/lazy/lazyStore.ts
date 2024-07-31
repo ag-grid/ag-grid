@@ -14,8 +14,6 @@ import type {
     ServerSideTransaction,
     ServerSideTransactionResult,
     StoreRefreshAfterParams,
-    StoreRefreshedEvent,
-    StoreUpdatedEvent,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, NumberSequence, ServerSideTransactionResultStatus, _warnOnce } from '@ag-grid-community/core';
@@ -271,7 +269,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param displayIndexSeq the number sequence for generating the display index of each row
      * @param nextRowTop an object containing the next row top value intended to be modified by ref per row
      */
-    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void {
+    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void {
         this.displayIndexStart = displayIndexSeq.peek();
         this.topPx = nextRowTop.value;
 
@@ -283,15 +281,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         if (footerNode === 'top') {
             this.parentRowNode.createFooter();
-            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
+            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop, uiLevel);
         }
 
         // delegate to the store to set the row display indexes
-        this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+        this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop, uiLevel);
 
         if (footerNode === 'bottom') {
             this.parentRowNode.createFooter();
-            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
+            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop, uiLevel);
         }
 
         this.displayIndexEnd = displayIndexSeq.peek();
@@ -710,19 +708,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public fireStoreUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        const event: WithoutGridCommon<StoreUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'storeUpdated',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     // gets called when row data updated, and no more refreshing needed
     public fireRefreshFinishedEvent(): void {
-        const event: WithoutGridCommon<StoreRefreshedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'storeRefreshed',
             route: this.parentRowNode.getRoute(),
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public getBlockStates() {

@@ -13,7 +13,6 @@ import type {
     IServerSideRowModel,
     IServerSideStore,
     LoadSuccessParams,
-    ModelUpdatedEvent,
     NamedBean,
     PivotResultColsService,
     RefreshServerSideParams,
@@ -24,7 +23,6 @@ import type {
     SortController,
     SortModelItem,
     StoreRefreshAfterParams,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import {
     BeanStub,
@@ -145,6 +143,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             ],
             resetListener
         );
+        this.addManagedPropertyListener('groupAllowUnbalanced', () => this.onStoreUpdated());
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
@@ -418,14 +417,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private dispatchModelUpdated(reset = false): void {
-        const modelUpdatedEvent: WithoutGridCommon<ModelUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             animate: !reset,
             keepRenderedRows: !reset,
             newPage: false,
             newData: false,
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        });
     }
 
     private onStoreUpdated(): void {
@@ -459,7 +457,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (!rootStore) {
             return;
         }
-        rootStore.setDisplayIndexes(new NumberSequence(), { value: 0 });
+        rootStore.setDisplayIndexes(new NumberSequence(), { value: 0 }, 0);
     }
 
     public retryLoads(): void {

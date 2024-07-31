@@ -6,9 +6,8 @@ import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
-import type { ColumnEventType, ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent } from '../../../events';
+import type { ColumnEventType } from '../../../events';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _last, _removeFromArray } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -47,7 +46,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.column = columnGroup;
     }
 
-    public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
+    public setComp(
+        comp: IHeaderGroupCellComp,
+        eGui: HTMLElement,
+        eResize: HTMLElement,
+        eHeaderCompWrapper: HTMLElement
+    ): void {
         this.comp = comp;
         this.setGui(eGui);
 
@@ -62,6 +66,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 this.tooltipFeature = this.destroyBean(this.tooltipFeature);
             }
         });
+
+        this.setupAutoHeight({
+            wrapperElement: eHeaderCompWrapper,
+        });
+
         this.setupUserComp();
         this.addHeaderMouseListeners();
 
@@ -83,7 +92,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         );
 
         this.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
-        this.addResizeAndMoveKeyboardListeners();
+        this.addResizeAndMoveKeyboardListeners(eGui);
+    }
+
+    public getColumn(): AgColumnGroup {
+        return this.column;
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
@@ -218,14 +231,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {
-        const eventType = isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave';
-
-        const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
-            type: eventType,
+        this.eventService.dispatchEvent({
+            type: isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave',
             column: this.column.getProvidedColumnGroup(),
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
@@ -305,6 +314,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             }
         } else {
             classes.push('ag-header-group-cell-with-group');
+            if (colGroupDef?.wrapHeaderText) {
+                classes.push('ag-header-cell-wrap-text');
+            }
         }
 
         classes.forEach((c) => this.comp.addOrRemoveCssClass(c, true));

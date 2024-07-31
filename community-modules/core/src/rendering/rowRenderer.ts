@@ -9,20 +9,12 @@ import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
-import type {
-    BodyScrollEvent,
-    CellFocusedEvent,
-    DisplayedRowsChangedEvent,
-    FirstDataRenderedEvent,
-    ModelUpdatedEvent,
-    ViewportChangedEvent,
-} from '../events';
+import type { BodyScrollEvent, CellFocusedEvent, ModelUpdatedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -1197,11 +1189,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
-        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'displayedRowsChanged',
             afterScroll,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -1433,13 +1424,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.firstRenderedRow = newFirst;
             this.lastRenderedRow = newLast;
 
-            const event: WithoutGridCommon<ViewportChangedEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'viewportChanged',
                 firstRow: newFirst,
                 lastRow: newLast,
-            };
-
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 
@@ -1454,15 +1443,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
         this.dataFirstRenderedFired = true;
 
-        const event: WithoutGridCommon<FirstDataRenderedEvent> = {
-            type: 'firstDataRendered',
-            firstRow: this.firstRenderedRow,
-            lastRow: this.lastRenderedRow,
-        };
-
         // See AG-7018
         window.requestAnimationFrame(() => {
-            this.beans.eventService.dispatchEvent(event);
+            this.beans.eventService.dispatchEvent({
+                type: 'firstDataRendered',
+                firstRow: this.firstRenderedRow,
+                lastRow: this.lastRenderedRow,
+            });
         });
     }
 

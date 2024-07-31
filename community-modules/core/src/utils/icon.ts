@@ -161,6 +161,13 @@ export const iconNameClassMap: { [key: string]: string } = {
     radioButtonOff: 'radio-button-off',
 };
 
+const ICONS = (() => {
+    const icons = new Set(Object.values(iconNameClassMap));
+    // 'eye' is in list of icons, but isn't actually mapped to any feature
+    icons.add('eye');
+    return icons;
+})();
+
 /**
  * If icon provided, use this (either a string, or a function callback).
  * if not, then use the default icon from the theme
@@ -234,7 +241,7 @@ export function _createIconNoSpan(
         _warnOnce('iconRenderer should return back a string or a dom object');
     } else {
         const span = document.createElement('span');
-        let cssClass = iconNameClassMap[iconName];
+        let cssClass = iconNameClassMap[iconName] ?? (ICONS.has(iconName) ? iconName : undefined);
 
         if (!cssClass) {
             if (!forceCreate) {

@@ -1,6 +1,8 @@
 import corePackageJson from '../../../community-modules/core/package.json';
 import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
+const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);
+
 // Speed up the builds by only building some of the frameworks/pages
 const quickBuildPages = import.meta.env?.QUICK_BUILD_PAGES;
 export const QUICK_BUILD_PAGES: string[] = quickBuildPages ? quickBuildPages.split(',') : undefined;
@@ -21,6 +23,8 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     angular: 'Angular',
     vue: 'Vue',
 };
+
+export const DISABLE_EXAMPLE_RUNNER = isTruthy(import.meta.env?.DISABLE_EXAMPLE_RUNNER);
 
 export const IMPORT_TYPES: ImportType[] = USE_PACKAGES ? ['modules', 'packages'] : ['modules'];
 
@@ -81,7 +85,7 @@ export const SITE_URL = import.meta.env?.SITE_URL || import.meta.env?.PUBLIC_SIT
 
 export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
 export const PRODUCTION_SITE_URL = 'https://www.ag-grid.com';
-export const USE_PUBLISHED_PACKAGES = ['1', 'true'].includes(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
+export const USE_PUBLISHED_PACKAGES = isTruthy(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
 /**
  * Enable debug pages to be built

@@ -9,7 +9,7 @@ import type { AgColumnGroup } from './entities/agColumnGroup';
 import type { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPositionUtils } from './entities/rowPositionUtils';
-import type { CellFocusClearedEvent, CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
+import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import type { NavigationService } from './gridBodyComp/navigationService';
 import type { GridCtrl } from './gridComp/gridCtrl';
@@ -274,8 +274,8 @@ export class FocusService extends BeanStub implements NamedBean {
         }
     }
 
-    private getFocusEventParams(): CommonCellFocusParams {
-        const { rowIndex, rowPinned, column } = this.focusedCellPosition!;
+    private getFocusEventParams(focusedCellPosition: CellPosition): CommonCellFocusParams {
+        const { rowIndex, rowPinned, column } = focusedCellPosition;
 
         const params: CommonCellFocusParams = {
             rowIndex: rowIndex,
@@ -299,14 +299,14 @@ export class FocusService extends BeanStub implements NamedBean {
             return;
         }
 
-        const event: WithoutGridCommon<CellFocusClearedEvent> = {
-            type: 'cellFocusCleared',
-            ...this.getFocusEventParams(),
-        };
+        const focusEventParams = this.getFocusEventParams(this.focusedCellPosition);
 
         this.focusedCellPosition = null;
 
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent({
+            type: 'cellFocusCleared',
+            ...focusEventParams,
+        });
     }
 
     public setFocusedCell(params: CellFocusedParams): void {
@@ -322,22 +322,18 @@ export class FocusService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.focusedCellPosition = gridColumn
-            ? {
-                  rowIndex: rowIndex!,
-                  rowPinned: _makeNull(rowPinned),
-                  column: gridColumn,
-              }
-            : null;
-
-        const event: WithoutGridCommon<CellFocusedEvent> = {
-            type: 'cellFocused',
-            ...this.getFocusEventParams(),
-            forceBrowserFocus,
-            preventScrollOnBrowserFocus,
+        this.focusedCellPosition = {
+            rowIndex: rowIndex!,
+            rowPinned: _makeNull(rowPinned),
+            column: gridColumn,
         };
 
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent({
+            type: 'cellFocused',
+            ...this.getFocusEventParams(this.focusedCellPosition),
+            forceBrowserFocus,
+            preventScrollOnBrowserFocus,
+        });
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
@@ -531,11 +527,8 @@ export class FocusService extends BeanStub implements NamedBean {
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
-        const focusSuccess = headerRowContainerCtrl.focusHeader(
-            headerPosition.headerRowIndex,
-            column as AgColumn,
-            event
-        );
+        const focusSuccess =
+            headerRowContainerCtrl?.focusHeader(headerPosition.headerRowIndex, column as AgColumn, event) || false;
 
         if (focusSuccess && (rowWithoutSpanValue != null || fromCell)) {
             this.headerNavigationService.setCurrentHeaderRowWithoutSpan(rowWithoutSpanValue ?? -1);

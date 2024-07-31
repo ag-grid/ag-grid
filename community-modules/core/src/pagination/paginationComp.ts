@@ -5,7 +5,7 @@ import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackPar
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import { _setAriaDisabled } from '../utils/aria';
 import { _addFocusableContainerListener } from '../utils/focus';
 import { _createIconNoSpan } from '../utils/icon';
@@ -18,16 +18,16 @@ import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorCom
 import type { PaginationService } from './paginationService';
 
 export class PaginationComp extends TabGuardComp implements FocusableContainer {
-    private rowNodeBlockLoader?: RowNodeBlockLoader;
     private rowModel: IRowModel;
     private paginationService: PaginationService;
     private focusService: FocusService;
+    private ariaAnnouncementService: AriaAnnouncementService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.rowNodeBlockLoader = beans.rowNodeBlockLoader;
         this.rowModel = beans.rowModel;
         this.paginationService = beans.paginationService!;
         this.focusService = beans.focusService;
+        this.ariaAnnouncementService = beans.ariaAnnouncementService;
     }
 
     private readonly btFirst: HTMLElement = RefPlaceholder;
@@ -48,6 +48,9 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
     private lastButtonDisabled = false;
     private areListenersSetup = false;
     private allowFocusInnerElement = false;
+
+    private ariaRowStatus: string;
+    private ariaPageStatus: string;
 
     constructor() {
         super();
@@ -106,9 +109,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
         this.setupListeners();
 
         this.enableOrDisableButtons();
-        this.updateRowLabels();
-        this.setCurrentPageLabel();
-        this.setTotalLabels();
+        this.updateLabels();
         this.onPageSizeRelatedOptionsChange();
     }
 
@@ -150,14 +151,6 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
         }
     }
 
-    private setCurrentPageLabel(): void {
-        const pagesExist = this.paginationService.getTotalPages() > 0;
-        const currentPage = this.paginationService.getCurrentPage();
-        const toDisplay = pagesExist ? currentPage + 1 : 0;
-
-        this.lbCurrent.textContent = this.formatNumber(toDisplay);
-    }
-
     private formatNumber(value: number): string {
         const userFunc = this.gos.getCallback('paginationNumberFormatter');
 
@@ -187,7 +180,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
 
         return /* html */ `<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
                 <ag-page-size-selector data-ref="pageSizeComp"></ag-page-size-selector>
-                <span class="ag-paging-row-summary-panel" role="status">
+                <span class="ag-paging-row-summary-panel">
                     <span id="ag-${compId}-first-row" data-ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-to">${strTo}</span>
                     <span id="ag-${compId}-last-row" data-ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-number"></span>
@@ -197,7 +190,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                 <span class="ag-paging-page-summary-panel" role="presentation">
                     <div data-ref="btFirst" class="ag-button ag-paging-button" role="button" aria-label="${strFirst}"></div>
                     <div data-ref="btPrevious" class="ag-button ag-paging-button" role="button" aria-label="${strPrevious}"></div>
-                    <span class="ag-paging-description" role="status">
+                    <span class="ag-paging-description">
                         <span id="ag-${compId}-start-page">${strPage}</span>
                         <span id="ag-${compId}-start-page-number" data-ref="lbCurrent" class="ag-paging-number"></span>
                         <span id="ag-${compId}-of-page">${strOf}</span>
@@ -251,46 +244,17 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
         button.classList.toggle('ag-disabled', disabled);
     }
 
-    private updateRowLabels() {
-        const currentPage = this.paginationService.getCurrentPage();
-        const pageSize = this.paginationService.getPageSize();
-        const maxRowFound = this.rowModel.isLastRowIndexKnown();
-        const rowCount = this.rowModel.isLastRowIndexKnown() ? this.paginationService.getMasterRowCount() : null;
-
-        let startRow: any;
-        let endRow: any;
-
-        if (this.isZeroPagesToDisplay()) {
-            startRow = endRow = 0;
-        } else {
-            startRow = pageSize * currentPage + 1;
-            endRow = startRow + pageSize - 1;
-            if (maxRowFound && endRow > rowCount!) {
-                endRow = rowCount;
-            }
-        }
-
-        const theoreticalEndRow = startRow + pageSize - 1;
-        const isLoadingPageSize = !maxRowFound && this.paginationService.getMasterRowCount() < theoreticalEndRow;
-        this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
-        if (isLoadingPageSize) {
-            const translate = this.localeService.getLocaleTextFunc();
-            this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
-        } else {
-            this.lbLastRowOnPage.textContent = this.formatNumber(endRow);
-        }
-    }
-
     private isZeroPagesToDisplay() {
         const maxRowFound = this.rowModel.isLastRowIndexKnown();
         const totalPages = this.paginationService.getTotalPages();
         return maxRowFound && totalPages === 0;
     }
 
-    private setTotalLabels() {
+    private updateLabels(): void {
         const lastPageFound = this.rowModel.isLastRowIndexKnown();
         const totalPages = this.paginationService.getTotalPages();
-        const rowCount = lastPageFound ? this.paginationService.getMasterRowCount() : null;
+        const masterRowCount = this.paginationService.getMasterRowCount();
+        const rowCount = lastPageFound ? masterRowCount : null;
 
         // When `pivotMode=true` and no grouping or value columns exist, a single 'hidden' group row (root node) is in
         // the grid and the pagination totals will correctly display total = 1. However this is confusing to users as
@@ -306,22 +270,89 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
             }
         }
 
-        if (lastPageFound) {
-            this.lbTotal.textContent = this.formatNumber(totalPages);
-            this.lbRecordCount.textContent = this.formatNumber(rowCount!);
+        const currentPage = this.paginationService.getCurrentPage();
+        const pageSize = this.paginationService.getPageSize();
+
+        let startRow: any;
+        let endRow: any;
+
+        if (this.isZeroPagesToDisplay()) {
+            startRow = endRow = 0;
         } else {
-            const moreText = this.localeService.getLocaleTextFunc()('more', 'more');
-            this.lbTotal.innerHTML = moreText;
-            this.lbRecordCount.innerHTML = moreText;
+            startRow = pageSize * currentPage + 1;
+            endRow = startRow + pageSize - 1;
+            if (lastPageFound && endRow > rowCount!) {
+                endRow = rowCount;
+            }
+        }
+
+        const theoreticalEndRow = startRow + pageSize - 1;
+        const isLoadingPageSize = !lastPageFound && masterRowCount < theoreticalEndRow;
+        const lbFirstRowOnPage = this.formatNumber(startRow);
+        this.lbFirstRowOnPage.textContent = lbFirstRowOnPage;
+        let lbLastRowOnPage: string;
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        if (isLoadingPageSize) {
+            lbLastRowOnPage = localeTextFunc('pageLastRowUnknown', '?');
+        } else {
+            lbLastRowOnPage = this.formatNumber(endRow);
+        }
+        this.lbLastRowOnPage.textContent = lbLastRowOnPage;
+
+        const pagesExist = totalPages > 0;
+        const toDisplay = pagesExist ? currentPage + 1 : 0;
+
+        const lbCurrent = this.formatNumber(toDisplay);
+        this.lbCurrent.textContent = lbCurrent;
+
+        let lbTotal: string;
+        let lbRecordCount: string;
+        if (lastPageFound) {
+            lbTotal = this.formatNumber(totalPages);
+            lbRecordCount = this.formatNumber(rowCount!);
+        } else {
+            const moreText = localeTextFunc('more', 'more');
+            lbTotal = moreText;
+            lbRecordCount = moreText;
+        }
+        this.lbTotal.textContent = lbTotal;
+        this.lbRecordCount.textContent = lbRecordCount;
+
+        this.announceAriaStatus(lbFirstRowOnPage, lbLastRowOnPage, lbRecordCount, lbCurrent, lbTotal);
+    }
+
+    private announceAriaStatus(
+        lbFirstRowOnPage: string,
+        lbLastRowOnPage: string,
+        lbRecordCount: string,
+        lbCurrent: string,
+        lbTotal: string
+    ): void {
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const strPage = localeTextFunc('page', 'Page');
+        const strTo = localeTextFunc('to', 'to');
+        const strOf = localeTextFunc('of', 'of');
+        const ariaRowStatus = `${lbFirstRowOnPage} ${strTo} ${lbLastRowOnPage} ${strOf} ${lbRecordCount}`;
+        const ariaPageStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotal}`;
+
+        if (ariaRowStatus !== this.ariaRowStatus) {
+            this.ariaRowStatus = ariaRowStatus;
+            this.ariaAnnouncementService.announceValue(ariaRowStatus, 'paginationRow');
+        }
+        if (ariaPageStatus !== this.ariaPageStatus) {
+            this.ariaPageStatus = ariaPageStatus;
+            this.ariaAnnouncementService.announceValue(ariaPageStatus, 'paginationPage');
         }
     }
 
     private setTotalLabelsToZero() {
-        this.lbFirstRowOnPage.textContent = this.formatNumber(0);
-        this.lbCurrent.textContent = this.formatNumber(0);
-        this.lbLastRowOnPage.textContent = this.formatNumber(0);
-        this.lbTotal.textContent = this.formatNumber(0);
-        this.lbRecordCount.textContent = this.formatNumber(0);
+        const strZero = this.formatNumber(0);
+        this.lbFirstRowOnPage.textContent = strZero;
+        this.lbCurrent.textContent = strZero;
+        this.lbLastRowOnPage.textContent = strZero;
+        this.lbTotal.textContent = strZero;
+        this.lbRecordCount.textContent = strZero;
+        this.announceAriaStatus(strZero, strZero, strZero, strZero, strZero);
     }
 }
 
