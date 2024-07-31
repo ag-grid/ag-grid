@@ -224,7 +224,7 @@ If you are showing child counts for the groups, then the child count is a count 
 
 ## Selection
 
-To enable selection set `gridOptions.rowSelection` to 'single' or 'multiple' as normal. However there are some restrictions to be aware of.
+To enable selection simply configure `gridOptions.selectionOptions` as described in [Row Selection](./row-selection). However there are some restrictions to be aware of.
 
 ### Checkbox vs Click Selection
 
@@ -232,14 +232,11 @@ Click selection is supported with tree data. However when you are displaying tre
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
-    // don't have click select rows
-    suppressRowClickSelection: true,
+    selectionOptions: {
+        // Prevent clicks from selecting a row
+        suppressClickSelection: true,
 
-    // have checkbox on the group column
-    autoGroupColumnDef: {
-        cellRendererParams: {
-            checkbox: true,
-        }
+        // other options...
     }
 }
 ```
@@ -250,9 +247,9 @@ const gridOptions = {
 
 If keeping selection of groups is a priority, then arrange your data so that the grid does not need to create any filler groups.
 
-### Example: Selecting Groups and Children
+### Example: Selecting Groups and Descendants
 
-Below is an example demonstrating the property `groupSelectsChildren` used with tree data.
+Below is an example demonstrating the group descendant selection with tree data.
 
 In the example below, note the following:
 

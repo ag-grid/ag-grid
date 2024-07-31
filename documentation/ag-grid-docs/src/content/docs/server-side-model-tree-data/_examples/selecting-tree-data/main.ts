@@ -1,13 +1,9 @@
 import {
-    ColDef,
-    GetRowIdParams,
-    GridApi,
-    GridOptions,
-    IRowNode,
-    IServerSideDatasource,
-    IServerSideGetRowsParams,
-    IServerSideGetRowsRequest,
-    IsServerSideGroupOpenByDefaultParams,
+    type GridApi,
+    type GridOptions,
+    type IServerSideDatasource,
+    type IServerSideGetRowsRequest,
+    type IsServerSideGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -18,20 +14,15 @@ import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-mo
 
 ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule]);
 
-var fakeServer: {
-    getData: (request: IServerSideGetRowsRequest) => void;
+interface FakeServer {
+    getData: (request: IServerSideGetRowsRequest) => any;
     addChildRow: (route: string[], newRow: any) => void;
     toggleEmployment: (route: string[]) => void;
     removeEmployee: (route: string[]) => void;
     moveEmployee: (from: string[], to: string[]) => void;
-};
+}
 
-const columnDefs: ColDef[] = [
-    { field: 'employeeId', hide: true },
-    { field: 'employeeName', hide: true },
-    { field: 'employmentType' },
-    { field: 'startDate' },
-];
+let fakeServer: FakeServer;
 
 let gridApi: GridApi;
 
@@ -50,19 +41,25 @@ const gridOptions: GridOptions = {
     },
     rowModelType: 'serverSide',
     treeData: true,
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: 'employeeId', hide: true },
+        { field: 'employeeName', hide: true },
+        { field: 'employmentType' },
+        { field: 'startDate' },
+    ],
     cacheBlockSize: 10,
-    rowSelection: 'multiple',
-    groupSelectsChildren: true,
-
+    selectionOptions: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+    },
     isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
         var isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';
         var isMabelWard = params.rowNode.level == 1 && params.data.employeeName == 'Mabel Ward';
         return isKathrynPowers || isMabelWard;
     },
-    getRowId: (row: GetRowIdParams) => String(row.data.employeeId),
-    isServerSideGroup: (dataItem: any) => dataItem.group,
-    getServerSideGroupKey: (dataItem: any) => dataItem.employeeName,
+    getRowId: (row) => String(row.data.employeeId),
+    isServerSideGroup: (dataItem) => dataItem.group,
+    getServerSideGroupKey: (dataItem) => dataItem.employeeName,
 };
 
 // setup the grid after the page has finished loading
@@ -111,7 +108,7 @@ function createFakeServer(fakeServerData: any[], api: GridApi) {
     };
 
     fakeServer = {
-        getData: (request: IServerSideGetRowsRequest) => {
+        getData: (request: IServerSideGetRowsRequest): any => {
             function extractRowsFromData(groupKeys: string[], data: any[]): any {
                 if (groupKeys.length === 0) {
                     return data.map(sanitizeRowForGrid);
@@ -190,9 +187,9 @@ function createFakeServer(fakeServerData: any[], api: GridApi) {
     return fakeServer;
 }
 
-function createServerSideDatasource(fakeServer: any) {
+function createServerSideDatasource(fakeServer: FakeServer) {
     const dataSource: IServerSideDatasource = {
-        getRows: (params: IServerSideGetRowsParams) => {
+        getRows: (params) => {
             console.log('ServerSideDatasource.getRows: params = ', params);
             var request = params.request;
             var allRows = fakeServer.getData(request);
