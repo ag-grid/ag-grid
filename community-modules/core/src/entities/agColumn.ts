@@ -360,8 +360,8 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public isCellEditable(rowNode: IRowNode): boolean {
-        // only allow editing of groups if the user has this option enabled
-        if (rowNode.group && !this.gos.get('enableGroupEdit')) {
+        // only allow editing of groups if the user has this option enabled, and if this is not a tree
+        if (rowNode.group && !this.gos.get('enableGroupEdit') && !this.gos.get('treeData')) {
             return false;
         }
 
