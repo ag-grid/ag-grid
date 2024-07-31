@@ -60,11 +60,13 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         const eCell = cell.getGui();
         return activeElement !== eCell && eCell.contains(activeElement);
     };
-    if (gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell()) {
-        // force focus back on the cell so it doesn't get lost
-        focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
-    } else if (!focusService.isCellFocused(cellPosition)) {
-        focusService.setFocusedCell(cellPosition);
+    const forceBrowserFocus = gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell();
+    if (forceBrowserFocus || !focusService.isCellFocused(cellPosition)) {
+        focusService.setFocusedCell({
+            ...cellPosition,
+            forceBrowserFocus,
+            preventScrollOnBrowserFocus: true,
+        });
     }
     cell.startRowOrCellEdit(params.key);
 }
