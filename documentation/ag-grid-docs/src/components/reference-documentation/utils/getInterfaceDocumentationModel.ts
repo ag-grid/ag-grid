@@ -100,13 +100,17 @@ export function getProperties({
     });
 
     const orderedProps = {};
-    const ordered = Object.entries<ChildDocEntry>(props).sort(([, v1], [, v2]) => {
-        // Put required props at the top as likely to be the most important
-        if ((v1 as ChildDocEntry).isRequired == (v2 as ChildDocEntry).isRequired) {
-            return 0;
-        }
-        return (v1 as ChildDocEntry).isRequired ? -1 : 1;
-    });
+    const ordered = Object.entries<ChildDocEntry>(props)
+        .sort(([, v1], [, v2]) => {
+            // Put required props at the top as likely to be the most important
+            if ((v1 as ChildDocEntry).isRequired == (v2 as ChildDocEntry).isRequired) {
+                return 0;
+            }
+            return (v1 as ChildDocEntry).isRequired ? -1 : 1;
+        })
+        .sort((a, b) => {
+            return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0;
+        });
 
     const interfaceDeclaration = getInterfaceWithGenericParams(interfaceName, interfaceData.meta);
     const description =
