@@ -1,10 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    FillEndEvent,
-    FillOperationParams,
-    FillStartEvent,
-    GridApi,
-    GridOptions,
+    type FillEndEvent,
+    type FillStartEvent,
+    type GridApi,
+    type GridOptions,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -35,22 +34,26 @@ const gridOptions: GridOptions = {
         editable: true,
         cellDataType: false,
     },
-    enableRangeSelection: true,
-    enableFillHandle: true,
-    fillOperation: (params: FillOperationParams) => {
-        var hasNonDayValues = params.initialValues.some(function (val) {
-            return daysList.indexOf(val) === -1;
-        });
+    selectionOptions: {
+        mode: 'cell',
+        handle: {
+            mode: 'fill',
+            setFillValue(params) {
+                var hasNonDayValues = params.initialValues.some(function (val) {
+                    return daysList.indexOf(val) === -1;
+                });
 
-        if (hasNonDayValues) {
-            return false;
-        }
+                if (hasNonDayValues) {
+                    return false;
+                }
 
-        var lastValue = params.values[params.values.length - 1];
-        var idxOfLast = daysList.indexOf(lastValue);
-        var nextDay = daysList[(idxOfLast + 1) % daysList.length];
-        console.log('Custom Fill Operation -> Next Day is:', nextDay);
-        return nextDay;
+                var lastValue = params.values[params.values.length - 1];
+                var idxOfLast = daysList.indexOf(lastValue);
+                var nextDay = daysList[(idxOfLast + 1) % daysList.length];
+                console.log('Custom Fill Operation -> Next Day is:', nextDay);
+                return nextDay;
+            },
+        },
     },
     onFillStart: (event: FillStartEvent) => {
         console.log('Fill Start', event);

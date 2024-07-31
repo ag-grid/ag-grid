@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { FillOperationParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { type GridApi, type GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
@@ -22,22 +22,21 @@ const gridOptions: GridOptions<IOlympicData> = {
         editable: true,
         cellDataType: false,
     },
-    enableRangeSelection: true,
-    enableFillHandle: true,
-    suppressClearOnFillReduction: true,
-    fillOperation: (params: FillOperationParams) => {
-        if (params.column.getColId() === 'country') {
-            return params.currentCellValue;
-        }
+    selectionOptions: {
+        mode: 'cell',
+        handle: {
+            mode: 'fill',
+            suppressClearOnFillReduction: true,
+            setFillValue(params) {
+                if (params.column.getColId() === 'country') {
+                    return params.currentCellValue;
+                }
 
-        return params.values[params.values.length - 1];
+                return params.values[params.values.length - 1];
+            },
+        },
     },
 };
-
-function createRowData(data: any[]) {
-    var rowData = data.slice(0, 100);
-    return rowData;
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -47,6 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
-            gridApi!.setGridOption('rowData', createRowData(data));
+            gridApi!.setGridOption('rowData', data.slice(0, 100));
         });
 });

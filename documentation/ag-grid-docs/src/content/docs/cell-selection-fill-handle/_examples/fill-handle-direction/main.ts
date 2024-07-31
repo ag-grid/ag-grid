@@ -1,11 +1,19 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { type GridApi, type GridOptions, type SelectionOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule]);
 
 let gridApi: GridApi<IOlympicData>;
+
+const selectionOptions: SelectionOptions = {
+    mode: 'cell',
+    handle: {
+        mode: 'fill',
+        direction: 'x',
+    },
+};
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -26,9 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         editable: true,
         cellDataType: false,
     },
-    enableRangeSelection: true,
-    enableFillHandle: true,
-    fillHandleDirection: 'x',
+    selectionOptions,
 };
 
 function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
@@ -40,7 +46,15 @@ function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
     });
 
     button.classList.add('selected');
-    gridApi!.setGridOption('fillHandleDirection', direction);
+
+    if (
+        selectionOptions.mode === 'cell' &&
+        typeof selectionOptions.handle !== 'boolean' &&
+        selectionOptions.handle?.mode === 'fill'
+    ) {
+        selectionOptions.handle.direction = direction;
+        gridApi!.setGridOption('selectionOptions', selectionOptions);
+    }
 }
 
 // setup the grid after the page has finished loading

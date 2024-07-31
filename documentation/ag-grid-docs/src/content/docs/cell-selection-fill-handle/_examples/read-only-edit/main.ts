@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CellEditRequestEvent, GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { type CellEditRequestEvent, type GridApi, type GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
@@ -26,10 +26,14 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
         editable: true,
         cellDataType: false,
     },
-    getRowId: (params: GetRowIdParams) => String(params.data.id),
-    enableRangeSelection: true,
-    enableFillHandle: true,
+    selectionOptions: {
+        mode: 'cell',
+        handle: {
+            mode: 'fill',
+        },
+    },
     readOnlyEdit: true,
+    getRowId: (params) => String(params.data.id),
     onCellEditRequest: onCellEditRequest,
 };
 
