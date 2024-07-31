@@ -148,8 +148,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
             this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
         );
-        this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (event) =>
-            this.recreateColumnDefs(convertSourceType(event.source))
+        this.addManagedPropertyListeners(
+            ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
+            (event) => this.recreateColumnDefs(convertSourceType(event.source))
         );
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))

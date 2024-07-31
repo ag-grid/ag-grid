@@ -594,10 +594,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
         const groupHeaderHeight = this.beans.columnModel.getGroupRowsHeight();
 
-        const numHeaders = groupHeaderHeight.length - 1;
         let extraHeight = 0;
-        for (let i = numHeaders - numberOfParents; i < numHeaders; i++) {
-            extraHeight += groupHeaderHeight[i];
+        for (let i = 0; i < numberOfParents; i++) {
+            extraHeight += groupHeaderHeight[groupHeaderHeight.length - 1 - i];
         }
 
         eGui.style.setProperty('top', `${-extraHeight}px`);
