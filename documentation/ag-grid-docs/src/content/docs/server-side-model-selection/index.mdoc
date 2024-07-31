@@ -1,0 +1,122 @@
+---
+title: "SSRM Row Selection"
+enterprise: true
+---
+
+Selecting rows and groups in the Server-Side Row Model is supported.
+Configure the `selectionOptions` grid option as described in [Row selection](./row-selection).
+Some SSRM-specific considerations are detailed below.
+
+{% note %}
+Server-Side Row Selection requires [Row IDs](./server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+{% /note %}
+
+## Filters and Selection
+
+The selected rows are preserved when the grid is sorted or filtered and are displayed as selected when scrolled into view. 
+Select a row, apply a column filter so that the selected row is in the filter results and it will appear as selected in the filter results. 
+If a selected row doesn’t match the applied filter, it will still be selected when the filter is removed.
+
+{% gridExampleRunner title="Click Selection" name="click-selection"  exampleHeight=590 /%}
+
+## Bulk Selection
+
+There are restrictions on the configuration of bulk selection when using SSRM. Using the `'filtered'` or `'currentPage'` settings for `selectionOptions.selectAll` is considered invalid. 
+The grid will behave as though `selectionOptions.selectAll = 'all'`, which is the default value.
+
+{% note %}
+When using header checkbox selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [API Reference](./server-side-model-selection/#api-reference) section below for suggested alternatives.
+{% /note %}
+
+{% gridExampleRunner title="Bulk Selection" name="select-all"  exampleHeight=590 /%}
+
+## Group Selection
+
+{% note %}
+When using group selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [API Reference](./server-side-model-selection/#api-reference) section below for suggested alternatives.
+{% /note %}
+
+### Transactions
+
+When adding a new row via transaction, the new row will be treated as if it conforms to the parents selection. Therefore, if the parent row was selected the new row will be treated as selected upon creation. For indeterminate groups, this will follow the last non-indeterminate state. Note the following:
+
+* When clicking the `Add new Aggressive` button, the new row is unselected
+* After selecting the `Aggressive` group, new rows created by the `Add new Aggressive` button will be selected.
+* After toggling one of the child rows of the `Aggressive` group, new rows follow the group's previous selection state.
+
+{% gridExampleRunner title="Transactions Example" name="group-selects-children-transactions"  exampleHeight=590 /%}
+
+## API Reference
+
+The following API functions exist for the Server-Side Row Model when using [Row Selection](./row-selection/#grid-selection-api). These can be used to get the currently selected rows and nodes if all of the selected rows have been loaded by the grid. 
+These cannot be used while using `selectionOptions.groupSelects = 'descendants'`, `selectionOptions.groupSelects = 'filteredDescendants'`, or when any select all functionality is required.
+
+{% apiDocumentation source="grid-api/api.json" section="selection" names=["getSelectedNodes", "getSelectedRows"] /%}
+
+When using selection where all selected rows may not have been loaded, it is instead advised to use `api.getServerSideSelectionState` and `api.setServerSideSelectionState`, as these functions can be used to identify selected rows without having ever loaded the rows.
+
+{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["getServerSideSelectionState", "setServerSideSelectionState"] /%}
+
+### Selection API
+
+The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `group-country-year-United States`, and the row with the ID `group-country-year-United States2004`.
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+api.setServerSideSelectionState({
+    selectAll: true,
+    toggledNodes: ['group-country-year-United States', 'group-country-year-United States2004'],
+});
+```
+
+In the example below, note the following;
+
+* The above snippet has been included inside of the `firstDataRendered` callback, which sets the initial selection state.
+* The `Save Selection` button has been configured to store the result of `api.getServerSideSelectionState()`, it also logs the saved state to the console when clicked.
+* The `Load Selection` button can subsequently re-apply the previously saved selection rules using `api.setServerSideSelectionState(state)`.
+
+{% gridExampleRunner title="Select All API" name="api-select-all"  exampleHeight=590 /%}
+
+### Group Selection API
+
+The below snippet demonstrates how to set all nodes as selected, except in the case of the "United States" group, whose only selected child is the row with the ID `group-country-year-United States2004`.
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+params.api.setServerSideSelectionState({
+    // this root level config can be used to determine a global select-all
+    selectAllChildren: true,
+    // all of the top level group nodes which do not conform with the select all value will have an entry here
+    // including indeterminate nodes
+    toggledNodes: [{
+        // as this is a group node with toggledNodes, this node will be marked as indeterminate
+        nodeId: 'group-country-year-United States',
+        // selectAllChildren can be used to determine whether this groups children are all selected
+        selectAllChildren: false,
+        toggledNodes: [{
+            // this group node has no toggledNodes, and so it will respect its own `selectAllChildren` property along
+            // with its descendants.
+            nodeId: 'group-country-year-United States2004',
+            selectAllChildren: true,
+        }],
+    }],
+});
+```
+
+{% note %}
+The state being used here conforms to `IServerSideGroupSelectionState`, not `IServerSideSelectionState`. Invalid states will be ignored.
+{% /note %}
+
+In the example below, note the following;
+
+* The above snippet has been included inside of the `firstDataRendered` callback, which sets the initial selection state.
+* The `Save Selection` button has been configured to store the result of `api.getServerSideSelectionState()`, it also logs the saved state to the console when clicked.
+* The `Load Selection` button can subsequently re-apply the previously saved selection rules using `api.setServerSideSelectionState(state)`.
+
+{% gridExampleRunner title="Group Selection API" name="api-group-selects-children"  exampleHeight=590 /%}
+
+## Tree Data
+
+Row selection is also supported when using tree data. See this documented on the [SSRM Tree Data](./server-side-model-tree-data/#selection-with-tree-data) page.
+
+## Next Up
+
+Continue to the next section to learn how to configure the [Loading Cell Renderer](./component-loading-cell-renderer/).
