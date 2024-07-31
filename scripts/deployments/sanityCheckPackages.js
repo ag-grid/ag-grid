@@ -16,7 +16,7 @@ if(!gridNewVersion || !chartNewVersion) {
 }
 
 console.log("******************************************************************************************************************************");
-console.log(`Verify Grid Version ${gridNewVersion} and Charts Version ${chartsDependencyVersion} are the dependencies used in package.json `);
+console.log(`Verify Grid Version ${gridNewVersion} and Charts Version ${chartNewVersion} are the dependencies used in package.json         `);
 console.log("******************************************************************************************************************************");
 
 let errorFound = false;
