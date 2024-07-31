@@ -33,8 +33,9 @@ export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
 };
 
 /**
- * We keep a secondary tree data structure together with the nodes.
+ * We keep a secondary tree data structure together with the rows.
  * We associate a node with a TreeNode, both storing the row in node.row and by storing the TreeNode in a hidden field in the row.
+ * We break the association when the row is removed or the TreeStrategy destroyed.
  *
  * TreeStrategy uses a two stage approach both for first time creation and updates.
  * Multiple updates interact with the tree, and a commit stage commits all updates reducing expensive computations.
