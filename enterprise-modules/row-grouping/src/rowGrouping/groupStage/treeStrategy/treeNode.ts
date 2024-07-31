@@ -32,6 +32,19 @@ export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
     (row as TreeRow)[EXPANDED_INITIALIZED_SYM] = value;
 };
 
+/**
+ * A TreeNode contains a RowNode and the children nodes.
+ *
+ * TreeStrategy uses a two stage approach both for first time creation and updates.
+ * Multiple updates interact with the tree, and a commit stage commits all updates reducing expensive computations.
+ *
+ * The only interactions in the creation and update allowed are:
+ *  - insert a filler node, done with node.upsertNodeByKey, node.upsertPath
+ *  - replace the existing node row with another, or null
+ *
+ * During commit, the childrenAfterGroup and allLeafChildren arrays are rebuilt, and the updates are applied.
+ * Before commit those arrays are NOT representing the truth.
+ */
 export class TreeNode {
     /**
      * The children of the tree, where the key is the node key and the value is the child node.
