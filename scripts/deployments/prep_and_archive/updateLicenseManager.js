@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { execSync } = require('child_process')
+const { execSync } = require('child_process');
 
 const LICENSE_MANAGER_FILE = 'enterprise-modules/core/src/license/shared/licenseManager.ts';
 
@@ -11,7 +11,7 @@ if (process.argv.length !== 3) {
 
 const [exec, scriptPath, genKeyPath] = process.argv;
 
-if(!fs.existsSync(genKeyPath)) {
+if (!fs.existsSync(genKeyPath)) {
     console.error(`ERROR: genKeyPath: [${genKeyPath}] does not exist`);
     process.exit(1);
 }
@@ -21,7 +21,7 @@ if (fs.lstatSync(genKeyPath).isDirectory()) {
 }
 
 const newLicenseKey = execSync(`node ${genKeyPath} release`).toString();
-if(!newLicenseKey || newLicenseKey.length !== 21) {
+if (!newLicenseKey || newLicenseKey.length !== 21) {
     console.error(`ERROR: license key generated invalid - incorrect key length: ${newLicenseKey}`);
     process.exit(1);
 }
