@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    AgColumnGroup,
     BeanCollection,
     ColumnModel,
     ColumnNameService,
@@ -11,7 +12,7 @@ import type {
     ValueService,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { BeanStub, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 
 export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
@@ -52,8 +53,25 @@ export class ChartColumnService extends BeanStub implements NamedBean {
         return this.visibleColsService.getAllCols();
     }
 
-    public getColDisplayName(col: AgColumn): string | null {
-        return this.columnNameService.getDisplayNameForColumn(col, 'chart');
+    public getColDisplayName(col: AgColumn, includePath?: boolean): string | null {
+        const headerLocation = 'chart';
+        const columnDisplayName = this.columnNameService.getDisplayNameForColumn(col, headerLocation);
+        if (includePath) {
+            const displayNames = [columnDisplayName];
+            const getDisplayName = (colGroup: AgColumnGroup | null) => {
+                if (!colGroup) {
+                    return;
+                }
+                const colGroupName = this.columnNameService.getDisplayNameForColumnGroup(colGroup, headerLocation);
+                if (!_missingOrEmpty(colGroupName)) {
+                    displayNames.unshift(colGroupName!);
+                    getDisplayName(colGroup.getParent());
+                }
+            };
+            getDisplayName(col.getParent());
+            return displayNames.join(' - ');
+        }
+        return columnDisplayName;
     }
 
     public getRowGroupColumns(): AgColumn[] {

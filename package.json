@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
+    "node-fetch": "2.7.0",
     "@nx/devkit": "18.3.4",
     "@nx/esbuild": "18.3.4",
     "@nx/eslint": "18.3.4",

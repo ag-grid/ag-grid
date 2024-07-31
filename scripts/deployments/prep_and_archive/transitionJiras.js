@@ -47,22 +47,61 @@ const getAvailableTransitions = async (issueId) => {
     );
 };
 
-const transitionIssues = async (filterId, transition) => {
+const transitionIssues = async (issueIds, transitionId) => {
+    const bodyData = `{
+      "transition": {
+        "id": "${transitionId}"
+      }
+    }`;
+
+    // there isn't currently support for bulk transitions so we have do them one at a time
+    // (there is a v3 beta api for bulk editing but this doesn't include transitioning issues)
+    const promises = [];
+    issueIds.forEach((issueId) => {
+        promises.push(
+            fetch(`https://ag-grid.atlassian.net/rest/api/2/issue/${issueId}/transitions`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Basic ${Buffer.from(JIRA_CREDENTIALS).toString('base64')}`,
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: bodyData,
+            })
+        );
+    });
+
+    return Promise.all(promises);
+};
+
+const transitionIssuesForFilter = async (filterId, transition) => {
     const data = await retrieveData(`https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=${filterId}&fields=id`);
     const issueIds = data.map((datum) => datum.key);
 
-    const transitions = await getAvailableTransitions(issueIds[0]);
-    await transitionIssues(issueIds, transitions[transition]);
+    if (issueIds.length > 0) {
+        const transitions = await getAvailableTransitions(issueIds[0]);
+
+        console.log(`Transitioning ${issueIds.length} issue(s): ${transition}`);
+        await transitionIssues(issueIds, transitions[transition]);
+        console.log(`${issueIds.length} issue(s) transitioned: ${transition}`);
+    } else {
+        console.log(`No issues to transition: ${transition}`);
+    }
 };
 
-const command = process.argv[2];
-switch (command) {
-    case 'REVIEWED_TO_PENDING_RC':
-        await transitionIssues(REVIEWED_ISSUES_FILTER, 'REVIEWED TO PENDING RC');
-        break;
-    case 'PENDING_RC_TO_READY_TO_VERIFY':
-        await transitionIssues(PENDING_RC_ISSUES_FILTER, 'READY TO VERIFY');
-        break;
-    default:
-        console.error('Invalid option. Possible options are [REVIEWED_TO_PENDING_RC|PENDING_RC_TO_READY_TO_VERIFY]');
-}
+(async () => {
+    const command = process.argv[2];
+
+    switch (command) {
+        case 'REVIEWED_TO_PENDING_RC':
+            await transitionIssuesForFilter(REVIEWED_ISSUES_FILTER, 'REVIEWED TO PENDING RC');
+            break;
+        case 'PENDING_RC_TO_READY_TO_VERIFY':
+            await transitionIssuesForFilter(PENDING_RC_ISSUES_FILTER, 'READY TO VERIFY');
+            break;
+        default:
+            console.error(
+                'Invalid option. Possible options are [REVIEWED_TO_PENDING_RC|PENDING_RC_TO_READY_TO_VERIFY]'
+            );
+    }
+})();
