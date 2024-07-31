@@ -997,10 +997,19 @@ export interface _RowGroupingGridApi<TData = any> {
 }
 
 export interface _RangeSelectionGridApi {
-    /** Returns the list of selected cell ranges. */
+    /**
+     * Returns the list of selected cell ranges.
+     *
+     * The start is the first cell the user clicked on and the end is the cell where the user stopped dragging.
+     * Do not assume that the start cell's index is numerically before the end cell, as the user could have dragged up.
+     */
     getCellRanges(): CellRange[] | null;
 
-    /** Adds the provided cell range to the selected ranges. */
+    /**
+     * Adds the provided cell range to the selected ranges.
+     *
+     * This keeps any previous ranges. If you wish to only have the new range selected, then call `clearRangeSelection()` first.
+     */
     addCellRange(params: CellRangeParams): void;
 
     /** Clears the selected ranges. */

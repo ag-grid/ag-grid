@@ -57,6 +57,7 @@ export enum CellRangeType {
     DIMENSION,
 }
 
+/** Describes a single range of cells */
 export interface CellRange {
     id?: string;
     type?: CellRangeType;
