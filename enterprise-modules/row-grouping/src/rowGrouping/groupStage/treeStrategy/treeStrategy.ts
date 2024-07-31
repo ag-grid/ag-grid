@@ -261,7 +261,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Overwrites the row property of a non-root node, preparing the tree correctly for the commit. */
     private overwriteNodeRow(node: TreeNode, newRow: RowNode | null): void {
         const row = node.row;
-        if (row === newRow) {
+        if (row === newRow || node === this.root) {
             return; // nothing to do
         }
 
@@ -274,8 +274,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             row.parent = null;
             row.childrenAfterGroup = null;
             row.allLeafChildren = null;
-            setTreeNode(row, null);
             (this.deletedRows ??= new Set()).add(row);
+            setTreeNode(row, null);
         }
 
         if (newRow) {
