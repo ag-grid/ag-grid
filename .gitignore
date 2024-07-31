@@ -6,8 +6,7 @@
 /.idea/atlassian-ide-plugin.xml
 .vscode
 
-.env.production
-.env.archive
+*.tar.gz
 
 .DS_Store
 lerna-debug.log
