@@ -1182,7 +1182,14 @@
                                     {
                                         "title": "Row Selection",
                                         "path": "server-side-model-selection",
-                                        "isEnterprise": true
+                                        "isEnterprise": true,
+                                        "items": [
+                                            {
+                                                "title": "Legacy Row Selection",
+                                                "path": "server-side-model-selection-legacy",
+                                                "isEnterprise": true
+                                            }
+                                        ]
                                     },
                                     {
                                         "title": "Loading Cell Renderer",
