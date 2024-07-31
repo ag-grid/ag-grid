@@ -40,10 +40,17 @@ export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
  *
  * The only interactions in the creation and update allowed are:
  *  - insert a filler node, done with node.upsertNodeByKey, node.upsertPath
- *  - replace the existing node row with another, or null
+ *  - replace the existing node row with another, or null, with TreeStrategy.setRowPath
+ *
+ * Those operation invalidate the affected paths with node.invalidate(), so that the commit operation will only
+ * update the affected paths without traversing the whole tree.
  *
  * During commit, the childrenAfterGroup and allLeafChildren arrays are rebuilt, and the updates are applied.
+ * The filler nodes without children are recursively removed.
  * Before commit those arrays are NOT representing the truth.
+ *
+ * Deletion and moving subtrees should be performed only by setting rows with TreeStrategy.setRowPath and not by
+ * moving node around.
  */
 export class TreeNode {
     /**
