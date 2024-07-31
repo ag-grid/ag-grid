@@ -53,15 +53,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
             // don't return focus to the header
             return;
         }
-
-        // requires async for react applications
-        setTimeout(() => {
-            const { column } = restoreFocusParams;
-            if (column && !column.isAlive()) {
-                return;
-            }
-            this.focusHeaderCell(restoreFocusParams);
-        });
+        this.focusHeaderCell(restoreFocusParams);
     }
 
     public closePopupAndRestoreFocusOnSelect(
@@ -131,10 +123,16 @@ export class MenuUtils extends BeanStub implements NamedBean {
         }
     }
 
-    private focusHeaderCell(restoreFocusParams: MenuRestoreFocusParams): void {
+    // make this async for react
+    private async focusHeaderCell(restoreFocusParams: MenuRestoreFocusParams): Promise<void> {
         const { column, columnIndex, headerPosition, eventSource } = restoreFocusParams;
 
-        const isColumnStillVisible = this.visibleColsService.getAllCols().some((col) => col === column);
+        // use await here to make sure we work with react's async rendering
+        const isColumnStillVisible = await this.visibleColsService.getAllCols().some((col) => col === column);
+
+        if (column && !column.isAlive()) {
+            return;
+        }
 
         if (isColumnStillVisible && eventSource && _isVisible(eventSource)) {
             const focusableEl = this.focusService.findTabbableParent(eventSource);
