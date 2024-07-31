@@ -118,7 +118,7 @@
 .date {
     text-align: end;
     flex-grow: 1;
-    color: var(--color-fg-quinary);
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 30%);
 }
 
 .description {
