@@ -751,6 +751,11 @@
                                         "title": "Fill Handle",
                                         "path": "cell-selection-fill-handle",
                                         "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Legacy API",
+                                        "path": "range-selection-legacy",
+                                        "isEnterprise": true
                                     }
                                 ]
                             }
