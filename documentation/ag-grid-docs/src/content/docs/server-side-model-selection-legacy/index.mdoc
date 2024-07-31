@@ -2,9 +2,12 @@
 title: "SSRM Row Selection"
 enterprise: true
 ---
-
 Selecting rows and groups in the Server-Side Row Model is supported.
 Just set the property `rowSelection` to either `'single'` or `'multiple'` as with any other row model.
+
+{% warning %}
+The row selection API documented here is being deprecated, and will be removed in a future major version. Find the new row selection API [here](./server-side-model-selection)
+{% /warning %}
 
 {% note %}
 Server-Side Row Selection requires [Row IDs](./server-side-model-configuration/#providing-row-ids) to be supplied to grid.
