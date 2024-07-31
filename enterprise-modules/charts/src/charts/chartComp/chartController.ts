@@ -420,8 +420,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     private displayNameMapper(col: ColState): ColState {
-        const columnNames = this.model.columnNames[col.colId];
-        col.displayName = columnNames ? columnNames.join(' - ') : this.model.getColDisplayName(col.column!);
+        const { column } = col;
+        if (column) {
+            col.displayName = this.model.getColDisplayName(column, this.model.isPivotMode());
+        } else {
+            const columnNames = this.model.columnNames[col.colId];
+            col.displayName = columnNames ? columnNames.join(' - ') : this.model.getColDisplayName(column!);
+        }
         return col;
     }
 
