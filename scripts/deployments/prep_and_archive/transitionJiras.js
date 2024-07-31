@@ -72,13 +72,13 @@ const transitionIssues = async (issueIds, transitionId) => {
     });
 
     return Promise.all(promises);
-}
+};
 
 const transitionIssuesForFilter = async (filterId, transition) => {
     const data = await retrieveData(`https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=${filterId}&fields=id`);
     const issueIds = data.map((datum) => datum.key);
 
-    if(issueIds.length > 0) {
+    if (issueIds.length > 0) {
         const transitions = await getAvailableTransitions(issueIds[0]);
 
         console.log(`Transitioning ${issueIds.length} issue(s): ${transition}`);
@@ -89,7 +89,7 @@ const transitionIssuesForFilter = async (filterId, transition) => {
     }
 };
 
-( async () => {
+(async () => {
     const command = process.argv[2];
 
     switch (command) {
@@ -100,6 +100,8 @@ const transitionIssuesForFilter = async (filterId, transition) => {
             await transitionIssuesForFilter(PENDING_RC_ISSUES_FILTER, 'READY TO VERIFY');
             break;
         default:
-            console.error('Invalid option. Possible options are [REVIEWED_TO_PENDING_RC|PENDING_RC_TO_READY_TO_VERIFY]');
+            console.error(
+                'Invalid option. Possible options are [REVIEWED_TO_PENDING_RC|PENDING_RC_TO_READY_TO_VERIFY]'
+            );
     }
-})()
+})();

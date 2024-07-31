@@ -57,7 +57,8 @@
         ]
       },
       "configurations": {
-        "production": {}
+        "production": {},
+        "archive": {}
       }
     }
   },
