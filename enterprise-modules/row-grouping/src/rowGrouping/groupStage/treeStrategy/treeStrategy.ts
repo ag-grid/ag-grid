@@ -94,9 +94,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const rootNode = this.root;
         const oldRootRow = this.root.row;
 
-        // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
-
         rootRow.level = -1;
         rootRow.leafGroup = false; // no pivoting with tree data
 
@@ -145,6 +142,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
             this.oldGroupDisplayColIds = newGroupDisplayColIds;
         }
+
+        // groups are about to get disposed, so need to deselect any that are selected
+        // TODO: is this really necessary now that we have tree disposal that deselect filler nodes?
+        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
 
         this.addRows(details, rootRow.allLeafChildren);
         this.commitTree(details);
