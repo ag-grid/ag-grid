@@ -189,7 +189,7 @@ export const Property: FunctionComponent<{
         }
     }, [idName]);
 
-    const isExpandable = detailsCode || formattedDefaultValue != null || isInitial;
+    const isExpandable = detailsCode || isInitial;
 
     return (
         <>
@@ -220,6 +220,15 @@ export const Property: FunctionComponent<{
                                         </a>
                                     ) : (
                                         <span className={styles.metaValue}>{propertyType}</span>
+                                    )}
+
+                                    {formattedDefaultValue != null && (
+                                        <div className={styles.metaItem}>
+                                            <span className={classnames(styles.metaValue, styles.defaultValue)}>
+                                                <span>default: </span>
+                                                {formattedDefaultValue}
+                                            </span>
+                                        </div>
                                     )}
                                 </div>
                                 <a href={`#${idName}`} className="docs-header-icon">
@@ -282,7 +291,7 @@ export const Property: FunctionComponent<{
                         )}
                     </div>
                     <div className={styles.actions}>
-                        {(detailsCode || formattedDefaultValue != null || isInitial) && (
+                        {(detailsCode || isInitial) && (
                             <button
                                 className={classnames(styles.seeMore, 'button-as-link')}
                                 onClick={() => {
@@ -302,18 +311,10 @@ export const Property: FunctionComponent<{
                     </div>
                 </td>
             </tr>
-            {(detailsCode || formattedDefaultValue != null || isInitial) && isExpanded && (
+            {(detailsCode || isInitial) && isExpanded && (
                 <tr className={classnames(styles.expandedContent)}>
                     <td colSpan={2}>
                         <div className={styles.metaList}>
-                            {formattedDefaultValue != null && (
-                                <div className={styles.metaItem}>
-                                    <span className={styles.metaLabel}>Default</span>
-                                    <span className={classnames(styles.metaValue, styles.defaultValue)}>
-                                        {formattedDefaultValue}
-                                    </span>
-                                </div>
-                            )}
                             {isInitial && (
                                 <div className={styles.metaItem}>
                                     {config.initialLink ? (
