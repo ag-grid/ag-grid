@@ -19,14 +19,14 @@ if (process.argv.length < 4) {
 
 const [exec, scriptPath, gridNewVersion, chartsDependencyVersion] = process.argv;
 
-if(!gridNewVersion || !chartsDependencyVersion) {
-    console.error("ERROR: Invalid grid or charts version supplied");
+if (!gridNewVersion || !chartsDependencyVersion) {
+    console.error('ERROR: Invalid grid or charts version supplied');
     process.exit(1);
 }
 
-console.log("************************************************************************************************");
+console.log('************************************************************************************************');
 console.log(`Setting Grid Version to ${gridNewVersion} and Charts Version to ${chartsDependencyVersion}      `);
-console.log("************************************************************************************************");
+console.log('************************************************************************************************');
 
 function main() {
     updatePackageJsonFiles();
