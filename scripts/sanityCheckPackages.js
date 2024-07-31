@@ -3,9 +3,7 @@
 const getPackageInformation = require('./utils/utils').getPackageInformation;
 
 if (process.argv.length < 4) {
-    console.log(
-        'Usage: node scripts/sanityCheckPackages.js [Grid Version] [Chart Version]'
-    );
+    console.log('Usage: node scripts/sanityCheckPackages.js [Grid Version] [Chart Version]');
     console.log('For example: node scripts/validateAgPackageAndDeps.js 23.0.0 23.0.0 1.0.0 1.0.0');
     console.log('Note: This script should be run from the root of the monorepo');
     process.exit(1);
@@ -68,7 +66,7 @@ packageNames
         }
     });
 
-if(errorFound) {
-    console.error("ERROR: One more errors found - please see messages above");
+if (errorFound) {
+    console.error('ERROR: One more errors found - please see messages above');
     process.exit(1);
 }

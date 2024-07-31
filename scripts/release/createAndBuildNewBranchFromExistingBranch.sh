@@ -13,10 +13,12 @@ SOURCE_BRANCH=$1
 NEW_BRANCH=$2
 
 NEW_GRID_VERSION=$3
-PEER_GRID_VERSION="~$3"
+PEER_GRID_VERSION=$3
 
 NEW_CHARTS_VERSION=$4
-PEER_CHARTS_VERSION="~$4"
+PEER_CHARTS_VERSION=$4
+
+GEN_KEY_DEFAULT_LOCATION="$5"
 
 echo "########################################################################"
 echo "########### Creating and switching to new branch $NEW_BRANCH ###########"
