@@ -1097,6 +1097,7 @@ export interface GridOptions<TData = any> {
     /**
      * When `true`, if you select a group, the children of the group will also be selected.
      * @default false
+     * @deprecated
      */
     groupSelectsChildren?: boolean;
     /**
@@ -1155,6 +1156,7 @@ export interface GridOptions<TData = any> {
     /**
      * If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
      * @default false
+     * @deprecated
      */
     groupSelectsFiltered?: boolean;
     /**
@@ -1435,21 +1437,25 @@ export interface GridOptions<TData = any> {
     // *** Selection *** //
     /**
      * Type of Row Selection: `single`, `multiple`.
+     * @deprecated
      */
     rowSelection?: 'single' | 'multiple';
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
+     * @deprecated
      */
     rowMultiSelectWithClick?: boolean;
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
+     * @deprecated
      */
     suppressRowDeselection?: boolean;
     /**
      * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
+     * @deprecated
      */
     suppressRowClickSelection?: boolean;
     /**
@@ -1477,6 +1483,7 @@ export interface GridOptions<TData = any> {
     /**
      * If `true`, only a single range can be selected.
      * @default false
+     * @deprecated
      */
     suppressMultiRangeSelection?: boolean;
     /**
@@ -1489,26 +1496,31 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Range Selection.
      * @default false
+     * @deprecated
      */
     enableRangeSelection?: boolean;
     /**
      * Set to `true` to enable the Range Handle.
      * @default false
+     * @deprecated
      */
     enableRangeHandle?: boolean;
     /**
      * Set to `true` to enable the Fill Handle.
      * @default false
+     * @deprecated
      */
     enableFillHandle?: boolean;
     /**
      * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
      * @default 'xy'
+     * @deprecated
      */
     fillHandleDirection?: 'x' | 'y' | 'xy';
     /**
      * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
      * @default false
+     * @deprecated
      */
     suppressClearOnFillReduction?: boolean;
 
@@ -1826,6 +1838,7 @@ export interface GridOptions<TData = any> {
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     * @deprecated
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
@@ -2259,7 +2272,7 @@ export interface GridOptions<TData = any> {
      */
     onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
     /**
-     * A change to range selection has occurred.
+     * A change to range selection has occurred. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing, respectively.
      */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>): void;
 
