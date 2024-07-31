@@ -19,7 +19,7 @@ if (process.argv.length < 4) {
 
 const [exec, scriptPath, gridNewVersion, chartsDependencyVersion] = process.argv;
 
-if(!gridNewVersion || chartsDependencyVersion) {
+if(!gridNewVersion || !chartsDependencyVersion) {
     console.error("ERROR: Invalid grid or charts version supplied");
     process.exit(1);
 }
