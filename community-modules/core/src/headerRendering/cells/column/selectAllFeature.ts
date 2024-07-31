@@ -1,3 +1,4 @@
+import { CONTROL_COLUMN_ID_PREFIX } from '../../../columns/controlColService';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -19,6 +20,7 @@ export class SelectAllFeature extends BeanStub {
         this.selectionService = beans.selectionService;
     }
 
+    private enabled = false;
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
     private column: AgColumn;
@@ -29,9 +31,14 @@ export class SelectAllFeature extends BeanStub {
     constructor(column: AgColumn) {
         super();
         this.column = column;
+        this.enabled = column.getColId().startsWith(CONTROL_COLUMN_ID_PREFIX);
     }
 
     public onSpaceKeyDown(e: KeyboardEvent): void {
+        if (!this.enabled) {
+            return;
+        }
+
         const checkbox = this.cbSelectAll;
 
         if (checkbox.isDisplayed() && !checkbox.getGui().contains(this.gos.getActiveDomElement())) {
@@ -77,7 +84,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private showOrHideSelectAll(): void {
-        this.cbSelectAllVisible = this.isCheckboxSelection();
+        this.cbSelectAllVisible = this.enabled && this.isCheckboxSelection();
         this.cbSelectAll.setDisplayed(this.cbSelectAllVisible, { skipAriaHidden: true });
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
@@ -195,32 +202,77 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private isCheckboxSelection(): boolean {
-        let result = this.column.getColDef().headerCheckboxSelection;
-
-        if (typeof result === 'function') {
-            const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
-            const params: HeaderCheckboxSelectionCallbackParams = this.gos.addGridCommonParams({
-                column: this.column,
-                colDef: this.column.getColDef(),
-            });
-            result = func(params);
+        if (!this.enabled) {
+            return false;
         }
 
-        if (result) {
+        const so = this.gos.get('selectionOptions');
+        if (so !== undefined) {
+            // handle new options
+            if (so?.mode !== 'multiRow') {
+                return false;
+            }
+
+            if (typeof so.headerCheckbox === 'boolean') {
+                return so.headerCheckbox;
+            }
+
+            const result =
+                so.headerCheckbox?.(
+                    this.gos.addGridCommonParams({
+                        column: this.column,
+                        colDef: this.column.getColDef(),
+                    })
+                ) ?? false;
+
             return (
-                this.checkRightRowModelType('headerCheckboxSelection') &&
-                this.checkSelectionType('headerCheckboxSelection')
+                result &&
+                this.checkSelectionType('Header checkbox selection') &&
+                this.checkRightRowModelType('Header checkbox selection')
             );
-        }
+        } else {
+            // handle legacy options
+            let result = this.column.getColDef().headerCheckboxSelection;
 
-        return false;
+            if (typeof result === 'function') {
+                const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
+                const params: HeaderCheckboxSelectionCallbackParams = this.gos.addGridCommonParams({
+                    column: this.column,
+                    colDef: this.column.getColDef(),
+                });
+                result = func(params);
+            }
+
+            if (result) {
+                return (
+                    this.checkRightRowModelType('headerCheckboxSelection') &&
+                    this.checkSelectionType('headerCheckboxSelection')
+                );
+            }
+
+            return false;
+        }
     }
 
     private isFilteredOnly(): boolean {
-        return !!this.column.getColDef().headerCheckboxSelectionFilteredOnly;
+        if (!this.enabled) {
+            return false;
+        }
+
+        const so = this.gos.get('selectionOptions');
+        return so !== undefined
+            ? so.mode === 'multiRow' && so.selectAll === 'filtered'
+            : !!this.column.getColDef().headerCheckboxSelectionFilteredOnly;
     }
 
     private isCurrentPageOnly(): boolean {
-        return !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
+        if (!this.enabled) {
+            return false;
+        }
+
+        const so = this.gos.get('selectionOptions');
+        return so !== undefined
+            ? so.mode === 'multiRow' && so.selectAll === 'currentPage'
+            : !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
     }
 }

@@ -10,6 +10,8 @@ export interface IControlColService {
     updateControlCols(autoGroupCols: AgColumn[], source: ColumnEventType): void;
 }
 
+export const CONTROL_COLUMN_ID_PREFIX = 'ag-Grid-ControlColumn' as const;
+
 export class ControlColService extends BeanStub implements NamedBean, IControlColService {
     beanName = 'controlColService' as const;
 
@@ -26,21 +28,12 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
         }
 
         if (so.checkboxSelection || (so.mode === 'multiRow' && so.headerCheckbox)) {
-            const checkboxSelection =
-                typeof so.checkboxSelection === 'boolean'
-                    ? so.checkboxSelection
-                    : so.checkboxSelection?.displayCheckbox;
-
-            const headerCheckbox = so.mode === 'multiRow' && so.headerCheckbox ? so.headerCheckbox : undefined;
-
             const colDef: ColDef = {
-                colId: 'CONTROL_AUTO_COLUMN',
-                checkboxSelection,
-                headerCheckboxSelection: headerCheckbox,
+                colId: `${CONTROL_COLUMN_ID_PREFIX}`,
                 suppressMovable: true,
                 lockPosition: enableRTL ? 'right' : 'left',
                 sortable: false,
-                width: 50,
+                minWidth: 100,
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);
             this.createBean(col);
