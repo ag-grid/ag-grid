@@ -210,11 +210,11 @@
     border-radius: var(--radius-sm, 0.375rem);
     background-color: var(--color-bg-code) !important;
     color: var(--color-fg-primary);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    // border: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 0.875em;
     font-variant-ligatures: none;
     font-optical-sizing: auto;
-    font-weight: 500;
+    font-weight: 400;
 }
 a.metaValue {
     color: var(--color-link);
