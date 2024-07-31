@@ -9,6 +9,8 @@ fi
 RELEASE_VERSION=$1
 RELEASE_BRANCH=$2
 
+echo "$RELEASE_VERSION - $RELEASE_BRANCH"
+
 NON_PACKAGE_JSON_COUNT=`git status --porcelain | grep -Ev "package.json|yarn.lock|version.ts|enterprise-modules/core/src/license/shared/licenseManager.ts" | wc -l`
 
 if [ $NON_PACKAGE_JSON_COUNT -ne 0 ];
@@ -18,6 +20,6 @@ then
   exit 1
 fi
 
-git add .
-git commit -am "Release $RELEASE_VERSION Prep"
-git push -u origin "$RELEASE_BRANCH"
+#git add .
+#git commit -am "Release $RELEASE_VERSION Prep"
+#git push -u origin "$RELEASE_BRANCH"
