@@ -60,7 +60,7 @@ switch (command) {
     case 'REVIEWED_TO_PENDING_RC':
         await transitionIssues(REVIEWED_ISSUES_FILTER, 'REVIEWED TO PENDING RC');
         break;
-    case 'PENDING_RC_TO_READY_FOR_REVIEW':
+    case 'PENDING_RC_TO_READY_TO_VERIFY':
         await transitionIssues(PENDING_RC_ISSUES_FILTER, 'READY TO VERIFY');
         break;
     default:
