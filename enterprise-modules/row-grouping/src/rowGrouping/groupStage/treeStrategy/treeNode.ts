@@ -33,16 +33,24 @@ export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
 };
 
 export class TreeNode {
-    /** The children of the tree, where the key is the node key and the value is the child node */
+    /**
+     * The children of the tree, where the key is the node key and the value is the child node.
+     * We use this to avoid exploring the whole tree during commit, we will just go to the paths
+     * that are changed in DFS order.
+     */
     public map: Map<string, TreeNode> | null = null;
 
     /** The RowNode associated to this tree node */
     public row: RowNode | null = null;
 
-    /** List of direct children to update in the commit stage */
-    public updates: Set<TreeNode> | null = null;
+    /** We keep the row.childrenAfterGroup here, we just swap it when we assign row */
+    public readonly childrenAfterGroup: RowNode[] = [];
 
-    public parent: TreeNode | null;
+    /** We keep the row.allLeafChildren here, we just swap it when we assign row */
+    public readonly allLeafChildren: RowNode[] = [];
+
+    /** List of direct invalidated children to update in the commit stage. */
+    public updates: Set<TreeNode> | null = null;
 
     /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
     public oldRow: RowNode | null = null;
@@ -50,10 +58,11 @@ export class TreeNode {
     /** We set this to true if a update transaction happened on this row, is set to false during commit. */
     public rowUpdated: boolean = false;
 
-    public key: string;
+    /** The parent node of this node, or null if removed or the root. */
+    public parent: TreeNode | null;
 
-    public childrenAfterGroup: RowNode[] = [];
-    public allLeafChildren: RowNode[] = [];
+    /** The key of this node. */
+    public readonly key: string;
 
     public constructor(parent: TreeNode | null, key: string) {
         this.parent = parent;
@@ -62,20 +71,109 @@ export class TreeNode {
 
     /** Recursively add every node to node.parent.updates set */
     public invalidate(): void {
-        let current: TreeNode | null = this;
-        let parent = this.parent;
-        while (parent) {
+        for (let node: TreeNode | null = this, parent = this.parent; parent; parent = parent.parent) {
             let updates: Set<TreeNode> | null = parent.updates;
             if (!updates) {
                 updates = new Set<TreeNode>();
                 parent.updates = updates;
-            } else if (updates.has(current)) {
+            } else if (updates.has(node)) {
                 break; // Node already added to updates, no need to continue
             }
-            updates.add(current);
-            current = parent;
-            parent = parent.parent;
+            updates.add(node);
+            node = parent;
         }
+    }
+
+    /**
+     * Gets a node a key in the given parent. If the node does not exists, creates a filler node, with null row.
+     * Invalidates the path to the node from the root if a filler node is added.
+     * @returns the node at the given key, or a new filler node inserted there if it does not exist.
+     */
+    public upsertNodeByKey(key: string): TreeNode {
+        let node = this.map?.get(key);
+        if (!node) {
+            node = new TreeNode(this, key);
+            (this.map ??= new Map()).set(key, node);
+            node.invalidate();
+        }
+        return node;
+    }
+
+    /**
+     * Given a path to follow, it creates the nodes in the path if they don't exist.
+     * @returns the last node in the path, or null if the path is empty.
+     */
+    public upsertPath(path: string[]): TreeNode | null {
+        for (let level = 0, parent: TreeNode | null = this, stopLevel = path.length - 1; level <= stopLevel; ++level) {
+            const key = path[level];
+            const node: TreeNode | null = parent.upsertNodeByKey(key);
+            if (level >= stopLevel) {
+                return node;
+            }
+            parent = node;
+        }
+        return null;
+    }
+
+    /** Used to free memory and reset the node and/or row */
+    public clear(clearRow: boolean) {
+        const row = clearRow && this.row;
+        this.childrenAfterGroup.length = 0;
+        this.allLeafChildren.length = 0;
+        this.updates = null;
+        this.oldRow = null;
+        this.map = null;
+        if (row) {
+            this.row = null;
+            row.childrenAfterGroup = [];
+            if (row.level >= 0) {
+                row.allLeafChildren = null;
+            }
+            setTreeNode(row, null);
+        }
+    }
+
+    /**
+     * Rebuild the allLeafChildren rows array of a node.
+     * It uses the allLeafChildren of all the children, we assume is already updated.
+     *
+     * Note: The order will be based on the map, not on the childrenAfterGroup array,
+     * so it does not change with ordering.
+     * @returns true if the array changed, false if not
+     */
+    public rebuildLeaves(): boolean {
+        const { map, allLeafChildren: output } = this;
+        const oldLen = output.length;
+        let writeIdx = 0;
+        let changed = false;
+        if (map) {
+            for (const child of map.values()) {
+                const childAllLeafChildren = child.allLeafChildren!;
+                const jLen = childAllLeafChildren.length;
+                if (jLen) {
+                    for (let j = 0; j < jLen; j++) {
+                        const leaf = childAllLeafChildren[j];
+                        if (writeIdx >= oldLen || output[writeIdx] !== leaf) {
+                            output[writeIdx] = leaf;
+                            changed = true;
+                        }
+                        ++writeIdx;
+                    }
+                } else {
+                    const childRow = child.row; // We have the row by now
+                    if ((writeIdx >= oldLen || output[writeIdx] !== childRow) && childRow) {
+                        output[writeIdx] = childRow;
+                        changed = true;
+                    }
+                    ++writeIdx;
+                }
+            }
+        }
+        if (writeIdx !== oldLen) {
+            output.length = writeIdx;
+            changed = true;
+        }
+        return changed;
     }
 }
 
