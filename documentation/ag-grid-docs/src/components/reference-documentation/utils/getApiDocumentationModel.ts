@@ -52,6 +52,9 @@ function getResolvedProperties({
         .filter(([name]) => {
             return names && names?.length > 0 ? names?.includes(name) : true;
         })
+        .filter(([name]) => {
+            return config.namePattern ? new RegExp(config.namePattern).test(name) : true;
+        })
         .sort((a, b) => {
             return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0;
         })

@@ -90,7 +90,8 @@ export function getProperties({
         propNameOnly = propNameOnly.split('(')[0];
         if (
             (names.length === 0 || names.includes(propNameOnly)) &&
-            (exclude.length == 0 || !exclude.includes(propNameOnly))
+            (exclude.length == 0 || !exclude.includes(propNameOnly)) &&
+            (config.namePattern ? new RegExp(config.namePattern).test(propNameOnly) : true)
         ) {
             const docs = (interfaceData.docs && formatJsDocString(interfaceData.docs[k])) || '';
             if (!docs.includes('@deprecated')) {
