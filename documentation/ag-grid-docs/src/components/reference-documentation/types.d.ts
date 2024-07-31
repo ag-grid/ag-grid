@@ -1,6 +1,9 @@
 import { type Framework } from '@ag-grid-types';
 
-export type Overrides = Record<string, any>;
+export type Overrides = {
+    meta: MetaTag;
+    [key: string]: any;
+};
 
 interface MetaTag {
     displayName: string;

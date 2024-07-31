@@ -158,7 +158,7 @@ export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationPro
     }
 
     const props: any = {};
-    let interfaceOverrides: Overrides = {};
+    let interfaceOverrides: Overrides = {} as Overrides;
     if (Object.keys(overrides).length) {
         interfaceOverrides = overrides[interfaceName];
         if (!interfaceOverrides) {

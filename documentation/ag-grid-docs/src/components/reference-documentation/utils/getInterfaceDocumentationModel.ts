@@ -57,9 +57,13 @@ export function getProperties({
     config: Config;
 }): DocProperties {
     const props: any = {};
-    let interfaceOverrides: Overrides = {};
+    let interfaceOverrides: Overrides = {} as Overrides;
+    let interfaceOverridesMeta = {};
     if (Object.keys(overrides).length) {
-        interfaceOverrides = overrides[interfaceName];
+        const { meta: interfaceMetaOverrides, ...interfaceOverridesData } = overrides[interfaceName];
+
+        interfaceOverrides = interfaceOverridesData;
+        interfaceOverridesMeta = interfaceMetaOverrides;
         if (!interfaceOverrides) {
             throw new Error(`override provided but does not contain expected section named: '${interfaceName}'!`);
         }
@@ -76,6 +80,7 @@ export function getProperties({
     } else {
         typeProps = Object.entries(interfaceData.type);
     }
+
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
         // interfaces include the ? as part of the name. We want to remove this for the <interface-documentation> component
         // Instead the type will be unioned with undefined as part of the propertyType
@@ -111,7 +116,7 @@ export function getProperties({
     const meta = {
         displayName: interfaceName,
         description,
-        ...interfaceOverrides.meta,
+        ...interfaceOverridesMeta,
     };
 
     ordered.forEach(([name, definition]) => {
