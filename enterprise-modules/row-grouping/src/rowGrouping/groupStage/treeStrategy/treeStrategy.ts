@@ -77,7 +77,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     public execute(params: StageExecuteParams): void {
-        const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
+        const { rowNode: rootRow, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
         const details: TreeGroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),
@@ -91,11 +91,34 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             getDataPath: this.gos.get('getDataPath'),
         };
 
+        const rootNode = this.root;
+        const oldRootRow = this.root.row;
+
+        // groups are about to get disposed, so need to deselect any that are selected
+        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
+
+        rootRow.level = -1;
+        rootRow.leafGroup = false; // no pivoting with tree data
+
+        if (!details.transactions) {
+            this.clearTree(oldRootRow && oldRootRow !== rootRow ? ClearTreeMode.Clear : ClearTreeMode.Preserve);
+        }
+
+        setTreeNode(rootRow, rootNode);
+        rootNode.row = rootRow;
+
+        rootRow.childrenAfterGroup = rootNode.childrenAfterGroup;
+        const sibling = rootRow.sibling;
+        if (sibling) {
+            sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
+            sibling.childrenMapped = rootRow.childrenMapped;
+        }
+
         if (details.transactions) {
             this.handleTransaction(details);
         } else {
             const afterColumnsChanged = params.afterColumnsChanged === true;
-            this.shotgun(details, rowNode, afterColumnsChanged);
+            this.shotgun(details, rootRow, afterColumnsChanged);
         }
     }
 
@@ -121,26 +144,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
 
             this.oldGroupDisplayColIds = newGroupDisplayColIds;
-        }
-
-        const rootNode = this.root;
-
-        // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
-
-        rootRow.level = -1;
-        rootRow.leafGroup = false; // no pivoting with tree data
-
-        this.clearTree(oldRootRow && oldRootRow !== rootRow ? ClearTreeMode.Clear : ClearTreeMode.Preserve);
-
-        setTreeNode(rootRow, rootNode);
-        rootNode.row = rootRow;
-
-        rootRow.childrenAfterGroup = rootNode.childrenAfterGroup;
-        const sibling = rootRow.sibling;
-        if (sibling) {
-            sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
-            sibling.childrenMapped = rootRow.childrenMapped;
         }
 
         this.addRows(details, rootRow.allLeafChildren);

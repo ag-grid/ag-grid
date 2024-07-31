@@ -2,6 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { setTimeout as asyncSetTimeout } from 'timers/promises';
 
 import { TreeDiagram } from './tree-test-utils';
 
@@ -118,6 +119,43 @@ describe('ag-grid tree data', () => {
             └─┬ D filler level:0 id:row-group-0-D
             · └─┬ E LEAF level:1 id:2 label:2-v1
             · · └── F LEAF level:2 selected !expanded id:1 label:1-v2
+        `);
+    });
+
+    test('tree data async loading', async () => {
+        const rowData1 = [{ id: '1', orgHierarchy: ['A', 'B'] }];
+        const rowData2 = [{ id: '2', orgHierarchy: ['C', 'D'] }];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [],
+            autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+            treeData: true,
+            animateRows: true,
+            groupDefaultExpanded: -1,
+            getDataPath,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = createMyGrid(gridOptions);
+
+        await asyncSetTimeout(1); // Simulate async loading
+
+        api.setGridOption('rowData', rowData1);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            └─┬ A filler level:0 id:row-group-0-A
+            · └── B LEAF level:1 id:1
+        `);
+
+        await asyncSetTimeout(1); // Simulate async re-loading
+
+        api.setGridOption('rowData', rowData2);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
+            └─┬ C filler level:0 id:row-group-0-C
+            · └── D LEAF level:1 id:2
         `);
     });
 });
