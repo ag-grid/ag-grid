@@ -310,26 +310,29 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    /** Commit the changes performed to a node and its children */
+    /** Commit the changes performed to a node and its children, in post-order DFS */
     private commitNode(
         details: TreeGroupingDetails,
         node: TreeNode,
         parent: TreeNode | null,
         level: number
     ): CommitFlags {
-        let childrenFlags: CommitFlags = CommitFlags.None;
+        // First, commit children
 
-        if (node.updates) {
-            const childLevel = level + 1;
-            for (const child of node.updates) {
-                childrenFlags |= this.commitNode(details, child, node, childLevel);
+        let childrenFlags: CommitFlags = CommitFlags.None;
+        const childLevel = level + 1;
+        for (;;) {
+            const invalidatedChild = node.dequeueInvalidated();
+            if (!invalidatedChild) {
+                break;
             }
-            node.updates = null;
+            childrenFlags |= this.commitNode(details, invalidatedChild, node, childLevel);
         }
+
+        // Then, commit the node itself
 
         let result: CommitFlags = 0;
         let childrenChanged = false;
-
         if (!parent) {
             // This is the root node
             childrenChanged = childrenFlags & CommitFlags.RowChanged ? this.rebuildChildrenAfterGroup(node) : false;

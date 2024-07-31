@@ -70,9 +70,6 @@ export class TreeNode {
     /** We keep the row.allLeafChildren here, we just swap it when we assign row */
     public readonly allLeafChildren: RowNode[] = [];
 
-    /** List of direct invalidated children to update in the commit stage. */
-    public updates: Set<TreeNode> | null = null;
-
     /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
     public oldRow: RowNode | null = null;
 
@@ -85,23 +82,80 @@ export class TreeNode {
     /** The key of this node. */
     public readonly key: string;
 
+    /** The head of the linked list of direct children nodes that are invalidated and need to be committed. */
+    private invalidatedHead: TreeNode | null | undefined = null;
+
+    /**
+     * The tail of the linked list of direct children nodes that are invalidated and need to be committed.
+     * This is required to process invalidated nodes in the insertion order, this is required by the commit algorithm.
+     */
+    private invalidatedTail: TreeNode | null = null;
+
+    /**
+     * The next node in the linked list of parent.invalidatedHead.
+     * - undefined means that the node is not invalidated (not present in the parent linked list)
+     * - null this is the last node in the linked list
+     * - a TreeNode is the next node in the linked list
+     */
+    private invalidatedNext: TreeNode | null | undefined = undefined;
+
     public constructor(parent: TreeNode | null, key: string) {
         this.parent = parent;
         this.key = key;
     }
 
-    /** Recursively add every node to node.parent.updates set */
+    /**
+     * Invalidates this node and all its parents until the root is reached.
+     * Order of invalidation is maintained when node.dequeueInvalidated is called.
+     * The root itself cannot be invalidated, as it has no parents.
+     * This is optimized, if a node is already invalidated, it will stop the recursion.
+     */
     public invalidate(): void {
-        for (let node: TreeNode | null = this, parent = this.parent; parent; parent = parent.parent) {
-            let updates: Set<TreeNode> | null = parent.updates;
-            if (!updates) {
-                updates = new Set<TreeNode>();
-                parent.updates = updates;
-            } else if (updates.has(node)) {
-                break; // Node already added to updates, no need to continue
+        let node: TreeNode | null = this;
+        do {
+            const parent: TreeNode | null = node.parent;
+            if (!parent || node.invalidatedNext !== undefined) {
+                break; // This is the root, or an already invalidated node
             }
-            updates.add(node);
-            node = parent;
+            node.invalidatedNext = null; // Mark as invalidated, and last in the linked list
+            const tail = parent.invalidatedTail;
+            if (tail) {
+                tail.invalidatedNext = node;
+            } else {
+                parent.invalidatedHead = node;
+            }
+            parent.invalidatedTail = node;
+
+            node = parent; // Go to the parent
+        } while (node);
+    }
+
+    /**
+     * Dequeues the next child invalidated node to be committed.
+     * @returns the next child node to be committed, or null if all children were already dequeued.
+     */
+    public dequeueInvalidated(): TreeNode | null {
+        const node = this.invalidatedHead;
+        if (!node) {
+            return null;
+        }
+        this.invalidatedHead = node.invalidatedNext;
+        if (!this.invalidatedHead) {
+            this.invalidatedTail = null;
+        }
+        node.invalidatedNext = undefined;
+        return node;
+    }
+
+    /** Clears the invalidated list of children nodes. */
+    public clearInvalidatedList(): void {
+        let node = this.invalidatedHead;
+        this.invalidatedHead = null;
+        this.invalidatedTail = null;
+        while (node) {
+            const nextNode = node.invalidatedNext;
+            node.invalidatedNext = undefined;
+            node = nextNode;
         }
     }
 
@@ -141,7 +195,6 @@ export class TreeNode {
         const row = clearRow && this.row;
         this.childrenAfterGroup.length = 0;
         this.allLeafChildren.length = 0;
-        this.updates = null;
         this.oldRow = null;
         this.map = null;
         if (row) {
@@ -154,6 +207,7 @@ export class TreeNode {
             }
             setTreeNode(row, null);
         }
+        this.clearInvalidatedList();
     }
 
     /**
