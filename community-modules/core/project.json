@@ -122,7 +122,8 @@
         "commands": ["node scripts/package/sanity-check-package.js dist/artifacts/contents/{projectRoot}/package"]
       },
       "configurations": {
-        "production": {}
+        "production": {},
+        "archive": {}
       }
     }
   },

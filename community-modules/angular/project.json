@@ -55,7 +55,8 @@
         ]
       },
       "configurations": {
-        "production": {}
+        "production": {},
+        "archive": {}
       }
     },
     "lint": {

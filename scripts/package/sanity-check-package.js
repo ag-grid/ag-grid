@@ -16,8 +16,11 @@ const args = yargs(hideBin(process.argv))
 tsNode.register();
 
 const targetConfig = process.env.NX_TASK_TARGET_CONFIGURATION || 'development';
+
+console.log('DXDDDD', process.env.NX_TASK_TARGET_CONFIGURATION);
+console.log(targetConfig);
 const expectedGridVersion =
-    targetConfig === 'production'
+    targetConfig === 'production' || targetConfig === 'archive'
         ? process.env.BUILD_GRID_VERSION
         : JSON.parse(fs.readFileSync('./package.json').toString()).version;
 

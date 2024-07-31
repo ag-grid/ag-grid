@@ -119,7 +119,8 @@
         "commands": ["node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"]
       },
       "configurations": {
-        "production": {}
+        "production": {},
+        "archive": {}
       }
     }
   },
