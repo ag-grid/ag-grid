@@ -29,8 +29,17 @@ console.log(`Setting Grid Version to ${gridNewVersion} and Charts Version to ${c
 console.log('************************************************************************************************');
 
 function main() {
+    createRootEnvFile();
     updatePackageJsonFiles();
     updateRootPackageJson();
+}
+
+function createRootEnvFile() {
+    const data = `# Production Build
+BUILD_GRID_VERSION=${gridNewVersion}
+BUILD_CHARTS_VERSION=${chartsDependencyVersion}
+`;
+    fs.writeFileSync('./.env.production', data, 'utf-8');
 }
 
 function updateAngularProject(CWD, packageDirectory) {

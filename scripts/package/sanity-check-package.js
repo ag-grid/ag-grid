@@ -8,18 +8,19 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
 const args = yargs(hideBin(process.argv))
-    .usage('Usage: $0 [package path] --grid-version [xx.xx.x] --charts-version [xx.xx.x]')
-    // .demandOption(['grid-version','charts-version'])
+    .usage('Usage: $0 [package path] --type [type] --allowed-ext [extention(s)]')
     .option('type', { type: 'string', default: 'core' })
     .option('allowed-ext', { array: true, type: 'string' })
     .parse();
 
 tsNode.register();
 
-const gridVersion = '32.0.1';
-const chartsVersion = '10.0.1';
-// const gridVersion = args.gridVersion;
-// const chartsVersion = args.chartsVersion;
+const targetConfig = process.env.NX_TASK_TARGET_CONFIGURATION || 'development';
+const expectedGridVersion =
+    targetConfig === 'production'
+        ? process.env.BUILD_GRID_VERSION
+        : JSON.parse(fs.readFileSync('./package.json').toString()).version;
+
 const type = args.type;
 
 const dir = args._[0];
@@ -142,9 +143,9 @@ function checkAllowedExtension(filename) {
 }
 
 function validatePackageVersions() {
-    if (packageJson.version !== gridVersion) {
+    if (packageJson.version !== expectedGridVersion) {
         console.log(
-            `[${packageJson.name}]: Version field mismatch, expected [${gridVersion}] but found [${packageJson.version}]`
+            `[${packageJson.name}]: Version field mismatch, expected [${expectedGridVersion}] but found [${packageJson.version}]`
         );
         exitStatus = 1;
     }
