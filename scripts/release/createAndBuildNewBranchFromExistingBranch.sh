@@ -36,13 +36,9 @@ echo "####### Updating  package.json version.ts files                #########"
 node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION $PEER_CHARTS_VERSION
 
 echo "########################################################################"
-echo "################# Installing Dependencies & Building #########################"
-npm run bootstrap
-
-echo "########################################################################"
-echo "##################### Updating .gitignore #############################"
-node scripts/release/updateGitIgnore.js
-
-echo "########################################################################"
 echo "##################### Updating licenses ################################"
 ./scripts/release/updateLicenses.sh
+
+echo "########################################################################"
+echo "################# Installing Dependencies & Building #########################"
+npm run bootstrap
