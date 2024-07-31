@@ -125,9 +125,11 @@ export class TreeNode {
         this.map = null;
         if (row) {
             this.row = null;
-            row.childrenAfterGroup = [];
             if (row.level >= 0) {
+                row.childrenAfterGroup = null;
                 row.allLeafChildren = null;
+            } else {
+                row.childrenAfterGroup = []; // root node
             }
             setTreeNode(row, null);
         }

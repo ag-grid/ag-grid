@@ -269,8 +269,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         if (row) {
             row.parent = null;
-            row.childrenAfterGroup = [];
-            row.allLeafChildren = [];
+            row.childrenAfterGroup = null;
+            row.allLeafChildren = null;
             setTreeNode(row, null);
             (this.deletedRows ??= new Set()).add(row);
         }
