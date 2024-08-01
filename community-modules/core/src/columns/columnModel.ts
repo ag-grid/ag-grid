@@ -937,16 +937,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public getGroupRowsHeight(): number[] {
         const heights: number[] = [];
-        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl();
+        const headerRowContainerCtrls = this.ctrlsService.getHeaderRowContainerCtrls();
 
-        if (headerRowContainerCtrl) {
+        for (const headerRowContainerCtrl of headerRowContainerCtrls) {
+            if (!headerRowContainerCtrl) {
+                continue;
+            }
+
             const groupRowCount = headerRowContainerCtrl.getGroupRowCount() || 0;
 
             for (let i = 0; i < groupRowCount; i++) {
                 const headerRowCtrl = headerRowContainerCtrl.getGroupRowCtrlAtIndex(i);
 
+                const currentHeightAtPos = heights[i];
                 if (headerRowCtrl) {
-                    heights.push(this.getColumnGroupHeaderRowHeight(headerRowCtrl));
+                    const newHeight = this.getColumnGroupHeaderRowHeight(headerRowCtrl);
+                    if (currentHeightAtPos == null || newHeight > currentHeightAtPos) {
+                        heights[i] = newHeight;
+                    }
                 }
             }
         }
@@ -954,7 +962,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return heights;
     }
 
-    public getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
+    private getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
         const defaultHeight: number = (
             this.isPivotMode() ? this.getPivotGroupHeaderHeight() : this.getGroupHeaderHeight()
         ) as number;
