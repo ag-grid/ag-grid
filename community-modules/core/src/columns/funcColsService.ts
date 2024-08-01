@@ -328,6 +328,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         }
 
         let atLeastOne = false;
+        const updatedCols: AgColumn[] = [];
 
         keys.forEach((key) => {
             if (!key) {
@@ -337,6 +338,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             if (!columnToAdd) {
                 return;
             }
+            updatedCols.push(columnToAdd);
 
             if (actionIsAdd) {
                 if (masterList.indexOf(columnToAdd) >= 0) {
@@ -364,7 +366,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         this.visibleColsService.refresh(source);
 
-        this.eventDispatcher.genericColumnEvent(eventType, masterList, source);
+        this.eventDispatcher.genericColumnEvent(eventType, updatedCols, source);
     }
 
     public extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
