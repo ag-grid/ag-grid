@@ -1,6 +1,6 @@
 import { SHOW_DEBUG_LOGS } from '@constants';
 
-import type { Config, DocEntryMap, InterfaceEntry, InterfaceHierarchyOverrides, PropertyType } from '../types';
+import type { DocEntryMap, InterfaceEntry, InterfaceHierarchyOverrides, PropertyType } from '../types';
 import { extractInterfaces } from './documentation-helpers';
 
 export const getInterfacesToWrite = ({
