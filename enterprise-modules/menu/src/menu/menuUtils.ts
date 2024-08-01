@@ -127,8 +127,9 @@ export class MenuUtils extends BeanStub implements NamedBean {
     private async focusHeaderCell(restoreFocusParams: MenuRestoreFocusParams): Promise<void> {
         const { column, columnIndex, headerPosition, eventSource } = restoreFocusParams;
 
-        // use await here to make sure we work with react's async rendering
-        const isColumnStillVisible = await this.visibleColsService.getAllCols().some((col) => col === column);
+        // DO NOT REMOVE `await` from the statement below
+        // even though `getAllCols` is a synchronous method, we use `await` to make it async
+        const isColumnStillVisible = this.visibleColsService.getAllCols().some((col) => col === column);
 
         if (column && !column.isAlive()) {
             return;
