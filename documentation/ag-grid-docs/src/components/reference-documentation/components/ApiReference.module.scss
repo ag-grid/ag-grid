@@ -119,6 +119,12 @@
         width: 100%;
         padding-right: 0;
     }
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        a {
+            display: none;
+        }
+    }
 }
 
 .rightColumn {
@@ -272,6 +278,10 @@ button.seeMore {
             fill: var(--color-link-hover);
         }
     }
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        min-width: 1.5ch;
+    }
 }
 
 .highlightAnimate {
@@ -355,6 +365,13 @@ button.seeMore {
 .propertyName {
     display: flex;
     align-items: center;
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        flex-direction: column;
+        align-items: start;
+        margin-top: $spacing-size-2;
+        gap: 8px;
+    }
 }
 
 .metaValue {
