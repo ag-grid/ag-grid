@@ -418,7 +418,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             node.rowUpdated = false;
             result |= CommitFlags.PathChanged;
         }
-        if ((childrenChanged || childrenFlags & CommitFlags.PathChanged) && details.changedPath.isActive()) {
+        const pathChanged = childrenChanged || childrenFlags & CommitFlags.PathChanged;
+        if (pathChanged && details.changedPath.isActive()) {
             details.changedPath.addParentNode(node.row);
         }
         return result;
@@ -436,10 +437,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             row.leafGroup = false;
             row.rowGroupIndex = null;
             this.overwriteNodeRow(node, row);
-
-            // TODO: why is this done here? we are not updating the children count as we go,
-            // i suspect this is updated in the filter stage
-            row.setAllChildrenCount(0);
         }
         return row;
     }
