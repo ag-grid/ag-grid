@@ -76,7 +76,7 @@ Note that when using a function in `selectionOptions.checkboxSelection`, the che
 
 ### Displaying Disabled Checkboxes
 
-It is possible to change the default behaviour for when a checkbox is not displayed, and instead have the checkbox visible but disabled. 
+When [selection of a particular row is disabled](#specify-selectable-rows), by default the grid will not display a checkbox in that row. Alternatively, you may configure the grid to display a disabled checkbox in such rows.
 This can be done by setting `checkboxSelection.showDisabledCheckboxes` to `true`.
 
 ## Bulk Selection
@@ -144,7 +144,7 @@ Row selection can be used when using row grouping, tree data and the server side
 
 ### Selection Events
 
-There are two events with regards to selection:{% br /%}
+There are two events with regards to selection, illustrated in the example below:
 
 {% apiDocumentation source="grid-events/events.json" section="selection" names=["rowSelected", "selectionChanged"] /%}
 

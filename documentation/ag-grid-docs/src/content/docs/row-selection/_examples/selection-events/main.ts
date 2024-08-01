@@ -1,5 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, RowSelectedEvent, SelectionChangedEvent, createGrid } from '@ag-grid-community/core';
+import {
+    type GridApi,
+    type GridOptions,
+    type RowSelectedEvent,
+    type SelectionChangedEvent,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -24,8 +30,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     selectionOptions: { mode: 'multiRow' },
-    onRowSelected: onRowSelected,
-    onSelectionChanged: onSelectionChanged,
+    onRowSelected,
+    onSelectionChanged,
 };
 
 function onRowSelected(event: RowSelectedEvent) {
