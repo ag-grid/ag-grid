@@ -20,7 +20,7 @@ import styles from './ApiReference.module.scss';
 function getDisplayNameSplit({ name, definition }: { name: string; definition: ChildDocEntry }) {
     let displayName = name;
     if (definition.isRequired) {
-        displayName += `&nbsp;<span class="${styles.required}" title="Required">&ast;</span>`;
+        displayName += `&nbsp;<span class="${styles.required}" title="Required">required</span>`;
     }
 
     if (definition.strikeThrough) {

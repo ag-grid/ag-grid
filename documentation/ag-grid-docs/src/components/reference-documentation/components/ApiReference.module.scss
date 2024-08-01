@@ -388,3 +388,20 @@ td {
     font-family: var(--text-monospace-font-family);
     font-size: var(--text-fs-sm);
 }
+
+.required {
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-sm);
+    font-weight: 400;
+    background-color: color-mix(in srgb, red, var(--color-bg-primary) 95%);
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: var(--radius-sm, 0.375rem);
+
+    #{$selector-darkmode} & {
+        color: rgb(255, 174, 174);
+        background-color: color-mix(in srgb, rgb(236, 180, 180), var(--color-bg-primary) 90%);
+    }
+}
