@@ -196,7 +196,7 @@ export const Property: FunctionComponent<{
         }
     }, [idName]);
 
-    const isExpandable = detailsCode || isInitial;
+    const isExpandable = detailsCode;
 
     return (
         <>
@@ -235,6 +235,18 @@ export const Property: FunctionComponent<{
                                                 <span>default: </span>
                                                 {formattedDefaultValue}
                                             </span>
+                                        </div>
+                                    )}
+
+                                    {isInitial && (
+                                        <div className={styles.metaItem}>
+                                            {config.initialLink ? (
+                                                <a className={styles.initialLabel} href={config.initialLink}>
+                                                    Initial
+                                                </a>
+                                            ) : (
+                                                <span className={styles.initialLabel}>Initial</span>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -367,7 +379,7 @@ export const Property: FunctionComponent<{
                         )}
                     </div>
                     <div className={styles.actions}>
-                        {(detailsCode || isInitial) && (
+                        {detailsCode && (
                             <button
                                 className={classnames(styles.seeMore, 'button-as-link')}
                                 onClick={() => {
@@ -390,19 +402,7 @@ export const Property: FunctionComponent<{
             {detailsCode && isExpanded && (
                 <tr id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
                     <td colSpan={2}>
-                        <div className={styles.metaList}>
-                            {isInitial && (
-                                <div className={styles.metaItem}>
-                                    {config.initialLink ? (
-                                        <a className={styles.metaLabel} href={config.initialLink}>
-                                            Initial
-                                        </a>
-                                    ) : (
-                                        <span className={styles.metaLabel}>Initial</span>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                        <div className={styles.metaList}></div>
                         {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
                     </td>
                 </tr>
