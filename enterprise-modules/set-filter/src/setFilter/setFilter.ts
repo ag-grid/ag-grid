@@ -474,7 +474,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         return promise.then(() => {
             this.checkAndRefreshVirtualList();
-            this.onBtApply(false, true);
+            if (!this.applyActive || this.areModelsEqual(this.getModel()!, this.getModelFromUi()!)) {
+                this.onBtApply(false, true);
+            }
         });
     }
 
