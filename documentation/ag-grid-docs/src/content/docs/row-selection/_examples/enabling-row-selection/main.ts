@@ -46,36 +46,31 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
 
-    document.querySelector('#input-selection-mode')?.addEventListener('change', (e) => {
-        //@ts-ignore
-        selectionOptions.mode = e.target!.value;
-        gridApi.setGridOption('selectionOptions', selectionOptions);
-    });
-
-    document.querySelector('#input-suppress-deselection')?.addEventListener('change', (e) => {
-        //@ts-ignore
-        selectionOptions.suppressDeselection = e.target!.checked;
-        gridApi.setGridOption('selectionOptions', selectionOptions);
-    });
-
-    document.querySelector('#input-suppress-click-selection')?.addEventListener('change', (e) => {
-        //@ts-ignore
-        selectionOptions.suppressClickSelection = e.target!.checked;
-        gridApi.setGridOption('selectionOptions', selectionOptions);
-    });
-
-    document.querySelector('#input-enable-multi-select-with-click')?.addEventListener('change', (e) => {
-        //@ts-ignore
-        if (selectionOptions.mode === 'multiRow') {
-            //@ts-ignore
-            selectionOptions.enableMultiSelectWithClick = e.target!.checked;
-        }
-        gridApi.setGridOption('selectionOptions', selectionOptions);
-    });
-
-    document.querySelector('#input-checkbox-selection')?.addEventListener('change', (e) => {
-        //@ts-ignore
-        selectionOptions.checkboxSelection = e.target!.checked;
-        gridApi.setGridOption('selectionOptions', selectionOptions);
-    });
+    document.querySelector('#input-selection-mode')?.addEventListener('change', refreshSelectionOptions);
+    document.querySelector('#input-suppress-deselection')?.addEventListener('change', refreshSelectionOptions);
+    document.querySelector('#input-suppress-click-selection')?.addEventListener('change', refreshSelectionOptions);
+    document.querySelector('#input-multi-select-with-click')?.addEventListener('change', refreshSelectionOptions);
+    document.querySelector('#input-checkbox-selection')?.addEventListener('change', refreshSelectionOptions);
 });
+
+function getCheckboxValue(id: string): boolean {
+    return document.querySelector<HTMLInputElement>(id)?.checked ?? false;
+}
+
+function getSelectValue(id: string): SelectionOptions['mode'] {
+    return (document.querySelector<HTMLSelectElement>(id)?.value as SelectionOptions['mode']) ?? 'singleRow';
+}
+
+function refreshSelectionOptions() {
+    const mode = getSelectValue('#input-selection-mode');
+    const selectionOptions: SelectionOptions = {
+        mode,
+        suppressDeselection: getCheckboxValue('#input-suppress-deselection'),
+        suppressClickSelection: getCheckboxValue('#input-suppress-click-selection'),
+        checkboxSelection: getCheckboxValue('#input-checkbox-selection'),
+        enableMultiSelectWithClick:
+            mode === 'multiRow' ? getCheckboxValue('#input-enable-multi-select-with-click') : undefined,
+    };
+
+    gridApi.setGridOption('selectionOptions', selectionOptions);
+}

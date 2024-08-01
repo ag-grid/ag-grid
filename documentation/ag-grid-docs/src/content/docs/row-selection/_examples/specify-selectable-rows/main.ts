@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, IRowNode, createGrid } from '@ag-grid-community/core';
+import { type GridApi, type GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
@@ -11,12 +11,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete' },
         { field: 'age', maxWidth: 100 },
-        {
-            field: 'country',
-            minWidth: 180,
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
-        },
+        { field: 'country', minWidth: 180 },
         { field: 'year', maxWidth: 120 },
         { field: 'date', minWidth: 150 },
         { field: 'sport' },
@@ -31,9 +26,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     selectionOptions: {
         mode: 'multiRow',
-        isRowSelectable: (rowNode: IRowNode) => {
-            return rowNode.data ? rowNode.data.year < 2007 : false;
-        },
+        isRowSelectable: (rowNode) => (rowNode.data ? rowNode.data.year < 2007 : false),
+        headerCheckbox: true,
+        checkboxSelection: true,
     },
 };
 

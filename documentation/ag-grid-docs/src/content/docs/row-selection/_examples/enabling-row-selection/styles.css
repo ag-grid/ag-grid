@@ -4,6 +4,18 @@
     height: 100%;
 }
 
+.example-header {
+    margin-bottom: 10px;
+}
+
+.selection-mode-control {
+    margin-bottom: 10px;
+}
+
+.selection-options-controls label:not(:first-of-type) {
+    margin-left: 20px;
+}
+
 #myGrid {
     flex: 1 1 0px;
     width: 100%;
