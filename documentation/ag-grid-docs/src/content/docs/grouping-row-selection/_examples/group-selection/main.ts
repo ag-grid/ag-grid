@@ -1,5 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { type GridApi, type GridOptions, type SelectionOptions, createGrid } from '@ag-grid-community/core';
+import {
+    type GridApi,
+    type GridOptions,
+    type GroupSelectionMode,
+    type SelectionOptions,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -9,7 +15,12 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 
 let gridApi: GridApi<IOlympicData>;
 
-const selectionOptions: SelectionOptions = { mode: 'multiRow', groupSelects: 'self', suppressClickSelection: true };
+const selectionOptions: SelectionOptions = {
+    mode: 'multiRow',
+    groupSelects: 'self',
+    suppressClickSelection: true,
+    checkboxSelection: true,
+};
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -31,9 +42,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         field: 'athlete',
         minWidth: 250,
         cellRenderer: 'agGroupCellRenderer',
-        cellRendererParams: {
-            checkbox: true,
-        },
     },
     selectionOptions,
     suppressAggFuncInHeader: true,
@@ -49,13 +57,19 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 
     document.querySelector('#input-group-selection-mode')?.addEventListener('change', (e) => {
-        //@ts-ignore
-        selectionOptions.groupSelects = e.target!.value;
-        gridApi.setGridOption('selectionOptions', selectionOptions);
+        const newSelectionOptions: SelectionOptions = {
+            ...selectionOptions,
+            groupSelects: getGroupSelectsValue(),
+        };
+        gridApi.setGridOption('selectionOptions', newSelectionOptions);
     });
 
-    document.querySelector('#input-quick-filter')?.addEventListener('change', (e) => {
+    document.querySelector<HTMLInputElement>('#input-quick-filter')?.addEventListener('change', (e) => {
         //@ts-ignore
         gridApi.setGridOption('quickFilterText', e.target!.value);
     });
 });
+
+function getGroupSelectsValue(): GroupSelectionMode {
+    return (document.querySelector<HTMLSelectElement>('#input-group-selection-mode')?.value as any) ?? 'self';
+}

@@ -3,7 +3,6 @@ import {
     type GridOptions,
     type IServerSideDatasource,
     type IServerSideGetRowsRequest,
-    type IsServerSideGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -33,10 +32,6 @@ const gridOptions: GridOptions = {
         sortable: false,
     },
     autoGroupColumnDef: {
-        headerCheckboxSelection: true,
-        cellRendererParams: {
-            checkbox: true,
-        },
         field: 'employeeName',
     },
     rowModelType: 'serverSide',
@@ -51,8 +46,10 @@ const gridOptions: GridOptions = {
     selectionOptions: {
         mode: 'multiRow',
         groupSelects: 'descendants',
+        headerCheckbox: true,
+        checkboxSelection: true,
     },
-    isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
+    isServerSideGroupOpenByDefault: (params) => {
         var isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';
         var isMabelWard = params.rowNode.level == 1 && params.data.employeeName == 'Mabel Ward';
         return isKathrynPowers || isMabelWard;
