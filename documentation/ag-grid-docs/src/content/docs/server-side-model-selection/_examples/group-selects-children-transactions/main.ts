@@ -1,13 +1,9 @@
 import {
-    ColDef,
-    GetRowIdParams,
-    GridApi,
-    GridOptions,
-    GridReadyEvent,
-    IServerSideGetRowsParams,
-    IsServerSideGroupOpenByDefaultParams,
-    ServerSideTransaction,
-    ServerSideTransactionResult,
+    type GridApi,
+    type GridOptions,
+    type IServerSideGetRowsParams,
+    type ServerSideTransaction,
+    type ServerSideTransactionResult,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -20,17 +16,15 @@ import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-const columnDefs: ColDef[] = [
-    { field: 'portfolio', hide: true, rowGroup: true },
-    { field: 'book' },
-    { field: 'previous' },
-    { field: 'current' },
-];
-
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    columnDefs,
+    columnDefs: [
+        { field: 'portfolio', hide: true, rowGroup: true },
+        { field: 'book' },
+        { field: 'previous' },
+        { field: 'current' },
+    ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -43,16 +37,16 @@ const gridOptions: GridOptions = {
             checkbox: true,
         },
     },
-    isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
+    isServerSideGroupOpenByDefault: (params) => {
         return params.rowNode.key === 'Aggressive' || params.rowNode.key === 'Hybrid';
     },
-    getRowId: (params: GetRowIdParams) => {
+    getRowId: (params) => {
         if (params.level === 0) {
             return params.data.portfolio;
         }
         return String(params.data.tradeId);
     },
-    onGridReady: (params: GridReadyEvent) => {
+    onGridReady: (params) => {
         // setup the fake server
         const server = FakeServer(data);
 
@@ -64,8 +58,11 @@ const gridOptions: GridOptions = {
     },
 
     rowModelType: 'serverSide',
-    groupSelectsChildren: true,
-    rowSelection: 'multiple',
+
+    selectionOptions: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+    },
 };
 
 function getServerSideDatasource(server: any) {
