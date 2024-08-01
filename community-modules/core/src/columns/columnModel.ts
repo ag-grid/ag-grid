@@ -509,7 +509,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setAutoHeightActive(): void {
-        this.autoHeightActive = this.cols.list.some((col) => col.isAutoHeight());
+        this.autoHeightActive = this.cols.list.some((col) => col.isVisible() && col.isAutoHeight());
 
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
