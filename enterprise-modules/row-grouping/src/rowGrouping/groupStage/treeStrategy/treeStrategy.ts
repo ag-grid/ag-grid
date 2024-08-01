@@ -153,11 +153,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     private clearTree(mode: ClearTreeMode): void {
         this.commitDeletedRows(); // Just in case an exception did stop this from being called
-        const root = this.root;
-        for (const child of root.enumChildren()) {
+        for (const child of this.root.enumChildren()) {
             this.clearSubtree(child, mode);
         }
-        root.clear(mode !== ClearTreeMode.Preserve);
+        this.root.clear(mode !== ClearTreeMode.Preserve);
     }
 
     private clearSubtree(node: TreeNode, mode: ClearTreeMode): void {
@@ -381,7 +380,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
 
-            if (node.rowUpdated) {
+            if (node.rowUpdated && node.row) {
                 // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
                 // refreshed into the gui.
                 // this is needed to kick off the event that rowComp listens to for refresh. this in turn
