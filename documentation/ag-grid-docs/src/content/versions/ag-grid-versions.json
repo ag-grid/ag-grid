@@ -189,10 +189,6 @@
         "notesPath": "./upgrading-to-ag-grid-31"
     },
     {
-        "version": "30.2.1",
-        "date": "November 2nd 2023"
-    },
-    {
         "version": "30.2.0",
         "date": "September 26th 2023",
         "highlights": [
