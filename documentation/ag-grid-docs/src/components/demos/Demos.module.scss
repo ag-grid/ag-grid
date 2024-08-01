@@ -9,39 +9,6 @@
     height: 100%;
 }
 
-#{$selector-darkmode} .tabWrapper {
-    background-color: var(--color-bg-secondary);
-
-    &:hover {
-        background-color: var(--color-bg-secondary);
-        transition: all 0.5s ease-in-out;
-    }
-}
-
-.tabWrapper {
-    background-color: #e5e9ed;
-    width: 100%;
-    max-width: 200px;
-    aspect-ratio: 16 / 9;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    transition: all 0.5s ease-in-out;
-    border: 1px solid var(--color-border-primary);
-
-    &:hover {
-        background-color: #c8cfd8;
-        transition: all 0.5s ease-in-out;
-    }
-
-    @media screen and (min-width: 720px) {
-        max-height: 140px;
-    }
-
-    @media screen and (max-height: 728px) {
-        height: 80px;
-    }
-}
-
 .tabs {
     display: flex;
     flex-wrap: wrap;
@@ -60,6 +27,11 @@
         }
     }
 
+    a div {
+        display: flex;
+        padding-top: 12px;
+    }
+
     span {
         position: relative;
         bottom: 56px;
@@ -75,9 +47,79 @@
         color: #044b93;
         padding-left: 12px;
         pointer-events: none;
+        font-weight: 600;
+        display: flex;
+        padding-top: $spacing-size-4;
+        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 100%);
 
         #{$selector-darkmode} & {
             background: linear-gradient(358deg, var(--color-bg-secondary) 30%, transparent);
+            color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 50%);
+        }
+    }
+
+    .spanActive {
+        color: #044b93;
+
+        #{$selector-darkmode} & {
+            color: var(--color-link);
+        }
+    }
+}
+
+.tabItem {
+    span {
+        transition: all 0.3s;
+    }
+
+    :hover span {
+        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 10%);
+        transition: all 0.3s;
+    }
+}
+
+.tabWrapper {
+    background-color: #e5e9ed;
+    width: 100%;
+    max-width: 200px;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all 0.5s ease-in-out;
+    border: 1px solid var(--color-border-primary);
+
+    &:hover {
+        background-color: #c8cfd8;
+        transition: all 0.5s ease-in-out;
+    }
+
+    &.tabActive {
+        outline: 2px solid #044b93;
+        border-radius: var(--radius-lg);
+
+        span {
+            color: #044b93;
+        }
+
+        #{$selector-darkmode} & {
+            outline: 2px solid var(--color-link);
+        }
+    }
+
+    @media screen and (min-width: 720px) {
+        max-height: 140px;
+    }
+
+    @media screen and (max-height: 728px) {
+        height: 80px;
+    }
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-secondary);
+
+        &:hover {
+            background-color: var(--color-bg-secondary);
+            transition: all 0.5s ease-in-out;
         }
     }
 }
@@ -102,61 +144,15 @@
         transition: all 0.4s ease-in-out;
     }
 
+    &.darkTab {
+        display: none;
+
+        #{$selector-darkmode} & {
+            display: block;
+        }
+    }
+
     #{$selector-darkmode} & {
         display: none;
-    }
-}
-
-.tabActive {
-    outline: 2px solid #044b93;
-    border-radius: var(--radius-lg);
-
-    span {
-        color: #044b93;
-    }
-
-    #{$selector-darkmode} & {
-        outline: 2px solid var(--color-link);
-    }
-}
-
-.tabs a div {
-    display: flex;
-    padding-top: 12px;
-}
-
-.tabItem span {
-    transition: all 0.3s;
-}
-
-.tabItem:hover span {
-    color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 10%);
-    transition: all 0.3s;
-}
-
-.showcaseItemTab.darkTab {
-    display: none;
-
-    #{$selector-darkmode} & {
-        display: block;
-    }
-}
-
-.tabs span {
-    font-weight: 600;
-    display: flex;
-    padding-top: $spacing-size-4;
-    color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 100%);
-
-    #{$selector-darkmode} & {
-        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 50%);
-    }
-}
-
-.tabs .spanActive {
-    color: #044b93;
-
-    #{$selector-darkmode} & {
-        color: var(--color-link);
     }
 }
