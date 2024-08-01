@@ -57,13 +57,6 @@ export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
  * moving node around.
  */
 export class TreeNode {
-    /**
-     * The children of the tree, where the key is the node key and the value is the child node.
-     * We use this to avoid exploring the whole tree during commit, we will just go to the paths
-     * that are changed in DFS order.
-     */
-    private children: Map<string, TreeNode> | null = null;
-
     /** The RowNode associated to this tree node */
     public row: RowNode | null = null;
 
@@ -84,6 +77,13 @@ export class TreeNode {
 
     /** The key of this node. */
     public readonly key: string;
+
+    /**
+     * The children of the tree, where the key is the node key and the value is the child node.
+     * We use this to avoid exploring the whole tree during commit, we will just go to the paths
+     * that are changed in DFS order.
+     */
+    private children: Map<string, TreeNode> | null = null;
 
     /** The head of the linked list of direct children nodes that are invalidated and need to be committed. */
     private invalidatedHead: TreeNode | null | undefined = null;
