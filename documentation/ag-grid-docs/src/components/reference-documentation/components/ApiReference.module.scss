@@ -383,3 +383,8 @@ td {
     cursor: pointer;
     width: 100%;
 }
+
+.initialLabel {
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-sm);
+}
