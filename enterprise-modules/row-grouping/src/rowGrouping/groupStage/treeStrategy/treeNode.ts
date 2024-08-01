@@ -12,6 +12,8 @@ const EXPANDED_INITIALIZED_SYM = Symbol('expandedInitialized');
  */
 const TREE_NODE_SYM = Symbol('treeNode');
 
+const EMPTY_CHILDREN: TreeNode[] = [];
+
 interface TreeRow extends RowNode {
     [TREE_NODE_SYM]?: TreeNode | null | undefined;
     [EXPANDED_INITIALIZED_SYM]?: unknown;
@@ -60,7 +62,7 @@ export class TreeNode {
      * We use this to avoid exploring the whole tree during commit, we will just go to the paths
      * that are changed in DFS order.
      */
-    public map: Map<string, TreeNode> | null = null;
+    private children: Map<string, TreeNode> | null = null;
 
     /** The RowNode associated to this tree node */
     public row: RowNode | null = null;
@@ -105,9 +107,66 @@ export class TreeNode {
         this.key = key;
     }
 
+    /** Returns the number of children in this node */
+    public childrenCount(): number {
+        return this.children?.size ?? 0;
+    }
+
+    /** Returns an iterator able to iterate all children in this node */
+    public enumChildren(): IterableIterator<TreeNode> {
+        return (this.children ?? EMPTY_CHILDREN).values();
+    }
+
     /** Returns true if this is an empty filler node (no row, or a row with no data) */
     public isEmptyFillerNode(): boolean {
-        return !this.row?.data && !this.map?.size;
+        return !this.children?.size && !this.row?.data;
+    }
+
+    /**
+     * Gets a node a key in the given parent. If the node does not exists, creates a filler node, with null row.
+     * Invalidates the path to the node from the root if a filler node is added.
+     * @returns the node at the given key, or a new filler node inserted there if it does not exist.
+     */
+    public upsertChild(key: string): TreeNode {
+        let node = this.children?.get(key);
+        if (!node) {
+            node = new TreeNode(this, key);
+            (this.children ??= new Map()).set(key, node);
+            node.invalidate();
+        }
+        return node;
+    }
+
+    /**
+     * Given a path to follow, it creates the nodes in the path if they don't exist.
+     * @returns the last node in the path, or null if the path is empty.
+     */
+    public upsertPath(path: string[]): TreeNode | null {
+        for (let level = 0, parent: TreeNode | null = this, stopLevel = path.length - 1; level <= stopLevel; ++level) {
+            const key = path[level];
+            const node: TreeNode | null = parent.upsertChild(key);
+            if (level >= stopLevel) {
+                return node;
+            }
+            parent = node;
+        }
+        return null;
+    }
+
+    /**
+     * Deletes a children node from this node, and set its parent to null.
+     * It does not invalidate this node, as this is supposed to be called during commit only.
+     */
+    public deleteChild(node: TreeNode): boolean {
+        const children = this.children;
+        if (node.parent !== this || !children?.delete(node.key)) {
+            return false;
+        }
+        if (!children.size) {
+            this.children = null;
+        }
+        node.parent = null;
+        return true;
     }
 
     /**
@@ -165,44 +224,13 @@ export class TreeNode {
         }
     }
 
-    /**
-     * Gets a node a key in the given parent. If the node does not exists, creates a filler node, with null row.
-     * Invalidates the path to the node from the root if a filler node is added.
-     * @returns the node at the given key, or a new filler node inserted there if it does not exist.
-     */
-    public upsertNodeByKey(key: string): TreeNode {
-        let node = this.map?.get(key);
-        if (!node) {
-            node = new TreeNode(this, key);
-            (this.map ??= new Map()).set(key, node);
-            node.invalidate();
-        }
-        return node;
-    }
-
-    /**
-     * Given a path to follow, it creates the nodes in the path if they don't exist.
-     * @returns the last node in the path, or null if the path is empty.
-     */
-    public upsertPath(path: string[]): TreeNode | null {
-        for (let level = 0, parent: TreeNode | null = this, stopLevel = path.length - 1; level <= stopLevel; ++level) {
-            const key = path[level];
-            const node: TreeNode | null = parent.upsertNodeByKey(key);
-            if (level >= stopLevel) {
-                return node;
-            }
-            parent = node;
-        }
-        return null;
-    }
-
     /** Used to free memory and reset the node and/or row */
     public clear(clearRow: boolean) {
         const row = clearRow && this.row;
         this.childrenAfterGroup.length = 0;
         this.allLeafChildren.length = 0;
         this.oldRow = null;
-        this.map = null;
+        this.children = null;
         if (row) {
             this.row = null;
             if (row.level >= 0) {
@@ -225,7 +253,7 @@ export class TreeNode {
      * @returns true if the array changed, false if not
      */
     public rebuildLeaves(): boolean {
-        const { map, allLeafChildren: output } = this;
+        const { children: map, allLeafChildren: output } = this;
         const oldLen = output.length;
         let writeIdx = 0;
         let changed = false;

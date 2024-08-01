@@ -154,26 +154,21 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private clearTree(mode: ClearTreeMode): void {
         this.commitDeletedRows(); // Just in case an exception did stop this from being called
         const root = this.root;
-        const { map } = this.root;
-        if (map) {
-            for (const child of map.values()) {
-                this.clearSubtree(child, mode);
-            }
+        for (const child of root.enumChildren()) {
+            this.clearSubtree(child, mode);
         }
         root.clear(mode !== ClearTreeMode.Preserve);
     }
 
     private clearSubtree(node: TreeNode, mode: ClearTreeMode): void {
-        const { map, row } = node;
+        const row = node.row;
         const deleteRow = mode === ClearTreeMode.Clear || (!!row && !row.data);
+        for (const child of node.enumChildren()) {
+            this.clearSubtree(child, mode);
+        }
         node.clear(deleteRow);
         if (row && deleteRow) {
             this.rowDeleted(row);
-        }
-        if (map) {
-            for (const child of map.values()) {
-                this.clearSubtree(child, mode);
-            }
         }
     }
 
@@ -325,21 +320,24 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         // Then, commit the node itself
 
-        const parent = node.parent;
         let result: CommitFlags = 0;
         let childrenChanged = false;
+        const parent = node.parent;
         if (!parent) {
             // This is the root node
+
             if (childrenFlags & CommitFlags.RowChanged) {
                 childrenChanged = this.rebuildChildrenAfterGroup(node);
             }
         } else if (node.isEmptyFillerNode()) {
-            // This is a filler node, remove it
-            node.parent = null;
-            parent.map?.delete(node.key);
+            // This is an empty filler node, we remove it now
+
+            parent.deleteChild(node);
             this.overwriteNodeRow(node, null);
             result |= childrenFlags & CommitFlags.LeafsChanged; // propagate leafs changes up
         } else {
+            // This is an inserted or updated node
+
             if (childrenFlags & CommitFlags.RowChanged) {
                 childrenChanged = this.rebuildChildrenAfterGroup(node);
             }
@@ -347,7 +345,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             const row = this.getOrCreateRow(node);
 
             row.parent = parent.row; // By now, we have the parent row
-            row.level = level;
+            row.level = level; // Update row level
 
             this.deletedRows?.delete(row); // This row is used. It's not deleted.
 
@@ -363,9 +361,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 this.setGroupData(row);
             }
 
-            if (node.oldRow !== node.row && node.map) {
+            if (node.oldRow !== node.row) {
                 // We need to update children parents, as the row changed
-                for (const { row: childRow } of node.map.values()) {
+                for (const { row: childRow } of node.enumChildren()) {
                     if (childRow) {
                         childRow.parent = row;
                     }
@@ -463,20 +461,18 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Updates node childrenAfterGroup. Returns true if the children changed. */
     private rebuildChildrenAfterGroup(node: TreeNode): boolean {
-        const { map, childrenAfterGroup } = node;
+        const childrenAfterGroup = node.childrenAfterGroup;
         const oldCount = childrenAfterGroup.length;
         let writeIdx = 0;
         let changed = false;
-        if (map) {
-            childrenAfterGroup.length = map.size;
-            for (const child of map.values()) {
-                const row = this.getOrCreateRow(child);
-                if (childrenAfterGroup[writeIdx] !== row) {
-                    childrenAfterGroup[writeIdx] = row;
-                    changed = true;
-                }
-                ++writeIdx;
+        childrenAfterGroup.length = node.childrenCount();
+        for (const child of node.enumChildren()) {
+            const row = this.getOrCreateRow(child);
+            if (childrenAfterGroup[writeIdx] !== row) {
+                childrenAfterGroup[writeIdx] = row;
+                changed = true;
             }
+            ++writeIdx;
         }
         if (writeIdx !== oldCount) {
             childrenAfterGroup.length = writeIdx;
