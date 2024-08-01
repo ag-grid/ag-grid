@@ -1,3 +1,5 @@
+import type { PropertyType } from '../types';
+
 /**
  * These are used to create links from types to relevant documentation.
  */
@@ -80,7 +82,7 @@ const TYPE_LINKS: Record<string, string> = {
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
 } as const;
 
-export function getTypeLink(type: string | undefined) {
+export function getTypeLink(type: string | PropertyType | undefined) {
     if (typeof type === 'string') {
         // handle removal of generics.
         const cleanType = type?.split('<')[0];
