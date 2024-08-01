@@ -94,6 +94,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const rootNode = this.root;
         const oldRootRow = this.root.row;
 
+        rootRow.parent = null;
         rootRow.level = -1;
         rootRow.leafGroup = false; // no pivoting with tree data
 
@@ -143,11 +144,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.oldGroupDisplayColIds = newGroupDisplayColIds;
         }
 
-        // groups are about to get disposed, so need to deselect any that are selected
-        // TODO: is this really necessary now that we have tree disposal that deselect filler nodes?
-        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
-
         this.addRows(details, rootRow.allLeafChildren);
+
         this.commitTree(details);
 
         rootRow.updateHasChildren();
@@ -297,7 +295,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Commit the changes performed to the tree */
     private commitTree(details: TreeGroupingDetails) {
-        this.commitNode(details, this.root, null, -1);
+        this.commitNode(details, this.root, -1);
         this.commitDeletedRows();
     }
 
@@ -312,38 +310,40 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     /** Commit the changes performed to a node and its children, in post-order DFS */
-    private commitNode(
-        details: TreeGroupingDetails,
-        node: TreeNode,
-        parent: TreeNode | null,
-        level: number
-    ): CommitFlags {
+    private commitNode(details: TreeGroupingDetails, node: TreeNode, level: number): CommitFlags {
         // First, commit children
 
         let childrenFlags: CommitFlags = CommitFlags.None;
         const childLevel = level + 1;
-        for (;;) {
+        while (true) {
             const invalidatedChild = node.dequeueInvalidated();
             if (!invalidatedChild) {
                 break;
             }
-            childrenFlags |= this.commitNode(details, invalidatedChild, node, childLevel);
+            childrenFlags |= this.commitNode(details, invalidatedChild, childLevel);
         }
 
         // Then, commit the node itself
 
+        const parent = node.parent;
         let result: CommitFlags = 0;
         let childrenChanged = false;
         if (!parent) {
             // This is the root node
-            childrenChanged = childrenFlags & CommitFlags.RowChanged ? this.rebuildChildrenAfterGroup(node) : false;
-        } else if (!node.row?.data && !node.map?.size) {
+            if (childrenFlags & CommitFlags.RowChanged) {
+                childrenChanged = this.rebuildChildrenAfterGroup(node);
+            }
+        } else if (node.isEmptyFillerNode()) {
             // This is a filler node, remove it
             node.parent = null;
             parent.map?.delete(node.key);
-            result |= childrenFlags & CommitFlags.LeafsChanged; // propagate leafs changes up
             this.overwriteNodeRow(node, null);
+            result |= childrenFlags & CommitFlags.LeafsChanged; // propagate leafs changes up
         } else {
+            if (childrenFlags & CommitFlags.RowChanged) {
+                childrenChanged = this.rebuildChildrenAfterGroup(node);
+            }
+
             const row = this.getOrCreateRow(node);
 
             row.parent = parent.row; // By now, we have the parent row
@@ -376,10 +376,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 row.id = makeFillerRowId(node, level);
             }
 
-            childrenChanged = childrenFlags & CommitFlags.RowChanged ? this.rebuildChildrenAfterGroup(node) : false;
-
-            if ((childrenChanged || childrenFlags & CommitFlags.LeafsChanged) && node.rebuildLeaves()) {
-                result |= CommitFlags.LeafsChanged;
+            if (childrenChanged || childrenFlags & CommitFlags.LeafsChanged) {
+                const leafsChanged = node.rebuildLeaves();
+                if (leafsChanged) {
+                    result |= CommitFlags.LeafsChanged;
+                }
             }
 
             if (node.rowUpdated) {
@@ -493,7 +494,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             for (const col of groupDisplayCols) {
                 // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
                 // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-                groupData![col.getColId()] = key;
+                groupData[col.getColId()] = key;
             }
         }
     }

@@ -63,7 +63,7 @@ describe('ag-grid tree transactions', () => {
                 cellRendererParams: { suppressCount: true },
             },
             treeData: true,
-            animateRows: true,
+            animateRows: false,
             groupDefaultExpanded: -1,
             rowData: [rowA, rowZ1],
             getRowId: (params) => params.data.id,

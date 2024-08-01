@@ -45,7 +45,7 @@ describe('ag-grid grouping tree data with groupRows', () => {
             ],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
-            animateRows: true,
+            animateRows: false,
             groupDefaultExpanded: -1,
             rowData,
             getDataPath,

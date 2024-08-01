@@ -105,6 +105,11 @@ export class TreeNode {
         this.key = key;
     }
 
+    /** Returns true if this is an empty filler node (no row, or a row with no data) */
+    public isEmptyFillerNode(): boolean {
+        return !this.row?.data && !this.map?.size;
+    }
+
     /**
      * Invalidates this node and all its parents until the root is reached.
      * Order of invalidation is maintained when node.dequeueInvalidated is called.

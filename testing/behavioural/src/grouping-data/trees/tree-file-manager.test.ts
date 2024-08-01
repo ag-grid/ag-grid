@@ -164,6 +164,6 @@ function getFileManagerGridOptions(): GridOptions {
         groupDefaultExpanded: -1,
         getDataPath: (data) => data.filePath,
         getRowId: (params) => '' + params.data.id,
-        animateRows: true,
+        animateRows: false,
     };
 }

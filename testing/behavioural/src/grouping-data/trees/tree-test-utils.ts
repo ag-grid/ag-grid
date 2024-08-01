@@ -57,11 +57,18 @@ export class TreeDiagram {
         }
         for (const root of rootNodes) {
             this.root = root;
-            this.recurseRow(root, root.parent, '', -1, -1);
+            this.recurseRow(root, root.parent, '', -1, -1, true);
         }
     }
 
-    private recurseRow(row: IRowNode, parent: IRowNode | null, branch: string, level: number, idx: number) {
+    private recurseRow(
+        row: IRowNode,
+        parent: IRowNode | null,
+        branch: string,
+        level: number,
+        idx: number,
+        expanded: boolean
+    ) {
         if (level < 0) this.rowIdxCounter = -1;
 
         const duplicateParent = this.uniqueNodeParents.get(row);
@@ -75,7 +82,7 @@ export class TreeDiagram {
             this.rowErrors.push('DUPLICATE in ' + rowKey(duplicateParent));
         } else {
             this.uniqueNodeParents.set(row, parent);
-            this.checkRow(row, level, parent!, idx);
+            this.checkRow(row, level, parent!, idx, expanded);
         }
         this.errorsCount += this.rowErrors.length;
         this.hasErrors ||= this.errorsCount > 0;
@@ -88,17 +95,26 @@ export class TreeDiagram {
         this.diagram += '\n';
         if (branch.length) branch = branch.slice(0, -2) + (branch.slice(-2) === '└─' ? '· ' : '│ ');
 
-        ++this.rowIdxCounter;
+        if (expanded || !row.parent) {
+            ++this.rowIdxCounter;
+        }
 
         if (!duplicateParent && children) {
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
-                this.recurseRow(child, row, i === children.length - 1 ? branch + '└─' : branch + '├─', level + 1, i);
+                this.recurseRow(
+                    child,
+                    row,
+                    i === children.length - 1 ? branch + '└─' : branch + '├─',
+                    level + 1,
+                    i,
+                    expanded && (!row.parent || row.expanded)
+                );
             }
         }
     }
 
-    private checkRow(row: IRowNode<any>, level: number, parent: IRowNode<any> | null, idx: number) {
+    private checkRow(row: IRowNode<any>, level: number, parent: IRowNode<any> | null, idx: number, expanded: boolean) {
         if (row === this.root) {
             if (row.id !== 'ROOT_NODE_ID') this.rowErrors.push('ROOT_NODE_ID!');
             if (row.key) this.rowErrors.push('ROOT_NODE_KEY!');
@@ -160,7 +176,7 @@ export class TreeDiagram {
         }
 
         // TODO: we need to handle the case for filters, collapsed groups and sorting
-        const expectedRowIndex = level < 0 ? null : this.rowIdxCounter >= 0 ? this.rowIdxCounter : null;
+        const expectedRowIndex = level < 0 || !expanded ? null : this.rowIdxCounter >= 0 ? this.rowIdxCounter : null;
         if (row.rowIndex !== expectedRowIndex) {
             this.rowErrors.push('ROW_INDEX!=' + expectedRowIndex);
             this.diagram += 'rowIdx:' + row.rowIndex + ' ';
