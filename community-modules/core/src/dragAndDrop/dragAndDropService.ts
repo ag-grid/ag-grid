@@ -13,6 +13,7 @@ import { _flatten, _removeFromArray } from '../utils/array';
 import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
 import { _clearElement, _getElementRectWithOffset, _loadTemplate } from '../utils/dom';
 import { _isFunction, _warnOnce } from '../utils/function';
+import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
 import { _escapeString } from '../utils/string';
 import type { DragListenerParams, DragService } from './dragService';
@@ -192,16 +193,17 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dropIconMap: { [key in DragAndDropIcon]: Element };
 
     public postConstruct(): void {
+        const create = (iconName: IconName) => _createIcon(iconName, this.gos, null);
         this.dropIconMap = {
-            pinned: _createIcon('columnMovePin', this.gos, null),
-            hide: _createIcon('columnMoveHide', this.gos, null),
-            move: _createIcon('columnMoveMove', this.gos, null),
-            left: _createIcon('columnMoveLeft', this.gos, null),
-            right: _createIcon('columnMoveRight', this.gos, null),
-            group: _createIcon('columnMoveGroup', this.gos, null),
-            aggregate: _createIcon('columnMoveValue', this.gos, null),
-            pivot: _createIcon('columnMovePivot', this.gos, null),
-            notAllowed: _createIcon('dropNotAllowed', this.gos, null),
+            pinned: create('columnMovePin'),
+            hide: create('columnMoveHide'),
+            move: create('columnMoveMove'),
+            left: create('columnMoveLeft'),
+            right: create('columnMoveRight'),
+            group: create('columnMoveGroup'),
+            aggregate: create('columnMoveValue'),
+            pivot: create('columnMovePivot'),
+            notAllowed: create('dropNotAllowed'),
         };
     }
 
@@ -250,9 +252,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.getDragItem();
 
-        if (this.dragSource.onDragStarted) {
-            this.dragSource.onDragStarted();
-        }
+        this.dragSource.onDragStarted?.();
 
         this.createGhost();
     }
@@ -261,11 +261,9 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.eventLastTime = null;
         this.dragging = false;
 
-        if (this.dragSource.onDragStopped) {
-            this.dragSource.onDragStopped();
-        }
+        this.dragSource.onDragStopped?.();
 
-        if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
+        if (this.lastDropTarget?.onDragStop) {
             const draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
         }
@@ -313,15 +311,15 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
     private allContainersIntersect(mouseEvent: MouseEvent, containers: HTMLElement[]) {
         for (const container of containers) {
-            const rect = container.getBoundingClientRect();
+            const { width, height, left, right, top, bottom } = container.getBoundingClientRect();
 
             // if element is not visible, then width and height are zero
-            if (rect.width === 0 || rect.height === 0) {
+            if (width === 0 || height === 0) {
                 return false;
             }
 
-            const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX < rect.right;
-            const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY < rect.bottom;
+            const horizontalFit = mouseEvent.clientX >= left && mouseEvent.clientX < right;
+            const verticalFit = mouseEvent.clientY >= top && mouseEvent.clientY < bottom;
 
             if (!horizontalFit || !verticalFit) {
                 return false;
@@ -341,12 +339,12 @@ export class DragAndDropService extends BeanStub implements NamedBean {
                 break;
             }
         }
-
-        if (dropTarget.targetContainsSource && !dropTarget.getContainer().contains(this.dragSource.eElement)) {
+        const { eElement, type } = this.dragSource;
+        if (dropTarget.targetContainsSource && !dropTarget.getContainer().contains(eElement)) {
             return false;
         }
 
-        return mouseOverTarget && dropTarget.isInterestedIn(this.dragSource.type, this.dragSource.eElement);
+        return mouseOverTarget && dropTarget.isInterestedIn(type, eElement);
     }
 
     private findCurrentDropTarget(mouseEvent: MouseEvent, validDropTargets: DropTarget[]): DropTarget | null {
