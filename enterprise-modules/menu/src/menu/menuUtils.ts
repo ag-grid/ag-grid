@@ -129,7 +129,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
 
         // DO NOT REMOVE `await` from the statement below
         // even though `getAllCols` is a synchronous method, we use `await` to make it async
-        const isColumnStillVisible = this.visibleColsService.getAllCols().some((col) => col === column);
+        const isColumnStillVisible = await this.visibleColsService.getAllCols().some((col) => col === column);
 
         if (column && !column.isAlive()) {
             return;
