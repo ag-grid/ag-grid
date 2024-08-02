@@ -73,10 +73,12 @@ function updatePackageJsonFiles() {
 
 function updateRootPackageJson() {
     console.log('Updating root package.json');
-    const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, ROOT_PACKAGE_JSON), 'utf8'));
+
+    const resolvedPath = path.resolve(__dirname, ROOT_PACKAGE_JSON);
+    const packageJson = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
     packageJson.version = gridNewVersion;
 
-    fs.writeFileSync(ROOT_PACKAGE_JSON, JSON.stringify(packageJson, null, 2), 'utf8');
+    fs.writeFileSync(resolvedPath, JSON.stringify(packageJson, null, 2), 'utf8');
 }
 
 function updateFileWithNewVersions(currentFile) {
