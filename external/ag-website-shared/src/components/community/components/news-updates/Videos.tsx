@@ -1,4 +1,3 @@
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
 import styles from './Videos.module.scss';
