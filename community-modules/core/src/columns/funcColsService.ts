@@ -328,7 +328,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         }
 
         let atLeastOne = false;
-        const updatedCols: AgColumn[] = [];
+        const updatedCols: Set<AgColumn> = new Set();
 
         keys.forEach((key) => {
             if (!key) {
@@ -338,7 +338,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             if (!columnToAdd) {
                 return;
             }
-            updatedCols.push(columnToAdd);
+            updatedCols.add(columnToAdd);
 
             if (actionIsAdd) {
                 if (masterList.indexOf(columnToAdd) >= 0) {
@@ -346,8 +346,13 @@ export class FuncColsService extends BeanStub implements NamedBean {
                 }
                 masterList.push(columnToAdd);
             } else {
-                if (masterList.indexOf(columnToAdd) < 0) {
+                const currentIndex = masterList.indexOf(columnToAdd);
+                if (currentIndex < 0) {
                     return;
+                }
+                for (let i = currentIndex + 1; i < masterList.length; i++) {
+                    // row indexes of subsequent columns have changed
+                    updatedCols.add(masterList[i]);
                 }
                 _removeFromArray(masterList, columnToAdd);
             }
@@ -366,7 +371,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         this.visibleColsService.refresh(source);
 
-        this.eventDispatcher.genericColumnEvent(eventType, updatedCols, source);
+        this.eventDispatcher.genericColumnEvent(eventType, Array.from(updatedCols), source);
     }
 
     public extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
