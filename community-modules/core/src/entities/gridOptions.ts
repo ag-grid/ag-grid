@@ -1838,7 +1838,7 @@ export interface GridOptions<TData = any> {
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     * @deprecated
+     * @deprecated v32.1 Use `selectionOptions.isRowSelectable` instead
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
