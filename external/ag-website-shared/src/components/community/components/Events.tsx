@@ -4,13 +4,34 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import styles from './Events.module.scss';
 
-const separateEventsByDate = (events) => {
-    const upcomingEvents = [];
-    const pastEvents = [];
+type Event = {
+    title: string;
+    description: string;
+    location: string;
+    logo: string;
+    logoLight: string;
+    countryIcon: string;
+    startDate: string;
+    eventPage: string;
+    recording: string;
+    collage: string;
+    eventLogo: string;
+};
+
+type Image = {
+    src: string;
+    alt: string;
+};
+
+const separateEventsByDate = (events: Event[]): { upcomingEvents: Event[]; pastEvents: Event[] } => {
+    const upcomingEvents: Event[] = [];
+    const pastEvents: Event[] = [];
+
+    const now = new Date();
 
     events.forEach((event) => {
         const startDate = new Date(event.startDate);
-        if (startDate >= new Date()) {
+        if (startDate >= now) {
             upcomingEvents.push(event);
         } else {
             pastEvents.push(event);
@@ -20,7 +41,7 @@ const separateEventsByDate = (events) => {
     return { upcomingEvents, pastEvents };
 };
 
-const EventItem = ({ event }) => {
+const EventItem = ({ event }: { event: Event }) => {
     const [darkMode] = useDarkmode();
     return (
         <a href={event.eventPage ? event.eventPage : event.recording} target="_blank" className={styles.linkWrapper}>
@@ -55,9 +76,13 @@ const EventItem = ({ event }) => {
                                 <p className={event.recording ? styles.secondaryCta : styles.primaryCta}>View Event</p>
                             )}
                             {event.recording && (
-                                <p className={event.eventPage ? styles.primaryCta : styles.secondaryCta}>
+                                <a
+                                    href={event.recording}
+                                    target="_blank"
+                                    className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
+                                >
                                     Watch Recording
-                                </p>
+                                </a>
                             )}
                         </div>
                     </div>
@@ -82,7 +107,7 @@ const EventItem = ({ event }) => {
     );
 };
 
-const Events = ({ images, events }) => {
+const Events = ({ images, events }: { images: Image[]; events: Event[] }) => {
     const { upcomingEvents, pastEvents } = separateEventsByDate(events);
     return (
         <div className={styles.container}>
@@ -94,7 +119,7 @@ const Events = ({ images, events }) => {
                     <p className={styles.eventsSeparatorTitle}>Upcoming Events</p>
                     <div className={styles.eventsContainer}>
                         {upcomingEvents
-                            .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+                            .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
                             .map((event, index) => (
                                 <EventItem key={index} event={event} />
                             ))}
