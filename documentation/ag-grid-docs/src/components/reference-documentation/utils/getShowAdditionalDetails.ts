@@ -3,10 +3,12 @@ import { extractInterfaces } from './documentation-helpers';
 import { applyInterfaceInclusions, isCallSig } from './interface-helpers';
 
 export function getShowAdditionalDetails({
+    name,
     definition,
     gridOpProp,
     interfaceLookup,
 }: {
+    name: string;
     definition: DocEntry | ChildDocEntry;
     gridOpProp: InterfaceEntry;
     interfaceLookup: Record<string, InterfaceEntry>;

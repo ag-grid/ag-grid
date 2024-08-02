@@ -126,7 +126,7 @@ export function getProperties({
 
     ordered.forEach(([name, definition]) => {
         const gridOpProp = codeData[name];
-        const showAdditionalDetails = getShowAdditionalDetails({ definition, gridOpProp, interfaceLookup });
+        const showAdditionalDetails = getShowAdditionalDetails({ name, definition, gridOpProp, interfaceLookup });
 
         const { type, propertyType } = getDefinitionType({
             definition,

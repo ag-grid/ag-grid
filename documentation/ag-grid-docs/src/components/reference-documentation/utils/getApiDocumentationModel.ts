@@ -60,7 +60,7 @@ function getResolvedProperties({
         })
         .map(([name, definition]) => {
             const gridOpProp = codeLookup[name];
-            const showAdditionalDetails = getShowAdditionalDetails({ definition, gridOpProp, interfaceLookup });
+            const showAdditionalDetails = getShowAdditionalDetails({ name, definition, gridOpProp, interfaceLookup });
             const { type, propertyType } = getDefinitionType({
                 definition,
                 gridOpProp,
