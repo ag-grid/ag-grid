@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
         .then((data: any[]) => {
             data.forEach((item, index) => (item.id = index));

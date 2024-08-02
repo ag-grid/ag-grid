@@ -43,9 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
-        .then(function (data) {
-            gridApi!.setGridOption('rowData', data.slice(0, 100));
-        });
+        .then((data) => gridApi.setGridOption('rowData', data));
 });

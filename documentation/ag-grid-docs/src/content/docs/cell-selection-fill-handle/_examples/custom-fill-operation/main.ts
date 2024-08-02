@@ -63,12 +63,11 @@ const gridOptions: GridOptions = {
     },
 };
 
-function createRowData(data: any[]) {
-    var rowData = data.slice(0, 100);
+function createRowData(rowData: any[]) {
     var currentDate = new Date();
     var currentYear = currentDate.getFullYear();
 
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < rowData.length; i++) {
         var dt = new Date(getRandom(currentYear - 10, currentYear + 10), getRandom(0, 12), getRandom(1, 25));
         rowData[i].dayOfTheWeek = daysList[dt.getDay()];
     }
@@ -83,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
             gridApi!.setGridOption('rowData', createRowData(data));
