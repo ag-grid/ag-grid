@@ -4,12 +4,14 @@ import { getPropertyType } from './interface-helpers';
 
 // Use the type definition if manually specified in config
 export function getDefinitionType({
+    name,
     definition,
     gridOpProp,
     interfaceLookup,
     isEvent,
     config,
 }: {
+    name: string;
     definition: DocEntry | ChildDocEntry;
     gridOpProp: InterfaceEntry;
     interfaceLookup: Record<string, InterfaceEntry>;

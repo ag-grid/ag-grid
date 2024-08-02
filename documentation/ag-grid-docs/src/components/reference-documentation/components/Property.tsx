@@ -82,6 +82,7 @@ function getDescription({
 // Use the type definition if manually specified in config
 function getDefinitionTypeUrl({
     id,
+    name,
     framework,
     definition,
     propertyType,
@@ -90,6 +91,7 @@ function getDefinitionTypeUrl({
     config,
 }: {
     id: string;
+    name: string;
     framework: Framework;
     definition: ChildDocEntry;
     propertyType: string;
@@ -168,6 +170,7 @@ export const Property: FunctionComponent<{
     const { isObject, description } = getDescription({ definition, gridOpProp, framework });
     const typeUrl = getDefinitionTypeUrl({
         id,
+        name,
         framework,
         definition,
         propertyType,
