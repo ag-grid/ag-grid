@@ -654,6 +654,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         switch (option) {
             case 'suppressMultiRangeSelection':
                 return cellOptionWithFallback(option, (opts) => opts.suppressMultiRanges);
+            case 'enableRangeSelection':
+                return cellOptionWithFallback(option, () => true);
             case 'enableRangeHandle':
                 return cellOptionWithFallback(
                     option,

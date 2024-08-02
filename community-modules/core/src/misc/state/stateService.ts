@@ -570,7 +570,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setRangeSelectionState(rangeSelectionState: RangeSelectionState): void {
-        if (!this.gos.get('enableRangeSelection') || !this.rangeService) {
+        if (!this.gos.getLegacySelectionOption('enableRangeSelection') || !this.rangeService) {
             return;
         }
         const cellRanges: CellRange[] = [];

@@ -98,7 +98,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         eventService.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
         if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
-            if (rangeService && gos.get('enableRangeSelection')) {
+            if (rangeService && gos.getLegacySelectionOption('enableRangeSelection')) {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
                 const column = cellCtrl.getColumn();

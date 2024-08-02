@@ -205,7 +205,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!this.gos.getLegacySelectionOption('enableRangeSelection')) {
             return;
         }
 
@@ -350,7 +350,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setCellRange(params: CellRangeParams): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!this.gos.getLegacySelectionOption('enableRangeSelection')) {
             return;
         }
 
@@ -484,7 +484,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!this.gos.getLegacySelectionOption('enableRangeSelection')) {
             return;
         }
 
@@ -677,7 +677,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!this.gos.getLegacySelectionOption('enableRangeSelection')) {
             return;
         }
 
