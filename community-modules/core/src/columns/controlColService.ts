@@ -32,8 +32,12 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
                 colId: `${CONTROL_COLUMN_ID_PREFIX}`,
                 suppressMovable: true,
                 lockPosition: enableRTL ? 'right' : 'left',
-                sortable: false,
                 maxWidth: 90,
+                comparator(valueA, valueB, nodeA, nodeB) {
+                    const aSelected = nodeA.isSelected();
+                    const bSelected = nodeB.isSelected();
+                    return aSelected && bSelected ? 0 : aSelected ? 1 : -1;
+                },
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);
             this.createBean(col);
