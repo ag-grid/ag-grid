@@ -79,7 +79,6 @@ export function _debounce(func: (...args: any[]) => void, delay: number): (...ar
 
     // Calling debounce returns a new anonymous function
     return function (...args: any[]) {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const context = this;
         window.clearTimeout(timeout);
 
@@ -99,7 +98,6 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
     let previousCall = 0;
 
     return function (...args: any[]) {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const context = this;
         const currentCall = new Date().getTime();
 

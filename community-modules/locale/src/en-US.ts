@@ -489,7 +489,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaColumn: 'Column',
     ariaColumnGroup: 'Column Group',
     ariaColumnFiltered: 'Column Filtered',
-    ariaColumnSelectAll: 'Toggle Select All Columns',
+    ariaColumnSelectAll: 'Toggle All Columns Visibility',
     ariaDateFilterInput: 'Date Filter Input',
     ariaDefaultListName: 'List',
     ariaFilterColumnsInput: 'Filter Columns Input',

@@ -236,25 +236,25 @@
         "getDisplayedRowAtIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "./rendering-api/"
+                "url": "./dom-virtualisation/"
             }
         },
         "getDisplayedRowCount": {
             "more": {
                 "name": "Rendering API",
-                "url": "./rendering-api/"
+                "url": "./dom-virtualisation/"
             }
         },
         "getFirstDisplayedRowIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "./rendering-api/"
+                "url": "./dom-virtualisation/"
             }
         },
         "getLastDisplayedRowIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "./rendering-api/"
+                "url": "./dom-virtualisation/"
             }
         }
     },

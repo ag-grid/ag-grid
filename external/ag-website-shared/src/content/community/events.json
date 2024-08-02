@@ -21,12 +21,14 @@
     },
     {
         "title": "React Summit",
-        "description": "React Summit is an annual conference on all things React, gathering thousands of Front-end and Full-stack engineers from around the world.\n\nWe'll be presenting a lightning (20-min) talk this year, watch this space to find out more as we approach June...",
+        "description": "We had the privilege of being premium sponsors once-again at React Summit Amsterdam. Drawing in over 10,000 developers (with 1,000+ of them in-person on the Friday) React Summit is the self-described 'Biggest React Conference Worldwide'. We certainly had that impression, with 100s of conversations at the booth, and a packed audience for Mana's talk: The Path to High-Performance Canvas Rendering.",
         "location": "Amsterdam, NL",
         "logo": "/community/events/organiser-logos/react-summit-logo.svg",
         "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
         "startDate": "2024-06-17",
         "countryIcon": "netherlands.png",
+        "recording": "https://portal.gitnation.org/contents/the-path-to-high-performance-canvas-rendering-in-react",
+        "collage": "react-summit-amsterdam-2024.webp",
         "eventPage": "https://reactsummit.com/"
     },
     {

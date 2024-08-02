@@ -7,24 +7,24 @@
         "linkText": "Read article"
     },
     {
-        "title": "Whats New in AG Grid 31.2",
-        "description": "What's New in AG Grid 31.2 - Updated Integrated Enterprise Charts Menu, Tooltips for truncated text, Export to Excel Table, Material Dark Theme",
+        "title": "Whats New in AG Grid 32",
+        "description": "What's New in AG Grid 32 - Rich Select Editor Multi Select, 15% Reduced Bundle Size, Localisation in 20+ languages, and more",
         "image": "/community/events/news/grid-table.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-31-2/",
+        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-32/",
         "linkText": "Read article"
     },
     {
-        "title": "What's New in AG Charts 9.2",
-        "description": "What's New in AG Charts 9.2 - New Map Series types - geographic, lines and markers series, Rounded Corners for all Bar Series types",
+        "title": "What's New in AG Charts 10",
+        "description": "What's New in AG Charts 10 - Financial Charts, Sankey & Chord Series, Smooth & Step Line Styles, and Localisation in 20+ languages",
         "image": "/community/events/news/integrated.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-9-2/",
+        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-10/",
         "linkText": "Read article"
     },
     {
-        "title": "AG Grid: A look back on 2023",
-        "description": "A look back on 2023, reflecting on our achievements and to thank our community for their unwavering support",
+        "title": "Building New Themes for AG Grid with our Figma Design System",
+        "description": "See how easy our Figma Design System makes it to create and customise themes for AG Grid.",
         "image": "/community/events/news/grid-2.png",
-        "link": "https://blog.ag-grid.com/ag-grid-a-look-back-on-2023/",
+        "link": "https://blog.ag-grid.com/building-a-new-theme-for-ag-grid-with-the-figma-design-system/",
         "linkText": "Read article"
     }
 ]

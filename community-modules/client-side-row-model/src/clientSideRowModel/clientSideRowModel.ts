@@ -514,6 +514,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             adjustedIndex -= 1;
         }
 
+        // if last row is footer, return this rows index.
+        const lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+        const indexOutsideGroupBounds = adjustedIndex >= this.rootNode.childrenAfterSort!.length;
+        if (lastRow.footer && indexOutsideGroupBounds) {
+            return lastRow.rowIndex!;
+        }
+
         let rowNode = this.rootNode.childrenAfterSort![adjustedIndex];
 
         if (this.gos.get('groupHideOpenParents')) {

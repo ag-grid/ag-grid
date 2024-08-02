@@ -1,5 +1,14 @@
 [
     {
+        "title": "The Path to High-Performance Canvas Rendering in React",
+        "link": "https://player.vimeo.com/video/964406319",
+        "description": "An overview of the top 3 approaches you can apply to boost the rendering performance of HTML Canvas in your React application, based on the lessons we learned during the development of AG Charts.",
+        "author": "Mana Peirov",
+        "type": "Video",
+        "published": "06/2024",
+        "thumbnail": "/community/video-thumbnails/the-path-to-high-performance-canvas-rendering-in-react.webp"
+    },
+    {
         "title": "The Future of AG Grid & AG Charts",
         "link": "https://www.youtube.com/embed/JxOtSAXFQ6c",
         "description": "In this short video the founder of AG Grid, Niall Crosby, shares how AG Grid became the leading JavaScript data grid for enterprise applications. An inspiring story, worth watching for anyone interested in enterprise architecture and how to grow a successful software company! ",

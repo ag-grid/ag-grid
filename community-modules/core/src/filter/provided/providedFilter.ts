@@ -29,7 +29,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: ProvidedFilterParams;
 
-    private applyActive = false;
+    protected applyActive = false;
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;

@@ -13,6 +13,7 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
 import { attemptMoveColumns, normaliseX } from '../../columnMoveHelper';
+import type { HeaderPosition } from '../../common/headerPosition';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
@@ -100,7 +101,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             })
         );
 
-        this.addResizeAndMoveKeyboardListeners();
+        this.addResizeAndMoveKeyboardListeners(eGui);
 
         this.addManagedPropertyListeners(
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'],
@@ -144,6 +145,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const isLeft = (hDirection === HorizontalDirection.Left) !== isRtl;
 
         const xPosition = normaliseX(isLeft ? left - 20 : left + width + 20, pinned, true, gos, ctrlsService);
+        const headerPosition = this.focusService.getFocusedHeader();
 
         attemptMoveColumns({
             allMovingColumns: [column],
@@ -160,6 +162,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         });
 
         ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
+
+        if ((!this.isAlive() || this.beans.gos.get('ensureDomOrder')) && headerPosition) {
+            this.restoreFocus(headerPosition);
+        }
+    }
+
+    protected restoreFocus(previousPosition: HeaderPosition): void {
+        this.focusService.focusHeaderPosition({
+            headerPosition: {
+                ...previousPosition,
+                column: this.column,
+            },
+        });
     }
 
     private setupUserComp(): void {
@@ -594,10 +609,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
         const groupHeaderHeight = this.beans.columnModel.getGroupRowsHeight();
 
-        const numHeaders = groupHeaderHeight.length - 1;
         let extraHeight = 0;
-        for (let i = numHeaders - numberOfParents; i < numHeaders; i++) {
-            extraHeight += groupHeaderHeight[i];
+        for (let i = 0; i < numberOfParents; i++) {
+            extraHeight += groupHeaderHeight[groupHeaderHeight.length - 1 - i];
         }
 
         eGui.style.setProperty('top', `${-extraHeight}px`);

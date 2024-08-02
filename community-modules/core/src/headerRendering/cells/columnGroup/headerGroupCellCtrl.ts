@@ -92,7 +92,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         );
 
         this.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
-        this.addResizeAndMoveKeyboardListeners();
+        this.addResizeAndMoveKeyboardListeners(eGui);
     }
 
     public getColumn(): AgColumnGroup {
@@ -149,7 +149,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
 
-        if (!this.isAlive() && headerPosition) {
+        if ((!this.isAlive() || this.beans.gos.get('ensureDomOrder')) && headerPosition) {
             this.restoreFocus(id, column, headerPosition);
         }
     }
@@ -410,7 +410,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             onDragStopped: () => allLeafColumns.forEach((col) => col.setMoving(false, 'uiColumnDragged')),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
-                    const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
+                    const { columns = [], visibleState } = dragItem ?? {};
+                    // mimic behaviour of `MoveColumnFeature.onDragEnter`
+                    const unlockedColumns = columns.filter(
+                        (col) => !col.getColDef().lockVisible && (!visibleState || visibleState[col.getColId()])
+                    );
                     columnModel.setColsVisible(unlockedColumns as AgColumn[], true, 'uiColumnMoved');
                 }
             },

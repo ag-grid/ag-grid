@@ -1,11 +1,18 @@
-import * as agGrid from '@ag-grid-community/core';
+import {
+    DetailGridInfo,
+    GridApi,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    createGrid,
+} from '@ag-grid-community/core';
 
-export class DetailCellRenderer implements agGrid.ICellRendererComp {
+export class DetailCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
-    params!: agGrid.ICellRendererParams;
-    detailGridApi!: agGrid.GridApi;
+    params!: ICellRendererParams;
+    detailGridApi!: GridApi;
 
-    init(params: agGrid.ICellRendererParams) {
+    init(params: ICellRendererParams) {
         this.params = params;
 
         // trick to convert string of HTML into DOM object
@@ -18,7 +25,7 @@ export class DetailCellRenderer implements agGrid.ICellRendererComp {
 
     setupDetailGrid() {
         var eDetailGrid = this.eGui.querySelector<HTMLElement>('.full-width-grid')!;
-        var detailGridOptions: agGrid.GridOptions = {
+        var detailGridOptions: GridOptions = {
             columnDefs: [
                 { field: 'callId' },
                 { field: 'direction' },
@@ -33,12 +40,12 @@ export class DetailCellRenderer implements agGrid.ICellRendererComp {
             rowData: this.params.data.callRecords,
         };
 
-        this.detailGridApi = agGrid.createGrid(eDetailGrid, detailGridOptions);
+        this.detailGridApi = createGrid(eDetailGrid, detailGridOptions);
 
         var masterGridApi = this.params.api;
         var rowId = this.params.node.id!;
 
-        var gridInfo: agGrid.DetailGridInfo = {
+        var gridInfo: DetailGridInfo = {
             id: rowId,
             api: this.detailGridApi,
         };
@@ -72,7 +79,7 @@ export class DetailCellRenderer implements agGrid.ICellRendererComp {
         return this.eGui;
     }
 
-    refresh(params: agGrid.ICellRendererParams): boolean {
+    refresh(params: ICellRendererParams): boolean {
         return false;
     }
 
