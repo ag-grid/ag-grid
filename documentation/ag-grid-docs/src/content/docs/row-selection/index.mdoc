@@ -133,6 +133,16 @@ This example demonstrates the following:
 
 {% gridExampleRunner title="Selectable Rows with Header Checkbox" name="specify-selectable-rows" /%}
 
+### Force Checkboxes to be Selected
+
+It is possible to select a row via the Grid API and disable its checkbox to prevent users from deselecting it. 
+This can be achieved by providing a function to `selectionOptions.checkboxSelection.displayCheckbox`.
+
+In the example below only rows with Year=2012 are selectable. All other rows cannot be selected by the user. 
+Clicking the header checkbox will select all rows even if their checkboxes are disabled.
+
+{% gridExampleRunner title="Force Checkboxes to be Selected" name="force-enable-checkboxes" /%}
+
 ## Enterprise Features
 
 Row selection can be used when using row grouping, tree data and the server side row model. See the respective sections of the documentation:
