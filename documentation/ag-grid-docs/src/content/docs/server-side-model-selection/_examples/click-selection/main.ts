@@ -7,10 +7,8 @@ import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-type OlympicData = IOlympicData & { id: string };
-
-let gridApi: GridApi<OlympicData>;
-const gridOptions: GridOptions<OlympicData> = {
+let gridApi: GridApi<IOlympicDataWithId>;
+const gridOptions: GridOptions<IOlympicDataWithId> = {
     columnDefs: [
         { field: 'athlete', filter: 'agTextColumnFilter' },
         { field: 'country', filter: 'agTextColumnFilter' },
@@ -40,7 +38,7 @@ const gridOptions: GridOptions<OlympicData> = {
             rowGroupColIds +
             '-' +
             (params.parentKeys || []).join('-') +
-            params.data[thisGroupCol.getColDef().field as keyof OlympicData]
+            params.data[thisGroupCol.getColDef().field as keyof IOlympicDataWithId]
         );
     },
 
