@@ -33,7 +33,7 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
                 suppressMovable: true,
                 lockPosition: enableRTL ? 'right' : 'left',
                 sortable: false,
-                minWidth: 100,
+                maxWidth: 90,
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);
             this.createBean(col);

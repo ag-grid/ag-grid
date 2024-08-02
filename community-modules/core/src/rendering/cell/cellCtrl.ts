@@ -405,7 +405,7 @@ export class CellCtrl extends BeanStub {
 
     private setupControlComps(): void {
         const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeSelection = this.isIncludeControl(this.column.isCellCheckboxSelection(this.rowNode));
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 

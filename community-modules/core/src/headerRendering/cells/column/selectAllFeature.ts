@@ -20,7 +20,6 @@ export class SelectAllFeature extends BeanStub {
         this.selectionService = beans.selectionService;
     }
 
-    private enabled = false;
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
     private column: AgColumn;
@@ -31,11 +30,17 @@ export class SelectAllFeature extends BeanStub {
     constructor(column: AgColumn) {
         super();
         this.column = column;
-        this.enabled = column.getColId().startsWith(CONTROL_COLUMN_ID_PREFIX);
+    }
+
+    private isEnabled(): boolean {
+        return (
+            this.gos.get('selectionOptions') === undefined ||
+            this.column.getColId().startsWith(CONTROL_COLUMN_ID_PREFIX)
+        );
     }
 
     public onSpaceKeyDown(e: KeyboardEvent): void {
-        if (!this.enabled) {
+        if (!this.isEnabled()) {
             return;
         }
 
@@ -84,7 +89,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private showOrHideSelectAll(): void {
-        this.cbSelectAllVisible = this.enabled && this.isCheckboxSelection();
+        this.cbSelectAllVisible = this.isEnabled() && this.isCheckboxSelection();
         this.cbSelectAll.setDisplayed(this.cbSelectAllVisible, { skipAriaHidden: true });
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
@@ -202,7 +207,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private isCheckboxSelection(): boolean {
-        if (!this.enabled) {
+        if (!this.isEnabled()) {
             return false;
         }
 
@@ -255,7 +260,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private isFilteredOnly(): boolean {
-        if (!this.enabled) {
+        if (!this.isEnabled()) {
             return false;
         }
 
@@ -266,7 +271,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private isCurrentPageOnly(): boolean {
-        if (!this.enabled) {
+        if (!this.isEnabled()) {
             return false;
         }
 

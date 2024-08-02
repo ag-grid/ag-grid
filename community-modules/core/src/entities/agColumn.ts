@@ -1,4 +1,5 @@
 import type { ColumnState } from '../columns/columnApplyStateService';
+import { CONTROL_COLUMN_ID_PREFIX } from '../columns/controlColService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
@@ -400,7 +401,17 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public isCellCheckboxSelection(rowNode: IRowNode): boolean {
-        return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
+        const so = this.gos.get('selectionOptions');
+
+        if (so) {
+            const checkboxSelection = so.mode === 'multiRow' && so.checkboxSelection;
+            const checkbox =
+                this.colId.startsWith(CONTROL_COLUMN_ID_PREFIX) &&
+                (typeof checkboxSelection !== 'boolean' ? checkboxSelection?.displayCheckbox : checkboxSelection);
+            return this.isColumnFunc(rowNode, checkbox);
+        } else {
+            return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
+        }
     }
 
     public isSuppressPaste(rowNode: IRowNode): boolean {
