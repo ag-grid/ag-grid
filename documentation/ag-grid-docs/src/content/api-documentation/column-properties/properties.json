@@ -100,7 +100,7 @@
         },
         "tooltipField": {
             "interfaceHierarchyOverrides": {
-                "exclude": ["ColDefField"]
+                "exclude": ["NestedFieldPaths"]
             }
         },
         "tooltipValueGetter": {

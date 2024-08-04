@@ -1,13 +1,29 @@
 import { SHOW_DEBUG_LOGS } from '@constants';
 
+import type { DocEntryMap, InterfaceEntry, InterfaceHierarchyOverrides, PropertyType } from '../types';
 import { extractInterfaces } from './documentation-helpers';
-import type { Config, DocEntryMap, InterfaceEntry, PropertyType } from './types';
 
-export const getInterfacesToWrite = (name, definition, config) => {
+export const getInterfacesToWrite = ({
+    name,
+    definition,
+    interfaceLookup,
+    gridOpProp,
+    interfaceHierarchyOverrides,
+}: {
+    name: string;
+    definition: any;
+    interfaceLookup: Record<string, InterfaceEntry>;
+    gridOpProp?: InterfaceEntry;
+    interfaceHierarchyOverrides?: InterfaceHierarchyOverrides;
+}) => {
     let interfacesToWrite = [];
     if (typeof definition === 'string') {
         // Extract all the words to enable support for Union types
-        interfacesToWrite = extractInterfaces(definition, config.lookups.interfaces, applyInterfaceInclusions(config));
+        interfacesToWrite = extractInterfaces(
+            definition,
+            interfaceLookup,
+            applyInterfaceInclusions({ gridOpProp, interfaceHierarchyOverrides })
+        );
     } else if (
         (typeof definition == 'object' && !Array.isArray(definition)) ||
         (typeof name == 'string' && Array.isArray(definition))
@@ -21,8 +37,14 @@ export const getInterfacesToWrite = (name, definition, config) => {
     return interfacesToWrite;
 };
 
-export function applyInterfaceInclusions({ gridOpProp, interfaceHierarchyOverrides }) {
-    return (typeName) => {
+export function applyInterfaceInclusions({
+    gridOpProp,
+    interfaceHierarchyOverrides,
+}: {
+    gridOpProp: InterfaceEntry;
+    interfaceHierarchyOverrides: InterfaceHierarchyOverrides;
+}) {
+    return (typeName: string) => {
         if (interfaceHierarchyOverrides) {
             // If definition includes overrides apply them
             if ((interfaceHierarchyOverrides.exclude || []).includes(typeName)) {
@@ -41,7 +63,7 @@ export function isGridOptionEvent(gridProp: InterfaceEntry) {
     return gridProp && gridProp.meta && gridProp.meta.isEvent;
 }
 
-export const getInterfaceName = (name) => `${name.substring(0, 1).toUpperCase()}${name.substring(1)}`;
+export const getInterfaceName = (name: string) => `${name.substring(0, 1).toUpperCase()}${name.substring(1)}`;
 
 export const formatJson = (value: string) =>
     JSON.stringify(value, undefined, 2)
@@ -55,14 +77,24 @@ export function isCallSig(gridProp: InterfaceEntry): boolean | undefined {
 /**
  * Property type is the small blue text that tells you the type of the given property
  */
-export function getPropertyType(type: string | PropertyType, config: Config) {
+export function getPropertyType({
+    isEvent,
+    type,
+    interfaceLookup,
+    gridOpProp,
+}: {
+    isEvent: boolean;
+    type: string | PropertyType;
+    interfaceLookup: Record<string, InterfaceEntry>;
+    gridOpProp: InterfaceEntry;
+}) {
     let propertyType = '';
     if (type) {
         if (typeof type == 'string') {
             propertyType = type;
         } else if (typeof type == 'object') {
             if (type.arguments || type.parameters) {
-                if (isGridOptionEvent(config.gridOpProp) || config.isEvent) {
+                if (isGridOptionEvent(gridOpProp) || isEvent) {
                     // If an event show the event type instead of Function
                     propertyType = Object.values(type.arguments)[0];
                 } else {
@@ -72,7 +104,7 @@ export function getPropertyType(type: string | PropertyType, config: Config) {
                 if (typeof type.returnType == 'object') {
                     propertyType = 'object';
                 } else if (typeof type.returnType == 'string') {
-                    const inter = config.lookups.interfaces[type.returnType];
+                    const inter = interfaceLookup[type.returnType];
                     if (inter && inter.meta && inter.meta.isCallSignature) {
                         propertyType = `Function`;
                     } else {
@@ -94,11 +126,11 @@ export function getPropertyType(type: string | PropertyType, config: Config) {
     return propertyType;
 }
 
-export const mergeObjects = (objects) => {
+export const mergeObjects = (objects: any[]) => {
     return objects.reduce((result, value) => Object.assign(result, value), {});
 };
 
-function getPropertyEntries({ properties, suppressSort }: { properties: DocEntryMap; suppressSort: boolean }) {
+function getPropertyEntries({ properties, suppressSort }: { properties: DocEntryMap; suppressSort?: boolean }) {
     const entries = Object.entries(properties).filter(([key]) => key !== '_config_');
     if (!suppressSort) {
         entries.sort(([k1, v1], [k2, v2]) => {
@@ -114,8 +146,8 @@ export const getAllSectionPropertyEntries = ({
     propertiesFromFiles,
     suppressSort,
 }: {
-    propertiesFromFiles: unknown;
-    suppressSort: boolean;
+    propertiesFromFiles: any[];
+    suppressSort?: boolean;
 }) => {
     const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
     const entries = getPropertyEntries({

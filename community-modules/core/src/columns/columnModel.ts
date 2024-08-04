@@ -148,8 +148,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
             this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
         );
-        this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (event) =>
-            this.recreateColumnDefs(convertSourceType(event.source))
+        this.addManagedPropertyListeners(
+            ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
+            (event) => this.recreateColumnDefs(convertSourceType(event.source))
         );
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))
@@ -508,7 +509,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setAutoHeightActive(): void {
-        this.autoHeightActive = this.cols.list.some((col) => col.isAutoHeight());
+        this.autoHeightActive = this.cols.list.some((col) => col.isVisible() && col.isAutoHeight());
 
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
@@ -936,16 +937,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public getGroupRowsHeight(): number[] {
         const heights: number[] = [];
-        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl();
+        const headerRowContainerCtrls = this.ctrlsService.getHeaderRowContainerCtrls();
 
-        if (headerRowContainerCtrl) {
+        for (const headerRowContainerCtrl of headerRowContainerCtrls) {
+            if (!headerRowContainerCtrl) {
+                continue;
+            }
+
             const groupRowCount = headerRowContainerCtrl.getGroupRowCount() || 0;
 
             for (let i = 0; i < groupRowCount; i++) {
                 const headerRowCtrl = headerRowContainerCtrl.getGroupRowCtrlAtIndex(i);
 
+                const currentHeightAtPos = heights[i];
                 if (headerRowCtrl) {
-                    heights.push(this.getColumnGroupHeaderRowHeight(headerRowCtrl));
+                    const newHeight = this.getColumnGroupHeaderRowHeight(headerRowCtrl);
+                    if (currentHeightAtPos == null || newHeight > currentHeightAtPos) {
+                        heights[i] = newHeight;
+                    }
                 }
             }
         }
@@ -953,7 +962,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return heights;
     }
 
-    public getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
+    private getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
         const defaultHeight: number = (
             this.isPivotMode() ? this.getPivotGroupHeaderHeight() : this.getGroupHeaderHeight()
         ) as number;

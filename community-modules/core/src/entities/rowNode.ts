@@ -416,7 +416,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public getGroupKeys(excludeSelf = false): string[] {
         const keys: string[] = [];
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode | null = this;
         if (excludeSelf) {
             pointer = pointer.parent;
@@ -1100,7 +1099,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public getFirstChildOfFirstChild(rowGroupColumn: AgColumn | null): RowNode | null {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let currentRowNode: RowNode = this;
         let isCandidate = true;
         let foundFirstChildPath = false;
@@ -1152,9 +1150,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         const res: string[] = [];
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode | null = this;
-
         while (pointer && pointer.key != null) {
             res.push(pointer.key);
             pointer = pointer.parent;

@@ -35,6 +35,8 @@ function main() {
 }
 
 function createRootEnvFiles() {
+    console.log('Creating Root Env Files');
+
     const data = `# Production Build
 BUILD_GRID_VERSION=${gridNewVersion}
 BUILD_CHARTS_VERSION=${chartsDependencyVersion}
@@ -49,6 +51,8 @@ function updateAngularProject(CWD, packageDirectory) {
 }
 
 function updatePackageJsonFiles() {
+    console.log('Updating package.json files');
+
     const CWD = process.cwd();
 
     packageDirectories.forEach((packageDirectory) => {
@@ -68,10 +72,13 @@ function updatePackageJsonFiles() {
 }
 
 function updateRootPackageJson() {
-    const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, ROOT_PACKAGE_JSON), 'utf8'));
+    console.log('Updating root package.json');
+
+    const resolvedPath = path.resolve(__dirname, ROOT_PACKAGE_JSON);
+    const packageJson = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
     packageJson.version = gridNewVersion;
 
-    fs.writeFileSync(ROOT_PACKAGE_JSON, JSON.stringify(packageJson, null, 2), 'utf8');
+    fs.writeFileSync(resolvedPath, JSON.stringify(packageJson, null, 2), 'utf8');
 }
 
 function updateFileWithNewVersions(currentFile) {

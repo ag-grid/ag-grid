@@ -9,11 +9,11 @@ fi
 RELEASE_VERSION=$1
 RELEASE_BRANCH=$2
 
-NON_PACKAGE_JSON_COUNT=`git status --porcelain | grep -Ev "package.json|yarn.lock|version.ts|enterprise-modules/core/src/license/shared/licenseManager.ts" | wc -l`
+NON_PACKAGE_JSON_COUNT=`git status --porcelain | grep -Ev "package.json|yarn.lock|version.ts|enterprise-modules/core/src/license/shared/licenseManager.ts|.env.production|.env.archive" | wc -l`
 
 if [ $NON_PACKAGE_JSON_COUNT -ne 0 ];
 then
-  echo "Only package.json, version.ts, yarn.lock of the licenseMangager files should be updated - please verify changeset.."
+  echo "Only package.json, version.ts, yarn.lock, root env files and  licenseMangager files should be updated - please verify changeset.."
   git status --porcelain
   exit 1
 fi

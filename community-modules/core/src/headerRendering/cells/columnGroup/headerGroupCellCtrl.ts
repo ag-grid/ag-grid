@@ -149,7 +149,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
 
-        if (!this.isAlive() && headerPosition) {
+        if ((!this.isAlive() || this.beans.gos.get('ensureDomOrder')) && headerPosition) {
             this.restoreFocus(id, column, headerPosition);
         }
     }

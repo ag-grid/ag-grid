@@ -59,15 +59,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
-        .then(function (dataNoUnbalanced) {
+        .then(function (data) {
             // add unbalanced data to the top of the dataset
-            const data = dataNoUnbalanced.map((item: IOlympicData) => ({
+            const unbalancedData = data.map((item: IOlympicData) => ({
                 ...item,
                 country: item.country === null ? '' : item.country,
             }));
-            data.sort((a: IOlympicData, b: IOlympicData) => (a.country === '' ? -1 : 1));
+            unbalancedData.sort((a: IOlympicData, b: IOlympicData) => (a.country === '' ? -1 : 1));
             // setup the fake server with entire dataset
-            var fakeServer = new FakeServer(data);
+            var fakeServer = new FakeServer(unbalancedData);
 
             // create datasource with a reference to the fake server
             var datasource = getServerSideDatasource(fakeServer);

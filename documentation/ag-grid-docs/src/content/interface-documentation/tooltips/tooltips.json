@@ -1,0 +1,11 @@
+{
+    "_config_": {},
+    "ColDef": {
+        "meta": {},
+        "tooltipField": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["NestedFieldPaths"]
+            }
+        }
+    }
+}
