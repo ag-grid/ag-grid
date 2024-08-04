@@ -45,10 +45,9 @@ interface TreeNodeWritablePrivateFields {
  * TreeStrategy uses a two stage approach both for first time creation and updates.
  * Multiple updates interact with the tree, and a commit stage commits all updates reducing expensive computations.
  *
- * The operations allowed are:
- *  - insert a filler node, done with node.upsertKey or TreeStrategy.upsertPath
- *  - replace the existing node row with another, or null, with TreeStrategy.overwriteRow
- *  - destroy the whole tree with TreeStrategy.destroy
+ * The operations are:
+ *  - create a path with a filler node with a null row, calling TreeStrategy.upsertPath
+ *  - replace an existing node row with another, or null, with TreeStrategy.overwriteRow
  *
  * Insert and overwrite will invalidate the affected paths with node.invalidate(), so that the commit operation will only
  * update the affected paths without traversing the whole tree.
