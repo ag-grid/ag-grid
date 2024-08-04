@@ -35,23 +35,23 @@ describe('ag-grid tree transactions', () => {
         api.getRowNode('2')!.setSelected(true);
 
         new TreeDiagram(api, 'initial').check(`
-            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-            ├─┬ Documents LEAF level:0 id:1
-            │ ├─┬ txt LEAF level:1 selected id:2
-            │ │ └── notes.txt LEAF level:2 id:3
-            │ ├─┬ pdf LEAF level:1 id:4
-            │ │ ├── book.pdf LEAF level:2 id:5
-            │ │ └── cv.pdf LEAF level:2 id:6
-            │ ├─┬ xls LEAF level:1 id:7
-            │ │ └── accounts.xls LEAF level:2 id:8
-            │ └─┬ stuff LEAF level:1 id:9
-            │ · └── xyz.txt LEAF level:2 id:10
-            ├─┬ Music filler level:0 id:row-group-0-Music
-            │ └─┬ mp3 filler level:1 id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop LEAF level:2 id:11
-            │ · │ └── theme.mp3 LEAF level:3 id:13
-            │ · └── jazz LEAF level:2 id:14
-            └── temp.txt LEAF level:0 id:12
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ Documents LEAF id:1
+            │ ├─┬ txt LEAF selected id:2
+            │ │ └── notes.txt LEAF id:3
+            │ ├─┬ pdf LEAF id:4
+            │ │ ├── book.pdf LEAF id:5
+            │ │ └── cv.pdf LEAF id:6
+            │ ├─┬ xls LEAF id:7
+            │ │ └── accounts.xls LEAF id:8
+            │ └─┬ stuff LEAF id:9
+            │ · └── xyz.txt LEAF id:10
+            ├─┬ Music filler id:row-group-0-Music
+            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
+            │ · ├─┬ pop LEAF id:11
+            │ · │ └── theme.mp3 LEAF id:13
+            │ · └── jazz LEAF id:14
+            └── temp.txt LEAF id:12
         `);
 
         function getRowsToUpdate(node: IRowNode, parentPath: string[]) {
@@ -77,47 +77,47 @@ describe('ag-grid tree transactions', () => {
         moveSelectedNodeToTarget('9');
 
         new TreeDiagram(api, 'move Documents/txt to Documents/stuff/').check(`
-            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-            ├─┬ Documents LEAF level:0 id:1
-            │ ├─┬ pdf LEAF level:1 id:4
-            │ │ ├── book.pdf LEAF level:2 id:5
-            │ │ └── cv.pdf LEAF level:2 id:6
-            │ ├─┬ xls LEAF level:1 id:7
-            │ │ └── accounts.xls LEAF level:2 id:8
-            │ └─┬ stuff LEAF level:1 id:9
-            │ · ├── xyz.txt LEAF level:2 id:10
-            │ · └─┬ txt LEAF level:2 selected id:2
-            │ · · └── notes.txt LEAF level:3 id:3
-            ├─┬ Music filler level:0 id:row-group-0-Music
-            │ └─┬ mp3 filler level:1 id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop LEAF level:2 id:11
-            │ · │ └── theme.mp3 LEAF level:3 id:13
-            │ · └── jazz LEAF level:2 id:14
-            └── temp.txt LEAF level:0 id:12
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ Documents LEAF id:1
+            │ ├─┬ pdf LEAF id:4
+            │ │ ├── book.pdf LEAF id:5
+            │ │ └── cv.pdf LEAF id:6
+            │ ├─┬ xls LEAF id:7
+            │ │ └── accounts.xls LEAF id:8
+            │ └─┬ stuff LEAF id:9
+            │ · ├── xyz.txt LEAF id:10
+            │ · └─┬ txt LEAF selected id:2
+            │ · · └── notes.txt LEAF id:3
+            ├─┬ Music filler id:row-group-0-Music
+            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
+            │ · ├─┬ pop LEAF id:11
+            │ · │ └── theme.mp3 LEAF id:13
+            │ · └── jazz LEAF id:14
+            └── temp.txt LEAF id:12
         `);
 
         api.applyTransaction({ update: [{ id: '7', filePath: ['Documents', 'stuff', 'var', 'xls-renamed'] }] });
 
         new TreeDiagram(api, 'rename "Documents/xls" to "Documents/stuff/var/xls-renamed"').check(`
-            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-            ├─┬ Documents LEAF level:0 id:1
-            │ ├─┬ pdf LEAF level:1 id:4
-            │ │ ├── book.pdf LEAF level:2 id:5
-            │ │ └── cv.pdf LEAF level:2 id:6
-            │ ├─┬ xls filler level:1 id:row-group-0-Documents-1-xls
-            │ │ └── accounts.xls LEAF level:2 id:8
-            │ └─┬ stuff LEAF level:1 id:9
-            │ · ├── xyz.txt LEAF level:2 id:10
-            │ · ├─┬ txt LEAF level:2 selected id:2
-            │ · │ └── notes.txt LEAF level:3 id:3
-            │ · └─┬ var filler level:2 id:row-group-0-Documents-1-stuff-2-var
-            │ · · └── xls-renamed LEAF level:3 id:7
-            ├─┬ Music filler level:0 id:row-group-0-Music
-            │ └─┬ mp3 filler level:1 id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop LEAF level:2 id:11
-            │ · │ └── theme.mp3 LEAF level:3 id:13
-            │ · └── jazz LEAF level:2 id:14
-            └── temp.txt LEAF level:0 id:12
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ Documents LEAF id:1
+            │ ├─┬ pdf LEAF id:4
+            │ │ ├── book.pdf LEAF id:5
+            │ │ └── cv.pdf LEAF id:6
+            │ ├─┬ xls filler id:row-group-0-Documents-1-xls
+            │ │ └── accounts.xls LEAF id:8
+            │ └─┬ stuff LEAF id:9
+            │ · ├── xyz.txt LEAF id:10
+            │ · ├─┬ txt LEAF selected id:2
+            │ · │ └── notes.txt LEAF id:3
+            │ · └─┬ var filler id:row-group-0-Documents-1-stuff-2-var
+            │ · · └── xls-renamed LEAF id:7
+            ├─┬ Music filler id:row-group-0-Music
+            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
+            │ · ├─┬ pop LEAF id:11
+            │ · │ └── theme.mp3 LEAF id:13
+            │ · └── jazz LEAF id:14
+            └── temp.txt LEAF id:12
         `);
     });
 });

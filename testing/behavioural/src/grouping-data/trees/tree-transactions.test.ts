@@ -5,7 +5,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import { getAllRows } from '../../test-utils';
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { TreeDiagram } from './tree-test-utils';
+import { TreeDiagram, executeTransactionsAsync } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -31,9 +31,7 @@ describe('ag-grid tree transactions', () => {
         consoleErrorSpy?.mockRestore();
     });
 
-    // test.each(['sync', 'async'])
-
-    test.only('ag-grid tree %s complex transaction', async (mode = 'sync') => {
+    test.each(['sync', 'async'])('ag-grid tree %s complex transaction', async (mode) => {
         const rowA = { id: '0', orgHierarchy: ['A'] };
 
         const rowZ1 = { id: '88', orgHierarchy: ['X', 'Y', 'Z'] };
@@ -80,78 +78,68 @@ describe('ag-grid tree transactions', () => {
         ];
 
         new TreeDiagram(api, 'rowData').check(`
-            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-            ├── A LEAF level:0 id:0
-            └─┬ X filler level:0 id:row-group-0-X
-            · └─┬ Y filler level:1 id:row-group-0-X-1-Y
-            · · └── Z LEAF level:2 id:88
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── A LEAF id:0
+            └─┬ X filler id:row-group-0-X
+            · └─┬ Y filler id:row-group-0-X-1-Y
+            · · └── Z LEAF id:88
         `);
 
         if (mode === 'async') {
-            const promises: Promise<void>[] = [];
-            for (const transaction of transactions) {
-                promises.push(
-                    new Promise((resolve) => {
-                        api.applyTransactionAsync(transaction, () => resolve());
-                    })
-                );
-            }
-
-            api.flushAsyncTransactions();
-            await Promise.all(promises);
+            await executeTransactionsAsync(transactions, api);
         } else {
             api.applyTransaction(transactions[0]);
 
             new TreeDiagram(api, 'Transaction 0').check(`
-                ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-                ├── A LEAF level:0 id:0
-                └─┬ X filler level:0 id:row-group-0-X
-                · └─┬ Y filler level:1 id:row-group-0-X-1-Y
-                · · └─┬ Z LEAF level:2 id:88
-                · · · └── W LEAF level:3 id:99
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├── A LEAF id:0
+                └─┬ X filler id:row-group-0-X
+                · └─┬ Y filler id:row-group-0-X-1-Y
+                · · └─┬ Z LEAF id:88
+                · · · └── W LEAF id:99
             `);
 
             api.applyTransaction(transactions[1]);
 
             new TreeDiagram(api, 'Transaction 1').check(`
-                ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-                ├─┬ A LEAF level:0 id:0
-                │ ├─┬ Y filler level:1 id:row-group-0-A-1-Y
-                │ │ └── Z LEAF level:2 id:88
-                │ └── B LEAF level:1 id:1
-                ├─┬ X filler level:0 id:row-group-0-X
-                │ └─┬ Y filler level:1 id:row-group-0-X-1-Y
-                │ · └─┬ Z filler level:2 id:row-group-0-X-1-Y-2-Z
-                │ · · └── W LEAF level:3 id:99
-                └─┬ C filler level:0 id:row-group-0-C
-                · └── D LEAF level:1 id:2
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├─┬ A LEAF id:0
+                │ ├─┬ Y filler id:row-group-0-A-1-Y
+                │ │ └── Z LEAF id:88
+                │ └── B LEAF id:1
+                ├─┬ X filler id:row-group-0-X
+                │ └─┬ Y filler id:row-group-0-X-1-Y
+                │ · └─┬ Z filler id:row-group-0-X-1-Y-2-Z
+                │ · · └── W LEAF id:99
+                └─┬ C filler id:row-group-0-C
+                · └── D LEAF id:2
             `);
 
             api.applyTransaction(transactions[2]);
 
             new TreeDiagram(api, 'Transaction 2').check(`
-                ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-                ├─┬ A LEAF level:0 id:0
-                │ └── B LEAF level:1 id:1
-                ├─┬ X filler level:0 id:row-group-0-X
-                │ └─┬ Y filler level:1 id:row-group-0-X-1-Y
-                │ · └─┬ Z filler level:2 id:row-group-0-X-1-Y-2-Z
-                │ · · ├── W LEAF level:3 id:99
-                │ · · └── H LEAF level:3 id:3
-                └─┬ C filler level:0 id:row-group-0-C
-                · └── D LEAF level:1 id:2
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├─┬ A LEAF id:0
+                │ └── B LEAF id:1
+                ├─┬ X filler id:row-group-0-X
+                │ └─┬ Y filler id:row-group-0-X-1-Y
+                │ · └─┬ Z filler id:row-group-0-X-1-Y-2-Z
+                │ · · ├── W LEAF id:99
+                │ · · └── H LEAF id:3
+                └─┬ C filler id:row-group-0-C
+                · └── D LEAF id:2
             `);
 
             api.applyTransaction(transactions[3]);
         }
 
         new TreeDiagram(api, 'final').check(`
-            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-            ├─┬ A LEAF level:0 id:0
-            │ └── B LEAF level:1 id:1
-            └─┬ C filler level:0 id:row-group-0-C
-            · ├── D LEAF level:1 id:2
-            · └── E LEAF level:1 id:3
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A LEAF id:0
+            │ └── B LEAF id:1
+            └─┬ C filler id:row-group-0-C
+            · ├── D LEAF id:2
+            · └── E LEAF id:3
         `);
 
         const rows = getAllRows(api);

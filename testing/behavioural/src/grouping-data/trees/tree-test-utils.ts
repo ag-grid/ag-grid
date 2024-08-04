@@ -1,4 +1,4 @@
-import type { GridApi, IRowNode } from '@ag-grid-community/core';
+import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
 
 import { isGridApi } from '../../test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
@@ -8,6 +8,20 @@ const info = console.info;
 
 function rowKey(row: IRowNode | null | undefined): string {
     return row?.key ?? row?.id ?? 'null';
+}
+
+export async function executeTransactionsAsync(transactions: RowDataTransaction<any>[], api: GridApi<any>) {
+    const promises: Promise<void>[] = [];
+    for (const transaction of transactions) {
+        promises.push(
+            new Promise((resolve) => {
+                api.applyTransactionAsync(transaction, () => resolve());
+            })
+        );
+    }
+
+    api.flushAsyncTransactions();
+    await Promise.all(promises);
 }
 
 function findTreeRootNodes(gridApi: GridApi | IRowNode[]): IRowNode[] {
@@ -43,9 +57,6 @@ export class TreeDiagram {
     private errorsCount: number = 0;
     private rowIdxCounter: number = 0;
 
-    /** optional overridable method */
-    public rowToString?: (row: IRowNode) => string;
-
     public constructor(root: IRowNode | IRowNode[] | GridApi, label: string = '') {
         this.label = label;
         this.diagram = '\n';
@@ -61,6 +72,53 @@ export class TreeDiagram {
         }
     }
 
+    private getNodeType(row: IRowNode): string {
+        if (row.level === -1 && row === this.root) {
+            return 'ROOT';
+        } else if (row.data) {
+            return 'LEAF';
+        }
+        return 'filler';
+    }
+
+    private formatRowErrors(errors: string[]): string {
+        return errors.map((err) => '❌' + err).join(' ');
+    }
+
+    private buildRowInfo(row: IRowNode, type: string, duplicateParent: IRowNode | null | undefined): string {
+        let rowInfo = `${type} `;
+
+        if (row.isSelected()) {
+            rowInfo += 'selected ';
+        }
+        if (row.level >= 0 && !row.expanded) {
+            rowInfo += '!expanded ';
+        }
+        rowInfo += `id:${row.id} `;
+        if (row.data?._diagramLabel) {
+            rowInfo += 'label:' + row.data._diagramLabel + ' ';
+        }
+        if (duplicateParent !== undefined) {
+            rowInfo += ' ' + this.formatRowErrors(['DUPLICATE in ' + rowKey(duplicateParent)]);
+        }
+
+        return rowInfo;
+    }
+
+    private recurseChildren(row: IRowNode, branch: string, level: number, expanded: boolean, children: IRowNode[]) {
+        for (let i = 0; i < children.length; i++) {
+            const child = children[i];
+            this.recurseRow(
+                child,
+                row,
+                i === children.length - 1 ? branch + '└─' : branch + '├─',
+                level + 1,
+                i,
+                expanded && (!row.parent || row.expanded)
+            );
+        }
+    }
+
     private recurseRow(
         row: IRowNode,
         parent: IRowNode | null,
@@ -69,52 +127,55 @@ export class TreeDiagram {
         idx: number,
         expanded: boolean
     ) {
-        if (level < 0) this.rowIdxCounter = -1;
+        if (level < 0) {
+            this.rowIdxCounter = -1;
+        }
 
         const duplicateParent = this.uniqueNodeParents.get(row);
         const children = row.childrenAfterGroup;
-        const type = row.level === -1 && row === this.root ? 'ROOT' : row.data ? 'LEAF' : 'filler';
-        this.diagram += `${branch}${branch.length ? (children?.length ? '┬ ' : '─ ') : ''}${rowKey(row)} ${type} level:${level} `;
-        if (row.isSelected()) this.diagram += 'selected ';
-        if (row.level >= 0 && !row.expanded) this.diagram += '!expanded ';
+        const type = this.getNodeType(row);
+        const branchPrefix = branch.length ? (children?.length ? '┬ ' : '─ ') : '';
+        const rowInfo = this.buildRowInfo(row, type, duplicateParent);
+
+        this.diagram += `${branch}${branchPrefix}${rowKey(row)} ${rowInfo}`;
+
+        let expectedUiLevel: number | undefined = Math.ceil(branch.length / 2 - 1);
+        if (expectedUiLevel < 0) {
+            expectedUiLevel = undefined;
+        }
+
         this.rowErrors = [];
-        if (duplicateParent !== undefined) {
-            this.rowErrors.push('DUPLICATE in ' + rowKey(duplicateParent));
-        } else {
+        if (duplicateParent === undefined) {
             this.uniqueNodeParents.set(row, parent);
-            this.checkRow(row, level, parent!, idx, expanded);
+            this.checkRow(row, level, parent!, idx, expanded, expectedUiLevel);
+        } else {
+            this.rowErrors.push('DUPLICATE in ' + rowKey(duplicateParent));
         }
         this.errorsCount += this.rowErrors.length;
         this.hasErrors ||= this.errorsCount > 0;
-        this.diagram += `id:${row.id} `;
-        if (row.data?._diagramLabel) {
-            this.diagram += 'label:' + row.data._diagramLabel + ' ';
+        this.diagram += ' ' + this.formatRowErrors(this.rowErrors) + '\n';
+
+        if (branch.length > 0) {
+            branch = branch.slice(0, -2) + (branch.slice(-2) === '└─' ? '· ' : '│ ');
         }
-        if (this.rowToString) this.diagram += ' ' + this.rowToString(row);
-        this.diagram += ' ' + this.rowErrors.map((err) => '❌' + err).join(' ');
-        this.diagram += '\n';
-        if (branch.length) branch = branch.slice(0, -2) + (branch.slice(-2) === '└─' ? '· ' : '│ ');
 
         if (expanded || !row.parent) {
             ++this.rowIdxCounter;
         }
 
         if (!duplicateParent && children) {
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i];
-                this.recurseRow(
-                    child,
-                    row,
-                    i === children.length - 1 ? branch + '└─' : branch + '├─',
-                    level + 1,
-                    i,
-                    expanded && (!row.parent || row.expanded)
-                );
-            }
+            this.recurseChildren(row, branch, level, expanded, children);
         }
     }
 
-    private checkRow(row: IRowNode<any>, level: number, parent: IRowNode<any> | null, idx: number, expanded: boolean) {
+    private checkRow(
+        row: IRowNode<any>,
+        level: number,
+        parent: IRowNode<any> | null,
+        idx: number,
+        expanded: boolean,
+        expectedUiLevel: number | undefined
+    ) {
         if (row === this.root) {
             if (row.id !== 'ROOT_NODE_ID') this.rowErrors.push('ROOT_NODE_ID!');
             if (row.key) this.rowErrors.push('ROOT_NODE_KEY!');
@@ -199,11 +260,29 @@ export class TreeDiagram {
             }
             this.uniqueChildrenAfterGroupArrays.set(row.childrenAfterGroup, rowKey(row));
         }
+
+        if (expectedUiLevel !== row.uiLevel) {
+            this.rowErrors.push('UI_LEVEL!=' + expectedUiLevel);
+            this.diagram += 'row.uiLevel:' + row.uiLevel + ' ';
+        }
     }
 
     public print(): this {
         log(this.diagram);
         return this;
+    }
+
+    public checkEmpty(): void {
+        if (this.root?.childrenAfterGroup?.length) {
+            const error = new Error(
+                'Expected empty tree, but found ' +
+                    this.root.childrenAfterGroup.length +
+                    ' children.\n' +
+                    this.toString()
+            );
+            Error.captureStackTrace(error, this.checkEmpty);
+            throw error;
+        }
     }
 
     public check(diagramSnapshot?: string | string[] | true): void {

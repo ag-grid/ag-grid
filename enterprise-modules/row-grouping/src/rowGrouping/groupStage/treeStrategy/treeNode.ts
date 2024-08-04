@@ -1,18 +1,17 @@
 import { RowNode } from '@ag-grid-community/core';
 
 /**
- * We need this to mark a row as expanded value already precomputed.
- * A row can be reinserted after a rowData replacement, and we want to maintain the expanded state.
+ * We use this symbol to mark a row as initial expanded state already precomputed.
+ * We don't want to recompute the expanded state more than once, we want to keep it as it is,
+ * except if the row is explicitly removed, in that case we reset this flag.
  */
 const EXPANDED_INITIALIZED_SYM = Symbol('expandedInitialized');
 
 /**
- * Used to map a TreeNode to a RowNode, so we can find the right tree node for a row in O(1).
+ * Symbol used to map a TreeNode to a RowNode, so we can find the right tree node for a row in O(1).
  * The association is disposed when the row is removed from the tree, or, when the TreeStrategy gets disposed.
  */
 const TREE_NODE_SYM = Symbol('treeNode');
-
-const EMPTY_CHILDREN: TreeNode[] = [];
 
 interface TreeRow extends RowNode {
     [TREE_NODE_SYM]?: TreeNode | null | undefined;
@@ -23,16 +22,20 @@ interface TreeRow extends RowNode {
 export const getTreeNode = (row: RowNode | null | undefined): TreeNode | null =>
     (row as TreeRow | null)?.[TREE_NODE_SYM] ?? null;
 
-/** Sets the TreeNode associated to a RowNode */
-export const setTreeNode = (row: RowNode, node: TreeNode | null): void => {
-    (row as TreeRow)[TREE_NODE_SYM] = node;
-};
-
 export const getExpandedInitialized = (row: RowNode): boolean => !!(row as TreeRow)[EXPANDED_INITIALIZED_SYM];
 
 export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
     (row as TreeRow)[EXPANDED_INITIALIZED_SYM] = value;
 };
+
+/** An empty iterator */
+const EMPTY_CHILDREN = ([] as readonly TreeNode[]).values();
+
+interface TreeNodeWritablePrivateFields {
+    parent: TreeNode | null;
+    row: RowNode | null;
+    ghost: boolean;
+}
 
 /**
  * We keep a secondary tree data structure together with the rows.
@@ -42,23 +45,44 @@ export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
  * TreeStrategy uses a two stage approach both for first time creation and updates.
  * Multiple updates interact with the tree, and a commit stage commits all updates reducing expensive computations.
  *
- * The only interactions in the creation and update allowed are:
- *  - insert a filler node, done with node.upsertNodeByKey, node.upsertPath
- *  - replace the existing node row with another, or null, with TreeStrategy.setRowPath
+ * The operations allowed are:
+ *  - insert a filler node, done with node.upsertKey or TreeStrategy.upsertPath
+ *  - replace the existing node row with another, or null, with TreeStrategy.overwriteRow
+ *  - destroy the whole tree with TreeStrategy.destroy
  *
- * Those operation invalidate the affected paths with node.invalidate(), so that the commit operation will only
+ * Insert and overwrite will invalidate the affected paths with node.invalidate(), so that the commit operation will only
  * update the affected paths without traversing the whole tree.
+ * Consider that order of invalidated items is not deterministic, so the commit operation should be able to handle any order.
+ * The subtrees that don't have children after a move or remove operation will be marked as ghosts and removed during commit.
  *
  * During commit, the childrenAfterGroup and allLeafChildren arrays are rebuilt, and the updates are applied.
- * The filler nodes without children are recursively removed.
+ * The ghost nodes are removed.
  * Before commit those arrays are NOT representing the truth, so they should not be used.
- *
- * Deletion and moving subtrees should be performed only by setting rows with TreeStrategy.setRowPath and not by
- * moving node around.
  */
-export class TreeNode {
+export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
+    /** Keep track of the number of children that are ghosts in this node */
+    private ghostsCount: number = 0;
+
+    /**
+     * The children of the tree, where the key is the node key and the value is the child node.
+     * We use this to avoid exploring the whole tree during commit, we will just go to the paths
+     * that are changed in DFS order.
+     */
+    private children: Map<string, TreeNode> | null = null;
+
+    /** The head of the linked list of direct children nodes that are invalidated and need to be committed. */
+    private invalidatedHead: TreeNode | null = null;
+
+    /**
+     * The next node in the linked list of parent.invalidatedHead.
+     * - undefined: the node is not invalidated (not present in the parent linked list)
+     * - null: this is the first and last node in the linked list
+     * - TreeNode instance: is the next node in the linked list
+     */
+    private invalidatedNext: TreeNode | null | undefined = undefined;
+
     /** The RowNode associated to this tree node */
-    public row: RowNode | null = null;
+    public readonly row: RowNode | null = null;
 
     /** We keep the row.childrenAfterGroup here, we just swap it when we assign row */
     public readonly childrenAfterGroup: RowNode[] = [];
@@ -72,39 +96,35 @@ export class TreeNode {
     /** We set this to true if a update transaction happened on this row, is set to false during commit. */
     public rowUpdated: boolean = false;
 
+    /**  True if changedPath.addParentNode(row) should be called on this node. Reset to false during commit. */
+    public pathChanged: boolean = false;
+
+    /** True if childrenAfterGroup should be fully recomputed. Reset to false during commit. */
+    public childChanged: boolean = false;
+
+    /** True if childrenAfterGroup array should be filtered from removed nodes. Reset to false during commit. */
+    public childRemoved: boolean = false;
+
+    /** True allLeafChildren should be recomputed. Reset to false during commit. */
+    public leafChildrenChanged: boolean = false;
+
+    /** A ghost node is a node that should be removed */
+    public readonly ghost: boolean;
+
     /** The parent node of this node, or null if removed or the root. */
-    public parent: TreeNode | null;
+    public readonly parent: TreeNode | null;
 
     /** The key of this node. */
     public readonly key: string;
 
-    /**
-     * The children of the tree, where the key is the node key and the value is the child node.
-     * We use this to avoid exploring the whole tree during commit, we will just go to the paths
-     * that are changed in DFS order.
-     */
-    private children: Map<string, TreeNode> | null = null;
+    /** The level of this node. Root has level -1 */
+    public readonly level: number;
 
-    /** The head of the linked list of direct children nodes that are invalidated and need to be committed. */
-    private invalidatedHead: TreeNode | null | undefined = null;
-
-    /**
-     * The tail of the linked list of direct children nodes that are invalidated and need to be committed.
-     * This is required to process invalidated nodes in the insertion order, this is required by the commit algorithm.
-     */
-    private invalidatedTail: TreeNode | null = null;
-
-    /**
-     * The next node in the linked list of parent.invalidatedHead.
-     * - undefined means that the node is not invalidated (not present in the parent linked list)
-     * - null this is the last node in the linked list
-     * - a TreeNode is the next node in the linked list
-     */
-    private invalidatedNext: TreeNode | null | undefined = undefined;
-
-    public constructor(parent: TreeNode | null, key: string) {
+    public constructor(parent: TreeNode | null, key: string, level: number, ghost: boolean) {
         this.parent = parent;
         this.key = key;
+        this.level = level;
+        this.ghost = ghost;
     }
 
     /** Returns the number of children in this node */
@@ -112,136 +132,163 @@ export class TreeNode {
         return this.children?.size ?? 0;
     }
 
-    /** Returns an iterator able to iterate all children in this node */
+    /** Returns an iterator able to iterate all children in this node, in order of insertion */
     public enumChildren(): IterableIterator<TreeNode> {
-        return (this.children ?? EMPTY_CHILDREN).values();
-    }
-
-    /** Returns true if this is an empty filler node (no row, or a row with no data) */
-    public isEmptyFillerNode(): boolean {
-        return !this.children?.size && !this.row?.data;
+        return this.children?.values() ?? EMPTY_CHILDREN;
     }
 
     /**
      * Gets a node a key in the given parent. If the node does not exists, creates a filler node, with null row.
-     * Invalidates the path to the node from the root if a filler node is added.
+     * Note that invalidate() is not called, is up to the caller to call it if needed.
      * @returns the node at the given key, or a new filler node inserted there if it does not exist.
      */
-    public upsertChild(key: string): TreeNode {
+    public upsertKey(key: string): TreeNode {
         let node = this.children?.get(key);
         if (!node) {
-            node = new TreeNode(this, key);
+            node = new TreeNode(this, key, this.level + 1, true);
             (this.children ??= new Map()).set(key, node);
-            node.invalidate();
+            ++this.ghostsCount;
         }
         return node;
     }
 
     /**
-     * Given a path to follow, it creates the nodes in the path if they don't exist.
-     * @returns the last node in the path, or null if the path is empty.
+     * Bidirectionally links (or unlink) a row to a node.
+     * It does not invalidate the node or update the ghost state, it's up to the caller to do it, if applicable.
      */
-    public upsertPath(path: string[]): TreeNode | null {
-        for (let level = 0, parent: TreeNode | null = this, stopLevel = path.length - 1; level <= stopLevel; ++level) {
-            const key = path[level];
-            const node: TreeNode | null = parent.upsertChild(key);
-            if (level >= stopLevel) {
-                return node;
-            }
-            parent = node;
+    public linkRow(newRow: RowNode | null): boolean {
+        const { row: oldRow } = this;
+        if (oldRow === newRow) {
+            return false; // No change
         }
-        return null;
-    }
 
-    /**
-     * Deletes a children node from this node, and set its parent to null.
-     * It does not invalidate this node, as this is supposed to be called during commit only.
-     */
-    public deleteChild(node: TreeNode): boolean {
-        const children = this.children;
-        if (node.parent !== this || !children?.delete(node.key)) {
-            return false;
+        if (oldRow) {
+            (oldRow as TreeRow)[TREE_NODE_SYM] = null;
+            oldRow.parent = null;
+            oldRow.level = 0;
+            if (this.level < 0) {
+                oldRow.childrenAfterGroup = [];
+            } else {
+                oldRow.childrenAfterGroup = null;
+                oldRow.allLeafChildren = null;
+            }
         }
-        if (!children.size) {
-            this.children = null;
+
+        if (newRow) {
+            (newRow as TreeRow)[TREE_NODE_SYM] = this;
+            newRow.parent = this.parent?.row ?? null;
+            newRow.level = this.level;
+            newRow.childrenAfterGroup = this.childrenAfterGroup;
+            if (this.level >= 0) {
+                newRow.allLeafChildren = this.allLeafChildren;
+            }
         }
-        node.parent = null;
+
+        (this as TreeNodeWritablePrivateFields).row = newRow;
+
         return true;
     }
 
     /**
      * Invalidates this node and all its parents until the root is reached.
-     * Order of invalidation is maintained when node.dequeueInvalidated is called.
+     * Order of invalidated nodes is not deterministic.
      * The root itself cannot be invalidated, as it has no parents.
-     * This is optimized, if a node is already invalidated, it will stop the recursion.
+     * If a node is already invalidated, it will stop the recursion.
      */
     public invalidate(): void {
         let node: TreeNode | null = this;
-        do {
-            const parent: TreeNode | null = node.parent;
-            if (!parent || node.invalidatedNext !== undefined) {
-                break; // This is the root, or an already invalidated node
-            }
-            node.invalidatedNext = null; // Mark as invalidated, and last in the linked list
-            const tail = parent.invalidatedTail;
-            if (tail) {
-                tail.invalidatedNext = node;
-            } else {
-                parent.invalidatedHead = node;
-            }
-            parent.invalidatedTail = node;
-
-            node = parent; // Go to the parent
-        } while (node);
+        while (node?.invalidateThis()) {
+            node = node.parent;
+        }
     }
 
     /**
-     * Dequeues the next child invalidated node to be committed.
+     * Dequeues the next child invalidated node to be committed. Order is not deterministic.
      * @returns the next child node to be committed, or null if all children were already dequeued.
      */
     public dequeueInvalidated(): TreeNode | null {
         const node = this.invalidatedHead;
-        if (!node) {
-            return null;
+        if (node !== null) {
+            this.invalidatedHead = node.invalidatedNext ?? null;
+            node.invalidatedNext = undefined; // Mark as not invalidated
         }
-        this.invalidatedHead = node.invalidatedNext;
-        if (!this.invalidatedHead) {
-            this.invalidatedTail = null;
-        }
-        node.invalidatedNext = undefined;
         return node;
     }
 
-    /** Clears the invalidated list of children nodes. */
-    public clearInvalidatedList(): void {
-        let node = this.invalidatedHead;
-        this.invalidatedHead = null;
-        this.invalidatedTail = null;
-        while (node) {
-            const nextNode = node.invalidatedNext;
-            node.invalidatedNext = undefined;
-            node = nextNode;
+    /**
+     * Invalidates this node by adding this node in the queue of invalidated children in the parent node.
+     * Order of invalidation is not deterministic.
+     * It does not traverse the tree up to the root, it only affect the parent node.
+     * @returns true if the node was invalidated during this call, false if it was already invalidated or there is no parent.
+     */
+    private invalidateThis(): boolean {
+        const { parent, invalidatedNext } = this;
+        if (parent === null || invalidatedNext !== undefined) {
+            return false;
         }
+        this.invalidatedNext = parent.invalidatedHead;
+        parent.invalidatedHead = this;
+        return true;
     }
 
-    /** Used to free memory and reset the node and/or row */
-    public clear(clearRow: boolean) {
-        const row = clearRow && this.row;
-        this.childrenAfterGroup.length = 0;
-        this.allLeafChildren.length = 0;
-        this.oldRow = null;
-        this.children = null;
-        if (row) {
-            this.row = null;
-            if (row.level >= 0) {
-                row.childrenAfterGroup = null;
-                row.allLeafChildren = null;
-            } else {
-                row.childrenAfterGroup = []; // root node
+    /**
+     * Updates the ghost status of this node and its parents.
+     * It stops updating the parents when a parent ghost status matches.
+     * @returns true if the ghost status changed, false if it was already the same.
+     */
+    public updateIsGhost(): boolean {
+        let result = false;
+        let node: TreeNode | null = this;
+        let parent: TreeNode | null = this.parent;
+        while (parent) {
+            const { ghost, row } = node;
+
+            const newGhost = !row?.data && node.ghostsCount === node.childrenCount();
+            if (newGhost === ghost) {
+                break; // No changes, stop here
             }
-            setTreeNode(row, null);
+
+            (node as TreeNodeWritablePrivateFields).ghost = newGhost;
+
+            if (newGhost) {
+                ++parent.ghostsCount;
+            } else {
+                --parent.ghostsCount;
+
+                // This was a ghost node, now is not, move the node at the end of the children list
+                // This is needed to generate a consistent ordering of re-inserted nodes in the childrenAfterGroup array
+                const key = node.key;
+                const parentChildren = parent.children;
+                if (parentChildren?.delete(key)) {
+                    parentChildren.set(key, node);
+                    if (node.oldRow !== null) {
+                        parent.childChanged = true;
+                    }
+                }
+            }
+
+            node = parent;
+            parent = node.parent;
+            result = true;
         }
-        this.clearInvalidatedList();
+        return result;
+    }
+
+    /**
+     * Used to free memory and break the association to the node row
+     * It does not invalidate and does not update the parent ghost status.
+     * After destroyed this node cannot be used, and need to be thrown away.
+     * It is safe to destroy the root however.
+     */
+    public remove(): void {
+        const parent = this.parent;
+        if (parent?.children?.delete(this.key)) {
+            if (this.ghost) {
+                --parent.ghostsCount;
+            }
+        }
+        (this as TreeNodeWritablePrivateFields).parent = null;
+        this.children = null;
     }
 
     /**
@@ -286,17 +333,17 @@ export class TreeNode {
         }
         return changed;
     }
-}
 
-/**
- * Called during commit to make the id of a new filler node.
- * We put "row-group-" before the group id, so it doesn't clash with standard row id's.
- * We also use 't-' and 'b-' for top pinned and bottom pinned rows.
- */
-export function makeFillerRowId(node: TreeNode, level: number): string {
-    let id = level + '-' + node.key;
-    for (let p = node.parent; p?.parent; p = p.parent) {
-        id = `${--level}-${p.key}-${id}`;
+    /**
+     * Called during commit to make the id of a new filler node.
+     * We put "row-group-" before the group id, so it doesn't clash with standard row id's.
+     * We also use 't-' and 'b-' for top pinned and bottom pinned rows.
+     */
+    public fillerRowId(): string {
+        let id = this.level + '-' + this.key;
+        for (let p = this.parent; p?.parent; p = p.parent) {
+            id = `${p.level}-${p.key}-${id}`;
+        }
+        return RowNode.ID_PREFIX_ROW_GROUP + id;
     }
-    return RowNode.ID_PREFIX_ROW_GROUP + id;
 }

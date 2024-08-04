@@ -55,15 +55,15 @@ describe('ag-grid grouping tree data with groupRows', () => {
         const api = createMyGrid(gridOptions);
 
         new TreeDiagram(api).check(`
-            ROOT_NODE_ID ROOT level:-1 id:ROOT_NODE_ID
-            ├─┬ A LEAF level:0 id:0
-            │ └── B LEAF level:1 id:1
-            ├─┬ C filler level:0 id:row-group-0-C
-            │ └── D LEAF level:1 id:2
-            └─┬ E filler level:0 id:row-group-0-E
-            · └─┬ F filler level:1 id:row-group-0-E-1-F
-            · · └─┬ G filler level:2 id:row-group-0-E-1-F-2-G
-            · · · └── H LEAF level:3 id:3`);
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A LEAF id:0
+            │ └── B LEAF id:1
+            ├─┬ C filler id:row-group-0-C
+            │ └── D LEAF id:2
+            └─┬ E filler id:row-group-0-E
+            · └─┬ F filler id:row-group-0-E-1-F
+            · · └─┬ G filler id:row-group-0-E-1-F-2-G
+            · · · └── H LEAF id:3`);
 
         const rows = getAllRows(api);
 
