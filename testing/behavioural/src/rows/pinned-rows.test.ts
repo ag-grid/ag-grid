@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
-describe('pinned rows', () => {
+describe('Pinned rows', () => {
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     const topData = [{ athlete: 'Top Athlete', sport: 'Top Sport', age: 11 }];
     const bottomData = [{ athlete: 'Bottom Athlete', sport: 'Bottom Sport', age: 22 }];
@@ -178,6 +178,23 @@ describe('pinned rows', () => {
             api.setGridOption('pinnedTopRowData', undefined);
             assertPinnedRowData([], 'top');
         });
+
+        test('cannot render duplicate rows with getRowId', () => {
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            const getRowId = jest.fn((p) => JSON.stringify(p.data));
+            createMyGrid({ columnDefs, pinnedTopRowData: topData.concat(topData), getRowId });
+
+            assertPinnedRowData(topData, 'top');
+            expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+            expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+                'AG Grid: Duplicate ID',
+                JSON.stringify(topData[0]),
+                'found for pinned row with data',
+                topData[0],
+                'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.'
+            );
+            consoleWarnSpy.mockRestore();
+        });
     });
 
     describe('bottom', () => {
@@ -316,6 +333,23 @@ describe('pinned rows', () => {
 
             api.setGridOption('pinnedBottomRowData', undefined);
             assertPinnedRowData([], 'bottom');
+        });
+
+        test('cannot render duplicate rows with getRowId', () => {
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            const getRowId = jest.fn((p) => JSON.stringify(p.data));
+            createMyGrid({ columnDefs, pinnedBottomRowData: bottomData.concat(bottomData), getRowId });
+
+            assertPinnedRowData(bottomData, 'bottom');
+            expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+            expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+                'AG Grid: Duplicate ID',
+                JSON.stringify(bottomData[0]),
+                'found for pinned row with data',
+                bottomData[0],
+                'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.'
+            );
+            consoleWarnSpy.mockRestore();
         });
     });
 });
