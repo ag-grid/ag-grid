@@ -115,11 +115,10 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
                     'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.'
                 );
                 continue;
-            } else {
-                i++;
-                dataIds.add(id);
             }
 
+            i++;
+            dataIds.add(id);
             newOrder.push(id);
 
             const existingNode = nodes.getById(id);
