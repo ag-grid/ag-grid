@@ -79,29 +79,27 @@ Note that if [Row Selection](./row-selection/) is enabled, it is recommended to 
 The Cell Component for a Column is set via `colDef.cellRenderer` and can be any of the following types:
 
 {% if isFramework("javascript") %}
-1. `String`: The name of a registered Cell Component.*
+1. `String`: The name of a registered Cell Component, see [Registering Custom Components](./components/#registering-custom-components)
 1. `Class`: Direct reference to a Cell Component.
 1. `Function`: A function that returns either an HTML string or DOM element for display.
 {% /if %}
 
 {% if isFramework("angular") %}
-1. `String`: The name of a registered Cell Component.*
+1. `String`: The name of a registered Cell Component, see [Registering Custom Components](./components/#registering-custom-components)
 1. `Class`: Direct reference to a Cell Component.
 1. `Function`: A function that returns either an HTML string or DOM element for display.
 {% /if %}
 
 {% if isFramework("vue") %}
-1. `String`: The name of a registered Cell Component.*
+1. `String`: The name of a registered Cell Component, see [Registering Custom Components](./components/#registering-custom-components)
 1. `Function`: A function that returns either an HTML string or DOM element for display.
 {% /if %}
 
 {% if isFramework("react") %}
-1. `String`: The name of a registered Cell Component.*
+1. `String`: The name of a registered Cell Component, see [Registering Custom Components](./components/#registering-custom-components)
 1. `Component`: Direct reference to a Cell Component.
 1. `Inlined Component`: An inlined Cell Component.
 {% /if %}
-
-\*If referenced by name then the Cell Component must [first be registered](./components/#registering-custom-components).
 
 The code snippet below demonstrates each of these method types.
 
