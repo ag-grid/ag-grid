@@ -132,28 +132,26 @@ const gridOptions = {
 
 {% if isFramework("react") %}
 ```{% spaceBetweenProperties=true %}
-const gridOptions = {
-    columnDefs: [
-        // 1 - String - The name of a Cell Component registered with the grid.
-        {
-            field: 'age',
-            cellRenderer: 'agGroupCellRenderer',
-        },
-        // 2 - Component - Provide your own Cell Component directly without registering.
-        {
-            field: 'sport',
-            cellRenderer: MyCustomCellRendererClass,
-        },
-        // 3 - Inlined Component
-        {
-            field: 'year',
-            cellRenderer: props => {
-                // put the value in bold
-                return <>Value is <b>{params.value}</b></>;
-            }
+const [columnDefs] = useState([
+    // 1 - String - The name of a Cell Component registered with the grid.
+    {
+        field: 'age',
+        cellRenderer: 'agGroupCellRenderer',
+    },
+    // 2 - Component - Provide your own Cell Component directly without registering.
+    {
+        field: 'sport',
+        cellRenderer: MyCustomCellRendererClass,
+    },
+    // 3 - Inlined Component
+    {
+        field: 'year',
+        cellRenderer: props => {
+            // put the value in bold
+            return <>Value is <b>{params.value}</b></>;
         }
-    ]
-}
+    }
+]);
 ```
 {% /if %}
 
