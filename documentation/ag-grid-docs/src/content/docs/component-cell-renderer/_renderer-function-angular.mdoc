@@ -18,7 +18,7 @@ In the example below we're outputting a string value that depends on the cell va
                ...other properties />`
 })
 export class AppComponent {
-   private columnDefs = [
+   columnDefs = [
        {
            headerName: "Value",
            field: "value",
@@ -31,5 +31,5 @@ export class AppComponent {
 {% /if %}
 
 {% if isFramework("angular") %}
-It is also possible to write a JavaScript-based Cell Renderer Component - refer to the [docs here](./component-cell-renderer/#cell-component-function) for more information
+It is also possible to write a JavaScript-based Cell Renderer Component - refer to the [docs here](/javascript-data-grid/component-cell-renderer/#cell-component-function) for more information
 {% /if %}
