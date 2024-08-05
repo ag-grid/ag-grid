@@ -5,6 +5,7 @@ import { AgGroupComponent } from '@ag-grid-enterprise/core';
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
+import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
 
 export class SeriesChartTypePanel extends Component {
     private chartTranslationService: ChartTranslationService;
@@ -109,7 +110,10 @@ export class SeriesChartTypePanel extends Component {
             seriesItemGroup.addItem(secondaryAxisComp);
 
             const options = (['line', 'area', 'stackedArea', 'groupedColumn', 'stackedColumn'] as const).map(
-                (value) => ({ value, text: this.chartTranslationService.translate(value) })
+                (value) => ({
+                    value,
+                    text: this.chartTranslationService.translate(getFullChartNameTranslationKey(value)),
+                })
             );
 
             const chartTypeComp = seriesItemGroup.createManagedBean(
