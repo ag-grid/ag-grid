@@ -15,7 +15,7 @@ describe('Pinned rows', () => {
         document.body.innerHTML = '<div id="myGrid"></div>';
     }
 
-    function assertPinnedRowData(data: any[], location: 'top' | 'bottom') {
+    function assertPinnedRowData(data: any[], location: 'top' | 'bottom', rowIndices?: string[]) {
         const pinnedRows = document.querySelectorAll(`.ag-floating-${location} .ag-row-pinned`);
 
         expect(pinnedRows.length).toBe(data.length);
@@ -30,6 +30,9 @@ describe('Pinned rows', () => {
             })
             .forEach((row, i) => {
                 const rowData = data[i];
+                if (rowIndices?.[i] != null) {
+                    expect(row.getAttribute('row-index')).toEqual(rowIndices[i]);
+                }
                 row.querySelectorAll('.ag-cell').forEach((cell, colIndex) => {
                     expect(cell.textContent).toBe(rowData[columnDefs[colIndex].field].toString());
                 });
@@ -152,7 +155,7 @@ describe('Pinned rows', () => {
                 getRowId,
             });
 
-            assertPinnedRowData(pinnedTopRowData, 'top');
+            assertPinnedRowData(pinnedTopRowData, 'top', ['t-0', 't-1', 't-2']);
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedTopRowData[2], rowPinned: 'top' })
             );
@@ -164,7 +167,7 @@ describe('Pinned rows', () => {
 
             api.setGridOption('pinnedTopRowData', updatedTop);
 
-            assertPinnedRowData(updatedTop, 'top');
+            assertPinnedRowData(updatedTop, 'top', ['t-0', 't-1']);
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedTop[1], rowPinned: 'top' })
             );
@@ -184,7 +187,7 @@ describe('Pinned rows', () => {
             const getRowId = jest.fn((p) => JSON.stringify(p.data));
             createMyGrid({ columnDefs, pinnedTopRowData: topData.concat(topData), getRowId });
 
-            assertPinnedRowData(topData, 'top');
+            assertPinnedRowData(topData, 'top', ['t-0']);
             expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
             expect(consoleWarnSpy).toHaveBeenLastCalledWith(
                 'AG Grid: Duplicate ID',
@@ -308,7 +311,7 @@ describe('Pinned rows', () => {
                 getRowId,
             });
 
-            assertPinnedRowData(pinnedBottomRowData, 'bottom');
+            assertPinnedRowData(pinnedBottomRowData, 'bottom', ['b-0', 'b-1', 'b-2']);
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedBottomRowData[2], rowPinned: 'bottom' })
             );
@@ -320,7 +323,7 @@ describe('Pinned rows', () => {
 
             api.setGridOption('pinnedBottomRowData', updatedBottom);
 
-            assertPinnedRowData(updatedBottom, 'bottom');
+            assertPinnedRowData(updatedBottom, 'bottom', ['b-0', 'b-1']);
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
@@ -340,7 +343,7 @@ describe('Pinned rows', () => {
             const getRowId = jest.fn((p) => JSON.stringify(p.data));
             createMyGrid({ columnDefs, pinnedBottomRowData: bottomData.concat(bottomData), getRowId });
 
-            assertPinnedRowData(bottomData, 'bottom');
+            assertPinnedRowData(bottomData, 'bottom', ['b-0']);
             expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
             expect(consoleWarnSpy).toHaveBeenLastCalledWith(
                 'AG Grid: Duplicate ID',

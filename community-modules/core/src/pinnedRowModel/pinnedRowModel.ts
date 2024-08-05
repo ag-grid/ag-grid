@@ -102,7 +102,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         const dataIds = new Set<string>();
 
         let nextRowTop = 0;
-        let i = 0;
+        let i = -1;
         for (const data of allData) {
             const id = getRowId?.({ data, level: 0, rowPinned: floating }) ?? idPrefix + this.nextId++;
 
