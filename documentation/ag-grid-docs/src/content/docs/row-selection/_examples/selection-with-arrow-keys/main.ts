@@ -29,12 +29,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function navigateToNextCell(params: NavigateToNextCellParams): CellPosition | null {
-    var suggestedNextCell = params.nextCellPosition;
+    const suggestedNextCell = params.nextCellPosition;
 
-    var KEY_UP = 'ArrowUp';
-    var KEY_DOWN = 'ArrowDown';
+    const KEY_UP = 'ArrowUp';
+    const KEY_DOWN = 'ArrowDown';
 
-    var noUpOrDownKey = params.key !== KEY_DOWN && params.key !== KEY_UP;
+    const noUpOrDownKey = params.key !== KEY_DOWN && params.key !== KEY_UP;
     if (noUpOrDownKey || !suggestedNextCell) {
         return suggestedNextCell;
     }
