@@ -134,7 +134,7 @@ export abstract class AbstractHeaderCellCtrl<
         checkMeasuringCallback?: (callback: () => void) => void;
     }) {
         const { wrapperElement, checkMeasuringCallback } = params;
-        const { resizeObserverService } = this.beans;
+        const { animationFrameService, resizeObserverService, columnModel, gos } = this.beans;
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive()) {
                 return;
@@ -149,7 +149,7 @@ export abstract class AbstractHeaderCellCtrl<
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = this.beans.gos.getDocument();
+                const doc = gos.getDocument();
                 const notYetInDom = !doc || !doc.contains(wrapperElement);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
@@ -157,12 +157,12 @@ export abstract class AbstractHeaderCellCtrl<
                 const possiblyNoContentYet = autoHeight == 0;
 
                 if (notYetInDom || possiblyNoContentYet) {
-                    window.setTimeout(() => measureHeight(timesCalled + 1), 0);
+                    animationFrameService.requestAnimationFrame(() => measureHeight(timesCalled + 1));
                     return;
                 }
             }
 
-            this.beans.columnModel.setColHeaderHeight(this.column, autoHeight);
+            columnModel.setColHeaderHeight(this.column, autoHeight);
         };
 
         let isMeasuring = false;
