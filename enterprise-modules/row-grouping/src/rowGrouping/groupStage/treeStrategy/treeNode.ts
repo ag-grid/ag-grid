@@ -1,32 +1,6 @@
 import { RowNode } from '@ag-grid-community/core';
 
-/**
- * We use this symbol to mark a row as initial expanded state already precomputed.
- * We don't want to recompute the expanded state more than once, we want to keep it as it is,
- * except if the row is explicitly removed, in that case we reset this flag.
- */
-const EXPANDED_INITIALIZED_SYM = Symbol('expandedInitialized');
-
-/**
- * Symbol used to map a TreeNode to a RowNode, so we can find the right tree node for a row in O(1).
- * The association is disposed when the row is removed from the tree, or, when the TreeStrategy gets disposed.
- */
-const TREE_NODE_SYM = Symbol('treeNode');
-
-interface TreeRow extends RowNode {
-    [TREE_NODE_SYM]?: TreeNode | null | undefined;
-    [EXPANDED_INITIALIZED_SYM]?: unknown;
-}
-
-/** Gets the TreeNode associated to a RowNode */
-export const getTreeNode = (row: RowNode | null | undefined): TreeNode | null =>
-    (row as TreeRow | null)?.[TREE_NODE_SYM] ?? null;
-
-export const getExpandedInitialized = (row: RowNode): boolean => !!(row as TreeRow)[EXPANDED_INITIALIZED_SYM];
-
-export const setExpandedInitialized = (row: RowNode, value: boolean): void => {
-    (row as TreeRow)[EXPANDED_INITIALIZED_SYM] = value;
-};
+import { setTreeRowTreeNode } from './treeRowNode';
 
 /** An empty iterator */
 const EMPTY_CHILDREN = ([] as readonly TreeNode[]).values();
@@ -91,9 +65,6 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
 
     /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
     public oldRow: RowNode | null = null;
-
-    /** We set this to true if a update transaction happened on this row, is set to false during commit. */
-    public rowUpdated: boolean = false;
 
     /**  True if changedPath.addParentNode(row) should be called on this node. Reset to false during commit. */
     public pathChanged: boolean = false;
@@ -162,7 +133,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
         }
 
         if (oldRow) {
-            (oldRow as TreeRow)[TREE_NODE_SYM] = null;
+            setTreeRowTreeNode(oldRow, null);
             oldRow.parent = null;
             oldRow.level = 0;
             if (this.level < 0) {
@@ -174,7 +145,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
         }
 
         if (newRow) {
-            (newRow as TreeRow)[TREE_NODE_SYM] = this;
+            setTreeRowTreeNode(newRow, this);
             newRow.parent = this.parent?.row ?? null;
             newRow.level = this.level;
             newRow.childrenAfterGroup = this.childrenAfterGroup;
@@ -231,46 +202,41 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
     }
 
     /**
-     * Updates the ghost status of this node and its parents.
-     * It stops updating the parents when a parent ghost status matches.
+     * Updates the ghost status of this node.
+     * This method does not update the status of the parents.
      * @returns true if the ghost status changed, false if it was already the same.
      */
-    public updateIsGhost(): boolean {
-        let result = false;
-        let node: TreeNode | null = this;
-        let parent: TreeNode | null = this.parent;
-        while (parent) {
-            const { ghost, row } = node;
+    public updateThisIsGhost(): boolean {
+        const { parent, row, ghost } = this;
+        if (parent === null) {
+            return false; // Root cannot be a ghost
+        }
 
-            const newGhost = !row?.data && node.ghostsCount === node.childrenCount();
-            if (newGhost === ghost) {
-                break; // No changes, stop here
-            }
+        const newGhost = !row?.data && this.ghostsCount === this.childrenCount();
+        if (newGhost === ghost) {
+            return false; // No changes
+        }
 
-            (node as TreeNodeWritablePrivateFields).ghost = newGhost;
+        (this as TreeNodeWritablePrivateFields).ghost = newGhost;
 
-            if (newGhost) {
-                ++parent.ghostsCount;
-            } else {
-                --parent.ghostsCount;
+        if (newGhost) {
+            ++parent.ghostsCount;
+        } else {
+            --parent.ghostsCount;
 
-                // This was a ghost node, now is not, move the node at the end of the children list
-                // This is needed to generate a consistent ordering of re-inserted nodes in the childrenAfterGroup array
-                const key = node.key;
-                const parentChildren = parent.children;
-                if (parentChildren?.delete(key)) {
-                    parentChildren.set(key, node);
-                    if (node.oldRow !== null) {
-                        parent.childChanged = true;
-                    }
+            // This was a ghost node, now is not, move the node at the end of the children list
+            // This is needed to generate a consistent ordering of re-inserted nodes in the childrenAfterGroup array
+            const key = this.key;
+            const parentChildren = parent.children;
+            if (parentChildren?.delete(key)) {
+                parentChildren.set(key, this);
+                if (this.oldRow !== null) {
+                    parent.childChanged = true;
                 }
             }
-
-            node = parent;
-            parent = node.parent;
-            result = true;
         }
-        return result;
+
+        return true;
     }
 
     /**
