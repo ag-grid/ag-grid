@@ -655,31 +655,28 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             case 'enableRangeHandle':
                 return cellOptionWithFallback(
                     option,
-                    (opts) => opts.handle === true || (opts.handle && opts.handle?.mode === 'range')
+                    ({ handle }) => handle === true || (handle && handle?.mode === 'range')
                 );
             case 'enableFillHandle':
                 return cellOptionWithFallback(
                     option,
-                    (opts) => typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill'
+                    ({ handle }) => typeof handle !== 'boolean' && handle?.mode === 'fill'
                 );
             case 'suppressClearOnFillReduction':
                 return cellOptionWithFallback(
                     option,
-                    (opts) =>
-                        typeof opts.handle !== 'boolean' &&
-                        opts.handle?.mode === 'fill' &&
-                        opts.handle.suppressClearOnFillReduction
+                    ({ handle }) =>
+                        typeof handle !== 'boolean' && handle?.mode === 'fill' && handle.suppressClearOnFillReduction
                 );
             case 'fillHandleDirection':
                 return cellOptionWithFallback(
                     option,
-                    (opts) => typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill' && opts.handle?.direction
+                    ({ handle }) => typeof handle !== 'boolean' && handle?.mode === 'fill' && handle?.direction
                 );
             case 'fillOperation':
                 return cellOptionWithFallback(
                     option,
-                    (opts) =>
-                        typeof opts.handle !== 'boolean' && opts.handle?.mode === 'fill' && opts.handle?.setFillValue
+                    ({ handle }) => typeof handle !== 'boolean' && handle?.mode === 'fill' && handle?.setFillValue
                 );
             case 'suppressRowClickSelection':
                 return rowOptionWithFallback(option, (opts) => opts.suppressClickSelection);
@@ -692,7 +689,10 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             case 'rowMultiSelectWithClick':
                 return multiRowOptionWithFallback(option, (opts) => opts.enableMultiSelectWithClick);
             case 'groupSelectsChildren':
-                return multiRowOptionWithFallback(option, (opts) => opts.groupSelects !== 'self');
+                return multiRowOptionWithFallback(
+                    option,
+                    ({ groupSelects }) => groupSelects && groupSelects !== 'self'
+                );
             case 'groupSelectsFiltered':
                 return multiRowOptionWithFallback(option, (opts) => opts.groupSelects === 'filteredDescendants');
             default:
