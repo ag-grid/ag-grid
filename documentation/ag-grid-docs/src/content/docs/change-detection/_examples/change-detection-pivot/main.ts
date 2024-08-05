@@ -209,7 +209,7 @@ function moveCourse() {
     var transaction = {
         update: [item],
     };
-    console.log('moving ' + item);
+    console.log('moving ', item);
     gridApi!.applyTransaction(transaction);
 }
 
