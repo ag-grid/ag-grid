@@ -134,8 +134,7 @@ const gridOptions = {
 
 {% if isFramework("react") %}
 ```{% spaceBetweenProperties=true %}
-const gridOptions = {
-    columnDefs: [
+const [columnDefs] = useState([
         // 1 - String - The name of a Cell Component registered with the grid.
         {
             field: 'age',
@@ -155,7 +154,7 @@ const gridOptions = {
             }
         }
     ]
-}
+);
 ```
 {% /if %}
 
