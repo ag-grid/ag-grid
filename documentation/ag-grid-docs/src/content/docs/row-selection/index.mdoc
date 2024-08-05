@@ -313,7 +313,6 @@ const gridOptions = {
     navigateToNextCell: params => {
         const suggestedNextCell = params.nextCellPosition;
 
-        // this is some code
         const KEY_UP = 'ArrowUp';
         const KEY_DOWN = 'ArrowDown';
 
@@ -322,11 +321,10 @@ const gridOptions = {
             return suggestedNextCell;
         }
 
-        params.api.forEachNode(node => {
-            if (node.rowIndex === suggestedNextCell.rowIndex) {
-                node.setSelected(true);
-            }
-        });
+        const nodeToSelect = params.api.getDisplayedRowAtIndex(suggestedNextCell.rowIndex);
+        if (nodeToSelect) {
+            nodeToSelect.setSelected(true);
+        }
 
         return suggestedNextCell;
     },
