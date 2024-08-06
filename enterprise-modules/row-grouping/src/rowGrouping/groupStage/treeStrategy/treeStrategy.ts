@@ -15,57 +15,59 @@ import { RowNode } from '@ag-grid-community/core';
 
 import { TreeNode } from './treeNode';
 import {
-    clearExpandedInitialized,
+    clearTreeRowFlags,
     getTreeRowTreeNode,
+    isTreeRowCommitted,
     isTreeRowExpandedInitialized,
     isTreeRowUpdated,
+    markTreeRowCommitted,
     setTreeRowUpdated,
-    treeRowCommitted,
-    treeRowDeleted,
-} from './treeRowNode';
+    unsetTreeRowExpandedInitialized,
+} from './treeRow';
 
-type IsGroupOpenByDefault = ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean) | undefined;
+export type IsGroupOpenByDefaultCallback =
+    | ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean)
+    | undefined;
 
-type InitialGroupOrderComparator =
+export type InitialGroupOrderComparatorCallback =
     | ((params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number)
     | undefined;
 
 export interface TreeExecutionDetails {
+    changedPath: ChangedPath | undefined;
+    rowNodeOrder: { [id: string]: number } | undefined;
     expandByDefault: number;
-    changedPath: ChangedPath;
-    rowNodeOrder: { [id: string]: number };
     suppressGroupMaintainValueType: boolean;
     getDataPath: GetDataPath | undefined;
-    isGroupOpenByDefault: IsGroupOpenByDefault;
-    initialGroupOrderComparator: InitialGroupOrderComparator;
+    isGroupOpenByDefault: IsGroupOpenByDefaultCallback;
+    initialGroupOrderComparator: InitialGroupOrderComparatorCallback;
 }
 
 export class TreeStrategy extends BeanStub implements IRowNodeStage {
-    private showRowGroupColsService: IShowRowGroupColsService;
     private beans: BeanCollection;
+    private showRowGroupColsService: IShowRowGroupColsService;
     private oldGroupDisplayColIds: string | undefined;
-    private deletedRows: Set<RowNode> | null = null;
+    private rowsPendingDeletion: Set<RowNode> | null = null;
     private readonly root: TreeNode = new TreeNode(null, '', -1, false);
 
     public wireBeans(beans: BeanCollection) {
-        this.showRowGroupColsService = beans.showRowGroupColsService!;
         this.beans = beans;
+        this.showRowGroupColsService = beans.showRowGroupColsService!;
     }
 
     public override destroy(): void {
-        this.destroyTree(this.root, null);
+        this.destroyTree(this.root, false, null);
         super.destroy();
-        this.beans = null!;
     }
 
     public execute(params: StageExecuteParams): void {
-        const { rowNode: rootRow, changedPath, rowNodeTransactions, rowNodeOrder } = params;
+        const { rowNode: rootRow, rowNodeTransactions, rowNodeOrder, changedPath } = params;
 
         const gos = this.gos;
         const details: TreeExecutionDetails = {
+            changedPath,
+            rowNodeOrder,
             expandByDefault: gos.get('groupDefaultExpanded'),
-            changedPath: changedPath!,
-            rowNodeOrder: rowNodeOrder!,
             suppressGroupMaintainValueType: gos.get('suppressGroupMaintainValueType'),
             getDataPath: gos.get('getDataPath'),
             isGroupOpenByDefault: gos.getCallback('isGroupOpenByDefault'),
@@ -97,7 +99,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         if (afterColumnsChanged || this.oldGroupDisplayColIds === undefined) {
             const newGroupDisplayColIds =
                 this.showRowGroupColsService
-                    .getShowRowGroupCols()
+                    ?.getShowRowGroupCols()
                     ?.map((c) => c.getId())
                     .join('-') ?? '';
 
@@ -134,7 +136,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         if (rowNodeOrder) {
             // this is used when doing delta updates, eg Redux, keeps nodes in right order
-            changedPath.forEachChangedNodeDepthFirst(
+            changedPath?.forEachChangedNodeDepthFirst(
                 (node) => {
                     const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, rowNodeOrder);
                     if (didSort) {
@@ -156,7 +158,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     /** Called when a subtree needs to be destroyed. */
-    private destroyTree(node: TreeNode, changedPath: ChangedPath | null): void {
+    private destroyTree(node: TreeNode, allRows: boolean, changedPath: ChangedPath | null | undefined): void {
         const { level, row, childrenAfterGroup, allLeafChildren } = node;
         childrenAfterGroup.length = 0;
         if (level >= 0) {
@@ -164,16 +166,18 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
         if (row !== null) {
             node.linkRow(null);
-            treeRowDeleted(row);
+            if (allRows || !row.data) {
+                this.deleteRow(row, true);
+            }
         }
         node.oldRow = null;
         let hasRows = false;
         for (const child of node.enumChildren()) {
             hasRows ||= !!child.row;
-            this.destroyTree(child, changedPath);
+            this.destroyTree(child, allRows, changedPath);
         }
-        if (hasRows && row && changedPath) {
-            if (changedPath.isActive()) {
+        if (allRows && hasRows && row) {
+            if (changedPath?.isActive()) {
                 changedPath.addParentNode(row);
             }
         }
@@ -191,9 +195,13 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Transactional removal */
     private removeRows(rows: RowNode[] | null | undefined): void {
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
-            const row = this.overwriteRow(getTreeRowTreeNode(rows![i]), null, false);
-            if (row) {
-                clearExpandedInitialized(row);
+            const node = getTreeRowTreeNode(rows![i]);
+            if (node) {
+                const oldRow = node.row;
+                this.overwriteRow(node, null, false);
+                if (oldRow !== null) {
+                    unsetTreeRowExpandedInitialized(oldRow);
+                }
             }
         }
     }
@@ -202,7 +210,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
         for (let i = 0, len = rows?.length ?? 0; i < len; i++) {
             const row = rows![i];
-            this.overwriteRow(this.upsertPath(this.getDataPath(details, row)), row, update);
+            const node = this.upsertPath(this.getDataPath(details, row));
+            if (node) {
+                this.overwriteRow(node, row, update);
+            }
         }
     }
 
@@ -244,11 +255,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * Overwrites the row property of a non-root node, preparing the tree correctly for the commit.
      * @returns The previous row, if any, that was overwritten.
      */
-    private overwriteRow(node: TreeNode | null, newRow: RowNode | null, update: boolean): RowNode | null {
-        if (!node || node.level < 0) {
+    private overwriteRow(node: TreeNode, newRow: RowNode | null, update: boolean): RowNode | null {
+        if (node.level < 0) {
             return null; // Cannot overwrite a null node or the root row
         }
-        const { row, ghost } = node;
+        const { row: oldRow, ghost } = node;
 
         const prevNode = getTreeRowTreeNode(newRow);
         if (prevNode !== node && prevNode) {
@@ -258,13 +269,13 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         let invalidate = false;
 
         if (node.linkRow(newRow)) {
-            if (row) {
-                (this.deletedRows ??= new Set()).add(row);
-                if (!ghost && row.data && newRow?.data) {
-                    _warnOnce(`duplicate group keys for row data, keys should be unique`, [row.data, newRow.data]);
+            invalidate = true;
+            if (oldRow) {
+                this.deleteRow(oldRow, !oldRow.data);
+                if (!ghost && oldRow.data && newRow?.data) {
+                    _warnOnce(`duplicate group keys for row data, keys should be unique`, [oldRow.data, newRow.data]);
                 }
             }
-            invalidate = true;
         }
 
         // We update the ghost state recursively
@@ -276,7 +287,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                     // This is a filler row, and we want to remove it
                     // This is because order of filler rows is currently handled by __objectId
                     // So we cannot reuse them.
-                    treeRowDeleted(current.row);
+                    this.deleteRow(current.row, true);
                     current.linkRow(null);
                 }
                 current = current.parent;
@@ -284,23 +295,54 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (update && newRow !== null && !isTreeRowUpdated(newRow)) {
-            setTreeRowUpdated(newRow);
             invalidate = true;
+            setTreeRowUpdated(newRow);
         }
 
         if (invalidate) {
             node.invalidate();
         }
 
-        return row;
+        return oldRow;
     }
 
-    private deleteDeletedRows() {
-        const deletedRows = this.deletedRows;
-        if (deletedRows) {
-            this.deletedRows = null;
-            for (const row of deletedRows) {
-                treeRowDeleted(row);
+    /**
+     * Finalizes the deletion of a row.
+     * @param immediate If true, the row is deleted immediately.
+     * If false, the row is marked for deletion, and will be deleted later with this.deleteDeletedRows()
+     */
+    private deleteRow(row: RowNode, immediate: boolean) {
+        if (!isTreeRowCommitted(row)) {
+            return; // Never committed, or already deleted, nothing to do.
+        }
+
+        if (!immediate) {
+            (this.rowsPendingDeletion ??= new Set()).add(row);
+            return; // We will delete it later with deleteDeletedRows
+        }
+
+        clearTreeRowFlags(row);
+
+        // We execute this only if the row was committed at least once before, and not already deleted.
+        row.setRowIndex(null);
+
+        // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
+        // remove, if rowTop is still present, the rowComp thinks it's just moved position.
+        row.setRowTop(null);
+
+        if (!row.data) {
+            // we remove selection on filler nodes here, as the selection would not be removed
+            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+        }
+    }
+
+    private commitDeletedRows() {
+        const rows = this.rowsPendingDeletion;
+        if (rows !== null) {
+            this.rowsPendingDeletion = null;
+            for (const row of rows) {
+                this.deleteRow(row, true);
             }
         }
     }
@@ -309,50 +351,26 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private commitTree(details: TreeExecutionDetails) {
         const root = this.root;
 
-        while (true) {
-            const child = root.dequeueInvalidated();
-            if (!child) {
-                break;
-            }
-            this.commitChild(details, root, child);
-        }
+        this.commitChildren(details, root);
 
-        const rootRow = root.row!;
         this.updateChildrenAfterGroup(root);
 
+        const rootRow = root.row!;
         rootRow.updateHasChildren();
 
         if (root.pathChanged || root.childRemoved || root.childChanged) {
             root.pathChanged = false;
             root.childChanged = false;
             root.childRemoved = false;
-            if (details.changedPath.isActive()) {
+            if (details.changedPath?.isActive()) {
                 details.changedPath.addParentNode(rootRow);
             }
         }
 
-        this.deleteDeletedRows();
+        this.commitDeletedRows();
     }
 
-    private getOrCreateRow(node: TreeNode): RowNode {
-        let row = node.row;
-        if (row === null) {
-            row = this.createFillerRow(node);
-            node.linkRow(row);
-        }
-        return row;
-    }
-
-    /** Commit the changes performed to a node and its children */
-    private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
-        if (node.ghost) {
-            if (node.oldRow !== null) {
-                parent.childRemoved = true;
-            }
-            this.destroyTree(node, details.changedPath);
-            return;
-        }
-
+    private commitChildren(details: TreeExecutionDetails, node: TreeNode): void {
         while (true) {
             const child = node.dequeueInvalidated();
             if (!child) {
@@ -360,16 +378,41 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
             this.commitChild(details, node, child);
         }
-
-        return this.commitNodePostOrder(details, parent, node);
     }
 
-    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode) {
-        const row = this.getOrCreateRow(node);
+    /** Commit the changes performed to a node and its children */
+    private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
+        if (node.ghost) {
+            this.clearTree(node);
+            if (node.oldRow !== null) {
+                parent.childRemoved = true;
+            }
+            this.destroyTree(node, true, details.changedPath);
+            return;
+        }
 
-        this.deletedRows?.delete(row); // This row is used. It's not deleted.
+        let row = node.row;
+        if (row === null) {
+            row = this.createFillerRow(node);
+            node.linkRow(row);
+        }
 
-        if (node.oldRow !== row) {
+        row.parent = parent.row;
+
+        this.rowsPendingDeletion?.delete(row); // This row is used. It's not deleted.
+
+        if (row.key !== node.key) {
+            row.key = node.key;
+            parent.pathChanged = true;
+            setTreeRowUpdated(row);
+            this.setGroupData(row);
+        }
+
+        if (!row.groupData) {
+            this.setGroupData(row);
+        }
+
+        if (node.oldRow !== null && node.oldRow !== row) {
             // We need to update children rows parents, as the row changed
             for (const { row: childRow } of node.enumChildren()) {
                 if (childRow) {
@@ -377,6 +420,14 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
         }
+
+        this.commitChildren(details, node);
+
+        return this.commitNodePostOrder(details, parent, node);
+    }
+
+    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode) {
+        const row = node.row!;
 
         this.updateChildrenAfterGroup(node);
 
@@ -387,18 +438,21 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
 
-        if (row.key !== node.key) {
-            if (row.key) {
-                setTreeRowUpdated(row);
-            }
-            row.key = node.key;
-            parent.pathChanged = true;
-            this.setGroupData(row);
-        } else if (!row.groupData) {
-            this.setGroupData(row);
+        if (node.childChanged || node.childRemoved) {
+            node.childChanged = false;
+            node.childRemoved = false;
+            node.pathChanged = true;
         }
 
-        const hasChildren = node.childrenAfterGroup.length > 0;
+        if (node.oldRow !== row) {
+            node.oldRow = node.row;
+            parent.childChanged = true;
+            parent.pathChanged = true;
+        }
+
+        parent.pathChanged ||= isTreeRowUpdated(row);
+
+        const hasChildren = !!row.childrenAfterGroup?.length;
         const group = hasChildren || !row.data;
         if (row.group !== group) {
             const oldExpanded = row.expanded;
@@ -416,26 +470,23 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             row.expanded = this.getExpandedInitialValue(details, row);
         }
 
-        if (node.childChanged || node.childRemoved || isTreeRowUpdated(row)) {
-            node.childChanged = false;
-            node.childRemoved = false;
-            parent.pathChanged = true;
+        if (isTreeRowUpdated(row)) {
+            // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
+            // refreshed into the gui.
+            // this is needed to kick off the event that rowComp listens to for refresh. this in turn
+            // then will get each cell in the row to refresh - which is what we need as we don't know which
+            // columns will be displaying the rowNode.key info.
+            row.setData(row.data);
         }
 
-        if (node.oldRow !== row) {
-            node.oldRow = node.row;
-            parent.childChanged = true;
-            parent.pathChanged = true;
-        }
+        markTreeRowCommitted(row);
 
         if (node.pathChanged) {
             node.pathChanged = false;
-            if (details.changedPath.isActive()) {
+            if (details.changedPath?.isActive()) {
                 details.changedPath.addParentNode(row);
             }
         }
-
-        treeRowCommitted(row);
     }
 
     private createFillerRow(node: TreeNode): RowNode {
@@ -445,7 +496,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         row.field = null;
         row.leafGroup = false;
         row.rowGroupIndex = null;
-        row.id = node.fillerRowId();
+
+        let id = node.level + '-' + node.key;
+        for (let p = node.parent; p?.parent; p = p.parent) {
+            id = `${p.level}-${p.key}-${id}`;
+        }
+        row.id = RowNode.ID_PREFIX_ROW_GROUP + id;
         return row;
     }
 

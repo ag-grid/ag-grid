@@ -1,6 +1,6 @@
-import { RowNode } from '@ag-grid-community/core';
+import type { RowNode } from '@ag-grid-community/core';
 
-import { setTreeRowTreeNode } from './treeRowNode';
+import { setTreeRowTreeNode } from './treeRow';
 
 /** An empty iterator */
 const EMPTY_CHILDREN = ([] as readonly TreeNode[]).values();
@@ -18,6 +18,7 @@ interface TreeNodeWritablePrivateFields {
  *
  * TreeStrategy uses a two stage approach both for first time creation and updates.
  * Multiple updates interact with the tree, and a commit stage commits all updates reducing expensive computations.
+ * The map of children is kept in a consistent order of insertion.
  *
  * The operations are:
  *  - create a path with a filler node with a null row, calling TreeStrategy.upsertPath
@@ -109,7 +110,6 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
 
     /**
      * Gets a node a key in the given parent. If the node does not exists, creates a filler node, with null row.
-     * Note that invalidate() is not called, is up to the caller to call it if needed.
      * @returns the node at the given key, or a new filler node inserted there if it does not exist.
      */
     public upsertKey(key: string): TreeNode {
@@ -122,10 +122,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
         return node;
     }
 
-    /**
-     * Bidirectionally links (or unlink) a row to a node.
-     * It does not invalidate the node or update the ghost state, it's up to the caller to do it, if applicable.
-     */
+    /** Bidirectionally links (or unlink) a row to a node. */
     public linkRow(newRow: RowNode | null): boolean {
         const { row: oldRow } = this;
         if (oldRow === newRow) {
@@ -173,19 +170,6 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
     }
 
     /**
-     * Dequeues the next child invalidated node to be committed. Order is not deterministic.
-     * @returns the next child node to be committed, or null if all children were already dequeued.
-     */
-    public dequeueInvalidated(): TreeNode | null {
-        const node = this.invalidatedHead;
-        if (node !== null) {
-            this.invalidatedHead = node.invalidatedNext ?? null;
-            node.invalidatedNext = undefined; // Mark as not invalidated
-        }
-        return node;
-    }
-
-    /**
      * Invalidates this node by adding this node in the queue of invalidated children in the parent node.
      * Order of invalidation is not deterministic.
      * It does not traverse the tree up to the root, it only affect the parent node.
@@ -199,6 +183,19 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
         this.invalidatedNext = parent.invalidatedHead;
         parent.invalidatedHead = this;
         return true;
+    }
+
+    /**
+     * Dequeues the next child invalidated node to be committed. Order is not deterministic.
+     * @returns the next child node to be committed, or null if all children were already dequeued.
+     */
+    public dequeueInvalidated(): TreeNode | null {
+        const node = this.invalidatedHead;
+        if (node !== null) {
+            this.invalidatedHead = node.invalidatedNext ?? null;
+            node.invalidatedNext = undefined; // Mark as not invalidated
+        }
+        return node;
     }
 
     /**
@@ -297,18 +294,5 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
             changed = true;
         }
         return changed;
-    }
-
-    /**
-     * Called during commit to make the id of a new filler node.
-     * We put "row-group-" before the group id, so it doesn't clash with standard row id's.
-     * We also use 't-' and 'b-' for top pinned and bottom pinned rows.
-     */
-    public fillerRowId(): string {
-        let id = this.level + '-' + this.key;
-        for (let p = this.parent; p?.parent; p = p.parent) {
-            id = `${p.level}-${p.key}-${id}`;
-        }
-        return RowNode.ID_PREFIX_ROW_GROUP + id;
     }
 }
