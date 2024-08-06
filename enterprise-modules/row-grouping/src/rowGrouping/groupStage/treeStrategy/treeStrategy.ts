@@ -168,6 +168,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             node.linkRow(null);
             if (allRows || !row.data) {
                 this.deleteRow(row, true);
+            } else {
+                clearTreeRowFlags(row);
             }
         }
         node.oldRow = null;
