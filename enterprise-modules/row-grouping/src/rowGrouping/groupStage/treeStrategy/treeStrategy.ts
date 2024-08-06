@@ -13,7 +13,7 @@ import type {
 import { BeanStub, _sortRowNodesByOrder, _warnOnce } from '@ag-grid-community/core';
 import { RowNode } from '@ag-grid-community/core';
 
-import { TreeNode } from './treeNode';
+import { ChildrenChanged, TreeNode } from './treeNode';
 import {
     clearTreeRowFlags,
     getTreeRowTreeNode,
@@ -358,10 +358,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const rootRow = root.row!;
         rootRow.updateHasChildren();
 
-        if (root.pathChanged || root.childRemoved || root.childChanged) {
+        if (root.pathChanged || root.childrenChanged !== ChildrenChanged.None) {
             root.pathChanged = false;
-            root.childChanged = false;
-            root.childRemoved = false;
+            root.childrenChanged = ChildrenChanged.None;
             if (details.changedPath?.isActive()) {
                 details.changedPath.addParentNode(rootRow);
             }
@@ -384,8 +383,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         if (node.ghost) {
             this.clearTree(node);
-            if (node.oldRow !== null) {
-                parent.childRemoved = true;
+            if (node.oldRow !== null && parent.childrenChanged === ChildrenChanged.None) {
+                parent.childrenChanged = ChildrenChanged.SomeRemoved;
             }
             this.destroyTree(node, true, details.changedPath);
             return;
@@ -431,23 +430,22 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         this.updateChildrenAfterGroup(node);
 
-        if (node.childChanged || node.childRemoved || node.leafChildrenChanged) {
+        if (node.childrenChanged !== ChildrenChanged.None || node.leafChildrenChanged) {
             node.leafChildrenChanged = false;
             if (node.rebuildLeaves()) {
                 parent.leafChildrenChanged = true; // propagate up
             }
         }
 
-        if (node.childChanged || node.childRemoved) {
-            node.childChanged = false;
-            node.childRemoved = false;
+        if (node.childrenChanged !== ChildrenChanged.None) {
+            node.childrenChanged = ChildrenChanged.None;
             node.pathChanged = true;
         }
 
         if (node.oldRow !== row) {
             node.oldRow = node.row;
-            parent.childChanged = true;
             parent.pathChanged = true;
+            parent.childrenChanged = ChildrenChanged.SomeInserted;
         }
 
         parent.pathChanged ||= isTreeRowUpdated(row);
@@ -506,12 +504,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private updateChildrenAfterGroup(node: TreeNode): void {
-        if (node.childRemoved) {
-            this.filterRemovedChildrenAfterGroup(node);
-            if (node.childChanged) {
-                this.rebuildChildrenAfterGroup(node);
-            }
-        } else if (node.childChanged) {
+        this.filterRemovedChildrenAfterGroup(node);
+        if (node.childrenChanged === ChildrenChanged.SomeInserted) {
             this.rebuildChildrenAfterGroup(node);
         }
     }
@@ -533,7 +527,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
         array.length = writeIdx;
 
-        node.childRemoved = changed;
+        if (!changed && node.childrenChanged === ChildrenChanged.SomeRemoved) {
+            node.childrenChanged = ChildrenChanged.None;
+        }
     }
 
     /** Updates node childrenAfterGroup. Returns true if the children changed. */
@@ -555,7 +551,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             array.length = writeIdx;
             changed = true;
         }
-        node.childChanged = changed;
+
+        if (!changed) {
+            node.childrenChanged = ChildrenChanged.None;
+        }
     }
 
     private setGroupData(row: RowNode): void {

@@ -12,6 +12,21 @@ interface TreeNodeWritablePrivateFields {
 }
 
 /**
+ * We use this to keep track if children were removed or added and moved, so we can skip
+ * recomputing the whole childrenAfterGroup and allLeafChildren array if not needed
+ */
+export const enum ChildrenChanged {
+    /** No changes */
+    None,
+
+    /** At least one child was removed */
+    SomeRemoved = 1,
+
+    /** At least one child was moved or added (and potentially deleted too) */
+    SomeInserted = 2,
+}
+
+/**
  * We keep a secondary tree data structure together with the rows.
  * We associate a node with a TreeNode, both storing the row in node.row and by storing the TreeNode in a hidden field in the row.
  * We break the association when the row is removed or the TreeStrategy destroyed.
@@ -70,11 +85,12 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
     /**  True if changedPath.addParentNode(row) should be called on this node. Reset to false during commit. */
     public pathChanged: boolean = false;
 
-    /** True if childrenAfterGroup should be fully recomputed. Reset to false during commit. */
-    public childChanged: boolean = false;
-
-    /** True if childrenAfterGroup array should be filtered from removed nodes. Reset to false during commit. */
-    public childRemoved: boolean = false;
+    /**
+     * We use this to keep track if children were removed or added and moved, so we can skip
+     * recomputing the whole childrenAfterGroup and allLeafChildren array if not needed.
+     * Reset to ChildrenChanged.None during commit.
+     */
+    public childrenChanged: ChildrenChanged = ChildrenChanged.None;
 
     /** True allLeafChildren should be recomputed. Reset to false during commit. */
     public leafChildrenChanged: boolean = false;
@@ -228,7 +244,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
             if (parentChildren?.delete(key)) {
                 parentChildren.set(key, this);
                 if (this.oldRow !== null) {
-                    parent.childChanged = true;
+                    parent.childrenChanged = ChildrenChanged.SomeInserted;
                 }
             }
         }
