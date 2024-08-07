@@ -4,7 +4,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
-import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
@@ -122,7 +121,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
                 let allRegistered = true;
                 modules.forEach((m) => {
-                    if (!ModuleRegistry.__assertRegistered(m, String(key), this.gridId)) {
+                    if (!this.gos.assertModuleRegistered(m, String(key))) {
                         allRegistered = false;
                         warnings.add(`${String(key)} is only available when ${m} is loaded.`);
                     }

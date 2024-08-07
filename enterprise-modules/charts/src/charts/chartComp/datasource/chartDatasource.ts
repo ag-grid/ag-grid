@@ -15,7 +15,7 @@ import type {
     SortController,
     ValueService,
 } from '@ag-grid-community/core';
-import { BeanStub, ModuleNames, ModuleRegistry, _includes, _last, _values, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, ModuleNames, _includes, _isRowModelType, _last, _values, _warnOnce } from '@ag-grid-community/core';
 
 import type { ColState } from '../model/chartDataModel';
 import { ChartDataModel } from '../model/chartDataModel';
@@ -65,13 +65,13 @@ export class ChartDatasource extends BeanStub {
                 return { chartData: [], columnNames: {} };
             }
 
-            if (!this.gos.isRowModelType('clientSide')) {
+            if (!_isRowModelType(this.gos, 'clientSide')) {
                 _warnOnce('crossing filtering is only supported in the client side row model.');
                 return { chartData: [], columnNames: {} };
             }
         }
 
-        const isServerSide = this.gos.isRowModelType('serverSide');
+        const isServerSide = _isRowModelType(this.gos, 'serverSide');
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
         }
@@ -293,7 +293,7 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        if (ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation', this.gridId)) {
+        if (this.gos.assertModuleRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
             const aggStage = this.aggregationStage!;
             dataAggregated.forEach((groupItem) =>
                 params.valueCols.forEach((col) => {

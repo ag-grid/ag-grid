@@ -12,7 +12,15 @@ import type {
     RowRenderer,
     SortController,
 } from '@ag-grid-community/core';
-import { BeanStub, NumberSequence, _jsonEquals, _warnOnce } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    NumberSequence,
+    _getRowHeightAsNumber,
+    _getRowIdCallback,
+    _isRowModelType,
+    _jsonEquals,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
@@ -52,11 +60,11 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     public postConstruct(): void {
-        if (!this.gos.isRowModelType('infinite')) {
+        if (!_isRowModelType(this.gos, 'infinite')) {
             return;
         }
 
-        this.rowHeight = this.gos.getRowHeightAsNumber();
+        this.rowHeight = _getRowHeightAsNumber(this.gos);
 
         this.addEventListeners();
 
@@ -101,7 +109,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
         this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
         this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = this.gos.getRowHeightAsNumber();
+            this.rowHeight = _getRowHeightAsNumber(this.gos);
             this.cacheParams.rowHeight = this.rowHeight;
             this.updateRowHeights();
         });
@@ -171,7 +179,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        const getRowIdFunc = this.gos.getRowIdCallback();
+        const getRowIdFunc = _getRowIdCallback(this.gos);
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
@@ -213,7 +221,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
             // or a new datasource is set
             initialRowCount: this.gos.get('infiniteInitialRowCount'),
             maxBlocksInCache: this.gos.get('maxBlocksInCache'),
-            rowHeight: this.gos.getRowHeightAsNumber(),
+            rowHeight: _getRowHeightAsNumber(this.gos),
 
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
             // the current page and request first row of next page

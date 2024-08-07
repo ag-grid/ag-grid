@@ -25,6 +25,7 @@ import {
     ProvidedFilter,
     RefPlaceholder,
     _areEqual,
+    _getActiveDomElement,
     _last,
     _makeNull,
     _setDisplayed,
@@ -163,7 +164,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private getComponentForKeyEvent(e: KeyboardEvent): SetFilterListItem<V> | undefined {
-        if (!this.eSetFilterList.contains(this.gos.getActiveDomElement()) || !this.virtualList) {
+        if (!this.eSetFilterList.contains(_getActiveDomElement(this.gos)) || !this.virtualList) {
             return;
         }
 

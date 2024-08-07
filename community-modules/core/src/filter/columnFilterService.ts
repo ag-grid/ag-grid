@@ -9,11 +9,11 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
+import { _getGroupAggFiltering } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { ModuleNames } from '../modules/moduleNames';
-import { ModuleRegistry } from '../modules/moduleRegistry';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
 import { _exists, _jsonEquals } from '../utils/generic';
@@ -237,7 +237,7 @@ export class ColumnFilterService extends BeanStub {
             return filter.isFilterActive();
         };
 
-        const groupFilterEnabled = !!this.gos.getGroupAggFiltering();
+        const groupFilterEnabled = !!_getGroupAggFiltering(this.gos);
 
         const isAggFilter = (column: AgColumn) => {
             const isSecondary = !column.isPrimary();
@@ -437,7 +437,7 @@ export class ColumnFilterService extends BeanStub {
 
     private getDefaultFilter(column: AgColumn): string {
         let defaultFilter;
-        if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId)) {
+        if (this.gos.isModuleRegistered(ModuleNames.SetFilterModule)) {
             defaultFilter = 'agSetColumnFilter';
         } else {
             const cellDataType = this.dataTypeService?.getBaseDataType(column);
@@ -454,7 +454,7 @@ export class ColumnFilterService extends BeanStub {
 
     public getDefaultFloatingFilter(column: AgColumn): string {
         let defaultFloatingFilterType: string;
-        if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId)) {
+        if (this.gos.isModuleRegistered(ModuleNames.SetFilterModule)) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
             const cellDataType = this.dataTypeService?.getBaseDataType(column);

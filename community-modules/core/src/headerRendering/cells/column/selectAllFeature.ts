@@ -3,6 +3,7 @@ import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
 import type { SelectionEventSourceType } from '../../../events';
+import { _getActiveDomElement } from '../../../gridOptionsUtils';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
@@ -34,7 +35,7 @@ export class SelectAllFeature extends BeanStub {
     public onSpaceKeyDown(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
 
-        if (checkbox.isDisplayed() && !checkbox.getGui().contains(this.gos.getActiveDomElement())) {
+        if (checkbox.isDisplayed() && !checkbox.getGui().contains(_getActiveDomElement(this.gos))) {
             e.preventDefault();
             checkbox.setValue(!checkbox.getValue());
         }

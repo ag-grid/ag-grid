@@ -13,6 +13,7 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
+import { _isRowModelType, useAsyncEvents } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
@@ -50,7 +51,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private init(): void {
-        this.isSsrm = this.gos.isRowModelType('serverSide');
+        this.isSsrm = _isRowModelType(this.gos, 'serverSide');
         this.cellExpressions = this.gos.get('enableCellExpressions');
         this.isTreeData = this.gos.get('treeData');
         this.initialised = true;
@@ -58,7 +59,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        const async = this.gos.useAsyncEvents();
+        const async = useAsyncEvents(this.gos);
         this.eventService.addEventListener('cellValueChanged', listener, async);
         this.addDestroyFunc(() => this.eventService.removeEventListener('cellValueChanged', listener, async));
 

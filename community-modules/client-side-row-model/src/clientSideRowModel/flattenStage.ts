@@ -7,7 +7,15 @@ import type {
     StageExecuteParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, RowNode, _exists, _missingOrEmpty } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    RowNode,
+    _exists,
+    _getGrandTotalRow,
+    _getGroupTotalRowCallback,
+    _isGroupMultiAutoColumn,
+    _missingOrEmpty,
+} from '@ag-grid-community/core';
 
 interface FlattenDetails {
     hideOpenParents: boolean;
@@ -72,10 +80,10 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
         return {
             groupRemoveLowestSingleChildren,
             groupRemoveSingleChildren,
-            isGroupMultiAutoColumn: this.gos.isGroupMultiAutoColumn(),
+            isGroupMultiAutoColumn: _isGroupMultiAutoColumn(this.gos),
             hideOpenParents: this.gos.get('groupHideOpenParents'),
-            grandTotalRow: this.gos.getGrandTotalRow(),
-            groupTotalRow: this.gos.getGroupTotalRowCallback(),
+            grandTotalRow: _getGrandTotalRow(this.gos),
+            groupTotalRow: _getGroupTotalRowCallback(this.gos),
         };
     }
 

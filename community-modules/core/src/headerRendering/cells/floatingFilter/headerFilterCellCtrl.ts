@@ -3,6 +3,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
+import { _getActiveDomElement } from '../../../gridOptionsUtils';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
 import { _isElementChildOfClass } from '../../../utils/dom';
@@ -107,7 +108,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private onTabKeyDown(e: KeyboardEvent) {
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
         const wrapperHasFocus = activeEl === this.eGui;
 
         if (wrapperHasFocus) {

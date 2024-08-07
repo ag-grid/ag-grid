@@ -8,6 +8,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
+import { _getDocument, _getRowHeightForNode, _isRowModelType } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -314,7 +315,7 @@ export class CellCtrl extends BeanStub {
         const eParentCell = eCellWrapper.parentElement!;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
-        const minRowHeight = this.beans.gos.getRowHeightForNode(this.rowNode).height;
+        const minRowHeight = _getRowHeightForNode(this.beans.gos, this.rowNode).height;
 
         const measureHeight = (timesCalled: number) => {
             if (this.editing) {
@@ -335,7 +336,7 @@ export class CellCtrl extends BeanStub {
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = this.beans.gos.getDocument();
+                const doc = _getDocument(this.beans.gos);
                 const notYetInDom = !doc || !doc.contains(eCellWrapper);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
@@ -1124,7 +1125,7 @@ export class CellCtrl extends BeanStub {
     ): RowDragComp | undefined {
         const pagination = this.beans.gos.get('pagination');
         const rowDragManaged = this.beans.gos.get('rowDragManaged');
-        const clientSideRowModelActive = this.beans.gos.isRowModelType('clientSide');
+        const clientSideRowModelActive = _isRowModelType(this.beans.gos, 'clientSide');
 
         if (rowDragManaged) {
             // row dragging only available in default row model

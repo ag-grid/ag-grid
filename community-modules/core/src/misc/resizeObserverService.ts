@@ -1,5 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import { getWindow } from '../gridOptionsUtils';
 
 const DEBOUNCE_DELAY = 50;
 export class ResizeObserverService extends BeanStub implements NamedBean {
@@ -9,7 +10,7 @@ export class ResizeObserverService extends BeanStub implements NamedBean {
     private polyfillScheduled: boolean;
 
     public observeResize(element: HTMLElement, callback: () => void): () => void {
-        const win = this.gos.getWindow();
+        const win = getWindow(this.gos);
         const useBrowserResizeObserver = () => {
             const resizeObserver = new win.ResizeObserver(callback);
             resizeObserver.observe(element);

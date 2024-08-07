@@ -25,7 +25,6 @@ import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { ModuleNames } from '../modules/moduleNames';
-import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _warnOnce } from '../utils/function';
 import { _exists, _toStringOrNull } from '../utils/generic';
@@ -644,7 +643,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         colId: string
     ): void {
         const formatValue = this.formatValueFuncs[cellDataType];
-        const usingSetFilter = ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.gridId);
+        const usingSetFilter = this.gos.isModuleRegistered(ModuleNames.SetFilterModule);
         const translate = this.localeService.getLocaleTextFunc();
         const mergeFilterParams = (params: any) => {
             const { filterParams } = colDef;

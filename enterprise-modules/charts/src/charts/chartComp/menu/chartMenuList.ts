@@ -6,7 +6,7 @@ import type {
     NamedBean,
     PopupService,
 } from '@ag-grid-community/core';
-import { BeanStub, Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';
+import { BeanStub, Component, RefPlaceholder, _createIconNoSpan, _isNothingFocused } from '@ag-grid-community/core';
 import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { ChartController } from '../chartController';
@@ -68,7 +68,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
             closedCallback: () => {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
-                if (this.gos.isNothingFocused()) {
+                if (_isNothingFocused(this.gos)) {
                     eventSource.focus({ preventScroll: true });
                 }
             },

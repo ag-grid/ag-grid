@@ -6,6 +6,7 @@ import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { Environment } from '../environment';
 import type { FilterManager } from '../filter/filterManager';
+import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -325,7 +326,7 @@ export class GridBodyCtrl extends BeanStub {
     public isVerticalScrollShowing(): boolean {
         const show = this.gos.get('alwaysShowVerticalScroll');
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
-        const allowVerticalScroll = this.gos.isDomLayout('normal');
+        const allowVerticalScroll = _isDomLayout(this.gos, 'normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
         return show || (allowVerticalScroll && _isVerticalScrollShowing(this.eBodyViewport));
     }
@@ -338,7 +339,7 @@ export class GridBodyCtrl extends BeanStub {
             // when scaling and doing row animation.
             const animateRows =
                 initialSizeMeasurementComplete &&
-                this.gos.isAnimateRows() &&
+                _isAnimateRows(this.gos) &&
                 !this.rowContainerHeightService.isStretching();
             const animateRowsCssClass: RowAnimationCssClasses = animateRows
                 ? 'ag-row-animation'

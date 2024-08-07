@@ -3,6 +3,7 @@ import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { RowNode } from '../../entities/rowNode';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import { _getRowHeightForNode, isGroupRowsSticky } from '../../gridOptionsUtils';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { PageBoundsService } from '../../pagination/pageBoundsService';
 import { _last } from '../../utils/array';
@@ -346,7 +347,7 @@ export class StickyRowFeature extends BeanStub {
     }
 
     private canRowsBeSticky(): boolean {
-        const isStickyEnabled = this.gos.isGroupRowsSticky();
+        const isStickyEnabled = isGroupRowsSticky(this.gos);
         const suppressFootersSticky = this.areFooterRowsStickySuppressed();
         const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
         return isStickyEnabled && (!suppressFootersSticky || !suppressGroupsSticky);
@@ -517,7 +518,7 @@ export class StickyRowFeature extends BeanStub {
         const updateRowHeight = (ctrl: RowCtrl) => {
             const rowNode = ctrl.getRowNode();
             if (rowNode.rowHeightEstimated) {
-                const rowHeight = this.gos.getRowHeightForNode(rowNode);
+                const rowHeight = _getRowHeightForNode(this.gos, rowNode);
                 rowNode.setRowHeight(rowHeight.height);
                 anyChange = true;
             }

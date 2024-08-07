@@ -7,7 +7,7 @@ import type {
     RowDataTransaction,
     RowNode,
 } from '@ag-grid-community/core';
-import { BeanStub, _errorOnce, _exists, _iterateObject, _missing } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce, _exists, _getRowIdCallback, _iterateObject, _missing } from '@ag-grid-community/core';
 
 import type { ClientSideRowModel } from './clientSideRowModel';
 
@@ -63,7 +63,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
             return;
         }
 
-        const getRowIdFunc = this.gos.getRowIdCallback();
+        const getRowIdFunc = _getRowIdCallback(this.gos);
         if (getRowIdFunc == null) {
             _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;

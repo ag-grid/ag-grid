@@ -1,6 +1,7 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import { _isDomLayout } from '../gridOptionsUtils';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class CenterWidthFeature extends BeanStub {
@@ -41,7 +42,7 @@ export class CenterWidthFeature extends BeanStub {
     }
 
     private setWidth(): void {
-        const printLayout = this.gos.isDomLayout('print');
+        const printLayout = _isDomLayout(this.gos, 'print');
 
         const centerWidth = this.visibleColsService.getBodyContainerWidth();
         const leftWidth = this.visibleColsService.getColsLeftWidth();
