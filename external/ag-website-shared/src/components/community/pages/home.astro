@@ -16,6 +16,8 @@ import supportSites from '@ag-website-shared/content/community/support.json';
 import events from '@ag-website-shared/content/community/events.json';
 import showcase from '@ag-website-shared/content/community/showcase.json';
 import videos from '@ag-website-shared/content/community/news-updates/videos.json';
+
+const { currentSite } = Astro.props;
 ---
 
 <CommunityLayout
@@ -78,10 +80,10 @@ import videos from '@ag-website-shared/content/community/news-updates/videos.jso
     <!-- Support -->
     <section>
         <h2>Support & Socials</h2>
-        <Support client:visible supportSites={supportSites} />
+        <Support client:visible supportSites={supportSites} currentSite={currentSite} />
     </section>
     <hr style={{ margin: '0px 5vw 5vw 5vw' }} />
     <section>
-        <Socials client:visible socialChannels={socialChannels} />
+        <Socials client:visible socialChannels={socialChannels} currentSite={currentSite} />
     </section>
 </CommunityLayout>
