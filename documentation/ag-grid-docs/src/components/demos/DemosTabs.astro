@@ -6,70 +6,75 @@ const { activeTab } = Astro.props;
 ---
 
 <div class={styles.tabs}>
-    <div class={styles.tabItem}>
-        <div class:list={[styles.tabWrapper, activeTab === 'complete' && styles.tabActive]}>
+    <div class:list={[styles.tabItem, activeTab === 'complete' && styles.activeTab]}>
+        <div class={styles.tabWrapper}>
             <a href={urlWithBaseUrl(`/example`)}>
                 <img
-                    class={styles.showcaseItemTab}
+                    class:list={[styles.showcaseImg, styles.showcaseImgLight]}
                     src={urlWithBaseUrl(`/example/performance.png`)}
                     alt="Performance Grid illustration"
                 />
                 <img
-                    class={`${styles.showcaseItemTab} ${styles.darkTab}`}
+                    class:list={[styles.showcaseImg, styles.showcaseImgDark]}
                     src={urlWithBaseUrl(`/example/performance-dark.png`)}
                     alt="Performance Grid illustration"
                 />
             </a>
         </div>
-        <span class:list={[activeTab === 'complete' && styles.spanActive]}>Performance</span>
+        <span class={styles.label}>Performance</span>
     </div>
 
-    <div class={styles.tabItem}>
-        <div class:list={[styles.tabWrapper, activeTab === 'finance' && styles.tabActive]}>
+    <div class:list={[styles.tabItem, activeTab === 'finance' && styles.activeTab]}>
+        <div class={styles.tabWrapper}>
             <a href={urlWithBaseUrl(`/example-finance`)}>
                 <img
-                    class={styles.showcaseItemTab}
+                    class:list={[styles.showcaseImg, styles.showcaseImgLight]}
                     src={urlWithBaseUrl(`/example/finance.png`)}
                     alt="Finance Grid illustration"
                 />
                 <img
-                    class={`${styles.showcaseItemTab} ${styles.darkTab}`}
+                    class:list={[styles.showcaseImg, styles.showcaseImgDark]}
                     src={urlWithBaseUrl(`/example/finance-dark.png`)}
                     alt="Finance Grid illustration"
                 />
             </a>
         </div>
-        <span class:list={[activeTab === 'finance' && styles.spanActive]}>Finance</span>
+        <span class={styles.label}>Finance</span>
     </div>
-    <div class={styles.tabItem}>
-        <div class:list={[styles.tabWrapper, activeTab === 'crm' && styles.tabActive]}>
+
+    <div class:list={[styles.tabItem, activeTab === 'crm' && styles.activeTab]}>
+        <div class={styles.tabWrapper}>
             <a href={urlWithBaseUrl(`/example-hr`)}>
-                <img class={styles.showcaseItemTab} src={urlWithBaseUrl(`/example/hr.png`)} alt="Grid illustration" />
                 <img
-                    class={`${styles.showcaseItemTab} ${styles.darkTab}`}
+                    class:list={[styles.showcaseImg, styles.showcaseImgLight]}
+                    src={urlWithBaseUrl(`/example/hr.png`)}
+                    alt="Grid illustration"
+                />
+                <img
+                    class:list={[styles.showcaseImg, styles.showcaseImgDark]}
                     src={urlWithBaseUrl(`/example/hr-dark.png`)}
                     alt="HR Grid illustration"
                 />
             </a>
         </div>
-        <span class:list={[activeTab === 'crm' && styles.spanActive]}>HR</span>
+        <span class={styles.label}>HR</span>
     </div>
 
-    <div class={styles.tabItem}>
-        <div class:list={[styles.tabWrapper, activeTab === 'inventory' && styles.tabActive]}>
+    <div class:list={[styles.tabItem, activeTab === 'inventory' && styles.activeTab]}>
+        <div class={styles.tabWrapper}>
             <a href={urlWithBaseUrl(`/example-inventory`)}>
                 <img
-                    class={`${styles.showcaseItemTab}`}
+                    class:list={[styles.showcaseImg, styles.showcaseImgLight]}
                     src={urlWithBaseUrl(`/example/inventory.png`)}
                     alt="Inventory Grid illustration"
                 />
                 <img
-                    class={`${styles.showcaseItemTab} ${styles.darkTab}`}
+                    class:list={[styles.showcaseImg, styles.showcaseImgDark]}
                     src={urlWithBaseUrl(`/example/inventory-dark.png`)}
                     alt="Inventory Grid illustration"
                 />
             </a>
         </div>
-        <span class:list={[activeTab === 'inventory' && styles.spanActive]}>Inventory</span>
+        <span class={styles.label}>Inventory</span>
     </div>
 </div>

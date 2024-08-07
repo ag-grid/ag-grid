@@ -15,48 +15,6 @@
     height: 100%;
     gap: $spacing-size-4;
 
-    a div {
-        display: flex;
-        padding-top: 12px;
-    }
-
-    span {
-        position: relative;
-        bottom: 56px;
-        background: linear-gradient(358deg, #e5e9ed 40%, transparent);
-        border-bottom-right-radius: 10px;
-        border-bottom-left-radius: 10px;
-        height: 40px;
-        margin-top: 16px;
-        display: flex;
-        justify-content: left;
-        align-items: flex-end;
-        padding-bottom: 8px;
-        color: #044b93;
-        padding-left: 12px;
-        pointer-events: none;
-        font-weight: 600;
-        display: flex;
-        padding-top: $spacing-size-4;
-        transition:
-            color 0.3s ease-in-out,
-            background-color 0.3s ease-in-out;
-        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 100%);
-
-        #{$selector-darkmode} & {
-            background: linear-gradient(358deg, var(--color-bg-secondary) 30%, transparent);
-            color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 50%);
-        }
-    }
-
-    .spanActive {
-        color: #044b93;
-
-        #{$selector-darkmode} & {
-            color: var(--color-link);
-        }
-    }
-
     @media screen and (min-width: 720px) {
         flex-wrap: nowrap;
     }
@@ -67,11 +25,6 @@
 
     @media screen and (min-width: 720px) {
         max-width: unset;
-    }
-
-    &:hover span {
-        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 10%);
-        transition: all 0.3s;
     }
 }
 
@@ -90,13 +43,9 @@
         transition: all 0.5s ease-in-out;
     }
 
-    &.tabActive {
+    .activeTab & {
         outline: 2px solid #044b93;
         border-radius: var(--radius-lg);
-
-        span {
-            color: #044b93;
-        }
     }
 
     @media screen and (min-width: 720px) {
@@ -121,7 +70,7 @@
     }
 }
 
-.showcaseItemTab {
+.showcaseImg {
     cursor: pointer;
     -webkit-user-drag: none;
     user-select: none;
@@ -140,16 +89,59 @@
         opacity: 1;
         transition: all 0.4s ease-in-out;
     }
+}
 
-    &.darkTab {
+.showcaseImgLight {
+    #{$selector-darkmode} & {
         display: none;
+    }
+}
+
+.showcaseImgDark {
+    display: none;
+
+    #{$selector-darkmode} & {
+        display: block;
+    }
+}
+
+.label {
+    position: relative;
+    bottom: 56px;
+    background: linear-gradient(358deg, #e5e9ed 40%, transparent);
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    height: 40px;
+    margin-top: 16px;
+    display: flex;
+    justify-content: left;
+    align-items: flex-end;
+    padding-bottom: 8px;
+    color: #044b93;
+    padding-left: 12px;
+    pointer-events: none;
+    font-weight: 600;
+    display: flex;
+    padding-top: $spacing-size-4;
+    transition:
+        color 0.3s ease-in-out,
+        background-color 0.3s ease-in-out;
+    color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 100%);
+
+    .tabItem:hover & {
+        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 10%);
+    }
+
+    .activeTab & {
+        color: #044b93;
+
+        #{$selector-darkmode} & {
+            color: var(--color-link);
+        }
     }
 
     #{$selector-darkmode} & {
-        display: none;
-
-        &.darkTab {
-            display: block;
-        }
+        background: linear-gradient(358deg, var(--color-bg-secondary) 30%, transparent);
+        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 50%);
     }
 }
