@@ -80,11 +80,11 @@
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/he": "^1.2.3",
-    "ag-charts-angular": "10.1.0-beta.20240804",
-    "ag-charts-community": "10.1.0-beta.20240804",
-    "ag-charts-enterprise": "10.1.0-beta.20240804",
-    "ag-charts-react": "10.1.0-beta.20240804",
-    "ag-charts-vue3": "10.1.0-beta.20240804",
+    "ag-charts-angular": "10.1.0-beta.20240806",
+    "ag-charts-community": "10.1.0-beta.20240806",
+    "ag-charts-enterprise": "10.1.0-beta.20240806",
+    "ag-charts-react": "10.1.0-beta.20240806",
+    "ag-charts-vue3": "10.1.0-beta.20240806",
     "prettier-plugin-astro": "^0.12.3",
     "vite-plugin-mkcert": "^1.17.2",
     "vitest": "^1.1.3"
