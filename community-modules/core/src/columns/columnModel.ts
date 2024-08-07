@@ -901,9 +901,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public getAllCols(): AgColumn[] {
         const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
         const pivotResultColsList = pivotResultCols?.list;
-        return ([] as AgColumn[]).concat(
-            ...[this.colDefCols?.list || [], this.autoCols?.list || [], pivotResultColsList || []]
-        );
+        return [
+            this.colDefCols?.list ?? [],
+            this.autoCols?.list ?? [],
+            this.controlCols?.list ?? [],
+            pivotResultColsList ?? [],
+        ].flat();
     }
 
     public getColsForKeys(keys: ColKey[]): AgColumn[] {
