@@ -15,18 +15,6 @@
     height: 100%;
     gap: $spacing-size-4;
 
-    > div {
-        max-width: calc(50% - #{$spacing-size-2});
-    }
-
-    @media screen and (min-width: 720px) {
-        flex-wrap: nowrap;
-
-        > div {
-            max-width: unset;
-        }
-    }
-
     a div {
         display: flex;
         padding-top: 12px;
@@ -50,6 +38,9 @@
         font-weight: 600;
         display: flex;
         padding-top: $spacing-size-4;
+        transition:
+            color 0.3s ease-in-out,
+            background-color 0.3s ease-in-out;
         color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 100%);
 
         #{$selector-darkmode} & {
@@ -65,14 +56,20 @@
             color: var(--color-link);
         }
     }
+
+    @media screen and (min-width: 720px) {
+        flex-wrap: nowrap;
+    }
 }
 
 .tabItem {
-    span {
-        transition: all 0.3s;
+    max-width: calc(50% - #{$spacing-size-2});
+
+    @media screen and (min-width: 720px) {
+        max-width: unset;
     }
 
-    :hover span {
+    &:hover span {
         color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 10%);
         transition: all 0.3s;
     }
@@ -100,10 +97,6 @@
         span {
             color: #044b93;
         }
-
-        #{$selector-darkmode} & {
-            outline: 2px solid var(--color-link);
-        }
     }
 
     @media screen and (min-width: 720px) {
@@ -120,6 +113,10 @@
         &:hover {
             background-color: var(--color-bg-secondary);
             transition: all 0.5s ease-in-out;
+        }
+
+        &.tabActive {
+            outline: 2px solid var(--color-link);
         }
     }
 }
@@ -146,13 +143,13 @@
 
     &.darkTab {
         display: none;
-
-        #{$selector-darkmode} & {
-            display: block;
-        }
     }
 
     #{$selector-darkmode} & {
         display: none;
+
+        &.darkTab {
+            display: block;
+        }
     }
 }
