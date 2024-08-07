@@ -47,7 +47,7 @@ function useSearchQuery() {
 export const Changelog = () => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
-    const [versions, setVersions] = useState([]);
+    const [versions, setVersions] = useState<string[]>([]);
     const [allReleaseNotes, setAllReleaseNotes] = useState(null);
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
     const [markdownContent, setMarkdownContent] = useState(undefined);
@@ -73,7 +73,20 @@ export const Changelog = () => {
             .then((response) => response.json())
             .then((data) => {
                 const gridVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.versions[0])];
-                setVersions([...new Set(gridVersions)]);
+                const allVersions = Array.from(new Set<string>(gridVersions)).sort((v1, v2) => {
+                    const [v1Major, v1Minor, v1Patch] = v1.split('.').map((num: string) => parseInt(num, 10));
+                    const [v2Major, v2Minor, v2Patch] = v2.split('.').map((num: string) => parseInt(num, 10));
+
+                    if (v1Major !== v2Major) {
+                        return v2Major - v1Major;
+                    } else if (v1Minor !== v2Minor) {
+                        return v2Minor - v1Minor;
+                    }
+
+                    return v2Patch - v1Patch;
+                });
+                setVersions(allVersions);
+
                 data.forEach((row) => {
                     // Only one version per row
                     row.version = row.versions[0];
