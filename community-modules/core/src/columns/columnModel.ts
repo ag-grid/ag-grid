@@ -147,14 +147,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         this.addManagedPropertyListeners(
-            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
+            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents', 'selectionOptions'],
             (event) => this.refreshAll(convertSourceType(event.source))
         );
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
             this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
-        );
-        this.addManagedPropertyListener('selectionOptions', (event) =>
-            this.onSelectionOptionsChanged(convertSourceType(event.source))
         );
         this.addManagedPropertyListeners(
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
@@ -1075,12 +1072,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
         if (this.autoCols) {
             this.autoColService!.updateAutoCols(this.autoCols.list, source);
-        }
-    }
-
-    private onSelectionOptionsChanged(source: ColumnEventType) {
-        if (this.controlCols && this.controlColService) {
-            this.refreshAll(source);
         }
     }
 }
