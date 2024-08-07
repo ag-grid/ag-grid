@@ -62,8 +62,8 @@ export function destroyColumnTree(
     context.destroyBeans(colsToDestroy);
 }
 
-export function isColumnGroupAutoCol(col: string | AgColumn): boolean {
-    const colId = typeof col === 'string' ? col : col.getId();
+export function isColumnGroupAutoCol(col: AgColumn): boolean {
+    const colId = col.getId();
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }
 
