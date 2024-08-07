@@ -33,12 +33,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     sideBar: 'filters',
 };
 
-let rowData: IOlympicData[];
-
 function reset() {
     gridApi!.setFilterModel(null);
     gridApi!.setGridOption('rowData', []);
-    gridApi!.setGridOption('rowData', rowData);
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 }
 
 // setup the grid after the page has finished loading
@@ -48,8 +48,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => {
-            rowData = data;
-            gridApi!.setGridOption('rowData', data);
-        });
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
