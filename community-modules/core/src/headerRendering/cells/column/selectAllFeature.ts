@@ -263,10 +263,6 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private isFilteredOnly(): boolean {
-        if (!this.isEnabled()) {
-            return false;
-        }
-
         const so = this.gos.get('selectionOptions');
         return so !== undefined
             ? so.mode === 'multiRow' && so.selectAll === 'filtered'
@@ -274,10 +270,6 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private isCurrentPageOnly(): boolean {
-        if (!this.isEnabled()) {
-            return false;
-        }
-
         const so = this.gos.get('selectionOptions');
         return so !== undefined
             ? so.mode === 'multiRow' && so.selectAll === 'currentPage'
