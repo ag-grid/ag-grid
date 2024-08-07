@@ -1080,7 +1080,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     private onSelectionOptionsChanged(source: ColumnEventType) {
         if (this.controlCols && this.controlColService) {
-            this.refreshCols();
+            this.refreshAll(source);
         }
     }
 }

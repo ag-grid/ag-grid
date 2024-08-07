@@ -2,12 +2,9 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
 
 export interface IControlColService {
     createControlCols(): AgColumn[];
-
-    updateControlCols(autoGroupCols: AgColumn[], source: ColumnEventType): void;
 }
 
 export const CONTROL_COLUMN_ID_PREFIX = 'ag-Grid-ControlColumn' as const;
@@ -46,6 +43,4 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
 
         return [];
     }
-
-    updateControlCols(autoGroupCols: AgColumn<any>[], source: ColumnEventType): void {}
 }
