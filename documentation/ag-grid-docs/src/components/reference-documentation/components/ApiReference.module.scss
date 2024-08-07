@@ -62,8 +62,6 @@
     tr {
         display: flex;
         flex-direction: row;
-        padding-top: $spacing-size-2;
-        padding-bottom: $spacing-size-2;
         border-top: 1px solid color-mix(in srgb, var(--color-border-primary), var(--color-bg-primary) 30%);
         justify-content: space-between;
         @container (max-width: #{$breakpoint-table-small}) {
@@ -82,7 +80,7 @@
     }
 }
 .apiReference {
-    border-bottom: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border-primary), var(--color-bg-primary) 30%);
 }
 
 .propertyRow {
@@ -225,7 +223,11 @@
 a.metaValue {
     color: var(--color-link);
     text-decoration: underline;
-
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: var(--radius-sm);
     background-color: color-mix(in srgb, var(--color-link), var(--color-bg-primary) 90%);
 
     &:hover {
@@ -241,8 +243,7 @@ a.metaValue {
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-size-4 $spacing-size-8;
-    margin-top: $spacing-size-2;
-    padding-top: $spacing-size-2;
+    padding-left: $spacing-size-2;
 
     pre {
         min-width: 100%;
@@ -251,32 +252,42 @@ a.metaValue {
 
 .seeMoreLink {
     font-size: var(--text-fs-base);
+    width: 100%;
+    justify-content: right;
+    align-items: center;
+    display: flex;
+
     svg {
         --icon-size: 1.25em;
         fill: var(--color-link);
+        margin-right: $spacing-size-2;
+    }
+    a {
+        justify-content: right;
+        display: flex;
+        width: max-content;
     }
 }
 
 button.seeMore {
-    min-width: 10.5ch;
     color: var(--color-link);
     transition: color $transition-default-timing;
     justify-content: right;
     display: flex;
     align-items: center;
     gap: $spacing-size-2;
-    color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 30%);
-    margin-top: -32px;
-
+    color: var(--color-fg-code);
+    padding-right: 0.5em;
     svg {
-        --icon-size: 18px;
+        --icon-size: 16px;
 
-        margin: -0.1em 0 0;
-        fill: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 55%);
+        fill: var(--color-fg-code);
         transition: fill $transition-default-timing;
     }
 
     span {
+        height: 24px;
+
         @container (max-width: #{$breakpoint-table-small}) {
             display: none;
         }
@@ -375,6 +386,7 @@ button.seeMore {
 .propertyName {
     display: flex;
     align-items: center;
+    justify-content: space-between;
 
     @container (max-width: #{$breakpoint-table-small}) {
         flex-direction: column;
@@ -384,12 +396,17 @@ button.seeMore {
     }
 }
 
-.metaValue {
+.propertyMeta {
+    display: flex;
+    justify-content: left;
+}
+
+.metaRow {
     background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 90%);
     padding-top: 0.125rem;
     padding-bottom: 0.125rem;
     padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-right: 0;
     border-radius: var(--radius-sm, 0.375rem);
 }
 
@@ -404,6 +421,9 @@ td {
     flex-direction: column;
     width: 100%;
     justify-content: space-between;
+    gap: $spacing-size-2;
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-4;
 }
 
 .expandable {
@@ -436,4 +456,22 @@ td {
     display: flex;
     flex-direction: row;
     gap: $spacing-size-4;
+    justify-content: space-between;
+    .docLink {
+        white-space: nowrap;
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+    }
+    svg {
+        --icon-size: 16px;
+    }
+}
+
+.metaRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    user-select: none;
 }
