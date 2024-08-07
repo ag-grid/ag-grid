@@ -266,12 +266,20 @@ button.seeMore {
     align-items: center;
     gap: $spacing-size-2;
     color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 30%);
+    margin-top: -32px;
+
     svg {
         --icon-size: 18px;
 
         margin: -0.1em 0 0;
         fill: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 55%);
         transition: fill $transition-default-timing;
+    }
+
+    span {
+        @container (max-width: #{$breakpoint-table-small}) {
+            display: none;
+        }
     }
     &:hover {
         color: var(--color-link-hover);
@@ -393,10 +401,9 @@ button.seeMore {
 td {
     // background-color: rgba(255, 0, 0, 0.105);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
     justify-content: space-between;
-    gap: $spacing-size-4;
 }
 
 .expandable {
@@ -424,4 +431,9 @@ td {
         color: rgb(255, 174, 174);
         background-color: color-mix(in srgb, rgb(236, 180, 180), var(--color-bg-primary) 90%);
     }
+}
+.contentDescription {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-4;
 }
