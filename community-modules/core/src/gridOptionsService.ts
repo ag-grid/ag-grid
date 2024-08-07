@@ -14,7 +14,6 @@ import type { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
-import { _getScrollbarWidth } from './utils/browser';
 import { _log, _warnOnce } from './utils/function';
 import { _exists, _missing, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
@@ -132,9 +131,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         this.api = beans.gridApi;
         this.gridId = beans.context.getGridId();
     }
-
-    // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
-    private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
 
     // This is quicker then having code call gridOptionsService.get('context')
@@ -151,8 +147,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
         this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
-        // sets an initial calculation for the scrollbar width
-        this.getScrollbarWidth();
 
         this.addManagedEventListeners({
             gridOptionsChanged: ({ options }) => {
@@ -290,27 +284,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             }
         };
     };
-
-    // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
-    // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
-    // allow the user to provide the scroll width before we work it out.
-    public getScrollbarWidth() {
-        if (this.scrollbarWidth == null) {
-            const useGridOptions =
-                typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _getScrollbarWidth();
-
-            if (scrollbarWidth != null) {
-                this.scrollbarWidth = scrollbarWidth;
-
-                this.eventService.dispatchEvent({
-                    type: 'scrollbarWidthChanged',
-                });
-            }
-        }
-
-        return this.scrollbarWidth;
-    }
 
     public getDomDataKey(): string {
         return this.domDataKey;

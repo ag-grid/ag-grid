@@ -26,6 +26,7 @@ import { _throttle, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import type { GridBodyCtrl } from './gridBodyCtrl';
 import type { MouseEventService } from './mouseEventService';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -55,6 +56,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private rowPositionUtils: RowPositionUtils;
     private cellNavigationService: CellNavigationService;
     private pinnedRowModel: PinnedRowModel;
+    private scrollVisibleService: ScrollVisibleService;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -70,6 +72,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.rowPositionUtils = beans.rowPositionUtils;
         this.cellNavigationService = beans.cellNavigationService;
         this.pinnedRowModel = beans.pinnedRowModel;
+        this.scrollVisibleService = beans.scrollVisibleService;
         this.rangeService = beans.rangeService;
     }
 
@@ -335,7 +338,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private getViewportHeight(): number {
         const { gridBodyCtrl, center } = this.ctrlsService.getParams();
         const scrollPosition = gridBodyCtrl.getScrollFeature().getVScrollPosition();
-        const scrollbarWidth = this.gos.getScrollbarWidth();
+        const scrollbarWidth = this.scrollVisibleService.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (center.isHorizontalScrollShowing()) {

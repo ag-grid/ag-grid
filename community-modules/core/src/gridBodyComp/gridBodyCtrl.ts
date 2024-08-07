@@ -241,7 +241,7 @@ export class GridBodyCtrl extends BeanStub {
         this.setStickyWidth(visible);
         this.setStickyBottomOffsetBottom();
 
-        const scrollbarWidth = visible ? this.gos.getScrollbarWidth() || 0 : 0;
+        const scrollbarWidth = visible ? this.scrollVisibleService.getScrollbarWidth() || 0 : 0;
         const pad = _isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
 
@@ -531,7 +531,7 @@ export class GridBodyCtrl extends BeanStub {
             this.comp.setStickyTopWidth('100%');
             this.comp.setStickyBottomWidth('100%');
         } else {
-            const scrollbarWidth = this.gos.getScrollbarWidth();
+            const scrollbarWidth = this.scrollVisibleService.getScrollbarWidth();
             this.comp.setStickyTopWidth(`calc(100% - ${scrollbarWidth}px)`);
             this.comp.setStickyBottomWidth(`calc(100% - ${scrollbarWidth}px)`);
         }
@@ -564,7 +564,7 @@ export class GridBodyCtrl extends BeanStub {
     private setStickyBottomOffsetBottom(): void {
         const pinnedBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
-        const scrollbarWidth = hScrollShowing ? this.gos.getScrollbarWidth() || 0 : 0;
+        const scrollbarWidth = hScrollShowing ? this.scrollVisibleService.getScrollbarWidth() || 0 : 0;
         const height = pinnedBottomHeight + scrollbarWidth;
 
         this.comp.setStickyBottomBottom(`${height}px`);
@@ -574,7 +574,7 @@ export class GridBodyCtrl extends BeanStub {
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFit(params?: ISizeColumnsToFitParams, nextTimeout?: number) {
         const removeScrollWidth = this.isVerticalScrollShowing();
-        const scrollWidthToRemove = removeScrollWidth ? this.gos.getScrollbarWidth() : 0;
+        const scrollWidthToRemove = removeScrollWidth ? this.scrollVisibleService.getScrollbarWidth() : 0;
         // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
         // because we change the width of the bodyViewport to hide the real browser scrollbar
         const bodyViewportWidth = _getInnerWidth(this.eGridBody);
