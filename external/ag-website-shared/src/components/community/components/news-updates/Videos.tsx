@@ -1,3 +1,4 @@
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
 import styles from './Videos.module.scss';
@@ -38,7 +39,7 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                     {currentVideo.thumbnail && !playVideo ? (
                         <img
                             className={styles.videoFrame}
-                            src={currentVideo.thumbnail}
+                            src={urlWithBaseUrl(currentVideo.thumbnail)}
                             alt="Video thumbnail"
                             onClick={() => playGitNationVideo()}
                         />
@@ -67,7 +68,11 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                                 className={styles.youtubeThumbnail}
                             />
                         ) : (
-                            <img src={video.thumbnail} alt="Video thumbnail" className={styles.videoThumbnail} />
+                            <img
+                                src={urlWithBaseUrl(video.thumbnail)}
+                                alt="Video thumbnail"
+                                className={styles.videoThumbnail}
+                            />
                         )}
                     </div>
                 ))}
