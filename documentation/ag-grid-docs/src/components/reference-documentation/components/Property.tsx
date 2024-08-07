@@ -317,7 +317,8 @@ export const Property: FunctionComponent<{
                                 }}
                                 role="presentation"
                             >
-                                <Icon name={isExpanded ? 'chevronDown' : 'chevronUp'} />
+                                More details
+                                <Icon className={styles.chevron} name={isExpanded ? 'chevronUp' : 'chevronDown'} />
                             </button>
                         )}
                     </div>
