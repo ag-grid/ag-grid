@@ -16,14 +16,13 @@ import { RowNode } from '@ag-grid-community/core';
 import { ChildrenChanged, TreeNode } from './treeNode';
 import {
     clearTreeRowFlags,
-    getTreeRowTreeNode,
     isTreeRowCommitted,
     isTreeRowExpandedInitialized,
     isTreeRowUpdated,
     markTreeRowCommitted,
     setTreeRowUpdated,
     unsetTreeRowExpandedInitialized,
-} from './treeRow';
+} from './treeNodeFlags';
 
 export type IsGroupOpenByDefaultCallback =
     | ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean)
@@ -197,7 +196,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Transactional removal */
     private removeRows(rows: RowNode[] | null | undefined): void {
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
-            const node = getTreeRowTreeNode(rows![i]);
+            const node = rows![i].treeNode as TreeNode | null;
             if (node) {
                 const oldRow = node.row;
                 this.overwriteRow(node, null, false);
@@ -263,7 +262,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
         const { row: oldRow, ghost } = node;
 
-        const prevNode = getTreeRowTreeNode(newRow);
+        const prevNode = newRow?.treeNode as TreeNode | null;
         if (prevNode !== node && prevNode) {
             this.overwriteRow(prevNode, null, false); // The row is somewhere else in the tree
         }

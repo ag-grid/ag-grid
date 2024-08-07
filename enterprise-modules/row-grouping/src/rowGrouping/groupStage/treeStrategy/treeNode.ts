@@ -1,15 +1,7 @@
 import type { RowNode } from '@ag-grid-community/core';
 
-import { setTreeRowTreeNode } from './treeRow';
-
 /** An empty iterator */
 const EMPTY_CHILDREN = ([] as readonly TreeNode[]).values();
-
-interface TreeNodeWritablePrivateFields {
-    parent: TreeNode | null;
-    row: RowNode | null;
-    ghost: boolean;
-}
 
 /**
  * We use this to keep track if children were removed or added and moved, so we can skip
@@ -48,7 +40,7 @@ export const enum ChildrenChanged {
  * The ghost nodes are removed.
  * Before commit those arrays are NOT representing the truth, so they should not be used.
  */
-export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
+export class TreeNode {
     /** Keep track of the number of children that are ghosts in this node */
     private ghostsCount: number = 0;
 
@@ -71,7 +63,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
     private invalidatedNext: TreeNode | null | undefined = undefined;
 
     /** The RowNode associated to this tree node */
-    public readonly row: RowNode | null = null;
+    public row: RowNode | null = null;
 
     /** We keep the row.childrenAfterGroup here, we just swap it when we assign row */
     public readonly childrenAfterGroup: RowNode[] = [];
@@ -96,10 +88,10 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
     public leafChildrenChanged: boolean = false;
 
     /** A ghost node is a node that should be removed */
-    public readonly ghost: boolean;
+    public ghost: boolean;
 
     /** The parent node of this node, or null if removed or the root. */
-    public readonly parent: TreeNode | null;
+    public parent: TreeNode | null;
 
     /** The key of this node. */
     public readonly key: string;
@@ -146,7 +138,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
         }
 
         if (oldRow) {
-            setTreeRowTreeNode(oldRow, null);
+            oldRow.treeNode = null;
             oldRow.parent = null;
             oldRow.level = 0;
             if (this.level < 0) {
@@ -158,7 +150,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
         }
 
         if (newRow) {
-            setTreeRowTreeNode(newRow, this);
+            newRow.treeNode = this;
             newRow.parent = this.parent?.row ?? null;
             newRow.level = this.level;
             newRow.childrenAfterGroup = this.childrenAfterGroup;
@@ -167,7 +159,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
             }
         }
 
-        (this as TreeNodeWritablePrivateFields).row = newRow;
+        this.row = newRow;
 
         return true;
     }
@@ -230,7 +222,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
             return false; // No changes
         }
 
-        (this as TreeNodeWritablePrivateFields).ghost = newGhost;
+        this.ghost = newGhost;
 
         if (newGhost) {
             ++parent.ghostsCount;
@@ -265,7 +257,7 @@ export class TreeNode implements Readonly<TreeNodeWritablePrivateFields> {
                 --parent.ghostsCount;
             }
         }
-        (this as TreeNodeWritablePrivateFields).parent = null;
+        this.parent = null;
         this.children = null;
     }
 

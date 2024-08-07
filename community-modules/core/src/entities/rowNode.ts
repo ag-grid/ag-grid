@@ -36,6 +36,12 @@ const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>(
     'sticky',
 ]);
 
+/**
+ * This is used only when using tree data.
+ * Implementation in enterprise-modules/row-grouping/src/rowGrouping/groupStage/treeStrategy/treeNode.ts
+ */
+export interface ITreeNode {}
+
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
     public static ID_PREFIX_TOP_PINNED = 't-';
@@ -159,6 +165,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     /** Children mapped by the pivot columns. */
     public childrenMapped: { [key: string]: any } | null = null;
+
+    /** The TreeNode associated to this row. Used only with tree data. */
+    public treeNode: ITreeNode | null = null;
+
+    /** The flags associated to this node. Used only with tree data. */
+    public treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;
