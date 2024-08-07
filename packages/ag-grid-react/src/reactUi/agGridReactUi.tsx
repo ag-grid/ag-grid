@@ -132,7 +132,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
             const ctrlsService = context.getBean('ctrlsService');
-            ctrlsService.whenReady(() => {
+            ctrlsService.whenReady(ctrlsService, () => {
                 if (context.isDestroyed()) {
                     return;
                 }
@@ -149,7 +149,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
         const acceptChangesCallback = (context: Context) => {
             const ctrlsService = context.getBean('ctrlsService');
-            ctrlsService.whenReady(() => {
+            ctrlsService.whenReady(ctrlsService, () => {
                 whenReadyFuncs.current.forEach((f) => f());
                 whenReadyFuncs.current.length = 0;
                 ready.current = true;

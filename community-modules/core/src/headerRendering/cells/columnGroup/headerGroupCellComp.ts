@@ -38,7 +38,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             getUserCompInstance: () => this.headerGroupComp,
         };
 
-        this.ctrl.setComp(compProxy, eGui, this.eResize, this.eHeaderCompWrapper);
+        this.ctrl.setComp(compProxy, eGui, this.eResize, this.eHeaderCompWrapper, undefined);
     }
 
     private setUserCompDetails(details: UserCompDetails): void {

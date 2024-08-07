@@ -79,11 +79,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         this.setupAutoHeight({
             wrapperElement: eHeaderCompWrapper,
-            checkMeasuringCallback: (checkMeasuring) => this.addRefreshFunction(checkMeasuring),
+            checkMeasuringCallback: (checkMeasuring) => this.setRefreshFunction('measuring', checkMeasuring),
         });
 
-        this.addColumnHoverListener();
-        this.setupFilterClass();
+        this.addColumnHoverListener(compBean);
+        this.setupFilterClass(compBean);
         this.setupClassesFromColDef();
         this.setupTooltip(compBean);
         this.addActiveHeaderMouseListeners(compBean);

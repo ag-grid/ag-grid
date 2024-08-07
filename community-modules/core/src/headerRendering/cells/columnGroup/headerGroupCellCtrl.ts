@@ -51,9 +51,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     public setComp(
         comp: IHeaderGroupCellComp,
-
         eGui: HTMLElement,
-
         eResize: HTMLElement,
         eHeaderCompWrapper: HTMLElement,
         compBean: BeanStub<any> | undefined
@@ -95,7 +93,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         );
 
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
-        this.addResizeAndMoveKeyboardListeners(compBeaneGui);
+        this.addResizeAndMoveKeyboardListeners(compBean);
     }
 
     public getColumn(): AgColumnGroup {

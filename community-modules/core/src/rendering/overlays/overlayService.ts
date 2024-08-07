@@ -196,6 +196,9 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private refreshWrapperPadding(): void {
+        if (!this.overlayWrapperComp) {
+            return;
+        }
         let newPadding: number = 0;
 
         if (this.state === OverlayServiceState.NoRows) {
