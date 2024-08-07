@@ -1,4 +1,4 @@
-import type { RowNode } from '@ag-grid-community/core';
+import type { ITreeNode, RowNode } from '@ag-grid-community/core';
 
 /** An empty iterator */
 const EMPTY_CHILDREN = ([] as readonly TreeNode[]).values();
@@ -40,7 +40,7 @@ export const enum ChildrenChanged {
  * The ghost nodes are removed.
  * Before commit those arrays are NOT representing the truth, so they should not be used.
  */
-export class TreeNode {
+export class TreeNode implements ITreeNode {
     /** Keep track of the number of children that are ghosts in this node */
     private ghostsCount: number = 0;
 
@@ -87,24 +87,19 @@ export class TreeNode {
     /** True allLeafChildren should be recomputed. Reset to false during commit. */
     public leafChildrenChanged: boolean = false;
 
-    /** A ghost node is a node that should be removed */
-    public ghost: boolean;
+    public constructor(
+        /** The parent node of this node, or null if removed or the root. */
+        public parent: TreeNode | null,
 
-    /** The parent node of this node, or null if removed or the root. */
-    public parent: TreeNode | null;
+        /** The key of this node. */
+        public readonly key: string,
 
-    /** The key of this node. */
-    public readonly key: string;
+        /** The level of this node. Root has level -1 */
+        public readonly level: number,
 
-    /** The level of this node. Root has level -1 */
-    public readonly level: number;
-
-    public constructor(parent: TreeNode | null, key: string, level: number, ghost: boolean) {
-        this.parent = parent;
-        this.key = key;
-        this.level = level;
-        this.ghost = ghost;
-    }
+        /** A ghost node is a node that should be removed */
+        public ghost: boolean
+    ) {}
 
     /** Returns the number of children in this node */
     public childrenCount(): number {

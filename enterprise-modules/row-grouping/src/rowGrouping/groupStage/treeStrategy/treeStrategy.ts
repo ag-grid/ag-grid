@@ -149,10 +149,13 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null | undefined): void {
-        for (let i = 0, len = rowNodes?.length ?? 0; i < len; ++i) {
-            const rowNode = rowNodes![i];
-            this.setGroupData(rowNode);
-            this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
+        if (rowNodes) {
+            const len = rowNodes.length;
+            for (let i = 0; i < len; ++i) {
+                const rowNode = rowNodes![i];
+                this.setGroupData(rowNode);
+                this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
+            }
         }
     }
 
@@ -195,13 +198,16 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Transactional removal */
     private removeRows(rows: RowNode[] | null | undefined): void {
-        for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
-            const node = rows![i].treeNode as TreeNode | null;
-            if (node) {
-                const oldRow = node.row;
-                this.overwriteRow(node, null, false);
-                if (oldRow !== null) {
-                    unsetTreeRowExpandedInitialized(oldRow);
+        if (rows) {
+            const len = rows.length;
+            for (let i = 0; i < len; ++i) {
+                const node = rows![i].treeNode as TreeNode | null;
+                if (node) {
+                    const oldRow = node.row;
+                    this.overwriteRow(node, null, false);
+                    if (oldRow !== null) {
+                        unsetTreeRowExpandedInitialized(oldRow);
+                    }
                 }
             }
         }
@@ -209,11 +215,14 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Transactional insert/update */
     private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
-        for (let i = 0, len = rows?.length ?? 0; i < len; i++) {
-            const row = rows![i];
-            const node = this.upsertPath(this.getDataPath(details, row));
-            if (node) {
-                this.overwriteRow(node, row, update);
+        if (rows) {
+            const len = rows.length;
+            for (let i = 0; i < len; ++i) {
+                const row = rows![i];
+                const node = this.upsertPath(this.getDataPath(details, row));
+                if (node) {
+                    this.overwriteRow(node, row, update);
+                }
             }
         }
     }
@@ -231,12 +240,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * Note that invalidate() is not called, is up to the caller to call it if needed.
      */
     private upsertPath(path: string[]): TreeNode | null {
-        for (let level = 0, parent: TreeNode | null = this.root, stop = path.length - 1; level <= stop; ++level) {
+        let parent: TreeNode | null = this.root;
+        const stop = path.length - 1;
+        for (let level = 0; level <= stop; ++level) {
             const node: TreeNode = parent.upsertKey(path[level]);
             if (level >= stop) {
                 node.invalidate();
                 return node;
-            } else if (!node.row) {
+            }
+            if (!node.row) {
                 // TODO: at the moment, the sorting of filler node is not correct. See AG-12497
                 // This needs more investigation and discussions.
                 // See _sortRowNodesByOrder implementation.
@@ -262,8 +274,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
         const { row: oldRow, ghost } = node;
 
-        const prevNode = newRow?.treeNode as TreeNode | null;
-        if (prevNode !== node && prevNode) {
+        const prevNode = (newRow?.treeNode ?? null) as TreeNode | null;
+        if (prevNode !== node && prevNode !== null) {
             this.overwriteRow(prevNode, null, false); // The row is somewhere else in the tree
         }
 
@@ -496,11 +508,19 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         row.leafGroup = false;
         row.rowGroupIndex = null;
 
+        // Generate a unique id for the filler row
         let id = node.level + '-' + node.key;
-        for (let p = node.parent; p?.parent; p = p.parent) {
+        let p = node.parent;
+        while (p !== null) {
+            const parent = p.parent;
+            if (parent === null) {
+                break;
+            }
             id = `${p.level}-${p.key}-${id}`;
+            p = parent;
         }
         row.id = RowNode.ID_PREFIX_ROW_GROUP + id;
+
         return row;
     }
 
