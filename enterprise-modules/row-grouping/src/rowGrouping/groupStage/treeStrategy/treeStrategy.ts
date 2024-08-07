@@ -242,7 +242,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 // See _sortRowNodesByOrder implementation.
                 // We need to create this row early instead of waiting for the commit stage
                 // because filler nodes are ordered by __objectId.
-                // We create it hear so we are sure filler nodes are created in the order they are encountered
+                // We create it here so we are sure filler nodes are created in the order they are encountered
                 // in the input rowData, and not in the order of invalidation, that is even less deterministic.
                 // We could reduce the amount of reordering needed, and, delay the creation of filler nodes to the commit stage.
                 this.overwriteRow(node, this.createFillerRow(node), false);
