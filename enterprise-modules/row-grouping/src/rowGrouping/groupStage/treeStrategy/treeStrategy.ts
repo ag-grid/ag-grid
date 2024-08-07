@@ -237,7 +237,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 node.invalidate();
                 return node;
             } else if (!node.row) {
-                // TODO: at the moment, the sorting of filler node is not correct.
+                // TODO: at the moment, the sorting of filler node is not correct. See AG-12497
                 // This needs more investigation and discussions.
                 // See _sortRowNodesByOrder implementation.
                 // We need to create this row early instead of waiting for the commit stage
@@ -287,7 +287,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 if (current.ghost && current.row) {
                     // This is a filler row, and we want to remove it
                     // This is because order of filler rows is currently handled by __objectId
-                    // So we cannot reuse them.
+                    // So we cannot reuse them. See AG-12497
                     this.deleteRow(current.row, true);
                     current.linkRow(null);
                 }
