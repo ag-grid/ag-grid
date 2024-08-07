@@ -1,11 +1,10 @@
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
-import Grid from '@components/grid/Grid';
+import { Grid } from '@components/grid/Grid';
 import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
 import styles from '@pages-styles/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
-import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -56,7 +55,6 @@ export const Changelog = () => {
     const [hideExpander, setHideExpander] = useState(fixVersion === ALL_FIX_VERSIONS);
     const { searchQuery, handleSearchQueryChange } = useSearchQuery();
     const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
-    const [darkMode] = useDarkmode();
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
@@ -327,7 +325,8 @@ export const Changelog = () => {
                 onFirstDataRendered={() => {
                     applyFixVersionFilter();
                 }}
-                theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
+                theme="ag-theme-quartz"
+                darkModeTheme="ag-theme-quartz-dark"
             ></Grid>
         </div>
     );
