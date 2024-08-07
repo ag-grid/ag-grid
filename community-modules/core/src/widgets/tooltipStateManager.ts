@@ -1,7 +1,6 @@
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { TooltipHideEvent, TooltipShowEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
 import { _isIOSUserAgent } from '../utils/browser';
@@ -250,8 +249,8 @@ export class TooltipStateManager extends BeanStub {
         return now - then < SHOW_QUICK_TOOLTIP_DIFF;
     }
 
-    private setToDoNothing(): void {
-        if (this.state === TooltipStates.SHOWING) {
+    private setToDoNothing(fromHideTooltip?: boolean): void {
+        if (!fromHideTooltip && this.state === TooltipStates.SHOWING) {
             this.hideTooltip();
         }
 
@@ -312,7 +311,7 @@ export class TooltipStateManager extends BeanStub {
             this.isInteractingWithTooltip = false;
         }
 
-        this.state = TooltipStates.NOTHING;
+        this.setToDoNothing(true);
     }
 
     private newTooltipComponentCallback(tooltipInstanceCopy: number, tooltipComp: ITooltipComp): void {
@@ -353,7 +352,7 @@ export class TooltipStateManager extends BeanStub {
         this.positionTooltip();
 
         if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
-            const listener = this.setToDoNothing.bind(this);
+            const listener = () => this.setToDoNothing();
             [this.onBodyScrollEventCallback, this.onColumnMovedEventCallback] = this.addManagedEventListeners({
                 bodyScroll: listener,
                 columnMoved: listener,
@@ -361,15 +360,12 @@ export class TooltipStateManager extends BeanStub {
         }
 
         if (this.interactionEnabled) {
-            if (this.tooltipTrigger === TooltipTrigger.HOVER) {
-                [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = this.addManagedElementListeners(
-                    eGui,
-                    {
-                        mouseenter: this.onTooltipMouseEnter.bind(this),
-                        mouseleave: this.onTooltipMouseLeave.bind(this),
-                    }
-                );
-            } else {
+            [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = this.addManagedElementListeners(eGui, {
+                mouseenter: this.onTooltipMouseEnter.bind(this),
+                mouseleave: this.onTooltipMouseLeave.bind(this),
+            });
+
+            if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
                 [this.tooltipFocusInListener, this.tooltipFocusOutListener] = this.addManagedElementListeners(eGui, {
                     focusin: this.onTooltipFocusIn.bind(this),
                     focusout: this.onTooltipFocusOut.bind(this),
@@ -392,6 +388,9 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private onTooltipMouseLeave(): void {
+        if (this.isTooltipFocused()) {
+            return;
+        }
         this.isInteractingWithTooltip = false;
         this.lockService();
     }
@@ -400,14 +399,19 @@ export class TooltipStateManager extends BeanStub {
         this.isInteractingWithTooltip = true;
     }
 
+    private isTooltipFocused(): boolean {
+        const tooltipGui = this.tooltipComp?.getGui();
+        const activeEl = this.gos.getActiveDomElement();
+
+        return !!tooltipGui && tooltipGui.contains(activeEl);
+    }
+
     private onTooltipFocusOut(e: FocusEvent): void {
         const parentGui = this.parentComp.getGui();
-        const tooltipGui = this.tooltipComp?.getGui();
-        const relatedTarget = e.relatedTarget as Element;
 
         // focusout is dispatched when inner elements lose focus
         // so we need to verify if focus is contained within the tooltip
-        if (tooltipGui?.contains(relatedTarget)) {
+        if (this.isTooltipFocused()) {
             return;
         }
 
@@ -415,7 +419,7 @@ export class TooltipStateManager extends BeanStub {
 
         // if we move the focus from the tooltip back to the original cell
         // the tooltip should remain open, but we need to restart the hide timeout counter
-        if (parentGui.contains(relatedTarget)) {
+        if (parentGui.contains(e.relatedTarget as Element)) {
             this.startHideTimeout();
         }
         // if the parent cell doesn't contain the focus, simply hide the tooltip

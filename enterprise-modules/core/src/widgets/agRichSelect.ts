@@ -281,6 +281,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             } else {
                 this.listComponent.refresh(true);
             }
+
+            this.alignPickerToComponent();
         }
     }
 
@@ -422,7 +424,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         this.setValueList({ valueList: filteredValues, refresh: true });
-        this.alignPickerToComponent();
     }
 
     private runSearch() {

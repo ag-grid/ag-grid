@@ -45,7 +45,7 @@ export const About = () => {
                 </section>
 
                 <section>
-                    <h2>The Dev Team</h2>
+                    <h2>The Product Team</h2>
 
                     <article className={styles.team}>
                         <div>

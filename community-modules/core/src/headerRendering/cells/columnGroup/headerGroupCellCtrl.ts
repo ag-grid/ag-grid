@@ -51,8 +51,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     public setComp(
         comp: IHeaderGroupCellComp,
+
         eGui: HTMLElement,
+
         eResize: HTMLElement,
+        eHeaderCompWrapper: HTMLElement,
         compBean: BeanStub<any> | undefined
     ): void {
         this.comp = comp;
@@ -66,6 +69,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.setupMovingCss(compBean);
         this.setupExpandable(compBean);
         this.setupTooltip(compBean);
+
+        this.setupAutoHeight({
+            wrapperElement: eHeaderCompWrapper,
+        });
+
         this.setupUserComp();
         this.addHeaderMouseListeners(compBean);
 
@@ -87,7 +95,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         );
 
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
-        this.addResizeAndMoveKeyboardListeners(compBean);
+        this.addResizeAndMoveKeyboardListeners(compBeaneGui);
+    }
+
+    public getColumn(): AgColumnGroup {
+        return this.column;
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
@@ -140,7 +152,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
 
-        if (!this.isAlive() && headerPosition) {
+        if ((!this.isAlive() || this.beans.gos.get('ensureDomOrder')) && headerPosition) {
             this.restoreFocus(id, column, headerPosition);
         }
     }
@@ -309,6 +321,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             }
         } else {
             classes.push('ag-header-group-cell-with-group');
+            if (colGroupDef?.wrapHeaderText) {
+                classes.push('ag-header-cell-wrap-text');
+            }
         }
 
         classes.forEach((c) => this.comp.addOrRemoveCssClass(c, true));
@@ -402,7 +417,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             onDragStopped: () => allLeafColumns.forEach((col) => col.setMoving(false, 'uiColumnDragged')),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
-                    const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
+                    const { columns = [], visibleState } = dragItem ?? {};
+                    // mimic behaviour of `MoveColumnFeature.onDragEnter`
+                    const unlockedColumns = columns.filter(
+                        (col) => !col.getColDef().lockVisible && (!visibleState || visibleState[col.getColId()])
+                    );
                     columnModel.setColsVisible(unlockedColumns as AgColumn[], true, 'uiColumnMoved');
                 }
             },

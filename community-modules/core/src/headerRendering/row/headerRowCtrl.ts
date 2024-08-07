@@ -107,6 +107,7 @@ export class HeaderRowCtrl extends BeanStub {
             columnResized: this.onColumnResized.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
+            columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
             gridStylesChanged: onHeightChanged,
             advancedFilterEnabledChanged: onHeightChanged,
@@ -185,29 +186,15 @@ export class HeaderRowCtrl extends BeanStub {
 
     public getTopAndHeight() {
         const { columnModel, filterManager } = this.beans;
-        let headerRowCount = columnModel.getHeaderRowCount();
         const sizes: number[] = [];
 
-        let numberOfFloating = 0;
-
-        if (filterManager?.hasFloatingFilters()) {
-            headerRowCount++;
-            numberOfFloating = 1;
-        }
-
-        const groupHeight = columnModel.getColumnGroupHeaderRowHeight();
+        const groupHeadersHeight = columnModel.getGroupRowsHeight();
         const headerHeight = columnModel.getColumnHeaderRowHeight();
 
-        const numberOfNonGroups = 1 + numberOfFloating;
-        const numberOfGroups = headerRowCount - numberOfNonGroups;
-
-        for (let i = 0; i < numberOfGroups; i++) {
-            sizes.push(groupHeight as number);
-        }
-
+        sizes.push(...groupHeadersHeight);
         sizes.push(headerHeight);
 
-        for (let i = 0; i < numberOfFloating; i++) {
+        if (filterManager?.hasFloatingFilters()) {
             sizes.push(columnModel.getFloatingFiltersHeight() as number);
         }
 
@@ -218,6 +205,7 @@ export class HeaderRowCtrl extends BeanStub {
         }
 
         const rowHeight = sizes[this.rowIndex];
+
         return { topOffset, rowHeight };
     }
 

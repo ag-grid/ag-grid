@@ -35,7 +35,7 @@
 
 .published {
     font-weight: var(--text-regular);
-    font-weight: 200;
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 30%);
     display: flex;
     align-items: center;
 }
@@ -52,9 +52,8 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    color: var(--color-text-secondary);
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 30%);
     gap: $spacing-size-4;
-    font-weight: 200;
 
     span {
         display: -webkit-box;

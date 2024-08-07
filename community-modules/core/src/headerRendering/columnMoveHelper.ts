@@ -363,7 +363,11 @@ export function normaliseX(
     gos: GridOptionsService,
     ctrlsService: CtrlsService
 ): number {
-    const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned).getViewportElement();
+    const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
+
+    if (!eViewport) {
+        return 0;
+    }
 
     if (fromKeyboard) {
         x -= eViewport.getBoundingClientRect().left;

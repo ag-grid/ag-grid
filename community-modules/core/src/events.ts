@@ -137,6 +137,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rightPinnedWidthChanged: RightPinnedWidthChangedEvent<TData, TContext>;
         rowContainerHeightChanged: RowContainerHeightChangedEvent<TData, TContext>;
         headerHeightChanged: HeaderHeightChangedEvent<TData, TContext>;
+        columnGroupHeaderHeightChanged: ColumnGroupHeaderHeightChangedEvent<TData, TContext>;
         columnHeaderHeightChanged: ColumnHeaderHeightChangedEvent<TData, TContext>;
         gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
         storeUpdated: StoreUpdatedEvent<TData, TContext>;
@@ -765,9 +766,6 @@ export interface ColumnRowGroupChangedEvent<TData = any, TContext = any>
 export interface ColumnValueChangedEvent<TData = any, TContext = any>
     extends ColumnEvent<'columnValueChanged', TData, TContext> {}
 
-export interface ColumnHeaderHeightChangedEvent<TData = any, TContext = any>
-    extends ColumnEvent<'columnHeaderHeightChanged', TData, TContext> {}
-
 export interface ColumnMovedEvent<TData = any, TContext = any> extends ColumnEvent<'columnMoved', TData, TContext> {
     /** The position the column was moved to */
     toIndex?: number;
@@ -1103,6 +1101,13 @@ export interface RowContainerHeightChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowContainerHeightChanged', TData, TContext> {}
 export interface HeaderHeightChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'headerHeightChanged', TData, TContext> {}
+export interface ColumnHeaderHeightChangedEvent<TData = any, TContext = any>
+    extends ColumnEvent<'columnHeaderHeightChanged', TData, TContext> {}
+export interface ColumnGroupHeaderHeightChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'columnGroupHeaderHeightChanged', TData, TContext> {
+    columnGroup: ColumnGroup | null;
+    source: 'autosizeColumnGroupHeaderHeight';
+}
 export interface GridStylesChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'gridStylesChanged', TData, TContext> {}
 export interface RowCountReadyEvent<TData = any, TContext = any>

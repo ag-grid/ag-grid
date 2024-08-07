@@ -90,6 +90,10 @@
         "commands": [
           "node scripts/package/sanity-check-package.js --allowed-ext css scss --type styles -- dist/artifacts/contents/{projectRoot}/package"
         ]
+      },
+      "configurations": {
+        "production": {},
+        "archive": {}
       }
     },
     "lint": {

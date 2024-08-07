@@ -287,13 +287,16 @@ export class MenuService extends BeanStub implements NamedBean {
             this.animationFrameService.requestAnimationFrame(() => {
                 const headerCellCtrl = this.ctrlsService
                     .getHeaderRowContainerCtrl(column.getPinned())
-                    .getHeaderCtrlForColumn(column)!;
-                menuFactory.showMenuAfterButtonClick(
-                    column,
-                    headerCellCtrl.getAnchorElementForMenu(filtersOnly),
-                    containerType,
-                    true
-                );
+                    ?.getHeaderCtrlForColumn(column);
+
+                if (headerCellCtrl) {
+                    menuFactory.showMenuAfterButtonClick(
+                        column,
+                        headerCellCtrl.getAnchorElementForMenu(filtersOnly),
+                        containerType,
+                        true
+                    );
+                }
             });
         }
     }

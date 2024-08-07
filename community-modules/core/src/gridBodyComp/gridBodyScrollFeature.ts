@@ -4,7 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { BodyScrollEndEvent, BodyScrollEvent } from '../events';
+import type { BodyScrollEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';

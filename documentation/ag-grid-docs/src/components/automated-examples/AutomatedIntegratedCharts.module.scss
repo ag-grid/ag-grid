@@ -63,6 +63,10 @@ $z-index-splash-contents: 10;
     }
 }
 
+:global(.automated-integrated-charts-grid.ag-theme-quartz-dark .context-replay-icon) {
+    filter: invert(1);
+}
+
 .sectionHeader {
     display: flex;
     flex-direction: column;

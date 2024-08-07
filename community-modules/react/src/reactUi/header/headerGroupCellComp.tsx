@@ -25,6 +25,7 @@ const HeaderGroupCellComp = (props: { ctrl: HeaderGroupCellCtrl }) => {
     const compBean = useRef<EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
+    const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeaderGroupComp>();
     const compProxy = useRef<IHeaderGroupCellComp>({
         setWidth: (width: string) => {
@@ -50,11 +51,11 @@ const HeaderGroupCellComp = (props: { ctrl: HeaderGroupCellCtrl }) => {
             return;
         }
 
-        ctrl.setComp(compProxy.current, eRef, eResize.current!, compBean.current!);
+        ctrl.setComp(compProxy.current, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current!);
     }, []);
 
     // js comps
-    useLayoutEffect(() => showJsComp(userCompDetails, context, eGui.current!), [userCompDetails]);
+    useLayoutEffect(() => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!), [userCompDetails]);
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {
@@ -79,8 +80,12 @@ const HeaderGroupCellComp = (props: { ctrl: HeaderGroupCellCtrl }) => {
 
     return (
         <div ref={setRef} className={className} col-id={colId} role="columnheader" aria-expanded={ariaExpanded}>
-            {reactUserComp && userCompStateless && <UserCompClass {...userCompDetails!.params} />}
-            {reactUserComp && !userCompStateless && <UserCompClass {...userCompDetails!.params} ref={userCompRef} />}
+            <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
+                {reactUserComp && userCompStateless && <UserCompClass {...userCompDetails!.params} />}
+                {reactUserComp && !userCompStateless && (
+                    <UserCompClass {...userCompDetails!.params} ref={userCompRef} />
+                )}
+            </div>
             <div ref={eResize} aria-hidden={resizableAriaHidden} className={resizableClassName}></div>
         </div>
     );

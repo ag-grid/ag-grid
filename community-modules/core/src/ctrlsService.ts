@@ -167,7 +167,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         return [leftHeader, rightHeader, centerHeader];
     }
 
-    public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl {
+    public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl | undefined {
         const params = this.params;
         switch (pinned) {
             case 'left':

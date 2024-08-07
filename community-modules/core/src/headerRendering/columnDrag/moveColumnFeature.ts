@@ -62,7 +62,20 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public getIconName(): DragAndDropIcon {
-        return this.pinned ? 'pinned' : 'move';
+        const columns = this.lastDraggingEvent.dragItem.columns ?? [];
+        if (this.pinned) {
+            const isAValidCol = columns.some((col) => {
+                // Valid to move a locked pinned column in its matching pinned container.
+                return !col.getColDef().lockPinned || col.getPinned() === this.pinned;
+            });
+            return isAValidCol ? 'pinned' : 'notAllowed';
+        } else {
+            const isAValidCol = columns.some((col) => {
+                // Valid to move a lockPinned column as long as it is not pinned.
+                return !col.getColDef().lockPinned || !col.isPinned();
+            });
+            return isAValidCol ? 'move' : 'notAllowed';
+        }
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
@@ -227,7 +240,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         if (this.movingIntervalId) {
             window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
-            this.dragAndDropService.setGhostIcon('move');
+            this.dragAndDropService.setGhostIcon(this.getIconName());
         }
     }
 

@@ -226,6 +226,14 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         return this.eViewport;
     }
 
+    public getGroupRowCount(): number {
+        return this.groupsRowCtrls.length;
+    }
+
+    public getGroupRowCtrlAtIndex(index: number): HeaderRowCtrl {
+        return this.groupsRowCtrls[index];
+    }
+
     public getRowCount(): number {
         return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);
     }

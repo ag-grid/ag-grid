@@ -22,19 +22,22 @@ export function FakeServer(allData) {
                 lastRow: getLastRowIndex(request),
             };
         },
-        getCountries: function () {
-            var sql = 'SELECT DISTINCT countryCode, countryName FROM ? ORDER BY countryName ASC';
+        getCountries: function (sportFilter) {
+            var textFilter = sportFilter ? ' WHERE ' + textFilterMapper('sport', sportFilter.filterModels[0]) : '';
+            var sql = 'SELECT DISTINCT countryCode, countryName FROM ? ' + textFilter + ' ORDER BY countryName ASC';
 
             return alasql(sql, [allData]).map((row) => ({
                 code: row.countryCode,
                 name: row.countryName,
             }));
         },
-        getSports: function (countries) {
+        getSports: function (countries, sportFilter) {
             console.log('Returning sports for ' + (countries ? countries.join(', ') : 'all countries'));
 
             var where = countries ? " WHERE countryCode IN ('" + countries.join("', '") + "')" : '';
-            var sql = 'SELECT DISTINCT sport FROM ? ' + where + ' ORDER BY sport ASC';
+            var operator = countries ? ' AND ' : ' WHERE ';
+            var textFilter = sportFilter ? operator + textFilterMapper('sport', sportFilter.filterModels[0]) : '';
+            var sql = 'SELECT DISTINCT sport FROM ? ' + where + textFilter + ' ORDER BY sport ASC';
 
             return alasql(sql, [allData]).map(function (x) {
                 return x.sport;
@@ -58,6 +61,36 @@ export function FakeServer(allData) {
         return columnKey === 'country' ? 'countryCode' : columnKey;
     }
 
+    function textFilterMapper(key, item) {
+        switch (item.type) {
+            case 'equals':
+                return key + " = '" + item.filter + "'";
+            case 'notEqual':
+                return key + "' != '" + item.filter + "'";
+            case 'contains':
+                return key + " LIKE '%" + item.filter + "%'";
+            case 'notContains':
+                return key + " NOT LIKE '%" + item.filter + "%'";
+            case 'startsWith':
+                return key + " LIKE '" + item.filter + "%'";
+            case 'endsWith':
+                return key + " LIKE '%" + item.filter + "'";
+            default:
+                console.log('unknown text filter type: ' + item.type);
+        }
+    }
+
+    function createFilterSql(mapper, key, item) {
+        if (item.operator) {
+            var condition1 = mapper(key, item.condition1);
+            var condition2 = mapper(key, item.condition2);
+
+            return '(' + condition1 + ' ' + item.operator + ' ' + condition2 + ')';
+        }
+
+        return mapper(key, item);
+    }
+
     function whereSql(request) {
         var whereParts = [];
         var filterModel = request.filterModel;
@@ -68,6 +101,31 @@ export function FakeServer(allData) {
 
                 if (filter.filterType === 'set') {
                     whereParts.push(mapColumnKey(columnKey) + " IN ('" + filter.values.join("', '") + "')");
+                    return;
+                }
+
+                if (filter.filterType === 'text') {
+                    whereParts.push(createFilterSql(textFilterMapper, columnKey, filter));
+                    return;
+                }
+
+                if (filter.filterType === 'multi') {
+                    Object.keys(filter.filterModels).forEach(function (fm) {
+                        if (filter.filterModels[fm]) {
+                            var model = filter.filterModels[fm];
+                            switch (model.filterType) {
+                                case 'text':
+                                    whereParts.push(createFilterSql(textFilterMapper, columnKey, model));
+                                    break;
+                                case 'set':
+                                    whereParts.push(columnKey + " IN ('" + model.values.join("', '") + "')");
+                                    break;
+                                default:
+                                    console.log('unknown filter type: ' + model.filterType, model);
+                                    break;
+                            }
+                        }
+                    });
                     return;
                 }
 

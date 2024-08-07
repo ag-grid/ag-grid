@@ -75,8 +75,8 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         }
 
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
-        const allCtrls = centerHeaderContainer.getAllCtrls();
-        const isFloatingFilterVisible = _last(allCtrls).getType() === HeaderRowType.FLOATING_FILTER;
+        const allCtrls = centerHeaderContainer?.getAllCtrls();
+        const isFloatingFilterVisible = _last(allCtrls || []).getType() === HeaderRowType.FLOATING_FILTER;
         const headerRowCount = this.getHeaderRowCount() - 1;
 
         let row = -1;
