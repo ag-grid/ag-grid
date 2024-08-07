@@ -21,31 +21,29 @@
 }
 
 .tabItem {
-    max-width: calc(50% - #{$spacing-size-2});
-
-    @media screen and (min-width: 720px) {
-        max-width: unset;
-    }
-}
-
-.tabWrapper {
-    background-color: #e5e9ed;
+    position: relative;
     width: 100%;
     max-width: 200px;
     aspect-ratio: 16 / 9;
     border-radius: var(--radius-lg);
+    background-color: #e5e9ed;
+    border: 1px solid var(--color-border-primary);
     overflow: hidden;
     transition: all 0.5s ease-in-out;
-    border: 1px solid var(--color-border-primary);
 
     &:hover {
         background-color: #c8cfd8;
         transition: all 0.5s ease-in-out;
     }
 
-    .activeTab & {
+    &.activeTab {
         outline: 2px solid #044b93;
         border-radius: var(--radius-lg);
+    }
+
+    a {
+        display: block;
+        height: 100%;
     }
 
     @media screen and (min-width: 720px) {
@@ -71,22 +69,15 @@
 }
 
 .showcaseImg {
-    cursor: pointer;
-    -webkit-user-drag: none;
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    max-width: 100%;
     position: relative;
+    max-width: 100%;
     left: 24px;
     top: 20px;
+    pointer-events: none;
     transition: all 0.3s ease-in-out;
-    border-radius: var(--radius-md);
 
-    &:hover {
+    .tabItem:hover & {
         transform: scale(1.1);
-        opacity: 1;
         transition: all 0.4s ease-in-out;
     }
 }
@@ -106,23 +97,20 @@
 }
 
 .label {
-    position: relative;
-    bottom: 56px;
-    background: linear-gradient(358deg, #e5e9ed 40%, transparent);
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    height: 40px;
-    margin-top: 16px;
+    position: absolute;
     display: flex;
     justify-content: left;
     align-items: flex-end;
-    padding-bottom: 8px;
-    color: #044b93;
-    padding-left: 12px;
-    pointer-events: none;
-    font-weight: 600;
-    display: flex;
+    height: 40px;
+    width: 100%;
+    bottom: 0;
     padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-2;
+    padding-left: $spacing-size-3;
+    font-weight: 600;
+    background: linear-gradient(358deg, #e5e9ed 40%, transparent);
+    color: #044b93;
+    pointer-events: none;
     transition:
         color 0.3s ease-in-out,
         background-color 0.3s ease-in-out;
