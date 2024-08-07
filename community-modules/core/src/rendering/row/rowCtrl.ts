@@ -17,6 +17,7 @@ import {
     _isGetRowHeightFunction,
     _isGroupUseEntireRow,
     _isRowSelection,
+    setDomData,
 } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
@@ -275,8 +276,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setRowCompRowBusinessKey(comp);
 
         // DOM DATA
-        gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
-        this.addDestroyFunc(() => gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
+        setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
+        this.addDestroyFunc(() => setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame

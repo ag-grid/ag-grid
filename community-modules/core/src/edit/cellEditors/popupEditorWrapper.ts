@@ -1,4 +1,5 @@
 import type { AgColumn } from '../../entities/agColumn';
+import { setDomData } from '../../gridOptionsUtils';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
@@ -9,7 +10,7 @@ export class PopupEditorWrapper extends PopupComponent {
     }
 
     public postConstruct(): void {
-        this.gos.setDomData(this.getGui(), 'popupEditorWrapper', true);
+        setDomData(this.gos, this.getGui(), 'popupEditorWrapper', true);
         this.addKeyDownListener();
     }
 

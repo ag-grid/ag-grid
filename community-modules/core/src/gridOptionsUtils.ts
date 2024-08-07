@@ -122,6 +122,24 @@ function isNumeric(value: any): value is number {
     return !isNaN(value) && typeof value === 'number' && isFinite(value);
 }
 
+// returns the dom data, or undefined if not found
+export function getDomData(gos: GridOptionsService, element: Node | null, key: string): any {
+    const domData = (element as any)[gos.getDomDataKey()];
+
+    return domData ? domData[key] : undefined;
+}
+
+export function setDomData(gos: GridOptionsService, element: Element, key: string, value: any): any {
+    const domDataKey = gos.getDomDataKey();
+    let domData = (element as any)[domDataKey];
+
+    if (_missing(domData)) {
+        domData = {};
+        (element as any)[domDataKey] = domData;
+    }
+    domData[key] = value;
+}
+
 export function _getDocument(gos: GridOptionsService): Document {
     // if user is providing document, we use the users one,
     // otherwise we use the document on the global namespace.

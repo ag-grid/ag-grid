@@ -10,7 +10,7 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { FocusService } from '../../../focusService';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
-import { _getActiveDomElement, _getDocument } from '../../../gridOptionsUtils';
+import { _getActiveDomElement, _getDocument, setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { MenuService } from '../../../misc/menuService';
@@ -357,8 +357,8 @@ export abstract class AbstractHeaderCellCtrl<
 
     private addDomData(eGui: HTMLElement): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
-        this.gos.setDomData(eGui, key, this);
-        this.addDestroyFunc(() => this.gos.setDomData(eGui, key, null));
+        setDomData(this.gos, eGui, key, this);
+        this.addDestroyFunc(() => setDomData(this.gos, eGui, key, null));
     }
 
     public getGui(): HTMLElement {

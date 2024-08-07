@@ -17,6 +17,7 @@ import {
     _getRowHeightAsNumber,
     _isAnimateRows,
     _isDomLayout,
+    getDomData,
     isGroupRowsSticky,
 } from '../gridOptionsUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
@@ -593,8 +594,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
         const activeElement = _getActiveDomElement(this.gos);
-        const cellDomData = this.gos.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = this.gos.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const cellDomData = getDomData(this.gos, activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowDomData = getDomData(this.gos, activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
         const gridElementFocused = cellDomData || rowDomData;
 

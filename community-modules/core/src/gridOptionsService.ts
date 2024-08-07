@@ -289,24 +289,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return this.domDataKey;
     }
 
-    // returns the dom data, or undefined if not found
-    public getDomData(element: Node | null, key: string): any {
-        const domData = (element as any)[this.getDomDataKey()];
-
-        return domData ? domData[key] : undefined;
-    }
-
-    public setDomData(element: Element, key: string, value: any): any {
-        const domDataKey = this.getDomDataKey();
-        let domData = (element as any)[domDataKey];
-
-        if (_missing(domData)) {
-            domData = {};
-            (element as any)[domDataKey] = domData;
-        }
-        domData[key] = value;
-    }
-
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
         return {
             api: this.api,

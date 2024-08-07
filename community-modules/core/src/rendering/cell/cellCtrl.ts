@@ -8,7 +8,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
-import { _getDocument, _getRowHeightForNode, _isRowModelType } from '../../gridOptionsUtils';
+import { _getDocument, _getRowHeightForNode, _isRowModelType, setDomData } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -756,8 +756,8 @@ export class CellCtrl extends BeanStub {
     private addDomData(): void {
         const element = this.getGui();
 
-        this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
-        this.addDestroyFunc(() => this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
+        setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
+        this.addDestroyFunc(() => setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
