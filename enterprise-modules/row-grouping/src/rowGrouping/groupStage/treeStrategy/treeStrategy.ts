@@ -395,7 +395,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Commit the changes performed to a node and its children */
     private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         if (node.ghost) {
-            this.clearTree(node);
             if (node.oldRow !== null && parent.childrenChanged === ChildrenChanged.None) {
                 parent.childrenChanged = ChildrenChanged.SomeRemoved;
             }
