@@ -1,8 +1,7 @@
-import { CONTROL_COLUMN_ID_PREFIX } from '../../../columns/controlColService';
+import { isColumnControlCol } from '../../../columns/columnUtils';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
-import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
 import type { SelectionEventSourceType } from '../../../events';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
@@ -32,11 +31,12 @@ export class SelectAllFeature extends BeanStub {
         this.column = column;
     }
 
+    /**
+     * Select all is enabled by default when using the legacy selection API.
+     * When using the new selection API, select all is only enabled for the checkbox column
+     */
     private isEnabled(): boolean {
-        return (
-            this.gos.get('selectionOptions') === undefined ||
-            this.column.getColId().startsWith(CONTROL_COLUMN_ID_PREFIX)
-        );
+        return this.gos.get('selectionOptions') === undefined || isColumnControlCol(this.column);
     }
 
     public onSpaceKeyDown(e: KeyboardEvent): void {
@@ -237,15 +237,18 @@ export class SelectAllFeature extends BeanStub {
             );
         } else {
             // handle legacy options
-            let result = this.column.getColDef().headerCheckboxSelection;
+            const headerCheckboxSelection = this.column.getColDef().headerCheckboxSelection;
+            let result = false;
 
-            if (typeof result === 'function') {
-                const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
-                const params: HeaderCheckboxSelectionCallbackParams = this.gos.addGridCommonParams({
-                    column: this.column,
-                    colDef: this.column.getColDef(),
-                });
-                result = func(params);
+            if (typeof headerCheckboxSelection === 'function') {
+                result = headerCheckboxSelection(
+                    this.gos.addGridCommonParams({
+                        column: this.column,
+                        colDef: this.column.getColDef(),
+                    })
+                );
+            } else {
+                result = !!headerCheckboxSelection;
             }
 
             if (result) {

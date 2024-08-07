@@ -1,5 +1,5 @@
 import type { ColumnState } from '../columns/columnApplyStateService';
-import { CONTROL_COLUMN_ID_PREFIX } from '../columns/controlColService';
+import { isColumnControlCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
@@ -406,7 +406,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         if (so) {
             const checkboxSelection = so.mode === 'multiRow' && so.checkboxSelection;
             const checkbox =
-                this.colId.startsWith(CONTROL_COLUMN_ID_PREFIX) &&
+                isColumnControlCol(this) &&
                 (typeof checkboxSelection !== 'boolean' ? checkboxSelection?.displayCheckbox : checkboxSelection);
             return this.isColumnFunc(rowNode, checkbox);
         } else {
