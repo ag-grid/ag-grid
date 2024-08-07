@@ -202,201 +202,137 @@ export const Property: FunctionComponent<{
         <>
             <tr ref={propertyRef}>
                 <td className={styles.propertyNameDscription}>
-                    <div className={classnames(styles.collapsedPropertyContent, { [styles.expandable]: isExpandable })}>
-                        <div role="presentation" className={styles.leftColumn}>
-                            <div className={styles.propertyName}>
-                                <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
-                                    <span
-                                        onClick={() => setExpanded(!isExpanded)}
-                                        dangerouslySetInnerHTML={{ __html: displayNameSplit }}
-                                    ></span>
-                                </h6>
-                                <div
-                                    title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
-                                    className={styles.metaItem}
-                                    onClick={() => setExpanded(!isExpanded)}
+                    <div className={styles.propertyName}>
+                        <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                            <span
+                                onClick={() => setExpanded(!isExpanded)}
+                                dangerouslySetInnerHTML={{ __html: displayNameSplit }}
+                            ></span>
+                        </h6>
+                        <div
+                            title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
+                            className={styles.metaItem}
+                            onClick={() => setExpanded(!isExpanded)}
+                        >
+                            {typeUrl ? (
+                                <a
+                                    className={styles.metaValue}
+                                    href={typeUrl}
+                                    target={typeUrl.startsWith('http') ? '_blank' : '_self'}
+                                    rel="noreferrer"
                                 >
-                                    {typeUrl ? (
-                                        <a
-                                            className={styles.metaValue}
-                                            href={typeUrl}
-                                            target={typeUrl.startsWith('http') ? '_blank' : '_self'}
-                                            rel="noreferrer"
-                                        >
-                                            {isObject ? getInterfaceName(name) : propertyType}
+                                    {isObject ? getInterfaceName(name) : propertyType}
+                                </a>
+                            ) : (
+                                <span className={styles.metaValue}>{propertyType}</span>
+                            )}
+
+                            {formattedDefaultValue != null && (
+                                <div className={styles.metaItem}>
+                                    <span className={classnames(styles.metaValue, styles.defaultValue)}>
+                                        <span>default: </span>
+                                        {formattedDefaultValue}
+                                    </span>
+                                </div>
+                            )}
+
+                            {isInitial && (
+                                <div className={styles.metaItem}>
+                                    {config.initialLink ? (
+                                        <a className={styles.initialLabel} href={config.initialLink}>
+                                            Initial
                                         </a>
                                     ) : (
-                                        <span className={styles.metaValue}>{propertyType}</span>
+                                        <span className={styles.initialLabel}>Initial</span>
                                     )}
-
-                                    {formattedDefaultValue != null && (
-                                        <div className={styles.metaItem}>
-                                            <span className={classnames(styles.metaValue, styles.defaultValue)}>
-                                                <span>default: </span>
-                                                {formattedDefaultValue}
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {isInitial && (
-                                        <div className={styles.metaItem}>
-                                            {config.initialLink ? (
-                                                <a className={styles.initialLabel} href={config.initialLink}>
-                                                    Initial
-                                                </a>
-                                            ) : (
-                                                <span className={styles.initialLabel}>Initial</span>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                                <a href={`#${idName}`} className="docs-header-icon">
-                                    <Icon name="link" />
-                                </a>
-                            </div>
-                        </div>
-
-                        <div className={styles.rightColumn}>
-                            <div
-                                onClick={() => setExpanded(!isExpanded)}
-                                role="presentation"
-                                className={styles.description}
-                                dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
-                            ></div>
-                            {isObject && (
-                                <div>
-                                    See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
-                                </div>
-                            )}
-                            {isInitial && config.showInitialDescription && (
-                                <div onClick={() => setExpanded(!isExpanded)} className={styles.description}>
-                                    This property will only be read on initialisation.
-                                </div>
-                            )}
-
-                            {definition.options != null && (
-                                <div>
-                                    Options:{' '}
-                                    {definition.options.map((o, i) => (
-                                        <Fragment key={o}>
-                                            {i > 0 ? ', ' : ''}
-                                            <code>{formatJson(o)}</code>
-                                        </Fragment>
-                                    ))}
                                 </div>
                             )}
                         </div>
-                        {formattedDefaultValue != null && (
-                            <div className={styles.metaItem}>
-                                <span className={styles.metaLabel}>Default</span>
-                                <span className={styles.metaValue}>{formattedDefaultValue}</span>
-                            </div>
-                        )}
-                        {isInitial && (
-                            <div className={styles.metaItem}>
-                                {config.initialLink ? (
-                                    <a className={styles.metaLabel} href={config.initialLink}>
-                                        Initial
-                                    </a>
-                                ) : (
-                                    <span className={styles.metaLabel}>Initial</span>
+                        <a href={`#${idName}`} className="docs-header-icon">
+                            <Icon name="link" />
+                        </a>
+                    </div>
+                    <div className={styles.contentDescription}>
+                        <div
+                            className={classnames(styles.collapsedPropertyContent, {
+                                [styles.expandable]: isExpandable,
+                            })}
+                        >
+                            <div role="presentation" className={styles.leftColumn}></div>
+
+                            <div className={styles.rightColumn}>
+                                <div
+                                    onClick={() => setExpanded(!isExpanded)}
+                                    role="presentation"
+                                    className={styles.description}
+                                    dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
+                                ></div>
+                                {isObject && (
+                                    <div>
+                                        See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
+                                    </div>
+                                )}
+                                {isInitial && config.showInitialDescription && (
+                                    <div onClick={() => setExpanded(!isExpanded)} className={styles.description}>
+                                        This property will only be read on initialisation.
+                                    </div>
+                                )}
+
+                                {definition.options != null && (
+                                    <div>
+                                        Options:{' '}
+                                        {definition.options.map((o, i) => (
+                                            <Fragment key={o}>
+                                                {i > 0 ? ', ' : ''}
+                                                <code>{formatJson(o)}</code>
+                                            </Fragment>
+                                        ))}
+                                    </div>
                                 )}
                             </div>
-                        )}
-                    </div>
-                </td>
-                <td className={styles.rightColumn}>
-                    <div
-                        onClick={() => setExpanded(!isExpanded)}
-                        role="presentation"
-                        className={styles.description}
-                        dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
-                    ></div>
-                    {isObject && (
-                        <div>
-                            See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
+                            {more != null && more.url && !config.hideMore && (
+                                <span className={styles.seeMoreLink}>
+                                    <span className="text-secondary">See: </span>{' '}
+                                    <a
+                                        href={urlWithPrefix({
+                                            url: more.url,
+                                            framework,
+                                        })}
+                                        onClick={() => {
+                                            trackApiDocumentation({
+                                                type: 'seeMoreLink',
+                                                framework,
+                                                id,
+                                                name,
+                                                seeMoreName: more.name,
+                                            });
+                                        }}
+                                    >
+                                        {more.name}
+                                    </a>
+                                </span>
+                            )}
                         </div>
-                    )}
-                    {isInitial && config.showInitialDescription && (
-                        <div onClick={() => setExpanded(!isExpanded)} className={styles.description}>
-                            This property will only be read on initialisation.
-                        </div>
-                    )}
-
-                    {definition.options != null && (
-                        <div>
-                            Options:{' '}
-                            {definition.options.map((o, i) => (
-                                <Fragment key={o}>
-                                    {i > 0 ? ', ' : ''}
-                                    <code>{formatJson(o)}</code>
-                                </Fragment>
-                            ))}
-                        </div>
-                    )}
-                    <div className={styles.actions}>
-                        {detailsCode && (
-                            <button
-                                className={classnames(styles.seeMore, 'button-as-link')}
-                                onClick={() => {
-                                    setExpanded(!isExpanded);
-                                    trackApiDocumentation({
-                                        type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
-                                        framework,
-                                        id,
-                                        name,
-                                    });
-                                }}
-                                aria-expanded={Boolean(isExpanded)}
-                                aria-controls={getDetailsId(idName)}
-                            >
-                                {!isExpanded ? 'More' : 'Hide'} details{' '}
-                                <Icon name={isExpanded ? 'chevronDown' : 'chevronRight'} />
-                            </button>
-                        )}
-                        {more != null && more.url && !config.hideMore && (
-                            <span className={styles.seeMoreLink}>
-                                <span className="text-secondary">See: </span>{' '}
-                                <a
-                                    href={urlWithPrefix({
-                                        url: more.url,
-                                        framework,
-                                    })}
+                        <div className={styles.actions}>
+                            {detailsCode && (
+                                <button
+                                    className={classnames(styles.seeMore, 'button-as-link')}
                                     onClick={() => {
+                                        setExpanded(!isExpanded);
                                         trackApiDocumentation({
-                                            type: 'seeMoreLink',
+                                            type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
                                             framework,
                                             id,
                                             name,
-                                            seeMoreName: more.name,
                                         });
                                     }}
                                     aria-label={`See more details about ${more.name}`}
                                 >
-                                    {more.name}
-                                </a>
-                            </span>
-                        )}
-                    </div>
-                    <div className={styles.actions}>
-                        {detailsCode && (
-                            <button
-                                className={classnames(styles.seeMore, 'button-as-link')}
-                                onClick={() => {
-                                    setExpanded(!isExpanded);
-                                    trackApiDocumentation({
-                                        type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
-                                        framework,
-                                        id,
-                                        name,
-                                    });
-                                }}
-                                role="presentation"
-                            >
-                                More details
-                                <Icon className={styles.chevron} name={isExpanded ? 'chevronUp' : 'chevronDown'} />
-                            </button>
-                        )}
+                                    <span>More details</span>
+                                    <Icon className={styles.chevron} name={isExpanded ? 'chevronUp' : 'chevronDown'} />
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </td>
             </tr>
