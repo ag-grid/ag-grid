@@ -153,6 +153,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
             this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
         );
+        this.addManagedPropertyListener('selectionOptions', (event) =>
+            this.onSelectionOptionsChanged(convertSourceType(event.source))
+        );
         this.addManagedPropertyListeners(
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
             (event) => this.recreateColumnDefs(convertSourceType(event.source))
@@ -391,6 +394,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private createControlCols(): void {
+        destroyColumnTree(this.context, this.controlCols?.tree);
+        this.controlCols = null;
+
         const cols = this.controlColService?.createControlCols();
         if (cols) {
             this.controlCols = {
@@ -691,12 +697,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
 
-        const notAllColsPresent = cols.filter((c: AgColumn) => this.cols.list.indexOf(c) < 0).length > 0;
+        const notAllColsPresent = cols.filter((c) => this.cols.list.indexOf(c) < 0).length > 0;
         if (notAllColsPresent) {
             return;
         }
 
-        cols.sort((a: AgColumn, b: AgColumn) => {
+        cols.sort((a, b) => {
             const indexA = this.cols.list.indexOf(a);
             const indexB = this.cols.list.indexOf(b);
             return indexA - indexB;
@@ -756,9 +762,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const cols = this.colDefCols.list.slice();
 
         if (this.showingPivotResult) {
-            cols.sort((a: AgColumn, b: AgColumn) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
+            cols.sort((a, b) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
         } else if (this.lastOrder) {
-            cols.sort((a: AgColumn, b: AgColumn) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
+            cols.sort((a, b) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
         }
 
         const rowGroupColumns = this.funcColsService.getRowGroupColumns();
@@ -867,6 +873,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public override destroy(): void {
         destroyColumnTree(this.context, this.colDefCols?.tree);
         destroyColumnTree(this.context, this.autoCols?.tree);
+        destroyColumnTree(this.context, this.controlCols?.tree);
         super.destroy();
     }
 
@@ -1065,6 +1072,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
         if (this.autoCols) {
             this.autoColService!.updateAutoCols(this.autoCols.list, source);
+        }
+    }
+
+    private onSelectionOptionsChanged(source: ColumnEventType) {
+        if (this.controlCols && this.controlColService) {
+            this.refreshCols();
         }
     }
 }
