@@ -7,6 +7,7 @@ import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce, _warnOnce } from '../../utils/function';
+import { _jsonEquals } from '../../utils/generic';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
@@ -28,7 +29,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: ProvidedFilterParams;
 
-    private applyActive = false;
+    protected applyActive = false;
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
@@ -141,7 +142,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         this.providedFilterParams = params;
         this.applyActive = isUseApplyButton(params);
 
-        this.resetButtonsPanel();
+        this.resetButtonsPanel(params);
     }
 
     protected updateParams(params: ProvidedFilterParams): void {
@@ -154,8 +155,13 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         });
     }
 
-    private resetButtonsPanel(): void {
-        const { buttons } = this.providedFilterParams;
+    private resetButtonsPanel(newParams: ProvidedFilterParams, oldParams?: ProvidedFilterParams): void {
+        const { buttons: oldButtons, readOnly: oldReadOnly } = oldParams ?? {};
+        const { buttons, readOnly } = newParams;
+        if (oldReadOnly === readOnly && _jsonEquals(oldButtons, buttons)) {
+            return;
+        }
+
         const hasButtons = buttons && buttons.length > 0 && !this.isReadOnly();
 
         if (!this.eButtonsPanel) {
@@ -442,7 +448,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     public refresh(newParams: ProvidedFilterParams): boolean {
+        const oldParams = this.providedFilterParams;
         this.providedFilterParams = newParams;
+
+        this.resetButtonsPanel(newParams, oldParams);
+
         return true;
     }
 

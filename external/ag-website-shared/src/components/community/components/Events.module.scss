@@ -118,8 +118,7 @@
 .date {
     text-align: end;
     flex-grow: 1;
-    font-weight: 200;
-    color: var(--color-text-secondary);
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 30%);
 }
 
 .description {
@@ -178,8 +177,8 @@
 }
 
 .location {
-    font-weight: 200;
     margin: 0px;
+    color: var(--color-fg-tertiary);
 }
 
 .flag {

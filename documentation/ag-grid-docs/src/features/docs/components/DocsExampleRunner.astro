@@ -4,6 +4,7 @@ import ExampleRunnerContainer from '@features/example-runner/components/ExampleR
 import { getIsDev } from '@utils/env';
 import { DocsExampleRunner } from './DocsExampleRunner';
 import type { ImportType } from '@ag-grid-types';
+import { DISABLE_EXAMPLE_RUNNER } from '@constants';
 
 interface Props {
     title: string;
@@ -19,15 +20,19 @@ const pageName = getPageNameFromPath(Astro.url.pathname);
 const isDev = getIsDev();
 ---
 
-<ExampleRunnerContainer exampleHeight={exampleHeight} pageName={pageName} exampleName={name}>
-    <DocsExampleRunner
-        client:only="react"
-        title={title}
-        name={name}
-        exampleHeight={exampleHeight}
-        typescriptOnly={typescriptOnly}
-        overrideImportType={overrideImportType}
-        pageName={pageName}
-        isDev={isDev}
-    />
-</ExampleRunnerContainer>
+{
+    !DISABLE_EXAMPLE_RUNNER && (
+        <ExampleRunnerContainer exampleHeight={exampleHeight} pageName={pageName} exampleName={name}>
+            <DocsExampleRunner
+                client:only="react"
+                title={title}
+                name={name}
+                exampleHeight={exampleHeight}
+                typescriptOnly={typescriptOnly}
+                overrideImportType={overrideImportType}
+                pageName={pageName}
+                isDev={isDev}
+            />
+        </ExampleRunnerContainer>
+    )
+}

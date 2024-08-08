@@ -238,9 +238,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         this.valueModel?.updateOnParamsChange(params).then(() => {
-            if (this.valueModel?.hasSelections()) {
-                this.refreshFilterValues();
-            }
+            this.refreshFilterValues();
         });
 
         return true;
@@ -476,7 +474,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         return promise.then(() => {
             this.checkAndRefreshVirtualList();
-            this.onBtApply(false, true);
+            if (!this.applyActive || this.areModelsEqual(this.getModel()!, this.getModelFromUi()!)) {
+                this.onBtApply(false, true);
+            }
         });
     }
 
@@ -1041,6 +1041,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         this.valueModel.refreshValues().then(() => {
+            this.hardRefreshVirtualList = true;
             this.checkAndRefreshVirtualList();
             this.onUiChanged();
         });

@@ -75,11 +75,31 @@ describe('ag-grid overlays state', () => {
             expect(hasLoadingOverlay()).toBeFalsy();
         });
 
+        test('should hide the loading overlay when rows are added via a transaction', () => {
+            const api = createMyGrid({ columnDefs });
+            expect(hasLoadingOverlay()).toBeTruthy();
+
+            api.applyTransaction({
+                add: [{}, {}],
+            });
+            expect(hasLoadingOverlay()).toBeFalsy();
+        });
+
         test('should show no-rows overlay when empty rows are loaded', () => {
             const api = createMyGrid({ columnDefs });
             expect(hasNoRowsOverlay()).toBeFalsy();
 
             api.setGridOption('rowData', []);
+            expect(hasNoRowsOverlay()).toBeTruthy();
+        });
+
+        test('should show no-rows overlay when empty rows are loaded via a transaction', () => {
+            const api = createMyGrid({ columnDefs });
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.applyTransaction({
+                add: [],
+            });
             expect(hasNoRowsOverlay()).toBeTruthy();
         });
 
@@ -95,6 +115,10 @@ describe('ag-grid overlays state', () => {
                 expect(hasLoadingOverlay()).toBeTruthy();
 
                 api.setGridOption('rowData', []);
+                expect(hasNoRowsOverlay()).toBeFalsy();
+                expect(hasLoadingOverlay()).toBeFalsy();
+
+                api.applyTransaction({ add: [] });
                 expect(hasNoRowsOverlay()).toBeFalsy();
                 expect(hasLoadingOverlay()).toBeFalsy();
 
@@ -190,6 +214,11 @@ describe('ag-grid overlays state', () => {
 
             resetGrids();
             createMyGrid({ columnDefs, loading: true }).setGridOption('rowData', [{}]);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            resetGrids();
+            createMyGrid({ columnDefs, loading: true }).applyTransaction({ add: [{}] });
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
         });

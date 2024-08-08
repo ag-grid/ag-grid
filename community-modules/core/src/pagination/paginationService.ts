@@ -3,8 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
-import type { PaginationChangedEvent } from '../events';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
 import type { ComponentSelector } from '../widgets/component';
@@ -333,14 +331,13 @@ export class PaginationService extends BeanStub implements NamedBean {
         keepRenderedRows?: boolean;
     }): void {
         const { keepRenderedRows = false, newPage = false, newPageSize = false } = params;
-        const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'paginationChanged',
             animate: false,
             newData: false,
             newPage,
             newPageSize,
             keepRenderedRows,
-        };
-        this.eventService.dispatchEvent(paginationChangedEvent);
+        });
     }
 }

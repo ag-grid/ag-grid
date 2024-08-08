@@ -121,13 +121,16 @@
         color: var(--ag-foreground-color);
         font-family: inherit;
         font-size: inherit;
-        height: calc(var(--ag-grid-size) * 5);
         padding-bottom: var(--ag-grid-size);
 
         border-width: 0;
         border-radius: 0;
         border-bottom: 2px solid;
         border-bottom-color: var(--ag-border-color);
+
+        &:not(textarea) {
+            height: calc(var(--ag-grid-size) * 5);
+        }
 
         &:focus {
             border-bottom: 2px solid;
@@ -200,10 +203,6 @@
         .ag-center-cols-container {
             min-height: 150px;
         }
-    }
-
-    .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-        padding-top: 60px;
     }
 
     .ag-picker-field-wrapper:focus-within {

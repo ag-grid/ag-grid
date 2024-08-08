@@ -18,10 +18,9 @@ import type {
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
-import type { AgGridEvent, DataTypesInferredEvent } from '../events';
+import type { AgGridEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { Column, ColumnEventName } from '../interfaces/iColumn';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -498,10 +497,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 if (columnTypeOverridesExist) {
                     this.columnModel.processResizeOperations();
                 }
-                const dataTypesInferredEvent: WithoutGridCommon<DataTypesInferredEvent> = {
+                this.eventService.dispatchEvent({
                     type: 'dataTypesInferred',
-                };
-                this.eventService.dispatchEvent(dataTypesInferredEvent);
+                });
             },
         });
     }
@@ -614,23 +612,23 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public validateColDef(colDef: ColDef): void {
+        const warning = (property: 'Formatter' | 'Parser') =>
+            _warnOnce(
+                `Cell data type is "object" but no Value ${property} has been provided. Please either provide an object data type definition with a Value ${property}, or set "colDef.value${property}"`
+            );
         if (colDef.cellDataType === 'object') {
             if (
                 colDef.valueFormatter === this.dataTypeDefinitions.object.groupSafeValueFormatter &&
                 !this.hasObjectValueFormatter
             ) {
-                _warnOnce(
-                    'Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"'
-                );
+                warning('Formatter');
             }
             if (
                 colDef.editable &&
                 colDef.valueParser === this.dataTypeDefinitions.object.valueParser &&
                 !this.hasObjectValueParser
             ) {
-                _warnOnce(
-                    'Cell data type is "object" but no value parser has been provided. Please either provide an object data type definition with a value parser, or set "colDef.valueParser"'
-                );
+                warning('Parser');
             }
         }
     }

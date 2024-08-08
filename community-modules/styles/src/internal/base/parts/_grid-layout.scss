@@ -270,11 +270,6 @@
         @include ag.card();
     }
 
-    // in auto-height mode with no rows, add padding to prevent grid being too small
-    .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-        padding-top: 30px;
-    }
-
     .ag-skeleton-container {
         width: 100%;
         height: 100%;

@@ -19,6 +19,9 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
     private executeLaterFuncs: ((...args: any[]) => any)[] = [];
 
     private active = false;
+    // activeNext starts with active but it is reset earlier after the nextFuncs are cleared
+    // to prevent calls made to executeNextVMTurn from queuing functions after executeNextFuncs has already been flushed,
+    private activeNext = false;
     private suppressAnimation = false;
 
     private animationThreadCount = 0;
@@ -54,19 +57,21 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
         this.ensureAnimationCssClassPresent();
 
         this.active = true;
+        this.activeNext = true;
     }
 
     public finish(): void {
         if (!this.active) {
             return;
         }
-        this.flush(() => {
-            this.active = false;
-        });
+        this.flush(
+            () => (this.activeNext = false),
+            () => (this.active = false)
+        );
     }
 
     public executeNextVMTurn(func: (...args: any[]) => any): void {
-        if (this.active) {
+        if (this.activeNext) {
             this.executeNextFuncs.push(func);
         } else {
             func();
@@ -96,9 +101,10 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
         });
     }
 
-    private flush(callback: () => void): void {
+    private flush(callbackNext: () => void, callbackLater: () => void): void {
         if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) {
-            callback();
+            callbackNext();
+            callbackLater();
             return;
         }
 
@@ -112,12 +118,15 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
         };
 
         this.getFrameworkOverrides().wrapIncoming(() => {
-            window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
+            window.setTimeout(() => {
+                callbackNext();
+                runFuncs(this.executeNextFuncs);
+            }, 0);
             window.setTimeout(() => {
                 // run the callback before executeLaterFuncs
                 // because some functions being executed later
                 // check if this service is `active`.
-                callback();
+                callbackLater();
                 runFuncs(this.executeLaterFuncs);
             }, 200);
         });

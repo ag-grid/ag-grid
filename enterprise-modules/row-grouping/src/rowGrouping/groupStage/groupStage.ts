@@ -8,7 +8,7 @@ import type {
 import { BeanStub } from '@ag-grid-community/core';
 
 import { GroupStrategy } from './groupStrategy';
-import { TreeStrategy } from './treeStrategy';
+import { TreeStrategy } from './treeStrategy/treeStrategy';
 
 export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'groupStage' as const;
@@ -33,5 +33,11 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         strategy.execute(params);
 
         this.selectableService.updateSelectableAfterGrouping();
+    }
+
+    public override destroy(): void {
+        this.destroyBean(this.strategy);
+        this.strategy = undefined;
+        super.destroy();
     }
 }

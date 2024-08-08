@@ -1,7 +1,7 @@
 import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { AgEventType } from '../eventTypes';
-import type { CellEditRequestEvent, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
+import type { RowEvent, SelectionEventSourceType } from '../events';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -21,6 +21,20 @@ import { FrameworkEventListenerService } from '../misc/frameworkEventListenerSer
 import { _debounce, _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import type { AgColumn } from './agColumn';
+
+/**
+ * When creating sibling nodes (e.g. footers), we don't copy these properties as they
+ * cause the sibling to have properties which should be unique to the row.
+ *
+ * Note that `keyof T` does not include private members of `T`, so these need to be
+ * added explicitly to this list. Take care when adding or renaming private properties
+ * of `RowNode`.
+ */
+const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>([
+    'localEventService',
+    '__objectId',
+    'sticky',
+]);
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -210,6 +224,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     private hovered: boolean = false;
 
     private selected: boolean | undefined = false;
+    /** If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES` */
     private localEventService: LocalEventService<RowNodeEventType> | null;
     private frameworkEventListenerService: FrameworkEventListenerService<any, any> | null;
 
@@ -401,7 +416,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public getGroupKeys(excludeSelf = false): string[] {
         const keys: string[] = [];
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode | null = this;
         if (excludeSelf) {
             pointer = pointer.parent;
@@ -689,7 +703,20 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const oldValue = this.getValueFromValueService(column);
 
         if (this.beans.gos.get('readOnlyEdit')) {
-            this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
+            this.beans.eventService.dispatchEvent({
+                type: 'cellEditRequest',
+                event: null,
+                rowIndex: this.rowIndex!,
+                rowPinned: this.rowPinned,
+                column: column,
+                colDef: column.getColDef(),
+                data: this.data,
+                node: this,
+                oldValue,
+                newValue,
+                value: newValue,
+                source: eventSource,
+            });
             return false;
         }
 
@@ -732,30 +759,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const value = this.beans.valueService.getValue(column, this, false, ignoreAggData);
 
         return value;
-    }
-
-    private dispatchEventForSaveValueReadOnly(
-        column: AgColumn,
-        oldValue: any,
-        newValue: any,
-        eventSource?: string
-    ): void {
-        const event: CellEditRequestEvent = this.beans.gos.addGridCommonParams({
-            type: 'cellEditRequest',
-            event: null,
-            rowIndex: this.rowIndex!,
-            rowPinned: this.rowPinned,
-            column: column,
-            colDef: column.getColDef(),
-            data: this.data,
-            node: this,
-            oldValue,
-            newValue,
-            value: newValue,
-            source: eventSource,
-        });
-
-        this.beans.eventService.dispatchEvent(event);
     }
 
     public setGroupValue(colKey: string | AgColumn, newValue: any): void {
@@ -989,13 +992,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             sibling.dispatchRowEvent('rowSelected');
         }
 
-        const event: RowSelectedEvent = {
+        this.beans.eventService.dispatchEvent({
             ...this.createGlobalRowEvent('rowSelected'),
             event: e || null,
             source,
-        };
-
-        this.beans.eventService.dispatchEvent(event);
+        });
 
         return true;
     }
@@ -1098,7 +1099,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public getFirstChildOfFirstChild(rowGroupColumn: AgColumn | null): RowNode | null {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let currentRowNode: RowNode = this;
         let isCandidate = true;
         let foundFirstChildPath = false;
@@ -1150,9 +1150,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         const res: string[] = [];
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode | null = this;
-
         while (pointer && pointer.key != null) {
             res.push(pointer.key);
             pointer = pointer.parent;
@@ -1168,13 +1166,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return;
         }
 
-        // we don't copy these properties as they cause the footer node
-        // to have properties which should be unique to the row.
-        const ignoredProperties = new Set(['eventService', '__objectId', 'sticky']);
         const footerNode = new RowNode(this.beans);
 
-        Object.keys(this).forEach((key) => {
-            if (ignoredProperties.has(key)) {
+        Object.keys(this).forEach((key: keyof RowNode) => {
+            if (IGNORED_SIBLING_PROPERTIES.has(key)) {
                 return;
             }
             (footerNode as any)[key] = (this as any)[key];

@@ -1,10 +1,4 @@
-import type {
-    BeanCollection,
-    NamedBean,
-    RowGroupOpenedEvent,
-    StoreUpdatedEvent,
-    WithoutGridCommon,
-} from '@ag-grid-community/core';
+import type { BeanCollection, NamedBean, RowGroupOpenedEvent } from '@ag-grid-community/core';
 import { BeanStub, RowNode, _exists, _missing } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -46,8 +40,7 @@ export class ExpandListener extends BeanStub implements NamedBean {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
-        const storeUpdatedEvent: WithoutGridCommon<StoreUpdatedEvent> = { type: 'storeUpdated' };
-        this.eventService.dispatchEvent(storeUpdatedEvent);
+        this.eventService.dispatchEvent({ type: 'storeUpdated' });
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {

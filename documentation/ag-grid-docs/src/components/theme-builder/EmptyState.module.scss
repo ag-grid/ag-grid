@@ -40,14 +40,15 @@
 }
 
 .lightImage {
-    #{$selector-darkmode} & {
-        display: none;
-    }
     border-radius: var(--radius-lg);
     max-width: 456px;
     width: 100%;
     margin-bottom: 24px;
     border: 1px solid var(--color-border-secondary);
+
+    #{$selector-darkmode} & {
+        display: none;
+    }
 }
 
 .darkImage {

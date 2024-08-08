@@ -2,10 +2,9 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import type { SelectionChangedEvent, SelectionEventSourceType } from '../events';
+import type { SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
@@ -646,10 +645,9 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     }
 
     private dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        const event: WithoutGridCommon<SelectionChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'selectionChanged',
             source,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 }

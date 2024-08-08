@@ -9,12 +9,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
-import type {
-    NewColumnsLoadedEvent,
-    PaginationChangedEvent,
-    RangeSelectionChangedEvent,
-    StateUpdatedEvent,
-} from '../../events';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
@@ -40,7 +34,6 @@ import type {
     SideBarState,
     SortState,
 } from '../../interfaces/gridState';
-import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IExpansionService } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { IRowModel } from '../../interfaces/iRowModel';
@@ -174,16 +167,17 @@ export class StateService extends BeanStub implements NamedBean {
         ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
 
+        const onUpdate = (state: keyof GridState) => () => this.updateColumnState([state]);
         this.addManagedEventListeners({
-            columnValueChanged: () => this.updateColumnState(['aggregation']),
-            columnMoved: () => this.updateColumnState(['columnOrder']),
-            columnPinned: () => this.updateColumnState(['columnPinning']),
-            columnResized: () => this.updateColumnState(['columnSizing']),
-            columnVisible: () => this.updateColumnState(['columnVisibility']),
-            columnPivotChanged: () => this.updateColumnState(['pivot']),
-            columnPivotModeChanged: () => this.updateColumnState(['pivot']),
-            columnRowGroupChanged: () => this.updateColumnState(['rowGroup']),
-            sortChanged: () => this.updateColumnState(['sort']),
+            columnValueChanged: onUpdate('aggregation'),
+            columnMoved: onUpdate('columnOrder'),
+            columnPinned: onUpdate('columnPinning'),
+            columnResized: onUpdate('columnSizing'),
+            columnVisible: onUpdate('columnVisibility'),
+            columnPivotChanged: onUpdate('pivot'),
+            columnPivotModeChanged: onUpdate('pivot'),
+            columnRowGroupChanged: onUpdate('rowGroup'),
+            sortChanged: onUpdate('sort'),
             newColumnsLoaded: () =>
                 this.updateColumnState([
                     'aggregation',
@@ -225,10 +219,22 @@ export class StateService extends BeanStub implements NamedBean {
         this.updateCachedState('rowSelection', this.getRowSelectionState());
         this.updateCachedState('pagination', this.getPaginationState());
 
+        const updateRowGroupExpansionState = () =>
+            this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
         this.addManagedEventListeners({
             filterChanged: () => this.updateCachedState('filter', this.getFilterState()),
             rowGroupOpened: () => this.onRowGroupOpenedDebounced(),
-            expandOrCollapseAll: () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()),
+            expandOrCollapseAll: updateRowGroupExpansionState,
+            // `groupDefaultExpanded` updates expansion state without an expansion event
+            columnRowGroupChanged: updateRowGroupExpansionState,
+            rowDataUpdated: () => {
+                if (this.gos.get('groupDefaultExpanded') !== 0) {
+                    setTimeout(() => {
+                        // once rows are loaded, they may be expanded
+                        updateRowGroupExpansionState();
+                    });
+                }
+            },
             selectionChanged: () => {
                 this.staleStateKeys.add('rowSelection');
                 this.onRowSelectedDebounced();
@@ -769,12 +775,11 @@ export class StateService extends BeanStub implements NamedBean {
     private dispatchQueuedStateUpdateEvents(): void {
         const sources = Array.from(this.queuedUpdateSources);
         this.queuedUpdateSources.clear();
-        const event: WithoutGridCommon<StateUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'stateUpdated',
             sources,
             state: this.cachedState,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {

@@ -98,10 +98,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         _setAriaRole(eGui, cellCtrl.getCellAriaRole());
         setAttribute('col-id', cellCtrl.getColumnIdSanitised());
-        const tabIndex = cellCtrl.getTabIndex();
-        if (tabIndex !== undefined) {
-            setAttribute('tabindex', tabIndex.toString());
-        }
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
@@ -479,7 +475,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
         this.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
 
-        this.rowCtrl?.setInlineEditingCss(editing);
+        this.rowCtrl?.setInlineEditingCss();
     }
 
     private addInCellEditor(): void {
@@ -525,7 +521,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse: 'over' | 'under' | undefined =
-            position != null ? position : cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';
+            position != null ? position : cellEditor.getPopupPosition?.() ?? 'over';
         const isRtl = this.beans.gos.get('enableRtl');
 
         const positionParams = {

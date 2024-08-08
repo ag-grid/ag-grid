@@ -4,7 +4,7 @@ import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     AlignedGrid,
-    AsyncTransactionsFlushed,
+    AsyncTransactionsFlushedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
     CellClickedEvent,
@@ -211,6 +211,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     private gridParams: GridParams;
 
     // in order to ensure firing of gridReady is deterministic
+    private _holdEvents = true;
     private _resolveFullyReady: () => void;
     private _fullyReady: Promise<void> = new Promise((resolve) => {
         this._resolveFullyReady = resolve;
@@ -226,6 +227,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         private frameworkComponentWrapper: AngularFrameworkComponentWrapper
     ) {
         this._nativeElement = elementDef.nativeElement;
+        this._fullyReady.then(() => {
+            // Register the status flag reset before any events are fired
+            // so that we can swap to synchronous event firing as soon as the grid is ready
+            this._holdEvents = false;
+        });
     }
 
     ngAfterViewInit(): void {
@@ -308,8 +314,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // Make sure we emit within the angular zone, so change detection works properly
             const fireEmitter = () => this.angularFrameworkOverrides.runInsideAngular(() => emitter.emit(event));
 
-            if (eventType === 'gridReady') {
-                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit then gridReady event
+            if (this._holdEvents) {
+                // if the user is listening to events, wait for ngAfterViewInit to fire first, then emit the grid events
                 this._fullyReady.then(() => fireEmitter());
             } else {
                 fireEmitter();
@@ -789,7 +795,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Show or hide the loading overlay.
      */
     @Input() public loading: boolean | undefined = undefined;
-    /** Provide a HTML string to override the default loading overlay.
+    /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
@@ -805,7 +811,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
-    /** Provide a HTML string to override the default no-rows overlay.
+    /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no-rows overlay component.
@@ -924,14 +930,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @deprecated 31.2 use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
      */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
-    /** To be used when setting `enableCellChangeFlash` on column definitions. Sets the duration in milliseconds of how long a cell should remain in its "flashed" state.
+    /** Sets the duration in milliseconds of how long a cell should remain in its "flashed" state.
+     * If `0`, the cell will not flash.
      * @default 500
      */
     @Input() public cellFlashDuration: number | undefined = undefined;
     /** @deprecated v31.1 - use `cellFlashDuration` instead.
      */
     @Input() public cellFlashDelay: number | undefined = undefined;
-    /** To be used when setting `enableCellChangeFlash` on column definitions. Sets the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by cellFlashDuration has completed.
+    /** Sets the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
      * @default 1000
      */
     @Input() public cellFadeDuration: number | undefined = undefined;
@@ -1934,8 +1941,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     >();
     /** Async transactions have been applied. Contains a list of all transaction results.
      */
-    @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<
-        AsyncTransactionsFlushed<TData>
+    @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushedEvent<TData>> = new EventEmitter<
+        AsyncTransactionsFlushedEvent<TData>
     >();
     /** A server side store has finished refreshing.
      */

@@ -1,9 +1,13 @@
+import type { VisibleColsService } from '../../columns/visibleColsService';
+import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { FocusService } from '../../focusService';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
+import { _last } from '../../utils/array';
 import { _clearElement } from '../../utils/dom';
+import { _isStopPropagationForAgGrid } from '../../utils/event';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
@@ -17,6 +21,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public wireBeans(beans: BeanCollection): void {
         this.overlayService = beans.overlayService;
         this.focusService = beans.focusService;
+        this.visibleColsService = beans.visibleColsService;
     }
 
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
@@ -26,6 +31,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private updateListenerDestroyFunc: (() => null) | null = null;
     private activeOverlayWrapperCssClass: string | null = null;
     private elToFocusAfter: HTMLElement | null = null;
+    private visibleColsService: VisibleColsService;
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
@@ -35,6 +41,28 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                     <div class="ag-overlay-wrapper" data-ref="eOverlayWrapper" role="presentation"></div>
                 </div>
             </div>`);
+    }
+
+    private handleKeyDown(e: KeyboardEvent): void {
+        if (e.key !== KeyCode.TAB || e.defaultPrevented || _isStopPropagationForAgGrid(e)) {
+            return;
+        }
+
+        const nextEl = this.focusService.findNextFocusableElement(this.eOverlayWrapper, false, e.shiftKey);
+        if (nextEl) {
+            return;
+        }
+
+        let isFocused = false;
+        if (e.shiftKey) {
+            isFocused = this.focusService.focusGridView(_last(this.visibleColsService.getAllCols()), true, false);
+        } else {
+            isFocused = this.focusService.focusNextGridCoreContainer(false);
+        }
+
+        if (isFocused) {
+            e.preventDefault();
+        }
     }
 
     public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
@@ -49,6 +77,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setDisplayed(false, { skipAriaHidden: true });
 
         this.overlayService.registerOverlayWrapperComp(this);
+        this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
     }
 
     private setWrapperTypeClass(overlayWrapperCssClass: string): void {
@@ -119,6 +148,10 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 focusService.focusInto(this.eOverlayWrapper);
             }
         });
+    }
+
+    public updateOverlayWrapperPaddingTop(padding: number): void {
+        this.eOverlayWrapper.style.setProperty('padding-top', `${padding}px`);
     }
 
     private destroyActiveOverlay(): void {

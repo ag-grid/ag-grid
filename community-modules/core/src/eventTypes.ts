@@ -123,6 +123,7 @@ export const INTERNAL_EVENTS = [
     'rightPinnedWidthChanged',
     'rowContainerHeightChanged',
     'headerHeightChanged',
+    'columnGroupHeaderHeightChanged',
     'columnHeaderHeightChanged',
     'gridStylesChanged',
     'storeUpdated',
@@ -141,6 +142,7 @@ export const INTERNAL_EVENTS = [
     'chartTitleEdit',
     'recalculateRowBounds',
     'stickyTopOffsetChanged',
+    'overlayExclusiveChanged',
 ] as const;
 
 export const ALL_EVENTS = [...PUBLIC_EVENTS, ...INTERNAL_EVENTS] as const;

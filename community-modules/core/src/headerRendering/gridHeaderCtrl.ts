@@ -75,15 +75,21 @@ export class GridHeaderCtrl extends BeanStub {
         const listener = this.setHeaderHeight.bind(this);
         listener();
 
-        this.addManagedPropertyListener('headerHeight', listener);
-        this.addManagedPropertyListener('pivotHeaderHeight', listener);
-        this.addManagedPropertyListener('groupHeaderHeight', listener);
-        this.addManagedPropertyListener('pivotGroupHeaderHeight', listener);
-        this.addManagedPropertyListener('floatingFiltersHeight', listener);
+        this.addManagedPropertyListeners(
+            [
+                'headerHeight',
+                'pivotHeaderHeight',
+                'groupHeaderHeight',
+                'pivotGroupHeaderHeight',
+                'floatingFiltersHeight',
+            ],
+            listener
+        );
 
         this.addManagedEventListeners({
             displayedColumnsChanged: listener,
             columnHeaderHeightChanged: listener,
+            columnGroupHeaderHeightChanged: listener,
             gridStylesChanged: listener,
             advancedFilterEnabledChanged: listener,
         });
@@ -96,25 +102,16 @@ export class GridHeaderCtrl extends BeanStub {
     private setHeaderHeight(): void {
         const { columnModel } = this;
 
-        let numberOfFloating = 0;
-        let headerRowCount = columnModel.getHeaderRowCount();
-        let totalHeaderHeight: number;
+        let totalHeaderHeight: number = 0;
 
-        const hasFloatingFilters = this.filterManager?.hasFloatingFilters();
-
-        if (hasFloatingFilters) {
-            headerRowCount++;
-            numberOfFloating = 1;
-        }
-
-        const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
+        const groupHeight = this.columnModel.getGroupRowsHeight().reduce((prev, curr) => prev + curr, 0);
         const headerHeight = this.columnModel.getColumnHeaderRowHeight();
 
-        const numberOfNonGroups = 1 + numberOfFloating;
-        const numberOfGroups = headerRowCount - numberOfNonGroups;
+        if (this.filterManager?.hasFloatingFilters()) {
+            totalHeaderHeight += columnModel.getFloatingFiltersHeight()!;
+        }
 
-        totalHeaderHeight = numberOfFloating * columnModel.getFloatingFiltersHeight()!;
-        totalHeaderHeight += numberOfGroups * groupHeight!;
+        totalHeaderHeight += groupHeight;
         totalHeaderHeight += headerHeight!;
 
         if (this.headerHeight === totalHeaderHeight) {
@@ -149,11 +146,13 @@ export class GridHeaderCtrl extends BeanStub {
 
     protected onTabKeyDown(e: KeyboardEvent): void {
         const isRtl = this.gos.get('enableRtl');
-        const direction = e.shiftKey !== isRtl ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT;
+        const backwards = e.shiftKey;
+        const direction = backwards !== isRtl ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT;
 
         if (
             this.headerNavigationService.navigateHorizontally(direction, true, e) ||
-            this.focusService.focusNextGridCoreContainer(e.shiftKey)
+            (!backwards && this.focusService.focusOverlay(false)) ||
+            this.focusService.focusNextGridCoreContainer(backwards)
         ) {
             // preventDefault so that the tab key doesn't cause focus to get lost
             e.preventDefault();
@@ -214,7 +213,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewportElement()) {
+        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl()?.getViewportElement()) {
             this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }

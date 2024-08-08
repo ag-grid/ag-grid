@@ -38,7 +38,7 @@ describe('ag-grid grouping treeData is reactive', () => {
         consoleErrorSpy?.mockRestore();
     });
 
-    test('toggling treeData rows snapshot', async () => {
+    test('ag-grid grouping treeData is reactive', async () => {
         const rowData = [
             { orgHierarchy: ['A'], g: 0, v: 0 },
             { orgHierarchy: ['A', 'B', 'C'], g: 1, v: 1 },
@@ -260,7 +260,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     key: 'A',
                     lastChild: false,
                     leafGroup: undefined,
-                    level: 1,
+                    level: 0,
                     master: false,
                     parentKey: null,
                     rowGroupIndex: undefined,
@@ -316,7 +316,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     key: 'C',
                     lastChild: true,
                     leafGroup: undefined,
-                    level: 3,
+                    level: 2,
                     master: false,
                     parentKey: 'B',
                     rowGroupIndex: undefined,
@@ -372,7 +372,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     key: 'E',
                     lastChild: true,
                     leafGroup: undefined,
-                    level: 2,
+                    level: 1,
                     master: false,
                     parentKey: 'D',
                     rowGroupIndex: undefined,

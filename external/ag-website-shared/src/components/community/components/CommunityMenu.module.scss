@@ -36,9 +36,10 @@
     &.selected {
         opacity: 1;
         background-color: var(--color-util-brand-100);
+        color: var(--color-fg-primary);
+
         #{$selector-darkmode} & {
             background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 10%);
         }
-        color: var(--color-fg-primary);
     }
 }

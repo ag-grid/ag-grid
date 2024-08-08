@@ -217,6 +217,19 @@ export class Theme {
     }
 
     private makeVariablesChunk(): ThemeCssChunk {
+        // Ensure that every variable has a value set on root elements ("root"
+        // elements are those containing grid UI, e.g. ag-root-wrapper and
+        // ag-popup)
+        //
+        // Simply setting .ag-root-wrapper { --ag-foo: default-value } is not
+        // appropriate because it will override any values set on parent
+        // elements. An application should be able to set `--ag-grid-size: 4px`
+        // on the document body and have it picked up by all grids on the page.
+        //
+        // To allow this we capture the application-provided value of --ag-foo
+        // into --ag-inherited-foo on the *parent* element of the root, and then
+        // use --ag-inherited-foo as the value for --ag-foo on the root element,
+        // applying our own default if it is unset.
         let variablesCss = '';
         let inheritanceCss = '';
         for (const [name, defaultValue] of Object.entries(this.getRenderedParams())) {
@@ -225,8 +238,13 @@ export class Theme {
             variablesCss += `\t${variable}: var(${inheritedVariable}, ${defaultValue});\n`;
             inheritanceCss += `\t${inheritedVariable}: var(${variable});\n`;
         }
-        let css = `.ag-root-wrapper, .ag-measurement-container, .ag-apply-theme-variables {\n${variablesCss}}\n`;
-        css += `:has(> .ag-root-wrapper), :has(> .ag-measurement-container), :has(> .ag-apply-theme-variables) {\n${inheritanceCss}}\n`;
+        const rootSelector =
+            ':where(.ag-root-wrapper, .ag-measurement-container, .ag-apply-theme-variables, .ag-popup)';
+        let css = `${rootSelector} {\n${variablesCss}}\n`;
+        // Capture application-provided variable values on the parent element,
+        // unless the parent is itself a root (which can happen if popupParent
+        // is ag-root-wrapper)
+        css += `:has(> ${rootSelector}):not(${rootSelector}) {\n${inheritanceCss}}\n`;
         return {
             css,
             id: 'variables',

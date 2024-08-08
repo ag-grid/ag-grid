@@ -808,7 +808,7 @@
         "overlayLoadingTemplate": {
             "more": {
                 "name": "Custom Overlays",
-                "url": "./overlays/#custom-overlays"
+                "url": "./overlays/#customisation"
             }
         },
         "loadingOverlayComponent": {
@@ -833,7 +833,7 @@
         "overlayNoRowsTemplate": {
             "more": {
                 "name": "Custom Overlays",
-                "url": "./overlays/#custom-overlays"
+                "url": "./overlays/#customisation"
             }
         },
         "noRowsOverlayComponent": {

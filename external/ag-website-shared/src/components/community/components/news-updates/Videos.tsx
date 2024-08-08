@@ -1,13 +1,29 @@
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
 import styles from './Videos.module.scss';
 
-const Videos = ({ videos }) => {
+interface Video {
+    title: string;
+    link: string;
+    description: string;
+    author: string;
+    type: 'Video' | 'Workshop';
+    published: string;
+    thumbnail?: string;
+    id?: string;
+}
+
+const Videos = ({ videos }: { videos: Video[] }) => {
+    const [playVideo, setPlayVideo] = useState(false);
     const [currentVideo, setCurrentVideo] = useState(videos[0]);
 
-    const handleVideoSelect = (video) => {
+    const handleVideoSelect = (video: Video) => {
         setCurrentVideo(video);
+        setPlayVideo(false);
+    };
+
+    const playGitNationVideo = () => {
+        setPlayVideo(true);
     };
 
     return (
@@ -19,12 +35,21 @@ const Videos = ({ videos }) => {
                 </div>
                 <div className={styles.rightColumn}>
                     {/* TODO: GitNation Portal Support */}
-                    <iframe
-                        className={styles.videoFrame}
-                        src={currentVideo.link}
-                        frameBorder="0"
-                        allowFullScreen
-                    ></iframe>
+                    {currentVideo.thumbnail && !playVideo ? (
+                        <img
+                            className={styles.videoFrame}
+                            src={currentVideo.thumbnail}
+                            alt="Video thumbnail"
+                            onClick={() => playGitNationVideo()}
+                        />
+                    ) : (
+                        <iframe
+                            className={styles.videoFrame}
+                            src={currentVideo.link}
+                            frameBorder="0"
+                            allowFullScreen
+                        ></iframe>
+                    )}
                 </div>
             </div>
             <div className={styles.videoContainer}>
@@ -42,11 +67,7 @@ const Videos = ({ videos }) => {
                                 className={styles.youtubeThumbnail}
                             />
                         ) : (
-                            <img
-                                src={urlWithBaseUrl(video.thumbnail)}
-                                alt="Video thumbnail"
-                                className={styles.videoThumbnail}
-                            />
+                            <img src={video.thumbnail} alt="Video thumbnail" className={styles.videoThumbnail} />
                         )}
                     </div>
                 ))}

@@ -13,7 +13,7 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _getElementSize } from '../../utils/dom';
+import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
@@ -106,7 +106,6 @@ export class CellCtrl extends BeanStub {
     private includeDndSource: boolean;
     private includeRowDrag: boolean;
     private colIdSanitised: string;
-    private tabIndex: number | undefined;
     private isAutoHeight: boolean;
 
     private suppressRefreshCell = false;
@@ -128,9 +127,6 @@ export class CellCtrl extends BeanStub {
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
 
         this.colIdSanitised = _escapeString(this.column.getId())!;
-        if (!beans.gos.get('suppressCellFocus')) {
-            this.tabIndex = -1;
-        }
 
         this.createCellPosition();
         this.addFeatures();
@@ -140,6 +136,11 @@ export class CellCtrl extends BeanStub {
     public shouldRestoreFocus(): boolean {
         // Used in React to determine if the cell should restore focus after re-rendering
         return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
+    }
+
+    public onFocusOut(): void {
+        // Used in React
+        this.beans.focusService.clearRestoreFocus();
     }
 
     private addFeatures(): void {
@@ -272,6 +273,8 @@ export class CellCtrl extends BeanStub {
 
         this.addDomData();
 
+        this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
+
         this.onCellFocused(this.focusEventToRestore);
         this.applyStaticCssClasses();
         this.setWrapText();
@@ -376,9 +379,6 @@ export class CellCtrl extends BeanStub {
     }
     public getColumnIdSanitised(): string {
         return this.colIdSanitised;
-    }
-    public getTabIndex(): number | undefined {
-        return this.tabIndex;
     }
     public isCellRenderer(): boolean {
         const colDef = this.column.getColDef();
@@ -661,18 +661,22 @@ export class CellCtrl extends BeanStub {
         if (!this.cellComp) {
             return;
         }
-
-        const fullName = `ag-cell-${cssName}`;
-        const animationFullName = `ag-cell-${cssName}-animation`;
         const { gos } = this.beans;
 
         if (!flashDuration) {
             flashDuration = gos.get('cellFlashDuration');
         }
 
+        if (flashDuration === 0) {
+            return;
+        }
+
         if (!_exists(fadeDuration)) {
             fadeDuration = gos.get('cellFadeDuration');
         }
+
+        const fullName = `ag-cell-${cssName}`;
+        const animationFullName = `ag-cell-${cssName}-animation`;
 
         // we want to highlight the cells, without any animation
         this.cellComp.addOrRemoveCssClass(fullName, true);
@@ -927,6 +931,13 @@ export class CellCtrl extends BeanStub {
         }
     }
 
+    public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
+        if (!this.eGui) {
+            return;
+        }
+        _addOrRemoveAttribute(this.eGui, 'tabindex', suppressCellFocus ? undefined : -1);
+    }
+
     public onFirstRightPinnedChanged(): void {
         if (!this.cellComp) {
             return;
@@ -944,7 +955,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (this.beans.gos.get('suppressCellFocus')) {
+        if (this.beans.focusService.isCellFocusSuppressed()) {
             return;
         }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);

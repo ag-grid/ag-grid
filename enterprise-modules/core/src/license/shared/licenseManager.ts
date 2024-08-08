@@ -7,6 +7,7 @@ const LICENSE_TYPES = {
     '02': 'CHARTS',
     '0102': 'BOTH',
 };
+const LICENSING_HELP_URL = 'https://ag-grid.com/licensing/';
 
 export interface ILicenseManager {
     setLicenseKey: (key?: string, gridContext?: boolean) => void;
@@ -333,7 +334,7 @@ export class LicenseManager {
                 ' ',
                 '*'
             );
-            this.padAndOutput('* Please contact info@ag-grid.com to obtain a combined license key.', ' ', '*');
+            this.padAndOutput(`* To troubleshoot your license key visit ${LICENSING_HELP_URL}.`, ' ', '*');
             this.centerPadAndOutput('');
             this.centerPadAndOutput('');
         } else {
@@ -341,11 +342,8 @@ export class LicenseManager {
             this.centerPadAndOutput('');
             this.centerPadAndOutput(` ${currentLicenseName} License `);
             this.centerPadAndOutput(' Invalid License Key ');
-            this.padAndOutput(
-                `* Your license key is not valid - please contact info@ag-grid.com to obtain a valid license.`,
-                ' ',
-                '*'
-            );
+            this.padAndOutput(`* Your license key is not valid.`, ' ', '*');
+            this.padAndOutput(`* To troubleshoot your license key visit ${LICENSING_HELP_URL}.`, ' ', '*');
             this.centerPadAndOutput('');
             this.centerPadAndOutput('');
         }

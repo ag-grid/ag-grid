@@ -17,14 +17,14 @@ const SELECTOR_CONFIG: Record<SelectorType, SelectorConfig> = {
     typescript: {
         label: 'Language',
         labelValues: {
-            Typescript: 'typescript',
+            TypeScript: 'typescript',
         },
     },
     react: {
         label: 'Language',
         labelValues: {
-            Javascript: 'reactFunctional',
-            Typescript: 'reactFunctionalTs',
+            JavaScript: 'reactFunctional',
+            TypeScript: 'reactFunctionalTs',
         },
     },
 };
@@ -34,7 +34,7 @@ const IMPORT_TYPE_CONFIG: Record<ImportType, string> = {
 };
 
 if (USE_PACKAGES) {
-    SELECTOR_CONFIG.typescript.labelValues['Javascript'] = 'vanilla';
+    SELECTOR_CONFIG.typescript.labelValues['JavaScript'] = 'vanilla';
 }
 
 function CodeOptionSelector({

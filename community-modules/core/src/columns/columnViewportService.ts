@@ -125,11 +125,22 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
     private isColumnInHeaderViewport(col: AgColumn): boolean {
         // for headers, we never filter out autoHeaderHeight columns, if calculating
-        if (col.isAutoHeaderHeight()) {
+        if (col.isAutoHeaderHeight() || this.isAnyParentAutoHeaderHeight(col)) {
             return true;
         }
 
         return this.isColumnInRowViewport(col);
+    }
+
+    private isAnyParentAutoHeaderHeight(col: AgColumn | AgColumnGroup | null): boolean {
+        while (col) {
+            if (col.isAutoHeaderHeight()) {
+                return true;
+            }
+            col = col.getParent();
+        }
+
+        return false;
     }
 
     private isColumnInRowViewport(col: AgColumn): boolean {

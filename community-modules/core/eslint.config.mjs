@@ -20,7 +20,7 @@ export default [
             '@typescript-eslint/ban-ts-comment': 'warn',
             '@typescript-eslint/no-non-null-asserted-optional-chain': 'warn',
             '@typescript-eslint/no-unnecessary-type-constraint': 'warn',
-            '@typescript-eslint/no-this-alias': 'warn',
+            '@typescript-eslint/no-this-alias': 'off',
         },
     },
 ];

@@ -49,12 +49,8 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
 
 const TooltipClass = 'ag-sparkline-tooltip';
 export class SparklineTooltip {
+    private created = false;
     element: HTMLElement = document.createElement('div');
-
-    constructor() {
-        const tooltipRoot = document.body;
-        tooltipRoot.appendChild(this.element);
-    }
 
     isVisible(): boolean {
         const { element } = this;
@@ -72,6 +68,11 @@ export class SparklineTooltip {
     }
 
     updateClass(visible?: boolean) {
+        if (!this.created) {
+            const tooltipRoot = document.body;
+            tooltipRoot.appendChild(this.element);
+            this.created = true;
+        }
         const classList = [`${TooltipClass}-wrapper`];
 
         if (visible !== true) {

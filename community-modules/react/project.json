@@ -113,33 +113,37 @@
     "pack": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
-      "inputs": ["production", "{projectRoot}/dist"],
-      "outputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
+      "inputs": ["allTransitiveOutputs"],
+      "outputs": ["{workspaceRoot}/dist/artifacts/{projectRoot}.tgz"],
       "options": {
-        "cwd": "community-modules/react",
+        "cwd": "{projectRoot}",
         "parallel": false,
-        "commands": ["mkdir -p ../../dist/packages", "yarn pack -f ../../dist/community-modules/react.tgz"]
+        "commands": [
+          "mkdir -p ../../dist/artifacts/{projectRoot}",
+          "yarn pack -f ../../dist/artifacts/{projectRoot}.tgz",
+          "rm -rf ../../dist/artifacts/{projectRoot}"
+        ]
       }
     },
     "pack:extract": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack"],
-      "inputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
-      "outputs": ["{workspaceRoot}/dist/packages/contents/community/react/react/"],
+      "inputs": ["allOutputs"],
+      "outputs": ["{workspaceRoot}/dist/artifacts/contents/{projectRoot}"],
       "options": {
-        "parallel": false,
-        "commands": [
-          "mkdir -p dist/packages/contents/community/react/react",
-          "tar -xzf dist/community-modules/react.tgz -C dist/packages/contents/community/react/react/"
-        ]
+        "command": "scripts/package/extract-contents.sh {projectRoot}"
       }
     },
     "pack:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
-      "inputs": ["{workspaceRoot}/dist/packages/contents/community/react/react/"],
+      "inputs": ["allOutputs"],
       "options": {
-        "commands": ["node tools/sanity-check-package.js dist/packages/contents/community/react/react/package"]
+        "commands": ["node scripts/package/sanity-check-package.js dist/artifacts/contents/{projectRoot}/package"]
+      },
+      "configurations": {
+        "production": {},
+        "archive": {}
       }
     }
   },

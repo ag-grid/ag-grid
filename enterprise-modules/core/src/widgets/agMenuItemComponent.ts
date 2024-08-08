@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgEvent,
     AgPromise,
     BeanCollection,
@@ -142,7 +143,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         return !!this.params.disabled;
     }
 
-    public openSubMenu(activateFirstItem = false): void {
+    public openSubMenu(activateFirstItem = false, event?: MouseEvent | KeyboardEvent): void {
         this.closeSubMenu();
 
         if (!this.params.subMenu) {
@@ -199,17 +200,30 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
             }
         }
 
-        const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService, {
-            eventSource: this.eGui,
-            ePopup,
-        });
+        const { popupService } = this;
+        const positionCallback = () => {
+            const eventSource = this.eGui!;
+            popupService.positionPopupForMenu({
+                eventSource,
+                ePopup,
+            });
+            const { column, node } = this.contextParams;
+            popupService.callPostProcessPopup(
+                'subMenu',
+                ePopup,
+                eventSource,
+                event instanceof MouseEvent ? event : undefined,
+                column as AgColumn,
+                node
+            );
+        };
 
         const translate = this.localeService.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = popupService.addPopup({
             modal: true,
             eChild: ePopup,
-            positionCallback: positionCallback,
+            positionCallback,
             anchorToElement: this.eGui,
             ariaLabel: translate('ariaLabelSubMenu', 'SubMenu'),
             afterGuiAttached,
@@ -322,7 +336,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
                 )
             );
         } else {
-            this.openSubMenu(event && event.type === 'keydown');
+            this.openSubMenu(event && event.type === 'keydown', event);
         }
 
         if ((this.params.subMenu && !this.params.action) || this.params.suppressCloseOnSelect) {
@@ -466,6 +480,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
+        this.menuItemComp?.destroy?.();
         super.destroy();
     }
 }

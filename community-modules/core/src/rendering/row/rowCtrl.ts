@@ -28,7 +28,7 @@ import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
-import { _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
+import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
@@ -134,7 +134,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private updateColumnListsPending = false;
 
     private rowId: string | null = null;
-    private tabIndex: number | undefined;
     private businessKeySanitised: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
 
@@ -166,11 +165,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
 
-        // calls to `isFullWidth()` only work after `setRowType` has been called.
-        if (this.isFullWidth() && !this.gos.get('suppressCellFocus')) {
-            this.tabIndex = -1;
-        }
-
         this.addListeners();
     }
 
@@ -192,9 +186,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
     public getRowStyles() {
         return this.rowStyles;
-    }
-    public getTabIndex() {
-        return this.tabIndex;
     }
 
     private isSticky(): boolean {
@@ -249,6 +240,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private initialiseRowComp(gui: RowGui): void {
         const gos = this.gos;
+
+        this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
         this.listenOnDomOrder(gui);
         if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
@@ -926,6 +919,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return 0;
     }
 
+    public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
+        const tabIndex = this.isFullWidth() && suppressCellFocus ? undefined : -1;
+        this.allRowGuis.forEach((gui) => {
+            _addOrRemoveAttribute(gui.element, 'tabindex', tabIndex);
+        });
+    }
+
     public onFullWidthRowFocused(event?: CellFocusedEvent) {
         const node = this.rowNode;
         const isFocused = !event
@@ -1012,9 +1012,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource('rowDoubleClicked', mouseEvent);
-
-        this.beans.eventService.dispatchEvent(agEvent);
+        this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowDoubleClicked', mouseEvent));
     }
 
     private getColumnForFullWidth(fullWidthRowGui?: RowGui): AgColumn {
@@ -1075,9 +1073,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const agEvent: RowClickedEvent = this.createRowEventWithSource('rowClicked', mouseEvent);
-
-        this.beans.eventService.dispatchEvent(agEvent);
+        this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowClicked', mouseEvent));
 
         if (this.isFullWidth()) {
             const fullWidthGui = this.findFullWidthRowGui(mouseEvent.target as HTMLElement);
@@ -1314,7 +1310,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.rowEditService?.stopEditing(this, cancel);
     }
 
-    public setInlineEditingCss(editing: boolean): void {
+    public setInlineEditingCss(): void {
+        const editing = this.editingRow || this.getAllCellCtrls().some((cellCtrl) => cellCtrl.isEditing());
         this.allRowGuis.forEach((gui) => {
             gui.rowComp.addOrRemoveCssClass('ag-row-inline-editing', editing);
             gui.rowComp.addOrRemoveCssClass('ag-row-not-inline-editing', !editing);
@@ -1461,7 +1458,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`
         );
 
-        this.beans.ariaAnnouncementService.announceValue(label);
+        this.beans.ariaAnnouncementService.announceValue(label, 'rowSelection');
     }
 
     public addHoverFunctionality(eRow: HTMLElement): void {

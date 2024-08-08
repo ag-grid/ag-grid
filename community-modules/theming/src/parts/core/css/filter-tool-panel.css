@@ -73,10 +73,6 @@
     margin-left: var(--ag-filter-tool-panel-group-indent);
 }
 
-.ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
-    padding-left: var(--ag-grid-size);
-}
-
 .ag-filter-toolpanel-group-instance-header-icon,
 .ag-filter-toolpanel-instance-header-icon {
     margin-left: var(--ag-grid-size);

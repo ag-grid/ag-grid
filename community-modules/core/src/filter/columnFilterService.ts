@@ -8,12 +8,7 @@ import type { BeanCollection, BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import type {
-    ColumnEventType,
-    FilterChangedEventSourceType,
-    FilterDestroyedEvent,
-    FilterModifiedEvent,
-} from '../events';
+import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -567,7 +562,11 @@ export class ColumnFilterService extends BeanStub {
             this.disposeColumnListener(colId);
         });
 
-        if (columns.length > 0) {
+        const allFiltersAreGroupFilters = columns.every(
+            (column) => column.getColDef().filter === 'agGroupColumnFilter'
+        );
+        // don't call `onFilterChanged` if only group column filter is present as it has no model
+        if (columns.length > 0 && !allFiltersAreGroupFilters) {
             // When a filter changes as a side effect of a column changes,
             // we report 'api' as the source, so that the client can distinguish
             this.filterManager?.onFilterChanged({ columns, source: 'api' });
@@ -691,24 +690,21 @@ export class ColumnFilterService extends BeanStub {
 
             this.allColumnFilters.delete(filterWrapper.column.getColId());
 
-            const event: WithoutGridCommon<FilterDestroyedEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'filterDestroyed',
                 source,
                 column: filterWrapper.column,
-            };
-            this.eventService.dispatchEvent(event);
+            });
         });
     }
 
     private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: AgColumn<any>) {
         return () => {
-            const event: WithoutGridCommon<FilterModifiedEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'filterModified',
                 column,
                 filterInstance: filter,
-            };
-
-            this.eventService.dispatchEvent(event);
+            });
         };
     }
 

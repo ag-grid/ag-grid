@@ -1,6 +1,6 @@
 @use 'design-system' as *;
 
-$nav-height: 340px;
+$nav-height: 200px;
 
 .githubIcon {
     padding: 4px;
@@ -9,6 +9,19 @@ $nav-height: 340px;
 .headerHeading {
     padding-bottom: 0;
     margin-bottom: 0;
+    font-size: var(--text-fs-2xl);
+}
+
+.headerTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-size-3;
+    padding-bottom: $spacing-size-1;
+
+    a {
+        padding-left: $spacing-size-2;
+    }
 }
 
 .topHeader {
@@ -16,8 +29,8 @@ $nav-height: 340px;
     padding-top: $spacing-size-8;
     display: flex;
     gap: $spacing-size-12;
-    margin-bottom: $spacing-size-2;
-    padding-bottom: $spacing-size-8;
+
+    margin-bottom: $spacing-size-3;
     width: 100%;
     justify-content: space-between;
 
@@ -36,19 +49,41 @@ $nav-height: 340px;
     }
 
     @media screen and (min-width: 720px) {
-        height: 244px;
+        height: 148px;
 
         > div:first-child {
-            width: 30%;
+            width: auto;
         }
+    }
+
+    @media screen and (max-width: 1000px) {
+        flex-direction: column;
+        height: auto;
     }
 
     p {
         color: var(--color-text-tertiary);
+        padding-top: $spacing-size-1;
     }
 
     button {
         padding-left: $spacing-size-3;
+        font-size: var(--text-fs-sm);
+    }
+
+    span {
+        font-size: var(--text-fs-sm);
+    }
+}
+
+.topHeaderTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-size-3;
+
+    h1 {
+        line-height: var(--text-lh-1xl);
     }
 }
 
@@ -77,7 +112,8 @@ $nav-height: 340px;
 }
 
 .layout {
-    --layout-grid-header-height: calc(var(--layout-site-header-height) + 276px);
+    --layout-top-header-height: 180px;
+    --layout-grid-header-height: calc(var(--layout-site-header-height) + var(--layout-top-header-height));
     --layout-grid-margin: 0px;
 
     @media screen and (max-width: 1900px) {
@@ -88,6 +124,29 @@ $nav-height: 340px;
     @media screen and (min-width: (1800px + 48px * 2)) {
         width: var(--layout-max-width);
         margin: 0 auto;
+    }
+
+    @media screen and (max-height: 728px) {
+        --layout-top-header-height: 125px;
+    }
+}
+
+.topHeader {
+    @media screen and (max-height: 728px) {
+        height: 100px;
+        padding-top: $spacing-size-4;
+
+        .headerHeading {
+            font-size: var(--text-fs-xl);
+        }
+
+        p {
+            font-size: var(--text-fs-sm);
+        }
+
+        .tabWrapper {
+            height: 80px;
+        }
     }
 }
 

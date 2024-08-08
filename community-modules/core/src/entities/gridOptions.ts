@@ -5,7 +5,7 @@ import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
-    AsyncTransactionsFlushed,
+    AsyncTransactionsFlushedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
     CellClickedEvent,
@@ -773,7 +773,7 @@ export interface GridOptions<TData = any> {
     loading?: boolean;
 
     /**
-     * Provide a HTML string to override the default loading overlay.
+     * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      */
     overlayLoadingTemplate?: string;
     /**
@@ -794,7 +794,7 @@ export interface GridOptions<TData = any> {
     suppressLoadingOverlay?: boolean;
 
     /**
-     * Provide a HTML string to override the default no-rows overlay.
+     * Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
      */
     overlayNoRowsTemplate?: string;
     /**
@@ -946,7 +946,8 @@ export interface GridOptions<TData = any> {
      */
     enableCellChangeFlash?: boolean;
     /**
-     * To be used when setting `enableCellChangeFlash` on column definitions. Sets the duration in milliseconds of how long a cell should remain in its "flashed" state.
+     * Sets the duration in milliseconds of how long a cell should remain in its "flashed" state.
+     * If `0`, the cell will not flash.
      * @default 500
      */
     cellFlashDuration?: number;
@@ -955,7 +956,7 @@ export interface GridOptions<TData = any> {
      */
     cellFlashDelay?: number;
     /**
-     * To be used when setting `enableCellChangeFlash` on column definitions. Sets the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by cellFlashDuration has completed.
+     * Sets the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
      * @default 1000
      */
     cellFadeDuration?: number;
@@ -2189,7 +2190,7 @@ export interface GridOptions<TData = any> {
     /**
      * Async transactions have been applied. Contains a list of all transaction results.
      */
-    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;
+    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushedEvent<TData>): void;
 
     // *** Row Model: Server Side ***//
     /**

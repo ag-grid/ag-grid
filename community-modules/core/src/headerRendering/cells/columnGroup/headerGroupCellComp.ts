@@ -7,12 +7,14 @@ import type { IHeaderGroupComp } from './headerGroupComp';
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
     private eResize: HTMLElement = RefPlaceholder;
+    private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;
 
     private headerGroupComp: IHeaderGroupComp | undefined;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
         super(
             /* html */ `<div class="ag-header-group-cell" role="columnheader">
+            <div data-ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
             <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`,
             ctrl
@@ -36,7 +38,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             getUserCompInstance: () => this.headerGroupComp,
         };
 
-        this.ctrl.setComp(compProxy, eGui, this.eResize);
+        this.ctrl.setComp(compProxy, eGui, this.eResize, this.eHeaderCompWrapper);
     }
 
     private setUserCompDetails(details: UserCompDetails): void {
@@ -54,7 +56,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const eGui = this.getGui();
         const eHeaderGroupGui = headerGroupComp.getGui();
 
-        eGui.appendChild(eHeaderGroupGui);
+        this.eHeaderCompWrapper.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
 
         this.headerGroupComp = headerGroupComp;

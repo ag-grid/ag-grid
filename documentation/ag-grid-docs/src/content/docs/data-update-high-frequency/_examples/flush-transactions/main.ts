@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    AsyncTransactionsFlushed,
+    AsyncTransactionsFlushedEvent,
     ColDef,
     GetRowIdParams,
     GridApi,
@@ -177,7 +177,7 @@ const gridOptions: GridOptions = {
         params.api.setGridOption('rowData', globalRowData);
         startFeed(params.api);
     },
-    onAsyncTransactionsFlushed: (e: AsyncTransactionsFlushed) => {
+    onAsyncTransactionsFlushed: (e: AsyncTransactionsFlushedEvent) => {
         console.log('========== onAsyncTransactionsFlushed: applied ' + e.results.length + ' transactions');
     },
 };
