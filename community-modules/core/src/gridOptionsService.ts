@@ -15,7 +15,7 @@ import { ModuleRegistry } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _log, _warnOnce } from './utils/function';
-import { _exists, _missing, toBoolean } from './utils/generic';
+import { _exists, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
