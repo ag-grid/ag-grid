@@ -1,5 +1,8 @@
 import type {
+    AgChartTheme,
+    AgChartThemeName,
     AgDonutSeriesOptions,
+    AgDonutTitleOptions,
     AgPieSeriesOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
@@ -33,11 +36,11 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         return {
             ...commonChartOptions,
             data: this.crossFiltering ? this.getCrossFilterData(params) : params.data,
-            series: this.getSeries(params),
+            series: this.getSeries(params, commonChartOptions),
         };
     }
 
-    private getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
+    private getSeries(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarSeriesOptions[] {
         const [category] = params.categories;
         const numFields = params.fields.length;
 
@@ -60,11 +63,6 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
 
                 if (this.chartType === 'donut' || this.chartType === 'doughnut') {
                     const { outerRadiusOffset, innerRadiusOffset } = calculateOffsets(offset);
-                    const title = f.displayName
-                        ? {
-                              title: { text: f.displayName, showInLegend: numFields > 1 },
-                          }
-                        : undefined;
 
                     // augment shared options with 'donut' specific options
                     return {
@@ -72,7 +70,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                         type: 'donut',
                         outerRadiusOffset,
                         innerRadiusOffset,
-                        ...title,
+                        ...this.getDonutSeriesTitle(f.displayName, numFields, commonChartOptions),
                         calloutLine: {
                             colors: this.getChartPalette()?.strokes,
                         },
@@ -141,5 +139,29 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     private getFields(params: UpdateParams): FieldDefinition[] {
         // pie charts only support a single series, donut charts support multiple series
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
+    }
+
+    private getDonutSeriesTitle(
+        displayName: string | null,
+        numFields: number,
+        commonChartOptions: AgPolarChartOptions
+    ): { title: AgDonutTitleOptions } | undefined {
+        const shouldOverrideTitle = (theme?: AgChartTheme | AgChartThemeName): boolean => {
+            if (typeof theme === 'object') {
+                const { baseTheme, overrides } = theme;
+                const title = overrides?.donut?.series?.title;
+                // if theme is explicitly disabled or has a title, then don't override
+                if (title?.enabled === false || title?.text) {
+                    return false;
+                }
+                return shouldOverrideTitle(baseTheme);
+            }
+            return true;
+        };
+        return displayName && shouldOverrideTitle(commonChartOptions.theme)
+            ? {
+                  title: { text: displayName, showInLegend: numFields > 1 },
+              }
+            : undefined;
     }
 }
