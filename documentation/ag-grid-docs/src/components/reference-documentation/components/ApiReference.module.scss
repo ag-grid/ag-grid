@@ -378,6 +378,13 @@ button.seeMore {
 
 .expandedContent {
     border-top: 1px solid var(--color-bg-primary) !important;
+    max-height: 400px;
+
+    code {
+        overflow: scroll !important;
+        overflow-x: scroll !important;
+        max-height: 400px !important;
+    }
 }
 
 .expandedContent > td {
