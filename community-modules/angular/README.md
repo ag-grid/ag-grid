@@ -190,14 +190,13 @@ $ npm install --save @ag-grid-community/core @ag-grid-community/angular
 Import the required modules, and register them via the ModuleRegistry.
 
 ```js
-import { Component } from '@angular/core';
-
 // Angular Data Grid Component
 import { AgGridAngular } from '@ag-grid-community/angular';
-// Column Definition Type Interface & Module Registry
-import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
 // Default Row Model
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+// Column Definition Type Interface & Module Registry
+import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
+import { Component } from '@angular/core';
 
 // Register the RowModel Module
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
