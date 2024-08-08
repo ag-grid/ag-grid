@@ -910,8 +910,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (!keys) {
             return [];
         }
-        const res = keys.map((key) => this.getCol(key)).filter((col) => col != null);
-        return res as AgColumn[];
+        return keys.map((key) => this.getCol(key)).filter((col): col is AgColumn => col != null);
     }
 
     public getColDefCol(key: ColKey): AgColumn | null {
@@ -951,12 +950,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public getAutoCol(key: ColKey): AgColumn | null {
-        if (this.autoCols == null) return null;
-        return this.autoCols.list.find((groupCol) => columnsMatch(groupCol, key)) || null;
+        return this.autoCols?.list.find((groupCol) => columnsMatch(groupCol, key)) ?? null;
     }
 
     public getAutoCols(): AgColumn[] | null {
-        return this.autoCols?.list || null;
+        return this.autoCols?.list ?? null;
     }
 
     public setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {

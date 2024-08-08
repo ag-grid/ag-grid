@@ -26,7 +26,7 @@ export class ColumnGetStateService extends BeanStub implements NamedBean {
         }
 
         const colsForState = this.columnModel.getAllCols();
-        const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
+        const res = colsForState.map((col) => this.createStateItemFromColumn(col));
 
         this.orderColumnStateList(res);
 
