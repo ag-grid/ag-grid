@@ -26,14 +26,10 @@
     display: flex;
     align-items: center;
     min-height: 36px;
-
     gap: $spacing-size-2;
+
     > * {
         flex-shrink: 0;
-    }
-
-    > *:last-child {
-        // padding-right: 90px;
     }
 
     select,
