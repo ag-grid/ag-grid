@@ -22,7 +22,7 @@ export class AngularFrameworkComponentWrapper
         this.angularFrameworkOverrides = angularFrameworkOverrides;
     }
 
-    createWrapper(OriginalConstructor: { new (): any }): WrappableInterface {
+    protected createWrapper(OriginalConstructor: { new (): any }): WrappableInterface {
         const angularFrameworkOverrides = this.angularFrameworkOverrides;
         const that = this;
         class DynamicAgNg2Component
