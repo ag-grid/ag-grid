@@ -120,9 +120,13 @@
         }
     }
 }
+
 .filterLabel {
-    margin-left: $spacing-size-2;
     font-size: var(--text-fs-sm);
+
+    &:not(:first-child) {
+        margin-left: $spacing-size-2;
+    }
 }
 
 .filterInput {
