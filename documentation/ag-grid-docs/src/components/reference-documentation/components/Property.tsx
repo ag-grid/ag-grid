@@ -257,7 +257,7 @@ export const Property: FunctionComponent<{
                                 )}
 
                                 {isInitial && (
-                                    <div className={styles.metaItem}>
+                                    <div className={classnames(styles.metaItem, styles.initialItem)}>
                                         <a
                                             className={styles.initialLabel}
                                             href="https://ag-grid.com/react-data-grid/grid-interface/#initial-grid-options"

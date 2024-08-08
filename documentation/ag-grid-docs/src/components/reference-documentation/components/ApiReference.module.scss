@@ -191,6 +191,7 @@
     flex-direction: row;
     gap: $spacing-size-2;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .metaLabel {
@@ -203,6 +204,7 @@
     font-size: var(--text-fs-sm);
     font-family: var(--text-monospace-font-family);
     color: var(--color-fg-code);
+    cursor: pointer;
 }
 
 .defaultValue {
@@ -220,6 +222,7 @@
     font-optical-sizing: auto;
     font-weight: 400;
 }
+.initialItem,
 a.metaValue {
     color: var(--color-link);
     text-decoration: underline;
@@ -378,7 +381,7 @@ button.seeMore {
 }
 
 .expandedContent > td {
-    padding: 0 0 $spacing-size-4;
+    padding: $spacing-size-2 0 $spacing-size-4;
     display: flex;
     flex-direction: column;
 }
@@ -399,6 +402,8 @@ button.seeMore {
 .propertyMeta {
     display: flex;
     justify-content: left;
+    flex-wrap: wrap;
+    gap: $spacing-size-2;
 }
 
 .metaRow {
