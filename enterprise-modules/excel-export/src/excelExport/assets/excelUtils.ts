@@ -5,10 +5,6 @@ import { XmlFactory } from '@ag-grid-community/csv-export';
 import { INCH_TO_EMU } from './excelConstants';
 import type { ExcelCalculatedImage } from './excelInterfaces';
 
-export const pixelsToPoint = (pixels: number): number => {
-    return Math.round((pixels * 72) / 96);
-};
-
 export const pointsToPixel = (points: number): number => {
     return Math.round((points * 96) / 72);
 };
@@ -46,7 +42,7 @@ export const getHeightFromProperty = (
         finalHeight = heightFunc({ rowIndex });
     }
 
-    return pixelsToPoint(finalHeight);
+    return finalHeight;
 };
 
 export const setExcelImageTotalWidth = (image: ExcelCalculatedImage, columnsToExport: AgColumn[]): void => {

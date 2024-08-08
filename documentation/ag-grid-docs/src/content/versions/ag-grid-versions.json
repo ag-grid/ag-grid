@@ -1,7 +1,7 @@
 [
     {
         "version": "32.1.0",
-        "date": "August 6th 2024",
+        "date": "August 8th 2024",
         "highlights": [
             {
                 "text": "Server-side Row Model - Hide Open Parents",

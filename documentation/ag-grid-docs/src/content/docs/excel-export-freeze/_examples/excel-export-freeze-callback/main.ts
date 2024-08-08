@@ -64,7 +64,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             }
             return node.rowIndex! < 20;
         },
-        freezeColumns: (params) => params.column.getColId() !== 'gold',
+        freezeColumns: (params) => params.column.getColId() !== 'sport',
     },
 };
 

@@ -33,6 +33,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     sideBar: 'filters',
 };
 
+function reset() {
+    gridApi!.setFilterModel(null);
+    gridApi!.setGridOption('rowData', []);
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

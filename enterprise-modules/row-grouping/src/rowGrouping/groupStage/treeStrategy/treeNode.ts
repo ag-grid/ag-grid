@@ -113,9 +113,13 @@ export class TreeNode implements ITreeNode {
 
     /**
      * Gets a node a key in the given parent. If the node does not exists, creates a filler node, with null row.
+     * We cast to string just to be sure the user passed a string correctly and not a number.
      * @returns the node at the given key, or a new filler node inserted there if it does not exist.
      */
-    public upsertKey(key: string): TreeNode {
+    public upsertKey(key: string | number): TreeNode {
+        if (typeof key !== 'string') {
+            key = String(key);
+        }
         let node = this.children?.get(key);
         if (!node) {
             node = new TreeNode(this, key, this.level + 1, true);

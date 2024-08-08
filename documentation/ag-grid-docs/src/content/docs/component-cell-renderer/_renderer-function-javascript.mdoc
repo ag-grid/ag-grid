@@ -10,8 +10,8 @@ Below are some simple examples of Cell Components provided as simple functions:
 
 {% if isFramework("javascript") %}
 ```js
-// put the value in bold
-colDef.cellRenderer = params => `**${params.value.toUpperCase()}**`;
+// uppercase the value
+colDef.cellRenderer = params => `${params.value.toUpperCase()}`;
 
 // put a tooltip on the value
 colDef.cellRenderer = params => `<span title="the tooltip">${params.value}</span>`;
