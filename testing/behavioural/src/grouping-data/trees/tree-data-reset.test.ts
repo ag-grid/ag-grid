@@ -167,6 +167,55 @@ describe('ag-grid tree data', () => {
         `);
     });
 
+    test('tree data with id ordering of fillers is consistent', async () => {
+        const rowData = [
+            { id: 'a', orgHierarchy: ['A'] },
+            { id: 'c', orgHierarchy: ['B', 'C'] },
+            { id: 'd', orgHierarchy: ['D'] },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [],
+            autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: [],
+            getDataPath,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = createMyGrid(gridOptions);
+
+        api.setGridOption('rowData', rowData);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── A LEAF id:a
+            ├─┬ B filler id:row-group-0-B
+            │ └── C LEAF id:c
+            └── D LEAF id:d
+        `);
+
+        api.setGridOption('rowData', [
+            { id: '0', orgHierarchy: ['0'] },
+            ...rowData,
+            { id: 'f', orgHierarchy: ['E', 'F'] },
+            { id: 'e', orgHierarchy: ['E'] },
+        ]);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── 0 LEAF id:0
+            ├── A LEAF id:a
+            ├─┬ B filler id:row-group-0-B
+            │ └── C LEAF id:c
+            ├── D LEAF id:d
+            └─┬ E LEAF id:e
+            · └── F LEAF id:f
+        `);
+    });
+
     test('tree data setRowData with id maintains selection and expanded state, and conservative ordering', async () => {
         const rowData1 = [
             { id: '1', orgHierarchy: ['A', 'B'], _diagramLabel: '1-v1' },
@@ -245,14 +294,14 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ P filler selected !expanded id:row-group-0-P
-            │ └── Q LEAF selected id:4 label:4-v2
+            ├── N LEAF selected id:7 label:7-v2
             ├─┬ R filler selected !expanded id:row-group-0-R
             │ └── S LEAF selected id:5 label:5-v2
             ├─┬ X filler id:row-group-0-X
             │ └─┬ Y LEAF id:2 label:2-v2
             │ · └── Z LEAF selected !expanded id:1 label:1-v2
-            ├── N LEAF selected id:7 label:7-v2
+            ├─┬ P filler selected !expanded id:row-group-0-P
+            │ └── Q LEAF selected id:4 label:4-v2
             └── M LEAF selected id:6 label:6-v2
         `);
 
@@ -260,9 +309,9 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ C filler id:row-group-0-C
-            │ └── D LEAF id:3 label:3-v3
-            └── a LEAF id:100 label:100-v3
+            ├── a LEAF id:100 label:100-v3
+            └─┬ C filler id:row-group-0-C
+            · └── D LEAF id:3 label:3-v3
         `);
 
         api.setGridOption('rowData', []);

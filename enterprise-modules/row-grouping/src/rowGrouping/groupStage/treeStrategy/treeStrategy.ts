@@ -10,9 +10,10 @@ import type {
     StageExecuteParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, _sortRowNodesByOrder, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import { RowNode } from '@ag-grid-community/core';
 
+import { ChildrenAfterGroupBuilder } from './childrenAfterGroupBuilder';
 import { ChildrenChanged, TreeNode } from './treeNode';
 import {
     clearTreeRowFlags,
@@ -48,6 +49,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string | undefined;
     private rowsPendingDeletion: Set<RowNode> | null = null;
     private readonly root: TreeNode = new TreeNode(null, '', -1, false);
+    private childrenAfterGroupBuilder = new ChildrenAfterGroupBuilder();
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
@@ -122,8 +124,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private handleTransaction(details: TreeExecutionDetails, transactions: RowNodeTransaction[]): void {
-        const { changedPath, rowNodeOrder } = details;
-
         for (const { remove, update, add } of transactions) {
             // the order of [add, remove, update] is the same as in ClientSideNodeManager.
             // Order is important when a record with the same id is added and removed in the same transaction.
@@ -132,20 +132,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.addOrUpdateRows(details, add as RowNode[] | null, false);
         }
         this.commitTree(details);
-
-        if (rowNodeOrder) {
-            // this is used when doing delta updates, eg Redux, keeps nodes in right order
-            changedPath?.forEachChangedNodeDepthFirst(
-                (node) => {
-                    const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, rowNodeOrder);
-                    if (didSort) {
-                        changedPath.addParentNode(node);
-                    }
-                },
-                false,
-                true
-            );
-        }
     }
 
     private checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null | undefined): void {
@@ -248,17 +234,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 node.invalidate();
                 return node;
             }
-            if (!node.row) {
-                // TODO: at the moment, the sorting of filler node is not correct. See AG-12497
-                // This needs more investigation and discussions.
-                // See _sortRowNodesByOrder implementation.
-                // We need to create this row early instead of waiting for the commit stage
-                // because filler nodes are ordered by __objectId.
-                // We create it here so we are sure filler nodes are created in the order they are encountered
-                // in the input rowData, and not in the order of invalidation, that is even less deterministic.
-                // We could reduce the amount of reordering needed, and, delay the creation of filler nodes to the commit stage.
-                this.overwriteRow(node, this.createFillerRow(node), false);
-            }
             parent = node;
         }
         return null;
@@ -296,13 +271,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             invalidate = true;
             let current: TreeNode | null = node;
             do {
-                if (current.ghost && current.row) {
-                    // This is a filler row, and we want to remove it
-                    // This is because order of filler rows is currently handled by __objectId
-                    // So we cannot reuse them. See AG-12497
-                    this.deleteRow(current.row, true);
-                    current.linkRow(null);
-                }
                 current = current.parent;
             } while (current?.updateThisIsGhost());
         }
@@ -362,6 +330,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Commit the changes performed to the tree */
     private commitTree(details: TreeExecutionDetails) {
+        this.childrenAfterGroupBuilder.init(details.rowNodeOrder);
+
         const root = this.root;
 
         this.commitChildren(details, root);
@@ -378,6 +348,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 details.changedPath.addParentNode(rootRow);
             }
         }
+
+        this.childrenAfterGroupBuilder.free();
 
         this.commitDeletedRows();
     }
@@ -526,7 +498,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private updateChildrenAfterGroup(node: TreeNode): void {
         this.filterRemovedChildrenAfterGroup(node);
         if (node.childrenChanged === ChildrenChanged.SomeInserted) {
-            this.rebuildChildrenAfterGroup(node);
+            if (!this.childrenAfterGroupBuilder.rebuildChildrenAfterGroup(node)) {
+                node.childrenChanged = ChildrenChanged.None;
+            }
         }
     }
 
@@ -548,31 +522,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         array.length = writeIdx;
 
         if (!changed && node.childrenChanged === ChildrenChanged.SomeRemoved) {
-            node.childrenChanged = ChildrenChanged.None;
-        }
-    }
-
-    /** Updates node childrenAfterGroup. Returns true if the children changed. */
-    private rebuildChildrenAfterGroup(node: TreeNode): void {
-        const array = node.childrenAfterGroup;
-        const oldCount = array.length;
-        let writeIdx = 0;
-        let changed = false;
-        array.length = node.childrenCount();
-        for (const child of node.enumChildren()) {
-            const row = child.row!;
-            if (array[writeIdx] !== row) {
-                array[writeIdx] = row;
-                changed = true;
-            }
-            ++writeIdx;
-        }
-        if (writeIdx !== oldCount) {
-            array.length = writeIdx;
-            changed = true;
-        }
-
-        if (!changed) {
             node.childrenChanged = ChildrenChanged.None;
         }
     }
