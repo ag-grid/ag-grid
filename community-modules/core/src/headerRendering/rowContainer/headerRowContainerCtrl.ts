@@ -13,8 +13,6 @@ import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { NumberSequence } from '../../utils/numberSequence';
-import type { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
-import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import { BodyDropTarget } from '../columnDrag/bodyDropTarget';
 import type { HeaderPosition } from '../common/headerPosition';
 import { HeaderRowType } from '../row/headerRowComp';
@@ -171,10 +169,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
     public getHeaderCtrlForColumn(column: AgColumn | AgColumnGroup): any {
         if (isColumn(column)) {
-            if (!this.columnsRowCtrl) {
-                return;
-            }
-            return this.columnsRowCtrl.getHeaderCellCtrl(column);
+            return this.columnsRowCtrl?.getHeaderCellCtrl(column);
         }
 
         if (this.groupsRowCtrls.length === 0) {

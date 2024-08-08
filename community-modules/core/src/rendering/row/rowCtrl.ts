@@ -7,13 +7,7 @@ import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
-import type {
-    CellFocusedEvent,
-    RowClickedEvent,
-    RowDoubleClickedEvent,
-    RowEvent,
-    VirtualRowRemovedEvent,
-} from '../../events';
+import type { CellFocusedEvent, RowEvent, VirtualRowRemovedEvent } from '../../events';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
