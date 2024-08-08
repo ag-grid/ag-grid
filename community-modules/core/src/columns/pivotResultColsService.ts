@@ -82,6 +82,16 @@ export class PivotResultColsService extends BeanStub implements NamedBean {
         return this.columnModel.getColFromCollection(key, this.pivotResultCols);
     }
 
+    public overridePrc(collections: ColumnCollections | undefined, source: ColumnEventType) {
+        if (collections) {
+            this.pivotResultCols = collections;
+        } else {
+            this.previousPivotResultCols = this.pivotResultCols ? this.pivotResultCols.tree : null;
+        }
+        this.columnModel.refreshCols();
+        this.visibleColsService.refresh(source);
+    }
+
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
         if (!this.columnModel.isReady()) {
             return;

@@ -1,268 +1,170 @@
-import type {
-    AgColumn,
-    BeanCollection,
-    ChangedPath,
-    ColDef,
-    ColumnModel,
-    FuncColsService,
-    GridOptions,
-    IRowNodeStage,
-    NamedBean,
-    PivotResultColsService,
-    RowNode,
-    StageExecuteParams,
-    ValueService,
-} from '@ag-grid-community/core';
-import { BeanStub, _iterateObject, _missing } from '@ag-grid-community/core';
+import type { BeanCollection } from '@ag-grid-community/core';
+import { AgColumn } from '@ag-grid-community/core';
+import type { RowNode } from '@ag-grid-community/core';
+import type { BeanName, IRowNodeStage, NamedBean, StageExecuteParams } from '@ag-grid-community/core';
+import { AgProvidedColumnGroup } from '@ag-grid-community/core';
+import type { ColGroupDef } from '@ag-grid-community/core';
+import { BeanStub } from '@ag-grid-community/core';
 
-import type { PivotColDefService } from './pivotColDefService';
+let createBean = (def: AgProvidedColumnGroup) => def;
+class ColumnGroupNode {
+    children: Map<string, ColumnGroupNode> = new Map();
+    level: number;
+    key: string;
+    parent?: ColumnGroupNode;
+    columns: AgColumn[];
+    path: string[];
 
-const EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.';
+    constructor(key: string, level: number, parent?: ColumnGroupNode) {
+        this.level = level;
+        this.key = key;
+        this.parent = parent;
+        this.path = this.getPath();
+    }
+
+    traverse(key: string): ColumnGroupNode {
+        const nextGroup = this.children.get(key);
+        if (!nextGroup) {
+            const newNode = new ColumnGroupNode(key, this.level + 1, this.level > 0 ? this : undefined);
+            this.children.set(key, newNode);
+            return newNode;
+        }
+
+        return nextGroup;
+    }
+
+    getPath(): string[] {
+        const path: string[] = new Array(this.level);
+        let node: ColumnGroupNode = this;
+        for (let i = path.length - 1; i >= 0; i--) {
+            path[i] = this.key;
+            node = node.parent!;
+        }
+        return path;
+    }
+
+    forEachLeafGroup(callback: (group: ColumnGroupNode) => void) {
+        if (this.children.size === 0) {
+            callback(this);
+            return;
+        }
+
+        this.children.forEach((child) => {
+            child.forEachLeafGroup(callback);
+        });
+    }
+
+    getProvidedColumnGroup(): AgProvidedColumnGroup {
+        const def: ColGroupDef = {
+            groupId: this.key,
+            headerName: this.key,
+            children: [],
+        };
+        const group = createBean(new AgProvidedColumnGroup(def, this.key, false, this.level));
+        const children: (AgColumn | AgProvidedColumnGroup)[] = [];
+        let next;
+        const iterator = this.children.values();
+        while ((next = iterator.next()?.value) != null) {
+            children.push(next.getProvidedColumnGroup());
+        }
+        if (this.columns) {
+            // add the func cols back in
+            children.push(...this.columns);
+        }
+        children.forEach((child) => child.setOriginalParent(group));
+        group.setChildren(children);
+        return group;
+    }
+
+    setColumns(columns: AgColumn[]) {
+        this.columns = columns;
+    }
+}
 
 export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
-    beanName = 'pivotStage' as const;
+    beanName: BeanName = 'pivotStage';
 
-    private valueService: ValueService;
-    private columnModel: ColumnModel;
-    private pivotResultColsService: PivotResultColsService;
-    private funcColsService: FuncColsService;
-    private pivotColDefService: PivotColDefService;
+    private beans: BeanCollection;
 
-    public wireBeans(beans: BeanCollection) {
-        this.valueService = beans.valueService;
-        this.columnModel = beans.columnModel;
-        this.pivotResultColsService = beans.pivotResultColsService;
-        this.funcColsService = beans.funcColsService;
-        this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
+    wireBeans(beans: BeanCollection) {
+        this.beans = beans;
+        createBean = this.createBean.bind(this);
     }
 
-    private uniqueValues: any = {};
-
-    private pivotColumnDefs: ColDef[];
-
-    private aggregationColumnsHashLastTime: string | null;
-    private aggregationFuncsHashLastTime: string;
-
-    private groupColumnsHashLastTime: string | null;
-
-    private pivotRowTotalsLastTime: GridOptions['pivotRowTotals'];
-    private pivotColumnGroupTotalsLastTime: GridOptions['pivotColumnGroupTotals'];
-    private suppressExpandablePivotGroupsLastTime: GridOptions['suppressExpandablePivotGroups'];
-    private removePivotHeaderRowWhenSingleValueColumnLastTime: GridOptions['removePivotHeaderRowWhenSingleValueColumn'];
-
-    private lastTimeFailed = false;
-
-    private maxUniqueValues: number = -1;
-
-    public execute(params: StageExecuteParams): void {
-        const changedPath = params.changedPath;
-        if (this.columnModel.isPivotActive()) {
-            this.executePivotOn(changedPath!);
-        } else {
-            this.executePivotOff(changedPath!);
-        }
-    }
-
-    private executePivotOff(changedPath: ChangedPath): void {
-        this.aggregationColumnsHashLastTime = null;
-        this.uniqueValues = {};
-        if (this.pivotResultColsService.isPivotResultColsPresent()) {
-            this.pivotResultColsService.setPivotResultCols(null, 'rowModelUpdated');
-            if (changedPath) {
-                changedPath.setInactive();
-            }
-        }
-    }
-
-    private executePivotOn(changedPath: ChangedPath): void {
-        const numberOfAggregationColumns = this.funcColsService.getValueColumns().length ?? 1;
-
-        // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
-        // to get the max number of unique values.
-        const configuredMaxCols = this.gos.get('pivotMaxGeneratedColumns');
-        this.maxUniqueValues = configuredMaxCols === -1 ? -1 : configuredMaxCols / numberOfAggregationColumns;
-        let uniqueValues;
-        try {
-            // try catch is used to force execution to stop when the max count is exceeded.
-            uniqueValues = this.bucketUpRowNodes(changedPath);
-        } catch (e) {
-            // message is checked rather than inheritance as the build seems to break instanceof
-            if (e.message === EXCEEDED_MAX_UNIQUE_VALUES) {
-                this.pivotResultColsService.setPivotResultCols([], 'rowModelUpdated');
-                this.eventService.dispatchEvent({
-                    type: 'pivotMaxColumnsExceeded',
-                    message: e.message,
-                });
-                this.lastTimeFailed = true;
-                return;
-            }
-            throw e;
+    execute(params: StageExecuteParams<any>) {
+        const pivotCols = this.beans.funcColsService.getPivotColumns();
+        if (!pivotCols.length) {
+            return;
         }
 
-        const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
+        const pivotRoot = new ColumnGroupNode(null!, 0);
 
-        const aggregationColumns = this.funcColsService.getValueColumns();
-        const aggregationColumnsHash = aggregationColumns
-            .map((column) => `${column.getId()}-${column.getColDef().headerName}`)
-            .join('#');
-        const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
-
-        const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
-        const aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
-        this.aggregationColumnsHashLastTime = aggregationColumnsHash;
-        this.aggregationFuncsHashLastTime = aggregationFuncsHash;
-
-        const groupColumnsHash = this.funcColsService
-            .getRowGroupColumns()
-            .map((column) => column.getId())
-            .join('#');
-        const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
-        this.groupColumnsHashLastTime = groupColumnsHash;
-
-        const pivotRowTotals = this.gos.get('pivotRowTotals');
-        const pivotColumnGroupTotals = this.gos.get('pivotColumnGroupTotals');
-        const suppressExpandablePivotGroups = this.gos.get('suppressExpandablePivotGroups');
-        const removePivotHeaderRowWhenSingleValueColumn = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
-
-        const anyGridOptionsChanged =
-            pivotRowTotals !== this.pivotRowTotalsLastTime ||
-            pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
-            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime ||
-            removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime;
-
-        this.pivotRowTotalsLastTime = pivotRowTotals;
-        this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
-        this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
-        this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
-
-        if (
-            this.lastTimeFailed ||
-            uniqueValuesChanged ||
-            aggregationColumnsChanged ||
-            groupColumnsChanged ||
-            aggregationFuncsChanged ||
-            anyGridOptionsChanged
-        ) {
-            const { pivotColumnGroupDefs, pivotColumnDefs } = this.pivotColDefService.createPivotColumnDefs(
-                this.uniqueValues
-            );
-            this.pivotColumnDefs = pivotColumnDefs;
-            this.pivotResultColsService.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
-            // because the secondary columns have changed, then the aggregation needs to visit the whole
-            // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
-            if (changedPath) {
-                changedPath.setInactive();
-            }
-        }
-        this.lastTimeFailed = false;
-    }
-
-    private setUniqueValues(newValues: any): boolean {
-        const json1 = JSON.stringify(newValues);
-        const json2 = JSON.stringify(this.uniqueValues);
-
-        const uniqueValuesChanged = json1 !== json2;
-
-        // we only continue the below if the unique values are different, as otherwise
-        // the result will be the same as the last time we did it
-        if (uniqueValuesChanged) {
-            this.uniqueValues = newValues;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private currentUniqueCount = 0;
-    private bucketUpRowNodes(changedPath: ChangedPath): any {
-        this.currentUniqueCount = 0;
-        // accessed from inside inner function
-        const uniqueValues: any = {};
-
-        // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
-        changedPath.forEachChangedNodeDepthFirst((node) => {
-            if (node.leafGroup) {
-                node.childrenMapped = null;
-            }
+        params.rowNode.allLeafChildren!.forEach((rowNode) => {
+            rowNode.parent!.childrenMapped = {};
         });
 
-        const recursivelyBucketFilteredChildren = (node: RowNode) => {
-            if (node.leafGroup) {
-                this.bucketRowNode(node, uniqueValues);
-            } else {
-                node.childrenAfterFilter?.forEach(recursivelyBucketFilteredChildren);
-            }
-        };
+        const aggFuncs = this.beans.funcColsService.getValueColumns();
+        const allCols: AgColumn[] = [];
+        const allColsMap: { [key: string]: AgColumn } = {};
 
-        changedPath.executeFromRootNode(recursivelyBucketFilteredChildren);
+        params.rowNode.allLeafChildren!.forEach((rowNode) => {
+            let parentChildMapped = rowNode.parent!.childrenMapped!;
 
-        return uniqueValues;
-    }
+            let node: ColumnGroupNode = pivotRoot;
+            for (let i = 0; i < pivotCols.length; i++) {
+                const pivotCol = pivotCols[i];
+                const pivotKey = this.beans.valueService.getValue(pivotCol, rowNode);
+                node = node.traverse(pivotKey);
 
-    private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
-        const pivotColumns = this.funcColsService.getPivotColumns();
-
-        if (pivotColumns.length === 0) {
-            rowNode.childrenMapped = null;
-        } else {
-            rowNode.childrenMapped = this.bucketChildren(rowNode.childrenAfterFilter!, pivotColumns, 0, uniqueValues);
-        }
-
-        if (rowNode.sibling) {
-            rowNode.sibling.childrenMapped = rowNode.childrenMapped;
-        }
-    }
-
-    private bucketChildren(
-        children: RowNode[],
-        pivotColumns: AgColumn[],
-        pivotIndex: number,
-        uniqueValues: any
-    ): Record<string, any> {
-        const mappedChildren: Record<string, any> = {};
-        const pivotColumn = pivotColumns[pivotIndex];
-
-        // map the children out based on the pivot column
-        children.forEach((child: RowNode) => {
-            let key: string = this.valueService.getKeyForNode(pivotColumn, child);
-
-            if (_missing(key)) {
-                key = '';
-            }
-
-            if (!uniqueValues[key]) {
-                this.currentUniqueCount += 1;
-                uniqueValues[key] = {};
-
-                const doesGeneratedColMaxExist = this.maxUniqueValues !== -1;
-                const hasExceededColMax = this.currentUniqueCount > this.maxUniqueValues;
-                if (doesGeneratedColMaxExist && hasExceededColMax) {
-                    // throw an error to prevent all additional execution and escape the loops.
-                    throw Error(EXCEEDED_MAX_UNIQUE_VALUES);
+                if (pivotCols.length - 1 === i) {
+                    parentChildMapped[pivotKey] ??= [];
+                    parentChildMapped[pivotKey].push(rowNode);
+                    continue;
                 }
+                parentChildMapped[pivotKey] ??= Object.create(null);
+                parentChildMapped = parentChildMapped[pivotKey];
             }
 
-            if (!mappedChildren[key]) {
-                mappedChildren[key] = [];
+            if (node.columns == null) {
+                const path = node.getPath();
+                const funcCols = aggFuncs.map((col) => {
+                    const headerName = this.beans.columnNameService.getDisplayNameForColumn(col, 'header') ?? node.key;
+                    const colId = `${node.key}-${col.getColId()}`;
+                    const colDef = {
+                        headerName,
+                        field: node.key,
+                        colId,
+                        aggFunc: col.getAggFunc(),
+                        pivotKeys: path,
+                        pivotValueColumn: col,
+                    };
+                    const newCol = this.createBean(new AgColumn(colDef, null, colId, false));
+                    allColsMap[colId] = newCol;
+                    return newCol;
+                });
+                node.setColumns(funcCols);
+                allCols.push(...funcCols);
             }
-            mappedChildren[key].push(child);
         });
 
-        // if it's the last pivot column, return as is, otherwise go one level further in the map
-        if (pivotIndex === pivotColumns.length - 1) {
-            return mappedChildren;
-        } else {
-            const result: Record<string, any> = {};
+        // pivotRoot.forEachLeafGroup((group) => {
+        //     // console.log(group.level);
+        // });
 
-            _iterateObject(mappedChildren, (key: string, value: RowNode[]) => {
-                result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
-            });
+        const tree = Array.from(pivotRoot.children.values()).map((i) => i.getProvidedColumnGroup());
+        const treeDepth = pivotCols.length;
 
-            return result;
-        }
-    }
+        // console.log('aaahed4', tree, treeDepth, allCols, allColsMap, pivotRoot);
+        this.beans.pivotResultColsService.overridePrc(
+            {
+                tree,
+                treeDepth,
+                list: allCols,
+                map: allColsMap,
+            },
+            'rowModelUpdated'
+        );
 
-    public getPivotColumnDefs(): ColDef[] {
-        return this.pivotColumnDefs;
+        // console.log(pivotRoot);
     }
 }

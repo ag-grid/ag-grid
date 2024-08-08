@@ -544,7 +544,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const missingFromLastOrder = this.cols.list.filter((col) => !lastOrderFilteredMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
-        const res = lastOrderFiltered.slice();
+        const res = new Array(lastOrder.length);
 
         missingFromLastOrder.forEach((newCol) => {
             let parent = newCol.getOriginalParent();
@@ -557,30 +557,26 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
             // find the group the column belongs to. if no siblings at the current level (eg col in group on it's
             // own) then go up one level and look for siblings there.
-            const siblings: AgColumn[] = [];
-            while (!siblings.length && parent) {
+            let lastSiblingIndex = -1;
+            // const siblings: AgColumn[] = [];
+            while (lastSiblingIndex === -1 && parent) {
                 const leafCols = parent.getLeafColumns();
                 leafCols.forEach((leafCol) => {
-                    const presentInNewCols = res.indexOf(leafCol) >= 0;
-                    const notYetInSiblings = siblings.indexOf(leafCol) < 0;
-                    if (presentInNewCols && notYetInSiblings) {
-                        siblings.push(leafCol);
+                    const indexInResult = res.indexOf(leafCol);
+                    if (indexInResult > lastSiblingIndex) {
+                        lastSiblingIndex = indexInResult;
                     }
                 });
                 parent = parent.getOriginalParent();
             }
 
             // if no siblings exist at any level, this means the col is in a group (or parent groups) on it's own
-            if (!siblings.length) {
+            if (lastSiblingIndex === -1) {
                 res.push(newCol);
                 return;
             }
 
-            // find index of last column in the group
-            const indexes = siblings.map((col) => res.indexOf(col));
-            const lastIndex = Math.max(...indexes);
-
-            _insertIntoArray(res, newCol, lastIndex + 1);
+            _insertIntoArray(res, newCol, lastSiblingIndex + 1);
         });
 
         this.cols.list = res;
