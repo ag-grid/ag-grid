@@ -24,8 +24,8 @@ describe('Pinned rows', () => {
             // Have to sort because DOM order of nodes is not necessarily the same as the logical
             // order (because rows are positioned absolutely)
             .sort((a, b) => {
-                const rowIndexA = a.getAttribute('row-index').split('-')[1];
-                const rowIndexB = b.getAttribute('row-index').split('-')[1];
+                const rowIndexA = a.getAttribute('row-index')!.split('-')[1];
+                const rowIndexB = b.getAttribute('row-index')!.split('-')[1];
                 return Number(rowIndexA) - Number(rowIndexB);
             })
             .forEach((row, i) => {
