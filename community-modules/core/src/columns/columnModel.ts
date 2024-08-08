@@ -147,7 +147,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         this.addManagedPropertyListeners(
-            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents', 'selectionOptions'],
+            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents', 'selection'],
             (event) => this.refreshAll(convertSourceType(event.source))
         );
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>

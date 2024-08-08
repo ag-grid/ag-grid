@@ -161,15 +161,7 @@ import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
 import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { CellPosition } from './cellPositionUtils';
-import type {
-    CheckboxSelectionCallback,
-    ColDef,
-    ColGroupDef,
-    ColTypeDef,
-    HeaderCheckboxSelectionCallback,
-    IAggFunc,
-    SortDirection,
-} from './colDef';
+import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {
@@ -1473,7 +1465,7 @@ export interface GridOptions<TData = any> {
     /**
      * Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
      */
-    selectionOptions?: SelectionOptions;
+    selection?: SelectionOptions;
 
     /**
      * If `true`, only a single range can be selected.
@@ -2480,7 +2472,7 @@ export type RowSelectionOptions<TData = any, TValue = any> =
     | SingleRowSelectionOptions<TData, TValue>
     | MultiRowSelectionOptions<TData, TValue>;
 
-interface CommonRowSelectionOptions<TData = any, TValue = any> {
+interface CommonRowSelectionOptions<TData = any> {
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
@@ -2492,11 +2484,6 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      */
     suppressClickSelection?: boolean;
     /**
-     * Determine checkbox selection behaviour
-     * @default false
-     */
-    checkboxSelection?: CheckboxSelectionOptions<TData, TValue>;
-    /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
      */
     isRowSelectable?: IsRowSelectable<TData>;
@@ -2505,14 +2492,19 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
 /**
  * Determines selection behaviour when only a single row can be selected at a time
  */
-export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData> {
     mode: 'singleRow';
+    /**
+     * Determines how checkboxes and header checkboxes are displayed for selection in singleRow mode
+     * @default false
+     */
+    checkboxColumn?: boolean | CheckboxSelectionCallback<TData, TValue>;
 }
 
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
@@ -2525,10 +2517,10 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
      */
     selectAll?: SelectAllMode;
     /**
-     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     * Determines how checkboxes and header checkboxes are displayed for selection in multiRow mode
      * @default false
      */
-    headerCheckbox?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
+    checkboxColumn?: boolean | CheckboxOptions<TData, TValue>;
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
@@ -2537,16 +2529,25 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
 }
 
 /**
- * Determines whether checkboxes are displayed for selection
+ * Used to configure more checkbox selection at a more fine-grained level.
  */
-export type CheckboxSelectionOptions<TData, TValue> =
-    | boolean
-    | {
-          /** Return `true` from function to render a selection checkbox in the first column. */
-          displayCheckbox?: boolean | CheckboxSelectionCallback<TData, TValue>;
-          /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. */
-          showDisabledCheckboxes?: boolean;
-      };
+interface CheckboxOptions<TData, TValue> {
+    /**
+     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     * @default false
+     */
+    headerCheckbox?: boolean;
+    /**
+     * Set to `true` or return `true` from the callback to render a selection checkbox.
+     * @default false
+     */
+    checkbox?: boolean | CheckboxSelectionCallback<TData, TValue>;
+    /**
+     * Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled.
+     * @default false
+     */
+    showDisabled?: boolean;
+}
 
 /**
  * Determines the behaviour when selecting a group row.

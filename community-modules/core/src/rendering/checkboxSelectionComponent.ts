@@ -189,10 +189,14 @@ export class CheckboxSelectionComponent extends Component {
             return this.overrides.isVisible;
         }
 
-        const so = this.gos.get('selectionOptions');
+        const so = this.gos.get('selection');
         if (so) {
-            const checkboxSelection = so.mode === 'multiRow' && so.checkboxSelection;
-            return typeof checkboxSelection !== 'boolean' ? checkboxSelection?.displayCheckbox : checkboxSelection;
+            const checkboxSelection = so.mode !== 'cell' && so.checkboxColumn;
+            return typeof checkboxSelection === 'object'
+                ? checkboxSelection.checkbox
+                : typeof checkboxSelection === 'function'
+                  ? checkboxSelection
+                  : checkboxSelection;
         }
 
         // column will be missing if groupDisplayType = 'groupRows'

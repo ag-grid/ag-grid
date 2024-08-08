@@ -13,7 +13,7 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
     beanName = 'controlColService' as const;
 
     public createControlCols(): AgColumn[] {
-        const so = this.gos.get('selectionOptions');
+        const so = this.gos.get('selection');
         const enableRTL = this.gos.get('enableRtl');
 
         if (!so) {
@@ -24,7 +24,7 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
             return [];
         }
 
-        if (so.checkboxSelection || (so.mode === 'multiRow' && so.headerCheckbox)) {
+        if (so.checkboxColumn) {
             const colDef: ColDef = {
                 colId: `${CONTROL_COLUMN_ID_PREFIX}`,
                 suppressMovable: true,

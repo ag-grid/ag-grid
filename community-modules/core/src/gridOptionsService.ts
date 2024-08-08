@@ -625,7 +625,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
     public getLegacySelectionOption<T extends keyof GridOptions>(option: T): GridOptions[T] {
         const go = this.gridOptions;
-        const so = go.selectionOptions;
+        const so = go.selection;
         const useNewAPI = so !== undefined;
 
         function cellOptionWithFallback(

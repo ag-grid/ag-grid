@@ -139,12 +139,9 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             res.cellRenderer = 'agGroupCellRenderer';
         }
 
-        // we never allow moving the group column
-        // defaultAutoColDef.suppressMovable = true;
         if (rowGroupCol) {
             const colDef = rowGroupCol.getColDef();
             Object.assign(res, {
-                // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnNameService.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter,
             });
