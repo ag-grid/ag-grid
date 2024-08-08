@@ -169,9 +169,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.restoreFocusOnHeader(focusedHeaderPosition);
     }
 
-    public getHeaderCtrlForColumn(column: AgColumn): HeaderCellCtrl | undefined;
-    public getHeaderCtrlForColumn(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
-    public getHeaderCtrlForColumn(column: any): any {
+    public getHeaderCtrlForColumn(column: AgColumn | AgColumnGroup): any {
         if (isColumn(column)) {
             if (!this.columnsRowCtrl) {
                 return;
@@ -192,11 +190,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         }
     }
 
-    /* tslint:disable */
-    public getHtmlElementForColumnHeader(column: AgColumnGroup): HTMLElement | null;
-    public getHtmlElementForColumnHeader(column: AgColumn): HTMLElement | null;
-    public getHtmlElementForColumnHeader(column: any): any {
-        /* tslint:enable */
+    public getHtmlElementForColumnHeader(column: AgColumn | AgColumnGroup): HTMLElement | null {
         const cellCtrl = this.getHeaderCtrlForColumn(column);
 
         if (!cellCtrl) {
