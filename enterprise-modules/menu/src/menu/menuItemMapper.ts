@@ -145,6 +145,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                         icon: _createIconNoSpan('menuValue', this.gos, null),
                         subMenu: this.createAggregationSubMenu(column!, this.aggFuncService!),
+                        disabled: this.gos.get('functionsReadOnly'),
                     };
                 } else {
                     return null;

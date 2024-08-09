@@ -105,9 +105,7 @@ export const Toolbar = ({
         <div className={styles.toolbar}>
             <div className={styles.controlsContainer}>
                 <div className={styles.controls}>
-                    <label htmlFor="data-size" className="text-sm">
-                        Data Size:
-                    </label>
+                    <span className={styles.filterLabel}>Data Size:</span>
 
                     {dataSizeOption && (
                         <Select
@@ -121,9 +119,7 @@ export const Toolbar = ({
                         />
                     )}
 
-                    <label htmlFor="grid-theme" className="text-sm">
-                        Theme:
-                    </label>
+                    <span className={styles.filterLabel}>Theme:</span>
                     <Select
                         isPopper
                         options={themeOptions}
@@ -145,16 +141,6 @@ export const Toolbar = ({
                         id="global-filter"
                         style={{ flex: 1 }}
                     />
-
-                    {/* <a
-                        className={styles.videoTour}
-                        href="https://youtu.be/bcMvTUVbMvI"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        <Icon name="youtube" />
-                        Take a video tour
-                    </a> */}
                 </div>
             </div>
             <div className={styles.scrollIndicator}></div>

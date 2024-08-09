@@ -1,16 +1,25 @@
 // Framework Code Snippets
-const { quickStartReact, quickStartAngular, quickStartVue3 } = require('./readme-framework-content');
+const {
+    quickStartReact,
+    quickStartReactModule,
+    quickStartAngular,
+    quickStartAngularModule,
+    quickStartVue3,
+    quickStartVue3Module,
+} = require('./readme-framework-content');
 
 // README Files
 const patterns = [
     // Framework Packages
     'packages/ag-grid-angular/README.md',
+    'packages/ag-grid-angular/projects/ag-grid-angular/README.md',
     'packages/ag-grid-react/README.md',
     'packages/ag-grid-community/README.md',
     'packages/ag-grid-vue3/README.md',
-    // Framework Modules
+    // Top-Level Framework Modules
     'community-modules/react/README.md',
     'community-modules/angular/README.md',
+    'community-modules/angular/projects/ag-grid-angular/README.md',
     'community-modules/vue3/README.md',
 ];
 
@@ -39,6 +48,7 @@ const getPackageName = (readme) => {
 const updateContent = (readme) => {
     let newReadme = '';
     const packageName = getPackageName(readme);
+    const isModule = readme.includes('community-modules');
     const isLibrary = libraries.includes(packageName);
     const framework = isLibrary ? 'javascript' : packageName.split('-').at(-1).replace('vue3', 'vue');
     const packageTitle = packageName
@@ -57,11 +67,16 @@ const updateContent = (readme) => {
     // Update Content
     newReadme = rootReadme
         .replaceAll('https://www.ag-grid.com/javascript/', `https://www.ag-grid.com/${framework}/`)
-        .replaceAll('/ag-grid-community', `/${packageName}`)
+        .replaceAll('/ag-grid-community', isModule ? `/@ag-grid-community/${framework}` : `/${packageName}`)
         .replaceAll('/javascript-data-grid/', `/${framework}-data-grid/`)
         .replaceAll('$ npm install --save ag-grid-community', `$ npm install --save ${packageName}`)
         .replaceAll('./readme-assets/', '../../readme-assets/')
-        .replaceAll('?utm_source=ag-grid-readme', `?utm_source=ag-grid-${packageTitle.toLowerCase()}-readme`)
+        .replaceAll(
+            '?utm_source=ag-grid-readme',
+            isModule
+                ? `?utm_source=@ag-grid-community/${framework}-readme`
+                : `?utm_source=ag-grid-${packageTitle.toLowerCase()}-readme`
+        )
         .replaceAll('JavaScript', `${packageTitle}`);
 
     // Update Main Description
@@ -71,7 +86,15 @@ const updateContent = (readme) => {
     newReadme = updateQuickStartDescription(newReadme, packageTitle);
 
     // Update Setup for Frameworks
-    newReadme = updateSetup(newReadme, packageTitle);
+    newReadme = updateSetup(newReadme, packageTitle, isModule);
+
+    // Update Installation for Modules
+    if (isModule) {
+        newReadme = newReadme.replaceAll(
+            `npm install --save ag-grid-${framework}`,
+            `npm install --save @ag-grid-community/core @ag-grid-community/${framework}`
+        );
+    }
 
     return newReadme;
 };
@@ -117,18 +140,18 @@ const updateQuickStartDescription = (content, packageTitle) => {
     return content.replace(regex, newSection);
 };
 
-const updateSetup = (content, packageTitle) => {
+const updateSetup = (content, packageTitle, isModule) => {
     let newContent;
     const normalizedTitle = packageTitle.trim().toLowerCase();
     switch (normalizedTitle) {
         case 'react':
-            newContent = quickStartReact;
+            newContent = isModule ? quickStartReactModule : quickStartReact;
             break;
         case 'angular':
-            newContent = quickStartAngular;
+            newContent = isModule ? quickStartAngularModule : quickStartAngular;
             break;
         case 'vue3':
-            newContent = quickStartVue3;
+            newContent = isModule ? quickStartVue3Module : quickStartVue3;
             break;
         default:
             return content;

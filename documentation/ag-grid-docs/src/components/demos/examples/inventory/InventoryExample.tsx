@@ -64,6 +64,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
             field: 'status',
             valueFormatter: statusFormatter,
             cellRenderer: StatusCellRenderer,
+            minWidth: 140,
             filter: true,
             filterParams: {
                 valueFormatter: statusFormatter,

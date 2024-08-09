@@ -1,6 +1,6 @@
 import type { IRowNode } from '@ag-grid-community/core';
 
-function getRowKey<TData = any>(row: IRowNode<TData> | undefined): string | undefined {
+function getRowKey<TData = any>(row: IRowNode<TData> | null | undefined): string | null | undefined {
     return row ? row.key : undefined;
 }
 
@@ -35,7 +35,7 @@ export function getRowSnapshot<TData = any>(row: IRowNode<TData>) {
     } = row;
 
     return {
-        allChildrenCount,
+        allChildrenCount: allChildrenCount as typeof allChildrenCount | undefined,
         allLeafChildren: allLeafChildren?.map(getRowKey),
         childIndex,
         childrenAfterFilter: childrenAfterFilter?.map(getRowKey),
@@ -47,15 +47,15 @@ export function getRowSnapshot<TData = any>(row: IRowNode<TData>) {
         firstChild,
         footer,
         group,
-        groupData,
+        groupData: groupData as typeof groupData | undefined,
         id,
         key,
         lastChild,
         leafGroup,
         level,
-        master,
+        master: master as typeof master | undefined,
         parentKey: getRowKey(parent),
-        rowGroupIndex,
+        rowGroupIndex: rowGroupIndex as typeof rowGroupIndex | undefined,
         rowPinned,
         selectable,
         siblingKey: getRowKey(sibling),

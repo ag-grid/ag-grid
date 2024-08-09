@@ -7,6 +7,7 @@ import type { CtrlsService } from '../ctrlsService';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
 import { _getActiveDomElement } from '../gridOptionsUtils';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { MenuService } from '../misc/menuService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
@@ -22,6 +23,7 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
+    private animationFrameService: AnimationFrameService;
     private headerNavigationService: HeaderNavigationService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
@@ -31,6 +33,7 @@ export class GridHeaderCtrl extends BeanStub {
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
+        this.animationFrameService = beans.animationFrameService;
         this.headerNavigationService = beans.headerNavigationService;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
@@ -90,7 +93,8 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedEventListeners({
             displayedColumnsChanged: listener,
             columnHeaderHeightChanged: listener,
-            columnGroupHeaderHeightChanged: listener,
+            // add this to the animation frame to avoid a feedback loop
+            columnGroupHeaderHeightChanged: () => this.animationFrameService.requestAnimationFrame(() => listener()),
             gridStylesChanged: listener,
             advancedFilterEnabledChanged: listener,
         });

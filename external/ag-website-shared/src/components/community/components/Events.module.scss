@@ -137,6 +137,17 @@
     justify-content: flex-end;
     align-items: center;
     gap: $spacing-size-8;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        align-items: end;
+        gap: 0px;
+
+        .primaryCta,
+        .secondaryCta {
+            margin-bottom: 10px; // Adjust as needed
+        }
+    }
 }
 
 .primaryCta {

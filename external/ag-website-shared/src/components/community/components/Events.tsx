@@ -44,7 +44,7 @@ const separateEventsByDate = (events: Event[]): { upcomingEvents: Event[]; pastE
 const EventItem = ({ event }: { event: Event }) => {
     const [darkMode] = useDarkmode();
     return (
-        <a href={event.eventPage ? event.eventPage : event.recording} target="_blank" className={styles.linkWrapper}>
+        <div className={styles.linkWrapper}>
             <div className={styles.eventItemContainer}>
                 <div className={styles.eventItemLeftColumn}>
                     <div className={styles.titleContainer}>
@@ -73,7 +73,13 @@ const EventItem = ({ event }: { event: Event }) => {
                         </div>
                         <div className={styles.ctaContainer}>
                             {event.eventPage && (
-                                <p className={event.recording ? styles.secondaryCta : styles.primaryCta}>View Event</p>
+                                <a
+                                    className={event.recording ? styles.secondaryCta : styles.primaryCta}
+                                    href={event.eventPage}
+                                    target="_blank"
+                                >
+                                    View Event
+                                </a>
                             )}
                             {event.recording && (
                                 <a
@@ -103,7 +109,7 @@ const EventItem = ({ event }: { event: Event }) => {
                     )}
                 </div>
             </div>
-        </a>
+        </div>
     );
 };
 
