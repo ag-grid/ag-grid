@@ -725,6 +725,11 @@ export { DataTypeService } from './columns/dataTypeService';
 export {
     GridOptions,
     SelectionOptions,
+    GroupSelectionMode,
+    SelectAllMode,
+    ControlColDef,
+    CellSelectionOptions,
+    RowSelectionOptions,
     IsApplyServerSideTransaction,
     GetContextMenuItems,
     GetDataPath,

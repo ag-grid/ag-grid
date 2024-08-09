@@ -2559,7 +2559,7 @@ interface MultiRowCheckboxOptions<TData, TValue> extends SingleRowCheckboxOption
     headerCheckbox?: boolean;
 }
 
-type ControlColDef = Pick<
+export type ControlColDef = Pick<
     ColDef,
     | 'icons'
     | 'suppressNavigable'
