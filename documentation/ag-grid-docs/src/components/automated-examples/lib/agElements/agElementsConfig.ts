@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { type GetElement } from '.';
 import {
+    AG_CHARTS_CANVAS,
     AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
     AG_CHART_SERIES_GROUP_TITLE_SELECTOR,
     AG_CHART_TOOL_PANEL_TAB_SELECTOR,
@@ -53,6 +54,7 @@ export interface AgElementsConfigItem {
     popup: AgElementBySelectorConfig;
     columnDropArea: AgElementBySelectorConfig;
     chartMenuToolbarButton: AgElementBySelectorConfig;
+    chartsCanvas: AgElementBySelectorConfig;
 
     contextMenuItem: AgElementByInnerTextConfig;
     chartToolPanelTab: AgElementByInnerTextConfig;
@@ -108,6 +110,9 @@ export const agElementsConfig: AgElementsConfigItem = {
     },
     chartMenuToolbarButton: {
         selector: AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
+    },
+    chartsCanvas: {
+        selector: AG_CHARTS_CANVAS,
     },
 
     // Find by inner text

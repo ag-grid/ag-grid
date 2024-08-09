@@ -36,7 +36,7 @@ async function typeText({
 
     await waitFor(speedPerCharacter);
 
-    typeText({
+    await typeText({
         el,
         text,
         currentText: el.value,
@@ -66,4 +66,6 @@ export async function typeInTextInput({
     const textInputEl = textInput.get() as HTMLInputElement;
 
     await typeText({ el: textInputEl, text, speedPerCharacter });
+
+    textInputEl.blur();
 }

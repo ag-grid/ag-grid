@@ -6,10 +6,19 @@ import { waitFor } from './waitFor';
 export type ClickType = 'left' | 'middle' | 'right';
 
 interface MouseClickParams {
-    containerEl?: HTMLElement;
+    /**
+     * Pass in element explicitly, otherwise element is derived from `coords`
+     */
+    element?: HTMLElement;
     mouse: Mouse;
     clickType?: ClickType;
     coords: Point;
+    /**
+     * Also send a click event
+     *
+     * Otherwise, it's just mouseDown and mouseUp events
+     */
+    withClick?: boolean;
     scriptDebugger?: ScriptDebugger;
 }
 
@@ -22,11 +31,13 @@ const DEFAULT_CLICK_BUTTON = CLICK_TYPE_MAPPING.left;
 
 export async function mouseClick({
     mouse,
+    element: paramElement,
     coords,
     clickType = 'left',
+    withClick,
     scriptDebugger,
 }: MouseClickParams): Promise<void> {
-    const element = document.elementFromPoint(coords.x, coords.y);
+    const element = paramElement || document.elementFromPoint(coords.x, coords.y);
     if (!element) {
         scriptDebugger?.errorLog('No element found');
         return;
@@ -64,6 +75,17 @@ export async function mouseClick({
             clientY: coords.y,
         });
         element.dispatchEvent(contentMenuEvent);
+    }
+
+    if (withClick) {
+        const clickEvent = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: false,
+            view: window,
+            clientX: coords.x,
+            clientY: coords.y,
+        });
+        element.dispatchEvent(clickEvent);
     }
 
     mouse.click();

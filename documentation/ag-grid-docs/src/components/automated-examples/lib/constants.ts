@@ -49,6 +49,8 @@ export const AG_RANGE_FIELD_INPUT_SELECTOR = '.ag-range-field-input';
 export const AG_TEXT_FIELD = '.ag-text-field';
 export const AG_TEXT_FIELD_INPUT = '.ag-text-field-input';
 
+export const AG_CHARTS_CANVAS = '.ag-charts-canvas';
+
 // Row group toggle
 export const AG_GROUP_CONTRACTED = '.ag-group-contracted';
 export const AG_GROUP_EXPANDED = '.ag-group-expanded';

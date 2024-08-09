@@ -1,14 +1,16 @@
+import { mouseClick } from '@components/automated-examples/lib/scriptActions/mouseClick';
+import { waitFor } from '@components/automated-examples/lib/scriptActions/waitFor';
 import type { Group } from '@tweenjs/tween.js';
 
 import type { GridApi } from 'ag-grid-community';
 
-import { createAgElementFinder } from '../../lib/agElements';
+import { type AgElement, createAgElementFinder } from '../../lib/agElements';
 import { type Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
-import { addPoints, scalePoint } from '../../lib/geometry';
+import { type Point, addPoints, scalePoint } from '../../lib/geometry';
 import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { dragRange } from '../../lib/scriptActions/dragRange';
-import { moveTarget } from '../../lib/scriptActions/move';
+import { moveTarget, moveTo } from '../../lib/scriptActions/move';
 import { type ScriptDebugger } from '../../lib/scriptDebugger';
 import { type ScriptAction } from '../../lib/scriptRunner';
 
@@ -19,15 +21,32 @@ interface Params {
      */
     getContainerScale?: () => number;
     mouse: Mouse;
+    getOverlay: () => HTMLElement;
     tweenGroup: Group;
     gridApi: GridApi;
     scriptDebugger?: ScriptDebugger;
+}
+
+function getLegendOffset({
+    chartsCanvas,
+    offsetX,
+    offsetY,
+}: {
+    chartsCanvas: AgElement;
+    offsetX: number;
+    offsetY: number;
+}) {
+    const { clientHeight } = chartsCanvas.get() as HTMLElement;
+    const { x, y } = chartsCanvas.getPos() as Point;
+
+    return { x: x + offsetX, y: Math.round(clientHeight / 2 + y) + offsetY };
 }
 
 export const createScript = ({
     containerEl,
     getContainerScale = () => 1,
     mouse,
+    getOverlay,
     tweenGroup,
     gridApi,
     scriptDebugger,
@@ -428,6 +447,132 @@ export const createScript = ({
                 groupTitle: 'Titles',
                 inputLabel: 'Title',
                 index: 0,
+            },
+        },
+        { type: 'wait', duration: 500 },
+
+        // Move to canvas legend
+        {
+            type: 'moveTo',
+            toPos: () => {
+                const chartsCanvas = agElementFinder.get('chartsCanvas')!;
+                const chartsCanvasEl = chartsCanvas?.get();
+                if (!chartsCanvasEl) {
+                    throw new Error('No charts canvas found');
+                }
+
+                const { clientHeight } = chartsCanvasEl;
+                const { x, y } = chartsCanvas.getPos() as Point;
+                const offsetX = -25;
+                const offsetY = -23;
+                const legendX = x + offsetX;
+                const legendY = Math.round(clientHeight / 2 + y) + offsetY;
+
+                return { x: legendX, y: legendY };
+            },
+            speed: 2,
+        },
+        { type: 'wait', duration: 500 },
+        {
+            type: 'custom',
+            action: async () => {
+                const chartsCanvas = agElementFinder.get('chartsCanvas')!;
+                const chartsCanvasEl = chartsCanvas?.get();
+                if (!chartsCanvasEl) {
+                    throw new Error('No charts canvas found');
+                }
+
+                const speed = 1;
+                // Offset coordinates for different legend positions
+                // NOTE: Get these dynamically, so that they are the most up to date when
+                // the action is run
+                const getOffsetCoords1 = () =>
+                    getLegendOffset({
+                        chartsCanvas,
+                        offsetX: -25,
+                        offsetY: -23,
+                    });
+                const getOffsetCoords2 = () =>
+                    getLegendOffset({
+                        chartsCanvas,
+                        offsetX: 50,
+                        offsetY: -23,
+                    });
+
+                // Select offset1 legend
+                await moveTo({
+                    mouse,
+                    getOverlay,
+                    toPos: getOffsetCoords1(),
+                    speed,
+                    tweenGroup,
+                    scriptDebugger,
+                });
+                await waitFor(300);
+                await mouseClick({
+                    mouse,
+                    element: chartsCanvasEl,
+                    coords: getOffsetCoords1(),
+                    withClick: true,
+                    scriptDebugger,
+                });
+                await waitFor(500);
+
+                // Select offset2 legend
+                await moveTo({
+                    mouse,
+                    getOverlay,
+                    toPos: getOffsetCoords2(),
+                    speed,
+                    tweenGroup,
+                    scriptDebugger,
+                });
+                await waitFor(300);
+                await mouseClick({
+                    mouse,
+                    element: chartsCanvasEl,
+                    coords: getOffsetCoords2(),
+                    withClick: true,
+                    scriptDebugger,
+                });
+                await waitFor(500);
+
+                // Deselect offset1 legend
+                await moveTo({
+                    mouse,
+                    getOverlay,
+                    toPos: getOffsetCoords1(),
+                    speed,
+                    tweenGroup,
+                    scriptDebugger,
+                });
+                await waitFor(300);
+                await mouseClick({
+                    mouse,
+                    element: chartsCanvasEl,
+                    coords: getOffsetCoords1(),
+                    withClick: true,
+                    scriptDebugger,
+                });
+                await waitFor(500);
+
+                // Deselect offset2 legend
+                await moveTo({
+                    mouse,
+                    getOverlay,
+                    toPos: getOffsetCoords2(),
+                    speed,
+                    tweenGroup,
+                    scriptDebugger,
+                });
+                await waitFor(300);
+                await mouseClick({
+                    mouse,
+                    element: chartsCanvasEl,
+                    coords: getOffsetCoords2(),
+                    withClick: true,
+                    scriptDebugger,
+                });
             },
         },
         { type: 'wait', duration: 500 },
