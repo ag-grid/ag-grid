@@ -148,9 +148,16 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark, extractNested 
             };
         } else {
             // i.e colWidth?: number;
-            const nested = {};
-            extractNested && extractNestedTypes(node.type, srcFile, includeQuestionMark, nested, new Set());
-            nodeMembers[name] = { meta: getJsDoc(node), type: { returnType, optional, nested } };
+            const type: { returnType: string; optional: boolean; nested?: Record<string, any> } = {
+                returnType,
+                optional,
+            };
+            if (extractNested) {
+                const nested = {};
+                extractNestedTypes(node.type, srcFile, includeQuestionMark, nested, new Set());
+                type.nested = nested;
+            }
+            nodeMembers[name] = { meta: getJsDoc(node), type };
         }
     } else if (kind == 'MethodSignature' || kind == 'MethodDeclaration') {
         // i.e isExternalFilterPresent?(): boolean;
