@@ -14,6 +14,7 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
 
     public createControlCols(): AgColumn[] {
         const so = this.gos.get('selection');
+        const controlColDef = this.gos.get('controlColDef');
         const enableRTL = this.gos.get('enableRtl');
 
         if (!so) {
@@ -25,10 +26,9 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
         }
 
         if (so.checkboxColumn) {
-            const baseColDef = (typeof so.checkboxColumn === 'object' && so.checkboxColumn.colDef) || {};
             const colDef: ColDef = {
                 maxWidth: 90,
-                ...baseColDef,
+                ...controlColDef,
                 colId: `${CONTROL_COLUMN_ID_PREFIX}`,
                 suppressMovable: true,
                 lockPosition: enableRTL ? 'right' : 'left',

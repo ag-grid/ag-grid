@@ -1466,6 +1466,13 @@ export interface GridOptions<TData = any> {
      * Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
      */
     selection?: SelectionOptions;
+    /**
+     * Configure the control column, used for displaying checkboxes.
+     *
+     * Note that due to the nature of this column, this type is a restricted version of `ColDef`, which does not support several features normal column features
+     * such as editing, pivoting and grouping.
+     */
+    controlColDef?: ControlColDef;
 
     /**
      * If `true`, only a single range can be selected.
@@ -2539,10 +2546,6 @@ interface SingleRowCheckboxOptions<TData, TValue> {
      * @default false
      */
     showDisabled?: boolean;
-    /**
-     * Stripped-down column definition for checkbox column permitting custom renderers and styling
-     */
-    colDef?: CheckboxColDef;
 }
 
 /**
@@ -2556,7 +2559,7 @@ interface MultiRowCheckboxOptions<TData, TValue> extends SingleRowCheckboxOption
     headerCheckbox?: boolean;
 }
 
-type CheckboxColDef = Pick<
+type ControlColDef = Pick<
     ColDef,
     | 'icons'
     | 'suppressNavigable'
