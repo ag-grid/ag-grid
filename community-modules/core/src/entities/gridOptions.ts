@@ -2498,7 +2498,7 @@ export interface SingleRowSelectionOptions<TData = any, TValue = any> extends Co
      * Determines how checkboxes and header checkboxes are displayed for selection in singleRow mode
      * @default false
      */
-    checkboxColumn?: boolean | CheckboxSelectionCallback<TData, TValue>;
+    checkboxColumn?: SingleRowCheckboxOptions<TData, TValue>;
 }
 
 /**
@@ -2520,7 +2520,7 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
      * Determines how checkboxes and header checkboxes are displayed for selection in multiRow mode
      * @default false
      */
-    checkboxColumn?: boolean | CheckboxOptions<TData, TValue>;
+    checkboxColumn?: boolean | MultiRowCheckboxOptions<TData, TValue>;
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
@@ -2528,15 +2528,7 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
     enableMultiSelectWithClick?: boolean;
 }
 
-/**
- * Used to configure more checkbox selection at a more fine-grained level.
- */
-interface CheckboxOptions<TData, TValue> {
-    /**
-     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
-     * @default false
-     */
-    headerCheckbox?: boolean;
+interface SingleRowCheckboxOptions<TData, TValue> {
     /**
      * Set to `true` or return `true` from the callback to render a selection checkbox.
      * @default false
@@ -2547,7 +2539,77 @@ interface CheckboxOptions<TData, TValue> {
      * @default false
      */
     showDisabled?: boolean;
+    /**
+     * Stripped-down column definition for checkbox column permitting custom renderers and styling
+     */
+    colDef?: CheckboxColDef;
 }
+
+/**
+ * Used to configure more checkbox selection at a more fine-grained level.
+ */
+interface MultiRowCheckboxOptions<TData, TValue> extends SingleRowCheckboxOptions<TData, TValue> {
+    /**
+     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     * @default false
+     */
+    headerCheckbox?: boolean;
+}
+
+type CheckboxColDef = Pick<
+    ColDef,
+    | 'icons'
+    | 'suppressNavigable'
+    | 'suppressKeyboardEvent'
+    | 'contextMenuItems'
+    | 'context'
+    | 'onCellClicked'
+    | 'onCellContextMenu'
+    | 'onCellDoubleClicked'
+    | 'onCellValueChanged'
+    | 'headerTooltip'
+    | 'headerClass'
+    | 'headerComponent'
+    | 'headerComponentParams'
+    | 'mainMenuItems'
+    | 'suppressHeaderContextMenu'
+    | 'suppressHeaderMenuButton'
+    | 'suppressHeaderKeyboardEvent'
+    | 'pinned'
+    | 'lockPinned'
+    | 'initialPinned'
+    | 'cellAriaRole'
+    | 'cellStyle'
+    | 'cellClass'
+    | 'cellClassRules'
+    | 'cellRenderer'
+    | 'cellRendererParams'
+    | 'cellRendererSelector'
+    | 'rowDrag'
+    | 'rowDragText'
+    | 'dndSource'
+    | 'dndSourceOnRowDrag'
+    | 'sortable'
+    | 'sort'
+    | 'initialSort'
+    | 'sortIndex'
+    | 'initialSortIndex'
+    | 'sortingOrder'
+    | 'unSortIcon'
+    | 'tooltipField'
+    | 'tooltipValueGetter'
+    | 'tooltipComponent'
+    | 'tooltipComponentParams'
+    | 'width'
+    | 'initialWidth'
+    | 'maxWidth'
+    | 'minWidth'
+    | 'flex'
+    | 'initialFlex'
+    | 'resizable'
+    | 'suppressSizeToFit'
+    | 'suppressAutoSize'
+>;
 
 /**
  * Determines the behaviour when selecting a group row.

@@ -25,16 +25,19 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
         }
 
         if (so.checkboxColumn) {
+            const baseColDef = (typeof so.checkboxColumn === 'object' && so.checkboxColumn.colDef) || {};
             const colDef: ColDef = {
+                maxWidth: 90,
+                ...baseColDef,
                 colId: `${CONTROL_COLUMN_ID_PREFIX}`,
                 suppressMovable: true,
                 lockPosition: enableRTL ? 'right' : 'left',
-                maxWidth: 90,
                 comparator(valueA, valueB, nodeA, nodeB) {
                     const aSelected = nodeA.isSelected();
                     const bSelected = nodeB.isSelected();
                     return aSelected && bSelected ? 0 : aSelected ? 1 : -1;
                 },
+                suppressFillHandle: true,
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);
             this.createBean(col);
