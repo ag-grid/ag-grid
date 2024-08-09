@@ -54,15 +54,17 @@ export async function mouseClick({
     });
     element.dispatchEvent(mouseUpEvent);
 
-    const contentMenuEvent = new MouseEvent('contextmenu', {
-        bubbles: true,
-        cancelable: false,
-        view: window,
-        button,
-        clientX: coords.x,
-        clientY: coords.y,
-    });
-    element.dispatchEvent(contentMenuEvent);
+    if (clickType === 'right') {
+        const contentMenuEvent = new MouseEvent('contextmenu', {
+            bubbles: true,
+            cancelable: false,
+            view: window,
+            button,
+            clientX: coords.x,
+            clientY: coords.y,
+        });
+        element.dispatchEvent(contentMenuEvent);
+    }
 
     mouse.click();
     await waitFor(300);
