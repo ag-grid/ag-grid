@@ -729,13 +729,7 @@
                             },
                             {
                                 "title": "Row Selection",
-                                "path": "row-selection",
-                                "items": [
-                                    {
-                                        "title": "Legacy API",
-                                        "path": "row-selection-legacy"
-                                    }
-                                ]
+                                "path": "row-selection"
                             },
                             {
                                 "title": "Cell Selection",
@@ -750,11 +744,6 @@
                                     {
                                         "title": "Fill Handle",
                                         "path": "cell-selection-fill-handle",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Legacy API",
-                                        "path": "range-selection-legacy",
                                         "isEnterprise": true
                                     }
                                 ]
@@ -1187,14 +1176,7 @@
                                     {
                                         "title": "Row Selection",
                                         "path": "server-side-model-selection",
-                                        "isEnterprise": true,
-                                        "items": [
-                                            {
-                                                "title": "Legacy Row Selection",
-                                                "path": "server-side-model-selection-legacy",
-                                                "isEnterprise": true
-                                            }
-                                        ]
+                                        "isEnterprise": true
                                     },
                                     {
                                         "title": "Loading Cell Renderer",

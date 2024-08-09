@@ -4,6 +4,21 @@ enterprise: true
 ---
 When doing grouping, you control what selecting a group means. This is controlled with the `groupSelects` property of the `selectionOptions` grid property.
 
+{% note %}
+{% if isFramework("javascript") %}
+This describes the new selection configuration API. For documentation on the deprecated API, [click here](/archive/32.1.0/javascript-data-grid/row-selection#group-selection).
+{% /if %}
+{% if isFramework("react") %}
+This describes the new selection configuration API. For documentation on the deprecated API, [click here](/archive/32.1.0/react-data-grid/row-selection#group-selection).
+{% /if %}
+{% if isFramework("angular") %}
+This describes the new selection configuration API. For documentation on the deprecated API, [click here](/archive/32.1.0/angular-data-grid/row-selection#group-selection).
+{% /if %}
+{% if isFramework("vue") %}
+This describes the new selection configuration API. For documentation on the deprecated API, [click here](/archive/32.1.0/vue-data-grid/row-selection#group-selection).
+{% /if %}
+{% /note %}
+
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionOptions"] /%}
 
 There are three values of `groupSelects`, corresponding to three modes of operation for selection of row groups:

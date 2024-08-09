@@ -1231,7 +1231,7 @@
         "groupSelectsChildren": {
             "more": {
                 "name": "Group Selection",
-                "url": "./row-selection-legacy/#group-selection"
+                "url": "./grouping-row-selection"
             }
         },
         "groupLockGroupColumns": {
@@ -1262,7 +1262,7 @@
         "groupSelectsFiltered": {
             "more": {
                 "name": "Group Selection",
-                "url": "./row-selection-legacy/#group-selection"
+                "url": "./grouping-row-selection"
             }
         },
         "showOpenedGroup": {
@@ -1667,33 +1667,33 @@
         "rowSelection": {
             "more": {
                 "name": "Row Selection",
-                "url": "./row-selection-legacy"
+                "url": "./row-selection"
             },
             "description": "Type of Row Selection."
         },
         "rowMultiSelectWithClick": {
             "more": {
                 "name": "Multi Select Single Click",
-                "url": "./row-selection-legacy/#multi-select-with-click"
+                "url": "./row-selection"
             }
         },
         "isRowSelectable": {
             "more": {
                 "name": "Specify Selectable Rows",
-                "url": "./row-selection-legacy/#specify-selectable-rows"
+                "url": "./row-selection"
             }
         },
         "suppressRowDeselection": {
             "more": {
                 "name": "Row Selection",
-                "url": "./row-selection-legacy"
+                "url": "./row-selection"
             },
             "description": "If `true`, rows will not be deselected if you hold down <kbd>^ Ctrl</kbd> and click the row or press <kbd>␣ Space</kbd>. Default: `false`"
         },
         "suppressRowClickSelection": {
             "more": {
                 "name": "Row Selection",
-                "url": "./row-selection-legacy"
+                "url": "./row-selection"
             }
         },
         "suppressCellFocus": {
