@@ -68,6 +68,9 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     public refresh(params: ISparklineCellRendererParams): boolean {
         if (this.sparkline) {
             this.sparkline.data = params.value;
+            this.sparkline.context = {
+                data: params.data,
+            };
             return true;
         }
         return false;
