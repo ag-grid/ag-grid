@@ -1,6 +1,6 @@
 ---
 title: "Multi Row Selection"
-description: "Configure row selection, checkbox selection, and group selection in the $framework Table. Single row selection, multiple row selection, and multi select with click."
+description: "Configure selection of multiple rows, checkbox selection, and group selection in the $framework Table."
 ---
 
 This selection mode allows the selection of multiple rows, adjacent or not. Selection can be configured with or without keyboard modifiers.
@@ -44,6 +44,20 @@ The range can also be truncated in the same way: by {% kbd "⇧ Shift" /%}-click
 
 {% kbd "⇧ Shift" /%}-clicking a row above the selection root will invert the selection: all rows below the selection root are deselected. All rows between the clicked row and the selection root are selected.
 
+Use the example below to explore row range behaviour. For example, follow these steps:
+
+1. Click "Alicia Coutts", then {% kbd "⇧ Shift" /%}-click "Natalie Coughlin".
+    - Observe that all rows between the two clicked rows are selected.
+1. Now {% kbd "⇧ Shift" /%}-click "Nastia Lukin". 
+    - Observe that the range of selected rows is extended to include everything between the initially clicked row ("Alicia Coutts") and the last clicked row.
+1. Now {% kbd "⇧ Shift" /%}-click "Aleksey Nemov". 
+    - Observe that the range of selected rows is inverted, selecting everything between the initially clicked row ("Alicia Coutts") and the last clicked row, but deselecting the previously selected range.
+1. Now {% kbd "^ Ctrl" /%}-click "Allison Schmitt". 
+    - Observe that this new row is added to the selection, preserving the existing selected rows.
+1. Now {% kbd "⇧ Shift" /%}-click "Cindy Klassen". 
+    - Observe that the range of rows between "Allison Schmitt" and "Cindy Klassen" is added to the selection.
+
+{% gridExampleRunner title="Row Range Selection" name="range-selection" /%}
 
 ## Deselection
 
@@ -95,7 +109,7 @@ Note that when using a function in `selectionOptions.checkboxSelection`, the che
 When [selection of a particular row is disabled](#configure-selectable-rows), by default the grid will not display a checkbox in that row. Alternatively, you may configure the grid to display a disabled checkbox in such rows.
 This can be done by setting `checkboxSelection.showDisabledCheckboxes` to `true`.
 
-{% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="checkbox-selection-disabled-checkboxes" /%}
+{% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="checkbox-selection-disable-checkboxes" /%}
 
 ## Bulk Selection
 
@@ -167,7 +181,7 @@ In certain circumstances, especially in the context of touchscreen devices, user
 
 This can be accomplished by setting the `selectionOptions.enableMultiSelectWithClick` flag to `true`.
 
-EXAMPLE HERE
+{% gridExampleRunner title="Multi-select without Keyboard modifiers" name="multi-select-with-click" /%}
 
 ## Enterprise Features
 

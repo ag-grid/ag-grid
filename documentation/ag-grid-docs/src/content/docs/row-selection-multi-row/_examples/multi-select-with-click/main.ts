@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { createGrid } from '@ag-grid-community/core';
-import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
+import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -12,20 +12,8 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
-    defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-    },
-    selectionOptions: { mode: 'multiRow', suppressDeselection: true },
-    onFirstDataRendered: (params) => {
-        const nodesToSelect: IRowNode[] = [];
-        params.api.forEachNode((node) => {
-            if (node.rowIndex && node.rowIndex >= 3 && node.rowIndex <= 6) {
-                nodesToSelect.push(node);
-            }
-        });
-        params.api.setNodesSelected({ nodes: nodesToSelect, newValue: true });
-    },
+    defaultColDef: { flex: 1, minWidth: 100 },
+    selectionOptions: { mode: 'multiRow', enableMultiSelectWithClick: true },
 };
 
 // setup the grid after the page has finished loading
