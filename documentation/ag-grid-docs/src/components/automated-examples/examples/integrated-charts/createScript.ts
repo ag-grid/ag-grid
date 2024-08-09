@@ -193,6 +193,20 @@ export const createScript = ({
         // Wait for chart toolbar pop up to show
         { type: 'wait', duration: 500 },
 
+        // Choose bar stacked
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartSeriesButton',
+                targetParams: {
+                    groupTitle: 'Bar',
+                    seriesTitle: 'Stacked',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
         // Click on set up tab
         {
             type: 'agAction',
@@ -206,63 +220,7 @@ export const createScript = ({
         },
         { type: 'wait', duration: 300 },
 
-        // Click on data input items
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelPickerField',
-                targetParams: {
-                    groupTitle: 'Series',
-                    selectLabel: 'Add a series',
-                    usePickerDisplayFieldSelector: true,
-                },
-                // Picker element requires mousedown
-                useMouseDown: true,
-            },
-        },
-        { type: 'wait', duration: 100 },
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelSelectListItem',
-                targetParams: {
-                    text: 'Apr',
-                },
-                useMouseDown: true,
-            },
-        },
-        { type: 'wait', duration: 100 },
-
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelPickerField',
-                targetParams: {
-                    groupTitle: 'Series',
-                    selectLabel: 'Add a series',
-                    usePickerDisplayFieldSelector: true,
-                },
-                // Picker element requires mousedown
-                useMouseDown: true,
-            },
-        },
-        { type: 'wait', duration: 100 },
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelSelectListItem',
-                targetParams: {
-                    text: 'May',
-                },
-                useMouseDown: true,
-            },
-        },
-        { type: 'wait', duration: 100 },
-
+        // Add `Feb` series
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
@@ -291,96 +249,46 @@ export const createScript = ({
         },
         { type: 'wait', duration: 100 },
 
-        // Click on chart tab
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelTab',
-                targetParams: {
-                    text: 'Chart',
-                },
-            },
-        },
-        { type: 'wait', duration: 300 },
-
-        // Select Pie
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartSeriesButton',
-                targetParams: {
-                    groupTitle: 'Pie',
-                    seriesTitle: 'Pie',
-                },
-            },
-        },
-        { type: 'wait', duration: 700 },
-
-        // Select Bar Stacked
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartSeriesButton',
-                targetParams: {
-                    groupTitle: 'Bar',
-                    seriesTitle: 'Stacked',
-                },
-            },
-        },
-        { type: 'wait', duration: 500 },
-
-        // Click on customize tab
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelTab',
-                targetParams: {
-                    text: 'Customize',
-                },
-            },
-        },
-        { type: 'wait', duration: 300 },
-
-        // Open Legend group
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelGroupTitle',
-                targetParams: {
-                    text: 'Legend',
-                },
-            },
-        },
-        { type: 'wait', duration: 300 },
-
-        // Enable legend
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelToggle',
-                targetParams: {
-                    groupTitle: 'Legend',
-                    toggleLabel: 'Enabled',
-                },
-            },
-        },
-        { type: 'wait', duration: 300 },
-
-        // Change Legend position
+        // Add `Mar` series
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
                 target: 'chartToolPanelPickerField',
                 targetParams: {
-                    groupTitle: 'Legend',
-                    selectLabel: 'Position',
+                    groupTitle: 'Series',
+                    selectLabel: 'Add a series',
+                    usePickerDisplayFieldSelector: true,
+                },
+                // Picker element requires mousedown
+                useMouseDown: true,
+            },
+        },
+        { type: 'wait', duration: 100 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelSelectListItem',
+                targetParams: {
+                    text: 'Mar',
+                },
+                useMouseDown: true,
+            },
+        },
+        { type: 'wait', duration: 100 },
+
+        // Change category to `Country`
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelPickerField',
+                targetParams: {
+                    groupTitle: 'Categories',
+                    // NOTE: Categories label is hidden
+                    selectLabel: '',
+                    index: 0,
                 },
                 // Picker element requires mousedown
                 useMouseDown: true,
@@ -393,14 +301,136 @@ export const createScript = ({
             actionParams: {
                 target: 'chartToolPanelSelectListItem',
                 targetParams: {
-                    text: 'Top',
+                    text: 'Country',
+                },
+                useMouseDown: true,
+            },
+        },
+        { type: 'wait', duration: 300 },
+
+        // Toggle `Aggregate`
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelToggle',
+                targetParams: {
+                    groupTitle: 'Categories',
+                    toggleLabel: 'Aggregate',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
+        // Select `Average` aggregate
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelPickerField',
+                targetParams: {
+                    groupTitle: 'Categories',
+                    // NOTE: Categories label is hidden
+                    selectLabel: '',
+                    index: 1,
                 },
                 // Picker element requires mousedown
                 useMouseDown: true,
             },
         },
-
+        { type: 'wait', duration: 200 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelSelectListItem',
+                targetParams: {
+                    text: 'Average',
+                },
+                useMouseDown: true,
+            },
+        },
         { type: 'wait', duration: 300 },
+
+        // Toggle `Switch Category / Series`
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelToggle',
+                targetParams: {
+                    groupTitle: 'Series',
+                    toggleLabel: 'Switch Category / Series',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
+        // Click on `Customize` tab
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelTab',
+                targetParams: {
+                    text: 'Customize',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
+        // Open `Titles` group
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelGroupTitle',
+                targetParams: {
+                    text: 'Titles',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
+        // Toggle `Chart Title`
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelToggle',
+                targetParams: {
+                    groupTitle: 'Titles',
+                    toggleLabel: 'Chart Title',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
+        // Change title to `Average Monthly Earning`
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelTextInput',
+                targetParams: {
+                    groupTitle: 'Titles',
+                    inputLabel: 'Title',
+                    index: 0,
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+        {
+            type: 'agAction',
+            actionType: 'typeInTextInput',
+            actionParams: {
+                text: 'Average Monthly Earning',
+                groupTitle: 'Titles',
+                inputLabel: 'Title',
+                index: 0,
+            },
+        },
+        { type: 'wait', duration: 500 },
 
         // Move off screen
         {

@@ -85,7 +85,7 @@ export async function moveToElementAndClick({
         });
     } else {
         mouse.click();
-        await 200;
+        await waitFor(200);
         element?.get()?.click();
     }
 }
