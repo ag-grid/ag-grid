@@ -151,7 +151,7 @@ export class PaginationService extends BeanStub implements NamedBean {
     }
 
     private get pageSize(): number {
-        if (_exists(this.pageSizeAutoCalculated)) {
+        if (_exists(this.pageSizeAutoCalculated) && this.gos.get('paginationAutoPageSize')) {
             return this.pageSizeAutoCalculated;
         }
         if (_exists(this.pageSizeFromPageSizeSelector)) {
