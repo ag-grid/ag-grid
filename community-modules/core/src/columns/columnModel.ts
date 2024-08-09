@@ -1107,8 +1107,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 return this.refreshAll(source);
             }
         } else if (prev.checkboxColumn) {
-            if (!current) {
-                // Selection options had checkboxColumn enabled but now are undefined
+            if (!current || current.mode === 'cell') {
+                // Selection options had checkboxColumn enabled but now are in cell mode or disabled
                 return this.refreshAll(source);
             }
         }
