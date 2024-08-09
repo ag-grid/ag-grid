@@ -491,7 +491,8 @@ export interface _ColumnGridApi<TData = any> {
      * cause the scrollbar to flicker. Use column flex for smoother results.
      *
      * If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      **/
     sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number): void;
@@ -622,14 +623,16 @@ export interface _ColumnGridApi<TData = any> {
 
     /**
      * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
     autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
 
     /**
      * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
     autoSizeAllColumns(skipHeader?: boolean): void;
@@ -709,7 +712,7 @@ export interface _ColumnFilterGridApi {
 
     /**
      * Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state.
-     * If inferring cell data types, and row data is provided asynchronously and is yet to be set,
+     * If inferring cell data types, and row data is initially empty or yet to be set,
      * the filter model will be applied asynchronously after row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition,
      * or provide cell data types for every column.
