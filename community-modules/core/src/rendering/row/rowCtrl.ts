@@ -887,7 +887,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
         let nextEl: HTMLElement | null = null;
 
-        if (!isFullWidthContainerFocused) {
+        if (!isFullWidthContainerFocused && !(keyboardEvent as any)['__ag_Grid_Focus_Out']) {
             nextEl = this.beans.focusService.findNextFocusableElement(
                 currentFullWidthContainer!,
                 false,
