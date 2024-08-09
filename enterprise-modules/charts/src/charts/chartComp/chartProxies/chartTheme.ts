@@ -50,6 +50,7 @@ export function createAgChartTheme(
     // Overrides in ascending precedence ordering.
     const overrides: (AgChartThemeOverrides | undefined)[] = [
         stockTheme ? inbuiltStockThemeOverrides(chartProxyParams, isEnterprise, isTitleEnabled()) : undefined,
+        pieAndDonutOverrides(),
         chartThemeDefaults,
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
@@ -148,6 +149,11 @@ function inbuiltStockThemeOverrides(params: ChartProxyParams, isEnterprise: bool
                 left: extraPadding.includes('left') ? 30 : 20,
             },
         },
+    };
+}
+
+function pieAndDonutOverrides() {
+    return {
         pie: {
             series: {
                 title: { _enabledFromTheme: true },
