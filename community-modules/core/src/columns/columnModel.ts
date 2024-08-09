@@ -7,6 +7,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { SelectionOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
@@ -148,9 +149,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         this.addManagedPropertyListeners(
-            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents', 'selection'],
+            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
             (event) => this.refreshAll(convertSourceType(event.source))
         );
+        this.addManagedPropertyListener('selection', (event) => {
+            this.onSelectionChanged(event.currentValue, event.previousValue, convertSourceType(event.source));
+        });
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
             this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
         );
@@ -1079,6 +1083,34 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
         if (this.autoCols) {
             this.autoColService!.updateAutoCols(this.autoCols.list, source);
+        }
+    }
+
+    private onSelectionChanged(
+        current: SelectionOptions | undefined,
+        prev: SelectionOptions | undefined,
+        source: ColumnEventType
+    ) {
+        if (!prev) {
+            if (current && current.mode !== 'cell' && current.checkboxColumn) {
+                // Selection options were previously undefined but now contain checkboxColumn options
+                return this.refreshAll(source);
+            }
+        } else if (prev.mode === 'cell') {
+            if (current && current.mode !== 'cell' && current.checkboxColumn) {
+                // Selection options were in cell mode but now are in row mode with checkboxColumn options
+                return this.refreshAll(source);
+            }
+        } else if (!prev.checkboxColumn) {
+            if (current && current.mode !== 'cell' && current.checkboxColumn) {
+                // Selection options did not have checkboxColumn options but now do have them
+                return this.refreshAll(source);
+            }
+        } else if (prev.checkboxColumn) {
+            if (!current) {
+                // Selection options had checkboxColumn enabled but now are undefined
+                return this.refreshAll(source);
+            }
         }
     }
 }
