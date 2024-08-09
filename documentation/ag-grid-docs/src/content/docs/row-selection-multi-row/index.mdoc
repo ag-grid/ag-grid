@@ -3,8 +3,7 @@ title: "Multi Row Selection"
 description: "Configure row selection, checkbox selection, and group selection in the $framework Table. Single row selection, multiple row selection, and multi select with click."
 ---
 
-Select a row by clicking on it. Selecting a row will remove any previous selection unless you hold down {% kbd "^ Ctrl" /%}
-while clicking. Selecting a row and holding down {% kbd "⇧ Shift" /%} while clicking a second row will select the range.
+This selection mode allows the selection of multiple rows, adjacent or not. Selection can be configured with or without keyboard modifiers.
 
 {% note %}
 {% if isFramework("javascript") %}
@@ -23,15 +22,13 @@ This describes the new selection configuration API. For documentation on the dep
 
 ## Enabling Multi Row Selection
 
-Multi row selection is configured by setting `selectionOptions.mode` to `"multiRow"`.
-
-{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionOptions"] /%}
-
-The following example illustrates a basic multi row selection configuration. 
+Multi row selection is configured by setting `selectionOptions.mode` to `"multiRow"`. The following example illustrates a basic multi row selection configuration. 
 Use {% kbd "^ Ctrl" /%}-click to add rows to the selection. 
 Use {% kbd "⇧ Shift" /%}-click to add a range of adjacent rows to the selection. Row range selection is discussed in more detail [below](#row-range-selection).
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
+
+See the [definition of `selectionOptions` below](#api-reference), or continue reading for more information about the range of available features.
 
 ## Row Range Selection
 
@@ -178,6 +175,10 @@ Row selection can be used when using row grouping, tree data and the server side
 - [Row Group Selection](./grouping-selection)
 - [Tree Data Selection](./tree-data)
 - [Server-Side Row Model Selection](./server-side-model-selection)
+
+## API Reference
+
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionOptions"] /%}
 
 ## Next up
 
