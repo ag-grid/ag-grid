@@ -729,7 +729,21 @@
                             },
                             {
                                 "title": "Row Selection",
-                                "path": "row-selection"
+                                "path": "row-selection",
+                                "items": [
+                                    {
+                                        "title": "Single Row Selection",
+                                        "path": "row-selection-single-row"
+                                    },
+                                    {
+                                        "title": "Multi Row Selection",
+                                        "path": "row-selection-multi-row"
+                                    },
+                                    {
+                                        "title": "API Reference",
+                                        "path": "row-selection-api-reference"
+                                    }
+                                ]
                             },
                             {
                                 "title": "Cell Selection",

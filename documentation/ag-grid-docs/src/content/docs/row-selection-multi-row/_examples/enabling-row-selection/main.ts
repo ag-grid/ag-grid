@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, SelectionOptions } from '@ag-grid-community/core';
+import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
@@ -9,13 +9,6 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi<IOlympicData>;
-
-const selectionOptions: SelectionOptions = {
-    mode: 'singleRow',
-    suppressDeselection: false,
-    suppressClickSelection: false,
-    checkboxSelection: false,
-};
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -34,7 +27,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selectionOptions,
+    selectionOptions: {
+        mode: 'multiRow',
+    },
 };
 
 // setup the grid after the page has finished loading
@@ -45,16 +40,4 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
-
-    document.querySelector('#input-selection-mode')?.addEventListener('change', updateSelectionOptions);
 });
-
-function getSelectValue(id: string): SelectionOptions['mode'] {
-    return (document.querySelector<HTMLSelectElement>(id)?.value as SelectionOptions['mode']) ?? 'singleRow';
-}
-
-function updateSelectionOptions() {
-    gridApi.setGridOption('selectionOptions', {
-        mode: getSelectValue('#input-selection-mode'),
-    });
-}

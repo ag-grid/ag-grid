@@ -1,0 +1,76 @@
+---
+title: "Row Selection API Reference"
+description: "Configure row selection, checkbox selection, and group selection in the $framework Table. Single row selection, multiple row selection, and multi select with click."
+---
+
+Selection API Reference for Single and Multi Row Selection
+
+{% note %}
+{% if isFramework("javascript") %}
+This describes the new selection configuration API. For documentation on the deprecated API, [click here](/archive/32.1.0/javascript-data-grid/row-selection).
+{% /if %}
+{% if isFramework("react") %}
+This describes the new selection configuration API. For documentation on the deprecated API, [click here](/archive/32.1.0/react-data-grid/row-selection).
+{% /if %}
+{% if isFramework("angular") %}
+This describes the new selection configuration API. For documentation on the deprecated API, [click here](/archive/32.1.0/angular-data-grid/row-selection).
+{% /if %}
+{% if isFramework("vue") %}
+This describes the new selection configuration API. For documentation on the deprecated API, [click here](/archive/32.1.0/vue-data-grid/row-selection).
+{% /if %}
+{% /note %}
+
+## API Reference
+
+### Selection Events
+
+There are two events with regards to selection, illustrated in the example below:
+
+{% apiDocumentation source="grid-events/events.json" section="selection" names=["rowSelected", "selectionChanged"] /%}
+
+The example below has configured alerts to be displayed on both these events firing. Click a row to see an illustration of the events.
+
+{% gridExampleRunner title="Selection Events" name="selection-events" /%}
+
+### Node Selection API
+
+To select rows programmatically, use the `node.setSelected(params)` method.
+
+{% apiDocumentation source="row-object/properties.json" section="selection" names=["setSelected", "isSelected"] /%}
+
+```{% frameworkTransform=true %}
+// set selected, keep any other selections
+node.setSelected(true);
+
+// set selected, exclusively, remove any other selections
+node.setSelected(true, true);
+
+// un-select
+node.setSelected(false);
+
+// check status of node selection
+const selected = node.isSelected();
+```
+
+The `isSelected()` method returns `true` if the node is selected, or `false` if it is not selected. If the node is a group node and the group selection is set to `'children'`, this will return `true` if all child (and grandchild) nodes are selected, `false` if all unselected, or `undefined` if a mixture.
+
+### Grid Selection API
+
+The grid API has the following methods for selection:
+
+{% apiDocumentation source="grid-api/api.json" section="selection" names=["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes", "getSelectedRows", "setNodesSelected"] /%}
+
+If you want to select only the filtered rows, you could do this using the following:
+
+```js
+// loop through each node after filter
+const nodes = [];
+api.forEachNodeAfterFilter(node => {
+   nodes.push(node);
+});
+api.setNodesSelected({ nodes, newValue: true });
+```
+
+## Next up
+
+Continue to the next section to learn about [Cell Selection](./cell-selection).
