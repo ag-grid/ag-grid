@@ -115,7 +115,7 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
                     }
                     records.push({
                         source: 'api',
-                        objectID: path,
+                        objectID: `${path}:${key}`,
                         title: breadcrumbSuffix,
                         heading: key,
                         text: data.type.nested?.[key].comment ?? '',
