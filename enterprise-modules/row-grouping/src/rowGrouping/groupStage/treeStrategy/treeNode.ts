@@ -238,7 +238,7 @@ export class TreeNode implements ITreeNode {
             --parent.ghosts; // Resurrection
 
             // This was a ghost node, now is not, move the node at the end of the children list
-            // We need to do this to keep the order of insertion consistent if rowNodeOrder is not passed during transactions
+            // We need to do this to keep the order consistent, a node reinserted after deletion will go at the end.
             const key = this.key;
             const parentChildren = parent.children;
             if (parentChildren?.delete(key)) {
