@@ -25,7 +25,10 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
             return [];
         }
 
-        if (so.checkboxes) {
+        const checkboxes = so.checkboxes ?? true;
+        const headerCheckbox = so.mode === 'multiRow' ? so.headerCheckbox ?? true : false;
+
+        if (checkboxes || headerCheckbox) {
             const colDef: ColDef = {
                 // overridable properties
                 maxWidth: 50,

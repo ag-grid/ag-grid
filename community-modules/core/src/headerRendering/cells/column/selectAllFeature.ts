@@ -225,7 +225,8 @@ export class SelectAllFeature extends BeanStub {
                 return false;
             }
 
-            const headerCheckbox = so.headerCheckbox ?? false;
+            // Header checkbox is enabled by default in 'multiRow' mode
+            const headerCheckbox = so.headerCheckbox ?? so.mode === 'multiRow';
 
             return (
                 headerCheckbox &&
