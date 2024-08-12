@@ -424,6 +424,19 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             return;
         }
 
+        // Note: we use commitChild, commitChildren, commitNodePreOrder, commitChildrenWithPostOrder, commitNodePostOrder in this way to leverage TCO (tail call optimization).
+        // See https://2ality.com/2015/06/tail-call-optimization.html
+
+        this.commitNodePreOrder(details, parent, node);
+        this.commitChildrenWithPostOrder(details, parent, node);
+    }
+
+    private commitChildrenWithPostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
+        this.commitChildren(details, node);
+        this.commitNodePostOrder(details, parent, node);
+    }
+
+    private commitNodePreOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         let row = node.row;
         if (row === null) {
             row = this.createFillerRow(node);
@@ -458,14 +471,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
         }
-
-        this.commitChildren(details, node);
-
-        this.commitNodePostOrder(details, parent, node, row);
     }
 
-    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode, row: RowNode): void {
+    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         const { rowNodeOrder } = details;
+        const row = node.row!;
 
         if (node.childrenChanged) {
             node.updateChildrenAfterGroup(rowNodeOrder);
