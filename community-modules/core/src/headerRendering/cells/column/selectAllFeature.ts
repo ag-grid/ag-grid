@@ -39,19 +39,7 @@ export class SelectAllFeature extends BeanStub {
         this.addManagedPropertyListener('selection', (e) => (this.selectionOptions = e.currentValue));
     }
 
-    /**
-     * Select all is enabled by default when using the legacy selection API.
-     * When using the new selection API, select all is only enabled for the checkbox column
-     */
-    private isEnabled(): boolean {
-        return this.selectionOptions === undefined || isColumnControlsCol(this.column);
-    }
-
     public onSpaceKeyDown(e: KeyboardEvent): void {
-        if (!this.isEnabled()) {
-            return;
-        }
-
         const checkbox = this.cbSelectAll;
 
         if (checkbox.isDisplayed() && !checkbox.getGui().contains(this.gos.getActiveDomElement())) {
@@ -97,7 +85,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private showOrHideSelectAll(): void {
-        this.cbSelectAllVisible = this.isEnabled() && this.isCheckboxSelection();
+        this.cbSelectAllVisible = this.isCheckboxSelection();
         this.cbSelectAll.setDisplayed(this.cbSelectAllVisible, { skipAriaHidden: true });
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
@@ -214,45 +202,34 @@ export class SelectAllFeature extends BeanStub {
         }
     }
 
+    /**
+     * Checkbox is enabled when either the `headerCheckbox` option is enabled in the new selection API
+     * or `headerCheckboxSelection` is enabled in the legacy API.
+     */
     private isCheckboxSelection(): boolean {
-        if (!this.isEnabled()) {
-            return false;
-        }
-
         const so = this.selectionOptions;
-        if (so !== undefined) {
-            const headerCheckbox = getHeaderCheckbox(so);
+        const newHeaderCheckbox = so && getHeaderCheckbox(so) && isColumnControlsCol(this.column);
+        const headerCheckboxSelection = this.column.getColDef().headerCheckboxSelection;
 
-            return (
-                headerCheckbox &&
-                this.checkSelectionType('Header checkbox selection') &&
-                this.checkRightRowModelType('Header checkbox selection')
+        let result = false;
+        if (newHeaderCheckbox) {
+            result = true;
+        } else if (typeof headerCheckboxSelection === 'function') {
+            result = headerCheckboxSelection(
+                this.gos.addGridCommonParams({
+                    column: this.column,
+                    colDef: this.column.getColDef(),
+                })
             );
         } else {
-            // handle legacy options
-            const headerCheckboxSelection = this.column.getColDef().headerCheckboxSelection;
-            let result = false;
-
-            if (typeof headerCheckboxSelection === 'function') {
-                result = headerCheckboxSelection(
-                    this.gos.addGridCommonParams({
-                        column: this.column,
-                        colDef: this.column.getColDef(),
-                    })
-                );
-            } else {
-                result = !!headerCheckboxSelection;
-            }
-
-            if (result) {
-                return (
-                    this.checkRightRowModelType('headerCheckboxSelection') &&
-                    this.checkSelectionType('headerCheckboxSelection')
-                );
-            }
-
-            return false;
+            result = !!headerCheckboxSelection;
         }
+
+        return (
+            result &&
+            this.checkRightRowModelType('headerCheckboxSelection') &&
+            this.checkSelectionType('headerCheckboxSelection')
+        );
     }
 
     private isFilteredOnly(): boolean {
