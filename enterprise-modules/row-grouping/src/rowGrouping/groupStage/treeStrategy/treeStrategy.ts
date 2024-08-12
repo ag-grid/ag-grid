@@ -14,7 +14,7 @@ import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import { RowNode } from '@ag-grid-community/core';
 
 import type { RowNodeOrder } from './treeNode';
-import { EMPTY_ARRAY, TreeNode, getRowIndex } from './treeNode';
+import { TreeNode } from './treeNode';
 import {
     clearTreeRowFlags,
     isTreeRowCommitted,
@@ -148,11 +148,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Called when a subtree needs to be destroyed. */
     private destroyTree(node: TreeNode, allRows: boolean, changedPath: ChangedPath | null | undefined): void {
-        const { level, row } = node;
-        node.childrenAfterGroup = EMPTY_ARRAY;
-        if (level >= 0) {
-            node.allLeafChildren = EMPTY_ARRAY;
-        }
+        const { row } = node;
         if (row !== null) {
             node.linkRow(null);
             if (!row.data) {
@@ -314,13 +310,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             setTreeRowUpdated(newRow);
         }
 
-        if (!invalidate && rowNodeOrder) {
-            const rowIndex = getRowIndex(newRow, rowNodeOrder);
-            if (rowIndex >= 0 && node.rowIndex !== rowIndex) {
-                invalidate = true;
-            }
-        }
-
         if (invalidate) {
             node.invalidate();
         }
@@ -473,22 +462,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             node.updateAllLeafChildren();
         }
 
-        if (rowNodeOrder) {
-            const rowIndex = getRowIndex(row, rowNodeOrder);
-            if (rowIndex >= 0) {
-                node.rowIndex = rowIndex;
-            }
-            if (!parent.childrenChanged) {
-                const newOrder = node.getNewRowOrder(rowNodeOrder, rowIndex);
-                if (node.rowOrder !== newOrder) {
-                    node.rowOrder = newOrder;
-                    parent.childrenChanged = true;
-                }
-            }
-        }
-
-        if (isTreeRowUpdated(row)) {
-            parent.pathChanged = true;
+        if (!parent.childrenChanged && rowNodeOrder && node.rowOrder !== node.getNewRowOrder(rowNodeOrder)) {
+            parent.childrenChanged = true; // We need to be sure the parent is going to update its children, as the order might have changed
         }
 
         const hasChildren = !!row.childrenAfterGroup?.length;
@@ -510,6 +485,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (isTreeRowUpdated(row)) {
+            parent.pathChanged = true;
+
             // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
             // refreshed into the gui.
             // this is needed to kick off the event that rowComp listens to for refresh. this in turn

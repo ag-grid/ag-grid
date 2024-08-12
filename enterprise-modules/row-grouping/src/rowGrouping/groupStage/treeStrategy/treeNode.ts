@@ -2,12 +2,20 @@ import type { ITreeNode, RowNode } from '@ag-grid-community/core';
 
 export type RowNodeOrder = { readonly [id: string]: number | undefined };
 
-export const EMPTY_ARRAY = Object.freeze([]) as unknown as any[];
+/**
+ * An empty array, used to set an empty array to the childrenAfterGroup and allLeafChildren arrays without allocating a new one for each leaf.
+ * Leaves don't have children, using a preallocated empty array reduces memory usage and GC pressure considerably.
+ */
+const EMPTY_ARRAY = Object.freeze([]) as unknown as any[];
 
-/** An empty iterator */
-const EMPTY_CHILDREN = EMPTY_ARRAY.values();
+/** An empty iterator, to avoid null checking when we iterate the children map */
+const EMPTY_CHILDREN = (EMPTY_ARRAY as TreeNode[]).values();
 
-export const getRowIndex = (row: RowNode | null | undefined, rowNodeOrder: RowNodeOrder): number => {
+/**
+ * Given a row, extract the row index from the rowNodeOrder map.
+ * @returns the row index, or -1 if the row is not found.
+ */
+const getRowIndex = (row: RowNode | null | undefined, rowNodeOrder: RowNodeOrder): number => {
     if (row?.data) {
         const id = row.id;
         if (id !== undefined) {
@@ -51,10 +59,16 @@ export class TreeNode implements ITreeNode {
      * The children of the tree, where the key is the node key and the value is the child node.
      * We use this to avoid exploring the whole tree during commit, we will just go to the paths
      * that are changed in DFS order.
+     * This map is null if the node has no children, and is created lazily. This to reduce memory usage and GC pressure.
      */
     private children: Map<string, TreeNode> | null = null;
 
-    /** The head of the linked list of direct children nodes that are invalidated and need to be committed. */
+    /**
+     * The head of the linked list of direct children nodes that are invalidated and need to be committed.
+     * We use a linked list so we can invalidate the whole path and explore only the invalidated during commit.
+     * Also, once a path is invalidated the next invalidation will not add the same node again and stop the recursion quickly.
+     * With a linked list we don't need to allocate any new array or object, we just change the pointers, this is fast.
+     */
     private invalidatedHead: TreeNode | null = null;
 
     /**
@@ -65,26 +79,27 @@ export class TreeNode implements ITreeNode {
      */
     private invalidatedNext: TreeNode | null | undefined = undefined;
 
-    /** The RowNode associated to this tree node */
-    public row: RowNode | null = null;
+    /**
+     * Keep track of the number of children that are ghosts in this node.
+     * Since we do not delete the children during the prepare stage, before the commit, we need to keep track of how many there are.
+     * A ghost node is a node that:
+     *  - is not the root
+     *  - AND is a filler node (it has no row, or no row.data)
+     *  - AND all the nodes of its subtrees are ghosts or fillers (they have row null, or no row.data)
+     *
+     * This is used to update the ghost status of the nodes without recursing the whole subtree, as checking if children.size === ghosts is O(1).
+     * When a node switch from being ghost to being a normal node, we move it at the end of the children list, to maintain the insertion order.
+     * Think about deleting the single leaf of a filler node, if the filler node has to be inserted again, it should be at the end of the children list.
+     */
+    private ghosts: number = 0;
 
-    /** We keep the row.childrenAfterGroup here, we just swap arrays when we assign rows */
-    public childrenAfterGroup: RowNode[] = EMPTY_ARRAY;
-
-    /** We keep the row.allLeafChildren here, we just swap arrays when we assign rows */
-    public allLeafChildren: RowNode[] = EMPTY_ARRAY;
-
-    /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
-    public oldRow: RowNode | null = null;
-
-    /** Keep track of the number of children that are ghosts in this node */
-    private ghostsCount: number = 0;
-
-    /** Coming from rowNodeOrder, or, first time, from the index of the row in the root.allLeafChildren array */
-    public rowIndex: number = -1;
-
-    /**  True if changedPath.addParentNode(row) should be called on this node. Reset to false during commit. */
-    public pathChanged: boolean = false;
+    /**
+     * Used when sorting.
+     * If this is a filler node, is the rowOrder of the first child.
+     * If this is a leaf node with no children, is the rowIndex.
+     * If this is a leaf node with children, is the min(this.rowOrder, childrenAfterGroup[0].rowOrder)
+     */
+    public rowOrder: number = -1;
 
     /**
      * We use this to keep track if children were removed or added and moved, so we can skip
@@ -96,13 +111,20 @@ export class TreeNode implements ITreeNode {
     /** True allLeafChildren should be recomputed. Reset to false during commit. */
     public leafChildrenChanged: boolean = false;
 
-    /**
-     * Used when sorting.
-     * If this is a filler node, is the rowOrder of the first child.
-     * If this is a leaf node with no children, is the rowIndex.
-     * If this is a leaf node with children, is the min(this.rowOrder, childrenAfterGroup[0].rowOrder)
-     */
-    public rowOrder: number = -1;
+    /**  True if changedPath.addParentNode(row) should be called on this node. Reset to false during commit. */
+    public pathChanged: boolean = false;
+
+    /** The RowNode associated to this tree node */
+    public row: RowNode | null = null;
+
+    /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
+    public oldRow: RowNode | null = null;
+
+    /** We keep the row.childrenAfterGroup here, we just swap arrays when we assign rows */
+    public childrenAfterGroup: RowNode[] = EMPTY_ARRAY;
+
+    /** We keep the row.allLeafChildren here, we just swap arrays when we assign rows */
+    private allLeafChildren: RowNode[] = EMPTY_ARRAY;
 
     public constructor(
         /** The parent node of this node, or null if removed or the root. */
@@ -136,7 +158,7 @@ export class TreeNode implements ITreeNode {
         if (!node) {
             node = new TreeNode(this, key, this.level + 1, true);
             (this.children ??= new Map()).set(key, node);
-            ++this.ghostsCount;
+            ++this.ghosts;
         }
         return node;
     }
@@ -176,6 +198,11 @@ export class TreeNode implements ITreeNode {
         return true;
     }
 
+    /**
+     * Updates the ghost status of this node and all its parents until the root is reached.
+     * Is optimized to avoid updating the ghost status of the parents if the ghost status of a node did not change.
+     * @returns true if the ghost status of this node changed, false if it was already the same.
+     */
     public updateIsGhost(): boolean {
         // We update the ghost state recursively
         if (!this.updateThisIsGhost()) {
@@ -199,7 +226,7 @@ export class TreeNode implements ITreeNode {
             return false; // Root cannot be a ghost
         }
 
-        const newGhost = !row?.data && this.ghostsCount === (this.children?.size ?? 0);
+        const newGhost = !row?.data && this.ghosts === (this.children?.size ?? 0);
         if (newGhost === ghost) {
             return false; // No changes
         }
@@ -207,9 +234,9 @@ export class TreeNode implements ITreeNode {
         this.ghost = newGhost;
 
         if (newGhost) {
-            ++parent.ghostsCount;
+            ++parent.ghosts; // We have a new ghost
         } else {
-            --parent.ghostsCount;
+            --parent.ghosts; // Resurrection
 
             // This was a ghost node, now is not, move the node at the end of the children list
             // We need to do this to keep the order of insertion consistent if rowNodeOrder is not passed during transactions
@@ -266,53 +293,66 @@ export class TreeNode implements ITreeNode {
         const parent = this.parent;
         if (parent?.children?.delete(this.key)) {
             if (this.ghost) {
-                --parent.ghostsCount;
+                --parent.ghosts;
             }
         }
         this.parent = null;
         this.children = null;
+        this.childrenAfterGroup = EMPTY_ARRAY;
+        if (this.level >= 0) {
+            this.allLeafChildren = EMPTY_ARRAY; // Not the root
+        }
     }
 
-    public getNewRowOrder(rowNodeOrder: RowNodeOrder, rowIndex = getRowIndex(this.row, rowNodeOrder)): number {
-        let result = rowIndex;
-        if (result < 0) {
-            result = this.rowIndex;
-        } else {
-            this.rowIndex = result;
-        }
-
-        let currentNode: TreeNode | null = this;
-
-        while (currentNode?.childrenAfterGroup.length > 0) {
-            const firstChildNode = currentNode.childrenAfterGroup[0].treeNode! as TreeNode;
-            let firstChildRowOrder = getRowIndex(firstChildNode.row, rowNodeOrder);
-            if (firstChildRowOrder < 0) {
-                firstChildRowOrder = firstChildNode.rowIndex;
+    /**
+     * When we receive rowNodeOrder not undefined, we need to update the rowOrder of the node,
+     * to ensure it will be sorted in the right order in childrenAfterGroup.
+     * This function computes the right rowOrder for the node, based on the rowNodeOrder map.
+     *
+     * We need to compute the minimum between the rowIndex of this node and the first child, recursively.
+     * This is because we need to find the find out which row first "created" this group.
+     *
+     * Implementation is not recursive however, is O(1) here because this function assumes the children are already
+     * sorted correctly, and childrenAfterGroup of the children are already computed in the right order (post-order DFS).
+     *
+     * So this function makes sense to be called only in the post-order commit DFS.
+     *
+     * @returns the rowOrder the node should have.
+     */
+    public getNewRowOrder(rowNodeOrder: RowNodeOrder): number {
+        let rowOrder = getRowIndex(this.row, rowNodeOrder);
+        if (this.childrenAfterGroup.length > 0) {
+            const firstChildRowOrder = (this.childrenAfterGroup[0].treeNode! as TreeNode).rowOrder;
+            if (firstChildRowOrder >= 0 && (rowOrder < 0 || firstChildRowOrder < rowOrder)) {
+                rowOrder = firstChildRowOrder;
             }
-
-            if (firstChildRowOrder >= 0 && (result < 0 || firstChildRowOrder < result)) {
-                result = firstChildRowOrder;
-            }
-
-            currentNode = firstChildNode;
         }
-
-        return result;
+        return rowOrder;
     }
 
+    /**
+     * This is called in post order during commit to update the childrenAfterGroup array.
+     * It uses the rowNodeOrder map to sort the children in the right order, if is passed.
+     * It assumes all children childrenAfterGroup are up to date and rows all created.
+     *
+     * It replaces the array with EMPTY_ARRAY if there are no children, to reduce memory usage and GC pressure.
+     * It does sort the children only if strictly needed, to avoid unnecessary work.
+     *
+     * If the order changes, also the order in the children map will be updated,
+     * so the next call to enumChildren() will return the children in the right order.
+     */
     public updateChildrenAfterGroup(rowNodeOrder: RowNodeOrder | undefined): void {
         this.childrenChanged = false; // Reset the flag for this node
 
-        let count = 0;
         let changed = false;
         let orderChanged = false;
-        let output = this.childrenAfterGroup;
+        let childrenAfterGroup = this.childrenAfterGroup;
         const children = this.children;
         const childrenCount = children?.size ?? 0;
         if (childrenCount === 0) {
             // No children
 
-            if (output.length > 0) {
+            if (childrenAfterGroup.length > 0) {
                 changed = true;
                 this.childrenAfterGroup = EMPTY_ARRAY;
                 this.row!.childrenAfterGroup = EMPTY_ARRAY;
@@ -320,56 +360,58 @@ export class TreeNode implements ITreeNode {
         } else {
             // We have children
 
-            if (output.length !== childrenCount) {
+            if (childrenAfterGroup.length !== childrenCount) {
                 changed = true;
-                if (output === EMPTY_ARRAY) {
-                    output = new Array(childrenCount);
-                    this.childrenAfterGroup = output;
-                    this.row!.childrenAfterGroup = output;
+                if (childrenAfterGroup === EMPTY_ARRAY) {
+                    childrenAfterGroup = new Array(childrenCount);
+                    this.childrenAfterGroup = childrenAfterGroup;
+                    this.row!.childrenAfterGroup = childrenAfterGroup;
                 } else {
-                    output.length = childrenCount;
+                    childrenAfterGroup.length = childrenCount;
                 }
             }
 
             if (rowNodeOrder) {
                 // We have an order to follow, as rowNodeOrder was passed
 
-                let prevOrder = -1;
+                let writeIdx = 0; // Keep track of where we are writing in the childrenAfterGroup array
+                let prevPosition = -1;
                 for (const child of children!.values()) {
-                    const newOrder = child.getNewRowOrder(rowNodeOrder);
-                    child.rowOrder = newOrder;
+                    const nextPosition = child.getNewRowOrder(rowNodeOrder);
+                    child.rowOrder = nextPosition;
                     const row = child.row!;
-                    if (changed || output[count] !== row) {
-                        output[count] = child.row!;
+                    if (changed || childrenAfterGroup[writeIdx] !== row) {
+                        childrenAfterGroup[writeIdx] = child.row!;
                         changed = true;
                     }
-                    ++count;
-                    if (prevOrder > newOrder) {
+                    ++writeIdx;
+                    if (prevPosition > nextPosition) {
                         orderChanged = true;
                     }
-                    prevOrder = newOrder;
+                    prevPosition = nextPosition;
                 }
 
                 if (orderChanged) {
-                    output.sort(rowOrderComparer);
+                    childrenAfterGroup.sort(rowOrderComparer);
 
                     // We need to rebuild the children map in the right order
                     children!.clear();
-                    for (let i = 0; i < count; ++i) {
-                        const node = output[i].treeNode! as TreeNode;
+                    for (let i = 0; i < childrenCount; ++i) {
+                        const node = childrenAfterGroup[i].treeNode! as TreeNode;
                         children!.set(node.key, node);
                     }
                 }
             } else {
                 // We follow the order that is already in the children map
 
+                let writeIdx = 0;
                 for (const child of children!.values()) {
                     const row = child.row!;
-                    if (changed || output[count] !== row) {
-                        output[count] = row;
+                    if (changed || childrenAfterGroup[writeIdx] !== row) {
+                        childrenAfterGroup[writeIdx] = row;
                         changed = true;
                     }
-                    ++count;
+                    ++writeIdx;
                 }
             }
         }
@@ -390,17 +432,16 @@ export class TreeNode implements ITreeNode {
     /**
      * Rebuild the allLeafChildren rows array of a node.
      * It uses childrenAfterGroup, we assume to be already updated.
+     * This is called in post order during commit, after the childrenAfterGroup are updated with updateChildrenAfterGroup().
      * It uses the allLeafChildren of all the children, we assume is already updated.
-     * @returns true if the array changed, false if not
      */
     public updateAllLeafChildren(): void {
-        this.leafChildrenChanged = false; // Reset the flag for this node
-
         const { parent, row, childrenAfterGroup } = this;
+
+        this.leafChildrenChanged = false; // Reset the flag for this node
 
         let changed = false;
         const childrenAfterGroupLen = childrenAfterGroup.length;
-
         if (childrenAfterGroupLen === 0) {
             // No children, no leaf nodes.
             changed = row!.allLeafChildren?.length !== 0;
@@ -416,49 +457,44 @@ export class TreeNode implements ITreeNode {
         } else {
             // We need to rebuild the allLeafChildren array, we use children allLeafChildren arrays
 
-            let output = this.allLeafChildren;
-            if (output === EMPTY_ARRAY) {
-                output = [];
-                this.allLeafChildren = output;
+            let allLeafChildren = this.allLeafChildren;
+            if (allLeafChildren === EMPTY_ARRAY) {
+                allLeafChildren = [];
+                this.allLeafChildren = allLeafChildren;
             }
+            const oldAllLeafChildrenLength = allLeafChildren.length;
 
-            const oldLen = output.length;
             let count = 0;
             for (let i = 0; i < childrenAfterGroupLen; ++i) {
                 const childRow = childrenAfterGroup[i];
                 const childAllLeafChildren = childRow.allLeafChildren!;
-                const jLen = childAllLeafChildren.length;
-                if (jLen) {
-                    for (let j = 0; j < jLen; j++) {
+                const childAllLeafChildrenLen = childAllLeafChildren.length;
+                if (childAllLeafChildrenLen) {
+                    for (let j = 0; j < childAllLeafChildrenLen; ++j) {
                         const leaf = childAllLeafChildren[j];
-                        if (count >= oldLen || output[count] !== leaf) {
-                            output[count] = leaf;
+                        if (count >= oldAllLeafChildrenLength || allLeafChildren[count] !== leaf) {
+                            allLeafChildren[count] = leaf;
                             changed = true;
                         }
                         ++count;
                     }
                 } else {
-                    if ((count >= oldLen || output[count] !== childRow) && childRow) {
-                        output[count] = childRow;
+                    if ((count >= oldAllLeafChildrenLength || allLeafChildren[count] !== childRow) && childRow) {
+                        allLeafChildren[count] = childRow;
                         changed = true;
                     }
                     ++count;
                 }
             }
-            if (count !== oldLen) {
+            if (oldAllLeafChildrenLength !== count) {
+                allLeafChildren.length = count;
                 changed = true;
-                if (count > 0) {
-                    output.length = count;
-                } else {
-                    output = EMPTY_ARRAY;
-                    this.allLeafChildren = EMPTY_ARRAY;
-                }
             }
-            if (row!.allLeafChildren !== output) {
-                if (!changed && (row!.allLeafChildren!.length > 0 || output.length > 0)) {
+            if (row!.allLeafChildren !== allLeafChildren) {
+                if (!changed && (row!.allLeafChildren!.length > 0 || allLeafChildren.length > 0)) {
                     changed = true;
                 }
-                row!.allLeafChildren = output;
+                row!.allLeafChildren = allLeafChildren;
             }
         }
 
