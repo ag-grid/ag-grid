@@ -1,14 +1,16 @@
+import { mouseClick } from '@components/automated-examples/lib/scriptActions/mouseClick';
+import { waitFor } from '@components/automated-examples/lib/scriptActions/waitFor';
 import type { Group } from '@tweenjs/tween.js';
 
 import type { GridApi } from 'ag-grid-community';
 
-import { createAgElementFinder } from '../../lib/agElements';
+import { type AgElement, createAgElementFinder } from '../../lib/agElements';
 import { type Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
-import { addPoints, scalePoint } from '../../lib/geometry';
+import { type Point, addPoints, scalePoint } from '../../lib/geometry';
 import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { dragRange } from '../../lib/scriptActions/dragRange';
-import { moveTarget } from '../../lib/scriptActions/move';
+import { moveTarget, moveTo } from '../../lib/scriptActions/move';
 import { type ScriptDebugger } from '../../lib/scriptDebugger';
 import { type ScriptAction } from '../../lib/scriptRunner';
 
@@ -19,15 +21,32 @@ interface Params {
      */
     getContainerScale?: () => number;
     mouse: Mouse;
+    getOverlay: () => HTMLElement;
     tweenGroup: Group;
     gridApi: GridApi;
     scriptDebugger?: ScriptDebugger;
+}
+
+function getLegendOffset({
+    chartsCanvas,
+    offsetX,
+    offsetY,
+}: {
+    chartsCanvas: AgElement;
+    offsetX: number;
+    offsetY: number;
+}) {
+    const { clientHeight } = chartsCanvas.get() as HTMLElement;
+    const { x, y } = chartsCanvas.getPos() as Point;
+
+    return { x: x + offsetX, y: Math.round(clientHeight / 2 + y) + offsetY };
 }
 
 export const createScript = ({
     containerEl,
     getContainerScale = () => 1,
     mouse,
+    getOverlay,
     tweenGroup,
     gridApi,
     scriptDebugger,
@@ -35,7 +54,7 @@ export const createScript = ({
     const START_CELL_COL_INDEX = 0;
     const START_CELL_ROW_INDEX = 0;
     const END_CELL_COL_INDEX = 2;
-    const END_CELL_ROW_INDEX = 3;
+    const END_CELL_ROW_INDEX = 9;
 
     const agElementFinder = createAgElementFinder({ containerEl });
     const getOffscreenPos = () => getBottomMidPos(containerEl);
@@ -73,6 +92,37 @@ export const createScript = ({
                 scrollColumn: 0,
             },
         },
+
+        // Sort by Jan twice for desc sort
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'headerCell',
+                targetParams: {
+                    text: 'Jan',
+                },
+            },
+        },
+        {
+            type: 'agAction',
+            actionType: 'sort',
+            actionParams: {
+                colId: 'jan',
+                sort: 'asc',
+            },
+        },
+        { type: 'wait', duration: 700 },
+        { type: 'click' },
+        {
+            type: 'agAction',
+            actionType: 'sort',
+            actionParams: {
+                colId: 'jan',
+                sort: 'desc',
+            },
+        },
+        { type: 'wait', duration: 700 },
 
         // Select start cell
         {
@@ -193,6 +243,20 @@ export const createScript = ({
         // Wait for chart toolbar pop up to show
         { type: 'wait', duration: 500 },
 
+        // Choose bar stacked
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartSeriesButton',
+                targetParams: {
+                    groupTitle: 'Bar',
+                    seriesTitle: 'Stacked',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
         // Click on set up tab
         {
             type: 'agAction',
@@ -206,7 +270,7 @@ export const createScript = ({
         },
         { type: 'wait', duration: 300 },
 
-        // Click on data input items
+        // Add `Feb` series
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
@@ -217,64 +281,6 @@ export const createScript = ({
                     selectLabel: 'Add a series',
                     usePickerDisplayFieldSelector: true,
                 },
-                // Picker element requires mousedown
-                useMouseDown: true,
-            },
-        },
-        { type: 'wait', duration: 100 },
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelSelectListItem',
-                targetParams: {
-                    text: 'Apr',
-                },
-                useMouseDown: true,
-            },
-        },
-        { type: 'wait', duration: 100 },
-
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelPickerField',
-                targetParams: {
-                    groupTitle: 'Series',
-                    selectLabel: 'Add a series',
-                    usePickerDisplayFieldSelector: true,
-                },
-                // Picker element requires mousedown
-                useMouseDown: true,
-            },
-        },
-        { type: 'wait', duration: 100 },
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelSelectListItem',
-                targetParams: {
-                    text: 'May',
-                },
-                useMouseDown: true,
-            },
-        },
-        { type: 'wait', duration: 100 },
-
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelPickerField',
-                targetParams: {
-                    groupTitle: 'Series',
-                    selectLabel: 'Add a series',
-                    usePickerDisplayFieldSelector: true,
-                },
-                // Picker element requires mousedown
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 100 },
@@ -286,53 +292,119 @@ export const createScript = ({
                 targetParams: {
                     text: 'Feb',
                 },
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 100 },
 
-        // Click on chart tab
+        // Add `Mar` series
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartToolPanelTab',
+                target: 'chartToolPanelPickerField',
                 targetParams: {
-                    text: 'Chart',
+                    groupTitle: 'Series',
+                    selectLabel: 'Add a series',
+                    usePickerDisplayFieldSelector: true,
+                },
+            },
+        },
+        { type: 'wait', duration: 100 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelSelectListItem',
+                targetParams: {
+                    text: 'Mar',
+                },
+            },
+        },
+        { type: 'wait', duration: 100 },
+
+        // Change category to `Country`
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelPickerField',
+                targetParams: {
+                    groupTitle: 'Categories',
+                    // NOTE: Categories label is hidden
+                    selectLabel: '',
+                    index: 0,
+                },
+            },
+        },
+        { type: 'wait', duration: 200 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelSelectListItem',
+                targetParams: {
+                    text: 'Country',
                 },
             },
         },
         { type: 'wait', duration: 300 },
 
-        // Select Pie
+        // Toggle `Aggregate`
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartSeriesButton',
+                target: 'chartToolPanelToggle',
                 targetParams: {
-                    groupTitle: 'Pie',
-                    seriesTitle: 'Pie',
+                    groupTitle: 'Categories',
+                    toggleLabel: 'Aggregate',
                 },
             },
         },
-        { type: 'wait', duration: 700 },
+        { type: 'wait', duration: 300 },
 
-        // Select Bar Stacked
+        // Select `Average` aggregate
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartSeriesButton',
+                target: 'chartToolPanelPickerField',
                 targetParams: {
-                    groupTitle: 'Bar',
-                    seriesTitle: 'Stacked',
+                    groupTitle: 'Categories',
+                    // NOTE: Categories label is hidden
+                    selectLabel: '',
+                    index: 1,
                 },
             },
         },
-        { type: 'wait', duration: 500 },
+        { type: 'wait', duration: 200 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelSelectListItem',
+                targetParams: {
+                    text: 'Average',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
 
-        // Click on customize tab
+        // Toggle `Switch Category / Series`
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelToggle',
+                targetParams: {
+                    groupTitle: 'Series',
+                    toggleLabel: 'Switch Category / Series',
+                },
+            },
+        },
+        { type: 'wait', duration: 300 },
+
+        // Click on `Customize` tab
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
@@ -345,62 +417,184 @@ export const createScript = ({
         },
         { type: 'wait', duration: 300 },
 
-        // Open Legend group
+        // Open `Titles` group
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
                 target: 'chartToolPanelGroupTitle',
                 targetParams: {
-                    text: 'Legend',
+                    text: 'Titles',
                 },
             },
         },
         { type: 'wait', duration: 300 },
 
-        // Enable legend
+        // Toggle `Chart Title`
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
                 target: 'chartToolPanelToggle',
                 targetParams: {
-                    groupTitle: 'Legend',
-                    toggleLabel: 'Enabled',
+                    groupTitle: 'Titles',
+                    toggleLabel: 'Chart Title',
                 },
             },
         },
         { type: 'wait', duration: 300 },
 
-        // Change Legend position
+        // Change title to `Average Monthly Earning`
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
             actionParams: {
-                target: 'chartToolPanelPickerField',
+                target: 'chartToolPanelTextInput',
                 targetParams: {
-                    groupTitle: 'Legend',
-                    selectLabel: 'Position',
+                    groupTitle: 'Titles',
+                    inputLabel: 'Title',
+                    index: 0,
                 },
-                // Picker element requires mousedown
-                useMouseDown: true,
             },
         },
-        { type: 'wait', duration: 200 },
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelSelectListItem',
-                targetParams: {
-                    text: 'Top',
-                },
-                // Picker element requires mousedown
-                useMouseDown: true,
-            },
-        },
-
         { type: 'wait', duration: 300 },
+        {
+            type: 'agAction',
+            actionType: 'typeInTextInput',
+            actionParams: {
+                text: 'Average Monthly Earning',
+                groupTitle: 'Titles',
+                inputLabel: 'Title',
+                index: 0,
+            },
+        },
+        { type: 'wait', duration: 500 },
+
+        // Move to canvas legend
+        {
+            type: 'moveTo',
+            toPos: () => {
+                const chartsCanvas = agElementFinder.get('chartsCanvas')!;
+                const chartsCanvasEl = chartsCanvas?.get();
+                if (!chartsCanvasEl) {
+                    throw new Error('No charts canvas found');
+                }
+
+                const { clientHeight } = chartsCanvasEl;
+                const { x, y } = chartsCanvas.getPos() as Point;
+                const offsetX = -25;
+                const offsetY = -23;
+                const legendX = x + offsetX;
+                const legendY = Math.round(clientHeight / 2 + y) + offsetY;
+
+                return { x: legendX, y: legendY };
+            },
+            speed: 2,
+        },
+        { type: 'wait', duration: 500 },
+        {
+            type: 'custom',
+            action: async () => {
+                const chartsCanvas = agElementFinder.get('chartsCanvas')!;
+                const chartsCanvasEl = chartsCanvas?.get();
+                if (!chartsCanvasEl) {
+                    throw new Error('No charts canvas found');
+                }
+
+                const speed = 1;
+                // Offset coordinates for different legend positions
+                // NOTE: Get these dynamically, so that they are the most up to date when
+                // the action is run
+                const getOffsetCoords1 = () =>
+                    getLegendOffset({
+                        chartsCanvas,
+                        offsetX: -25,
+                        offsetY: -23,
+                    });
+                const getOffsetCoords2 = () =>
+                    getLegendOffset({
+                        chartsCanvas,
+                        offsetX: 50,
+                        offsetY: -23,
+                    });
+
+                // Select offset1 legend
+                await moveTo({
+                    mouse,
+                    getOverlay,
+                    toPos: getOffsetCoords1(),
+                    speed,
+                    tweenGroup,
+                    scriptDebugger,
+                });
+                await waitFor(300);
+                await mouseClick({
+                    mouse,
+                    element: chartsCanvasEl,
+                    coords: getOffsetCoords1(),
+                    withClick: true,
+                    scriptDebugger,
+                });
+                await waitFor(500);
+
+                // Select offset2 legend
+                await moveTo({
+                    mouse,
+                    getOverlay,
+                    toPos: getOffsetCoords2(),
+                    speed,
+                    tweenGroup,
+                    scriptDebugger,
+                });
+                await waitFor(300);
+                await mouseClick({
+                    mouse,
+                    element: chartsCanvasEl,
+                    coords: getOffsetCoords2(),
+                    withClick: true,
+                    scriptDebugger,
+                });
+                await waitFor(500);
+
+                // Deselect offset1 legend
+                await moveTo({
+                    mouse,
+                    getOverlay,
+                    toPos: getOffsetCoords1(),
+                    speed,
+                    tweenGroup,
+                    scriptDebugger,
+                });
+                await waitFor(300);
+                await mouseClick({
+                    mouse,
+                    element: chartsCanvasEl,
+                    coords: getOffsetCoords1(),
+                    withClick: true,
+                    scriptDebugger,
+                });
+                await waitFor(500);
+
+                // Deselect offset2 legend
+                await moveTo({
+                    mouse,
+                    getOverlay,
+                    toPos: getOffsetCoords2(),
+                    speed,
+                    tweenGroup,
+                    scriptDebugger,
+                });
+                await waitFor(300);
+                await mouseClick({
+                    mouse,
+                    element: chartsCanvasEl,
+                    coords: getOffsetCoords2(),
+                    withClick: true,
+                    scriptDebugger,
+                });
+            },
+        },
+        { type: 'wait', duration: 500 },
 
         // Move off screen
         {
