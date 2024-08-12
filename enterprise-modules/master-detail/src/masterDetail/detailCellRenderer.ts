@@ -8,17 +8,10 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererParams,
 } from '@ag-grid-community/core';
-import {
-    Component,
-    ModuleRegistry,
-    RefPlaceholder,
-    _cloneObject,
-    _missing,
-    _warnOnce,
-    createGrid,
-} from '@ag-grid-community/core';
+import { Component, ModuleRegistry, RefPlaceholder, _missing, _warnOnce, createGrid } from '@ag-grid-community/core';
 
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
+import { DetailFrameworkComponentWrapper } from './detailFrameworkComponentWrapper';
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
     private eDetailGrid: HTMLElement = RefPlaceholder;
@@ -101,23 +94,16 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             return;
         }
 
-        // AG-1715
-        // this is only needed when suppressReactUi=true, once we remove the old way
-        // of doing react, and Master / Details is all native React, then we
-        // can remove this code.
-        const agGridReact = this.context.getBean('agGridReact');
-        const agGridReactCloned = agGridReact ? _cloneObject(agGridReact) : undefined;
-
         // when we create detail grid, the detail grid needs frameworkComponentWrapper so that
         // it created child components correctly, ie  Angular detail grid can have Angular cell renderer.
         // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
-        const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+        const parentFrameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+        const frameworkComponentWrapper = new DetailFrameworkComponentWrapper(parentFrameworkComponentWrapper);
         const frameworkOverrides = this.getFrameworkOverrides();
 
         const api = createGrid(this.eDetailGrid, gridOptions, {
             frameworkOverrides,
             providedBeanInstances: {
-                agGridReact: agGridReactCloned,
                 frameworkComponentWrapper: frameworkComponentWrapper,
             },
             modules: ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId()),
