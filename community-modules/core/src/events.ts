@@ -279,11 +279,11 @@ export interface PinnedHeightChangedEvent<TData = any, TContext = any>
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
  * - `rowGroupChanged` - grouping changed which updated the selection
- * - `selectableChanged`- selectable status of row has changed when `groupSelectsChildren = true`
+ * - `selectableChanged`- selectable status of row has changed when `selectionOptions.groupSelects` is `'descendants'` or `'filteredDescendants'`
  * - `spaceKey` - space key pressed on row
  * - `uiSelectAll` - select all in header clicked
- * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
- * - `uiSelectAllCurrentPage` - select all in header clicked when `headerCheckboxSelectionCurrentPageOnly = true`
+ * - `uiSelectAllFiltered` - select all in header clicked when `selectionOptions.selectAll = 'filtered'`
+ * - `uiSelectAllCurrentPage` - select all in header clicked when `selectionOptions.selectAll = 'currentPage'`
  * - 'gridInitializing' - set as part of initial state while the grid is initializing
  */
 export type SelectionEventSourceType =

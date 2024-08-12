@@ -1,6 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
+import { getCheckboxes, getHideDisabledCheckboxes } from '../gridOptionsService';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
@@ -93,7 +94,7 @@ export class CheckboxSelectionComponent extends Component {
                 // would possibly get selected twice
                 _stopPropagationForAgGrid(event);
 
-                const groupSelectsFiltered = !!this.gos.getLegacySelectionOption('groupSelectsFiltered');
+                const groupSelectsFiltered = !!this.gos.getSelectionOption('groupSelectsFiltered');
                 const isSelected = this.eCheckbox.getValue();
 
                 if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
@@ -116,7 +117,7 @@ export class CheckboxSelectionComponent extends Component {
             selectableChanged: this.onSelectableChanged.bind(this),
         });
 
-        const isRowSelectableFunc = this.gos.getLegacySelectionOption('isRowSelectable');
+        const isRowSelectableFunc = this.gos.getSelectionOption('isRowSelectable');
         const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {
@@ -168,7 +169,10 @@ export class CheckboxSelectionComponent extends Component {
             }
         }
 
-        const disableInsteadOfHide = this.column?.getColDef().showDisabledCheckboxes;
+        const so = this.gos.get('selection');
+        const disableInsteadOfHide = so
+            ? !getHideDisabledCheckboxes(so)
+            : this.column?.getColDef().showDisabledCheckboxes;
         if (disableInsteadOfHide) {
             this.eCheckbox.setDisabled(!selectable);
             this.setVisible(true);
@@ -187,6 +191,11 @@ export class CheckboxSelectionComponent extends Component {
     private getIsVisible(): boolean | CheckboxSelectionCallback<any> | undefined {
         if (this.overrides) {
             return this.overrides.isVisible;
+        }
+
+        const so = this.gos.get('selection');
+        if (so) {
+            return getCheckboxes(so);
         }
 
         // column will be missing if groupDisplayType = 'groupRows'

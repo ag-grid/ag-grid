@@ -13,8 +13,6 @@ import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { NumberSequence } from '../../utils/numberSequence';
-import type { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
-import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import { BodyDropTarget } from '../columnDrag/bodyDropTarget';
 import type { HeaderPosition } from '../common/headerPosition';
 import { HeaderRowType } from '../row/headerRowComp';
@@ -169,14 +167,9 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.restoreFocusOnHeader(focusedHeaderPosition);
     }
 
-    public getHeaderCtrlForColumn(column: AgColumn): HeaderCellCtrl | undefined;
-    public getHeaderCtrlForColumn(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
-    public getHeaderCtrlForColumn(column: any): any {
+    public getHeaderCtrlForColumn(column: AgColumn | AgColumnGroup): any {
         if (isColumn(column)) {
-            if (!this.columnsRowCtrl) {
-                return;
-            }
-            return this.columnsRowCtrl.getHeaderCellCtrl(column);
+            return this.columnsRowCtrl?.getHeaderCellCtrl(column);
         }
 
         if (this.groupsRowCtrls.length === 0) {
@@ -192,11 +185,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         }
     }
 
-    /* tslint:disable */
-    public getHtmlElementForColumnHeader(column: AgColumnGroup): HTMLElement | null;
-    public getHtmlElementForColumnHeader(column: AgColumn): HTMLElement | null;
-    public getHtmlElementForColumnHeader(column: any): any {
-        /* tslint:enable */
+    public getHtmlElementForColumnHeader(column: AgColumn | AgColumnGroup): HTMLElement | null {
         const cellCtrl = this.getHeaderCtrlForColumn(column);
 
         if (!cellCtrl) {

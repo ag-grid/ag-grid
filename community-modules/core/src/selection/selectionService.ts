@@ -34,11 +34,11 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
     public postConstruct(): void {
         this.selectionCtx.init(this.rowModel);
-        this.rowSelection = this.gos.getLegacySelectionOption('rowSelection');
-        this.groupSelectsChildren = !!this.gos.getLegacySelectionOption('groupSelectsChildren');
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection', 'selectionOptions'], () => {
-            const groupSelectsChildren = !!this.gos.getLegacySelectionOption('groupSelectsChildren');
-            const rowSelection = this.gos.getLegacySelectionOption('rowSelection');
+        this.rowSelection = this.gos.getSelectionOption('rowSelection');
+        this.groupSelectsChildren = !!this.gos.getSelectionOption('groupSelectsChildren');
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection', 'selection'], () => {
+            const groupSelectsChildren = !!this.gos.getSelectionOption('groupSelectsChildren');
+            const rowSelection = this.gos.getSelectionOption('rowSelection');
 
             if (groupSelectsChildren !== this.groupSelectsChildren || rowSelection !== this.rowSelection) {
                 this.groupSelectsChildren = groupSelectsChildren;

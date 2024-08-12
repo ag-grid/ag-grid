@@ -1,7 +1,9 @@
 import type { ColumnState } from '../columns/columnApplyStateService';
+import { isColumnControlsCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
+import { getCheckboxes } from '../gridOptionsService';
 import type {
     Column,
     ColumnEventName,
@@ -400,7 +402,14 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public isCellCheckboxSelection(rowNode: IRowNode): boolean {
-        return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
+        const so = this.gos.get('selection');
+
+        if (so) {
+            const checkbox = isColumnControlsCol(this) && getCheckboxes(so);
+            return this.isColumnFunc(rowNode, checkbox);
+        } else {
+            return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
+        }
     }
 
     public isSuppressPaste(rowNode: IRowNode): boolean {

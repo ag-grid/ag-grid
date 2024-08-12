@@ -28,7 +28,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     private selectionMode?: 'single' | 'multiple';
 
     public postConstruct(): void {
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'selectionOptions'], () => {
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'selection'], () => {
             const groupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
 
             // Only switch strategies when value of groupSelectsChildren actually changes, not just any part of selection options
@@ -50,7 +50,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         });
 
         this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
-        this.addManagedPropertyListener('selectionOptions', () => {
+        this.addManagedPropertyListener('selection', () => {
             // Only reset selection when selection mode changes, not just any part of selection options
             const rowSelection = this.gos.getLegacySelectionOption('rowSelection');
             if (rowSelection !== this.selectionMode) {

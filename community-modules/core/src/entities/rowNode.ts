@@ -355,7 +355,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     private checkRowSelectable() {
-        const isRowSelectableFunc = this.beans.gos.getLegacySelectionOption('isRowSelectable');
+        const isRowSelectableFunc = this.beans.gos.getSelectionOption('isRowSelectable');
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
@@ -368,7 +368,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 return;
             }
 
-            const isGroupSelectsChildren = this.beans.gos.getLegacySelectionOption('groupSelectsChildren');
+            const isGroupSelectsChildren = this.beans.gos.getSelectionOption('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
                 this.setSelectedParams({
