@@ -862,7 +862,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         return cellPosition;
     }
 
-    private tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards: boolean = false): boolean {
+    public tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards?: boolean): boolean {
         const displayedColumns = this.visibleColsService.getAllCols();
         const rowComp = this.rowRenderer.getRowByPosition(position);
         if (!rowComp || !rowComp.isFullWidth()) {
@@ -880,7 +880,9 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.focusPosition(cellPosition);
 
         const fromBelow =
-            currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
+            backwards == null
+                ? currentCellFocused != null && this.rowPositionUtils.before(cellPosition, currentCellFocused)
+                : backwards;
 
         this.eventService.dispatchEvent({
             type: 'fullWidthRowFocused',
