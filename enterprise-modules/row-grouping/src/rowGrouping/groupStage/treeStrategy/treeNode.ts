@@ -490,9 +490,7 @@ export class TreeNode implements ITreeNode {
                 changed = true;
             }
             if (row!.allLeafChildren !== allLeafChildren) {
-                if (!changed && (writeIdx > 0 || row!.allLeafChildren!.length > 0)) {
-                    changed = true;
-                }
+                changed = true;
                 row!.allLeafChildren = allLeafChildren;
             }
         }
