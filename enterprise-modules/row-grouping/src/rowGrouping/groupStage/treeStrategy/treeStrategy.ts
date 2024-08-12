@@ -250,6 +250,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return null;
     }
 
+    /**
+     * Overwrites the row property of a non-root node to null.
+     * @returns The previous row, if any, that was overwritten.
+     */
     private clearRow(node: TreeNode): RowNode | null {
         const { row: oldRow, parent, level } = node;
 
