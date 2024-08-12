@@ -281,8 +281,6 @@ export const createScript = ({
                     selectLabel: 'Add a series',
                     usePickerDisplayFieldSelector: true,
                 },
-                // Picker element requires mousedown
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 100 },
@@ -294,7 +292,6 @@ export const createScript = ({
                 targetParams: {
                     text: 'Feb',
                 },
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 100 },
@@ -310,8 +307,6 @@ export const createScript = ({
                     selectLabel: 'Add a series',
                     usePickerDisplayFieldSelector: true,
                 },
-                // Picker element requires mousedown
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 100 },
@@ -323,7 +318,6 @@ export const createScript = ({
                 targetParams: {
                     text: 'Mar',
                 },
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 100 },
@@ -340,8 +334,6 @@ export const createScript = ({
                     selectLabel: '',
                     index: 0,
                 },
-                // Picker element requires mousedown
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 200 },
@@ -353,7 +345,6 @@ export const createScript = ({
                 targetParams: {
                     text: 'Country',
                 },
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 300 },
@@ -384,8 +375,6 @@ export const createScript = ({
                     selectLabel: '',
                     index: 1,
                 },
-                // Picker element requires mousedown
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 200 },
@@ -397,7 +386,6 @@ export const createScript = ({
                 targetParams: {
                     text: 'Average',
                 },
-                useMouseDown: true,
             },
         },
         { type: 'wait', duration: 300 },

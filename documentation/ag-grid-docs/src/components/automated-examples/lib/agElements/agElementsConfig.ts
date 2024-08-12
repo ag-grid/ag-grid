@@ -28,15 +28,24 @@ import {
 } from '../constants';
 import { findElementWithInnerText } from '../dom';
 
-export interface AgElementBySelectorConfig {
+interface BaseConfig {
+    /**
+     * Requires sending a mouse down and mouse up event to trigger a click
+     *
+     * Otherwise a normal DOM click event is sent
+     */
+    useMouseDown?: boolean;
+}
+
+export interface AgElementBySelectorConfig extends BaseConfig {
     selector: string;
 }
 
-export interface AgElementByInnerTextConfig {
+export interface AgElementByInnerTextConfig extends BaseConfig {
     innerTextSelector: string;
 }
 
-export interface AgElementByFindConfig<Params> {
+export interface AgElementByFindConfig<Params> extends BaseConfig {
     find: ({
         getElement,
         containerEl,
@@ -133,6 +142,7 @@ export const agElementsConfig: AgElementsConfigItem = {
     },
     chartToolPanelSelectListItem: {
         innerTextSelector: AG_SELECT_LIST_ITEM_SELECTOR,
+        useMouseDown: true,
     },
 
     // Find by custom function
@@ -219,6 +229,8 @@ export const agElementsConfig: AgElementsConfigItem = {
         },
     },
     chartToolPanelPickerField: {
+        // Picker element requires mousedown
+        useMouseDown: true,
         find: ({ getElement, params }) => {
             const { groupTitle, selectLabel, usePickerDisplayFieldSelector, index } = params;
             const groupTitleEl = getElement('chartToolPanelGroupTitle', {

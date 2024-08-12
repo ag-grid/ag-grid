@@ -15,7 +15,6 @@ interface MoveToElementAndClickParams {
     agElementFinder: AgElementFinder;
     target: AgElementName;
     targetParams: any;
-    useMouseDown?: boolean;
     mouse: Mouse;
     tweenGroup: Group;
     speed?: number;
@@ -33,7 +32,6 @@ export async function moveToElementAndClick({
     agElementFinder,
     target,
     targetParams,
-    useMouseDown,
     mouse,
     speed,
     duration,
@@ -77,7 +75,7 @@ export async function moveToElementAndClick({
 
     await waitFor(500);
 
-    if (useMouseDown) {
+    if (element?.useMouseDown) {
         return mouseClick({
             mouse,
             coords: toPos,
