@@ -885,9 +885,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
+        const activeEl = this.gos.getActiveDomElement();
+        let isDetailGridCellFocused = false;
+
+        if (currentFullWidthContainer && activeEl) {
+            isDetailGridCellFocused =
+                currentFullWidthContainer.contains(activeEl) && activeEl.classList.contains('ag-cell');
+        }
+
         let nextEl: HTMLElement | null = null;
 
-        if (!isFullWidthContainerFocused && !(keyboardEvent as any)['__ag_Grid_Focus_Out']) {
+        if (!isFullWidthContainerFocused && !isDetailGridCellFocused) {
             nextEl = this.beans.focusService.findNextFocusableElement(
                 currentFullWidthContainer!,
                 false,

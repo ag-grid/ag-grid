@@ -434,8 +434,6 @@ export class NavigationService extends BeanStub implements NamedBean {
                 this.focusService.focusNextGridCoreContainer(backwards)
             ) {
                 keyboardEvent.preventDefault();
-            } else if (!backwards) {
-                (keyboardEvent as any)['__ag_Grid_Focus_Out'] = true;
             }
         }
     }
