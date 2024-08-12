@@ -54,7 +54,7 @@ export const createScript = ({
     const START_CELL_COL_INDEX = 0;
     const START_CELL_ROW_INDEX = 0;
     const END_CELL_COL_INDEX = 2;
-    const END_CELL_ROW_INDEX = 3;
+    const END_CELL_ROW_INDEX = 9;
 
     const agElementFinder = createAgElementFinder({ containerEl });
     const getOffscreenPos = () => getBottomMidPos(containerEl);
@@ -92,6 +92,37 @@ export const createScript = ({
                 scrollColumn: 0,
             },
         },
+
+        // Sort by Jan twice for desc sort
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'headerCell',
+                targetParams: {
+                    text: 'Jan',
+                },
+            },
+        },
+        {
+            type: 'agAction',
+            actionType: 'sort',
+            actionParams: {
+                colId: 'jan',
+                sort: 'asc',
+            },
+        },
+        { type: 'wait', duration: 700 },
+        { type: 'click' },
+        {
+            type: 'agAction',
+            actionType: 'sort',
+            actionParams: {
+                colId: 'jan',
+                sort: 'desc',
+            },
+        },
+        { type: 'wait', duration: 700 },
 
         // Select start cell
         {

@@ -90,6 +90,14 @@ export interface ClearRangeSelectionAction {
     actionType: 'clearRangeSelection';
 }
 
+export interface SortAction {
+    actionType: 'sort';
+    actionParams: {
+        colId: string;
+        sort: 'asc' | 'desc';
+    };
+}
+
 interface CloseToolPanelAction {
     actionType: 'closeToolPanel';
 }
@@ -165,6 +173,7 @@ export type AGCreatorAction =
     | ClearSelectSingleCellAction
     | ClearAllSingleCellSelectionsAction
     | ClearRangeSelectionAction
+    | SortAction
     | FocusCellAction
     | OpenToolPanelAction
     | CloseToolPanelAction
@@ -237,6 +246,13 @@ export function createAGActionCreator({
             clearAllSingleCellSelections();
         } else if (actionType === 'clearRangeSelection') {
             gridApi.clearRangeSelection();
+        } else if (actionType === 'sort') {
+            const action = agAction as SortAction;
+            const { colId, sort } = action.actionParams;
+            gridApi.applyColumnState({
+                state: [{ colId, sort }],
+                defaultState: { sort: null },
+            });
         } else if (actionType === 'openToolPanel') {
             const action = agAction as OpenToolPanelAction;
             gridApi.openToolPanel(action.actionParams.toolPanelKey);
