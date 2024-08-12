@@ -462,7 +462,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             node.updateAllLeafChildren();
         }
 
-        if (!parent.childrenChanged && rowNodeOrder && node.rowOrder !== node.getNewRowOrder(rowNodeOrder)) {
+        if (!parent.childrenChanged && rowNodeOrder && node.rowPosition !== node.getRowPosition(rowNodeOrder)) {
             parent.childrenChanged = true; // We need to be sure the parent is going to update its children, as the order might have changed
         }
 

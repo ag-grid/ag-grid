@@ -28,9 +28,8 @@ const getRowIndex = (row: RowNode | null | undefined, rowNodeOrder: RowNodeOrder
     return -1;
 };
 
-/** Compare two RowNode by the TreeNode rowOrder. Assumes TreeNode to be set and valid. */
-const rowOrderComparer = (a: RowNode, b: RowNode): number =>
-    (a.treeNode! as TreeNode).rowOrder - (b.treeNode! as TreeNode).rowOrder;
+/** Compare two RowNode by the TreeNode rowPosition. Assumes TreeNode to be set and valid. */
+const rowPositionComparer = (a: RowNode, b: RowNode): number => a.treeNode!.rowPosition - b.treeNode!.rowPosition;
 
 /**
  * We keep a secondary tree data structure together with the rows.
@@ -95,11 +94,11 @@ export class TreeNode implements ITreeNode {
 
     /**
      * Used when sorting.
-     * If this is a filler node, is the rowOrder of the first child.
+     * If this is a filler node, is the rowPosition of the first child.
      * If this is a leaf node with no children, is the rowIndex.
-     * If this is a leaf node with children, is the min(this.rowOrder, childrenAfterGroup[0].rowOrder)
+     * If this is a leaf node with children, is the min(this.rowPosition, childrenAfterGroup[0].rowPosition)
      */
-    public rowOrder: number = -1;
+    public rowPosition: number = -1;
 
     /**
      * We use this to keep track if children were removed or added and moved, so we can skip
@@ -305,9 +304,9 @@ export class TreeNode implements ITreeNode {
     }
 
     /**
-     * When we receive rowNodeOrder not undefined, we need to update the rowOrder of the node,
+     * When we receive rowNodeOrder not undefined, we need to update the rowPosition of the node,
      * to ensure it will be sorted in the right order in childrenAfterGroup.
-     * This function computes the right rowOrder for the node, based on the rowNodeOrder map.
+     * This function computes the right rowPosition for the node, based on the rowNodeOrder map.
      *
      * We need to compute the minimum between the rowIndex of this node and the first child, recursively.
      * This is because we need to find the find out which row first "created" this group.
@@ -317,17 +316,17 @@ export class TreeNode implements ITreeNode {
      *
      * So this function makes sense to be called only in the post-order commit DFS.
      *
-     * @returns the rowOrder the node should have.
+     * @returns the rowPosition the node should have.
      */
-    public getNewRowOrder(rowNodeOrder: RowNodeOrder): number {
-        let rowOrder = getRowIndex(this.row, rowNodeOrder);
+    public getRowPosition(rowNodeOrder: RowNodeOrder): number {
+        let rowPosition = getRowIndex(this.row, rowNodeOrder);
         if (this.childrenAfterGroup.length > 0) {
-            const firstChildRowOrder = (this.childrenAfterGroup[0].treeNode! as TreeNode).rowOrder;
-            if (firstChildRowOrder >= 0 && (rowOrder < 0 || firstChildRowOrder < rowOrder)) {
-                rowOrder = firstChildRowOrder;
+            const firstChildRowPosition = this.childrenAfterGroup[0].treeNode!.rowPosition;
+            if (firstChildRowPosition >= 0 && (rowPosition < 0 || firstChildRowPosition < rowPosition)) {
+                rowPosition = firstChildRowPosition;
             }
         }
-        return rowOrder;
+        return rowPosition;
     }
 
     /**
@@ -377,8 +376,8 @@ export class TreeNode implements ITreeNode {
                 let writeIdx = 0; // Keep track of where we are writing in the childrenAfterGroup array
                 let prevPosition = -1;
                 for (const child of children!.values()) {
-                    const nextPosition = child.getNewRowOrder(rowNodeOrder);
-                    child.rowOrder = nextPosition;
+                    const nextPosition = child.getRowPosition(rowNodeOrder);
+                    child.rowPosition = nextPosition;
                     const row = child.row!;
                     if (changed || childrenAfterGroup[writeIdx] !== row) {
                         childrenAfterGroup[writeIdx] = child.row!;
@@ -392,7 +391,7 @@ export class TreeNode implements ITreeNode {
                 }
 
                 if (orderChanged) {
-                    childrenAfterGroup.sort(rowOrderComparer);
+                    childrenAfterGroup.sort(rowPositionComparer);
 
                     // We need to rebuild the children map in the right order
                     children!.clear();
@@ -464,7 +463,7 @@ export class TreeNode implements ITreeNode {
             }
             const oldAllLeafChildrenLength = allLeafChildren.length;
 
-            let count = 0;
+            let writeIdx = 0;
             for (let i = 0; i < childrenAfterGroupLen; ++i) {
                 const childRow = childrenAfterGroup[i];
                 const childAllLeafChildren = childRow.allLeafChildren!;
@@ -472,26 +471,26 @@ export class TreeNode implements ITreeNode {
                 if (childAllLeafChildrenLen) {
                     for (let j = 0; j < childAllLeafChildrenLen; ++j) {
                         const leaf = childAllLeafChildren[j];
-                        if (count >= oldAllLeafChildrenLength || allLeafChildren[count] !== leaf) {
-                            allLeafChildren[count] = leaf;
+                        if (writeIdx >= oldAllLeafChildrenLength || allLeafChildren[writeIdx] !== leaf) {
+                            allLeafChildren[writeIdx] = leaf;
                             changed = true;
                         }
-                        ++count;
+                        ++writeIdx;
                     }
                 } else {
-                    if ((count >= oldAllLeafChildrenLength || allLeafChildren[count] !== childRow) && childRow) {
-                        allLeafChildren[count] = childRow;
+                    if ((writeIdx >= oldAllLeafChildrenLength || allLeafChildren[writeIdx] !== childRow) && childRow) {
+                        allLeafChildren[writeIdx] = childRow;
                         changed = true;
                     }
-                    ++count;
+                    ++writeIdx;
                 }
             }
-            if (oldAllLeafChildrenLength !== count) {
-                allLeafChildren.length = count;
+            if (oldAllLeafChildrenLength !== writeIdx) {
+                allLeafChildren.length = writeIdx;
                 changed = true;
             }
             if (row!.allLeafChildren !== allLeafChildren) {
-                if (!changed && (row!.allLeafChildren!.length > 0 || allLeafChildren.length > 0)) {
+                if (!changed && (writeIdx > 0 || row!.allLeafChildren!.length > 0)) {
                     changed = true;
                 }
                 row!.allLeafChildren = allLeafChildren;
