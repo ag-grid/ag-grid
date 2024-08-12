@@ -384,7 +384,13 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private commitTree(details: TreeExecutionDetails) {
         const root = this.root;
 
-        this.commitChildren(details, root);
+        while (true) {
+            const child = root.dequeueInvalidated();
+            if (!child) {
+                break;
+            }
+            this.commitChild(details, root, child);
+        }
 
         if (root.childrenChanged) {
             root.updateChildrenAfterGroup(details.rowNodeOrder);
@@ -404,39 +410,30 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.commitDeletedRows();
     }
 
-    private commitChildren(details: TreeExecutionDetails, node: TreeNode): void {
-        while (true) {
-            const child = node.dequeueInvalidated();
-            if (!child) {
-                break;
+    /** Commit the changes performed to a node and its children */
+    private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
+        if (this.commitNodePreOrder(details, parent, node)) {
+            while (true) {
+                const child = node.dequeueInvalidated();
+                if (!child) {
+                    break;
+                }
+                this.commitChild(details, node, child); // Recursion
             }
-            this.commitChild(details, node, child);
+
+            this.commitNodePostOrder(details, parent, node);
         }
     }
 
-    /** Commit the changes performed to a node and its children */
-    private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
+    private commitNodePreOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): boolean {
         if (node.ghost) {
             if (node.oldRow !== null && !parent.childrenChanged) {
                 parent.childrenChanged = true;
             }
             this.destroyTree(node, true, details.changedPath);
-            return;
+            return false; // Destroyed. No need to process children.
         }
 
-        // Note: we use commitChild, commitChildren, commitNodePreOrder, commitChildrenWithPostOrder, commitNodePostOrder in this way to leverage TCO (tail call optimization).
-        // See https://2ality.com/2015/06/tail-call-optimization.html
-
-        this.commitNodePreOrder(details, parent, node);
-        this.commitChildrenWithPostOrder(details, parent, node);
-    }
-
-    private commitChildrenWithPostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
-        this.commitChildren(details, node);
-        this.commitNodePostOrder(details, parent, node);
-    }
-
-    private commitNodePreOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         let row = node.row;
         if (row === null) {
             row = this.createFillerRow(node);
@@ -471,6 +468,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
         }
+
+        return true;
     }
 
     private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
