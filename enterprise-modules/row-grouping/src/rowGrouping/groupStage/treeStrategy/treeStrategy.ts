@@ -117,7 +117,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.oldGroupDisplayColIds = newGroupDisplayColIds;
         }
 
-        this.clearTree(this.root);
+        this.destroyTree(root, true, details.changedPath);
 
         const rows = rootRow.allLeafChildren;
         const rowsLen = rows?.length ?? 0;
@@ -159,7 +159,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private destroyTree(node: TreeNode, allRows: boolean, changedPath: ChangedPath | null | undefined): void {
         const { row } = node;
         if (row !== null) {
-            node.linkRow(null);
+            if (!allRows || node.level >= 0) {
+                node.linkRow(null);
+            }
             if (!row.data) {
                 this.deleteRow(row, true);
             } else if (allRows) {
@@ -169,8 +171,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
         let hadChildrenRows = false;
-        for (const child of node.enumChildren()) {
-            if (child.oldRow !== null) {
+        const children = node.enumChildren();
+        node.destroy();
+        for (const child of children) {
+            if (!hadChildrenRows && child.oldRow !== null) {
                 hadChildrenRows = true;
             }
             this.destroyTree(child, allRows, changedPath);
@@ -179,18 +183,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             if (changedPath?.isActive()) {
                 changedPath.addParentNode(row);
             }
-        }
-        node.destroy();
-    }
-
-    /** Removes all rows from the tree, by making all the node in the subtree ghost nodes */
-    private clearTree(node: TreeNode): void {
-        const oldRow = this.clearRow(node);
-        if (oldRow !== null && !oldRow.data) {
-            unsetTreeRowExpandedInitialized(oldRow);
-        }
-        for (const child of node.enumChildren()) {
-            this.clearTree(child);
         }
     }
 
@@ -373,13 +365,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private commitTree(details: TreeExecutionDetails) {
         const root = this.root;
 
-        while (true) {
-            const child = root.dequeueInvalidated();
-            if (!child) {
-                break;
-            }
-            this.commitChild(details, root, child);
-        }
+        this.commitChildren(details, root);
 
         if (root.childrenChanged) {
             root.updateChildrenAfterGroup(details.rowNodeOrder);
@@ -399,17 +385,22 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.commitDeletedRows();
     }
 
+    private commitChildren(details: TreeExecutionDetails, parent: TreeNode): void {
+        while (true) {
+            const child = parent.dequeueInvalidated();
+            if (child === null) {
+                break;
+            }
+            if (child.parent === parent) {
+                this.commitChild(details, parent, child);
+            }
+        }
+    }
+
     /** Commit the changes performed to a node and its children */
     private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         if (this.commitNodePreOrder(details, parent, node)) {
-            while (true) {
-                const child = node.dequeueInvalidated();
-                if (!child) {
-                    break;
-                }
-                this.commitChild(details, node, child); // Recursion
-            }
-
+            this.commitChildren(details, node);
             this.commitNodePostOrder(details, parent, node);
         }
     }
