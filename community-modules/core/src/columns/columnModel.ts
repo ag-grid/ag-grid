@@ -154,7 +154,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             (event) => this.refreshAll(convertSourceType(event.source))
         );
         this.addManagedPropertyListener('selection', (event) => {
-            this.onSelectionChanged(event.currentValue, event.previousValue, convertSourceType(event.source));
+            this.onSelectionOptionsChanged(event.currentValue, event.previousValue, convertSourceType(event.source));
         });
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
             this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
@@ -1087,7 +1087,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    private onSelectionChanged(
+    private onSelectionOptionsChanged(
         current: SelectionOptions | undefined,
         prev: SelectionOptions | undefined,
         source: ColumnEventType

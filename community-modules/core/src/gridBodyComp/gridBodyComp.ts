@@ -138,8 +138,8 @@ export class GridBodyComp extends Component {
         );
 
         if (
-            (this.rangeService && this.gos.getLegacySelectionOption('enableRangeSelection')) ||
-            this.gos.getLegacySelectionOption('rowSelection') === 'multiple'
+            (this.rangeService && this.gos.getSelectionOption('enableRangeSelection')) ||
+            this.gos.getSelectionOption('rowSelection') === 'multiple'
         ) {
             _setAriaMultiSelectable(this.getGui(), true);
         }

@@ -1057,7 +1057,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // the children (as the default behaviour when clicking is to unselect other rows) which results
         // in the group getting unselected (as all children are unselected). the correct thing would be
         // to change this, so that children of the selected group are not then subsequently un-selected.
-        const groupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
+        const groupSelectsChildren = this.gos.getSelectionOption('groupSelectsChildren');
 
         if (
             // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
@@ -1065,13 +1065,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             (groupSelectsChildren && this.rowNode.group) ||
             this.isRowSelectionBlocked() ||
             // if click selection suppressed, do nothing
-            this.gos.getLegacySelectionOption('suppressRowClickSelection')
+            this.gos.getSelectionOption('suppressRowClickSelection')
         ) {
             return;
         }
 
-        const multiSelectOnClick = this.gos.getLegacySelectionOption('rowMultiSelectWithClick');
-        const rowDeselectionWithCtrl = !this.gos.getLegacySelectionOption('suppressRowDeselection');
+        const multiSelectOnClick = this.gos.getSelectionOption('rowMultiSelectWithClick');
+        const rowDeselectionWithCtrl = !this.gos.getSelectionOption('suppressRowDeselection');
         const source = 'rowClicked';
 
         if (this.rowNode.isSelected()) {
@@ -1403,7 +1403,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const selected = this.rowNode.isSelected()!;
-        if (selected && this.gos.getLegacySelectionOption('suppressRowDeselection')) {
+        if (selected && this.gos.getSelectionOption('suppressRowDeselection')) {
             return;
         }
 

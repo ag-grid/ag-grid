@@ -340,7 +340,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     }
 
     public isRowSelection() {
-        const rowSelection = this.getLegacySelectionOption('rowSelection');
+        const rowSelection = this.getSelectionOption('rowSelection');
         return rowSelection === 'single' || rowSelection === 'multiple';
     }
 
@@ -625,7 +625,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         };
     }
 
-    public getLegacySelectionOption<T extends keyof GridOptions>(option: T): GridOptions[T] {
+    public getSelectionOption<T extends keyof GridOptions>(option: T): GridOptions[T] {
         const go = this.gridOptions;
         const so = go.selection;
         const useNewAPI = so !== undefined;

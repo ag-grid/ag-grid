@@ -178,8 +178,8 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (!this.cellCtrl.isEditing() && gos.isRowSelection()) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
-            if (newSelection || !gos.getLegacySelectionOption('suppressRowDeselection')) {
-                const groupSelectsFiltered = this.beans.gos.getLegacySelectionOption('groupSelectsFiltered');
+            if (newSelection || !gos.getSelectionOption('suppressRowDeselection')) {
+                const groupSelectsFiltered = this.beans.gos.getSelectionOption('groupSelectsFiltered');
                 const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,
