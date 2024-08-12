@@ -1,5 +1,5 @@
 import type { ColumnState } from '../columns/columnApplyStateService';
-import { isColumnsControlCol } from '../columns/columnUtils';
+import { isColumnControlsCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
@@ -405,7 +405,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         const so = this.gos.get('selection');
 
         if (so) {
-            const checkbox = isColumnsControlCol(this) && getCheckboxes(this.gos);
+            const checkbox = isColumnControlsCol(this) && getCheckboxes(this.gos);
             return this.isColumnFunc(rowNode, checkbox);
         } else {
             return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);

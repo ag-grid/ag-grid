@@ -6,7 +6,7 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { _warnOnce } from '../utils/function';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
-import { CONTROL_COLUMN_ID_PREFIX } from './controlColService';
+import { CONTROLS_COLUMN_ID_PREFIX } from './controlsColService';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 
@@ -68,7 +68,7 @@ export function isColumnGroupAutoCol(col: AgColumn): boolean {
 }
 
 export function isColumnControlsCol(col: AgColumn): boolean {
-    return col.getColId().startsWith(CONTROL_COLUMN_ID_PREFIX);
+    return col.getColId().startsWith(CONTROLS_COLUMN_ID_PREFIX);
 }
 
 export function convertColumnTypes(type: string | string[]): string[] {

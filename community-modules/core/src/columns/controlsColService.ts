@@ -8,14 +8,14 @@ export interface IControlsColService {
     createControlsCols(): AgColumn[];
 }
 
-export const CONTROL_COLUMN_ID_PREFIX = 'ag-Grid-ControlColumn' as const;
+export const CONTROLS_COLUMN_ID_PREFIX = 'ag-Grid-ControlsColumn' as const;
 
 export class ControlsColService extends BeanStub implements NamedBean, IControlsColService {
     beanName = 'controlsColService' as const;
 
     public createControlsCols(): AgColumn[] {
         const so = this.gos.get('selection');
-        const controlColDef = this.gos.get('controlsColDef');
+        const controlsColDef = this.gos.get('controlsColDef');
         const enableRTL = this.gos.get('enableRtl');
 
         if (!so) {
@@ -45,10 +45,10 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
                 },
                 suppressFillHandle: true,
                 // overrides
-                ...controlColDef,
+                ...controlsColDef,
                 // non-overridable properties
                 editable: false,
-                colId: `${CONTROL_COLUMN_ID_PREFIX}`,
+                colId: `${CONTROLS_COLUMN_ID_PREFIX}`,
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);
             this.createBean(col);
