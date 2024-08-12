@@ -426,29 +426,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
     }
 
-    public getGroupKeys(excludeSelf = false): string[] {
-        const keys: string[] = [];
-
-        let pointer: RowNode | null = this;
-        if (excludeSelf) {
-            pointer = pointer.parent;
-        }
-        while (pointer && pointer.level >= 0) {
-            keys.push(pointer.key!);
-            pointer = pointer.parent;
-        }
-        keys.reverse();
-
-        return keys;
-    }
-
-    public isPixelInRange(pixel: number): boolean {
-        if (!_exists(this.rowTop) || !_exists(this.rowHeight)) {
-            return false;
-        }
-        return pixel >= this.rowTop && pixel < this.rowTop + this.rowHeight;
-    }
-
     public setRowTop(rowTop: number | null): void {
         this.oldRowTop = this.rowTop;
 
