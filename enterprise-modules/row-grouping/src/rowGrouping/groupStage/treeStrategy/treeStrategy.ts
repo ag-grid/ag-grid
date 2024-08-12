@@ -119,18 +119,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         this.clearTree(this.root);
 
-        const rows = rootRow.allLeafChildren;
-        if (rows) {
-            const len = rows.length;
-            for (let rowIndex = 0; rowIndex < len; ++rowIndex) {
-                const row = rows[rowIndex];
-                const node = this.upsertPath(this.getDataPath(details, row));
-                if (node) {
-                    node.rowIndex = rowIndex;
-                    this.overwriteRow(node, row, undefined, false);
-                }
-            }
-        }
+        this.addOrUpdateRows(details, rootRow.allLeafChildren, false);
 
         this.commitTree(details);
     }
