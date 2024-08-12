@@ -445,7 +445,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.setGroupData(row, key);
         }
 
-        if (node.oldRow !== null && node.oldRow !== row) {
+        if (node.oldRow !== row) {
+            node.oldRow = node.row;
+
+            parent.pathChanged = true;
+            parent.childrenChanged = true;
+
             // We need to update children rows parents, as the row changed
             for (const { row: childRow } of node.enumChildren()) {
                 if (childRow !== null) {
@@ -456,19 +461,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         this.commitChildren(details, node);
 
-        this.commitNodePostOrder(details, parent, node);
+        this.commitNodePostOrder(details, parent, node, row);
     }
 
-    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
-        const row = node.row!;
-
+    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode, row: RowNode): void {
         const { rowNodeOrder } = details;
-
-        if (node.oldRow !== row) {
-            node.oldRow = node.row;
-            parent.pathChanged = true;
-            parent.childrenChanged = true;
-        }
 
         if (node.childrenChanged) {
             node.updateChildrenAfterGroup(rowNodeOrder);
