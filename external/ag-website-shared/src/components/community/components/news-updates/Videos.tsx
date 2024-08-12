@@ -15,16 +15,9 @@ interface Video {
 }
 
 const Videos = ({ videos }: { videos: Video[] }) => {
-    const [playVideo, setPlayVideo] = useState(false);
     const [currentVideo, setCurrentVideo] = useState(videos[0]);
-
     const handleVideoSelect = (video: Video) => {
         setCurrentVideo(video);
-        setPlayVideo(false);
-    };
-
-    const playGitNationVideo = () => {
-        setPlayVideo(true);
     };
 
     return (
@@ -36,12 +29,12 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                 </div>
                 <div className={styles.rightColumn}>
                     {/* TODO: GitNation Portal Support */}
-                    {currentVideo.thumbnail && !playVideo ? (
+                    {currentVideo.thumbnail ? (
                         <img
-                            className={styles.videoFrame}
+                            className={styles.videoImage}
                             src={urlWithBaseUrl(currentVideo.thumbnail)}
                             alt="Video thumbnail"
-                            onClick={() => playGitNationVideo()}
+                            onClick={() => window.open(currentVideo.link, '_blank')}
                         />
                     ) : (
                         <iframe
