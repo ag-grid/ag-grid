@@ -1,7 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { getHideDisabledCheckboxes } from '../gridOptionsService';
+import { getCheckboxes, getHideDisabledCheckboxes } from '../gridOptionsService';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
@@ -194,7 +194,7 @@ export class CheckboxSelectionComponent extends Component {
 
         const so = this.gos.get('selection');
         if (so) {
-            return (so.mode !== 'cell' && so.checkboxes) ?? true;
+            return getCheckboxes(this.gos);
         }
 
         // column will be missing if groupDisplayType = 'groupRows'
