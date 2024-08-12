@@ -168,9 +168,15 @@ export const Changelog = () => {
     const switchDisplayedFixVersion = useCallback(
         (fixVersion) => {
             setFixVersion(fixVersion);
-            const url = new URL(window.location);
+            const url = new URL(window.location.href);
+
+            // Remove trailing slash when adding search params (SEO)
+            if (url.pathname.endsWith('/')) {
+                url.pathname = url.pathname.slice(0, -1);
+            }
+
             url.searchParams.set('fixVersion', fixVersion);
-            window.history.pushState({}, '', url);
+            window.history.replaceState({}, '', url);
         },
         [setFixVersion]
     );
