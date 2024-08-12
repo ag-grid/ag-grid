@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
+import { getCheckboxes, getHeaderCheckbox } from '../gridOptionsService';
 
 export interface IControlColService {
     createControlCols(): AgColumn[];
@@ -25,8 +26,8 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
             return [];
         }
 
-        const checkboxes = so.checkboxes ?? true;
-        const headerCheckbox = so.mode === 'multiRow' ? so.headerCheckbox ?? true : false;
+        const checkboxes = getCheckboxes(this.gos);
+        const headerCheckbox = getHeaderCheckbox(this.gos);
 
         if (checkboxes || headerCheckbox) {
             const colDef: ColDef = {

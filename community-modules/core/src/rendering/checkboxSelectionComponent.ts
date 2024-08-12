@@ -1,6 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
+import { getHideDisabledCheckboxes } from '../gridOptionsService';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
@@ -169,7 +170,7 @@ export class CheckboxSelectionComponent extends Component {
         }
 
         const so = this.gos.get('selection');
-        const hideDisabledCheckboxes = (so?.mode !== 'cell' && so?.hideDisabledCheckboxes) ?? true;
+        const hideDisabledCheckboxes = getHideDisabledCheckboxes(this.gos);
         const disableInsteadOfHide = so ? hideDisabledCheckboxes : this.column?.getColDef().showDisabledCheckboxes;
         if (disableInsteadOfHide) {
             this.eCheckbox.setDisabled(!selectable);

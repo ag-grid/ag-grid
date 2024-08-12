@@ -4,6 +4,7 @@ import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SelectionOptions } from '../../../entities/gridOptions';
 import type { SelectionEventSourceType } from '../../../events';
+import { getHeaderCheckbox } from '../../../gridOptionsService';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
@@ -220,13 +221,7 @@ export class SelectAllFeature extends BeanStub {
 
         const so = this.selectionOptions;
         if (so !== undefined) {
-            // handle new options
-            if (so?.mode !== 'multiRow') {
-                return false;
-            }
-
-            // Header checkbox is enabled by default in 'multiRow' mode
-            const headerCheckbox = so.headerCheckbox ?? so.mode === 'multiRow';
+            const headerCheckbox = getHeaderCheckbox(this.gos);
 
             return (
                 headerCheckbox &&
