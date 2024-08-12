@@ -4,16 +4,16 @@ import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import { getCheckboxes, getHeaderCheckbox } from '../gridOptionsService';
 
-export interface IControlColService {
-    createControlCols(): AgColumn[];
+export interface IControlsColService {
+    createControlsCols(): AgColumn[];
 }
 
 export const CONTROL_COLUMN_ID_PREFIX = 'ag-Grid-ControlColumn' as const;
 
-export class ControlColService extends BeanStub implements NamedBean, IControlColService {
-    beanName = 'controlColService' as const;
+export class ControlsColService extends BeanStub implements NamedBean, IControlsColService {
+    beanName = 'controlsColService' as const;
 
-    public createControlCols(): AgColumn[] {
+    public createControlsCols(): AgColumn[] {
         const so = this.gos.get('selection');
         const controlColDef = this.gos.get('controlsColDef');
         const enableRTL = this.gos.get('enableRtl');

@@ -34,7 +34,7 @@ import type { ColumnSizeService } from './columnSizeService';
 import { GROUP_AUTO_COLUMN_ID, isColumnControlCol } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
-import type { IControlColService } from './controlColService';
+import type { IControlsColService } from './controlColService';
 import type { FuncColsService } from './funcColsService';
 import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
@@ -64,7 +64,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private pivotResultColsService: PivotResultColsService;
     private columnAnimationService: ColumnAnimationService;
     private autoColService?: IAutoColService;
-    private controlColService?: IControlColService;
+    private controlColService?: IControlsColService;
     private valueCache: ValueCache;
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
@@ -399,7 +399,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         destroyColumnTree(this.context, this.controlCols?.tree);
         this.controlCols = null;
 
-        const list = this.controlColService?.createControlCols() ?? [];
+        const list = this.controlColService?.createControlsCols() ?? [];
 
         const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
         this.controlCols = {
