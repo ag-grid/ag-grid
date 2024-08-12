@@ -251,6 +251,8 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     setExpanded(expanded: boolean, sourceEvent?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
 
     /**
+     * @deprecated v32.2.0
+     *
      * Returns:
      * - `true` if the node is a full width cell.
      * - `false` if the node is not a full width cell.

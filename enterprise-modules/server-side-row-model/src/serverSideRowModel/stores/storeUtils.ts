@@ -39,7 +39,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
         endRow?: number;
     }): void {
         const { storeParams, parentBlock, parentNode } = p;
-        const groupKeys = parentNode.getGroupKeys();
+        const groupKeys = parentNode.getRoute() ?? [];
 
         if (!storeParams.datasource) {
             return;
