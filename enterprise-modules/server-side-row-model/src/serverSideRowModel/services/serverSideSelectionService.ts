@@ -29,7 +29,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
 
     public postConstruct(): void {
         this.addManagedPropertyListeners(['groupSelectsChildren', 'selection'], () => {
-            const groupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
+            const groupSelectsChildren = this.gos.getSelectionOption('groupSelectsChildren');
 
             // Only switch strategies when value of groupSelectsChildren actually changes, not just any part of selection options
             const Strategy =
@@ -52,15 +52,15 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
         this.addManagedPropertyListener('selection', () => {
             // Only reset selection when selection mode changes, not just any part of selection options
-            const rowSelection = this.gos.getLegacySelectionOption('rowSelection');
+            const rowSelection = this.gos.getSelectionOption('rowSelection');
             if (rowSelection !== this.selectionMode) {
                 this.selectionMode = rowSelection;
                 this.deselectAllRowNodes({ source: 'api' });
             }
         });
 
-        this.selectionMode = this.gos.getLegacySelectionOption('rowSelection');
-        const groupSelectsChildren = this.gos.getLegacySelectionOption('groupSelectsChildren');
+        this.selectionMode = this.gos.getSelectionOption('rowSelection');
+        const groupSelectsChildren = this.gos.getSelectionOption('groupSelectsChildren');
         const Strategy = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new Strategy());
     }
@@ -85,7 +85,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const { nodes, ...otherParams } = params;
 
-        const rowSelection = this.gos.getLegacySelectionOption('rowSelection');
+        const rowSelection = this.gos.getSelectionOption('rowSelection');
         if (nodes.length > 1 && rowSelection !== 'multiple') {
             _warnOnce(`cannot multi select while rowSelection='single'`);
             return 0;
