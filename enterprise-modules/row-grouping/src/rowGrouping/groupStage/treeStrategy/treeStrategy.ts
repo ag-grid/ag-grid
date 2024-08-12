@@ -199,14 +199,13 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Transactional insert/update */
     private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
-        const { rowNodeOrder } = details;
         if (rows) {
             const len = rows.length;
             for (let i = 0; i < len; ++i) {
                 const row = rows![i];
                 const node = this.upsertPath(this.getDataPath(details, row));
                 if (node) {
-                    this.overwriteRow(node, row, rowNodeOrder, update);
+                    this.overwriteRow(node, row, update);
                 }
             }
         }
@@ -272,12 +271,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * Overwrites the row property of a non-root node, preparing the tree correctly for the commit.
      * @returns The previous row, if any, that was overwritten.
      */
-    private overwriteRow(
-        node: TreeNode,
-        newRow: RowNode,
-        rowNodeOrder: RowNodeOrder | undefined,
-        update: boolean
-    ): RowNode | null {
+    private overwriteRow(node: TreeNode, newRow: RowNode, update: boolean): RowNode | null {
         if (node.level < 0) {
             return null; // Cannot overwrite a null node or the root row
         }
