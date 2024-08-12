@@ -168,21 +168,22 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 clearTreeRowFlags(row);
             }
         }
-        node.oldRow = null;
-        let hasRows = false;
+        let hadChildrenRows = false;
         for (const child of node.enumChildren()) {
-            hasRows ||= !!child.row;
+            if (child.oldRow !== null) {
+                hadChildrenRows = true;
+            }
             this.destroyTree(child, allRows, changedPath);
         }
-        if (allRows && hasRows && row) {
+        if (allRows && hadChildrenRows && row !== null) {
             if (changedPath?.isActive()) {
                 changedPath.addParentNode(row);
             }
         }
-        node.remove();
+        node.destroy();
     }
 
-    /** Removes all rows from the tree */
+    /** Removes all rows from the tree, by making all the node in the subtree ghost nodes */
     private clearTree(node: TreeNode): void {
         const oldRow = this.clearRow(node);
         if (oldRow !== null && !oldRow.data) {

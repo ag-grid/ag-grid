@@ -288,13 +288,14 @@ export class TreeNode implements ITreeNode {
      * After destroyed this node cannot be used, and need to be thrown away.
      * It is safe to destroy the root however.
      */
-    public remove(): void {
+    public destroy(): void {
         const parent = this.parent;
         if (parent?.children?.delete(this.key)) {
             if (this.ghost) {
                 --parent.ghosts;
             }
         }
+        this.oldRow = null;
         this.parent = null;
         this.children = null;
         this.childrenAfterGroup = EMPTY_ARRAY;
