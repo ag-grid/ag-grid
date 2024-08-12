@@ -11,6 +11,7 @@ import type {
     DataChangedEvent,
     IRowNode,
     RowHighlightPosition,
+    RowNodeEvent,
     RowNodeEventType,
     RowPinnedType,
     SetSelectedParams,
@@ -448,25 +449,25 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         return pixel >= this.rowTop && pixel < this.rowTop + this.rowHeight;
     }
 
-    private updateIfDifferent<T extends keyof RowNode>(key: T, value: RowNode[T], eventName: RowNodeEventType): void {
-        if (this[key] === value) {
-            return;
-        }
-        (this as RowNode)[key] = value;
-
-        this.dispatchRowEvent(eventName);
-    }
-
     public setFirstChild(firstChild: boolean): void {
-        this.updateIfDifferent('firstChild', firstChild, 'firstChildChanged');
+        if (this.firstChild !== firstChild) {
+            this.firstChild = firstChild;
+            this.dispatchRowEvent('firstChildChanged');
+        }
     }
 
     public setLastChild(lastChild: boolean): void {
-        this.updateIfDifferent('lastChild', lastChild, 'lastChildChanged');
+        if (this.lastChild !== lastChild) {
+            this.lastChild = lastChild;
+            this.dispatchRowEvent('lastChildChanged');
+        }
     }
 
     public setChildIndex(childIndex: number): void {
-        this.updateIfDifferent('childIndex', childIndex, 'childIndexChanged');
+        if (this.childIndex !== childIndex) {
+            this.childIndex = childIndex;
+            this.dispatchRowEvent('childIndexChanged');
+        }
     }
 
     public setRowTop(rowTop: number | null): void {
@@ -490,22 +491,27 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     private setDisplayed(displayed: boolean): void {
-        this.updateIfDifferent('displayed', displayed, 'displayedChanged');
+        if (this.displayed !== displayed) {
+            this.displayed = displayed;
+            this.dispatchRowEvent('displayedChanged');
+        }
     }
 
     public setDragging(dragging: boolean): void {
-        this.updateIfDifferent('dragging', dragging, 'draggingChanged');
+        if (this.dragging !== dragging) {
+            this.dragging = dragging;
+            this.dispatchRowEvent('draggingChanged');
+        }
     }
 
     public setHighlighted(highlighted: RowHighlightPosition | null): void {
-        this.updateIfDifferent('highlighted', highlighted, 'rowHighlightChanged');
+        if (this.highlighted !== highlighted) {
+            this.highlighted = highlighted;
+            this.dispatchRowEvent('rowHighlightChanged');
+        }
     }
 
     public setHovered(hovered: boolean): void {
-        if (this.hovered === hovered) {
-            return;
-        }
-
         this.hovered = hovered;
     }
 
@@ -514,7 +520,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public setAllChildrenCount(allChildrenCount: number | null): void {
-        this.updateIfDifferent('allChildrenCount', allChildrenCount, 'allChildrenCountChanged');
+        if (this.allChildrenCount !== allChildrenCount) {
+            this.allChildrenCount = allChildrenCount;
+            this.dispatchRowEvent('allChildrenCountChanged');
+        }
     }
 
     public setMaster(master: boolean): void {
@@ -644,17 +653,21 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.setRowHeight(newRowHeight);
 
         const rowModel = this.beans.rowModel as IClientSideRowModel | IServerSideRowModel;
-        if (rowModel.onRowHeightChangedDebounced) {
-            rowModel.onRowHeightChangedDebounced();
-        }
+        rowModel.onRowHeightChangedDebounced?.();
     }
 
     public setRowIndex(rowIndex: number | null): void {
-        this.updateIfDifferent('rowIndex', rowIndex, 'rowIndexChanged');
+        if (this.rowIndex !== rowIndex) {
+            this.rowIndex = rowIndex;
+            this.dispatchRowEvent('rowIndexChanged');
+        }
     }
 
     public setUiLevel(uiLevel: number): void {
-        this.updateIfDifferent('uiLevel', uiLevel, 'uiLevelChanged');
+        if (this.uiLevel !== uiLevel) {
+            this.uiLevel = uiLevel;
+            this.dispatchRowEvent('uiLevelChanged');
+        }
     }
 
     /**
@@ -977,11 +990,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
-        const event = {
+        this.localEventService?.dispatchEvent({
             type: type,
             node: this,
-        };
-        this.localEventService?.dispatchEvent(event);
+        } as RowNodeEvent<T, TData>);
     }
 
     public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
