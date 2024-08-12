@@ -39,7 +39,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         // if doing groupDisplayType = "multipleColumns", then we call the method multiple times, once
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
-            rowGroupCols.forEach((rowGroupCol: AgColumn, index: number) => {
+            rowGroupCols.forEach((rowGroupCol, index) => {
                 autoCols.push(this.createOneAutoCol(rowGroupCol, index));
             });
         } else {
@@ -50,7 +50,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     }
 
     public updateAutoCols(autoGroupCols: AgColumn[], source: ColumnEventType) {
-        autoGroupCols.forEach((col: AgColumn, index: number) => this.updateOneAutoCol(col, index, source));
+        autoGroupCols.forEach((col, index) => this.updateOneAutoCol(col, index, source));
     }
 
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
@@ -139,12 +139,9 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             res.cellRenderer = 'agGroupCellRenderer';
         }
 
-        // we never allow moving the group column
-        // defaultAutoColDef.suppressMovable = true;
         if (rowGroupCol) {
             const colDef = rowGroupCol.getColDef();
             Object.assign(res, {
-                // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnNameService.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter,
             });

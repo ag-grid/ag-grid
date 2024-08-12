@@ -51,8 +51,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     public getHeaderRowCount(): number {
-        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
-        return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
+        return this.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
     }
 
     public getHeaderPositionForColumn(

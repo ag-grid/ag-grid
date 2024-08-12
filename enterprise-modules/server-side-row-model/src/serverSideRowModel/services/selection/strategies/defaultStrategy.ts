@@ -36,7 +36,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     public postConstruct(): void {
         this.selectionCtx.init(this.rowModel);
         this.rowSelection = this.gos.getLegacySelectionOption('rowSelection');
-        this.addManagedPropertyListeners(['rowSelection', 'selectionOptions'], () => {
+        this.addManagedPropertyListeners(['rowSelection', 'selection'], () => {
             this.rowSelection = this.gos.getLegacySelectionOption('rowSelection');
         });
     }

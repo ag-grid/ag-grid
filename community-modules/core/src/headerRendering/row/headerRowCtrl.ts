@@ -128,9 +128,7 @@ export class HeaderRowCtrl extends BeanStub {
         );
     }
 
-    public getHeaderCellCtrl(column: AgColumnGroup): HeaderGroupCellCtrl | undefined;
-    public getHeaderCellCtrl(column: AgColumn): HeaderCellCtrl | undefined;
-    public getHeaderCellCtrl(column: any): any {
+    public getHeaderCellCtrl(column: AgColumn | AgColumnGroup): any {
         if (!this.headerCellCtrls) {
             return;
         }

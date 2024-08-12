@@ -161,15 +161,7 @@ import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
 import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { CellPosition } from './cellPositionUtils';
-import type {
-    CheckboxSelectionCallback,
-    ColDef,
-    ColGroupDef,
-    ColTypeDef,
-    HeaderCheckboxSelectionCallback,
-    IAggFunc,
-    SortDirection,
-} from './colDef';
+import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {
@@ -1473,7 +1465,14 @@ export interface GridOptions<TData = any> {
     /**
      * Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
      */
-    selectionOptions?: SelectionOptions;
+    selection?: SelectionOptions;
+    /**
+     * Configure the control column, used for displaying checkboxes.
+     *
+     * Note that due to the nature of this column, this type is a restricted version of `ColDef`, which does not support several normal column features
+     * such as editing, pivoting and grouping.
+     */
+    controlsColDef?: ControlsColDef;
 
     /**
      * If `true`, only a single range can be selected.
@@ -2478,7 +2477,7 @@ export interface FillHandleOptions<TData = any> {
 
 export type RowSelectionOptions<TData = any, TValue = any> =
     | SingleRowSelectionOptions<TData, TValue>
-    | MultiRowSelectionOptions<TData, TValue>;
+    | MultiRowSelectionOptions<TData>;
 
 interface CommonRowSelectionOptions<TData = any, TValue = any> {
     /**
@@ -2492,10 +2491,15 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      */
     suppressClickSelection?: boolean;
     /**
-     * Determine checkbox selection behaviour
+     * Set to `true` or return `true` from the callback to render a selection checkbox.
      * @default false
      */
-    checkboxSelection?: CheckboxSelectionOptions<TData, TValue>;
+    checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue>;
+    /**
+     * Set to `true` to hide a disabled checkbox when row is not selectable and checkboxes are enabled.
+     * @default false
+     */
+    hideDisabledCheckboxes?: boolean;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
      */
@@ -2512,7 +2516,7 @@ export interface SingleRowSelectionOptions<TData = any, TValue = any> extends Co
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectionOptions<TData> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
@@ -2528,7 +2532,7 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
      * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
      * @default false
      */
-    headerCheckbox?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
+    headerCheckbox?: boolean;
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
@@ -2536,17 +2540,60 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
     enableMultiSelectWithClick?: boolean;
 }
 
-/**
- * Determines whether checkboxes are displayed for selection
- */
-export type CheckboxSelectionOptions<TData, TValue> =
-    | boolean
-    | {
-          /** Return `true` from function to render a selection checkbox in the first column. */
-          displayCheckbox?: boolean | CheckboxSelectionCallback<TData, TValue>;
-          /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. */
-          showDisabledCheckboxes?: boolean;
-      };
+export type ControlsColDef = Pick<
+    ColDef,
+    | 'icons'
+    | 'suppressNavigable'
+    | 'suppressKeyboardEvent'
+    | 'contextMenuItems'
+    | 'context'
+    | 'onCellClicked'
+    | 'onCellContextMenu'
+    | 'onCellDoubleClicked'
+    | 'onCellValueChanged'
+    | 'headerTooltip'
+    | 'headerClass'
+    | 'headerComponent'
+    | 'headerComponentParams'
+    | 'mainMenuItems'
+    | 'suppressHeaderContextMenu'
+    | 'suppressHeaderMenuButton'
+    | 'suppressHeaderKeyboardEvent'
+    | 'pinned'
+    | 'lockPinned'
+    | 'initialPinned'
+    | 'cellAriaRole'
+    | 'cellStyle'
+    | 'cellClass'
+    | 'cellClassRules'
+    | 'cellRenderer'
+    | 'cellRendererParams'
+    | 'cellRendererSelector'
+    | 'rowDrag'
+    | 'rowDragText'
+    | 'dndSource'
+    | 'dndSourceOnRowDrag'
+    | 'sortable'
+    | 'sort'
+    | 'initialSort'
+    | 'sortIndex'
+    | 'initialSortIndex'
+    | 'sortingOrder'
+    | 'unSortIcon'
+    | 'tooltipField'
+    | 'tooltipValueGetter'
+    | 'tooltipComponent'
+    | 'tooltipComponentParams'
+    | 'width'
+    | 'initialWidth'
+    | 'maxWidth'
+    | 'minWidth'
+    | 'flex'
+    | 'initialFlex'
+    | 'resizable'
+    | 'suppressSizeToFit'
+    | 'suppressAutoSize'
+>;
 
 /**
  * Determines the behaviour when selecting a group row.

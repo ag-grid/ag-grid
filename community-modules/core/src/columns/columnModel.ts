@@ -7,10 +7,12 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { SelectionOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
+import { getCheckboxes, getHeaderCheckbox } from '../gridOptionsService';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
@@ -30,9 +32,10 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnGroupStateService } from './columnGroupStateService';
 import type { ColumnMoveService } from './columnMoveService';
 import type { ColumnSizeService } from './columnSizeService';
-import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, isColumnControlsCol } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
+import type { IControlsColService } from './controlsColService';
 import type { FuncColsService } from './funcColsService';
 import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
@@ -62,6 +65,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private pivotResultColsService: PivotResultColsService;
     private columnAnimationService: ColumnAnimationService;
     private autoColService?: IAutoColService;
+    private controlsColService?: IControlsColService;
     private valueCache: ValueCache;
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
@@ -84,6 +88,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.pivotResultColsService = beans.pivotResultColsService;
         this.columnAnimationService = beans.columnAnimationService;
         this.autoColService = beans.autoColService;
+        this.controlsColService = beans.controlsColService;
         this.valueCache = beans.valueCache;
         this.columnDefFactory = beans.columnDefFactory;
         this.columnApplyStateService = beans.columnApplyStateService;
@@ -107,7 +112,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // group auto columns
     private autoCols: ColumnCollections | null;
 
-    // [providedCols OR pivotResultCols] PLUS autoGroupCols.
+    // control element columns
+    private controlsCols: ColumnCollections | null;
+
+    // [providedCols OR pivotResultCols] PLUS autoGroupCols PLUS controlsCols
     // this cols.list maintains column order.
     private cols: ColumnCollections;
 
@@ -145,6 +153,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
             ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
             (event) => this.refreshAll(convertSourceType(event.source))
         );
+        this.addManagedPropertyListener('selection', (event) => {
+            this.onSelectionOptionsChanged(event.currentValue, event.previousValue, convertSourceType(event.source));
+        });
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
             this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
         );
@@ -236,6 +247,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.createAutoCols();
         this.addAutoCols();
 
+        this.createControlsCols();
+        this.addControlsCols();
+
         this.restoreColOrder();
 
         this.positionLockedCols();
@@ -268,7 +282,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 list: list.slice(),
                 map: { ...map },
                 tree: tree.slice(),
-                treeDepth: treeDepth,
+                treeDepth,
             };
 
             // If the current columns are the same or a subset of the previous
@@ -284,7 +298,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 list: list.slice(),
                 map: { ...map },
                 tree: tree.slice(),
-                treeDepth: treeDepth,
+                treeDepth,
             };
         }
     }
@@ -361,7 +375,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         destroyPrevious();
-        const [tree, treeDepth] = this.columnFactory.createForAutoGroups(list, this.cols?.tree);
+        const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols?.tree);
         this.autoCols = {
             list,
             tree,
@@ -380,6 +394,38 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.lastOrder = putAutocolsFirstInList(this.lastOrder);
         this.lastPivotOrder = putAutocolsFirstInList(this.lastPivotOrder);
+    }
+
+    private createControlsCols(): void {
+        destroyColumnTree(this.context, this.controlsCols?.tree);
+        this.controlsCols = null;
+
+        const list = this.controlsColService?.createControlsCols() ?? [];
+
+        const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
+        this.controlsCols = {
+            list,
+            tree,
+            treeDepth,
+            map: {},
+        };
+
+        function sortControlsColsFirst(a: AgColumn, b: AgColumn): number {
+            const isAControl = isColumnControlsCol(a);
+            const isBControl = isColumnControlsCol(b);
+            return isAControl && isBControl ? 0 : isAControl ? -1 : 1;
+        }
+        this.lastOrder?.sort(sortControlsColsFirst);
+        this.lastPivotOrder?.sort(sortControlsColsFirst);
+    }
+
+    private addControlsCols(): void {
+        if (this.controlsCols == null) {
+            return;
+        }
+        this.cols.list = this.controlsCols.list.concat(this.cols.list);
+        this.cols.tree = this.controlsCols.tree.concat(this.cols.tree);
+        updateColsMap(this.cols);
     }
 
     // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
@@ -662,12 +708,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
 
-        const notAllColsPresent = cols.filter((c: AgColumn) => this.cols.list.indexOf(c) < 0).length > 0;
+        const notAllColsPresent = cols.filter((c) => this.cols.list.indexOf(c) < 0).length > 0;
         if (notAllColsPresent) {
             return;
         }
 
-        cols.sort((a: AgColumn, b: AgColumn) => {
+        cols.sort((a, b) => {
             const indexA = this.cols.list.indexOf(a);
             const indexB = this.cols.list.indexOf(b);
             return indexA - indexB;
@@ -727,9 +773,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const cols = this.colDefCols.list.slice();
 
         if (this.showingPivotResult) {
-            cols.sort((a: AgColumn, b: AgColumn) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
+            cols.sort((a, b) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
         } else if (this.lastOrder) {
-            cols.sort((a: AgColumn, b: AgColumn) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
+            cols.sort((a, b) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
         }
 
         const rowGroupColumns = this.funcColsService.getRowGroupColumns();
@@ -838,6 +884,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public override destroy(): void {
         destroyColumnTree(this.context, this.colDefCols?.tree);
         destroyColumnTree(this.context, this.autoCols?.tree);
+        destroyColumnTree(this.context, this.controlsCols?.tree);
         super.destroy();
     }
 
@@ -865,17 +912,19 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public getAllCols(): AgColumn[] {
         const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
         const pivotResultColsList = pivotResultCols?.list;
-        return ([] as AgColumn[]).concat(
-            ...[this.colDefCols?.list || [], this.autoCols?.list || [], pivotResultColsList || []]
-        );
+        return [
+            this.colDefCols?.list ?? [],
+            this.autoCols?.list ?? [],
+            this.controlsCols?.list ?? [],
+            pivotResultColsList ?? [],
+        ].flat();
     }
 
     public getColsForKeys(keys: ColKey[]): AgColumn[] {
         if (!keys) {
             return [];
         }
-        const res = keys.map((key) => this.getCol(key)).filter((col) => col != null);
-        return res as AgColumn[];
+        return keys.map((key) => this.getCol(key)).filter((col): col is AgColumn => col != null);
     }
 
     public getColDefCol(key: ColKey): AgColumn | null {
@@ -915,12 +964,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public getAutoCol(key: ColKey): AgColumn | null {
-        if (this.autoCols == null) return null;
-        return this.autoCols.list.find((groupCol) => columnsMatch(groupCol, key)) || null;
+        return this.autoCols?.list.find((groupCol) => columnsMatch(groupCol, key)) ?? null;
     }
 
     public getAutoCols(): AgColumn[] | null {
-        return this.autoCols?.list || null;
+        return this.autoCols?.list ?? null;
     }
 
     public setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
@@ -1036,6 +1084,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {
         if (this.autoCols) {
             this.autoColService!.updateAutoCols(this.autoCols.list, source);
+        }
+    }
+
+    private onSelectionOptionsChanged(
+        current: SelectionOptions | undefined,
+        prev: SelectionOptions | undefined,
+        source: ColumnEventType
+    ) {
+        const prevCheckbox = prev ? getCheckboxes(prev) : undefined;
+        const currCheckbox = current ? getCheckboxes(current) : undefined;
+        const checkboxHasChanged = prevCheckbox !== currCheckbox;
+
+        const prevHeaderCheckbox = prev ? getHeaderCheckbox(prev) : undefined;
+        const currHeaderCheckbox = current ? getHeaderCheckbox(current) : undefined;
+        const headerCheckboxHasChanged = prevHeaderCheckbox !== currHeaderCheckbox;
+
+        if (checkboxHasChanged || headerCheckboxHasChanged) {
+            this.refreshAll(source);
         }
     }
 }
