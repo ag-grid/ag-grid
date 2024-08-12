@@ -71,8 +71,12 @@ export function Select<O>({
                 }
             }}
         >
-            <RadixSelect.Trigger tabIndex={0} className={classnames(styles.trigger, { [styles.large]: isLarge })}>
-                <RadixSelect.Value placeholder="Choose...">{getOptionContent(value).optionContent}</RadixSelect.Value>
+            <RadixSelect.Trigger
+                tabIndex={0}
+                aria-label="Framework selector"
+                className={classnames(styles.trigger, { [styles.large]: isLarge })}
+            >
+                <RadixSelect.Value>{getOptionContent(value).optionContent}</RadixSelect.Value>
                 <RadixSelect.Icon>
                     <ChevronDown className={styles.chevronDown} />
                 </RadixSelect.Icon>
