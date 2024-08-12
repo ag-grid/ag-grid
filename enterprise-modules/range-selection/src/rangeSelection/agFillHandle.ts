@@ -352,7 +352,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
             params;
 
-        const userFillOperation = this.gos.getLegacySelectionOption('fillOperation');
+        const userFillOperation = this.gos.getSelectionOption('fillOperation');
         const isVertical = this.dragAxis === 'y';
         let direction: 'up' | 'down' | 'left' | 'right';
 

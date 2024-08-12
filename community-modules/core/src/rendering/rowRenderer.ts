@@ -184,7 +184,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 'detailCellRendererParams',
                 'enableRangeSelection',
                 'enableCellTextSelection',
-                'selectionOptions',
+                'selection',
             ],
             () => this.redrawRows()
         );
@@ -323,15 +323,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.eventService.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeRangeSelectionListeners());
-        this.addManagedPropertyListeners(['enableRangeSelection', 'selectionOptions'], () => {
-            const isEnabled = this.gos.getLegacySelectionOption('enableRangeSelection');
+        this.addManagedPropertyListeners(['enableRangeSelection', 'selection'], () => {
+            const isEnabled = this.gos.getSelectionOption('enableRangeSelection');
             if (isEnabled) {
                 addRangeSelectionListeners();
             } else {
                 removeRangeSelectionListeners();
             }
         });
-        const rangeSelectionEnabled = this.gos.getLegacySelectionOption('enableRangeSelection');
+        const rangeSelectionEnabled = this.gos.getSelectionOption('enableRangeSelection');
         if (rangeSelectionEnabled) {
             addRangeSelectionListeners();
         }
