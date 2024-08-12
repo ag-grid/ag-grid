@@ -27,7 +27,7 @@ export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from './colu
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
-export { GROUP_AUTO_COLUMN_ID } from './columns/columnUtils';
+export { GROUP_AUTO_COLUMN_ID, isColumnControlsCol, isColumnGroupAutoCol } from './columns/columnUtils';
 export { IAutoColService } from './interfaces/iAutoColService';
 export {
     SizeColumnsToFitGridColumnLimits,

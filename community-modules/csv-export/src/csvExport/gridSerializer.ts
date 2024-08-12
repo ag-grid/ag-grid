@@ -20,11 +20,12 @@ import type {
 } from '@ag-grid-community/core';
 import {
     BeanStub,
-    GROUP_AUTO_COLUMN_ID,
     GroupInstanceIdCreator,
     _compose,
     _last,
+    isColumnControlsCol,
     isColumnGroup,
+    isColumnGroupAutoCol,
 } from '@ag-grid-community/core';
 
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './interfaces';
@@ -376,7 +377,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
         }
 
         if (skipRowGroups && !isTreeData) {
-            columnsToExport = columnsToExport.filter((column) => column.getColId() !== GROUP_AUTO_COLUMN_ID);
+            columnsToExport = columnsToExport.filter(
+                (column) => isColumnGroupAutoCol(column) || isColumnControlsCol(column)
+            );
         }
 
         return columnsToExport;

@@ -47,6 +47,7 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
                 // overrides
                 ...controlColDef,
                 // non-overridable properties
+                editable: false,
                 colId: `${CONTROL_COLUMN_ID_PREFIX}`,
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);

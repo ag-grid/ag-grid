@@ -67,7 +67,7 @@ export function isColumnGroupAutoCol(col: AgColumn): boolean {
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }
 
-export function isColumnControlCol(col: AgColumn): boolean {
+export function isColumnControlsCol(col: AgColumn): boolean {
     return col.getColId().startsWith(CONTROL_COLUMN_ID_PREFIX);
 }
 

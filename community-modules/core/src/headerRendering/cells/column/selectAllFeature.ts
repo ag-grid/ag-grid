@@ -1,4 +1,4 @@
-import { isColumnControlCol } from '../../../columns/columnUtils';
+import { isColumnsControlCol } from '../../../columns/columnUtils';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -44,7 +44,7 @@ export class SelectAllFeature extends BeanStub {
      * When using the new selection API, select all is only enabled for the checkbox column
      */
     private isEnabled(): boolean {
-        return this.selectionOptions === undefined || isColumnControlCol(this.column);
+        return this.selectionOptions === undefined || isColumnsControlCol(this.column);
     }
 
     public onSpaceKeyDown(e: KeyboardEvent): void {

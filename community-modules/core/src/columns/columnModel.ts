@@ -31,7 +31,7 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnGroupStateService } from './columnGroupStateService';
 import type { ColumnMoveService } from './columnMoveService';
 import type { ColumnSizeService } from './columnSizeService';
-import { GROUP_AUTO_COLUMN_ID, isColumnControlCol } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, isColumnControlsCol } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import type { IControlsColService } from './controlColService';
@@ -410,8 +410,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         };
 
         function sortControlColsFirst(a: AgColumn, b: AgColumn): number {
-            const isAControl = isColumnControlCol(a);
-            const isBControl = isColumnControlCol(b);
+            const isAControl = isColumnControlsCol(a);
+            const isBControl = isColumnControlsCol(b);
             return isAControl && isBControl ? 0 : isAControl ? -1 : 1;
         }
         this.lastOrder?.sort(sortControlColsFirst);
