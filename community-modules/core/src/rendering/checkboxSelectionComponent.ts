@@ -170,8 +170,9 @@ export class CheckboxSelectionComponent extends Component {
         }
 
         const so = this.gos.get('selection');
-        const hideDisabledCheckboxes = getHideDisabledCheckboxes(this.gos);
-        const disableInsteadOfHide = so ? !hideDisabledCheckboxes : this.column?.getColDef().showDisabledCheckboxes;
+        const disableInsteadOfHide = so
+            ? !getHideDisabledCheckboxes(so)
+            : this.column?.getColDef().showDisabledCheckboxes;
         if (disableInsteadOfHide) {
             this.eCheckbox.setDisabled(!selectable);
             this.setVisible(true);
@@ -194,7 +195,7 @@ export class CheckboxSelectionComponent extends Component {
 
         const so = this.gos.get('selection');
         if (so) {
-            return getCheckboxes(this.gos);
+            return getCheckboxes(so);
         }
 
         // column will be missing if groupDisplayType = 'groupRows'

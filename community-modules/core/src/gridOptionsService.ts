@@ -10,6 +10,7 @@ import type {
     GridOptions,
     MultiRowSelectionOptions,
     RowSelectionOptions,
+    SelectionOptions,
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
 import type { Environment } from './environment';
@@ -706,24 +707,21 @@ export class GridOptionsService extends BeanStub implements NamedBean {
  * Get the selection checkbox configuration. Defaults to enabled.
  */
 export function getCheckboxes(
-    gos: GridOptionsService
+    selection: SelectionOptions
 ): NonNullable<SingleRowSelectionOptions['checkboxes']> | NonNullable<MultiRowSelectionOptions['checkboxes']> {
-    const selection = gos.get('selection');
     return (selection?.mode !== 'cell' && selection?.checkboxes) ?? true;
 }
 
 /**
  * Get the header checkbox configuration. Defaults to enabled in `multiRow`, otherwise disabled.
  */
-export function getHeaderCheckbox(gos: GridOptionsService): boolean {
-    const selection = gos.get('selection');
+export function getHeaderCheckbox(selection: SelectionOptions): boolean {
     return selection?.mode === 'multiRow' && (selection.headerCheckbox ?? true);
 }
 
 /**
  * Get the display configuration for disabled checkboxes. Defaults to displaying disabled checkboxes.
  */
-export function getHideDisabledCheckboxes(gos: GridOptionsService): boolean {
-    const selection = gos.get('selection');
+export function getHideDisabledCheckboxes(selection: SelectionOptions): boolean {
     return (selection?.mode !== 'cell' && selection?.hideDisabledCheckboxes) ?? true;
 }

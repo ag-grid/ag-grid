@@ -26,8 +26,8 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
             return [];
         }
 
-        const checkboxes = getCheckboxes(this.gos);
-        const headerCheckbox = getHeaderCheckbox(this.gos);
+        const checkboxes = getCheckboxes(so);
+        const headerCheckbox = getHeaderCheckbox(so);
 
         if (checkboxes || headerCheckbox) {
             const colDef: ColDef = {

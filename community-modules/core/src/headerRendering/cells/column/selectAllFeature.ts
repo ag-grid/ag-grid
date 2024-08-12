@@ -221,7 +221,7 @@ export class SelectAllFeature extends BeanStub {
 
         const so = this.selectionOptions;
         if (so !== undefined) {
-            const headerCheckbox = getHeaderCheckbox(this.gos);
+            const headerCheckbox = getHeaderCheckbox(so);
 
             return (
                 headerCheckbox &&

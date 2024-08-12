@@ -12,6 +12,7 @@ import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
+import { getCheckboxes, getHeaderCheckbox } from '../gridOptionsService';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
@@ -1091,9 +1092,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         prev: SelectionOptions | undefined,
         source: ColumnEventType
     ) {
-        const prevCheckbox = prev?.mode !== 'cell' ? prev?.checkboxes : undefined;
-        const currCheckbox = current?.mode !== 'cell' ? current?.checkboxes : undefined;
-        if (prevCheckbox !== currCheckbox) {
+        const prevCheckbox = prev ? getCheckboxes(prev) : undefined;
+        const currCheckbox = current ? getCheckboxes(current) : undefined;
+        const checkboxHasChanged = prevCheckbox !== currCheckbox;
+
+        const prevHeaderCheckbox = prev ? getHeaderCheckbox(prev) : undefined;
+        const currHeaderCheckbox = current ? getHeaderCheckbox(current) : undefined;
+        const headerCheckboxHasChanged = prevHeaderCheckbox !== currHeaderCheckbox;
+
+        if (checkboxHasChanged || headerCheckboxHasChanged) {
             this.refreshAll(source);
         }
     }
