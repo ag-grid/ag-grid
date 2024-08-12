@@ -47,7 +47,7 @@ import type {
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
-    ControlColDef,
+    ControlsColDef,
     CsvExportParams,
     CutEndEvent,
     CutStartEvent,
