@@ -56,7 +56,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     public override destroy(): void {
-        this.destroyTree(this.root, false, null);
+        const rootRow = this.root.row;
+        if (rootRow !== null) {
+            this.root.linkRow(null);
+            clearTreeRowFlags(rootRow);
+        }
+        this.destroyTree(this.root);
         super.destroy();
     }
 
@@ -117,7 +122,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.oldGroupDisplayColIds = newGroupDisplayColIds;
         }
 
-        this.destroyTree(root, true, details.changedPath);
+        this.clearTree(root, details.changedPath);
 
         const rows = rootRow.allLeafChildren;
         const rowsLen = rows?.length ?? 0;
@@ -155,34 +160,45 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    /** Called when a subtree needs to be destroyed. */
-    private destroyTree(node: TreeNode, allRows: boolean, changedPath: ChangedPath | null | undefined): void {
-        const { row } = node;
+    /** Called by the destructor, to the destroy the whole tree. */
+    private destroyTree(node: TreeNode): void {
+        const { row, level } = node;
         if (row !== null) {
-            if (!allRows || node.level >= 0) {
-                node.linkRow(null);
-            }
-            if (!row.data) {
-                this.deleteRow(row, true);
-            } else if (allRows) {
-                this.deleteRow(row, false);
+            node.linkRow(null);
+            if (level >= 0 && !row.data) {
+                this.deleteRow(row, true); // Delete filler nodes
             } else {
                 clearTreeRowFlags(row);
             }
         }
-        let hadChildrenRows = false;
         const children = node.enumChildren();
         node.destroy();
         for (const child of children) {
-            if (!hadChildrenRows && child.oldRow !== null) {
-                hadChildrenRows = true;
-            }
-            this.destroyTree(child, allRows, changedPath);
+            this.destroyTree(child);
         }
-        if (allRows && hadChildrenRows && row !== null) {
-            if (changedPath?.isActive()) {
-                changedPath.addParentNode(row);
+    }
+
+    /** Called to clear a subtree. */
+    private clearTree(node: TreeNode, changedPath: ChangedPath | null | undefined): void {
+        const { row, level } = node;
+        let shouldNotify = false;
+        if (row !== null) {
+            shouldNotify = isTreeRowCommitted(row);
+            if (level >= 0) {
+                node.linkRow(null);
+                this.deleteRow(row, !row.data);
             }
+        }
+        const children = node.enumChildren();
+        node.destroy();
+        for (const child of children) {
+            if (shouldNotify && child.row !== null && isTreeRowCommitted(child.row)) {
+                shouldNotify = false;
+                if (changedPath?.isActive()) {
+                    changedPath.addParentNode(row);
+                }
+            }
+            this.clearTree(child, changedPath);
         }
     }
 
@@ -410,8 +426,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             if (node.oldRow !== null && !parent.childrenChanged) {
                 parent.childrenChanged = true;
             }
-            this.destroyTree(node, true, details.changedPath);
-            return false; // Destroyed. No need to process children.
+            this.clearTree(node, details.changedPath);
+            return false; // Cleared. No need to process children.
         }
 
         let row = node.row;
