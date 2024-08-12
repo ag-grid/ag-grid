@@ -76,6 +76,157 @@ describe('ag-grid tree transactions', () => {
         expect(rows[0].data).toEqual(rowA);
     });
 
+    describe('remove re-insert filler', () => {
+        test('ag-grid tree sync remove re-insert filler', async () => {
+            // This is actually a very important test. This proves that the implementation is commutative,
+            // i.e. the grouping of the remove and insert operations does not matter.
+            // i.e. executing a remove-add in the same transaction, in multiple async transactions followed by a single commit,
+            // or in isolated transactions does not change the final resulting order of the rows.
+
+            const rowB = { id: 'b', orgHierarchy: ['A', 'B'] };
+            const rowC = { id: 'c', orgHierarchy: ['A', 'C'] };
+            const rowD = { id: 'd', orgHierarchy: ['D'] };
+
+            const rowData = [rowB, rowC, rowD];
+
+            const gridOptions: GridOptions = {
+                columnDefs: [],
+                autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+                treeData: true,
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+                getDataPath: (data: any) => data.orgHierarchy,
+            };
+
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = createMyGrid(gridOptions);
+
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├─┬ A filler id:row-group-0-A
+                │ ├── B LEAF id:b
+                │ └── C LEAF id:c
+                └── D LEAF id:d
+            `);
+
+            api.applyTransaction({ remove: [rowB, rowC] });
+
+            new TreeDiagram(api, 'Transaction[0]').check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                └── D LEAF id:d
+            `);
+
+            api.applyTransaction({ add: [rowC, rowB] });
+
+            await flushTimers();
+
+            new TreeDiagram(api, 'finalSync').check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├── D LEAF id:d
+                └─┬ A filler id:row-group-0-A
+                · ├── C LEAF id:c
+                · └── B LEAF id:b
+            `);
+        });
+
+        test('ag-grid tree same transaction remove re-insert filler', async () => {
+            const rowB = { id: 'b', orgHierarchy: ['A', 'B'] };
+            const rowC = { id: 'c', orgHierarchy: ['A', 'C'] };
+            const rowD = { id: 'd', orgHierarchy: ['D'] };
+
+            const rowData = [rowB, rowC, rowD];
+
+            const gridOptions: GridOptions = {
+                columnDefs: [],
+                autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+                treeData: true,
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+                getDataPath: (data: any) => data.orgHierarchy,
+            };
+
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = createMyGrid(gridOptions);
+
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├─┬ A filler id:row-group-0-A
+                │ ├── B LEAF id:b
+                │ └── C LEAF id:c
+                └── D LEAF id:d
+            `);
+
+            api.applyTransaction({
+                remove: [rowB, rowC],
+                add: [rowC, rowB],
+            });
+
+            await flushTimers();
+
+            new TreeDiagram(api, 'finalTogether').check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├── D LEAF id:d
+                └─┬ A filler id:row-group-0-A
+                · ├── C LEAF id:c
+                · └── B LEAF id:b
+            `);
+        });
+
+        test('ag-grid tree async remove re-insert filler', async () => {
+            // This is actually a very important test. This proves that the implementation is commutative,
+            // i.e. the grouping of the remove and insert operations does not matter.
+            // i.e. executing a remove-add in the same transaction, in multiple async transactions followed by a single commit,
+            // or in isolated transactions does not change the final resulting order of the rows.
+
+            const rowB = { id: 'b', orgHierarchy: ['A', 'B'] };
+            const rowC = { id: 'c', orgHierarchy: ['A', 'C'] };
+            const rowD = { id: 'd', orgHierarchy: ['D'] };
+
+            const rowData = [rowB, rowC, rowD];
+
+            const gridOptions: GridOptions = {
+                columnDefs: [],
+                autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+                treeData: true,
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+                getDataPath: (data: any) => data.orgHierarchy,
+            };
+
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = createMyGrid(gridOptions);
+
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├─┬ A filler id:row-group-0-A
+                │ ├── B LEAF id:b
+                │ └── C LEAF id:c
+                └── D LEAF id:d
+            `);
+
+            await executeTransactionsAsync([{ remove: [rowB, rowC] }, { add: [rowC, rowB] }], api);
+
+            await flushTimers();
+
+            new TreeDiagram(api, 'finalAsync').check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├── D LEAF id:d
+                └─┬ A filler id:row-group-0-A
+                · ├── C LEAF id:c
+                · └── B LEAF id:b
+            `);
+        });
+    });
+
     test.each(['sync', 'async', 'together'] as const)('ag-grid tree %s remove re-insert filler', async (mode) => {
         // This is actually a very important test. This proves that the implementation is commutative,
         // i.e. the grouping of the remove and insert operations does not matter.

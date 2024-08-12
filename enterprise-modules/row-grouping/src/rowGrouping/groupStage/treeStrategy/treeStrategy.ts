@@ -13,8 +13,8 @@ import type {
 import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import { RowNode } from '@ag-grid-community/core';
 
-import { ChildrenAfterGroupBuilder } from './childrenAfterGroupBuilder';
-import { ChildrenChanged, TreeNode } from './treeNode';
+import type { RowNodeOrder } from './treeNode';
+import { EMPTY_ARRAY, TreeNode, getRowIndex } from './treeNode';
 import {
     clearTreeRowFlags,
     isTreeRowCommitted,
@@ -35,7 +35,7 @@ export type InitialGroupOrderComparatorCallback =
 
 export interface TreeExecutionDetails {
     changedPath: ChangedPath | undefined;
-    rowNodeOrder: { [id: string]: number } | undefined;
+    rowNodeOrder: RowNodeOrder | undefined;
     expandByDefault: number;
     suppressGroupMaintainValueType: boolean;
     getDataPath: GetDataPath | undefined;
@@ -49,7 +49,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string | undefined;
     private rowsPendingDeletion: Set<RowNode> | null = null;
     private readonly root: TreeNode = new TreeNode(null, '', -1, false);
-    private childrenAfterGroupBuilder = new ChildrenAfterGroupBuilder();
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
@@ -119,7 +118,20 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         this.clearTree(this.root);
-        this.addOrUpdateRows(details, rootRow.allLeafChildren, false);
+
+        const rows = rootRow.allLeafChildren;
+        if (rows) {
+            const len = rows.length;
+            for (let rowIndex = 0; rowIndex < len; ++rowIndex) {
+                const row = rows[rowIndex];
+                const node = this.upsertPath(this.getDataPath(details, row));
+                if (node) {
+                    node.rowIndex = rowIndex;
+                    this.overwriteRow(node, row, undefined, false);
+                }
+            }
+        }
+
         this.commitTree(details);
     }
 
@@ -139,7 +151,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             const len = rowNodes.length;
             for (let i = 0; i < len; ++i) {
                 const rowNode = rowNodes![i];
-                this.setGroupData(rowNode);
+                this.setGroupData(rowNode, rowNode.treeNode?.key ?? rowNode.key!);
                 this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
             }
         }
@@ -147,15 +159,17 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Called when a subtree needs to be destroyed. */
     private destroyTree(node: TreeNode, allRows: boolean, changedPath: ChangedPath | null | undefined): void {
-        const { level, row, childrenAfterGroup, allLeafChildren } = node;
-        childrenAfterGroup.length = 0;
+        const { level, row } = node;
+        node.childrenAfterGroup = EMPTY_ARRAY;
         if (level >= 0) {
-            allLeafChildren.length = 0;
+            node.allLeafChildren = EMPTY_ARRAY;
         }
         if (row !== null) {
             node.linkRow(null);
-            if (allRows || !row.data) {
+            if (!row.data) {
                 this.deleteRow(row, true);
+            } else if (allRows) {
+                this.deleteRow(row, false);
             } else {
                 clearTreeRowFlags(row);
             }
@@ -176,7 +190,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Removes all rows from the tree */
     private clearTree(node: TreeNode): void {
-        this.overwriteRow(node, null, false);
+        this.clearRow(node);
         for (const child of node.enumChildren()) {
             this.clearTree(child);
         }
@@ -189,8 +203,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             for (let i = 0; i < len; ++i) {
                 const node = rows![i].treeNode as TreeNode | null;
                 if (node) {
-                    const oldRow = node.row;
-                    this.overwriteRow(node, null, false);
+                    const oldRow = this.clearRow(node);
                     if (oldRow !== null) {
                         unsetTreeRowExpandedInitialized(oldRow);
                     }
@@ -201,13 +214,14 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Transactional insert/update */
     private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
+        const { rowNodeOrder } = details;
         if (rows) {
             const len = rows.length;
             for (let i = 0; i < len; ++i) {
                 const row = rows![i];
                 const node = this.upsertPath(this.getDataPath(details, row));
                 if (node) {
-                    this.overwriteRow(node, row, update);
+                    this.overwriteRow(node, row, rowNodeOrder, update);
                 }
             }
         }
@@ -239,19 +253,55 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return null;
     }
 
+    private clearRow(node: TreeNode): RowNode | null {
+        const { row: oldRow, parent, level } = node;
+
+        if (level < 0) {
+            return null; // Cannot overwrite a null node or the root row
+        }
+
+        let invalidate = false;
+
+        if (node.linkRow(null)) {
+            invalidate = true;
+            if (oldRow) {
+                if (parent) {
+                    parent.childrenChanged = true;
+                }
+                this.deleteRow(oldRow, !oldRow.data);
+            }
+        }
+
+        if (node.updateIsGhost()) {
+            invalidate = true;
+        }
+
+        if (invalidate) {
+            node.invalidate();
+        }
+
+        return oldRow;
+    }
+
     /**
      * Overwrites the row property of a non-root node, preparing the tree correctly for the commit.
      * @returns The previous row, if any, that was overwritten.
      */
-    private overwriteRow(node: TreeNode, newRow: RowNode | null, update: boolean): RowNode | null {
+    private overwriteRow(
+        node: TreeNode,
+        newRow: RowNode,
+        rowNodeOrder: RowNodeOrder | undefined,
+        update: boolean
+    ): RowNode | null {
         if (node.level < 0) {
             return null; // Cannot overwrite a null node or the root row
         }
-        const { row: oldRow, ghost } = node;
 
-        const prevNode = (newRow?.treeNode ?? null) as TreeNode | null;
+        const { row: oldRow } = node;
+
+        const prevNode = newRow.treeNode as TreeNode | null;
         if (prevNode !== node && prevNode !== null) {
-            this.overwriteRow(prevNode, null, false); // The row is somewhere else in the tree
+            this.clearRow(prevNode); // The row is somewhere else in the tree
         }
 
         let invalidate = false;
@@ -260,24 +310,26 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             invalidate = true;
             if (oldRow) {
                 this.deleteRow(oldRow, !oldRow.data);
-                if (!ghost && oldRow.data && newRow?.data) {
+                if (oldRow.data && newRow.data) {
                     _warnOnce(`duplicate group keys for row data, keys should be unique`, [oldRow.data, newRow.data]);
                 }
             }
         }
 
-        // We update the ghost state recursively
-        if (node.updateThisIsGhost()) {
+        if (node.updateIsGhost()) {
             invalidate = true;
-            let current: TreeNode | null = node;
-            do {
-                current = current.parent;
-            } while (current?.updateThisIsGhost());
         }
 
-        if (update && newRow !== null && !isTreeRowUpdated(newRow)) {
+        if (update && !isTreeRowUpdated(newRow)) {
             invalidate = true;
             setTreeRowUpdated(newRow);
+        }
+
+        if (!invalidate && rowNodeOrder) {
+            const rowIndex = getRowIndex(newRow, rowNodeOrder);
+            if (rowIndex >= 0 && node.rowIndex !== rowIndex) {
+                invalidate = true;
+            }
         }
 
         if (invalidate) {
@@ -330,26 +382,24 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Commit the changes performed to the tree */
     private commitTree(details: TreeExecutionDetails) {
-        this.childrenAfterGroupBuilder.init(details.rowNodeOrder);
-
         const root = this.root;
 
         this.commitChildren(details, root);
 
-        this.updateChildrenAfterGroup(root);
+        if (root.childrenChanged) {
+            root.updateChildrenAfterGroup(details.rowNodeOrder);
+        }
 
         const rootRow = root.row!;
         rootRow.updateHasChildren();
 
-        if (root.pathChanged || root.childrenChanged !== ChildrenChanged.None) {
+        if (root.pathChanged || root.childrenChanged) {
             root.pathChanged = false;
-            root.childrenChanged = ChildrenChanged.None;
+            root.childrenChanged = false;
             if (details.changedPath?.isActive()) {
                 details.changedPath.addParentNode(rootRow);
             }
         }
-
-        this.childrenAfterGroupBuilder.free();
 
         this.commitDeletedRows();
     }
@@ -367,8 +417,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Commit the changes performed to a node and its children */
     private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         if (node.ghost) {
-            if (node.oldRow !== null && parent.childrenChanged === ChildrenChanged.None) {
-                parent.childrenChanged = ChildrenChanged.SomeRemoved;
+            if (node.oldRow !== null && !parent.childrenChanged) {
+                parent.childrenChanged = true;
             }
             this.destroyTree(node, true, details.changedPath);
             return;
@@ -384,21 +434,21 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         this.rowsPendingDeletion?.delete(row); // This row is used. It's not deleted.
 
-        if (row.key !== node.key) {
-            row.key = node.key;
+        const key = node.key;
+        if (row.key !== key) {
+            row.key = key;
             parent.pathChanged = true;
             setTreeRowUpdated(row);
-            this.setGroupData(row);
+            this.setGroupData(row, key);
         }
-
         if (!row.groupData) {
-            this.setGroupData(row);
+            this.setGroupData(row, key);
         }
 
         if (node.oldRow !== null && node.oldRow !== row) {
             // We need to update children rows parents, as the row changed
             for (const { row: childRow } of node.enumChildren()) {
-                if (childRow) {
+                if (childRow !== null) {
                     childRow.parent = row;
                 }
             }
@@ -406,33 +456,45 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         this.commitChildren(details, node);
 
-        return this.commitNodePostOrder(details, parent, node);
+        this.commitNodePostOrder(details, parent, node);
     }
 
-    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode) {
+    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         const row = node.row!;
 
-        this.updateChildrenAfterGroup(node);
-
-        if (node.childrenChanged !== ChildrenChanged.None || node.leafChildrenChanged) {
-            node.leafChildrenChanged = false;
-            if (node.rebuildLeaves()) {
-                parent.leafChildrenChanged = true; // propagate up
-            }
-        }
-
-        if (node.childrenChanged !== ChildrenChanged.None) {
-            node.childrenChanged = ChildrenChanged.None;
-            node.pathChanged = true;
-        }
+        const { rowNodeOrder } = details;
 
         if (node.oldRow !== row) {
             node.oldRow = node.row;
             parent.pathChanged = true;
-            parent.childrenChanged = ChildrenChanged.SomeInserted;
+            parent.childrenChanged = true;
         }
 
-        parent.pathChanged ||= isTreeRowUpdated(row);
+        if (node.childrenChanged) {
+            node.updateChildrenAfterGroup(rowNodeOrder);
+        }
+
+        if (node.leafChildrenChanged) {
+            node.updateAllLeafChildren();
+        }
+
+        if (rowNodeOrder) {
+            const rowIndex = getRowIndex(row, rowNodeOrder);
+            if (rowIndex >= 0) {
+                node.rowIndex = rowIndex;
+            }
+            if (!parent.childrenChanged) {
+                const newOrder = node.getNewRowOrder(rowNodeOrder, rowIndex);
+                if (node.rowOrder !== newOrder) {
+                    node.rowOrder = newOrder;
+                    parent.childrenChanged = true;
+                }
+            }
+        }
+
+        if (isTreeRowUpdated(row)) {
+            parent.pathChanged = true;
+        }
 
         const hasChildren = !!row.childrenAfterGroup?.length;
         const group = hasChildren || !row.data;
@@ -495,39 +557,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return row;
     }
 
-    private updateChildrenAfterGroup(node: TreeNode): void {
-        this.filterRemovedChildrenAfterGroup(node);
-        if (node.childrenChanged === ChildrenChanged.SomeInserted) {
-            if (!this.childrenAfterGroupBuilder.rebuildChildrenAfterGroup(node)) {
-                node.childrenChanged = ChildrenChanged.None;
-            }
-        }
-    }
-
-    private filterRemovedChildrenAfterGroup(node: TreeNode): void {
-        // // Order did not change, no new rows were added, we can just filter out the nodes that have the wrong parent
-        let writeIdx = 0;
-        let changed = false;
-        const array = node.childrenAfterGroup;
-        const oldCount = array.length;
-        const parentRow = node.row!;
-        for (let i = 0; i < oldCount; i++) {
-            const child = array[i];
-            if (child.parent === parentRow) {
-                array[writeIdx++] = child;
-            } else {
-                changed = true;
-            }
-        }
-        array.length = writeIdx;
-
-        if (!changed && node.childrenChanged === ChildrenChanged.SomeRemoved) {
-            node.childrenChanged = ChildrenChanged.None;
-        }
-    }
-
-    private setGroupData(row: RowNode): void {
-        const key = row.key!;
+    private setGroupData(row: RowNode, key: string): void {
         const groupData: Record<string, string> = {};
         row.groupData = groupData;
         const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols();

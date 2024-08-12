@@ -1,22 +1,28 @@
 import type { ITreeNode, RowNode } from '@ag-grid-community/core';
 
+export type RowNodeOrder = { readonly [id: string]: number | undefined };
+
+export const EMPTY_ARRAY = Object.freeze([]) as unknown as any[];
+
 /** An empty iterator */
-const EMPTY_CHILDREN = ([] as readonly TreeNode[]).values();
+const EMPTY_CHILDREN = EMPTY_ARRAY.values();
 
-/**
- * We use this to keep track if children were removed or added and moved, so we can skip
- * recomputing the whole childrenAfterGroup and allLeafChildren array if not needed
- */
-export const enum ChildrenChanged {
-    /** No changes */
-    None,
+export const getRowIndex = (row: RowNode | null | undefined, rowNodeOrder: RowNodeOrder): number => {
+    if (row?.data) {
+        const id = row.id;
+        if (id !== undefined) {
+            const order = rowNodeOrder[id];
+            if (typeof order === 'number') {
+                return order;
+            }
+        }
+    }
+    return -1;
+};
 
-    /** At least one child was removed */
-    SomeRemoved = 1,
-
-    /** At least one child was moved or added (and potentially deleted too) */
-    SomeInserted = 2,
-}
+/** Compare two RowNode by the TreeNode rowOrder. Assumes TreeNode to be set and valid. */
+const rowOrderComparer = (a: RowNode, b: RowNode): number =>
+    (a.treeNode! as TreeNode).rowOrder - (b.treeNode! as TreeNode).rowOrder;
 
 /**
  * We keep a secondary tree data structure together with the rows.
@@ -41,9 +47,6 @@ export const enum ChildrenChanged {
  * Before commit those arrays are NOT representing the truth, so they should not be used.
  */
 export class TreeNode implements ITreeNode {
-    /** Keep track of the number of children that are ghosts in this node */
-    private ghostsCount: number = 0;
-
     /**
      * The children of the tree, where the key is the node key and the value is the child node.
      * We use this to avoid exploring the whole tree during commit, we will just go to the paths
@@ -65,14 +68,20 @@ export class TreeNode implements ITreeNode {
     /** The RowNode associated to this tree node */
     public row: RowNode | null = null;
 
-    /** We keep the row.childrenAfterGroup here, we just swap it when we assign row */
-    public readonly childrenAfterGroup: RowNode[] = [];
+    /** We keep the row.childrenAfterGroup here, we just swap arrays when we assign rows */
+    public childrenAfterGroup: RowNode[] = EMPTY_ARRAY;
 
-    /** We keep the row.allLeafChildren here, we just swap it when we assign row */
-    public readonly allLeafChildren: RowNode[] = [];
+    /** We keep the row.allLeafChildren here, we just swap arrays when we assign rows */
+    public allLeafChildren: RowNode[] = EMPTY_ARRAY;
 
     /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
     public oldRow: RowNode | null = null;
+
+    /** Keep track of the number of children that are ghosts in this node */
+    private ghostsCount: number = 0;
+
+    /** Coming from rowNodeOrder, or, first time, from the index of the row in the root.allLeafChildren array */
+    public rowIndex: number = -1;
 
     /**  True if changedPath.addParentNode(row) should be called on this node. Reset to false during commit. */
     public pathChanged: boolean = false;
@@ -80,12 +89,20 @@ export class TreeNode implements ITreeNode {
     /**
      * We use this to keep track if children were removed or added and moved, so we can skip
      * recomputing the whole childrenAfterGroup and allLeafChildren array if not needed.
-     * Reset to ChildrenChanged.None during commit.
+     * Reset during commit.
      */
-    public childrenChanged: ChildrenChanged = ChildrenChanged.None;
+    public childrenChanged: boolean = false;
 
     /** True allLeafChildren should be recomputed. Reset to false during commit. */
     public leafChildrenChanged: boolean = false;
+
+    /**
+     * Used when sorting.
+     * If this is a filler node, is the rowOrder of the first child.
+     * If this is a leaf node with no children, is the rowIndex.
+     * If this is a leaf node with children, is the min(this.rowOrder, childrenAfterGroup[0].rowOrder)
+     */
+    public rowOrder: number = -1;
 
     public constructor(
         /** The parent node of this node, or null if removed or the root. */
@@ -100,11 +117,6 @@ export class TreeNode implements ITreeNode {
         /** A ghost node is a node that should be removed */
         public ghost: boolean
     ) {}
-
-    /** Returns the number of children in this node */
-    public childrenCount(): number {
-        return this.children?.size ?? 0;
-    }
 
     /** Returns an iterator able to iterate all children in this node, in order of insertion */
     public enumChildren(): IterableIterator<TreeNode> {
@@ -132,6 +144,7 @@ export class TreeNode implements ITreeNode {
     /** Bidirectionally links (or unlink) a row to a node. */
     public linkRow(newRow: RowNode | null): boolean {
         const { row: oldRow } = this;
+
         if (oldRow === newRow) {
             return false; // No change
         }
@@ -140,11 +153,11 @@ export class TreeNode implements ITreeNode {
             oldRow.treeNode = null;
             oldRow.parent = null;
             oldRow.level = 0;
-            if (this.level < 0) {
-                oldRow.childrenAfterGroup = [];
-            } else {
+            if (this.level >= 0) {
                 oldRow.childrenAfterGroup = null;
                 oldRow.allLeafChildren = null;
+            } else {
+                oldRow.childrenAfterGroup = []; // root
             }
         }
 
@@ -163,6 +176,56 @@ export class TreeNode implements ITreeNode {
         return true;
     }
 
+    public updateIsGhost(): boolean {
+        // We update the ghost state recursively
+        if (!this.updateThisIsGhost()) {
+            return false;
+        }
+        let current: TreeNode | null = this;
+        do {
+            current = current.parent;
+        } while (current?.updateThisIsGhost());
+        return true;
+    }
+
+    /**
+     * Updates the ghost status of this node.
+     * This method does not update the status of the parents.
+     * @returns true if the ghost status changed, false if it was already the same.
+     */
+    private updateThisIsGhost(): boolean {
+        const { parent, row, ghost } = this;
+        if (parent === null) {
+            return false; // Root cannot be a ghost
+        }
+
+        const newGhost = !row?.data && this.ghostsCount === (this.children?.size ?? 0);
+        if (newGhost === ghost) {
+            return false; // No changes
+        }
+
+        this.ghost = newGhost;
+
+        if (newGhost) {
+            ++parent.ghostsCount;
+        } else {
+            --parent.ghostsCount;
+
+            // This was a ghost node, now is not, move the node at the end of the children list
+            // We need to do this to keep the order of insertion consistent if rowNodeOrder is not passed during transactions
+            const key = this.key;
+            const parentChildren = parent.children;
+            if (parentChildren?.delete(key)) {
+                parentChildren.set(key, this);
+                if (this.oldRow !== null) {
+                    parent.childrenChanged = true;
+                }
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Invalidates this node and all its parents until the root is reached.
      * Order of invalidated nodes is not deterministic.
@@ -171,25 +234,13 @@ export class TreeNode implements ITreeNode {
      */
     public invalidate(): void {
         let node: TreeNode | null = this;
-        while (node?.invalidateThis()) {
-            node = node.parent;
+        let parent = this.parent;
+        while (parent !== null && node.invalidatedNext === undefined) {
+            node.invalidatedNext = parent.invalidatedHead;
+            parent.invalidatedHead = node;
+            node = parent;
+            parent = node.parent;
         }
-    }
-
-    /**
-     * Invalidates this node by adding this node in the queue of invalidated children in the parent node.
-     * Order of invalidation is not deterministic.
-     * It does not traverse the tree up to the root, it only affect the parent node.
-     * @returns true if the node was invalidated during this call, false if it was already invalidated or there is no parent.
-     */
-    private invalidateThis(): boolean {
-        const { parent, invalidatedNext } = this;
-        if (parent === null || invalidatedNext !== undefined) {
-            return false;
-        }
-        this.invalidatedNext = parent.invalidatedHead;
-        parent.invalidatedHead = this;
-        return true;
     }
 
     /**
@@ -203,44 +254,6 @@ export class TreeNode implements ITreeNode {
             node.invalidatedNext = undefined; // Mark as not invalidated
         }
         return node;
-    }
-
-    /**
-     * Updates the ghost status of this node.
-     * This method does not update the status of the parents.
-     * @returns true if the ghost status changed, false if it was already the same.
-     */
-    public updateThisIsGhost(): boolean {
-        const { parent, row, ghost } = this;
-        if (parent === null) {
-            return false; // Root cannot be a ghost
-        }
-
-        const newGhost = !row?.data && this.ghostsCount === this.childrenCount();
-        if (newGhost === ghost) {
-            return false; // No changes
-        }
-
-        this.ghost = newGhost;
-
-        if (newGhost) {
-            ++parent.ghostsCount;
-        } else {
-            --parent.ghostsCount;
-
-            // This was a ghost node, now is not, move the node at the end of the children list
-            // This is needed to generate a consistent ordering of re-inserted nodes in the childrenAfterGroup array
-            const key = this.key;
-            const parentChildren = parent.children;
-            if (parentChildren?.delete(key)) {
-                parentChildren.set(key, this);
-                if (this.oldRow !== null) {
-                    parent.childrenChanged = ChildrenChanged.SomeInserted;
-                }
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -260,46 +273,197 @@ export class TreeNode implements ITreeNode {
         this.children = null;
     }
 
+    public getNewRowOrder(rowNodeOrder: RowNodeOrder, rowIndex = getRowIndex(this.row, rowNodeOrder)): number {
+        let result = rowIndex;
+        if (result < 0) {
+            result = this.rowIndex;
+        } else {
+            this.rowIndex = result;
+        }
+
+        let currentNode: TreeNode | null = this;
+
+        while (currentNode?.childrenAfterGroup.length > 0) {
+            const firstChildNode = currentNode.childrenAfterGroup[0].treeNode! as TreeNode;
+            let firstChildRowOrder = getRowIndex(firstChildNode.row, rowNodeOrder);
+            if (firstChildRowOrder < 0) {
+                firstChildRowOrder = firstChildNode.rowIndex;
+            }
+
+            if (firstChildRowOrder >= 0 && (result < 0 || firstChildRowOrder < result)) {
+                result = firstChildRowOrder;
+            }
+
+            currentNode = firstChildNode;
+        }
+
+        return result;
+    }
+
+    public updateChildrenAfterGroup(rowNodeOrder: RowNodeOrder | undefined): void {
+        this.childrenChanged = false; // Reset the flag for this node
+
+        let count = 0;
+        let changed = false;
+        let orderChanged = false;
+        let output = this.childrenAfterGroup;
+        const children = this.children;
+        const childrenCount = children?.size ?? 0;
+        if (childrenCount === 0) {
+            // No children
+
+            if (output.length > 0) {
+                changed = true;
+                this.childrenAfterGroup = EMPTY_ARRAY;
+                this.row!.childrenAfterGroup = EMPTY_ARRAY;
+            }
+        } else {
+            // We have children
+
+            if (output.length !== childrenCount) {
+                changed = true;
+                if (output === EMPTY_ARRAY) {
+                    output = new Array(childrenCount);
+                    this.childrenAfterGroup = output;
+                    this.row!.childrenAfterGroup = output;
+                } else {
+                    output.length = childrenCount;
+                }
+            }
+
+            if (rowNodeOrder) {
+                // We have an order to follow, as rowNodeOrder was passed
+
+                let prevOrder = -1;
+                for (const child of children!.values()) {
+                    const newOrder = child.getNewRowOrder(rowNodeOrder);
+                    child.rowOrder = newOrder;
+                    const row = child.row!;
+                    if (changed || output[count] !== row) {
+                        output[count] = child.row!;
+                        changed = true;
+                    }
+                    ++count;
+                    if (prevOrder > newOrder) {
+                        orderChanged = true;
+                    }
+                    prevOrder = newOrder;
+                }
+
+                if (orderChanged) {
+                    output.sort(rowOrderComparer);
+
+                    // We need to rebuild the children map in the right order
+                    children!.clear();
+                    for (let i = 0; i < count; ++i) {
+                        const node = output[i].treeNode! as TreeNode;
+                        children!.set(node.key, node);
+                    }
+                }
+            } else {
+                // We follow the order that is already in the children map
+
+                for (const child of children!.values()) {
+                    const row = child.row!;
+                    if (changed || output[count] !== row) {
+                        output[count] = row;
+                        changed = true;
+                    }
+                    ++count;
+                }
+            }
+        }
+
+        if (changed) {
+            // If there are changed elements, we need to recompute the allLeafChildren
+            // I don't think it matters to update the leafs if only order changed, we avoid unnecessary work.
+            this.leafChildrenChanged = true;
+
+            // Children changed, we need to call changedPath.addParentNode
+            this.pathChanged = true;
+        } else if (orderChanged) {
+            // Order of children changed, we need to call changedPath.addParentNode
+            this.pathChanged = true;
+        }
+    }
+
     /**
      * Rebuild the allLeafChildren rows array of a node.
+     * It uses childrenAfterGroup, we assume to be already updated.
      * It uses the allLeafChildren of all the children, we assume is already updated.
-     *
-     * Note: The order will be based on the map, not on the childrenAfterGroup array,
-     * so it does not change with ordering.
      * @returns true if the array changed, false if not
      */
-    public rebuildLeaves(): boolean {
-        const { children: map, allLeafChildren: output } = this;
-        const oldLen = output.length;
-        let writeIdx = 0;
+    public updateAllLeafChildren(): void {
+        this.leafChildrenChanged = false; // Reset the flag for this node
+
+        const { parent, row, childrenAfterGroup } = this;
+
         let changed = false;
-        if (map) {
-            for (const child of map.values()) {
-                const childAllLeafChildren = child.allLeafChildren!;
+        const childrenAfterGroupLen = childrenAfterGroup.length;
+
+        if (childrenAfterGroupLen === 0) {
+            // No children, no leaf nodes.
+            changed = row!.allLeafChildren?.length !== 0;
+            row!.allLeafChildren = EMPTY_ARRAY;
+            this.allLeafChildren = EMPTY_ARRAY;
+        } else if (childrenAfterGroupLen === 1 && childrenAfterGroup[0].allLeafChildren?.length) {
+            // We can avoid building the leaf children array if we are a node with just one child that has leafs
+            // In this case we use the allLeafChildren of the child by assigning it to this.row.allLeafChildren in O(1)
+            // and without occupying any extra memory.
+            changed = true; // This must be true as this may come from a child that changed
+            this.allLeafChildren = EMPTY_ARRAY; // We cannot set here the the child allLeafChildren or it may get modified
+            row!.allLeafChildren = childrenAfterGroup[0].allLeafChildren; // Use the same array
+        } else {
+            // We need to rebuild the allLeafChildren array, we use children allLeafChildren arrays
+
+            let output = this.allLeafChildren;
+            if (output === EMPTY_ARRAY) {
+                output = [];
+                this.allLeafChildren = output;
+            }
+
+            const oldLen = output.length;
+            let count = 0;
+            for (let i = 0; i < childrenAfterGroupLen; ++i) {
+                const childRow = childrenAfterGroup[i];
+                const childAllLeafChildren = childRow.allLeafChildren!;
                 const jLen = childAllLeafChildren.length;
                 if (jLen) {
                     for (let j = 0; j < jLen; j++) {
                         const leaf = childAllLeafChildren[j];
-                        if (writeIdx >= oldLen || output[writeIdx] !== leaf) {
-                            output[writeIdx] = leaf;
+                        if (count >= oldLen || output[count] !== leaf) {
+                            output[count] = leaf;
                             changed = true;
                         }
-                        ++writeIdx;
+                        ++count;
                     }
                 } else {
-                    const childRow = child.row; // We have the row by now
-                    if ((writeIdx >= oldLen || output[writeIdx] !== childRow) && childRow) {
-                        output[writeIdx] = childRow;
+                    if ((count >= oldLen || output[count] !== childRow) && childRow) {
+                        output[count] = childRow;
                         changed = true;
                     }
-                    ++writeIdx;
+                    ++count;
                 }
             }
+            if (count !== oldLen) {
+                changed = true;
+                if (count > 0) {
+                    output.length = count;
+                } else {
+                    output = EMPTY_ARRAY;
+                    this.allLeafChildren = EMPTY_ARRAY;
+                }
+            }
+            if (row!.allLeafChildren !== output) {
+                if (!changed && (row!.allLeafChildren!.length > 0 || output.length > 0)) {
+                    changed = true;
+                }
+                row!.allLeafChildren = output;
+            }
         }
-        if (writeIdx !== oldLen) {
-            output.length = writeIdx;
-            changed = true;
+
+        if (changed && parent) {
+            parent.leafChildrenChanged = true; // Propagate to the parent, as it may need to rebuild its allLeafChildren too
         }
-        return changed;
     }
 }

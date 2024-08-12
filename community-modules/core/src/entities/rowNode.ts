@@ -40,7 +40,9 @@ const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>(
  * This is used only when using tree data.
  * Implementation in enterprise-modules/row-grouping/src/rowGrouping/groupStage/treeStrategy/treeNode.ts
  */
-export interface ITreeNode {}
+export interface ITreeNode {
+    readonly key: string;
+}
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
