@@ -1472,7 +1472,7 @@ export interface GridOptions<TData = any> {
      * Note that due to the nature of this column, this type is a restricted version of `ColDef`, which does not support several features normal column features
      * such as editing, pivoting and grouping.
      */
-    controlColDef?: ControlColDef;
+    controlsColDef?: ControlsColDef;
 
     /**
      * If `true`, only a single range can be selected.
@@ -2477,9 +2477,9 @@ export interface FillHandleOptions<TData = any> {
 
 export type RowSelectionOptions<TData = any, TValue = any> =
     | SingleRowSelectionOptions<TData, TValue>
-    | MultiRowSelectionOptions<TData, TValue>;
+    | MultiRowSelectionOptions<TData>;
 
-interface CommonRowSelectionOptions<TData = any> {
+interface CommonRowSelectionOptions<TData = any, TValue = any> {
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
@@ -2491,6 +2491,16 @@ interface CommonRowSelectionOptions<TData = any> {
      */
     suppressClickSelection?: boolean;
     /**
+     * Set to `true` or return `true` from the callback to render a selection checkbox.
+     * @default false
+     */
+    checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue>;
+    /**
+     * Set to `true` to hide a disabled checkbox when row is not selectable and checkboxes are enabled.
+     * @default false
+     */
+    hideDisabledCheckboxes?: boolean;
+    /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
      */
     isRowSelectable?: IsRowSelectable<TData>;
@@ -2499,19 +2509,14 @@ interface CommonRowSelectionOptions<TData = any> {
 /**
  * Determines selection behaviour when only a single row can be selected at a time
  */
-export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData> {
+export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
     mode: 'singleRow';
-    /**
-     * Determines how checkboxes and header checkboxes are displayed for selection in singleRow mode
-     * @default false
-     */
-    checkboxColumn?: SingleRowCheckboxOptions<TData, TValue>;
 }
 
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData> {
+export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectionOptions<TData> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
@@ -2524,10 +2529,10 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
      */
     selectAll?: SelectAllMode;
     /**
-     * Determines how checkboxes and header checkboxes are displayed for selection in multiRow mode
+     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
      * @default false
      */
-    checkboxColumn?: boolean | MultiRowCheckboxOptions<TData, TValue>;
+    headerCheckbox?: boolean;
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
@@ -2535,31 +2540,7 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
     enableMultiSelectWithClick?: boolean;
 }
 
-interface SingleRowCheckboxOptions<TData, TValue> {
-    /**
-     * Set to `true` or return `true` from the callback to render a selection checkbox.
-     * @default false
-     */
-    checkbox?: boolean | CheckboxSelectionCallback<TData, TValue>;
-    /**
-     * Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled.
-     * @default false
-     */
-    showDisabled?: boolean;
-}
-
-/**
- * Used to configure more checkbox selection at a more fine-grained level.
- */
-interface MultiRowCheckboxOptions<TData, TValue> extends SingleRowCheckboxOptions<TData, TValue> {
-    /**
-     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
-     * @default false
-     */
-    headerCheckbox?: boolean;
-}
-
-export type ControlColDef = Pick<
+export type ControlsColDef = Pick<
     ColDef,
     | 'icons'
     | 'suppressNavigable'

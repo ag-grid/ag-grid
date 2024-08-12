@@ -727,7 +727,7 @@ export {
     SelectionOptions,
     GroupSelectionMode,
     SelectAllMode,
-    ControlColDef,
+    ControlsColDef,
     CellSelectionOptions,
     RowSelectionOptions,
     IsApplyServerSideTransaction,

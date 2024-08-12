@@ -14,7 +14,7 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
 
     public createControlCols(): AgColumn[] {
         const so = this.gos.get('selection');
-        const controlColDef = this.gos.get('controlColDef');
+        const controlColDef = this.gos.get('controlsColDef');
         const enableRTL = this.gos.get('enableRtl');
 
         if (!so) {
@@ -25,11 +25,13 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
             return [];
         }
 
-        if (so.checkboxColumn) {
+        if (so.checkboxes) {
             const colDef: ColDef = {
-                maxWidth: 90,
-                ...controlColDef,
-                colId: `${CONTROL_COLUMN_ID_PREFIX}`,
+                // overridable properties
+                maxWidth: 50,
+                resizable: false,
+                suppressHeaderMenuButton: true,
+                sortable: false,
                 suppressMovable: true,
                 lockPosition: enableRTL ? 'right' : 'left',
                 comparator(valueA, valueB, nodeA, nodeB) {
@@ -38,6 +40,10 @@ export class ControlColService extends BeanStub implements NamedBean, IControlCo
                     return aSelected && bSelected ? 0 : aSelected ? 1 : -1;
                 },
                 suppressFillHandle: true,
+                // overrides
+                ...controlColDef,
+                // non-overridable properties
+                colId: `${CONTROL_COLUMN_ID_PREFIX}`,
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);
             this.createBean(col);

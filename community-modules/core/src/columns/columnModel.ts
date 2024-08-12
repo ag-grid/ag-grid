@@ -1091,26 +1091,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         prev: SelectionOptions | undefined,
         source: ColumnEventType
     ) {
-        if (!prev) {
-            if (current && current.mode !== 'cell' && current.checkboxColumn) {
-                // Selection options were previously undefined but now contain checkboxColumn options
-                return this.refreshAll(source);
-            }
-        } else if (prev.mode === 'cell') {
-            if (current && current.mode !== 'cell' && current.checkboxColumn) {
-                // Selection options were in cell mode but now are in row mode with checkboxColumn options
-                return this.refreshAll(source);
-            }
-        } else if (!prev.checkboxColumn) {
-            if (current && current.mode !== 'cell' && current.checkboxColumn) {
-                // Selection options did not have checkboxColumn options but now do have them
-                return this.refreshAll(source);
-            }
-        } else if (prev.checkboxColumn) {
-            if (!current || current.mode === 'cell') {
-                // Selection options had checkboxColumn enabled but now are in cell mode or disabled
-                return this.refreshAll(source);
-            }
+        const prevCheckbox = prev?.mode !== 'cell' ? prev?.checkboxes : undefined;
+        const currCheckbox = current?.mode !== 'cell' ? current?.checkboxes : undefined;
+        if (prevCheckbox !== currCheckbox) {
+            this.refreshAll(source);
         }
     }
 }

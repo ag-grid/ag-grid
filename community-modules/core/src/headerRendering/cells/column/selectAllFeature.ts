@@ -225,9 +225,7 @@ export class SelectAllFeature extends BeanStub {
                 return false;
             }
 
-            const checkboxSelection = so.checkboxColumn;
-            const headerCheckbox =
-                typeof checkboxSelection == 'boolean' ? checkboxSelection : checkboxSelection?.headerCheckbox ?? false;
+            const headerCheckbox = so.headerCheckbox ?? false;
 
             return (
                 headerCheckbox &&

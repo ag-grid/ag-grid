@@ -231,7 +231,7 @@
       "SizeColumnsToContentStrategy"
     ]
   },
-  "selectionOptions": {
+  "selection": {
     "typeName": "SelectionOptions",
     "typesToInclude": [
       "SelectionOptions"
