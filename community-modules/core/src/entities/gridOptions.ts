@@ -1469,7 +1469,7 @@ export interface GridOptions<TData = any> {
     /**
      * Configure the control column, used for displaying checkboxes.
      *
-     * Note that due to the nature of this column, this type is a restricted version of `ColDef`, which does not support several features normal column features
+     * Note that due to the nature of this column, this type is a restricted version of `ColDef`, which does not support several normal column features
      * such as editing, pivoting and grouping.
      */
     controlsColDef?: ControlsColDef;
