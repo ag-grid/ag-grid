@@ -43,11 +43,11 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
                     const bSelected = nodeB.isSelected();
                     return aSelected && bSelected ? 0 : aSelected ? 1 : -1;
                 },
+                editable: false,
                 suppressFillHandle: true,
                 // overrides
                 ...controlsColDef,
                 // non-overridable properties
-                editable: false,
                 colId: `${CONTROLS_COLUMN_ID_PREFIX}`,
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);
