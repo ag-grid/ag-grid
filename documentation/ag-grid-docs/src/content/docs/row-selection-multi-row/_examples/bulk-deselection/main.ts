@@ -16,7 +16,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selectionOptions: { mode: 'multiRow' },
+    selection: { mode: 'multiRow' },
     onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
         const nodesToSelect: IRowNode[] = [];
         params.api.forEachNode((node) => {

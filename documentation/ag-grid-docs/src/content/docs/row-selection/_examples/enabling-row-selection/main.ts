@@ -10,13 +10,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 
 let gridApi: GridApi<IOlympicData>;
 
-const selectionOptions: SelectionOptions = {
-    mode: 'singleRow',
-    suppressDeselection: false,
-    suppressClickSelection: false,
-    checkboxSelection: false,
-};
-
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete', minWidth: 150 },
@@ -34,7 +27,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selectionOptions,
+    selection: {
+        mode: 'singleRow',
+    },
 };
 
 // setup the grid after the page has finished loading
@@ -54,7 +49,7 @@ function getSelectValue(id: string): SelectionOptions['mode'] {
 }
 
 function updateSelectionOptions() {
-    gridApi.setGridOption('selectionOptions', {
+    gridApi.setGridOption('selection', {
         mode: getSelectValue('#input-selection-mode'),
     });
 }

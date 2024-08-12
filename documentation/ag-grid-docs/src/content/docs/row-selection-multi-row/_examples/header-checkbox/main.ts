@@ -7,12 +7,10 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
-const selectionOptions: SelectionOptions = {
+const selection: SelectionOptions = {
     mode: 'multiRow',
     suppressClickSelection: true,
     selectAll: 'all',
-    headerCheckbox: true,
-    checkboxSelection: true,
 };
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -34,7 +32,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     pagination: true,
     paginationAutoPageSize: true,
-    selectionOptions,
+    selection,
 };
 
 function onQuickFilterChanged() {
@@ -50,14 +48,14 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
 
-    document.querySelector<HTMLSelectElement>('#select-all-mode')?.addEventListener('change', (e) => {
+    document.querySelector<HTMLSelectElement>('#select-all-mode')?.addEventListener('change', () => {
         const selectAll = document.querySelector<HTMLSelectElement>('#select-all-mode')?.value ?? 'all';
 
         const newSelectionOptions: SelectionOptions = {
-            ...selectionOptions,
+            ...selection,
             selectAll: selectAll as 'all' | 'filtered' | 'currentPage',
         };
 
-        gridApi.setGridOption('selectionOptions', newSelectionOptions);
+        gridApi.setGridOption('selection', newSelectionOptions);
     });
 });

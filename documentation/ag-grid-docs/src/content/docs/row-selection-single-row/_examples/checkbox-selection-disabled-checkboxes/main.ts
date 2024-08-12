@@ -15,13 +15,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selectionOptions: {
+    selection: {
         mode: 'singleRow',
         suppressClickSelection: true,
-        checkboxSelection: {
-            displayCheckbox: true,
-            showDisabledCheckboxes: true,
-        },
         isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
     },
     onFirstDataRendered: (params) => {

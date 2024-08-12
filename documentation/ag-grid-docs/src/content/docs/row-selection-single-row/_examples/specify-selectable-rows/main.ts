@@ -24,10 +24,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 150,
         filter: true,
     },
-    selectionOptions: {
+    selection: {
         mode: 'singleRow',
         isRowSelectable: (rowNode) => (rowNode.data ? rowNode.data.year < 2007 : false),
-        checkboxSelection: true,
     },
 };
 

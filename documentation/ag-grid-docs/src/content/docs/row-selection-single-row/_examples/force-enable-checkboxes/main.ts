@@ -21,13 +21,10 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selectionOptions: {
+    selection: {
         mode: 'multiRow',
         suppressClickSelection: true,
-        checkboxSelection: {
-            displayCheckbox: (params) => params.data?.year === 2012,
-            showDisabledCheckboxes: true,
-        },
+        checkboxes: (params) => params.data?.year === 2012,
     },
     onFirstDataRendered: (params) => {
         const nodesToSelect: IRowNode[] = [];

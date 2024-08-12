@@ -16,7 +16,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selectionOptions: { mode: 'singleRow' },
+    selection: { mode: 'singleRow' },
     onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
         const nodesToSelect: IRowNode[] = [];
         params.api.forEachNode((node) => {
