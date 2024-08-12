@@ -763,6 +763,14 @@ export class FocusService extends BeanStub implements NamedBean {
             if (column && rowIndex !== undefined && rowIndex !== null) {
                 this.navigationService.ensureCellVisible({ rowIndex, column, rowPinned });
 
+                if (backwards) {
+                    // if full width we need to focus into the full width cell in the correct direction
+                    const rowCtrl = this.rowRenderer.getRowByPosition(nextRow);
+                    if (rowCtrl?.isFullWidth() && this.navigationService.tryToFocusFullWidthRow(nextRow, backwards)) {
+                        return true;
+                    }
+                }
+
                 this.setFocusedCell({
                     rowIndex,
                     column,

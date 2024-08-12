@@ -315,11 +315,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
 
         if (this.rowPinned === 'top') {
-            return 't-' + this.rowIndex;
+            return RowNode.ID_PREFIX_TOP_PINNED + this.rowIndex;
         }
 
         if (this.rowPinned === 'bottom') {
-            return 'b-' + this.rowIndex;
+            return RowNode.ID_PREFIX_BOTTOM_PINNED + this.rowIndex;
         }
 
         return this.rowIndex.toString();
@@ -401,7 +401,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 // as we don't always have the key for this level (eg when updating
                 // data via transaction on SSRM, we are getting key to look up the
                 // RowNode, don't have the RowNode yet, thus no way to get the current key)
-                const parentKeys = this.getGroupKeys(true);
+                const parentKeys = this.parent?.getRoute() ?? [];
                 this.id = getRowIdFunc({
                     data: this.data,
                     parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
@@ -868,10 +868,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         return this.__hasChildren;
     }
 
-    public isEmptyRowGroupNode(): boolean {
-        return (this.group && _missingOrEmpty(this.childrenAfterGroup)) ?? false;
-    }
-
     private dispatchCellChangedEvent(column: AgColumn, newValue: TData, oldValue: TData): void {
         const cellChangedEvent: CellChangedEvent<TData> = {
             type: 'cellChanged',
@@ -934,7 +930,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public calculateSelectedFromChildren(): boolean | undefined | null {
         let atLeastOneSelected = false;
         let atLeastOneDeSelected = false;
-        let atLeastOneMixed = false;
 
         if (!this.childrenAfterGroup?.length) {
             return this.selectable ? this.selected : null;
@@ -961,12 +956,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                     atLeastOneDeSelected = true;
                     break;
                 default:
-                    atLeastOneMixed = true;
-                    break;
+                    return undefined;
             }
         }
 
-        if (atLeastOneMixed || (atLeastOneSelected && atLeastOneDeSelected)) {
+        if (atLeastOneSelected && atLeastOneDeSelected) {
             return undefined;
         }
 
@@ -989,7 +983,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.selected = selected;
     }
 
-    public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
+    private dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
         this.localEventService?.dispatchEvent({
             type: type,
             node: this,
@@ -1068,20 +1062,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * - `false` if the node isn't pinned
      */
     public isRowPinned(): boolean {
-        return this.rowPinned === 'top' || this.rowPinned === 'bottom';
-    }
-
-    public isParentOfNode(potentialParent: RowNode): boolean {
-        let parentNode = this.parent;
-
-        while (parentNode) {
-            if (parentNode === potentialParent) {
-                return true;
-            }
-            parentNode = parentNode.parent;
-        }
-
-        return false;
+        return !!this.rowPinned;
     }
 
     /** Add an event listener. */
@@ -1122,34 +1103,9 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.dispatchRowEvent('mouseLeave');
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: AgColumn | null): RowNode | null {
-        let currentRowNode: RowNode = this;
-        let isCandidate = true;
-        let foundFirstChildPath = false;
-        let nodeToSwapIn: RowNode | null = null;
-
-        // if we are hiding groups, then if we are the first child, of the first child,
-        // all the way up to the column we are interested in, then we show the group cell.
-        while (isCandidate && !foundFirstChildPath) {
-            const parentRowNode = currentRowNode.parent!;
-            const firstChild = _exists(parentRowNode) && currentRowNode.firstChild;
-
-            if (firstChild) {
-                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
-                    foundFirstChildPath = true;
-                    nodeToSwapIn = parentRowNode;
-                }
-            } else {
-                isCandidate = false;
-            }
-
-            currentRowNode = parentRowNode;
-        }
-
-        return foundFirstChildPath ? nodeToSwapIn : null;
-    }
-
     /**
+     * @deprecated v32.2.0
+     *
      * Returns:
      * - `true` if the node is a full width cell
      * - `false` if the node is not a full width cell
@@ -1168,12 +1124,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * If the Row Node is not a group, it returns `undefined`.
      */
     public getRoute(): string[] | undefined {
-        if (this.key == null) {
-            return;
+        if (!this.group) {
+            return undefined;
         }
 
         const res: string[] = [];
-
         let pointer: RowNode | null = this;
         while (pointer && pointer.key != null) {
             res.push(pointer.key);
@@ -1216,9 +1171,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.sibling = footerNode;
     }
 
-    // Only used by SSRM. In CSRM this is never used as footers should always be present for
-    // the purpose of exporting collapsed groups. In SSRM it is not possible to export collapsed
-    // groups anyway, so can destroy footers.
     public destroyFooter(): void {
         if (!this.sibling) {
             return;
@@ -1228,5 +1180,51 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.sibling.setRowIndex(null);
 
         this.sibling = undefined as any;
+    }
+
+    // Generic setters
+    private updateIfDifferent<T extends keyof RowNode>(key: T, value: RowNode[T], eventName: RowNodeEventType): void {
+        if (this[key] === value) {
+            return;
+        }
+        (this as RowNode)[key] = value;
+
+        this.dispatchRowEvent(eventName);
+    }
+
+    public setFirstChild(firstChild: boolean): void {
+        this.updateIfDifferent('firstChild', firstChild, 'firstChildChanged');
+    }
+
+    public setLastChild(lastChild: boolean): void {
+        this.updateIfDifferent('lastChild', lastChild, 'lastChildChanged');
+    }
+
+    public setChildIndex(childIndex: number): void {
+        this.updateIfDifferent('childIndex', childIndex, 'childIndexChanged');
+    }
+
+    private setDisplayed(displayed: boolean): void {
+        this.updateIfDifferent('displayed', displayed, 'displayedChanged');
+    }
+
+    public setDragging(dragging: boolean): void {
+        this.updateIfDifferent('dragging', dragging, 'draggingChanged');
+    }
+
+    public setHighlighted(highlighted: RowHighlightPosition | null): void {
+        this.updateIfDifferent('highlighted', highlighted, 'rowHighlightChanged');
+    }
+
+    public setAllChildrenCount(allChildrenCount: number | null): void {
+        this.updateIfDifferent('allChildrenCount', allChildrenCount, 'allChildrenCountChanged');
+    }
+
+    public setRowIndex(rowIndex: number | null): void {
+        this.updateIfDifferent('rowIndex', rowIndex, 'rowIndexChanged');
+    }
+
+    public setUiLevel(uiLevel: number): void {
+        this.updateIfDifferent('uiLevel', uiLevel, 'uiLevelChanged');
     }
 }

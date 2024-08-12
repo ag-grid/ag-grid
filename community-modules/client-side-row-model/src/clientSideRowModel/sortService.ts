@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     BeanCollection,
     ChangedPath,
     ColumnModel,
@@ -272,12 +273,34 @@ export class SortService extends BeanStub implements NamedBean {
                     childRowNode.setGroupValue(groupDisplayCol.getId(), undefined);
                 } else {
                     // if doing a set operation, we set only where the pull down is to occur
-                    const parentToStealFrom = childRowNode.getFirstChildOfFirstChild(rowGroupColumn);
+                    const parentToStealFrom = this.getFirstChildOfFirstChild(childRowNode, rowGroupColumn);
                     if (parentToStealFrom) {
                         childRowNode.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
                     }
                 }
             });
         });
+    }
+
+    private getFirstChildOfFirstChild(node: RowNode, rowGroupColumn: AgColumn | null): RowNode | null {
+        let currentRowNode: RowNode | null = node;
+
+        // if we are hiding groups, then if we are the first child, of the first child,
+        // all the way up to the column we are interested in, then we show the group cell.
+        while (currentRowNode) {
+            const parentRowNode: RowNode | null = currentRowNode.parent;
+
+            if (parentRowNode && currentRowNode.firstChild) {
+                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
+                    return parentRowNode;
+                }
+            } else {
+                return null;
+            }
+
+            currentRowNode = parentRowNode;
+        }
+
+        return null;
     }
 }

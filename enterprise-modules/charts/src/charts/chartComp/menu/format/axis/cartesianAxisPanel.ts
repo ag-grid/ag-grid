@@ -136,6 +136,9 @@ export class CartesianAxisPanel extends Component {
             chartUpdated: updateAxisLabelRotations,
             chartModelUpdate: () =>
                 setTimeout(() => {
+                    if (!this.isAlive()) {
+                        return;
+                    }
                     // make sure this runs after the actual chart update has happened
                     this.refreshAxisTypeSelect(chartAxisOptions);
                     updateTimeFormatVisibility();
