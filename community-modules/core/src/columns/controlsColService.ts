@@ -15,9 +15,6 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
 
     public createControlsCols(): AgColumn[] {
         const so = this.gos.get('selection');
-        const controlsColDef = this.gos.get('controlsColDef');
-        const enableRTL = this.gos.get('enableRtl');
-
         if (!so) {
             return [];
         }
@@ -30,6 +27,8 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
         const headerCheckbox = getHeaderCheckbox(so);
 
         if (checkboxes || headerCheckbox) {
+            const controlsColDef = this.gos.get('controlsColDef');
+            const enableRTL = this.gos.get('enableRtl');
             const colDef: ColDef = {
                 // overridable properties
                 maxWidth: 50,
