@@ -326,7 +326,7 @@ export class TreeNode implements ITreeNode {
                 rowPosition = firstChildRowPosition;
             }
         }
-        return rowPosition;
+        return rowPosition < 0 ? this.rowPosition : rowPosition;
     }
 
     /**

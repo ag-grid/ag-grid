@@ -119,7 +119,16 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         this.clearTree(this.root);
 
-        this.addOrUpdateRows(details, rootRow.allLeafChildren, false);
+        const rows = rootRow.allLeafChildren;
+        const rowsLen = rows?.length ?? 0;
+        for (let rowIndex = 0; rowIndex < rowsLen; ++rowIndex) {
+            const row = rows![rowIndex];
+            const node = this.upsertPath(this.getDataPath(details, row));
+            if (node) {
+                node.rowPosition = rowIndex;
+                this.overwriteRow(node, row, false);
+            }
+        }
 
         this.commitTree(details);
     }
@@ -175,7 +184,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Removes all rows from the tree */
     private clearTree(node: TreeNode): void {
-        this.clearRow(node);
+        const oldRow = this.clearRow(node);
+        if (oldRow !== null && !oldRow.data) {
+            unsetTreeRowExpandedInitialized(oldRow);
+        }
         for (const child of node.enumChildren()) {
             this.clearTree(child);
         }
