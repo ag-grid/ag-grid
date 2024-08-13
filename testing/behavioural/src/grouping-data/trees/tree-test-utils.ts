@@ -76,6 +76,9 @@ export class TreeDiagram {
         if (row.level === -1 && row === this.root) {
             return 'ROOT';
         } else if (row.data) {
+            if (row.childrenAfterGroup?.length) {
+                return 'GROUP';
+            }
             return 'LEAF';
         }
         return 'filler';

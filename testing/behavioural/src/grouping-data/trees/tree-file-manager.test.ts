@@ -36,19 +36,19 @@ describe('ag-grid tree transactions', () => {
 
         new TreeDiagram(api, 'initial').check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ Documents LEAF id:1
-            │ ├─┬ txt LEAF selected id:2
+            ├─┬ Documents GROUP id:1
+            │ ├─┬ txt GROUP selected id:2
             │ │ └── notes.txt LEAF id:3
-            │ ├─┬ pdf LEAF id:4
+            │ ├─┬ pdf GROUP id:4
             │ │ ├── book.pdf LEAF id:5
             │ │ └── cv.pdf LEAF id:6
-            │ ├─┬ xls LEAF id:7
+            │ ├─┬ xls GROUP id:7
             │ │ └── accounts.xls LEAF id:8
-            │ └─┬ stuff LEAF id:9
+            │ └─┬ stuff GROUP id:9
             │ · └── xyz.txt LEAF id:10
             ├─┬ Music filler id:row-group-0-Music
             │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop LEAF id:11
+            │ · ├─┬ pop GROUP id:11
             │ · │ └── theme.mp3 LEAF id:13
             │ · └── jazz LEAF id:14
             └── temp.txt LEAF id:12
@@ -78,19 +78,19 @@ describe('ag-grid tree transactions', () => {
 
         new TreeDiagram(api, 'move Documents/txt to Documents/stuff/').check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ Documents LEAF id:1
-            │ ├─┬ pdf LEAF id:4
+            ├─┬ Documents GROUP id:1
+            │ ├─┬ pdf GROUP id:4
             │ │ ├── book.pdf LEAF id:5
             │ │ └── cv.pdf LEAF id:6
-            │ ├─┬ xls LEAF id:7
+            │ ├─┬ xls GROUP id:7
             │ │ └── accounts.xls LEAF id:8
-            │ └─┬ stuff LEAF id:9
+            │ └─┬ stuff GROUP id:9
             │ · ├── xyz.txt LEAF id:10
-            │ · └─┬ txt LEAF selected id:2
+            │ · └─┬ txt GROUP selected id:2
             │ · · └── notes.txt LEAF id:3
             ├─┬ Music filler id:row-group-0-Music
             │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop LEAF id:11
+            │ · ├─┬ pop GROUP id:11
             │ · │ └── theme.mp3 LEAF id:13
             │ · └── jazz LEAF id:14
             └── temp.txt LEAF id:12
@@ -100,21 +100,21 @@ describe('ag-grid tree transactions', () => {
 
         new TreeDiagram(api, 'rename "Documents/xls" to "Documents/stuff/var/xls-renamed"').check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ Documents LEAF id:1
-            │ ├─┬ pdf LEAF id:4
+            ├─┬ Documents GROUP id:1
+            │ ├─┬ pdf GROUP id:4
             │ │ ├── book.pdf LEAF id:5
             │ │ └── cv.pdf LEAF id:6
             │ ├─┬ xls filler id:row-group-0-Documents-1-xls
             │ │ └── accounts.xls LEAF id:8
-            │ └─┬ stuff LEAF id:9
+            │ └─┬ stuff GROUP id:9
             │ · ├── xyz.txt LEAF id:10
-            │ · ├─┬ txt LEAF selected id:2
+            │ · ├─┬ txt GROUP selected id:2
             │ · │ └── notes.txt LEAF id:3
             │ · └─┬ var filler id:row-group-0-Documents-1-stuff-2-var
             │ · · └── xls-renamed LEAF id:7
             ├─┬ Music filler id:row-group-0-Music
             │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop LEAF id:11
+            │ · ├─┬ pop GROUP id:11
             │ · │ └── theme.mp3 LEAF id:13
             │ · └── jazz LEAF id:14
             └── temp.txt LEAF id:12

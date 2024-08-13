@@ -54,9 +54,9 @@ describe('ag-grid tree transactions', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            └─┬ A LEAF id:a
+            └─┬ A GROUP id:a
             · └─┬ B filler id:row-group-0-A-1-B
-            · · └─┬ C LEAF id:c
+            · · └─┬ C GROUP id:c
             · · · └── D LEAF id:d
         `);
 

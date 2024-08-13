@@ -115,7 +115,7 @@ describe('ag-grid tree data', () => {
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ D filler id:row-group-0-D
-            │ └─┬ E LEAF id:1
+            │ └─┬ E GROUP id:1
             │ · └── F LEAF id:0
             └─┬ P filler id:row-group-0-P
             · ├── R LEAF id:2
@@ -211,7 +211,7 @@ describe('ag-grid tree data', () => {
             ├─┬ C filler id:row-group-0-C
             │ └── D LEAF id:d
             ├── E LEAF id:e
-            └─┬ F LEAF id:f
+            └─┬ F GROUP id:f
             · └── G LEAF id:g
         `);
     });
@@ -244,13 +244,13 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ P LEAF id:p
+            ├─┬ P GROUP id:p
             │ ├── R LEAF id:r
             │ └── Q LEAF id:q
             ├─┬ A filler id:row-group-0-A
             │ ├── C LEAF id:c
             │ └── B LEAF id:b
-            └─┬ S LEAF id:s
+            └─┬ S GROUP id:s
             · └── T LEAF id:t
         `);
     });
@@ -384,10 +384,10 @@ describe('ag-grid tree data', () => {
             ├─┬ A filler id:row-group-0-A
             │ ├── B LEAF id:b label:b1
             │ └── C LEAF id:c label:c1
-            ├─┬ P LEAF id:p label:p1
+            ├─┬ P GROUP id:p label:p1
             │ ├── Q LEAF id:q label:q1
             │ └── R LEAF id:r label:r1
-            └─┬ S LEAF id:s label:s1
+            └─┬ S GROUP id:s label:s1
             · └── T LEAF id:t label:t1
         `);
 
@@ -395,13 +395,13 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ P LEAF id:p label:p2
+            ├─┬ P GROUP id:p label:p2
             │ ├── R LEAF id:r label:r2
             │ └── Q LEAF id:q label:q2
             ├─┬ A filler id:row-group-0-A
             │ ├── C LEAF id:c label:c2
             │ └── B LEAF id:b label:b2
-            └─┬ S LEAF id:s label:s2
+            └─┬ S GROUP id:s label:s2
             · └── T LEAF id:t label:t2
         `);
     });
@@ -468,7 +468,7 @@ describe('ag-grid tree data', () => {
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler selected id:row-group-0-A
-            │ └─┬ B LEAF selected !expanded id:1 label:1-v1
+            │ └─┬ B GROUP selected !expanded id:1 label:1-v1
             │ · └── C LEAF selected id:8 label:8-v1
             ├─┬ C filler selected id:row-group-0-C
             │ └── D LEAF selected id:3 label:3-v1
@@ -490,7 +490,7 @@ describe('ag-grid tree data', () => {
             ├─┬ R filler selected !expanded id:row-group-0-R
             │ └── S LEAF selected id:5 label:5-v2
             ├─┬ X filler id:row-group-0-X
-            │ └─┬ Y LEAF id:2 label:2-v2
+            │ └─┬ Y GROUP id:2 label:2-v2
             │ · └── Z LEAF selected id:1 label:1-v2
             ├─┬ P filler selected !expanded id:row-group-0-P
             │ └── Q LEAF selected id:4 label:4-v2
@@ -540,14 +540,14 @@ describe('ag-grid tree data', () => {
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
-            │ └─┬ B LEAF id:0
+            │ └─┬ B GROUP id:0
             │ · ├── C LEAF id:1
             │ · ├── D LEAF id:2
             │ · ├── E LEAF id:3
             │ · ├── F LEAF id:4
             │ · └── G LEAF id:5
             ├─┬ C filler id:row-group-0-C
-            │ └─┬ B LEAF id:6
+            │ └─┬ B GROUP id:6
             │ · ├── C LEAF id:7
             │ · └── D LEAF id:8
             └── D LEAF id:9
@@ -571,7 +571,7 @@ describe('ag-grid tree data', () => {
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
-            │ ├─┬ B LEAF id:0
+            │ ├─┬ B GROUP id:0
             │ │ ├── X LEAF id:2
             │ │ ├── F LEAF id:4
             │ │ ├── Y LEAF id:1
@@ -579,7 +579,7 @@ describe('ag-grid tree data', () => {
             │ └── Q LEAF id:11
             ├── D LEAF id:9
             └─┬ C filler id:row-group-0-C
-            · ├─┬ B LEAF id:6
+            · ├─┬ B GROUP id:6
             · │ ├── R LEAF id:8
             · │ └── W LEAF id:7
             · ├── U LEAF id:12

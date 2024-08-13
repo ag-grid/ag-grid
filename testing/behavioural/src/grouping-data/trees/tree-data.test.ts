@@ -61,7 +61,7 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ A LEAF id:0
+            ├─┬ A GROUP id:0
             │ └── B LEAF id:1
             ├─┬ C filler id:row-group-0-C
             │ └── D LEAF id:2
@@ -117,10 +117,10 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ A LEAF id:2
+            ├─┬ A GROUP id:2
             │ └── B LEAF id:0
             └─┬ C filler id:row-group-0-C
-            · └─┬ D LEAF id:3
+            · └─┬ D GROUP id:3
             · · └── E LEAF id:1`);
 
         const rowsSnapshot = getRowsSnapshot(rows);

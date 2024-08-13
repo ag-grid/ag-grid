@@ -95,7 +95,7 @@ describe('ag-grid tree transactions', () => {
                 ├── A LEAF id:0
                 └─┬ X filler id:row-group-0-X
                 · └─┬ Y filler id:row-group-0-X-1-Y
-                · · └─┬ Z LEAF id:88
+                · · └─┬ Z GROUP id:88
                 · · · └── W LEAF id:99
             `);
 
@@ -103,7 +103,7 @@ describe('ag-grid tree transactions', () => {
 
             new TreeDiagram(api, 'Transaction 1').check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-                ├─┬ A LEAF id:0
+                ├─┬ A GROUP id:0
                 │ ├─┬ Y filler id:row-group-0-A-1-Y
                 │ │ └── Z LEAF id:88
                 │ └── B LEAF id:1
@@ -119,7 +119,7 @@ describe('ag-grid tree transactions', () => {
 
             new TreeDiagram(api, 'Transaction 2').check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-                ├─┬ A LEAF id:0
+                ├─┬ A GROUP id:0
                 │ └── B LEAF id:1
                 ├─┬ X filler id:row-group-0-X
                 │ └─┬ Y filler id:row-group-0-X-1-Y
@@ -135,7 +135,7 @@ describe('ag-grid tree transactions', () => {
 
         new TreeDiagram(api, 'final').check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ A LEAF id:0
+            ├─┬ A GROUP id:0
             │ └── B LEAF id:1
             └─┬ C filler id:row-group-0-C
             · ├── D LEAF id:2
