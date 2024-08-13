@@ -224,7 +224,7 @@ If you are showing child counts for the groups, then the child count is a count 
 
 ## Selection
 
-To enable selection simply configure `gridOptions.selectionOptions` as described in [Row Selection](./row-selection). However there are some restrictions to be aware of.
+To enable selection simply configure `gridOptions.selection` as described in [Row Selection](./row-selection). However there are some restrictions to be aware of.
 
 ### Checkbox vs Click Selection
 
@@ -243,7 +243,7 @@ const gridOptions = {
 
 ### Group Selection
 
-[Filler Groups](#filler-groups) do not keep their selection state should the filler group be moved. For example if you have groups A->B->C, where C is the only row provided (so the grid creates groups A and B for you), and then you change the path to D->B->C, group B will not keep its selection.
+[Filler Groups](#filler-groups) do not keep their selection state should the filler group be moved. For example if you have groups `A->B->C`, where `C` is the only row provided (so the grid creates groups `A` and `B` for you), and then you change the path to `D->B->C`, group `B` will not keep its selection.
 
 If keeping selection of groups is a priority, then arrange your data so that the grid does not need to create any filler groups.
 

@@ -1,20 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    type CheckboxSelectionCallbackParams,
-    type GridApi,
-    type GridOptions,
-    createGrid,
-} from '@ag-grid-community/core';
+import { type GridApi, type GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RowGroupingModule]);
-
-function checkboxSelection(params: CheckboxSelectionCallbackParams) {
-    return params.node.group === true;
-}
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -39,11 +30,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 250,
         cellRenderer: 'agGroupCellRenderer',
     },
-    selectionOptions: {
+    selection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
         suppressClickSelection: true,
-        checkboxSelection: { displayCheckbox: checkboxSelection },
+        checkboxes: (params) => !!params.node.group,
     },
     suppressAggFuncInHeader: true,
 };

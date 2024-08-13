@@ -19,7 +19,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
         { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
         { field: 'year', enableRowGroup: true, rowGroup: true, hide: true },
         { field: 'athlete', hide: true },
-        { field: 'sport', enableRowGroup: true, checkboxSelection: true, filter: 'agTextColumnFilter' },
+        { field: 'sport', enableRowGroup: true, filter: 'agTextColumnFilter' },
         { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
         { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
         { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
@@ -74,11 +74,9 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     rowModelType: 'serverSide',
 
     // allow multiple row selections
-    selectionOptions: {
+    selection: {
         mode: 'multiRow',
         suppressClickSelection: true,
-        headerCheckbox: true,
-        checkboxSelection: true,
         groupSelects: 'descendants',
     },
     rowGroupPanelShow: 'always',

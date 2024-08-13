@@ -45,7 +45,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    selectionOptions: {
+    selection: {
         mode: 'multiRow',
     },
 

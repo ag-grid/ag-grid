@@ -28,10 +28,9 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     treeData: true, // enable Tree Data mode
     groupDefaultExpanded: -1, // expand all groups by default
-    selectionOptions: {
+    selection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
-        checkboxSelection: true,
         suppressClickSelection: true,
     },
     getDataPath: (data) => data.orgHierarchy,

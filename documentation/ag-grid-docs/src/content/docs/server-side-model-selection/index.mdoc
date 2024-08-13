@@ -4,7 +4,7 @@ enterprise: true
 ---
 
 Selecting rows and groups in the Server-Side Row Model is supported.
-Configure the `selectionOptions` grid option as described in [Row selection](./row-selection).
+Configure the `selection` grid option as described in [Row selection](./row-selection).
 Some SSRM-specific considerations are detailed below.
 
 {% note %}
@@ -32,18 +32,18 @@ The selected rows are preserved when the grid is sorted or filtered and are disp
 Select a row, apply a column filter so that the selected row is in the filter results and it will appear as selected in the filter results. 
 If a selected row doesn’t match the applied filter, it will still be selected when the filter is removed.
 
-{% gridExampleRunner title="Click Selection" name="click-selection"  exampleHeight=590 /%}
+{% gridExampleRunner title="Click Selection" name="click-selection" /%}
 
 ## Bulk Selection
 
-There are restrictions on the configuration of bulk selection when using SSRM. Using the `'filtered'` or `'currentPage'` settings for `selectionOptions.selectAll` is considered invalid. 
-The grid will behave as though `selectionOptions.selectAll = 'all'`, which is the default value.
+There are restrictions on the configuration of bulk selection when using SSRM. Using the `'filtered'` or `'currentPage'` settings for `selection.selectAll` is considered invalid. 
+The grid will behave as though `selection.selectAll = 'all'`, which is the default value. The example below demonstrates this.
+
+{% gridExampleRunner title="Bulk Selection" name="select-all" /%}
 
 {% note %}
 When using header checkbox selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [API Reference](./server-side-model-selection/#api-reference) section below for suggested alternatives.
 {% /note %}
-
-{% gridExampleRunner title="Bulk Selection" name="select-all"  exampleHeight=590 /%}
 
 ## Group Selection
 
@@ -59,12 +59,12 @@ When adding a new row via transaction, the new row will be treated as if it conf
 * After selecting the `Aggressive` group, new rows created by the `Add new Aggressive` button will be selected.
 * After toggling one of the child rows of the `Aggressive` group, new rows follow the group's previous selection state.
 
-{% gridExampleRunner title="Transactions Example" name="group-selects-children-transactions"  exampleHeight=590 /%}
+{% gridExampleRunner title="Transactions Example" name="group-selects-children-transactions" /%}
 
 ## API Reference
 
 The following API functions exist for the Server-Side Row Model when using [Row Selection](./row-selection/#grid-selection-api). These can be used to get the currently selected rows and nodes if all of the selected rows have been loaded by the grid. 
-These cannot be used while using `selectionOptions.groupSelects` is `'descendants'` or `'filteredDescendants'`, or when any select all functionality is required.
+These cannot be used while using `selection.groupSelects` is `'descendants'` or `'filteredDescendants'`, or when any select all functionality is required.
 
 {% apiDocumentation source="grid-api/api.json" section="selection" names=["getSelectedNodes", "getSelectedRows"] /%}
 
@@ -89,7 +89,7 @@ In the example below, note the following;
 * The `Save Selection` button has been configured to store the result of `api.getServerSideSelectionState()`, it also logs the saved state to the console when clicked.
 * The `Load Selection` button can subsequently re-apply the previously saved selection rules using `api.setServerSideSelectionState(state)`.
 
-{% gridExampleRunner title="Select All API" name="api-select-all"  exampleHeight=590 /%}
+{% gridExampleRunner title="Select All API" name="api-select-all"  /%}
 
 ### Group Selection API
 
@@ -126,7 +126,7 @@ In the example below, note the following;
 * The `Save Selection` button has been configured to store the result of `api.getServerSideSelectionState()`, it also logs the saved state to the console when clicked.
 * The `Load Selection` button can subsequently re-apply the previously saved selection rules using `api.setServerSideSelectionState(state)`.
 
-{% gridExampleRunner title="Group Selection API" name="api-group-selects-children"  exampleHeight=590 /%}
+{% gridExampleRunner title="Group Selection API" name="api-group-selects-children" /%}
 
 ## Tree Data
 

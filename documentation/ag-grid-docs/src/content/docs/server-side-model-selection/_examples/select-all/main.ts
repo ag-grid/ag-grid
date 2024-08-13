@@ -47,12 +47,13 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    selectionOptions: {
+    selection: {
         mode: 'multiRow',
         suppressClickSelection: true,
-        headerCheckbox: true,
-        checkboxSelection: true,
+        selectAll: 'all',
     },
+
+    groupDefaultExpanded: -1,
 
     suppressAggFuncInHeader: true,
 };
@@ -100,4 +101,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);
         });
+
+    document.querySelector('#input-select-all')?.addEventListener('change', (e) => {
+        gridApi.setGridOption('selection', {
+            mode: 'multiRow',
+            suppressClickSelection: true,
+            //@ts-ignore
+            selectAll: e.target!.value,
+        });
+    });
 });

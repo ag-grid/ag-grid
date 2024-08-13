@@ -43,11 +43,9 @@ const gridOptions: GridOptions = {
         { field: 'startDate' },
     ],
     cacheBlockSize: 10,
-    selectionOptions: {
+    selection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
-        headerCheckbox: true,
-        checkboxSelection: true,
     },
     isServerSideGroupOpenByDefault: (params) => {
         var isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';

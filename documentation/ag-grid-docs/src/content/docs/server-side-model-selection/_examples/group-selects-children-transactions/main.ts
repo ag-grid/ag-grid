@@ -33,9 +33,6 @@ const gridOptions: GridOptions = {
     autoGroupColumnDef: {
         minWidth: 220,
         field: 'tradeId',
-        cellRendererParams: {
-            checkbox: true,
-        },
     },
     isServerSideGroupOpenByDefault: (params) => {
         return params.rowNode.key === 'Aggressive' || params.rowNode.key === 'Hybrid';
@@ -59,7 +56,7 @@ const gridOptions: GridOptions = {
 
     rowModelType: 'serverSide',
 
-    selectionOptions: {
+    selection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
     },
