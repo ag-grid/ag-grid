@@ -202,93 +202,149 @@ export const Property: FunctionComponent<{
         <>
             <tr ref={propertyRef}>
                 <td className={styles.propertyNameDscription}>
-                    <div className={styles.propertyName}>
-                        <div className={styles.propertyMeta}>
-                            <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
-                                <span
-                                    onClick={() => setExpanded(!isExpanded)}
-                                    dangerouslySetInnerHTML={{ __html: displayNameSplit }}
-                                ></span>
-                            </h6>
-                            <div
-                                title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
-                                className={styles.metaItem}
-                                onClick={() => setExpanded(!isExpanded)}
-                            >
-                                {typeUrl ? (
-                                    <a
-                                        className={styles.metaValue}
-                                        href={typeUrl}
-                                        target={typeUrl.startsWith('http') ? '_blank' : '_self'}
-                                        rel="noreferrer"
+                    <div className={styles.columnWrapper}>
+                        <div className={styles.leftColumn}>
+                            {' '}
+                            <div className={styles.propertyName}>
+                                <div className={styles.propertyMeta}>
+                                    <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                                        <span
+                                            onClick={() => setExpanded(!isExpanded)}
+                                            dangerouslySetInnerHTML={{ __html: displayNameSplit }}
+                                        ></span>
+                                    </h6>
+                                    <div
+                                        title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
+                                        className={styles.metaItem}
+                                        onClick={() => setExpanded(!isExpanded)}
                                     >
-                                        {isObject ? getInterfaceName(name) : propertyType}
-                                    </a>
-                                ) : (
-                                    <div className={styles.metaRow}>
-                                        <span className={styles.metaValue}>{propertyType}</span>
-                                        <div className={styles.actions}></div>
-                                    </div>
-                                )}
+                                        {typeUrl ? (
+                                            <a
+                                                className={styles.metaValue}
+                                                href={typeUrl}
+                                                target={typeUrl.startsWith('http') ? '_blank' : '_self'}
+                                                rel="noreferrer"
+                                            >
+                                                {isObject ? getInterfaceName(name) : propertyType}
+                                            </a>
+                                        ) : (
+                                            <div className={styles.metaRow}>
+                                                <span className={styles.metaValue}>{propertyType}</span>
+                                                <div className={styles.actions}></div>
+                                            </div>
+                                        )}
 
-                                {formattedDefaultValue != null && (
-                                    <div className={styles.metaItem}>
-                                        <span className={classnames(styles.metaValue, styles.defaultValue)}>
-                                            <span>default: </span>
-                                            {formattedDefaultValue}
-                                        </span>
-                                    </div>
-                                )}
+                                        {formattedDefaultValue != null && (
+                                            <div className={styles.metaItem}>
+                                                <span className={classnames(styles.metaValue, styles.defaultValue)}>
+                                                    <span>default: </span>
+                                                    {formattedDefaultValue}
+                                                </span>
+                                            </div>
+                                        )}
 
-                                {isInitial && (
-                                    <div className={classnames(styles.metaItem, styles.initialItem)}>
-                                        <a
-                                            className={styles.initialLabel}
-                                            href="https://ag-grid.com/react-data-grid/grid-interface/#initial-grid-options"
-                                            target="_blank"
-                                        >
-                                            Initial
-                                        </a>
+                                        {isInitial && (
+                                            <div className={classnames(styles.metaItem, styles.initialItem)}>
+                                                <a
+                                                    className={styles.initialLabel}
+                                                    href="https://ag-grid.com/react-data-grid/grid-interface/#initial-grid-options"
+                                                    target="_blank"
+                                                >
+                                                    Initial
+                                                </a>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div className={styles.contentDescription}>
-                        <div
-                            className={classnames(styles.collapsedPropertyContent, {
-                                [styles.expandable]: isExpandable,
-                            })}
-                        >
-                            <div className={styles.rightColumn}>
+                        <div className={styles.rightColumn}>
+                            {' '}
+                            <div className={styles.contentDescription}>
                                 <div
-                                    onClick={() => setExpanded(!isExpanded)}
-                                    role="presentation"
-                                    className={styles.description}
-                                    dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
-                                ></div>
-                                {isObject && (
-                                    <div>
-                                        See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
+                                    className={classnames(styles.collapsedPropertyContent, {
+                                        [styles.expandable]: isExpandable,
+                                    })}
+                                >
+                                    <div className={styles.rightColumn}>
+                                        <div
+                                            onClick={() => setExpanded(!isExpanded)}
+                                            role="presentation"
+                                            className={styles.description}
+                                            dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
+                                        ></div>
+                                        {isObject && (
+                                            <div>
+                                                See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
+                                            </div>
+                                        )}
+                                        {isInitial && config.showInitialDescription && (
+                                            <div
+                                                onClick={() => setExpanded(!isExpanded)}
+                                                className={styles.description}
+                                            >
+                                                This property will only be read on initialisation.
+                                            </div>
+                                        )}
+
+                                        {definition.options != null && (
+                                            <div>
+                                                Options:{' '}
+                                                {definition.options.map((o, i) => (
+                                                    <Fragment key={o}>
+                                                        {i > 0 ? ', ' : ''}
+                                                        <code>{formatJson(o)}</code>
+                                                    </Fragment>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                                {isInitial && config.showInitialDescription && (
-                                    <div onClick={() => setExpanded(!isExpanded)} className={styles.description}>
-                                        This property will only be read on initialisation.
-                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.actionsRow}>
+                                {detailsCode && (
+                                    <button
+                                        className={classnames(styles.seeMore, 'button-as-link')}
+                                        onClick={() => {
+                                            setExpanded(!isExpanded);
+                                            trackApiDocumentation({
+                                                type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
+                                                framework,
+                                                id,
+                                                name,
+                                            });
+                                        }}
+                                        role="presentation"
+                                    >
+                                        More details
+                                        <Icon
+                                            className={styles.chevron}
+                                            name={isExpanded ? 'chevronUp' : 'chevronDown'}
+                                        />
+                                    </button>
                                 )}
 
-                                {definition.options != null && (
-                                    <div>
-                                        Options:{' '}
-                                        {definition.options.map((o, i) => (
-                                            <Fragment key={o}>
-                                                {i > 0 ? ', ' : ''}
-                                                <code>{formatJson(o)}</code>
-                                            </Fragment>
-                                        ))}
-                                    </div>
+                                {more != null && more.url && !config.hideMore && (
+                                    <a
+                                        className={`${styles.docLink} ${detailsCode ? styles.separator : ''}`}
+                                        target="_blank"
+                                        href={urlWithPrefix({
+                                            url: more.url,
+                                            framework,
+                                        })}
+                                        onClick={() => {
+                                            trackApiDocumentation({
+                                                type: 'seeMoreLink',
+                                                framework,
+                                                id,
+                                                name,
+                                                seeMoreName: more.name,
+                                            });
+                                        }}
+                                    >
+                                        {more.name}
+                                        <Icon name="newTab"> </Icon>
+                                    </a>
                                 )}
                             </div>
                             {more != null && more.url && !config.hideMore && (
@@ -335,49 +391,7 @@ export const Property: FunctionComponent<{
                             )}
                         </div>
                     </div>
-                    <div className={styles.actionsRow}>
-                        {detailsCode && (
-                            <button
-                                className={classnames(styles.seeMore, 'button-as-link')}
-                                onClick={() => {
-                                    setExpanded(!isExpanded);
-                                    trackApiDocumentation({
-                                        type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
-                                        framework,
-                                        id,
-                                        name,
-                                    });
-                                }}
-                                role="presentation"
-                            >
-                                More details
-                                <Icon className={styles.chevron} name={isExpanded ? 'chevronUp' : 'chevronDown'} />
-                            </button>
-                        )}
 
-                        {more != null && more.url && !config.hideMore && (
-                            <a
-                                className={`${styles.docLink} ${detailsCode ? styles.separator : ''}`}
-                                target="_blank"
-                                href={urlWithPrefix({
-                                    url: more.url,
-                                    framework,
-                                })}
-                                onClick={() => {
-                                    trackApiDocumentation({
-                                        type: 'seeMoreLink',
-                                        framework,
-                                        id,
-                                        name,
-                                        seeMoreName: more.name,
-                                    });
-                                }}
-                            >
-                                {more.name}
-                                <Icon name="newTab"> </Icon>
-                            </a>
-                        )}
-                    </div>
                     {detailsCode && isExpanded && (
                         <tr className={classnames(styles.expandedContent)}>
                             <td colSpan={2}>{detailsCode && <Code code={detailsCode} keepMarkup={true} />}</td>

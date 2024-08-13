@@ -110,7 +110,7 @@
 
 .leftColumn {
     flex-shrink: 0;
-    width: 100%;
+    width: 50%;
     padding: $spacing-size-2 $spacing-size-4 $spacing-size-2 calc(var(--nested-path-depth, 0) * $spacing-size-2);
 
     @container (max-width: #{$breakpoint-table-small}) {
@@ -438,6 +438,11 @@ td {
     gap: $spacing-size-2;
     padding-top: $spacing-size-4;
     padding-bottom: $spacing-size-4;
+
+    .columnWrapper {
+        display: flex;
+        flex-direction: row;
+    }
 }
 
 .expandable {
@@ -492,6 +497,7 @@ td {
     display: flex;
     flex-direction: row;
     width: fit-content;
+    padding-top: $spacing-size-2;
 }
 
 .metaRow {
