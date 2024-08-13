@@ -4,7 +4,7 @@
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Dark-Theme.svg?raw=true"/>
       <source media="(prefers-color-scheme: light)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg?raw=true"/>
-      <img width="100%" alt="AG Grid Logo" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Dark-Theme.svg?raw=true"/>
+      <img width="100%" alt="AG Grid Logo" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg?raw=true"/>
     </picture>
     <div align="center">
         <h4><a href="https://www.ag-grid.com?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">🌐 Website</a> • <a href="https://www.ag-grid.com/javascript-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">📖 Documentation</a> • <a href="https://www.ag-grid.com/community?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">🏘️ Community</a></h4>
@@ -45,7 +45,7 @@
 <picture>
     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/kitchen-sink-demo-light.gif?raw=true" media="(prefers-color-scheme: light)">
     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/kitchen-sink-demo-dark.gif?raw=true" media="(prefers-color-scheme: dark)">
-    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/kitchen-sink-demo-dark.gif?raw=true" alt="High Performance Demo">
+    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/kitchen-sink-demo-light.gif?raw=true" alt="High Performance Demo">
 </picture>
 <div align="right">
     <a href="https://ag-grid.com/example/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github"><br><img alt="Static Badge" src="https://img.shields.io/badge/ag%E2%80%93grid.com-Live%20Demo-blue?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KDTwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIFRyYW5zZm9ybWVkIGJ5OiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KDTxnIGlkPSJTVkdSZXBvX2JnQ2FycmllciIgc3Ryb2tlLXdpZHRoPSIwIi8%2BCg08ZyBpZD0iU1ZHUmVwb190cmFjZXJDYXJyaWVyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KDTxnIGlkPSJTVkdSZXBvX2ljb25DYXJyaWVyIj4gPHBhdGggZD0iTTE4IDIwLjc1SDZDNS4yNzA2NSAyMC43NSA0LjU3MTE4IDIwLjQ2MDMgNC4wNTU0NiAxOS45NDQ1QzMuNTM5NzMgMTkuNDI4OCAzLjI1IDE4LjcyOTMgMy4yNSAxOFY2QzMuMjUgNS4yNzA2NSAzLjUzOTczIDQuNTcxMTggNC4wNTU0NiA0LjA1NTQ2QzQuNTcxMTggMy41Mzk3MyA1LjI3MDY1IDMuMjUgNiAzLjI1SDEyQzEyLjE5ODkgMy4yNSAxMi4zODk3IDMuMzI5MDIgMTIuNTMwMyAzLjQ2OTY3QzEyLjY3MSAzLjYxMDMyIDEyLjc1IDMuODAxMDkgMTIuNzUgNEMxMi43NSA0LjE5ODkxIDEyLjY3MSA0LjM4OTY4IDEyLjUzMDMgNC41MzAzM0MxMi4zODk3IDQuNjcwOTggMTIuMTk4OSA0Ljc1IDEyIDQuNzVINkM1LjY2ODQ4IDQuNzUgNS4zNTA1NCA0Ljg4MTcgNS4xMTYxMiA1LjExNjEyQzQuODgxNyA1LjM1MDU0IDQuNzUgNS42Njg0OCA0Ljc1IDZWMThDNC43NSAxOC4zMzE1IDQuODgxNyAxOC42NDk1IDUuMTE2MTIgMTguODgzOUM1LjM1MDU0IDE5LjExODMgNS42Njg0OCAxOS4yNSA2IDE5LjI1SDE4QzE4LjMzMTUgMTkuMjUgMTguNjQ5NSAxOS4xMTgzIDE4Ljg4MzkgMTguODgzOUMxOS4xMTgzIDE4LjY0OTUgMTkuMjUgMTguMzMxNSAxOS4yNSAxOFYxMkMxOS4yNSAxMS44MDExIDE5LjMyOSAxMS42MTAzIDE5LjQ2OTcgMTEuNDY5N0MxOS42MTAzIDExLjMyOSAxOS44MDExIDExLjI1IDIwIDExLjI1QzIwLjE5ODkgMTEuMjUgMjAuMzg5NyAxMS4zMjkgMjAuNTMwMyAxMS40Njk3QzIwLjY3MSAxMS42MTAzIDIwLjc1IDExLjgwMTEgMjAuNzUgMTJWMThDMjAuNzUgMTguNzI5MyAyMC40NjAzIDE5LjQyODggMTkuOTQ0NSAxOS45NDQ1QzE5LjQyODggMjAuNDYwMyAxOC43MjkzIDIwLjc1IDE4IDIwLjc1WiIgZmlsbD0iI2ZmZmZmZiIvPiA8cGF0aCBkPSJNMjAgOC43NUMxOS44MDE5IDguNzQ3NDEgMTkuNjEyNiA4LjY2NzU2IDE5LjQ3MjUgOC41Mjc0N0MxOS4zMzI0IDguMzg3MzcgMTkuMjUyNiA4LjE5ODExIDE5LjI1IDhWNC43NUgxNkMxNS44MDExIDQuNzUgMTUuNjEwMyA0LjY3MDk4IDE1LjQ2OTcgNC41MzAzM0MxNS4zMjkgNC4zODk2OCAxNS4yNSA0LjE5ODkxIDE1LjI1IDRDMTUuMjUgMy44MDEwOSAxNS4zMjkgMy42MTAzMiAxNS40Njk3IDMuNDY5NjdDMTUuNjEwMyAzLjMyOTAyIDE1LjgwMTEgMy4yNSAxNiAzLjI1SDIwQzIwLjE5ODEgMy4yNTI1OSAyMC4zODc0IDMuMzMyNDQgMjAuNTI3NSAzLjQ3MjUzQzIwLjY2NzYgMy42MTI2MyAyMC43NDc0IDMuODAxODkgMjAuNzUgNFY4QzIwLjc0NzQgOC4xOTgxMSAyMC42Njc2IDguMzg3MzcgMjAuNTI3NSA4LjUyNzQ3QzIwLjM4NzQgOC42Njc1NiAyMC4xOTgxIDguNzQ3NDEgMjAgOC43NVoiIGZpbGw9IiNmZmZmZmYiLz4gPHBhdGggZD0iTTEzLjUgMTEuMjVDMTMuMzA3MSAxMS4yMzUyIDEzLjEyNzYgMTEuMTQ1NSAxMyAxMUMxMi44NzcgMTAuODYyNSAxMi44MDkgMTAuNjg0NSAxMi44MDkgMTAuNUMxMi44MDkgMTAuMzE1NSAxMi44NzcgMTAuMTM3NSAxMyAxMEwxOS41IDMuNUMxOS41Njg3IDMuNDI2MzEgMTkuNjUxNSAzLjM2NzIxIDE5Ljc0MzUgMy4zMjYyMkMxOS44MzU1IDMuMjg1MjMgMTkuOTM0OCAzLjI2MzE5IDIwLjAzNTUgMy4yNjE0MUMyMC4xMzYyIDMuMjU5NjMgMjAuMjM2MiAzLjI3ODE2IDIwLjMyOTYgMy4zMTU4OEMyMC40MjMgMy4zNTM2IDIwLjUwNzggMy40MDk3NCAyMC41NzkgMy40ODA5NkMyMC42NTAzIDMuNTUyMTggMjAuNzA2NCAzLjYzNzAxIDIwLjc0NDEgMy43MzA0QzIwLjc4MTggMy44MjM3OSAyMC44MDA0IDMuOTIzODIgMjAuNzk4NiA0LjAyNDUyQzIwLjc5NjggNC4xMjUyMyAyMC43NzQ4IDQuMjI0NTQgMjAuNzMzOCA0LjMxNjU0QzIwLjY5MjggNC40MDg1NCAyMC42MzM3IDQuNDkxMzQgMjAuNTYgNC41NkwxNCAxMUMxMy44NzI0IDExLjE0NTUgMTMuNjkyOSAxMS4yMzUyIDEzLjUgMTEuMjVaIiBmaWxsPSIjZmZmZmZmIi8%2BIDwvZz4KDTwvc3ZnPg%3D%3D">
@@ -115,8 +115,10 @@ AG Grid is available in two versions: Community & Enterprise.
 | [Tool Panels](https://www.ag-grid.com/javascript-data-grid/tool-panel/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                    | ❌                | ✅                 |
 | [Support](https://ag-grid.zendesk.com/hc/en-us)                                                                                                                | ❌                | ✅                 |
 
-> [!IMPORTANT]
-> Visit the [Pricing](https://www.ag-grid.com/license-pricing/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) page for a full comparison.
+<blockquote>
+    <p>ℹ️ <b>Note:</b></p>
+    <span>Visit the <a href="https://www.ag-grid.com/license-pricing/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">Pricing</a> page for a full comparison.</span>
+</blockquote>
 
 ### Examples
 
@@ -130,7 +132,7 @@ We've created several demos to showcase AG Grid's rich feature set across differ
     <picture>
       <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/finance-demo-light.gif?raw=true" media="(prefers-color-scheme: light)">
       <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/finance-demo-dark.gif?raw=true" media="(prefers-color-scheme: dark)">
-      <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/finance-demo-dark.gif?raw=true" alt="Finance">
+      <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/finance-demo-light.gif?raw=true" alt="Finance">
     </picture>
   </a>
   <br>
@@ -145,7 +147,7 @@ We've created several demos to showcase AG Grid's rich feature set across differ
     <picture>
       <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/inventory-demo-light.gif?raw=true" media="(prefers-color-scheme: light)">
       <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/inventory-demo-dark.gif?raw=true" media="(prefers-color-scheme: dark)">
-      <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/inventory-demo-dark.gif?raw=true" alt="Finance">
+      <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/inventory-demo-light.gif?raw=true" alt="Finance">
     </picture>
   </a>
   <div align="right"><span><a href="https://ag-grid.com/example-inventory/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">Live Demo</a></span>&nbsp;•&nbsp;<span><a href="https://github.com/ag-grid/ag-grid-demos/tree/main/inventory">Source Code</a></span></div>
@@ -160,7 +162,7 @@ We've created several demos to showcase AG Grid's rich feature set across differ
     <picture>
       <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/hr-demo-light.gif?raw=true" media="(prefers-color-scheme: light)">
       <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/hr-demo-dark.gif?raw=true" media="(prefers-color-scheme: dark)">
-      <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/hr-demo-dark.gif?raw=true" alt="Finance">
+      <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/hr-demo-light.gif?raw=true" alt="Finance">
     </picture>
   </a>
   <div align="right"><span><a href="https://ag-grid.com/example-hr/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">Live Demo</a></span>&nbsp;•&nbsp;<span><a href="https://github.com/ag-grid/ag-grid-demos/tree/main/hr">Source Code</a></span></div>
@@ -249,8 +251,10 @@ Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the
 
 <!-- END SETUP -->
 
-> [!IMPORTANT]
-> For more information on building Data Grids with AG Grid, refer to our [Documentation](https://www.ag-grid.com/javascript-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+<blockquote>
+    <p>ℹ️ <b>Note:</b></p>
+    <span>For more information on building Data Grids with AG Grid, refer to our <a href="https://www.ag-grid.com/javascript-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=githu">Documentation</a>.</span>
+</blockquote>
 
 ### Seed Projects
 
@@ -369,7 +373,7 @@ AG Grid has 4 [themes](https://ag-grid.com/javascript-data-grid/global-style/?ut
                 <picture>
                     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/quartz-theme-light.png?raw=true" media="(prefers-color-scheme: light)">
                     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/quartz-theme.png?raw=true" media="(prefers-color-scheme: dark)">
-                    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/quartz-theme.png?raw=true" alt="Quartz Theme">
+                    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/quartz-theme-light.png?raw=true" alt="Quartz Theme">
                 </picture>
             </a>
         </td>
@@ -378,7 +382,7 @@ AG Grid has 4 [themes](https://ag-grid.com/javascript-data-grid/global-style/?ut
                 <picture>
                     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/material-theme-light.png?raw=true" media="(prefers-color-scheme: light)">
                     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/material-theme.png?raw=true" media="(prefers-color-scheme: dark)">
-                    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/material-theme.png?raw=true" alt="Material Theme">
+                    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/material-theme-light.png?raw=true" alt="Material Theme">
                 </picture>
             </a>
         </td>
@@ -393,7 +397,7 @@ AG Grid has 4 [themes](https://ag-grid.com/javascript-data-grid/global-style/?ut
                 <picture>
                     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/alpine-theme-light.png?raw=true" media="(prefers-color-scheme: light)">
                     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/alpine-theme.png?raw=true" media="(prefers-color-scheme: dark)">
-                    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/alpine-theme.png?raw=true" alt="Alpine Theme">
+                    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/alpine-theme-light.png?raw=true" alt="Alpine Theme">
                 </picture>
             </a>
         </td>
@@ -402,7 +406,7 @@ AG Grid has 4 [themes](https://ag-grid.com/javascript-data-grid/global-style/?ut
                 <picture>
                     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/balham-theme-light.png?raw=true" media="(prefers-color-scheme: light)">
                     <source srcset="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/balham-theme.png?raw=true" media="(prefers-color-scheme: dark)">
-                    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/balham-theme.png?raw=true" alt="Balham Theme">
+                    <img src="https://github.com/ag-grid/ag-grid/blob/latest/readme-assets/balham-theme-light.png?raw=true" alt="Balham Theme">
                 </picture>
             </a>
         </td>
@@ -516,7 +520,7 @@ Initially built to power [Integrated Charts](https://www.ag-grid.com/javascript-
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ag-grid/ag-charts/blob/2ee85f286ccc151cb5e4517f711bafd03366db3c/packages/ag-charts-website/public/images/readme-assets/gallery-dark.gif?raw=true"/>
     <source media="(prefers-color-scheme: light)" srcset="https://github.com/ag-grid/ag-charts/blob/2ee85f286ccc151cb5e4517f711bafd03366db3c/packages/ag-charts-website/public/images/readme-assets/gallery.gif?raw=true"/>
-    <img width="100%" alt="Preview of AG Charts JavaScript Charting Examples" src="https://github.com/ag-grid/ag-charts/blob/2ee85f286ccc151cb5e4517f711bafd03366db3c/packages/ag-charts-website/public/images/readme-assets/gallery-dark.gif?raw=true"/>
+    <img width="100%" alt="Preview of AG Charts JavaScript Charting Examples" src="https://github.com/ag-grid/ag-charts/blob/2ee85f286ccc151cb5e4517f711bafd03366db3c/packages/ag-charts-website/public/images/readme-assets/gallery.gif?raw=true"/>
 </picture>
 </a>
 

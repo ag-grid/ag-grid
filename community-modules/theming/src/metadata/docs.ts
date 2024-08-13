@@ -7,14 +7,15 @@ const docs: Record<string, string | undefined> = {
     accentColor:
         "The 'brand color' for the grid, used wherever a non-neutral color is required. Selections, focus outlines and checkboxes use the accent color by default.",
     invalidColor: 'The color for inputs and UI controls in an invalid state.',
-    colorScheme: 'The color scheme to apply to browser scrollbars within the grid',
+    browserColorScheme:
+        'The CSS color-scheme to apply to the grid, which affects the default appearance of browser scrollbars form inputs unless these have been styled with CSS.',
     borderColor: 'Default color for borders.',
     wrapperBorder: 'Borders around the outside of the grid',
     headerRowBorder: 'Borders between and below header rows.',
     rowBorder: 'Horizontal borders between rows.',
     footerRowBorder: 'Horizontal borders above footer components like the pagination and status bars',
-    columnBorder: 'Vertical borders between columns.',
-    headerColumnBorder: 'Vertical borders between column headers.',
+    columnBorder: 'Vertical borders between columns within the grid only, excluding headers.',
+    headerColumnBorder: 'Vertical borders between columns within headers.',
     headerColumnBorderHeight:
         'Height of the vertical border between column headers. Percentage values are relative to the header height.',
     pinnedColumnBorder:
@@ -36,9 +37,12 @@ const docs: Record<string, string | undefined> = {
     headerFontSize: 'Size of text in the header',
     headerVerticalPaddingScale: 'Multiply the header vertical padding by a number, e.g. 1.5 to increase by 50%',
     headerTextColor: 'Color of text in the header',
-    headerCellHoverBackgroundColor: 'Background color when hovering over header cells.',
-    headerCellHoverBackgroundTransitionDuration:
-        'Duration of header cell hover transition, if headerCellHoverBackgroundColor is set.',
+    headerCellHoverBackgroundColor:
+        'Background color of a header cell when hovering over it, or `transparent` for no change.',
+    headerCellMovingBackgroundColor:
+        'Background color of a header cell when dragging to reposition it, or `transparent` for no change.',
+    headerCellBackgroundTransitionDuration:
+        'Duration of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set.',
     cellTextColor: 'Color of text in grid cells.',
     subtleTextColor: 'Color of text and UI elements that should stand out less than the default.',
     rangeSelectionBorderStyle: 'Border style around range selections.',
@@ -75,10 +79,12 @@ const docs: Record<string, string | undefined> = {
     cellHorizontalPadding: 'Padding at the start and end of grid cells and header cells.',
     cellHorizontalPaddingScale: 'Multiply the cell horizontal padding by a number, e.g. 1.5 to increase by 50%',
     fontSize: 'Default font size for text in the grid',
-    rowHeight: 'Height of grid rows',
+    rowHeight:
+        'Height of grid rows. NOTE: by default this value is calculated to leave enough room for text, icons and padding. Most applications should leave it as is and use rowVerticalPaddingScale to change padding.',
     rowVerticalPaddingScale:
-        'Multiply the row vertical padding by a number, e.g. 1.5 to increase by 50%. If rowHeight is set, the amount of padding is fixed and so this will have no effect.',
-    headerHeight: 'Height of header rows',
+        'Multiply the row vertical padding by a number, e.g. 1.5 to increase by 50%. Has no effect if rowHeight is set.',
+    headerHeight:
+        'Height of header rows. NOTE: by default this value is calculated to leave enough room for text, icons and padding. Most applications should leave it as is and use rowVerticalPaddingScale to change padding.',
     popupShadow: 'Default shadow for elements that float above the grid e.g. dialogs and menus',
     dropdownShadow: 'Default shadow for dropdown menus',
     dragGhostBackgroundColor: 'Background color of the ghost element when dragging columns',
@@ -87,12 +93,11 @@ const docs: Record<string, string | undefined> = {
     focusShadow:
         'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
     sideBarPanelWidth: 'Default width of the sidebar that contains the columns and filters tool panels',
-    headerColumnResizeHandleDisplay:
-        'Whether to display an indicator of the drag handle on resizable header columns. If hidden, the handle will still be active but invisible.',
     headerColumnResizeHandleHeight:
         'Height of the drag handle on resizable header columns. Percentage values are relative to the header height.',
     headerColumnResizeHandleWidth: 'Width of the drag handle on resizable header columns.',
-    headerColumnResizeHandleColor: 'Color of the drag handle on resizable header columns',
+    headerColumnResizeHandleColor:
+        'Color of the drag handle on resizable header columns. Set this to transparent to hide the resize handle.',
     widgetContainerHorizontalPadding:
         'The horizontal padding of containers that contain stacked widgets, such as menus and tool panels',
     widgetContainerVerticalPadding:

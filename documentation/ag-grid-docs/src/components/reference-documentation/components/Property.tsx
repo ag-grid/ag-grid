@@ -155,6 +155,10 @@ function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gr
     };
 }
 
+function getDetailsId(id: string) {
+    return `${id}-details`;
+}
+
 export const Property: FunctionComponent<{
     id: string;
     name: string;
@@ -196,15 +200,15 @@ export const Property: FunctionComponent<{
         <>
             <tr ref={propertyRef}>
                 <td role="presentation" className={styles.leftColumn}>
-                    <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                    <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
                         <span
                             onClick={() => setExpanded(!isExpanded)}
                             dangerouslySetInnerHTML={{ __html: displayNameSplit }}
                         ></span>
-                        <a href={`#${idName}`} className="docs-header-icon">
+                        <a href={`#${idName}`} className="docs-header-icon" aria-label={`Link to '${name}' property`}>
                             <Icon name="link" />
                         </a>
-                    </h6>
+                    </div>
 
                     <div className={styles.metaList}>
                         <div
@@ -287,7 +291,8 @@ export const Property: FunctionComponent<{
                                         name,
                                     });
                                 }}
-                                role="presentation"
+                                aria-expanded={Boolean(isExpanded)}
+                                aria-controls={getDetailsId(idName)}
                             >
                                 {!isExpanded ? 'More' : 'Hide'} details{' '}
                                 <Icon name={isExpanded ? 'chevronDown' : 'chevronRight'} />
@@ -310,6 +315,7 @@ export const Property: FunctionComponent<{
                                             seeMoreName: more.name,
                                         });
                                     }}
+                                    aria-label={`See more details about ${more.name}`}
                                 >
                                     {more.name}
                                 </a>
@@ -319,7 +325,7 @@ export const Property: FunctionComponent<{
                 </td>
             </tr>
             {detailsCode && isExpanded && (
-                <tr className={classnames(styles.expandedContent)}>
+                <tr id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
                     <td colSpan={2}>
                         <Code code={detailsCode} keepMarkup={true} />
                     </td>

@@ -20,25 +20,32 @@ type LinkProps = BaseProps & {
 
 type Props = ButtonProps | LinkProps;
 
+const DISPLAY_NAME: Record<CtaType, string> = {
+    newTab: 'New Tab',
+    plunker: 'Plunker',
+    stackblitz: 'StackBlitz',
+    codesandbox: 'CodeSandbox',
+};
+
 const TOOLTIPS: Record<CtaType, ReactNode> = {
     newTab: (
         <>
-            <span className={styles.tooltip}>New Tab</span>
+            <span className={styles.tooltip}>{DISPLAY_NAME.newTab}</span>
         </>
     ),
     plunker: (
         <>
-            <span className={styles.tooltip}>Plunker</span>
+            <span className={styles.tooltip}>{DISPLAY_NAME.plunker}</span>
         </>
     ),
     stackblitz: (
         <>
-            <span className={styles.tooltip}>StackBlitz</span>
+            <span className={styles.tooltip}>{DISPLAY_NAME.stackblitz}</span>
         </>
     ),
     codesandbox: (
         <>
-            <span className={styles.tooltip}>CodeSandbox</span>
+            <span className={styles.tooltip}>{DISPLAY_NAME.codesandbox}</span>
         </>
     ),
 };
@@ -56,6 +63,7 @@ export const OpenInCTA: FunctionComponent<Props> = (props) => {
                 {tooltip}
                 <button
                     className="button-style-none"
+                    aria-label={DISPLAY_NAME[type]}
                     onClick={(event) => {
                         onClick(event);
                         tracking && tracking();
@@ -77,6 +85,7 @@ export const OpenInCTA: FunctionComponent<Props> = (props) => {
                     onClick={() => {
                         tracking && tracking();
                     }}
+                    aria-label={DISPLAY_NAME[type]}
                 >
                     <Icon name={type} />
                 </a>

@@ -53,7 +53,7 @@ export class EditService extends BeanStub implements NamedBean {
         const { newValue, newValueExists } = this.takeValueFromCellEditor(cancel, cellComp);
         const rowNode = cellCtrl.getRowNode();
         const column = cellCtrl.getColumn();
-        const oldValue = rowNode.getValueFromValueService(column);
+        const oldValue = this.valueService.getValueForDisplay(column, rowNode);
         let valueChanged = false;
 
         if (newValueExists) {
@@ -182,7 +182,7 @@ export class EditService extends BeanStub implements NamedBean {
         const column = cellCtrl.getColumn();
         const rowNode = cellCtrl.getRowNode();
         return this.gos.addGridCommonParams({
-            value: rowNode.getValueFromValueService(column),
+            value: this.valueService.getValueForDisplay(column, rowNode),
             eventKey: key,
             column: column,
             colDef: column.getColDef(),

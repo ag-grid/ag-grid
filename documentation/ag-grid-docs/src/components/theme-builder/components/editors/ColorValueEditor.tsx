@@ -1,3 +1,4 @@
+import { type ColorValue, paramValueToCss } from '@ag-grid-community/theming';
 import styled from '@emotion/styled';
 import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
 import { useEffect, useRef, useState } from 'react';
@@ -9,8 +10,12 @@ import { Input } from './Input';
 import { RGBAColor } from './RGBAColor';
 import { type ValueEditorProps } from './ValueEditorProps';
 
-export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps) => (
-    <ColorEditor preventTransparency={param.property === 'backgroundColor'} value={value} onChange={onChange} />
+export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps<ColorValue>) => (
+    <ColorEditor
+        preventTransparency={param.property === 'backgroundColor'}
+        value={paramValueToCss(param.property, value) || ''}
+        onChange={onChange}
+    />
 );
 
 export type ColorEditorProps = {
@@ -45,6 +50,8 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
         if (!showPicker) {
             setEditorValue(hexValue || value);
         }
+        // deliberately reduced dependencies array
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hexValue]);
 
     const handleInput = (newValue: string) => {

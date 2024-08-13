@@ -2,11 +2,11 @@ import type { ReactNode } from 'react';
 
 import type { ParamModel } from '../../model/ParamModel';
 
-export type ValueEditorProps = {
-    param: ParamModel;
-    value: string;
+export type ValueEditorProps<T> = {
+    param: ParamModel<T>;
+    value: T;
     // onChange(null) to reset default
-    onChange: (newValue: string | null) => void;
+    onChange: (newValue: T | null) => void;
     icon?: ReactNode;
     swipeAdjustmentDivisor?: number;
 };

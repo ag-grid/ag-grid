@@ -24,7 +24,9 @@ export interface IDetailCellRendererParams<TData = any, TDetail = any> extends I
     /** Allows changing the template used around the Detail Grid. */
     template: string | TemplateFunc<TData>;
 
+    /** @deprecated v32.2 This property is no longer used */
     agGridReact: any;
+    /** @deprecated v32.2 This property is no longer used */
     frameworkComponentWrapper: any;
     pinned: 'left' | 'right' | null | undefined;
 }

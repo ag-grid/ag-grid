@@ -18,3 +18,11 @@
     border-top: 1px solid var(--ag-border-color);
     height: 100%;
 }
+
+.chart-placeholder {
+    background-color: var(--ag-background-color);
+    color: var(--ag-foreground-color);
+    height: 100%;
+    text-align: center;
+    align-content: center;
+}

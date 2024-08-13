@@ -1,4 +1,4 @@
-import { corePart, paramValueToCss } from '@ag-grid-community/theming';
+import { getCoreDefaults, paramValueToCss } from '@ag-grid-community/theming';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import { paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
@@ -35,10 +35,10 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     useEffect(() => {
         const wrapper = wrapperRef.current;
         if (wrapper) {
-            const params = { ...corePart.defaults, ...preset.params };
+            const params = { ...getCoreDefaults(), ...preset.params };
             for (const [key, value] of Object.entries(params)) {
                 const rendered = paramValueToCss(key, value);
-                if (typeof rendered === 'string') {
+                if (rendered !== false) {
                     wrapper.style.setProperty(paramToVariableName(key), rendered);
                 }
             }

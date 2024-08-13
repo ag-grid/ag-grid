@@ -411,8 +411,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                         continue;
                     }
                     const emptyValue =
-                        this.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ??
-                        null;
+                        this.valueService.parseValue(
+                            column,
+                            rowNode,
+                            '',
+                            this.valueService.getValueForDisplay(column, rowNode)
+                        ) ?? null;
                     rowNode.setDataValue(column, emptyValue, cellEventSource);
                 }
             });

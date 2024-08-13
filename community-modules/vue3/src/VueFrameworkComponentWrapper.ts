@@ -24,7 +24,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         }
     }
 
-    public createWrapper(component: any): WrappableInterface {
+    protected createWrapper(component: any): WrappableInterface {
         const that = this;
 
         class DynamicComponent extends VueComponent<any, any> implements WrappableInterface {
