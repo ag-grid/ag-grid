@@ -12,15 +12,24 @@ interface Props {
     showHeader?: boolean;
 }
 
+const fetchYouTubeThumbnail = async (videoId) => {
+    const response = await fetch(`https://img.youtube.com/vi/${videoId}/0.jpg`);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64Image = buffer.toString('base64');
+    return `data:image/jpeg;base64,${base64Image}`;
+};
+
 const { id, title = 'Video', playlist, showHeader } = Astro.props as Props;
 const link = `https://www.youtube.com/watch?v=${id}${playlist ? `&list=${playlist}` : ''}`;
+const imageSrc = await fetchYouTubeThumbnail(id);
 ---
 
 <div class={styles.videoSection}>
     <div class:list={{ [styles.header]: showHeader }}><slot /></div>
     <a href={link} target="_blank">
         <div class={styles.ytContainer}>
-            <img src={`https://img.youtube.com/vi/${id}/0.jpg`} alt={`${title} thumbnail`} class={styles.ytThumbnail} />
+            <img src={imageSrc} alt={`${title} thumbnail`} class={styles.ytThumbnail} />
             <Icon name="youtube" svgClasses={styles.ytIcon} />
         </div>
     </a>
