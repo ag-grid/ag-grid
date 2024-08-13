@@ -723,5 +723,5 @@ export function getHeaderCheckbox(selection: SelectionOptions): boolean {
  * Get the display configuration for disabled checkboxes. Defaults to displaying disabled checkboxes.
  */
 export function getHideDisabledCheckboxes(selection: SelectionOptions): boolean {
-    return (selection?.mode !== 'cell' && selection?.hideDisabledCheckboxes) ?? true;
+    return (selection?.mode !== 'cell' && selection?.hideDisabledCheckboxes) ?? false;
 }
