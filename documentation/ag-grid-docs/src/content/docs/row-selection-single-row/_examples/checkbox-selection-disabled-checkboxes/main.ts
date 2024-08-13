@@ -1,5 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { type GridApi, type GridOptions, type IRowNode, createGrid } from '@ag-grid-community/core';
+import {
+    type GridApi,
+    type GridOptions,
+    type IRowNode,
+    type SelectionOptions,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -9,17 +15,20 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 
 let gridApi: GridApi<IOlympicData>;
 
+const selection: SelectionOptions = {
+    mode: 'singleRow',
+    suppressClickSelection: true,
+    hideDisabledCheckboxes: true,
+    isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
+};
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
     },
-    selection: {
-        mode: 'singleRow',
-        suppressClickSelection: true,
-        isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
-    },
+    selection,
     onFirstDataRendered: (params) => {
         const nodesToSelect: IRowNode[] = [];
         params.api.forEachNode((node) => {
@@ -39,4 +48,15 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+
+    document.querySelector('#toggle-hide-checkbox')?.addEventListener('change', () => {
+        gridApi.setGridOption('selection', {
+            ...selection,
+            hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
+        });
+    });
 });
+
+function getCheckboxValue(id: string): boolean {
+    return document.querySelector<HTMLInputElement>(id)?.checked ?? false;
+}

@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selectionOptions: {
+    selection: {
         mode: 'cell',
     },
 };

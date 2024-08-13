@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         editable: true,
         cellDataType: false,
     },
-    selectionOptions: {
+    selection: {
         mode: 'cell',
         handle: {
             mode: 'fill',

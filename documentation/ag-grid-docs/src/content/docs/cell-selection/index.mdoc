@@ -22,7 +22,7 @@ This describes the new selection configuration API. For documentation on the dep
 
 ## Enabling Cell Selection
 
-Range Selection is enabled by setting the `selectionOptions.mode` to `'cell'`. When enabled, ranges can be selected in the following ways:
+Range Selection is enabled by setting the `selection.mode` to `'cell'`. When enabled, ranges can be selected in the following ways:
 
 * **Mouse Drag:** Click the mouse down on a cell and drag and release the mouse over another cell. A range will be created between the two cells and clear any existing ranges.
 
@@ -50,7 +50,7 @@ The example below demonstrates simple range selection. Ranges can be selected in
 
 ## Prevent Selection of Multiple Ranges
 
-By default multiple ranges can be selected. To restrict range selection to a single range, even if the {% kbd "^ Ctrl" /%} key is held down, set `selectionOptions.suppressMultiRanges` to `true`.
+By default multiple ranges can be selected. To restrict range selection to a single range, even if the {% kbd "^ Ctrl" /%} key is held down, set `selection.suppressMultiRanges` to `true`.
 
 The following example demonstrates single range selection:
 

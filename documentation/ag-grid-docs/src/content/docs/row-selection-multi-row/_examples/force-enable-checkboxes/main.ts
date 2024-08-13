@@ -19,12 +19,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         mode: 'multiRow',
         suppressClickSelection: true,
         checkboxes: (params) => params.data?.year === 2012,
-        hideDisabledCheckboxes: true,
     },
     onFirstDataRendered: (params) => {
         const nodesToSelect: IRowNode[] = [];
         params.api.forEachNode((node) => {
-            if (node.data?.year !== 2012) {
+            if (node.data && node.data.year <= 2008 && node.data.year >= 2004) {
                 nodesToSelect.push(node);
             }
         });

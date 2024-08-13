@@ -22,11 +22,11 @@ This describes the new selection configuration API. For documentation on the dep
 
 ## Enabling the Fill Handle
 
-To enable the Fill Handle, set `selectionOptions.handle` to `{ mode: 'fill' }` in the `gridOptions` as shown below:
+To enable the Fill Handle, set `selection.handle` to `{ mode: 'fill' }` in the `gridOptions` as shown below:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selectionOptions: {
+    selection: {
         mode: 'cell',
         handle: {
             mode: 'fill',
@@ -64,17 +64,17 @@ The default Fill Handle behaviour will be as close as possible to other spreadsh
 Reducing a range selection with the Fill Handle will clear cell contents by default, as can be observed in the
 [cell reduction](#range-reduction) example above.
 
-If this behaviour for decreasing selection needs to be prevented, the flag `selectionOptions.handle.suppressClearOnFillReduction` should be set to `true`.
+If this behaviour for decreasing selection needs to be prevented, the flag `selection.handle.suppressClearOnFillReduction` should be set to `true`.
 
 {% gridExampleRunner title="Fill Handle - Range Reduction" name="fill-handle-reduction"  exampleHeight=560 /%}
 
 ## Fill Handle Axis
 
-By the default, the Fill Handle can be dragged horizontally or vertically. If you wish to restrict the permitted direction of dragging to either horizontal or vertical, set `selectionOptions.handle.direction` to either `x` for horizontal or `y` for vertical.
+By the default, the Fill Handle can be dragged horizontally or vertically. If you wish to restrict the permitted direction of dragging to either horizontal or vertical, set `selection.handle.direction` to either `x` for horizontal or `y` for vertical.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selectionOptions: {
+    selection: {
         mode: 'cell',
         handle: {
             mode: 'fill',

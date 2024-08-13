@@ -34,7 +34,7 @@ const gridOptions: GridOptions = {
         editable: true,
         cellDataType: false,
     },
-    selectionOptions: {
+    selection: {
         mode: 'cell',
         handle: {
             mode: 'fill',

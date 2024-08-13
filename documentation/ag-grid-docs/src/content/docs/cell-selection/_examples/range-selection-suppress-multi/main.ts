@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         editable: true,
     },
-    selectionOptions: { mode: 'cell', suppressMultiRanges: true },
+    selection: { mode: 'cell', suppressMultiRanges: true },
 };
 
 // setup the grid after the page has finished loading

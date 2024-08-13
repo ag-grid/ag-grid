@@ -13,7 +13,7 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
     defaultColDef: { flex: 1, minWidth: 100 },
-    selection: { mode: 'multiRow', enableMultiSelectWithClick: true },
+    selection: { mode: 'multiRow', enableMultiSelectWithClick: true, checkboxes: false, headerCheckbox: false },
 };
 
 // setup the grid after the page has finished loading

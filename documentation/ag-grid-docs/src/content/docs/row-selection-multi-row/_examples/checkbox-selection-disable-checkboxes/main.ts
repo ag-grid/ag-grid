@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { type GridApi, type GridOptions, type IRowNode, createGrid } from '@ag-grid-community/core';
+import { type GridApi, type GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -18,15 +18,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: {
         mode: 'multiRow',
         suppressClickSelection: true,
-    },
-    onFirstDataRendered: (params) => {
-        const nodesToSelect: IRowNode[] = [];
-        params.api.forEachNode((node) => {
-            if (node.data?.year !== 2012) {
-                nodesToSelect.push(node);
-            }
-        });
-        params.api.setNodesSelected({ nodes: nodesToSelect, newValue: true });
+        hideDisabledCheckboxes: true,
+        isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
     },
 };
 

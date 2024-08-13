@@ -12,11 +12,8 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
-    defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-    },
-    selection: { mode: 'singleRow' },
+    defaultColDef: { flex: 1, minWidth: 100 },
+    selection: { mode: 'singleRow', checkboxes: false },
     onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
         const nodesToSelect: IRowNode[] = [];
         params.api.forEachNode((node) => {

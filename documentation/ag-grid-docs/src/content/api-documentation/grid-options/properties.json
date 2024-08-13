@@ -1651,18 +1651,12 @@
                 "url": "./selection-overview/"
             }
         },
-        "selectionOptions": {
+        "selection": {
             "more": {
                 "name": "Row Selection",
                 "url": "./row-selection"
             },
             "addNestedFields": true
-        },
-        "rowSelection": {
-            "more": {
-                "name": "Row Selection",
-                "url": "./row-selection"
-            }
         },
         "rowSelection": {
             "more": {
