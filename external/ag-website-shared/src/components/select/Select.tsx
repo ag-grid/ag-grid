@@ -107,13 +107,13 @@ export function Select<O>({
     );
 }
 
-const defaultGetKey = (option: any) => {
+const defaultGetKey = (option: any): string => {
     if (typeof option === 'string') return option;
     const valueProperty = option?.value;
-    if (typeof valueProperty !== 'string') {
-        throw new Error('option.value must be a string or getOptionValue must be provided');
+    if (typeof valueProperty === 'string' || typeof valueProperty === 'number') {
+        return String(valueProperty);
     }
-    return valueProperty;
+    throw new Error('option.value must be a string or getKey must be provided');
 };
 
 const defaultGetLabel = (option: any): string | undefined => {

@@ -1,17 +1,18 @@
-import { paramValueToCss } from '@ag-grid-community/theming';
+import { type FontFamilyValue, paramValueToCss } from '@ag-grid-community/theming';
 import { Select } from '@ag-website-shared/components/select/Select';
 import styled from '@emotion/styled';
 
 import type { ValueEditorProps } from './ValueEditorProps';
 
-export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorProps) => {
+export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorProps<FontFamilyValue>) => {
     const options = param.property === 'fontFamily' ? topLevelOptions : subLevelOptions;
-    const selectedOption = options.find((o) => o.value === value) || options[0];
+    const selectedOption = options.find((o) => isSameFont(o.value, value)) || options[0];
 
     return (
         <Select
             options={options}
             value={selectedOption}
+            getKey={(option) => option.label}
             onChange={(newValue) => onChange(newValue.value)}
             renderItem={(o) => {
                 const font = paramValueToCss('fontFamily', o.value);
@@ -25,42 +26,52 @@ export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorPro
 
 const FontItem = styled('span')``;
 
-const fontOptions = [
+const fontOptions: { label: string; value: FontFamilyValue }[] = [
     {
         label: 'System',
-        value: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
+        value: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            'Segoe UI',
+            'Roboto',
+            'Oxygen-Sans',
+            'Ubuntu',
+            'Cantarell',
+            'Helvetica Neue',
+            'sans-serif',
+        ],
     },
     {
         label: 'Arial',
-        value: '"Arial" , sans-serif',
+        value: ['Arial', 'sans-serif'],
     },
     {
         label: 'Inter',
-        value: 'google:Inter',
+        value: { googleFont: 'Inter' },
     },
     {
         label: 'IBM Plex Sans',
-        value: 'google:IBM Plex Sans',
+        value: { googleFont: 'IBM Plex Sans' },
     },
     {
         label: 'IBM Plex Mono',
-        value: 'google:IBM Plex Mono',
+        value: { googleFont: 'IBM Plex Mono' },
     },
     {
         label: 'Roboto',
-        value: 'google:Roboto',
+        value: { googleFont: 'Roboto' },
     },
     {
         label: 'Inclusive Sans',
-        value: 'google:Inclusive Sans',
+        value: { googleFont: 'Inclusive Sans' },
     },
     {
         label: 'Open Sans',
-        value: 'google:Open Sans',
+        value: { googleFont: 'Open Sans' },
     },
     {
         label: 'Lato',
-        value: 'google:Lato',
+        value: { googleFont: 'Lato' },
     },
     {
         label: 'Times New Roman',
@@ -68,30 +79,33 @@ const fontOptions = [
     },
     {
         label: 'Merriweather',
-        value: 'google:Merriweather',
+        value: { googleFont: 'Merriweather' },
     },
     {
         label: 'UnifrakturCook',
-        value: 'google:UnifrakturCook',
+        value: { googleFont: 'UnifrakturCook' },
     },
     {
         label: 'Pixelify Sans',
-        value: 'google:Pixelify Sans',
+        value: { googleFont: 'Pixelify Sans' },
     },
 ];
 const topLevelOptions = [{ label: 'Same as application', value: 'inherit' }, ...fontOptions];
 const subLevelOptions = [{ label: 'Unchanged', value: 'inherit' }, ...fontOptions];
 
-export const PreloadFontSelection = () => {
+export const LoadFontFamilyMenuFonts = () => {
     const css = fontOptions
         .map(({ value }) => value)
-        .filter((v) => String(v).startsWith('google:'))
-        .map((v) => String(v).replace('google:', ''))
+        .filter((v: unknown): v is { googleFont: string } => typeof v === 'object' && v != null && 'googleFont' in v)
+        .map((v) => v.googleFont)
         .sort()
         .map(
             (font) =>
-                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@100;200;300;400;500;600;700&display=swap');`
+                `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@100;200;300;400;500;600;700;800;900&display=swap');\n`
         )
         .join('\n');
     return <style>{css}</style>;
 };
+
+const isSameFont = (a: FontFamilyValue, b: FontFamilyValue) =>
+    paramValueToCss('fontFamily', a) === paramValueToCss('fontFamily', b);

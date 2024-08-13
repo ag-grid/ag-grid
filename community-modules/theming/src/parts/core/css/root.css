@@ -6,7 +6,7 @@
     -webkit-font-smoothing: antialiased;
     font-family: var(--ag-font-family);
     font-size: var(--ag-font-size);
-    color-scheme: var(--ag-color-scheme);
+    color-scheme: var(--ag-browser-color-scheme);
     color: var(--ag-text-color);
     background-color: var(--ag-background-color);
     --ag-indentation-level: 0;

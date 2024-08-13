@@ -1,13 +1,24 @@
+import type { ScaleValue } from '@ag-grid-community/theming';
 import { stripFloatingPointErrors } from '@components/theme-builder/model/utils';
 
 import { FormattedInput } from './FormattedInput';
 import { type ValueEditorProps } from './ValueEditorProps';
 
-export const ScaleValueEditor = ({ value, onChange, icon, swipeAdjustmentDivisor = 175 }: ValueEditorProps) => {
+export const ScaleValueEditor = ({
+    value,
+    onChange,
+    icon,
+    swipeAdjustmentDivisor = 175,
+}: ValueEditorProps<ScaleValue>) => {
     return (
         <FormattedInput
-            value={value}
-            onChange={onChange}
+            value={String(value)}
+            onChange={(newValue) => {
+                const parsed = parseFloat(newValue);
+                if (!isNaN(parsed)) {
+                    onChange(parsed);
+                }
+            }}
             onClear={() => onChange(null)}
             valueToDisplayString={formatPercentWithUnits}
             valueToEditingString={formatPercentNumber}

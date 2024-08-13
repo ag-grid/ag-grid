@@ -1,45 +1,55 @@
 import { join } from 'path';
 
+import type { ThemeParam } from '../../src/GENERATED-param-types';
+import { ThemeUnit } from '../../src/ThemeUnit';
+import { coreParams } from '../../src/parts/core/core-part';
 import { getParamType } from '../../src/theme-types';
 import type { ParamType, Part } from '../../src/theme-types';
 import { DEV_MODE, fatalError, getProjectDir, writeTsFile } from './utils';
 
 export const generateDocsFile = async () => {
     const mainExports = await import('../../src/main');
-    const { allParts } = await import('../../src/parts/parts');
     const { getParamDocs, getParamDocsKeys } = await import('../../src/metadata/docs');
 
     validateDocs(getParamDocsKeys().map((key) => [key, getParamDocs(key)]));
 
-    const exportedParts = new Set<Part>();
+    const exportedUnits: ThemeUnit[] = [];
+    const exportNames = new Map<ThemeUnit, string>();
     for (const [exportName, exportValue] of Object.entries(mainExports)) {
-        const part = exportValue as Part;
-        if (part.partId && part.variantId) {
-            if (!allParts.includes(part)) {
-                throw fatalError(`Part ${part.partId}/${part.variantId} is exported but not listed in allParts`);
+        if (exportValue instanceof ThemeUnit) {
+            const unit = exportValue as ThemeUnit;
+            if (exportNames.has(unit)) {
+                throw new Error(`${unit.id} exported twice with names ${exportNames.get(unit)} and ${exportName}`);
             }
-            exportedParts.add(part);
-            const expectedName = part.partId + upperCamelCase(part.variantId);
+            exportNames.set(unit, exportName);
+            exportedUnits.push(unit);
+            if (!/^\w+\/\w+$/.test(unit.id)) {
+                throw fatalError(`${unit.id} should have id in the format "group/variant" (actual: "${unit.id}")`);
+            }
+            const [groupFromId, variantFromId] = unit.id.split('/');
+            const expectedName = groupFromId + upperCamelCase(variantFromId);
             if (exportName !== expectedName) {
-                throw fatalError(
-                    `Part ${part.partId}/${part.variantId} should be exported with name "${expectedName}" (actual: "${exportName}")`
-                );
+                throw fatalError(`${unit.id} should be exported with name "${expectedName}" (actual: "${exportName}")`);
+            }
+            if (unit.group !== groupFromId) {
+                throw fatalError(`${unit.id} has group "${unit.group}" that doesn't match the first part of its id`);
             }
         }
     }
 
-    for (const part of allParts) {
-        if (!exportedParts.has(part)) {
-            throw fatalError(`Part ${part.partId}/${part.variantId} is not exported`);
-        }
+    const allUnits = flattenUnits(exportedUnits);
+
+    for (const unit of allUnits) {
         try {
-            part.additionalParamNames?.forEach(getParamType);
+            getPartParams(unit).forEach(getParamType);
         } catch (e: any) {
-            throw fatalError(`Error in part ${part.partId}/${part.variantId}: ${e.message}`);
+            throw fatalError(`Error in ${unit.id}: ${e.message}`);
         }
     }
 
-    const allParams = Array.from(new Set<string>(allParts.flatMap((p) => p.additionalParamNames || []))).sort();
+    const allParams = Array.from(
+        new Set<string>(Array.from(allUnits).flatMap(getPartParams).concat(coreParams))
+    ).sort();
 
     const allParamsSet = new Set(allParams);
     const superfluousParamDocs = getParamDocsKeys().filter((p) => !allParamsSet.has(p));
@@ -51,13 +61,19 @@ export const generateDocsFile = async () => {
 
     const valueTypes = Array.from(new Set(allParams.map(getParamType).map(valueTypeName))).sort();
 
-    result += `import { ${valueTypes.join(', ')} } from "./main";\n\n`;
+    result += `import type { ${valueTypes.join(', ')} } from "./theme-types";\n\n`;
 
-    result += `export type Param = keyof ParamTypes;\n\n`;
+    const paramsByType: Record<string, string[]> = {};
 
-    result += `export type ParamTypes = {\n\n`;
+    result += docComment({
+        mainComment:
+            'All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.',
+    });
+    result += `export type ThemeParams = {\n\n`;
     for (const param of allParams) {
         const type = getParamType(param);
+        paramsByType[type] ||= [];
+        paramsByType[type].push(param);
         let mainComment = getParamDocs(param);
         if (!mainComment) {
             const message = `No documentation for param ${param}`;
@@ -72,7 +88,30 @@ export const generateDocsFile = async () => {
     }
     result += `}\n\n`;
 
+    result += docComment({ mainComment: 'Union of all possible theme param names' });
+    result += `export type ThemeParam = keyof ThemeParams;\n\n`;
+
+    for (const type of Object.keys(paramsByType).sort()) {
+        const params = paramsByType[type]
+            .sort()
+            .map((p) => `"${p}"`)
+            .join(' | ');
+        result += `export type ${upperCamelCase(type)}Param = ${params};\n\n`;
+    }
+
     await writeTsFile(join(getProjectDir(), 'GENERATED-param-types.ts'), result);
+};
+
+const flattenUnits = (units: ThemeUnit[]): ThemeUnit[] => {
+    const all: ThemeUnit[] = [];
+    const accumulate = (a: readonly ThemeUnit[]) => {
+        for (const unit of a) {
+            all.push(unit);
+            accumulate(unit.dependencies);
+        }
+    };
+    accumulate(units);
+    return Array.from(new Set(all));
 };
 
 const fatalErrorInProdOnly = (message: string) => {
@@ -142,42 +181,91 @@ const paramSuffixes = [
 
 const paramExtraDocs: Record<ParamType, string[]> = {
     color: [
-        'A CSS color value e.g. "red" or "#ff0088". The following shorthands are accepted:',
-        '- `true` -> "solid 1px var(--ag-border-color)"',
-        '- `false` -> "none".',
-        // TODO add {ref: 'paramName'} when implemented as well as color extensions
+        'A CSS color value e.g. "red" or "#ff0088". Alternatively:',
+        '',
+        '- `{ref: "foo"}` -> use the same value as the `foo` param (`ref` must be a color param name)',
+        '- `{ref: "foo", mix: 0.1}` -> use 10% `foo`, 90% transparent',
+        '- `{ref: "foo", mix: 0.1, onto: "bar"}` -> use 10% `foo`, 90% `bar`',
     ],
     colorScheme: [
         'A CSS color-scheme value, e.g. "light", "dark", or "inherit" to use the same setting as the parent application',
+        '',
+        '@see https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme',
     ],
     border: [
-        'A CSS border value e.g. "solid 1px red". See https://developer.mozilla.org/en-US/docs/Web/CSS/border. The following shorthands are accepted:',
-        '- `true` -> "solid 1px var(--ag-border-color)"',
-        '- `false` -> "none".',
+        'A CSS border value e.g. "solid 1px red". Alternatively an object containing optional properties:',
+        '',
+        '- `style` -> a CSS border-style, default `"solid"`',
+        '- `width` -> a width in pixels, default `1`',
+        '- `color` -> a ColorValue as you would pass to any color param, default `{ref: "borderColor"}`',
+        '',
+        'Or a reference:',
+        '- `{ref: "foo"}` -> use the same value as the `foo` param (`ref` must be a valid param name)',
+        '',
+        'Or boolean value',
+        '- `true` -> `{}` (the default border style, equivalent to `{style: "solid", width: 1, color: {ref: "borderColor"}`)',
+        '- `false` -> `"none"` (no border).',
+        '',
+        '@see https://developer.mozilla.org/en-US/docs/Web/CSS/border',
     ],
     borderStyle: [
-        'A CSS line-style value e.g. "solid" or "dashed". See https://developer.mozilla.org/en-US/docs/Web/CSS/line-style.',
-    ],
-    display: [
-        'A CSS display value, "block" to show the element and "none" to hide it. It is recommended to use the boolean shorthands:',
-        '- `true` -> "block" (show)',
-        '- `false` -> "none" (hide).',
+        'A CSS line-style value e.g. "solid" or "dashed".',
+        '',
+        '@see https://developer.mozilla.org/en-US/docs/Web/CSS/line-style',
     ],
     length: [
-        'A CSS dimension value with length units, e.g. "1px" or "2em". A JavaScript number will be interpreted as a length in pixel units, e.g.',
-        '- `4` -> "4px"',
-        // TODO add {ref: 'paramName'} when implemented as well as length extensions
+        'A CSS dimension value with length units, e.g. "1px" or "2em". Alternatively:',
+        '',
+        '- `4` -> "4px" (a plain JavaScript number will be given pixel units)',
+        '- `{ref: "foo"}` -> use the same value as the `foo` param (`ref` must be a valid param name)',
+        '- `{calc: "foo + bar * 2"}` -> Use a dynamically calculated expression. You can use param names like gridSize and fontSize in the expression, as well as built-in CSS math functions like `min(gridSize, fontSize)`',
     ],
     scale: ['A number without units to multiply the original value by.'],
-    duration: ['A CSS time value with second or millisecond units e.g. `"0.3s"` or `"300ms"`.'],
+    duration: [
+        'A CSS time value with second or millisecond units e.g. `"0.3s"` or `"300ms"`. Alternatively:',
+        '',
+        '- `0.4` -> "0.4s" (a plain JavaScript number is assumed to be a number of seconds.',
+        '- `{ref: "foo"}` -> use the same value as the `foo` param (`ref` must be a valid param name)',
+        '',
+        '@see https://developer.mozilla.org/en-US/docs/Web/CSS/animation-duration',
+    ],
     shadow: [
-        'A CSS box shadow value e.g. "10px 5px 5px red;". See https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow',
+        'A CSS box shadow value e.g. "10px 5px 5px red;". Alternatively an object containing optional properties:',
+        '',
+        '- `offsetX` -> number of pixels to move the shadow to the right, or a negative value to move left, default 0',
+        '- `offsetY` -> number of pixels to move the shadow downwards, or a negative value to move up, default 0',
+        '- `radius` -> softness of the shadow. 0 = hard edge, 10 = 10px wide blur',
+        '- `spread` -> size of the shadow. 0 = same size as the shadow-casting element. 10 = 10px wider in all directions.',
+        '- `color` -> color of the shadow e.g. `"red"`. Default `{ref: "foregroundColor"}`',
+        '',
+        'Or a reference:',
+        '- `{ref: "foo"}` -> use the same value as the `foo` param (`ref` must be a valid param name)',
+        '',
+        '@see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow',
     ],
     image: [
-        'A CSS image value e.g. `"url(data:image/png;base64,base64-encoded-image...)". See https://developer.mozilla.org/en-US/docs/Web/CSS/image`',
+        'A CSS image value e.g. `"url(...image-url...)"`. Alternatively:',
+        '',
+        '- `{svg: "...XML source of SVG image..."}` -> embed an SVG as a data: uri',
+        '- `{url: "https://..."}` -> a URL to load an image asset from. Can be a HTTPS URL, or image assets such as PNGs can be converted to data: URLs',
+        '- `{ref: "foo"}` -> use the same value as the `foo` param (`ref` must be a valid param name)',
+        '',
+        '@see https://developer.mozilla.org/en-US/docs/Web/CSS/image',
     ],
-    fontFamily: ['A CSS font-family value e.g. `\'"Times New Roman", serif\'`'],
-    fontWeight: ['A CSS font-weight value e.g. `500` or `"bold"`'],
+    fontFamily: [
+        'A CSS font-family value consisting of a font name or comma-separated list of fonts in order of preference e.g. `"Roboto, -apple-system, \'Segoe UI\', sans-serif"`. Alternatively:',
+        '',
+        '- `["Roboto", "-apple-system", "Segoe UI", "sans-serif"]` -> an array of font names in order of preference',
+        '- `["Dave\'s Font"]` -> when passing an array, special characters in font names will automatically be escaped',
+        '- `{ref: "foo"}` -> use the same value as `foo` which must be a valid font family param name',
+        '',
+        '@see https://developer.mozilla.org/en-US/docs/Web/CSS/font-family',
+    ],
+    fontWeight: [
+        'A CSS font-weight value e.g. `500` or `"bold"`',
+        '',
+        '@see https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight',
+    ],
 };
 
 const docComment = (arg: {
@@ -218,3 +306,5 @@ const valueTypeName = (type: ParamType) => `${upperCamelCase(type)}Value`;
 const upperCamelCase = (str: string) => camelCase(str[0].toUpperCase() + str.slice(1));
 
 const camelCase = (str: string) => str.replace(/[\W_]+([a-z])/g, (_, letter) => letter.toUpperCase());
+
+const getPartParams = (part: Part): ThemeParam[] => Object.keys(part.defaults) as ThemeParam[];

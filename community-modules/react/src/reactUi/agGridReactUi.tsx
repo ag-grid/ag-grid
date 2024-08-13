@@ -226,7 +226,7 @@ class ReactFrameworkComponentWrapper
         super();
     }
 
-    createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
+    protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
         if (this.reactiveCustomComponents) {
             const getComponentClass = (propertyName: string) => {
                 switch (propertyName) {

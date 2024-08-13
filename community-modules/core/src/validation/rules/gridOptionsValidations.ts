@@ -231,7 +231,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     treeData: {
         supportedRowModels: ['clientSide', 'serverSide'],
         module: ModuleNames.RowGroupingModule,
-        dependencies: (options) => {
+        validate: (options) => {
             const rowModel = options.rowModelType ?? 'clientSide';
             switch (rowModel) {
                 case 'clientSide': {
@@ -265,7 +265,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     },
     groupIncludeFooter: {
         supportedRowModels: ['clientSide', 'serverSide'],
-        dependencies: (options) => {
+        validate: (options) => {
             const rowModel = options.rowModelType ?? 'clientSide';
             switch (rowModel) {
                 case 'clientSide':
@@ -323,6 +323,19 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     rowData: {
         supportedRowModels: ['clientSide'],
         module: ModuleNames.ClientSideRowModelModule,
+    },
+    paginationPageSizeSelector: {
+        validate: (options) => {
+            const values = options.paginationPageSizeSelector;
+            if (typeof values === 'boolean' || values == null) {
+                return null;
+            }
+            if (!values.length) {
+                return `'paginationPageSizeSelector' cannot be an empty array.
+                    If you want to hide the page size selector, set paginationPageSizeSelector to false.`;
+            }
+            return null;
+        },
     },
 
     columnDefs: () => COL_DEF_VALIDATORS,

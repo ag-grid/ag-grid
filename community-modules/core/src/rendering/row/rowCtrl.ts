@@ -439,13 +439,22 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return isLeftReady && isCenterReady && isRightReady;
     }
 
+    private isNodeFullWidthCell(): boolean {
+        if (this.rowNode.detail) {
+            return true;
+        }
+
+        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
+        return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this.rowNode }) : false;
+    }
+
     private setRowType(): void {
         // groupHideOpenParents implicitly disables full width loading
         const isStub =
             this.rowNode.stub &&
             !this.gos.get('suppressServerSideFullWidthLoadingRow') &&
             !this.gos.get('groupHideOpenParents');
-        const isFullWidthCell = this.rowNode.isFullWidthCell();
+        const isFullWidthCell = this.isNodeFullWidthCell();
         const isDetailCell = this.gos.get('masterDetail') && this.rowNode.detail;
         const pivotMode = this.beans.columnModel.isPivotMode();
         // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
@@ -758,7 +767,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
         // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
-        const fullWidthChanged = this.isFullWidth() !== !!this.rowNode.isFullWidthCell();
+        const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
         if (fullWidthChanged) {
             this.beans.rowRenderer.redrawRow(this.rowNode);
             return;
@@ -889,9 +898,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
+        const activeEl = this.gos.getActiveDomElement();
+        let isDetailGridCellFocused = false;
+
+        if (currentFullWidthContainer && activeEl) {
+            isDetailGridCellFocused =
+                currentFullWidthContainer.contains(activeEl) && activeEl.classList.contains('ag-cell');
+        }
+
         let nextEl: HTMLElement | null = null;
 
-        if (!isFullWidthContainerFocused) {
+        if (!isFullWidthContainerFocused && !isDetailGridCellFocused) {
             nextEl = this.beans.focusService.findNextFocusableElement(
                 currentFullWidthContainer!,
                 false,

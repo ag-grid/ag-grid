@@ -388,9 +388,16 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
+    private isPixelInNodeRange(node: RowNode, pixel: number): boolean {
+        if (!_exists(node.rowTop) || !_exists(node.rowHeight)) {
+            return false;
+        }
+        return pixel >= node.rowTop && pixel < node.rowTop + node.rowHeight;
+    }
+
     public getIndexAtPixel(rowNode: RowNode, pixel: number): number | null {
         // first check if pixel is in range of current row
-        if (rowNode.isPixelInRange(pixel)) {
+        if (this.isPixelInNodeRange(rowNode, pixel)) {
             return rowNode.rowIndex;
         }
 
@@ -398,7 +405,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const expandedMasterRow = rowNode.master && rowNode.expanded;
         const detailNode = rowNode.detailNode;
 
-        if (expandedMasterRow && detailNode && detailNode.isPixelInRange(pixel)) {
+        if (expandedMasterRow && detailNode && this.isPixelInNodeRange(detailNode, pixel)) {
             return rowNode.detailNode.rowIndex;
         }
 

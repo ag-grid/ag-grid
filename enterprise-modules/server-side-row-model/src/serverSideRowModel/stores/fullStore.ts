@@ -301,7 +301,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return undefined;
             }
 
-            const parentKeys = this.parentRowNode.getGroupKeys();
+            const parentKeys = this.parentRowNode.getRoute() ?? [];
             const level = this.level;
             const id = getRowIdFunc({
                 data,
@@ -750,7 +750,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (getRowIdFunc != null) {
             // find rowNode using id
-            const parentKeys = this.parentRowNode.getGroupKeys();
+            const parentKeys = this.parentRowNode.getRoute() ?? [];
             const id = getRowIdFunc({
                 data,
                 parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
@@ -776,7 +776,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
             suppressInfiniteScroll: true,
-            route: this.parentRowNode.getGroupKeys(),
+            route: this.parentRowNode.getRoute() ?? [],
             rowCount: this.allRowNodes.length,
             info: this.info,
         });

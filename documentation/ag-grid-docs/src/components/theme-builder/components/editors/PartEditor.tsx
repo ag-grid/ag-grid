@@ -1,28 +1,22 @@
-import type { PartId } from '@ag-grid-community/theming';
 import { Select } from '@ag-website-shared/components/select/Select';
 
-import type { VariantModel } from '../../model/PartModel';
-import { PartModel, useSelectedVariant } from '../../model/PartModel';
+import type { PartModel } from '../../model/PartModel';
+import { GroupModel, useSelectedPart } from '../../model/PartModel';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
 
 export type VariantSelectorProps = {
-    part: PartId;
+    partId: string;
 };
 
 export const PartEditor = withErrorBoundary((props: VariantSelectorProps) => {
-    const part = PartModel.for(props.part);
-    const [variant, setVariant] = useSelectedVariant(part);
+    const group = GroupModel.for(props.partId);
+    const [variant, setVariant] = useSelectedPart(group);
     return (
-        <FormField label={part.label} docs={part.docs}>
-            <Select
-                options={part.variants.filter((v) => v.variantId !== 'base')}
-                value={variant}
-                getKey={getVariantId}
-                onChange={setVariant}
-            />
+        <FormField label={group.label} docs={group.docs}>
+            <Select options={group.parts} value={variant} getKey={getVariantId} onChange={setVariant} />
         </FormField>
     );
 });
 
-const getVariantId = ({ variantId }: VariantModel) => variantId;
+const getVariantId = ({ id }: PartModel) => id;

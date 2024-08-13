@@ -32,12 +32,9 @@ export type Validations<T extends object> = Partial<{
 export interface OptionsValidation<T extends object> {
     module?: ModuleNames | ModuleNames[];
     supportedRowModels?: RowModelType[];
-    dependencies?: DependencyValidator<T>;
+    dependencies?: RequiredOptions<T>;
+    validate?: (options: T, gridOptions: GridOptions) => string | null;
 }
-
-export type DependencyValidator<T extends object> =
-    | RequiredOptions<T>
-    | ((options: T, gridOptions: GridOptions) => string | null);
 
 // Each property key requires one of the values in the array to also be present.
 export type RequiredOptions<T extends object> = { [K in keyof T]: T[K][] };

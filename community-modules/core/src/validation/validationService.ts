@@ -10,7 +10,7 @@ import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
-import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
+import type { OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validationService' as const;
@@ -107,7 +107,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                 rules = rulesOrGetter;
             }
 
-            const { module, dependencies, supportedRowModels } = rules;
+            const { module, dependencies, validate, supportedRowModels } = rules;
             if (supportedRowModels) {
                 const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
                 if (!supportedRowModels.includes(rowModel)) {
@@ -133,7 +133,14 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
 
             if (dependencies) {
-                const warning = this.checkForWarning(key, dependencies, options);
+                const warning = this.checkForRequiredDependencies(key, dependencies, options);
+                if (warning) {
+                    warnings.add(warning);
+                    return;
+                }
+            }
+            if (validate) {
+                const warning = validate(options, this.gridOptions);
                 if (warning) {
                     warnings.add(warning);
                     return;
@@ -147,15 +154,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    private checkForWarning<T extends object>(
+    private checkForRequiredDependencies<T extends object>(
         key: keyof T,
-        validator: DependencyValidator<T>,
+        validator: RequiredOptions<T>,
         options: T
     ): string | null {
-        if (typeof validator === 'function') {
-            return validator(options, this.gridOptions);
-        }
-
         const optionEntries = Object.entries(validator) as [string, any][];
         const failed = optionEntries.find(([key, value]) => {
             const gridOptionValue = options[key as keyof T];

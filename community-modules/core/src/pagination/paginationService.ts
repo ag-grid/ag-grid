@@ -151,7 +151,9 @@ export class PaginationService extends BeanStub implements NamedBean {
     }
 
     private get pageSize(): number {
-        if (_exists(this.pageSizeAutoCalculated)) {
+        // Explicitly check for autosize status as this can be set to false before the calculated value is cleared.
+        // Due to a race condition in when event listeners are added.
+        if (_exists(this.pageSizeAutoCalculated) && this.gos.get('paginationAutoPageSize')) {
             return this.pageSizeAutoCalculated;
         }
         if (_exists(this.pageSizeFromPageSizeSelector)) {

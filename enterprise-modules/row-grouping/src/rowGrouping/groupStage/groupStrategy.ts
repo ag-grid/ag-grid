@@ -330,7 +330,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
                 return false;
             }
             // if still not removed, then we remove if this group is empty
-            return rowNode.isEmptyRowGroupNode();
+            return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
         };
 
         while (checkAgain) {
