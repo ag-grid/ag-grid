@@ -227,30 +227,7 @@ export const Property: FunctionComponent<{
                                 ) : (
                                     <div className={styles.metaRow}>
                                         <span className={styles.metaValue}>{propertyType}</span>
-                                        <div className={styles.actions}>
-                                            {detailsCode && (
-                                                <button
-                                                    className={classnames(styles.seeMore, 'button-as-link')}
-                                                    onClick={() => {
-                                                        setExpanded(!isExpanded);
-                                                        trackApiDocumentation({
-                                                            type: isExpanded
-                                                                ? 'propertyHideDetails'
-                                                                : 'propertyShowDetails',
-                                                            framework,
-                                                            id,
-                                                            name,
-                                                        });
-                                                    }}
-                                                    role="presentation"
-                                                >
-                                                    <Icon
-                                                        className={styles.chevron}
-                                                        name={isExpanded ? 'chevronUp' : 'chevronDown'}
-                                                    />
-                                                </button>
-                                            )}
-                                        </div>
+                                        <div className={styles.actions}></div>
                                     </div>
                                 )}
 
@@ -275,16 +252,9 @@ export const Property: FunctionComponent<{
                                     </div>
                                 )}
                             </div>
-                            <a href={`#${idName}`} className="docs-header-icon">
-                                <Icon name="link" />
-                            </a>
                         </div>
                     </div>
-                    {detailsCode && isExpanded && (
-                        <tr className={classnames(styles.expandedContent)}>
-                            <td colSpan={2}>{detailsCode && <Code code={detailsCode} keepMarkup={true} />}</td>
-                        </tr>
-                    )}
+
                     <div className={styles.contentDescription}>
                         <div
                             className={classnames(styles.collapsedPropertyContent, {
@@ -364,9 +334,30 @@ export const Property: FunctionComponent<{
                                 </button>
                             )}
                         </div>
+                    </div>
+                    <div className={styles.actionsRow}>
+                        {detailsCode && (
+                            <button
+                                className={classnames(styles.seeMore, 'button-as-link')}
+                                onClick={() => {
+                                    setExpanded(!isExpanded);
+                                    trackApiDocumentation({
+                                        type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
+                                        framework,
+                                        id,
+                                        name,
+                                    });
+                                }}
+                                role="presentation"
+                            >
+                                More details
+                                <Icon className={styles.chevron} name={isExpanded ? 'chevronUp' : 'chevronDown'} />
+                            </button>
+                        )}
+
                         {more != null && more.url && !config.hideMore && (
                             <a
-                                className={styles.docLink}
+                                className={`${styles.docLink} ${detailsCode ? styles.separator : ''}`}
                                 target="_blank"
                                 href={urlWithPrefix({
                                     url: more.url,
@@ -387,6 +378,11 @@ export const Property: FunctionComponent<{
                             </a>
                         )}
                     </div>
+                    {detailsCode && isExpanded && (
+                        <tr className={classnames(styles.expandedContent)}>
+                            <td colSpan={2}>{detailsCode && <Code code={detailsCode} keepMarkup={true} />}</td>
+                        </tr>
+                    )}
                 </td>
             </tr>
             {detailsCode && isExpanded && (

@@ -279,12 +279,14 @@ button.seeMore {
     display: flex;
     align-items: center;
     gap: $spacing-size-2;
-    color: var(--color-fg-code);
+    color: var(--color-link);
     padding-right: 0.5em;
+    font-weight: 600;
+
     svg {
         --icon-size: 16px;
 
-        fill: var(--color-fg-code);
+        fill: var(--color-link);
         transition: fill $transition-default-timing;
     }
 
@@ -414,7 +416,7 @@ button.seeMore {
 }
 
 .metaRow {
-    background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 90%);
+    background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 94%);
     padding-top: 0.125rem;
     padding-bottom: 0.125rem;
     padding-left: 0.5rem;
@@ -469,16 +471,27 @@ td {
     flex-direction: row;
     gap: $spacing-size-4;
     justify-content: space-between;
-    .docLink {
-        white-space: nowrap;
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        align-items: center;
-    }
+}
+
+.docLink {
+    white-space: nowrap;
+    display: flex;
+    gap: 8px;
+
     svg {
         --icon-size: 16px;
     }
+    align-items: center;
+}
+.separator {
+    border-left: 1px solid var(--color-border-secondary);
+    padding-left: $spacing-size-2;
+}
+
+.actionsRow {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
 }
 
 .metaRow {
