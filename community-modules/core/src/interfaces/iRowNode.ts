@@ -315,8 +315,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
 
     /**
-     * Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.
-     * If the Row Node is not a group, it returns `undefined`.
+     * Returns the route of keys to the row node.
      */
     getRoute(): string[] | undefined;
 }
