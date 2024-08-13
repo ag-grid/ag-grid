@@ -347,6 +347,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      */
     private deleteRow(row: RowNode, immediate: boolean) {
         if (!isTreeRowCommitted(row)) {
+            clearTreeRowFlags(row);
             return; // Never committed, or already deleted, nothing to do.
         }
 
