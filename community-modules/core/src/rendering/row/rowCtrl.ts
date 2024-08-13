@@ -898,7 +898,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
         let isDetailGridCellFocused = false;
 
         if (currentFullWidthContainer && activeEl) {
