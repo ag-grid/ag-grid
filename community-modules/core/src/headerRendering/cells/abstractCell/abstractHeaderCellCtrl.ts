@@ -14,7 +14,7 @@ import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { MenuService } from '../../../misc/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
-import { _addOrRemoveAttribute, _getElementSize, _addOrRemoveAttribute, _getInnerWidth } from '../../../utils/dom';
+import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
@@ -237,7 +237,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private refreshTabIndex(): void {
-        if(this.eGui) {
+        if (this.eGui) {
             _addOrRemoveAttribute(this.eGui, 'tabindex', this.focusService.isHeaderFocusSuppressed() ? null : '-1');
         }
     }
