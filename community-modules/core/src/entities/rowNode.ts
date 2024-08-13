@@ -1034,9 +1034,14 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     /**
-     * Returns the route of keys to the row node.
+     * Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.
+     * If the Row Node is not a group, it returns `undefined`.
      */
-    public getRoute(): string[] {
+    public getRoute(): string[] | undefined {
+        if (!this.group) {
+            return undefined;
+        }
+
         const res: string[] = [];
         let pointer: RowNode | null = this;
         while (pointer && pointer.key != null) {
