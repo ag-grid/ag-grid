@@ -1,6 +1,5 @@
 ---
 import CommunityLayout from '@ag-website-shared/components/community/layout/CommunityLayout.astro';
-import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from './home.module.scss';
 import Videos from '@ag-website-shared/components/community/components/news-updates/Videos';
 import UpcomingEvents from '@ag-website-shared/components/community/components/landing-page/UpcomingEvents';
@@ -9,6 +8,8 @@ import Support from '@ag-website-shared/components/community/components/landing-
 import Socials from '@ag-website-shared/components/community/components/landing-page/Socials';
 import ToolsExtensions from '@ag-website-shared/components/community/components/ToolsExtensions';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { fetchYouTubeThumbnail } from '@ag-website-shared/utils/fetchYoutubeThumbnail';
 
 import eventImages from '@ag-website-shared/content/community/events-images.json';
 import socialChannels from '@ag-website-shared/content/community/socials.json';
@@ -18,6 +19,13 @@ import showcase from '@ag-website-shared/content/community/showcase.json';
 import videos from '@ag-website-shared/content/community/news-updates/videos.json';
 
 const { currentSite } = Astro.props;
+
+// Fetch YouTube thumbnails for each video
+videos.map(async (video) => {
+    if (video.id) {
+        video.thumbnail = await fetchYouTubeThumbnail(video.id);
+    }
+});
 ---
 
 <CommunityLayout

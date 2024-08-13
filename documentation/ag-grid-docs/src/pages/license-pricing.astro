@@ -1,6 +1,10 @@
 ---
 import { LicensePricing } from '@ag-website-shared/components/license-pricing/LicensePricing';
+import { fetchYouTubeThumbnail } from '@ag-website-shared/utils/fetchYoutubeThumbnail';
+
 import Layout from '@layouts/Layout.astro';
+
+const pricingVideoThumbnail = await fetchYouTubeThumbnail('VPr__OKxH50');
 ---
 
 <Layout
@@ -9,5 +13,5 @@ import Layout from '@layouts/Layout.astro';
     showSearchBar={true}
     showDocsNav={false}
 >
-    <LicensePricing client:load defaultSelection="grid" />
+    <LicensePricing client:load defaultSelection="grid" pricingVideoThumbnail={pricingVideoThumbnail} />
 </Layout>

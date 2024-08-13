@@ -7,6 +7,14 @@ import Videos from '@ag-website-shared/components/community/components/news-upda
 import blogs from '@ag-website-shared/content/community/news-updates/blogs.json';
 import podcasts from '@ag-website-shared/content/community/news-updates/podcasts.json';
 import videos from '@ag-website-shared/content/community/news-updates/videos.json';
+import { fetchYouTubeThumbnail } from '@ag-website-shared/utils/fetchYoutubeThumbnail';
+
+// Fetch YouTube thumbnails for each video
+videos.map(async (video) => {
+    if (video.id) {
+        video.thumbnail = await fetchYouTubeThumbnail(video.id);
+    }
+});
 ---
 
 <CommunityLayout

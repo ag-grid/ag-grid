@@ -1,5 +1,6 @@
 ---
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { fetchYouTubeThumbnail } from '@ag-website-shared/utils/fetchYoutubeThumbnail';
 import styles from './VideoSection.module.scss';
 
 /**
@@ -11,14 +12,6 @@ interface Props {
     playlist?: string;
     showHeader?: boolean;
 }
-
-const fetchYouTubeThumbnail = async (videoId) => {
-    const response = await fetch(`https://img.youtube.com/vi/${videoId}/0.jpg`);
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64Image = buffer.toString('base64');
-    return `data:image/jpeg;base64,${base64Image}`;
-};
 
 const { id, title = 'Video', playlist, showHeader } = Astro.props as Props;
 const link = `https://www.youtube.com/watch?v=${id}${playlist ? `&list=${playlist}` : ''}`;

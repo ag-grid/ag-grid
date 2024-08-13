@@ -20,9 +20,10 @@ export type LicenseTab = 'grid' | 'charts';
 
 interface Props {
     defaultSelection: LicenseTab;
+    pricingVideoThumbnail: string;
 }
 
-export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) => {
+export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection, pricingVideoThumbnail }) => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
 
     const contactSalesRef = useRef(null); // Step 1: Create a ref for the contactSales div
@@ -181,10 +182,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 target="_blank"
                                 className={styles.thumbnail}
                             >
-                                <img
-                                    src="https://img.youtube.com/vi/VPr__OKxH50/hqdefault.jpg"
-                                    alt="AG Grid license explained video"
-                                />
+                                <img src={pricingVideoThumbnail} alt="AG Grid license explained video" />
                             </a>
 
                             <div>

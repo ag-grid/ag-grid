@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import styles from './Videos.module.scss';
 
-interface Video {
+export interface Video {
     title: string;
     link: string;
     description: string;
@@ -29,7 +29,7 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                 </div>
                 <div className={styles.rightColumn}>
                     {/* TODO: GitNation Portal Support */}
-                    {currentVideo.thumbnail ? (
+                    {!currentVideo.id ? (
                         <img
                             className={styles.videoImage}
                             src={urlWithBaseUrl(currentVideo.thumbnail)}
@@ -40,7 +40,11 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                         <iframe
                             className={styles.videoFrame}
                             src={currentVideo.link}
+                            title="YouTube video player"
                             frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            sandbox
                             allowFullScreen
                         ></iframe>
                     )}
@@ -55,11 +59,7 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                     >
                         {/* TODO: GitNation Portal Support */}
                         {video.id ? (
-                            <img
-                                src={`https://img.youtube.com/vi/${video.id}/0.jpg`}
-                                alt="Video thumbnail"
-                                className={styles.youtubeThumbnail}
-                            />
+                            <img src={video.thumbnail} alt="Video thumbnail" className={styles.youtubeThumbnail} />
                         ) : (
                             <img
                                 src={urlWithBaseUrl(video.thumbnail)}
