@@ -1020,16 +1020,16 @@ export interface _ServerSideRowModelGridApi {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
-     * If `selectionOptions.groupSelects` is `'self'` the returned object will be flat, and will conform to `IServerSideSelectionState`.
-     * If `selectionOptions.groupSelects` is `'descendants'` or `'filteredDescendants'` the returned object will be hierarchical, and will conform to `IServerSideGroupSelectionState`.
+     * If `selection.groupSelects` is `'self'` the returned object will be flat, and will conform to `IServerSideSelectionState`.
+     * If `selection.groupSelects` is `'descendants'` or `'filteredDescendants'` the returned object will be hierarchical, and will conform to `IServerSideGroupSelectionState`.
      */
     getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null;
 
     /**
      * Set the rules matching the selected rows in the SSRM.
      *
-     * If `selectionOptions.groupSelects` is `'self'` the param will be flat, and should conform to `IServerSideSelectionState`.
-     * If `selectionOptions.groupSelects` is `'descendants'` or `'filteredDescendants'` the param will be hierarchical, and should conform to `IServerSideGroupSelectionState`.
+     * If `selection.groupSelects` is `'self'` the param will be flat, and should conform to `IServerSideSelectionState`.
+     * If `selection.groupSelects` is `'descendants'` or `'filteredDescendants'` the param will be hierarchical, and should conform to `IServerSideGroupSelectionState`.
      */
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
 

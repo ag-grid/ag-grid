@@ -32,39 +32,39 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 
-    enableFillHandle: { version: '32.2', message: 'Use `selectionOptions.handle` instead.' },
-    enableRangeHandle: { version: '32.2', message: 'Use `selectionOptions.handle` instead.' },
-    enableRangeSelection: { version: '32.2', message: 'Use `selectionOptions.mode = "cell"` instead.' },
+    enableFillHandle: { version: '32.2', message: 'Use `selection.handle` instead.' },
+    enableRangeHandle: { version: '32.2', message: 'Use `selection.handle` instead.' },
+    enableRangeSelection: { version: '32.2', message: 'Use `selection.mode = "cell"` instead.' },
     rowSelection: {
         version: '32.2',
-        message: 'Use `selectionOptions.mode = "singleRow"` or `selectionOptions.mode = "multiRow" instead.',
+        message: 'Use `selection.mode = "singleRow"` or `selection.mode = "multiRow" instead.',
     },
     suppressMultiRangeSelection: {
         version: '32.2',
-        message: 'Use `selectionOptions.suppressMultiRanges` instead.',
+        message: 'Use `selection.suppressMultiRanges` instead.',
     },
     suppressClearOnFillReduction: {
         version: '32.2',
-        message: 'Use `selectionOptions.handle.suppressClearOnFillReduction` instead.',
+        message: 'Use `selection.handle.suppressClearOnFillReduction` instead.',
     },
-    fillHandleDirection: { version: '32.2', message: 'Use `selectionOptions.handle.direction` instead.' },
-    fillOperation: { version: '32.2', message: 'Use `selectionOptions.handle.setFillValue` instead.' },
+    fillHandleDirection: { version: '32.2', message: 'Use `selection.handle.direction` instead.' },
+    fillOperation: { version: '32.2', message: 'Use `selection.handle.setFillValue` instead.' },
     suppressRowClickSelection: {
         version: '32.2',
-        message: 'Use `selectionOptions.suppressClickSelection` instead.',
+        message: 'Use `selection.suppressClickSelection` instead.',
     },
-    suppressRowDeselection: { version: '32.2', message: 'Use `selectionOptions.suppressDeselection` instead.' },
+    suppressRowDeselection: { version: '32.2', message: 'Use `selection.suppressDeselection` instead.' },
     rowMultiSelectWithClick: {
         version: '32.2',
-        message: 'Use `selectionOptions.enableMultiSelectWithClick` instead.',
+        message: 'Use `selection.enableMultiSelectWithClick` instead.',
     },
     groupSelectsChildren: {
         version: '32.2',
-        message: 'Use `selectionOptions.groupSelects = "descendants"` instead.',
+        message: 'Use `selection.groupSelects = "descendants"` instead.',
     },
     groupSelectsFiltered: {
         version: '32.2',
-        message: 'Use `selectionOptions.groupSelects = "filteredDescendants"` instead.',
+        message: 'Use `selection.groupSelects = "filteredDescendants"` instead.',
     },
     isRowSelectable: { version: '32.2', message: 'Use `selectionOptions.isRowSelectable` instead.' },
 });

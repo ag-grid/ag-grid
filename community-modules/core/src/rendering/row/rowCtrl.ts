@@ -350,7 +350,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private addRowDraggerToRow(gui: RowGui) {
         if (this.gos.getSelectionOption('enableRangeSelection')) {
             _warnOnce(
-                "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `selectionOptions.mode = 'cell'`"
+                "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `selection.mode = 'cell'`"
             );
             return;
         }
