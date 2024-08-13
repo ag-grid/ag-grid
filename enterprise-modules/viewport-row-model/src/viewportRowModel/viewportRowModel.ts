@@ -3,12 +3,10 @@ import type {
     FocusService,
     IRowModel,
     IViewportDatasource,
-    ModelUpdatedEvent,
     NamedBean,
     RowBounds,
     RowModelType,
     RowRenderer,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { BeanStub, RowNode, _iterateObject, _missing, _warnOnce } from '@ag-grid-community/core';
 
@@ -228,14 +226,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             node.setRowTop(this.rowHeight * node.rowIndex!);
         });
 
-        const event: WithoutGridCommon<ModelUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             newData: false,
             newPage: false,
             keepRenderedRows: true,
             animate: false,
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public getTopLevelRowCount(): number {
@@ -333,15 +330,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             type: 'rowCountReady',
         });
 
-        const event: WithoutGridCommon<ModelUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'modelUpdated',
             newData: false,
             newPage: false,
             keepRenderedRows: keepRenderedRows,
             animate: false,
-        };
-
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public isRowPresent(rowNode: RowNode): boolean {

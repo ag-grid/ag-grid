@@ -31,13 +31,17 @@ const GridConfigDropdown = () => {
                     incompatibleProperty && gridConfig[property] && gridConfig[incompatibleProperty]
                         ? `${titleCase(property)} does not work with ${titleCase(incompatibleProperty)}. ${titleCase(property)} has been disabled.`
                         : null;
+                const debugMarker = productionConfigFields.includes(property as any) ? '' : ' 🧪';
                 const item = (
                     <Checkbox
                         key={property}
                         checked={!!gridConfig[property]}
                         onChange={() => setGridConfig({ ...gridConfig, [property]: !gridConfig[property] })}
                     >
-                        <Label className={warning ? 'has-warning' : undefined}>{titleCase(String(property))}</Label>
+                        <Label className={warning ? 'has-warning' : undefined}>
+                            {titleCase(String(property))}
+                            {debugMarker}
+                        </Label>
                         {warning && <WarningAltFilled color="var(--color-warning-500)" />}
                     </Checkbox>
                 );

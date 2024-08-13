@@ -36,9 +36,9 @@ export const indexBy = <T, K extends keyof T>(list: readonly T[], property: K): 
     Object.fromEntries(list.map((item) => [String(item[property]), item]));
 
 export const memoize = <R, A = void>(fn: (arg: A) => R): ((arg: A) => R) => {
-    const values = new Map<string, R>();
+    const values = new Map<A, R>();
     return (a) => {
-        const key = String(a);
+        const key = a;
         if (!values.has(key)) {
             values.set(key, fn(a));
         }
@@ -93,6 +93,5 @@ const cssPropertyForParamType = {
     image: 'backgroundImage',
     fontFamily: 'fontFamily',
     fontWeight: 'fontWeight',
-    display: 'display',
     duration: 'transitionDuration',
 } satisfies Record<ParamType, keyof CSSStyleDeclaration>;

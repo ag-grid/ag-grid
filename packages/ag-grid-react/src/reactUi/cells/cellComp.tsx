@@ -499,8 +499,10 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         </>
     );
 
+    const onBlur = useCallback(() => cellCtrl.onFocusOut(), []);
+
     return (
-        <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colId}>
+        <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colId} onBlur={onBlur}>
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
                     {showContents()}

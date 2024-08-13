@@ -9,7 +9,7 @@ import { _warnOnce } from './function';
 //
 // If you change the list below, copy/paste the new content into the docs page custom-icons
 //
-export const iconNameClassMap: { [key: string]: string } = {
+export const iconNameClassMap = {
     // header column group shown when expanded (click to contract)
     columnGroupOpened: 'expanded',
     // header column group shown when contracted (click to expand)
@@ -159,7 +159,17 @@ export const iconNameClassMap: { [key: string]: string } = {
     radioButtonOn: 'radio-button-on',
     // radio button off
     radioButtonOff: 'radio-button-off',
-};
+} as const;
+
+export type IconName = keyof typeof iconNameClassMap;
+export type IconValue = (typeof iconNameClassMap)[IconName];
+
+const ICONS = (() => {
+    const icons = new Set<IconValue>(Object.values(iconNameClassMap));
+    // 'eye' is in list of icons, but isn't actually mapped to any feature
+    icons.add('eye' as any);
+    return icons;
+})();
 
 /**
  * If icon provided, use this (either a string, or a function callback).
@@ -234,7 +244,8 @@ export function _createIconNoSpan(
         _warnOnce('iconRenderer should return back a string or a dom object');
     } else {
         const span = document.createElement('span');
-        let cssClass = iconNameClassMap[iconName];
+        let cssClass: string =
+            iconNameClassMap[iconName as IconName] ?? (ICONS.has(iconName as IconValue) ? iconName : undefined);
 
         if (!cssClass) {
             if (!forceCreate) {

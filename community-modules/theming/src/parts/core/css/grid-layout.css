@@ -206,7 +206,7 @@
     margin-left: auto;
 }
 
-.ag-cell,
+.ag-cell:not(.ag-cell-inline-editing),
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
@@ -243,11 +243,6 @@
 
 .ag-overlay-loading-wrapper {
     background-color: var(--ag-modal-overlay-background-color);
-}
-
-/* in auto-height mode with no rows, add padding to prevent grid being too small */
-.ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-    padding-top: 60px;
 }
 
 .ag-skeleton-container {

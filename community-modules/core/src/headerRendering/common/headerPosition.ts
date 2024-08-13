@@ -180,7 +180,7 @@ export class HeaderPositionUtils extends BeanStub implements NamedBean {
         }
 
         const childContainer = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
-        const type = childContainer.getRowType(level);
+        const type = childContainer?.getRowType(level);
 
         if (type == HeaderRowType.COLUMN_GROUP) {
             const columnGroup = this.visibleColsService.getColGroupAtLevel(column, level);

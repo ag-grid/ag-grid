@@ -100,7 +100,7 @@
         },
         "tooltipField": {
             "interfaceHierarchyOverrides": {
-                "exclude": ["ColDefField"]
+                "exclude": ["NestedFieldPaths"]
             }
         },
         "tooltipValueGetter": {
@@ -528,13 +528,11 @@
         },
         "groupId": {},
         "marryChildren": {},
-        "suppressStickyLabel": {},
         "openByDefault": {},
         "columnGroupShow": {},
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},
         "suppressFiltersToolPanel": {},
-        "suppressSpanHeaderHeight": {},
         "tooltipComponent": {
             "description": "Provide your own tooltip component for the column group.",
             "more": {
@@ -556,6 +554,12 @@
         "headerName": {},
         "headerClass": {},
         "headerTooltip": {},
+        "autoHeaderHeight": {
+            "more": {
+                "name": "Auto Header Height",
+                "url": "./column-groups/"
+            }
+        },
         "headerGroupComponent": {
             "description": "The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.",
             "more": {
@@ -563,6 +567,8 @@
                 "url": "./column-headers/"
             }
         },
-        "headerGroupComponentParams": {}
+        "headerGroupComponentParams": {},
+        "suppressSpanHeaderHeight": {},
+        "suppressStickyLabel": {}
     }
 }

@@ -6,6 +6,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { MenuService } from '../misc/menuService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
@@ -21,6 +22,7 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
+    private animationFrameService: AnimationFrameService;
     private headerNavigationService: HeaderNavigationService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
@@ -30,6 +32,7 @@ export class GridHeaderCtrl extends BeanStub {
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
+        this.animationFrameService = beans.animationFrameService;
         this.headerNavigationService = beans.headerNavigationService;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
@@ -89,6 +92,8 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedEventListeners({
             displayedColumnsChanged: listener,
             columnHeaderHeightChanged: listener,
+            // add this to the animation frame to avoid a feedback loop
+            columnGroupHeaderHeightChanged: () => this.animationFrameService.requestAnimationFrame(() => listener()),
             gridStylesChanged: listener,
             advancedFilterEnabledChanged: listener,
         });
@@ -101,25 +106,16 @@ export class GridHeaderCtrl extends BeanStub {
     private setHeaderHeight(): void {
         const { columnModel } = this;
 
-        let numberOfFloating = 0;
-        let headerRowCount = columnModel.getHeaderRowCount();
-        let totalHeaderHeight: number;
+        let totalHeaderHeight: number = 0;
 
-        const hasFloatingFilters = this.filterManager?.hasFloatingFilters();
-
-        if (hasFloatingFilters) {
-            headerRowCount++;
-            numberOfFloating = 1;
-        }
-
-        const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
+        const groupHeight = this.columnModel.getGroupRowsHeight().reduce((prev, curr) => prev + curr, 0);
         const headerHeight = this.columnModel.getColumnHeaderRowHeight();
 
-        const numberOfNonGroups = 1 + numberOfFloating;
-        const numberOfGroups = headerRowCount - numberOfNonGroups;
+        if (this.filterManager?.hasFloatingFilters()) {
+            totalHeaderHeight += columnModel.getFloatingFiltersHeight()!;
+        }
 
-        totalHeaderHeight = numberOfFloating * columnModel.getFloatingFiltersHeight()!;
-        totalHeaderHeight += numberOfGroups * groupHeight!;
+        totalHeaderHeight += groupHeight;
         totalHeaderHeight += headerHeight!;
 
         if (this.headerHeight === totalHeaderHeight) {
@@ -221,7 +217,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewportElement()) {
+        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl()?.getViewportElement()) {
             this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }

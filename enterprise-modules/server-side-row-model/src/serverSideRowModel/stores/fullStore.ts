@@ -300,7 +300,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return undefined;
             }
 
-            const parentKeys = this.parentRowNode.getGroupKeys();
+            const parentKeys = this.parentRowNode.getRoute() ?? [];
             const level = this.level;
             const id = getRowIdFunc({
                 data,
@@ -398,7 +398,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         return displayIndex >= this.displayIndexStart! && displayIndex < this.displayIndexEnd!;
     }
 
-    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void {
+    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void {
         this.displayIndexStart = displayIndexSeq.peek();
         this.topPx = nextRowTop.value;
 
@@ -406,7 +406,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         // set on all visible nodes
         this.nodesAfterSort.forEach((rowNode) => {
-            this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop);
+            this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop, uiLevel);
             visibleNodeIds[rowNode.id!] = true;
         });
 
@@ -647,11 +647,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 source: 'rowDataChanged',
             });
 
-            const event: WithoutGridCommon<SelectionChangedEvent> = {
+            this.eventService.dispatchEvent({
                 type: 'selectionChanged',
                 source: 'rowDataChanged',
-            };
-            this.eventService.dispatchEvent(event);
+            });
         }
     }
 
@@ -750,7 +749,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (getRowIdFunc != null) {
             // find rowNode using id
-            const parentKeys = this.parentRowNode.getGroupKeys();
+            const parentKeys = this.parentRowNode.getRoute() ?? [];
             const id = getRowIdFunc({
                 data,
                 parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
@@ -776,7 +775,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
             suppressInfiniteScroll: true,
-            route: this.parentRowNode.getGroupKeys(),
+            route: this.parentRowNode.getRoute() ?? [],
             rowCount: this.allRowNodes.length,
             info: this.info,
         });
@@ -810,10 +809,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private fireStoreUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        const event: WithoutGridCommon<StoreUpdatedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'storeUpdated',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     public getRowCount(): number {

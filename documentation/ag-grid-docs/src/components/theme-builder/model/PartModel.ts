@@ -1,4 +1,4 @@
-import type { Part, PartId } from '@ag-grid-community/theming';
+import type { Part } from '@ag-grid-community/theming';
 import * as themes from '@ag-grid-community/theming';
 import { atom, useAtom } from 'jotai';
 
@@ -6,73 +6,87 @@ import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
 import { memoize, titleCase } from './utils';
 
-const variantsByPartId: Record<PartId, Part[]> = {
-    colorScheme: themes.allColorSchemes,
-    design: themes.allDesigns,
-    iconSet: themes.allIconSets,
-    core: [themes.corePart],
-    tabStyle: themes.allTabStyles,
-    inputStyle: themes.allInputStyles,
+const partsByGroup: Record<string, Part<any>[] | undefined> = {
+    colorScheme: [
+        themes.colorSchemeLightCold,
+        themes.colorSchemeLightNeutral,
+        themes.colorSchemeLightWarm,
+        themes.colorSchemeDarkBlue,
+        themes.colorSchemeDarkNeutral,
+        themes.colorSchemeDarkWarm,
+    ],
+    iconSet: [
+        themes.iconSetAlpine,
+        themes.iconSetMaterial,
+        themes.iconSetQuartzLight,
+        themes.iconSetQuartzRegular,
+        themes.iconSetQuartzBold,
+    ],
+    tabStyle: [themes.tabStyleQuartz, themes.tabStyleAlpine, themes.tabStyleMaterial, themes.tabStyleRolodex],
+    inputStyle: [themes.inputStyleBordered, themes.inputStyleUnderlined],
 };
 
-export const getVariantsByPartId = (partId: PartId) => variantsByPartId[partId];
+export const getPartsByGroup = (group: string) => partsByGroup[group];
 
-const featureModels: Record<string, PartModel> = {};
+const featureModels: Record<string, GroupModel> = {};
 
-const partDocs: Record<PartId, string | null> = {
-    colorScheme: null,
-    design: 'Selecting a design applies many default settings to create a consistent look that you can then customise.',
-    iconSet: null,
-    core: null,
+const partDocs: Record<string, string | undefined> = {
     tabStyle: 'The appearance of tabs in chart settings and legacy column menu',
     inputStyle: 'The appearance of text input fields',
 };
 
-export class PartModel {
+const defaultPartIds = new Set(themes.themeQuartz.dependencies.map((dep) => dep.id));
+
+export class GroupModel {
     readonly label: string;
     readonly docs: string | null;
-    readonly variants: VariantModel[];
-    readonly defaultVariant: VariantModel;
-    readonly variantAtom: PersistentAtom<VariantModel>;
+    readonly parts: PartModel[];
+    readonly defaultPart: PartModel;
+    readonly selectedPartAtom: PersistentAtom<PartModel>;
 
-    private constructor(readonly partId: PartId) {
-        this.label = titleCase(partId);
-        this.docs = partDocs[partId];
-        this.variants = variantsByPartId[partId].map((part) => new VariantModel(this, part));
-        this.defaultVariant =
-            this.variants.find((v) => themes.designQuartz.dependencies().includes(v.variant)) || this.variants[0];
-        this.variantAtom = createFeatureAtom(this);
+    private constructor(readonly groupId: string) {
+        this.label = titleCase(groupId);
+        this.docs = partDocs[groupId] || null;
+        const parts = partsByGroup[groupId];
+        if (!parts) throw new Error(`Invalid groupId "${groupId}"`);
+        this.parts = parts.map((part) => new PartModel(this, part));
+        this.defaultPart = this.parts.find((v) => defaultPartIds.has(v.id)) || this.parts[0];
+        this.selectedPartAtom = createSelectedPartAtom(this);
     }
 
-    static for(partID: PartId) {
-        return featureModels[partID] || (featureModels[partID] = new PartModel(partID));
+    static for(partID: string) {
+        return featureModels[partID] || (featureModels[partID] = new GroupModel(partID));
     }
 }
 
-export const useSelectedVariant = (part: PartModel) => useAtom(part.variantAtom);
+export const useSelectedPart = (group: GroupModel) => useAtom(group.selectedPartAtom);
 
-const createFeatureAtom = (part: PartModel) => {
-    const backingAtom = atomWithJSONStorage<string | null>(`part-variant.${part.partId}`, null);
+const createSelectedPartAtom = (group: GroupModel) => {
+    const backingAtom = atomWithJSONStorage<string | null>(`selected-part.${group.groupId}`, null);
     return atom(
         (get) => {
-            const variantId = get(backingAtom) || '';
-            return part.variants.find((v) => v.variantId === variantId) || part.defaultVariant;
+            const variantId = get(backingAtom);
+            return group.parts.find((v) => v.id === variantId) || group.defaultPart;
         },
-        (_get, set, newVariant: VariantModel) => set(backingAtom, newVariant.variantId)
+        (_get, set, newVariant: PartModel) => set(backingAtom, newVariant.id)
     );
 };
 
-export class VariantModel {
+export class PartModel {
     readonly label: string;
-    readonly variantId: string;
+    readonly id: string;
+    readonly variant: string;
 
     constructor(
-        readonly part: PartModel,
-        readonly variant: Part
+        readonly group: GroupModel,
+        readonly part: Part<any>
     ) {
-        this.label = titleCase(variant.variantId || '');
-        this.variantId = variant.variantId || '';
+        this.label = titleCase(part.variant);
+        this.variant = part.variant;
+        this.id = part.id;
     }
 }
 
-export const allPartModels = memoize(() => Object.keys(partDocs).map((partId) => PartModel.for(partId as PartId)));
+const allPartIds = ['colorScheme', 'iconSet', 'tabStyle', 'inputStyle'];
+
+export const allGroupModels = memoize(() => allPartIds.map((partId) => GroupModel.for(partId)));

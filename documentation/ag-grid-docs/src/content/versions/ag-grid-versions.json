@@ -1,5 +1,31 @@
 [
     {
+        "version": "32.1.0",
+        "date": "August 8th 2024",
+        "highlights": [
+            {
+                "text": "Server-side Row Model - Hide Open Parents",
+                "path": "./server-side-model-grouping/#hide-open-parents"
+            },
+            {
+                "text": "Server-side Row Model - Unbalanced Row Groups",
+                "path": "./server-side-model-grouping/#unbalanced-groups"
+            },
+            {
+                "text": "Column Group Headers - Auto-Height",
+                "path": "./column-groups/#auto-header-height"
+            },
+            {
+                "text": "Excel Export - Freezing Content",
+                "path": "./excel-export-freeze"
+            },
+            {
+                "text": "Scrolling Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-32-1"
+    },
+    {
         "version": "32.0.2",
         "date": "July 12th 2024"
     },
@@ -161,10 +187,6 @@
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-31"
-    },
-    {
-        "version": "30.2.1",
-        "date": "November 2nd 2023"
     },
     {
         "version": "30.2.0",

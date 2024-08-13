@@ -393,7 +393,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
                     continue outer;
                 }
 
-                flexingColumnSizes[i] = Math.round(widthByFlexRule);
+                flexingColumnSizes[i] = Math.floor(widthByFlexRule);
             }
             break;
         }

@@ -1,25 +1,21 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
+import type { GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { getAllRows } from '../../test-utils';
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
-import { checkTreeDiagram, simpleHierarchyRowData, simpleHierarchyRowSnapshot } from './tree-test-utils';
+import { TreeDiagram, simpleHierarchyRowData, simpleHierarchyRowSnapshot } from './tree-test-utils';
+
+const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
     let consoleErrorSpy: jest.SpyInstance;
+    let consoleWarnSpy: jest.SpyInstance;
 
     function createMyGrid(gridOptions: GridOptions) {
         return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function getAllRows(api: GridApi) {
-        const rows: IRowNode<any>[] = [];
-        api.forEachNode((node) => {
-            rows.push(node);
-        });
-        return rows;
     }
 
     function resetGrids() {
@@ -37,12 +33,11 @@ describe('ag-grid tree data', () => {
 
     afterEach(() => {
         consoleErrorSpy?.mockRestore();
+        consoleWarnSpy?.mockRestore();
     });
 
     test('ag-grid tree data', async () => {
         const rowData = simpleHierarchyRowData();
-
-        const getDataPath = (data: any) => data.orgHierarchy;
 
         const gridOptions: GridOptions = {
             columnDefs: [
@@ -56,7 +51,7 @@ describe('ag-grid tree data', () => {
                 cellRendererParams: { suppressCount: true },
             },
             treeData: true,
-            animateRows: true,
+            animateRows: false,
             groupDefaultExpanded: -1,
             rowData,
             getDataPath,
@@ -64,13 +59,18 @@ describe('ag-grid tree data', () => {
 
         const api = createMyGrid(gridOptions);
 
-        expect(checkTreeDiagram(api)).toBe(true);
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A LEAF id:0
+            │ └── B LEAF id:1
+            ├─┬ C filler id:row-group-0-C
+            │ └── D LEAF id:2
+            └─┬ E filler id:row-group-0-E
+            · └─┬ F filler id:row-group-0-E-1-F
+            · · └─┬ G filler id:row-group-0-E-1-F-2-G
+            · · · └── H LEAF id:3`);
 
         const rows = getAllRows(api);
-
-        expect(rows.length).toBe(8);
-
-        const rowsSnapshot = getRowsSnapshot(rows);
 
         expect(rows[0].data).toEqual(rowData[0]);
         expect(rows[1].data).toEqual(rowData[1]);
@@ -81,6 +81,7 @@ describe('ag-grid tree data', () => {
         expect(rows[6].data).toEqual(undefined);
         expect(rows[7].data).toEqual(rowData[3]);
 
+        const rowsSnapshot = getRowsSnapshot(rows);
         expect(rowsSnapshot).toMatchObject(simpleHierarchyRowSnapshot());
     });
 
@@ -92,8 +93,6 @@ describe('ag-grid tree data', () => {
             { orgHierarchy: ['C', 'D'] },
         ];
 
-        const getDataPath = (data: any) => data.orgHierarchy;
-
         const gridOptions: GridOptions = {
             columnDefs: [
                 {
@@ -106,7 +105,7 @@ describe('ag-grid tree data', () => {
                 cellRendererParams: { suppressCount: true },
             },
             treeData: true,
-            animateRows: true,
+            animateRows: false,
             groupDefaultExpanded: -1,
             rowData,
             getDataPath,
@@ -116,7 +115,13 @@ describe('ag-grid tree data', () => {
 
         const rows = getAllRows(api);
 
-        expect(checkTreeDiagram(api)).toBe(true);
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A LEAF id:2
+            │ └── B LEAF id:0
+            └─┬ C filler id:row-group-0-C
+            · └─┬ D LEAF id:3
+            · · └── E LEAF id:1`);
 
         const rowsSnapshot = getRowsSnapshot(rows);
 
@@ -136,11 +141,11 @@ describe('ag-grid tree data', () => {
                 childrenAfterSort: ['B'],
                 detail: undefined,
                 displayed: true,
-                expanded: false,
+                expanded: true,
                 firstChild: true,
                 footer: undefined,
                 group: true,
-                groupData: undefined,
+                groupData: { 'ag-Grid-AutoColumn': 'A' },
                 id: '2',
                 key: 'A',
                 lastChild: false,
@@ -163,7 +168,7 @@ describe('ag-grid tree data', () => {
                 childrenAfterGroup: [],
                 childrenAfterSort: [],
                 detail: undefined,
-                displayed: false,
+                displayed: true,
                 expanded: true,
                 firstChild: true,
                 footer: undefined,
@@ -180,12 +185,12 @@ describe('ag-grid tree data', () => {
                 rowPinned: undefined,
                 selectable: true,
                 siblingKey: undefined,
-                uiLevel: undefined,
-                rowIndex: null,
+                uiLevel: 1,
+                rowIndex: 1,
             },
             {
                 allChildrenCount: 2,
-                allLeafChildren: ['E', 'D'],
+                allLeafChildren: ['E'],
                 childIndex: 1,
                 childrenAfterFilter: ['D'],
                 childrenAfterGroup: ['D'],
@@ -209,7 +214,7 @@ describe('ag-grid tree data', () => {
                 selectable: true,
                 siblingKey: undefined,
                 uiLevel: 0,
-                rowIndex: 1,
+                rowIndex: 2,
             },
             {
                 allChildrenCount: 1,
@@ -220,11 +225,11 @@ describe('ag-grid tree data', () => {
                 childrenAfterSort: ['E'],
                 detail: undefined,
                 displayed: true,
-                expanded: false,
+                expanded: true,
                 firstChild: true,
                 footer: undefined,
                 group: true,
-                groupData: undefined,
+                groupData: { 'ag-Grid-AutoColumn': 'D' },
                 id: '3',
                 key: 'D',
                 lastChild: true,
@@ -237,7 +242,7 @@ describe('ag-grid tree data', () => {
                 selectable: true,
                 siblingKey: undefined,
                 uiLevel: 1,
-                rowIndex: 2,
+                rowIndex: 3,
             },
             {
                 allChildrenCount: null,
@@ -247,7 +252,7 @@ describe('ag-grid tree data', () => {
                 childrenAfterGroup: [],
                 childrenAfterSort: [],
                 detail: undefined,
-                displayed: false,
+                displayed: true,
                 expanded: true,
                 firstChild: true,
                 footer: undefined,
@@ -264,11 +269,49 @@ describe('ag-grid tree data', () => {
                 rowPinned: undefined,
                 selectable: true,
                 siblingKey: undefined,
-                uiLevel: undefined,
-                rowIndex: null,
+                uiLevel: 2,
+                rowIndex: 4,
             },
         ];
 
         expect(rowsSnapshot).toMatchObject(expectedSnapshot);
+    });
+
+    test('duplicate group keys', async () => {
+        const rowData = [
+            { orgHierarchy: ['A', 'B'], x: 1, _diagramLabel: '1' },
+            { orgHierarchy: ['A', 'B'], x: 2, _diagramLabel: '2' },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [],
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getDataPath,
+        };
+
+        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = createMyGrid(gridOptions);
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            'AG Grid: duplicate group keys for row data, keys should be unique',
+            [rowData[0], rowData[1]]
+        );
+        consoleWarnSpy?.mockRestore();
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            └─┬ A filler id:row-group-0-A
+            · └── B LEAF id:1 label:2
+        `);
+
+        const rows = getAllRows(api);
+
+        expect(rows.length).toBe(2);
+        expect(rows[0].data).toEqual(undefined);
+        expect(rows[1].data).toEqual(rowData[1]);
     });
 });

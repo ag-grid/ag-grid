@@ -150,6 +150,10 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         });
     }
 
+    public updateOverlayWrapperPaddingTop(padding: number): void {
+        this.eOverlayWrapper.style.setProperty('padding-top', `${padding}px`);
+    }
+
     private destroyActiveOverlay(): void {
         this.activePromise = null;
 

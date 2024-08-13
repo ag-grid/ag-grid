@@ -3,8 +3,6 @@ import type {
     AgColumn,
     BeanCollection,
     ColumnModel,
-    ColumnPanelItemDragEndEvent,
-    ColumnPanelItemDragStartEvent,
     DragAndDropService,
     DragItem,
     DragSource,
@@ -230,17 +228,15 @@ export class ToolPanelColumnComp extends Component {
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
-                const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
+                this.eventService.dispatchEvent({
                     type: 'columnPanelItemDragStart',
                     column: this.column,
-                };
-                this.eventService.dispatchEvent(event);
+                });
             },
             onDragStopped: () => {
-                const event: WithoutGridCommon<ColumnPanelItemDragEndEvent> = {
+                this.eventService.dispatchEvent({
                     type: 'columnPanelItemDragEnd',
-                };
-                this.eventService.dispatchEvent(event);
+                });
             },
             onGridEnter: (dragItem: DragItem | null) => {
                 if (hideColumnOnExit) {

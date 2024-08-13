@@ -10,12 +10,15 @@ import LogoMark from '@components/logo/LogoMark';
 <DemosLayout title="Demo - Finance" description="Financial data example featuring live updates and sparklines.">
     <div class={styles.topHeader}>
         <div>
-            <h1 class={styles.headerHeading}>Finance</h1>
+            <div class={styles.headerTitle}>
+                <h1 class={styles.headerHeading}>Finance</h1>
+                <a class="button-secondary" href="https://github.com/ag-grid/ag-grid-demos/tree/main/finance">
+                    <Icon name="github" svgClasses={styles.githubIcon} />
+                    <span>See on Github</span>
+                </a>
+            </div>
+
             <p>Financial data example featuring live updates and sparklines.</p>
-            <a class="button-secondary" href="https://github.com/ag-grid/ag-grid-demos/tree/main/finance">
-                <Icon name="github" svgClasses={styles.githubIcon} />
-                <span>See on Github</span>
-            </a>
         </div>
 
         <DemoTabs activeTab="finance" />

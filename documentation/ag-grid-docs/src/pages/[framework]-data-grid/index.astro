@@ -1,11 +1,24 @@
 ---
 import { getDocsFrameworkPages } from '@features/docs/utils/pageData';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
-import FrameworkRedirectPage from '@components/FrameworkRedirectPage.astro';
+import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
+import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
+import Layout from '@layouts/Layout.astro';
 
 export async function getStaticPaths() {
     return getDocsFrameworkPages();
 }
+
+const frameworkDisplay = FRAMEWORK_DISPLAY_TEXT[Astro.params?.framework];
 ---
 
-<FrameworkRedirectPage framework={Astro.params.framework} redirectPageName={DOCS_FRAMEWORK_REDIRECT_PAGE} />
+<Layout
+    title="AG Grid: Documentation"
+    description={'View the AG Grid Documentation - a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more.'}
+    showSearchBar={false}
+    showDocsNav={false}
+>
+    <FrameworkRedirectPage framework={Astro.params.framework} redirectPageName={DOCS_FRAMEWORK_REDIRECT_PAGE}>
+        <h1>Redirecting to AG Grid {frameworkDisplay} Documentation...</h1>
+    </FrameworkRedirectPage>
+</Layout>

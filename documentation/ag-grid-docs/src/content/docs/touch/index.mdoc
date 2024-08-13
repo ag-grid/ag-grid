@@ -42,3 +42,7 @@ See [Legacy Column Menu](./column-menu/#legacy-tabbed-column-menu) for more info
 This is demonstrated in the following example:
 
 {% gridExampleRunner title="Column Menu" name="column-menu" /%}
+
+## Custom Header Components
+
+If using custom header components with interactive elements, the grid may consume the touch events in order to support the behaviour above. To prevent this, either the grid touch support can be disabled by setting the grid option `suppressTouch = true`, or the custom header component can stop propagation on the `touchstart` event.

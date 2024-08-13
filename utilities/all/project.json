@@ -62,7 +62,8 @@
       "outputs": [],
       "dependsOn": ["^pack:verify"],
       "configurations": {
-        "production": {}
+        "production": {},
+        "archive": {}
       }
     },
     "build:core:modules": {
@@ -200,6 +201,7 @@
     "community-modules/locale",
     "community-modules/csv-export",
     "community-modules/infinite-row-model",
+    "community-modules/theming",
     "community-modules/angular",
     "community-modules/react",
     "community-modules/vue3",

@@ -1,6 +1,7 @@
 import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useIsSmallScreenSize } from '@utils/hooks/useIsSmallScreenSize';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 
 import styles from './Dialog.module.scss';
@@ -22,8 +23,14 @@ export const WelcomeModal = () => {
             <Dialog.Portal>
                 <Dialog.Overlay className={styles.overlay} />
                 <Dialog.Content className={styles.content}>
-                    <img className={welcomeStyles.lightImage} src="/theme-builder/theme-builder.gif"></img>
-                    <img className={welcomeStyles.darkImage} src="/theme-builder/theme-builder-dark.gif"></img>
+                    <img
+                        className={welcomeStyles.lightImage}
+                        src={urlWithBaseUrl('/theme-builder/theme-builder.gif')}
+                    ></img>
+                    <img
+                        className={welcomeStyles.darkImage}
+                        src={urlWithBaseUrl('/theme-builder/theme-builder-dark.gif')}
+                    ></img>
                     <div className={styles.contentModal}>
                         <Dialog.Title className={styles.title}>Welcome to Theme Builder</Dialog.Title>
                         <Dialog.Description className={styles.description}>

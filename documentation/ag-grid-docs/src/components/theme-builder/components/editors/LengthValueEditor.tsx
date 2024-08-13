@@ -1,13 +1,21 @@
+import { type LengthValue, paramValueToCss } from '@ag-grid-community/theming';
 import { reinterpretCSSValue, stripFloatingPointErrors } from '@components/theme-builder/model/utils';
 
 import { FormattedInput } from './FormattedInput';
 import { type ValueEditorProps } from './ValueEditorProps';
 
-export const LengthValueEditor = ({ value, onChange, icon, swipeAdjustmentDivisor = 100 }: ValueEditorProps) => {
-    const units = getUnit(value);
+export const LengthValueEditor = ({
+    param,
+    value,
+    onChange,
+    icon,
+    swipeAdjustmentDivisor = 100,
+}: ValueEditorProps<LengthValue>) => {
+    const cssValue = paramValueToCss(param.property, value) || '';
+    const units = getUnit(cssValue);
     return (
         <FormattedInput
-            value={value}
+            value={cssValue}
             onChange={onChange}
             onClear={() => onChange(null)}
             valueToDisplayString={toDisplayString}
@@ -49,7 +57,8 @@ const getUnit = (value: string) => {
     if (cssFunctionRegex.test(value)) {
         value = reinterpretCSSValue(value, 'length') || value;
     }
-    return /%\s*$/.test(value) ? '%' : 'px';
+    const [unit] = value.match(/[^\d.]+$/) || [];
+    return unit || '';
 };
 
 const round2dp = (value: number) => stripFloatingPointErrors(Math.round(value * 100) / 100);

@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent } from '../../events';
+import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
 import { _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
@@ -227,8 +227,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (this.mouseStayingInsideCell(mouseEvent)) {
             return;
         }
-        const cellMouseOutEvent: CellMouseOutEvent = this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut');
-        this.beans.eventService.dispatchEvent(cellMouseOutEvent);
+        this.beans.eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
         this.beans.columnHoverService.clearMouseOver();
     }
 
@@ -236,8 +235,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (this.mouseStayingInsideCell(mouseEvent)) {
             return;
         }
-        const cellMouseOverEvent: CellMouseOverEvent = this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver');
-        this.beans.eventService.dispatchEvent(cellMouseOverEvent);
+        this.beans.eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
         this.beans.columnHoverService.setMouseOver([this.column]);
     }
 

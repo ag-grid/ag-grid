@@ -2,9 +2,9 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
-import type { CssVariablesChanged, PinnedHeightChangedEvent, PinnedRowDataChangedEvent } from '../events';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { CssVariablesChanged } from '../events';
 import type { RowPinnedType } from '../interfaces/iRowNode';
+import { _warnOnce } from '../utils/function';
 
 export class PinnedRowModel extends BeanStub implements NamedBean {
     beanName = 'pinnedRowModel' as const;
@@ -62,20 +62,18 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         rowTop = 0;
         this.pinnedTopRows?.forEach(updateRowHeight);
 
-        const event: WithoutGridCommon<PinnedHeightChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'pinnedHeightChanged',
-        };
-        this.eventService.dispatchEvent(event);
+        });
 
         return anyChange;
     }
 
     private setPinnedRowData(rowData: any[] | undefined, floating: NonNullable<RowPinnedType>): void {
         this.updateNodesFromRowData(rowData, floating);
-        const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'pinnedRowDataChanged',
-        };
-        this.eventService.dispatchEvent(event);
+        });
     }
 
     /**
@@ -100,10 +98,27 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         // Data that matches based on ID can nonetheless still appear in a different order than before
         const newOrder: string[] = [];
 
+        // Used for catching duplicate IDs/rows within `allData` itself
+        const dataIds = new Set<string>();
+
         let nextRowTop = 0;
-        for (const [i, data] of allData.entries()) {
+        let i = -1;
+        for (const data of allData) {
             const id = getRowId?.({ data, level: 0, rowPinned: floating }) ?? idPrefix + this.nextId++;
 
+            if (dataIds.has(id)) {
+                _warnOnce(
+                    'Duplicate ID',
+                    id,
+                    'found for pinned row with data',
+                    data,
+                    'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.'
+                );
+                continue;
+            }
+
+            i++;
+            dataIds.add(id);
             newOrder.push(id);
 
             const existingNode = nodes.getById(id);

@@ -1,10 +1,8 @@
 import type {
-    AgColumn,
     BeanCollection,
     ChangedPath,
     GetDataPath,
     IRowNodeStage,
-    ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
@@ -12,341 +10,95 @@ import type {
     StageExecuteParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, RowNode, _removeFromArray, _sortRowNodesByOrder, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _sortRowNodesByOrder, _warnOnce } from '@ag-grid-community/core';
+import { RowNode } from '@ag-grid-community/core';
 
-import { BatchRemover } from '../../batchRemover';
+import { ChildrenChanged, TreeNode } from './treeNode';
+import {
+    clearTreeRowFlags,
+    isTreeRowCommitted,
+    isTreeRowExpandedInitialized,
+    isTreeRowUpdated,
+    markTreeRowCommitted,
+    setTreeRowUpdated,
+    unsetTreeRowExpandedInitialized,
+} from './treeNodeFlags';
 
-interface TreeGroupingDetails {
+export type IsGroupOpenByDefaultCallback =
+    | ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean)
+    | undefined;
+
+export type InitialGroupOrderComparatorCallback =
+    | ((params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number)
+    | undefined;
+
+export interface TreeExecutionDetails {
+    changedPath: ChangedPath | undefined;
+    rowNodeOrder: { [id: string]: number } | undefined;
     expandByDefault: number;
-    changedPath: ChangedPath;
-    transactions: RowNodeTransaction[];
-    rowNodeOrder: { [id: string]: number };
-
-    isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
-    initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
-
     suppressGroupMaintainValueType: boolean;
     getDataPath: GetDataPath | undefined;
-}
-
-interface GroupInfo {
-    key: string; // e.g. 'Ireland'
-    field: string | null; // e.g. 'country'
-    rowGroupColumn: AgColumn | null;
-    leafNode?: RowNode;
-}
-
-type TreeMap = Map<string, TreeNode>;
-
-class TreeNode {
-    /** The key of this tree node */
-    public readonly key: string;
-
-    /** Tree node children */
-    public map: TreeMap | null = null;
-
-    /** The RowNode associated to this tree node */
-    public row: RowNode | null = null;
-
-    public constructor(key: string) {
-        this.key = key;
-    }
-
-    public upsert(key: string): TreeNode {
-        let child: TreeNode | undefined;
-        let map = this.map;
-        if (map) {
-            child = map.get(key);
-        } else {
-            map = new Map();
-            this.map = map;
-        }
-        if (!child) {
-            child = new TreeNode(key);
-            map.set(key, child);
-        }
-        return child;
-    }
+    isGroupOpenByDefault: IsGroupOpenByDefaultCallback;
+    initialGroupOrderComparator: InitialGroupOrderComparatorCallback;
 }
 
 export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private beans: BeanCollection;
-    private selectionService: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
+    private oldGroupDisplayColIds: string | undefined;
+    private rowsPendingDeletion: Set<RowNode> | null = null;
+    private readonly root: TreeNode = new TreeNode(null, '', -1, false);
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
-        this.selectionService = beans.selectionService;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
     }
 
-    private oldGroupDisplayColIds: string | undefined;
-
-    /** Hierarchical node cache to speed up tree data node insertion */
-    private root: TreeNode = new TreeNode('');
+    public override destroy(): void {
+        this.destroyTree(this.root, false, null);
+        super.destroy();
+    }
 
     public execute(params: StageExecuteParams): void {
-        const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
+        const { rowNode: rootRow, rowNodeTransactions, rowNodeOrder, changedPath } = params;
 
-        const details: TreeGroupingDetails = {
-            expandByDefault: this.gos.get('groupDefaultExpanded'),
-            rowNodeOrder: rowNodeOrder!,
-            transactions: rowNodeTransactions!,
-            // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
-            changedPath: changedPath!,
-            isGroupOpenByDefault: this.gos.getCallback('isGroupOpenByDefault') as any,
-            initialGroupOrderComparator: this.gos.getCallback('initialGroupOrderComparator') as any,
-            suppressGroupMaintainValueType: this.gos.get('suppressGroupMaintainValueType'),
-            getDataPath: this.gos.get('getDataPath'),
+        const gos = this.gos;
+        const details: TreeExecutionDetails = {
+            changedPath,
+            rowNodeOrder,
+            expandByDefault: gos.get('groupDefaultExpanded'),
+            suppressGroupMaintainValueType: gos.get('suppressGroupMaintainValueType'),
+            getDataPath: gos.get('getDataPath'),
+            isGroupOpenByDefault: gos.getCallback('isGroupOpenByDefault'),
+            initialGroupOrderComparator: gos.getCallback('initialGroupOrderComparator'),
         };
 
-        const oldRootRow = this.root.row;
-        if (oldRootRow !== rowNode) {
-            this.root.row = rowNode;
-            if (oldRootRow) {
-                // The root node changed? This should not happen, but if it does, clear cache
-                this.root.map?.clear();
-            }
+        const rootNode = this.root;
+        rootNode.linkRow(rootRow);
+        rootRow.parent = null;
+        rootRow.level = -1;
+        rootRow.leafGroup = false; // no pivoting with tree data
+        rootRow.childrenAfterGroup = rootNode.childrenAfterGroup;
+        const sibling = rootRow.sibling;
+        if (sibling) {
+            sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
+            sibling.childrenMapped = rootRow.childrenMapped;
         }
 
-        if (details.transactions) {
-            this.handleTransaction(details);
+        if (rowNodeTransactions) {
+            this.handleTransaction(details, rowNodeTransactions);
         } else {
-            const afterColsChanged = params.afterColumnsChanged === true;
-            this.shotgunResetEverything(details, afterColsChanged);
+            this.handleRowData(details, rootRow, params.afterColumnsChanged === true);
         }
     }
 
-    private setTreeNodeRow(treeNode: TreeNode, row: RowNode): void {
-        const oldRow = treeNode.row;
-        if (oldRow === row) {
-            return;
-        }
+    private handleRowData(details: TreeExecutionDetails, rootRow: RowNode, afterColumnsChanged: boolean): void {
+        const root = this.root;
 
-        if (oldRow?.data) {
-            if (!row.data) {
-                return; // filler node, so we don't overwrite the real node
-            }
-        }
-
-        treeNode.row = row;
-        return;
-    }
-
-    private handleTransaction(details: TreeGroupingDetails): void {
-        // we don't allow batch remover for tree data as tree data uses Filler Nodes,
-        // and creating/deleting filler nodes needs to be done alongside the node deleting
-        // and moving. if we want to Batch Remover working with tree data then would need
-        // to consider how Filler Nodes would be impacted (it's possible that it can be easily
-        // modified to work, however for now I don't have the brain energy to work it all out).
-
-        for (const { remove, update, add } of details.transactions) {
-            // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
-            // as the order is important when a record with the same id is added and removed in the same
-            // transaction.
-
-            if (remove?.length) {
-                this.removeNodes(remove as RowNode[], details);
-            }
-            if (update?.length) {
-                this.moveNodesInWrongPath(update as RowNode[], details);
-            }
-            if (add?.length) {
-                this.insertNodes(add as RowNode[], details);
-            }
-        }
-
-        if (details.rowNodeOrder) {
-            // this is used when doing delta updates, eg Redux, keeps nodes in right order
-            details.changedPath.forEachChangedNodeDepthFirst(
-                (node) => {
-                    const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
-                    if (didSort) {
-                        details.changedPath.addParentNode(node);
-                    }
-                },
-                false,
-                true
-            );
-        }
-    }
-
-    private isNodeInTheRightPath(node: RowNode, details: TreeGroupingDetails): boolean {
-        const newPath: string[] = this.getDataPath(node, details);
-
-        // Traverse from the node to the root to get the old path and compare it with the new path
-        let pointer: RowNode | null = node;
-        for (let i = newPath.length - 1; i >= 0; i--) {
-            if (!pointer || pointer.key !== newPath[i]) {
-                return false;
-            }
-            pointer = pointer.parent;
-        }
-
-        // Ensure we have reached the root
-        return pointer === this.root.row;
-    }
-
-    private moveNodesInWrongPath(childNodes: RowNode[], details: TreeGroupingDetails): void {
-        const sorted = topologicalSort(this.root.row!, childNodes);
-        for (const childNode of sorted) {
-            // we add node, even if parent has not changed, as the data could have
-            // changed, hence aggregations will be wrong
-            if (details.changedPath.isActive()) {
-                details.changedPath.addParentNode(childNode.parent);
-            }
-
-            if (!this.isNodeInTheRightPath(childNode, details)) {
-                this.moveNode(childNode, details);
-            }
-        }
-    }
-
-    private moveNode(childNode: RowNode, details: TreeGroupingDetails): void {
-        this.removeNodesInStages([childNode], details);
-        this.insertOneNode(childNode, details, true);
-
-        // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
-        // refreshed into the gui.
-        // this is needed to kick off the event that rowComp listens to for refresh. this in turn
-        // then will get each cell in the row to refresh - which is what we need as we don't know which
-        // columns will be displaying the rowNode.key info.
-        childNode.setData(childNode.data);
-
-        // we add both old and new parents to changed path, as both will need to be refreshed.
-        // we already added the old parent (in calling method), so just add the new parent here
-        if (details.changedPath.isActive()) {
-            const newParent = childNode.parent;
-            details.changedPath.addParentNode(newParent);
-        }
-    }
-
-    private removeNodes(leafRowNodes: RowNode[], details: TreeGroupingDetails): void {
-        const { changedPath } = details;
-        this.removeNodesInStages(leafRowNodes, details);
-        if (changedPath.isActive()) {
-            for (const rowNode of leafRowNodes) {
-                changedPath.addParentNode(rowNode.parent);
-            }
-        }
-    }
-
-    private removeNodesInStages(leafRowNodes: RowNode[], details: TreeGroupingDetails): void {
-        const batchRemover = new BatchRemover();
-
-        for (const nodeToRemove of leafRowNodes) {
-            this.removeFromParent(nodeToRemove, batchRemover);
-
-            // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
-            // the ClientSideNodeManager is responsible for the Root Node.
-
-            for (
-                let parent: RowNode | null = nodeToRemove.parent, grandParent: RowNode | null;
-                parent && parent !== this.root.row;
-                parent = grandParent
-            ) {
-                grandParent = parent.parent;
-                batchRemover.removeFromAllLeafChildren(parent, nodeToRemove);
-            }
-        }
-
-        batchRemover.flush();
-
-        // For TreeData, there is no BatchRemover, so we have to call removeEmptyGroups here.
-        const nodeParents = leafRowNodes.map((n) => n.parent!);
-        this.removeEmptyGroups(nodeParents, details);
-    }
-
-    private removeEmptyGroups(possibleEmptyGroups: RowNode[], details: TreeGroupingDetails): void {
-        // we do this multiple times, as when we remove groups, that means the parent of just removed
-        // group can then be empty. to get around this, if we remove, then we check everything again for
-        // newly emptied groups. the max number of times this will execute is the depth of the group tree.
-        let checkAgain = true;
-
-        while (checkAgain) {
-            checkAgain = false;
-            const batchRemover = new BatchRemover();
-
-            // remove empty groups
-
-            for (const possibleEmptyGroup of possibleEmptyGroups) {
-                for (
-                    let row: RowNode | null = possibleEmptyGroup, parent: RowNode | null;
-                    row && row !== this.root.row;
-                    row = parent
-                ) {
-                    parent = row.parent;
-
-                    // it's possible we already moved the node, so double check before trying to remove again.
-                    const mapKey = getChildrenMappedKey(row.key!, row.rowGroupColumn);
-                    const parentRowNode = row.parent;
-                    const groupAlreadyRemoved = parentRowNode?.childrenMapped
-                        ? !parentRowNode.childrenMapped[mapKey]
-                        : true;
-
-                    if (!groupAlreadyRemoved && row.isEmptyRowGroupNode()) {
-                        if (row.data && details.getDataPath?.(row.data)) {
-                            // This node has associated tree data so shouldn't be removed, but should no longer be
-                            // marked as a group if it has no children.
-                            row.setGroup((row.childrenAfterGroup && row.childrenAfterGroup.length > 0) ?? false);
-                        } else {
-                            checkAgain = true;
-
-                            this.removeFromParent(row, batchRemover);
-                            // we remove selection on filler nodes here, as the selection would not be removed
-                            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
-                        }
-                    }
-                }
-            }
-            batchRemover.flush();
-        }
-    }
-
-    // removes the node from the parent by:
-    // a) removing from childrenAfterGroup (using batchRemover if present, otherwise immediately)
-    // b) removing from childrenMapped (immediately)
-    // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
-    // d) setRowIndex(null) - as the rowNode will no longer be displayed.
-    private removeFromParent(child: RowNode, batchRemover?: BatchRemover) {
-        if (child.parent) {
-            if (batchRemover) {
-                batchRemover.removeFromChildrenAfterGroup(child.parent, child);
-            } else {
-                _removeFromArray(child.parent.childrenAfterGroup!, child);
-                child.parent.updateHasChildren();
-            }
-        }
-        if (child.parent?.childrenMapped) {
-            delete child.parent.childrenMapped[getChildrenMappedKey(child.key!, child.rowGroupColumn)];
-        }
-        // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
-        // remove, if rowTop is still present, the rowComp thinks it's just moved position.
-        child.setRowTop(null);
-        child.setRowIndex(null);
-    }
-
-    /**
-     * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
-     */
-    private addToParent(child: RowNode, parent: RowNode | null) {
-        const childrenMapped = parent?.childrenMapped;
-        if (childrenMapped) {
-            const mapKey = getChildrenMappedKey(child.key!, child.rowGroupColumn);
-            if (childrenMapped[mapKey] !== child) {
-                childrenMapped[mapKey] = child;
-                parent.childrenAfterGroup!.push(child);
-                parent.setGroup(true); // calls `.updateHasChildren` internally
-            }
-        }
-    }
-
-    private shotgunResetEverything(details: TreeGroupingDetails, afterColumnsChanged: boolean): void {
         if (afterColumnsChanged || this.oldGroupDisplayColIds === undefined) {
             const newGroupDisplayColIds =
                 this.showRowGroupColsService
-                    .getShowRowGroupCols()
+                    ?.getShowRowGroupCols()
                     ?.map((c) => c.getId())
                     .join('-') ?? '';
 
@@ -354,7 +106,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 // if the group display cols have changed, then we need to update rowNode.groupData
                 // (regardless of tree data or row grouping)
                 if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
-                    this.checkAllGroupDataAfterColsChanged(this.root.row!.childrenAfterGroup);
+                    this.checkAllGroupDataAfterColsChanged(root.row?.childrenAfterGroup);
                 }
 
                 // WARNING: this assumes that an event with afterColumnsChange=true doesn't change the rows
@@ -364,339 +116,491 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.oldGroupDisplayColIds = newGroupDisplayColIds;
         }
 
-        // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
-
-        const rootNode = this.root.row!;
-
-        // set .leafGroup always to false for tree data, as .leafGroup is only used when pivoting, and pivoting
-        // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
-        rootNode.leafGroup = false;
-
-        // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
-        rootNode.childrenAfterGroup = [];
-        rootNode.childrenMapped = {};
-        rootNode.updateHasChildren();
-
-        const sibling = rootNode.sibling;
-        if (sibling) {
-            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-            sibling.childrenMapped = rootNode.childrenMapped;
-        }
-
-        this.insertNodes(rootNode.allLeafChildren!, details);
+        this.clearTree(this.root);
+        this.addOrUpdateRows(details, rootRow.allLeafChildren, false);
+        this.commitTree(details);
     }
 
-    private checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null): void {
-        if (!rowNodes) {
-            return;
+    private handleTransaction(details: TreeExecutionDetails, transactions: RowNodeTransaction[]): void {
+        const { changedPath, rowNodeOrder } = details;
+
+        for (const { remove, update, add } of transactions) {
+            // the order of [add, remove, update] is the same as in ClientSideNodeManager.
+            // Order is important when a record with the same id is added and removed in the same transaction.
+            this.removeRows(remove as RowNode[] | null);
+            this.addOrUpdateRows(details, update as RowNode[] | null, true);
+            this.addOrUpdateRows(details, add as RowNode[] | null, false);
         }
-        for (const rowNode of rowNodes) {
-            const groupInfo: GroupInfo = {
-                field: rowNode.field,
-                key: rowNode.key!,
-                rowGroupColumn: rowNode.rowGroupColumn,
-                leafNode: rowNode.allLeafChildren?.[0],
-            };
-            this.setGroupData(rowNode, groupInfo);
-            this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
+        this.commitTree(details);
+
+        if (rowNodeOrder) {
+            // this is used when doing delta updates, eg Redux, keeps nodes in right order
+            changedPath?.forEachChangedNodeDepthFirst(
+                (node) => {
+                    const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, rowNodeOrder);
+                    if (didSort) {
+                        changedPath.addParentNode(node);
+                    }
+                },
+                false,
+                true
+            );
         }
     }
 
-    private insertNodes(newRowNodes: RowNode[], details: TreeGroupingDetails): void {
-        this.buildNodeCacheFromRows(newRowNodes, details);
-
-        for (const rowNode of newRowNodes) {
-            this.insertOneNode(rowNode, details, false);
-            if (details.changedPath.isActive()) {
-                details.changedPath.addParentNode(rowNode.parent);
+    private checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null | undefined): void {
+        if (rowNodes) {
+            const len = rowNodes.length;
+            for (let i = 0; i < len; ++i) {
+                const rowNode = rowNodes![i];
+                this.setGroupData(rowNode);
+                this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
             }
         }
     }
 
-    private insertOneNode(
-        childNode: RowNode,
-        details: TreeGroupingDetails,
-        isMove: boolean,
-        batchRemover?: BatchRemover
-    ): void {
-        const path = this.getDataPath(childNode, details);
-        const level = path.length - 1;
-        const key = path[level];
-
-        let treeNode = this.root;
-        let parentGroup = this.root.row!;
-        let rowThatNeedsLevelUpdate: RowNode | null = null;
-
-        for (let level = 0, stopLevel = path.length - 1; level < stopLevel; ++level) {
-            const key = path[level];
-            treeNode = treeNode.upsert(key);
-
-            let row = parentGroup?.childrenMapped?.[key];
-
-            if (!row) {
-                row = treeNode.row;
-                if (row) {
-                    row.parent = parentGroup;
-                } else {
-                    row = this.createGroup(key, parentGroup, level, details);
-                    this.setTreeNodeRow(treeNode, row);
-                }
-                // attach the new group to the parent
-                this.addToParent(row, parentGroup);
+    /** Called when a subtree needs to be destroyed. */
+    private destroyTree(node: TreeNode, allRows: boolean, changedPath: ChangedPath | null | undefined): void {
+        const { level, row, childrenAfterGroup, allLeafChildren } = node;
+        childrenAfterGroup.length = 0;
+        if (level >= 0) {
+            allLeafChildren.length = 0;
+        }
+        if (row !== null) {
+            node.linkRow(null);
+            if (allRows || !row.data) {
+                this.deleteRow(row, true);
             } else {
-                this.setTreeNodeRow(treeNode, row);
-            }
-
-            parentGroup = row;
-            if (row.level !== level) {
-                row.level = level;
-                rowThatNeedsLevelUpdate = row;
-            }
-
-            // node gets added to all group nodes.
-            // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
-
-            if (!batchRemover?.isRemoveFromAllLeafChildren(parentGroup, childNode)) {
-                parentGroup.allLeafChildren!.push(childNode);
-            } else {
-                // if this node is about to be removed, prevent that
-                batchRemover?.preventRemoveFromAllLeafChildren(parentGroup, childNode);
+                clearTreeRowFlags(row);
             }
         }
-
-        const existingNode = parentGroup.childrenAfterGroup?.find((node) => node.key === childNode.key);
-        if (existingNode) {
-            _warnOnce(`duplicate group keys for row data, keys should be unique`, [existingNode.data, childNode.data]);
-            return;
+        node.oldRow = null;
+        let hasRows = false;
+        for (const child of node.enumChildren()) {
+            hasRows ||= !!child.row;
+            this.destroyTree(child, allRows, changedPath);
         }
-        childNode.parent = parentGroup;
-        childNode.level = level;
-        this.ensureRowNodeFields(childNode, key);
-        this.setGroupData(childNode, { key, field: null, rowGroupColumn: null });
-        // AG-3441 - only set initial value if node is not being moved
-        if (!isMove) {
-            this.setExpandedInitialValue(details, childNode);
+        if (allRows && hasRows && row) {
+            if (changedPath?.isActive()) {
+                changedPath.addParentNode(row);
+            }
         }
-        this.addToParent(childNode, parentGroup);
+        node.remove();
+    }
 
-        if (rowThatNeedsLevelUpdate) {
-            this.fixLevels(rowThatNeedsLevelUpdate, rowThatNeedsLevelUpdate.level);
+    /** Removes all rows from the tree */
+    private clearTree(node: TreeNode): void {
+        this.overwriteRow(node, null, false);
+        for (const child of node.enumChildren()) {
+            this.clearTree(child);
         }
     }
 
-    private fixLevels(rowNode: RowNode, level: number): void {
-        rowNode.level = level;
-        rowNode.childrenAfterGroup?.forEach((child) => this.fixLevels(child, level + 1));
-    }
-
-    /**
-     * Directly re-initialises the tree cache
-     */
-    private buildNodeCacheFromRows(rows: RowNode[], details: TreeGroupingDetails): void {
-        this.root.map?.clear(); // Clear the cache
-
-        // Populate the cache with the rows
-        // Fills the rows if the row is a leaf, leave null for filler rows.
-        // Filler rows will be filled in the next step (backfillGroups)
-
-        for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
-            const row = rows[rowIdx];
-            const path = this.getDataPath(row, details);
-            let treeNode = this.root;
-            for (let level = 0; level < path.length; level++) {
-                const isLeaf = level === path.length - 1;
-
-                const key = path[level];
-                treeNode = treeNode.upsert(key);
-                if (isLeaf) {
-                    this.setTreeNodeRow(treeNode, row);
-                    this.ensureRowNodeFields(row, key);
+    /** Transactional removal */
+    private removeRows(rows: RowNode[] | null | undefined): void {
+        if (rows) {
+            const len = rows.length;
+            for (let i = 0; i < len; ++i) {
+                const node = rows![i].treeNode as TreeNode | null;
+                if (node) {
+                    const oldRow = node.row;
+                    this.overwriteRow(node, null, false);
+                    if (oldRow !== null) {
+                        unsetTreeRowExpandedInitialized(oldRow);
+                    }
                 }
             }
         }
-
-        this.backfillGroups(this.root, 0, details);
     }
 
-    private ensureRowNodeFields(rowNode: RowNode, key?: string): RowNode {
-        if (key !== undefined) {
-            rowNode.key = key;
-        }
-        rowNode.childrenMapped ??= {};
-        rowNode.allLeafChildren ??= [];
-        rowNode.childrenAfterGroup ??= [];
-        return rowNode;
-    }
-
-    /** Walks the Tree recursively and backfills `null` entries with filler group nodes */
-    private backfillGroups(parent: TreeNode, level: number, details: TreeGroupingDetails): void {
-        const subtree = parent.map;
-        if (!subtree) {
-            return;
-        }
-        for (const child of subtree.values()) {
-            let row = child.row;
-            if (!row) {
-                row = this.createGroup(child.key, parent.row!, level, details);
-                this.setTreeNodeRow(child, row);
-            }
-
-            const subtree = child.map;
-            if (subtree) {
-                this.backfillGroups(child, level + 1, details);
+    /** Transactional insert/update */
+    private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
+        if (rows) {
+            const len = rows.length;
+            for (let i = 0; i < len; ++i) {
+                const row = rows![i];
+                const node = this.upsertPath(this.getDataPath(details, row));
+                if (node) {
+                    this.overwriteRow(node, row, update);
+                }
             }
         }
     }
 
-    private createGroup(key: string, parent: RowNode, level: number, details: TreeGroupingDetails): RowNode {
-        const groupNode = new RowNode(this.beans);
-
-        groupNode.group = true;
-        groupNode.field = null;
-
-        this.setGroupData(groupNode, {
-            key,
-            field: null,
-            rowGroupColumn: null,
-        });
-
-        groupNode.key = key;
-
-        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
-        // for top pinned and bottom pinned rows.
-        groupNode.id = RowNode.ID_PREFIX_ROW_GROUP + this.createGroupIdEnd(groupNode, parent, level);
-
-        groupNode.level = level;
-        groupNode.leafGroup = false;
-
-        groupNode.allLeafChildren = [];
-
-        // why is this done here? we are not updating the children count as we go,
-        // i suspect this is updated in the filter stage
-        groupNode.setAllChildrenCount(0);
-
-        groupNode.rowGroupIndex = null;
-
-        groupNode.childrenAfterGroup = [];
-        groupNode.childrenMapped = {};
-        groupNode.updateHasChildren();
-
-        groupNode.parent = parent;
-
-        this.setExpandedInitialValue(details, groupNode);
-
-        return groupNode;
-    }
-
-    private createGroupIdEnd(node: RowNode, parent: RowNode | null, level: number): string | null {
-        if (level < 0) {
-            return null;
-        } // root node
-        const parentId = parent ? this.createGroupIdEnd(parent, parent.parent, level - 1) : null;
-        return `${parentId == null ? '' : parentId + '-'}${level}-${node.key}`;
-    }
-
-    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
-        groupNode.groupData = {};
-        const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
-        for (const col of groupDisplayCols) {
-            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
-            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-
-            groupNode.groupData![col.getColId()] = groupInfo.key;
-        }
-    }
-
-    private setExpandedInitialValue(details: TreeGroupingDetails, groupNode: RowNode): void {
-        // use callback if exists
-        const userCallback = details.isGroupOpenByDefault;
-        if (userCallback) {
-            const params: WithoutGridCommon<IsGroupOpenByDefaultParams> = {
-                rowNode: groupNode,
-                field: groupNode.field!,
-                key: groupNode.key!,
-                level: groupNode.level,
-                rowGroupColumn: groupNode.rowGroupColumn!,
-            };
-            groupNode.expanded = userCallback(params) == true;
-            return;
-        }
-
-        // use expandByDefault if exists
-        if (details.expandByDefault === -1) {
-            groupNode.expanded = true;
-            return;
-        }
-
-        // otherwise
-        groupNode.expanded = groupNode.level < details.expandByDefault;
-    }
-
-    private getDataPath({ data }: RowNode, { getDataPath }: TreeGroupingDetails): string[] {
+    private getDataPath({ getDataPath }: TreeExecutionDetails, { data }: RowNode): string[] {
         const keys = getDataPath?.(data) || [];
         if (!keys.length) {
-            _warnOnce(`getDataPath() should not return an empty path for data ${data}`);
+            _warnOnce(`getDataPath() should not return an empty path`, [data]);
         }
         return keys;
     }
-}
 
-function getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
-    return rowGroupColumn ? rowGroupColumn.getId() + '-' + key : key;
-}
-
-/**
- * Topological sort of the given row nodes based on the grouping hierarchy, where parents come before children.
- * Used to ensure tree data is moved in the correct order (see AG-11678)
- */
-function topologicalSort(rootRow: RowNode, rowNodes: RowNode[]): RowNode[] {
-    const sortedNodes: RowNode[] = [];
-
-    // performance: create a cache of ids to make lookups during the search faster
-    const idLookup = new Map<string, RowNode>();
-
-    // performance: keep track of the nodes we haven't found yet so we can return early
-    const stillToFind = new Set<string>();
-
-    for (let i = 0; i < rowNodes.length; i++) {
-        const row = rowNodes[i];
-        const id = row.id!;
-        idLookup.set(id, row);
-        stillToFind.add(id);
+    /**
+     * Gets the last node of a path. Inserts filler nodes where needed.
+     * Note that invalidate() is not called, is up to the caller to call it if needed.
+     */
+    private upsertPath(path: string[]): TreeNode | null {
+        let parent: TreeNode | null = this.root;
+        const stop = path.length - 1;
+        for (let level = 0; level <= stop; ++level) {
+            const node: TreeNode = parent.upsertKey(path[level]);
+            if (level >= stop) {
+                node.invalidate();
+                return node;
+            }
+            if (!node.row) {
+                // TODO: at the moment, the sorting of filler node is not correct. See AG-12497
+                // This needs more investigation and discussions.
+                // See _sortRowNodesByOrder implementation.
+                // We need to create this row early instead of waiting for the commit stage
+                // because filler nodes are ordered by __objectId.
+                // We create it here so we are sure filler nodes are created in the order they are encountered
+                // in the input rowData, and not in the order of invalidation, that is even less deterministic.
+                // We could reduce the amount of reordering needed, and, delay the creation of filler nodes to the commit stage.
+                this.overwriteRow(node, this.createFillerRow(node), false);
+            }
+            parent = node;
+        }
+        return null;
     }
 
-    const queue = [rootRow];
-    let i = 0;
+    /**
+     * Overwrites the row property of a non-root node, preparing the tree correctly for the commit.
+     * @returns The previous row, if any, that was overwritten.
+     */
+    private overwriteRow(node: TreeNode, newRow: RowNode | null, update: boolean): RowNode | null {
+        if (node.level < 0) {
+            return null; // Cannot overwrite a null node or the root row
+        }
+        const { row: oldRow, ghost } = node;
 
-    // BFS for nodes in the hierarchy that match IDs of the given nodes
-    while (i < queue.length) {
-        // performance: indexing into the array instead of using e.g. `.shift` is _much_ faster
-        const node = queue[i];
-        i++;
-        if (node === undefined) {
-            continue;
+        const prevNode = (newRow?.treeNode ?? null) as TreeNode | null;
+        if (prevNode !== node && prevNode !== null) {
+            this.overwriteRow(prevNode, null, false); // The row is somewhere else in the tree
         }
 
-        const { id, childrenAfterGroup } = node;
+        let invalidate = false;
 
-        const found = id && idLookup.get(id);
-        if (found) {
-            sortedNodes.push(found);
-            stillToFind.delete(id);
+        if (node.linkRow(newRow)) {
+            invalidate = true;
+            if (oldRow) {
+                this.deleteRow(oldRow, !oldRow.data);
+                if (!ghost && oldRow.data && newRow?.data) {
+                    _warnOnce(`duplicate group keys for row data, keys should be unique`, [oldRow.data, newRow.data]);
+                }
+            }
         }
 
-        // we can stop early if we've already found all the nodes
-        if (stillToFind.size === 0) {
-            return sortedNodes;
+        // We update the ghost state recursively
+        if (node.updateThisIsGhost()) {
+            invalidate = true;
+            let current: TreeNode | null = node;
+            do {
+                if (current.ghost && current.row) {
+                    // This is a filler row, and we want to remove it
+                    // This is because order of filler rows is currently handled by __objectId
+                    // So we cannot reuse them. See AG-12497
+                    this.deleteRow(current.row, true);
+                    current.linkRow(null);
+                }
+                current = current.parent;
+            } while (current?.updateThisIsGhost());
         }
 
-        if (childrenAfterGroup) {
-            for (let i = 0; i < childrenAfterGroup.length; i++) {
-                queue.push(childrenAfterGroup[i]);
+        if (update && newRow !== null && !isTreeRowUpdated(newRow)) {
+            invalidate = true;
+            setTreeRowUpdated(newRow);
+        }
+
+        if (invalidate) {
+            node.invalidate();
+        }
+
+        return oldRow;
+    }
+
+    /**
+     * Finalizes the deletion of a row.
+     * @param immediate If true, the row is deleted immediately.
+     * If false, the row is marked for deletion, and will be deleted later with this.deleteDeletedRows()
+     */
+    private deleteRow(row: RowNode, immediate: boolean) {
+        if (!isTreeRowCommitted(row)) {
+            return; // Never committed, or already deleted, nothing to do.
+        }
+
+        if (!immediate) {
+            (this.rowsPendingDeletion ??= new Set()).add(row);
+            return; // We will delete it later with deleteDeletedRows
+        }
+
+        clearTreeRowFlags(row);
+
+        // We execute this only if the row was committed at least once before, and not already deleted.
+        row.setRowIndex(null);
+
+        // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
+        // remove, if rowTop is still present, the rowComp thinks it's just moved position.
+        row.setRowTop(null);
+
+        if (!row.data) {
+            // we remove selection on filler nodes here, as the selection would not be removed
+            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+        }
+    }
+
+    private commitDeletedRows() {
+        const rows = this.rowsPendingDeletion;
+        if (rows !== null) {
+            this.rowsPendingDeletion = null;
+            for (const row of rows) {
+                this.deleteRow(row, true);
             }
         }
     }
 
-    return sortedNodes;
+    /** Commit the changes performed to the tree */
+    private commitTree(details: TreeExecutionDetails) {
+        const root = this.root;
+
+        this.commitChildren(details, root);
+
+        this.updateChildrenAfterGroup(root);
+
+        const rootRow = root.row!;
+        rootRow.updateHasChildren();
+
+        if (root.pathChanged || root.childrenChanged !== ChildrenChanged.None) {
+            root.pathChanged = false;
+            root.childrenChanged = ChildrenChanged.None;
+            if (details.changedPath?.isActive()) {
+                details.changedPath.addParentNode(rootRow);
+            }
+        }
+
+        this.commitDeletedRows();
+    }
+
+    private commitChildren(details: TreeExecutionDetails, node: TreeNode): void {
+        while (true) {
+            const child = node.dequeueInvalidated();
+            if (!child) {
+                break;
+            }
+            this.commitChild(details, node, child);
+        }
+    }
+
+    /** Commit the changes performed to a node and its children */
+    private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
+        if (node.ghost) {
+            if (node.oldRow !== null && parent.childrenChanged === ChildrenChanged.None) {
+                parent.childrenChanged = ChildrenChanged.SomeRemoved;
+            }
+            this.destroyTree(node, true, details.changedPath);
+            return;
+        }
+
+        let row = node.row;
+        if (row === null) {
+            row = this.createFillerRow(node);
+            node.linkRow(row);
+        }
+
+        row.parent = parent.row;
+
+        this.rowsPendingDeletion?.delete(row); // This row is used. It's not deleted.
+
+        if (row.key !== node.key) {
+            row.key = node.key;
+            parent.pathChanged = true;
+            setTreeRowUpdated(row);
+            this.setGroupData(row);
+        }
+
+        if (!row.groupData) {
+            this.setGroupData(row);
+        }
+
+        if (node.oldRow !== null && node.oldRow !== row) {
+            // We need to update children rows parents, as the row changed
+            for (const { row: childRow } of node.enumChildren()) {
+                if (childRow) {
+                    childRow.parent = row;
+                }
+            }
+        }
+
+        this.commitChildren(details, node);
+
+        return this.commitNodePostOrder(details, parent, node);
+    }
+
+    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode) {
+        const row = node.row!;
+
+        this.updateChildrenAfterGroup(node);
+
+        if (node.childrenChanged !== ChildrenChanged.None || node.leafChildrenChanged) {
+            node.leafChildrenChanged = false;
+            if (node.rebuildLeaves()) {
+                parent.leafChildrenChanged = true; // propagate up
+            }
+        }
+
+        if (node.childrenChanged !== ChildrenChanged.None) {
+            node.childrenChanged = ChildrenChanged.None;
+            node.pathChanged = true;
+        }
+
+        if (node.oldRow !== row) {
+            node.oldRow = node.row;
+            parent.pathChanged = true;
+            parent.childrenChanged = ChildrenChanged.SomeInserted;
+        }
+
+        parent.pathChanged ||= isTreeRowUpdated(row);
+
+        const hasChildren = !!row.childrenAfterGroup?.length;
+        const group = hasChildren || !row.data;
+        if (row.group !== group) {
+            const oldExpanded = row.expanded;
+            row.setGroup(group); // Internally calls updateHasChildren
+            if (!group) {
+                // hack: restore expanded state, it seems to be lost after setGroup(false)
+                // We don't want to lose expanded state when a group becomes a leaf
+                row.expanded = oldExpanded;
+            }
+        } else if (row.hasChildren() !== hasChildren) {
+            row.updateHasChildren();
+        }
+
+        if (!isTreeRowExpandedInitialized(row)) {
+            row.expanded = this.getExpandedInitialValue(details, row);
+        }
+
+        if (isTreeRowUpdated(row)) {
+            // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
+            // refreshed into the gui.
+            // this is needed to kick off the event that rowComp listens to for refresh. this in turn
+            // then will get each cell in the row to refresh - which is what we need as we don't know which
+            // columns will be displaying the rowNode.key info.
+            row.setData(row.data);
+        }
+
+        markTreeRowCommitted(row);
+
+        if (node.pathChanged) {
+            node.pathChanged = false;
+            if (details.changedPath?.isActive()) {
+                details.changedPath.addParentNode(row);
+            }
+        }
+    }
+
+    private createFillerRow(node: TreeNode): RowNode {
+        const row = new RowNode(this.beans); // Create a filler node
+        row.key = node.key;
+        row.group = true;
+        row.field = null;
+        row.leafGroup = false;
+        row.rowGroupIndex = null;
+
+        // Generate a unique id for the filler row
+        let id = node.level + '-' + node.key;
+        let p = node.parent;
+        while (p !== null) {
+            const parent = p.parent;
+            if (parent === null) {
+                break;
+            }
+            id = `${p.level}-${p.key}-${id}`;
+            p = parent;
+        }
+        row.id = RowNode.ID_PREFIX_ROW_GROUP + id;
+
+        return row;
+    }
+
+    private updateChildrenAfterGroup(node: TreeNode): void {
+        this.filterRemovedChildrenAfterGroup(node);
+        if (node.childrenChanged === ChildrenChanged.SomeInserted) {
+            this.rebuildChildrenAfterGroup(node);
+        }
+    }
+
+    private filterRemovedChildrenAfterGroup(node: TreeNode): void {
+        // // Order did not change, no new rows were added, we can just filter out the nodes that have the wrong parent
+        let writeIdx = 0;
+        let changed = false;
+        const array = node.childrenAfterGroup;
+        const oldCount = array.length;
+        const parentRow = node.row!;
+        for (let i = 0; i < oldCount; i++) {
+            const child = array[i];
+            if (child.parent === parentRow) {
+                array[writeIdx++] = child;
+            } else {
+                changed = true;
+            }
+        }
+        array.length = writeIdx;
+
+        if (!changed && node.childrenChanged === ChildrenChanged.SomeRemoved) {
+            node.childrenChanged = ChildrenChanged.None;
+        }
+    }
+
+    /** Updates node childrenAfterGroup. Returns true if the children changed. */
+    private rebuildChildrenAfterGroup(node: TreeNode): void {
+        const array = node.childrenAfterGroup;
+        const oldCount = array.length;
+        let writeIdx = 0;
+        let changed = false;
+        array.length = node.childrenCount();
+        for (const child of node.enumChildren()) {
+            const row = child.row!;
+            if (array[writeIdx] !== row) {
+                array[writeIdx] = row;
+                changed = true;
+            }
+            ++writeIdx;
+        }
+        if (writeIdx !== oldCount) {
+            array.length = writeIdx;
+            changed = true;
+        }
+
+        if (!changed) {
+            node.childrenChanged = ChildrenChanged.None;
+        }
+    }
+
+    private setGroupData(row: RowNode): void {
+        const key = row.key!;
+        const groupData: Record<string, string> = {};
+        row.groupData = groupData;
+        const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols();
+        if (groupDisplayCols) {
+            for (const col of groupDisplayCols) {
+                // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
+                // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
+                groupData[col.getColId()] = key;
+            }
+        }
+    }
+
+    private getExpandedInitialValue(details: TreeExecutionDetails, row: RowNode): boolean {
+        const userCallback = details.isGroupOpenByDefault;
+        return userCallback
+            ? userCallback({
+                  rowNode: row,
+                  field: row.field!,
+                  key: row.key!,
+                  level: row.level,
+                  rowGroupColumn: row.rowGroupColumn!,
+              }) == true
+            : details.expandByDefault === -1 || row.level < details.expandByDefault;
+    }
 }

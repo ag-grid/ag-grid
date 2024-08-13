@@ -6,17 +6,10 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
-import type {
-    CellValueChangedEvent,
-    RedoEndedEvent,
-    RedoStartedEvent,
-    UndoEndedEvent,
-    UndoStartedEvent,
-} from '../events';
+import type { CellValueChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { CellValueChange, LastFocusedCell } from './iUndoRedo';
 import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
 
@@ -133,37 +126,33 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     }
 
     public undo(source: 'api' | 'ui'): void {
-        const startEvent: WithoutGridCommon<UndoStartedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'undoStarted',
             source,
-        };
-        this.eventService.dispatchEvent(startEvent);
+        });
 
         const operationPerformed = this.undoRedo(this.undoStack, this.redoStack, 'initialRange', 'oldValue', 'undo');
 
-        const endEvent: WithoutGridCommon<UndoEndedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'undoEnded',
             source,
             operationPerformed,
-        };
-        this.eventService.dispatchEvent(endEvent);
+        });
     }
 
     public redo(source: 'api' | 'ui'): void {
-        const startEvent: WithoutGridCommon<RedoStartedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'redoStarted',
             source,
-        };
-        this.eventService.dispatchEvent(startEvent);
+        });
 
         const operationPerformed = this.undoRedo(this.redoStack, this.undoStack, 'finalRange', 'newValue', 'redo');
 
-        const endEvent: WithoutGridCommon<RedoEndedEvent> = {
+        this.eventService.dispatchEvent({
             type: 'redoEnded',
             source,
             operationPerformed,
-        };
-        this.eventService.dispatchEvent(endEvent);
+        });
     }
 
     private undoRedo(

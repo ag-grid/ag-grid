@@ -48,6 +48,7 @@ const gridOptions: GridOptions = {
             filterParams: {
                 valueFormatter: (params: ValueFormatterParams) => `${params.value}`,
             },
+            sort: 'asc',
         },
         {
             field: 'quarter',

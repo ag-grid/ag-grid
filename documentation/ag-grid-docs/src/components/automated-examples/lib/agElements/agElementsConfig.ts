@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { type GetElement } from '.';
 import {
+    AG_CHARTS_CANVAS,
     AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
     AG_CHART_SERIES_GROUP_TITLE_SELECTOR,
     AG_CHART_TOOL_PANEL_TAB_SELECTOR,
@@ -21,19 +22,30 @@ import {
     AG_RANGE_FIELD_INPUT_SELECTOR,
     AG_SELECT_LIST_ITEM_SELECTOR,
     AG_SLIDER_SELECTOR,
+    AG_TEXT_FIELD,
+    AG_TEXT_FIELD_INPUT,
     AG_TOGGLE_LABEL_SELECTOR,
 } from '../constants';
 import { findElementWithInnerText } from '../dom';
 
-export interface AgElementBySelectorConfig {
+interface BaseConfig {
+    /**
+     * Requires sending a mouse down and mouse up event to trigger a click
+     *
+     * Otherwise a normal DOM click event is sent
+     */
+    useMouseDown?: boolean;
+}
+
+export interface AgElementBySelectorConfig extends BaseConfig {
     selector: string;
 }
 
-export interface AgElementByInnerTextConfig {
+export interface AgElementByInnerTextConfig extends BaseConfig {
     innerTextSelector: string;
 }
 
-export interface AgElementByFindConfig<Params> {
+export interface AgElementByFindConfig<Params> extends BaseConfig {
     find: ({
         getElement,
         containerEl,
@@ -51,6 +63,7 @@ export interface AgElementsConfigItem {
     popup: AgElementBySelectorConfig;
     columnDropArea: AgElementBySelectorConfig;
     chartMenuToolbarButton: AgElementBySelectorConfig;
+    chartsCanvas: AgElementBySelectorConfig;
 
     contextMenuItem: AgElementByInnerTextConfig;
     chartToolPanelTab: AgElementByInnerTextConfig;
@@ -74,6 +87,7 @@ export interface AgElementsConfigItem {
         groupTitle: string;
         selectLabel: string;
         usePickerDisplayFieldSelector?: boolean;
+        index?: number;
     }>;
     chartToolPanelToggle: AgElementByFindConfig<{
         groupTitle: string;
@@ -83,6 +97,11 @@ export interface AgElementsConfigItem {
     chartToolPanelSliderInput: AgElementByFindConfig<{
         groupTitle: string;
         sliderLabel: string;
+    }>;
+    chartToolPanelTextInput: AgElementByFindConfig<{
+        groupTitle: string;
+        inputLabel: string;
+        index?: number;
     }>;
 }
 export type AgElementName = keyof AgElementsConfigItem;
@@ -100,6 +119,9 @@ export const agElementsConfig: AgElementsConfigItem = {
     },
     chartMenuToolbarButton: {
         selector: AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
+    },
+    chartsCanvas: {
+        selector: AG_CHARTS_CANVAS,
     },
 
     // Find by inner text
@@ -120,6 +142,7 @@ export const agElementsConfig: AgElementsConfigItem = {
     },
     chartToolPanelSelectListItem: {
         innerTextSelector: AG_SELECT_LIST_ITEM_SELECTOR,
+        useMouseDown: true,
     },
 
     // Find by custom function
@@ -206,8 +229,10 @@ export const agElementsConfig: AgElementsConfigItem = {
         },
     },
     chartToolPanelPickerField: {
+        // Picker element requires mousedown
+        useMouseDown: true,
         find: ({ getElement, params }) => {
-            const { groupTitle, selectLabel, usePickerDisplayFieldSelector } = params;
+            const { groupTitle, selectLabel, usePickerDisplayFieldSelector, index } = params;
             const groupTitleEl = getElement('chartToolPanelGroupTitle', {
                 text: groupTitle,
             })?.get();
@@ -221,6 +246,7 @@ export const agElementsConfig: AgElementsConfigItem = {
                 containerEl: groupEl,
                 selector: usePickerDisplayFieldSelector ? AG_PICKER_FIELD_DISPLAY_SELECTOR : AG_LABEL_SELECTOR,
                 text: selectLabel,
+                index,
             });
             if (!labelEl) {
                 console.error(`No label title found: ${selectLabel}`);
@@ -294,6 +320,33 @@ export const agElementsConfig: AgElementsConfigItem = {
             }
 
             return (sliderContainer.querySelector(AG_RANGE_FIELD_INPUT_SELECTOR) as HTMLElement) || undefined;
+        },
+    },
+    chartToolPanelTextInput: {
+        find: ({ getElement, params }) => {
+            const { groupTitle, inputLabel, index } = params;
+            const groupTitleEl = getElement('chartToolPanelGroupTitle', {
+                text: groupTitle,
+            })?.get();
+
+            const groupEl = groupTitleEl?.closest(AG_GROUP_SELECTOR) as HTMLElement;
+            if (!groupEl) {
+                console.error(`No group title found: ${groupTitle}`);
+                return;
+            }
+
+            const labelEl = findElementWithInnerText({
+                containerEl: groupEl,
+                selector: AG_LABEL_SELECTOR,
+                text: inputLabel,
+                index,
+            });
+            if (!labelEl) {
+                console.error(`No label title found: ${groupTitle} > ${inputLabel}`);
+                return;
+            }
+
+            return labelEl.closest(AG_TEXT_FIELD)?.querySelector(AG_TEXT_FIELD_INPUT) || undefined;
         },
     },
 };

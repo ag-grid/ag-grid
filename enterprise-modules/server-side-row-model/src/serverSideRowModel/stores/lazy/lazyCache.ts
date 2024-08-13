@@ -158,7 +158,7 @@ export class LazyCache extends BeanStub {
             return node;
         }
 
-        const hideOpenGroups = this.gos.get('groupHideOpenParents');
+        const hideOpenGroups = this.gos.get('groupHideOpenParents') || this.gos.get('groupAllowUnbalanced');
         if (hideOpenGroups) {
             // if hiding open groups, the first node in this expanded store may not be
             // the first displayed node, as it could be hidden, so need to DFS first.
@@ -285,7 +285,7 @@ export class LazyCache extends BeanStub {
      * @param displayIndexSeq the number sequence for generating the display index of each row
      * @param nextRowTop an object containing the next row top value intended to be modified by ref per row
      */
-    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void {
+    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void {
         // Create a map of display index nodes for access speed
         this.nodeDisplayIndexMap.clear();
 
@@ -317,7 +317,7 @@ export class LazyCache extends BeanStub {
             }
 
             // set this nodes index and row top
-            this.blockUtils.setDisplayIndex(node, displayIndexSeq, nextRowTop);
+            this.blockUtils.setDisplayIndex(node, displayIndexSeq, nextRowTop, uiLevel);
             if (node.rowIndex != null) {
                 this.nodeDisplayIndexMap.set(node.rowIndex, node);
             }
@@ -790,7 +790,8 @@ export class LazyCache extends BeanStub {
     }
 
     private isNodeCached(node: RowNode): boolean {
-        return (node.isExpandable() && node.expanded) || this.isNodeFocused(node);
+        const isUnbalancedNode = this.gos.get('groupAllowUnbalanced') && node.key === '';
+        return (node.isExpandable() && node.expanded) || this.isNodeFocused(node) || isUnbalancedNode;
     }
 
     private extractDuplicateIds(rows: any[]) {
@@ -1009,7 +1010,7 @@ export class LazyCache extends BeanStub {
 
         // find rowNode using id
         const { level } = this.store.getRowDetails();
-        const parentKeys = this.store.getParentNode().getGroupKeys();
+        const parentKeys = this.store.getParentNode().getRoute() ?? [];
         return this.getRowIdFunc({
             data,
             parentKeys: parentKeys.length > 0 ? parentKeys : undefined,

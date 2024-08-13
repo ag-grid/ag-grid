@@ -8,7 +8,7 @@ import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
-import type { AgGridCommon } from './interfaces/iCommon';
+import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
 import type { IFilterComp } from './interfaces/iFilter';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
@@ -77,7 +77,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         selectionChanged: SelectionChangedEvent<TData, TContext>;
         tooltipShow: TooltipShowEvent<TData, TContext>;
         tooltipHide: TooltipHideEvent<TData, TContext>;
-        cellKeyDown: CellKeyDownEvent<TData, TContext>;
+        cellKeyDown: FullWidthCellKeyDownEvent<TData, TContext> | CellKeyDownEvent<TData, TContext>;
         cellMouseOver: CellMouseOverEvent<TData, TContext>;
         cellMouseOut: CellMouseOutEvent<TData, TContext>;
         filterChanged: FilterChangedEvent<TData, TContext>;
@@ -137,6 +137,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rightPinnedWidthChanged: RightPinnedWidthChangedEvent<TData, TContext>;
         rowContainerHeightChanged: RowContainerHeightChangedEvent<TData, TContext>;
         headerHeightChanged: HeaderHeightChangedEvent<TData, TContext>;
+        columnGroupHeaderHeightChanged: ColumnGroupHeaderHeightChangedEvent<TData, TContext>;
         columnHeaderHeightChanged: ColumnHeaderHeightChangedEvent<TData, TContext>;
         gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
         storeUpdated: StoreUpdatedEvent<TData, TContext>;
@@ -155,8 +156,19 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         chartTitleEdit: ChartTitleEditEvent<TData, TContext>;
         recalculateRowBounds: RecalculateRowBoundsEvent<TData, TContext>;
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
+        overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
     }
 >;
+
+/** Internal Interface for AG Grid Events */
+export type AllEventsWithoutGridCommon<TData = any, TContext = any> = {
+    [K in keyof AgEventTypeParams<TData, TContext>]: WithoutGridCommon<AgEventTypeParams<TData, TContext>[K]>;
+}[keyof AgEventTypeParams];
+
+/** Union Type of all AG Grid Events */
+export type AllEvents<TData = any, TContext = any> = {
+    [K in keyof AgEventTypeParams<TData, TContext>]: AgEventTypeParams<TData, TContext>[K];
+}[keyof AgEventTypeParams];
 
 export interface AgEvent<TEventType extends string = string> {
     /** Event identifier */
@@ -1090,7 +1102,12 @@ export interface RowContainerHeightChangedEvent<TData = any, TContext = any>
 export interface HeaderHeightChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'headerHeightChanged', TData, TContext> {}
 export interface ColumnHeaderHeightChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'columnHeaderHeightChanged', TData, TContext> {}
+    extends ColumnEvent<'columnHeaderHeightChanged', TData, TContext> {}
+export interface ColumnGroupHeaderHeightChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'columnGroupHeaderHeightChanged', TData, TContext> {
+    columnGroup: ColumnGroup | null;
+    source: 'autosizeColumnGroupHeaderHeight';
+}
 export interface GridStylesChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'gridStylesChanged', TData, TContext> {}
 export interface RowCountReadyEvent<TData = any, TContext = any>

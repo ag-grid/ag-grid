@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "32.0.1",
+  "version": "32.1.0",
   "description": "AG Grid React Component",
   "main": "./dist/package/index.cjs.js",
   "types": "./dist/types/src/index.d.ts",
@@ -16,11 +16,14 @@
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
   "keywords": [
+    "react data grid",
+    "react table",
     "react-component",
-    "grid",
     "data",
+    "grid",
     "table",
-    "react"
+    "react",
+    "data grid"
   ],
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "license": "MIT",
@@ -29,7 +32,7 @@
   },
   "homepage": "https://www.ag-grid.com/react-grid/",
   "devDependencies": {
-    "ag-grid-community": "32.0.1",
+    "ag-grid-community": "32.1.0",
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
     "prop-types": "^15.6.2",
@@ -40,7 +43,7 @@
   },
   "dependencies": {
     "prop-types": "^15.8.1",
-    "ag-grid-community": "32.0.1"
+    "ag-grid-community": "32.1.0"
   },
   "peerDependencies": {
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",

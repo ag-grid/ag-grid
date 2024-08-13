@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
-describe('pinned rows', () => {
+describe('Pinned rows', () => {
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     const topData = [{ athlete: 'Top Athlete', sport: 'Top Sport', age: 11 }];
     const bottomData = [{ athlete: 'Bottom Athlete', sport: 'Bottom Sport', age: 22 }];
@@ -15,7 +15,7 @@ describe('pinned rows', () => {
         document.body.innerHTML = '<div id="myGrid"></div>';
     }
 
-    function assertPinnedRowData(data: any[], location: 'top' | 'bottom') {
+    function assertPinnedRowData(data: any[], location: 'top' | 'bottom', rowIndices?: string[]) {
         const pinnedRows = document.querySelectorAll(`.ag-floating-${location} .ag-row-pinned`);
 
         expect(pinnedRows.length).toBe(data.length);
@@ -24,12 +24,15 @@ describe('pinned rows', () => {
             // Have to sort because DOM order of nodes is not necessarily the same as the logical
             // order (because rows are positioned absolutely)
             .sort((a, b) => {
-                const rowIndexA = a.getAttribute('row-index').split('-')[1];
-                const rowIndexB = b.getAttribute('row-index').split('-')[1];
+                const rowIndexA = a.getAttribute('row-index')!.split('-')[1];
+                const rowIndexB = b.getAttribute('row-index')!.split('-')[1];
                 return Number(rowIndexA) - Number(rowIndexB);
             })
             .forEach((row, i) => {
                 const rowData = data[i];
+                if (rowIndices?.[i] != null) {
+                    expect(row.getAttribute('row-index')).toEqual(rowIndices[i]);
+                }
                 row.querySelectorAll('.ag-cell').forEach((cell, colIndex) => {
                     expect(cell.textContent).toBe(rowData[columnDefs[colIndex].field].toString());
                 });
@@ -152,7 +155,7 @@ describe('pinned rows', () => {
                 getRowId,
             });
 
-            assertPinnedRowData(pinnedTopRowData, 'top');
+            assertPinnedRowData(pinnedTopRowData, 'top', ['t-0', 't-1', 't-2']);
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedTopRowData[2], rowPinned: 'top' })
             );
@@ -164,7 +167,7 @@ describe('pinned rows', () => {
 
             api.setGridOption('pinnedTopRowData', updatedTop);
 
-            assertPinnedRowData(updatedTop, 'top');
+            assertPinnedRowData(updatedTop, 'top', ['t-0', 't-1']);
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedTop[1], rowPinned: 'top' })
             );
@@ -177,6 +180,23 @@ describe('pinned rows', () => {
 
             api.setGridOption('pinnedTopRowData', undefined);
             assertPinnedRowData([], 'top');
+        });
+
+        test('cannot render duplicate rows with getRowId', () => {
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            const getRowId = jest.fn((p) => JSON.stringify(p.data));
+            createMyGrid({ columnDefs, pinnedTopRowData: topData.concat(topData), getRowId });
+
+            assertPinnedRowData(topData, 'top', ['t-0']);
+            expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+            expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+                'AG Grid: Duplicate ID',
+                JSON.stringify(topData[0]),
+                'found for pinned row with data',
+                topData[0],
+                'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.'
+            );
+            consoleWarnSpy.mockRestore();
         });
     });
 
@@ -291,7 +311,7 @@ describe('pinned rows', () => {
                 getRowId,
             });
 
-            assertPinnedRowData(pinnedBottomRowData, 'bottom');
+            assertPinnedRowData(pinnedBottomRowData, 'bottom', ['b-0', 'b-1', 'b-2']);
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: pinnedBottomRowData[2], rowPinned: 'bottom' })
             );
@@ -303,7 +323,7 @@ describe('pinned rows', () => {
 
             api.setGridOption('pinnedBottomRowData', updatedBottom);
 
-            assertPinnedRowData(updatedBottom, 'bottom');
+            assertPinnedRowData(updatedBottom, 'bottom', ['b-0', 'b-1']);
             expect(getRowId).toHaveBeenLastCalledWith(
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
@@ -316,6 +336,23 @@ describe('pinned rows', () => {
 
             api.setGridOption('pinnedBottomRowData', undefined);
             assertPinnedRowData([], 'bottom');
+        });
+
+        test('cannot render duplicate rows with getRowId', () => {
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            const getRowId = jest.fn((p) => JSON.stringify(p.data));
+            createMyGrid({ columnDefs, pinnedBottomRowData: bottomData.concat(bottomData), getRowId });
+
+            assertPinnedRowData(bottomData, 'bottom', ['b-0']);
+            expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+            expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+                'AG Grid: Duplicate ID',
+                JSON.stringify(bottomData[0]),
+                'found for pinned row with data',
+                bottomData[0],
+                'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.'
+            );
+            consoleWarnSpy.mockRestore();
         });
     });
 });

@@ -281,6 +281,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             } else {
                 this.listComponent.refresh(true);
             }
+
+            this.alignPickerToComponent();
         }
     }
 
@@ -328,7 +330,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                     e.stopImmediatePropagation();
                 },
                 announceItemFocus: () => {
-                    this.ariaAnnouncementService.announceValue(this.ariaDeleteSelection);
+                    this.announceAriaValue(this.ariaDeleteSelection);
                 },
                 getValue: () => this.getValue() as TValue[] | null,
                 setValue: (value: TValue[] | null) => this.setValue(value, true),
@@ -353,7 +355,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             focusableEl.focus();
             focusableEl.select();
         } else if (multiSelect && !suppressDeselectAll && !this.skipWrapperAnnouncement) {
-            this.ariaAnnouncementService.announceValue(this.ariaDeselectAllItems);
+            this.announceAriaValue(this.ariaDeselectAllItems);
         }
     }
 
@@ -422,7 +424,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         this.setValueList({ valueList: filteredValues, refresh: true });
-        this.alignPickerToComponent();
     }
 
     private runSearch() {
@@ -716,7 +717,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 this.onNavigationKeyDown(e, key, () => {
                     if (multiSelect) {
                         this.doWhileBlockingAnnouncement(() => this.eWrapper.focus());
-                        this.ariaAnnouncementService.announceValue(this.ariaToggleSelection);
+                        this.announceAriaValue(this.ariaToggleSelection);
                     }
                 });
                 break;
@@ -755,6 +756,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                     this.buildSearchStringFromKeyboardEvent(e);
                 }
         }
+    }
+
+    private announceAriaValue(value: string): void {
+        this.ariaAnnouncementService.announceValue(value, 'richSelect');
     }
 
     public override destroy(): void {

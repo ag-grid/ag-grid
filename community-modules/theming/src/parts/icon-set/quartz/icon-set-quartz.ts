@@ -1,27 +1,26 @@
-import { definePart } from '../../../theme-utils';
+import { createPart } from '../../../theme-types';
 import { getQuartzIconsCss } from './quartz-icon-data';
 
+// prettier-ignore
 export const iconSetQuartz = (args: { strokeWidth?: number } = {}) =>
-    definePart({
-        partId: 'iconSet',
-        variantId: 'quartz',
-        css: [() => getQuartzIconsCss(args)],
-    });
+    /*#__PURE__*/
+    createPart('iconSet', 'quartz')
+        .addCss(() => getQuartzIconsCss(args));
 
-export const iconSetQuartzLight = definePart({
-    partId: 'iconSet',
-    variantId: 'quartzLight',
-    css: [() => getQuartzIconsCss({ strokeWidth: 1 })],
-});
+// prettier-ignore
+export const iconSetQuartzLight =
+    /*#__PURE__*/
+    createPart('iconSet', 'quartzLight')
+        .addCss(() => getQuartzIconsCss({ strokeWidth: 1 }));
 
-export const iconSetQuartzRegular = definePart({
-    partId: 'iconSet',
-    variantId: 'quartzRegular',
-    css: [getQuartzIconsCss],
-});
+// prettier-ignore
+export const iconSetQuartzRegular =
+    /*#__PURE__*/
+    createPart('iconSet', 'quartzRegular')
+        .addCss(getQuartzIconsCss);
 
-export const iconSetQuartzBold = definePart({
-    partId: 'iconSet',
-    variantId: 'quartzBold',
-    css: [() => getQuartzIconsCss({ strokeWidth: 2 })],
-});
+// prettier-ignore
+export const iconSetQuartzBold =
+    /*#__PURE__*/
+    createPart('iconSet', 'quartzBold')
+        .addCss(() => getQuartzIconsCss({ strokeWidth: 2 }));

@@ -125,7 +125,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             valueCols: ssrmParams.valueCols,
             pivotCols: ssrmParams.pivotCols,
             pivotMode: ssrmParams.pivotMode,
-            groupKeys: (cache as any).store.getParentNode().getGroupKeys(),
+            groupKeys: (cache as any).store.getParentNode().getRoute() ?? [],
             filterModel: ssrmParams.filterModel,
             sortModel: ssrmParams.sortModel,
         };

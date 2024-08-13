@@ -1,8 +1,8 @@
-import { definePart } from '../../../theme-utils';
+import { createPart } from '../../../theme-types';
 import { iconSetMaterialCSS } from './GENERATED-icon-set-material';
 
-export const iconSetMaterial = definePart({
-    partId: 'iconSet',
-    variantId: 'material',
-    css: [iconSetMaterialCSS],
-});
+// prettier-ignore
+export const iconSetMaterial =
+    /*#__PURE__*/
+    createPart('iconSet', 'material')
+        .addCss(iconSetMaterialCSS);

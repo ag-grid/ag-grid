@@ -14,3 +14,6 @@ project.json
 jest.config.js
 jest.config.ts
 *.map
+.swcrc
+eslint.config.mjs
+tsconfig.types.test.json

@@ -39,6 +39,7 @@ export function createScriptRunner({
         containerEl,
         getContainerScale,
         mouse,
+        getOverlay,
         tweenGroup,
         gridApi,
         scriptDebugger,

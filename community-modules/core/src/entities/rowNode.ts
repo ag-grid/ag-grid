@@ -1,7 +1,7 @@
 import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { AgEventType } from '../eventTypes';
-import type { CellEditRequestEvent, RowEvent, RowSelectedEvent, SelectionEventSourceType } from '../events';
+import type { RowEvent, SelectionEventSourceType } from '../events';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -11,6 +11,7 @@ import type {
     DataChangedEvent,
     IRowNode,
     RowHighlightPosition,
+    RowNodeEvent,
     RowNodeEventType,
     RowPinnedType,
     SetSelectedParams,
@@ -19,7 +20,7 @@ import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import { _debounce, _errorOnce, _warnOnce } from '../utils/function';
-import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
+import { _exists, _missing } from '../utils/generic';
 import type { AgColumn } from './agColumn';
 
 /**
@@ -35,6 +36,12 @@ const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>(
     '__objectId',
     'sticky',
 ]);
+
+/**
+ * This is used only when using tree data.
+ * Implementation in enterprise-modules/row-grouping/src/rowGrouping/groupStage/treeStrategy/treeNode.ts
+ */
+export interface ITreeNode {}
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -158,7 +165,13 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public allChildrenCount: number | null;
 
     /** Children mapped by the pivot columns. */
-    public childrenMapped: { [key: string]: any } | null = {};
+    public childrenMapped: { [key: string]: any } | null = null;
+
+    /** The TreeNode associated to this row. Used only with tree data. */
+    public treeNode: ITreeNode | null = null;
+
+    /** The flags associated to this node. Used only with tree data. */
+    public treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;
@@ -302,11 +315,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
 
         if (this.rowPinned === 'top') {
-            return 't-' + this.rowIndex;
+            return RowNode.ID_PREFIX_TOP_PINNED + this.rowIndex;
         }
 
         if (this.rowPinned === 'bottom') {
-            return 'b-' + this.rowIndex;
+            return RowNode.ID_PREFIX_BOTTOM_PINNED + this.rowIndex;
         }
 
         return this.rowIndex.toString();
@@ -388,7 +401,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 // as we don't always have the key for this level (eg when updating
                 // data via transaction on SSRM, we are getting key to look up the
                 // RowNode, don't have the RowNode yet, thus no way to get the current key)
-                const parentKeys = this.getGroupKeys(true);
+                const parentKeys = this.parent?.getRoute() ?? [];
                 this.id = getRowIdFunc({
                     data: this.data,
                     parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
@@ -413,51 +426,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
     }
 
-    public getGroupKeys(excludeSelf = false): string[] {
-        const keys: string[] = [];
-
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        let pointer: RowNode | null = this;
-        if (excludeSelf) {
-            pointer = pointer.parent;
-        }
-        while (pointer && pointer.level >= 0) {
-            keys.push(pointer.key!);
-            pointer = pointer.parent;
-        }
-        keys.reverse();
-
-        return keys;
-    }
-
-    public isPixelInRange(pixel: number): boolean {
-        if (!_exists(this.rowTop) || !_exists(this.rowHeight)) {
-            return false;
-        }
-        return pixel >= this.rowTop && pixel < this.rowTop + this.rowHeight;
-    }
-
-    private updateIfDifferent<T extends keyof RowNode>(key: T, value: RowNode[T], eventName: RowNodeEventType): void {
-        if (this[key] === value) {
-            return;
-        }
-        (this as RowNode)[key] = value;
-
-        this.dispatchRowEvent(eventName);
-    }
-
-    public setFirstChild(firstChild: boolean): void {
-        this.updateIfDifferent('firstChild', firstChild, 'firstChildChanged');
-    }
-
-    public setLastChild(lastChild: boolean): void {
-        this.updateIfDifferent('lastChild', lastChild, 'lastChildChanged');
-    }
-
-    public setChildIndex(childIndex: number): void {
-        this.updateIfDifferent('childIndex', childIndex, 'childIndexChanged');
-    }
-
     public setRowTop(rowTop: number | null): void {
         this.oldRowTop = this.rowTop;
 
@@ -478,32 +446,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.setRowIndex(null);
     }
 
-    private setDisplayed(displayed: boolean): void {
-        this.updateIfDifferent('displayed', displayed, 'displayedChanged');
-    }
-
-    public setDragging(dragging: boolean): void {
-        this.updateIfDifferent('dragging', dragging, 'draggingChanged');
-    }
-
-    public setHighlighted(highlighted: RowHighlightPosition | null): void {
-        this.updateIfDifferent('highlighted', highlighted, 'rowHighlightChanged');
-    }
-
     public setHovered(hovered: boolean): void {
-        if (this.hovered === hovered) {
-            return;
-        }
-
         this.hovered = hovered;
     }
 
     public isHovered(): boolean {
         return this.hovered;
-    }
-
-    public setAllChildrenCount(allChildrenCount: number | null): void {
-        this.updateIfDifferent('allChildrenCount', allChildrenCount, 'allChildrenCountChanged');
     }
 
     public setMaster(master: boolean): void {
@@ -633,17 +581,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.setRowHeight(newRowHeight);
 
         const rowModel = this.beans.rowModel as IClientSideRowModel | IServerSideRowModel;
-        if (rowModel.onRowHeightChangedDebounced) {
-            rowModel.onRowHeightChangedDebounced();
-        }
-    }
-
-    public setRowIndex(rowIndex: number | null): void {
-        this.updateIfDifferent('rowIndex', rowIndex, 'rowIndexChanged');
-    }
-
-    public setUiLevel(uiLevel: number): void {
-        this.updateIfDifferent('uiLevel', uiLevel, 'uiLevelChanged');
+        rowModel.onRowHeightChangedDebounced?.();
     }
 
     /**
@@ -704,7 +642,20 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const oldValue = this.getValueFromValueService(column);
 
         if (this.beans.gos.get('readOnlyEdit')) {
-            this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
+            this.beans.eventService.dispatchEvent({
+                type: 'cellEditRequest',
+                event: null,
+                rowIndex: this.rowIndex!,
+                rowPinned: this.rowPinned,
+                column: column,
+                colDef: column.getColDef(),
+                data: this.data,
+                node: this,
+                oldValue,
+                newValue,
+                value: newValue,
+                source: eventSource,
+            });
             return false;
         }
 
@@ -747,30 +698,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const value = this.beans.valueService.getValue(column, this, false, ignoreAggData);
 
         return value;
-    }
-
-    private dispatchEventForSaveValueReadOnly(
-        column: AgColumn,
-        oldValue: any,
-        newValue: any,
-        eventSource?: string
-    ): void {
-        const event: CellEditRequestEvent = this.beans.gos.addGridCommonParams({
-            type: 'cellEditRequest',
-            event: null,
-            rowIndex: this.rowIndex!,
-            rowPinned: this.rowPinned,
-            column: column,
-            colDef: column.getColDef(),
-            data: this.data,
-            node: this,
-            oldValue,
-            newValue,
-            value: newValue,
-            source: eventSource,
-        });
-
-        this.beans.eventService.dispatchEvent(event);
     }
 
     public setGroupValue(colKey: string | AgColumn, newValue: any): void {
@@ -855,10 +782,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         return this.__hasChildren;
     }
 
-    public isEmptyRowGroupNode(): boolean {
-        return (this.group && _missingOrEmpty(this.childrenAfterGroup)) ?? false;
-    }
-
     private dispatchCellChangedEvent(column: AgColumn, newValue: TData, oldValue: TData): void {
         const cellChangedEvent: CellChangedEvent<TData> = {
             type: 'cellChanged',
@@ -921,7 +844,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public calculateSelectedFromChildren(): boolean | undefined | null {
         let atLeastOneSelected = false;
         let atLeastOneDeSelected = false;
-        let atLeastOneMixed = false;
 
         if (!this.childrenAfterGroup?.length) {
             return this.selectable ? this.selected : null;
@@ -948,12 +870,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                     atLeastOneDeSelected = true;
                     break;
                 default:
-                    atLeastOneMixed = true;
-                    break;
+                    return undefined;
             }
         }
 
-        if (atLeastOneMixed || (atLeastOneSelected && atLeastOneDeSelected)) {
+        if (atLeastOneSelected && atLeastOneDeSelected) {
             return undefined;
         }
 
@@ -976,12 +897,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.selected = selected;
     }
 
-    public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
-        const event = {
+    private dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
+        this.localEventService?.dispatchEvent({
             type: type,
             node: this,
-        };
-        this.localEventService?.dispatchEvent(event);
+        } as RowNodeEvent<T, TData>);
     }
 
     public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
@@ -1004,13 +924,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             sibling.dispatchRowEvent('rowSelected');
         }
 
-        const event: RowSelectedEvent = {
+        this.beans.eventService.dispatchEvent({
             ...this.createGlobalRowEvent('rowSelected'),
             event: e || null,
             source,
-        };
-
-        this.beans.eventService.dispatchEvent(event);
+        });
 
         return true;
     }
@@ -1058,20 +976,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * - `false` if the node isn't pinned
      */
     public isRowPinned(): boolean {
-        return this.rowPinned === 'top' || this.rowPinned === 'bottom';
-    }
-
-    public isParentOfNode(potentialParent: RowNode): boolean {
-        let parentNode = this.parent;
-
-        while (parentNode) {
-            if (parentNode === potentialParent) {
-                return true;
-            }
-            parentNode = parentNode.parent;
-        }
-
-        return false;
+        return !!this.rowPinned;
     }
 
     /** Add an event listener. */
@@ -1112,35 +1017,9 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.dispatchRowEvent('mouseLeave');
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: AgColumn | null): RowNode | null {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        let currentRowNode: RowNode = this;
-        let isCandidate = true;
-        let foundFirstChildPath = false;
-        let nodeToSwapIn: RowNode | null = null;
-
-        // if we are hiding groups, then if we are the first child, of the first child,
-        // all the way up to the column we are interested in, then we show the group cell.
-        while (isCandidate && !foundFirstChildPath) {
-            const parentRowNode = currentRowNode.parent!;
-            const firstChild = _exists(parentRowNode) && currentRowNode.firstChild;
-
-            if (firstChild) {
-                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
-                    foundFirstChildPath = true;
-                    nodeToSwapIn = parentRowNode;
-                }
-            } else {
-                isCandidate = false;
-            }
-
-            currentRowNode = parentRowNode;
-        }
-
-        return foundFirstChildPath ? nodeToSwapIn : null;
-    }
-
     /**
+     * @deprecated v32.2.0
+     *
      * Returns:
      * - `true` if the node is a full width cell
      * - `false` if the node is not a full width cell
@@ -1159,15 +1038,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * If the Row Node is not a group, it returns `undefined`.
      */
     public getRoute(): string[] | undefined {
-        if (this.key == null) {
-            return;
+        if (!this.group) {
+            return undefined;
         }
 
         const res: string[] = [];
-
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let pointer: RowNode | null = this;
-
         while (pointer && pointer.key != null) {
             res.push(pointer.key);
             pointer = pointer.parent;
@@ -1209,9 +1085,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.sibling = footerNode;
     }
 
-    // Only used by SSRM. In CSRM this is never used as footers should always be present for
-    // the purpose of exporting collapsed groups. In SSRM it is not possible to export collapsed
-    // groups anyway, so can destroy footers.
     public destroyFooter(): void {
         if (!this.sibling) {
             return;
@@ -1221,5 +1094,68 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.sibling.setRowIndex(null);
 
         this.sibling = undefined as any;
+    }
+
+    public setFirstChild(firstChild: boolean): void {
+        if (this.firstChild !== firstChild) {
+            this.firstChild = firstChild;
+            this.dispatchRowEvent('firstChildChanged');
+        }
+    }
+
+    public setLastChild(lastChild: boolean): void {
+        if (this.lastChild !== lastChild) {
+            this.lastChild = lastChild;
+            this.dispatchRowEvent('lastChildChanged');
+        }
+    }
+
+    public setChildIndex(childIndex: number): void {
+        if (this.childIndex !== childIndex) {
+            this.childIndex = childIndex;
+            this.dispatchRowEvent('childIndexChanged');
+        }
+    }
+
+    private setDisplayed(displayed: boolean): void {
+        if (this.displayed !== displayed) {
+            this.displayed = displayed;
+            this.dispatchRowEvent('displayedChanged');
+        }
+    }
+
+    public setDragging(dragging: boolean): void {
+        if (this.dragging !== dragging) {
+            this.dragging = dragging;
+            this.dispatchRowEvent('draggingChanged');
+        }
+    }
+
+    public setHighlighted(highlighted: RowHighlightPosition | null): void {
+        if (this.highlighted !== highlighted) {
+            this.highlighted = highlighted;
+            this.dispatchRowEvent('rowHighlightChanged');
+        }
+    }
+
+    public setAllChildrenCount(allChildrenCount: number | null): void {
+        if (this.allChildrenCount !== allChildrenCount) {
+            this.allChildrenCount = allChildrenCount;
+            this.dispatchRowEvent('allChildrenCountChanged');
+        }
+    }
+
+    public setRowIndex(rowIndex: number | null): void {
+        if (this.rowIndex !== rowIndex) {
+            this.rowIndex = rowIndex;
+            this.dispatchRowEvent('rowIndexChanged');
+        }
+    }
+
+    public setUiLevel(uiLevel: number): void {
+        if (this.uiLevel !== uiLevel) {
+            this.uiLevel = uiLevel;
+            this.dispatchRowEvent('uiLevelChanged');
+        }
     }
 }

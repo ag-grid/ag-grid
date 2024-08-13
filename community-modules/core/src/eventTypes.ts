@@ -95,7 +95,7 @@ export const PUBLIC_EVENTS = [
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
-// These events are still available to users via the API, but are not intended for general use
+// These events are still available to users via the API if the eventName is cast to any to stop Typescript from complaining, but they are not intended for general use
 /** Exclude the following internal events from code generation to prevent exposing these events via framework components */
 export const INTERNAL_EVENTS = [
     'scrollbarWidthChanged',
@@ -123,6 +123,7 @@ export const INTERNAL_EVENTS = [
     'rightPinnedWidthChanged',
     'rowContainerHeightChanged',
     'headerHeightChanged',
+    'columnGroupHeaderHeightChanged',
     'columnHeaderHeightChanged',
     'gridStylesChanged',
     'storeUpdated',
@@ -141,6 +142,7 @@ export const INTERNAL_EVENTS = [
     'chartTitleEdit',
     'recalculateRowBounds',
     'stickyTopOffsetChanged',
+    'overlayExclusiveChanged',
 ] as const;
 
 export const ALL_EVENTS = [...PUBLIC_EVENTS, ...INTERNAL_EVENTS] as const;

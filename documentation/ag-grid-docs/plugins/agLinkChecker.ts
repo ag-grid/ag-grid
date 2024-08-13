@@ -22,9 +22,20 @@ const filePathToUrl = (filePath: string) => {
     return `/${filePath.replace('index.html', '')}`;
 };
 
+const filePathsString = (filePaths: Set<string>): string => {
+    const pageNames = Array.from(filePaths).map((filePath) => {
+        // Take page name from path
+        // eg, javascript-data-grid/grid-options/index.html
+        const [, pageName] = filePath.split('/') || [];
+        return pageName ?? filePath;
+    });
+
+    return pageNames.join(', ');
+};
+
 const checkLinks = async (dir: string, files: string[]) => {
     const anchors = new Set<string>();
-    const linksToValidate = new Set<string>();
+    const linksToValidate: Record<string, { filePaths: Set<string> }> = {};
 
     for (let i = 0; i < files.length; i++) {
         const filePath = files[i];
@@ -95,7 +106,12 @@ const checkLinks = async (dir: string, files: string[]) => {
                     const thisHash = href;
                     anchors.add(`${thisFileUrl}${thisHash}`);
                 } else if (href.startsWith('/')) {
-                    linksToValidate.add(href);
+                    const filePaths = linksToValidate[href]?.filePaths ?? new Set();
+                    filePaths.add(filePath);
+
+                    linksToValidate[href] = {
+                        filePaths,
+                    };
                 }
             }
         });
@@ -103,8 +119,8 @@ const checkLinks = async (dir: string, files: string[]) => {
 
     const errors: string[] = [];
     // validate the unchecked links
-    for (let link of linksToValidate) {
-        if (IGNORED_PATHS.includes(link)) continue;
+    Object.entries(linksToValidate).forEach(([link, { filePaths }]) => {
+        if (IGNORED_PATHS.includes(link)) return;
 
         const originalLink = link;
         if (link.startsWith('/')) link = link.slice(1);
@@ -116,29 +132,29 @@ const checkLinks = async (dir: string, files: string[]) => {
                 if (!files.includes(link)) {
                     errors.push(`File link to ${link} does not exist.`);
                 }
-                continue;
+                return;
             }
 
             // if this is a directory, check for index.html
             const dirHtml = `${!link || link.endsWith('/') ? link : `${link}/`}index.html`;
             if (files.includes(dirHtml)) {
-                continue;
+                return;
             }
 
             // might be a html file itself...
             if (files.includes(`${link.endsWith('/') ? link.slice(0, -1) : link}.html`)) {
-                continue;
+                return;
             }
 
-            errors.push(`Link to ${link} could not be resolved.`);
-            continue;
+            errors.push(`Link to ${link} could not be resolved (${filePathsString(filePaths)}).`);
+            return;
         } else {
             // check if the hash exists in the file
             if (!anchors.has(originalLink)) {
-                errors.push(`Link to ${originalLink} could not be resolved.`);
+                errors.push(`Link to ${originalLink} could not be resolved in (${filePathsString(filePaths)}).`);
             }
         }
-    }
+    });
 
     if (errors.length) {
         throw new Error(`
