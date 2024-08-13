@@ -19,8 +19,14 @@ import {
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;
+
+interface RootNode extends RowNode {
+    allLeafChildren: RowNode[] | null;
+    childrenAfterGroup: RowNode[] | null;
+}
+
 export class ClientSideNodeManager {
-    private readonly rootNode: RowNode;
+    private readonly rootNode: RootNode;
 
     private gos: GridOptionsService;
     private eventService: EventService;
@@ -79,7 +85,7 @@ export class ClientSideNodeManager {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
-        const sibling = this.rootNode.sibling;
+        const sibling: RootNode = this.rootNode.sibling;
 
         rootNode.childrenAfterFilter = null;
         rootNode.childrenAfterGroup = null;
@@ -207,8 +213,9 @@ export class ClientSideNodeManager {
         } else {
             this.rootNode.allLeafChildren = [...allLeafChildren, ...newNodes];
         }
-        if (this.rootNode.sibling) {
-            this.rootNode.sibling.allLeafChildren = allLeafChildren;
+        const sibling: RootNode = this.rootNode.sibling;
+        if (sibling) {
+            sibling.allLeafChildren = allLeafChildren;
         }
         // add new row nodes to the transaction add items
         rowNodeTransaction.add = newNodes;
@@ -254,8 +261,9 @@ export class ClientSideNodeManager {
 
         this.rootNode.allLeafChildren =
             this.rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
-        if (this.rootNode.sibling) {
-            this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
+        const sibling: RootNode = this.rootNode.sibling;
+        if (sibling) {
+            sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
     }
 

@@ -26,7 +26,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { BatchRemover } from '../batchRemover';
+import { BatchRemover } from './batchRemover';
+import type { GroupRow } from './groupRow';
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
@@ -94,7 +95,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
-        changedPath.forEachChangedNodeDepthFirst((group) => {
+        changedPath.forEachChangedNodeDepthFirst((group: GroupRow) => {
             if (group.childrenAfterGroup) {
                 const leafNodes: RowNode[] = [];
                 const groupNodes: RowNode[] = [];
@@ -431,7 +432,8 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
         // groups are about to get disposed, so need to deselect any that are selected
         this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
 
-        const { rootNode, groupedCols } = details;
+        const { groupedCols } = details;
+        const rootNode: GroupRow = details.rootNode;
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         rootNode.leafGroup = groupedCols.length === 0;
@@ -441,7 +443,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
         rootNode.childrenMapped = {};
         rootNode.updateHasChildren();
 
-        const sibling = rootNode.sibling;
+        const sibling: GroupRow = rootNode.sibling;
         if (sibling) {
             sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             sibling.childrenMapped = rootNode.childrenMapped;
@@ -540,7 +542,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
-        const groupNode = new RowNode(this.beans);
+        const groupNode: GroupRow = new RowNode(this.beans);
 
         groupNode.group = true;
         groupNode.field = groupInfo.field;

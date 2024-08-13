@@ -414,6 +414,7 @@ describe('ag-grid tree data', () => {
             { id: '5', orgHierarchy: ['R', 'S'], _diagramLabel: '5-v1' },
             { id: '6', orgHierarchy: ['M'], _diagramLabel: '6-v1' },
             { id: '7', orgHierarchy: ['N'], _diagramLabel: '7-v1' },
+            { id: '8', orgHierarchy: ['A', 'B', 'C'], _diagramLabel: '8-v1' },
         ];
 
         const rowData2 = [
@@ -467,7 +468,8 @@ describe('ag-grid tree data', () => {
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler selected id:row-group-0-A
-            │ └── B LEAF selected !expanded id:1 label:1-v1
+            │ └─┬ B LEAF selected !expanded id:1 label:1-v1
+            │ · └── C LEAF selected id:8 label:8-v1
             ├─┬ C filler selected id:row-group-0-C
             │ └── D LEAF selected id:3 label:3-v1
             ├─┬ P filler selected !expanded id:row-group-0-P
@@ -489,7 +491,7 @@ describe('ag-grid tree data', () => {
             │ └── S LEAF selected id:5 label:5-v2
             ├─┬ X filler id:row-group-0-X
             │ └─┬ Y LEAF id:2 label:2-v2
-            │ · └── Z LEAF selected !expanded id:1 label:1-v2
+            │ · └── Z LEAF selected id:1 label:1-v2
             ├─┬ P filler selected !expanded id:row-group-0-P
             │ └── Q LEAF selected id:4 label:4-v2
             └── M LEAF selected id:6 label:6-v2

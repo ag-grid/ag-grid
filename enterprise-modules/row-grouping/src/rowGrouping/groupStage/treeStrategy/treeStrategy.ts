@@ -15,15 +15,18 @@ import { RowNode } from '@ag-grid-community/core';
 
 import type { RowNodeOrder } from './treeNode';
 import { TreeNode } from './treeNode';
+import type { TreeRow } from './treeRow';
 import {
     clearTreeRowFlags,
     isTreeRowCommitted,
     isTreeRowExpandedInitialized,
+    isTreeRowKeyChanged,
     isTreeRowUpdated,
     markTreeRowCommitted,
+    setTreeRowExpandedInitialized,
+    setTreeRowKeyChanged,
     setTreeRowUpdated,
-    unsetTreeRowExpandedInitialized,
-} from './treeNodeFlags';
+} from './treeRow';
 
 export type IsGroupOpenByDefaultCallback =
     | ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean)
@@ -66,7 +69,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     public execute(params: StageExecuteParams): void {
-        const { rowNode: rootRow, rowNodeTransactions, rowNodeOrder, changedPath } = params;
+        const { rowNodeTransactions, rowNodeOrder, changedPath } = params;
+        const rootRow: TreeRow = params.rowNode;
 
         const gos = this.gos;
         const details: TreeExecutionDetails = {
@@ -85,7 +89,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         rootRow.level = -1;
         rootRow.leafGroup = false; // no pivoting with tree data
         rootRow.childrenAfterGroup = rootNode.childrenAfterGroup;
-        const sibling = rootRow.sibling;
+        const sibling: TreeRow = rootRow.sibling;
         if (sibling) {
             sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
             sibling.childrenMapped = rootRow.childrenMapped;
@@ -146,7 +150,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.addOrUpdateRows(details, update as RowNode[] | null, true);
             this.addOrUpdateRows(details, add as RowNode[] | null, false);
         }
-        this.commitTree(details);
+        this.commitTree(details); // One single commit for all the transactions
     }
 
     private checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null | undefined): void {
@@ -211,7 +215,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 if (node) {
                     const oldRow = this.clearRow(node);
                     if (oldRow !== null) {
-                        unsetTreeRowExpandedInitialized(oldRow);
+                        setTreeRowExpandedInitialized(oldRow, false);
                     }
                 }
             }
@@ -443,8 +447,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const key = node.key;
         if (row.key !== key) {
             row.key = key;
-            parent.pathChanged = true;
-            setTreeRowUpdated(row);
+            setTreeRowKeyChanged(row);
             this.setGroupData(row, key);
         }
         if (!row.groupData) {
@@ -481,36 +484,37 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (!parent.childrenChanged && rowNodeOrder && node.rowPosition !== node.getRowPosition(rowNodeOrder)) {
-            parent.childrenChanged = true; // We need to be sure the parent is going to update its children, as the order might have changed
+            // We need to be sure the parent is going to update its children, as the order might have changed
+            parent.childrenChanged = true;
         }
 
         const hasChildren = !!row.childrenAfterGroup?.length;
         const group = hasChildren || !row.data;
         if (row.group !== group) {
-            const oldExpanded = row.expanded;
             row.setGroup(group); // Internally calls updateHasChildren
-            if (!group) {
-                // hack: restore expanded state, it seems to be lost after setGroup(false)
-                // We don't want to lose expanded state when a group becomes a leaf
-                row.expanded = oldExpanded;
+            if (!group && !row.expanded) {
+                setTreeRowExpandedInitialized(row, false);
             }
         } else if (row.hasChildren() !== hasChildren) {
             row.updateHasChildren();
         }
 
-        if (!isTreeRowExpandedInitialized(row)) {
+        if (row.group && !isTreeRowExpandedInitialized(row)) {
+            setTreeRowExpandedInitialized(row, true);
             row.expanded = this.getExpandedInitialValue(details, row);
         }
 
         if (isTreeRowUpdated(row)) {
             parent.pathChanged = true;
 
-            // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
-            // refreshed into the gui.
-            // this is needed to kick off the event that rowComp listens to for refresh. this in turn
-            // then will get each cell in the row to refresh - which is what we need as we don't know which
-            // columns will be displaying the rowNode.key info.
-            row.setData(row.data);
+            if (isTreeRowKeyChanged(row)) {
+                // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
+                // refreshed into the gui.
+                // this is needed to kick off the event that rowComp listens to for refresh. this in turn
+                // then will get each cell in the row to refresh - which is what we need as we don't know which
+                // columns will be displaying the rowNode.key info.
+                row.setData(row.data);
+            }
         }
 
         markTreeRowCommitted(row);

@@ -91,7 +91,7 @@ export class TreeDiagram {
         if (row.isSelected()) {
             rowInfo += 'selected ';
         }
-        if (row.level >= 0 && !row.expanded) {
+        if (row.level >= 0 && !row.expanded && row.group) {
             rowInfo += '!expanded ';
         }
         rowInfo += `id:${row.id} `;
@@ -261,9 +261,11 @@ export class TreeDiagram {
             this.uniqueChildrenAfterGroupArrays.set(row.childrenAfterGroup, rowKey(row));
         }
 
-        if (expectedUiLevel !== row.uiLevel) {
-            this.rowErrors.push('UI_LEVEL!=' + expectedUiLevel);
-            this.diagram += 'row.uiLevel:' + row.uiLevel + ' ';
+        if (expanded) {
+            if (expectedUiLevel !== row.uiLevel) {
+                this.rowErrors.push('UI_LEVEL!=' + expectedUiLevel);
+                this.diagram += 'row.uiLevel:' + row.uiLevel + ' ';
+            }
         }
     }
 
@@ -411,7 +413,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             childrenAfterSort: [],
             detail: undefined,
             displayed: true,
-            expanded: true,
+            expanded: false,
             firstChild: true,
             footer: undefined,
             group: false,
@@ -467,7 +469,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             childrenAfterSort: [],
             detail: undefined,
             displayed: true,
-            expanded: true,
+            expanded: false,
             firstChild: true,
             footer: undefined,
             group: false,
@@ -579,7 +581,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             childrenAfterSort: [],
             detail: undefined,
             displayed: true,
-            expanded: true,
+            expanded: false,
             firstChild: true,
             footer: undefined,
             group: false,

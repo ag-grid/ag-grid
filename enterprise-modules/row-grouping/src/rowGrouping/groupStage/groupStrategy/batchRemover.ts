@@ -1,5 +1,7 @@
 import type { RowNode } from '@ag-grid-community/core';
 
+import type { GroupRow } from './groupRow';
+
 // doing _removeFromArray() multiple times on a large list can be a bottleneck.
 // when doing large deletes (eg removing 1,000 rows) then we would be calling _removeFromArray()
 // a thousands of times, in particular RootNode.allGroupChildren could be a large list, and
@@ -55,7 +57,7 @@ export class BatchRemover {
     }
 
     public flush(): void {
-        this.allParents.forEach((parent) => {
+        this.allParents.forEach((parent: GroupRow) => {
             const nodeDetails = this.allSets[parent.id!];
 
             parent.childrenAfterGroup = parent.childrenAfterGroup!.filter(
@@ -65,9 +67,10 @@ export class BatchRemover {
                 parent.allLeafChildren?.filter((child) => !nodeDetails.removeFromAllLeafChildren[child.id!]) ?? null;
             parent.updateHasChildren();
 
-            if (parent.sibling) {
-                parent.sibling.childrenAfterGroup = parent.childrenAfterGroup;
-                parent.sibling.allLeafChildren = parent.allLeafChildren;
+            const sibling: GroupRow = parent.sibling;
+            if (sibling) {
+                sibling.childrenAfterGroup = parent.childrenAfterGroup;
+                sibling.allLeafChildren = parent.allLeafChildren;
             }
         });
         this.allSets = {};

@@ -151,11 +151,18 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     /** Used by server side row model, true if this node needs refreshed by the server when in viewport */
     public __needsRefreshWhenVisible: boolean;
 
-    /** All lowest level nodes beneath this node, no groups. */
-    public allLeafChildren: RowNode<TData>[] | null;
+    /**
+     * All lowest level nodes beneath this node, no groups.
+     * Do not modify this array directly. The grouping module relies on mutable references to the array.
+     * The array might also br frozen (immutable).
+     */
+    public readonly allLeafChildren: RowNode<TData>[] | null;
 
-    /** Children of this group. If multi levels of grouping, shows only immediate children. */
-    public childrenAfterGroup: RowNode<TData>[] | null;
+    /**
+     * Children of this group. If multi levels of grouping, shows only immediate children.
+     * Do not modify this array directly. The grouping module relies on mutable references to the array.
+     */
+    public readonly childrenAfterGroup: RowNode<TData>[] | null;
 
     /** Filtered children of this group. */
     public childrenAfterFilter: RowNode<TData>[] | null;
@@ -173,10 +180,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public childrenMapped: { [key: string]: any } | null = null;
 
     /** The TreeNode associated to this row. Used only with tree data. */
-    public treeNode: ITreeNode | null = null;
+    public readonly treeNode: ITreeNode | null = null;
 
     /** The flags associated to this node. Used only with tree data. */
-    public treeNodeFlags: number = 0;
+    public readonly treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;

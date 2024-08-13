@@ -43,6 +43,10 @@ enum RecursionType {
     PivotNodes,
 }
 
+interface RootNode extends RowNode {
+    childrenAfterGroup: RowNode[] | null;
+}
+
 export interface BatchTransactionItem<TData = any> {
     rowDataTransaction: RowDataTransaction<TData>;
     callback: ((res: RowNodeTransaction<TData>) => void) | undefined;
@@ -1111,9 +1115,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 }
             }
         } else {
-            this.rootNode.childrenAfterGroup = this.rootNode.allLeafChildren;
-            if (this.rootNode.sibling) {
-                this.rootNode.sibling.childrenAfterGroup = this.rootNode.childrenAfterGroup;
+            const rootNode: RootNode = this.rootNode;
+            const sibling: RootNode = rootNode.sibling;
+            rootNode.childrenAfterGroup = rootNode.allLeafChildren;
+            if (sibling) {
+                sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             }
             this.rootNode.updateHasChildren();
         }

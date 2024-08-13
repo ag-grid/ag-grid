@@ -1,5 +1,7 @@
 import type { ITreeNode, RowNode } from '@ag-grid-community/core';
 
+import type { TreeRow } from './treeRow';
+
 export type RowNodeOrder = { readonly [id: string]: number | undefined };
 
 /**
@@ -114,16 +116,21 @@ export class TreeNode implements ITreeNode {
     public pathChanged: boolean = false;
 
     /** The RowNode associated to this tree node */
-    public row: RowNode | null = null;
+    public row: TreeRow | null = null;
 
     /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
-    public oldRow: RowNode | null = null;
+    public oldRow: TreeRow | null = null;
 
     /** We keep the row.childrenAfterGroup here, we just swap arrays when we assign rows */
-    public childrenAfterGroup: RowNode[] = EMPTY_ARRAY;
+    public childrenAfterGroup: TreeRow[] = EMPTY_ARRAY;
 
-    /** We keep the row.allLeafChildren here, we just swap arrays when we assign rows */
-    private allLeafChildren: RowNode[] = EMPTY_ARRAY;
+    /**
+     * We keep the row.allLeafChildren here, we just swap arrays when we assign or swap the row to this node.
+     * If this is null, we are borrowing the allLeafChildren array from one of the children,
+     * in this case the row.allLeafChildren will be the same as one of the childrenAfterGroup[x].allLeafChildren,
+     * to get the allLeafChildren if is null, do node.allLeafChildren ?? node.row.allLeafChildren.
+     */
+    private allLeafChildren: TreeRow[] | null = EMPTY_ARRAY;
 
     public constructor(
         /** The parent node of this node, or null if removed or the root. */
@@ -163,18 +170,20 @@ export class TreeNode implements ITreeNode {
     }
 
     /** Bidirectionally links (or unlink) a row to a node. */
-    public linkRow(newRow: RowNode | null): boolean {
+    public linkRow(newRow: TreeRow | null): boolean {
         const { row: oldRow } = this;
 
         if (oldRow === newRow) {
             return false; // No change
         }
 
+        let oldRowAllLeafChildren: TreeRow[] | null = null;
         if (oldRow) {
             oldRow.treeNode = null;
             oldRow.parent = null;
             oldRow.level = 0;
             if (this.level >= 0) {
+                oldRowAllLeafChildren = oldRow.allLeafChildren;
                 oldRow.childrenAfterGroup = null;
                 oldRow.allLeafChildren = null;
             } else {
@@ -188,7 +197,7 @@ export class TreeNode implements ITreeNode {
             newRow.level = this.level;
             newRow.childrenAfterGroup = this.childrenAfterGroup;
             if (this.level >= 0) {
-                newRow.allLeafChildren = this.allLeafChildren;
+                newRow.allLeafChildren = this.allLeafChildren ?? oldRowAllLeafChildren ?? EMPTY_ARRAY;
             }
         }
 
@@ -344,7 +353,7 @@ export class TreeNode implements ITreeNode {
     public updateChildrenAfterGroup(rowNodeOrder: RowNodeOrder | undefined): void {
         this.childrenChanged = false; // Reset the flag for this node
 
-        let changed = false;
+        let nodesChanged = false;
         let orderChanged = false;
         let childrenAfterGroup = this.childrenAfterGroup;
         const children = this.children;
@@ -353,7 +362,7 @@ export class TreeNode implements ITreeNode {
             // No children
 
             if (childrenAfterGroup.length > 0) {
-                changed = true;
+                nodesChanged = true;
                 this.childrenAfterGroup = EMPTY_ARRAY;
                 this.row!.childrenAfterGroup = EMPTY_ARRAY;
             }
@@ -361,7 +370,7 @@ export class TreeNode implements ITreeNode {
             // We have children
 
             if (childrenAfterGroup.length !== childrenCount) {
-                changed = true;
+                nodesChanged = true;
                 if (childrenAfterGroup === EMPTY_ARRAY) {
                     childrenAfterGroup = new Array(childrenCount);
                     this.childrenAfterGroup = childrenAfterGroup;
@@ -380,9 +389,9 @@ export class TreeNode implements ITreeNode {
                     const nextPosition = child.getRowPosition(rowNodeOrder);
                     child.rowPosition = nextPosition;
                     const row = child.row!;
-                    if (changed || childrenAfterGroup[writeIdx] !== row) {
+                    if (nodesChanged || childrenAfterGroup[writeIdx] !== row) {
                         childrenAfterGroup[writeIdx] = child.row!;
-                        changed = true;
+                        nodesChanged = true;
                     }
                     ++writeIdx;
                     if (prevPosition > nextPosition) {
@@ -407,16 +416,16 @@ export class TreeNode implements ITreeNode {
                 let writeIdx = 0;
                 for (const child of children!.values()) {
                     const row = child.row!;
-                    if (changed || childrenAfterGroup[writeIdx] !== row) {
+                    if (nodesChanged || childrenAfterGroup[writeIdx] !== row) {
                         childrenAfterGroup[writeIdx] = row;
-                        changed = true;
+                        nodesChanged = true;
                     }
                     ++writeIdx;
                 }
             }
         }
 
-        if (changed) {
+        if (nodesChanged) {
             // If there are changed elements, we need to recompute the allLeafChildren
             // I don't think it matters to update the leafs if only order changed, we avoid unnecessary work.
             this.leafChildrenChanged = true;
@@ -440,25 +449,32 @@ export class TreeNode implements ITreeNode {
 
         this.leafChildrenChanged = false; // Reset the flag for this node
 
-        let changed = false;
+        let nodesChanged = false;
         const childrenAfterGroupLen = childrenAfterGroup.length;
         if (childrenAfterGroupLen === 0) {
             // No children, no leaf nodes.
-            changed = row!.allLeafChildren?.length !== 0;
+            nodesChanged = row!.allLeafChildren?.length !== 0;
             row!.allLeafChildren = EMPTY_ARRAY;
             this.allLeafChildren = EMPTY_ARRAY;
         } else if (childrenAfterGroupLen === 1 && childrenAfterGroup[0].allLeafChildren?.length) {
             // We can avoid building the leaf children array if we are a node with just one child that has leafs
             // In this case we use the allLeafChildren of the child by assigning it to this.row.allLeafChildren in O(1)
             // and without occupying any extra memory.
-            changed = true; // This must be true as this may come from a child that changed
-            this.allLeafChildren = EMPTY_ARRAY; // We cannot set here the the child allLeafChildren or it may get modified
+
             row!.allLeafChildren = childrenAfterGroup[0].allLeafChildren; // Use the same array
+
+            // Set allLeafChildren to null as indicator that we are borrowing the array from one of the children
+            // This is used to prevent `updateAllLeafChildren` modifying this array in a future pass, if this nodes
+            // direct children have been updated.
+            // In this case we will have to use this.row.allLeafChildren to access the allLeafChildren array.
+            this.allLeafChildren = null;
+
+            nodesChanged = true; // This must be true as this may come from a child that changed
         } else {
             // We need to rebuild the allLeafChildren array, we use children allLeafChildren arrays
 
             let allLeafChildren = this.allLeafChildren;
-            if (allLeafChildren === EMPTY_ARRAY) {
+            if (allLeafChildren === EMPTY_ARRAY || allLeafChildren === null) {
                 allLeafChildren = [];
                 this.allLeafChildren = allLeafChildren;
             }
@@ -474,29 +490,29 @@ export class TreeNode implements ITreeNode {
                         const leaf = childAllLeafChildren[j];
                         if (writeIdx >= oldAllLeafChildrenLength || allLeafChildren[writeIdx] !== leaf) {
                             allLeafChildren[writeIdx] = leaf;
-                            changed = true;
+                            nodesChanged = true;
                         }
                         ++writeIdx;
                     }
                 } else {
                     if ((writeIdx >= oldAllLeafChildrenLength || allLeafChildren[writeIdx] !== childRow) && childRow) {
                         allLeafChildren[writeIdx] = childRow;
-                        changed = true;
+                        nodesChanged = true;
                     }
                     ++writeIdx;
                 }
             }
             if (oldAllLeafChildrenLength !== writeIdx) {
                 allLeafChildren.length = writeIdx;
-                changed = true;
+                nodesChanged = true;
             }
             if (row!.allLeafChildren !== allLeafChildren) {
-                changed = true;
+                nodesChanged = true;
                 row!.allLeafChildren = allLeafChildren;
             }
         }
 
-        if (changed && parent) {
+        if (nodesChanged && parent) {
             parent.leafChildrenChanged = true; // Propagate to the parent, as it may need to rebuild its allLeafChildren too
         }
     }
