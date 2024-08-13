@@ -206,7 +206,7 @@
     margin-left: auto;
 }
 
-.ag-cell,
+.ag-cell:not(.ag-cell-inline-editing),
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)

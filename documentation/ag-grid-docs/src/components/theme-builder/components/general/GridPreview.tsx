@@ -19,7 +19,7 @@ import root from 'react-shadow';
 
 import { useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { ColorEditor } from '../editors/ColorValueEditor';
-import { PreloadFontSelection } from '../editors/FontFamilyValueEditor';
+import { LoadFontFamilyMenuFonts } from '../editors/FontFamilyValueEditor';
 import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { useGridOptions } from '../grid-config/grid-config-atom';
 import { allPresets } from '../presets/presets';
@@ -54,6 +54,7 @@ const GridPreview = () => {
 
     return (
         <Wrapper style={{ backgroundColor }}>
+            <LoadFontFamilyMenuFonts />
             <GridConfigDropdownButton />
             <ColorPickerWrapper>
                 <ColorEditor value={backgroundColor} onChange={setBackground} preventTransparency />
@@ -61,7 +62,6 @@ const GridPreview = () => {
             </ColorPickerWrapper>
             <GridSizer>
                 <root.div style={{ height: '100%' }}>
-                    <PreloadFontSelection />
                     <div
                         ref={(el) => {
                             setContainer(el);
