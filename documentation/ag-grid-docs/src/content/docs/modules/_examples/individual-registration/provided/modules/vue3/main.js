@@ -3,7 +3,6 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -13,7 +12,7 @@ import { createApp } from 'vue';
 import './styles.css';
 
 // Register shared Modules globally
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, GridChartsModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
 
 let rowIdSequence = 100;
 const createRowBlock = () =>
@@ -35,8 +34,6 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :rowData="leftRowData"
                         :columnDefs="columns"
-                        :enableRangeSelection="true"
-                        :enableCharts="true"
                         :modules="leftModules"
                         >
                     </ag-grid-vue>
@@ -51,8 +48,6 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :rowData="rightRowData"
                         :columnDefs="columns"
-                        :enableRangeSelection="true"
-                        :enableCharts="true"
                         :modules="rightModules"
                         >
                     </ag-grid-vue>
