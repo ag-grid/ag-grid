@@ -1,3 +1,4 @@
+import { isColumnControlsCol } from '../../columns/columnUtils';
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -8,6 +9,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
+import { getCheckboxes } from '../../gridOptionsService';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -404,8 +406,11 @@ export class CellCtrl extends BeanStub {
     }
 
     private setupControlComps(): void {
+        const { selection } = this.beans.gridOptions;
         const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(this.column.isCellCheckboxSelection(this.rowNode));
+        this.includeSelection = this.isIncludeControl(
+            colDef.checkboxSelection || (isColumnControlsCol(this.column) && selection && getCheckboxes(selection))
+        );
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
