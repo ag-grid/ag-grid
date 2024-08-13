@@ -6,7 +6,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { _isRowModelType } from '../gridOptionsUtils';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
@@ -122,7 +122,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
             return null;
         }
 
-        if (!_isRowModelType(this.gos, 'clientSide')) {
+        if (!_isClientSideRowModel(this.gos)) {
             _warnOnce('Quick filtering only works with the Client-Side Row Model');
             return null;
         }

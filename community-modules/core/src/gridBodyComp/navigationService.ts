@@ -10,7 +10,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
 import type { FocusService } from '../focusService';
-import { isGroupRowsSticky } from '../gridOptionsUtils';
+import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
@@ -936,7 +936,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     public ensureCellVisible(gridCell: CellPosition): void {
-        const isGroupStickyEnabled = isGroupRowsSticky(this.gos);
+        const isGroupStickyEnabled = _isGroupRowsSticky(this.gos);
 
         const rowNode = this.rowModel.getRow(gridCell.rowIndex);
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.

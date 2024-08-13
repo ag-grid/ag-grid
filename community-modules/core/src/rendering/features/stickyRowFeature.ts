@@ -3,7 +3,7 @@ import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { RowNode } from '../../entities/rowNode';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
-import { _getRowHeightForNode, isGroupRowsSticky } from '../../gridOptionsUtils';
+import { _getRowHeightForNode, _isClientSideRowModel, _isGroupRowsSticky } from '../../gridOptionsUtils';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { PageBoundsService } from '../../pagination/pageBoundsService';
 import { _last } from '../../utils/array';
@@ -45,7 +45,7 @@ export class StickyRowFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.isClientSide = this.rowModel.getType() === 'clientSide';
+        this.isClientSide = _isClientSideRowModel(this.gos);
 
         this.ctrlsService.whenReady((params) => {
             this.gridBodyCtrl = params.gridBodyCtrl;
@@ -347,7 +347,7 @@ export class StickyRowFeature extends BeanStub {
     }
 
     private canRowsBeSticky(): boolean {
-        const isStickyEnabled = isGroupRowsSticky(this.gos);
+        const isStickyEnabled = _isGroupRowsSticky(this.gos);
         const suppressFootersSticky = this.areFooterRowsStickySuppressed();
         const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
         return isStickyEnabled && (!suppressFootersSticky || !suppressGroupsSticky);

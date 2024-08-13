@@ -1,4 +1,4 @@
-import { _isGroupMultiAutoColumn, _isGroupUseEntireRow, _isRowModelType } from '@ag-grid-community/core';
+import { _isGroupMultiAutoColumn, _isGroupUseEntireRow, _isServerSideRowModel } from '@ag-grid-community/core';
 import type {
     AgColumn,
     ColumnModel,
@@ -112,7 +112,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 return true;
             }
 
-            if (_isRowModelType(this.gos, 'serverSide') && node.group) {
+            if (_isServerSideRowModel(this.gos) && node.group) {
                 return true;
             }
 

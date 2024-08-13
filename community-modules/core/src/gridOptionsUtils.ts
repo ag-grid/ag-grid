@@ -15,8 +15,16 @@ import type { IRowNode } from './interfaces/iRowNode';
 import { _warnOnce } from './utils/function';
 import { _exists, _missing } from './utils/generic';
 
-export function _isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
+function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
     return gos.get('rowModelType') === rowModelType;
+}
+
+export function _isClientSideRowModel(gos: GridOptionsService): boolean {
+    return isRowModelType(gos, 'clientSide');
+}
+
+export function _isServerSideRowModel(gos: GridOptionsService): boolean {
+    return isRowModelType(gos, 'serverSide');
 }
 
 export function _isDomLayout(gos: GridOptionsService, domLayout: DomLayoutType) {
@@ -28,7 +36,7 @@ export function _isRowSelection(gos: GridOptionsService) {
     return rowSelection === 'single' || rowSelection === 'multiple';
 }
 
-export function useAsyncEvents(gos: GridOptionsService) {
+export function _useAsyncEvents(gos: GridOptionsService) {
     return !gos.get('suppressAsyncEvents');
 }
 
@@ -123,13 +131,13 @@ function isNumeric(value: any): value is number {
 }
 
 // returns the dom data, or undefined if not found
-export function getDomData(gos: GridOptionsService, element: Node | null, key: string): any {
+export function _getDomData(gos: GridOptionsService, element: Node | null, key: string): any {
     const domData = (element as any)[gos.getDomDataKey()];
 
     return domData ? domData[key] : undefined;
 }
 
-export function setDomData(gos: GridOptionsService, element: Element, key: string, value: any): any {
+export function _setDomData(gos: GridOptionsService, element: Element, key: string, value: any): any {
     const domDataKey = gos.getDomDataKey();
     let domData = (element as any)[domDataKey];
 
@@ -158,17 +166,17 @@ export function _getDocument(gos: GridOptionsService): Document {
     return document;
 }
 
-export function getWindow(gos: GridOptionsService) {
+export function _getWindow(gos: GridOptionsService) {
     const eDocument = _getDocument(gos);
     return eDocument.defaultView || window;
 }
 
-export function getRootNode(gos: GridOptionsService): Document | ShadowRoot {
+export function _getRootNode(gos: GridOptionsService): Document | ShadowRoot {
     return gos.eGridDiv.getRootNode() as Document | ShadowRoot;
 }
 
 export function _getActiveDomElement(gos: GridOptionsService): Element | null {
-    return getRootNode(gos).activeElement;
+    return _getRootNode(gos).activeElement;
 }
 
 export function _isNothingFocused(gos: GridOptionsService): boolean {
@@ -186,7 +194,7 @@ export function _isAnimateRows(gos: GridOptionsService) {
     return gos.get('animateRows');
 }
 
-export function isGroupRowsSticky(gos: GridOptionsService): boolean {
+export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
     if (gos.get('paginateChildRows') || gos.get('groupHideOpenParents') || _isDomLayout(gos, 'print')) {
         return false;
     }

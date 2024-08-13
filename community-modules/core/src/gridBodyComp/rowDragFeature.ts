@@ -10,7 +10,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
-import { _getRowIdCallback, _isRowModelType } from '../gridOptionsUtils';
+import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -81,7 +81,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public postConstruct(): void {
-        if (_isRowModelType(this.gos, 'clientSide')) {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 

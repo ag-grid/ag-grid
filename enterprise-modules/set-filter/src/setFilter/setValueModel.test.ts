@@ -59,7 +59,6 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     };
 
     const rowModel = {
-        getType: () => 'clientSide',
         forEachLeafNode: (callback: (node: RowNode) => void) => {
             for (const value of values) {
                 callback({ data: { value } } as any);
@@ -85,6 +84,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
 
     const gos = mock<GridOptionsService>('get', 'addGridCommonParams');
     gos.addGridCommonParams.mockImplementation((params) => params as any);
+    gos.get.mockImplementation((prop) => (prop === 'rowModelType' ? 'clientSide' : undefined));
 
     const funcColsService = mock<FuncColsService>('getRowGroupColumns');
     funcColsService.getRowGroupColumns.mockImplementation(() => []);

@@ -3,7 +3,7 @@ import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
 import type { SelectionEventSourceType } from '../../../events';
-import { _getActiveDomElement } from '../../../gridOptionsUtils';
+import { _getActiveDomElement, _isClientSideRowModel, _isServerSideRowModel } from '../../../gridOptionsUtils';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
@@ -152,12 +152,11 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkRightRowModelType(feature: string): boolean {
-        const rowModelType = this.rowModel.getType();
-        const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
+        const rowModelMatches = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
 
         if (!rowModelMatches) {
             _warnOnce(
-                `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
+                `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${this.rowModel.getType()}.`
             );
             return false;
         }

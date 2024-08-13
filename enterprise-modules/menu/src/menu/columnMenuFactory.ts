@@ -3,12 +3,11 @@ import type {
     BeanCollection,
     ColumnModel,
     FuncColsService,
-    IRowModel,
     MenuItemDef,
     MenuService,
     NamedBean,
 } from '@ag-grid-community/core';
-import { BeanStub, _removeRepeatsFromArray } from '@ag-grid-community/core';
+import { BeanStub, _isClientSideRowModel, _removeRepeatsFromArray } from '@ag-grid-community/core';
 import { AgMenuList } from '@ag-grid-enterprise/core';
 
 import type { MenuItemMapper } from './menuItemMapper';
@@ -21,14 +20,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     private menuItemMapper: MenuItemMapper;
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
-    private rowModel: IRowModel;
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
-        this.rowModel = beans.rowModel;
         this.menuService = beans.menuService;
     }
 
@@ -114,7 +111,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const isPrimary = column.isPrimary();
         const pivotModeOn = this.columnModel.isPivotMode();
 
-        const isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
+        const isInMemoryRowModel = _isClientSideRowModel(this.gos);
 
         const usingTreeData = this.gos.get('treeData');
 

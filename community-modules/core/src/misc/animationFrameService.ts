@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { getWindow } from '../gridOptionsUtils';
+import { _getWindow } from '../gridOptionsUtils';
 import type { PaginationService } from '../pagination/paginationService';
 import { _warnOnce } from '../utils/function';
 
@@ -201,7 +201,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     }
 
     public requestAnimationFrame(callback: any) {
-        const win = getWindow(this.gos);
+        const win = _getWindow(this.gos);
 
         if (win.requestAnimationFrame) {
             win.requestAnimationFrame(callback);

@@ -13,11 +13,13 @@ import {
     _getActiveDomElement,
     _getRowHeightForNode,
     _isAnimateRows,
+    _isClientSideRowModel,
     _isDomLayout,
     _isGetRowHeightFunction,
     _isGroupUseEntireRow,
     _isRowSelection,
-    setDomData,
+    _isServerSideRowModel,
+    _setDomData,
 } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
@@ -276,8 +278,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setRowCompRowBusinessKey(comp);
 
         // DOM DATA
-        setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
-        this.addDestroyFunc(() => setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
+        _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
+        this.addDestroyFunc(() => _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
@@ -1136,10 +1138,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 // doing another update
                 const updateRowHeightFunc = () => {
                     this.rowNode.setRowHeight(clientHeight);
-                    if (this.beans.rowModel.getType() === 'clientSide') {
-                        (this.beans.rowModel as IClientSideRowModel).onRowHeightChanged();
-                    } else if (this.beans.rowModel.getType() === 'serverSide') {
-                        (this.beans.rowModel as IServerSideRowModel).onRowHeightChanged();
+                    if (_isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos)) {
+                        (this.beans.rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged();
                     }
                 };
                 window.setTimeout(updateRowHeightFunc, 0);

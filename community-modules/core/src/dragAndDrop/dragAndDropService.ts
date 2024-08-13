@@ -6,7 +6,7 @@ import type { IAggFunc } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
-import { _getDocument, getRootNode } from '../gridOptionsUtils';
+import { _getDocument, _getRootNode } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -358,7 +358,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             return validDropTargets[0];
         }
 
-        const rootNode = getRootNode(this.gos);
+        const rootNode = _getRootNode(this.gos);
 
         // elementsFromPoint return a list of elements under
         // the mouseEvent sorted from topMost to bottomMost
@@ -584,7 +584,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             // simply by trying to read the fullscreenElement property
         } finally {
             if (!rootNode) {
-                rootNode = getRootNode(this.gos);
+                rootNode = _getRootNode(this.gos);
             }
             const body = rootNode.querySelector('body');
             if (body) {

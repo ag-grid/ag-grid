@@ -1,5 +1,12 @@
 import type { BeanCollection, NamedBean, RowGroupOpenedEvent } from '@ag-grid-community/core';
-import { BeanStub, RowNode, _exists, _getRowHeightForNode, _isRowModelType, _missing } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    RowNode,
+    _exists,
+    _getRowHeightForNode,
+    _isServerSideRowModel,
+    _missing,
+} from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from '../stores/storeFactory';
@@ -19,7 +26,7 @@ export class ExpandListener extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!_isRowModelType(this.gos, 'serverSide')) {
+        if (!_isServerSideRowModel(this.gos)) {
             return;
         }
 

@@ -14,11 +14,13 @@ import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
     _getActiveDomElement,
+    _getDomData,
     _getRowHeightAsNumber,
     _isAnimateRows,
+    _isClientSideRowModel,
     _isDomLayout,
-    getDomData,
-    isGroupRowsSticky,
+    _isGroupRowsSticky,
+    _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { ICellEditor } from '../interfaces/iCellEditor';
@@ -196,9 +198,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             () => this.redrawRows()
         );
 
-        if (isGroupRowsSticky(this.gos)) {
-            const rowModelType = this.rowModel.getType();
-            if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
+        if (_isGroupRowsSticky(this.gos)) {
+            if (_isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos)) {
                 this.stickyRowFeature = this.createManagedBean(
                     new StickyRowFeature(this.createRowCon.bind(this), this.destroyRowCtrls.bind(this))
                 );
@@ -594,8 +595,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
         const activeElement = _getActiveDomElement(this.gos);
-        const cellDomData = getDomData(this.gos, activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = getDomData(this.gos, activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const cellDomData = _getDomData(this.gos, activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowDomData = _getDomData(this.gos, activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
         const gridElementFocused = cellDomData || rowDomData;
 

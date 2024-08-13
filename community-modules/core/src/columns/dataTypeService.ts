@@ -19,6 +19,7 @@ import type {
     ValueParserLiteParams,
 } from '../entities/dataType';
 import type { AgGridEvent } from '../events';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { Column, ColumnEventName } from '../interfaces/iColumn';
 import type { IEventListener } from '../interfaces/iEventEmitter';
@@ -383,7 +384,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
-        if (this.rowModel.getType() !== 'clientSide') {
+        if (!_isClientSideRowModel(this.gos)) {
             return false;
         }
         const propsToCheckForInference = { cellRenderer: true, valueGetter: true, valueParser: true, refData: true };

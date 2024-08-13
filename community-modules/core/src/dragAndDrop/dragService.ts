@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
-import { _getDocument, getRootNode } from '../gridOptionsUtils';
+import { _getDocument, _getRootNode } from '../gridOptionsUtils';
 import { _removeFromArray } from '../utils/array';
 import { _isBrowserSafari } from '../utils/browser';
 import { _isFocusableFormField } from '../utils/dom';
@@ -124,7 +124,7 @@ export class DragService extends BeanStub implements NamedBean {
             // preventDefault needs to be called in the touchmove listener and never inside the
             // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
             {
-                target: getRootNode(this.gos),
+                target: _getRootNode(this.gos),
                 type: 'touchmove',
                 listener: documentTouchMove,
                 options: { passive: false },
@@ -178,7 +178,7 @@ export class DragService extends BeanStub implements NamedBean {
         const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);
         const contextEvent = (event: MouseEvent) => event.preventDefault();
 
-        const target = getRootNode(this.gos);
+        const target = _getRootNode(this.gos);
         const events = [
             { target, type: 'mousemove', listener: mouseMoveEvent },
             { target, type: 'mouseup', listener: mouseUpEvent },

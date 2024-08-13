@@ -11,7 +11,7 @@ import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
-import { _isDomLayout, _isGroupUseEntireRow, _isRowModelType } from '../gridOptionsUtils';
+import { _isClientSideRowModel, _isDomLayout, _isGroupUseEntireRow, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
@@ -515,8 +515,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
 
-            const supportedRowModel =
-                _isRowModelType(this.gos, 'clientSide') || _isRowModelType(this.gos, 'serverSide');
+            const supportedRowModel = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
             if (!supportedRowModel) {
                 _warnOnce('autoHeight columns only work with Client Side Row Model and Server Side Row Model.');
             }

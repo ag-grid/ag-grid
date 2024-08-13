@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _isRowModelType } from '../gridOptionsUtils';
+import { _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { _removeFromArray } from '../utils/array';
@@ -110,7 +110,7 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
     }
 
     public getBlockState() {
-        if (_isRowModelType(this.gos, 'serverSide')) {
+        if (_isServerSideRowModel(this.gos)) {
             const ssrm = this.rowModel as IServerSideRowModel;
             return ssrm.getBlockStates();
         }

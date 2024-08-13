@@ -13,7 +13,7 @@ import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import type { NavigationService } from './gridBodyComp/navigationService';
 import type { GridCtrl } from './gridComp/gridCtrl';
-import { _getActiveDomElement, _getDocument, getDomData } from './gridOptionsUtils';
+import { _getActiveDomElement, _getDocument, _getDomData } from './gridOptionsUtils';
 import { AbstractHeaderCellCtrl } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import type { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
@@ -211,7 +211,7 @@ export class FocusService extends BeanStub implements NamedBean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
-            const data = getDomData(this.gos, ePointer, key);
+            const data = _getDomData(this.gos, ePointer, key);
 
             if (data) {
                 return false;

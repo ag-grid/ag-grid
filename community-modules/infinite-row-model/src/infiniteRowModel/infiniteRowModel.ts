@@ -17,7 +17,6 @@ import {
     NumberSequence,
     _getRowHeightAsNumber,
     _getRowIdCallback,
-    _isRowModelType,
     _jsonEquals,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -60,7 +59,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     public postConstruct(): void {
-        if (!_isRowModelType(this.gos, 'infinite')) {
+        if (this.gos.get('rowModelType') !== 'infinite') {
             return;
         }
 

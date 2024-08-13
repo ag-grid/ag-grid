@@ -8,7 +8,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
-import { _getDocument, _getRowHeightForNode, _isRowModelType, setDomData } from '../../gridOptionsUtils';
+import { _getDocument, _getRowHeightForNode, _isClientSideRowModel, _setDomData } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -756,8 +756,8 @@ export class CellCtrl extends BeanStub {
     private addDomData(): void {
         const element = this.getGui();
 
-        setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
-        this.addDestroyFunc(() => setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
+        _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
+        this.addDestroyFunc(() => _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
@@ -1125,7 +1125,7 @@ export class CellCtrl extends BeanStub {
     ): RowDragComp | undefined {
         const pagination = this.beans.gos.get('pagination');
         const rowDragManaged = this.beans.gos.get('rowDragManaged');
-        const clientSideRowModelActive = _isRowModelType(this.beans.gos, 'clientSide');
+        const clientSideRowModelActive = _isClientSideRowModel(this.beans.gos);
 
         if (rowDragManaged) {
             // row dragging only available in default row model

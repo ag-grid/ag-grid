@@ -2,7 +2,7 @@ import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { AgEventType } from '../eventTypes';
 import type { RowEvent, SelectionEventSourceType } from '../events';
-import { _getRowHeightForNode, _getRowIdCallback, _isRowModelType } from '../gridOptionsUtils';
+import { _getRowHeightForNode, _getRowIdCallback, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -833,7 +833,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         let newValue: boolean | null =
             (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
 
-        const isSsrm = _isRowModelType(this.beans.gos, 'serverSide');
+        const isSsrm = _isServerSideRowModel(this.beans.gos);
         if (isSsrm) {
             const isTreeData = this.beans.gos.get('treeData');
             const isGroupFunc = this.beans.gos.get('isServerSideGroup');

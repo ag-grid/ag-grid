@@ -35,6 +35,7 @@ import {
     _exists,
     _getActiveDomElement,
     _getDocument,
+    _isClientSideRowModel,
     _last,
     _removeFromArray,
     _warnOnce,
@@ -115,7 +116,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private navigatorApiFailed = false;
 
     public postConstruct(): void {
-        if (this.rowModel.getType() === 'clientSide') {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
