@@ -429,7 +429,7 @@ button.seeMore {
     flex-direction: column;
 }
 
-td {
+.apiReference > td {
     // background-color: rgba(255, 0, 0, 0.105);
     display: flex;
     flex-direction: column;
@@ -482,11 +482,11 @@ td {
     white-space: nowrap;
     display: flex;
     gap: 8px;
+    align-items: center;
 
     svg {
         --icon-size: 16px;
     }
-    align-items: center;
 }
 .separator {
     border-left: 1px solid var(--color-border-secondary);
