@@ -83,6 +83,7 @@ export class CellCtrl extends BeanStub {
     private focusEventToRestore: CellFocusedEvent | undefined;
 
     private printLayout: boolean;
+    private staticCssClasses: string[];
 
     private value: any;
     private valueFormatted: any;
@@ -122,6 +123,15 @@ export class CellCtrl extends BeanStub {
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
 
         this.colIdSanitised = _escapeString(this.column.getId())!;
+
+        // CSS Classes that only get applied once, they never change
+        // normal cells fill the height of the row. autoHeight cells have no height to let them
+        // fit the height of content.
+        this.staticCssClasses = [
+            CSS_CELL,
+            CSS_CELL_NOT_INLINE_EDITING,
+            this.column.isAutoHeight() == true ? CSS_AUTO_HEIGHT : CSS_NORMAL_HEIGHT,
+        ];
 
         this.createCellPosition();
         this.addFeatures();
@@ -271,7 +281,6 @@ export class CellCtrl extends BeanStub {
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
         this.onCellFocused(this.focusEventToRestore);
-        this.applyStaticCssClasses();
         this.setWrapText();
 
         this.onFirstRightPinnedChanged();
@@ -996,17 +1005,8 @@ export class CellCtrl extends BeanStub {
         };
     }
 
-    // CSS Classes that only get applied once, they never change
-    private applyStaticCssClasses(): void {
-        this.cellComp.addOrRemoveCssClass(CSS_CELL, true);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, true);
-
-        // normal cells fill the height of the row. autoHeight cells have no height to let them
-        // fit the height of content.
-
-        const autoHeight = this.column.isAutoHeight() == true;
-        this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
-        this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
+    public getStaticClasses(): string[] {
+        return this.staticCssClasses;
     }
 
     public onColumnHover(): void {

@@ -239,7 +239,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const cssClassManager = useRef<CssClassManager>();
 
     if (!cssClassManager.current) {
-        cssClassManager.current = new CssClassManager(() => eGui.current);
+        cssClassManager.current = new CssClassManager(() => eGui.current, cellCtrl.getStaticClasses());
     }
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
@@ -450,9 +450,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
 
     const reactCellRendererStateless = useMemo(() => {
         const res =
-            renderDetails &&
-            renderDetails.compDetails &&
-            renderDetails.compDetails.componentFromFramework &&
+            renderDetails?.compDetails?.componentFromFramework &&
             isComponentStateless(renderDetails.compDetails.componentClass);
 
         return !!res;
@@ -502,7 +500,14 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const onBlur = useCallback(() => cellCtrl.onFocusOut(), []);
 
     return (
-        <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colId} onBlur={onBlur}>
+        <div
+            ref={setRef}
+            className={cssClassManager.current!.getCssClassString()}
+            style={userStyles}
+            role={cellAriaRole}
+            col-id={colId}
+            onBlur={onBlur}
+        >
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
                     {showContents()}

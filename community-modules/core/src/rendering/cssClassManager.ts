@@ -5,8 +5,12 @@ export class CssClassManager {
     // there, or removing one that wasn't present, all takes CPU.
     private cssClassStates: { [cssClass: string]: boolean } = {};
 
-    constructor(getGui: () => HTMLElement | undefined | null) {
+    private isCssClassStrStale = false;
+    private cssClassString: string = '';
+
+    constructor(getGui: () => HTMLElement | undefined | null, initialCssClasses: string[] = []) {
         this.getGui = getGui;
+        initialCssClasses.forEach((cssClass) => this.addCssClass(cssClass));
     }
 
     public addCssClass(className: string): void {
@@ -24,6 +28,7 @@ export class CssClassManager {
                 eGui.classList.add(className);
             }
             this.cssClassStates[className] = true;
+            this.isCssClassStrStale = true;
         }
     }
 
@@ -43,6 +48,7 @@ export class CssClassManager {
             }
 
             this.cssClassStates[className] = false;
+            this.isCssClassStrStale = true;
         }
     }
 
@@ -78,6 +84,27 @@ export class CssClassManager {
             }
 
             this.cssClassStates[className] = addOrRemove;
+            this.isCssClassStrStale = true;
         }
+    }
+
+    public getCssClassString(): string {
+        if (this.isCssClassStrStale) {
+            this.updateClassString();
+        }
+
+        return this.cssClassString;
+    }
+
+    private updateClassString(): void {
+        const res: string[] = [];
+        Object.keys(this.cssClassStates).forEach((key) => {
+            if (this.cssClassStates[key]) {
+                res.push(key);
+            }
+        });
+
+        this.cssClassString = res.join(' ');
+        this.isCssClassStrStale = false;
     }
 }

@@ -99,6 +99,8 @@ export class CellComp extends Component implements TooltipParentComp {
         _setAriaRole(eGui, cellCtrl.getCellAriaRole());
         setAttribute('col-id', cellCtrl.getColumnIdSanitised());
 
+        cellCtrl.getStaticClasses().forEach((c) => this.addCssClass(c));
+
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles: CellStyle) => _addStylesToElement(eGui, styles),

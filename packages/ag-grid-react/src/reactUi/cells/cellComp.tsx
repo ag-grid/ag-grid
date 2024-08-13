@@ -450,9 +450,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
 
     const reactCellRendererStateless = useMemo(() => {
         const res =
-            renderDetails &&
-            renderDetails.compDetails &&
-            renderDetails.compDetails.componentFromFramework &&
+            renderDetails?.compDetails?.componentFromFramework &&
             isComponentStateless(renderDetails.compDetails.componentClass);
 
         return !!res;
