@@ -200,7 +200,7 @@ export const Property: FunctionComponent<{
         <>
             <tr ref={propertyRef}>
                 <td role="presentation" className={styles.leftColumn}>
-                    <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                    <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
                         <span
                             onClick={() => setExpanded(!isExpanded)}
                             dangerouslySetInnerHTML={{ __html: displayNameSplit }}
@@ -208,7 +208,7 @@ export const Property: FunctionComponent<{
                         <a href={`#${idName}`} className="docs-header-icon" aria-label={`Link to '${name}' property`}>
                             <Icon name="link" />
                         </a>
-                    </h6>
+                    </div>
 
                     <div className={styles.metaList}>
                         <div

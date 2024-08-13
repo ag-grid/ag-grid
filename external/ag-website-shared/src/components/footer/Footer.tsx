@@ -14,7 +14,7 @@ interface FooterProps {
 const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) =>
     footerItems.map(({ title, links }) => (
         <div key={title} className={styles.menuColumn}>
-            <h4>{title}</h4>
+            <h2>{title}</h2>
             <ul className="list-style-none">
                 {links.map(({ name, url, newTab, iconName }: any) => (
                     <li key={`${title}_${name}`}>
