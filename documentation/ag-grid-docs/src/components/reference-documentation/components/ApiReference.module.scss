@@ -119,9 +119,6 @@
     }
 
     @container (max-width: #{$breakpoint-table-small}) {
-        a {
-            display: none;
-        }
     }
 }
 
@@ -435,6 +432,10 @@ button.seeMore {
     .columnWrapper {
         display: flex;
         flex-direction: row;
+        @container (max-width: #{$breakpoint-table-small}) {
+            display: flex;
+            flex-direction: column;
+        }
     }
 }
 
@@ -497,5 +498,4 @@ button.seeMore {
     display: flex;
     flex-direction: row;
     align-items: center;
-    user-select: none;
 }

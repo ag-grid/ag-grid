@@ -314,7 +314,7 @@ export const Property: FunctionComponent<{
                                                 name,
                                             });
                                         }}
-                                        role="presentation"
+                                        aria-label={`See more details about ${more?.name}`}
                                     >
                                         More details
                                         <Icon
@@ -347,66 +347,18 @@ export const Property: FunctionComponent<{
                                     </a>
                                 )}
                             </div>
-                            {more != null && more.url && !config.hideMore && (
-                                <span className={styles.seeMoreLink}>
-                                    <span className="text-secondary">See: </span>{' '}
-                                    <a
-                                        href={urlWithPrefix({
-                                            url: more.url,
-                                            framework,
-                                        })}
-                                        onClick={() => {
-                                            trackApiDocumentation({
-                                                type: 'seeMoreLink',
-                                                framework,
-                                                id,
-                                                name,
-                                                seeMoreName: more.name,
-                                            });
-                                        }}
-                                    >
-                                        {more.name}
-                                    </a>
-                                </span>
-                            )}
-                        </div>
-                        <div className={styles.actions}>
-                            {detailsCode && (
-                                <button
-                                    className={classnames(styles.seeMore, 'button-as-link')}
-                                    onClick={() => {
-                                        setExpanded(!isExpanded);
-                                        trackApiDocumentation({
-                                            type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
-                                            framework,
-                                            id,
-                                            name,
-                                        });
-                                    }}
-                                    aria-label={`See more details about ${more.name}`}
-                                >
-                                    <span>More details</span>
-                                    <Icon className={styles.chevron} name={isExpanded ? 'chevronUp' : 'chevronDown'} />
-                                </button>
-                            )}
                         </div>
                     </div>
-
                     {detailsCode && isExpanded && (
-                        <tr className={classnames(styles.expandedContent)}>
-                            <td colSpan={2}>{detailsCode && <Code code={detailsCode} keepMarkup={true} />}</td>
+                        <tr id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
+                            <td colSpan={2}>
+                                <div className={styles.metaList}></div>
+                                {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
+                            </td>
                         </tr>
                     )}
                 </td>
             </tr>
-            {detailsCode && isExpanded && (
-                <tr id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
-                    <td colSpan={2}>
-                        <div className={styles.metaList}></div>
-                        {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
-                    </td>
-                </tr>
-            )}
         </>
     );
 };
