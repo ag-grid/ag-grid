@@ -22,7 +22,11 @@ This describes the new selection configuration API. For documentation on the dep
 
 ## Enabling Multi Row Selection
 
-Multi row selection is configured by setting `selection.mode` to `'multiRow'`. The following example illustrates a basic multi row selection configuration. 
+Multi row selection is configured by setting `selection.mode` to `'multiRow'`. 
+
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selection"] /%}
+
+The following example illustrates a basic multi row selection configuration. 
 Checkboxes are enabled by default. Click checkboxes to select or deselect a row. Alternatively, use {% kbd "^ Ctrl" /%}-click to add rows to the selection. 
 Use {% kbd "⇧ Shift" /%}-click to add a range of adjacent rows to the selection. Row range selection is discussed in more detail [below](#row-range-selection).
 
@@ -34,7 +38,7 @@ See the [definition of the `selection` object below](#api-reference), or continu
 
 In `'multiRow'` mode, ranges of rows can be selected by holiding down {% kbd "⇧ Shift" /%} while clicking on rows. 
 {% kbd "⇧ Shift" /%}-clicking a row will select all rows between that row and the previously selected row.
-This behaviour also applies when [checkbox selection](#checkbox-selection) is enabled, and in [group selection](./grouping-selection).
+This behaviour also applies when [checkbox selection](#checkbox-selection) is enabled, and in [group selection](./grouping-row-selection).
 
 ### Extending, truncating and inverting a selected range
 
@@ -67,20 +71,26 @@ This is controlled by the `selection.checkboxes` property. To hide the checkbox 
 The rendering of the checkbox can also be determined dynamically, by instead setting `selection.checkboxes` to a function.
 The function will be invoked for a given row to determine whether or not that row should display a checkbox.
 
-Note that when using a function in `selection.checkboxes`, the checkbox column will appear even if the function returns `false` for all rows. To be explicit:
+Note that when using a function in `selection.checkboxes`, the checkbox column will appear (albeit disabled) even if the function returns `false` for all rows. To be explicit:
 
 | Value of `selection.checkboxes` | Checkbox rendered | Checkbox visible |
 |------------------------------|--------------------------|------------------|
 | `false`                      | No ❌                    | No ❌            |
 | `true`                       | Yes ✅                   | Yes ✅           |
-| Function returning `false`   | Yes ✅                   | Yes ✅           |
+| Function returning `false`   | Yes ✅                   | Yes ✅ [(disabled)](#hiding-disabled-checkboxes)          |
 | Function returning `true`    | Yes ✅                   | Yes ✅           |
 
 The example below illustrates using a function to control which rows have checkbox selection enabled. 
 Specifically, only those rows with a "Year" value less than or equal to 2004 will have checkboxes enabled.
-For those rows that don't satisfy this filter, a checkbox will be rendered in a disabled state.
+For those rows that don't satisfy this criterion, a checkbox will be rendered in a disabled state.
 
 {% gridExampleRunner title="Checkbox Selection" name="checkbox-selection" /%}
+
+### Disabling Click Selection
+
+When checkbox selection is enabled, in many cases it makes sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked.
+
+This behaviour is enabled in the example below using the `selection.suppressClickSelection` flag.
 
 ### Hiding Disabled Checkboxes
 
@@ -112,10 +122,23 @@ To disable the header checkbox, set `selection.headerCheckbox = false`.
 
 ## Deselection
 
+### Deselecting a Row without Checkboxes
+When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
+When checkboxes are disabled, rows can be deselected by {% kbd "^ Ctrl" /%}-clicking the row. 
+This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
+{% kbd "^ Ctrl" /%}-click the selected row in the example below. 
+
+{% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
+
 ### Deselecting Ranges
-Typically, rows are deselected individually by {% kbd "^ Ctrl" /%}-clicking the row. Users may also deselect multiple rows at once by using {% kbd "⇧ Shift" /%}-click. 
+Typically, rows are deselected individually by {% kbd "^ Ctrl" /%}-clicking the row or unchecking the checkbox. Users may also deselect multiple rows at once by using {% kbd "⇧ Shift" /%}-click. 
 For example, deselecting a single row with {% kbd "^ Ctrl" /%}-click, then deselecting another row with {% kbd "⇧ Shift" /%}-click will deselect all rows between the two. 
-Note that this deselection occurs whether or not the row is within the original range of selected rows. Use the example below to explore this behaviour.
+Note that this deselection occurs whether or not the row is within the original range of selected rows.
+
+To illustrate this, in the example below:
+1. Deselect "Ryan Lochte"
+1. {% kbd "⇧ Shift" /%}-select "Dara Torres"
+1. Observe that only "Missy Franklin" and "Cindy Klassen" remain selected
 
 {% gridExampleRunner title="Deselecting Ranges" name="bulk-deselection" /%}
 
@@ -125,9 +148,11 @@ In some circumstances you may want to prevent users from deselecting a selected 
 
 Observe that in the example below, it is not possible to deselect a row, whether {% kbd "^ Ctrl" /%}-clicking or using bulk deselection. 
 
-Note that deselection is still possible when checkboxes are enabled by clicking a selected checkbox.
-
 {% gridExampleRunner title="Supress Deselection" name="suppress-deselection" /%}
+
+{% note %}
+Note that deselection is still possible when checkboxes are enabled by clicking a selected checkbox.
+{% /note %}
 
 ## Configure Selectable Rows
 
@@ -150,6 +175,7 @@ This example demonstrates the following:
 
 * The `selection.isRowSelectable(node)` callback only allows selections on rows where the year is less than 2007.
 * Only rows which are selectable will have a selectable checkbox. Similarly, the header checkbox will only select selectable rows.
+* Note again that the checkboxes for unselectable rows are displayed as disabled. See [Hiding Disabled Checkboxes](#hiding-disabled-checkboxes) for instructions on how to prevent them being displayed.
 
 {% gridExampleRunner title="Selectable Rows with Header Checkbox" name="specify-selectable-rows" /%}
 
@@ -158,8 +184,8 @@ This example demonstrates the following:
 It is possible to select a row via the Grid API and disable its checkbox to prevent users from deselecting it. 
 This can be achieved by providing a function to `selection.checkboxes`.
 
-In the example below only rows with Year equal to 2012 are selectable. All other rows cannot be selected by the user.
-Clicking the header checkbox will select all rows even if their checkboxes are disabled.
+In the example below only rows with Year equal to 2012 can be selected or deselected by the user. All other rows cannot have their selection state changed by user-clicks.
+Clicking the header checkbox, however, will select all rows even if their checkboxes are disabled.
 
 {% gridExampleRunner title="Force Checkboxes to be Selected" name="force-enable-checkboxes" /%}
 
@@ -176,13 +202,9 @@ Click multiple rows in the example below without pressing any keyboard modifier 
 ## Enterprise Features
 
 Row selection can be used when using row grouping, tree data and the server side row model. See the respective sections of the documentation:
-- [Row Group Selection](./grouping-selection)
-- [Tree Data Selection](./tree-data)
+- [Row Group Selection](./grouping-row-selection)
+- [Tree Data Selection](./tree-data#selection)
 - [Server-Side Row Model Selection](./server-side-model-selection)
-
-## API Reference
-
-{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selection"] /%}
 
 ## Next up
 

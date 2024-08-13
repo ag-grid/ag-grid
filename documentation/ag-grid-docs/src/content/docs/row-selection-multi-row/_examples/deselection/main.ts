@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { type GridApi, type GridOptions, type SelectionOptions, createGrid } from '@ag-grid-community/core';
+import { createGrid } from '@ag-grid-community/core';
+import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -9,20 +10,23 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 
 let gridApi: GridApi<IOlympicData>;
 
-const selection: SelectionOptions = {
-    mode: 'multiRow',
-    suppressClickSelection: true,
-    hideDisabledCheckboxes: true,
-    isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
-};
-
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
-    defaultColDef: {
-        flex: 1,
-        minWidth: 100,
+    defaultColDef: { flex: 1, minWidth: 100 },
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
     },
-    selection,
+    onFirstDataRendered: (params) => {
+        const nodesToSelect: IRowNode[] = [];
+        params.api.forEachNode((node) => {
+            if (node.rowIndex && node.rowIndex === 3) {
+                nodesToSelect.push(node);
+            }
+        });
+        params.api.setNodesSelected({ nodes: nodesToSelect, newValue: true });
+    },
 };
 
 // setup the grid after the page has finished loading
@@ -32,16 +36,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
-
-    document.querySelector('#toggle-hide-checkbox')?.addEventListener('change', () => {
-        gridApi.setGridOption('selection', {
-            ...selection,
-            hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
-        });
-    });
+        .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
 });
-
-function getCheckboxValue(id: string): boolean {
-    return document.querySelector<HTMLInputElement>(id)?.checked ?? false;
-}

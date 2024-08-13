@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { createGrid } from '@ag-grid-community/core';
-import type { FirstDataRenderedEvent, GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
+import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -14,7 +14,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
     defaultColDef: { flex: 1, minWidth: 100 },
     selection: { mode: 'singleRow', checkboxes: false },
-    onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
+    onFirstDataRendered: (params) => {
         const nodesToSelect: IRowNode[] = [];
         params.api.forEachNode((node) => {
             if (node.rowIndex && node.rowIndex === 3) {
