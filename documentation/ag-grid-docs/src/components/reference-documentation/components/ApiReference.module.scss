@@ -412,6 +412,7 @@ button.seeMore {
     justify-content: left;
     flex-wrap: wrap;
     gap: $spacing-size-2;
+    flex-direction: column;
 }
 
 .metaRow {
