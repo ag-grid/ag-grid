@@ -639,7 +639,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
         const column = getColumnFromKey()!;
-        const oldValue = this.getValueFromValueService(column);
+        const oldValue = this.beans.valueService.getValueForDisplay(column, this);
 
         if (this.beans.gos.get('readOnlyEdit')) {
             this.beans.eventService.dispatchEvent({
@@ -665,39 +665,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.checkRowSelectable();
 
         return valueChanged;
-    }
-
-    public getValueFromValueService(column: AgColumn): any {
-        // if we don't check this, then the grid will render leaf groups as open even if we are not
-        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
-        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
-        // them via the API, or user user expanded them in the UI before turning on pivot mode
-        const lockedClosedGroup = this.leafGroup && this.beans.columnModel.isPivotMode();
-
-        const isOpenGroup = this.group && this.expanded && !this.footer && !lockedClosedGroup;
-
-        let includeFooter = false;
-        // are we showing group footers
-        const groupIncludeFooterOpt = this.beans.gos.get('groupTotalRow') ?? this.beans.gos.get('groupIncludeFooter');
-        if (typeof groupIncludeFooterOpt !== 'function') {
-            includeFooter = !!groupIncludeFooterOpt;
-        } else {
-            const groupIncludeFooterCb: any =
-                this.beans.gos.getCallback('groupTotalRow' as any) ??
-                this.beans.gos.getCallback('groupIncludeFooter' as any);
-            includeFooter = !!groupIncludeFooterCb({ node: this });
-        }
-
-        // if doing footers, we normally don't show agg data at group level when group is open
-        const groupAlwaysShowAggData = this.beans.gos.get('groupSuppressBlankHeader');
-
-        // if doing grouping and footers, we don't want to include the agg value
-        // in the header when the group is open
-        const ignoreAggData = isOpenGroup && includeFooter && !groupAlwaysShowAggData;
-
-        const value = this.beans.valueService.getValue(column, this, false, ignoreAggData);
-
-        return value;
     }
 
     public setGroupValue(colKey: string | AgColumn, newValue: any): void {
@@ -1018,13 +985,17 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     /**
-     * @deprecated v32.2.0
+     * @deprecated v32.2.0 Check `node.detail` then user provided callback `isFullWidthRow` instead.
      *
      * Returns:
      * - `true` if the node is a full width cell
      * - `false` if the node is not a full width cell
      */
     public isFullWidthCell(): boolean {
+        _warnOnce(
+            'since version v32.2.0, rowNode.isFullWidthCell() has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.'
+        );
+
         if (this.detail) {
             return true;
         }
@@ -1034,11 +1005,15 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     /**
-     * Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.
-     * If the Row Node is not a group, it returns `undefined`.
+     * Returns the route of keys to the row node. Returns undefined if the node has no key.
      */
     public getRoute(): string[] | undefined {
-        if (!this.group) {
+        // root node is still a valid route
+        if (this.level === -1) {
+            return [];
+        }
+
+        if (this.key == null) {
             return undefined;
         }
 

@@ -510,7 +510,7 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = this.beans.gos.addGridCommonParams({
             value: this.value,
             valueFormatted: this.valueFormatted,
-            getValue: () => this.rowNode.getValueFromValueService(this.column),
+            getValue: () => this.beans.valueService.getValueForDisplay(this.column, this.rowNode),
             setValue: (value: any) => this.beans.valueService.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
@@ -729,7 +729,7 @@ export class CellCtrl extends BeanStub {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
-        this.value = this.rowNode.getValueFromValueService(this.column);
+        this.value = this.beans.valueService.getValueForDisplay(this.column, this.rowNode);
         this.valueFormatted = this.callValueFormatter(this.value);
 
         if (compareValues) {

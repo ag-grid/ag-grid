@@ -1850,12 +1850,6 @@
                 "url": "./row-styles/#row-class-rules"
             }
         },
-        "isFullWidthRow": {
-            "more": {
-                "name": "Full Width Rows",
-                "url": "./full-width-rows/"
-            }
-        },
         "suppressRowHoverHighlight": {
             "more": {
                 "name": "Highlighting Rows and Columns",
