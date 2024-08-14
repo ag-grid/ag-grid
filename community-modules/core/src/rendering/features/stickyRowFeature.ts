@@ -26,8 +26,8 @@ export class StickyRowFeature extends BeanStub {
     private stickyTopRowCtrls: RowCtrl[] = [];
     private stickyBottomRowCtrls: RowCtrl[] = [];
     private gridBodyCtrl: GridBodyCtrl;
-    private topContainerHeight = 0;
-    private bottomContainerHeight = 0;
+    private topContainerHeight: number;
+    private bottomContainerHeight: number;
     private isClientSide: boolean;
 
     // sticky rows pulls in extra rows from other pages which impacts row position
@@ -50,6 +50,8 @@ export class StickyRowFeature extends BeanStub {
         this.ctrlsService.whenReady((params) => {
             this.gridBodyCtrl = params.gridBodyCtrl;
         });
+
+        this.resetStickyContainers();
     }
 
     public getStickyTopRowCtrls(): RowCtrl[] {
@@ -373,6 +375,10 @@ export class StickyRowFeature extends BeanStub {
     }
 
     public destroyStickyCtrls(): void {
+        this.resetStickyContainers();
+    }
+
+    private resetStickyContainers(): void {
         this.refreshNodesAndContainerHeight('top', new Set(), 0);
         this.refreshNodesAndContainerHeight('bottom', new Set(), 0);
     }
