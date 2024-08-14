@@ -217,9 +217,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             for (let i = 0; i < len; ++i) {
                 const row = rows![i];
                 const node = row.treeNode as TreeNode | null;
-                if (node) {
+                if (node !== null) {
                     this.removeRow(node, row);
-                    setTreeRowExpandedInitialized(row, false);
                 }
             }
         }
