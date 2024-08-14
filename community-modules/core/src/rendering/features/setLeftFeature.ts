@@ -3,6 +3,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { isColumnGroup } from '../../entities/agColumnGroup';
+import { _isDomLayout } from '../../gridOptionsUtils';
 import { _setAriaColSpan } from '../../utils/aria';
 import { _last } from '../../utils/array';
 import { _exists } from '../../utils/generic';
@@ -104,7 +105,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(colOrGroup: AgColumn | AgColumnGroup, leftPosition: number): number {
-        const printLayout = this.beans.gos.isDomLayout('print');
+        const printLayout = _isDomLayout(this.beans.gos, 'print');
 
         if (!printLayout) {
             return leftPosition;

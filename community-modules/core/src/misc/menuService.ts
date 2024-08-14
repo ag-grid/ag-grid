@@ -14,6 +14,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _warnOnce } from '../utils/function';
+import type { ValueService } from '../valueService/valueService';
 import type { AnimationFrameService } from './animationFrameService';
 
 interface BaseShowColumnMenuParams {
@@ -78,12 +79,14 @@ export class MenuService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
     private animationFrameService: AnimationFrameService;
     private filterManager?: FilterManager;
+    private valueService: ValueService;
     private rowRenderer: RowRenderer;
     private columnChooserFactory?: IColumnChooserFactory;
     private contextMenuFactory?: IContextMenuFactory;
     private enterpriseMenuFactory?: IMenuFactory;
 
     public wireBeans(beans: BeanCollection): void {
+        this.valueService = beans.valueService;
         this.filterMenuFactory = beans.filterMenuFactory;
         this.ctrlsService = beans.ctrlsService;
         this.animationFrameService = beans.animationFrameService;
@@ -141,7 +144,7 @@ export class MenuService extends BeanStub implements NamedBean {
         let { anchorToElement, value } = params;
 
         if (rowNode && column && value == null) {
-            value = rowNode.getValueFromValueService(column);
+            value = this.valueService.getValueForDisplay(column, rowNode);
         }
 
         if (anchorToElement == null) {

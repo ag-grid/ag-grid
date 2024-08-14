@@ -2,7 +2,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AllEvents } from '../events';
-import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import type { GridApi } from './gridApi';
 import { gridApiFunctionsMap } from './gridApiFunctions';
@@ -85,7 +84,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     }
 
     private apiNotFound(fnName: ApiFunctionName): void {
-        const { beans, gridId, preDestroyLink } = this;
+        const { beans, gos, preDestroyLink } = this;
         if (!beans) {
             _warnOnce(
                 `Grid API function ${fnName}() cannot be called as the grid has been destroyed.\n` +
@@ -94,7 +93,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
             );
         } else {
             const module = gridApiFunctionsMap[fnName];
-            if (ModuleRegistry.__assertRegistered(module, `api.${fnName}`, gridId)) {
+            if (gos.assertModuleRegistered(module, `api.${fnName}`)) {
                 _warnOnce(`API function '${fnName}' not registered to module '${module}'`);
             }
         }

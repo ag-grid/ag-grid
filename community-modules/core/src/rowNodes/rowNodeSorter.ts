@@ -4,6 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
+import { _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import { _defaultComparator } from '../utils/generic';
@@ -39,7 +40,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.isAccentedSort = this.gos.get('accentedSort');
-        this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup();
+        this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
 
         this.addManagedPropertyListener(
             'accentedSort',
@@ -47,7 +48,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         );
         this.addManagedPropertyListener(
             'autoGroupColumnDef',
-            () => (this.primaryColumnsSortGroups = this.gos.isColumnsSortingCoupledToGroup())
+            () => (this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos))
         );
     }
 
@@ -131,7 +132,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
-            const isGroupRows = this.gos.isGroupUseEntireRow(this.columnModel.isPivotActive());
+            const isGroupRows = _isGroupUseEntireRow(this.gos, this.columnModel.isPivotActive());
             // because they're group rows, no display cols exist, so groupData never populated.
             // instead delegate to getting value from leaf child.
             if (isGroupRows) {

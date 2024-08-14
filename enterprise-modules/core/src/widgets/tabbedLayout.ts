@@ -5,6 +5,8 @@ import {
     TabGuardComp,
     _clearElement,
     _createIconNoSpan,
+    _getActiveDomElement,
+    _getDocument,
     _setAriaLabel,
     _setAriaRole,
 } from '@ag-grid-community/core';
@@ -75,7 +77,7 @@ export class TabbedLayout extends TabGuardComp {
         };
         if (enableCloseButton) {
             this.setupCloseButton(addCssClasses);
-            this.eTabHeader = this.gos.getDocument().createElement('div');
+            this.eTabHeader = _getDocument(this.gos).createElement('div');
             addCssClasses(this.eHeader, 'header-wrapper');
             _setAriaRole(this.eHeader, 'presentation');
             this.eHeader.appendChild(this.eTabHeader);
@@ -87,7 +89,7 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private setupCloseButton(addCssClasses: (el: HTMLElement, suffix: string) => void): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const eCloseButton = eDocument.createElement('button');
         addCssClasses(eCloseButton, 'close-button');
         const eIcon = _createIconNoSpan('close', this.gos, undefined, true)!;
@@ -106,7 +108,7 @@ export class TabbedLayout extends TabGuardComp {
         switch (e.key) {
             case KeyCode.RIGHT:
             case KeyCode.LEFT: {
-                if (!this.eTabHeader.contains(this.gos.getActiveDomElement())) {
+                if (!this.eTabHeader.contains(_getActiveDomElement(this.gos))) {
                     return;
                 }
                 const isRightKey = e.key === KeyCode.RIGHT;
@@ -144,7 +146,7 @@ export class TabbedLayout extends TabGuardComp {
         const { focusService, eHeader, eBody, activeItem, params } = this;
         const { suppressTrapFocus, enableCloseButton } = params;
 
-        const activeElement = this.gos.getActiveDomElement();
+        const activeElement = _getActiveDomElement(this.gos);
         const target = e.target as HTMLElement;
         const backwards = e.shiftKey;
 
@@ -153,7 +155,7 @@ export class TabbedLayout extends TabGuardComp {
             if (enableCloseButton && backwards && !this.eCloseButton?.contains(activeElement)) {
                 this.eCloseButton?.focus();
             } else if (suppressTrapFocus && backwards) {
-                this.focusService.findFocusableElementBeforeTabGuard(this.gos.getDocument().body, target)?.focus();
+                this.focusService.findFocusableElementBeforeTabGuard(_getDocument(this.gos).body, target)?.focus();
             } else {
                 // focus is in header, move into body of popup
                 this.focusBody(e.shiftKey);

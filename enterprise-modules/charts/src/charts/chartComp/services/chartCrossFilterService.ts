@@ -8,7 +8,7 @@ import type {
     RowNode,
     ValueService,
 } from '@ag-grid-community/core';
-import { BeanStub, _includes, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _includes, _isClientSideRowModel, _warnOnce } from '@ag-grid-community/core';
 
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterService' as const;
@@ -22,7 +22,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
         this.valueService = beans.valueService;
         this.filterManager = beans.filterManager;
-        if (beans.rowModel.getType() === 'clientSide') {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = beans.rowModel as IClientSideRowModel;
         }
     }

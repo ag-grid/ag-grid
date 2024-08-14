@@ -4,6 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
 import type { CellPosition } from '../entities/cellPositionUtils';
+import { _isDomLayout } from '../gridOptionsUtils';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _getCtrlForEventTarget } from '../utils/event';
 import { _exists } from '../utils/generic';
@@ -61,7 +62,7 @@ export class MouseEventService extends BeanStub implements NamedBean {
     }
 
     public getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number; y: number } {
-        const gridPanelHasScrolls = this.gos.isDomLayout('normal');
+        const gridPanelHasScrolls = _isDomLayout(this.gos, 'normal');
         const e = event as MouseEvent;
         let x: number;
         let y: number;

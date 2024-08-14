@@ -6,6 +6,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
+import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { MenuService } from '../misc/menuService';
 import { _isIOSUserAgent } from '../utils/browser';
@@ -201,7 +202,7 @@ export class GridHeaderCtrl extends BeanStub {
     protected onFocusOut(e: FocusEvent): void {
         const { relatedTarget } = e;
 
-        if (!relatedTarget && this.eGui.contains(this.gos.getActiveDomElement())) {
+        if (!relatedTarget && this.eGui.contains(_getActiveDomElement(this.gos))) {
             return;
         }
 

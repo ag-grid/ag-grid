@@ -1,6 +1,7 @@
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
 import { _isIOSUserAgent } from '../utils/browser';
@@ -401,7 +402,7 @@ export class TooltipStateManager extends BeanStub {
 
     private isTooltipFocused(): boolean {
         const tooltipGui = this.tooltipComp?.getGui();
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
 
         return !!tooltipGui && tooltipGui.contains(activeEl);
     }

@@ -15,7 +15,13 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, _errorOnce, _missingOrEmpty } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    _errorOnce,
+    _getGrandTotalRow,
+    _getGroupAggFiltering,
+    _missingOrEmpty,
+} from '@ag-grid-community/core';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -74,7 +80,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
         const aggDetails: AggregationDetails = {
             alwaysAggregateAtRootLevel: this.gos.get('alwaysAggregateAtRootLevel'),
-            groupIncludeTotalFooter: !!this.gos.getGrandTotalRow(),
+            groupIncludeTotalFooter: !!_getGrandTotalRow(this.gos),
             changedPath: params.changedPath!,
             valueColumns: measureColumns,
             pivotColumns: pivotColumns,
@@ -86,7 +92,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     }
 
     private isSuppressAggFilteredOnly() {
-        const isGroupAggFiltering = this.gos.getGroupAggFiltering() !== undefined;
+        const isGroupAggFiltering = _getGroupAggFiltering(this.gos) !== undefined;
         return isGroupAggFiltering || this.gos.get('suppressAggFilteredOnly');
     }
 

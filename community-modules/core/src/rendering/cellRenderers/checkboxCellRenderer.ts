@@ -1,5 +1,6 @@
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
+import { _getActiveDomElement } from '../../gridOptionsUtils';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import { _stopPropagationForAgGrid } from '../../utils/event';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
@@ -54,7 +55,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         this.addManagedElementListeners(this.params.eGridCell, {
             keydown: (event: KeyboardEvent) => {
                 if (event.key === KeyCode.SPACE && !this.eCheckbox.isDisabled()) {
-                    if (this.params.eGridCell === this.gos.getActiveDomElement()) {
+                    if (this.params.eGridCell === _getActiveDomElement(this.gos)) {
                         this.eCheckbox.toggle();
                     }
                     const isSelected = this.eCheckbox.getValue();

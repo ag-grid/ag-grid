@@ -8,6 +8,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
+import { _getDocument, _getRowHeightForNode, _isClientSideRowModel, _setDomData } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -323,7 +324,7 @@ export class CellCtrl extends BeanStub {
         const eParentCell = eCellWrapper.parentElement!;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
         // thus allowing different min heights for different rows.
-        const minRowHeight = this.beans.gos.getRowHeightForNode(this.rowNode).height;
+        const minRowHeight = _getRowHeightForNode(this.beans.gos, this.rowNode).height;
 
         const measureHeight = (timesCalled: number) => {
             if (this.editing) {
@@ -344,7 +345,7 @@ export class CellCtrl extends BeanStub {
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = this.beans.gos.getDocument();
+                const doc = _getDocument(this.beans.gos);
                 const notYetInDom = !doc || !doc.contains(eCellWrapper);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
@@ -519,7 +520,7 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = this.beans.gos.addGridCommonParams({
             value: this.value,
             valueFormatted: this.valueFormatted,
-            getValue: () => this.rowNode.getValueFromValueService(this.column),
+            getValue: () => this.beans.valueService.getValueForDisplay(this.column, this.rowNode),
             setValue: (value: any) => this.beans.valueService.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
@@ -738,7 +739,7 @@ export class CellCtrl extends BeanStub {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
-        this.value = this.rowNode.getValueFromValueService(this.column);
+        this.value = this.beans.valueService.getValueForDisplay(this.column, this.rowNode);
         this.valueFormatted = this.callValueFormatter(this.value);
 
         if (compareValues) {
@@ -764,8 +765,8 @@ export class CellCtrl extends BeanStub {
     private addDomData(): void {
         const element = this.getGui();
 
-        this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
-        this.addDestroyFunc(() => this.beans.gos.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
+        _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
+        this.addDestroyFunc(() => _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
@@ -1124,7 +1125,7 @@ export class CellCtrl extends BeanStub {
     ): RowDragComp | undefined {
         const pagination = this.beans.gos.get('pagination');
         const rowDragManaged = this.beans.gos.get('rowDragManaged');
-        const clientSideRowModelActive = this.beans.gos.isRowModelType('clientSide');
+        const clientSideRowModelActive = _isClientSideRowModel(this.beans.gos);
 
         if (rowDragManaged) {
             // row dragging only available in default row model

@@ -3,6 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
+import { _isRowSelection } from '../../gridOptionsUtils';
 import { _isDeleteKey } from '../../utils/keyboard';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellCtrl } from './cellCtrl';
@@ -103,8 +104,12 @@ export class CellKeyboardListenerFeature extends BeanStub {
             } else if (cellCtrl.isCellEditable()) {
                 const column = cellCtrl.getColumn();
                 const emptyValue =
-                    this.beans.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ??
-                    null;
+                    this.beans.valueService.parseValue(
+                        column,
+                        rowNode,
+                        '',
+                        this.beans.valueService.getValueForDisplay(column, rowNode)
+                    ) ?? null;
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {
@@ -175,7 +180,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onSpaceKeyDown(event: KeyboardEvent): void {
         const { gos } = this.beans;
 
-        if (!this.cellCtrl.isEditing() && gos.isRowSelection()) {
+        if (!this.cellCtrl.isEditing() && _isRowSelection(gos)) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
             if (newSelection || !gos.get('suppressRowDeselection')) {

@@ -30,6 +30,7 @@ import {
     _existsAndNotEmpty,
     _getCtrlForEventTarget,
     _includes,
+    _isDomLayout,
     _last,
     _makeNull,
     _missing,
@@ -109,7 +110,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 getHorizontalPosition: () => gridBodyCtrl.getScrollFeature().getHScrollPosition().left,
                 setHorizontalPosition: (position) =>
                     gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(position),
-                shouldSkipVerticalScroll: () => !this.gos.isDomLayout('normal'),
+                shouldSkipVerticalScroll: () => !_isDomLayout(this.gos, 'normal'),
                 shouldSkipHorizontalScroll: () => !gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing(),
             });
         });
@@ -411,8 +412,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                         continue;
                     }
                     const emptyValue =
-                        this.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ??
-                        null;
+                        this.valueService.parseValue(
+                            column,
+                            rowNode,
+                            '',
+                            this.valueService.getValueForDisplay(column, rowNode)
+                        ) ?? null;
                     rowNode.setDataValue(column, emptyValue, cellEventSource);
                 }
             });

@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { FocusService } from '../focusService';
+import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
@@ -49,7 +50,7 @@ export class GridCtrl extends BeanStub {
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.gridId);
+        this.eGui.setAttribute('grid-id', this.beans.context.getGridId());
 
         const { dragAndDropService, mouseEventService, ctrlsService, resizeObserverService } = this.beans;
 
@@ -213,7 +214,7 @@ export class GridCtrl extends BeanStub {
         indexWithFocus: number;
         nextIndex: number;
     } {
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
         const indexWithFocus = focusableContainers.findIndex((container) => container.getGui().contains(activeEl));
         const nextIndex = indexWithFocus + (backwards ? -1 : 1);
         return {

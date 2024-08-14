@@ -1,5 +1,6 @@
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
+import { _isColumnsSortingCoupledToGroup } from '../../../gridOptionsUtils';
 import type { SortController } from '../../../sortController';
 import { _clearElement, _setDisplayed } from '../../../utils/dom';
 import { _createIconNoSpan } from '../../../utils/icon';
@@ -125,7 +126,7 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortMixed, this.column);
 
         const isColumnShowingRowGroup = this.column.getColDef().showRowGroup;
-        const areGroupsCoupled = this.gos.isColumnsSortingCoupledToGroup();
+        const areGroupsCoupled = _isColumnsSortingCoupledToGroup(this.gos);
         if (areGroupsCoupled && isColumnShowingRowGroup) {
             this.addManagedEventListeners({
                 // Watch global events, as row group columns can effect their display column.

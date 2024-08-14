@@ -13,6 +13,7 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
+import { _isServerSideRowModel, _useAsyncEvents } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
@@ -50,7 +51,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private init(): void {
-        this.isSsrm = this.gos.isRowModelType('serverSide');
+        this.isSsrm = _isServerSideRowModel(this.gos);
         this.cellExpressions = this.gos.get('enableCellExpressions');
         this.isTreeData = this.gos.get('treeData');
         this.initialised = true;
@@ -58,11 +59,42 @@ export class ValueService extends BeanStub implements NamedBean {
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        const async = this.gos.useAsyncEvents();
+        const async = _useAsyncEvents(this.gos);
         this.eventService.addEventListener('cellValueChanged', listener, async);
         this.addDestroyFunc(() => this.eventService.removeEventListener('cellValueChanged', listener, async));
 
         this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
+    }
+
+    /**
+     * Use this function to get a displayable cell value.
+     * This hides values in expanded group rows which are instead displayed by the footer row.
+     */
+    public getValueForDisplay(column: AgColumn, node: RowNode) {
+        // when in pivot mode, leafGroups cannot be expanded
+        const lockedClosedGroup = node.leafGroup && this.columnModel.isPivotMode();
+        const isOpenGroup = node.group && node.expanded && !node.footer && !lockedClosedGroup;
+
+        // checks if we show header data regardless of footer
+        const groupAlwaysShowAggData = this.gos.get('groupSuppressBlankHeader');
+        if (!isOpenGroup || groupAlwaysShowAggData) {
+            return this.getValue(column, node);
+        }
+
+        let includeFooter = false;
+        const groupIncludeFooterOpt = this.gos.get('groupTotalRow') ?? this.gos.get('groupIncludeFooter');
+        if (typeof groupIncludeFooterOpt !== 'function') {
+            includeFooter = !!groupIncludeFooterOpt;
+        } else {
+            const groupIncludeFooterCb: any =
+                this.gos.getCallback('groupTotalRow' as any) ?? this.gos.getCallback('groupIncludeFooter' as any);
+            includeFooter = !!groupIncludeFooterCb({ node: this });
+        }
+
+        // if doing grouping and footers, we don't want to include the agg value
+        // in the header when the group is open
+        const ignoreAggData = isOpenGroup && includeFooter;
+        return this.getValue(column, node, false, ignoreAggData);
     }
 
     public getValue(column: AgColumn, rowNode?: IRowNode | null, forFilter = false, ignoreAggData = false): any {

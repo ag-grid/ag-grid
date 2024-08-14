@@ -8,6 +8,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, FilterChangedEventSourceType } from '../events';
+import { _getGroupAggFiltering } from '../gridOptionsUtils';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -168,7 +169,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     private refreshFiltersForAggregations() {
-        const isAggFiltering = this.gos.getGroupAggFiltering();
+        const isAggFiltering = _getGroupAggFiltering(this.gos);
         if (isAggFiltering) {
             this.onFilterChanged();
         }
@@ -213,7 +214,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     private updateAggFiltering(): void {
-        this.aggFiltering = !!this.gos.getGroupAggFiltering();
+        this.aggFiltering = !!_getGroupAggFiltering(this.gos);
     }
 
     public isAggregateQuickFilterPresent(): boolean {

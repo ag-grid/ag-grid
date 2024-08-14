@@ -1,19 +1,17 @@
-import type { BeanCollection, IRowModel, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
-import { _formatNumberCommas, _warnOnce } from '@ag-grid-community/core';
+import type { BeanCollection, ISelectionService, IStatusPanelComp } from '@ag-grid-community/core';
+import { _formatNumberCommas, _isClientSideRowModel, _isServerSideRowModel, _warnOnce } from '@ag-grid-community/core';
 
 import { AgNameValue } from './agNameValue';
 
 export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
-    private rowModel: IRowModel;
     private selectionService: ISelectionService;
 
     public wireBeans(beans: BeanCollection) {
-        this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;
     }
 
     public postConstruct(): void {
-        if (!this.isValidRowModel()) {
+        if (!_isClientSideRowModel(this.gos) && !_isServerSideRowModel(this.gos)) {
             _warnOnce(`agSelectedRowCountComponent should only be used with the client and server side row model.`);
             return;
         }
@@ -27,12 +25,6 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
 
         const eventListener = this.onRowSelectionChanged.bind(this);
         this.addManagedEventListeners({ modelUpdated: eventListener, selectionChanged: eventListener });
-    }
-
-    private isValidRowModel() {
-        // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.rowModel.getType();
-        return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 
     private onRowSelectionChanged() {
