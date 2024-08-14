@@ -156,7 +156,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         let removedNodes: RowNode[] | undefined = undefined;
         if (transaction.remove?.length) {
             const allIdsToRemove = transaction.remove.map((data) =>
-                idFunc({ level: this.level, parentKeys: this.parentRowNode.getGroupKeys(), data })
+                idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
@@ -665,7 +665,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     addStoreStates(result: ServerSideGroupLevelState[]) {
         result.push({
             suppressInfiniteScroll: false,
-            route: this.parentRowNode.getGroupKeys(),
+            route: this.parentRowNode.getRoute() ?? [],
             rowCount: this.getRowCount(),
             lastRowIndexKnown: this.isLastRowIndexKnown(),
             info: this.info,

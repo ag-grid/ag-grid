@@ -16,23 +16,23 @@ $nav-height: 200px;
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
     gap: $spacing-size-3;
     padding-bottom: $spacing-size-1;
 
-    a {
-        padding-left: $spacing-size-2;
+    @media screen and (min-width: 700px) {
+        flex-wrap: nowrap;
     }
 }
 
 .topHeader {
-    margin: 0 auto;
-    padding-top: $spacing-size-8;
     display: flex;
-    gap: $spacing-size-12;
-
-    margin-bottom: $spacing-size-3;
-    width: 100%;
     justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-size-12;
+    width: 100%;
+    margin: 0 auto $spacing-size-3;
+    padding-top: $spacing-size-8;
 
     @media screen and (max-width: 700px) {
         flex-direction: column;

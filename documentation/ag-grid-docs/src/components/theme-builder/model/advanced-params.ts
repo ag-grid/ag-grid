@@ -14,7 +14,7 @@ export const enabledAdvancedParamsAtom = atom(
 
 export const useSetAdvancedParamEnabled = () => {
     const [all, setAll] = useAtom(enabledAdvancedParamsAtom);
-    return (param: ParamModel, enabled: boolean) => {
+    return (param: ParamModel<unknown>, enabled: boolean) => {
         const copy = new Set(all);
         if (enabled) {
             copy.add(param.property);
@@ -28,7 +28,7 @@ export const useSetAdvancedParamEnabled = () => {
 export const useAdvancedParamIsEnabled = () => {
     const all = useAtomValue(enabledAdvancedParamsAtom);
 
-    return (param: ParamModel) => {
+    return (param: ParamModel<unknown>) => {
         return all.has(param.property);
     };
 };

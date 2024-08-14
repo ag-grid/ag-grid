@@ -35,9 +35,14 @@
     }
 }
 
-.videoFrame {
+.videoFrame,
+.videoImage {
     width: 100%;
     height: 300px;
+}
+
+.videoImage {
+    cursor: pointer;
 }
 
 .paginationContainer {

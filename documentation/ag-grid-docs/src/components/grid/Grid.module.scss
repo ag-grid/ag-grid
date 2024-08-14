@@ -1,0 +1,14 @@
+.grid {
+    position: relative;
+    overflow: hidden;
+
+    svg[class*='logo-mark'] {
+        position: absolute;
+        display: block;
+        width: 64px * 2;
+        height: 48px * 2;
+        top: 50%;
+        left: 50%;
+        transform: translate(-60px, -48px);
+    }
+}

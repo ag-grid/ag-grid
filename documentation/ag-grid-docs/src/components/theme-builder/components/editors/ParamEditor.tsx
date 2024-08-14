@@ -1,4 +1,4 @@
-import type { ParamType } from '@ag-grid-community/theming';
+import type { ParamType, ThemeParam } from '@ag-grid-community/theming';
 import { useSetAdvancedParamEnabled } from '@components/theme-builder/model/advanced-params';
 import type { FC, ReactNode } from 'react';
 
@@ -18,7 +18,7 @@ import { ScaleValueEditor } from './ScaleValueEditor';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export type ParamEditorProps = {
-    param: string | ParamModel;
+    param: ThemeParam | ParamModel<unknown>;
     label?: string;
     showDocs?: boolean;
     icon?: ReactNode;
@@ -38,11 +38,11 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        const params = theme.getRenderedParams();
+        const params = theme.getParams();
         if (param.property in params) {
             editorValue = params[param.property];
         } else {
-            throw new Error(`Param "${param.property}" does not exist.`);
+            throw new Error(`ThemeParam "${param.property}" does not exist.`);
         }
     }
 
@@ -74,7 +74,7 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
     );
 });
 
-const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
+const valueEditors: Record<ParamType, FC<ValueEditorProps<any>>> = {
     color: ColorValueEditor,
     colorScheme: ColorSchemeValueEditor,
     length: LengthValueEditor,
@@ -85,6 +85,5 @@ const valueEditors: Record<ParamType, FC<ValueEditorProps>> = {
     image: CssValueEditor,
     fontFamily: FontFamilyValueEditor,
     fontWeight: FontWeightValueEditor,
-    display: CssValueEditor,
-    duration: CssValueEditor,
+    duration: LengthValueEditor,
 };

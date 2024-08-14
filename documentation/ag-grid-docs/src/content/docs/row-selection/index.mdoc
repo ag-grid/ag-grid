@@ -100,9 +100,9 @@ Please note that clicking the header checkbox selects all rows even if their che
 
 When doing grouping, you control what selecting a group means. This is controlled with the two grid properties `groupSelectsChildren` and `groupSelectsFiltered`.
 
-* `groupSelectsChildren`: When `true`, selecting a group will have the impact of selecting all its children. The group will then display `'selected'` when all children are selected, `'unselected'` when none are selected and `'intermediate'` when children have a mix of selected and unselected. When the node is selecting children, it will never appear in the selected set when calling `api.getSelectedNodes()`.{% br /%} When `false`, the group is selectable independently of the child nodes. When selecting the group node independently of the children, it will appear in the set when calling `api.getSelectedNodes()`.
+* `groupSelectsChildren`: When `true`, selecting a group will have the impact of selecting all its children. The group will then display `'selected'` when all children are selected, `'unselected'` when none are selected and `'indeterminate'` when children have a mix of selected and unselected. When the node is selecting children, it will never appear in the selected set when calling `api.getSelectedNodes()`.{% br /%} When `false`, the group is selectable independently of the child nodes. When selecting the group node independently of the children, it will appear in the set when calling `api.getSelectedNodes()`.
 
-* `groupSelectsFiltered`: Used when `groupSelectsChildren=true`. When `true` only filtered children of the group will be selected / unselected. This means you can apply a filter, then try to select a group, and the group will end up in the intermediate state as only as subset of the children will be selected.
+* `groupSelectsFiltered`: Used when `groupSelectsChildren=true`. When `true` only filtered children of the group will be selected / unselected. This means you can apply a filter, then try to select a group, and the group will end up in the indeterminate state as only as subset of the children will be selected.
 
 ### Groups & Checkbox Selection
 
@@ -313,7 +313,6 @@ const gridOptions = {
     navigateToNextCell: params => {
         const suggestedNextCell = params.nextCellPosition;
 
-        // this is some code
         const KEY_UP = 'ArrowUp';
         const KEY_DOWN = 'ArrowDown';
 
@@ -322,11 +321,10 @@ const gridOptions = {
             return suggestedNextCell;
         }
 
-        params.api.forEachNode(node => {
-            if (node.rowIndex === suggestedNextCell.rowIndex) {
-                node.setSelected(true);
-            }
-        });
+        const nodeToSelect = params.api.getDisplayedRowAtIndex(suggestedNextCell.rowIndex);
+        if (nodeToSelect) {
+            nodeToSelect.setSelected(true);
+        }
 
         return suggestedNextCell;
     },

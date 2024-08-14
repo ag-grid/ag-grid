@@ -1,155 +1,302 @@
-import {
-    calc,
-    foregroundBorder,
-    opaqueForeground,
-    ref,
-    transparentAccent,
-    transparentBackground,
-    transparentForeground,
-    transparentRef,
-} from '../../css-helpers';
-import { definePart } from '../../theme-utils';
-import { coreCSS } from './GENERATED-core';
+import type { ThemeParams } from '../../GENERATED-param-types';
+import { createPart } from '../../theme-types';
 
-const coreDefaults = {
+export { coreCSS } from './GENERATED-core';
+
+export const coreDefaults = {
     backgroundColor: '#FFF',
     foregroundColor: '#181d1f',
-    textColor: ref('foregroundColor'),
+    textColor: {
+        ref: 'foregroundColor',
+    },
     accentColor: '#2196f3',
     invalidColor: '#e02525',
-    borderColor: transparentForeground(0.15),
+    borderColor: {
+        ref: 'foregroundColor',
+        mix: 0.15,
+    },
     wrapperBorder: true,
     rowBorder: true,
-    colorScheme: 'inherit',
-    headerRowBorder: ref('rowBorder'),
-    footerRowBorder: ref('rowBorder'),
-    columnBorder: 'solid 1px transparent',
+    browserColorScheme: 'inherit',
+    headerRowBorder: {
+        ref: 'rowBorder',
+    },
+    footerRowBorder: {
+        ref: 'rowBorder',
+    },
+    columnBorder: {
+        style: 'solid',
+        width: 1,
+        color: 'transparent',
+    },
     headerColumnBorder: false,
     headerColumnBorderHeight: '100%',
     pinnedColumnBorder: true,
     pinnedRowBorder: true,
     sidePanelBorder: true,
-    fontFamily: 'google:IBM Plex Sans',
-    chromeBackgroundColor: transparentForeground(0.02),
-    headerBackgroundColor: ref('chromeBackgroundColor'),
-    headerFontFamily: ref('fontFamily'),
-    headerFontWeight: '500',
-    headerFontSize: ref('fontSize'),
-    headerTextColor: ref('textColor'),
+    fontFamily: { googleFont: 'IBM Plex Sans' },
+    chromeBackgroundColor: {
+        ref: 'foregroundColor',
+        mix: 0.02,
+    },
+    headerBackgroundColor: {
+        ref: 'chromeBackgroundColor',
+    },
+    headerFontFamily: {
+        ref: 'fontFamily',
+    },
+    headerFontWeight: 500,
+    headerFontSize: {
+        ref: 'fontSize',
+    },
+    headerTextColor: {
+        ref: 'textColor',
+    },
     headerCellHoverBackgroundColor: 'transparent',
-    headerCellHoverBackgroundTransitionDuration: '0.2s',
-    cellTextColor: ref('textColor'),
-    subtleTextColor: transparentRef('textColor', 0.5),
+    headerCellMovingBackgroundColor: { ref: 'backgroundColor' },
+    headerCellBackgroundTransitionDuration: '0.2s',
+    cellTextColor: {
+        ref: 'textColor',
+    },
+    subtleTextColor: {
+        ref: 'textColor',
+        mix: 0.5,
+    },
     rangeSelectionBorderStyle: 'solid',
-    rangeSelectionBorderColor: ref('accentColor'),
-    rangeSelectionBackgroundColor: transparentAccent(0.2),
+    rangeSelectionBorderColor: {
+        ref: 'accentColor',
+    },
+    rangeSelectionBackgroundColor: {
+        ref: 'accentColor',
+        mix: 0.2,
+    },
     rangeSelectionChartBackgroundColor: '#0058FF1A',
     rangeSelectionChartCategoryBackgroundColor: '#00FF841A',
-    rangeSelectionHighlightColor: transparentAccent(0.5),
-    rowHoverColor: transparentAccent(0.12),
-    columnHoverColor: transparentAccent(0.05),
-    selectedRowBackgroundColor: transparentAccent(0.08),
-    modalOverlayBackgroundColor: transparentBackground(0.66),
-    oddRowBackgroundColor: ref('backgroundColor'),
-    borderRadius: '4px',
-    wrapperBorderRadius: '8px',
-    cellHorizontalPadding: calc('gridSize * 2 * cellHorizontalPaddingScale'),
-    cellWidgetSpacing: calc('gridSize * 1.5'),
-    cellHorizontalPaddingScale: '1',
-    rowGroupIndentSize: calc('cellWidgetSpacing + iconSize'),
+    rangeSelectionHighlightColor: {
+        ref: 'accentColor',
+        mix: 0.5,
+    },
+    rowHoverColor: {
+        ref: 'accentColor',
+        mix: 0.12,
+    },
+    columnHoverColor: {
+        ref: 'accentColor',
+        mix: 0.05,
+    },
+    selectedRowBackgroundColor: {
+        ref: 'accentColor',
+        mix: 0.08,
+    },
+    modalOverlayBackgroundColor: {
+        ref: 'backgroundColor',
+        mix: 0.66,
+    },
+    oddRowBackgroundColor: {
+        ref: 'backgroundColor',
+    },
+    borderRadius: 4,
+    wrapperBorderRadius: 8,
+    cellHorizontalPadding: {
+        calc: 'gridSize * 2 * cellHorizontalPaddingScale',
+    },
+    cellWidgetSpacing: {
+        calc: 'gridSize * 1.5',
+    },
+    cellHorizontalPaddingScale: 1,
+    rowGroupIndentSize: {
+        calc: 'cellWidgetSpacing + iconSize',
+    },
     valueChangeDeltaUpColor: '#43a047',
     valueChangeDeltaDownColor: '#e53935',
     valueChangeValueHighlightBackgroundColor: '#16a08580',
-    gridSize: '8px',
-    fontSize: '14px',
-    rowHeight: calc('max(iconSize, fontSize) + gridSize * 3.5 * rowVerticalPaddingScale'),
-    rowVerticalPaddingScale: '1',
-    headerHeight: calc('max(iconSize, fontSize) + gridSize * 4.25 * headerVerticalPaddingScale'),
-    headerVerticalPaddingScale: '1',
-    popupShadow: '0 0 16px 0 #00000026',
-    dropdownShadow: '0 1px 4px 1px #babfc766',
-    dragGhostBackgroundColor: ref('backgroundColor'),
+    gridSize: 8,
+    fontSize: 14,
+    rowHeight: {
+        calc: 'max(iconSize, fontSize) + gridSize * 3.5 * rowVerticalPaddingScale',
+    },
+    rowVerticalPaddingScale: 1,
+    headerHeight: {
+        calc: 'max(iconSize, fontSize) + gridSize * 4.25 * headerVerticalPaddingScale',
+    },
+    headerVerticalPaddingScale: 1,
+    popupShadow: {
+        radius: 16,
+        color: '#00000026',
+    },
+    dropdownShadow: {
+        radius: 4,
+        spread: 1,
+        offsetY: 1,
+        color: '#babfc766',
+    },
+    dragGhostBackgroundColor: {
+        ref: 'backgroundColor',
+    },
     dragGhostBorder: true,
-    dragGhostShadow: ref('popupShadow'),
-    focusShadow: '0 0 0 3px color-mix(in srgb, transparent, var(--ag-accent-color) 50%)',
-    sideBarPanelWidth: '250px',
+    dragGhostShadow: {
+        ref: 'popupShadow',
+    },
+    focusShadow: {
+        spread: 3,
+        color: { ref: 'accentColor', mix: 0.5 },
+    },
+    sideBarPanelWidth: 250,
     sideButtonSelectedBorder: true,
-    sideButtonSelectedBackgroundColor: ref('backgroundColor'),
-    sideBarBackgroundColor: ref('chromeBackgroundColor'),
-    headerColumnResizeHandleDisplay: 'block',
+    sideButtonSelectedBackgroundColor: {
+        ref: 'backgroundColor',
+    },
+    sideBarBackgroundColor: {
+        ref: 'chromeBackgroundColor',
+    },
     headerColumnResizeHandleHeight: '30%',
-    headerColumnResizeHandleWidth: '2px',
-    headerColumnResizeHandleColor: ref('borderColor'),
-    widgetContainerHorizontalPadding: calc('gridSize * 1.5'),
-    widgetContainerVerticalPadding: calc('gridSize * 1.5'),
-    widgetHorizontalSpacing: calc('gridSize * 1.5'),
-    widgetVerticalSpacing: ref('gridSize'),
-    listItemHeight: calc('iconSize + widgetVerticalSpacing'),
-    iconSize: '16px',
-    toggleButtonWidth: '28px',
-    toggleButtonHeight: '18px',
-    toggleButtonBorderWidth: '2px',
-    toggleButtonOnBorderColor: ref('accentColor'),
-    toggleButtonOnBackgroundColor: ref('accentColor'),
-    toggleButtonOffBorderColor: opaqueForeground(0.3),
-    toggleButtonOffBackgroundColor: opaqueForeground(0.3),
-    toggleButtonSwitchBorderColor: ref('toggleButtonOffBorderColor'),
-    toggleButtonSwitchBackgroundColor: ref('backgroundColor'),
-    checkboxBorderWidth: '1px',
-    checkboxBorderRadius: ref('borderRadius'),
-    checkboxUncheckedBackgroundColor: ref('backgroundColor'),
-    checkboxUncheckedBorderColor: opaqueForeground(0.3),
-    checkboxCheckedBackgroundColor: ref('accentColor'),
-    checkboxCheckedBorderColor: ref('accentColor'),
-    checkboxCheckedShapeImage:
-        "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%227%22%20fill%3D%22none%22%3E%3Cpath%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.75%22%20d%3D%22M1%203.5%203.5%206l5-5%22%2F%3E%3C%2Fsvg%3E')",
-    checkboxCheckedShapeColor: ref('backgroundColor'),
-    checkboxIndeterminateBackgroundColor: opaqueForeground(0.3),
-    checkboxIndeterminateBorderColor: opaqueForeground(0.3),
-    checkboxIndeterminateShapeImage:
-        "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22none%22%3E%3Crect%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22%23000%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E')",
-    checkboxIndeterminateShapeColor: ref('backgroundColor'),
-    radioCheckedShapeImage:
-        "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%226%22%20height%3D%226%22%20fill%3D%22none%22%3E%3Ccircle%20cx%3D%223%22%20cy%3D%223%22%20r%3D%223%22%20fill%3D%22%23000%22%2F%3E%3C%2Fsvg%3E')",
-    menuBorder: foregroundBorder(0.2),
-    menuBackgroundColor: opaqueForeground(0.03),
-    menuTextColor: opaqueForeground(0.95),
-    menuShadow: ref('popupShadow'),
-    menuSeparatorColor: ref('borderColor'),
-    setFilterIndentSize: ref('iconSize'),
-    chartMenuPanelWidth: '260px',
-    chartMenuLabelColor: transparentForeground(0.8),
-    iconButtonHoverColor: transparentForeground(0.1),
-    dialogShadow: ref('popupShadow'),
-    dialogBorder: foregroundBorder(0.2),
-    panelBackgroundColor: ref('backgroundColor'),
-    panelTitleBarBackgroundColor: ref('headerBackgroundColor'),
+    headerColumnResizeHandleWidth: 2,
+    headerColumnResizeHandleColor: {
+        ref: 'borderColor',
+    },
+    widgetContainerHorizontalPadding: {
+        calc: 'gridSize * 1.5',
+    },
+    widgetContainerVerticalPadding: {
+        calc: 'gridSize * 1.5',
+    },
+    widgetHorizontalSpacing: {
+        calc: 'gridSize * 1.5',
+    },
+    widgetVerticalSpacing: {
+        ref: 'gridSize',
+    },
+    listItemHeight: {
+        calc: 'iconSize + widgetVerticalSpacing',
+    },
+    iconSize: 16,
+    toggleButtonWidth: 28,
+    toggleButtonHeight: 18,
+    toggleButtonBorderWidth: 2,
+    toggleButtonOnBorderColor: {
+        ref: 'accentColor',
+    },
+    toggleButtonOnBackgroundColor: {
+        ref: 'accentColor',
+    },
+    toggleButtonOffBorderColor: {
+        ref: 'foregroundColor',
+        mix: 0.3,
+        onto: 'backgroundColor',
+    },
+    toggleButtonOffBackgroundColor: {
+        ref: 'foregroundColor',
+        mix: 0.3,
+        onto: 'backgroundColor',
+    },
+    toggleButtonSwitchBorderColor: {
+        ref: 'toggleButtonOffBorderColor',
+    },
+    toggleButtonSwitchBackgroundColor: {
+        ref: 'backgroundColor',
+    },
+    menuBorder: {
+        color: {
+            ref: 'foregroundColor',
+            mix: 0.2,
+        },
+    },
+    menuBackgroundColor: {
+        ref: 'foregroundColor',
+        mix: 0.03,
+        onto: 'backgroundColor',
+    },
+    menuTextColor: {
+        ref: 'foregroundColor',
+        mix: 0.95,
+        onto: 'backgroundColor',
+    },
+    menuShadow: {
+        ref: 'popupShadow',
+    },
+    menuSeparatorColor: {
+        ref: 'borderColor',
+    },
+    setFilterIndentSize: {
+        ref: 'iconSize',
+    },
+    chartMenuPanelWidth: 260,
+    chartMenuLabelColor: {
+        ref: 'foregroundColor',
+        mix: 0.8,
+    },
+    iconButtonHoverColor: {
+        ref: 'foregroundColor',
+        mix: 0.1,
+    },
+    dialogShadow: {
+        ref: 'popupShadow',
+    },
+    dialogBorder: {
+        color: {
+            ref: 'foregroundColor',
+            mix: 0.2,
+        },
+    },
+    panelBackgroundColor: {
+        ref: 'backgroundColor',
+    },
+    panelTitleBarBackgroundColor: {
+        ref: 'headerBackgroundColor',
+    },
     panelTitleBarBorder: true,
-    columnSelectIndentSize: ref('iconSize'),
+    columnSelectIndentSize: {
+        ref: 'iconSize',
+    },
     toolPanelSeparatorBorder: true,
-    tooltipBackgroundColor: ref('chromeBackgroundColor'),
-    tooltipTextColor: ref('textColor'),
+    tooltipBackgroundColor: {
+        ref: 'chromeBackgroundColor',
+    },
+    tooltipTextColor: {
+        ref: 'textColor',
+    },
     tooltipBorder: true,
-    columnDropCellBackgroundColor: transparentForeground(0.07),
-    columnDropCellBorder: foregroundBorder(0.13),
-    selectCellBackgroundColor: transparentForeground(0.07),
-    selectCellBorder: foregroundBorder(0.13),
+
+    columnDropCellBackgroundColor: {
+        ref: 'foregroundColor',
+        mix: 0.07,
+    },
+    columnDropCellBorder: {
+        color: {
+            ref: 'foregroundColor',
+            mix: 0.13,
+        },
+    },
+    selectCellBackgroundColor: {
+        ref: 'foregroundColor',
+        mix: 0.07,
+    },
+    selectCellBorder: {
+        color: {
+            ref: 'foregroundColor',
+            mix: 0.13,
+        },
+    },
     advancedFilterBuilderButtonBarBorder: true,
-    advancedFilterBuilderIndentSize: calc('gridSize * 2 + iconSize'),
+    advancedFilterBuilderIndentSize: {
+        calc: 'gridSize * 2 + iconSize',
+    },
     advancedFilterBuilderJoinPillColor: '#f08e8d',
     advancedFilterBuilderColumnPillColor: '#a6e194',
     advancedFilterBuilderOptionPillColor: '#f3c08b',
     advancedFilterBuilderValuePillColor: '#85c0e4',
-    filterToolPanelGroupIndent: ref('gridSize'),
-    iconButtonHoverBackgroundColor: transparentForeground(0.1),
+    filterToolPanelGroupIndent: {
+        ref: 'gridSize',
+    },
+    iconButtonHoverBackgroundColor: {
+        ref: 'foregroundColor',
+        mix: 0.1,
+    },
     rowLoadingSkeletonEffectColor: 'rgba(66, 66, 66, 0.2)',
-} as const;
-
-export const corePart = definePart({
-    partId: 'core',
-    variantId: 'part',
-    additionalParams: coreDefaults,
-    css: [coreCSS],
-});
+} satisfies Partial<ThemeParams>;
 
 export type CoreParam = keyof typeof coreDefaults;
+
+export const coreParams = Object.keys(coreDefaults) as readonly CoreParam[];
+
+export const getCoreDefaults = () => ({ ...coreDefaults });

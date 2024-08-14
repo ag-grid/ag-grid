@@ -3,6 +3,7 @@ import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _clearElement } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
+import { _missingOrEmpty } from '../../utils/generic';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
@@ -132,15 +133,20 @@ export class PageSizeSelectorComp extends Component {
         const shouldAddAndSelectEmptyOption =
             !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption);
         if (shouldAddAndSelectEmptyOption) {
+            const pageSizeSet = this.gos.exists('paginationPageSize');
+            const pageSizesSet = this.gos.get('paginationPageSizeSelector') !== true;
+
+            _warnOnce(
+                `'paginationPageSize=${paginationPageSizeOption}'${pageSizeSet ? '' : ' (default value)'}, but ${paginationPageSizeOption} is not included in${pageSizesSet ? '' : ' the default'} paginationPageSizeSelector=[${pageSizeOptions.join(', ')}].`
+            );
+            if (!pageSizesSet) {
+                _warnOnce(
+                    `Either set 'paginationPageSizeSelector' to an array that includes ${paginationPageSizeOption} or to 'false' to disable the page size selector.`
+                );
+            }
             // When the paginationPageSize option is set to a value that is
             // not in the list of page size options.
             pageSizeOptions.unshift('');
-
-            _warnOnce(
-                `The paginationPageSize grid option is set to a value that is not in the list of page size options.
-                Please make sure that the paginationPageSize grid option is set to one of the values in the 
-                paginationPageSizeSelector array, or set the paginationPageSizeSelector to false to hide the page size selector.`
-            );
         }
 
         if (this.selectPageSizeComp) {
@@ -171,50 +177,11 @@ export class PageSizeSelectorComp extends Component {
         const defaultValues = [20, 50, 100];
         const paginationPageSizeSelectorValues = this.gos.get('paginationPageSizeSelector');
 
-        if (
-            !Array.isArray(paginationPageSizeSelectorValues) ||
-            !this.validateValues(paginationPageSizeSelectorValues)
-        ) {
+        if (!Array.isArray(paginationPageSizeSelectorValues) || _missingOrEmpty(paginationPageSizeSelectorValues)) {
             return defaultValues;
         }
 
         return [...paginationPageSizeSelectorValues].sort((a, b) => a - b);
-    }
-
-    private validateValues(values: number[]): boolean {
-        if (!values.length) {
-            _warnOnce(
-                `The paginationPageSizeSelector grid option is an empty array. This is most likely a mistake.
-                If you want to hide the page size selector, please set the paginationPageSizeSelector to false.`
-            );
-
-            return false;
-        }
-
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
-            const isNumber = typeof value === 'number';
-            const isPositive = value > 0;
-
-            if (!isNumber) {
-                _warnOnce(
-                    `The paginationPageSizeSelector grid option contains a non-numeric value.
-                    Please make sure that all values in the paginationPageSizeSelector array are numbers.`
-                );
-                return false;
-            }
-
-            if (!isPositive) {
-                _warnOnce(
-                    `The paginationPageSizeSelector grid option contains a negative number or zero.
-                    Please make sure that all values in the paginationPageSizeSelector array are positive.`
-                );
-
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public override destroy() {

@@ -12,6 +12,7 @@ import { moveToElementAndClick } from './scriptActions/moveToElementAndClick';
 import { openChartToolPanel } from './scriptActions/openChartToolPanel';
 import { resetGrid } from './scriptActions/resetGrid';
 import { clearAllSingleCellSelections, clearSingleCell, selectSingleCell } from './scriptActions/singleCell';
+import { typeInTextInput } from './scriptActions/typeInTextInput';
 import { type ScriptDebugger } from './scriptDebugger';
 import { type EasingFunction } from './tween';
 
@@ -89,6 +90,14 @@ export interface ClearRangeSelectionAction {
     actionType: 'clearRangeSelection';
 }
 
+export interface SortAction {
+    actionType: 'sort';
+    actionParams: {
+        colId: string;
+        sort: 'asc' | 'desc';
+    };
+}
+
 interface CloseToolPanelAction {
     actionType: 'closeToolPanel';
 }
@@ -130,10 +139,20 @@ interface MoveToElementAndClickAction {
     actionParams: {
         target: AgElementName;
         targetParams?: any;
-        useMouseDown?: boolean;
         speed?: number;
         duration?: number;
         easing?: EasingFunction;
+    };
+}
+
+interface TypeInInputAction {
+    actionType: 'typeInTextInput';
+    actionParams: {
+        text: string;
+        groupTitle: string;
+        inputLabel: string;
+        index?: number;
+        speedPerCharacter?: number;
     };
 }
 
@@ -153,6 +172,7 @@ export type AGCreatorAction =
     | ClearSelectSingleCellAction
     | ClearAllSingleCellSelectionsAction
     | ClearRangeSelectionAction
+    | SortAction
     | FocusCellAction
     | OpenToolPanelAction
     | CloseToolPanelAction
@@ -161,6 +181,7 @@ export type AGCreatorAction =
     | CreateRangeChartAction
     | ClickOnContextMenuItemAction
     | MoveToElementAndClickAction
+    | TypeInInputAction
     | OpenChartToolPanelAction;
 
 export function createAGActionCreator({
@@ -224,6 +245,13 @@ export function createAGActionCreator({
             clearAllSingleCellSelections();
         } else if (actionType === 'clearRangeSelection') {
             gridApi.clearRangeSelection();
+        } else if (actionType === 'sort') {
+            const action = agAction as SortAction;
+            const { colId, sort } = action.actionParams;
+            gridApi.applyColumnState({
+                state: [{ colId, sort }],
+                defaultState: { sort: null },
+            });
         } else if (actionType === 'openToolPanel') {
             const action = agAction as OpenToolPanelAction;
             gridApi.openToolPanel(action.actionParams.toolPanelKey);
@@ -257,10 +285,19 @@ export function createAGActionCreator({
                 agElementFinder,
                 target: action.actionParams.target,
                 targetParams: action.actionParams.targetParams,
-                useMouseDown: action.actionParams.useMouseDown,
                 easing: action.actionParams.easing || defaultEasing,
                 speed: action.actionParams.speed,
                 duration: action.actionParams.duration,
+            });
+        } else if (actionType === 'typeInTextInput') {
+            const action = agAction as TypeInInputAction;
+            return typeInTextInput({
+                agElementFinder,
+                text: action.actionParams?.text,
+                groupTitle: action.actionParams?.groupTitle,
+                inputLabel: action.actionParams?.inputLabel,
+                index: action.actionParams?.index,
+                speedPerCharacter: action.actionParams?.speedPerCharacter,
             });
         } else if (actionType === 'openChartToolPanel') {
             const action = agAction as OpenChartToolPanelAction;

@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
+import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 describe('ag-grid overlays state', () => {
@@ -105,7 +105,7 @@ describe('ag-grid overlays state', () => {
         expect(api.getRowNode).toBe(oldGetRowNode);
 
         // Methods can be deleted
-        delete api.getRowNode;
+        delete (api as Partial<GridApi>).getRowNode;
         expect('getRowNode' in api).toBe(false);
         api.getRowNode = oldGetRowNode;
 

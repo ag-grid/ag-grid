@@ -63,7 +63,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
             heading,
             subHeading,
             path: hashPath,
-            text: cleanContents(text),
+            text: cleanContents(text).slice(0, 250), // this is only used for display not search, limit chars to reduce load on algolia
             rank,
             positionInPage: position++,
             metaTag,

@@ -6,6 +6,8 @@ import type { GetRowIdParams, GridApi, GridOptions, GridSizeChangedEvent, ISetFi
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { createGenerator } from '@utils/grid/generator-utils';
@@ -14,7 +16,13 @@ import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from '.
 import { columnDefs, generateStockUpdate, generateStocks } from './data';
 import { fixtureData } from './rowDataFixture';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, SparklinesModule, SetFilterModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    SparklinesModule,
+    SetFilterModule,
+    ClipboardModule,
+    MenuModule,
+]);
 
 let api: GridApi;
 const rowData = generateStocks();

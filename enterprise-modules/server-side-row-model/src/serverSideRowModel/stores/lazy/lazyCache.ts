@@ -1010,7 +1010,7 @@ export class LazyCache extends BeanStub {
 
         // find rowNode using id
         const { level } = this.store.getRowDetails();
-        const parentKeys = this.store.getParentNode().getGroupKeys();
+        const parentKeys = this.store.getParentNode().getRoute() ?? [];
         return this.getRowIdFunc({
             data,
             parentKeys: parentKeys.length > 0 ? parentKeys : undefined,

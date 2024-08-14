@@ -76,7 +76,7 @@ export const EditorPanel = () => {
                 />
             </Section>
             <Section heading="Icons">
-                <PartEditor part="iconSet" />
+                <PartEditor partId="iconSet" />
                 <ParamEditor param="iconSize" label="Size" />
             </Section>
             <Section heading="Advanced">

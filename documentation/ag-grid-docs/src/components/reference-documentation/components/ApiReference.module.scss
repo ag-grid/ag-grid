@@ -137,6 +137,7 @@
     font-family: var(--text-monospace-font-family);
     font-size: var(--text-fs-lg);
     font-weight: var(--text-bold);
+    line-height: var(--text-lh-xs);
     margin-bottom: $spacing-size-2;
 
     @container (min-width: #{$breakpoint-table-small}) {

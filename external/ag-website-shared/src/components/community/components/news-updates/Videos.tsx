@@ -1,3 +1,4 @@
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
 import styles from './Videos.module.scss';
@@ -14,16 +15,9 @@ interface Video {
 }
 
 const Videos = ({ videos }: { videos: Video[] }) => {
-    const [playVideo, setPlayVideo] = useState(false);
     const [currentVideo, setCurrentVideo] = useState(videos[0]);
-
     const handleVideoSelect = (video: Video) => {
         setCurrentVideo(video);
-        setPlayVideo(false);
-    };
-
-    const playGitNationVideo = () => {
-        setPlayVideo(true);
     };
 
     return (
@@ -35,12 +29,12 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                 </div>
                 <div className={styles.rightColumn}>
                     {/* TODO: GitNation Portal Support */}
-                    {currentVideo.thumbnail && !playVideo ? (
+                    {currentVideo.thumbnail ? (
                         <img
-                            className={styles.videoFrame}
-                            src={currentVideo.thumbnail}
+                            className={styles.videoImage}
+                            src={urlWithBaseUrl(currentVideo.thumbnail)}
                             alt="Video thumbnail"
-                            onClick={() => playGitNationVideo()}
+                            onClick={() => window.open(currentVideo.link, '_blank')}
                         />
                     ) : (
                         <iframe
@@ -67,7 +61,11 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                                 className={styles.youtubeThumbnail}
                             />
                         ) : (
-                            <img src={video.thumbnail} alt="Video thumbnail" className={styles.videoThumbnail} />
+                            <img
+                                src={urlWithBaseUrl(video.thumbnail)}
+                                alt="Video thumbnail"
+                                className={styles.videoThumbnail}
+                            />
                         )}
                     </div>
                 ))}

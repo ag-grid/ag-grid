@@ -14,4 +14,5 @@
 .columns {
     display: flex;
     flex-direction: row;
+    gap: 16px;
 }

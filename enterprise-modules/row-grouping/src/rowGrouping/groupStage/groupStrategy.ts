@@ -330,7 +330,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
                 return false;
             }
             // if still not removed, then we remove if this group is empty
-            return rowNode.isEmptyRowGroupNode();
+            return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
         };
 
         while (checkAgain) {
@@ -368,7 +368,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (child.parent?.childrenMapped != undefined) {
+        if (child.parent?.childrenMapped) {
             delete child.parent.childrenMapped[mapKey];
         }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
@@ -382,8 +382,8 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
      */
     private addToParent(child: RowNode, parent: RowNode | null) {
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (parent?.childrenMapped != null) {
-            if (parent?.childrenMapped?.[mapKey] !== child) {
+        if (parent?.childrenMapped) {
+            if (parent.childrenMapped[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
                 parent.setGroup(true); // calls `.updateHasChildren` internally
@@ -506,7 +506,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
         let nextNode: RowNode = details.rootNode;
 
         path.forEach((groupInfo, level) => {
-            nextNode = this.getOrCreateNextNode(nextNode, path, groupInfo, level, details);
+            nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
 
@@ -523,7 +523,6 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
 
     private getOrCreateNextNode(
         parentGroup: RowNode,
-        path: GroupInfo[],
         groupInfo: GroupInfo,
         level: number,
         details: GroupingDetails

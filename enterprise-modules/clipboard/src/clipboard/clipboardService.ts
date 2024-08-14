@@ -784,7 +784,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
         const emptyValue =
-            this.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ?? null;
+            this.valueService.parseValue(column, rowNode, '', this.valueService.getValueForDisplay(column, rowNode)) ??
+            null;
         rowNode.setDataValue(column, emptyValue, 'clipboardService');
     }
 

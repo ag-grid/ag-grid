@@ -251,6 +251,8 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     setExpanded(expanded: boolean, sourceEvent?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
 
     /**
+     * @deprecated v32.2.0 Check `node.detail` then user provided callback `isFullWidthRow` instead.
+     *
      * Returns:
      * - `true` if the node is a full width cell.
      * - `false` if the node is not a full width cell.
@@ -313,8 +315,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
 
     /**
-     * Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node.
-     * If the Row Node is not a group, it returns `undefined`.
+     * Returns the route of the row node. If the Row Node does not have a key (i.e it's a group) returns undefined
      */
     getRoute(): string[] | undefined;
 }

@@ -231,6 +231,8 @@ export abstract class AgPickerField<
             anchorToElement: this.eWrapper,
         };
 
+        // need to set position before adding to the dom
+        ePicker.style.position = 'absolute';
         const addPopupRes = this.popupService.addPopup(popupParams);
 
         const { maxPickerHeight, minPickerWidth, maxPickerWidth, variableWidth } = this;
@@ -250,7 +252,6 @@ export abstract class AgPickerField<
         const maxHeight = maxPickerHeight ?? `${_getInnerHeight(this.popupService.getPopupParent())}px`;
 
         ePicker.style.setProperty('max-height', maxHeight);
-        ePicker.style.position = 'absolute';
 
         this.alignPickerToComponent();
 
