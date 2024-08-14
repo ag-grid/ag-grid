@@ -25,7 +25,7 @@ export const StatusBarCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule],
 });
 
-export const StatusBarApiModule = _defineModule<_StatusBarGridApi<any>>({
+export const StatusBarApiModule = _defineModule<_StatusBarGridApi>({
     version: VERSION,
     moduleName: `${ModuleNames.StatusBarModule}-api`,
     apiFunctions: {

@@ -325,7 +325,7 @@ export const gridApiFunctionsMap = {
         getSideBar: 0,
     }),
 
-    ...mod<_StatusBarGridApi<any>>(ModuleNames.StatusBarModule, {
+    ...mod<_StatusBarGridApi>(ModuleNames.StatusBarModule, {
         getStatusPanel: 0,
     }),
 };
