@@ -197,7 +197,6 @@ export const Property: FunctionComponent<{
     }, [idName]);
 
     const isExpandable = detailsCode;
-
     return (
         <>
             <tr ref={propertyRef}>
@@ -215,17 +214,40 @@ export const Property: FunctionComponent<{
                                 <div
                                     title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
                                     className={styles.metaItem}
-                                    onClick={() => setExpanded(!isExpanded)}
                                 >
-                                    {typeUrl ? (
-                                        <a
-                                            className={styles.metaValue}
-                                            href={typeUrl}
-                                            target={typeUrl.startsWith('http') ? '_blank' : '_self'}
-                                            rel="noreferrer"
-                                        >
-                                            {isObject ? getInterfaceName(name) : propertyType}
-                                        </a>
+                                    {typeUrl && detailsCode ? (
+                                        <>
+                                            <button
+                                                className={classnames(styles.seeMore, 'button-as-link', {
+                                                    [styles.isExpanded]: isExpanded,
+                                                })}
+                                                onClick={() => {
+                                                    setExpanded(!isExpanded);
+                                                    trackApiDocumentation({
+                                                        type: isExpanded
+                                                            ? 'propertyHideDetails'
+                                                            : 'propertyShowDetails',
+                                                        framework,
+                                                        id,
+                                                        name,
+                                                    });
+                                                }}
+                                                aria-label={`See more details about ${more?.name}`}
+                                            >
+                                                <Icon
+                                                    className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
+                                                    name="chevronDown"
+                                                />
+                                            </button>
+                                            <a
+                                                className={styles.metaValue}
+                                                href={typeUrl}
+                                                target={typeUrl.startsWith('http') ? '_blank' : '_self'}
+                                                rel="noreferrer"
+                                            >
+                                                {isObject ? getInterfaceName(name) : propertyType}
+                                            </a>
+                                        </>
                                     ) : (
                                         <div className={styles.metaRow}>
                                             {detailsCode && (
@@ -252,8 +274,9 @@ export const Property: FunctionComponent<{
                                                     />
                                                 </button>
                                             )}
-                                            <span className={styles.metaValue}>{propertyType}</span>
-                                            <div className={styles.actions}></div>
+                                            <span onClick={() => setExpanded(!isExpanded)} className={styles.metaValue}>
+                                                {propertyType}
+                                            </span>
                                         </div>
                                     )}
 
@@ -271,7 +294,6 @@ export const Property: FunctionComponent<{
                                             <a
                                                 className={styles.initialLabel}
                                                 href="https://ag-grid.com/react-data-grid/grid-interface/#initial-grid-options"
-                                                target="_blank"
                                             >
                                                 Initial
                                             </a>
@@ -290,7 +312,6 @@ export const Property: FunctionComponent<{
                                 >
                                     <div className={styles.rightColumn}>
                                         <div
-                                            onClick={() => setExpanded(!isExpanded)}
                                             role="presentation"
                                             className={styles.description}
                                             dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
@@ -327,7 +348,6 @@ export const Property: FunctionComponent<{
                                 {more != null && more.url && !config.hideMore && (
                                     <a
                                         className={`${styles.docLink} ${detailsCode ? styles.separator : ''}`}
-                                        target="_blank"
                                         href={urlWithPrefix({
                                             url: more.url,
                                             framework,

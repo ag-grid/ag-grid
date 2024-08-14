@@ -201,6 +201,7 @@
     padding-left: 8px;
     padding-right: 8px;
     border-radius: var(--radius-sm);
+    cursor: pointer;
 }
 
 .defaultValue {
@@ -235,17 +236,6 @@ a.metaValue {
 
 .description {
     padding-top: $spacing-size-1;
-}
-
-.actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $spacing-size-4 $spacing-size-8;
-    padding-left: $spacing-size-2;
-
-    pre {
-        min-width: 100%;
-    }
 }
 
 .seeMoreLink {
@@ -285,6 +275,8 @@ button.seeMore {
     height: 24px;
     width: 24px;
     margin-right: $spacing-size-2;
+    transition: 0.5s all;
+    flex-shrink: 0;
 
     svg {
         --icon-size: 16px;
@@ -292,6 +284,7 @@ button.seeMore {
         transition: 0.25s ease-in-out;
         fill: var(--color-link);
         transition: all $transition-default-timing;
+        top: 1px;
     }
 
     span {
@@ -303,7 +296,8 @@ button.seeMore {
     }
     &:hover {
         color: var(--color-link-hover);
-        border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 80%);
+        border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 50%);
+        transition: 0.5s all;
 
         svg {
             fill: var(--color-link-hover);
