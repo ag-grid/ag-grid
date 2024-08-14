@@ -1,5 +1,6 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { BeanCollection, Context } from '../../../context/context';
+import { _getDocument } from '../../../gridOptionsUtils';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warnOnce } from '../../../utils/function';
@@ -166,7 +167,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected createValueElement(): HTMLElement {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const eCondition = eDocument.createElement('div');
         eCondition.classList.add('ag-filter-body');
 
@@ -182,7 +183,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         dateConditionComps: DateCompWrapper[],
         fromTo: string
     ): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const eConditionPanel = eDocument.createElement('div');
         eConditionPanel.classList.add(`ag-filter-${fromTo}`);
         eConditionPanel.classList.add(`ag-filter-date-${fromTo}`);

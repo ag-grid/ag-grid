@@ -6,6 +6,7 @@ import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
+import { _getActiveDomElement } from '../../../gridOptionsUtils';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
@@ -670,7 +671,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     public announceAriaDescription(): void {
-        if (!this.eGui.contains(this.beans.gos.getActiveDomElement())) {
+        if (!this.eGui.contains(_getActiveDomElement(this.beans.gos))) {
             return;
         }
         const ariaDescription = Array.from(this.ariaDescriptionProperties.keys())

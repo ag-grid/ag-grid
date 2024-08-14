@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
+import { _getRowHeightAsNumber } from '../gridOptionsUtils';
 import { _debounce } from '../utils/function';
 import type { PaginationService } from './paginationService';
 
@@ -59,7 +60,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
 
         if (bodyHeight > 0) {
             const update = () => {
-                const rowHeight = Math.max(this.gos.getRowHeightAsNumber(), 1); // prevent divide by zero error if row height is 0
+                const rowHeight = Math.max(_getRowHeightAsNumber(this.gos), 1); // prevent divide by zero error if row height is 0
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
                 this.paginationService.setPageSize(newPageSize, 'autoCalculated');
             };

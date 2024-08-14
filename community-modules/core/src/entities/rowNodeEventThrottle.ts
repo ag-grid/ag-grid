@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowGroupOpenedEvent } from '../events';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -24,7 +25,7 @@ export class RowNodeEventThrottle extends BeanStub implements NamedBean {
     private dispatchExpandedDebounced: () => void;
 
     public postConstruct(): void {
-        if (this.rowModel.getType() == 'clientSide') {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
     }

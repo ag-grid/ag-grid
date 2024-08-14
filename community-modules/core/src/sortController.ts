@@ -6,6 +6,7 @@ import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import type { SortDirection } from './entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from './events';
+import { _isColumnsSortingCoupledToGroup } from './gridOptionsUtils';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 import type { SortOption } from './rowNodes/rowNodeSorter';
@@ -43,7 +44,7 @@ export class SortController extends BeanStub implements NamedBean {
             sort = null;
         }
 
-        const isColumnsSortingCoupledToGroup = this.gos.isColumnsSortingCoupledToGroup();
+        const isColumnsSortingCoupledToGroup = _isColumnsSortingCoupledToGroup(this.gos);
         let columnsToUpdate = [column];
         if (isColumnsSortingCoupledToGroup) {
             if (column.getColDef().showRowGroup) {
@@ -75,7 +76,7 @@ export class SortController extends BeanStub implements NamedBean {
     }
 
     private updateSortIndex(lastColToChange: AgColumn) {
-        const isCoupled = this.gos.isColumnsSortingCoupledToGroup();
+        const isCoupled = _isColumnsSortingCoupledToGroup(this.gos);
         const groupParent = this.showRowGroupColsService?.getShowRowGroupCol(lastColToChange.getId());
         const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
 
@@ -185,7 +186,7 @@ export class SortController extends BeanStub implements NamedBean {
         let allSortedCols = this.columnModel.getAllCols().filter((col) => !!col.getSort());
 
         if (this.columnModel.isPivotMode()) {
-            const isSortingLinked = this.gos.isColumnsSortingCoupledToGroup();
+            const isSortingLinked = _isColumnsSortingCoupledToGroup(this.gos);
             allSortedCols = allSortedCols.filter((col) => {
                 const isAggregated = !!col.getAggFunc();
                 const isSecondary = !col.isPrimary();
@@ -222,7 +223,7 @@ export class SortController extends BeanStub implements NamedBean {
             }
         });
 
-        const isSortLinked = this.gos.isColumnsSortingCoupledToGroup() && !!sortedRowGroupCols.length;
+        const isSortLinked = _isColumnsSortingCoupledToGroup(this.gos) && !!sortedRowGroupCols.length;
         if (isSortLinked) {
             allSortedCols = [
                 ...new Set(
@@ -277,7 +278,7 @@ export class SortController extends BeanStub implements NamedBean {
     }
 
     public canColumnDisplayMixedSort(column: AgColumn): boolean {
-        const isColumnSortCouplingActive = this.gos.isColumnsSortingCoupledToGroup();
+        const isColumnSortCouplingActive = _isColumnsSortingCoupledToGroup(this.gos);
         const isGroupDisplayColumn = !!column.getColDef().showRowGroup;
         return isColumnSortCouplingActive && isGroupDisplayColumn;
     }

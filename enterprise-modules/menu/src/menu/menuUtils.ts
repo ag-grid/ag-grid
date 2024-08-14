@@ -8,7 +8,7 @@ import type {
     PopupEventParams,
     VisibleColsService,
 } from '@ag-grid-community/core';
-import { BeanStub, _isVisible, _last } from '@ag-grid-community/core';
+import { BeanStub, _getActiveDomElement, _isNothingFocused, _isVisible, _last } from '@ag-grid-community/core';
 import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
 
 export interface MenuRestoreFocusParams {
@@ -43,12 +43,12 @@ export class MenuUtils extends BeanStub implements NamedBean {
             return;
         }
 
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
         if (
             // focus is outside of comp
             !eComp.contains(activeEl) &&
             // something else has focus
-            !this.gos.isNothingFocused()
+            !_isNothingFocused(this.gos)
         ) {
             // don't return focus to the header
             return;
@@ -73,7 +73,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
         // in this case we focus the cell that was previously focused, otherwise the header
         const focusedCell = this.focusService.getFocusedCell();
 
-        if (this.gos.isNothingFocused()) {
+        if (_isNothingFocused(this.gos)) {
             if (focusedCell) {
                 const { rowIndex, rowPinned, column } = focusedCell;
                 this.focusService.setFocusedCell({

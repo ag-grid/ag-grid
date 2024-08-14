@@ -6,6 +6,7 @@ import { AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProv
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import type { ColumnEventType } from '../events';
+import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import { _warnOnce } from '../utils/function';
 import { _attrToBoolean, _attrToNumber } from '../utils/generic';
 import { _iterateObject, _mergeDeep } from '../utils/object';
@@ -460,7 +461,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
         _mergeDeep(res, colDef, false, true);
 
         const autoGroupColDef = this.gos.get('autoGroupColumnDef');
-        const isSortingCoupled = this.gos.isColumnsSortingCoupledToGroup();
+        const isSortingCoupled = _isColumnsSortingCoupledToGroup(this.gos);
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
             _mergeDeep(

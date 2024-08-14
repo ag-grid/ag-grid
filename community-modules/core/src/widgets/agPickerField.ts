@@ -1,5 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
+import { _isNothingFocused } from '../gridOptionsUtils';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
@@ -220,7 +221,7 @@ export abstract class AgPickerField<
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
-                const shouldRestoreFocus = this.gos.isNothingFocused();
+                const shouldRestoreFocus = _isNothingFocused(this.gos);
                 this.beforeHidePicker();
 
                 if (shouldRestoreFocus && this.isAlive()) {

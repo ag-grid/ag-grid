@@ -6,7 +6,7 @@ import type {
     SortOption,
     StageExecuteParams,
 } from '@ag-grid-community/core';
-import { BeanStub, _exists } from '@ag-grid-community/core';
+import { BeanStub, _exists, _isColumnsSortingCoupledToGroup } from '@ag-grid-community/core';
 
 import type { SortService } from './sortService';
 
@@ -35,7 +35,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             this.gos.get('deltaSort');
 
         const sortContainsGroupColumns = sortOptions.some((opt) => {
-            const isSortingCoupled = this.gos.isColumnsSortingCoupledToGroup();
+            const isSortingCoupled = _isColumnsSortingCoupledToGroup(this.gos);
             if (isSortingCoupled) {
                 return opt.column.isPrimary() && opt.column.isRowGroupActive();
             }

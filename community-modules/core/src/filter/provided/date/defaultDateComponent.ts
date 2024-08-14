@@ -1,3 +1,4 @@
+import { _getActiveDomElement } from '../../../gridOptionsUtils';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from '../../../utils/browser';
@@ -45,7 +46,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
                 inputElement.focus();
             },
             input: (e) => {
-                if (e.target !== this.gos.getActiveDomElement()) {
+                if (e.target !== _getActiveDomElement(this.gos)) {
                     return;
                 }
                 if (this.eDateInput.isDisabled()) {
