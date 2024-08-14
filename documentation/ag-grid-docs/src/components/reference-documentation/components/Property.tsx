@@ -352,9 +352,9 @@ export const Property: FunctionComponent<{
                         </div>
                     </div>
                     {detailsCode && isExpanded && (
-                        <tr id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
-                            <td colSpan={2}>{detailsCode && <Code code={detailsCode} keepMarkup={true} />}</td>
-                        </tr>
+                        <div id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
+                            <div>{detailsCode && <Code code={detailsCode} keepMarkup={true} />}</div>
+                        </div>
                     )}
                 </td>
             </tr>
