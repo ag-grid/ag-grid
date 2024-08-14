@@ -4,6 +4,7 @@ import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
+import { SELECTION_VALIDATORS } from './selectionValidations';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -365,6 +366,8 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     defaultColDef: () => COL_DEF_VALIDATORS,
     defaultColGroupDef: () => COL_DEF_VALIDATORS,
     autoGroupColumnDef: () => COL_DEF_VALIDATORS,
+
+    selection: () => SELECTION_VALIDATORS,
 });
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
