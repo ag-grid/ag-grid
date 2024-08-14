@@ -59,6 +59,7 @@ export const GRID_OPTION_DEFAULTS = {
     allowDragFromColumnsToolPanel: false,
     suppressMovableColumns: false,
     suppressColumnMoveAnimation: false,
+    suppressMoveWhenColumnDragging: false,
     suppressDragLeaveHidesColumns: false,
     suppressRowGroupHidesColumns: false,
     suppressAutoSize: false,

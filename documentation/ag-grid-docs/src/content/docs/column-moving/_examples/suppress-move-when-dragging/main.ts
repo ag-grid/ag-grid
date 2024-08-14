@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { Column, GridApi, GridOptions } from '@ag-grid-community/core';
+import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -23,30 +23,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         width: 150,
     },
     suppressDragLeaveHidesColumns: true,
+    suppressMoveWhenColumnDragging: true,
 };
-
-function onMedalsFirst() {
-    gridApi!.moveColumns(['gold', 'silver', 'bronze', 'total'], 0);
-}
-
-function onMedalsLast() {
-    gridApi!.moveColumns(['gold', 'silver', 'bronze', 'total'], 6);
-}
-
-function onCountryFirst() {
-    gridApi!.moveColumns(['country'], 0);
-}
-
-function onSwapFirstTwo() {
-    gridApi!.moveColumnByIndex(0, 1);
-}
-
-function onPrintColumns() {
-    const cols = gridApi!.getAllGridColumns();
-    const colToNameFunc = (col: Column, index: number) => index + ' = ' + col.getId();
-    const colNames = cols.map(colToNameFunc).join(', ');
-    console.log('columns are: ' + colNames);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
