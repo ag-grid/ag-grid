@@ -7,14 +7,14 @@ const BasicFeatures: React.FC = () => {
     const codeExample = `const GridExample = () => {
     const [rowData, setRowData] = getRowDataJson();
     const [colDefs, setColDefs] = useState<ColDef<IRow>[]>([
-        { field: "make" }, { field: "model" },
-        { field: "price" }, { field: "electric" }
+        { field: "make" }, 
+        { field: "model" },
+        { field: "price" }
     ]);
     
     return (
         <div className={"ag-theme-quartz-dark"}>
-            <AgGridReact rowData={rowData} columnDefs={colDefs}
-            />
+            <AgGridReact rowData={rowData} columnDefs={colDefs}  />
         </div>
     );
 }
