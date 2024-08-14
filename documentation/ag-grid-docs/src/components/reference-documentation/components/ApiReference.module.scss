@@ -201,6 +201,12 @@
     font-size: var(--text-fs-sm);
     font-family: var(--text-monospace-font-family);
     color: var(--color-fg-code);
+    background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 94%);
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: var(--radius-sm, 0.375rem);
 }
 
 .defaultValue {
@@ -268,22 +274,31 @@ a.metaValue {
     }
 }
 
+.isExpanded svg {
+    transform: rotate(180deg);
+    transition: 0.25s ease-in-out;
+}
+
 button.seeMore {
     color: var(--color-link);
     transition: color $transition-default-timing;
-    justify-content: right;
-    display: flex;
+    justify-content: center;
     align-items: center;
+    display: flex;
     gap: $spacing-size-2;
     color: var(--color-link);
-    padding-right: 0.5em;
     font-weight: 600;
+    border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 80%);
+    height: 24px;
+    width: 24px;
+    margin-right: $spacing-size-2;
 
     svg {
         --icon-size: 16px;
-
+        margin-left: 2px;
+        transition: 0.25s ease-in-out;
         fill: var(--color-link);
-        transition: fill $transition-default-timing;
+        transition: all $transition-default-timing;
     }
 
     span {
@@ -295,6 +310,7 @@ button.seeMore {
     }
     &:hover {
         color: var(--color-link-hover);
+        border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 80%);
 
         svg {
             fill: var(--color-link-hover);
@@ -405,15 +421,6 @@ button.seeMore {
     flex-direction: column;
 }
 
-.metaRow {
-    background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 94%);
-    padding-top: 0.125rem;
-    padding-bottom: 0.125rem;
-    padding-left: 0.5rem;
-    padding-right: 0;
-    border-radius: var(--radius-sm, 0.375rem);
-}
-
 .propertyNameDescription {
     display: flex;
     flex-direction: column;
@@ -481,10 +488,6 @@ button.seeMore {
     svg {
         --icon-size: 16px;
     }
-}
-.separator {
-    border-left: 1px solid var(--color-border-secondary);
-    padding-left: $spacing-size-2;
 }
 
 .actionsRow {

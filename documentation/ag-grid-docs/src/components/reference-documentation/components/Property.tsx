@@ -229,6 +229,30 @@ export const Property: FunctionComponent<{
                                             </a>
                                         ) : (
                                             <div className={styles.metaRow}>
+                                                {detailsCode && (
+                                                    <button
+                                                        className={classnames(styles.seeMore, 'button-as-link', {
+                                                            [styles.isExpanded]: isExpanded,
+                                                        })}
+                                                        onClick={() => {
+                                                            setExpanded(!isExpanded);
+                                                            trackApiDocumentation({
+                                                                type: isExpanded
+                                                                    ? 'propertyHideDetails'
+                                                                    : 'propertyShowDetails',
+                                                                framework,
+                                                                id,
+                                                                name,
+                                                            });
+                                                        }}
+                                                        aria-label={`See more details about ${more?.name}`}
+                                                    >
+                                                        <Icon
+                                                            className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
+                                                            name="chevronDown"
+                                                        />
+                                                    </button>
+                                                )}
                                                 <span className={styles.metaValue}>{propertyType}</span>
                                                 <div className={styles.actions}></div>
                                             </div>
@@ -302,28 +326,6 @@ export const Property: FunctionComponent<{
                                 </div>
                             </div>
                             <div className={styles.actionsRow}>
-                                {detailsCode && (
-                                    <button
-                                        className={classnames(styles.seeMore, 'button-as-link')}
-                                        onClick={() => {
-                                            setExpanded(!isExpanded);
-                                            trackApiDocumentation({
-                                                type: isExpanded ? 'propertyHideDetails' : 'propertyShowDetails',
-                                                framework,
-                                                id,
-                                                name,
-                                            });
-                                        }}
-                                        aria-label={`See more details about ${more?.name}`}
-                                    >
-                                        More details
-                                        <Icon
-                                            className={styles.chevron}
-                                            name={isExpanded ? 'chevronUp' : 'chevronDown'}
-                                        />
-                                    </button>
-                                )}
-
                                 {more != null && more.url && !config.hideMore && (
                                     <a
                                         className={`${styles.docLink} ${detailsCode ? styles.separator : ''}`}
@@ -351,10 +353,7 @@ export const Property: FunctionComponent<{
                     </div>
                     {detailsCode && isExpanded && (
                         <tr id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
-                            <td colSpan={2}>
-                                <div className={styles.metaList}></div>
-                                {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
-                            </td>
+                            <td colSpan={2}>{detailsCode && <Code code={detailsCode} keepMarkup={true} />}</td>
                         </tr>
                     )}
                 </td>
