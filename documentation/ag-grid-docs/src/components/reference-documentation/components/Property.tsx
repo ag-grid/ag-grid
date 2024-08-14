@@ -271,7 +271,7 @@ export const Property: FunctionComponent<{
                                             <div className={classnames(styles.metaItem, styles.initialItem)}>
                                                 <a
                                                     className={styles.initialLabel}
-                                                    href="https://ag-grid.com/react-data-grid/grid-interface/#initial-grid-options"
+                                                    href={urlWithPrefix({ url: "./grid-interface/#initial-grid-options", framework })}
                                                     target="_blank"
                                                 >
                                                     Initial
