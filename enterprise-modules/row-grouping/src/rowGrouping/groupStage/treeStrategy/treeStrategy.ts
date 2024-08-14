@@ -61,7 +61,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     public override destroy(): void {
         const rootRow = this.root.row;
         if (rootRow !== null) {
-            this.root.linkRow(null);
+            this.root.removeRow(rootRow);
             clearTreeRowFlags(rootRow);
         }
         this.destroyTree(this.root);
@@ -84,11 +84,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         };
 
         const rootNode = this.root;
-        rootNode.linkRow(rootRow);
-        rootRow.parent = null;
-        rootRow.level = -1;
+        rootNode.setRow(rootRow);
         rootRow.leafGroup = false; // no pivoting with tree data
-        rootRow.childrenAfterGroup = rootNode.childrenAfterGroup;
         const sibling: TreeRow = rootRow.sibling;
         if (sibling) {
             sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
@@ -129,13 +126,16 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.clearTree(root, details.changedPath);
 
         const rows = rootRow.allLeafChildren;
-        const rowsLen = rows?.length ?? 0;
-        for (let rowIndex = 0; rowIndex < rowsLen; ++rowIndex) {
-            const row = rows![rowIndex];
-            const node = this.upsertPath(this.getDataPath(details, row));
-            if (node) {
-                node.rowPosition = rowIndex;
-                this.overwriteRow(node, row, false);
+        if (rows) {
+            for (let rowIndex = 0, rowsLen = rows.length; rowIndex < rowsLen; ++rowIndex) {
+                const row = rows![rowIndex];
+                const node = this.upsertPath(this.getDataPath(details, row));
+                if (node) {
+                    this.addOrUpdateRow(node, row, false);
+                    if (node.rowPosition < 0) {
+                        node.rowPosition = rowIndex;
+                    }
+                }
             }
         }
 
@@ -166,14 +166,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Called by the destructor, to the destroy the whole tree. */
     private destroyTree(node: TreeNode): void {
-        const { row, level } = node;
-        if (row !== null) {
-            node.linkRow(null);
+        const { level } = node;
+        let row = node.row;
+        while (row !== null && node.removeRow(row)) {
             if (level >= 0 && !row.data) {
                 this.deleteRow(row, true); // Delete filler nodes
             } else {
-                clearTreeRowFlags(row);
+                clearTreeRowFlags(row); // Just clear the flags
             }
+            row = node.row;
         }
         const children = node.enumChildren();
         node.destroy();
@@ -189,8 +190,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         if (row !== null) {
             shouldNotify = isTreeRowCommitted(row);
             if (level >= 0) {
-                node.linkRow(null);
-                this.deleteRow(row, !row.data);
+                let row = node.row;
+                while (row !== null && node.removeRow(row)) {
+                    this.deleteRow(row, !row.data);
+                    row = node.row;
+                }
             }
         }
         const children = node.enumChildren();
@@ -211,12 +215,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         if (rows) {
             const len = rows.length;
             for (let i = 0; i < len; ++i) {
-                const node = rows![i].treeNode as TreeNode | null;
-                if (node) {
-                    const oldRow = this.clearRow(node);
-                    if (oldRow !== null) {
-                        setTreeRowExpandedInitialized(oldRow, false);
-                    }
+                const row = rows![i];
+                const node = row.treeNode as TreeNode | null;
+                if (node !== null) {
+                    this.removeRow(node, row);
                 }
             }
         }
@@ -230,7 +232,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 const row = rows![i];
                 const node = this.upsertPath(this.getDataPath(details, row));
                 if (node) {
-                    this.overwriteRow(node, row, update);
+                    this.addOrUpdateRow(node, row, update);
                 }
             }
         }
@@ -266,23 +268,21 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
      * Overwrites the row property of a non-root node to null.
      * @returns The previous row, if any, that was overwritten.
      */
-    private clearRow(node: TreeNode): RowNode | null {
-        const { row: oldRow, parent, level } = node;
+    private removeRow(node: TreeNode, oldRow: RowNode): void {
+        const { parent, level } = node;
 
         if (level < 0) {
-            return null; // Cannot overwrite a null node or the root row
+            return; // Cannot overwrite a null node or the root row
         }
 
         let invalidate = false;
 
-        if (node.linkRow(null)) {
+        if (node.removeRow(oldRow)) {
             invalidate = true;
-            if (oldRow) {
-                if (parent) {
-                    parent.childrenChanged = true;
-                }
-                this.deleteRow(oldRow, !oldRow.data);
+            if (parent) {
+                parent.childrenChanged = true;
             }
+            this.deleteRow(oldRow, !oldRow.data);
         }
 
         if (node.updateIsGhost()) {
@@ -292,34 +292,43 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         if (invalidate) {
             node.invalidate();
         }
-
-        return oldRow;
     }
 
-    /**
-     * Overwrites the row property of a non-root node, preparing the tree correctly for the commit.
-     * @returns The previous row, if any, that was overwritten.
-     */
-    private overwriteRow(node: TreeNode, newRow: RowNode, update: boolean): RowNode | null {
+    /** Add or updates the row to a non-root node, preparing the tree correctly for the commit. */
+    private addOrUpdateRow(node: TreeNode, newRow: RowNode, update: boolean): void {
         if (node.level < 0) {
-            return null; // Cannot overwrite a null node or the root row
+            return; // Cannot overwrite the root row
         }
 
         const { row: oldRow } = node;
-
-        const prevNode = newRow.treeNode as TreeNode | null;
-        if (prevNode !== node && prevNode !== null) {
-            this.clearRow(prevNode); // The row is somewhere else in the tree
-        }
-
         let invalidate = false;
 
-        if (node.linkRow(newRow)) {
-            invalidate = true;
-            if (oldRow) {
-                this.deleteRow(oldRow, !oldRow.data);
-                if (oldRow.data && newRow.data) {
-                    _warnOnce(`duplicate group keys for row data, keys should be unique`, [oldRow.data, newRow.data]);
+        const prevNode = newRow.treeNode as TreeNode | null;
+        if (prevNode !== null && prevNode !== node) {
+            // The new row is somewhere else in the tree, we need to move it.
+            if (prevNode.removeRow(newRow)) {
+                if (prevNode.parent) {
+                    prevNode.parent.childrenChanged = true;
+                }
+                prevNode.updateIsGhost();
+                prevNode.invalidate();
+            }
+        }
+
+        if (oldRow !== newRow) {
+            if (oldRow === null) {
+                // No previous row, just set the new row.
+                node.setRow(newRow);
+                invalidate = true;
+            } else if (!oldRow.data) {
+                // We are replacing a filler row with a real row.
+                node.setRow(newRow);
+                this.deleteRow(oldRow, true); // Delete the filler node
+                invalidate = true;
+            } else {
+                // We have a new non-filler row, but we had already one, this is a duplicate
+                if (node.addDuplicateRow(newRow)) {
+                    invalidate = true;
                 }
             }
         }
@@ -329,15 +338,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (update && !isTreeRowUpdated(newRow)) {
-            invalidate = true;
             setTreeRowUpdated(newRow);
+            invalidate = true;
         }
 
         if (invalidate) {
             node.invalidate();
         }
 
-        return oldRow;
+        this.rowsPendingDeletion?.delete(newRow); // This row is not deleted.
     }
 
     /**
@@ -438,12 +447,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         let row = node.row;
         if (row === null) {
             row = this.createFillerRow(node);
-            node.linkRow(row);
+            node.setRow(row);
         }
 
         row.parent = parent.row;
-
-        this.rowsPendingDeletion?.delete(row); // This row is used. It's not deleted.
 
         const key = node.key;
         if (row.key !== key) {
@@ -525,6 +532,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             if (details.changedPath?.isActive()) {
                 details.changedPath.addParentNode(row);
             }
+        }
+
+        if (node.duplicateRows?.size && !node.duplicateRowsWarned) {
+            node.duplicateRowsWarned = true;
+            _warnOnce(`duplicate group keys for row data, keys should be unique`, [
+                row.id,
+                row.data,
+                ...Array.from(node.duplicateRows).map((r) => r.data),
+            ]);
         }
     }
 
