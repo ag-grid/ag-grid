@@ -1,5 +1,11 @@
 import type { Component } from '@ag-grid-community/core';
-import { BeanStub, KeyCode, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    KeyCode,
+    _getActiveDomElement,
+    _isStopPropagationForAgGrid,
+    _stopPropagationForAgGrid,
+} from '@ag-grid-community/core';
 
 export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
     constructor(
@@ -29,7 +35,7 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
                         if (_isStopPropagationForAgGrid(event)) {
                             return;
                         }
-                        if (this.eGui.contains(this.gos.getActiveDomElement())) {
+                        if (this.eGui.contains(_getActiveDomElement(this.gos))) {
                             event.preventDefault();
                             _stopPropagationForAgGrid(event);
                             this.focusWrapper.focus();
@@ -46,7 +52,7 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
                         if (_isStopPropagationForAgGrid(event)) {
                             return;
                         }
-                        if (this.gos.getActiveDomElement() === this.focusWrapper) {
+                        if (_getActiveDomElement(this.gos) === this.focusWrapper) {
                             event.preventDefault();
                             _stopPropagationForAgGrid(event);
                             this.eFocusableComp.getFocusableElement().focus();

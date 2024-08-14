@@ -11,6 +11,7 @@ import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
+import { _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
 import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
@@ -36,7 +37,6 @@ import type {
 } from '../../interfaces/gridState';
 import type { IExpansionService } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
-import type { IRowModel } from '../../interfaces/iRowModel';
 import type { ISelectionService } from '../../interfaces/iSelectionService';
 import type { ISideBarService } from '../../interfaces/iSideBar';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
@@ -58,7 +58,6 @@ export class StateService extends BeanStub implements NamedBean {
     private columnGroupStateService: ColumnGroupStateService;
     private columnGetStateService: ColumnGetStateService;
     private paginationService?: PaginationService;
-    private rowModel: IRowModel;
     private selectionService: ISelectionService;
     private expansionService: IExpansionService;
     private columnAnimationService: ColumnAnimationService;
@@ -76,7 +75,6 @@ export class StateService extends BeanStub implements NamedBean {
         this.columnGroupStateService = beans.columnGroupStateService;
         this.columnGetStateService = beans.columnGetStateService;
         this.paginationService = beans.paginationService;
-        this.rowModel = beans.rowModel;
         this.selectionService = beans.selectionService;
         this.expansionService = beans.expansionService;
         this.columnAnimationService = beans.columnAnimationService;
@@ -106,7 +104,7 @@ export class StateService extends BeanStub implements NamedBean {
     private staleStateKeys: Set<keyof GridState> = new Set();
 
     public postConstruct(): void {
-        this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
+        this.isClientSideRowModel = _isClientSideRowModel(this.gos);
 
         this.cachedState = this.gos.get('initialState') ?? {};
 

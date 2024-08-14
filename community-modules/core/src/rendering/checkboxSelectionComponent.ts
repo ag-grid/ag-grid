@@ -1,6 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
@@ -140,7 +141,7 @@ export class CheckboxSelectionComponent extends Component {
         return (
             groupSelectsFiltered &&
             (this.eCheckbox.getPreviousValue() === undefined || isSelected === undefined) &&
-            this.gos.isRowModelType('clientSide')
+            _isClientSideRowModel(this.gos)
         );
     }
 

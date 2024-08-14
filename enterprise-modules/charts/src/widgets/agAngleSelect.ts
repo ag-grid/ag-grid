@@ -10,6 +10,7 @@ import {
     AgInputNumberFieldSelector,
     RefPlaceholder,
     _exists,
+    _getActiveDomElement,
     _setFixedWidth,
 } from '@ag-grid-community/core';
 
@@ -107,7 +108,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleS
 
         this.addManagedListeners(this, {
             fieldValueChanged: () => {
-                if (this.eAngleValue.getInputElement().contains(this.gos.getActiveDomElement())) {
+                if (this.eAngleValue.getInputElement().contains(_getActiveDomElement(this.gos))) {
                     return;
                 }
                 this.updateNumberInput();

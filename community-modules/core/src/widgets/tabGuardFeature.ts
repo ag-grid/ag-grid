@@ -1,4 +1,5 @@
 import { BeanStub } from '../context/beanStub';
+import { _getDocument } from '../gridOptionsUtils';
 import { _setAriaRole } from '../utils/aria';
 import { _clearElement, _isNodeOrElement } from '../utils/dom';
 import type { Component } from './component';
@@ -97,7 +98,7 @@ export class TabGuardFeature extends BeanStub {
     }
 
     private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
-        const tabGuard = this.gos.getDocument().createElement('div');
+        const tabGuard = _getDocument(this.gos).createElement('div');
         const cls = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
 
         tabGuard.classList.add(TabGuardClassNames.TAB_GUARD, cls);

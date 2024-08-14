@@ -5,7 +5,7 @@ import type {
     SortModelItem,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _isServerSideRowModel } from '@ag-grid-community/core';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
@@ -25,7 +25,7 @@ export class SortListener extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
-        if (!this.gos.isRowModelType('serverSide')) {
+        if (!_isServerSideRowModel(this.gos)) {
             return;
         }
 

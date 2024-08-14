@@ -22,6 +22,7 @@ import {
     RowDragComp,
     _cloneObject,
     _createIconNoSpan,
+    _getGrandTotalRow,
     _isElementInEventPath,
     _isStopPropagationForAgGrid,
     _missing,
@@ -200,7 +201,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private isTopLevelFooter(): boolean {
-        const totalRow = this.gos.getGrandTotalRow();
+        const totalRow = _getGrandTotalRow(this.gos);
         if (!totalRow) {
             return false;
         }

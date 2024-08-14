@@ -1,3 +1,4 @@
+import { _isGroupMultiAutoColumn, _isGroupUseEntireRow, _isServerSideRowModel } from '@ag-grid-community/core';
 import type {
     AgColumn,
     ColumnModel,
@@ -111,7 +112,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 return true;
             }
 
-            if (this.gos.isRowModelType('serverSide') && node.group) {
+            if (_isServerSideRowModel(this.gos) && node.group) {
                 return true;
             }
 
@@ -124,7 +125,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             }
         }
 
-        const isGroupUseEntireRow = this.gos.isGroupUseEntireRow(this.columnModel.isPivotMode());
+        const isGroupUseEntireRow = _isGroupUseEntireRow(this.gos, this.columnModel.isPivotMode());
 
         return currentColumnIndex === 0 && isGroupUseEntireRow;
     }
@@ -167,7 +168,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const isFooter = node.footer;
         const keys = [getValueFromNode(node)];
 
-        if (!this.gos.isGroupMultiAutoColumn()) {
+        if (!_isGroupMultiAutoColumn(this.gos)) {
             while (node.parent) {
                 node = node.parent;
                 keys.push(getValueFromNode(node));

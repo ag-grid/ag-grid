@@ -1,5 +1,13 @@
 import type { BeanCollection, FocusService } from '@ag-grid-community/core';
-import { Component, KeyCode, _clearElement, _setAriaPosInSet, _setAriaSetSize } from '@ag-grid-community/core';
+import {
+    Component,
+    KeyCode,
+    _clearElement,
+    _getActiveDomElement,
+    _getDocument,
+    _setAriaPosInSet,
+    _setAriaSetSize,
+} from '@ag-grid-community/core';
 
 import { AgPill } from './agPill';
 
@@ -82,7 +90,7 @@ export class AgPillContainer<TValue> extends Component {
 
         e.preventDefault();
 
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
         const eGui = this.getGui();
         const { params, focusService } = this;
 
@@ -105,7 +113,7 @@ export class AgPillContainer<TValue> extends Component {
     private clearPills(): void {
         const eGui = this.getGui();
 
-        if (eGui.contains(this.gos.getActiveDomElement()) && this.params.eWrapper) {
+        if (eGui.contains(_getActiveDomElement(this.gos)) && this.params.eWrapper) {
             this.params.eWrapper.focus();
         }
 
@@ -127,7 +135,7 @@ export class AgPillContainer<TValue> extends Component {
 
         e.preventDefault();
 
-        const eDoc = this.gos.getDocument();
+        const eDoc = _getDocument(this.gos);
         const pillIndex = this.pills.findIndex((pill) => pill.getGui().contains(eDoc.activeElement));
 
         if (pillIndex === -1) {

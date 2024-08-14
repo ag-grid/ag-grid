@@ -42,10 +42,8 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     protected eventService: EventService;
     protected gos: GridOptionsService;
     protected localeService: LocaleService;
-    protected gridId: string;
 
     public preWireBeans(beans: BeanCollection): void {
-        this.gridId = beans.context.getGridId();
         this.frameworkOverrides = beans.frameworkOverrides;
         this.stubContext = beans.context;
         this.eventService = beans.eventService;

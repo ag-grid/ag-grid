@@ -1,5 +1,6 @@
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
+import { _getRowHeightAsNumber } from '../gridOptionsUtils';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import type { ICellRenderer } from './cellRenderers/iCellRenderer';
@@ -54,7 +55,7 @@ export function flushAllAnimationFrames(beans: BeanCollection): void {
 
 export function getSizesForCurrentTheme(beans: BeanCollection) {
     return {
-        rowHeight: beans.gos.getRowHeightAsNumber(),
+        rowHeight: _getRowHeightAsNumber(beans.gos),
         headerHeight: beans.columnModel.getHeaderHeight(),
     };
 }

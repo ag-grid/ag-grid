@@ -27,11 +27,14 @@ import type {
 import {
     BeanStub,
     ModuleNames,
-    ModuleRegistry,
     NumberSequence,
     RowNode,
     _debounce,
     _errorOnce,
+    _getRowHeightAsNumber,
+    _getRowHeightForNode,
+    _isGetRowHeightFunction,
+    _isRowSelection,
     _jsonEquals,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -162,7 +165,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (this.gos.exists('initialGroupOrderComparator')) {
             _warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
         }
-        if (this.gos.isRowSelection() && !this.gos.exists('getRowId')) {
+        if (_isRowSelection(this.gos) && !this.gos.exists('getRowId')) {
             _warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
         }
     }
@@ -296,7 +299,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public generateSecondaryColumns(pivotFields: string[]) {
         if (!this.pivotColDefService) {
-            ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'pivotResultFields', this.gridId);
+            this.gos.assertModuleRegistered(ModuleNames.RowGroupingModule, 'pivotResultFields');
             return;
         }
 
@@ -308,10 +311,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     public resetRowHeights(): void {
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
 
-        const rootNodeHeight = this.gos.getRowHeightForNode(this.rootNode);
+        const rootNodeHeight = _getRowHeightForNode(this.gos, this.rootNode);
         this.rootNode.setRowHeight(rootNodeHeight.height, rootNodeHeight.estimated);
         if (this.rootNode.sibling) {
-            const rootNodeSibling = this.gos.getRowHeightForNode(this.rootNode.sibling);
+            const rootNodeSibling = _getRowHeightForNode(this.gos, this.rootNode.sibling);
             this.rootNode.sibling.setRowHeight(rootNodeSibling.height, rootNodeSibling.estimated);
         }
 
@@ -325,19 +328,19 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private resetRowHeightsForAllRowNodes(): boolean {
         let atLeastOne = false;
         this.forEachNode((rowNode) => {
-            const rowHeightForNode = this.gos.getRowHeightForNode(rowNode);
+            const rowHeightForNode = _getRowHeightForNode(this.gos, rowNode);
             rowNode.setRowHeight(rowHeightForNode.height, rowHeightForNode.estimated);
             // we keep the height each row is at, however we set estimated=true rather than clear the height.
             // this means the grid will not reset the row heights back to defaults, rather it will re-calc
             // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
             const detailNode = rowNode.detailNode;
             if (detailNode) {
-                const detailRowHeight = this.gos.getRowHeightForNode(detailNode);
+                const detailRowHeight = _getRowHeightForNode(this.gos, detailNode);
                 detailNode.setRowHeight(detailRowHeight.height, detailRowHeight.estimated);
             }
 
             if (rowNode.sibling) {
-                const siblingRowHeight = this.gos.getRowHeightForNode(rowNode.sibling);
+                const siblingRowHeight = _getRowHeightForNode(this.gos, rowNode.sibling);
                 detailNode.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
             }
             atLeastOne = true;
@@ -388,7 +391,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         const valueColumnVos = this.columnsToValueObjects(this.funcColsService.getValueColumns());
         const pivotColumnVos = this.columnsToValueObjects(this.funcColsService.getPivotColumns());
 
-        const dynamicRowHeight = this.gos.isGetRowHeightFunction();
+        const dynamicRowHeight = _isGetRowHeightFunction(this.gos);
 
         const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
@@ -552,7 +555,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     public getRowBounds(index: number): RowBounds {
         const rootStore = this.getRootStore();
         if (!rootStore) {
-            const rowHeight = this.gos.getRowHeightAsNumber();
+            const rowHeight = _getRowHeightAsNumber(this.gos);
             return {
                 rowTop: 0,
                 rowHeight: rowHeight,

@@ -7,6 +7,7 @@ import type { AgColumn } from './entities/agColumn';
 import type { CellPosition } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPosition } from './entities/rowPositionUtils';
+import { _isGroupRowsSticky } from './gridOptionsUtils';
 import type { IRowModel } from './interfaces/iRowModel';
 import type { PageBoundsService } from './pagination/pageBoundsService';
 import type { PaginationService } from './pagination/paginationService';
@@ -225,7 +226,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
-        if (!this.gos.isGroupRowsSticky() || !rowNode || !rowNode.sticky) {
+        if (!_isGroupRowsSticky(this.gos) || !rowNode || !rowNode.sticky) {
             return;
         }
 

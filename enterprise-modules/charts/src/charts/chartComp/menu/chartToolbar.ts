@@ -1,5 +1,5 @@
 import type { BeanCollection, ChartToolbarMenuItemOptions } from '@ag-grid-community/core';
-import { Component, RefPlaceholder, _clearElement, _createIconNoSpan } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _clearElement, _createIconNoSpan, _getDocument } from '@ag-grid-community/core';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 
@@ -61,7 +61,7 @@ export class ChartToolbar extends Component {
         const buttonEl = _createIconNoSpan(iconName, this.gos, undefined, true)!;
         buttonEl.classList.add('ag-chart-menu-icon');
 
-        const wrapperEl = this.gos.getDocument().createElement('button');
+        const wrapperEl = _getDocument(this.gos).createElement('button');
         wrapperEl.appendChild(buttonEl);
         wrapperEl.classList.add('ag-chart-menu-toolbar-button');
         return wrapperEl;

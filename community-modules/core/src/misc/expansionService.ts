@@ -1,6 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { IExpansionService } from '../interfaces/iExpansionService';
@@ -19,7 +20,7 @@ export class ExpansionService extends BeanStub implements NamedBean, IExpansionS
     private isClientSideRowModel: boolean;
 
     public postConstruct(): void {
-        this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
+        this.isClientSideRowModel = _isClientSideRowModel(this.gos);
     }
 
     public expandRows(rowIds: string[]): void {

@@ -1,4 +1,5 @@
 import type { GridOptionsService } from '../gridOptionsService';
+import { _getDomData } from '../gridOptionsUtils';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { _includes } from './array';
 
@@ -56,7 +57,7 @@ export function _getCtrlForEventTarget<T>(
     let sourceElement = eventTarget as HTMLElement;
 
     while (sourceElement) {
-        const renderedComp = gos.getDomData(sourceElement, type);
+        const renderedComp = _getDomData(gos, sourceElement, type);
 
         if (renderedComp) {
             return renderedComp as T;

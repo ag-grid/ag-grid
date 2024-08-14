@@ -6,7 +6,6 @@ import type {
     CellNavigationService,
     CellPositionUtils,
     IRangeService,
-    IRowModel,
     IStatusPanelComp,
     RowPosition,
     RowPositionUtils,
@@ -17,6 +16,8 @@ import {
     RefPlaceholder,
     _exists,
     _formatNumberTwoDecimalPlacesAndCommas,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
     _missing,
     _missingOrEmpty,
     _warnOnce,
@@ -28,7 +29,6 @@ import { AgNameValueSelector } from './agNameValue';
 export class AggregationComp extends Component implements IStatusPanelComp {
     private valueService: ValueService;
     private cellNavigationService: CellNavigationService;
-    private rowModel: IRowModel;
     private cellPositionUtils: CellPositionUtils;
     private rowPositionUtils: RowPositionUtils;
     private rangeService?: IRangeService;
@@ -36,7 +36,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.cellNavigationService = beans.cellNavigationService;
-        this.rowModel = beans.rowModel;
         this.cellPositionUtils = beans.cellPositionUtils;
         this.rowPositionUtils = beans.rowPositionUtils;
         this.rangeService = beans.rangeService;
@@ -70,7 +69,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     public postConstruct(): void {
-        if (!this.isValidRowModel()) {
+        if (!_isClientSideRowModel(this.gos) && !_isServerSideRowModel(this.gos)) {
             _warnOnce(`agAggregationComponent should only be used with the client and server side row model.`);
             return;
         }
@@ -85,12 +84,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             rangeSelectionChanged: this.onRangeSelectionChanged.bind(this),
             modelUpdated: this.onRangeSelectionChanged.bind(this),
         });
-    }
-
-    private isValidRowModel() {
-        // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.rowModel.getType();
-        return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 
     public init(params: AggregationStatusPanelParams) {
