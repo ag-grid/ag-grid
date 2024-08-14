@@ -33,15 +33,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     public postConstruct(): void {
         const eGui = this.getGui();
 
-        const setAttribute = (name: string, value: string | null | undefined) => {
-            if (value != null && value != '') {
-                eGui.setAttribute(name, value);
-            } else {
-                eGui.removeAttribute(name);
-            }
-        };
-
-        setAttribute('col-id', this.column.getColId());
+        eGui.setAttribute('col-id', this.column.getColId());
 
         const compProxy: IHeaderCellComp = {
             setWidth: (width) => (eGui.style.width = width),

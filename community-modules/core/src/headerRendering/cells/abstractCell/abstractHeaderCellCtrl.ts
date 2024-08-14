@@ -102,9 +102,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected getWrapperHasFocus(): boolean {
-        const activeEl = this.gos.getActiveDomElement();
-
-        return activeEl === this.eGui;
+        return this.gos.getActiveDomElement() === this.eGui;
     }
 
     protected setGui(eGui: HTMLElement): void {
@@ -239,9 +237,8 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private refreshTabIndex(): void {
-        const suppressHeaderFocus = this.focusService.isHeaderFocusSuppressed();
         if (this.eGui) {
-            _addOrRemoveAttribute(this.eGui, 'tabindex', suppressHeaderFocus ? null : '-1');
+            _addOrRemoveAttribute(this.eGui, 'tabindex', this.focusService.isHeaderFocusSuppressed() ? null : '-1');
         }
     }
 

@@ -1,5 +1,6 @@
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
+import { _addOrRemoveAttribute } from '../utils/dom';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import type { ICellRenderer } from './cellRenderers/iCellRenderer';
@@ -10,13 +11,7 @@ export function setGridAriaProperty(beans: BeanCollection, property: string, val
         return;
     }
     const eGrid = beans.ctrlsService.getGridBodyCtrl().getGui();
-    const ariaProperty = `aria-${property}`;
-
-    if (value === null) {
-        eGrid.removeAttribute(ariaProperty);
-    } else {
-        eGrid.setAttribute(ariaProperty, value);
-    }
+    _addOrRemoveAttribute(eGrid, `aria-${property}`, value);
 }
 
 export function refreshCells<TData = any>(beans: BeanCollection, params: RefreshCellsParams<TData> = {}): void {

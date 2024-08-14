@@ -7,7 +7,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
-import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
+import { _addOrRemoveAttribute, _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
 import { _warnOnce } from '../../utils/function';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
@@ -88,16 +88,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.refreshWrapper(false);
 
-        const setAttribute = (name: string, value: string | null | undefined) => {
-            if (value != null && value != '') {
-                eGui.setAttribute(name, value);
-            } else {
-                eGui.removeAttribute(name);
-            }
-        };
-
         _setAriaRole(eGui, cellCtrl.getCellAriaRole());
-        setAttribute('col-id', cellCtrl.getColumnIdSanitised());
+        eGui.setAttribute('col-id', cellCtrl.getColumnIdSanitised());
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),

@@ -1,5 +1,5 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
-import { _setDisplayed } from '../../../utils/dom';
+import { _addOrRemoveAttribute, _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
@@ -24,16 +24,14 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     public postConstruct(): void {
         const eGui = this.getGui();
 
-        const setAttribute = (key: string, value: string | undefined) =>
-            value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
-
         eGui.setAttribute('col-id', this.ctrl.getColId());
 
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizableDisplayed: (displayed) => _setDisplayed(this.eResize, displayed),
             setWidth: (width) => (eGui.style.width = width),
-            setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAttribute('aria-expanded', expanded),
+            setAriaExpanded: (expanded: 'true' | 'false' | undefined) =>
+                _addOrRemoveAttribute(eGui, 'aria-expanded', expanded),
             setUserCompDetails: (details) => this.setUserCompDetails(details),
             getUserCompInstance: () => this.headerGroupComp,
         };

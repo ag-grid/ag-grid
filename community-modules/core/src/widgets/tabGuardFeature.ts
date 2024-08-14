@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { _setAriaRole } from '../utils/aria';
-import { _clearElement, _isNodeOrElement } from '../utils/dom';
+import { _addOrRemoveAttribute, _clearElement, _isNodeOrElement } from '../utils/dom';
 import type { Component } from './component';
 import type { ITabGuard } from './tabGuardCtrl';
 import { TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
@@ -51,11 +51,7 @@ export class TabGuardFeature extends BeanStub {
 
         const compProxy: ITabGuard = {
             setTabIndex: (tabIndex) => {
-                tabGuards.forEach((tabGuard) =>
-                    tabIndex != null
-                        ? tabGuard.setAttribute('tabindex', tabIndex)
-                        : tabGuard.removeAttribute('tabindex')
-                );
+                tabGuards.forEach((tabGuard) => _addOrRemoveAttribute(tabGuard, 'tabindex', tabIndex));
             },
         };
 
