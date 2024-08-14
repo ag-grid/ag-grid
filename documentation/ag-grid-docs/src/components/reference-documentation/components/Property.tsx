@@ -218,7 +218,7 @@ export const Property: FunctionComponent<{
                                     {typeUrl && detailsCode ? (
                                         <>
                                             <button
-                                                className={classnames(styles.seeMore, 'button-as-link', {
+                                                className={classnames(styles.seeMore, 'button-style-none', {
                                                     [styles.isExpanded]: isExpanded,
                                                 })}
                                                 onClick={() => {

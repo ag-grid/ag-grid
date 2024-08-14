@@ -278,6 +278,10 @@ button.seeMore {
     transition: 0.5s all;
     flex-shrink: 0;
 
+    &:active {
+        background-color: transparent;
+    }
+
     svg {
         --icon-size: 16px;
         margin-left: 2px;
