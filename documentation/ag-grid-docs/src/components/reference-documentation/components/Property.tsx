@@ -240,7 +240,9 @@ export const Property: FunctionComponent<{
                                                 />
                                             </button>
                                             <a
-                                                className={styles.metaValue}
+                                                className={classnames(styles.metaValue, {
+                                                    [styles.isExpanded]: isExpanded,
+                                                })}
                                                 href={typeUrl}
                                                 target={typeUrl.startsWith('http') ? '_blank' : '_self'}
                                                 rel="noreferrer"
@@ -253,7 +255,7 @@ export const Property: FunctionComponent<{
                                             {detailsCode && (
                                                 <button
                                                     className={classnames(styles.seeMore, 'button-as-link', {
-                                                        [styles.isExpanded]: isExpanded,
+                                                        [styles.isExpandable]: detailsCode,
                                                     })}
                                                     onClick={() => {
                                                         setExpanded(!isExpanded);
@@ -274,7 +276,12 @@ export const Property: FunctionComponent<{
                                                     />
                                                 </button>
                                             )}
-                                            <span onClick={() => setExpanded(!isExpanded)} className={styles.metaValue}>
+                                            <span
+                                                onClick={() => setExpanded(!isExpanded)}
+                                                className={classnames(styles.metaValue, {
+                                                    [styles.isExpandable]: detailsCode,
+                                                })}
+                                            >
                                                 {propertyType}
                                             </span>
                                         </div>

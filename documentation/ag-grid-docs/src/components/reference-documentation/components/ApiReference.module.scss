@@ -201,7 +201,6 @@
     padding-left: 8px;
     padding-right: 8px;
     border-radius: var(--radius-sm);
-    cursor: pointer;
 }
 
 .defaultValue {
@@ -441,7 +440,7 @@ button.seeMore {
     }
 }
 
-.expandable {
+.isExpandable {
     cursor: pointer;
     width: 100%;
 }
