@@ -26,7 +26,11 @@ export async function executeTransactionsAsync(transactions: RowDataTransaction<
 
 function findTreeRootNodes(gridApi: GridApi | IRowNode[]): IRowNode[] {
     const set = new Set<IRowNode>();
-    const processNode = (row: IRowNode) => row.parent && !row.parent.parent && set.add(row.parent);
+    const processNode = (row: IRowNode) => {
+        if (row.parent && !row.parent.parent) {
+            set.add(row.parent);
+        }
+    };
     if (Array.isArray(gridApi)) {
         gridApi.forEach(processNode);
     } else {
@@ -62,7 +66,7 @@ export class TreeDiagram {
         this.diagram = '\n';
         const rootNodes = isGridApi(root) || Array.isArray(root) ? findTreeRootNodes(root) : [root];
         if (rootNodes.length === 0) {
-            this.diagram += '❌ No tree root in\n';
+            this.diagram += '❌ No tree root\n';
             this.errorsCount = 1;
             return this;
         }
