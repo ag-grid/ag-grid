@@ -4,6 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowRenderer } from '../rendering/rowRenderer';
@@ -25,7 +26,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
     private clientSideRowModel: IClientSideRowModel;
 
     public postConstruct(): void {
-        if (this.rowModel.getType() === 'clientSide') {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 

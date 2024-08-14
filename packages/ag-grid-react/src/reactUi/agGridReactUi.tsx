@@ -19,6 +19,8 @@ import {
     ModuleRegistry,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
     _processOnChange,
     _warnOnce,
 } from 'ag-grid-community';
@@ -354,10 +356,8 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                     // doing another update
                     const updateRowHeightFunc = () => {
                         props.node.setRowHeight(clientHeight);
-                        if (rowModel.getType() === 'clientSide') {
-                            (rowModel as unknown as IClientSideRowModel).onRowHeightChanged();
-                        } else if (rowModel.getType() === 'serverSide') {
-                            (rowModel as unknown as IServerSideRowModel).onRowHeightChanged();
+                        if (_isClientSideRowModel(gos) || _isServerSideRowModel(gos)) {
+                            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged();
                         }
                     };
                     setTimeout(updateRowHeightFunc, 0);

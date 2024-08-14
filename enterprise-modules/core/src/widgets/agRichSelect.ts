@@ -23,6 +23,7 @@ import {
     _escapeString,
     _exists,
     _fuzzySuggestions,
+    _getActiveDomElement,
     _isEventFromPrintableCharacter,
     _isVisible,
     _setAriaActiveDescendant,
@@ -597,7 +598,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private onDeleteKeyDown(e: KeyboardEvent): void {
         const { eWrapper, gos } = this;
-        const activeEl = gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(gos);
 
         if (activeEl === eWrapper) {
             e.preventDefault();

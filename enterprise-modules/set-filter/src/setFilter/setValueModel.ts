@@ -22,6 +22,7 @@ import {
     _defaultComparator,
     _errorOnce,
     _exists,
+    _isClientSideRowModel,
     _makeNull,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -176,7 +177,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         const getDataPath = gos.get('getDataPath');
         const groupAllowUnbalanced = gos.get('groupAllowUnbalanced');
 
-        if (rowModel.getType() === 'clientSide') {
+        if (_isClientSideRowModel(gos)) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
                 this.filterParams,

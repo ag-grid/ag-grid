@@ -27,7 +27,12 @@ import {
     _debounce,
     _errorOnce,
     _exists,
+    _getGrandTotalRow,
+    _getGroupTotalRowCallback,
+    _getRowHeightForNode,
     _insertIntoArray,
+    _isAnimateRows,
+    _isDomLayout,
     _last,
     _missing,
     _missingOrEmpty,
@@ -324,7 +329,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
                 const rowNode = this.getRow(rowIndex);
                 if (rowNode.rowHeightEstimated) {
-                    const rowHeight = this.gos.getRowHeightForNode(rowNode);
+                    const rowHeight = _getRowHeightForNode(this.gos, rowNode);
                     rowNode.setRowHeight(rowHeight.height);
                     atLeastOneChange = true;
                     res = true;
@@ -351,7 +356,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
         // with these two layouts.
-        const allowEstimate = this.gos.isDomLayout('normal');
+        const allowEstimate = _isDomLayout(this.gos, 'normal');
 
         for (let i = 0; i < this.rowsToDisplay.length; i++) {
             const rowNode = this.rowsToDisplay[i];
@@ -361,7 +366,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (rowNode.rowHeight == null) {
-                const rowHeight = this.gos.getRowHeightForNode(rowNode, allowEstimate, defaultRowHeight);
+                const rowHeight = _getRowHeightForNode(this.gos, rowNode, allowEstimate, defaultRowHeight);
                 rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
             }
 
@@ -555,7 +560,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public onRowGroupOpened(): void {
-        const animate = this.gos.isAnimateRows();
+        const animate = _isAnimateRows(this.gos);
         this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
     }
 
@@ -563,7 +568,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (event.afterDataChange) {
             return;
         }
-        const animate = this.gos.isAnimateRows();
+        const animate = _isAnimateRows(this.gos);
 
         const primaryOrQuickFilterChanged = event.columns.length === 0 || event.columns.some((col) => col.isPrimary());
         const step: ClientSideRowModelSteps = primaryOrQuickFilterChanged
@@ -573,7 +578,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onSortChanged(): void {
-        const animate = this.gos.isAnimateRows();
+        const animate = _isAnimateRows(this.gos);
         this.refreshModel({
             step: ClientSideRowModelSteps.SORT,
             keepRenderedRows: true,
@@ -947,8 +952,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
             if (!parentNode) return;
 
-            const grandTotal = includeFooterNodes && this.gos.getGrandTotalRow();
-            const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
+            const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
+            const isGroupIncludeFooter = _getGroupTotalRowCallback(this.gos);
             const groupTotal = includeFooterNodes && isGroupIncludeFooter({ node: parentNode });
 
             const isRootNode = parentNode === this.rootNode;
@@ -1200,7 +1205,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     ): void {
         if (this.applyAsyncTransactionsTimeout == null) {
             this.rowDataTransactionBatch = [];
-            const waitMillis = this.gos.getAsyncTransactionWaitMillis();
+            const waitMillis = this.gos.get('asyncTransactionWaitMillis');
             this.applyAsyncTransactionsTimeout = window.setTimeout(() => {
                 this.executeBatchUpdateRowData();
             }, waitMillis);

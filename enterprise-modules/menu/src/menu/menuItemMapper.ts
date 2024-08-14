@@ -19,15 +19,7 @@ import type {
     RowPositionUtils,
     SortController,
 } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    ModuleNames,
-    ModuleRegistry,
-    _createIconNoSpan,
-    _escapeString,
-    _exists,
-    _warnOnce,
-} from '@ag-grid-community/core';
+import { BeanStub, ModuleNames, _createIconNoSpan, _escapeString, _exists, _warnOnce } from '@ag-grid-community/core';
 
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 
@@ -144,13 +136,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     checked: !!column && !column.isPinned(),
                 };
             case 'valueAggSubMenu':
-                if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.RowGroupingModule,
-                        'Aggregation from Menu',
-                        this.gridId
-                    )
-                ) {
+                if (this.gos.assertModuleRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
                     if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {
                         return null;
                     }
@@ -254,7 +240,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     action: () => this.expansionService.expandAll(false),
                 };
             case 'copy':
-                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Copy from Menu', this.gridId)) {
+                if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Copy from Menu')) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -265,13 +251,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.ClipboardModule,
-                        'Copy with Headers from Menu',
-                        this.gridId
-                    )
-                ) {
+                if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -282,13 +262,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'copyWithGroupHeaders':
-                if (
-                    ModuleRegistry.__assertRegistered(
-                        ModuleNames.ClipboardModule,
-                        'Copy with Group Headers from Menu',
-                        this.gridId
-                    )
-                ) {
+                if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu')) {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -300,7 +274,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'cut':
-                if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Cut from Menu', this.gridId)) {
+                if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Cut from Menu')) {
                     const focusedCell = this.focusService.getFocusedCell();
                     const rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
@@ -315,9 +289,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'paste':
-                if (
-                    ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Paste from Clipboard', this.gridId)
-                ) {
+                if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Paste from Clipboard')) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
@@ -331,8 +303,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'export': {
                 const exportSubMenuItems: string[] = [];
 
-                const csvModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.gridId);
-                const excelModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.gridId);
+                const csvModuleLoaded = this.gos.isModuleRegistered(ModuleNames.CsvExportModule);
+                const excelModuleLoaded = this.gos.isModuleRegistered(ModuleNames.ExcelExportModule);
 
                 if (!this.gos.get('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
@@ -380,7 +352,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'columnChooser':
-                if (ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.gridId)) {
+                if (this.gos.isModuleRegistered(ModuleNames.ColumnsToolPanelModule)) {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _createIconNoSpan('columns', this.gos, null),

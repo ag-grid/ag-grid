@@ -2,6 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
 import { _values } from '../../utils/generic';
@@ -57,7 +58,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.isPrintLayout = this.gos.isDomLayout('print');
+        this.isPrintLayout = _isDomLayout(this.gos, 'print');
         this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
     }
 
@@ -138,7 +139,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        this.isPrintLayout = this.gos.isDomLayout('print');
+        this.isPrintLayout = _isDomLayout(this.gos, 'print');
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.onRowHeightChanged();

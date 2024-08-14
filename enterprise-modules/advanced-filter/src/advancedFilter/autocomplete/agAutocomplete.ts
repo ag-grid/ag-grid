@@ -6,7 +6,14 @@ import type {
     PopupPositionParams,
     PopupService,
 } from '@ag-grid-community/core';
-import { AgInputTextFieldSelector, Component, KeyCode, RefPlaceholder, _makeNull } from '@ag-grid-community/core';
+import {
+    AgInputTextFieldSelector,
+    Component,
+    KeyCode,
+    RefPlaceholder,
+    _isNothingFocused,
+    _makeNull,
+} from '@ag-grid-community/core';
 
 import { AgAutocompleteList } from './agAutocompleteList';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
@@ -217,7 +224,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     }
 
     private setCaret(position: number, setFocus?: boolean): void {
-        if (setFocus && this.gos.isNothingFocused()) {
+        if (setFocus && _isNothingFocused(this.gos)) {
             // clicking on the list loses focus, so restore
             this.eAutocompleteInput.getFocusableElement().focus();
         }

@@ -5,7 +5,6 @@ import { HeaderComp } from '../../headerRendering/cells/column/headerComp';
 import { SortIndicatorComp } from '../../headerRendering/cells/column/sortIndicatorComp';
 import { HeaderGroupComp } from '../../headerRendering/cells/columnGroup/headerGroupComp';
 import { ModuleNames } from '../../modules/moduleNames';
-import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { AnimateShowChangeCellRenderer } from '../../rendering/cellRenderers/animateShowChangeCellRenderer';
 import { AnimateSlideCellRenderer } from '../../rendering/cellRenderers/animateSlideCellRenderer';
 import { CheckboxCellRenderer } from '../../rendering/cellRenderers/checkboxCellRenderer';
@@ -106,11 +105,7 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
 
         const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            ModuleRegistry.__assertRegistered(
-                moduleForComponent,
-                `AG Grid '${propertyName}' component: ${name}`,
-                this.gridId
-            );
+            this.gos.assertModuleRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`);
         } else {
             _doOnce(() => {
                 this.warnAboutMissingComponent(propertyName, name);

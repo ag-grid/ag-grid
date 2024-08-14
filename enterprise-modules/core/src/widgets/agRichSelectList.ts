@@ -1,5 +1,11 @@
 import type { Component, RichSelectParams } from '@ag-grid-community/core';
-import { KeyCode, _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
+import {
+    KeyCode,
+    _getDocument,
+    _setAriaActiveDescendant,
+    _setAriaControls,
+    _setAriaLabel,
+} from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
@@ -248,7 +254,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private createLoadingElement(): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const translate = this.localeService.getLocaleTextFunc();
         const el = eDocument.createElement('div');
 

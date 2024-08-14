@@ -3,6 +3,7 @@ import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
 import type { SelectionEventSourceType } from '../../../events';
+import { _getActiveDomElement, _isClientSideRowModel, _isServerSideRowModel } from '../../../gridOptionsUtils';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
@@ -34,7 +35,7 @@ export class SelectAllFeature extends BeanStub {
     public onSpaceKeyDown(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
 
-        if (checkbox.isDisplayed() && !checkbox.getGui().contains(this.gos.getActiveDomElement())) {
+        if (checkbox.isDisplayed() && !checkbox.getGui().contains(_getActiveDomElement(this.gos))) {
             e.preventDefault();
             checkbox.setValue(!checkbox.getValue());
         }
@@ -151,12 +152,11 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkRightRowModelType(feature: string): boolean {
-        const rowModelType = this.rowModel.getType();
-        const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
+        const rowModelMatches = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
 
         if (!rowModelMatches) {
             _warnOnce(
-                `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`
+                `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${this.rowModel.getType()}.`
             );
             return false;
         }

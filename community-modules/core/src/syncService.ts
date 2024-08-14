@@ -8,7 +8,6 @@ import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { PropertyValueChangedEvent } from './gridOptionsService';
 import type { IRowModel } from './interfaces/iRowModel';
 import { ModuleNames } from './modules/moduleNames';
-import { ModuleRegistry } from './modules/moduleRegistry';
 import { _log } from './utils/function';
 
 export class SyncService extends BeanStub implements NamedBean {
@@ -50,7 +49,7 @@ export class SyncService extends BeanStub implements NamedBean {
 
     private gridReady(): void {
         this.dispatchGridReadyEvent();
-        const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.gridId);
+        const isEnterprise = this.gos.isModuleRegistered(ModuleNames.EnterpriseCoreModule);
         if (this.gos.get('debug')) {
             _log(`initialised successfully, enterprise = ${isEnterprise}`);
         }

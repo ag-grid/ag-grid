@@ -30,6 +30,7 @@ import {
     ServerSideTransactionResultStatus,
     _errorOnce,
     _getAllValuesInObject,
+    _getRowIdCallback,
     _insertIntoArray,
     _missing,
     _missingOrEmpty,
@@ -295,7 +296,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 return undefined;
             }
 
-            const getRowIdFunc = this.gos.getRowIdCallback();
+            const getRowIdFunc = _getRowIdCallback(this.gos);
             if (!getRowIdFunc) {
                 return undefined;
             }
@@ -745,7 +746,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getRowIdCallback();
+        const getRowIdFunc = _getRowIdCallback(this.gos);
 
         if (getRowIdFunc != null) {
             // find rowNode using id
