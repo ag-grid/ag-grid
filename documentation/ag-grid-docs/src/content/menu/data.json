@@ -147,6 +147,10 @@
                                 "path": "deep-dive"
                             },
                             {
+                                "title": "Tutorial: Styling The Grid",
+                                "path": "styling-the-grid"
+                            },
+                            {
                                 "title": "Video Tutorials",
                                 "path": "videos"
                             },
