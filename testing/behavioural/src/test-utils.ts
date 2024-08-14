@@ -1,4 +1,4 @@
-import type { GridApi, IRowNode } from '@ag-grid-community/core';
+import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
 import util from 'util';
 
 export const isGridApi = (node: unknown): node is GridApi =>
@@ -9,6 +9,25 @@ export const getAllRows = (api: GridApi | null | undefined) => {
     api?.forEachNode((node) => rows.push(node));
     return rows;
 };
+
+export const getAllRowData = (api: GridApi | null | undefined) => {
+    const rows: any[] = [];
+    api?.forEachNode((node) => rows.push(node.data));
+    return rows;
+};
+
+export async function executeTransactionsAsync(transactions: RowDataTransaction<any>[], api: GridApi<any>) {
+    const promises: Promise<void>[] = [];
+    for (const transaction of transactions) {
+        promises.push(
+            new Promise((resolve) => {
+                api.applyTransactionAsync(transaction, () => resolve());
+            })
+        );
+    }
+    api.flushAsyncTransactions();
+    await Promise.all(promises);
+}
 
 export const printDataSnapshot = (data: any, pretty = false) => {
     if (typeof data === 'string') {
