@@ -36,7 +36,7 @@ const MyComponent: React.FC<Props> = () => {
                 </div>
                 <h1 className={styles.heading}>Fast, Powerful and Flexible React Table</h1>
                 <p className={styles.subHeading}>
-                    Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b> React data tables to
+                    Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b> React Data Tables to
                     your application in <b>minutes</b>, all for <b>free</b>.
                 </p>
             </div>
