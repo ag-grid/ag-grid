@@ -54,7 +54,7 @@ export const DataTypeModule = _defineModule({
     beans: [DataTypeService],
 });
 
-export const ColumnApiModule = _defineModule<_ColumnGridApi>({
+export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/column-api',
     apiFunctions: {
