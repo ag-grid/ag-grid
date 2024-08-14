@@ -28,7 +28,7 @@ export const EditCoreModule = _defineModule({
     beans: [EditService],
 });
 
-export const EditApiModule = _defineModule<_EditGridApi>({
+export const EditApiModule = _defineModule<_EditGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/edit-api',
     apiFunctions: {
