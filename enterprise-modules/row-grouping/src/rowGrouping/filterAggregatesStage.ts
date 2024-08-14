@@ -7,7 +7,7 @@ import type {
     RowNode,
     StageExecuteParams,
 } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _getGroupAggFiltering } from '@ag-grid-community/core';
 
 export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'filterAggregatesStage' as const;
@@ -35,7 +35,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
         // The predicate to determine whether filters should apply to this row. Either defined by the user in groupAggFiltering or a default depending
         // on current pivot mode status.
         const applyFilterToNode =
-            this.gos.getGroupAggFiltering() ||
+            _getGroupAggFiltering(this.gos) ||
             (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
 
         const { changedPath } = params;

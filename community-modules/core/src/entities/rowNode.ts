@@ -2,6 +2,7 @@ import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { AgEventType } from '../eventTypes';
 import type { RowEvent, SelectionEventSourceType } from '../events';
+import { _getRowHeightForNode, _getRowIdCallback, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -391,7 +392,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = this.beans.gos.getRowIdCallback();
+        const getRowIdFunc = _getRowIdCallback(this.beans.gos);
 
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
@@ -571,7 +572,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         // means more rows fit in) which looks crap. so best ignore small values and assume
         // we are still waiting for values to render.
         if (nonePresent || newRowHeight < 10) {
-            newRowHeight = this.beans.gos.getRowHeightForNode(this).height;
+            newRowHeight = _getRowHeightForNode(this.beans.gos, this).height;
         }
 
         if (newRowHeight == this.rowHeight) {
@@ -726,7 +727,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         let newValue: boolean | null =
             (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
 
-        const isSsrm = this.beans.gos.isRowModelType('serverSide');
+        const isSsrm = _isServerSideRowModel(this.beans.gos);
         if (isSsrm) {
             const isTreeData = this.beans.gos.get('treeData');
             const isGroupFunc = this.beans.gos.get('isServerSideGroup');

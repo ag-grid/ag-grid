@@ -23,6 +23,8 @@ import {
     ProvidedFilter,
     TabGuardComp,
     _forEachReverse,
+    _getActiveDomElement,
+    _isNothingFocused,
     _loadTemplate,
     _removeFromArray,
 } from '@ag-grid-community/core';
@@ -410,14 +412,14 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 });
             }
 
-            const activeEl = this.gos.getActiveDomElement();
+            const activeEl = _getActiveDomElement(this.gos);
 
             // if we haven't focused the first item in the filter, we might run into two scenarios:
             // 1 - we are loading the filter for the first time and the component isn't ready,
             //     which means the document will have focus.
             // 2 - The focus will be somewhere inside the component due to auto focus
             // In both cases we need to force the focus somewhere valid but outside the filter.
-            if (!hasFocused && (this.gos.isNothingFocused() || this.getGui().contains(activeEl))) {
+            if (!hasFocused && (_isNothingFocused(this.gos) || this.getGui().contains(activeEl))) {
                 // reset focus to the top of the container, and blur
                 this.forceFocusOutOfContainer(true);
             }

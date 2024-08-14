@@ -3,6 +3,7 @@ import {
     Component,
     KeyCode,
     _clearElement,
+    _getActiveDomElement,
     _setAriaColIndex,
     _setAriaColSpan,
     _setAriaRole,
@@ -193,6 +194,6 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private hasFocus(): boolean {
-        return this.gos.getActiveDomElement() === this.getFocusableElement();
+        return _getActiveDomElement(this.gos) === this.getFocusableElement();
     }
 }

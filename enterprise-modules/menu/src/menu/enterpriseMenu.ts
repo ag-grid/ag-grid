@@ -23,7 +23,6 @@ import {
     Component,
     FilterWrapperComp,
     ModuleNames,
-    ModuleRegistry,
     RefPlaceholder,
     _createIconNoSpan,
     _warnOnce,
@@ -404,7 +403,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
 
     private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === TAB_COLUMNS) {
-            return ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.gridId);
+            return this.gos.isModuleRegistered(ModuleNames.ColumnsToolPanelModule);
         }
 
         return true;

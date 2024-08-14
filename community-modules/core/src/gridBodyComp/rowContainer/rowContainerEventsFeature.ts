@@ -5,6 +5,7 @@ import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { FocusService } from '../../focusService';
+import { _getDomData } from '../../gridOptionsUtils';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { IRowModel } from '../../interfaces/iRowModel';
@@ -129,7 +130,7 @@ export class RowContainerEventsFeature extends BeanStub {
         let sourceElement: HTMLElement | null = event.target as HTMLElement | null;
 
         while (sourceElement) {
-            const rowCon = this.gos.getDomData(sourceElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+            const rowCon = _getDomData(this.gos, sourceElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
             if (rowCon) {
                 return rowCon;
             }

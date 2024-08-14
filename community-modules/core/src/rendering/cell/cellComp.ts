@@ -4,6 +4,7 @@ import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapp
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
+import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
@@ -482,7 +483,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(this.beans.gos.getActiveDomElement())) {
+        if (eGui.contains(_getActiveDomElement(this.beans.gos))) {
             eGui.focus();
         }
 
@@ -578,7 +579,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(this.beans.gos.getActiveDomElement()) && _browserSupportsPreventScroll()) {
+        if (eGui.contains(_getActiveDomElement(this.beans.gos)) && _browserSupportsPreventScroll()) {
             eGui.focus({ preventScroll: true });
         }
 

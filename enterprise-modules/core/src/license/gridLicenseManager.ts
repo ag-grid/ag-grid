@@ -1,5 +1,5 @@
 import type { ComponentSelector, IWatermark, NamedBean } from '@ag-grid-community/core';
-import { BeanStub } from '@ag-grid-community/core';
+import { BeanStub, _getDocument } from '@ag-grid-community/core';
 
 import type { ILicenseManager } from './shared/licenseManager';
 import { LicenseManager } from './shared/licenseManager';
@@ -15,7 +15,7 @@ export class GridLicenseManager extends BeanStub implements NamedBean, IWatermar
     }
 
     public validateLicense(): void {
-        this.licenseManager = new LicenseManager(this.gos.getDocument());
+        this.licenseManager = new LicenseManager(_getDocument(this.gos));
         this.licenseManager.validateLicense();
     }
 

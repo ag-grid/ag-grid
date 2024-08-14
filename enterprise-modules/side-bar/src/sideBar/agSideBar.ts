@@ -15,9 +15,9 @@ import {
     KeyCode,
     ManagedFocusFeature,
     ModuleNames,
-    ModuleRegistry,
     RefPlaceholder,
     _addFocusableContainerListener,
+    _getActiveDomElement,
     _removeFromParent,
     _setAriaControls,
     _warnOnce,
@@ -85,7 +85,7 @@ export class AgSideBar extends Component implements ISideBar {
         const { focusService, sideBarButtons } = this;
         const eGui = this.getGui();
         const sideBarGui = sideBarButtons.getGui();
-        const activeElement = this.gos.getActiveDomElement() as HTMLElement;
+        const activeElement = _getActiveDomElement(this.gos) as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
         const target = e.target as HTMLElement;
 
@@ -124,7 +124,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        const currentButton = this.gos.getActiveDomElement();
+        const currentButton = _getActiveDomElement(this.gos);
 
         if (!this.sideBarButtons.getGui().contains(currentButton)) {
             return;
@@ -286,10 +286,9 @@ export class AgSideBar extends Component implements ISideBar {
 
         // helpers, in case user doesn't have the right module loaded
         if (def.toolPanel === 'agColumnsToolPanel') {
-            const moduleMissing = !ModuleRegistry.__assertRegistered(
+            const moduleMissing = !this.gos.assertModuleRegistered(
                 ModuleNames.ColumnsToolPanelModule,
-                'Column Tool Panel',
-                this.gridId
+                'Column Tool Panel'
             );
             if (moduleMissing) {
                 return false;
@@ -297,10 +296,9 @@ export class AgSideBar extends Component implements ISideBar {
         }
 
         if (def.toolPanel === 'agFiltersToolPanel') {
-            const moduleMissing = !ModuleRegistry.__assertRegistered(
+            const moduleMissing = !this.gos.assertModuleRegistered(
                 ModuleNames.FiltersToolPanelModule,
-                'Filters Tool Panel',
-                this.gridId
+                'Filters Tool Panel'
             );
             if (moduleMissing) {
                 return false;

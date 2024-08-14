@@ -7,7 +7,14 @@ import type {
     PopupService,
     ResizableStructure,
 } from '@ag-grid-community/core';
-import { Component, TabGuardFeature, _createIconNoSpan, _setDisplayed } from '@ag-grid-community/core';
+import {
+    Component,
+    TabGuardFeature,
+    _createIconNoSpan,
+    _getDocument,
+    _isNothingFocused,
+    _setDisplayed,
+} from '@ag-grid-community/core';
 
 import type { PanelOptions } from './agPanel';
 import { AgPanel } from './agPanel';
@@ -87,11 +94,11 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         this.tabGuardFeature.initialiseTabGuard({
             isFocusableContainer: true,
             onFocusIn: () => {
-                const eDocument = this.gos.getDocument();
+                const eDocument = _getDocument(this.gos);
                 const { activeElement } = eDocument;
                 const restoreFocus = this.popupService.bringPopupToFront(eGui);
                 // if popup is brought to front, need to put focus back
-                if (restoreFocus && !this.gos.isNothingFocused()) {
+                if (restoreFocus && !_isNothingFocused(this.gos)) {
                     (activeElement as HTMLElement)?.focus?.();
                 }
             },

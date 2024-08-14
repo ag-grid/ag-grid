@@ -23,6 +23,8 @@ import {
     GROUP_AUTO_COLUMN_ID,
     GroupInstanceIdCreator,
     _compose,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
     _last,
     isColumnGroup,
 } from '@ag-grid-community/core';
@@ -241,9 +243,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
         return (gridSerializingSession) => {
             // when in pivot mode, we always render cols on screen, never 'all columns'
             const rowModel = this.rowModel;
-            const rowModelType = rowModel.getType();
-            const usingCsrm = rowModelType === 'clientSide';
-            const usingSsrm = rowModelType === 'serverSide';
+            const usingCsrm = _isClientSideRowModel(this.gos);
+            const usingSsrm = _isServerSideRowModel(this.gos);
             const onlySelectedNonStandardModel = !usingCsrm && params.onlySelected;
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
             const { exportedRows = 'filteredAndSorted' } = params;

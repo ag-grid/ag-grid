@@ -11,6 +11,7 @@ import {
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,
+    _getDocument,
     _setAriaSelected,
 } from '@ag-grid-community/core';
 
@@ -91,7 +92,7 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const eGui = this.getGui();
 
         const span = eDocument.createElement('span');

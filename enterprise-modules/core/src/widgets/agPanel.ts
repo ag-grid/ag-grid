@@ -4,6 +4,7 @@ import {
     PositionableFeature,
     RefPlaceholder,
     _createIconNoSpan,
+    _getActiveDomElement,
     _getInnerHeight,
     _getInnerWidth,
     _isVisible,
@@ -95,7 +96,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             mousedown: (e: MouseEvent) => {
                 if (
                     eGui.contains(e.relatedTarget as HTMLElement) ||
-                    eGui.contains(this.gos.getActiveDomElement()) ||
+                    eGui.contains(_getActiveDomElement(this.gos)) ||
                     this.eTitleBarButtons.contains(e.target as HTMLElement)
                 ) {
                     e.preventDefault();

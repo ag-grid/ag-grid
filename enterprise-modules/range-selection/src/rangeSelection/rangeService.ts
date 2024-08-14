@@ -30,6 +30,7 @@ import {
     _existsAndNotEmpty,
     _getCtrlForEventTarget,
     _includes,
+    _isDomLayout,
     _last,
     _makeNull,
     _missing,
@@ -109,7 +110,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 getHorizontalPosition: () => gridBodyCtrl.getScrollFeature().getHScrollPosition().left,
                 setHorizontalPosition: (position) =>
                     gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(position),
-                shouldSkipVerticalScroll: () => !this.gos.isDomLayout('normal'),
+                shouldSkipVerticalScroll: () => !_isDomLayout(this.gos, 'normal'),
                 shouldSkipHorizontalScroll: () => !gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing(),
             });
         });

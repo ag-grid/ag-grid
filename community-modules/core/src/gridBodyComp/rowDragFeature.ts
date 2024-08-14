@@ -10,6 +10,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
+import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -80,7 +81,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public postConstruct(): void {
-        if (this.gos.isRowModelType('clientSide')) {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
@@ -244,7 +245,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             });
             this.moveRows(rowNodes!, pixel, increment);
         } else {
-            const getRowIdFunc = this.gos.getRowIdCallback();
+            const getRowIdFunc = _getRowIdCallback(this.gos);
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 

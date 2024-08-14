@@ -6,6 +6,7 @@ import type { IAggFunc } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
+import { _getDocument, _getRootNode } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -357,7 +358,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             return validDropTargets[0];
         }
 
-        const rootNode = this.gos.getRootNode();
+        const rootNode = _getRootNode(this.gos);
 
         // elementsFromPoint return a list of elements under
         // the mouseEvent sorted from topMost to bottomMost
@@ -516,7 +517,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         let top = clientY - offsetParentSize.top - ghostHeight / 2;
         let left = clientX - offsetParentSize.left - 10;
 
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const win = eDocument.defaultView || window;
         const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
         const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
@@ -572,7 +573,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
 
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         let rootNode: Document | ShadowRoot | HTMLElement | null = null;
         let targetEl: HTMLElement | ShadowRoot | null = null;
 
@@ -583,7 +584,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             // simply by trying to read the fullscreenElement property
         } finally {
             if (!rootNode) {
-                rootNode = this.gos.getRootNode();
+                rootNode = _getRootNode(this.gos);
             }
             const body = rootNode.querySelector('body');
             if (body) {

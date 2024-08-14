@@ -13,6 +13,7 @@ import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import type { NavigationService } from './gridBodyComp/navigationService';
 import type { GridCtrl } from './gridComp/gridCtrl';
+import { _getActiveDomElement, _getDocument, _getDomData } from './gridOptionsUtils';
 import { AbstractHeaderCellCtrl } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import type { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
@@ -136,7 +137,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     private registerKeyboardFocusEvents(): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         FocusService.addKeyboardModeEvents(eDocument);
 
         FocusService.instanceCount++;
@@ -180,7 +181,7 @@ export class FocusService extends BeanStub implements NamedBean {
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about. we check for ROW data, as this covers both focused Rows (for Full Width Rows)
         // and Cells (covers cells as cells live in rows)
-        if (this.isDomDataMissingInHierarchy(this.gos.getActiveDomElement(), RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
+        if (this.isDomDataMissingInHierarchy(_getActiveDomElement(this.gos), RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
             return null;
         }
 
@@ -196,7 +197,7 @@ export class FocusService extends BeanStub implements NamedBean {
         // we have nothing to worry about
         if (
             this.isDomDataMissingInHierarchy(
-                this.gos.getActiveDomElement(),
+                _getActiveDomElement(this.gos),
                 AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL
             )
         ) {
@@ -210,7 +211,7 @@ export class FocusService extends BeanStub implements NamedBean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
-            const data = this.gos.getDomData(ePointer, key);
+            const data = _getDomData(this.gos, ePointer, key);
 
             if (data) {
                 return false;
@@ -671,7 +672,7 @@ export class FocusService extends BeanStub implements NamedBean {
         backwards?: boolean
     ): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
-        const activeEl = this.gos.getActiveDomElement() as HTMLElement;
+        const activeEl = _getActiveDomElement(this.gos) as HTMLElement;
         let currentIndex: number;
 
         if (onlyManaged) {
@@ -797,7 +798,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     /** Returns true if an element inside the grid has focus */
     public isGridFocused(): boolean {
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
         return !!activeEl && this.eGridDiv.contains(activeEl);
     }
 

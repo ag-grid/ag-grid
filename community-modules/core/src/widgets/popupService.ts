@@ -7,6 +7,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
+import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -421,7 +422,7 @@ export class PopupService extends BeanStub implements NamedBean {
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
         // positioning is inside the border, leading the popup to be off by the width
         // of the border
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         let popupParent = this.getPopupParent();
 
         if (popupParent === eDocument.body) {
@@ -440,7 +441,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const offsetProperty = isVertical ? 'height' : 'width';
         const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
 
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const popupRect = ePopup.getBoundingClientRect();
@@ -465,7 +466,7 @@ export class PopupService extends BeanStub implements NamedBean {
     }
 
     public addPopup(params: AddPopupParams): AddPopupResult {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
@@ -548,7 +549,7 @@ export class PopupService extends BeanStub implements NamedBean {
     private addEventListenersToPopup(
         params: AddPopupParams & { wrapperEl: HTMLElement }
     ): (popupParams?: PopupEventParams) => void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const ePopupParent = this.getPopupParent();
 
         const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
@@ -556,7 +557,7 @@ export class PopupService extends BeanStub implements NamedBean {
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            if (!wrapperEl.contains(this.gos.getActiveDomElement())) {
+            if (!wrapperEl.contains(_getActiveDomElement(this.gos))) {
                 return;
             }
 
@@ -796,7 +797,7 @@ export class PopupService extends BeanStub implements NamedBean {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         while (el && el !== eDocument.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                 return true;

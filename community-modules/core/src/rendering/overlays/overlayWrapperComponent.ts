@@ -3,6 +3,7 @@ import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { FocusService } from '../../focusService';
+import { _getActiveDomElement, _isNothingFocused } from '../../gridOptionsUtils';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _last } from '../../utils/array';
@@ -108,8 +109,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setDisplayed(true, { skipAriaHidden: true });
 
         if (exclusive && this.focusService.isGridFocused()) {
-            const activeElement = this.gos.getActiveDomElement();
-            if (activeElement && !this.gos.isNothingFocused()) {
+            const activeElement = _getActiveDomElement(this.gos);
+            if (activeElement && !_isNothingFocused(this.gos)) {
                 this.elToFocusAfter = activeElement as HTMLElement;
             }
         }

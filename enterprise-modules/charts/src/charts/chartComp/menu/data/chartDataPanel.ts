@@ -4,7 +4,7 @@ import type {
     ChartType,
     IChartService,
 } from '@ag-grid-community/core';
-import { AgToggleButton, Component, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
+import { AgToggleButton, Component, _getDocument, _setDisplayed, _warnOnce } from '@ag-grid-community/core';
 
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
@@ -179,7 +179,7 @@ export class ChartDataPanel extends Component {
         if (!this.panels.length) {
             return;
         }
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const fragment = eDocument.createDocumentFragment();
         for (const panel of this.panels) {
             panel.addCssClass('ag-chart-data-section');

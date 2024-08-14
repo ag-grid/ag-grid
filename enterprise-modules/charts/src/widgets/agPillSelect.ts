@@ -1,5 +1,12 @@
 import type { DragItem, DraggingEvent, DropTarget, ListOption } from '@ag-grid-community/core';
-import { AgSelect, Component, DragSourceType, _escapeString, _removeFromParent } from '@ag-grid-community/core';
+import {
+    AgSelect,
+    Component,
+    DragSourceType,
+    _escapeString,
+    _getActiveDomElement,
+    _removeFromParent,
+} from '@ag-grid-community/core';
 import { PillDragComp, PillDropZonePanel } from '@ag-grid-enterprise/core';
 
 export interface AgPillSelectParams<TValue = string | null> {
@@ -119,7 +126,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         this.selectedValues = values;
         const changes = this.getChanges(previousSelectedValues, values);
         const refreshSelect = forceRefreshSelect || changes.added.length || changes.removed.length;
-        const activeElement = this.gos.getActiveDomElement();
+        const activeElement = _getActiveDomElement(this.gos);
         const selectHasFocus = this.eSelect?.getGui().contains(activeElement);
         const dropZoneHasFocus = this.dropZonePanel?.getGui().contains(activeElement);
         if (!silent) {

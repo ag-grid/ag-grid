@@ -12,6 +12,7 @@ import {
     RowNode,
     _cloneObject,
     _errorOnce,
+    _getRowIdCallback,
     _missingOrEmpty,
     _sortRowNodesByOrder,
     _warnOnce,
@@ -288,7 +289,7 @@ export class ClientSideNodeManager {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gos.getRowIdCallback();
+        const getRowIdFunc = _getRowIdCallback(this.gos);
 
         let rowNode: RowNode | undefined;
         if (getRowIdFunc) {

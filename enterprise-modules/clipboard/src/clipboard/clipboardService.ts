@@ -29,7 +29,17 @@ import type {
     VisibleColsService,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, ChangedPath, _exists, _last, _removeFromArray, _warnOnce } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    ChangedPath,
+    _exists,
+    _getActiveDomElement,
+    _getDocument,
+    _isClientSideRowModel,
+    _last,
+    _removeFromArray,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
 interface RowCallback {
     (
@@ -106,7 +116,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private navigatorApiFailed = false;
 
     public postConstruct(): void {
-        if (this.rowModel.getType() === 'clientSide') {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
@@ -1157,8 +1167,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private copyDataToClipboardLegacy(data: string): void {
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement((element) => {
-            const eDocument = this.gos.getDocument();
-            const focusedElementBefore = this.gos.getActiveDomElement() as HTMLElement;
+            const eDocument = _getDocument(this.gos);
+            const focusedElementBefore = _getActiveDomElement(this.gos) as HTMLElement;
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
@@ -1184,7 +1194,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         callbackNow: (element: HTMLTextAreaElement) => void,
         callbackAfter?: (element: HTMLTextAreaElement) => void
     ): void {
-        const eDoc = this.gos.getDocument();
+        const eDoc = _getDocument(this.gos);
         const eTempInput = eDoc.createElement('textarea');
         eTempInput.style.width = '1px';
         eTempInput.style.height = '1px';

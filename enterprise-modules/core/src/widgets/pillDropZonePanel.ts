@@ -16,6 +16,7 @@ import {
     _clearElement,
     _createIconNoSpan,
     _existsAndNotEmpty,
+    _getActiveDomElement,
     _includes,
     _insertArrayIntoArray,
     _last,
@@ -146,7 +147,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
 
         const { shiftKey } = e;
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
 
         const isFirstFocused = activeEl === focusableElements[0];
         const isLastFocused = activeEl === _last(focusableElements);
@@ -434,7 +435,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private getFocusedItem(): number {
         const eGui = this.getGui();
-        const activeElement = this.gos.getActiveDomElement();
+        const activeElement = _getActiveDomElement(this.gos);
 
         if (!eGui.contains(activeElement)) {
             return -1;
