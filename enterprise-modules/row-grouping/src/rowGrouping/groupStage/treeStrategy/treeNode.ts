@@ -33,7 +33,11 @@ const getRowIndex = (row: RowNode | null | undefined, rowNodeOrder: RowNodeOrder
 /** Compare two RowNode by the TreeNode rowPosition. Assumes TreeNode to be set and valid. */
 const rowPositionComparer = (a: RowNode, b: RowNode): number => a.treeNode!.rowPosition - b.treeNode!.rowPosition;
 
-const rowUnlinked = (row: TreeRow, root: boolean): void => {
+/**
+ * Disassociate a node from a row, breaking the association between to the node.
+ * Leaves the node untouched, only the row is modified.
+ */
+const orphanRow = (row: TreeRow, root: boolean): void => {
     row.parent = null;
     row.treeNode = null;
     if (root) {
@@ -190,7 +194,7 @@ export class TreeNode implements ITreeNode {
         if (level < 0) {
             newRow.parent = null; // root
             if (oldRow !== null && oldRow !== newRow) {
-                rowUnlinked(oldRow, true);
+                orphanRow(oldRow, true);
             }
         } else {
             if (oldRow === newRow) {
@@ -199,7 +203,7 @@ export class TreeNode implements ITreeNode {
             newRow.parent = parent?.row ?? null;
             if (oldRow !== null) {
                 newRow.allLeafChildren = oldRow.allLeafChildren ?? this.allLeafChildren ?? EMPTY_ARRAY;
-                rowUnlinked(oldRow, false); // Unlink the old row, is being replaced
+                orphanRow(oldRow, false); // Unlink the old row, is being replaced
             } else {
                 newRow.allLeafChildren = this.allLeafChildren ?? EMPTY_ARRAY;
             }
@@ -260,7 +264,7 @@ export class TreeNode implements ITreeNode {
                 this.duplicateRows = null; // Free memory
             }
         }
-        rowUnlinked(rowToRemove, level < 0);
+        orphanRow(rowToRemove, level < 0);
         return true;
     }
 
