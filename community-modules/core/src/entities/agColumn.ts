@@ -7,6 +7,7 @@ import type {
     ColumnEventName,
     ColumnGroup,
     ColumnGroupShowType,
+    ColumnHighlightPosition,
     ColumnInstanceId,
     ColumnPinnedType,
     HeaderColumnId,
@@ -90,6 +91,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     private sortIndex: number | null | undefined;
     private moving = false;
     private menuVisible = false;
+    private highlighted: ColumnHighlightPosition | null;
 
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;
@@ -312,6 +314,10 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         return this.tooltipFieldContainsDots;
     }
 
+    public getHighlighted(): ColumnHighlightPosition | null {
+        return this.highlighted;
+    }
+
     public override addEventListener<T extends ColumnEventName>(
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
@@ -433,6 +439,13 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         }
 
         return false;
+    }
+
+    public setHighlighted(highlighted: ColumnHighlightPosition | null): void {
+        if (this.highlighted !== highlighted) {
+            this.highlighted = highlighted;
+            this.columnEventService.dispatchEvent(this.createColumnEvent('headerHighlightChanged', 'uiColumnMoved'));
+        }
     }
 
     public setMoving(moving: boolean, source: ColumnEventType): void {

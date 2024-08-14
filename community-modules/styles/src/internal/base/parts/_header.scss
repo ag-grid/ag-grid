@@ -113,6 +113,23 @@
         );
     }
 
+    .ag-header-highlight-before::after,
+    .ag-header-highlight-after::after {
+        content: '';
+        position: absolute;
+        height: 100%;
+        width: 1px;
+        background-color: var(--ag-range-selection-border-color);
+    }
+
+    .ag-header-highlight-before::after {
+        left: 0px;
+    }
+
+    .ag-header-highlight-after::after {
+        right: 0px;
+    }
+
     .ag-header-cell-resize {
         display: flex;
         align-items: center;

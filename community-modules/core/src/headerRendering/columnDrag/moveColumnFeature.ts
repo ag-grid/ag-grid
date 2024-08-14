@@ -10,7 +10,9 @@ import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnEventType } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import type { MouseEventService } from '../../gridBodyComp/mouseEventService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import { ColumnHighlightPosition } from '../../interfaces/iColumn';
 import { _errorOnce } from '../../utils/function';
 import { _exists, _missing } from '../../utils/generic';
 import { attemptMoveColumns, moveColumns, normaliseX } from '../columnMoveHelper';
@@ -22,6 +24,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private columnMoveService: ColumnMoveService;
     private dragAndDropService: DragAndDropService;
     private ctrlsService: CtrlsService;
+    private mouseEventService: MouseEventService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -29,6 +32,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.columnMoveService = beans.columnMoveService;
         this.dragAndDropService = beans.dragAndDropService;
         this.ctrlsService = beans.ctrlsService;
+        this.mouseEventService = beans.mouseEventService;
     }
 
     private gridBodyCon: GridBodyCtrl;
@@ -42,6 +46,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private isCenterContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
+    private lastHighlightedColumn: AgColumn | null;
     private lastMovedInfo: { columns: AgColumn[]; toIndex: number } | null = null;
 
     // this counts how long the user has been trying to scroll by dragging and failing,
@@ -193,7 +198,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return true;
         }) || []) as AgColumn[];
 
-        const lastMovedInfo = attemptMoveColumns({
+        const params = {
             allMovingColumns,
             isFromHeader: dragSourceType === DragSourceType.HeaderCell,
             hDirection,
@@ -205,10 +210,41 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             columnModel: this.columnModel,
             columnMoveService: this.columnMoveService,
             presentedColsService: this.visibleColsService,
-        });
+        };
 
-        if (lastMovedInfo) {
-            this.lastMovedInfo = lastMovedInfo;
+        if (this.gos.get('suppressMoveWhenColumnDragging')) {
+            if (this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)) {
+                const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).x;
+
+                const targetColumn = this.columnModel.getCols().find((col) => {
+                    const start = col.getLeft()!;
+                    const end = start + col.getActualWidth();
+
+                    return start <= pixel && end >= pixel;
+                });
+
+                if (this.lastHighlightedColumn !== targetColumn) {
+                    if (this.lastHighlightedColumn) {
+                        this.lastHighlightedColumn.setHighlighted(null);
+                    }
+                    this.lastHighlightedColumn = targetColumn || null;
+                }
+
+                if (targetColumn) {
+                    const left = targetColumn.getLeft();
+                    const width = targetColumn.getActualWidth();
+
+                    const position =
+                        pixel - left! < width / 2 ? ColumnHighlightPosition.Before : ColumnHighlightPosition.After;
+                    targetColumn.setHighlighted(position);
+                }
+            }
+        } else {
+            const lastMovedInfo = attemptMoveColumns(params);
+
+            if (lastMovedInfo) {
+                this.lastMovedInfo = lastMovedInfo;
+            }
         }
     }
 
