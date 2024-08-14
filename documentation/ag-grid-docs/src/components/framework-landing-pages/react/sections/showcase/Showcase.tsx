@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React from 'react';
 
 import styles from './Showcase.module.scss';
@@ -60,7 +61,9 @@ const Showcase: React.FC = () => {
                                                 <Icon svgClasses={styles.newTabIcon} name={'newTab'} />
                                             </div>
                                             <img
-                                                src={darkMode && item.imageLight ? item.imageLight : item.image}
+                                                src={urlWithBaseUrl(
+                                                    darkMode && item.imageLight ? item.imageLight : item.image
+                                                )}
                                                 alt={item.alt}
                                                 className={styles.stackedImage}
                                             />

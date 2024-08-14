@@ -1,5 +1,5 @@
-import { Icon } from '@ag-website-shared/components/icon/Icon';
-import React, { useState } from 'react';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import React from 'react';
 
 import styles from './Examples.module.scss';
 import examples from './examples.json';
@@ -11,7 +11,10 @@ const Examples: React.FC = () => {
                 <div className={styles.cardsContainer}>
                     {examples.map((card, index) => (
                         <div key={index} className={styles.card}>
-                            <img className={styles.cardImage} src={`landing-pages/examples/${card.img}`}></img>
+                            <img
+                                className={styles.cardImage}
+                                src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
+                            ></img>
                             <div className={styles.cardDetails}>
                                 <h3>{card.title}</h3>
                                 <p>{card.content}</p>
