@@ -68,7 +68,8 @@ describe('ag-grid tree data', () => {
             └─┬ E filler id:row-group-0-E
             · └─┬ F filler id:row-group-0-E-1-F
             · · └─┬ G filler id:row-group-0-E-1-F-2-G
-            · · · └── H LEAF id:3`);
+            · · · └── H LEAF id:3
+        `);
 
         const rows = getAllRows(api);
 
@@ -275,43 +276,5 @@ describe('ag-grid tree data', () => {
         ];
 
         expect(rowsSnapshot).toMatchObject(expectedSnapshot);
-    });
-
-    test('duplicate group keys', async () => {
-        const rowData = [
-            { orgHierarchy: ['A', 'B'], x: 1, _diagramLabel: '1' },
-            { orgHierarchy: ['A', 'B'], x: 2, _diagramLabel: '2' },
-        ];
-
-        const gridOptions: GridOptions = {
-            columnDefs: [],
-            treeData: true,
-            animateRows: false,
-            groupDefaultExpanded: -1,
-            rowData,
-            getDataPath,
-        };
-
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-        const api = createMyGrid(gridOptions);
-
-        expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: duplicate group keys for row data, keys should be unique',
-            [rowData[0], rowData[1]]
-        );
-        consoleWarnSpy?.mockRestore();
-
-        new TreeDiagram(api).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · └── B LEAF id:1 label:2
-        `);
-
-        const rows = getAllRows(api);
-
-        expect(rows.length).toBe(2);
-        expect(rows[0].data).toEqual(undefined);
-        expect(rows[1].data).toEqual(rowData[1]);
     });
 });

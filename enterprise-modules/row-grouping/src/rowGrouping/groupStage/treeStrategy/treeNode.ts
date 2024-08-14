@@ -33,20 +33,30 @@ const getRowIndex = (row: RowNode | null | undefined, rowNodeOrder: RowNodeOrder
 /** Compare two RowNode by the TreeNode rowPosition. Assumes TreeNode to be set and valid. */
 const rowPositionComparer = (a: RowNode, b: RowNode): number => a.treeNode!.rowPosition - b.treeNode!.rowPosition;
 
+const rowUnlinked = (row: TreeRow, root: boolean): void => {
+    row.parent = null;
+    row.treeNode = null;
+    if (root) {
+        row.childrenAfterGroup = [];
+    } else {
+        row.level = 0;
+        row.childrenAfterGroup = null;
+        row.allLeafChildren = null;
+    }
+};
+
 /**
  * We keep a secondary tree data structure together with the rows.
- * We associate a node with a TreeNode, both storing the row in node.row and by storing the TreeNode in a hidden field in the row.
+ * We associate a node with a TreeNode, both storing the row in node.row and by storing the TreeNode in row.treeNode field.
  * We break the association when the row is removed or the TreeStrategy destroyed.
+ * Consider that a TreeNode can contain more than one row if there are duplicates keys in the same group,
+ * in this case it means that the rows will have the same TreeNode.
  *
  * TreeStrategy uses a two stage approach both for first time creation and updates.
  * Multiple updates interact with the tree, and a commit stage commits all updates reducing expensive computations.
  * The map of children is kept in a consistent order of insertion.
  *
- * The operations are:
- *  - create a path with a filler node with a null row, calling TreeStrategy.upsertPath
- *  - replace an existing node row with another, or null, with TreeStrategy.overwriteRow
- *
- * Insert and overwrite will invalidate the affected paths with node.invalidate(), so that the commit operation will only
+ * Operations will invalidate the affected paths with node.invalidate(), so that the commit operation will only
  * update the affected paths without traversing the whole tree.
  * Consider that order of invalidated items is not deterministic, so the commit operation should be able to handle any order.
  * The subtrees that don't have children after a move or remove operation will be marked as ghosts and removed during commit.
@@ -118,11 +128,17 @@ export class TreeNode implements ITreeNode {
     /** The RowNode associated to this tree node */
     public row: TreeRow | null = null;
 
+    /** There may be duplicate rows if they have the same key */
+    public duplicateRows: Set<TreeRow> | null = null;
+
     /** We use this during commit to understand if the row changed. After commit, it will be the same as this.row. */
     public oldRow: TreeRow | null = null;
 
     /** We keep the row.childrenAfterGroup here, we just swap arrays when we assign rows */
     public childrenAfterGroup: TreeRow[] = EMPTY_ARRAY;
+
+    /** This is set if the duplicate key warning was already raised for this node, to reduce the performance hit */
+    public duplicateRowsWarned?: boolean;
 
     /**
      * We keep the row.allLeafChildren here, we just swap arrays when we assign or swap the row to this node.
@@ -169,40 +185,82 @@ export class TreeNode implements ITreeNode {
         return node;
     }
 
-    /** Bidirectionally links (or unlink) a row to a node. */
-    public linkRow(newRow: TreeRow | null): boolean {
-        const { row: oldRow } = this;
-
-        if (oldRow === newRow) {
-            return false; // No change
-        }
-
-        let oldRowAllLeafChildren: TreeRow[] | null = null;
-        if (oldRow) {
-            oldRow.treeNode = null;
-            oldRow.parent = null;
-            oldRow.level = 0;
-            if (this.level >= 0) {
-                oldRowAllLeafChildren = oldRow.allLeafChildren;
-                oldRow.childrenAfterGroup = null;
-                oldRow.allLeafChildren = null;
+    public setRow(newRow: TreeRow): boolean {
+        const { parent, level, row: oldRow, childrenAfterGroup } = this;
+        if (level < 0) {
+            newRow.parent = null; // root
+            if (oldRow !== null && oldRow !== newRow) {
+                rowUnlinked(oldRow, true);
+            }
+        } else {
+            if (oldRow === newRow) {
+                return false; // Already the same row
+            }
+            newRow.parent = parent?.row ?? null;
+            if (oldRow !== null) {
+                newRow.allLeafChildren = oldRow.allLeafChildren ?? this.allLeafChildren ?? EMPTY_ARRAY;
+                rowUnlinked(oldRow, false); // Unlink the old row, is being replaced
             } else {
-                oldRow.childrenAfterGroup = []; // root
+                newRow.allLeafChildren = this.allLeafChildren ?? EMPTY_ARRAY;
             }
         }
-
-        if (newRow) {
-            newRow.treeNode = this;
-            newRow.parent = this.parent?.row ?? null;
-            newRow.level = this.level;
-            newRow.childrenAfterGroup = this.childrenAfterGroup;
-            if (this.level >= 0) {
-                newRow.allLeafChildren = this.allLeafChildren ?? oldRowAllLeafChildren ?? EMPTY_ARRAY;
-            }
-        }
-
+        newRow.childrenAfterGroup = childrenAfterGroup;
+        newRow.level = level;
+        newRow.treeNode = this;
         this.row = newRow;
+        return true;
+    }
 
+    public addDuplicateRow(newRow: TreeRow): boolean {
+        const { parent, level } = this;
+        let duplicateRows = this.duplicateRows;
+        if (duplicateRows === null) {
+            duplicateRows = new Set();
+            this.duplicateRows = duplicateRows;
+        } else if (duplicateRows.has(newRow)) {
+            return false; // Already present
+        }
+
+        duplicateRows.add(newRow);
+
+        newRow.treeNode = this;
+        newRow.parent = parent?.row ?? null;
+        newRow.level = level;
+        newRow.childrenAfterGroup = EMPTY_ARRAY;
+        if (level >= 0) {
+            newRow.allLeafChildren = EMPTY_ARRAY;
+        }
+        return true;
+    }
+
+    public removeRow(rowToRemove: TreeRow): boolean {
+        const { level, row, duplicateRows, childrenAfterGroup } = this;
+        if (row === rowToRemove) {
+            // Pop the first row from the duplicate rows and use that as first row
+            const first: TreeRow | null | undefined = duplicateRows?.values().next().value;
+            if (first) {
+                this.row = first;
+                duplicateRows!.delete(first);
+                if (duplicateRows!.size === 0) {
+                    this.duplicateRows = null;
+                }
+                first.childrenAfterGroup = childrenAfterGroup;
+                if (level >= 0) {
+                    first.allLeafChildren = row.allLeafChildren ?? this.allLeafChildren ?? EMPTY_ARRAY;
+                }
+            } else {
+                this.row = null;
+            }
+        } else {
+            // Delete from the duplicate rows
+            if (!duplicateRows?.delete(rowToRemove)) {
+                return false; // Not found
+            }
+            if (duplicateRows.size === 0) {
+                this.duplicateRows = null; // Free memory
+            }
+        }
+        rowUnlinked(rowToRemove, level < 0);
         return true;
     }
 
@@ -298,7 +356,7 @@ export class TreeNode implements ITreeNode {
      * It is safe to destroy the root however.
      */
     public destroy(): void {
-        const parent = this.parent;
+        const { parent, level } = this;
         if (parent?.children?.delete(this.key)) {
             if (this.ghost) {
                 --parent.ghosts;
@@ -308,7 +366,7 @@ export class TreeNode implements ITreeNode {
         this.parent = null;
         this.children = null;
         this.childrenAfterGroup = EMPTY_ARRAY;
-        if (this.level >= 0) {
+        if (level >= 0) {
             this.allLeafChildren = EMPTY_ARRAY; // Not the root
         }
     }
