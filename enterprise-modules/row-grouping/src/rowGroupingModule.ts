@@ -72,7 +72,7 @@ export const RowGroupingCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule],
 });
 
-export const RowGroupingApiModule = _defineModule<_RowGroupingGridApi>({
+export const RowGroupingApiModule = _defineModule<_RowGroupingGridApi<any>>({
     version: VERSION,
     moduleName: `${ModuleNames.RowGroupingModule}-api`,
     apiFunctions: {

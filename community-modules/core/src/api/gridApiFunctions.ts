@@ -29,7 +29,7 @@ const mod = <TGridApi extends Partial<GridApi>>(
 };
 
 export const gridApiFunctionsMap = {
-    ...mod<_CoreModuleGridApi>(ModuleNames.CommunityCoreModule, {
+    ...mod<_CoreModuleGridApi<any>>(ModuleNames.CommunityCoreModule, {
         dispatchEvent: 0,
         destroy: 0,
         getGridId: 0,
@@ -188,7 +188,7 @@ export const gridApiFunctionsMap = {
         getCacheBlockState: 0,
     }),
 
-    ...mod<_ClientSideRowModelGridApi>(ModuleNames.ClientSideRowModelModule, {
+    ...mod<_ClientSideRowModelGridApi<any>>(ModuleNames.ClientSideRowModelModule, {
         onGroupExpandedOrCollapsed: 0,
         refreshClientSideRowModel: 0,
         forEachLeafNode: 0,
@@ -270,7 +270,7 @@ export const gridApiFunctionsMap = {
         clearRangeSelection: 0,
     }),
 
-    ...mod<_RowGroupingGridApi>(ModuleNames.RowGroupingModule, {
+    ...mod<_RowGroupingGridApi<any>>(ModuleNames.RowGroupingModule, {
         addAggFunc: 0,
         addAggFuncs: 0,
         clearAggFuncs: 0,
@@ -312,7 +312,7 @@ export const gridApiFunctionsMap = {
         getServerSideGroupLevelState: 0,
     }),
 
-    ...mod<_SideBarGridApi>(ModuleNames.SideBarModule, {
+    ...mod<_SideBarGridApi<any>>(ModuleNames.SideBarModule, {
         isSideBarVisible: 0,
         setSideBarVisible: 0,
         setSideBarPosition: 0,

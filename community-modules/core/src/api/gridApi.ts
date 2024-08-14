@@ -184,7 +184,7 @@ export interface _OverlayGridApi {
     hideOverlay(): void;
 }
 
-export interface _RowGridApi<TData = any> {
+export interface _RowGridApi<TData> {
     /** Remove row(s) from the DOM and recreate them again from scratch. */
     redrawRows(params?: RedrawRowsParams<TData>): void;
 
@@ -251,7 +251,7 @@ export interface _RowGridApi<TData = any> {
     getModel(): IRowModel;
 }
 
-export interface _ScrollGridApi<TData = any> {
+export interface _ScrollGridApi<TData> {
     /**
      * Returns an object with two properties:
      *  - `top`: The top pixel position of the current scroll in the grid
@@ -318,7 +318,7 @@ export interface _KeyboardNavigationGridApi {
     tabToPreviousCell(event?: KeyboardEvent): boolean;
 }
 
-export interface _EventGridApi<TData = any> {
+export interface _EventGridApi<TData> {
     /**
      * Add an event listener for the specified `eventType`.
      * Listener will receive the `event` as a single parameter.
@@ -351,7 +351,7 @@ export interface _EventGridApi<TData = any> {
     ): void;
 }
 
-export interface _CellGridApi {
+export interface _CellGridApi<TData> {
     /** Expire the value cache. */
     expireValueCache(): void;
 
@@ -397,7 +397,7 @@ export interface _SortGridApi {
     onSortChanged(): void;
 }
 
-export interface _ClientSideRowModelGridApi<TData = any> {
+export interface _ClientSideRowModelGridApi<TData> {
     /**
      * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
      * Typically called after updating the row node expanded state explicitly, i.e `rowNode.expanded = false`,
@@ -475,7 +475,7 @@ export interface _SsrmInfiniteSharedGridApi {
     getCacheBlockState(): any;
 }
 
-export interface _ColumnGridApi<TData = any> {
+export interface _ColumnGridApi<TData> {
     getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
 
     /**
@@ -546,10 +546,10 @@ export interface _ColumnGridApi<TData = any> {
     isPinningRight(): boolean;
 
     /** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */
-    getDisplayedColAfter(col: Column): Column | null;
+    getDisplayedColAfter<TValue = any>(col: Column): Column<TValue> | null;
 
     /** Same as `getVisibleColAfter` except gives column to the left. */
-    getDisplayedColBefore(col: Column): Column | null;
+    getDisplayedColBefore<TValue = any>(col: Column): Column<TValue> | null;
 
     /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
     setColumnVisible(key: string | Column, visible: boolean): void;
@@ -649,7 +649,7 @@ export interface _DragGridApi {
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams;
 }
 
-export interface _EditGridApi<TData = any> {
+export interface _EditGridApi<TData> {
     /** Reverts the last cell edit. */
     undoCellEditing(): void;
 
@@ -799,12 +799,12 @@ export interface _PinnedRowGridApi {
     getPinnedBottomRowCount(): number;
 
     /** Gets the top pinned row with the specified index. */
-    getPinnedTopRow(index: number): IRowNode | undefined;
+    getPinnedTopRow<TPinnedData = any>(index: number): IRowNode<TPinnedData> | undefined;
     /** Gets the bottom pinned row with the specified index. */
-    getPinnedBottomRow(index: number): IRowNode | undefined;
+    getPinnedBottomRow<TPinnedData = any>(index: number): IRowNode<TPinnedData> | undefined;
 }
 
-export interface _RenderGridApi<TData = any> {
+export interface _RenderGridApi<TData> {
     /**
      * Sets an ARIA property in the grid panel (element with `role=\"treegrid\"`), and removes an ARIA property when the value is null.
      *
@@ -838,7 +838,7 @@ export interface _RenderGridApi<TData = any> {
     getCellRendererInstances(params?: GetCellRendererInstancesParams<TData>): ICellRenderer[];
 }
 
-export interface _SideBarGridApi {
+export interface _SideBarGridApi<TData> {
     /** Returns `true` if the side bar is visible. */
     isSideBarVisible(): boolean;
 
@@ -910,7 +910,7 @@ export interface _CsvExportGridApi {
     exportDataAsCsv(params?: CsvExportParams): void;
 }
 
-export interface _RowGroupingGridApi<TData = any> {
+export interface _RowGroupingGridApi<TData> {
     /** @deprecated v31.1 addAggFunc(key, func) is  deprecated, please use addAggFuncs({ key: func }) instead. */
     addAggFunc(key: string, aggFunc: IAggFunc): void;
 
@@ -1171,24 +1171,24 @@ export interface _AdvancedFilterGridApi {
     hideAdvancedFilterBuilder(): void;
 }
 
-export interface _CoreModuleGridApi
-    extends _CoreGridApi,
+export interface _CoreModuleGridApi<TData>
+    extends _CoreGridApi<TData>,
         _StateGridApi,
-        _RowSelectionGridApi,
-        _RowGridApi,
-        _ScrollGridApi,
+        _RowSelectionGridApi<TData>,
+        _RowGridApi<TData>,
+        _ScrollGridApi<TData>,
         _KeyboardNavigationGridApi,
-        _EventGridApi,
-        _CellGridApi,
+        _EventGridApi<TData>,
+        _CellGridApi<TData>,
         _CommunityMenuGridApi,
         _SortGridApi,
         _OverlayGridApi,
         _PinnedRowGridApi,
-        _RenderGridApi,
+        _RenderGridApi<TData>,
         _DragGridApi,
-        _ColumnGridApi,
+        _ColumnGridApi<TData>,
         _DragGridApi,
-        _EditGridApi,
+        _EditGridApi<TData>,
         _FilterGridApi,
         _ColumnFilterGridApi,
         _QuickFilterGridApi,
@@ -1199,9 +1199,9 @@ export interface _CoreModuleGridApi
 }
 
 export interface GridApi<TData = any>
-    extends _CoreModuleGridApi,
+    extends _CoreModuleGridApi<TData>,
         _ClientSideRowModelGridApi<TData>,
-        _SideBarGridApi,
+        _SideBarGridApi<TData>,
         _StatusBarGridApi,
         _InfiniteRowModelGridApi,
         _CsvExportGridApi,
