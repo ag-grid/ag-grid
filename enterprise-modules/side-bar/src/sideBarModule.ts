@@ -25,7 +25,7 @@ export const SideBarCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule],
 });
 
-export const SideBarApiModule = _defineModule<_SideBarGridApi>({
+export const SideBarApiModule = _defineModule<_SideBarGridApi<any>>({
     version: VERSION,
     moduleName: `${ModuleNames.SideBarModule}-api`,
     apiFunctions: {

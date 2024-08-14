@@ -97,7 +97,7 @@ export const RowSelectionApiModule = _defineModule<_RowSelectionGridApi>({
     },
 });
 
-export const RowApiModule = _defineModule<_RowGridApi>({
+export const RowApiModule = _defineModule<_RowGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/row-api',
     apiFunctions: {
@@ -117,7 +117,7 @@ export const RowApiModule = _defineModule<_RowGridApi>({
     },
 });
 
-export const ScrollApiModule = _defineModule<_ScrollGridApi>({
+export const ScrollApiModule = _defineModule<_ScrollGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/scroll-api',
     apiFunctions: {
@@ -142,7 +142,7 @@ export const KeyboardNavigationApiModule = _defineModule<_KeyboardNavigationGrid
     },
 });
 
-export const EventApiModule = _defineModule<_EventGridApi>({
+export const EventApiModule = _defineModule<_EventGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/event-api',
     apiFunctions: {
@@ -153,7 +153,7 @@ export const EventApiModule = _defineModule<_EventGridApi>({
     },
 });
 
-export const CellApiModule = _defineModule<_CellGridApi>({
+export const CellApiModule = _defineModule<_CellGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/cell-api',
     apiFunctions: {

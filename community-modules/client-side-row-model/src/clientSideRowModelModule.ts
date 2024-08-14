@@ -29,7 +29,7 @@ export const ClientSideRowModelCoreModule = _defineModule({
     beans: [ClientSideRowModel, FilterStage, SortStage, FlattenStage, SortService, ImmutableService],
 });
 
-export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGridApi>({
+export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGridApi<any>>({
     version: VERSION,
     moduleName: `${ModuleNames.ClientSideRowModelModule}-api`,
     beans: [RowModelHelperService],

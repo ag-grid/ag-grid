@@ -12,7 +12,7 @@ import {
     setGridAriaProperty,
 } from './renderApi';
 
-export const RenderApiModule = _defineModule<_RenderGridApi>({
+export const RenderApiModule = _defineModule<_RenderGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/render-api',
     apiFunctions: {
