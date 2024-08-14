@@ -17,7 +17,7 @@ const MyComponent: React.FC<Props> = () => {
     const [isCopied, setIsCopied] = useState(false);
     const installTextRef = useRef(null);
     const copyToClipboard = () => {
-        const text = installTextRef?.current.innerText;
+        const text = installTextRef?.current.innerText.replace('$', '');
         navigator.clipboard.writeText(text).then(() => {
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 2000);
@@ -28,9 +28,9 @@ const MyComponent: React.FC<Props> = () => {
         <div className={styles.container}>
             <div className={styles.headingContainer}>
                 <div onClick={() => handleClick('/whats-new')} className={styles.versionTagContainer}>
-                    <span className={styles.version}>AG Grid v32.0.0</span>
+                    <span className={styles.version}>AG Grid v32.0.1</span>
                     <span className={styles.featureHighlight}>
-                        15% reduction in bundle size (1st iteration)
+                        New SSRM, Column Group & Excel Export Features
                         <Icon svgClasses={styles.featureArrow} name="arrowRight" />
                     </span>
                 </div>
