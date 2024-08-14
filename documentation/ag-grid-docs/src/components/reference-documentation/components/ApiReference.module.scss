@@ -247,9 +247,11 @@ a.metaValue {
 
     svg {
         --icon-size: 1.25em;
+
         fill: var(--color-link);
         margin-right: $spacing-size-2;
     }
+
     a {
         justify-content: right;
         display: flex;
@@ -259,12 +261,10 @@ a.metaValue {
 
 .isExpanded svg {
     transform: rotate(180deg);
-    transition: 0.25s ease-in-out;
 }
 
 button.seeMore {
     color: var(--color-link);
-    transition: color $transition-default-timing;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -275,7 +275,9 @@ button.seeMore {
     height: 24px;
     width: 24px;
     margin-right: $spacing-size-2;
-    transition: 0.5s all;
+    transition:
+        color 0.5s ease-in-out,
+        border-color 0.5s ease-in-out;
     flex-shrink: 0;
 
     &:active {
@@ -284,10 +286,12 @@ button.seeMore {
 
     svg {
         --icon-size: 16px;
+
         margin-left: 2px;
-        transition: 0.25s ease-in-out;
         fill: var(--color-link);
-        transition: all $transition-default-timing;
+        transition:
+            fill 0.25s ease-in-out,
+            transform 0.25s ease-in-out;
         top: 1px;
     }
 
@@ -298,10 +302,10 @@ button.seeMore {
             display: none;
         }
     }
+
     &:hover {
         color: var(--color-link-hover);
         border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 50%);
-        transition: 0.5s all;
 
         svg {
             fill: var(--color-link-hover);
