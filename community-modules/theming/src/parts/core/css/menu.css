@@ -245,10 +245,6 @@
     gap: var(--ag-widget-vertical-spacing);
 }
 
-.ag-menu-option .ag-icon {
-    opacity: 65%;
-}
-
 .ag-menu-option {
     font-weight: 500;
     cursor: pointer;
