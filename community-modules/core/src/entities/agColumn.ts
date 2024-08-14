@@ -46,7 +46,6 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
     return col instanceof AgColumn;
 }
 
-export const DEFAULT_COLUMN_MIN_WIDTH = 20;
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and ProvidedColumnGroupChild as the class can
@@ -244,7 +243,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     private initMinAndMaxWidths(): void {
         const colDef = this.colDef;
 
-        this.minWidth = colDef.minWidth ?? DEFAULT_COLUMN_MIN_WIDTH;
+        this.minWidth = colDef.minWidth ?? this.gos.environment.getDefaultColumnMinWidth();
         this.maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     }
 
