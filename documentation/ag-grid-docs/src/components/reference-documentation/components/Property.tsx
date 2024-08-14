@@ -206,10 +206,7 @@ export const Property: FunctionComponent<{
                             {' '}
                             <div className={styles.propertyMeta}>
                                 <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
-                                    <span
-                                        onClick={() => setExpanded(!isExpanded)}
-                                        dangerouslySetInnerHTML={{ __html: displayNameSplit }}
-                                    ></span>
+                                    <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
                                 </h6>
                                 <div
                                     title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
@@ -255,7 +252,7 @@ export const Property: FunctionComponent<{
                                             {detailsCode && (
                                                 <button
                                                     className={classnames(styles.seeMore, 'button-as-link', {
-                                                        [styles.isExpandable]: detailsCode,
+                                                        [styles.isExpanded]: isExpanded,
                                                     })}
                                                     onClick={() => {
                                                         setExpanded(!isExpanded);
