@@ -347,7 +347,7 @@ export const Property: FunctionComponent<{
                             <div className={styles.actionsRow}>
                                 {more != null && more.url && !config.hideMore && (
                                     <a
-                                        className={`${styles.docLink} ${detailsCode ? styles.separator : ''}`}
+                                        className={styles.docLink}
                                         href={urlWithPrefix({
                                             url: more.url,
                                             framework,
