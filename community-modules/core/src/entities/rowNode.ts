@@ -154,7 +154,21 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public __needsRefreshWhenVisible: boolean;
 
     /**
+     * This number represents the ordering of this row in root.allLeafChildren.
+     * This is NOT the index of the row, is a monotonic increasing number, so it may have gaps,
+     * furthermore, we try to not modify it if the order of rows did not change, to avoid unnecessary updates.
+     *
+     * This is used by the GroupStage to maintain the order of the nodes in the tree consistent (for trees and groups).
+     *
+     * This replaces the old rowNodeOrder map that was originally used for a similar purpose.
+     *
+     * Initially is -1, that means, no particular order.
+     */
+    public positionInRootChildren: number = -1;
+
+    /**
      * All lowest level nodes beneath this node, no groups.
+     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      * The array might also br frozen (immutable).
      */
