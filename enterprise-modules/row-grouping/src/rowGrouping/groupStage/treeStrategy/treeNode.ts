@@ -42,10 +42,9 @@ const orphanRow = (row: TreeRow, root: boolean): void => {
  * Operations will invalidate the affected paths with node.invalidate(), so that the commit operation will only
  * update the affected paths without traversing the whole tree.
  * Consider that order of invalidated items is not deterministic, so the commit operation should be able to handle any order.
- * The subtrees that don't have children after a move or remove operation will be marked as ghosts and removed during commit.
  *
  * During commit, the childrenAfterGroup and allLeafChildren arrays are rebuilt, and the updates are applied.
- * The ghost nodes are removed.
+ * The empty filler nodes nodes are removed.
  * Before commit those arrays are NOT representing the truth, so they should not be used.
  */
 export class TreeNode implements ITreeNode {
@@ -72,20 +71,6 @@ export class TreeNode implements ITreeNode {
      * - TreeNode instance: is the next node in the linked list
      */
     private invalidatedNext: TreeNode | null | undefined = undefined;
-
-    /**
-     * Keep track of the number of children that are ghosts in this node.
-     * Since we do not delete the children during the prepare stage, before the commit, we need to keep track of how many there are.
-     * A ghost node is a node that:
-     *  - is not the root
-     *  - AND is a filler node (it has no row, or no row.data)
-     *  - AND all the nodes of its subtrees are ghosts or fillers (they have row null, or no row.data)
-     *
-     * This is used to update the ghost status of the nodes without recursing the whole subtree, as checking if children.size === ghosts is O(1).
-     * When a node switch from being ghost to being a normal node, we move it at the end of the children list, to maintain the insertion order.
-     * Think about deleting the single leaf of a filler node, if the filler node has to be inserted again, it should be at the end of the children list.
-     */
-    private ghosts: number = 0;
 
     /**
      * We use this to keep track if children were removed or added and moved, so we can skip
@@ -133,11 +118,19 @@ export class TreeNode implements ITreeNode {
         public readonly key: string,
 
         /** The level of this node. Root has level -1 */
-        public readonly level: number,
-
-        /** A ghost node is a node that should be removed */
-        public ghost: boolean
+        public readonly level: number
     ) {}
+
+    public isEmptyFillerNode(): boolean {
+        const row = this.row;
+        if (row?.data) {
+            return false;
+        }
+        if (this.children?.size) {
+            return false;
+        }
+        return true;
+    }
 
     /** Returns an iterator able to iterate all children in this node, in order of insertion */
     public enumChildren(): IterableIterator<TreeNode> {
@@ -155,9 +148,8 @@ export class TreeNode implements ITreeNode {
         }
         let node = this.children?.get(key);
         if (!node) {
-            node = new TreeNode(this, key, this.level + 1, true);
+            node = new TreeNode(this, key, this.level + 1);
             (this.children ??= new Map()).set(key, node);
-            ++this.ghosts;
         }
         return node;
     }
@@ -242,61 +234,6 @@ export class TreeNode implements ITreeNode {
     }
 
     /**
-     * Updates the ghost status of this node and all its parents until the root is reached.
-     * Is optimized to avoid updating the ghost status of the parents if the ghost status of a node did not change.
-     * @returns true if the ghost status of this node changed, false if it was already the same.
-     */
-    public updateIsGhost(): boolean {
-        // We update the ghost state recursively
-        if (!this.updateThisIsGhost()) {
-            return false;
-        }
-        let current: TreeNode | null = this;
-        do {
-            current = current.parent;
-        } while (current?.updateThisIsGhost());
-        return true;
-    }
-
-    /**
-     * Updates the ghost status of this node.
-     * This method does not update the status of the parents.
-     * @returns true if the ghost status changed, false if it was already the same.
-     */
-    private updateThisIsGhost(): boolean {
-        const { parent, row, ghost } = this;
-        if (parent === null) {
-            return false; // Root cannot be a ghost
-        }
-
-        const newGhost = !row?.data && this.ghosts === (this.children?.size ?? 0);
-        if (newGhost === ghost) {
-            return false; // No changes
-        }
-
-        this.ghost = newGhost;
-
-        if (newGhost) {
-            ++parent.ghosts; // We have a new ghost
-        } else {
-            --parent.ghosts; // Resurrection
-
-            // This was a ghost node, now is not, move the node at the end of the children list
-            // We need to do this to keep the order consistent, a node reinserted must go at the end.
-            const key = this.key;
-            const parentChildren = parent.children;
-            if (parentChildren?.delete(key)) {
-                parentChildren.set(key, this);
-                if (this.oldRow !== null) {
-                    parent.childrenChanged = true;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Invalidates this node and all its parents until the root is reached.
      * Order of invalidated nodes is not deterministic.
      * The root itself cannot be invalidated, as it has no parents.
@@ -334,11 +271,7 @@ export class TreeNode implements ITreeNode {
      */
     public destroy(): void {
         const { parent, level } = this;
-        if (parent?.children?.delete(this.key)) {
-            if (this.ghost) {
-                --parent.ghosts;
-            }
-        }
+        parent?.children?.delete(this.key);
         this.oldRow = null;
         this.parent = null;
         this.children = null;

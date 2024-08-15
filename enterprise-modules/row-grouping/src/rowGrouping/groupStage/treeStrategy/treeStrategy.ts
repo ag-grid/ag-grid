@@ -49,7 +49,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private showRowGroupColsService: IShowRowGroupColsService;
     private oldGroupDisplayColIds: string | undefined;
     private rowsPendingDeletion: Set<RowNode> | null = null;
-    private readonly root: TreeNode = new TreeNode(null, '', -1, false);
+    private readonly root: TreeNode = new TreeNode(null, '', -1);
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
@@ -158,32 +158,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    /** Called by the destructor, to the destroy the whole tree. */
-    private destroyTree(node: TreeNode): void {
-        const { row, level, duplicateRows } = node;
-        if (row) {
-            if (level >= 0) {
-                this.deleteRow(row, true); // Delete the row
-            } else {
-                clearTreeRowFlags(row); // Just clear the flags
-            }
-        }
-        if (duplicateRows) {
-            for (const row of duplicateRows) {
-                if (level >= 0 && !row.data) {
-                    this.deleteRow(row, true); // Delete filler nodes
-                } else {
-                    clearTreeRowFlags(row); // Just clear the flags
-                }
-            }
-        }
-        const children = node.enumChildren();
-        node.destroy();
-        for (const child of children) {
-            this.destroyTree(child);
-        }
-    }
-
     /** Called to clear a subtree. */
     private clearTree(node: TreeNode, changedPath: ChangedPath | null | undefined): void {
         const { row, level } = node;
@@ -208,6 +182,32 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
             this.clearTree(child, changedPath);
+        }
+    }
+
+    /** Called by the destructor, to the destroy the whole tree. */
+    private destroyTree(node: TreeNode): void {
+        const { row, level, duplicateRows } = node;
+        if (row) {
+            if (level >= 0) {
+                this.deleteRow(row, true); // Delete the row
+            } else {
+                clearTreeRowFlags(row); // Just clear the flags
+            }
+        }
+        if (duplicateRows) {
+            for (const row of duplicateRows) {
+                if (level >= 0 && !row.data) {
+                    this.deleteRow(row, true); // Delete filler nodes
+                } else {
+                    clearTreeRowFlags(row); // Just clear the flags
+                }
+            }
+        }
+        const children = node.enumChildren();
+        node.destroy();
+        for (const child of children) {
+            this.destroyTree(child);
         }
     }
 
@@ -286,10 +286,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.deleteRow(oldRow, !oldRow.data);
         }
 
-        if (node.updateIsGhost()) {
-            invalidate = true;
-        }
-
         if (invalidate) {
             node.invalidate();
         }
@@ -311,7 +307,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 if (prevNode.parent) {
                     prevNode.parent.childrenChanged = true;
                 }
-                prevNode.updateIsGhost();
                 prevNode.invalidate();
             }
         }
@@ -332,10 +327,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                     invalidate = true;
                 }
             }
-        }
-
-        if (node.updateIsGhost()) {
-            invalidate = true;
         }
 
         if (update && !isTreeRowUpdated(newRow)) {
@@ -437,8 +428,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private commitNodePreOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): boolean {
-        if (node.ghost) {
-            if (node.oldRow !== null && !parent.childrenChanged) {
+        if (node.isEmptyFillerNode()) {
+            if (node.oldRow !== null) {
                 parent.childrenChanged = true;
             }
             this.clearTree(node, details.changedPath);
@@ -488,6 +479,14 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         const row = node.row!;
+
+        if (node.isEmptyFillerNode()) {
+            if (node.oldRow !== null) {
+                parent.childrenChanged = true;
+            }
+            this.clearTree(node, details.changedPath);
+            return; // Cleared. No need to process further
+        }
 
         if (node.childrenChanged) {
             node.updateChildrenAfterGroup();
