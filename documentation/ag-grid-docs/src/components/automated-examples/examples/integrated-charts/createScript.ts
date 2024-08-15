@@ -53,7 +53,7 @@ export const createScript = ({
 }: Params): ScriptAction[] => {
     const START_CELL_COL_INDEX = 0;
     const START_CELL_ROW_INDEX = 0;
-    const END_CELL_COL_INDEX = 2;
+    const END_CELL_COL_INDEX = 4; // Till `Mar` column
     const END_CELL_ROW_INDEX = 9;
 
     const agElementFinder = createAgElementFinder({ containerEl });
@@ -93,35 +93,6 @@ export const createScript = ({
             },
         },
 
-        // Sort by Jan twice for desc sort
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'headerCell',
-                targetParams: {
-                    text: 'Jan',
-                },
-            },
-        },
-        {
-            type: 'agAction',
-            actionType: 'sort',
-            actionParams: {
-                colId: 'jan',
-                sort: 'asc',
-            },
-        },
-        { type: 'wait', duration: 700 },
-        { type: 'click' },
-        {
-            type: 'agAction',
-            actionType: 'sort',
-            actionParams: {
-                colId: 'jan',
-                sort: 'desc',
-            },
-        },
         { type: 'wait', duration: 700 },
 
         // Select start cell
@@ -157,12 +128,12 @@ export const createScript = ({
                     endRow: END_CELL_ROW_INDEX,
                     tweenGroup,
                     scriptDebugger,
-                    duration: 200,
+                    duration: 400,
                 });
             },
         },
         { type: 'mouseUp' },
-        { type: 'wait', duration: 100 },
+        { type: 'wait', duration: 600 },
 
         {
             type: 'agAction',
@@ -173,7 +144,7 @@ export const createScript = ({
                     colIndex: END_CELL_COL_INDEX,
                     rowIndex: END_CELL_ROW_INDEX,
                 },
-                menuItemPath: ['Chart Range', 'Column', 'Stacked'],
+                menuItemPath: ['Chart Range', 'Bar', 'Stacked'],
                 tweenGroup,
                 scriptDebugger,
                 speed: 0.5,
@@ -205,7 +176,7 @@ export const createScript = ({
                 }
 
                 gridApi.createRangeChart({
-                    chartType: 'stackedColumn',
+                    chartType: 'stackedBar',
                     cellRange: {
                         rowStartIndex: START_CELL_ROW_INDEX,
                         rowEndIndex: END_CELL_ROW_INDEX,
@@ -216,111 +187,8 @@ export const createScript = ({
             },
         },
 
-        // Open chart tool panel
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartMenuToolbarButton',
-            },
-        },
-        {
-            type: 'agAction',
-            actionType: 'clickOnContextMenuItem',
-            actionParams: {
-                mouse,
-                menuItemPath: ['Edit Chart'],
-                tweenGroup,
-                scriptDebugger,
-                speed: 0.5,
-            },
-        },
-        {
-            type: 'agAction',
-            actionType: 'openChartToolPanel',
-        },
-
         // Wait for chart toolbar pop up to show
-        { type: 'wait', duration: 500 },
-
-        // Choose bar stacked
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartSeriesButton',
-                targetParams: {
-                    groupTitle: 'Bar',
-                    seriesTitle: 'Stacked',
-                },
-            },
-        },
-        { type: 'wait', duration: 300 },
-
-        // Click on set up tab
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelTab',
-                targetParams: {
-                    text: 'Set Up',
-                },
-            },
-        },
-        { type: 'wait', duration: 300 },
-
-        // Add `Feb` series
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelPickerField',
-                targetParams: {
-                    groupTitle: 'Series',
-                    selectLabel: 'Add a series',
-                    usePickerDisplayFieldSelector: true,
-                },
-            },
-        },
-        { type: 'wait', duration: 100 },
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelSelectListItem',
-                targetParams: {
-                    text: 'Feb',
-                },
-            },
-        },
-        { type: 'wait', duration: 100 },
-
-        // Add `Mar` series
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelPickerField',
-                targetParams: {
-                    groupTitle: 'Series',
-                    selectLabel: 'Add a series',
-                    usePickerDisplayFieldSelector: true,
-                },
-            },
-        },
-        { type: 'wait', duration: 100 },
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelSelectListItem',
-                targetParams: {
-                    text: 'Mar',
-                },
-            },
-        },
-        { type: 'wait', duration: 100 },
+        { type: 'wait', duration: 1000 },
 
         // Change category to `Country`
         {
@@ -336,7 +204,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 200 },
+        { type: 'wait', duration: 400 },
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
@@ -347,7 +215,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 600 },
 
         // Toggle `Aggregate`
         {
@@ -361,7 +229,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 600 },
 
         // Select `Average` aggregate
         {
@@ -377,7 +245,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 200 },
+        { type: 'wait', duration: 400 },
         {
             type: 'agAction',
             actionType: 'moveToElementAndClick',
@@ -388,7 +256,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 600 },
 
         // Toggle `Switch Category / Series`
         {
@@ -402,7 +270,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 600 },
 
         // Click on `Customize` tab
         {
@@ -415,7 +283,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 600 },
 
         // Open `Titles` group
         {
@@ -428,7 +296,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 600 },
 
         // Toggle `Chart Title`
         {
@@ -442,7 +310,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 600 },
 
         // Change title to `Average Monthly Earning`
         {
@@ -457,7 +325,7 @@ export const createScript = ({
                 },
             },
         },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 600 },
         {
             type: 'agAction',
             actionType: 'typeInTextInput',
@@ -468,7 +336,7 @@ export const createScript = ({
                 index: 0,
             },
         },
-        { type: 'wait', duration: 500 },
+        { type: 'wait', duration: 1000 },
 
         // Move to canvas legend
         {
@@ -491,7 +359,7 @@ export const createScript = ({
             },
             speed: 2,
         },
-        { type: 'wait', duration: 500 },
+        { type: 'wait', duration: 1000 },
         {
             type: 'custom',
             action: async () => {
@@ -514,8 +382,8 @@ export const createScript = ({
                 const getOffsetCoords2 = () =>
                     getLegendOffset({
                         chartsCanvas,
-                        offsetX: 50,
-                        offsetY: -23,
+                        offsetX: -25,
+                        offsetY: -43,
                     });
 
                 // Select offset1 legend
@@ -527,7 +395,7 @@ export const createScript = ({
                     tweenGroup,
                     scriptDebugger,
                 });
-                await waitFor(300);
+                await waitFor(100);
                 await mouseClick({
                     mouse,
                     element: chartsCanvasEl,
@@ -535,7 +403,7 @@ export const createScript = ({
                     withClick: true,
                     scriptDebugger,
                 });
-                await waitFor(500);
+                await waitFor(600);
 
                 // Select offset2 legend
                 await moveTo({
@@ -546,7 +414,7 @@ export const createScript = ({
                     tweenGroup,
                     scriptDebugger,
                 });
-                await waitFor(300);
+                await waitFor(100);
                 await mouseClick({
                     mouse,
                     element: chartsCanvasEl,
@@ -554,44 +422,17 @@ export const createScript = ({
                     withClick: true,
                     scriptDebugger,
                 });
-                await waitFor(500);
+                await waitFor(600);
+            },
+        },
+        { type: 'wait', duration: 1000 },
 
-                // Deselect offset1 legend
-                await moveTo({
-                    mouse,
-                    getOverlay,
-                    toPos: getOffsetCoords1(),
-                    speed,
-                    tweenGroup,
-                    scriptDebugger,
-                });
-                await waitFor(300);
-                await mouseClick({
-                    mouse,
-                    element: chartsCanvasEl,
-                    coords: getOffsetCoords1(),
-                    withClick: true,
-                    scriptDebugger,
-                });
-                await waitFor(500);
-
-                // Deselect offset2 legend
-                await moveTo({
-                    mouse,
-                    getOverlay,
-                    toPos: getOffsetCoords2(),
-                    speed,
-                    tweenGroup,
-                    scriptDebugger,
-                });
-                await waitFor(300);
-                await mouseClick({
-                    mouse,
-                    element: chartsCanvasEl,
-                    coords: getOffsetCoords2(),
-                    withClick: true,
-                    scriptDebugger,
-                });
+        // Close chart tool panel
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartMenuToolPanelCloseButton',
             },
         },
         { type: 'wait', duration: 500 },

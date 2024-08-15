@@ -4,6 +4,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type {
     ColDef,
+    ColumnStateParams,
     GridApi,
     GridOptions,
     ICellRendererParams,
@@ -113,7 +114,7 @@ const columnDefs: ColDef[] = [
             return `<div class='country'><span class='flag'><img border="0" width="24" height="16" alt="${params.value} flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value as CountryCodeKey]}.png"></span><span>${params.value}</span></div>`;
         },
     },
-    { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true, sort: 'desc' },
     { field: 'feb', type: ['measure', 'numericColumn'], enableRowGroup: true },
     { field: 'mar', type: ['measure', 'numericColumn'], enableRowGroup: true },
     { field: 'apr', type: ['measure', 'numericColumn'], enableRowGroup: true },
@@ -150,6 +151,9 @@ const gridOptions: GridOptions = {
     enableRangeSelection: true,
     suppressAggFuncInHeader: true,
     rowGroupPanelShow: 'always',
+    chartToolPanelsDef: {
+        defaultToolPanel: 'data',
+    },
 };
 
 function getDarkModeChartThemes(darkMode: boolean) {
