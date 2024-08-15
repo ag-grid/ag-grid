@@ -6,8 +6,7 @@
     white-space: nowrap;
     z-index: 9999;
 
-    /* TODO remove this !important, which requires removing the style.height set in dragAndDropservice.ts */
-    height: var(--ag-header-height) !important;
+    height: var(--ag-header-height);
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
