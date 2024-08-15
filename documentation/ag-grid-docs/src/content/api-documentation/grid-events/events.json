@@ -94,13 +94,13 @@
         "rowSelected": {
             "more": {
                 "name": "Selection Events",
-                "url": "./row-selection/#selection-events"
+                "url": "./row-selection-api-reference/#reference--rowSelected"
             }
         },
         "selectionChanged": {
             "more": {
                 "name": "Selection Events",
-                "url": "./row-selection/#selection-events"
+                "url": "./row-selection-api-reference/#reference--selectionChanged"
             }
         },
         "cellContextMenu": {},

@@ -1179,13 +1179,13 @@
         "getServerSideSelectionState": {
             "more": {
                 "name": "Selection",
-                "url": "./server-side-model-selection/#api-selection"
+                "url": "./server-side-model-selection/#api-reference"
             }
         },
         "setServerSideSelectionState": {
             "more": {
                 "name": "Selection",
-                "url": "./server-side-model-selection/#api-selection"
+                "url": "./server-side-model-selection/#api-reference"
             }
         },
         "getCacheBlockState": {

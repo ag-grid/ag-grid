@@ -15,7 +15,7 @@ highlighting the charted category and series data in the grid.
 
 Try it out on our [demo page](/example) by doing the following:
 
-* Select a [Cell Range](./range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
+* Select a [Cell Range](./cell-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
 * Bring up the [Context Menu](./context-menu/) and select the desired chart type from the 'Chart Range' sub menu.
 
 Note that developers can also programmatically create range charts, see [Application Created Charts](./integrated-charts-application-created/).
@@ -30,13 +30,15 @@ const gridOptions = {
 }
 ```
 
-To allow users to create charts from a [Range Selection](./range-selection/) and / or display the [Chart Ranges](./integrated-charts-range-chart/#creating-chart-ranges)
-in the grid, `enableRangeSelection` should also be enabled as follows:
+To allow users to create charts from a [Cell Selection](./cell-selection/) and / or display the [Chart Ranges](./integrated-charts-range-chart/#creating-chart-ranges)
+in the grid, cell selection should also be enabled as follows:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     enableCharts: true,
-    enableRangeSelection: true
+    selection: {
+        mode: 'cell',
+    },
 }
 ```
 
