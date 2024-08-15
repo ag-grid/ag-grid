@@ -4,7 +4,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type {
     ColDef,
-    ColumnStateParams,
     GridApi,
     GridOptions,
     ICellRendererParams,

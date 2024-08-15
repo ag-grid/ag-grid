@@ -3,7 +3,6 @@ import { ToggleAutomatedExampleButton } from '@components/automated-examples/Tog
 import { createAutomatedIntegratedCharts } from '@components/automated-examples/examples/integrated-charts';
 import { INTEGRATED_CHARTS_ID } from '@components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
-import breakpoints from '@design-system/breakpoint.module.scss';
 import { trackHomepageExampleIntegratedCharts, trackOnceHomepageExampleIntegratedCharts } from '@utils/analytics';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
