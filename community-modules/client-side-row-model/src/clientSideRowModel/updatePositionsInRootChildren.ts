@@ -16,11 +16,12 @@ export function updatePositionsInRootChildren(rows: RowNode[] | null | undefined
     let prevPosition = -1;
     for (let index = 0; index < length; ++index) {
         const row = rows[index];
-        if (row.positionInRootChildren <= prevPosition) {
+        const positionInRootChildren = row.positionInRootChildren;
+        if (positionInRootChildren <= prevPosition) {
             row.positionInRootChildren = ++prevPosition;
             orderChanged = true;
         } else {
-            prevPosition = row.positionInRootChildren;
+            prevPosition = positionInRootChildren;
         }
     }
 

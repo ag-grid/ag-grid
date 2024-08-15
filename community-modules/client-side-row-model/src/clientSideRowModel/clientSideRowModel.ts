@@ -1283,12 +1283,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const animate = !this.gos.get('suppressAnimationFrame');
 
-        // if (forceRowNodeOrder) {
-        //     if (!this.gos.get('suppressMaintainUnsortedOrder')) {
-        //         rowNodeOrderChanged = updatePositionsInRootChildren(this.rootNode.allLeafChildren);
-        //     }
-        // }
-
         this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
         });
