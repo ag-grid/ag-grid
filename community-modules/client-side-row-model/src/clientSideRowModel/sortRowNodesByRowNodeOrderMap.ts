@@ -16,15 +16,15 @@ export function sortRowNodesByRowNodeOrderMap(
     // check if the list first needs sorting
     let atLeastOneOutOfOrder = false;
 
-    let prevOrder = Number.NEGATIVE_INFINITY;
+    let prevPosition = -1;
     for (let i = 0; i < rowNodes.length; i++) {
         const node = rowNodes[i];
-        const order = rowNodeOrder[node.id!];
-        if (order <= prevOrder) {
+        const nodePosition = rowNodeOrder[node.id!];
+        if (prevPosition > nodePosition) {
             atLeastOneOutOfOrder = true;
             break;
         }
-        prevOrder = order;
+        prevPosition = nodePosition;
     }
 
     if (atLeastOneOutOfOrder) {
