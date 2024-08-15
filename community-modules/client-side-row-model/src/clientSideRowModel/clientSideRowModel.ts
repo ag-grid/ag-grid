@@ -703,12 +703,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         switch (params.step) {
             case ClientSideRowModelSteps.EVERYTHING:
-                this.doRowGrouping(
-                    params.rowNodeTransactions,
-                    !!params.rowNodeOrderChanged,
-                    changedPath,
-                    !!params.afterColumnsChanged
-                );
+                this.doRowGrouping(params.rowNodeTransactions, changedPath, !!params.afterColumnsChanged);
             /* eslint-disable no-fallthrough */
             case ClientSideRowModelSteps.FILTER:
                 this.doFilter(changedPath);
@@ -1086,7 +1081,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private doRowGrouping(
         rowNodeTransactions: RowNodeTransaction[] | undefined,
-        rowNodeOrderChanged: boolean,
         changedPath: ChangedPath,
         afterColumnsChanged: boolean
     ) {
@@ -1095,14 +1089,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.groupStage.execute({
                     rowNode: this.rootNode,
                     rowNodeTransactions: rowNodeTransactions,
-                    rowNodeOrderChanged: !!rowNodeOrderChanged,
                     changedPath: changedPath,
                 });
             } else {
                 this.groupStage.execute({
                     rowNode: this.rootNode,
                     changedPath: changedPath,
-                    rowNodeOrderChanged: !!rowNodeOrderChanged,
                     afterColumnsChanged: afterColumnsChanged,
                 });
             }
@@ -1227,22 +1219,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
-        let orderChanged = false;
-
         if (this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch.forEach((tranItem) => {
                 const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, undefined);
                 rowNodeTrans.push(rowNodeTran);
-                if (rowNodeTran.orderChanged) {
-                    orderChanged = true;
-                }
                 if (tranItem.callback) {
                     callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
                 }
             });
         }
 
-        this.commonUpdateRowData(rowNodeTrans, orderChanged);
+        this.commonUpdateRowData(rowNodeTrans);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1270,13 +1257,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
-        this.commonUpdateRowData([rowNodeTran], rowNodeTran.orderChanged);
+        this.commonUpdateRowData([rowNodeTran]);
 
         return rowNodeTran;
     }
 
     // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[], orderChanged: boolean): void {
+    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[]): void {
         if (!this.hasStarted) {
             return;
         }
@@ -1290,7 +1277,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
-            rowNodeOrderChanged: orderChanged,
             keepRenderedRows: true,
             keepEditingRows: true,
             animate,

@@ -429,12 +429,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             return; // Cleared. No need to process children.
         }
 
-        this.commitNodePreOrder(details, parent, node);
+        this.commitNodePreOrder(parent, node);
         this.commitChildren(details, node);
         this.commitNodePostOrder(details, parent, node);
     }
 
-    private commitNodePreOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
+    private commitNodePreOrder(parent: TreeNode, node: TreeNode): void {
         let row = node.row;
         if (row === null) {
             row = this.createFillerRow(node);
@@ -454,44 +454,27 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             row.key = key;
             setTreeRowKeyChanged(row);
             this.setGroupData(row, key);
-        }
-        if (!row.groupData) {
+        } else if (!row.groupData) {
             this.setGroupData(row, key);
         }
 
         const oldRow = node.oldRow;
         if (oldRow !== row) {
-            node.oldRow = row;
-
             parent.pathChanged = true;
             parent.childrenChanged = true;
 
-            let hasChildRows = false;
             // We need to update children rows parents, as the row changed
             for (const { row: childRow } of node.enumChildren()) {
                 if (childRow !== null) {
-                    hasChildRows = true;
                     childRow.parent = row;
                 }
-            }
-
-            // When removing a group and so it gets replaced by a filler or new node, its expanded state is retained. See AG-12591
-            if (
-                hasChildRows &&
-                oldRow &&
-                oldRow.group &&
-                isTreeRowExpandedInitialized(oldRow) &&
-                !isTreeRowExpandedInitialized(row) &&
-                !details.isGroupOpenByDefault // If we have a callback, we use that later instead
-            ) {
-                row.expanded = oldRow.expanded;
-                setTreeRowExpandedInitialized(row, true);
             }
         }
     }
 
     private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         const row = node.row!;
+        const oldRow = node.oldRow;
 
         if (node.isEmptyFillerNode()) {
             if (node.oldRow !== null) {
@@ -528,8 +511,20 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (row.group && !isTreeRowExpandedInitialized(row)) {
+            if (
+                oldRow !== row &&
+                oldRow !== null &&
+                oldRow.group &&
+                isTreeRowExpandedInitialized(oldRow) &&
+                !details.isGroupOpenByDefault // If we have a callback, we use that instead
+            ) {
+                // When removing a group and so it gets replaced by a filler or new node, its expanded state is retained. See AG-12591
+                row.expanded = oldRow.expanded;
+            } else {
+                row.expanded = this.getExpandedInitialValue(details, row);
+            }
+
             setTreeRowExpandedInitialized(row, true);
-            row.expanded = this.getExpandedInitialValue(details, row);
         }
 
         if (isTreeRowUpdated(row)) {
@@ -545,6 +540,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
 
+        node.oldRow = row;
         markTreeRowCommitted(row);
 
         if (node.pathChanged) {

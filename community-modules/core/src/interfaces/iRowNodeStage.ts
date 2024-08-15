@@ -8,7 +8,6 @@ export interface StageExecuteParams<TData = any> {
     rowNodeTransaction?: RowNodeTransaction<TData> | null;
     // used in sort stage, as sort stage looks at all transactions in one go
     rowNodeTransactions?: RowNodeTransaction<TData>[] | null;
-    rowNodeOrderChanged?: boolean;
     changedPath?: ChangedPath;
     afterColumnsChanged?: boolean;
 }

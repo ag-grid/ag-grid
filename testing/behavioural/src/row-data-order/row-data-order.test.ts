@@ -9,24 +9,18 @@ function verifyPositionInRootChildren(rows: GridApi | RowNode[]) {
         rows = getAllRows(rows);
     }
     const errors: string[] = [];
-    let prevOrder = -1;
-    for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const newOrder = row.positionInRootChildren;
-        if (newOrder < 0) {
+    for (let index = 0; index < rows.length; ++index) {
+        const row = rows[index];
+        if (row.positionInRootChildren !== index) {
             errors.push(
-                `Row at index ${i} id:'${row.id}' has positionInRootChildren ${newOrder}, it should not be negative`
-            );
-        } else if (newOrder <= prevOrder) {
-            errors.push(
-                `Row at index ${i} id:'${row.id}' has positionInRootChildren ${newOrder}, expected to be greater than ${prevOrder}`
+                `Row id:'${row.id}' at index ${index} has positionInRootChildren:${row.positionInRootChildren}`
             );
         }
-        prevOrder = newOrder;
     }
 
     const errorsCount = errors.length;
     if (errorsCount > 0) {
+        errors.push(JSON.stringify(rows.map((row) => row.positionInRootChildren)));
         if (errorsCount > 20) {
             errors.splice(20);
             errors.push(`And ${errorsCount - errors.length} more errors...`);

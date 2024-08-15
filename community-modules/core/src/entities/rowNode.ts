@@ -151,15 +151,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public __needsRefreshWhenVisible: boolean;
 
     /**
-     * This number represents the ordering of this row in root.allLeafChildren.
-     * This is NOT the index of the row, is a monotonic increasing number, so it may have gaps,
-     * furthermore, we try to not modify it if the order of rows did not change, to avoid unnecessary updates.
-     *
-     * This is used by the GroupStage to maintain the order of the nodes in the tree consistent (for trees and groups).
-     *
-     * This replaces the old rowNodeOrder map that was originally used for a similar purpose.
-     *
-     * Initially is -1, that means, no particular order.
+     * This is the index of this row in rootNode.allLeafChildren. It need to be kept consistent.
+     * Initially is -1, that means, not in row data.
      */
     public positionInRootChildren: number = -1;
 

@@ -122,14 +122,7 @@ export class TreeNode implements ITreeNode {
     ) {}
 
     public isEmptyFillerNode(): boolean {
-        const row = this.row;
-        if (row?.data) {
-            return false;
-        }
-        if (this.children?.size) {
-            return false;
-        }
-        return true;
+        return !this.row?.data && !this.children?.size;
     }
 
     /** Returns an iterator able to iterate all children in this node, in order of insertion */
