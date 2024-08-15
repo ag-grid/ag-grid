@@ -1705,7 +1705,7 @@
         "suppressMultiRangeSelection": {
             "more": {
                 "name": "Suppress Multi Range Selection",
-                "url": "./range-selection/#suppress-multi-range-selection"
+                "url": "./cell-selection/#prevent-selection-of-multiple-ranges"
             }
         },
         "enableCellTextSelection": {
@@ -1717,37 +1717,37 @@
         "enableRangeSelection": {
             "more": {
                 "name": "Range Selection",
-                "url": "./range-selection"
+                "url": "./cell-selection/#enabling-cell-selection"
             }
         },
         "enableRangeHandle": {
             "more": {
                 "name": "Range Handle",
-                "url": "./range-selection-handle"
+                "url": "./cell-selection-handle"
             }
         },
         "enableFillHandle": {
             "more": {
                 "name": "Fill Handle",
-                "url": "./range-selection-fill-handle/"
+                "url": "./cell-selection-fill-handle/"
             }
         },
         "fillHandleDirection": {
             "more": {
                 "name": "Fill Handle Axis",
-                "url": "./range-selection-fill-handle/#fill-handle-axis"
+                "url": "./cell-selection-fill-handle/#fill-handle-axis"
             }
         },
         "fillOperation": {
             "more": {
                 "name": "Custom User Function",
-                "url": "./range-selection-fill-handle/#custom-user-function"
+                "url": "./cell-selection-fill-handle/#custom-user-function"
             }
         },
         "suppressClearOnFillReduction": {
             "more": {
                 "name": "Preventing Range Reduction",
-                "url": "./range-selection-fill-handle/#preventing-range-reduction"
+                "url": "./cell-selection-fill-handle/#preventing-range-reduction"
             }
         }
     },

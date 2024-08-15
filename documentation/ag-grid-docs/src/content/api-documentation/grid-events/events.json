@@ -107,19 +107,19 @@
         "rangeSelectionChanged": {
             "more": {
                 "name": "Range Selection Changed Event",
-                "url": "./range-selection/#range-selection-changed-event"
+                "url": "./cell-selection/#reference--rangeSelectionChanged"
             }
         },
         "fillStart": {
             "more": {
                 "name": "Fill Range Event",
-                "url": "./range-selection-fill-handle/#fill-handle-events"
+                "url": "./cell-selection-fill-handle/#reference--fillStart"
             }
         },
         "fillEnd": {
             "more": {
                 "name": "Fill Range Event",
-                "url": "./range-selection-fill-handle/#fill-handle-events"
+                "url": "./cell-selection-fill-handle/#reference--fillEnd"
             }
         }
     },
@@ -149,7 +149,9 @@
                 "url": "./integrated-charts-events/#chartoptionschanged"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["ChartOptions"],
+                "exclude": [
+                    "ChartOptions"
+                ],
                 "include": []
             }
         },
@@ -237,13 +239,13 @@
         "rangeDeleteStart": {
             "more": {
                 "name": "Delete Range",
-                "url": "./range-selection/#delete-range"
+                "url": "./cell-selection/#reference--rangeDeleteStart"
             }
         },
         "rangeDeleteEnd": {
             "more": {
                 "name": "Delete Range",
-                "url": "./range-selection/#delete-range"
+                "url": "./cell-selection/#reference--rangeDeleteEnd"
             }
         }
     },
