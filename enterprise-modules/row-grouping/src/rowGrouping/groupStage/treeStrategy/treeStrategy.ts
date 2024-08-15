@@ -461,27 +461,31 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         const oldRow = node.oldRow;
         if (oldRow !== row) {
+            node.oldRow = row;
+
+            parent.pathChanged = true;
+            parent.childrenChanged = true;
+
+            let hasChildRows = false;
+            // We need to update children rows parents, as the row changed
+            for (const { row: childRow } of node.enumChildren()) {
+                if (childRow !== null) {
+                    hasChildRows = true;
+                    childRow.parent = row;
+                }
+            }
+
             // When removing a group and so it gets replaced by a filler or new node, its expanded state is retained. See AG-12591
             if (
+                hasChildRows &&
                 oldRow &&
+                oldRow.group &&
                 isTreeRowExpandedInitialized(oldRow) &&
                 !isTreeRowExpandedInitialized(row) &&
                 !details.isGroupOpenByDefault // If we have a callback, we use that later instead
             ) {
                 row.expanded = oldRow.expanded;
                 setTreeRowExpandedInitialized(row, true);
-            }
-
-            node.oldRow = row;
-
-            parent.pathChanged = true;
-            parent.childrenChanged = true;
-
-            // We need to update children rows parents, as the row changed
-            for (const { row: childRow } of node.enumChildren()) {
-                if (childRow !== null) {
-                    childRow.parent = row;
-                }
             }
         }
     }
