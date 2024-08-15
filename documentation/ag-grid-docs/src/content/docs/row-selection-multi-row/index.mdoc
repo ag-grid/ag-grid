@@ -3,7 +3,7 @@ title: "Multi Row Selection"
 description: "Configure selection of multiple rows, checkbox selection, and group selection in the $framework Table."
 ---
 
-This selection mode allows the selection of multiple rows, adjacent or not. Selection can be configured with or without keyboard modifiers.
+Enable users to select many rows at once within a grid.
 
 ## Enabling Multi Row Selection
 
@@ -12,38 +12,36 @@ Multi row selection is configured by setting `selection.mode` to `'multiRow'`.
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selection"] /%}
 
 The following example illustrates a basic multi row selection configuration. 
-Checkboxes are enabled by default. Click checkboxes to select or deselect a row. Alternatively, use {% kbd "^ Ctrl" /%}-click to add rows to the selection. 
-Use {% kbd "⇧ Shift" /%}-click to add a range of adjacent rows to the selection. Row range selection is discussed in more detail [below](#row-range-selection).
+Checkboxes are enabled by default. Click checkboxes to select or deselect a row. Alternatively, hold {% kbd "^ Ctrl" /%} and then click to add rows to the selection. 
+Users can hold {% kbd "⇧ Shift" /%} and then click to add a range of adjacent rows to the selection.
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
 
-See the [definition of the `selection` object below](#api-reference), or continue reading for more information about the range of available features.
-
 ## Row Range Selection
 
-In `'multiRow'` mode, ranges of rows can be selected by holiding down {% kbd "⇧ Shift" /%} while clicking on rows. 
-{% kbd "⇧ Shift" /%}-clicking a row will select all rows between that row and the previously selected row.
-This behaviour also applies when [checkbox selection](#checkbox-selection) is enabled, and in [group selection](./grouping-row-selection).
+In `'multiRow'` mode, ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on rows. 
+Clicking a row with {% kbd "⇧ Shift" /%} held down will select all rows between that row and the previously selected row.
+This behaviour also applies when [Checkbox Selection](#checkbox-selection) is enabled, and in [Group Selection](./grouping-row-selection).
 
 ### Extending, truncating and inverting a selected range
 
-Once selected, a given range can be extended by {% kbd "⇧ Shift" /%}-clicking another row. 
-The range will be expanded to select every row between the last {% kbd "⇧ Shift" /%}-clicked row, and the first row in the range.
-The range can also be truncated in the same way: by {% kbd "⇧ Shift" /%}-clicking a row within the current range. 
+Once selected, a given range can be extended by holding {% kbd "⇧ Shift" /%} and clicking another row. 
+The range will be expanded to select every row between the last clicked row, and the first row in the range.
+The range can also be truncated in the same way: by holding {% kbd "⇧ Shift" /%} and clicking a row within the current range. 
 
-{% kbd "⇧ Shift" /%}-clicking a row above the selection root will invert the selection: all rows below the selection root are deselected. All rows between the clicked row and the selection root are selected.
+Holding {% kbd "⇧ Shift" /%} and clicking a row above the selection root will invert the selection: all rows below the selection root are deselected. All rows between the clicked row and the selection root are selected.
 
 Use the example below to explore row range behaviour. For example, follow these steps:
 
-1. Click "Alicia Coutts", then {% kbd "⇧ Shift" /%}-click "Natalie Coughlin".
+1. Click "Alicia Coutts", then hold {% kbd "⇧ Shift" /%} and click "Natalie Coughlin".
     - Observe that all rows between the two clicked rows are selected.
-1. Now {% kbd "⇧ Shift" /%}-click "Nastia Lukin". 
+1. Now hold {% kbd "⇧ Shift" /%} and click "Nastia Lukin". 
     - Observe that the range of selected rows is extended to include everything between the initially clicked row ("Alicia Coutts") and the last clicked row.
-1. Now {% kbd "⇧ Shift" /%}-click "Aleksey Nemov". 
+1. Now hold {% kbd "⇧ Shift" /%} and click "Aleksey Nemov". 
     - Observe that the range of selected rows is inverted, selecting everything between the initially clicked row ("Alicia Coutts") and the last clicked row, but deselecting the previously selected range.
-1. Now {% kbd "^ Ctrl" /%}-click "Allison Schmitt". 
+1. Now hold {% kbd "^ Ctrl" /%} and click "Allison Schmitt". 
     - Observe that this new row is added to the selection, preserving the existing selected rows.
-1. Now {% kbd "⇧ Shift" /%}-click "Cindy Klassen". 
+1. Now hold {% kbd "⇧ Shift" /%} and click "Cindy Klassen". 
     - Observe that the range of rows between "Allison Schmitt" and "Cindy Klassen" is added to the selection.
 
 {% gridExampleRunner title="Row Range Selection" name="range-selection" /%}
@@ -71,12 +69,6 @@ For those rows that don't satisfy this criterion, a checkbox will be rendered in
 
 {% gridExampleRunner title="Checkbox Selection" name="checkbox-selection" /%}
 
-### Disabling Click Selection
-
-When checkbox selection is enabled, in many cases it makes sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked.
-
-This behaviour is enabled in the example below using the `selection.suppressClickSelection` flag.
-
 ### Hiding Disabled Checkboxes
 
 When `selection.checkboxes` is a function that returns `false`, or when [selection of a particular row is disabled](#configure-selectable-rows), the grid will display a disabled checkbox in that row by default. 
@@ -86,6 +78,14 @@ Alternatively, you may configure the grid to hide the checkbox in these rows. Th
 
 ### Disabling Checkboxes
 To prevent row checkboxes from being rendered at all, set `selection.checkboxes = false`.
+
+## Disabling Click Selection
+
+When checkbox selection is enabled, in many cases it makes sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked.
+
+This behaviour is enabled in the example below using the `selection.suppressClickSelection` flag.
+
+{% gridExampleRunner title="Disable Click Selection" name="suppress-click-selection" /%}
 
 ## Bulk Selection
 
@@ -109,20 +109,20 @@ To disable the header checkbox, set `selection.headerCheckbox = false`.
 
 ### Deselecting a Row without Checkboxes
 When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
-When checkboxes are disabled, rows can be deselected by {% kbd "^ Ctrl" /%}-clicking the row. 
+When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
 This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
-{% kbd "^ Ctrl" /%}-click the selected row in the example below. 
+Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
 
 {% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
 
 ### Deselecting Ranges
-Typically, rows are deselected individually by {% kbd "^ Ctrl" /%}-clicking the row or unchecking the checkbox. Users may also deselect multiple rows at once by using {% kbd "⇧ Shift" /%}-click. 
-For example, deselecting a single row with {% kbd "^ Ctrl" /%}-click, then deselecting another row with {% kbd "⇧ Shift" /%}-click will deselect all rows between the two. 
+Typically, rows are deselected individually by holding {% kbd "^ Ctrl" /%} and clicking the row or unchecking the checkbox. Users may also deselect multiple rows at once by using holding {% kbd "⇧ Shift" /%} and clicking a row. 
+For example, deselecting a single row by holding {% kbd "^ Ctrl" /%} and clicking, then deselecting another row by holding {% kbd "⇧ Shift" /%} and clicking, will deselect all rows between the two. 
 Note that this deselection occurs whether or not the row is within the original range of selected rows.
 
 To illustrate this, in the example below:
 1. Deselect "Ryan Lochte"
-1. {% kbd "⇧ Shift" /%}-select "Dara Torres"
+1. Hold {% kbd "⇧ Shift" /%} and select "Dara Torres"
 1. Observe that only "Missy Franklin" and "Cindy Klassen" remain selected
 
 {% gridExampleRunner title="Deselecting Ranges" name="bulk-deselection" /%}
@@ -131,7 +131,7 @@ To illustrate this, in the example below:
 
 In some circumstances you may want to prevent users from deselecting a selected row. This can be done using the `selection.suppressDeselection` flag. 
 
-Observe that in the example below, it is not possible to deselect a row, whether {% kbd "^ Ctrl" /%}-clicking or using bulk deselection. 
+Observe that in the example below, it is not possible to deselect a row, whether holding {% kbd "^ Ctrl" /%} and clicking, or using bulk deselection. 
 
 {% gridExampleRunner title="Supress Deselection" name="suppress-deselection" /%}
 
@@ -176,11 +176,11 @@ Clicking the header checkbox, however, will select all rows even if their checkb
 
 ## Selecting Multiple Rows without Keyboard Modifiers
 
-In certain circumstances, especially in the context of touchscreen devices, users may want to allow selecting multiple rows without having to use the {% kbd "^ Ctrl" /%} and {% kbd "⇧ Shift" /%} modifier keys.
+In certain circumstances, especially in the context of touchscreen devices, users may want to allow selecting multiple rows without having to use the {% kbd "^ Ctrl" /%} and {% kbd "⇧ Shift" /%} keys.
 
 This can be accomplished by setting the `selection.enableMultiSelectWithClick` flag to `true`.
 
-Click multiple rows in the example below without pressing any keyboard modifier keys to explore this behaviour.
+Click multiple rows in the example below without pressing any keyboard keys to explore this behaviour.
 
 {% gridExampleRunner title="Multi-select without Keyboard modifiers" name="multi-select-with-click" /%}
 
