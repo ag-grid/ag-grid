@@ -580,7 +580,6 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
         eText.innerHTML = _escapeString(dragItemName as string) || '';
 
-        this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
 
