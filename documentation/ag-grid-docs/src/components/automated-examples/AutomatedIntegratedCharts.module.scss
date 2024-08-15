@@ -17,7 +17,7 @@ $z-index-splash-contents: 10;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         width: 200% !important;
-        height: 450px !important;
+        height: 550px !important;
         margin-bottom: calc(450px / -2 + $spacing-size-4);
         transform-origin: top left;
         transform: scale(0.5);
@@ -78,18 +78,10 @@ $z-index-splash-contents: 10;
         margin-bottom: $spacing-size-4;
         font-weight: var(--font-weight-bold);
         line-height: var(--line-height-ultra-tight);
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: var(--font-size-massive);
-        }
     }
 
     p {
         max-width: 50em;
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: var(--font-size-large);
-        }
     }
 }
 
