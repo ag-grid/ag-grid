@@ -40,7 +40,6 @@ import {
 } from '@ag-grid-community/core';
 
 import { ClientSideNodeManager } from './clientSideNodeManager';
-import { updatePositionsInRootChildren } from './updatePositionsInRootChildren';
 
 enum RecursionType {
     Normal,
@@ -1228,24 +1227,22 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
-        // The rowGroup stage uses rowNodeOrder if order was provided. if we didn't pass 'true' to
-        // commonUpdateRowData, using addIndex would have no effect when grouping.
-        let forceRowNodeOrder = false;
+        let orderChanged = false;
 
         if (this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch.forEach((tranItem) => {
                 const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, undefined);
                 rowNodeTrans.push(rowNodeTran);
+                if (rowNodeTran.orderChanged) {
+                    orderChanged = true;
+                }
                 if (tranItem.callback) {
                     callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
-                }
-                if (typeof tranItem.rowDataTransaction.addIndex === 'number') {
-                    forceRowNodeOrder = true;
                 }
             });
         }
 
-        this.commonUpdateRowData(rowNodeTrans, false, forceRowNodeOrder);
+        this.commonUpdateRowData(rowNodeTrans, orderChanged);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1273,33 +1270,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
-        // if doing immutableData, addIndex is never present. however if doing standard transaction, and user
-        // provided addIndex, then this is used in updateRowData. However if doing Enterprise, then the rowGroup
-        // stage also uses the
-        const forceRowNodeOrder = typeof rowDataTran.addIndex === 'number';
-
-        this.commonUpdateRowData([rowNodeTran], rowNodeTran.rowNodeOrderChanged, forceRowNodeOrder);
+        this.commonUpdateRowData([rowNodeTran], rowNodeTran.orderChanged);
 
         return rowNodeTran;
     }
 
     // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(
-        rowNodeTrans: RowNodeTransaction[],
-        rowNodeOrderChanged: boolean,
-        forceRowNodeOrder: boolean
-    ): void {
+    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[], orderChanged: boolean): void {
         if (!this.hasStarted) {
             return;
         }
 
         const animate = !this.gos.get('suppressAnimationFrame');
 
-        if (forceRowNodeOrder) {
-            if (!this.gos.get('suppressMaintainUnsortedOrder')) {
-                rowNodeOrderChanged = updatePositionsInRootChildren(this.rootNode.allLeafChildren);
-            }
-        }
+        // if (forceRowNodeOrder) {
+        //     if (!this.gos.get('suppressMaintainUnsortedOrder')) {
+        //         rowNodeOrderChanged = updatePositionsInRootChildren(this.rootNode.allLeafChildren);
+        //     }
+        // }
 
         this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
@@ -1308,7 +1296,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
-            rowNodeOrderChanged,
+            rowNodeOrderChanged: orderChanged,
             keepRenderedRows: true,
             keepEditingRows: true,
             animate,

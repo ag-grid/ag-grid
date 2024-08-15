@@ -135,7 +135,7 @@ export class ClientSideNodeManager {
             remove: [],
             update: [],
             add: [],
-            rowNodeOrderChanged: false,
+            orderChanged: false,
         };
 
         const nodesToUnselect: RowNode[] = [];
@@ -146,16 +146,20 @@ export class ClientSideNodeManager {
 
         this.updateSelection(nodesToUnselect, 'rowDataChanged');
 
+        let orderChanged = false;
         if (rowNodeOrder) {
             if (_sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder)) {
-                rowNodeTransaction.rowNodeOrderChanged = true;
+                orderChanged = true;
             }
         }
 
-        if (updatePositionsInRootChildren(this.rootNode.allLeafChildren)) {
-            rowNodeTransaction.rowNodeOrderChanged = true;
+        if (orderChanged || rowDataTran.add?.length) {
+            if (updatePositionsInRootChildren(this.rootNode.allLeafChildren)) {
+                orderChanged = true;
+            }
         }
 
+        rowNodeTransaction.orderChanged = orderChanged;
         return rowNodeTransaction;
     }
 
