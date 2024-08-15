@@ -78,7 +78,9 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const { rowNodeTransactions, rowNodesOrderChanged, changedPath } = params;
         const rootRow: TreeRow = params.rowNode;
 
-        this.rowNodesOrderChanged = !!rowNodesOrderChanged;
+        if (rowNodesOrderChanged) {
+            this.rowNodesOrderChanged = true;
+        }
 
         const gos = this.gos;
         const details: TreeExecutionDetails = {
@@ -104,6 +106,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         } else {
             this.handleRowData(details, rootRow, params.afterColumnsChanged === true);
         }
+
+        this.rowNodesOrderChanged = false;
     }
 
     private handleRowData(details: TreeExecutionDetails, rootRow: RowNode, afterColumnsChanged: boolean): void {
