@@ -1,4 +1,5 @@
 import type { GridApi, RowDataTransaction, RowNode } from '@ag-grid-community/core';
+import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import util from 'util';
 
 export const isGridApi = (node: unknown): node is GridApi =>
@@ -55,3 +56,9 @@ export const printDataSnapshot = (data: any, pretty = false) => {
             '\n'
     );
 };
+
+export async function flushJestTimers() {
+    jest.advanceTimersByTime(10000);
+    jest.useRealTimers();
+    await asyncSetTimeout(1);
+}
