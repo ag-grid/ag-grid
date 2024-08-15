@@ -1094,15 +1094,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (rowNodeTransactions) {
                 this.groupStage.execute({
                     rowNode: this.rootNode,
+                    rowNodeOrderChanged,
                     rowNodeTransactions: rowNodeTransactions,
-                    rowNodeOrderChanged: !!rowNodeOrderChanged,
                     changedPath: changedPath,
                 });
             } else {
                 this.groupStage.execute({
                     rowNode: this.rootNode,
                     changedPath: changedPath,
-                    rowNodeOrderChanged: !!rowNodeOrderChanged,
                     afterColumnsChanged: afterColumnsChanged,
                 });
             }
@@ -1147,8 +1146,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.pivotStage?.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
-    public getCopyOfNodesMap(): { [id: string]: RowNode } {
-        return this.nodeManager.getCopyOfNodesMap();
+    public getNodeManager() {
+        return this.nodeManager;
     }
 
     public getRowNode(id: string): RowNode | undefined {
@@ -1200,6 +1199,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
+    /**
+     * Queue a transaction for processing. Transactions can be processed in a batch.
+     * Called by gridApi
+     */
     public batchUpdateRowData(
         rowDataTransaction: RowDataTransaction,
         callback?: (res: RowNodeTransaction) => void
@@ -1214,6 +1217,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowDataTransactionBatch!.push({ rowDataTransaction: rowDataTransaction, callback: callback });
     }
 
+    /**
+     * Flush all queued transactions
+     * Called by gridApi
+     */
     public flushAsyncTransactions(): void {
         if (this.applyAsyncTransactionsTimeout != null) {
             clearTimeout(this.applyAsyncTransactionsTimeout);
@@ -1227,22 +1234,22 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
-        let orderChanged = false;
-
+        let hasOrderChanged = false;
         if (this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch.forEach((tranItem) => {
-                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, undefined);
+                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction);
                 rowNodeTrans.push(rowNodeTran);
-                if (rowNodeTran.orderChanged) {
-                    orderChanged = true;
-                }
                 if (tranItem.callback) {
                     callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
+                }
+
+                if (tranItem.rowDataTransaction.addIndex != null) {
+                    hasOrderChanged = true;
                 }
             });
         }
 
-        this.commonUpdateRowData(rowNodeTrans, orderChanged);
+        this.commonUpdateRowData(rowNodeTrans, hasOrderChanged);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1262,20 +1269,37 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.applyAsyncTransactionsTimeout = undefined;
     }
 
-    public updateRowData(
-        rowDataTran: RowDataTransaction,
-        rowNodeOrder?: { [id: string]: number }
-    ): RowNodeTransaction | null {
+    /**
+     * Used to apply transaction changes
+     * Called by gridApi & rowDragFeature
+     */
+    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
         this.valueCache.onDataChanged();
 
-        const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
+        const rowNodeTran = this.nodeManager.updateRowData(rowDataTran);
 
-        this.commonUpdateRowData([rowNodeTran], rowNodeTran.orderChanged);
+        const hasOrderChanged = rowDataTran.addIndex != null;
+        this.commonUpdateRowData([rowNodeTran], hasOrderChanged);
 
         return rowNodeTran;
     }
 
-    // common to updateRowData and batchUpdateRowData
+    /**
+     * Used to apply generated transaction
+     */
+    public afterImmutableDataChange(rowNodeTransaction: RowNodeTransaction): void {
+        this.commonUpdateRowData([rowNodeTransaction], true);
+    }
+
+    /**
+     * Common to:
+     * - executeBatchUpdateRowData (batch transactions)
+     * - updateRowData (single transaction)
+     * - afterImmutableDataChange (generated transaction)
+     *
+     * @param rowNodeTrans - the transactions to apply
+     * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
+     */
     private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[], orderChanged: boolean): void {
         if (!this.hasStarted) {
             return;

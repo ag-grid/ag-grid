@@ -17,8 +17,7 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { sortRowNodesByRowNodeOrderMap } from './sortRowNodesByRowNodeOrderMap';
-import { updatePositionsInRootChildren } from './updatePositionsInRootChildren';
+import { sortRowNodesByRootIndex } from './sortRowNodesByRowNodeOrderMap';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;
@@ -104,11 +103,9 @@ export class ClientSideNodeManager {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
-            rootNode.allLeafChildren = rowData.map((dataItem, index) => {
-                const node = this.createNode(dataItem, this.rootNode, TOP_LEVEL);
-                node.positionInRootChildren = index;
-                return node;
-            });
+            rootNode.allLeafChildren = rowData.map((dataItem, index) =>
+                this.createNode(dataItem, this.rootNode, TOP_LEVEL, index)
+            );
         } else {
             rootNode.allLeafChildren = [];
             rootNode.childrenAfterGroup = [];
@@ -124,10 +121,7 @@ export class ClientSideNodeManager {
         }
     }
 
-    public updateRowData(
-        rowDataTran: RowDataTransaction,
-        rowNodeOrder: { [id: string]: number } | null | undefined
-    ): RowNodeTransaction {
+    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
         this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 
@@ -135,7 +129,6 @@ export class ClientSideNodeManager {
             remove: [],
             update: [],
             add: [],
-            orderChanged: false,
         };
 
         const nodesToUnselect: RowNode[] = [];
@@ -146,21 +139,20 @@ export class ClientSideNodeManager {
 
         this.updateSelection(nodesToUnselect, 'rowDataChanged');
 
-        let orderChanged = false;
-        if (rowNodeOrder) {
-            if (sortRowNodesByRowNodeOrderMap(this.rootNode.allLeafChildren, rowNodeOrder)) {
-                orderChanged = true;
-            }
-        }
-
-        if (orderChanged || rowDataTran.add?.length) {
-            if (updatePositionsInRootChildren(this.rootNode.allLeafChildren)) {
-                orderChanged = true;
-            }
-        }
-
-        rowNodeTransaction.orderChanged = orderChanged;
         return rowNodeTransaction;
+    }
+
+    /**
+     * Used by the immutable service, after updating with a generated transaction to
+     * apply the order as specified by the the new data.
+     */
+    public ensureRowOrder(): void {
+        const allLeafChildren = this.rootNode.allLeafChildren;
+        if (!allLeafChildren) {
+            return;
+        }
+
+        sortRowNodesByRootIndex(allLeafChildren);
     }
 
     public isRowCountReady(): boolean {
@@ -205,32 +197,44 @@ export class ClientSideNodeManager {
             return;
         }
 
-        // create new row nodes for each data item
-        const newNodes: RowNode[] = add!.map((item) => this.createNode(item, this.rootNode, TOP_LEVEL));
-
         const allLeafChildren = this.rootNode.allLeafChildren!;
-        if (typeof addIndex === 'number' && addIndex >= 0) {
-            // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
-            // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
-            const len = allLeafChildren.length;
-            let normalisedAddIndex = addIndex;
-
+        const allChildrenCount = allLeafChildren.length;
+        let adjustedAddIndex = rowDataTran.addIndex;
+        if (adjustedAddIndex != null && adjustedAddIndex > 0 && allChildrenCount > 0) {
             const isTreeData = this.gos.get('treeData');
-            if (isTreeData && addIndex > 0 && len > 0) {
-                for (let i = 0; i < len; i++) {
-                    if (allLeafChildren[i]?.rowIndex == addIndex - 1) {
-                        normalisedAddIndex = i + 1;
+            if (isTreeData) {
+                for (let i = 0; i < allChildrenCount; i++) {
+                    const node = allLeafChildren[i];
+                    if (node?.rowIndex == adjustedAddIndex - 1) {
+                        adjustedAddIndex = i + 1;
                         break;
                     }
                 }
             }
-
-            const nodesBeforeIndex = allLeafChildren.slice(0, normalisedAddIndex);
-            const nodesAfterIndex = allLeafChildren.slice(normalisedAddIndex, allLeafChildren.length);
-            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
-        } else {
-            this.rootNode.allLeafChildren = [...allLeafChildren, ...newNodes];
         }
+
+        if (adjustedAddIndex == null) {
+            adjustedAddIndex = allChildrenCount;
+        }
+
+        // create new row nodes for each data item
+        const newNodes: RowNode[] = add!.map((item, idx) =>
+            this.createNode(item, this.rootNode, TOP_LEVEL, adjustedAddIndex + idx)
+        );
+
+        if (adjustedAddIndex >= allChildrenCount) {
+            allLeafChildren.push(...newNodes);
+        } else {
+            const nodesBeforeIndex = allLeafChildren.slice(0, adjustedAddIndex);
+            const nodesAfterIndex = allLeafChildren.slice(adjustedAddIndex, allLeafChildren.length);
+            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
+
+            // update latter row indexes
+            nodesAfterIndex.forEach((node, idx) => {
+                node.positionInRootChildren = adjustedAddIndex + idx + newNodes.length;
+            });
+        }
+
         const sibling: RootNode = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = allLeafChildren;
@@ -279,6 +283,12 @@ export class ClientSideNodeManager {
 
         this.rootNode.allLeafChildren =
             this.rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
+
+        // after rows have been removed, all following rows need the position index updated
+        this.rootNode.allLeafChildren?.forEach((node, idx) => {
+            node.positionInRootChildren = idx;
+        });
+
         const sibling: RootNode = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = this.rootNode.allLeafChildren;
@@ -338,8 +348,9 @@ export class ClientSideNodeManager {
         return rowNode || null;
     }
 
-    private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
+    private createNode(dataItem: any, parent: RowNode, level: number, positionInRootChildren: number): RowNode {
         const node = new RowNode(this.beans);
+        node.positionInRootChildren = positionInRootChildren;
 
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);

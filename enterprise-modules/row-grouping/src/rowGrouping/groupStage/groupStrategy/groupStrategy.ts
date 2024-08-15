@@ -123,7 +123,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const { rowNode, changedPath, rowNodeTransactions, rowNodeOrderChanged } = params;
+        const { rowNode, changedPath, rowNodeTransactions } = params;
 
         const groupedCols = this.funcColsService.getRowGroupColumns();
 
@@ -133,8 +133,8 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),
             groupedColCount: groupedCols?.length ?? 0,
-            rowNodeOrderChanged: !!rowNodeOrderChanged,
             transactions: rowNodeTransactions!,
+            rowNodeOrderChanged: params.rowNodeOrderChanged,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
             groupAllowUnbalanced: this.gos.get('groupAllowUnbalanced'),

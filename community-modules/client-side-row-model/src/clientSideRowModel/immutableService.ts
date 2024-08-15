@@ -53,28 +53,38 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
     }
 
     public setRowData(rowData: any[]): void {
-        const transactionAndMap = this.createTransactionForRowData(rowData);
-        if (!transactionAndMap) {
+        const transaction = this.createTransactionForRowData(rowData);
+        if (!transaction) {
             return;
         }
+        const nodeManager = this.clientSideRowModel.getNodeManager();
+        const rowNodeTransaction = nodeManager.updateRowData(transaction);
 
-        const [transaction, orderIdMap] = transactionAndMap;
-        this.clientSideRowModel.updateRowData(transaction, orderIdMap);
+        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
+        if (!suppressSortOrder) {
+            for (let i = 0; i < rowData.length; i++) {
+                const getRowIdFunc = _getRowIdCallback(this.gos)!;
+                const id = getRowIdFunc({ data: rowData[i], level: 0 });
+                const node = nodeManager.getRowNode(id);
+                node!.positionInRootChildren = i;
+            }
+            nodeManager.ensureRowOrder();
+        }
+
+        this.clientSideRowModel.afterImmutableDataChange(rowNodeTransaction);
     }
 
     // converts the setRowData() command to a transaction
-    private createTransactionForRowData(
-        rowData: any[]
-    ): [RowDataTransaction, { [id: string]: number } | undefined] | undefined {
+    private createTransactionForRowData(rowData: any[]): RowDataTransaction | undefined {
         if (_missing(this.clientSideRowModel)) {
             _errorOnce('ImmutableService only works with ClientSideRowModel');
-            return;
+            return undefined;
         }
 
         const getRowIdFunc = _getRowIdCallback(this.gos);
         if (getRowIdFunc == null) {
             _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
-            return;
+            return undefined;
         }
 
         // convert the data into a transaction object by working out adds, removes and updates
@@ -84,23 +94,18 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
             add: [],
         };
 
-        const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
-
-        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
-        const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
+        const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel
+            .getNodeManager()
+            .getCopyOfNodesMap();
 
         if (_exists(rowData)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
             // if not changed, do not include in the transaction
-            rowData.forEach((data: any, index: number) => {
+            rowData.forEach((data: any) => {
                 const id = getRowIdFunc({ data, level: 0 });
                 const existingNode = existingNodesMap[id];
-
-                if (orderMap) {
-                    orderMap[id] = index;
-                }
 
                 if (existingNode) {
                     const dataHasChanged = existingNode.data !== data;
@@ -124,7 +129,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
             }
         });
 
-        return [transaction, orderMap];
+        return transaction;
     }
 
     private onRowDataUpdated(): void {

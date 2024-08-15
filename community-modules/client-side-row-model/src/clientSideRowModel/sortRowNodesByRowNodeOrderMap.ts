@@ -37,3 +37,11 @@ export function sortRowNodesByRowNodeOrderMap(
 
     return false;
 }
+
+export function sortRowNodesByRootIndex(rowNodes: RowNode[] | null | undefined): void {
+    if (!rowNodes?.length) {
+        return;
+    }
+
+    rowNodes.sort((nodeA: RowNode, nodeB: RowNode) => nodeA.positionInRootChildren - nodeB.positionInRootChildren);
+}
