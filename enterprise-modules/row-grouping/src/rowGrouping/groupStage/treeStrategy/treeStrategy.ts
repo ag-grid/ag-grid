@@ -421,21 +421,20 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Commit the changes performed to a node and its children */
     private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
-        if (this.commitNodePreOrder(details, parent, node)) {
-            this.commitChildren(details, node);
-            this.commitNodePostOrder(details, parent, node);
-        }
-    }
-
-    private commitNodePreOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): boolean {
         if (node.isEmptyFillerNode()) {
             if (node.oldRow !== null) {
                 parent.childrenChanged = true;
             }
             this.clearTree(node, details.changedPath);
-            return false; // Cleared. No need to process children.
+            return; // Cleared. No need to process children.
         }
 
+        this.commitNodePreOrder(details, parent, node);
+        this.commitChildren(details, node);
+        this.commitNodePostOrder(details, parent, node);
+    }
+
+    private commitNodePreOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         let row = node.row;
         if (row === null) {
             row = this.createFillerRow(node);
@@ -473,8 +472,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
         }
-
-        return true;
     }
 
     private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
