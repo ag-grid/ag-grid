@@ -96,7 +96,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'name',
         chartDataType: 'category',
-        minWidth: 280,
+        minWidth: 200,
         enableRowGroup: true,
     },
     {

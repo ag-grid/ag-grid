@@ -55,18 +55,10 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         margin-bottom: $spacing-size-4;
         font-weight: var(--font-weight-bold);
         line-height: var(--line-height-ultra-tight);
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: var(--font-size-massive);
-        }
     }
 
     p {
         max-width: 50em;
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: var(--font-size-large);
-        }
     }
 }
 

@@ -1,3 +1,4 @@
+import { isMobile } from '@components/automated-examples/lib/isMobile';
 import { mouseClick } from '@components/automated-examples/lib/scriptActions/mouseClick';
 import { waitFor } from '@components/automated-examples/lib/scriptActions/waitFor';
 import type { Group } from '@tweenjs/tween.js';
@@ -340,27 +341,6 @@ export const createScript = ({
 
         // Move to canvas legend
         {
-            type: 'moveTo',
-            toPos: () => {
-                const chartsCanvas = agElementFinder.get('chartsCanvas')!;
-                const chartsCanvasEl = chartsCanvas?.get();
-                if (!chartsCanvasEl) {
-                    throw new Error('No charts canvas found');
-                }
-
-                const { clientHeight } = chartsCanvasEl;
-                const { x, y } = chartsCanvas.getPos() as Point;
-                const offsetX = -25;
-                const offsetY = -23;
-                const legendX = x + offsetX;
-                const legendY = Math.round(clientHeight / 2 + y) + offsetY;
-
-                return { x: legendX, y: legendY };
-            },
-            speed: 2,
-        },
-        { type: 'wait', duration: 1000 },
-        {
             type: 'custom',
             action: async () => {
                 const chartsCanvas = agElementFinder.get('chartsCanvas')!;
@@ -373,18 +353,32 @@ export const createScript = ({
                 // Offset coordinates for different legend positions
                 // NOTE: Get these dynamically, so that they are the most up to date when
                 // the action is run
-                const getOffsetCoords1 = () =>
-                    getLegendOffset({
-                        chartsCanvas,
+
+                const getOffsetCoords1 = () => {
+                    const desktopCoords = {
                         offsetX: -25,
-                        offsetY: -23,
-                    });
-                const getOffsetCoords2 = () =>
-                    getLegendOffset({
+                        offsetY: isMobile() ? -103 : -23,
+                    };
+                    const coords = getLegendOffset({
                         chartsCanvas,
-                        offsetX: -25,
-                        offsetY: -43,
+                        ...desktopCoords,
                     });
+
+                    return coords;
+                };
+
+                const getOffsetCoords2 = () => {
+                    const desktopCoords = {
+                        offsetX: -25,
+                        offsetY: isMobile() ? -118 : -43,
+                    };
+                    const coords = getLegendOffset({
+                        chartsCanvas,
+                        ...desktopCoords,
+                    });
+
+                    return coords;
+                };
 
                 // Select offset1 legend
                 await moveTo({
