@@ -39,9 +39,14 @@ const orphanRow = (row: TreeRow, root: boolean): void => {
  * Multiple updates interact with the tree, and a commit stage commits all updates reducing expensive computations.
  * The map of children is kept in a consistent order of insertion.
  *
- * Operations will invalidate the affected paths with node.invalidate(), so that the commit operation will only
- * update the affected paths without traversing the whole tree.
+ * Operations that do not affect the order will invalidate only the affected paths with node.invalidate(),
+ * so that the commit operation will only update the affected paths without traversing the whole tree.
  * Consider that order of invalidated items is not deterministic, so the commit operation should be able to handle any order.
+ *
+ * If the row node order changed in transactions, the whole tree need to be re-evaluated, as we do not receive
+ * update events for order changed only if the data does not change.
+ * We receive only update events if the rowNode.data reference changes.
+ * See ImmutableService.createTransactionForRowData for more details.
  *
  * During commit, the childrenAfterGroup and allLeafChildren arrays are rebuilt, and the updates are applied.
  * The empty filler nodes nodes are removed.
@@ -301,7 +306,12 @@ export class TreeNode implements ITreeNode {
         return this.childrenAfterGroup.length > 0 ? this.childrenAfterGroup[0].positionInRootChildren : -1;
     }
 
-    public sortDuplicateRows() {
+    /**
+     * This is needed to sort the duplicate rows if the order changed.
+     * This is supposed to be called only if there are duplicate rows, or it will blow.
+     * @returns the main row to use, after sorting the duplicate rows.
+     */
+    public sortDuplicateRows(): TreeRow {
         const oldFirstRow = this.row!;
         const duplicateRows = this.duplicateRows!;
 
@@ -336,8 +346,10 @@ export class TreeNode implements ITreeNode {
                 oldFirstRow.allLeafChildren = EMPTY_ARRAY;
 
                 this.row = newFirstRow;
+                return newFirstRow;
             }
         }
+        return oldFirstRow;
     }
 
     /**

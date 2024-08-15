@@ -28,6 +28,10 @@ interface RootNode extends RowNode {
     childrenAfterGroup: RowNode[] | null;
 }
 
+export interface ClientSideRowNodeTransaction extends RowNodeTransaction {
+    orderChanged: boolean;
+}
+
 export class ClientSideNodeManager {
     private readonly rootNode: RootNode;
 
@@ -125,14 +129,15 @@ export class ClientSideNodeManager {
     public updateRowData(
         rowDataTran: RowDataTransaction,
         rowNodeOrder: { [id: string]: number } | null | undefined
-    ): RowNodeTransaction {
+    ): ClientSideRowNodeTransaction {
         this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 
-        const rowNodeTransaction: RowNodeTransaction = {
+        const rowNodeTransaction: ClientSideRowNodeTransaction = {
             remove: [],
             update: [],
             add: [],
+            orderChanged: false,
         };
 
         const nodesToUnselect: RowNode[] = [];
@@ -141,16 +146,13 @@ export class ClientSideNodeManager {
         this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
         this.executeAdd(rowDataTran, rowNodeTransaction);
 
-        let didSort = false;
         if (rowNodeOrder) {
-            didSort = sortRowNodesByRowNodeOrderMap(this.rootNode.allLeafChildren, rowNodeOrder);
+            if (sortRowNodesByRowNodeOrderMap(this.rootNode.allLeafChildren, rowNodeOrder)) {
+                rowNodeTransaction.orderChanged = true;
+            }
         }
 
-        if (
-            didSort ||
-            rowNodeTransaction.remove.length > 0 ||
-            (rowNodeTransaction.add.length > 0 && typeof rowDataTran.addIndex === 'number')
-        ) {
+        if (rowNodeTransaction.orderChanged || rowNodeTransaction.remove.length > 0) {
             updatePositionsInRootChildren(this.rootNode.allLeafChildren);
         }
 
@@ -195,7 +197,7 @@ export class ClientSideNodeManager {
         }
     }
 
-    private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+    private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: ClientSideRowNodeTransaction): void {
         const add = rowDataTran.add;
         if (_missingOrEmpty(add)) {
             return;
@@ -240,6 +242,8 @@ export class ClientSideNodeManager {
             const nodesBeforeIndex = allLeafChildren.slice(0, normalisedAddIndex);
             const nodesAfterIndex = allLeafChildren.slice(normalisedAddIndex, allLeafChildren.length);
             this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
+
+            rowNodeTransaction.orderChanged = true;
         } else {
             this.rootNode.allLeafChildren = [...allLeafChildren, ...newNodes];
         }
@@ -253,7 +257,7 @@ export class ClientSideNodeManager {
 
     private executeRemove(
         rowDataTran: RowDataTransaction,
-        rowNodeTransaction: RowNodeTransaction,
+        rowNodeTransaction: ClientSideRowNodeTransaction,
         nodesToUnselect: RowNode[]
     ): void {
         const { remove } = rowDataTran;
@@ -299,7 +303,7 @@ export class ClientSideNodeManager {
 
     private executeUpdate(
         rowDataTran: RowDataTransaction,
-        rowNodeTransaction: RowNodeTransaction,
+        rowNodeTransaction: ClientSideRowNodeTransaction,
         nodesToUnselect: RowNode[]
     ): void {
         const { update } = rowDataTran;

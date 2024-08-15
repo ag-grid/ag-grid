@@ -44,6 +44,7 @@ interface GroupingDetails {
     groupedCols: AgColumn[];
     groupedColCount: number;
     transactions: RowNodeTransaction[];
+    rowNodesOrderChanged: boolean;
 
     groupAllowUnbalanced: boolean;
     isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
@@ -122,7 +123,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const { rowNode, changedPath, rowNodeTransactions } = params;
+        const { rowNode, changedPath, rowNodeTransactions, rowNodesOrderChanged } = params;
 
         const groupedCols = this.funcColsService.getRowGroupColumns();
 
@@ -133,6 +134,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             pivotMode: this.columnModel.isPivotMode(),
             groupedColCount: groupedCols?.length ?? 0,
             transactions: rowNodeTransactions!,
+            rowNodesOrderChanged: !!rowNodesOrderChanged,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
             groupAllowUnbalanced: this.gos.get('groupAllowUnbalanced'),
@@ -146,6 +148,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private handleTransaction(details: GroupingDetails): void {
+        let nodesAdded = false;
         details.transactions.forEach((tran) => {
             const batchRemover = new BatchRemover();
 
@@ -159,6 +162,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
                 this.moveNodesInWrongPath(tran.update as RowNode[], details, batchRemover);
             }
             if (_existsAndNotEmpty(tran.add)) {
+                nodesAdded = true;
                 this.insertNodes(tran.add as RowNode[], details);
             }
 
@@ -169,7 +173,9 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             this.removeEmptyGroups(parentsWithChildrenRemoved, details);
         });
 
-        this.sortChildren(details);
+        if (details.rowNodesOrderChanged || nodesAdded) {
+            this.sortChildren(details);
+        }
     }
 
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
