@@ -106,17 +106,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private invalidateNode(node: TreeNode): void {
-        // If rowNodesOrderChanged, we don't invalidate the node, as we need to evaluate the whole tree.
-        // If the row node order changed in transactions, the whole tree need to be re-evaluated, as we do not receive
-        // update events for order changed only if the data does not change.
-        // We receive only update events if the rowNode.data reference changes.
-        // See ImmutableService.createTransactionForRowData for more details.
-        if (!this.rowNodesOrderChanged) {
-            node.invalidate();
-        }
-    }
-
     private handleRowData(details: TreeExecutionDetails, rootRow: RowNode, afterColumnsChanged: boolean): void {
         const root = this.root;
 
@@ -167,6 +156,17 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 this.setGroupData(rowNode, rowNode.treeNode?.key ?? rowNode.key!);
                 this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
             }
+        }
+    }
+
+    private invalidateNode(node: TreeNode): void {
+        // If rowNodesOrderChanged, we don't invalidate the node, as we need to evaluate the whole tree.
+        // If the row node order changed in transactions, the whole tree need to be re-evaluated, as we do not receive
+        // update events for order changed only if the data does not change.
+        // We receive only update events if the rowNode.data reference changes.
+        // See ImmutableService.createTransactionForRowData for more details.
+        if (!this.rowNodesOrderChanged) {
+            node.invalidate();
         }
     }
 

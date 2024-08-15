@@ -152,6 +152,14 @@ export class TreeNode implements ITreeNode {
         return node;
     }
 
+    /**
+     * Sets the row for the TreeNode.
+     * If the row is already set, it will be replaced with the new row, and the old row will be orphaned.
+     * childrenAfterGroup and allLeafChildren will be reassigned.
+     *
+     * @param newRow - The new TreeRow to set.
+     * @returns True if the row was successfully set, false otherwise.
+     */
     public setRow(newRow: TreeRow): boolean {
         const { parent, level, row: oldRow, childrenAfterGroup } = this;
         if (level < 0) {
@@ -178,6 +186,11 @@ export class TreeNode implements ITreeNode {
         return true;
     }
 
+    /**
+     * Adds a duplicate row to the tree node.
+     * @param newRow - The new row to be added.
+     * @returns A boolean indicating whether the row was successfully added.
+     */
     public addDuplicateRow(newRow: TreeRow): boolean {
         const { parent, level } = this;
         let duplicateRows = this.duplicateRows;
@@ -200,6 +213,13 @@ export class TreeNode implements ITreeNode {
         return true;
     }
 
+    /**
+     * Removes a row from the tree node.
+     * If the row is the main row, it will be replaced with the first row in the duplicate rows, if any.
+     * If the row is a duplicate row, it will be removed from the duplicate rows.
+     * @param rowToRemove - The row to be removed.
+     * @returns `true` if the row was successfully removed, `false` if the row was not found.
+     */
     public removeRow(rowToRemove: TreeRow): boolean {
         const { level, row, duplicateRows, childrenAfterGroup } = this;
         if (row === rowToRemove) {
