@@ -173,11 +173,11 @@ The following props are passed to the Custom Component (`CustomHeaderProps` inte
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="IHeaderParams" config={ "description": "" } /%}
+{% interfaceDocumentation interfaceName="IHeaderParams" exclude=["template"] config={ "description": "" } /%}
 {% /if %}
 
 {% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomHeaderProps" config={ "description": "" } /%}
+{% interfaceDocumentation interfaceName="CustomHeaderProps" exclude=["template"] config={ "description": "" } /%}
 {% /if %}
 
 ### Responsibilities

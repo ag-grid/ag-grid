@@ -216,7 +216,8 @@ const makeVariablesChunk = (theme: ThemeUnit<any>): ThemeCssChunk => {
         variablesCss += `\t${variable}: var(${inheritedVariable}, ${defaultValue});\n`;
         inheritanceCss += `\t${inheritedVariable}: var(${variable});\n`;
     }
-    const rootSelector = ':where(.ag-root-wrapper, .ag-measurement-container, .ag-apply-theme-variables, .ag-popup)';
+    const rootSelector =
+        ':where(.ag-root-wrapper, .ag-measurement-container, .ag-apply-theme-variables, .ag-popup, .ag-dnd-ghost)';
     let css = `${rootSelector} {\n${variablesCss}}\n`;
     // Create --ag-inherited-foo variable values on the parent element, unless
     // the parent is itself a root (which can happen if popupParent is
