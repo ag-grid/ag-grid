@@ -50,7 +50,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private oldGroupDisplayColIds: string | undefined;
 
     /** Rows that are pending deletion, this.commitDeletedRows() will finalize removal. */
-    private rowsPendingDeletion: Set<RowNode> | null = null;
+    private rowsPendingDestruction: Set<RowNode> | null = null;
 
     /** Set when execute is called to keep track of whether the order of row nodes has changed. */
     private rowNodesOrderChanged: boolean = false;
@@ -70,7 +70,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             clearTreeRowFlags(rootRow);
         }
         this.destroyTree(this.root);
-        this.commitDeletedRows();
+        this.commitDestroyedRows();
         super.destroy();
     }
 
@@ -170,56 +170,17 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    /** Called to clear a subtree. */
-    private clearTree(node: TreeNode, changedPath: ChangedPath | null | undefined): void {
-        const { row, level } = node;
-        let shouldNotify = false;
-        if (row !== null) {
-            shouldNotify = isTreeRowCommitted(row);
-            if (level >= 0) {
-                let row = node.row;
-                while (row !== null && node.removeRow(row)) {
-                    this.deleteRow(row, !row.data);
-                    row = node.row;
+    /** Transactional add/update */
+    private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
+        if (rows) {
+            const len = rows.length;
+            for (let i = 0; i < len; ++i) {
+                const row = rows[i];
+                const node = this.upsertPath(this.getDataPath(details, row));
+                if (node) {
+                    this.addOrUpdateRow(node, row, update);
                 }
             }
-        }
-        const children = node.enumChildren();
-        node.destroy();
-        for (const child of children) {
-            if (shouldNotify && child.row !== null && isTreeRowCommitted(child.row)) {
-                shouldNotify = false;
-                if (changedPath?.isActive()) {
-                    changedPath.addParentNode(row);
-                }
-            }
-            this.clearTree(child, changedPath);
-        }
-    }
-
-    /** Called by the destructor, to the destroy the whole tree. */
-    private destroyTree(node: TreeNode): void {
-        const { row, level, duplicateRows } = node;
-        if (row) {
-            if (level >= 0 && !row.data) {
-                this.deleteRow(row, true); // Delete the filler node
-            } else {
-                clearTreeRowFlags(row); // Just clear the flags
-            }
-        }
-        if (duplicateRows) {
-            for (const row of duplicateRows) {
-                if (level >= 0 && !row.data) {
-                    this.deleteRow(row, true); // Delete filler nodes
-                } else {
-                    clearTreeRowFlags(row); // Just clear the flags
-                }
-            }
-        }
-        const children = node.enumChildren();
-        node.destroy();
-        for (const child of children) {
-            this.destroyTree(child);
         }
     }
 
@@ -232,20 +193,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 const node = row.treeNode as TreeNode | null;
                 if (node !== null) {
                     this.removeRow(node, row);
-                }
-            }
-        }
-    }
-
-    /** Transactional insert/update */
-    private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
-        if (rows) {
-            const len = rows.length;
-            for (let i = 0; i < len; ++i) {
-                const row = rows[i];
-                const node = this.upsertPath(this.getDataPath(details, row));
-                if (node) {
-                    this.addOrUpdateRow(node, row, update);
                 }
             }
         }
@@ -277,32 +224,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         return null;
     }
 
-    /**
-     * Overwrites the row property of a non-root node to null.
-     * @returns The previous row, if any, that was overwritten.
-     */
-    private removeRow(node: TreeNode, oldRow: RowNode): void {
-        const { parent, level } = node;
-
-        if (level < 0) {
-            return; // Cannot overwrite a null node or the root row
-        }
-
-        let invalidate = false;
-
-        if (node.removeRow(oldRow)) {
-            invalidate = true;
-            if (parent) {
-                parent.childrenChanged = true;
-            }
-            this.deleteRow(oldRow, !oldRow.data);
-        }
-
-        if (invalidate) {
-            this.invalidateNode(node);
-        }
-    }
-
     /** Add or updates the row to a non-root node, preparing the tree correctly for the commit. */
     private addOrUpdateRow(node: TreeNode, newRow: RowNode, update: boolean): void {
         if (node.level < 0) {
@@ -331,7 +252,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             } else if (!oldRow.data) {
                 // We are replacing a filler row with a real row.
                 node.setRow(newRow);
-                this.deleteRow(oldRow, true); // Delete the filler node
+                this.destroyRow(oldRow, true); // Delete the filler node
                 invalidate = true;
             } else {
                 // We have a new non-filler row, but we had already one, this is a duplicate
@@ -350,52 +271,32 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.invalidateNode(node);
         }
 
-        this.rowsPendingDeletion?.delete(newRow); // This row is not deleted.
+        this.rowsPendingDestruction?.delete(newRow); // This row is not deleted.
     }
 
     /**
-     * Finalizes the deletion of a row.
-     * @param immediate If true, the row is deleted immediately.
-     * If false, the row is marked for deletion, and will be deleted later with this.deleteDeletedRows()
+     * Overwrites the row property of a non-root node to null.
+     * @returns The previous row, if any, that was overwritten.
      */
-    private deleteRow(row: RowNode, immediate: boolean) {
-        if (!isTreeRowCommitted(row)) {
-            clearTreeRowFlags(row);
-            return; // Never committed, or already deleted, nothing to do.
+    private removeRow(node: TreeNode, oldRow: RowNode): void {
+        const { parent, level } = node;
+
+        if (level < 0) {
+            return; // Cannot overwrite a null node or the root row
         }
 
-        if (!immediate) {
-            (this.rowsPendingDeletion ??= new Set()).add(row);
-            return; // We will delete it later with commitDeletedRows
-        }
+        let invalidate = false;
 
-        clearTreeRowFlags(row);
-
-        // We execute this only if the row was committed at least once before, and not already deleted.
-        row.setRowIndex(null);
-
-        // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
-        // remove, if rowTop is still present, the rowComp thinks it's just moved position.
-        row.setRowTop(null);
-
-        if (!row.data && row.isSelected()) {
-            //we remove selection on filler nodes here, as the selection would not be removed
-            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
-        }
-    }
-
-    /**
-     * deleteRow can defer the deletion to the end of the commit stage.
-     * This method finalizes the deletion of rows that were marked for deletion.
-     */
-    private commitDeletedRows() {
-        const { rowsPendingDeletion } = this;
-        if (rowsPendingDeletion !== null) {
-            this.rowsPendingDeletion = null;
-            for (const row of rowsPendingDeletion) {
-                this.deleteRow(row, true);
+        if (node.removeRow(oldRow)) {
+            invalidate = true;
+            if (parent) {
+                parent.childrenChanged = true;
             }
+            this.destroyRow(oldRow, !oldRow.data);
+        }
+
+        if (invalidate) {
+            this.invalidateNode(node);
         }
     }
 
@@ -420,7 +321,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
 
-        this.commitDeletedRows();
+        this.commitDestroyedRows();
     }
 
     private commitChildren(details: TreeExecutionDetails, parent: TreeNode): void {
@@ -634,5 +535,104 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                   rowGroupColumn: row.rowGroupColumn!,
               }) == true
             : details.expandByDefault === -1 || row.level < details.expandByDefault;
+    }
+
+    /** Called to clear a subtree. */
+    private clearTree(node: TreeNode, changedPath: ChangedPath | null | undefined): void {
+        const { row, level } = node;
+        let shouldNotify = false;
+        if (row !== null) {
+            shouldNotify = isTreeRowCommitted(row);
+            if (level >= 0) {
+                let row = node.row;
+                while (row !== null && node.removeRow(row)) {
+                    this.destroyRow(row, !row.data);
+                    row = node.row;
+                }
+            }
+        }
+        const children = node.enumChildren();
+        node.destroy();
+        for (const child of children) {
+            if (shouldNotify && child.row !== null && isTreeRowCommitted(child.row)) {
+                shouldNotify = false;
+                if (changedPath?.isActive()) {
+                    changedPath.addParentNode(row);
+                }
+            }
+            this.clearTree(child, changedPath);
+        }
+    }
+
+    /** Called by the destructor, to the destroy the whole tree. */
+    private destroyTree(node: TreeNode): void {
+        const { row, level, duplicateRows } = node;
+        if (row) {
+            if (level >= 0 && !row.data) {
+                this.destroyRow(row, true); // Delete the filler node
+            } else {
+                clearTreeRowFlags(row); // Just clear the flags
+            }
+        }
+        if (duplicateRows) {
+            for (const row of duplicateRows) {
+                if (level >= 0 && !row.data) {
+                    this.destroyRow(row, true); // Delete filler nodes
+                } else {
+                    clearTreeRowFlags(row); // Just clear the flags
+                }
+            }
+        }
+        const children = node.enumChildren();
+        node.destroy();
+        for (const child of children) {
+            this.destroyTree(child);
+        }
+    }
+
+    /**
+     * Finalizes the deletion of a row.
+     * @param immediate If true, the row is deleted immediately.
+     * If false, the row is marked for deletion, and will be deleted later with this.deleteDeletedRows()
+     */
+    private destroyRow(row: RowNode, immediate: boolean) {
+        if (!isTreeRowCommitted(row)) {
+            clearTreeRowFlags(row);
+            return; // Never committed, or already deleted, nothing to do.
+        }
+
+        if (!immediate) {
+            (this.rowsPendingDestruction ??= new Set()).add(row);
+            return; // We will delete it later with commitDeletedRows
+        }
+
+        clearTreeRowFlags(row);
+
+        // We execute this only if the row was committed at least once before, and not already deleted.
+        row.setRowIndex(null);
+
+        // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
+        // remove, if rowTop is still present, the rowComp thinks it's just moved position.
+        row.setRowTop(null);
+
+        if (!row.data && row.isSelected()) {
+            //we remove selection on filler nodes here, as the selection would not be removed
+            // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+        }
+    }
+
+    /**
+     * destroyRow can defer the deletion to the end of the commit stage.
+     * This method finalizes the deletion of rows that were marked for deletion.
+     */
+    private commitDestroyedRows() {
+        const { rowsPendingDestruction: rowsPendingDeletion } = this;
+        if (rowsPendingDeletion !== null) {
+            this.rowsPendingDestruction = null;
+            for (const row of rowsPendingDeletion) {
+                this.destroyRow(row, true);
+            }
+        }
     }
 }
