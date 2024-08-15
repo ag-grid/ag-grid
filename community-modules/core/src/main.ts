@@ -931,7 +931,6 @@ export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { NumberSequence } from './utils/numberSequence';
 export { _formatNumberTwoDecimalPlacesAndCommas, _formatNumberCommas } from './utils/number';
 export { _iterateObject, _cloneObject, _getAllValuesInObject, _mergeDeep } from './utils/object';
-export { _sortRowNodesByOrder, _sortRowNodesByPositionInRootChildren } from './utils/rowNode';
 export { _capitalise, _escapeString, _utf8_encode } from './utils/string';
 export { AgPromise } from './utils/promise';
 export { _addFocusableContainerListener } from './utils/focus';

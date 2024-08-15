@@ -14,10 +14,10 @@ import {
     _errorOnce,
     _getRowIdCallback,
     _missingOrEmpty,
-    _sortRowNodesByOrder,
     _warnOnce,
 } from '@ag-grid-community/core';
 
+import { sortRowNodesByRowNodeOrderMap } from './sortRowNodesByRowNodeOrderMap';
 import { updatePositionsInRootChildren } from './updatePositionsInRootChildren';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
@@ -148,7 +148,7 @@ export class ClientSideNodeManager {
 
         let orderChanged = false;
         if (rowNodeOrder) {
-            if (_sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder)) {
+            if (sortRowNodesByRowNodeOrderMap(this.rootNode.allLeafChildren, rowNodeOrder)) {
                 orderChanged = true;
             }
         }

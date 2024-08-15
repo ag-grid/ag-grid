@@ -22,12 +22,12 @@ import {
     _exists,
     _existsAndNotEmpty,
     _removeFromArray,
-    _sortRowNodesByPositionInRootChildren,
     _warnOnce,
 } from '@ag-grid-community/core';
 
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';
+import { sortGroupChildren } from './sortGroupChildren';
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
@@ -180,7 +180,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     private sortChildren(details: GroupingDetails): void {
         details.changedPath.forEachChangedNodeDepthFirst(
             (node) => {
-                const didSort = _sortRowNodesByPositionInRootChildren(node.childrenAfterGroup);
+                const didSort = sortGroupChildren(node.childrenAfterGroup);
                 if (didSort) {
                     details.changedPath.addParentNode(node);
                 }
