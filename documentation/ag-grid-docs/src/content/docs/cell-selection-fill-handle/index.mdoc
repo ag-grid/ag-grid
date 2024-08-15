@@ -95,9 +95,10 @@ When using the fill handle the grid will fire the `fillStart` event before it st
 
 ## Custom User Function
 
-Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression. In these scenarios, the `fillOperation` callback should be used.
+Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression. 
+In these scenarios, the `selection.handle.setFillValue` callback should be used.
 
-{% apiDocumentation source="grid-options/properties.json" section="selection" names=["fillOperation"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selection"] /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -107,11 +108,13 @@ const gridOptions = {
         { field: 'sport' },
         { field: 'total' }
     ],
-    enableRangeSelection: true,
-    enableFillHandle: true,
-    fillOperation: (fillOperationParams) => {
-        return 'Foo';
-    }
+    selection: {
+        mode: 'cell',
+        handle: {
+            mode: 'fill',
+            setFillValue: (params) => 'Custom Fill Value',
+        }
+    },
 }
 ```
 
@@ -120,19 +123,19 @@ const gridOptions = {
 {% interfaceDocumentation interfaceName="FillOperationParams" /%}
 
 {% note %}
-If a `fillOperation` callback is provided, the fill handle will always run it. If the current values are not relevant to the `fillOperation` function that was provided, `false` should be returned to allow the grid to process the values as it normally would.
+If a `setFillValue` callback is provided, the fill handle will always run it. If the current values are not relevant to the `setFillValue` function that was provided, `false` should be returned to allow the grid to process the values as it normally would.
 {% /note %}
 
-The example below will use the custom `fillOperation` for the **Day of the week** column, but it will use the default operation for any other column.
+The example below will use the custom `setFillValue` for the **Day of the week** column, but it will use the default operation for any other column.
 
 {% gridExampleRunner title="Custom Fill Operation" name="custom-fill-operation"  exampleHeight=560 /%}
 
 ### Skipping Columns in the Fill Operation
 
-The example below will use the custom `fillOperation` to prevent values in the **Country** column from being altered by the Fill Handle.
+The example below will use the custom `setFillValue` to prevent values in the **Country** column from being altered by the Fill Handle.
 
 {% note %}
-When the `fillOperation` function returns `params.currentCellValue` that value is not added to the `params.values` list. This allows users to skip any cells in the Fill Handle operation.
+When the `setFillValue` function returns `params.currentCellValue` that value is not added to the `params.values` list. This allows users to skip any cells in the Fill Handle operation.
 {% /note %}
 
 {% gridExampleRunner title="Skipping Columns" name="skipping-columns"  exampleHeight=560 /%}
