@@ -18,6 +18,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
+import { updatePositionsInRootChildren } from './updatePositionsInRootChildren';
+
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;
 
@@ -102,7 +104,11 @@ export class ClientSideNodeManager {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
-            rootNode.allLeafChildren = rowData.map((dataItem) => this.createNode(dataItem, this.rootNode, TOP_LEVEL));
+            rootNode.allLeafChildren = rowData.map((dataItem, index) => {
+                const node = this.createNode(dataItem, this.rootNode, TOP_LEVEL);
+                node.positionInRootChildren = index;
+                return node;
+            });
         } else {
             rootNode.allLeafChildren = [];
             rootNode.childrenAfterGroup = [];
@@ -129,6 +135,7 @@ export class ClientSideNodeManager {
             remove: [],
             update: [],
             add: [],
+            rowNodeOrderChanged: false,
         };
 
         const nodesToUnselect: RowNode[] = [];
@@ -140,7 +147,13 @@ export class ClientSideNodeManager {
         this.updateSelection(nodesToUnselect, 'rowDataChanged');
 
         if (rowNodeOrder) {
-            _sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
+            if (_sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder)) {
+                rowNodeTransaction.rowNodeOrderChanged = true;
+            }
+        }
+
+        if (updatePositionsInRootChildren(this.rootNode.allLeafChildren)) {
+            rowNodeTransaction.rowNodeOrderChanged = true;
         }
 
         return rowNodeTransaction;

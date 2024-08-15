@@ -7,4 +7,6 @@ export interface RowNodeTransaction<TData = any> {
     remove: IRowNode<TData>[];
     /** Row nodes updated */
     update: IRowNode<TData>[];
+    /** True if order changed */
+    rowNodeOrderChanged: boolean;
 }

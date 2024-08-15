@@ -13,7 +13,6 @@ import type {
 import { BeanStub, _warnOnce } from '@ag-grid-community/core';
 import { RowNode } from '@ag-grid-community/core';
 
-import type { RowNodeOrder } from './treeNode';
 import { TreeNode } from './treeNode';
 import type { TreeRow } from './treeRow';
 import {
@@ -38,7 +37,6 @@ export type InitialGroupOrderComparatorCallback =
 
 export interface TreeExecutionDetails {
     changedPath: ChangedPath | undefined;
-    rowNodeOrder: RowNodeOrder | undefined;
     expandByDefault: number;
     suppressGroupMaintainValueType: boolean;
     getDataPath: GetDataPath | undefined;
@@ -69,13 +67,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     public execute(params: StageExecuteParams): void {
-        const { rowNodeTransactions, rowNodeOrder, changedPath } = params;
+        const { rowNodeTransactions, changedPath } = params;
         const rootRow: TreeRow = params.rowNode;
 
         const gos = this.gos;
         const details: TreeExecutionDetails = {
             changedPath,
-            rowNodeOrder,
             expandByDefault: gos.get('groupDefaultExpanded'),
             suppressGroupMaintainValueType: gos.get('suppressGroupMaintainValueType'),
             getDataPath: gos.get('getDataPath'),
@@ -132,9 +129,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 const node = this.upsertPath(this.getDataPath(details, row));
                 if (node) {
                     this.addOrUpdateRow(node, row, false);
-                    if (node.rowPosition < 0) {
-                        node.rowPosition = rowIndex;
-                    }
                 }
             }
         }
@@ -166,15 +160,22 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     /** Called by the destructor, to the destroy the whole tree. */
     private destroyTree(node: TreeNode): void {
-        const { level } = node;
-        let row = node.row;
-        while (row !== null && node.removeRow(row)) {
-            if (level >= 0 && !row.data) {
-                this.deleteRow(row, true); // Delete filler nodes
+        const { row, level, duplicateRows } = node;
+        if (row) {
+            if (level >= 0) {
+                this.deleteRow(row, true); // Delete the row
             } else {
                 clearTreeRowFlags(row); // Just clear the flags
             }
-            row = node.row;
+        }
+        if (duplicateRows) {
+            for (const row of duplicateRows) {
+                if (level >= 0 && !row.data) {
+                    this.deleteRow(row, true); // Delete filler nodes
+                } else {
+                    clearTreeRowFlags(row); // Just clear the flags
+                }
+            }
         }
         const children = node.enumChildren();
         node.destroy();
@@ -398,7 +399,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.commitChildren(details, root);
 
         if (root.childrenChanged) {
-            root.updateChildrenAfterGroup(details.rowNodeOrder);
+            root.updateChildrenAfterGroup();
         }
 
         const rootRow = root.row!;
@@ -448,6 +449,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         if (row === null) {
             row = this.createFillerRow(node);
             node.setRow(row);
+        } else {
+            // If we have a list of duplicates we need to be sure that those are sorted by positionInRootChildren
+            if (node.duplicateRows) {
+                node.sortDuplicateRows();
+                row = node.row!;
+            }
         }
 
         row.parent = parent.row;
@@ -480,18 +487,19 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
-        const { rowNodeOrder } = details;
         const row = node.row!;
 
         if (node.childrenChanged) {
-            node.updateChildrenAfterGroup(rowNodeOrder);
+            node.updateChildrenAfterGroup();
         }
 
         if (node.leafChildrenChanged) {
             node.updateAllLeafChildren();
         }
 
-        if (!parent.childrenChanged && rowNodeOrder && node.rowPosition !== node.getRowPosition(rowNodeOrder)) {
+        const newRowPosition = node.getRowPosition();
+        if (node.oldRowPosition !== newRowPosition) {
+            node.oldRowPosition = newRowPosition;
             // We need to be sure the parent is going to update its children, as the order might have changed
             parent.childrenChanged = true;
         }

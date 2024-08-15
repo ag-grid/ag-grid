@@ -60,8 +60,8 @@ export interface RefreshModelParams<TData = any> {
     keepEditingRows?: boolean;
     // if doing delta updates, this has the changes that were done
     rowNodeTransactions?: RowNodeTransaction<TData>[];
-    // if doing delta updates, this has the order of the nodes
-    rowNodeOrder?: { [id: string]: number };
+    // true if the order of rowNodes changed
+    rowNodeOrderChanged?: boolean;
     // true user called setRowData() (or a new page in pagination). the grid scrolls
     // back to the top when this is true.
     newData?: boolean;

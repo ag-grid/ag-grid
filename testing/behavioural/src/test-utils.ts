@@ -1,19 +1,22 @@
-import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
+import type { GridApi, RowDataTransaction, RowNode } from '@ag-grid-community/core';
 import util from 'util';
 
 export const isGridApi = (node: unknown): node is GridApi =>
     typeof node === 'object' && node !== null && typeof (node as GridApi).setGridOption === 'function';
 
 export const getAllRows = (api: GridApi | null | undefined) => {
-    const rows: IRowNode<any>[] = [];
-    api?.forEachNode((node) => rows.push(node));
+    const rows: RowNode<any>[] = [];
+    api?.forEachNode((node) => rows.push(node as RowNode));
     return rows;
 };
 
-export const getAllRowData = (api: GridApi | null | undefined) => {
-    const rows: any[] = [];
-    api?.forEachNode((node) => rows.push(node.data));
-    return rows;
+export const getAllRowData = (rows: GridApi | RowNode[] | null | undefined) => {
+    if (Array.isArray(rows)) {
+        return rows.map((node) => node.data);
+    }
+    const result: any[] = [];
+    rows?.forEachNode((node) => result.push(node.data));
+    return result;
 };
 
 export async function executeTransactionsAsync(transactions: RowDataTransaction<any>[], api: GridApi<any>) {

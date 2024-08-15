@@ -1,4 +1,4 @@
-import type { GridApi, IRowNode } from '@ag-grid-community/core';
+import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
 
 import { isGridApi } from '../../test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
@@ -8,6 +8,20 @@ const info = console.info;
 
 function rowKey(row: IRowNode | null | undefined): string {
     return row?.key ?? row?.id ?? 'null';
+}
+
+export async function executeTransactionsAsync(transactions: RowDataTransaction<any>[], api: GridApi<any>) {
+    const promises: Promise<void>[] = [];
+    for (const transaction of transactions) {
+        promises.push(
+            new Promise((resolve) => {
+                api.applyTransactionAsync(transaction, () => resolve());
+            })
+        );
+    }
+
+    api.flushAsyncTransactions();
+    await Promise.all(promises);
 }
 
 function findTreeRootNodes(gridApi: GridApi | IRowNode[]): IRowNode[] {

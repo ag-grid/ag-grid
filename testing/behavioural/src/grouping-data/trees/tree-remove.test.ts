@@ -4,8 +4,8 @@ import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 
-import { getAllRows } from '../../test-utils';
-import { TreeDiagram, executeTransactionsAsync } from './tree-test-utils';
+import { executeTransactionsAsync, getAllRows } from '../../test-utils';
+import { TreeDiagram } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;

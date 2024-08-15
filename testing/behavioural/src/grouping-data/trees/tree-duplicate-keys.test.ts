@@ -233,4 +233,83 @@ describe('ag-grid tree duplicate keys', () => {
             · └── B LEAF id:7KmRgOg-2
         `);
     });
+
+    test('positionInRootChildren of duplicates matters, and when a duplicate over many duplicates is moved the right one is used as main row', async () => {
+        const rowData = [
+            { id: 'xRow-0', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-1', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-2', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-3', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-4', orgHierarchy: ['A', 'B'] },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [],
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getDataPath,
+            getRowId: (params) => params.data.id,
+        };
+
+        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = createMyGrid(gridOptions);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            └─┬ A filler id:row-group-0-A
+            · └── B LEAF id:xRow-0
+        `);
+
+        expect(consoleWarnSpy).toHaveBeenCalled();
+
+        api.setGridOption('rowData', [
+            { id: 'xRow-2', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-1', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-0', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-3', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-4', orgHierarchy: ['A', 'B'] },
+        ]);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            └─┬ A filler id:row-group-0-A
+            · └── B LEAF id:xRow-2
+        `);
+
+        api.setGridOption('rowData', [
+            { id: 'xRow-3', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-4', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-0', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-2', orgHierarchy: ['A', 'C'] },
+            { id: 'xRow-1', orgHierarchy: ['A', 'C'] },
+        ]);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            └─┬ A filler id:row-group-0-A
+            · ├── B LEAF id:xRow-3
+            · └── C LEAF id:xRow-2
+        `);
+
+        api.setGridOption('rowData', [
+            { id: 'xRow-2', orgHierarchy: ['A', 'C'] },
+            { id: 'xRow-1', orgHierarchy: ['A', 'C'] },
+            { id: 'xRow-3', orgHierarchy: ['A', 'C'] },
+            { id: 'xRow-0', orgHierarchy: ['A', 'B'] },
+            { id: 'xRow-4', orgHierarchy: ['A', 'C'] },
+            { id: 'xRow-5', orgHierarchy: ['A', 'B'] },
+        ]);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            └─┬ A filler id:row-group-0-A
+            · ├── C LEAF id:xRow-2
+            · └── B LEAF id:xRow-0
+        `);
+
+        consoleWarnSpy?.mockRestore();
+    });
 });

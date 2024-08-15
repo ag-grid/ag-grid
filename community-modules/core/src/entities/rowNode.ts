@@ -45,9 +45,6 @@ const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>(
 export interface ITreeNode {
     /** The key of this node */
     readonly key: string;
-
-    /** The order this node is supposed to have */
-    readonly rowPosition: number;
 }
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {

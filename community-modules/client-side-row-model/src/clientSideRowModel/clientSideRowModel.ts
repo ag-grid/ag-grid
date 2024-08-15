@@ -40,6 +40,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { ClientSideNodeManager } from './clientSideNodeManager';
+import { updatePositionsInRootChildren } from './updatePositionsInRootChildren';
 
 enum RecursionType {
     Normal,
@@ -705,7 +706,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             case ClientSideRowModelSteps.EVERYTHING:
                 this.doRowGrouping(
                     params.rowNodeTransactions,
-                    params.rowNodeOrder,
+                    !!params.rowNodeOrderChanged,
                     changedPath,
                     !!params.afterColumnsChanged
                 );
@@ -1086,7 +1087,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private doRowGrouping(
         rowNodeTransactions: RowNodeTransaction[] | undefined,
-        rowNodeOrder: { [id: string]: number } | undefined,
+        rowNodeOrderChanged: boolean,
         changedPath: ChangedPath,
         afterColumnsChanged: boolean
     ) {
@@ -1095,13 +1096,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.groupStage.execute({
                     rowNode: this.rootNode,
                     rowNodeTransactions: rowNodeTransactions,
-                    rowNodeOrder: rowNodeOrder,
+                    rowNodeOrderChanged: !!rowNodeOrderChanged,
                     changedPath: changedPath,
                 });
             } else {
                 this.groupStage.execute({
                     rowNode: this.rootNode,
                     changedPath: changedPath,
+                    rowNodeOrderChanged: !!rowNodeOrderChanged,
                     afterColumnsChanged: afterColumnsChanged,
                 });
             }
@@ -1243,7 +1245,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             });
         }
 
-        this.commonUpdateRowData(rowNodeTrans, undefined, forceRowNodeOrder);
+        this.commonUpdateRowData(rowNodeTrans, false, forceRowNodeOrder);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1276,33 +1278,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // stage also uses the
         const forceRowNodeOrder = typeof rowDataTran.addIndex === 'number';
 
-        this.commonUpdateRowData([rowNodeTran], rowNodeOrder, forceRowNodeOrder);
+        this.commonUpdateRowData([rowNodeTran], rowNodeTran.rowNodeOrderChanged, forceRowNodeOrder);
 
         return rowNodeTran;
-    }
-
-    private createRowNodeOrder(): { [id: string]: number } | undefined {
-        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
-        if (suppressSortOrder) {
-            return;
-        }
-
-        const orderMap: { [id: string]: number } = {};
-
-        if (this.rootNode && this.rootNode.allLeafChildren) {
-            for (let index = 0; index < this.rootNode.allLeafChildren.length; index++) {
-                const node = this.rootNode.allLeafChildren[index];
-                orderMap[node.id!] = index;
-            }
-        }
-
-        return orderMap;
     }
 
     // common to updateRowData and batchUpdateRowData
     private commonUpdateRowData(
         rowNodeTrans: RowNodeTransaction[],
-        rowNodeOrder: { [id: string]: number } | undefined,
+        rowNodeOrderChanged: boolean,
         forceRowNodeOrder: boolean
     ): void {
         if (!this.hasStarted) {
@@ -1312,7 +1296,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const animate = !this.gos.get('suppressAnimationFrame');
 
         if (forceRowNodeOrder) {
-            rowNodeOrder = this.createRowNodeOrder();
+            if (!this.gos.get('suppressMaintainUnsortedOrder')) {
+                rowNodeOrderChanged = updatePositionsInRootChildren(this.rootNode.allLeafChildren);
+            }
         }
 
         this.eventService.dispatchEvent({
@@ -1322,7 +1308,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
-            rowNodeOrder: rowNodeOrder,
+            rowNodeOrderChanged,
             keepRenderedRows: true,
             keepEditingRows: true,
             animate,

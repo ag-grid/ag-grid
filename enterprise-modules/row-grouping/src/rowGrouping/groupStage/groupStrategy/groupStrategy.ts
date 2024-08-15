@@ -22,7 +22,7 @@ import {
     _exists,
     _existsAndNotEmpty,
     _removeFromArray,
-    _sortRowNodesByOrder,
+    _sortRowNodesByPositionInRootChildren,
     _warnOnce,
 } from '@ag-grid-community/core';
 
@@ -44,7 +44,7 @@ interface GroupingDetails {
     groupedCols: AgColumn[];
     groupedColCount: number;
     transactions: RowNodeTransaction[];
-    rowNodeOrder: { [id: string]: number };
+    rowNodeOrderChanged: boolean;
 
     groupAllowUnbalanced: boolean;
     isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
@@ -123,7 +123,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
+        const { rowNode, changedPath, rowNodeTransactions, rowNodeOrderChanged } = params;
 
         const groupedCols = this.funcColsService.getRowGroupColumns();
 
@@ -133,7 +133,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),
             groupedColCount: groupedCols?.length ?? 0,
-            rowNodeOrder: rowNodeOrder!,
+            rowNodeOrderChanged: !!rowNodeOrderChanged,
             transactions: rowNodeTransactions!,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
@@ -171,7 +171,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             this.removeEmptyGroups(parentsWithChildrenRemoved, details);
         });
 
-        if (details.rowNodeOrder) {
+        if (details.rowNodeOrderChanged) {
             this.sortChildren(details);
         }
     }
@@ -180,7 +180,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     private sortChildren(details: GroupingDetails): void {
         details.changedPath.forEachChangedNodeDepthFirst(
             (node) => {
-                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
+                const didSort = _sortRowNodesByPositionInRootChildren(node.childrenAfterGroup);
                 if (didSort) {
                     details.changedPath.addParentNode(node);
                 }

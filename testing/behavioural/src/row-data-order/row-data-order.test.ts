@@ -2,40 +2,40 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridApi, GridOptions, RowNode } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
-import { executeTransactionsAsync, getAllRowData } from '../test-utils';
+import { executeTransactionsAsync, getAllRowData, getAllRows } from '../test-utils';
 
 function verifyPositionInRootChildren(rows: GridApi | RowNode[]) {
     if (!Array.isArray(rows)) {
-        rows = getAllRowData(rows);
+        rows = getAllRows(rows);
     }
-
     const errors: string[] = [];
-    let errorsCount = 0;
-
     let prevOrder = -1;
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const newOrder = row.positionInRootChildren;
-        if (newOrder < prevOrder) {
-            ++errorsCount;
+        if (newOrder < 0) {
+            errors.push(
+                `Row at index ${i} id:'${row.id}' has positionInRootChildren ${newOrder}, it should not be negative`
+            );
+        } else if (newOrder <= prevOrder) {
             errors.push(
                 `Row at index ${i} id:'${row.id}' has positionInRootChildren ${newOrder}, expected to be greater than ${prevOrder}`
             );
-            if (errors.length > 100) {
-                break;
-            }
         }
         prevOrder = newOrder;
     }
 
+    const errorsCount = errors.length;
     if (errorsCount > 0) {
-        if (errorsCount > errors.length) {
+        if (errorsCount > 20) {
+            errors.splice(20);
             errors.push(`And ${errorsCount - errors.length} more errors...`);
         }
         const error = new Error(errors.join('\n'));
         Error.captureStackTrace(error, verifyPositionInRootChildren);
         throw error;
     }
+    return getAllRowData(rows);
 }
 
 describe('ag-grid rows-ordering', () => {
@@ -73,22 +73,22 @@ describe('ag-grid rows-ordering', () => {
 
         const api = createMyGrid(gridOptions);
 
-        let allRowData = getAllRowData(api);
+        let allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([{ x: 1 }, { x: 2 }, { x: 3 }, { x: 4 }]);
 
         api.setGridOption('rowData', rowData2);
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual(rowData2);
 
         api.applyTransaction({ add: [{ x: 7 }, { x: 5 }] });
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([{ x: 2 }, { x: 1 }, { x: 4 }, { x: 7 }, { x: 5 }]);
 
         api.applyTransaction({ addIndex: 1, add: [{ x: 6 }] });
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([{ x: 2 }, { x: 6 }, { x: 1 }, { x: 4 }, { x: 7 }, { x: 5 }]);
     });
 
@@ -114,7 +114,7 @@ describe('ag-grid rows-ordering', () => {
 
         const api = createMyGrid(gridOptions);
 
-        let allRowData = getAllRowData(api);
+        let allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '1', x: 1 },
             { id: '2', x: 2 },
@@ -124,7 +124,7 @@ describe('ag-grid rows-ordering', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '2', x: 2 },
             { id: '1', x: 1 },
@@ -138,7 +138,7 @@ describe('ag-grid rows-ordering', () => {
             ],
         });
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '2', x: 2 },
             { id: '1', x: 1 },
@@ -152,7 +152,7 @@ describe('ag-grid rows-ordering', () => {
             add: [{ id: '6', x: 6 }],
         });
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '2', x: 2 },
             { id: '6', x: 6 },
@@ -191,7 +191,7 @@ describe('ag-grid rows-ordering', () => {
 
         consoleWarnSpy.mockRestore();
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '2', x: 2 },
             { id: '1', x: 1 },
@@ -226,7 +226,7 @@ describe('ag-grid rows-ordering', () => {
             { id: '1', x: 1 },
         ]);
 
-        let allRowData = getAllRowData(api);
+        let allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '2', x: 2 },
             { id: '1', x: 1 },
@@ -244,7 +244,7 @@ describe('ag-grid rows-ordering', () => {
             { id: '1', x: 11 },
         ]);
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '2', x: 12 },
             { id: '1', x: 11 },
@@ -277,7 +277,7 @@ describe('ag-grid rows-ordering', () => {
 
         const api = createMyGrid(gridOptions);
 
-        let allRowData = getAllRowData(api);
+        let allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '1', x: 1 },
             { id: '2', x: 2 },
@@ -287,13 +287,135 @@ describe('ag-grid rows-ordering', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        allRowData = getAllRowData(api);
+        allRowData = verifyPositionInRootChildren(api);
         expect(allRowData).toEqual([
             { id: '1', x: 11 },
             { id: '3', x: 13 },
             { id: '4', x: 14 },
             { id: '5', x: 15 },
             { id: '6', x: 16 },
+        ]);
+    });
+
+    test('complex setRowData with remove, update, change order, add', () => {
+        const rowData1 = [
+            { id: '1', x: 1 },
+            { id: '2', x: 2 },
+            { id: '3', x: 3 },
+            { id: '4', x: 4 },
+            { id: '5', x: 5 },
+            { id: '6', x: 6 },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'x' }],
+            animateRows: false,
+            rowData: rowData1,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = createMyGrid(gridOptions);
+
+        api.setGridOption('rowData', [
+            { id: '5', x: 11 },
+            { id: '2', x: 13 },
+            { id: '6', x: 12 },
+            { id: '3', x: 14 },
+        ]);
+
+        let allRowData = verifyPositionInRootChildren(api);
+        expect(allRowData).toEqual([
+            { id: '5', x: 11 },
+            { id: '2', x: 13 },
+            { id: '6', x: 12 },
+            { id: '3', x: 14 },
+        ]);
+
+        api.applyTransaction({
+            remove: [{ id: '5' }],
+            update: [
+                { id: '6', x: 100 },
+                { id: '3', x: 101 },
+            ],
+            addIndex: 1,
+            add: [
+                { id: '7', x: 102 },
+                { id: '8', x: 103 },
+                { id: '9', x: 104 },
+            ],
+        });
+
+        allRowData = verifyPositionInRootChildren(api);
+        expect(allRowData).toEqual([
+            { id: '2', x: 13 },
+            { id: '7', x: 102 },
+            { id: '8', x: 103 },
+            { id: '9', x: 104 },
+            { id: '6', x: 100 },
+            { id: '3', x: 101 },
+        ]);
+    });
+
+    test('multiple interleaved addIndex with async transaction', async () => {
+        const rowData1 = [
+            { id: '1', x: 1 },
+            { id: '2', x: 2 },
+            { id: '3', x: 3 },
+            { id: '4', x: 4 },
+            { id: '5', x: 5 },
+            { id: '6', x: 6 },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'x' }],
+            animateRows: false,
+            rowData: rowData1,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = createMyGrid(gridOptions);
+
+        await executeTransactionsAsync(
+            [
+                {
+                    remove: [{ id: '5' }],
+                    addIndex: 1,
+                    add: [
+                        { id: '7', x: 7 },
+                        { id: '8', x: 8 },
+                    ],
+                },
+                {
+                    remove: [{ id: '6' }],
+                    update: [{ id: '7', x: 33 }],
+                    addIndex: 3,
+                    add: [{ id: '9', x: 9 }],
+                },
+                {
+                    addIndex: 5,
+                    update: [{ id: '9', x: 99 }],
+                    add: [
+                        { id: '10', x: 10 },
+                        { id: '5', x: 105 },
+                        { id: '11', x: 11 },
+                    ],
+                },
+            ],
+            api
+        );
+
+        const allRowData = verifyPositionInRootChildren(api);
+        expect(allRowData).toEqual([
+            { id: '1', x: 1 },
+            { id: '7', x: 33 },
+            { id: '8', x: 8 },
+            { id: '9', x: 99 },
+            { id: '2', x: 2 },
+            { id: '10', x: 10 },
+            { id: '5', x: 105 },
+            { id: '11', x: 11 },
+            { id: '3', x: 3 },
+            { id: '4', x: 4 },
         ]);
     });
 });

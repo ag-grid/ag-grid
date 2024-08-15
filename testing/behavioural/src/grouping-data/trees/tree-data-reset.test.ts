@@ -244,12 +244,12 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ P GROUP id:p
-            │ ├── R LEAF id:r
-            │ └── Q LEAF id:q
             ├─┬ A filler id:row-group-0-A
             │ ├── C LEAF id:c
             │ └── B LEAF id:b
+            ├─┬ P GROUP id:p
+            │ ├── R LEAF id:r
+            │ └── Q LEAF id:q
             └─┬ S GROUP id:s
             · └── T LEAF id:t
         `);
@@ -358,8 +358,8 @@ describe('ag-grid tree data', () => {
             { id: 'r', orgHierarchy: ['P', 'R'], _diagramLabel: 'r2' },
             { id: 'q', orgHierarchy: ['P', 'Q'], _diagramLabel: 'q2' },
             { id: 'c', orgHierarchy: ['A', 'C'], _diagramLabel: 'c2' },
-            { id: 'p', orgHierarchy: ['P'], _diagramLabel: 'p2' },
             { id: 's', orgHierarchy: ['S'], _diagramLabel: 's2' },
+            { id: 'p', orgHierarchy: ['P'], _diagramLabel: 'p2' },
             { id: 'b', orgHierarchy: ['A', 'B'], _diagramLabel: 'b2' },
             { id: 't', orgHierarchy: ['S', 'T'], _diagramLabel: 't2' },
         ];
@@ -395,14 +395,14 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ P GROUP id:p label:p2
-            │ ├── R LEAF id:r label:r2
-            │ └── Q LEAF id:q label:q2
             ├─┬ A filler id:row-group-0-A
             │ ├── C LEAF id:c label:c2
             │ └── B LEAF id:b label:b2
-            └─┬ S GROUP id:s label:s2
-            · └── T LEAF id:t label:t2
+            ├─┬ S GROUP id:s label:s2
+            │ └── T LEAF id:t label:t2
+            └─┬ P GROUP id:p label:p2
+            · ├── R LEAF id:r label:r2
+            · └── Q LEAF id:q label:q2
         `);
     });
 
@@ -570,6 +570,7 @@ describe('ag-grid tree data', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── D LEAF id:9
             ├─┬ A filler id:row-group-0-A
             │ ├─┬ B GROUP id:0
             │ │ ├── X LEAF id:2
@@ -577,7 +578,6 @@ describe('ag-grid tree data', () => {
             │ │ ├── Y LEAF id:1
             │ │ └── Z LEAF id:5
             │ └── Q LEAF id:11
-            ├── D LEAF id:9
             └─┬ C filler id:row-group-0-C
             · ├─┬ B GROUP id:6
             · │ ├── R LEAF id:8

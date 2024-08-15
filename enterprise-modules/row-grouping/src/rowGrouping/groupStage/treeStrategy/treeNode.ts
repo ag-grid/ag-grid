@@ -1,8 +1,7 @@
-import type { ITreeNode, RowNode } from '@ag-grid-community/core';
+import type { ITreeNode } from '@ag-grid-community/core';
 
+import { positionInRootChildrenComparer } from './treeRow';
 import type { TreeRow } from './treeRow';
-
-export type RowNodeOrder = { readonly [id: string]: number | undefined };
 
 /**
  * An empty array, used to set an empty array to the childrenAfterGroup and allLeafChildren arrays without allocating a new one for each leaf.
@@ -12,26 +11,6 @@ const EMPTY_ARRAY = Object.freeze([]) as unknown as any[];
 
 /** An empty iterator, to avoid null checking when we iterate the children map */
 const EMPTY_CHILDREN = (EMPTY_ARRAY as TreeNode[]).values();
-
-/**
- * Given a row, extract the row index from the rowNodeOrder map.
- * @returns the row index, or -1 if the row is not found.
- */
-const getRowIndex = (row: RowNode | null | undefined, rowNodeOrder: RowNodeOrder): number => {
-    if (row?.data) {
-        const id = row.id;
-        if (id !== undefined) {
-            const order = rowNodeOrder[id];
-            if (typeof order === 'number') {
-                return order;
-            }
-        }
-    }
-    return -1;
-};
-
-/** Compare two RowNode by the TreeNode rowPosition. Assumes TreeNode to be set and valid. */
-const rowPositionComparer = (a: RowNode, b: RowNode): number => a.treeNode!.rowPosition - b.treeNode!.rowPosition;
 
 /**
  * Disassociate a node from a row, breaking the association between to the node.
@@ -109,14 +88,6 @@ export class TreeNode implements ITreeNode {
     private ghosts: number = 0;
 
     /**
-     * Used when sorting.
-     * If this is a filler node, is the rowPosition of the first child.
-     * If this is a leaf node with no children, is the rowIndex.
-     * If this is a leaf node with children, is the min(this.rowPosition, childrenAfterGroup[0].rowPosition)
-     */
-    public rowPosition: number = -1;
-
-    /**
      * We use this to keep track if children were removed or added and moved, so we can skip
      * recomputing the whole childrenAfterGroup and allLeafChildren array if not needed.
      * Reset during commit.
@@ -151,6 +122,8 @@ export class TreeNode implements ITreeNode {
      * to get the allLeafChildren if is null, do node.allLeafChildren ?? node.row.allLeafChildren.
      */
     private allLeafChildren: TreeRow[] | null = EMPTY_ARRAY;
+
+    public oldRowPosition: number = -1;
 
     public constructor(
         /** The parent node of this node, or null if removed or the root. */
@@ -390,15 +363,55 @@ export class TreeNode implements ITreeNode {
      *
      * @returns the rowPosition the node should have.
      */
-    public getRowPosition(rowNodeOrder: RowNodeOrder): number {
-        let rowPosition = getRowIndex(this.row, rowNodeOrder);
-        if (this.childrenAfterGroup.length > 0) {
-            const firstChildRowPosition = this.childrenAfterGroup[0].treeNode!.rowPosition;
-            if (firstChildRowPosition >= 0 && (rowPosition < 0 || firstChildRowPosition < rowPosition)) {
-                rowPosition = firstChildRowPosition;
+    public getRowPosition(): number {
+        const row = this.row;
+        if (row === null) {
+            return -1; // No row, no position yet
+        }
+        if (row.data) {
+            return row.positionInRootChildren;
+        }
+        // This assumes the children are already updated
+        return this.childrenAfterGroup.length > 0 ? this.childrenAfterGroup[0].positionInRootChildren : -1;
+    }
+
+    public sortDuplicateRows() {
+        const oldFirstRow = this.row!;
+        const duplicateRows = this.duplicateRows!;
+
+        let inOrder = true;
+        let prevOrder = oldFirstRow.positionInRootChildren;
+        for (const row of duplicateRows) {
+            const order = row.positionInRootChildren;
+            if (order <= prevOrder) {
+                inOrder = false;
+                break;
+            }
+            prevOrder = order;
+        }
+
+        if (!inOrder) {
+            const allDuplicatesArray = Array.from(duplicateRows);
+            allDuplicatesArray.push(oldFirstRow);
+            allDuplicatesArray.sort(positionInRootChildrenComparer);
+
+            duplicateRows.clear();
+            for (let i = 1, len = allDuplicatesArray.length; i < len; ++i) {
+                duplicateRows.add(allDuplicatesArray[i]);
+            }
+
+            const newFirstRow = allDuplicatesArray[0];
+
+            if (newFirstRow !== oldFirstRow) {
+                newFirstRow.childrenAfterGroup = this.childrenAfterGroup;
+                newFirstRow.allLeafChildren = oldFirstRow.allLeafChildren ?? this.allLeafChildren ?? EMPTY_ARRAY;
+
+                oldFirstRow.childrenAfterGroup = EMPTY_ARRAY;
+                oldFirstRow.allLeafChildren = EMPTY_ARRAY;
+
+                this.row = newFirstRow;
             }
         }
-        return rowPosition < 0 ? this.rowPosition : rowPosition;
     }
 
     /**
@@ -412,7 +425,7 @@ export class TreeNode implements ITreeNode {
      * If the order changes, also the order in the children map will be updated,
      * so the next call to enumChildren() will return the children in the right order.
      */
-    public updateChildrenAfterGroup(rowNodeOrder: RowNodeOrder | undefined): void {
+    public updateChildrenAfterGroup(): void {
         this.childrenChanged = false; // Reset the flag for this node
 
         let nodesChanged = false;
@@ -442,47 +455,31 @@ export class TreeNode implements ITreeNode {
                 }
             }
 
-            if (rowNodeOrder) {
-                // We have an order to follow, as rowNodeOrder was passed
-
-                let writeIdx = 0; // Keep track of where we are writing in the childrenAfterGroup array
-                let prevPosition = -1;
-                for (const child of children!.values()) {
-                    const nextPosition = child.getRowPosition(rowNodeOrder);
-                    child.rowPosition = nextPosition;
-                    const row = child.row!;
-                    if (nodesChanged || childrenAfterGroup[writeIdx] !== row) {
-                        childrenAfterGroup[writeIdx] = child.row!;
-                        nodesChanged = true;
-                    }
-                    ++writeIdx;
-                    if (prevPosition > nextPosition) {
-                        orderChanged = true;
-                    }
-                    prevPosition = nextPosition;
+            let writeIdx = 0; // Keep track of where we are writing in the childrenAfterGroup array
+            let prevPosition = -1;
+            for (const child of children!.values()) {
+                const nextPosition = child.getRowPosition();
+                const row = child.row!;
+                row.positionInRootChildren = nextPosition;
+                if (nodesChanged || childrenAfterGroup[writeIdx] !== row) {
+                    childrenAfterGroup[writeIdx] = child.row!;
+                    nodesChanged = true;
                 }
-
-                if (orderChanged) {
-                    childrenAfterGroup.sort(rowPositionComparer);
-
-                    // We need to rebuild the children map in the right order
-                    children!.clear();
-                    for (let i = 0; i < childrenCount; ++i) {
-                        const node = childrenAfterGroup[i].treeNode! as TreeNode;
-                        children!.set(node.key, node);
-                    }
+                ++writeIdx;
+                if (prevPosition > nextPosition) {
+                    orderChanged = true;
                 }
-            } else {
-                // We follow the order that is already in the children map
+                prevPosition = nextPosition;
+            }
 
-                let writeIdx = 0;
-                for (const child of children!.values()) {
-                    const row = child.row!;
-                    if (nodesChanged || childrenAfterGroup[writeIdx] !== row) {
-                        childrenAfterGroup[writeIdx] = row;
-                        nodesChanged = true;
-                    }
-                    ++writeIdx;
+            if (orderChanged) {
+                childrenAfterGroup.sort(positionInRootChildrenComparer);
+
+                // We need to rebuild the children map in the right order
+                children!.clear();
+                for (let i = 0; i < childrenCount; ++i) {
+                    const node = childrenAfterGroup[i].treeNode! as TreeNode;
+                    children!.set(node.key, node);
                 }
             }
         }

@@ -3,9 +3,9 @@ import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { getAllRows } from '../../test-utils';
+import { executeTransactionsAsync, getAllRows } from '../../test-utils';
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { TreeDiagram, executeTransactionsAsync } from './tree-test-utils';
+import { TreeDiagram } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
