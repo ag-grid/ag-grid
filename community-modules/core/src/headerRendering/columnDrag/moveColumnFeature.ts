@@ -14,7 +14,7 @@ import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../../interfaces/iColumn';
 import { _errorOnce } from '../../utils/function';
 import { _exists, _missing } from '../../utils/generic';
-import { attemptMoveColumns, moveColumns, normaliseX } from '../columnMoveHelper';
+import { attemptMoveColumns, normaliseX } from '../columnMoveHelper';
 import type { DropListener } from './bodyDropTarget';
 
 export class MoveColumnFeature extends BeanStub implements DropListener {
@@ -42,8 +42,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private pinned: ColumnPinnedType;
     private isCenterContainer: boolean;
 
-    private lastDraggingEvent: DraggingEvent;
-    private lastHighlightedColumn: AgColumn | null;
+    private lastDraggingEvent: DraggingEvent | null;
+    private lastHighlightedColumn: { column: AgColumn; position: ColumnHighlightPosition } | null;
     private lastMovedInfo: { columns: AgColumn[]; toIndex: number } | null = null;
 
     // this counts how long the user has been trying to scroll by dragging and failing,
@@ -64,7 +64,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public getIconName(): DragAndDropIcon {
-        const columns = this.lastDraggingEvent.dragItem.columns ?? [];
+        const columns = this.lastDraggingEvent?.dragItem.columns ?? [];
         if (this.pinned) {
             const isAValidCol = columns.some((col) => {
                 // Valid to move a locked pinned column in its matching pinned container.
@@ -123,7 +123,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public onDragStop(): void {
-        this.onDragging(this.lastDraggingEvent, false, true, true);
+        this.onDragging(this.lastDraggingEvent!, false, true, true);
         this.ensureIntervalCleared();
         this.lastMovedInfo = null;
     }
@@ -153,7 +153,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public onDragging(
-        draggingEvent: DraggingEvent = this.lastDraggingEvent,
+        draggingEvent: DraggingEvent | null = this.lastDraggingEvent,
         fromEnter = false,
         fakeEvent = false,
         finished = false
@@ -168,7 +168,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
-        if (!finished && _missing(draggingEvent.hDirection)) {
+        if (!draggingEvent || (!finished && _missing(draggingEvent.hDirection))) {
             return;
         }
 
@@ -187,33 +187,45 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             }
             this.highlightHoveredColumn(mouseX);
         } else {
-            const lastMovedInfo = attemptMoveColumns(
-                this.getMoveColumnParams(draggingEvent, mouseX, fromEnter, fakeEvent)
-            );
+            const params = this.getMoveColumnParams(draggingEvent, mouseX, fromEnter, fakeEvent);
+            const lastMovedInfo = attemptMoveColumns(params);
 
             if (lastMovedInfo) {
                 this.lastMovedInfo = lastMovedInfo;
-            }
-
-            if (finished) {
+            } else if (finished) {
                 // only falls here when suppressMoveWhenColumnDragging is true
+
+                const { column, position } = this.lastHighlightedColumn!;
+                const toIndex = this.columnMoveService.getMoveTargetIndex(
+                    params.allMovingColumns,
+                    column,
+                    position === ColumnHighlightPosition.Before
+                );
+
+                if (toIndex != null) {
+                    this.lastMovedInfo = {
+                        columns: params.allMovingColumns,
+                        toIndex,
+                    };
+                }
+
                 this.finishColumnMoving();
             }
         }
     }
 
     private finishColumnMoving(): void {
+        if (this.lastHighlightedColumn) {
+            this.lastHighlightedColumn.column.setHighlighted(null);
+            this.lastHighlightedColumn = null;
+        }
+
         if (!this.lastMovedInfo) {
             return;
         }
 
         const { columns, toIndex } = this.lastMovedInfo;
-        moveColumns(columns, toIndex, 'uiColumnMoved', true, this.columnMoveService);
-
-        if (this.lastHighlightedColumn) {
-            this.lastHighlightedColumn.setHighlighted(null);
-            this.lastHighlightedColumn = null;
-        }
+        this.columnMoveService.moveColumns(columns, toIndex, 'uiColumnMoved', true);
     }
 
     private getAllMovingColumns(draggingEvent: DraggingEvent): AgColumn[] {
@@ -252,11 +264,11 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return start <= mouseX && end >= mouseX;
         });
 
-        if (this.lastHighlightedColumn !== targetColumn) {
+        if (this.lastHighlightedColumn?.column !== targetColumn) {
             if (this.lastHighlightedColumn) {
-                this.lastHighlightedColumn.setHighlighted(null);
+                this.lastHighlightedColumn.column.setHighlighted(null);
+                this.lastHighlightedColumn = null;
             }
-            this.lastHighlightedColumn = targetColumn || null;
         }
 
         if (targetColumn) {
@@ -266,6 +278,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             const position =
                 mouseX - left! < width / 2 ? ColumnHighlightPosition.Before : ColumnHighlightPosition.After;
             targetColumn.setHighlighted(position);
+            this.lastHighlightedColumn = { column: targetColumn, position };
         }
     }
 
@@ -327,7 +340,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
 
-            const columns = this.lastDraggingEvent.dragItem.columns as AgColumn[] | undefined;
+            const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;
             const columnsThatCanPin = columns!.filter((c) => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {
@@ -339,5 +352,13 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 }
             }
         }
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        this.lastDraggingEvent = null;
+        this.lastHighlightedColumn = null;
+        this.lastMovedInfo = null;
     }
 }
