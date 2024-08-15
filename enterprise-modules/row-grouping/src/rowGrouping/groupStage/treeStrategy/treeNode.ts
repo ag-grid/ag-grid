@@ -265,7 +265,7 @@ export class TreeNode implements ITreeNode {
 
     /**
      * Used to free memory and break the association to the node row
-     * It does not invalidate and does not update the parent ghost status.
+     * It does not invalidate the path.
      * After destroyed this node cannot be used, and need to be thrown away.
      * It is safe to destroy the root however.
      */
