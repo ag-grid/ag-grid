@@ -76,8 +76,6 @@ $z-index-splash-contents: 10;
 
     h2 {
         margin-bottom: $spacing-size-4;
-        font-weight: var(--font-weight-bold);
-        line-height: var(--line-height-ultra-tight);
     }
 
     p {
@@ -107,24 +105,6 @@ $z-index-splash-contents: 10;
 
     @media screen and (min-width: $breakpoint-site-header-large) {
         margin-left: -100px;
-    }
-}
-
-.exploreExampleButton {
-    padding: 0.375em 0.5em 0.5em 0.5em;
-
-    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-        display: none;
-    }
-
-    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-        font-size: var(--font-size-extra-large);
-    }
-
-    :global(.icon) {
-        --icon-size: 1.5em;
-
-        margin: -1em 0 -1em 0.25em;
     }
 }
 
@@ -159,7 +139,7 @@ $z-index-splash-contents: 10;
     // Override inline styles for 'dark-mode' automated cursor
     :global(.highlight),
     :global(.animate-click) {
-        fill: var(--link-color) !important;
+        fill: var(--color-link) !important;
     }
 
     :global(.highlight) {
