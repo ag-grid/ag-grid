@@ -9,7 +9,7 @@ Enable users to select many rows at once within a grid.
 
 Multi row selection is configured by setting `selection.mode` to `'multiRow'`. 
 
-{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selection"] /%}
+{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" config={"description":""} /%}
 
 The following example illustrates a basic multi row selection configuration. 
 Checkboxes are enabled by default. Click checkboxes to select or deselect a row. Alternatively, hold {% kbd "^ Ctrl" /%} and then click to add rows to the selection. 
@@ -96,6 +96,8 @@ Bulk selection has three modes of operation which can be configured by setting t
 - `'filtered'`: Bulk selection will select all rows that satisfy the currently active filter.
 - `'currentPage'`: Bulk selection will select all rows that satisfy the currently active filter on the current page.
 
+{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["selectAll"] config={"description":""} /%}
+
 The example below demonstrates the three different modes of bulk selection. Use the select element to control which mode is being used:
 
 {% gridExampleRunner title="Header Checkbox Selection" name="header-checkbox" /%}
@@ -174,7 +176,7 @@ Clicking the header checkbox, however, will select all rows even if their checkb
 
 {% gridExampleRunner title="Force Checkboxes to be Selected" name="force-enable-checkboxes" /%}
 
-## Selecting Multiple Rows without Keyboard Modifiers
+## Selecting Multiple Rows without {% kbd "^ Ctrl" /%} or {% kbd "⇧ Shift" /%} keys
 
 In certain circumstances, especially in the context of touchscreen devices, users may want to allow selecting multiple rows without having to use the {% kbd "^ Ctrl" /%} and {% kbd "⇧ Shift" /%} keys.
 

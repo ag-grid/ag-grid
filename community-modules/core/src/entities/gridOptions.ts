@@ -2537,7 +2537,7 @@ export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectio
      */
     groupSelects?: GroupSelectionMode;
     /**
-     * Determines how "select all" behaviour works. This controls both header checkbox selection and CTRL+A behaviour.
+     * Determines how "select all" behaviour works. This controls header checkbox selection.
      * @default 'all'
      */
     selectAll?: SelectAllMode;
@@ -2611,17 +2611,23 @@ export type ControlsColDef = Pick<
 /**
  * Determines the behaviour when selecting a group row.
  *
- * When `'self'`, selects only the group row itself.
- * When `'descendants'`, selecting a group row selects all its child rows.
- * When `'filteredDescendants'`, selecting a group row selects all child rows that satisfy the currently active filter.
+ * - When `'self'`, selects only the group row itself.
+ * - When `'descendants'`, selecting a group row selects all its child rows.
+ * - When `'filteredDescendants'`, selecting a group row selects all child rows that satisfy the currently active filter.
  */
 export type GroupSelectionMode = 'self' | 'descendants' | 'filteredDescendants';
 
 /**
  * Determines how "select all" behaviour works.
  *
- * When `'all'`, selects all rows, regardless of filter and pagination settings.
- * When `'filtered'`, selects all rows that satisfy the currently active filter.
- * When `'currentPage'`, selects all rows that satisfy the currently active filter on the current page.
+ * - When `'all'`, selects all rows, regardless of filter and pagination settings.
+ * - When `'filtered'`, selects all rows that satisfy the currently active filter.
+ * - When `'currentPage'`, selects all rows that satisfy the currently active filter on the current page.
  */
-export type SelectAllMode = 'all' | 'filtered' | 'currentPage';
+export type SelectAllMode =
+    /** selects all rows, regardless of filter and pagination settings */
+    | 'all'
+    /** selects all rows that satisfy the currently active filter */
+    | 'filtered'
+    /** selects all rows that satisfy the currently active filter on the current page */
+    | 'currentPage';
