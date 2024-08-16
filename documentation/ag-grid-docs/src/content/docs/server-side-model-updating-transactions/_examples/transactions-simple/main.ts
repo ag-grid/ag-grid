@@ -1,12 +1,12 @@
 import {
-    ColDef,
-    GetRowIdParams,
-    GridApi,
-    GridOptions,
-    GridReadyEvent,
-    IServerSideGetRowsParams,
-    ServerSideTransaction,
-    ServerSideTransactionResult,
+    type ColDef,
+    type GetRowIdParams,
+    type GridApi,
+    type GridOptions,
+    type GridReadyEvent,
+    type IServerSideGetRowsParams,
+    type ServerSideTransaction,
+    type ServerSideTransactionResult,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -42,7 +42,7 @@ const gridOptions: GridOptions = {
         // register the datasource with the grid
         params.api.setGridOption('serverSideDatasource', datasource);
     },
-    rowSelection: 'single',
+    selection: { mode: 'singleRow', checkboxes: false },
     rowModelType: 'serverSide',
 };
 

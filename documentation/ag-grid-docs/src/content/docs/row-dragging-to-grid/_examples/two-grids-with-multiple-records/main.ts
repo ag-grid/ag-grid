@@ -49,14 +49,6 @@ const leftColumnDefs: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    {
-        colId: 'checkbox',
-        maxWidth: 50,
-        checkboxSelection: true,
-        suppressHeaderMenuButton: true,
-        suppressHeaderFilterButton: true,
-        headerCheckboxSelection: true,
-    },
     { field: 'athlete' },
     { field: 'sport' },
 ];
@@ -90,9 +82,11 @@ const leftGridOptions: GridOptions = {
         minWidth: 100,
         filter: true,
     },
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+    },
     rowDragMultiRow: true,
-    suppressRowClickSelection: true,
     getRowId: (params: GetRowIdParams) => {
         return params.data.athlete;
     },
@@ -184,16 +178,10 @@ function loadGrids() {
 }
 
 const resetBtn = document.querySelector('button.reset')!;
-const checkboxToggle = document.querySelector('#toggleCheck') as HTMLInputElement;
 
 resetBtn.addEventListener('click', () => {
     resetInputs();
     loadGrids();
-});
-
-checkboxToggle.addEventListener('change', () => {
-    leftApi!.setColumnsVisible(['checkbox'], checkboxToggle.checked);
-    leftApi!.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
 });
 
 loadGrids();

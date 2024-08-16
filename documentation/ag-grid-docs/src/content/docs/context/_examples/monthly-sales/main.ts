@@ -1,11 +1,10 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    ColDef,
-    ColGroupDef,
-    GridApi,
-    GridOptions,
-    ICellRendererParams,
-    IGroupCellRendererParams,
+    type ColDef,
+    type ColGroupDef,
+    type GridApi,
+    type GridOptions,
+    type ICellRendererParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -125,12 +124,12 @@ const gridOptions: GridOptions = {
         field: 'city',
         minWidth: 260,
         cellRenderer: 'agGroupCellRenderer',
-        cellRendererParams: {
-            checkbox: true,
-        } as IGroupCellRendererParams,
     },
-    rowSelection: 'multiple',
-    groupSelectsChildren: true,
+    selection: {
+        mode: 'multiRow',
+        headerCheckbox: false,
+        groupSelects: 'descendants',
+    },
     context: context,
 };
 

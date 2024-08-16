@@ -1,12 +1,10 @@
 import {
-    GetRowIdParams,
-    GetServerSideGroupLevelParamsParams,
-    GridApi,
-    GridOptions,
-    IServerSideDatasource,
-    IServerSideGetRowsParams,
-    IsServerSideGroupOpenByDefaultParams,
-    ServerSideGroupLevelParams,
+    type GetRowIdParams,
+    type GridApi,
+    type GridOptions,
+    type IServerSideDatasource,
+    type IServerSideGetRowsParams,
+    type IsServerSideGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -36,9 +34,13 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 280,
     },
     rowModelType: 'serverSide',
-    rowSelection: 'multiple',
-    isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
-    getRowId: getRowId,
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
+    isServerSideGroupOpenByDefault,
+    getRowId,
     suppressGroupRowsSticky: true,
 };
 

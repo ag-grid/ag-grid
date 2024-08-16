@@ -1,4 +1,10 @@
-import { ColDef, GridApi, GridOptions, IServerSideDatasource, createGrid } from '@ag-grid-community/core';
+import {
+    type ColDef,
+    type GridApi,
+    type GridOptions,
+    type IServerSideDatasource,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
@@ -18,8 +24,8 @@ const gridOptions: GridOptions = {
         sortable: false,
         enableCellChangeFlash: true,
     },
-    columnDefs: columnDefs,
-    rowSelection: 'multiple',
+    columnDefs,
+    selection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
     // use the enterprise row model
     rowModelType: 'serverSide',
     cacheBlockSize: 75,

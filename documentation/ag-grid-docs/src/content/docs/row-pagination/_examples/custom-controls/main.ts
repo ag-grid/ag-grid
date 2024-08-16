@@ -1,5 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, ValueFormatterParams, createGrid } from '@ag-grid-community/core';
+import {
+    type ColDef,
+    type GridApi,
+    type GridOptions,
+    type ValueFormatterParams,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
@@ -32,11 +38,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         filter: true,
     },
-    // debug: true,
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        checkboxes: true,
+        headerCheckbox: true,
+    },
     paginationPageSize: 500,
     paginationPageSizeSelector: [100, 500, 1000],
-    columnDefs: columnDefs,
+    columnDefs,
     pagination: true,
     suppressPaginationPanel: true,
     suppressScrollOnNewData: true,

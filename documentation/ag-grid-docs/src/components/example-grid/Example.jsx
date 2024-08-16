@@ -664,16 +664,16 @@ const ExampleInner = ({ darkMode }) => {
             suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
             enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
             enableCharts: true,
-            enableRangeSelection: true,
-            enableFillHandle: true,
             undoRedoCellEditing: true,
             undoRedoCellEditingLimit: 50,
             suppressClearOnFillReduction: false,
-            rowSelection: 'multiple',
             quickFilterText: null,
-            groupSelectsChildren: true,
-            suppressRowClickSelection: true,
             autoGroupColumnDef: groupColumn,
+            selection: {
+                mode: 'multiRow',
+                groupSelects: 'descendants',
+                suppressClickSelection: true,
+            },
             sideBar: {
                 toolPanels: ['columns', 'filters'],
                 position: 'right',
@@ -706,7 +706,6 @@ const ExampleInner = ({ darkMode }) => {
             columnTypes: {
                 currencyType: {
                     useValueFormatterForExport: false,
-                    // useValueParserForImport: false,
                     valueFormatter: currencyFormatter,
                 },
             },

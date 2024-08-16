@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    ColDef,
-    GetRowIdParams,
-    GridApi,
-    GridOptions,
-    RowSelectedEvent,
-    ValueFormatterParams,
+    type ColDef,
+    type GetRowIdParams,
+    type GridApi,
+    type GridOptions,
+    type RowSelectedEvent,
+    type ValueFormatterParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -46,9 +46,11 @@ let gridApi: GridApi<ICar>;
 
 // Pass ICar as generic row data type
 const gridOptions: GridOptions<ICar> = {
-    columnDefs: columnDefs,
-    rowData: rowData,
-    rowSelection: 'multiple',
+    columnDefs,
+    rowData,
+    selection: {
+        mode: 'multiRow',
+    },
     context: {
         discount: 0.9,
     } as IDiscountRate,

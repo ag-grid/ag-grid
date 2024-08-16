@@ -1,13 +1,13 @@
 import {
-    ColDef,
-    GetRowIdParams,
-    GridApi,
-    GridOptions,
-    IRowNode,
-    IServerSideDatasource,
-    IServerSideGetRowsParams,
-    IServerSideGetRowsRequest,
-    IsServerSideGroupOpenByDefaultParams,
+    type ColDef,
+    type GetRowIdParams,
+    type GridApi,
+    type GridOptions,
+    type IRowNode,
+    type IServerSideDatasource,
+    type IServerSideGetRowsParams,
+    type IServerSideGetRowsRequest,
+    type IsServerSideGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -46,9 +46,9 @@ const gridOptions: GridOptions = {
     },
     rowModelType: 'serverSide',
     treeData: true,
-    columnDefs: columnDefs,
+    columnDefs,
     cacheBlockSize: 10,
-    rowSelection: 'single',
+    selection: { mode: 'singleRow', checkboxes: false },
 
     isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
         var isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';
