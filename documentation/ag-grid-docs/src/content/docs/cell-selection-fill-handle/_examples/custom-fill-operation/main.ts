@@ -1,11 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    type FillEndEvent,
-    type FillStartEvent,
-    type GridApi,
-    type GridOptions,
-    createGrid,
-} from '@ag-grid-community/core';
+import { FillEndEvent, FillStartEvent, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 

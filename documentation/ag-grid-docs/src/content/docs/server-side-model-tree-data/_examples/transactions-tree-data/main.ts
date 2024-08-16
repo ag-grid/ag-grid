@@ -1,13 +1,13 @@
 import {
-    type ColDef,
-    type GetRowIdParams,
-    type GridApi,
-    type GridOptions,
-    type IRowNode,
-    type IServerSideDatasource,
-    type IServerSideGetRowsParams,
-    type IServerSideGetRowsRequest,
-    type IsServerSideGroupOpenByDefaultParams,
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    IRowNode,
+    IServerSideDatasource,
+    IServerSideGetRowsParams,
+    IServerSideGetRowsRequest,
+    IsServerSideGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';

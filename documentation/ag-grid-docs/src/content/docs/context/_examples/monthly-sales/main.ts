@@ -1,12 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    type ColDef,
-    type ColGroupDef,
-    type GridApi,
-    type GridOptions,
-    type ICellRendererParams,
-    createGrid,
-} from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridApi, GridOptions, ICellRendererParams, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';

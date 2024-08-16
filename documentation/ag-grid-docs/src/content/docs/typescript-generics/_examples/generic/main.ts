@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
-    type ColDef,
-    type GetRowIdParams,
-    type GridApi,
-    type GridOptions,
-    type RowSelectedEvent,
-    type ValueFormatterParams,
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    RowSelectedEvent,
+    ValueFormatterParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';

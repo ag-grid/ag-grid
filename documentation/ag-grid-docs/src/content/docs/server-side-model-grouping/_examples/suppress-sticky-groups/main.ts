@@ -1,10 +1,10 @@
 import {
-    type GetRowIdParams,
-    type GridApi,
-    type GridOptions,
-    type IServerSideDatasource,
-    type IServerSideGetRowsParams,
-    type IsServerSideGroupOpenByDefaultParams,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    IServerSideDatasource,
+    IServerSideGetRowsParams,
+    IsServerSideGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';

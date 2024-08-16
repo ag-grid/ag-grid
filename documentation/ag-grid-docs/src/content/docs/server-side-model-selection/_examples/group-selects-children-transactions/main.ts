@@ -1,9 +1,9 @@
 import {
-    type GridApi,
-    type GridOptions,
-    type IServerSideGetRowsParams,
-    type ServerSideTransaction,
-    type ServerSideTransactionResult,
+    GridApi,
+    GridOptions,
+    IServerSideGetRowsParams,
+    ServerSideTransaction,
+    ServerSideTransactionResult,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';

@@ -1,10 +1,10 @@
 import {
-    type ColDef,
-    type GridApi,
-    type GridOptions,
-    type ICellRendererComp,
-    type ICellRendererParams,
-    type ValueFormatterParams,
+    ColDef,
+    GridApi,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    ValueFormatterParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';

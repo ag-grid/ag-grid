@@ -1,8 +1,8 @@
 import {
-    type GridApi,
-    type GridOptions,
-    type IServerSideDatasource,
-    type IServerSideGroupSelectionState,
+    GridApi,
+    GridOptions,
+    IServerSideDatasource,
+    IServerSideGroupSelectionState,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';

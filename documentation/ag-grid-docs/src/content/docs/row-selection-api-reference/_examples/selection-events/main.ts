@@ -1,11 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    type GridApi,
-    type GridOptions,
-    type RowSelectedEvent,
-    type SelectionChangedEvent,
-    createGrid,
-} from '@ag-grid-community/core';
+import { GridApi, GridOptions, RowSelectedEvent, SelectionChangedEvent, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
