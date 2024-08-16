@@ -30,7 +30,7 @@ const ALL_PROPERTIES = Object.keys(selectionPropertyMap) as KeysOfUnion<Selectio
 export const SELECTION_VALIDATORS: OptionsValidator<SelectionOptions> = {
     objectName: 'selection',
     allProperties: ALL_PROPERTIES,
-    docsUrl: '/',
+    docsUrl: 'grid-options/#reference--selection/',
     deprecations: SELECTION_DEPRECATIONS,
     validations: SELECTION_OPTIONS_VALIDATIONS,
 };
