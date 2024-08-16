@@ -2685,4 +2685,22 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-data-grid/whats-new', to: '/whats-new' },
     { from: '/angular-data-grid/whats-new', to: '/whats-new' },
     { from: '/javascript-data-grid/whats-new', to: '/whats-new' },
+
+    { from: '/javascript-data-grid/range-selection', to: '/javascript-data-grid/cell-selection' },
+    { from: '/angular-data-grid/range-selection', to: '/angular-data-grid/cell-selection' },
+    { from: '/react-data-grid/range-selection', to: '/react-data-grid/cell-selection' },
+    { from: '/vue-data-grid/range-selection', to: '/vue-data-grid/cell-selection' },
+
+    { from: '/javascript-data-grid/range-selection-handle', to: '/javascript-data-grid/cell-selection-handle' },
+    { from: '/angular-data-grid/range-selection-handle', to: '/angular-data-grid/cell-selection-handle' },
+    { from: '/react-data-grid/range-selection-handle', to: '/react-data-grid/cell-selection-handle' },
+    { from: '/vue-data-grid/range-selection-handle', to: '/vue-data-grid/cell-selection-handle' },
+
+    {
+        from: '/javascript-data-grid/range-selection-fill-handle',
+        to: '/javascript-data-grid/cell-selection-fill-handle',
+    },
+    { from: '/angular-data-grid/range-selection-fill-handle', to: '/angular-data-grid/cell-selection-fill-handle' },
+    { from: '/react-data-grid/range-selection-fill-handle', to: '/react-data-grid/cell-selection-fill-handle' },
+    { from: '/vue-data-grid/range-selection-fill-handle', to: '/vue-data-grid/cell-selection-fill-handle' },
 ];
