@@ -759,6 +759,11 @@
                                         "title": "Fill Handle",
                                         "path": "cell-selection-fill-handle",
                                         "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "API Reference",
+                                        "path": "cell-selection-api-reference",
+                                        "isEnterprise": true
                                     }
                                 ]
                             }
