@@ -195,18 +195,21 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             } else if (finished) {
                 // only falls here when suppressMoveWhenColumnDragging is true
 
-                const { column, position } = this.lastHighlightedColumn!;
-                const toIndex = this.columnMoveService.getMoveTargetIndex(
-                    params.allMovingColumns,
-                    column,
-                    position === ColumnHighlightPosition.Before
-                );
+                const { column, position } = this.lastHighlightedColumn || {};
 
-                if (toIndex != null) {
-                    this.lastMovedInfo = {
-                        columns: params.allMovingColumns,
-                        toIndex,
-                    };
+                if (column && position != null) {
+                    const toIndex = this.columnMoveService.getMoveTargetIndex(
+                        params.allMovingColumns,
+                        column,
+                        position === ColumnHighlightPosition.Before
+                    );
+
+                    if (toIndex != null) {
+                        this.lastMovedInfo = {
+                            columns: params.allMovingColumns,
+                            toIndex,
+                        };
+                    }
                 }
 
                 this.finishColumnMoving();
