@@ -386,122 +386,124 @@ describe('ag-grid rows-ordering', () => {
         ]);
     });
 
-    test('duplicate IDs do not cause positionInRootChildren to be invalid', async () => {
-        const rowData1 = [
-            { id: '1', x: 1 },
-            { id: '2', x: 2 },
-            { id: '3', x: 3 },
-            { id: '4', x: 4 },
-            { id: '3', x: 5 },
-            { id: '3', x: 6 },
-        ];
+    describe('edge cases', () => {
+        test('duplicate IDs do not cause positionInRootChildren to be invalid', async () => {
+            const rowData1 = [
+                { id: '1', x: 1 },
+                { id: '2', x: 2 },
+                { id: '3', x: 3 },
+                { id: '4', x: 4 },
+                { id: '3', x: 5 },
+                { id: '3', x: 6 },
+            ];
 
-        const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'x' }],
-            animateRows: false,
-            rowData: rowData1,
-            getRowId: (params) => params.data.id,
-        };
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'x' }],
+                animateRows: false,
+                rowData: rowData1,
+                getRowId: (params) => params.data.id,
+            };
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        const api = createMyGrid(gridOptions);
+            const api = createMyGrid(gridOptions);
 
-        expect(consoleWarnSpy).toHaveBeenCalled();
-        consoleWarnSpy.mockReset();
+            expect(consoleWarnSpy).toHaveBeenCalled();
+            consoleWarnSpy.mockReset();
 
-        let allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '1', x: 1 },
-            { id: '2', x: 2 },
-            { id: '3', x: 3 },
-            { id: '4', x: 4 },
-            { id: '3', x: 5 },
-            { id: '3', x: 6 },
-        ]);
+            let allRowData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allRowData).toEqual([
+                { id: '1', x: 1 },
+                { id: '2', x: 2 },
+                { id: '3', x: 3 },
+                { id: '4', x: 4 },
+                { id: '3', x: 5 },
+                { id: '3', x: 6 },
+            ]);
 
-        await executeTransactionsAsync(
-            [
-                {
-                    addIndex: 1,
-                    add: [
-                        { id: '13', x: 131 },
-                        { id: '13', x: 132 },
-                    ],
-                },
-                { addIndex: 5, add: [{ id: '13', x: 133 }] },
-                { remove: [{ id: '4' }], update: [{ id: '2', x: 33 }] },
-                { addIndex: 3, add: [{ id: '13', x: 134 }] },
-            ],
-            api
-        );
+            await executeTransactionsAsync(
+                [
+                    {
+                        addIndex: 1,
+                        add: [
+                            { id: '13', x: 131 },
+                            { id: '13', x: 132 },
+                        ],
+                    },
+                    { addIndex: 5, add: [{ id: '13', x: 133 }] },
+                    { remove: [{ id: '4' }], update: [{ id: '2', x: 33 }] },
+                    { addIndex: 3, add: [{ id: '13', x: 134 }] },
+                ],
+                api
+            );
 
-        expect(consoleWarnSpy).toHaveBeenCalled();
-        consoleWarnSpy.mockReset();
+            expect(consoleWarnSpy).toHaveBeenCalled();
+            consoleWarnSpy.mockReset();
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
+            allRowData = getAllRowData(verifyPositionInRootChildren(api));
 
-        expect(allRowData).toEqual([
-            { id: '1', x: 1 },
-            { id: '13', x: 131 },
-            { id: '13', x: 132 },
-            { id: '13', x: 134 },
-            { id: '2', x: 33 },
-            { id: '3', x: 3 },
-            { id: '13', x: 133 },
-            { id: '3', x: 5 },
-            { id: '3', x: 6 },
-        ]);
-    });
+            expect(allRowData).toEqual([
+                { id: '1', x: 1 },
+                { id: '13', x: 131 },
+                { id: '13', x: 132 },
+                { id: '13', x: 134 },
+                { id: '2', x: 33 },
+                { id: '3', x: 3 },
+                { id: '13', x: 133 },
+                { id: '3', x: 5 },
+                { id: '3', x: 6 },
+            ]);
+        });
 
-    test('addIndex is tolerant to floating point numbers, negative values, and values bigger than the array', async () => {
-        const rowData = [
-            { id: '1', x: 1 },
-            { id: '2', x: 2 },
-            { id: '3', x: 3 },
-            { id: '4', x: 4 },
-            { id: '5', x: 5 },
-        ];
+        test('addIndex is tolerant to floating point numbers, negative values, and values bigger than the array', async () => {
+            const rowData = [
+                { id: '1', x: 1 },
+                { id: '2', x: 2 },
+                { id: '3', x: 3 },
+                { id: '4', x: 4 },
+                { id: '5', x: 5 },
+            ];
 
-        const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'x' }],
-            animateRows: false,
-            rowData: rowData,
-            getRowId: (params) => params.data.id,
-        };
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'x' }],
+                animateRows: false,
+                rowData: rowData,
+                getRowId: (params) => params.data.id,
+            };
 
-        const api = createMyGrid(gridOptions);
+            const api = createMyGrid(gridOptions);
 
-        await executeTransactionsAsync(
-            [
-                { addIndex: rowData.length / 2, add: [{ id: '7', x: 7 }] },
-                { addIndex: 1.5, add: [{ id: '6', x: 6 }] },
-                { addIndex: -1, add: [{ id: '8', x: 8 }] },
-                { addIndex: rowData.length + 3, add: [{ id: '9', x: 9 }] },
-                { addIndex: rowData.length + 10, add: [{ id: '10', x: 10 }] },
-                { addIndex: Number.NEGATIVE_INFINITY, add: [{ id: '0', x: 11 }] },
-                { addIndex: Number.POSITIVE_INFINITY, add: [{ id: '12', x: 12 }] },
-                { addIndex: Number.NaN, add: [{ id: '13', x: 13 }] },
-            ],
-            api
-        );
+            await executeTransactionsAsync(
+                [
+                    { addIndex: rowData.length / 2, add: [{ id: '7', x: 7 }] },
+                    { addIndex: 1.5, add: [{ id: '6', x: 6 }] },
+                    { addIndex: -1, add: [{ id: '8', x: 8 }] },
+                    { addIndex: rowData.length + 3, add: [{ id: '9', x: 9 }] },
+                    { addIndex: rowData.length + 10, add: [{ id: '10', x: 10 }] },
+                    { addIndex: Number.NEGATIVE_INFINITY, add: [{ id: '11', x: 11 }] },
+                    { addIndex: Number.POSITIVE_INFINITY, add: [{ id: '12', x: 12 }] },
+                    { addIndex: Number.NaN, add: [{ id: '13', x: 13 }] },
+                ],
+                api
+            );
 
-        const allRowData = getAllRowData(verifyPositionInRootChildren(api));
+            const allRowData = getAllRowData(verifyPositionInRootChildren(api));
 
-        expect(allRowData).toEqual([
-            { id: '0', x: 11 },
-            { id: '8', x: 8 },
-            { id: '1', x: 1 },
-            { id: '2', x: 2 },
-            { id: '6', x: 6 },
-            { id: '3', x: 3 },
-            { id: '7', x: 7 },
-            { id: '4', x: 4 },
-            { id: '5', x: 5 },
-            { id: '9', x: 9 },
-            { id: '10', x: 10 },
-            { id: '12', x: 12 },
-            { id: '13', x: 13 },
-        ]);
+            expect(allRowData).toEqual([
+                { id: '1', x: 1 },
+                { id: '2', x: 2 },
+                { id: '6', x: 6 },
+                { id: '3', x: 3 },
+                { id: '7', x: 7 },
+                { id: '4', x: 4 },
+                { id: '5', x: 5 },
+                { id: '8', x: 8 },
+                { id: '9', x: 9 },
+                { id: '10', x: 10 },
+                { id: '11', x: 11 },
+                { id: '12', x: 12 },
+                { id: '13', x: 13 },
+            ]);
+        });
     });
 });

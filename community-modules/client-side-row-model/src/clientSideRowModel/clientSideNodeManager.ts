@@ -160,22 +160,28 @@ export class ClientSideNodeManager {
 
         // A map to lookup the index of a row data
         const newRowDataIndexMap = new Map<TData, number>();
+
+        // Note: we are not covering the edge case in which row data contains duplicate instances,
+        // for example `const data0 = { id: '0' }, rowData = [data0, data0];`. In this case,
+        // positionInRootChildren will be incorrect as there will be duplicates and it does not
+        // represent the index of the row in root.allLeafChildren array.
+        // At the moment this does not pose any issue,
+        // as positionInRootChildren is not used for anything that could break if this happen.
+        // The user will already receive a warning for duplicate id in any case.
+        // If we ever need to fix this, just recompute the positionInRootChildren at the end if there are duplicates.
+
         rowData.forEach((data: TData, index) => {
             newRowDataIndexMap.set(data, index);
         });
 
         let orderChanged = false;
-        let lastPosition = -1;
         for (let rowIdx = 0, rowsLength = rows.length; rowIdx < rowsLength; ++rowIdx) {
             const row = rows[rowIdx];
-
-            const newPosition = newRowDataIndexMap.get(row.data) ?? rowIdx;
+            const newPosition = newRowDataIndexMap.get(row.data)!;
             row.positionInRootChildren = newPosition; // has to match the index of the new row data
-
-            if (newPosition < lastPosition) {
+            if (newPosition !== rowIdx) {
                 orderChanged = true; // not in order, we need to sort.
             }
-            lastPosition = newPosition;
         }
 
         if (orderChanged) {
@@ -283,12 +289,8 @@ export class ClientSideNodeManager {
 
     private sanitizeAddIndex(addIndex: number | null | undefined): number {
         const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
-        if (typeof addIndex !== 'number' || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
-            return allChildrenCount; // Append
-        }
-
-        if (addIndex <= 0) {
-            return 0; // Negative index, prepend
+        if (typeof addIndex !== 'number' || addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
+            return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
         }
 
         // Ensure index is a whole number and not a floating point.
