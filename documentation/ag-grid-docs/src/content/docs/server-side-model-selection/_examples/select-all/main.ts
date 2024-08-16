@@ -101,13 +101,12 @@ document.addEventListener('DOMContentLoaded', function () {
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);
         });
-
-    document.querySelector('#input-select-all')?.addEventListener('change', (e) => {
-        gridApi.setGridOption('selection', {
-            mode: 'multiRow',
-            suppressClickSelection: true,
-            //@ts-ignore
-            selectAll: e.target!.value,
-        });
-    });
 });
+
+function onSelectAllChanged() {
+    gridApi.setGridOption('selection', {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        selectAll: document.querySelector<HTMLSelectElement>('#input-select-all')!.value as any,
+    });
+}

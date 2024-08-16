@@ -40,8 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
-
-    document.querySelector('#input-selection-mode')?.addEventListener('change', updateSelectionOptions);
 });
 
 function getSelectValue(id: string): SelectionOptions['mode'] {

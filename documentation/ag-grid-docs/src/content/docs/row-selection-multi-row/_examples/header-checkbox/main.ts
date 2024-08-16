@@ -1,17 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, SelectionOptions } from '@ag-grid-community/core';
+import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
-
-const selection: SelectionOptions = {
-    mode: 'multiRow',
-    suppressClickSelection: true,
-    selectAll: 'all',
-};
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -32,11 +26,25 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     pagination: true,
     paginationAutoPageSize: true,
-    selection,
+    selection: {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        selectAll: 'all',
+    },
 };
 
 function onQuickFilterChanged() {
     gridApi!.setGridOption('quickFilterText', document.querySelector<HTMLInputElement>('#quickFilter')?.value);
+}
+
+function updateSelectAllMode() {
+    const selectAll = document.querySelector<HTMLSelectElement>('#select-all-mode')?.value ?? 'all';
+
+    gridApi.setGridOption('selection', {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        selectAll: selectAll as 'all' | 'filtered' | 'currentPage',
+    });
 }
 
 // setup the grid after the page has finished loading
@@ -47,15 +55,4 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
-
-    document.querySelector<HTMLSelectElement>('#select-all-mode')?.addEventListener('change', () => {
-        const selectAll = document.querySelector<HTMLSelectElement>('#select-all-mode')?.value ?? 'all';
-
-        const newSelectionOptions: SelectionOptions = {
-            ...selection,
-            selectAll: selectAll as 'all' | 'filtered' | 'currentPage',
-        };
-
-        gridApi.setGridOption('selection', newSelectionOptions);
-    });
 });
