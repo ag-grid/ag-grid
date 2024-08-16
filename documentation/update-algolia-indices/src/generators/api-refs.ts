@@ -70,7 +70,7 @@ export const parseApiPageData = (details: APIPageData): AlgoliaRecord[] => {
             const breadcrumb = `API > ${breadcrumbSuffix}`;
             const path = `${pagePath}#reference-${sectionKey}-${propertyKey}`;
             const text = description ?? data.meta.comment;
-            const normalizedText = text.replace(/\[([^\]]+)\][^\)]+\)/g, '$1');
+            const normalizedText = text?.replace(/\[([^\]]+)\][^)]+\)/g, '$1');
 
             records.push({
                 source: 'api',
