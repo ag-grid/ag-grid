@@ -71,7 +71,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
 
         let orderChanged = false;
         if (!suppressSortOrder) {
-            // if we are not maintaining sort order, then we need to reorder the nodes to match the new data order
+            // we need to reorder the nodes to match the new data order
             orderChanged = nodeManager.updateRowOrderFromRowData(rowData);
         }
 
