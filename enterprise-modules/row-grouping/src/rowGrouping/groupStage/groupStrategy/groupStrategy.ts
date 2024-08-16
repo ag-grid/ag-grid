@@ -148,7 +148,6 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private handleTransaction(details: GroupingDetails): void {
-        let nodesAdded = false;
         details.transactions.forEach((tran) => {
             const batchRemover = new BatchRemover();
 
@@ -162,7 +161,6 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
                 this.moveNodesInWrongPath(tran.update as RowNode[], details, batchRemover);
             }
             if (_existsAndNotEmpty(tran.add)) {
-                nodesAdded = true;
                 this.insertNodes(tran.add as RowNode[], details);
             }
 
@@ -173,7 +171,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             this.removeEmptyGroups(parentsWithChildrenRemoved, details);
         });
 
-        if (details.rowNodesOrderChanged || nodesAdded) {
+        if (details.rowNodesOrderChanged) {
             this.sortChildren(details);
         }
     }
