@@ -749,7 +749,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const result: RowNode[] = [];
 
-        const groupsSelectChildren = this.gos.get('groupSelectsChildren');
+        const groupsSelectChildren = this.gos.getSelectionOption('groupSelectsChildren');
 
         this.forEachNodeAfterFilterAndSort((rowNode) => {
             // range has been closed, skip till end
@@ -1097,7 +1097,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 });
             }
 
-            if (this.gos.get('groupSelectsChildren')) {
+            if (this.gos.getSelectionOption('groupSelectsChildren')) {
                 const selectionChanged = this.selectionService.updateGroupsFromChildrenSelections(
                     'rowGroupChanged',
                     changedPath
