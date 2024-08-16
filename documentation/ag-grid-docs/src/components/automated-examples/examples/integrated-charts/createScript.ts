@@ -232,33 +232,6 @@ export const createScript = ({
         },
         { type: 'wait', duration: 600 },
 
-        // Select `Average` aggregate
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelPickerField',
-                targetParams: {
-                    groupTitle: 'Categories',
-                    // NOTE: Categories label is hidden
-                    selectLabel: '',
-                    index: 1,
-                },
-            },
-        },
-        { type: 'wait', duration: 400 },
-        {
-            type: 'agAction',
-            actionType: 'moveToElementAndClick',
-            actionParams: {
-                target: 'chartToolPanelSelectListItem',
-                targetParams: {
-                    text: 'Average',
-                },
-            },
-        },
-        { type: 'wait', duration: 600 },
-
         // Toggle `Switch Category / Series`
         {
             type: 'agAction',
@@ -331,7 +304,7 @@ export const createScript = ({
             type: 'agAction',
             actionType: 'typeInTextInput',
             actionParams: {
-                text: 'Average Monthly Earning',
+                text: 'Total Monthly Earning by Country',
                 groupTitle: 'Titles',
                 inputLabel: 'Title',
                 index: 0,
@@ -417,6 +390,32 @@ export const createScript = ({
                     scriptDebugger,
                 });
                 await waitFor(600);
+            },
+        },
+        { type: 'wait', duration: 600 },
+
+        // Click on `Chart` tab
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelTab',
+                targetParams: {
+                    text: 'Chart',
+                },
+            },
+        },
+        { type: 'wait', duration: 600 },
+
+        // Change to 4th chart theme
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartThemeItem',
+                targetParams: {
+                    index: 3, // 4th theme
+                },
             },
         },
         { type: 'wait', duration: 1000 },
