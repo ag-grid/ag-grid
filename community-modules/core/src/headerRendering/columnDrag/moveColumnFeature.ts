@@ -99,7 +99,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             this.setColumnsVisible(visibleColumns, true, 'uiColumnDragged');
         }
 
-        this.setColumnsPinned(columns, this.pinned, 'uiColumnDragged');
+        if (!this.gos.get('suppressMoveWhenColumnDragging')) {
+            this.attemptToPinColumns(columns, this.pinned);
+        }
         this.onDragging(draggingEvent, true, true);
     }
 
@@ -112,13 +114,6 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         if (columns) {
             const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
             this.columnModel.setColsVisible(allowedCols, visible, source);
-        }
-    }
-
-    public setColumnsPinned(columns: AgColumn[] | null | undefined, pinned: ColumnPinnedType, source: ColumnEventType) {
-        if (columns) {
-            const allowedCols = columns.filter((c) => !c.getColDef().lockPinned);
-            this.columnModel.setColsPinned(allowedCols, pinned, source);
         }
     }
 
@@ -212,12 +207,17 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                     }
                 }
 
-                this.finishColumnMoving();
+                const attemptToPin =
+                    this.needToMoveLeft ||
+                    this.needToMoveLeft ||
+                    this.failedMoveAttempts > 7 ||
+                    params.allMovingColumns.some((col) => col.getPinned() !== this.pinned);
+                this.finishColumnMoving(attemptToPin);
             }
         }
     }
 
-    private finishColumnMoving(): void {
+    private finishColumnMoving(attemptToPin: boolean = false): void {
         if (this.lastHighlightedColumn) {
             this.lastHighlightedColumn.column.setHighlighted(null);
             this.lastHighlightedColumn = null;
@@ -228,6 +228,10 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
 
         const { columns, toIndex } = this.lastMovedInfo;
+
+        if (attemptToPin) {
+            this.attemptToPinColumns(columns, undefined, true);
+        }
         this.columnMoveService.moveColumns(columns, toIndex, 'uiColumnMoved', true);
     }
 
@@ -313,6 +317,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         if (this.movingIntervalId) {
             window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
+            this.failedMoveAttempts = 0;
             this.dragAndDropService.setGhostIcon(this.getIconName());
         }
     }
@@ -343,17 +348,42 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
 
-            const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;
-            const columnsThatCanPin = columns!.filter((c) => !c.getColDef().lockPinned);
-
-            if (columnsThatCanPin.length > 0) {
-                this.dragAndDropService.setGhostIcon('pinned');
-                if (this.failedMoveAttempts > 7) {
-                    const pinType = this.needToMoveLeft ? 'left' : 'right';
-                    this.setColumnsPinned(columnsThatCanPin, pinType, 'uiColumnDragged');
-                    this.dragAndDropService.nudge();
-                }
+            if (this.failedMoveAttempts <= 8) {
+                return;
             }
+
+            this.dragAndDropService.setGhostIcon('pinned');
+
+            if (!this.gos.get('suppressMoveWhenColumnDragging')) {
+                const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;
+                this.attemptToPinColumns(columns, undefined, true);
+            }
+        }
+    }
+
+    private attemptToPinColumns(
+        columns: AgColumn[] | undefined,
+        pinned?: ColumnPinnedType,
+        fromMoving: boolean = false
+    ) {
+        const allowedCols = (columns || []).filter((c) => !c.getColDef().lockPinned);
+
+        if (!allowedCols.length) {
+            return;
+        }
+
+        if (fromMoving) {
+            if (this.needToMoveLeft || this.pinned === 'left') {
+                pinned = 'left';
+            } else if (this.needToMoveRight || this.pinned === 'right') {
+                pinned = 'right';
+            }
+        }
+
+        this.columnModel.setColsPinned(allowedCols, pinned, 'uiColumnDragged');
+
+        if (fromMoving) {
+            this.dragAndDropService.nudge();
         }
     }
 
