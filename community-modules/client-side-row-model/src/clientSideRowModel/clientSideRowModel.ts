@@ -1146,8 +1146,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.pivotStage?.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
-    public getCopyOfNodesMap(): { [id: string]: RowNode } {
-        return this.nodeManager.getCopyOfNodesMap();
+    public getNodeManager(): ClientSideNodeManager {
+        return this.nodeManager;
     }
 
     public getRowNode(id: string): RowNode | undefined {
@@ -1227,18 +1227,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const rowNodeTrans: RowNodeTransaction[] = [];
 
         let orderChanged = false;
-        if (this.rowDataTransactionBatch) {
-            this.rowDataTransactionBatch.forEach((tranItem) => {
-                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, undefined);
-                rowNodeTrans.push(rowNodeTran);
-                if (rowNodeTran.orderChanged) {
-                    orderChanged = true;
-                }
-                if (tranItem.callback) {
-                    callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
-                }
-            });
-        }
+        this.rowDataTransactionBatch?.forEach((tranItem) => {
+            const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(tranItem.rowDataTransaction);
+            if (rowsInserted) {
+                orderChanged = true;
+            }
+            rowNodeTrans.push(rowNodeTransaction);
+            if (tranItem.callback) {
+                callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTransaction));
+            }
+        });
 
         this.commonUpdateRowData(rowNodeTrans, orderChanged);
 
@@ -1260,20 +1258,36 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.applyAsyncTransactionsTimeout = undefined;
     }
 
-    public updateRowData(
-        rowDataTran: RowDataTransaction,
-        rowNodeOrder?: { [id: string]: number }
-    ): RowNodeTransaction | null {
+    /**
+     * Used to apply transaction changes.
+     * Called by gridApi & rowDragFeature
+     */
+    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
         this.valueCache.onDataChanged();
 
-        const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
+        const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 
-        this.commonUpdateRowData([rowNodeTran], rowNodeTran.orderChanged);
+        this.commonUpdateRowData([rowNodeTransaction], rowsInserted);
 
-        return rowNodeTran;
+        return rowNodeTransaction;
     }
 
-    // common to updateRowData and batchUpdateRowData
+    /**
+     * Used to apply generated transaction
+     */
+    public afterImmutableDataChange(rowNodeTransaction: RowNodeTransaction, rowNodesOrderChanged: boolean): void {
+        this.commonUpdateRowData([rowNodeTransaction], rowNodesOrderChanged);
+    }
+
+    /**
+     * Common to:
+     * - executeBatchUpdateRowData (batch transactions)
+     * - updateRowData (single transaction)
+     * - afterImmutableDataChange (generated transaction)
+     *
+     * @param rowNodeTrans - the transactions to apply
+     * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
+     */
     private commonUpdateRowData(rowNodeTransactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
         if (!this.hasStarted) {
             return;

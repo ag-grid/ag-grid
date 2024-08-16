@@ -1,6 +1,6 @@
-import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
+import type { GridApi, IRowNode, RowDataTransaction, RowNode } from '@ag-grid-community/core';
 
-import { isGridApi } from '../../test-utils';
+import { isGridApi, verifyPositionInRootChildren } from '../../test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
 
 const log = console.log;
@@ -68,7 +68,6 @@ export class TreeDiagram {
         if (rootNodes.length === 0) {
             this.diagram += '❌ No tree root\n';
             this.errorsCount = 1;
-            return this;
         }
         for (const root of rootNodes) {
             this.root = root;
@@ -296,6 +295,8 @@ export class TreeDiagram {
 
     public check(diagramSnapshot?: string | string[] | true): void {
         try {
+            verifyPositionInRootChildren(this.root?.allLeafChildren ?? []);
+
             if (diagramSnapshot !== undefined && diagramSnapshot !== true) {
                 expect(normalizeDiagram(this.diagram)).toEqual(normalizeDiagram(diagramSnapshot));
             }

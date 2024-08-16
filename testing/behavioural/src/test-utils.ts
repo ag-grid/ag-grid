@@ -1,4 +1,4 @@
-import type { GridApi, RowDataTransaction, RowNode } from '@ag-grid-community/core';
+import type { GridApi, IRowNode, RowDataTransaction, RowNode } from '@ag-grid-community/core';
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import util from 'util';
 
@@ -94,3 +94,30 @@ export const cachedJSONObjects = {
         return array.map(cachedJSONObjects.object);
     },
 };
+
+export function verifyPositionInRootChildren(rows: GridApi | IRowNode[]): RowNode[] {
+    if (!Array.isArray(rows)) {
+        rows = getAllRows(rows);
+    }
+    const errors: string[] = [];
+    for (let index = 0; index < rows.length; ++index) {
+        const row = rows[index] as RowNode;
+        if (row.positionInRootChildren !== index) {
+            errors.push(`   row ${index} positionInRootChildren:${row.positionInRootChildren} id:'${row.id}'`);
+        }
+    }
+
+    const errorsCount = errors.length;
+    if (errorsCount > 0) {
+        errors.push(JSON.stringify(rows.map((row) => (row as RowNode).positionInRootChildren)));
+        if (errorsCount > 20) {
+            errors.splice(20);
+            errors.push(`And ${errorsCount - errors.length} more errors...`);
+        }
+        const error = new Error('❌ positionInRootChildren incorrect:\n' + errors.join('\n'));
+        Error.captureStackTrace(error, verifyPositionInRootChildren);
+        throw error;
+    }
+
+    return rows as RowNode[];
+}

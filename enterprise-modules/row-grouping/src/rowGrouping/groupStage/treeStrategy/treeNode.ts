@@ -13,7 +13,7 @@ const EMPTY_ARRAY = Object.freeze([]) as unknown as any[];
 const EMPTY_CHILDREN = (EMPTY_ARRAY as TreeNode[]).values();
 
 /**
- * Disassociate a node from a row, breaking the association between to the node.
+ * Disassociate a node from a row, breaking the association to the node.
  * Leaves the node untouched, only the row is modified.
  */
 const orphanRow = (row: TreeRow, root: boolean): void => {
