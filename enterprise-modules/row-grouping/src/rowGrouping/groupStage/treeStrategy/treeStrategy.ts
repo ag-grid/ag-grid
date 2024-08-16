@@ -104,27 +104,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    /**
-     * This method invalidates the nodes that have oldRowPosition !== positionInRootChildren.
-     * if the row node order changed in transactions, we need to invalidate all nodes that have
-     * a different position in the children array than the one they had before.
-     * We receive only update events if the rowNode.data reference changes, but not if just order changes.
-     * See ImmutableService.createTransactionForRowData for more details.
-     */
-    private handleRowNodesOrderChanged(rootRow: TreeRow): void {
-        const rows = rootRow.allLeafChildren;
-        if (rows) {
-            const rowsLen = rows.length;
-            for (let rowIdx = 0; rowIdx < rowsLen; ++rowIdx) {
-                const row = rows[rowIdx];
-                const node = row.treeNode as TreeNode | null;
-                if (node !== null && node.oldRowPosition !== row.positionInRootChildren) {
-                    node.invalidate(); // Position changed, we might need to recompute and sort parent.childrenAfterGroup
-                }
-            }
-        }
-    }
-
     private handleRowData(details: TreeExecutionDetails, rootRow: RowNode, afterColumnsChanged: boolean): void {
         const root = this.root;
 
@@ -154,6 +133,27 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.addOrUpdateRows(details, rootRow.allLeafChildren, false);
 
         this.commitTree(details);
+    }
+
+    /**
+     * This method invalidates the nodes that have oldRowPosition !== positionInRootChildren.
+     * if the row node order changed in transactions, we need to invalidate all nodes that have
+     * a different position in the children array than the one they had before.
+     * We receive only update events if the rowNode.data reference changes, but not if just order changes.
+     * See ImmutableService.createTransactionForRowData for more details.
+     */
+    private handleRowNodesOrderChanged(rootRow: TreeRow): void {
+        const rows = rootRow.allLeafChildren;
+        if (rows) {
+            const rowsLen = rows.length;
+            for (let rowIdx = 0; rowIdx < rowsLen; ++rowIdx) {
+                const row = rows[rowIdx];
+                const node = row.treeNode as TreeNode | null;
+                if (node !== null && node.oldRowPosition !== row.positionInRootChildren) {
+                    node.invalidate(); // Position changed, we might need to recompute and sort parent.childrenAfterGroup
+                }
+            }
+        }
     }
 
     private handleTransaction(details: TreeExecutionDetails, transactions: RowNodeTransaction[]): void {
