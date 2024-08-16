@@ -113,6 +113,7 @@ export class TreeNode implements ITreeNode {
      */
     private allLeafChildren: TreeRow[] | null = EMPTY_ARRAY;
 
+    /** The ordering this node had in the previous commit. */
     public oldRowPosition: number = -1;
 
     public constructor(
@@ -419,6 +420,7 @@ export class TreeNode implements ITreeNode {
                 const nextPosition = child.getRowPosition();
                 const row = child.row!;
                 row.positionInRootChildren = nextPosition;
+                child.oldRowPosition = nextPosition; // Save the old position for next commit
                 if (nodesChanged || childrenAfterGroup[writeIdx] !== row) {
                     childrenAfterGroup[writeIdx] = child.row!;
                     nodesChanged = true;

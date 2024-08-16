@@ -52,9 +52,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Rows that are pending deletion, this.commitDeletedRows() will finalize removal. */
     private rowsPendingDestruction: Set<RowNode> | null = null;
 
-    /** Set when execute is called to keep track of whether the order of row nodes has changed. */
-    private rowNodesOrderChanged: boolean = false;
-
     /** The root node of the tree. */
     private readonly root: TreeNode = new TreeNode(null, '', -1);
 
@@ -78,10 +75,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const { rowNodeTransactions, rowNodesOrderChanged, changedPath } = params;
         const rootRow: TreeRow = params.rowNode;
 
-        if (rowNodesOrderChanged) {
-            this.rowNodesOrderChanged = true;
-        }
-
         const gos = this.gos;
         const details: TreeExecutionDetails = {
             changedPath,
@@ -102,12 +95,34 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (rowNodeTransactions) {
+            if (rowNodesOrderChanged) {
+                this.handleRowNodesOrderChanged(rootRow);
+            }
             this.handleTransaction(details, rowNodeTransactions);
         } else {
             this.handleRowData(details, rootRow, params.afterColumnsChanged === true);
         }
+    }
 
-        this.rowNodesOrderChanged = false;
+    /**
+     * This method invalidates the nodes that have oldRowPosition !== positionInRootChildren.
+     * if the row node order changed in transactions, we need to invalidate all nodes that have
+     * a different position in the children array than the one they had before.
+     * We receive only update events if the rowNode.data reference changes, but not if just order changes.
+     * See ImmutableService.createTransactionForRowData for more details.
+     */
+    private handleRowNodesOrderChanged(rootRow: TreeRow): void {
+        const rows = rootRow.allLeafChildren;
+        if (rows) {
+            const rowsLen = rows.length;
+            for (let rowIdx = 0; rowIdx < rowsLen; ++rowIdx) {
+                const row = rows[rowIdx];
+                const node = row.treeNode as TreeNode | null;
+                if (node !== null && node.oldRowPosition !== row.positionInRootChildren) {
+                    node.invalidate(); // Position changed, we might need to recompute and sort parent.childrenAfterGroup
+                }
+            }
+        }
     }
 
     private handleRowData(details: TreeExecutionDetails, rootRow: RowNode, afterColumnsChanged: boolean): void {
@@ -163,17 +178,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private invalidateNode(node: TreeNode): void {
-        // If rowNodesOrderChanged, we don't invalidate the node, as we need to evaluate the whole tree.
-        // If the row node order changed in transactions, the whole tree need to be re-evaluated, as we do not receive
-        // update events for order changed only if the data does not change.
-        // We receive only update events if the rowNode.data reference changes.
-        // See ImmutableService.createTransactionForRowData for more details.
-        if (!this.rowNodesOrderChanged) {
-            node.invalidate();
-        }
-    }
-
     /** Transactional add/update */
     private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
         if (rows) {
@@ -220,7 +224,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         for (let level = 0; level <= stop; ++level) {
             const node: TreeNode = parent.upsertKey(path[level]);
             if (level >= stop) {
-                this.invalidateNode(node);
+                node.invalidate();
                 return node;
             }
             parent = node;
@@ -244,7 +248,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 if (prevNode.parent) {
                     prevNode.parent.childrenChanged = true;
                 }
-                this.invalidateNode(prevNode);
+                prevNode.invalidate();
             }
         }
 
@@ -272,7 +276,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (invalidate) {
-            this.invalidateNode(node);
+            node.invalidate();
         }
 
         this.rowsPendingDestruction?.delete(newRow); // This row is not deleted.
@@ -300,7 +304,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (invalidate) {
-            this.invalidateNode(node);
+            node.invalidate();
         }
     }
 
@@ -308,7 +312,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     private commitTree(details: TreeExecutionDetails) {
         const root = this.root;
 
-        this.commitChildren(details, root);
+        this.commitInvalidatedChildren(details, root);
 
         if (root.childrenChanged) {
             root.updateChildrenAfterGroup();
@@ -328,25 +332,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         this.commitDestroyedRows();
     }
 
-    private commitChildren(details: TreeExecutionDetails, parent: TreeNode): void {
-        if (this.rowNodesOrderChanged) {
-            // If the row node order changed in transactions, the whole tree need to be re-evaluated, as we do not receive
-            // update events for order changed only if the data does not change.
-            // We receive only update events if the rowNode.data reference changes.
-            // See ImmutableService.createTransactionForRowData for more details.
-            for (const child of parent.enumChildren()) {
-                this.commitChild(details, parent, child);
+    /** Calls commitChild for each invalidated child, recursively. We commit only the invalidated paths. */
+    private commitInvalidatedChildren(details: TreeExecutionDetails, parent: TreeNode): void {
+        while (true) {
+            const child = parent.dequeueInvalidated();
+            if (child === null) {
+                break;
             }
-        } else {
-            // We process only the invalidated paths
-            while (true) {
-                const child = parent.dequeueInvalidated();
-                if (child === null) {
-                    break;
-                }
-                if (child.parent === parent) {
-                    this.commitChild(details, parent, child);
-                }
+            if (child.parent === parent) {
+                this.commitChild(details, parent, child);
             }
         }
     }
@@ -362,7 +356,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         this.commitNodePreOrder(parent, node);
-        this.commitChildren(details, node);
+        this.commitInvalidatedChildren(details, node);
         this.commitNodePostOrder(details, parent, node);
     }
 
@@ -374,7 +368,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             node.setRow(row);
         } else {
             // If we have a list of duplicates we need to be sure that those are sorted by positionInRootChildren
-            if (node.duplicateRows && this.rowNodesOrderChanged) {
+            if (node.duplicateRows) {
                 row = node.sortDuplicateRows();
             }
         }
