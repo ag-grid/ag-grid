@@ -283,12 +283,12 @@ export class ClientSideNodeManager {
 
     private sanitizeAddIndex(addIndex: number | null | undefined): number {
         const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
-        if (typeof addIndex !== 'number' || addIndex > allChildrenCount) {
+        if (typeof addIndex !== 'number' || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
             return allChildrenCount; // Append
         }
 
-        if (addIndex < 0) {
-            return 0; // Negative index, add at the start
+        if (addIndex <= 0) {
+            return 0; // Negative index, prepend
         }
 
         // Ensure index is a whole number and not a floating point.

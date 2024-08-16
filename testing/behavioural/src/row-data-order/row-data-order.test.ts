@@ -479,6 +479,9 @@ describe('ag-grid rows-ordering', () => {
                 { addIndex: -1, add: [{ id: '8', x: 8 }] },
                 { addIndex: rowData.length + 3, add: [{ id: '9', x: 9 }] },
                 { addIndex: rowData.length + 10, add: [{ id: '10', x: 10 }] },
+                { addIndex: Number.NEGATIVE_INFINITY, add: [{ id: '0', x: 11 }] },
+                { addIndex: Number.POSITIVE_INFINITY, add: [{ id: '12', x: 12 }] },
+                { addIndex: Number.NaN, add: [{ id: '13', x: 13 }] },
             ],
             api
         );
@@ -486,6 +489,7 @@ describe('ag-grid rows-ordering', () => {
         const allRowData = getAllRowData(verifyPositionInRootChildren(api));
 
         expect(allRowData).toEqual([
+            { id: '0', x: 11 },
             { id: '8', x: 8 },
             { id: '1', x: 1 },
             { id: '2', x: 2 },
@@ -496,6 +500,8 @@ describe('ag-grid rows-ordering', () => {
             { id: '5', x: 5 },
             { id: '9', x: 9 },
             { id: '10', x: 10 },
+            { id: '12', x: 12 },
+            { id: '13', x: 13 },
         ]);
     });
 });
