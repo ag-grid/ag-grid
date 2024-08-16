@@ -4,6 +4,7 @@ import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
+import { SELECTION_VALIDATORS } from './selectionValidations';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -31,41 +32,41 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 
-    enableFillHandle: { version: '32.1', message: 'Use `selectionOptions.handle` instead.' },
-    enableRangeHandle: { version: '32.1', message: 'Use `selectionOptions.handle` instead.' },
-    enableRangeSelection: { version: '32.1', message: 'Use `selectionOptions.mode = "cell"` instead.' },
+    enableFillHandle: { version: '32.2', message: 'Use `selectionOptions.handle` instead.' },
+    enableRangeHandle: { version: '32.2', message: 'Use `selectionOptions.handle` instead.' },
+    enableRangeSelection: { version: '32.2', message: 'Use `selectionOptions.mode = "cell"` instead.' },
     rowSelection: {
-        version: '32.1',
+        version: '32.2',
         message: 'Use `selectionOptions.mode = "singleRow"` or `selectionOptions.mode = "multiRow" instead.',
     },
     suppressMultiRangeSelection: {
-        version: '32.1',
+        version: '32.2',
         message: 'Use `selectionOptions.suppressMultiRanges` instead.',
     },
     suppressClearOnFillReduction: {
-        version: '32.1',
+        version: '32.2',
         message: 'Use `selectionOptions.handle.suppressClearOnFillReduction` instead.',
     },
-    fillHandleDirection: { version: '32.1', message: 'Use `selectionOptions.handle.direction` instead.' },
-    fillOperation: { version: '32.1', message: 'Use `selectionOptions.handle.setFillValue` instead.' },
+    fillHandleDirection: { version: '32.2', message: 'Use `selectionOptions.handle.direction` instead.' },
+    fillOperation: { version: '32.2', message: 'Use `selectionOptions.handle.setFillValue` instead.' },
     suppressRowClickSelection: {
-        version: '32.1',
+        version: '32.2',
         message: 'Use `selectionOptions.suppressClickSelection` instead.',
     },
-    suppressRowDeselection: { version: '32.1', message: 'Use `selectionOptions.suppressDeselection` instead.' },
+    suppressRowDeselection: { version: '32.2', message: 'Use `selectionOptions.suppressDeselection` instead.' },
     rowMultiSelectWithClick: {
-        version: '32.1',
+        version: '32.2',
         message: 'Use `selectionOptions.enableMultiSelectWithClick` instead.',
     },
     groupSelectsChildren: {
-        version: '32.1',
+        version: '32.2',
         message: 'Use `selectionOptions.groupSelects = "descendants"` instead.',
     },
     groupSelectsFiltered: {
-        version: '32.1',
+        version: '32.2',
         message: 'Use `selectionOptions.groupSelects = "filteredDescendants"` instead.',
     },
-    isRowSelectable: { version: '32.1', message: 'Use `selectionOptions.isRowSelectable` instead.' },
+    isRowSelectable: { version: '32.2', message: 'Use `selectionOptions.isRowSelectable` instead.' },
 });
 
 // Leave untyped. so it can be inferred.
@@ -365,6 +366,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     defaultColDef: () => COL_DEF_VALIDATORS,
     defaultColGroupDef: () => COL_DEF_VALIDATORS,
     autoGroupColumnDef: () => COL_DEF_VALIDATORS,
+    controlsColDef: () => COL_DEF_VALIDATORS,
+
+    selection: () => SELECTION_VALIDATORS,
 });
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
