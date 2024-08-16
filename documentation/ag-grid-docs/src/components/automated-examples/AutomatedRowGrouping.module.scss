@@ -53,8 +53,6 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
 
     h2 {
         margin-bottom: $spacing-size-4;
-        font-weight: var(--font-weight-bold);
-        line-height: var(--line-height-ultra-tight);
     }
 
     p {
