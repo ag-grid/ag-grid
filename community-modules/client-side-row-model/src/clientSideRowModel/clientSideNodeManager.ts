@@ -229,29 +229,14 @@ export class ClientSideNodeManager {
         }
 
         const allLeafChildren = this.rootNode.allLeafChildren!;
-        const allChildrenCount = allLeafChildren.length;
-        let addIndex = rowDataTran.addIndex;
+        let addIndex = this.sanitizeAddIndex(rowDataTran.addIndex);
 
-        if (typeof addIndex !== 'number' || addIndex > allChildrenCount || Number.isNaN(addIndex)) {
-            addIndex = allChildrenCount;
-        }
-
-        if (addIndex < 0) {
-            addIndex = 0;
-        } else {
-            // Ensure index is a whole number and not a floating point.
-            // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
-            // If the array has an odd number of elements, the addIndex need to be rounded up.
-            // Consider that array.slice does round up internally, but we are setting this value to node.positionInRootChildren.
-            addIndex = Math.ceil(addIndex);
-        }
-
-        if (addIndex > 0 && allChildrenCount > 0) {
+        if (addIndex > 0 && allLeafChildren.length > 0) {
             // TODO: this code should not be here, see AG-12602
             // This was a fix for AG-6231, but is not the correct fix
             const isTreeData = this.gos.get('treeData');
             if (isTreeData) {
-                for (let i = 0; i < allChildrenCount; i++) {
+                for (let i = 0; i < allLeafChildren.length; i++) {
                     const node = allLeafChildren[i];
                     if (node?.rowIndex == addIndex - 1) {
                         addIndex = i + 1;
@@ -266,7 +251,7 @@ export class ClientSideNodeManager {
             this.createNode(item, this.rootNode, TOP_LEVEL, addIndex + index)
         );
 
-        if (addIndex < allChildrenCount) {
+        if (addIndex < allLeafChildren.length) {
             // Insert at the specified index
 
             const nodesBeforeIndex = allLeafChildren.slice(0, addIndex);
@@ -294,6 +279,23 @@ export class ClientSideNodeManager {
 
         // add new row nodes to the transaction add items
         result.rowNodeTransaction.add = newNodes;
+    }
+
+    private sanitizeAddIndex(addIndex: number | null | undefined): number {
+        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
+        if (typeof addIndex !== 'number' || addIndex > allChildrenCount) {
+            return allChildrenCount; // Append
+        }
+
+        if (addIndex < 0) {
+            return 0; // Negative index, add at the start
+        }
+
+        // Ensure index is a whole number and not a floating point.
+        // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
+        // If the array has an odd number of elements, the addIndex need to be rounded up.
+        // Consider that array.slice does round up internally, but we are setting this value to node.positionInRootChildren.
+        return Math.ceil(addIndex);
     }
 
     private executeRemove(

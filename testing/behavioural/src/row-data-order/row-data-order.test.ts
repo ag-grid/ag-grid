@@ -454,7 +454,7 @@ describe('ag-grid rows-ordering', () => {
         ]);
     });
 
-    test('addIndex is tolerant to floating point numbers', async () => {
+    test('addIndex is tolerant to floating point numbers, negative values, and values bigger than the array', async () => {
         const rowData = [
             { id: '1', x: 1 },
             { id: '2', x: 2 },
@@ -476,11 +476,15 @@ describe('ag-grid rows-ordering', () => {
             [
                 { addIndex: rowData.length / 2, add: [{ id: '7', x: 7 }] },
                 { addIndex: 1.5, add: [{ id: '6', x: 6 }] },
+                { addIndex: -1, add: [{ id: '8', x: 8 }] },
+                { addIndex: rowData.length + 6, add: [{ id: '9', x: 9 }] },
+                { addIndex: rowData.length + 10, add: [{ id: '10', x: 10 }] },
             ],
             api
         );
 
         const allRowData = getAllRowData(verifyPositionInRootChildren(api));
+        console.log(JSON.stringify(allRowData));
 
         expect(allRowData).toEqual([
             { id: '1', x: 1 },
@@ -488,8 +492,11 @@ describe('ag-grid rows-ordering', () => {
             { id: '6', x: 6 },
             { id: '3', x: 3 },
             { id: '7', x: 7 },
+            { id: '9', x: 9 },
             { id: '4', x: 4 },
+            { id: '8', x: 8 },
             { id: '5', x: 5 },
+            { id: '10', x: 10 },
         ]);
     });
 });
