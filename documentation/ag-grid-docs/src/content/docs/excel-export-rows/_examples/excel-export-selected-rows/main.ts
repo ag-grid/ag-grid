@@ -8,7 +8,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MenuModule]);
 
 const columnDefs: ColDef[] = [
-    { checkboxSelection: true, field: 'athlete', minWidth: 200 },
+    { field: 'athlete', minWidth: 200 },
     { field: 'country', minWidth: 200 },
     { headerName: 'Group', valueGetter: 'data.country.charAt(0)' },
     { field: 'sport', minWidth: 150 },
@@ -26,9 +26,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         flex: 1,
     },
-    suppressRowClickSelection: true,
     columnDefs: columnDefs,
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        headerCheckbox: false,
+    },
     onGridReady: (params: GridReadyEvent) => {
         (document.getElementById('selectedOnly') as HTMLInputElement).checked = true;
     },

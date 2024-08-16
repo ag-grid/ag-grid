@@ -14,6 +14,13 @@
             <button onclick="setSelectedToGroup('B')">Move to Group B</button>
             <button onclick="setSelectedToGroup('C')">Move to Group C</button>
         </div>
+        <div style="margin-bottom: 5px">
+            <label for="select-mode">Selection mode: </label>
+            <select id="select-mode" onchange="onSelectionModeChange()">
+                <option value="multiRow">multiRow</option>
+                <option value="cell">cell</option>
+            </select>
+        </div>
     </div>
     <div style="flex: 1 1 0px">
         <div id="myGrid" style="height: 100%" class="ag-theme-quartz"></div>

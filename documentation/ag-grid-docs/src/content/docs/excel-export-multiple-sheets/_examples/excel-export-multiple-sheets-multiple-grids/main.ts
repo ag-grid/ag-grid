@@ -85,7 +85,7 @@ const leftGridOptions: GridOptions = {
         minWidth: 100,
         filter: true,
     },
-    rowSelection: 'multiple',
+    selection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
     rowDragMultiRow: true,
     getRowId: (params: GetRowIdParams) => {
         return params.data.athlete;

@@ -47,7 +47,11 @@ const gridOptions: GridOptions = {
         // apply red to Ford cars
         'rag-red': (params) => params.data.make === 'Ford',
     },
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
 };
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

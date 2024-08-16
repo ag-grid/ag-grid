@@ -36,13 +36,11 @@ const gridOptions: GridOptions<IAccount> = {
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
-            rowSelection: 'multiple',
-            suppressRowClickSelection: true,
-            enableRangeSelection: true,
+            selection: { mode: 'multiRow', headerCheckbox: false, suppressClickSelection: true },
             pagination: true,
             paginationAutoPageSize: true,
             columnDefs: [
-                { field: 'callId', checkboxSelection: true },
+                { field: 'callId' },
                 { field: 'direction' },
                 { field: 'number', minWidth: 150 },
                 { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
