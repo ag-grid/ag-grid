@@ -55,6 +55,30 @@ The below example demonstrates copying the focused cell only when using row sele
 
 {% gridExampleRunner title="Suppress Copying Rows" name="suppress-copy-row" /%}
 
+## Mixed Copying Cell Ranges & Rows
+
+The copy operation copies the selected content in the following order of precedence:
+
+1. Cell Ranges (if [Range Selection](./cell-selection) is enabled)
+1. Row Selection (if [Row Selection](./row-selection) is enabled and `suppressCopyRowsToClipboard` is **not** enabled)
+1. Focused Cell
+
+When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it impossible for users to copy rows (as the selected cell range is copied by default). Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` makes it possible to copy the selected rows when only a single cell is selected via range selection.
+
+{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["suppressCopySingleCellRanges"] /%}
+
+In this mode, when multiple cells are selected via range selection, the cell range is copied and not the selected rows. This behaviour is not enabled by default since it can be confusing for the copy behaviour to change depending on how much is selected.
+
+The below example has range selection, row selection and `suppressCopySingleCellRanges` enabled.
+
+* Select a range by clicking & dragging on a cell.
+* Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}, paste into a text editor, observe that the range was copied.
+* Deselect this range by clicking on any cell
+* Select one or more rows by moving focus with the arrow keys and pressing the {% kbd "␣ Space" /%} key to toggle the row's selection.
+* Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}, paste into a text editor and observe that the rows were copied.
+
+{% gridExampleRunner title="Copying Mixed Ranges & Rows" name="copy-mixed" /%}
+
 ## Custom Clipboard Interaction
 
 If you want to do the copy to clipboard yourself (i.e. not use the grid's clipboard interaction) then implement the callback `sendToClipboard(params)`. Use this if you are in a non-standard web container that has a bespoke API for interacting with the clipboard. The callback gets the data to go into the clipboard, it's your job to call the bespoke API.
