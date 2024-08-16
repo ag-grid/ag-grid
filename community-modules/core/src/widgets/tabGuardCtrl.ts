@@ -222,7 +222,7 @@ export class TabGuardCtrl extends BeanStub {
             return indexA - indexB;
         });
 
-        focusableRange[up ? focusableRange.length - 1 : 0].focus();
+        focusableRange[up ? focusableRange.length - 1 : 0]?.focus();
     }
 
     private onFocusIn(e: FocusEvent): void {
