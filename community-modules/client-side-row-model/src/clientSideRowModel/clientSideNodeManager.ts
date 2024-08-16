@@ -239,14 +239,14 @@ export class ClientSideNodeManager {
         if (addIndex < 0) {
             addIndex = 0;
         } else {
-            // ensure index is a whole number and not a floating point.
-            // use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
-            // If the array has an odd number of elements, the index need to be rounded up.
-            // If we don't do this, we may end up with a positionInRootChildren not being an integer
+            // Ensure index is a whole number and not a floating point.
+            // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
+            // If the array has an odd number of elements, the addIndex need to be rounded up.
+            // Consider that array.slice does round up internally, but we are setting this value to node.positionInRootChildren.
             addIndex = Math.ceil(addIndex);
         }
 
-        if (addIndex > 0 && addIndex < allChildrenCount) {
+        if (addIndex > 0 && allChildrenCount > 0) {
             // TODO: this code should not be here, see AG-12602
             // This was a fix for AG-6231, but is not the correct fix
             const isTreeData = this.gos.get('treeData');
@@ -272,13 +272,13 @@ export class ClientSideNodeManager {
             const nodesBeforeIndex = allLeafChildren.slice(0, addIndex);
             const nodesAfterIndex = allLeafChildren.slice(addIndex, allLeafChildren.length);
 
-            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
-
             // update latter row indexes
-            const startIndex = nodesBeforeIndex.length + newNodes.length;
+            const nodesAfterIndexFirstIndex = nodesBeforeIndex.length + newNodes.length;
             nodesAfterIndex.forEach((node, index) => {
-                node.positionInRootChildren = startIndex + index;
+                node.positionInRootChildren = nodesAfterIndexFirstIndex + index;
             });
+
+            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
 
             // Mark the result as rows inserted
             result.rowsInserted = true;
