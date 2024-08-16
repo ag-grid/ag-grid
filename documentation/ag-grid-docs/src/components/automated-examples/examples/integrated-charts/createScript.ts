@@ -145,7 +145,7 @@ export const createScript = ({
                     colIndex: END_CELL_COL_INDEX,
                     rowIndex: END_CELL_ROW_INDEX,
                 },
-                menuItemPath: ['Chart Range', 'Bar', 'Stacked'],
+                menuItemPath: ['Chart Range', 'Line'],
                 tweenGroup,
                 scriptDebugger,
                 speed: 0.5,
@@ -177,7 +177,7 @@ export const createScript = ({
                 }
 
                 gridApi.createRangeChart({
-                    chartType: 'stackedBar',
+                    chartType: 'line',
                     cellRange: {
                         rowStartIndex: START_CELL_ROW_INDEX,
                         rowEndIndex: END_CELL_ROW_INDEX,
@@ -190,6 +190,34 @@ export const createScript = ({
 
         // Wait for chart toolbar pop up to show
         { type: 'wait', duration: 1000 },
+
+        // Select Stacked Bar Chart
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartSeriesButton',
+                targetParams: {
+                    groupTitle: 'Bar',
+                    seriesTitle: 'Stacked',
+                },
+                scrollOffsetY: -35,
+            },
+        },
+        { type: 'wait', duration: 1000 },
+
+        // Click on `Set Up` tab
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartToolPanelTab',
+                targetParams: {
+                    text: 'Set Up',
+                },
+            },
+        },
+        { type: 'wait', duration: 600 },
 
         // Change category to `Country`
         {
