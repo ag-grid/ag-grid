@@ -116,49 +116,6 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.onDragging(draggingEvent, true, true);
     }
 
-    public onDragLeave(): void {
-        this.ensureIntervalCleared();
-        this.clearHighlighted();
-        this.lastMovedInfo = null;
-    }
-
-    public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
-        if (columns) {
-            const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-            this.columnModel.setColsVisible(allowedCols, visible, source);
-        }
-    }
-
-    public onDragStop(): void {
-        this.onDragging(this.lastDraggingEvent!, false, true, true);
-        this.ensureIntervalCleared();
-        this.lastMovedInfo = null;
-    }
-
-    private checkCenterForScrolling(xAdjustedForScroll: number): void {
-        if (this.isCenterContainer) {
-            // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
-            // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            const centerCtrl = this.ctrlsService.get('center');
-            const firstVisiblePixel = centerCtrl.getCenterViewportScrollLeft();
-            const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
-
-            if (this.gos.get('enableRtl')) {
-                this.needToMoveRight = xAdjustedForScroll < firstVisiblePixel + 50;
-                this.needToMoveLeft = xAdjustedForScroll > lastVisiblePixel - 50;
-            } else {
-                this.needToMoveLeft = xAdjustedForScroll < firstVisiblePixel + 50;
-                this.needToMoveRight = xAdjustedForScroll > lastVisiblePixel - 50;
-            }
-
-            if (this.needToMoveLeft || this.needToMoveRight) {
-                this.ensureIntervalStarted();
-            } else {
-                this.ensureIntervalCleared();
-            }
-        }
-    }
-
     public onDragging(
         draggingEvent: DraggingEvent | null = this.lastDraggingEvent,
         fromEnter = false,
@@ -229,6 +186,25 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
     }
 
+    public onDragLeave(): void {
+        this.ensureIntervalCleared();
+        this.clearHighlighted();
+        this.lastMovedInfo = null;
+    }
+
+    public onDragStop(): void {
+        this.onDragging(this.lastDraggingEvent!, false, true, true);
+        this.ensureIntervalCleared();
+        this.lastMovedInfo = null;
+    }
+
+    public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
+        if (columns) {
+            const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
+            this.columnModel.setColsVisible(allowedCols, visible, source);
+        }
+    }
+
     private finishColumnMoving(attemptToPin: boolean = false): void {
         this.clearHighlighted();
 
@@ -272,6 +248,22 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         };
     }
 
+    private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
+        if (this.gos.get('enableRtl')) {
+            switch (hDirection) {
+                case HorizontalDirection.Left:
+                    return HorizontalDirection.Right;
+                case HorizontalDirection.Right:
+                    return HorizontalDirection.Left;
+                default:
+                    _errorOnce(`Unknown direction ${hDirection}`);
+                    return;
+            }
+        }
+
+        return hDirection;
+    }
+
     private highlightHoveredColumn(mouseX: number) {
         const targetColumn = this.columnModel
             .getCols()
@@ -298,37 +290,61 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
     }
 
-    private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
+    private clearHighlighted(): void {
+        if (!this.lastHighlightedColumn) {
+            return;
+        }
+
+        this.lastHighlightedColumn.column.setHighlighted(null);
+        this.lastHighlightedColumn = null;
+    }
+
+    private checkCenterForScrolling(xAdjustedForScroll: number): void {
+        if (!this.isCenterContainer) {
+            return;
+        }
+
+        // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
+        // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
+        const centerCtrl = this.ctrlsService.get('center');
+        const firstVisiblePixel = centerCtrl.getCenterViewportScrollLeft();
+        const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
+
         if (this.gos.get('enableRtl')) {
-            switch (hDirection) {
-                case HorizontalDirection.Left:
-                    return HorizontalDirection.Right;
-                case HorizontalDirection.Right:
-                    return HorizontalDirection.Left;
-                default:
-                    _errorOnce(`Unknown direction ${hDirection}`);
-            }
+            this.needToMoveRight = xAdjustedForScroll < firstVisiblePixel + 50;
+            this.needToMoveLeft = xAdjustedForScroll > lastVisiblePixel - 50;
         } else {
-            return hDirection;
+            this.needToMoveLeft = xAdjustedForScroll < firstVisiblePixel + 50;
+            this.needToMoveRight = xAdjustedForScroll > lastVisiblePixel - 50;
+        }
+
+        if (this.needToMoveLeft || this.needToMoveRight) {
+            this.ensureIntervalStarted();
+        } else {
+            this.ensureIntervalCleared();
         }
     }
 
     private ensureIntervalStarted(): void {
-        if (!this.movingIntervalId) {
-            this.intervalCount = 0;
-            this.failedMoveAttempts = 0;
-            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
-            this.dragAndDropService.setGhostIcon(this.needToMoveLeft ? 'left' : 'right', true);
+        if (this.movingIntervalId) {
+            return;
         }
+
+        this.intervalCount = 0;
+        this.failedMoveAttempts = 0;
+        this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
+        this.dragAndDropService.setGhostIcon(this.needToMoveLeft ? 'left' : 'right', true);
     }
 
     private ensureIntervalCleared(): void {
-        if (this.movingIntervalId) {
-            window.clearInterval(this.movingIntervalId);
-            this.movingIntervalId = null;
-            this.failedMoveAttempts = 0;
-            this.dragAndDropService.setGhostIcon(this.getIconName());
+        if (!this.movingIntervalId) {
+            return;
         }
+
+        window.clearInterval(this.movingIntervalId);
+        this.movingIntervalId = null;
+        this.failedMoveAttempts = 0;
+        this.dragAndDropService.setGhostIcon(this.getIconName());
     }
 
     private moveInterval(): void {
@@ -343,6 +359,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         let pixelsMoved: number | null = null;
         const scrollFeature = this.gridBodyCon.getScrollFeature();
+
         if (this.needToMoveLeft) {
             pixelsMoved = scrollFeature.scrollHorizontally(-pixelsToMove);
         } else if (this.needToMoveRight) {
@@ -394,15 +411,6 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         if (fromMoving) {
             this.dragAndDropService.nudge();
         }
-    }
-
-    private clearHighlighted(): void {
-        if (!this.lastHighlightedColumn) {
-            return;
-        }
-
-        this.lastHighlightedColumn.column.setHighlighted(null);
-        this.lastHighlightedColumn = null;
     }
 
     public override destroy(): void {
