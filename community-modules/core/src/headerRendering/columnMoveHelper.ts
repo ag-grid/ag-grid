@@ -342,14 +342,18 @@ function calculateValidMoves(params: {
     return validMoves;
 }
 
-export function normaliseX(
-    x: number,
-    pinned: ColumnPinnedType,
-    fromKeyboard: boolean,
-    gos: GridOptionsService,
-    ctrlsService: CtrlsService
-): number {
+export function normaliseX(params: {
+    x: number;
+    pinned?: ColumnPinnedType;
+    fromKeyboard?: boolean;
+    useScrollWidth?: boolean;
+    gos: GridOptionsService;
+    ctrlsService: CtrlsService;
+}): number {
+    const { pinned, fromKeyboard, gos, ctrlsService, useScrollWidth } = params;
     const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
+
+    let { x } = params;
 
     if (!eViewport) {
         return 0;
@@ -361,12 +365,17 @@ export function normaliseX(
 
     // flip the coordinate if doing RTL
     if (gos.get('enableRtl')) {
-        const clientWidth = eViewport.clientWidth;
-        x = clientWidth - x;
+        let containerWidth: number;
+        if (useScrollWidth) {
+            containerWidth = eViewport.scrollWidth;
+        } else {
+            containerWidth = eViewport.clientWidth;
+        }
+        x = containerWidth - x;
     }
 
     // adjust for scroll only if centre container (the pinned containers don't scroll)
-    if (pinned == null) {
+    if (pinned == null && !useScrollWidth) {
         x += ctrlsService.get('center').getCenterViewportScrollLeft();
     }
 

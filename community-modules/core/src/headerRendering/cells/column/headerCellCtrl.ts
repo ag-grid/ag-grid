@@ -147,7 +147,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const isRtl = gos.get('enableRtl');
         const isLeft = (hDirection === HorizontalDirection.Left) !== isRtl;
 
-        const xPosition = normaliseX(isLeft ? left - 20 : left + width + 20, pinned, true, gos, ctrlsService);
+        const xPosition = normaliseX({
+            x: isLeft ? left - 20 : left + width + 20,
+            pinned,
+            fromKeyboard: true,
+            gos,
+            ctrlsService,
+        });
         const headerPosition = this.focusService.getFocusedHeader();
 
         attemptMoveColumns({

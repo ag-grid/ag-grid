@@ -136,7 +136,14 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        const mouseX = normaliseX(draggingEvent.x, this.pinned, false, this.gos, this.ctrlsService);
+        const { pinned, gos, ctrlsService } = this;
+
+        const mouseX = normaliseX({
+            x: draggingEvent.x,
+            pinned,
+            gos,
+            ctrlsService,
+        });
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
@@ -265,12 +272,28 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private highlightHoveredColumn(mouseX: number) {
-        const targetColumn = this.columnModel
+        const { gos, ctrlsService, columnModel } = this;
+        const isRtl = gos.get('enableRtl');
+
+        let start: number | null = null;
+        let width: number | null = null;
+
+        const targetColumn = columnModel
             .getCols()
             .filter((col) => col.getPinned() === this.pinned)
             .find((col) => {
-                const start = col.getLeft()!;
-                const end = start + col.getActualWidth();
+                const left = col.getLeft()!;
+                width = col.getActualWidth();
+
+                start = normaliseX({
+                    x: isRtl ? left + width : left,
+                    pinned: col.getPinned(),
+                    useScrollWidth: true,
+                    gos,
+                    ctrlsService,
+                });
+
+                const end = start + width;
 
                 return start <= mouseX && end >= mouseX;
             });
@@ -279,15 +302,20 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             this.clearHighlighted();
         }
 
-        if (targetColumn) {
-            const left = targetColumn.getLeft();
-            const width = targetColumn.getActualWidth();
-
-            const position =
-                mouseX - left! < width / 2 ? ColumnHighlightPosition.Before : ColumnHighlightPosition.After;
-            targetColumn.setHighlighted(position);
-            this.lastHighlightedColumn = { column: targetColumn, position };
+        if (!targetColumn || start == null || width == null) {
+            return;
         }
+
+        let position: ColumnHighlightPosition;
+
+        if (mouseX - start < width / 2 !== isRtl) {
+            position = ColumnHighlightPosition.Before;
+        } else {
+            position = ColumnHighlightPosition.After;
+        }
+
+        targetColumn.setHighlighted(position);
+        this.lastHighlightedColumn = { column: targetColumn, position };
     }
 
     private clearHighlighted(): void {
