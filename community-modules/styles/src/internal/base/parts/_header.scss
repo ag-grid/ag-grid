@@ -130,6 +130,10 @@
         right: 0px;
     }
 
+    .ag-pinned-left-header .ag-header-highlight-after::after {
+        right: 1px;
+    }
+
     .ag-header-cell-resize {
         display: flex;
         align-items: center;

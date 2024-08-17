@@ -65,19 +65,30 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     public getIconName(): DragAndDropIcon {
         const columns = this.lastDraggingEvent?.dragItem.columns ?? [];
-        if (this.pinned) {
-            const isAValidCol = columns.some((col) => {
-                // Valid to move a locked pinned column in its matching pinned container.
-                return !col.getColDef().lockPinned || col.getPinned() === this.pinned;
-            });
-            return isAValidCol ? 'pinned' : 'notAllowed';
-        } else {
-            const isAValidCol = columns.some((col) => {
-                // Valid to move a lockPinned column as long as it is not pinned.
-                return !col.getColDef().lockPinned || !col.isPinned();
-            });
-            return isAValidCol ? 'move' : 'notAllowed';
+
+        for (const col of columns) {
+            const colPinned = col.getPinned();
+            // when the column is lockPinned, only moves within pinned section
+            if (col.getColDef().lockPinned) {
+                if (colPinned == this.pinned) {
+                    return 'move';
+                }
+                continue;
+            }
+            // if the column pinned state is the same as the container's, or
+            // when `unpinning` a column, set the icon to move
+            if (colPinned === this.pinned || !this.pinned) {
+                return 'move';
+            }
+
+            // moving an unpinned column to a pinned container
+            // set the icon to pinned
+            if (!colPinned && this.pinned) {
+                return 'pinned';
+            }
         }
+
+        return 'notAllowed';
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
@@ -107,6 +118,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     public onDragLeave(): void {
         this.ensureIntervalCleared();
+        this.clearHighlighted();
         this.lastMovedInfo = null;
     }
 
@@ -218,10 +230,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private finishColumnMoving(attemptToPin: boolean = false): void {
-        if (this.lastHighlightedColumn) {
-            this.lastHighlightedColumn.column.setHighlighted(null);
-            this.lastHighlightedColumn = null;
-        }
+        this.clearHighlighted();
 
         if (!this.lastMovedInfo) {
             return;
@@ -264,18 +273,18 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private highlightHoveredColumn(mouseX: number) {
-        const targetColumn = this.columnModel.getCols().find((col) => {
-            const start = col.getLeft()!;
-            const end = start + col.getActualWidth();
+        const targetColumn = this.columnModel
+            .getCols()
+            .filter((col) => col.getPinned() === this.pinned)
+            .find((col) => {
+                const start = col.getLeft()!;
+                const end = start + col.getActualWidth();
 
-            return start <= mouseX && end >= mouseX;
-        });
+                return start <= mouseX && end >= mouseX;
+            });
 
         if (this.lastHighlightedColumn?.column !== targetColumn) {
-            if (this.lastHighlightedColumn) {
-                this.lastHighlightedColumn.column.setHighlighted(null);
-                this.lastHighlightedColumn = null;
-            }
+            this.clearHighlighted();
         }
 
         if (targetColumn) {
@@ -387,11 +396,20 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
     }
 
+    private clearHighlighted(): void {
+        if (!this.lastHighlightedColumn) {
+            return;
+        }
+
+        this.lastHighlightedColumn.column.setHighlighted(null);
+        this.lastHighlightedColumn = null;
+    }
+
     public override destroy(): void {
         super.destroy();
 
         this.lastDraggingEvent = null;
-        this.lastHighlightedColumn = null;
+        this.clearHighlighted();
         this.lastMovedInfo = null;
     }
 }
