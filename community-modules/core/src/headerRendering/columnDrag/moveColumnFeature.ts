@@ -172,7 +172,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                     const toIndex = this.columnMoveService.getMoveTargetIndex(
                         params.allMovingColumns,
                         column,
-                        position === ColumnHighlightPosition.Before
+                        (position === ColumnHighlightPosition.Before) !== this.gos.get('enableRtl')
                     );
 
                     if (toIndex != null) {
