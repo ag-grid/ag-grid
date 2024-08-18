@@ -166,14 +166,21 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             } else if (finished) {
                 // only falls here when suppressMoveWhenColumnDragging is true
 
+                const isAttemptingToPin =
+                    this.needToMoveLeft ||
+                    this.needToMoveLeft ||
+                    this.failedMoveAttempts > 7 ||
+                    params.allMovingColumns.some((col) => col.getPinned() !== this.pinned);
+
                 const { column, position } = this.lastHighlightedColumn || {};
 
                 if (column && position != null) {
-                    const toIndex = this.columnMoveService.getMoveTargetIndex(
-                        params.allMovingColumns,
-                        column,
-                        (position === ColumnHighlightPosition.Before) !== this.gos.get('enableRtl')
-                    );
+                    const toIndex = this.columnMoveService.getMoveTargetIndex({
+                        currentColumns: params.allMovingColumns,
+                        lastHoveredColumn: column,
+                        isBefore: (position === ColumnHighlightPosition.Before) !== this.gos.get('enableRtl'),
+                        isAttemptingToPin,
+                    });
 
                     if (toIndex != null) {
                         this.lastMovedInfo = {
@@ -183,12 +190,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                     }
                 }
 
-                const attemptToPin =
-                    this.needToMoveLeft ||
-                    this.needToMoveLeft ||
-                    this.failedMoveAttempts > 7 ||
-                    params.allMovingColumns.some((col) => col.getPinned() !== this.pinned);
-                this.finishColumnMoving(attemptToPin);
+                this.finishColumnMoving(isAttemptingToPin);
             }
         }
     }

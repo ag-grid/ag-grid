@@ -106,11 +106,11 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             return;
         }
 
-        const targetIndex: number | null = columnMoveService.getMoveTargetIndex(
+        const targetIndex: number | null = columnMoveService.getMoveTargetIndex({
             currentColumns,
             lastHoveredColumn,
-            isBefore
-        );
+            isBefore,
+        });
 
         if (targetIndex != null) {
             this.columnMoveService.moveColumns(currentColumns, targetIndex, 'toolPanelUi');

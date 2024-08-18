@@ -79,16 +79,19 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         return this.doesOrderPassRules(proposedColumnOrder);
     }
 
-    public getMoveTargetIndex(
-        currentColumns: AgColumn[] | null,
-        lastHoveredColumn: AgColumn,
-        isBefore: boolean
-    ): number | null {
+    public getMoveTargetIndex(params: {
+        currentColumns: AgColumn[] | null;
+        lastHoveredColumn: AgColumn;
+        isBefore: boolean;
+        isAttemptingToPin?: boolean;
+    }): number | null {
+        const { currentColumns, lastHoveredColumn, isBefore, isAttemptingToPin } = params;
         if (!lastHoveredColumn || !currentColumns) {
             return null;
         }
-        // if the target col is in the cols to be moved, no index to move.
-        if (currentColumns.indexOf(lastHoveredColumn) !== -1) {
+
+        // if the target col is in the cols to be moved, no index to move, unless we are trying to pin.
+        if (!isAttemptingToPin && currentColumns.indexOf(lastHoveredColumn) !== -1) {
             return null;
         }
 
