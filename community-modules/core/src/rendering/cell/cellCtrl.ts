@@ -48,10 +48,6 @@ export interface ICellComp {
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
-    setIncludeSelection(include: boolean): void;
-    setIncludeRowDrag(include: boolean): void;
-    setIncludeDndSource(include: boolean): void;
-
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
@@ -75,7 +71,11 @@ export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 export class CellCtrl extends BeanStub {
     public static DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
 
-    private instanceId: CellCtrlInstanceId;
+    public readonly instanceId: CellCtrlInstanceId;
+    public readonly colIdSanitised: string;
+    public readonly includeSelection: boolean;
+    public readonly includeDndSource: boolean;
+    public readonly includeRowDrag: boolean;
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
@@ -98,10 +98,6 @@ export class CellCtrl extends BeanStub {
     private cellPosition: CellPosition;
     private editing: boolean;
 
-    private includeSelection: boolean;
-    private includeDndSource: boolean;
-    private includeRowDrag: boolean;
-    private colIdSanitised: string;
     private isAutoHeight: boolean;
 
     private suppressRefreshCell = false;
@@ -123,6 +119,11 @@ export class CellCtrl extends BeanStub {
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
 
         this.colIdSanitised = _escapeString(this.column.getId())!;
+
+        const colDef = column.getColDef();
+        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
         this.createCellPosition();
         this.addFeatures();
@@ -270,7 +271,6 @@ export class CellCtrl extends BeanStub {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
-        this.setupControlComps();
 
         this.setupAutoHeight(eCellWrapper);
 
@@ -370,12 +370,6 @@ export class CellCtrl extends BeanStub {
         return this.column.getColDef().cellAriaRole ?? 'gridcell';
     }
 
-    public getInstanceId(): CellCtrlInstanceId {
-        return this.instanceId;
-    }
-    public getColumnIdSanitised(): string {
-        return this.colIdSanitised;
-    }
     public isCellRenderer(): boolean {
         const colDef = this.column.getColDef();
         return colDef.cellRenderer != null || colDef.cellRendererSelector != null;
@@ -402,17 +396,6 @@ export class CellCtrl extends BeanStub {
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.cellRangeFeature?.refreshHandle();
-    }
-
-    private setupControlComps(): void {
-        const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
-        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
-        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
-
-        this.cellComp.setIncludeSelection(this.includeSelection);
-        this.cellComp.setIncludeDndSource(this.includeDndSource);
-        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
     }
 
     public isForceWrapper(): boolean {
