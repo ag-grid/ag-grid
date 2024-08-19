@@ -68,7 +68,3 @@ export const markTreeRowCommitted = (row: TreeRow): void => {
 export const clearTreeRowFlags = (row: TreeRow): void => {
     row.treeNodeFlags = 0;
 };
-
-/** Compare two RowNode by the TreeNode rowPosition. Assumes TreeNode to be set and valid. */
-export const positionInRootChildrenComparer = (a: RowNode, b: RowNode): number =>
-    a.positionInRootChildren - b.positionInRootChildren;

@@ -234,7 +234,7 @@ describe('ag-grid tree duplicate keys', () => {
         `);
     });
 
-    test('positionInRootChildren of duplicates matters, and when a duplicate over many duplicates is moved the right one is used as main row', async () => {
+    test('indexInRowData of duplicates matters, and when a duplicate over many duplicates is moved the right one is used as main row', async () => {
         const rowData = [
             { id: 'xRow-0', orgHierarchy: ['A', 'B'] },
             { id: 'xRow-1', orgHierarchy: ['A', 'B'] },

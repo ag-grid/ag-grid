@@ -4,7 +4,7 @@ import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 
-import { cachedJSONObjects } from '../../test-utils';
+import { cachedJSONObjects, getRootAllLeafChildrenData } from '../../test-utils';
 import { TreeDiagram } from './tree-test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
@@ -268,7 +268,66 @@ describe('ag-grid tree data', () => {
         `);
     });
 
-    test('tree data with id can be reordered', async () => {
+    test('tree data with only leafs can be reordered (same references)', async () => {
+        const rowData1 = cachedJSONObjects.array([
+            { id: '0', orgHierarchy: ['0'] },
+            { id: '1', orgHierarchy: ['1'] },
+            { id: '2', orgHierarchy: ['2'] },
+            { id: '3', orgHierarchy: ['3'] },
+            { id: '4', orgHierarchy: ['4'] },
+            { id: '5', orgHierarchy: ['5'] },
+        ]);
+
+        const rowData2 = cachedJSONObjects.array([
+            { id: '1', orgHierarchy: ['1'] },
+            { id: '5', orgHierarchy: ['5'] },
+            { id: '2', orgHierarchy: ['2'] },
+            { id: '4', orgHierarchy: ['4'] },
+            { id: '0', orgHierarchy: ['0'] },
+            { id: '3', orgHierarchy: ['3'] },
+        ]);
+
+        const api = createMyGrid({
+            columnDefs: [],
+            autoGroupColumnDef: { headerName: 'x' },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: [],
+            getDataPath,
+            getRowId: (params) => params.data.id,
+        });
+
+        api.setGridOption('rowData', rowData1);
+
+        expect(getRootAllLeafChildrenData(api)).toEqual(rowData1);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── 0 LEAF id:0
+            ├── 1 LEAF id:1
+            ├── 2 LEAF id:2
+            ├── 3 LEAF id:3
+            ├── 4 LEAF id:4
+            └── 5 LEAF id:5
+        `);
+
+        api.setGridOption('rowData', rowData2);
+
+        expect(getRootAllLeafChildrenData(api)).toEqual(rowData2);
+
+        new TreeDiagram(api).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── 1 LEAF id:1
+            ├── 5 LEAF id:5
+            ├── 2 LEAF id:2
+            ├── 4 LEAF id:4
+            ├── 0 LEAF id:0
+            └── 3 LEAF id:3
+        `);
+    });
+
+    test('tree data with id can be reordered (same references)', async () => {
         const rowData1 = cachedJSONObjects.array([
             { id: '0', orgHierarchy: ['0'] },
             { id: 'd', orgHierarchy: ['A', 'B', 'C', 'D'] },
@@ -296,7 +355,7 @@ describe('ag-grid tree data', () => {
             { id: 'd', orgHierarchy: ['A', 'B', 'C', 'D'] },
         ]);
 
-        const gridOptions: GridOptions = {
+        const api = createMyGrid({
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -305,12 +364,12 @@ describe('ag-grid tree data', () => {
             rowData: [],
             getDataPath,
             getRowId: (params) => params.data.id,
-        };
-
-        const api = createMyGrid(gridOptions);
+        });
 
         api.setGridOption('rowData', rowData1);
         api.setGridOption('rowData', rowData1);
+
+        expect(getRootAllLeafChildrenData(api)).toEqual(rowData1);
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -327,6 +386,8 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', rowData2);
 
+        expect(getRootAllLeafChildrenData(api)).toEqual(rowData2);
+
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── 0 LEAF id:0
@@ -340,7 +401,10 @@ describe('ag-grid tree data', () => {
             └── H LEAF id:h
         `);
 
+        api.setGridOption('rowData', []);
         api.setGridOption('rowData', rowData3);
+
+        expect(getRootAllLeafChildrenData(api)).toEqual(rowData3);
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID

@@ -20,9 +20,13 @@ import {
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;
 
+interface ClientSideRowNode extends RowNode {
+    indexInRowData: number;
+}
+
 interface RootNode extends RowNode {
-    allLeafChildren: RowNode[] | null;
-    childrenAfterGroup: RowNode[] | null;
+    allLeafChildren: ClientSideRowNode[] | null;
+    childrenAfterGroup: ClientSideRowNode[] | null;
 }
 
 export interface ClientSideUpdateRowDataResult {
@@ -149,47 +153,43 @@ export class ClientSideNodeManager {
 
     /**
      * Used by the immutable service, after updateRowData, after updating with a generated transaction to
-     * apply the order as specified by the the new data. We use positionInRootChildren to determine the order of the rows.
+     * apply the order as specified by the the new data. We use indexInRowData to determine the order of the rows.
+     * Time complexity is O(n) where n is the number of rows/rowData
      * @returns true if the order changed, otherwise false
      */
     public updateRowOrderFromRowData<TData>(rowData: TData[]): boolean {
         const rows = this.rootNode.allLeafChildren;
-        if (!rows) {
-            return false;
-        }
+        const rowsLength = rows?.length ?? 0;
+        const rowsOutOfOrder = new Map<TData, ClientSideRowNode>();
+        let firstIndexOutOfOrder = -1;
+        let lastIndexOutOfOrder = -1;
 
-        // A map to lookup the index of a row data
-        const newRowDataIndexMap = new Map<TData, number>();
-
-        // Note: we are not covering the edge case in which row data contains duplicate instances,
-        // for example `const data0 = { id: '0' }, rowData = [data0, data0];`. In this case,
-        // positionInRootChildren will be incorrect as there will be duplicates and it does not
-        // represent the index of the row in root.allLeafChildren array.
-        // At the moment this does not pose any issue,
-        // as positionInRootChildren is not used for anything that could break if this happen.
-        // The user will already receive a warning for duplicate id in any case.
-        // If we ever need to fix this, just recompute the positionInRootChildren at the end if there are duplicates.
-
-        rowData.forEach((data: TData, index) => {
-            newRowDataIndexMap.set(data, index);
-        });
-
-        let orderChanged = false;
-        for (let rowIdx = 0, rowsLength = rows.length; rowIdx < rowsLength; ++rowIdx) {
-            const row = rows[rowIdx];
-            const newPosition = newRowDataIndexMap.get(row.data)!;
-            row.positionInRootChildren = newPosition; // has to match the index of the new row data
-            if (newPosition !== rowIdx) {
-                orderChanged = true; // not in order, we need to sort.
+        // Step 1: Build the rowsOutOfOrder mapping data => row for the rows out of order, in O(n)
+        for (let i = 0; i < rowsLength; ++i) {
+            const row = rows![i];
+            const data = row.data;
+            if (data !== rowData[i]) {
+                // The row is not in the correct position
+                if (lastIndexOutOfOrder < 0) {
+                    firstIndexOutOfOrder = i; // First row out of order was found
+                }
+                lastIndexOutOfOrder = i; // Last row out of order
+                rowsOutOfOrder.set(data, row); // A new row out of order was found, add it to the map
             }
         }
-
-        if (orderChanged) {
-            // Order changed, we need to sort by positionInRootChildren
-            rows.sort((rowA, rowB) => rowA.positionInRootChildren - rowB.positionInRootChildren);
+        if (firstIndexOutOfOrder < 0) {
+            return false; // No rows out of order
         }
 
-        return orderChanged;
+        // Step 2: Overwrite the rows out of order we find in the map, in O(n)
+        for (let i = firstIndexOutOfOrder; i <= lastIndexOutOfOrder; ++i) {
+            const row = rowsOutOfOrder.get(rowData[i]);
+            if (row !== undefined) {
+                rows![i] = row; // Out of order row found, overwrite it
+                row.indexInRowData = i; // Update its position
+            }
+        }
+        return true; // The order changed
     }
 
     public isRowCountReady(): boolean {
@@ -235,18 +235,22 @@ export class ClientSideNodeManager {
         }
 
         const allLeafChildren = this.rootNode.allLeafChildren!;
-        let addIndex = this.sanitizeAddIndex(rowDataTran.addIndex);
+        let addIndex = allLeafChildren.length;
 
-        if (addIndex > 0 && allLeafChildren.length > 0) {
-            // TODO: this code should not be here, see AG-12602
-            // This was a fix for AG-6231, but is not the correct fix
-            const isTreeData = this.gos.get('treeData');
-            if (isTreeData) {
-                for (let i = 0; i < allLeafChildren.length; i++) {
-                    const node = allLeafChildren[i];
-                    if (node?.rowIndex == addIndex - 1) {
-                        addIndex = i + 1;
-                        break;
+        if (typeof rowDataTran.addIndex === 'number') {
+            addIndex = this.sanitizeAddIndex(rowDataTran.addIndex);
+
+            if (addIndex > 0) {
+                // TODO: this code should not be here, see AG-12602
+                // This was a fix for AG-6231, but is not the correct fix
+                const isTreeData = this.gos.get('treeData');
+                if (isTreeData) {
+                    for (let i = 0; i < allLeafChildren.length; i++) {
+                        const node = allLeafChildren[i];
+                        if (node?.rowIndex == addIndex - 1) {
+                            addIndex = i + 1;
+                            break;
+                        }
                     }
                 }
             }
@@ -265,9 +269,9 @@ export class ClientSideNodeManager {
 
             // update latter row indexes
             const nodesAfterIndexFirstIndex = nodesBeforeIndex.length + newNodes.length;
-            nodesAfterIndex.forEach((node, index) => {
-                node.positionInRootChildren = nodesAfterIndexFirstIndex + index;
-            });
+            for (let index = 0, length = nodesAfterIndex.length; index < length; ++index) {
+                nodesAfterIndex[index].indexInRowData = nodesAfterIndexFirstIndex + index;
+            }
 
             this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
 
@@ -287,16 +291,16 @@ export class ClientSideNodeManager {
         result.rowNodeTransaction.add = newNodes;
     }
 
-    private sanitizeAddIndex(addIndex: number | null | undefined): number {
+    private sanitizeAddIndex(addIndex: number): number {
         const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
-        if (typeof addIndex !== 'number' || addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
+        if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
             return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
         }
 
         // Ensure index is a whole number and not a floating point.
         // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
         // If the array has an odd number of elements, the addIndex need to be rounded up.
-        // Consider that array.slice does round up internally, but we are setting this value to node.positionInRootChildren.
+        // Consider that array.slice does round up internally, but we are setting this value to node.indexInRowData.
         return Math.ceil(addIndex);
     }
 
@@ -343,7 +347,7 @@ export class ClientSideNodeManager {
 
         // after rows have been removed, all following rows need the position index updated
         this.rootNode.allLeafChildren?.forEach((node, idx) => {
-            node.positionInRootChildren = idx;
+            node.indexInRowData = idx;
         });
 
         const sibling: RootNode | null = this.rootNode.sibling;
@@ -405,9 +409,9 @@ export class ClientSideNodeManager {
         return rowNode || null;
     }
 
-    private createNode(dataItem: any, parent: RowNode, level: number, positionInRootChildren: number): RowNode {
-        const node = new RowNode(this.beans);
-        node.positionInRootChildren = positionInRootChildren;
+    private createNode(dataItem: any, parent: RowNode, level: number, indexInRowData: number): RowNode {
+        const node: ClientSideRowNode = new RowNode(this.beans);
+        node.indexInRowData = indexInRowData;
 
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);

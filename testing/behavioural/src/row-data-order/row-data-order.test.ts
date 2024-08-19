@@ -1,11 +1,12 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
+import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 import { executeTransactionsAsync, getAllRowData, verifyPositionInRootChildren } from '../test-utils';
 
 describe('ag-grid rows-ordering', () => {
     let consoleWarnSpy: jest.SpyInstance;
+    let consoleErrorSpy: jest.SpyInstance;
 
     function createMyGrid(gridOptions: GridOptions) {
         return createGrid(document.getElementById('myGrid')!, gridOptions);
@@ -21,11 +22,13 @@ describe('ag-grid rows-ordering', () => {
 
     beforeEach(() => {
         consoleWarnSpy?.mockRestore();
+        consoleErrorSpy?.mockRestore();
         resetGrids();
     });
 
     afterEach(() => {
         consoleWarnSpy?.mockRestore();
+        consoleErrorSpy?.mockRestore();
     });
 
     test('row order is the same as row data (without id)', async () => {
@@ -386,8 +389,141 @@ describe('ag-grid rows-ordering', () => {
         ]);
     });
 
+    describe('complex transaction', () => {
+        test('ag-grid tree sync complex transaction', async () => {
+            const row0 = { id: '0', x: '0' };
+            const row1a = { id: '1', x: '1a' };
+            const row2 = { id: '2', x: '2' };
+            const row3 = { id: '3', x: '3' };
+            const row4 = { id: '4', x: '4' };
+            const row5a = { id: '5', x: '5a' };
+            const row6a = { id: '6', x: '6a' };
+
+            const row1b = { id: '1', x: '1b' };
+            const row5b = { id: '5', x: '5b' };
+            const row6b = { id: '6', x: '6b' };
+
+            const rowData = [row0, row1a];
+            const transactions: RowDataTransaction[] = [
+                { add: [row2] },
+                { update: [row1b], add: [row3, row4] },
+                { remove: [row1b], add: [row5a, row6a] },
+                { remove: [row2], update: [row6b] },
+                { update: [row5b] },
+            ];
+
+            const api = createMyGrid({
+                columnDefs: [{ field: 'x' }],
+                animateRows: false,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            let allData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allData).toEqual([row0, row1a]);
+
+            api.applyTransaction(transactions[0]);
+
+            allData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allData).toEqual([row0, row1a, row2]);
+
+            api.applyTransaction(transactions[1]);
+
+            allData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allData).toEqual([row0, row1b, row2, row3, row4]);
+
+            api.applyTransaction(transactions[2]);
+
+            allData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allData).toEqual([row0, row2, row3, row4, row5a, row6a]);
+
+            api.applyTransaction(transactions[3]);
+
+            allData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allData).toEqual([row0, row3, row4, row5a, row6b]);
+
+            api.applyTransaction(transactions[4]);
+
+            allData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allData).toEqual([row0, row3, row4, row5b, row6b]);
+        });
+
+        test('ag-grid tree async complex transaction', async () => {
+            const row0 = { id: '0', x: '0' };
+            const row1a = { id: '1', x: '1a' };
+            const row2 = { id: '2', x: '2' };
+            const row3 = { id: '3', x: '3' };
+            const row4 = { id: '4', x: '4' };
+            const row5a = { id: '5', x: '5a' };
+            const row6a = { id: '6', x: '6a' };
+
+            const row1b = { id: '1', x: '1b' };
+            const row5b = { id: '5', x: '5b' };
+            const row6b = { id: '6', x: '6b' };
+
+            const rowData = [row0, row1a];
+            const transactions: RowDataTransaction[] = [
+                { add: [row2] },
+                { update: [row1b], add: [row3, row4] },
+                { remove: [row1b], add: [row5a, row6a] },
+                { remove: [row2], update: [row6b] },
+                { update: [row5b] },
+            ];
+
+            const api = createMyGrid({
+                columnDefs: [{ field: 'x' }],
+                animateRows: false,
+                rowData,
+                getRowId: (params) => params.data.id,
+            });
+
+            await executeTransactionsAsync(transactions, api);
+
+            const allData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allData).toEqual([row0, row3, row4, row5b, row6b]);
+        });
+    });
+
     describe('edge cases', () => {
-        test('duplicate IDs do not cause positionInRootChildren to be invalid', async () => {
+        test('updating rows that do not exists do not add them', async () => {
+            const rowData1 = [
+                { id: '1', x: 1 },
+                { id: '2', x: 2 },
+            ];
+
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'x' }],
+                animateRows: false,
+                rowData: rowData1,
+                getRowId: (params) => params.data.id,
+            };
+
+            const api = createMyGrid(gridOptions);
+
+            consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+            api.applyTransaction({ update: [{ id: 'jhDjSi3Ec-3', x: 3 }] });
+
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                'AG Grid: could not find row id=jhDjSi3Ec-3, data item was not found for this id'
+            );
+
+            await executeTransactionsAsync({ update: [{ id: 'jhDjSi3Ec-4', x: 4 }] }, api);
+
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                'AG Grid: could not find row id=jhDjSi3Ec-4, data item was not found for this id'
+            );
+
+            consoleErrorSpy.mockRestore();
+
+            const allRowData = getAllRowData(verifyPositionInRootChildren(api));
+            expect(allRowData).toEqual([
+                { id: '1', x: 1 },
+                { id: '2', x: 2 },
+            ]);
+        });
+
+        test('duplicate IDs do not cause indexInRowData to be invalid', async () => {
             const rowData1 = [
                 { id: '1', x: 1 },
                 { id: '2', x: 2 },

@@ -45,6 +45,9 @@ const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>(
 export interface ITreeNode {
     /** The key of this node */
     readonly key: string;
+
+    /** Updated during commit to be the same as row.indexInRowData */
+    readonly oldIndexInRowData: number;
 }
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
@@ -152,9 +155,9 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     /**
      * This is the index of this row in rootNode.allLeafChildren. It need to be kept consistent.
-     * Initially is -1, that means, not in row data.
+     * If is -1, the row is not in rootNode.allLeafChildren, for example, the root node or filler nodes for tree data.
      */
-    public positionInRootChildren: number = -1;
+    public readonly indexInRowData: number = -1;
 
     /**
      * All lowest level nodes beneath this node, no groups.

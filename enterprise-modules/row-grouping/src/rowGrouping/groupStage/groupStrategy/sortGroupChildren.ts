@@ -26,8 +26,8 @@ export function sortGroupChildren(rowNodes: RowNode[] | null | undefined): boole
 }
 
 function compareGroupChildren(nodeA: RowNode, nodeB: RowNode): number {
-    const positionA = nodeA.positionInRootChildren;
-    const positionB = nodeB.positionInRootChildren;
+    const positionA = nodeA.indexInRowData;
+    const positionB = nodeB.indexInRowData;
 
     const aHasIndex = positionA >= 0;
     const bHasIndex = positionB >= 0;
