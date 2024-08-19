@@ -76,22 +76,43 @@ const gridOptions = {
 
 Note that we have enabled `suppressClickSelection` in this example, to prevent users from affecting selection with row clicks.
 
-## Disabling Click Selection
+## Prevent Click Selection & Deselection
 
-When checkbox selection is enabled, in many cases it makes sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked.
+The `selection.suppressClickSelection` configuration setting controls the suppression of the default selection behaviour when clicking.
 
-This behaviour is enabled in the example below using the `selection.suppressClickSelection` flag.
+{% interfaceDocumentation interfaceName="SingleRowSelectionOptions" names=["suppressClickSelection"] config={"description": ""}/%}
+
+In some cases, such as when checkbox selection is enabled, it can make sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked. 
+This can be achieved by setting `suppressClickSelection` to `true` or `'suppressClick'`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     selection: { 
         mode: 'singleRow',
-        suppressClickSelection: true
+        suppressClickSelection: 'suppressClick',
     }
 }
 ```
 
+It may also be necessary to prevent users from deselecting rows via {% kbd "^ Ctrl" /%}+click. This can be achieved by setting `suppressClickSelection` to `true` or `'suppressDeselection'`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'singleRow',
+        suppressClickSelection: 'suppressDeselection',
+    }
+}
+```
+
+All of the configuration states for this option can be explored in the example below. Use the select element to switch between modes.
+
 {% gridExampleRunner title="Disable Click Selection" name="suppress-click-selection" /%}
+
+{% note %}
+Note that deselection is still possible when checkboxes are enabled by clicking a selected checkbox.
+{% /note %}
+
 
 ## Deselecting a Row
 When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
@@ -100,27 +121,6 @@ This is also possible when checkboxes are enabled, as long as `selection.suppres
 Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
 
 {% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
-
-## Prevent Row Deselection
-
-In some circumstances you may want to prevent users from deselecting a selected row. This can be done using the `selection.suppressDeselection` flag.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    selection: { 
-        mode: 'singleRow',
-        suppressDeselection: true,
-    }
-}
-```
-
-Observe that in the example below, it is not possible to deselect a row. Only by selecting another row will the currently selected row be deselected. That is, there is always one selected row.
-
-{% gridExampleRunner title="Supress Deselection" name="suppress-deselection" /%}
-
-{% note %}
-Note that deselection is still possible when checkboxes are enabled by clicking a selected checkbox.
-{% /note %}
 
 ## Configure Selectable Rows
 

@@ -27,7 +27,10 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: { mode: 'singleRow', suppressClickSelection: true },
+    selection: {
+        mode: 'singleRow',
+        suppressClickSelection: true,
+    },
 };
 
 // setup the grid after the page has finished loading
@@ -39,3 +42,12 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
 });
+
+function onSelectSupressClickSelection() {
+    const value = document.querySelector<HTMLSelectElement>('#select-suppress')?.value;
+
+    gridApi.setGridOption('selection', {
+        mode: 'singleRow',
+        suppressClickSelection: value === 'true' ? true : (value as any),
+    });
+}
