@@ -18,6 +18,10 @@ import { attemptMoveColumns, normaliseX } from '../columnMoveHelper';
 import type { DropListener } from './bodyDropTarget';
 
 const MOVE_FAIL_THRESHOLD = 7;
+const SCROLL_MOVE_WIDTH = 100;
+const SCROLL_GAP_NEEDED_BEFORE_MOVE = SCROLL_MOVE_WIDTH / 2;
+const SCROLL_ACCELERATION_RATE = 5;
+const SCROLL_TIME_INTERVAL = 100;
 
 export class MoveColumnFeature extends BeanStub implements DropListener {
     private columnModel: ColumnModel;
@@ -352,11 +356,11 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
 
         if (this.gos.get('enableRtl')) {
-            this.needToMoveRight = xAdjustedForScroll < firstVisiblePixel + 50;
-            this.needToMoveLeft = xAdjustedForScroll > lastVisiblePixel - 50;
+            this.needToMoveRight = xAdjustedForScroll < firstVisiblePixel + SCROLL_GAP_NEEDED_BEFORE_MOVE;
+            this.needToMoveLeft = xAdjustedForScroll > lastVisiblePixel - SCROLL_GAP_NEEDED_BEFORE_MOVE;
         } else {
-            this.needToMoveLeft = xAdjustedForScroll < firstVisiblePixel + 50;
-            this.needToMoveRight = xAdjustedForScroll > lastVisiblePixel - 50;
+            this.needToMoveLeft = xAdjustedForScroll < firstVisiblePixel + SCROLL_GAP_NEEDED_BEFORE_MOVE;
+            this.needToMoveRight = xAdjustedForScroll > lastVisiblePixel - SCROLL_GAP_NEEDED_BEFORE_MOVE;
         }
 
         if (this.needToMoveLeft || this.needToMoveRight) {
@@ -373,7 +377,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         this.intervalCount = 0;
         this.failedMoveAttempts = 0;
-        this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
+        this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), SCROLL_TIME_INTERVAL);
         this.dragAndDropService.setGhostIcon(this.needToMoveLeft ? 'left' : 'right', true);
     }
 
@@ -390,12 +394,12 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     private moveInterval(): void {
         // the amounts we move get bigger at each interval, so the speed accelerates, starting a bit slow
-        // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
+        // and getting faster. this is to give smoother user experience. we max at `SCROLL_MOVE_WIDTH` to limit the speed.
         let pixelsToMove: number;
         this.intervalCount++;
-        pixelsToMove = 10 + this.intervalCount * 5;
-        if (pixelsToMove > 100) {
-            pixelsToMove = 100;
+        pixelsToMove = 10 + this.intervalCount * SCROLL_ACCELERATION_RATE;
+        if (pixelsToMove > SCROLL_MOVE_WIDTH) {
+            pixelsToMove = SCROLL_MOVE_WIDTH;
         }
 
         let pixelsMoved: number | null = null;
