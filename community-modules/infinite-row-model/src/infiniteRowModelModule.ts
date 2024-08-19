@@ -8,12 +8,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { InfiniteRowModel } from './infiniteRowModel/infiniteRowModel';
-import {
-    getInfiniteRowCount,
-    isLastRowIndexKnown,
-    purgeInfiniteCache,
-    refreshInfiniteCache,
-} from './infiniteRowModel/infiniteRowModelApi';
+import { getInfiniteRowCount, purgeInfiniteCache, refreshInfiniteCache } from './infiniteRowModel/infiniteRowModelApi';
 import { VERSION } from './version';
 
 export const InfiniteRowModelCoreModule = _defineModule({
@@ -32,7 +27,6 @@ export const InfiniteRowModelApiModule = _defineModule<_InfiniteRowModelGridApi>
         refreshInfiniteCache,
         purgeInfiniteCache,
         getInfiniteRowCount,
-        isLastRowIndexKnown,
     },
     dependantModules: [InfiniteRowModelCoreModule, _SsrmInfiniteSharedApiModule],
 });
