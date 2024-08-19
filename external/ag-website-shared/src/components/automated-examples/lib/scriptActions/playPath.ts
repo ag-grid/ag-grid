@@ -4,7 +4,7 @@ import { AG_ROW_HOVER_CLASSNAME, AG_ROW_SELECTOR } from '../constants';
 import { getOffset } from '../dom';
 import { type Point } from '../geometry';
 import { type PathItem } from '../pathRecorder';
-import { clearAllRowHighlights } from '../scriptActions/clearAllRowHighlights';
+import { clearAllRowHighlights } from './clearAllRowHighlights';
 import { moveTarget } from './move';
 
 export interface MouseDataItem {

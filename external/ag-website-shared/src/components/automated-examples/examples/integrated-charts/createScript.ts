@@ -1,6 +1,6 @@
-import { isMobile } from '@components/automated-examples/lib/isMobile';
-import { mouseClick } from '@components/automated-examples/lib/scriptActions/mouseClick';
-import { waitFor } from '@components/automated-examples/lib/scriptActions/waitFor';
+import { isMobile } from '@ag-website-shared/components/automated-examples/lib/isMobile';
+import { mouseClick } from '@ag-website-shared/components/automated-examples/lib/scriptActions/mouseClick';
+import { waitFor } from '@ag-website-shared/components/automated-examples/lib/scriptActions/waitFor';
 import type { Group } from '@tweenjs/tween.js';
 
 import type { GridApi } from 'ag-grid-community';
