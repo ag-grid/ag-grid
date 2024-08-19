@@ -153,15 +153,6 @@ const mobileDefaultCols = [
         field: 'name',
         width: 200,
         cellClass: 'v-align',
-        checkboxSelection: (params) => {
-            // we put checkbox on the name if we are not doing grouping
-            return params.api.getRowGroupColumns().length === 0;
-        },
-        headerCheckboxSelection: (params) => {
-            // we put checkbox on the name if we are not doing grouping
-            return params.api.getRowGroupColumns().length === 0;
-        },
-        headerCheckboxSelectionFilteredOnly: true,
     },
     {
         field: 'language',
@@ -227,15 +218,6 @@ const desktopDefaultCols = [
                 width: 200,
                 enableRowGroup: true,
                 cellClass: 'v-align',
-                checkboxSelection: (params) => {
-                    // we put checkbox on the name if we are not doing grouping
-                    return params.api.getRowGroupColumns().length === 0;
-                },
-                headerCheckboxSelection: (params) => {
-                    // we put checkbox on the name if we are not doing grouping
-                    return params.api.getRowGroupColumns().length === 0;
-                },
-                headerCheckboxSelectionFilteredOnly: true,
             },
             {
                 field: 'language',
