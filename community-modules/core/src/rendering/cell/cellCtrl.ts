@@ -446,10 +446,10 @@ export class CellCtrl extends BeanStub {
         key: string | null = null,
         cellStartedEdit = false,
         event: KeyboardEvent | MouseEvent | null = null
-    ): void {
+    ): boolean {
         const { editService } = this.beans;
         if (!this.isCellEditable() || this.editing || !editService) {
-            return;
+            return true;
         }
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
@@ -458,10 +458,10 @@ export class CellCtrl extends BeanStub {
             this.onCellCompAttachedFuncs.push(() => {
                 this.startEditing(key, cellStartedEdit, event);
             });
-            return;
+            return true;
         }
 
-        editService.startEditing(this, key, cellStartedEdit, event);
+        return editService.startEditing(this, key, cellStartedEdit, event);
     }
 
     public setEditing(editing: boolean, compDetails: UserCompDetails | undefined): void {
@@ -850,20 +850,20 @@ export class CellCtrl extends BeanStub {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(key?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
+    public startRowOrCellEdit(key?: string | null, event: KeyboardEvent | MouseEvent | null = null): boolean {
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
             this.onCellCompAttachedFuncs.push(() => {
                 this.startRowOrCellEdit(key, event);
             });
-            return;
+            return true;
         }
 
         if (this.beans.gos.get('editType') === 'fullRow') {
-            this.rowCtrl.startRowEditing(key, this);
+            return this.rowCtrl.startRowEditing(key, this);
         } else {
-            this.startEditing(key, true, event);
+            return this.startEditing(key, true, event);
         }
     }
 
