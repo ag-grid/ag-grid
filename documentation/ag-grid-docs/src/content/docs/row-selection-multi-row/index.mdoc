@@ -5,25 +5,31 @@ description: "Configure selection of multiple rows, checkbox selection, and grou
 
 Enable users to select many rows at once within a grid.
 
-## Enabling Multi-Row Selection
+## Using Multi-Row Selection
 
-Multi-row selection is configured by setting `selection.mode` to `'multiRow'`. 
+Multi-row selection is configured by setting the selection mode to `'multiRow'`:
 
-The following example illustrates a basic multi-row selection configuration. 
-Checkboxes are enabled by default. Click checkboxes to select or deselect a row. Alternatively, hold {% kbd "^ Ctrl" /%} and then click to add rows to the selection. 
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'multiRow' 
+    }
+}
+```
+
+The following example illustrates a basic multi-row selection configuration. Checkboxes are enabled by default. 
+Click checkboxes to select or deselect a row. Alternatively, hold {% kbd "^ Ctrl" /%} and then click to add rows to the selection. 
 Users can hold {% kbd "⇧ Shift" /%} and then click to add a range of adjacent rows to the selection.
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
 
-{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" config={"description":""} /%}
-
-## Row Range Selection
+### Row Range Selection
 
 In `'multiRow'` mode, ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on rows. 
 Clicking a row with {% kbd "⇧ Shift" /%} held down will select all rows between that row and the previously selected row.
 This behaviour also applies when [Checkbox Selection](#checkbox-selection) is enabled, and in [Group Selection](./grouping-row-selection).
 
-### Extending, truncating and inverting a selected range
+#### Extending, truncating and inverting a selected range
 
 Once selected, a given range can be extended by holding {% kbd "⇧ Shift" /%} and clicking another row. 
 The range will be expanded to select every row between the last clicked row, and the first row in the range.
@@ -45,6 +51,18 @@ Use the example below to explore row range behaviour. For example, follow these 
     - Observe that the range of rows between "Allison Schmitt" and "Cindy Klassen" is added to the selection.
 
 {% gridExampleRunner title="Row Range Selection" name="range-selection" /%}
+
+#### Deselecting Ranges
+Typically, rows are deselected individually by holding {% kbd "^ Ctrl" /%} and clicking the row or unchecking the checkbox. Users may also deselect multiple rows at once by using holding {% kbd "⇧ Shift" /%} and clicking a row. 
+For example, deselecting a single row by holding {% kbd "^ Ctrl" /%} and clicking, then deselecting another row by holding {% kbd "⇧ Shift" /%} and clicking, will deselect all rows between the two. 
+Note that this deselection occurs whether or not the row is within the original range of selected rows.
+
+To illustrate this, in the example below:
+1. Deselect "Ryan Lochte"
+1. Hold {% kbd "⇧ Shift" /%} and select "Dara Torres"
+1. Observe that only "Missy Franklin" and "Cindy Klassen" remain selected
+
+{% gridExampleRunner title="Deselecting Ranges" name="bulk-deselection" /%}
 
 ## Checkbox Selection
 
@@ -75,10 +93,28 @@ For those rows that don't satisfy this criterion, a checkbox will be rendered in
 When `selection.checkboxes` is a function that returns `false`, or when selection of a particular row is disabled (see [Configure Selectable Rows](#configure-selectable-rows)), the grid will display a disabled checkbox in that row by default. 
 Alternatively, you may configure the grid to hide the checkbox in these rows. This can be done by setting `selection.hideDisabledCheckboxes` to `true`.
 
-{% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="checkbox-selection-disable-checkboxes" /%}
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'multiRow',
+        hideDisabledCheckboxes: true
+    }
+}
+```
+
+{% gridExampleRunner title="Checkbox Selection: Hiding Disabled Checkboxes" name="checkbox-selection-disable-checkboxes" /%}
 
 ### Disabling Checkboxes
-To prevent row checkboxes from being rendered at all, set `selection.checkboxes = false`.
+To prevent row checkboxes from being rendered at all, set `selection.checkboxes` to `false`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'multiRow',
+        checkboxes: false,
+    }
+}
+```
 
 {% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="turn-off-checkboxes" /%}
 
@@ -87,6 +123,15 @@ To prevent row checkboxes from being rendered at all, set `selection.checkboxes 
 When checkbox selection is enabled, in many cases it makes sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked.
 
 This behaviour is enabled in the example below using the `selection.suppressClickSelection` flag.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'multiRow',
+        suppressClickSelection: true
+    }
+}
+```
 
 {% gridExampleRunner title="Disable Click Selection" name="suppress-click-selection" /%}
 
@@ -99,7 +144,14 @@ Bulk selection has three modes of operation which can be configured by setting t
 - `'filtered'`: Bulk selection will select all rows that satisfy the currently active filter.
 - `'currentPage'`: Bulk selection will select all rows that satisfy the currently active filter on the current page.
 
-{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["selectAll"] config={"description":""} /%}
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'multiRow',
+        selectAll: 'filtered'
+    }
+}
+```
 
 The example below demonstrates the three different modes of bulk selection. Use the select element to control which mode is being used:
 
@@ -108,29 +160,26 @@ The example below demonstrates the three different modes of bulk selection. Use 
 ### Disabling the Header Checkbox
 
 The header checkbox is displayed by default when selection is enabled in `'multiRow'` mode. 
-To disable the header checkbox, set `selection.headerCheckbox = false`.
+To disable the header checkbox, set `selection.headerCheckbox` to `false`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'multiRow',
+        headerCheckbox: false
+    }
+}
+```
 
 ## Deselection
 
-### Deselecting a Row without Checkboxes
+### Deselecting a Row
 When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
 When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
 This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
 Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
 
 {% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
-
-### Deselecting Ranges
-Typically, rows are deselected individually by holding {% kbd "^ Ctrl" /%} and clicking the row or unchecking the checkbox. Users may also deselect multiple rows at once by using holding {% kbd "⇧ Shift" /%} and clicking a row. 
-For example, deselecting a single row by holding {% kbd "^ Ctrl" /%} and clicking, then deselecting another row by holding {% kbd "⇧ Shift" /%} and clicking, will deselect all rows between the two. 
-Note that this deselection occurs whether or not the row is within the original range of selected rows.
-
-To illustrate this, in the example below:
-1. Deselect "Ryan Lochte"
-1. Hold {% kbd "⇧ Shift" /%} and select "Dara Torres"
-1. Observe that only "Missy Franklin" and "Cindy Klassen" remain selected
-
-{% gridExampleRunner title="Deselecting Ranges" name="bulk-deselection" /%}
 
 ### Prevent Row Deselection
 
@@ -188,6 +237,12 @@ This can be accomplished by setting the `selection.enableMultiSelectWithClick` f
 Click multiple rows in the example below without pressing any keyboard keys to explore this behaviour.
 
 {% gridExampleRunner title="Multi-select without Keyboard modifiers" name="multi-select-with-click" /%}
+
+## API Reference
+
+Here you can find a full list of configuration options available in `'multiRow'` mode.
+
+{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" config={"description":""} /%}
 
 ## Enterprise Features
 

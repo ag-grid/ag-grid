@@ -5,15 +5,13 @@ description: "Configure single row selection, with and without checkboxes"
 
 Enable users to select a single row within a grid.
 
-## Enabling Single Row Selection
+## Using Single Row Selection
 
 Single row selection is configured by setting `selection.mode` to `'singleRow'`.
 
 The following example illustrates a basic single row selection configuration.
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
-
-{% interfaceDocumentation interfaceName="SingleRowSelectionOptions" config={"description":""} /%}
 
 ## Checkbox Selection
 
@@ -40,13 +38,31 @@ Rows for which the `selection.checkboxes` function returns `false` may still be 
 When `selection.checkboxes` is a function that returns `false`, or when [selection of a particular row is disabled](#configure-selectable-rows), by default the grid will display a disabled checkbox in that row. Alternatively, you may configure the grid to hide the checkbox in such rows.
 This can be done by setting `selection.hideDisabledCheckboxes` to `true`. In the example below, the rows where `year` does not fall between 2002 and 2010 have their checkboxes hidden.
 
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'singleRow',
+        hideDisabledCheckboxes: true
+    }
+}
+```
+
 {% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="checkbox-selection-disabled-checkboxes" /%}
 
 Note that in this example we've also set `selection.suppressClickSelection = true` to force selection to be done via the checkboxes.
 
 ### Disabling Checkboxes
 
-To prevent any checkboxes from being rendered, set `selection.checkboxes = false`.
+To prevent any checkboxes from being rendered, set `selection.checkboxes` to `false`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'singleRow',
+        checkboxes: false,
+    }
+}
+```
 
 {% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="turn-off-checkboxes" /%}
 
@@ -55,6 +71,15 @@ To prevent any checkboxes from being rendered, set `selection.checkboxes = false
 When checkbox selection is enabled, in many cases it makes sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked.
 
 This behaviour is enabled in the example below using the `selection.suppressClickSelection` flag.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'singleRow',
+        suppressClickSelection: true
+    }
+}
+```
 
 {% gridExampleRunner title="Disable Click Selection" name="suppress-click-selection" /%}
 
@@ -99,6 +124,12 @@ Rows for which `isRowSelectable` return `false` cannot be selected at all, wheth
 
 Note that in the example above the checkboxes for unselectable rows are displayed as disabled.
 See [Hiding Disabled Checkboxes](#hiding-disabled-checkboxes) for instructions on how to prevent them being displayed.
+
+## API Reference
+
+Here you can find a full list of configuration options available in `'singleRow'` mode.
+
+{% interfaceDocumentation interfaceName="SingleRowSelectionOptions" config={"description":""} /%}
 
 ## Enterprise Features
 

@@ -32,7 +32,7 @@ The following methods are available on the `GridApi` for managing cell selection
 
 {% apiDocumentation source="grid-api/api.json" section="selection" names=["getCellRanges", "clearRangeSelection", "addCellRange"] /%}
 
-Cell ranges are normally bounded by a start and end row. However it is also possible to define a range unbounded by rows (i.e. to contain all rows). For an unbounded range, do not provide start or end row positions.
+Cell ranges are normally bounded by a start and end row. However it is also possible to define a range unbounded by rows (i.e. to contain all rows). When adding an unbounded range via `gridApi.addCellRange`, do not provide start or end row positions.
 
 Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned can be either `'top'` (row is in pinned top section), `'bottom'` (row is in pinned bottom section) or `null` (row is in the main body). See [Row Pinning](./row-pinning/) for information on row pinning.
 
