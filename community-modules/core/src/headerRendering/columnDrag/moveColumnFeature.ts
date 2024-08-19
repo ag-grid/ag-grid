@@ -17,6 +17,8 @@ import { _exists, _missing } from '../../utils/generic';
 import { attemptMoveColumns, normaliseX } from '../columnMoveHelper';
 import type { DropListener } from './bodyDropTarget';
 
+const MOVE_FAIL_THRESHOLD = 7;
+
 export class MoveColumnFeature extends BeanStub implements DropListener {
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
@@ -194,7 +196,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const isAttemptingToPin =
             this.needToMoveLeft ||
             this.needToMoveLeft ||
-            this.failedMoveAttempts > 7 ||
+            this.failedMoveAttempts > MOVE_FAIL_THRESHOLD ||
             allMovingColumns.some((col) => col.getPinned() !== this.pinned);
 
         const { column, position } = this.lastHighlightedColumn || {};
@@ -404,11 +406,11 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             this.onDragging(this.lastDraggingEvent);
             this.failedMoveAttempts = 0;
         } else {
-            // we count the failed move attempts. if we fail to move 7 times, then we pin the column.
+            // we count the failed move attempts. if we fail to move `MOVE_FAIL_THRESHOLD` times, then we pin the column.
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
 
-            if (this.failedMoveAttempts <= 8) {
+            if (this.failedMoveAttempts <= MOVE_FAIL_THRESHOLD + 1) {
                 return;
             }
 
