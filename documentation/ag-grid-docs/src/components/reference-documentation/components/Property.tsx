@@ -207,6 +207,13 @@ export const Property: FunctionComponent<{
                             <div className={styles.propertyMeta}>
                                 <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
                                     <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
+                                    <a
+                                        href={`#${idName}`}
+                                        className="docs-header-icon"
+                                        aria-label={`Link to '${name}' property`}
+                                    >
+                                        <Icon name="link" />
+                                    </a>
                                 </h6>
                                 <div
                                     title={typeUrl && isObject ? getInterfaceName(name) : propertyType}

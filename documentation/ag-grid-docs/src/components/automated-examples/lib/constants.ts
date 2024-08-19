@@ -31,6 +31,10 @@ export const AG_CHART_SERIES_GROUP_TITLE_SELECTOR =
     '.ag-chart-settings-mini-wrapper:not(.ag-hidden) .ag-charts-settings-group-title';
 
 export const AG_CHART_TOOL_PANEL_TAB_SELECTOR = '.ag-chart-menu-panel .ag-tab';
+export const AG_CHART_TOOL_PANEL_CLOSE_BUTTON_SELECTOR = '.ag-chart-tabbed-menu-close-button';
+
+export const AG_CHART_THEMES_CONTAINER_SELECTOR = '.ag-chart-settings-card-selector';
+export const AG_CHART_THEME_SELECTOR = '.ag-chart-settings-card-item';
 
 export const AG_GROUP_SELECTOR = '.ag-group';
 export const AG_GROUP_ITEM_SELECTOR = '.ag-group-item';

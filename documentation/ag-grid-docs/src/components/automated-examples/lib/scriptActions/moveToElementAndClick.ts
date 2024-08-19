@@ -48,10 +48,15 @@ export async function moveToElementAndClick({
     const scrollContainer = (element.get()?.closest(AG_SCROLLABLE_CONTAINER_SELECTOR) ||
         element.get()?.closest(AG_CHART_TAB)) as HTMLElement;
     if (scrollContainer && !isInViewport({ element: element.get()!, threshold: 0.5, scrollContainer })) {
-        element.get()?.scrollIntoView({
+        const elRect = element.get()!.getBoundingClientRect();
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const top = elRect.top - containerRect.top + scrollContainer.scrollTop;
+
+        scrollContainer.scrollTo({
+            top,
             behavior: 'smooth',
-            block: 'nearest',
         });
+
         await waitFor(400);
 
         // Recalculate element, because of scroll

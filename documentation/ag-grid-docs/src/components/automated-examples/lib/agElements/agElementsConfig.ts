@@ -4,6 +4,9 @@ import {
     AG_CHARTS_CANVAS,
     AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
     AG_CHART_SERIES_GROUP_TITLE_SELECTOR,
+    AG_CHART_THEMES_CONTAINER_SELECTOR,
+    AG_CHART_THEME_SELECTOR,
+    AG_CHART_TOOL_PANEL_CLOSE_BUTTON_SELECTOR,
     AG_CHART_TOOL_PANEL_TAB_SELECTOR,
     AG_COLUMN_DROP_SELECTOR,
     AG_GROUP_CONTRACTED,
@@ -63,7 +66,9 @@ export interface AgElementsConfigItem {
     popup: AgElementBySelectorConfig;
     columnDropArea: AgElementBySelectorConfig;
     chartMenuToolbarButton: AgElementBySelectorConfig;
+    chartMenuToolPanelCloseButton: AgElementBySelectorConfig;
     chartsCanvas: AgElementBySelectorConfig;
+    chartThemesContainer: AgElementBySelectorConfig;
 
     contextMenuItem: AgElementByInnerTextConfig;
     chartToolPanelTab: AgElementByInnerTextConfig;
@@ -103,6 +108,9 @@ export interface AgElementsConfigItem {
         inputLabel: string;
         index?: number;
     }>;
+    chartThemeItem: AgElementByFindConfig<{
+        index: number;
+    }>;
 }
 export type AgElementName = keyof AgElementsConfigItem;
 
@@ -120,8 +128,14 @@ export const agElementsConfig: AgElementsConfigItem = {
     chartMenuToolbarButton: {
         selector: AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,
     },
+    chartMenuToolPanelCloseButton: {
+        selector: AG_CHART_TOOL_PANEL_CLOSE_BUTTON_SELECTOR,
+    },
     chartsCanvas: {
         selector: AG_CHARTS_CANVAS,
+    },
+    chartThemesContainer: {
+        selector: AG_CHART_THEMES_CONTAINER_SELECTOR,
     },
 
     // Find by inner text
@@ -347,6 +361,26 @@ export const agElementsConfig: AgElementsConfigItem = {
             }
 
             return labelEl.closest(AG_TEXT_FIELD)?.querySelector(AG_TEXT_FIELD_INPUT) || undefined;
+        },
+    },
+    chartThemeItem: {
+        find: ({ getElement, params }) => {
+            const { index } = params;
+
+            const chartThemesContainerEl = getElement('chartThemesContainer')?.get();
+            if (!chartThemesContainerEl) {
+                console.error(`No chart themes container found`);
+                return;
+            }
+
+            const chartThemes = chartThemesContainerEl.querySelectorAll(AG_CHART_THEME_SELECTOR);
+            const chartTheme = chartThemes[index] as HTMLElement;
+            if (!chartTheme) {
+                console.error(`Chart theme with index ${index} not found`);
+                return;
+            }
+
+            return chartTheme;
         },
     },
 };

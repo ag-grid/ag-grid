@@ -277,7 +277,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (!this.values) {
                 this.values = valueList;
                 if (this.isPickerDisplayed) {
-                    this.listComponent.selectValue(this.value);
+                    const hasRefreshed = this.listComponent.selectValue(this.value);
+                    if (!hasRefreshed) {
+                        this.listComponent.refresh();
+                    }
                 }
             } else {
                 this.listComponent.refresh(true);
