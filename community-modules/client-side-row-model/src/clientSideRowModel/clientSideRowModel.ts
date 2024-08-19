@@ -705,8 +705,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             case ClientSideRowModelSteps.EVERYTHING:
                 this.doRowGrouping(
                     params.rowNodeTransactions,
-                    params.rowNodeOrder,
                     changedPath,
+                    !!params.rowNodesOrderChanged,
                     !!params.afterColumnsChanged
                 );
             /* eslint-disable no-fallthrough */
@@ -1086,16 +1086,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private doRowGrouping(
         rowNodeTransactions: RowNodeTransaction[] | undefined,
-        rowNodeOrder: { [id: string]: number } | undefined,
         changedPath: ChangedPath,
+        rowNodesOrderChanged: boolean,
         afterColumnsChanged: boolean
     ) {
         if (this.groupStage) {
             if (rowNodeTransactions) {
                 this.groupStage.execute({
                     rowNode: this.rootNode,
-                    rowNodeTransactions: rowNodeTransactions,
-                    rowNodeOrder: rowNodeOrder,
+                    rowNodeTransactions,
+                    rowNodesOrderChanged,
                     changedPath: changedPath,
                 });
             } else {
@@ -1146,8 +1146,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.pivotStage?.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
-    public getCopyOfNodesMap(): { [id: string]: RowNode } {
-        return this.nodeManager.getCopyOfNodesMap();
+    public getNodeManager(): ClientSideNodeManager {
+        return this.nodeManager;
     }
 
     public getRowNode(id: string): RowNode | undefined {
@@ -1226,24 +1226,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
-        // The rowGroup stage uses rowNodeOrder if order was provided. if we didn't pass 'true' to
-        // commonUpdateRowData, using addIndex would have no effect when grouping.
-        let forceRowNodeOrder = false;
+        let orderChanged = false;
+        this.rowDataTransactionBatch?.forEach((tranItem) => {
+            const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(tranItem.rowDataTransaction);
+            if (rowsInserted) {
+                orderChanged = true;
+            }
+            rowNodeTrans.push(rowNodeTransaction);
+            if (tranItem.callback) {
+                callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTransaction));
+            }
+        });
 
-        if (this.rowDataTransactionBatch) {
-            this.rowDataTransactionBatch.forEach((tranItem) => {
-                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, undefined);
-                rowNodeTrans.push(rowNodeTran);
-                if (tranItem.callback) {
-                    callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
-                }
-                if (typeof tranItem.rowDataTransaction.addIndex === 'number') {
-                    forceRowNodeOrder = true;
-                }
-            });
-        }
-
-        this.commonUpdateRowData(rowNodeTrans, undefined, forceRowNodeOrder);
+        this.commonUpdateRowData(rowNodeTrans, orderChanged);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1263,57 +1258,42 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.applyAsyncTransactionsTimeout = undefined;
     }
 
-    public updateRowData(
-        rowDataTran: RowDataTransaction,
-        rowNodeOrder?: { [id: string]: number }
-    ): RowNodeTransaction | null {
+    /**
+     * Used to apply transaction changes.
+     * Called by gridApi & rowDragFeature
+     */
+    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
         this.valueCache.onDataChanged();
 
-        const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
+        const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 
-        // if doing immutableData, addIndex is never present. however if doing standard transaction, and user
-        // provided addIndex, then this is used in updateRowData. However if doing Enterprise, then the rowGroup
-        // stage also uses the
-        const forceRowNodeOrder = typeof rowDataTran.addIndex === 'number';
+        this.commonUpdateRowData([rowNodeTransaction], rowsInserted);
 
-        this.commonUpdateRowData([rowNodeTran], rowNodeOrder, forceRowNodeOrder);
-
-        return rowNodeTran;
+        return rowNodeTransaction;
     }
 
-    private createRowNodeOrder(): { [id: string]: number } | undefined {
-        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
-        if (suppressSortOrder) {
-            return;
-        }
-
-        const orderMap: { [id: string]: number } = {};
-
-        if (this.rootNode && this.rootNode.allLeafChildren) {
-            for (let index = 0; index < this.rootNode.allLeafChildren.length; index++) {
-                const node = this.rootNode.allLeafChildren[index];
-                orderMap[node.id!] = index;
-            }
-        }
-
-        return orderMap;
+    /**
+     * Used to apply generated transaction
+     */
+    public afterImmutableDataChange(rowNodeTransaction: RowNodeTransaction, rowNodesOrderChanged: boolean): void {
+        this.commonUpdateRowData([rowNodeTransaction], rowNodesOrderChanged);
     }
 
-    // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(
-        rowNodeTrans: RowNodeTransaction[],
-        rowNodeOrder: { [id: string]: number } | undefined,
-        forceRowNodeOrder: boolean
-    ): void {
+    /**
+     * Common to:
+     * - executeBatchUpdateRowData (batch transactions)
+     * - updateRowData (single transaction)
+     * - afterImmutableDataChange (generated transaction)
+     *
+     * @param rowNodeTrans - the transactions to apply
+     * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
+     */
+    private commonUpdateRowData(rowNodeTransactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
         if (!this.hasStarted) {
             return;
         }
 
         const animate = !this.gos.get('suppressAnimationFrame');
-
-        if (forceRowNodeOrder) {
-            rowNodeOrder = this.createRowNodeOrder();
-        }
 
         this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
@@ -1321,8 +1301,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
-            rowNodeTransactions: rowNodeTrans,
-            rowNodeOrder: rowNodeOrder,
+            rowNodeTransactions,
+            rowNodesOrderChanged,
             keepRenderedRows: true,
             keepEditingRows: true,
             animate,

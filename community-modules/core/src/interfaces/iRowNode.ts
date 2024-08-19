@@ -162,6 +162,13 @@ interface BaseRowNode<TData = any> {
     /** Used by server side row model, `true` if this row node failed a load. */
     failedLoad: boolean | undefined;
 
+    /**
+     * This is the index of the row in the source rowData array and it is kept consistent also during transactions.
+     * It does not change when sorting, filtering, grouping, pivoting or any other UI related operation.
+     * It is -1 if this node is a filler node in tree data or grouping.
+     */
+    readonly indexInRowData: number;
+
     /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
     rowIndex: number | null;
 

@@ -2,10 +2,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { setTimeout as asyncSetTimeout } from 'timers/promises';
 
-import { getAllRows } from '../../test-utils';
-import { TreeDiagram, executeTransactionsAsync } from './tree-test-utils';
+import { executeTransactionsAsync, flushJestTimers, getAllRows } from '../../test-utils';
+import { TreeDiagram } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -63,7 +62,7 @@ describe('ag-grid tree transactions', () => {
         api.applyTransaction({ remove: [rowC] });
         api.applyTransaction({ remove: [rowD] });
 
-        await flushTimers();
+        await flushJestTimers();
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -121,7 +120,7 @@ describe('ag-grid tree transactions', () => {
 
             api.applyTransaction({ add: [rowC, rowB] });
 
-            await flushTimers();
+            await flushJestTimers();
 
             new TreeDiagram(api, 'finalSync').check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -167,7 +166,7 @@ describe('ag-grid tree transactions', () => {
                 add: [rowC, rowB],
             });
 
-            await flushTimers();
+            await flushJestTimers();
 
             new TreeDiagram(api, 'finalTogether').check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -215,7 +214,7 @@ describe('ag-grid tree transactions', () => {
 
             await executeTransactionsAsync([{ remove: [rowB, rowC] }, { add: [rowC, rowB] }], api);
 
-            await flushTimers();
+            await flushJestTimers();
 
             new TreeDiagram(api, 'finalAsync').check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -279,7 +278,7 @@ describe('ag-grid tree transactions', () => {
             api.applyTransaction(transactions[1]);
         }
 
-        await flushTimers();
+        await flushJestTimers();
 
         new TreeDiagram(api, 'final' + mode).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -378,7 +377,7 @@ describe('ag-grid tree transactions', () => {
             api.applyTransaction(transactions2[1]);
         }
 
-        await flushTimers();
+        await flushJestTimers();
 
         new TreeDiagram(api, 'Transactions2 ' + mode).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -393,9 +392,3 @@ describe('ag-grid tree transactions', () => {
         `);
     });
 });
-
-function flushTimers() {
-    jest.advanceTimersByTime(10000);
-    jest.useRealTimers();
-    return asyncSetTimeout(1);
-}

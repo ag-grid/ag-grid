@@ -46,8 +46,8 @@ export interface ITreeNode {
     /** The key of this node */
     readonly key: string;
 
-    /** The order this node is supposed to have */
-    readonly rowPosition: number;
+    /** Updated during commit to be the same as row.indexInRowData */
+    readonly oldIndexInRowData: number;
 }
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
@@ -154,7 +154,14 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public __needsRefreshWhenVisible: boolean;
 
     /**
+     * This is the index of this row in rootNode.allLeafChildren. It need to be kept consistent.
+     * If is -1, the row is not in rootNode.allLeafChildren, for example, the root node or filler nodes for tree data.
+     */
+    public readonly indexInRowData: number = -1;
+
+    /**
      * All lowest level nodes beneath this node, no groups.
+     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      * The array might also br frozen (immutable).
      */
