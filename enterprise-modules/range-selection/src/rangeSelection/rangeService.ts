@@ -934,6 +934,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
         this.eventService.dispatchEvent({
+            type: 'cellSelectionChanged',
+            started,
+            finished,
+            id,
+        });
+        this.eventService.dispatchEvent({
             type: 'rangeSelectionChanged',
             started,
             finished,

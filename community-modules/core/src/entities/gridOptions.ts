@@ -19,6 +19,7 @@ import type {
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
+    CellSelectionChangedEvent,
     CellValueChangedEvent,
     ChartCreatedEvent,
     ChartDestroyedEvent,
@@ -2292,9 +2293,15 @@ export interface GridOptions<TData = any> {
      */
     onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
     /**
-     * A change to range selection has occurred. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing, respectively.
+     * A change to range selection has occurred.
+     *
+     * @deprecated v32.2 Use `onCellSelectionChanged` instead
      */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>): void;
+    /**
+     * A change to cell selection has occurred.
+     */
+    onCellSelectionChanged?(event: CellSelectionChangedEvent<TData>): void;
 
     /**
      * A tooltip has been displayed */

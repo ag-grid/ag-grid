@@ -271,7 +271,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         this.addManagedEventListeners({
             cellFocused: () => this.updateCachedState('focusedCell', this.getFocusedCellState()),
-            rangeSelectionChanged: (event) => {
+            cellSelectionChanged: (event) => {
                 if (event.finished) {
                     this.updateCachedState('rangeSelection', this.getRangeSelectionState());
                 }

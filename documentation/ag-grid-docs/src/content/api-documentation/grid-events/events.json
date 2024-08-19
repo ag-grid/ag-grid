@@ -104,10 +104,10 @@
             }
         },
         "cellContextMenu": {},
-        "rangeSelectionChanged": {
+        "cellSelectionChanged": {
             "more": {
-                "name": "Range Selection Changed Event",
-                "url": "./cell-selection/#reference--rangeSelectionChanged"
+                "name": "Cell Selection Changed Event",
+                "url": "./range-selection/#range-selection-changed-event"
             }
         },
         "fillStart": {

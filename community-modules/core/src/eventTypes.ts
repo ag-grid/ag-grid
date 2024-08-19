@@ -26,6 +26,7 @@ export const PUBLIC_EVENTS = [
     'rowDataUpdated',
     'pinnedRowDataChanged',
     'rangeSelectionChanged',
+    'cellSelectionChanged',
     'chartCreated',
     'chartRangeSelectionChanged',
     'chartOptionsChanged',

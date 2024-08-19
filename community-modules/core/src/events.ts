@@ -45,6 +45,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDataUpdated: RowDataUpdatedEvent<TData, TContext>;
         pinnedRowDataChanged: PinnedRowDataChangedEvent<TData, TContext>;
         rangeSelectionChanged: RangeSelectionChangedEvent<TData, TContext>;
+        cellSelectionChanged: CellSelectionChangedEvent<TData, TContext>;
         chartCreated: ChartCreatedEvent<TData, TContext>;
         chartRangeSelectionChanged: ChartRangeSelectionChangedEvent<TData, TContext>;
         chartOptionsChanged: ChartOptionsChangedEvent<TData, TContext>;
@@ -572,6 +573,15 @@ export interface FirstDataRenderedEvent<TData = any, TContext = any>
 
 export interface RangeSelectionChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rangeSelectionChanged', TData, TContext> {
+    id?: string;
+    /** True for the first change event, otherwise false */
+    started: boolean;
+    /** True for the last change event, otherwise false */
+    finished: boolean;
+}
+
+export interface CellSelectionChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'cellSelectionChanged', TData, TContext> {
     id?: string;
     /** True for the first change event, otherwise false */
     started: boolean;
