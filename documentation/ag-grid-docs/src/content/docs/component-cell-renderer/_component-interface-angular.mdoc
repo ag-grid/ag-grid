@@ -5,13 +5,22 @@ The interface for the Cell Component is as follows:
 {% if isFramework("angular") %}
 ```ts
 interface ICellRendererAngularComp {
-   // Mandatory - Params for rendering
-   agInit(params: ICellRendererParams): void;
+    // Mandatory - Params for rendering
+    agInit(params: ICellRendererParams): void;
 
-   // Mandatory - Return true if you have managed the cell refresh yourself in this method, otherwise return false.
-   // If you return false, the grid will remove the component from the DOM and create a new component in its place 
-   // with the new values.
-   refresh(params: ICellRendererParams): boolean;
+    // Mandatory - Return true if you have managed the cell refresh yourself in this method, otherwise return false.
+    // If you return false, the grid will remove the component from the DOM and create a new component in its place 
+    // with the new values.
+    refresh(params: ICellRendererParams): boolean;
+
+    // Optional - Called when the cell is clicked on.
+    // This happens for each of the `click`, `mousedown`, `touchstart` and `dblclick` events.
+    // This can therefore happen multiple times when clicking (e.g. `mousedown` then `click`).
+    // Return `true` to prevent the grid from performing any action
+    // (including focusing the cell, range selection, row selection, and starting editing).
+    // Returning `false` (or not implementing this method) will perform the default
+    // grid behaviour.
+    suppressGridClickHandling?(mouseEvent: MouseEvent): boolean;
 }
 ```
 {% /if %}
@@ -23,11 +32,11 @@ The Component is provided `props` containing, amongst other things, the value to
 {% if isFramework("angular") %}
 ```ts
 class CustomButtonComponent implements ICellRendererAngularComp {
-  // ...
-  agInit(props: ICellRendererParams): void {
-    this.cellValue = props.value;
-  }
-  // ...
+    // ...
+    agInit(props: ICellRendererParams): void {
+        this.cellValue = props.value;
+    }
+    // ...
 ```
 {% /if %}
 

@@ -21,7 +21,7 @@ import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
 import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
-import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import type { BaseCellRenderer, ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
@@ -54,6 +54,11 @@ export interface ICellComp {
 
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
+    /**
+     * In React with React custom renderer, this is what's passed to `useGridCellRenderer`.
+     * Otherwise it's the cell renderer component
+     */
+    getBaseCellRenderer(): BaseCellRenderer | null;
     getParentOfValue(): HTMLElement | null;
 
     setRenderDetails(
@@ -536,6 +541,7 @@ export class CellCtrl extends BeanStub {
                 this.enableTooltipFeature(value, shouldDisplayTooltip);
                 this.tooltipFeature?.refreshToolTip();
             },
+            focusCell: () => this.focusCell(true),
         });
 
         return res;
@@ -898,6 +904,11 @@ export class CellCtrl extends BeanStub {
 
     public isRangeSelectionEnabled(): boolean {
         return this.cellRangeFeature != null;
+    }
+
+    public allowClick(event: MouseEvent): boolean {
+        const cellRenderer = this.getComp().getBaseCellRenderer();
+        return !cellRenderer?.suppressGridClickHandling?.(event);
     }
 
     public focusCell(forceBrowserFocus = false): void {

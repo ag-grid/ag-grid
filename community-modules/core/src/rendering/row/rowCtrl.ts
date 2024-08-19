@@ -34,7 +34,7 @@ import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
 import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
-import { _isStopPropagationForAgGrid } from '../../utils/event';
+import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
@@ -392,7 +392,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             }
         }
 
-        const compDetails = this.createFullWidthCompDetails(gui.element, pinned);
+        const compDetails = this.createFullWidthCompDetails(gui, pinned);
         gui.rowComp.showFullWidth(compDetails);
     }
 
@@ -684,7 +684,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             } // no refresh needed
 
             return gui.rowComp.refreshFullWidth(() => {
-                const compDetails = this.createFullWidthCompDetails(gui.element, pinned);
+                const compDetails = this.createFullWidthCompDetails(gui, pinned);
                 return compDetails.params;
             });
         };
@@ -866,10 +866,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         };
     }
 
+    private findFullWidthRowGui(target: HTMLElement): RowGui | undefined {
+        return this.allRowGuis.find((c) => c.element.contains(target));
+    }
+
     public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
-        const currentFullWidthComp = this.allRowGuis.find((c) =>
-            c.element.contains(keyboardEvent.target as HTMLElement)
-        );
+        const currentFullWidthComp = this.findFullWidthRowGui(keyboardEvent.target as HTMLElement);
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
 
@@ -882,7 +884,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const cellPosition: CellPosition = {
             rowIndex: node.rowIndex!,
             rowPinned: node.rowPinned,
-            column: (lastFocusedCell && lastFocusedCell.column) as AgColumn,
+            column: (lastFocusedCell?.column as AgColumn) ?? this.getColumnForFullWidth(currentFullWidthComp),
         };
 
         this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
@@ -1034,6 +1036,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowDoubleClicked', mouseEvent));
     }
 
+    private getColumnForFullWidth(fullWidthRowGui?: RowGui): AgColumn {
+        const { visibleColsService } = this.beans;
+        switch (fullWidthRowGui?.containerType) {
+            case 'center':
+                return visibleColsService.getCenterCols()[0];
+            case 'left':
+                return visibleColsService.getLeftCols()[0];
+            case 'right':
+                return visibleColsService.getRightCols()[0];
+            default:
+                return visibleColsService.getAllCols()[0];
+        }
+    }
+
     private onRowMouseDown(mouseEvent: MouseEvent) {
         this.lastMouseDownOnDragger = _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
 
@@ -1041,14 +1057,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
+        const fullWidthRowGui = this.findFullWidthRowGui(mouseEvent.target as HTMLElement);
+
+        if (fullWidthRowGui?.rowComp?.getFullWidthCellRenderer()?.suppressGridClickHandling?.(mouseEvent)) {
+            _stopPropagationForAgGrid(mouseEvent);
+            return;
+        }
+
         const node = this.rowNode;
-        const presentedColsService = this.beans.visibleColsService;
 
         if (this.beans.rangeService) {
             this.beans.rangeService.removeAllCellRanges();
         }
 
-        const element = this.getFullWidthElement();
+        const element = fullWidthRowGui?.element;
         const target = mouseEvent.target as HTMLElement;
 
         let forceBrowserFocus = true;
@@ -1059,7 +1081,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.beans.focusService.setFocusedCell({
             rowIndex: node.rowIndex!,
-            column: presentedColsService.getAllCols()[0],
+            column: this.getColumnForFullWidth(fullWidthRowGui),
             rowPinned: node.rowPinned,
             forceBrowserFocus,
         });
@@ -1073,6 +1095,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowClicked', mouseEvent));
+
+        if (this.isFullWidth()) {
+            const fullWidthGui = this.findFullWidthRowGui(mouseEvent.target as HTMLElement);
+            if (fullWidthGui?.rowComp?.getFullWidthCellRenderer()?.suppressGridClickHandling?.(mouseEvent)) {
+                _stopPropagationForAgGrid(mouseEvent);
+                return;
+            }
+        }
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
@@ -1170,7 +1200,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         checkRowSizeFunc();
     }
 
-    private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
+    private createFullWidthCompDetails(rowGui: RowGui, pinned: ColumnPinnedType): UserCompDetails {
+        const eRow = rowGui.element;
         const { gos, rowNode } = this;
         const params = gos.addGridCommonParams({
             fullWidth: true,
@@ -1186,6 +1217,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) =>
                 this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange),
             setTooltip: (value, shouldDisplayTooltip) => this.refreshRowTooltip(value, shouldDisplayTooltip),
+            focusCell: () =>
+                this.beans.focusService.setFocusedCell({
+                    rowIndex: this.rowNode.rowIndex,
+                    column: this.getColumnForFullWidth(rowGui),
+                    rowPinned: this.rowNode.rowPinned,
+                    forceBrowserFocus: true,
+                    isFullWidthCell: true,
+                }),
         } as WithoutGridCommon<ICellRendererParams>);
 
         const compFactory = this.beans.userComponentFactory;

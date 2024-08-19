@@ -115,6 +115,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
             getCellEditor: () => this.cellEditor || null,
             getCellRenderer: () => this.cellRenderer || null,
+            getBaseCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.getParentOfValue(),
         };
 

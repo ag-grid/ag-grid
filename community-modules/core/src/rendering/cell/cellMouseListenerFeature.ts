@@ -4,7 +4,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari, _isIOSUserAgent } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
-import { _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
+import { _isEventSupported, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
 import type { CellCtrl } from './cellCtrl';
 
 export class CellMouseListenerFeature extends BeanStub {
@@ -58,7 +58,9 @@ export class CellMouseListenerFeature extends BeanStub {
         const { eventService, rangeService, gos } = this.beans;
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
-        if (rangeService && isMultiKey) {
+        const allowClick = this.cellCtrl.allowClick(mouseEvent);
+
+        if (allowClick && rangeService && isMultiKey) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
             // range on this cell
             if (rangeService.getCellRangeCount(this.cellCtrl.getCellPosition()) > 1) {
@@ -78,6 +80,11 @@ export class CellMouseListenerFeature extends BeanStub {
                     colDef.onCellClicked!(cellClickedEvent);
                 });
             }, 0);
+        }
+
+        if (!allowClick) {
+            _stopPropagationForAgGrid(mouseEvent);
+            return;
         }
 
         const editOnSingleClick =
@@ -121,6 +128,11 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
+        if (!cellCtrl.allowClick(mouseEvent)) {
+            _stopPropagationForAgGrid(mouseEvent);
+            return;
+        }
+
         const editOnDoubleClick = !gos.get('singleClickEdit') && !gos.get('suppressClickEdit');
         if (editOnDoubleClick) {
             cellCtrl.startRowOrCellEdit(null, mouseEvent);
@@ -132,6 +144,12 @@ export class CellMouseListenerFeature extends BeanStub {
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
         const { eventService, rangeService, focusService, gos } = beans;
+
+        if (!cellCtrl.allowClick(mouseEvent)) {
+            eventService.dispatchEvent(cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
+            _stopPropagationForAgGrid(mouseEvent);
+            return;
+        }
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
@@ -190,7 +208,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (rangeService) {
-            const thisCell = this.cellCtrl.getCellPosition();
+            const thisCell = cellCtrl.getCellPosition();
 
             if (shiftKey) {
                 rangeService.extendLatestRangeToCell(thisCell);
@@ -200,7 +218,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
+        eventService.dispatchEvent(cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
     }
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {

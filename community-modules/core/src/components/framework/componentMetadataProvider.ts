@@ -66,7 +66,7 @@ export class ComponentMetadataProvider extends BeanStub implements NamedBean {
             },
             cellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh', 'afterGuiAttached'],
+                optionalMethodList: ['refresh', 'afterGuiAttached', 'suppressGridClickHandling'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
             },
             cellEditor: {

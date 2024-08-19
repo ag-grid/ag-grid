@@ -686,6 +686,16 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        // The browser changes the Event target of cached events when working with the ShadowDOM
+        // so we need to retrieve the initial DragStartTarget.
+        const startTarget = this.dragService.getStartTarget();
+
+        const cellCtrl = this.getCellCtrl(startTarget);
+
+        if (!cellCtrl?.allowClick(mouseEvent)) {
+            return;
+        }
+
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 
         // ctrlKey for windows, metaKey for Apple
@@ -698,12 +708,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             this.removeAllCellRanges(true);
         }
 
-        // The browser changes the Event target of cached events when working with the ShadowDOM
-        // so we need to retrieve the initial DragStartTarget.
-        const startTarget = this.dragService.getStartTarget();
-
         if (startTarget) {
-            this.updateValuesOnMove(startTarget);
+            this.updateValuesOnMove(cellCtrl);
         }
 
         if (!this.lastCellHovered) {
@@ -847,8 +853,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return min;
     }
 
-    private updateValuesOnMove(eventTarget: EventTarget | null) {
-        const cellCtrl = _getCtrlForEventTarget<CellCtrl>(this.gos, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+    private getCellCtrl(eventTarget: EventTarget | null): CellCtrl | null {
+        return _getCtrlForEventTarget<CellCtrl>(this.gos, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+    }
+
+    private updateValuesOnMove(cellCtrl: CellCtrl | null) {
         const cell = cellCtrl?.getCellPosition();
 
         this.cellHasChanged = false;
@@ -869,7 +878,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        this.updateValuesOnMove(mouseEvent.target);
+        this.updateValuesOnMove(this.getCellCtrl(mouseEvent.target));
 
         this.lastMouseEvent = mouseEvent;
 

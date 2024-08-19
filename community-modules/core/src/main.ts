@@ -337,6 +337,7 @@ export {
     ICellRendererComp,
     ICellRendererParams,
     ISetFilterCellRendererParams,
+    BaseCellRenderer,
 } from './rendering/cellRenderers/iCellRenderer';
 export { AnimateShowChangeCellRenderer } from './rendering/cellRenderers/animateShowChangeCellRenderer';
 export { AnimateSlideCellRenderer } from './rendering/cellRenderers/animateSlideCellRenderer';

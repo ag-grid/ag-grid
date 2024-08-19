@@ -1,4 +1,5 @@
 import type {
+    BaseCellRenderer,
     CellCtrl,
     CellStyle,
     Component,
@@ -14,7 +15,7 @@ import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef,
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
-import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
+import type { CustomCellEditorCallbacks, CustomCellRendererCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { isComponentStateless } from '../utils';
@@ -110,6 +111,7 @@ const jsxShowValue = (
     key: number,
     parentId: string,
     cellRendererRef: MutableRefObject<any>,
+    baseCellRendererRef: MutableRefObject<BaseCellRenderer | null>,
     showCellWrapper: boolean,
     reactCellRendererStateless: boolean,
     setECellValue: (ref: any) => void
@@ -127,7 +129,13 @@ const jsxShowValue = (
     const valueForNoCellRenderer = value?.toString ? value.toString() : value;
 
     const bodyJsxFunc = () => (
-        <>
+        <CustomContext.Provider
+            value={{
+                setMethods: (methods: CustomCellRendererCallbacks) => {
+                    baseCellRendererRef.current = methods;
+                },
+            }}
+        >
             {noCellRenderer && <>{valueForNoCellRenderer}</>}
             {reactCellRenderer && !reactCellRendererStateless && (
                 <CellRendererClass {...compDetails!.params} key={key} ref={cellRendererRef} />
@@ -135,7 +143,7 @@ const jsxShowValue = (
             {reactCellRenderer && reactCellRendererStateless && (
                 <CellRendererClass {...compDetails!.params} key={key} />
             )}
-        </>
+        </CustomContext.Provider>
     );
 
     return (
@@ -193,6 +201,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const eGui = useRef<HTMLDivElement | null>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
+    const baseCellRendererRef = useRef<BaseCellRenderer | null>(null);
     const cellEditorRef = useRef<ICellEditor>();
 
     const eCellWrapper = useRef<HTMLDivElement>();
@@ -394,6 +403,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
 
             getCellEditor: () => cellEditorRef.current || null,
             getCellRenderer: () => (cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current),
+            getBaseCellRenderer: () => baseCellRendererRef.current ?? jsCellRendererRef.current ?? null,
             getParentOfValue: () =>
                 eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
 
@@ -483,6 +493,7 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
                     renderKey,
                     cellInstanceId,
                     cellRendererRef,
+                    baseCellRendererRef,
                     showCellWrapper,
                     reactCellRendererStateless,
                     setCellValueRef

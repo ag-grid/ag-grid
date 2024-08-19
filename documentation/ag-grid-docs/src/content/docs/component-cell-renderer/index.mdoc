@@ -283,3 +283,37 @@ The example below demonstrates a dynamic tooltip being displayed on Cell Compone
 When using custom Cell Components, the custom Cell Component is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid cell with a custom Cell Component will focus the entire cell instead of any of the elements inside the custom cell renderer.
 
 In order to handle focus in your custom cell component, implement [Custom Cell Component Keyboard Navigation](./keyboard-navigation/#custom-cell-component).
+
+### Handling Mouse Events
+
+By default when a cell is clicked on, the grid will perform actions including:
+- Focusing the cell.
+- Updating the range, if [Range Selection](./range-selection/) is enabled.
+- Selecting the row, if [Row Selection](./row-selection/) is enabled.
+- Starting editing, if [Editing](./cell-editing/) is enabled.
+
+This behaviour may not be desired for custom cell components, e.g. if they contain interactive elements.
+
+{% if isFramework("javascript", "angular", "vue") %}
+To prevent the grid from handling the click, the `suppressGridClickHandling` method can be implemented.
+{% /if %}
+
+{% if isFramework("react") %}
+To prevent the grid from handling the click, the `suppressGridClickHandling` callback can be passed to the `useGridCellRenderer` hook.
+
+```{% frameworkTransform=false %}
+const suppressGridClickHandling = useCallback(() => true, []);
+
+useGridCellRenderer({ suppressGridClickHandling });
+```
+
+{% interfaceDocumentation interfaceName="CustomCellRendererCallbacks" config={"description":""} /%}
+{% /if %}
+
+If `suppressGridClickHandling` returns `false` or is not implemented, the default grid behaviour will happen. If it returns `true`, the grid will do nothing (expect for dispatching any relevant click events). The mouse event is passed as a parameter, which means that it's possible to achieve different behaviour depending on which part of the component has been clicked.
+
+`suppressGridClickHandling` will be called for each of the `click`, `mousedown`, `touchstart` and `dblclick` events. This can therefore be called multiple times when clicking (e.g. `mousedown` then `click`).
+
+The following example demonstrates using `suppressGridClickHandling` with range selection, row selection, and editing. When the button is clicked on, `true` is returned. When any other part of the cell is clicked on, `false` is returned.
+
+{% gridExampleRunner title="Handling Mouse Events" name="handling-mouse-events" /%}
