@@ -64,6 +64,22 @@ The example below demonstrates client-side sorting using the SSRM. Note the foll
 
 {% gridExampleRunner title="Client Side Sorting" name="client-side-sorting" /%}
 
+## Sorting All Levels
+
+By default, when using the SSRM and sorting columns which have row grouping enabled, the grid will only sort the groups which are impacted by the request. This results in better performance
+and less requests to the server. When sorting columns containing aggregated data all the nodes will be sorted but if additional data is provided without an aggregate then the sorting
+behaviour will not be completed as expected, eg. when using a `valueGetter` for each row.
+
+If you wish to sort all the levels enable `serverSideSortAllLevels` to disable this feature.
+
+The example below demonstrates sorting all levels. Note the following:
+
+* `serverSideSortAllLevels` is set to true
+* The Random Number column uses a `valueGetter` to generate a random number for each node
+* When any column is sorted, all the nodes are sorted and the data is reloaded
+
+{% gridExampleRunner title="Sort All Levels" name="sort-all-levels" /%}
+
 ## Next Up
 
 Continue to the next section to learn about [SSRM Filtering](./server-side-model-filtering/).
