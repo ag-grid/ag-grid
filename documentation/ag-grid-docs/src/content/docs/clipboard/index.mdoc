@@ -32,52 +32,25 @@ In the below example `copyHeadersToClipboard` has been enabled, try:
 
 ## Copying Rows
 
-When [Row Selection](./row-selection) is enabled by setting `gridOptions.selection.mode` to either `"singleRow"` or `"multiRow"`, then copying while a row is selected will add the whole row's contents to your clipboard.
+When [Row Selection](./row-selection) is enabled by setting `gridOptions.selection.mode` to either `"singleRow"` or `"multiRow"`, the default behaviour is to copy only the focussed cell to the clipboard. 
+In order to copy the whole row, enable the `gridOptions.selection.copySelectedRows` flag.
 
-The below example demonstrates copying rows:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    mode: 'multiRow',
+    copySelectedRows: true,
+}
+```
 
-* Please select one or more rows in the example below and press CTRL+C
+The below example demonstrates copying rows. Initially, pressing {% kbd "^ Ctrl" /%}+C will select the focussed cell, regardless of which rows have been selected. ]
+You can change this behaviour by toggling the "Copy Selected Rows" checkbox to enable the `copySelectedRows` flag:
+
+* Toggle the "Copy Selected Rows" checkbox on
+* Select one or more rows in the example below and press {% kbd "^ Ctrl" /%}+C
 * Paste copied content in a text editor
-* Note pasted content includes all selected rows
+* When the "Copy Selected Rows" checkbox is toggled on, the pasted content includes all selected rows. When the "Copy Selected Rows" checkbox is toggled off, the pasted content includes only the focussed cell. 
 
 {% gridExampleRunner title="Copying Rows" name="copy-row" /%}
-
-If you want to use row selection for another purpose and wish to copy the focused cell instead of selected rows, you can disable copying rows by setting
-`gridOptions.suppressCopyRowsToClipboard=true`.
-
-{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["suppressCopyRowsToClipboard"] /%}
-
-The below example demonstrates copying the focused cell only when using row selection:
-
-* Please select one or more rows in the example below and press CTRL+C
-* Paste copied content in a text editor
-* Note pasted content includes focused cell only
-
-{% gridExampleRunner title="Suppress Copying Rows" name="suppress-copy-row" /%}
-
-## Mixed Copying Cell Ranges & Rows
-
-The copy operation copies the selected content in the following order of precedence:
-
-1. Cell Ranges (if [Range Selection](./cell-selection) is enabled)
-1. Row Selection (if [Row Selection](./row-selection) is enabled and `suppressCopyRowsToClipboard` is **not** enabled)
-1. Focused Cell
-
-When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it impossible for users to copy rows (as the selected cell range is copied by default). Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` makes it possible to copy the selected rows when only a single cell is selected via range selection.
-
-{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["suppressCopySingleCellRanges"] /%}
-
-In this mode, when multiple cells are selected via range selection, the cell range is copied and not the selected rows. This behaviour is not enabled by default since it can be confusing for the copy behaviour to change depending on how much is selected.
-
-The below example has range selection, row selection and `suppressCopySingleCellRanges` enabled.
-
-* Select a range by clicking & dragging on a cell.
-* Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}, paste into a text editor, observe that the range was copied.
-* Deselect this range by clicking on any cell
-* Select one or more rows by moving focus with the arrow keys and pressing the {% kbd "␣ Space" /%} key to toggle the row's selection.
-* Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}, paste into a text editor and observe that the rows were copied.
-
-{% gridExampleRunner title="Copying Mixed Ranges & Rows" name="copy-mixed" /%}
 
 ## Custom Clipboard Interaction
 

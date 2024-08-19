@@ -280,12 +280,13 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
      * @default false
+     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
      */
     suppressCopyRowsToClipboard?: boolean;
     /**
      * Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
      * @default false
-     * @deprecated v32.2 Use `selection.copySelectedRows = true` instead.
+     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
      */
     suppressCopySingleCellRanges?: boolean;
     /**

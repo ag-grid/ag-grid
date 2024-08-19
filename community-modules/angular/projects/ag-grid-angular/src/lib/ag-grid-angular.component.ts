@@ -423,10 +423,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public clipboardDelimiter: string | undefined = undefined;
     /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
      * @default false
+     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
      */
     @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
     /** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
      * @default false
+     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
      */
     @Input() public suppressCopySingleCellRanges: boolean | undefined = undefined;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.

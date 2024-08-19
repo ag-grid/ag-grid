@@ -434,11 +434,11 @@ export function getHideDisabledCheckboxes(selection: SelectionOptions): boolean 
 /**
  * Gets the new row copy behaviour flag, falling back to the deprecated flag
  */
-export function _getSuppressCopySingleCellRanges(gos: GridOptionsService): boolean {
+export function _getSuppressCopyRowsToClipboard(gos: GridOptionsService): boolean {
     const so = gos.get('selection');
     if (so) {
-        return !!(so.mode !== 'cell' && so.copySelectedRows);
+        return so.mode === 'cell' ? false : !(so.copySelectedRows ?? true);
     } else {
-        return gos.get('suppressCopySingleCellRanges');
+        return gos.get('suppressCopyRowsToClipboard');
     }
 }

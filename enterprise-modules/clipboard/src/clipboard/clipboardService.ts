@@ -35,7 +35,7 @@ import {
     _exists,
     _getActiveDomElement,
     _getDocument,
-    _getSuppressCopySingleCellRanges,
+    _getSuppressCopyRowsToClipboard,
     _isClientSideRowModel,
     _last,
     _removeFromArray,
@@ -739,17 +739,23 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         const copyParams = { includeHeaders, includeGroupHeaders };
-        const shouldCopyRows = !this.gos.get('suppressCopyRowsToClipboard');
+        const selection = this.gos.get('selection');
+        const shouldCopyRows = !_getSuppressCopyRowsToClipboard(this.gos);
+        const shouldCopyCells = selection ? selection.mode === 'cell' : true;
 
+        console.log({ shouldCopyRows, shouldCopyCells });
         let cellClearType: CellClearType | null = null;
         // Copy priority is Range > Row > Focus
-        if (this.rangeService && !this.rangeService.isEmpty() && !this.shouldSkipSingleCellRange(this.rangeService)) {
+        if (shouldCopyCells && this.rangeService && !this.rangeService.isEmpty()) {
+            console.log('cell');
             this.copySelectedRangeToClipboard(copyParams);
             cellClearType = CellClearType.CellRange;
         } else if (shouldCopyRows && !this.selectionService.isEmpty()) {
+            console.log('row');
             this.copySelectedRowsToClipboard(copyParams);
             cellClearType = CellClearType.SelectedRows;
         } else if (this.focusService.isAnyCellFocused()) {
+            console.log('focus');
             this.copyFocusedCellToClipboard(copyParams);
             cellClearType = CellClearType.FocusedCell;
         }
@@ -798,10 +804,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             this.valueService.parseValue(column, rowNode, '', this.valueService.getValueForDisplay(column, rowNode)) ??
             null;
         rowNode.setDataValue(column, emptyValue, 'clipboardService');
-    }
-
-    private shouldSkipSingleCellRange(rangeService: IRangeService): boolean {
-        return _getSuppressCopySingleCellRanges(this.gos) && !rangeService.isMoreThanOneCell();
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
