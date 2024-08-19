@@ -1306,13 +1306,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         key: string | null = null,
         sourceRenderedCell: CellCtrl | null = null,
         event: KeyboardEvent | null = null
-    ): void {
+    ): boolean {
         // don't do it if already editing
         if (this.editingRow) {
-            return;
+            return true;
         }
 
-        this.beans.rowEditService?.startEditing(this, key, sourceRenderedCell, event);
+        return this.beans.rowEditService?.startEditing(this, key, sourceRenderedCell, event) ?? true;
     }
 
     public getAllCellCtrls(): CellCtrl[] {

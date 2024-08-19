@@ -12,11 +12,12 @@ export class RowEditService extends BeanStub implements NamedBean {
         key: string | null = null,
         sourceRenderedCell: CellCtrl | null = null,
         event: KeyboardEvent | null = null
-    ): void {
+    ): boolean {
+        let preventDefault = true;
         const atLeastOneEditing = rowCtrl.getAllCellCtrls().reduce((prev: boolean, cellCtrl: CellCtrl) => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
-                cellCtrl.startEditing(key, cellStartedEdit, event);
+                preventDefault = cellCtrl.startEditing(key, cellStartedEdit, event);
             } else {
                 cellCtrl.startEditing(null, cellStartedEdit, event);
             }
@@ -30,6 +31,7 @@ export class RowEditService extends BeanStub implements NamedBean {
         if (atLeastOneEditing) {
             this.setEditing(rowCtrl, true);
         }
+        return preventDefault;
     }
 
     public stopEditing(rowCtrl: RowCtrl, cancel = false): void {
