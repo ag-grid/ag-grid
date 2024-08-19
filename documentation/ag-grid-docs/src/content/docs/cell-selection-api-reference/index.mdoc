@@ -3,9 +3,11 @@ title: "Cell Selection API Reference"
 enterprise: true
 ---
 
-## API Reference
+## Configuration API 
 
-### Selection Events
+{% interfaceDocumentation interfaceName="CellSelectionOptions" config={"description":""} /%}
+
+## Selection Events
 
 {% apiDocumentation source="grid-events/events.json" section="selection" names=["fillStart", "fillEnd", "rangeSelectionChanged"] /%}
 
@@ -26,11 +28,11 @@ The example below also illustrates this by logging the event fields in the conso
 
 {% gridExampleRunner title="rangeSelectionChanged" name="range-selection-changed-event" /%}
 
-### Editing Events 
+## Editing Events 
 
 {% apiDocumentation source="grid-events/events.json" section="editing" names=["rangeDeleteStart", "rangeDeleteEnd", "cellEditRequest"] /%}
 
-### Cell Selection API
+## Cell Selection API
 
 The following methods are available on the `GridApi` for managing cell selection.
 

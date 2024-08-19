@@ -20,8 +20,6 @@ const gridOptions = {
 }
 ```
 
-{% interfaceDocumentation interfaceName="FillHandleOptions" config={"description":""} /%}
-
 The example below demonstrates the [default behaviour](#default-fill-handle) with the minimal configuration above:
 
 {% gridExampleRunner title="Fill Handle" name="fill-handle" /%}
@@ -86,8 +84,6 @@ When using the fill handle the grid will fire the `fillStart` event before it st
 Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression. 
 In these scenarios, the `selection.handle.setFillValue` callback should be used.
 
-{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selection"] /%}
-
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -149,6 +145,12 @@ The Fill Handle can be disabled on a per column basis by setting the column defi
 In the example below, please note that the Fill Handle is disabled in the **Country** and **Date** columns.
 
 {% gridExampleRunner title="Suppress Fill Handle" name="suppress-fill-handle"  exampleHeight=560 /%}
+
+## API Reference
+
+Here you can find a full list of configuration options available when the handle options are in `'fill'` mode.
+
+{% interfaceDocumentation interfaceName="FillHandleOptions" config={"description":""} /%}
 
 ## Next up
 

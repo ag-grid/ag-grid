@@ -9,6 +9,14 @@ Enable users to select a single row within a grid.
 
 Single row selection is configured by setting `selection.mode` to `'singleRow'`.
 
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'singleRow' 
+    }
+}
+```
+
 The following example illustrates a basic single row selection configuration.
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
@@ -66,6 +74,8 @@ const gridOptions = {
 
 {% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="turn-off-checkboxes" /%}
 
+Note that we have enabled `suppressClickSelection` in this example, to prevent users from affecting selection with row clicks.
+
 ## Disabling Click Selection
 
 When checkbox selection is enabled, in many cases it makes sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked.
@@ -93,7 +103,16 @@ Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below.
 
 ## Prevent Row Deselection
 
-In some circumstances you may want to prevent users from deselecting a selected row. This can be done using the `selection.suppressDeselection` flag. 
+In some circumstances you may want to prevent users from deselecting a selected row. This can be done using the `selection.suppressDeselection` flag.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: { 
+        mode: 'singleRow',
+        suppressDeselection: true,
+    }
+}
+```
 
 Observe that in the example below, it is not possible to deselect a row. Only by selecting another row will the currently selected row be deselected. That is, there is always one selected row.
 

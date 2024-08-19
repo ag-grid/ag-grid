@@ -9,7 +9,13 @@ Cell selection allows Excel-like selection of ranges of cells. Cell selections a
 
 Cell Selection is enabled by setting the `selection.mode` to `'cell'`. 
 
-{% interfaceDocumentation interfaceName="CellSelectionOptions" config={"description":""} /%}
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: {
+        mode: 'cell',
+    }
+}
+```
 
 When enabled, ranges can be selected in the following ways:
 
@@ -41,6 +47,15 @@ The example below demonstrates simple cell selection. Cell ranges can be selecte
 
 By default multiple ranges can be selected. To restrict cell selection to a single range, even if the {% kbd "^ Ctrl" /%} key is held down, set `selection.suppressMultiRanges` to `true`.
 
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: {
+        mode: 'cell',
+        suppressMultiRanges: true,
+    }
+}
+```
+
 The following example demonstrates single range cell selection:
 
 {% gridExampleRunner title="Cell Range Selection Suppress Multi" name="range-selection-suppress-multi" /%}
@@ -68,6 +83,12 @@ When [Cell Editing](./cell-editing/) is enabled, pressing the {% kbd "Delete" /%
 This will also emit the following events:
 
 {% apiDocumentation source="grid-events/events.json" section="editing" names=["rangeDeleteStart","rangeDeleteEnd"] /%}
+
+## API Reference 
+
+Here you can find a full list of configuration options available in `'cell'` mode.
+
+{% interfaceDocumentation interfaceName="CellSelectionOptions" config={"description":""} /%}
 
 ## Next up
 

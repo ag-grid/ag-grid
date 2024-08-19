@@ -7,7 +7,18 @@ When working with cell selection, it can be useful to have a handle inside the l
 
 ## Enabling the Range Handle
 
-To enable the Range Handle, set `selection.handle` to `true` in the `gridOptions`. The example below demonstrates simple range selection with a range handle.
+To enable the Range Handle, set `selection.handle` to `true` in the `gridOptions`. 
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: {
+        mode: 'cell',
+        handle: true,
+    }
+}
+```
+
+The example below demonstrates simple range selection with a range handle.
 
 {% gridExampleRunner title="Range Handle" name="range-selection-handle" /%}
 
