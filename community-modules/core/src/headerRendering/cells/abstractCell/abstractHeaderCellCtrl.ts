@@ -40,6 +40,8 @@ export abstract class AbstractHeaderCellCtrl<
 > extends BeanStub {
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
+    public readonly instanceId: HeaderCellCtrlInstanceId;
+
     private pinnedWidthService: PinnedWidthService;
     protected focusService: FocusService;
     protected userComponentFactory: UserComponentFactory;
@@ -57,7 +59,6 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected beans: BeanCollection;
-    private instanceId: HeaderCellCtrlInstanceId;
     private columnGroupChild: AgColumn | AgColumnGroup;
     private parentRowCtrl: HeaderRowCtrl;
 
@@ -385,10 +386,6 @@ export abstract class AbstractHeaderCellCtrl<
 
     public getPinned(): ColumnPinnedType {
         return this.parentRowCtrl.getPinned();
-    }
-
-    public getInstanceId(): HeaderCellCtrlInstanceId {
-        return this.instanceId;
     }
 
     public getColumnGroupChild(): AgColumn | AgColumnGroup {

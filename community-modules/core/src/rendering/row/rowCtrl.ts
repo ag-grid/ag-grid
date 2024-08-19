@@ -80,7 +80,7 @@ export type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
-    private instanceId: RowCtrlInstanceId;
+    public readonly instanceId: RowCtrlInstanceId;
 
     private readonly rowNode: RowNode;
     private readonly beans: BeanCollection;
@@ -195,10 +195,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private isSticky(): boolean {
         return this.rowNode.sticky;
-    }
-
-    public getInstanceId(): RowCtrlInstanceId {
-        return this.instanceId;
     }
 
     private updateGui(containerType: RowContainerType, gui: RowGui | undefined) {
@@ -533,14 +529,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
 
         prev.list.forEach((prevCellCtrl) => {
-            const cellInResult = res.map[prevCellCtrl.getColumn().getInstanceId()] != null;
+            const colInstanceId = prevCellCtrl.getColumn().getInstanceId();
+            const cellInResult = res.map[colInstanceId] != null;
             if (cellInResult) {
                 return;
             }
 
             const keepCell = !this.isCellEligibleToBeRemoved(prevCellCtrl, pinned);
             if (keepCell) {
-                addCell(prevCellCtrl.getColumn().getInstanceId(), prevCellCtrl);
+                addCell(colInstanceId, prevCellCtrl);
                 return;
             }
 

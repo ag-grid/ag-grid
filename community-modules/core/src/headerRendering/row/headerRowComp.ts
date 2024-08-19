@@ -57,7 +57,7 @@ export class HeaderRowComp extends Component {
         this.headerComps = {};
 
         ctrls.forEach((ctrl) => {
-            const id = ctrl.getInstanceId();
+            const id = ctrl.instanceId;
             let comp = oldComps[id];
             delete oldComps[id];
 
