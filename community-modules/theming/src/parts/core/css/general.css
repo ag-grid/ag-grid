@@ -1,16 +1,3 @@
-/**
-  ****************************
-  * Generic Styles
-  ****************************
-  */
-ag-grid,
-ag-grid-angular,
-ag-grid-ng2,
-ag-grid-polymer,
-ag-grid-aurelia {
-    display: block;
-}
-
 .ag-aria-description-container {
     z-index: 9999;
     border: 0px;
@@ -37,15 +24,6 @@ ag-grid-aurelia {
 
 .ag-selectable {
     user-select: text;
-}
-
-.ag-tabs-header {
-    display: flex;
-}
-
-.ag-tab {
-    position: relative;
-    cursor: pointer;
 }
 
 .ag-tab-guard {
@@ -116,34 +94,6 @@ ag-grid-aurelia {
     font-family: Impact, sans-serif;
     font-size: 19px;
     padding-left: 0.7rem;
-}
-
-.ag-root-wrapper-body {
-    display: flex;
-    flex-direction: row;
-
-    &.ag-layout-normal {
-        flex: 1 1 auto;
-        height: 0;
-        min-height: 0;
-    }
-}
-
-.ag-root {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-
-    &.ag-layout-normal,
-    &.ag-layout-auto-height {
-        overflow: hidden;
-        flex: 1 1 auto;
-        width: 0;
-    }
-
-    &.ag-layout-normal {
-        height: 100%;
-    }
 }
 
 /**
@@ -217,10 +167,10 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Containers
- ****************************
- */
+  ****************************
+  * Containers
+  ****************************
+  */
 .ag-header-container,
 .ag-floating-top-container,
 .ag-body-container,
@@ -272,11 +222,11 @@ ag-grid-aurelia {
     top: 0px;
     left: 0;
     /* turn off pointer events, because this container overlays the main row containers.
-        so when user clicks on space between full width rows, we want the mouse clicks to
-        pass onto the underlying container where the real rows are. eg if using full width
-        for row grouping, the groups will be in the full width container, but when user
-        opens a group the children are shown in the other containers - we want to make sure we
-        don't block mouse clicks to those other containers with the children. */
+         so when user clicks on space between full width rows, we want the mouse clicks to
+         pass onto the underlying container where the real rows are. eg if using full width
+         for row grouping, the groups will be in the full width container, but when user
+         opens a group the children are shown in the other containers - we want to make sure we
+         don't block mouse clicks to those other containers with the children. */
     pointer-events: none;
 }
 
@@ -297,10 +247,10 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Scrollers
- ****************************
- */
+  ****************************
+  * Scrollers
+  ****************************
+  */
 .ag-body {
     position: relative;
     display: flex;
@@ -363,10 +313,10 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Columns
- ****************************
- */
+  ****************************
+  * Columns
+  ****************************
+  */
 .ag-column-moving {
     .ag-cell {
         transition: left 0.2s;
@@ -384,10 +334,10 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Rows
- ****************************
- */
+  ****************************
+  * Rows
+  ****************************
+  */
 .ag-row-animation .ag-row {
     transition:
         transform 0.4s,
@@ -395,7 +345,7 @@ ag-grid-aurelia {
         opacity 0.2s;
 }
 /* for rows older than one second, we also animate the height. we don't include the height
-    initially so we are not animating auto-height rows on initial render. */
+     initially so we are not animating auto-height rows on initial render. */
 .ag-row-animation .ag-row.ag-after-created {
     transition:
         transform 0.4s,
@@ -441,10 +391,10 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Cells
- ****************************
- */
+  ****************************
+  * Cells
+  ****************************
+  */
 .ag-cell {
     display: inline-block;
     position: absolute;
@@ -453,12 +403,12 @@ ag-grid-aurelia {
 }
 
 /* This is used when using a Cell Wrapper (eg row drag, selection, or auto-height).
-    If not using wrapper, ag-cell-value is on a div, which is 100% width. However when
-    in a wrapper, it's a span (not a div), so we need 100% width to provide consistent
-    behaviour regardless of wrapper used or not. If we did not do this, Cell Renderer's
-    with 100% width wouldn't get the full width when using a wrapper.
-    Instead of just 100% width we use flex, as it's not the only item on the line, so it
-    fills the remaining space. */
+     If not using wrapper, ag-cell-value is on a div, which is 100% width. However when
+     in a wrapper, it's a span (not a div), so we need 100% width to provide consistent
+     behaviour regardless of wrapper used or not. If we did not do this, Cell Renderer's
+     with 100% width wouldn't get the full width when using a wrapper.
+     Instead of just 100% width we use flex, as it's not the only item on the line, so it
+     fills the remaining space. */
 .ag-cell-value {
     flex: 1 1 auto;
 }
@@ -476,7 +426,6 @@ ag-grid-aurelia {
 
 .ag-sparkline-wrapper {
     position: absolute;
-    /* TODO use inset */
     height: 100%;
     width: 100%;
     /*rtl:ignore*/
@@ -495,30 +444,10 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Popup
- ****************************
- */
-
-.ag-popup-child {
-    z-index: 5;
-    top: 0;
-}
-
-.ag-popup-editor {
-    position: absolute;
-    user-select: none;
-}
-
-.ag-large-text-input {
-    display: block;
-}
-
-/**
- ****************************
- * Floating Top and Bottom
- ****************************
- */
+  ****************************
+  * Floating Top and Bottom
+  ****************************
+  */
 .ag-floating-top {
     overflow: hidden;
     white-space: nowrap;
@@ -566,10 +495,10 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Sticky Top
- ****************************
- */
+  ****************************
+  * Sticky Top
+  ****************************
+  */
 .ag-sticky-top,
 .ag-sticky-bottom {
     position: absolute;
@@ -595,14 +524,14 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Animations
- ****************************
- */
+  ****************************
+  * Animations
+  ****************************
+  */
 
 /* this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
-    however it is not tied to color, only placement and visiblity, which is behaviour and not style,
-    thus belongs here, besides it doesn't change wih the themes */
+     however it is not tied to color, only placement and visiblity, which is behaviour and not style,
+     thus belongs here, besides it doesn't change wih the themes */
 .ag-value-slide-out {
     margin-right: 5px;
     opacity: 1;
@@ -619,47 +548,6 @@ ag-grid-aurelia {
 
 .ag-opacity-zero {
     opacity: 0 !important;
-}
-
-/**
- ****************************
- * Tool Panel
- ****************************
- */
-.ag-tool-panel-wrapper {
-    display: flex;
-    overflow-y: auto;
-    overflow-x: hidden;
-    cursor: default;
-    user-select: none;
-}
-
-.ag-select-agg-func-item {
-    position: relative;
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    height: 100%;
-    > * {
-        flex: none;
-    }
-}
-
-.ag-select-agg-func-item {
-    flex: 1 1 auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.ag-tool-panel-horizontal-resize {
-    cursor: ew-resize;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    width: 5px;
-    z-index: 1;
 }
 
 .ag-details-row {
@@ -698,10 +586,10 @@ ag-grid-aurelia {
 }
 
 /**
- ****************************
- * Widgets
- ****************************
- */
+  ****************************
+  * Widgets
+  ****************************
+  */
 
 .ag-column-group-icons {
     display: block;
@@ -772,7 +660,7 @@ ag-grid-aurelia {
     overflow: hidden;
     visibility: hidden;
 
-    div {
+    & div {
         position: absolute;
     }
 }

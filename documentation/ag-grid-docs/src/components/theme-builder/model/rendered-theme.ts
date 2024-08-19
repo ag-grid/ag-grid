@@ -2,7 +2,7 @@ import { type Theme, themeQuartz } from '@ag-grid-community/theming';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 
 import { allParamModels } from './ParamModel';
-import { GroupModel } from './PartModel';
+import { FeatureModel } from './PartModel';
 import { enabledAdvancedParamsAtom } from './advanced-params';
 import type { Store } from './store';
 
@@ -25,17 +25,17 @@ export const renderedThemeAtom = atom((get): Theme => {
             .map((param) => [param.property, get(param.valueAtom)])
     );
 
-    const iconSet = get(GroupModel.for('iconSet').selectedPartAtom).part;
+    const iconSet = get(FeatureModel.for('iconSet').selectedPartAtom).part;
 
     const theme = themeQuartz.usePart(iconSet).overrideParams(params);
 
     const container = get(previewGridContainer);
     if (container) {
-        theme.install({ container, loadGoogleFonts: true });
+        theme.install({ container, loadThemeGoogleFonts: true });
     }
 
     // also install the theme at the top level, as it is required for preset previews
-    theme.install({ loadGoogleFonts: true });
+    theme.install({ loadThemeGoogleFonts: true });
 
     return theme as Theme;
 });

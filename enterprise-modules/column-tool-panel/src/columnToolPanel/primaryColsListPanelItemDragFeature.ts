@@ -2,7 +2,6 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
-    ColumnModel,
     ColumnMoveService,
     ColumnPanelItemDragStartEvent,
 } from '@ag-grid-community/core';
@@ -15,11 +14,9 @@ import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
-    private columnModel: ColumnModel;
     private columnMoveService: ColumnMoveService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
         this.columnMoveService = beans.columnMoveService;
     }
 
@@ -50,7 +47,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                 moveItem: (
                     currentDragValue: AgColumn | AgProvidedColumnGroup | null,
                     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
-                ) => this.moveItem(currentDragValue, lastHoveredListItem),
+                ) => this.moveItem(this.getCurrentColumnsBeingMoved(currentDragValue), lastHoveredListItem),
             })
         );
     }
@@ -61,13 +58,20 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         return listItemDragStartEvent.column as AgColumn | AgProvidedColumnGroup;
     }
 
+    private getCurrentColumnsBeingMoved(column: AgColumn | AgProvidedColumnGroup | null): AgColumn[] {
+        if (isProvidedColumnGroup(column)) {
+            return column.getLeafColumns();
+        }
+        return column ? [column] : [];
+    }
+
     private isMoveBlocked(currentDragValue: AgColumn | AgProvidedColumnGroup | null): boolean {
         const preventMoving = this.gos.get('suppressMovableColumns');
         if (preventMoving) {
             return true;
         }
 
-        const currentColumns = this.getCurrentColumns(currentDragValue);
+        const currentColumns = this.getCurrentColumnsBeingMoved(currentDragValue);
         const hasNotMovable = currentColumns.find((col) => {
             const colDef = col.getColDef();
             return !!colDef.suppressMovable || !!colDef.lockPosition;
@@ -77,70 +81,39 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private moveItem(
-        currentDragValue: AgColumn | AgProvidedColumnGroup | null,
+        currentColumns: AgColumn[],
         lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
     ): void {
-        const targetIndex: number | null = this.getTargetIndex(currentDragValue, lastHoveredListItem);
-
-        const columnsToMove: AgColumn[] = this.getCurrentColumns(currentDragValue);
-
-        if (targetIndex != null) {
-            this.columnMoveService.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
-        }
-    }
-
-    private getMoveDiff(currentDragValue: AgColumn | AgProvidedColumnGroup | null, end: number): number {
-        const allColumns = this.columnModel.getCols();
-        const currentColumns = this.getCurrentColumns(currentDragValue);
-        const currentColumn = currentColumns[0];
-        const span = currentColumns.length;
-
-        const currentIndex = allColumns.indexOf(currentColumn as AgColumn);
-
-        if (currentIndex < end) {
-            return span;
-        }
-
-        return 0;
-    }
-
-    private getCurrentColumns(currentDragValue: AgColumn | AgProvidedColumnGroup | null): AgColumn[] {
-        if (isProvidedColumnGroup(currentDragValue)) {
-            return currentDragValue.getLeafColumns();
-        }
-        return [currentDragValue!];
-    }
-
-    private getTargetIndex(
-        currentDragValue: AgColumn | AgProvidedColumnGroup | null,
-        lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
-    ): number | null {
         if (!lastHoveredListItem) {
-            return null;
+            return;
         }
-        const columnItemComponent = lastHoveredListItem.component;
+
+        const { columnMoveService } = this;
+        const { component } = lastHoveredListItem;
+
+        let lastHoveredColumn: AgColumn | null = null;
         let isBefore = lastHoveredListItem.position === 'top';
 
-        let targetColumn: AgColumn;
-
-        if (columnItemComponent instanceof ToolPanelColumnGroupComp) {
-            const columns = columnItemComponent.getColumns();
-            targetColumn = columns[0];
+        if (component instanceof ToolPanelColumnGroupComp) {
+            const columns = component.getColumns();
+            lastHoveredColumn = columns[0];
             isBefore = true;
-        } else {
-            targetColumn = columnItemComponent.getColumn();
+        } else if (component) {
+            lastHoveredColumn = component.getColumn();
         }
 
-        // if the target col is in the cols to be moved, no index to move.
-        const movingCols = this.getCurrentColumns(currentDragValue);
-        if (movingCols.indexOf(targetColumn) !== -1) {
-            return null;
+        if (!lastHoveredColumn) {
+            return;
         }
 
-        const targetColumnIndex = this.columnModel.getCols().indexOf(targetColumn as AgColumn);
-        const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
-        const diff = this.getMoveDiff(currentDragValue, adjustedTarget);
+        const targetIndex: number | null = columnMoveService.getMoveTargetIndex({
+            currentColumns,
+            lastHoveredColumn,
+            isBefore,
+        });
 
-        return adjustedTarget - diff;
+        if (targetIndex != null) {
+            this.columnMoveService.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
+        }
     }
 }

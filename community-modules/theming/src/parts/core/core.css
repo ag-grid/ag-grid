@@ -1,7 +1,5 @@
-/* Files containing base styles that need to be overridden by more specific
-   components should be listed first */
 @import './css/reset.css';
-@import './css/common-structural.css';
+@import './css/general.css';
 @import './css/group.css';
 @import './css/popup.css';
 @import './css/grid-layout.css';

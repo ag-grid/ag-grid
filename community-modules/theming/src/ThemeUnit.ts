@@ -1,78 +1,68 @@
 import { _errorOnce, _warnOnce } from '@ag-grid-community/core';
 
-import type { ThemeParam, ThemeParams } from './GENERATED-param-types';
-import { coreCSS, coreDefaults, coreParams } from './parts/core/core-part';
-import type { CoreParam } from './parts/core/core-part';
+import { coreCSS, coreDefaults } from './parts/core/core-part';
 import { paramValueToCss } from './theme-types';
-import type { CssFragment, ThemeInstallArgs, ThemeRenderArgs } from './theme-types';
+import type { CssFragment, ThemeInstallArgs } from './theme-types';
 import { paramToVariableName } from './theme-utils';
 
-export class ThemeUnit<T extends ThemeParam = never> {
-    readonly availableParams: ReadonlySet<T>;
+const IS_SSR = typeof window !== 'object' || !window || typeof document !== 'object' || window.document !== document;
 
+export class ThemeUnit<TParams = unknown> {
     constructor(
-        readonly group: string,
+        readonly feature: string | undefined,
         readonly variant: string,
         readonly dependencies: readonly ThemeUnit[] = [],
-        readonly defaults: Partial<ThemeParams> = {} as any,
+        readonly defaults: Partial<TParams> = {},
         readonly css: ReadonlyArray<CssFragment> = []
-    ) {
-        const availableParams = new Set<T>(Object.keys(defaults) as T[]);
-        for (const dependency of dependencies) {
-            extendSetWithIterable(availableParams, dependency.availableParams);
-        }
-        if (group === 'theme') {
-            extendSetWithIterable(availableParams, coreParams as ThemeParam[]);
-        }
-        this.availableParams = availableParams;
-    }
+    ) {}
 
     get id(): string {
-        return `${this.group}/${this.variant}`;
+        return `${this.feature}/${this.variant}`;
     }
 
-    usePart<D extends ThemeParam>(part: ThemeUnit<D>): ThemeUnit<T | D> {
-        return new ThemeUnit(
-            this.group,
+    usePart<TPartParams>(part: ThemeUnit<TPartParams>): ThemeUnit<TParams & TPartParams> {
+        return new ThemeUnit<TParams & TPartParams>(
+            this.feature,
             this.variant,
             this.dependencies.concat(part as any),
-            this.defaults,
+            this.defaults as TParams & TPartParams,
             this.css
-        ) as any;
+        );
     }
 
-    overrideParams(params: Partial<Pick<ThemeParams, T | CoreParam>>): this {
+    overrideParams(params: Partial<TParams>): ThemeUnit<TParams> {
         const newParams: any = { ...this.defaults };
         for (const [name, value] of Object.entries(params)) {
             if (value != null) {
                 newParams[name] = value;
             }
         }
-        return new ThemeUnit(this.group, this.variant, this.dependencies, newParams, this.css) as any;
+        return new ThemeUnit(this.feature, this.variant, this.dependencies, newParams, this.css);
     }
 
-    addCss(css: CssFragment): ThemeUnit<T> {
-        return new ThemeUnit(this.group, this.variant, this.dependencies, this.defaults, this.css.concat(css));
+    addCss(css: CssFragment): ThemeUnit<TParams> {
+        return new ThemeUnit(this.feature, this.variant, this.dependencies, this.defaults, this.css.concat(css));
     }
 
-    createVariant(variant: string): ThemeUnit<T> {
-        return new ThemeUnit(this.group, variant, this.dependencies, this.defaults, this.css);
+    createVariant(variant: string): ThemeUnit<TParams> {
+        return new ThemeUnit(this.feature, variant, this.dependencies, this.defaults, this.css);
     }
 
-    addParams<A extends ThemeParam>(defaults: Pick<ThemeParams, A>): ThemeUnit<T | A> {
+    addParams<TAdditionalParams>(defaults: TAdditionalParams): ThemeUnit<TParams & TAdditionalParams> {
         return this.overrideParams(defaults as any) as any;
     }
 
-    getCSS(args: ThemeRenderArgs = {}): string {
-        return this._getCSSChunks(args, 'getCSS')
+    getCSS(): string {
+        return this._getCSSChunks()
             .map((chunk) => chunk.css)
             .join('\n\n');
     }
 
     async install(args: ThemeInstallArgs = {}) {
-        if (this.group !== 'theme') {
+        if (this.feature !== 'theme') {
             throw new Error(`${this.id} can't be installed directly, it must be used by a theme instead`);
         }
+        if (IS_SSR) return;
 
         let container = args.container || null;
         const loadPromises: Promise<void>[] = [];
@@ -80,7 +70,20 @@ export class ThemeUnit<T extends ThemeParam = never> {
             container = document.querySelector('head');
             if (!container) throw new Error("Can't install theme before document head is created");
         }
-        const chunks = this._getCSSChunks(args, 'install');
+        const chunks = this._getCSSChunks().filter((chunk) => {
+            if (chunk.id === 'googleFonts') {
+                const { loadThemeGoogleFonts } = args;
+                if (loadThemeGoogleFonts == null) {
+                    getGoogleFontsUsed(this).forEach((font) =>
+                        _warnOnce(
+                            `${this.id} uses google font ${font} but no value for loadThemeGoogleFonts was provided. Pass true to load fonts from ${googleFontsDomain} or false to silence this warning.`
+                        )
+                    );
+                }
+                return !!loadThemeGoogleFonts;
+            }
+            return true;
+        });
         const activeChunkIds = new Set(chunks.map((chunk) => chunk.id));
         const existingStyles = Array.from(
             container.querySelectorAll(':scope > [data-ag-injected-style-id]')
@@ -90,13 +93,20 @@ export class ThemeUnit<T extends ThemeParam = never> {
                 style.remove();
             }
         });
+        let lastExistingStyle: AnnotatedStyleElement | undefined = existingStyles[existingStyles.length - 1];
         for (const chunk of chunks) {
             let style = existingStyles.find((s) => s.dataset.agInjectedStyleId === chunk.id);
             if (!style) {
                 style = document.createElement('style');
                 style.dataset.agInjectedStyleId = chunk.id;
-                const lastExistingStyle = existingStyles[existingStyles.length - 1];
-                container.insertBefore(style, lastExistingStyle?.nextSibling || null);
+                // insert <style> elements at the start of the head so that
+                // application stylesheets take precedence
+                if (!lastExistingStyle) {
+                    container.insertBefore(style, container.firstChild);
+                } else {
+                    container.insertBefore(style, lastExistingStyle.nextSibling || null);
+                }
+                lastExistingStyle = style;
             }
             if (style._agTextContent !== chunk.css) {
                 style.textContent = chunk.css;
@@ -108,14 +118,14 @@ export class ThemeUnit<T extends ThemeParam = never> {
         await Promise.all(loadPromises);
     }
 
-    private _getParamsCache?: Partial<ThemeParams>;
-    public getParams(): Partial<ThemeParams> {
+    private _getParamsCache?: Record<string, unknown>;
+    public getParams(): Record<string, unknown> {
         if (this._getParamsCache) return this._getParamsCache;
 
         const mergedParams: any = { ...coreDefaults };
         for (const part of this._getFlatUnits()) {
             for (const [param, value] of Object.entries(part.defaults)) {
-                const partParamValue = value != null ? value : coreDefaults[param as CoreParam];
+                const partParamValue = value != null ? value : (coreDefaults as any)[param];
                 if (partParamValue != null) {
                     mergedParams[param] = partParamValue;
                 }
@@ -129,43 +139,39 @@ export class ThemeUnit<T extends ThemeParam = never> {
     private _getFlatUnits(): ThemeUnit[] {
         if (this._getFlatUnitsCache) return this._getFlatUnitsCache;
 
+        let noFeaturePartCounter = 0;
         const visit = (part: ThemeUnit<any>, accumulator: Record<string, ThemeUnit<any>>) => {
             for (const dep of part.dependencies) {
                 visit(dep, accumulator);
             }
+            const feature = part.feature || 'noFeature-' + String(++noFeaturePartCounter);
+
             // remove any existing item before overwriting, so that the newly added
             // part is ordered at the end of the list
-            delete accumulator[part.group];
-            accumulator[part.group] = part;
+            delete accumulator[feature];
+            accumulator[feature] = part;
         };
 
         const accumulator: Record<string, ThemeUnit> = {};
         visit(this, accumulator);
+
         return (this._getFlatUnitsCache = Object.values(accumulator));
     }
 
     private _getCssChunksCache?: ThemeCssChunk[];
-    private _getCSSChunks({ loadGoogleFonts }: ThemeRenderArgs, method: string): ThemeCssChunk[] {
+    private _getCSSChunks(): ThemeCssChunk[] {
         if (this._getCssChunksCache) return this._getCssChunksCache;
 
         const chunks: ThemeCssChunk[] = [];
 
         const googleFontsChunk = makeGoogleFontsChunk(this);
         if (googleFontsChunk) {
-            if (loadGoogleFonts) {
-                chunks.push(googleFontsChunk);
-            } else if (loadGoogleFonts == null) {
-                getGoogleFontsUsed(this).forEach((font) =>
-                    _warnOnce(
-                        `${this.id} uses google font ${font} but no value for loadGoogleFonts was passed to theme.${method}(). Pass true to load fonts from ${googleFontsDomain} or false to silence this warning.`
-                    )
-                );
-            }
+            chunks.push(googleFontsChunk);
         }
 
         chunks.push(makeVariablesChunk(this));
 
-        chunks.push({ id: 'core', css: coreCSS() });
+        chunks.push({ id: 'core', css: coreCSS });
 
         for (const part of this._getFlatUnits()) {
             if (part.css.length > 0) {
@@ -178,12 +184,6 @@ export class ThemeUnit<T extends ThemeParam = never> {
         return (this._getCssChunksCache = chunks);
     }
 }
-
-const extendSetWithIterable = <T>(set: Set<T>, iterable: Iterable<T>) => {
-    for (const item of iterable) {
-        set.add(item);
-    }
-};
 
 const makeVariablesChunk = (theme: ThemeUnit<any>): ThemeCssChunk => {
     // Ensure that every variable has a value set on root elements ("root"

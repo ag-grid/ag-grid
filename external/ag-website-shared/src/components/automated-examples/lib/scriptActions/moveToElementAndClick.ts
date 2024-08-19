@@ -17,6 +17,7 @@ interface MoveToElementAndClickParams {
     targetParams: any;
     mouse: Mouse;
     tweenGroup: Group;
+    scrollOffsetY?: number;
     speed?: number;
     duration?: number;
     /**
@@ -33,6 +34,7 @@ export async function moveToElementAndClick({
     target,
     targetParams,
     mouse,
+    scrollOffsetY = 0,
     speed,
     duration,
     tweenGroup,
@@ -50,7 +52,7 @@ export async function moveToElementAndClick({
     if (scrollContainer && !isInViewport({ element: element.get()!, threshold: 0.5, scrollContainer })) {
         const elRect = element.get()!.getBoundingClientRect();
         const containerRect = scrollContainer.getBoundingClientRect();
-        const top = elRect.top - containerRect.top + scrollContainer.scrollTop;
+        const top = elRect.top - containerRect.top + scrollContainer.scrollTop + scrollOffsetY;
 
         scrollContainer.scrollTo({
             top,

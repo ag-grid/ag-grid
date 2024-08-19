@@ -1,4 +1,5 @@
 .ag-tabs-header {
+    display: flex;
     background-color: var(--ag-tab-bar-background-color);
     padding: var(--ag-tab-bar-top-padding) var(--ag-tab-bar-horizontal-padding) 0;
     gap: var(--ag-tab-spacing);
@@ -15,7 +16,6 @@
 
 .ag-tabs-close-button-wrapper {
     border: 0;
-    /* TODO var to control this style */
     border-right: solid 1px var(--ag-border-color);
     padding: var(--ag-grid-size);
 }
@@ -29,6 +29,7 @@
 
 .ag-tab {
     position: relative;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;

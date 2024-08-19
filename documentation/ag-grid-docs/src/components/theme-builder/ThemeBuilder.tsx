@@ -6,7 +6,7 @@ import { RootContainer } from './components/general/RootContainer';
 import { WelcomeModal } from './components/general/WelcomeModal';
 import { applyPreset, darkModePreset, lightModePreset } from './components/presets/presets';
 import { allParamModels } from './model/ParamModel';
-import { allGroupModels } from './model/PartModel';
+import { allFeatureModels } from './model/PartModel';
 import { addChangedModelItem, getChangedModelItemCount } from './model/changed-model-items';
 import { rerenderTheme } from './model/rendered-theme';
 import { initialiseStore } from './model/store';
@@ -32,7 +32,9 @@ export const ThemeBuilder = () => {
         };
         const listeners = [
             ...allParamModels().map((param) => store.sub(param.valueAtom, () => detectChange(param.property))),
-            ...allGroupModels().map((group) => store.sub(group.selectedPartAtom, () => detectChange(group.groupId))),
+            ...allFeatureModels().map((feature) =>
+                store.sub(feature.selectedPartAtom, () => detectChange(feature.featureName))
+            ),
         ];
 
         if (!initialised) {

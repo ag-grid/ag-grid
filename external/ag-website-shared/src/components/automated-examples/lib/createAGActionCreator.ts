@@ -139,6 +139,11 @@ interface MoveToElementAndClickAction {
     actionParams: {
         target: AgElementName;
         targetParams?: any;
+        /**
+         * If the element needs to be scrolled to view, a y offset to apply to
+         * the scrolled position
+         */
+        scrollOffsetY?: number;
         speed?: number;
         duration?: number;
         easing?: EasingFunction;
@@ -285,6 +290,7 @@ export function createAGActionCreator({
                 agElementFinder,
                 target: action.actionParams.target,
                 targetParams: action.actionParams.targetParams,
+                scrollOffsetY: action.actionParams.scrollOffsetY,
                 easing: action.actionParams.easing || defaultEasing,
                 speed: action.actionParams.speed,
                 duration: action.actionParams.duration,

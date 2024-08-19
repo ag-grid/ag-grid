@@ -100,3 +100,8 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
 export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
     extends ICellEditor<TValue>,
         IPopupComponent<ICellEditorParams<TData, TValue, TContext>> {}
+
+/** This is only used internally within the grid */
+export interface DefaultProvidedCellEditorParams {
+    suppressPreventDefault?: boolean;
+}

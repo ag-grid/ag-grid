@@ -1,5 +1,7 @@
 :where([class^='ag-']) {
-    &*,
+    box-sizing: border-box;
+    outline: none;
+
     &:focus,
     &::after,
     &::before,

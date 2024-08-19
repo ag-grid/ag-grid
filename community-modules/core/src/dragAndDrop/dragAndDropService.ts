@@ -2,6 +2,7 @@ import { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
 import type { IAggFunc } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
@@ -167,11 +168,13 @@ export type DragAndDropIcon =
 export class DragAndDropService extends BeanStub implements NamedBean {
     beanName = 'dragAndDropService' as const;
 
+    private ctrlsService: CtrlsService;
     private dragService: DragService;
     private mouseEventService: MouseEventService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
         this.dragService = beans.dragService;
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;
@@ -446,6 +449,14 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         const externalTargets = this.dropTargets.filter((target) => target.external);
 
         return externalTargets.find((zone) => zone.getContainer() === params.getContainer()) || null;
+    }
+
+    public isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridGui = gridBodyCon.getGui();
+        const { dropZoneTarget } = draggingEvent;
+
+        return gridGui.contains(dropZoneTarget);
     }
 
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection | null {

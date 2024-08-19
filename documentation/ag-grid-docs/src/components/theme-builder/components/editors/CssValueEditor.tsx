@@ -49,13 +49,13 @@ export const CssValueEditor = ({ param, value, onChange }: ValueEditorProps<unkn
 };
 
 const getEditorValue = (theme: Theme, param: ParamModel<unknown>): string => {
-    let value = theme.getParams()[param.property];
-    value = paramValueToCss(param.property, value) || '';
-    const reinterpreted = reinterpretCSSValue(value, param.type);
+    const paramValue = theme.getParams()[param.property];
+    let cssValue = paramValueToCss(param.property, paramValue) || '';
+    const reinterpreted = reinterpretCSSValue(cssValue, param.type);
     if (reinterpreted) {
-        value = reinterpreted;
+        cssValue = reinterpreted;
     }
-    return value.replaceAll(
+    return cssValue.replaceAll(
         /(color|rgba?|hsla?)\([^()]+\)/gi,
         (colorExpr) => RGBAColor.parseCss(colorExpr)?.toCSSHex() || colorExpr
     );
