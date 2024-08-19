@@ -236,7 +236,7 @@ export class CellRangeFeature {
     private addSelectionHandle() {
         const gos = this.beans.gos;
         const cellRangeType = _last(this.rangeService.getCellRanges()).type;
-        const selectionHandleFill = gos.get('enableFillHandle') && _missing(cellRangeType);
+        const selectionHandleFill = gos.getSelectionOption('enableFillHandle') && _missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {

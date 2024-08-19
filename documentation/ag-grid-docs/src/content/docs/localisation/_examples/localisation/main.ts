@@ -62,8 +62,6 @@ const columnDefs: ColDef[] = [
     {
         headerName: '#',
         cellRenderer: NodeIdRenderer,
-        checkboxSelection: true,
-        headerCheckboxSelection: true,
     },
     { field: 'athlete', filterParams: { buttons: ['clear', 'reset', 'apply'] } },
     {
@@ -117,10 +115,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     pagination: true,
     paginationPageSize: 500,
     paginationPageSizeSelector: [100, 500, 1000],
-    enableRangeSelection: true,
     enableCharts: true,
     localeText: AG_GRID_LOCALE_DE,
-    rowSelection: 'multiple',
+    selection: { mode: 'multiRow' },
 };
 
 // setup the grid after the page has finished loading

@@ -178,7 +178,8 @@ export class CellCtrl extends BeanStub {
             });
         }
 
-        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gos.get('enableRangeSelection');
+        const rangeSelectionEnabled =
+            this.beans.rangeService && this.beans.gos.getSelectionOption('enableRangeSelection');
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
             this.addDestroyFunc(() => {

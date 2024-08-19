@@ -11,7 +11,6 @@ import type {
     RowPosition,
     ValueService,
     VisibleColsService,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
 import { SelectionHandleType, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
 
@@ -353,7 +352,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
             params;
 
-        const userFillOperation = this.gos.getCallback('fillOperation');
+        const userFillOperation = this.gos.getSelectionOption('fillOperation');
         const isVertical = this.dragAxis === 'y';
         let direction: 'up' | 'down' | 'left' | 'right';
 
@@ -364,7 +363,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            const params: WithoutGridCommon<FillOperationParams> = {
+            const params = this.gos.addGridCommonParams<FillOperationParams>({
                 event,
                 values: values.map(({ value }) => value),
                 initialValues,
@@ -375,7 +374,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 direction,
                 column: col,
                 rowNode: rowNode,
-            };
+            });
             const userResult = userFillOperation(params);
             if (userResult !== false) {
                 return { value: userResult, fromUserFunction: true };

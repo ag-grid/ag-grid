@@ -7,14 +7,14 @@ You can copy and paste items to and from the grid using the system clipboard.
 
 ## How to copy
 
-Copying from the grid is **enabled by default** for enterprise users. To copy your selection to the system clipboard, you can use the keybind {% kbd "^ Ctrl" /%}+{% kbd "C" /%}, or right click on a cell and select 'Copy' from the context menu. Unless [Range Selection](./range-selection) or [Row Selection](./row-selection) is enabled, you will only be copying from the currently focused cell.
+Copying from the grid is **enabled by default** for enterprise users. To copy your selection to the system clipboard, you can use the keybind {% kbd "^ Ctrl" /%}+{% kbd "C" /%}, or right click on a cell and select 'Copy' from the context menu. Unless [Cell Selection](./cell-selection) or [Row Selection](./row-selection) is enabled, you will only be copying from the currently focused cell.
 
 When copying multiple cells, the contents will be copied in an Excel compatible format, with fields
 separated by a `\t` (tab) character.
 
 ## Copying Cell Ranges
 
-When [Cell Ranges](./range-selection) are enabled by setting `gridOptions.enableRangeSelection=true`, copying will copy the Cell Range's content to your clipboard. Select a range by clicking on a cell and dragging with the mouse, then copy with the {% kbd "^ Ctrl" /%}+{% kbd "C" /%} keybind.
+When [Cell Ranges](./cell-selection) are enabled by setting `gridOptions.selection.mode='cell'`, copying will copy the Cell Range's content to your clipboard. Select a range by clicking on a cell and dragging with the mouse, then copy with the {% kbd "^ Ctrl" /%}+{% kbd "C" /%} keybind.
 
 Multiple cell ranges can be selected at once using {% kbd "^ Ctrl" /%} and dragging with the mouse. When copying, all ranges will be copied to the clipboard. Note that the relative positions of multiple ranges is not preserved when copying, they are stacked vertically in the clipboard.
 
@@ -32,7 +32,7 @@ In the below example `copyHeadersToClipboard` has been enabled, try:
 
 ## Copying Rows
 
-When [Row Selection](./row-selection) is enabled by setting `gridOptions.rowSelection` to either `"single"` or `"multiple"`, then copying while a row is selected will add the whole row's contents to your clipboard.
+When [Row Selection](./row-selection) is enabled by setting `gridOptions.selection.mode` to either `"singleRow"` or `"multiRow"`, then copying while a row is selected will add the whole row's contents to your clipboard.
 
 The below example demonstrates copying rows:
 
@@ -59,7 +59,7 @@ The below example demonstrates copying the focused cell only when using row sele
 
 The copy operation copies the selected content in the following order of precedence:
 
-1. Cell Ranges (if [Range Selection](./range-selection) is enabled)
+1. Cell Ranges (if [Range Selection](./cell-selection) is enabled)
 1. Row Selection (if [Row Selection](./row-selection) is enabled and `suppressCopyRowsToClipboard` is **not** enabled)
 1. Focused Cell
 
@@ -96,7 +96,7 @@ to copy rows or ranges respectively, these API calls take optional parameters to
 
 ## How to Cut
 
-Cut from the grid is **enabled by default** for enterprise users. To cut your selection to the system clipboard, you can use the keybind {% kbd "^ Ctrl" /%}+{% kbd "X" /%}, or right click on a cell and select 'Cut' from the context menu. Unless [Range Selection](./range-selection) or [Row Selection](./row-selection) is enabled, you will only be copying from the currently focused cell.
+Cut from the grid is **enabled by default** for enterprise users. To cut your selection to the system clipboard, you can use the keybind {% kbd "^ Ctrl" /%}+{% kbd "X" /%}, or right click on a cell and select 'Cut' from the context menu. Unless [Range Selection](./cell-selection) or [Row Selection](./row-selection) is enabled, you will only be copying from the currently focused cell.
 
 The cut operations will work exactly the same as the copy operations, with the addition that data will be removed from the grid afterwards, so the cut operations will use the same properties described above to customise the `copy` process.
 

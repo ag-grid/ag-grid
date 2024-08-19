@@ -325,7 +325,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             },
             keyShortcutChangedCellEnd: () => {
                 let action: UndoRedoAction;
-                if (this.rangeService && this.gos.get('enableRangeSelection')) {
+                if (this.rangeService && this.gos.getSelectionOption('enableRangeSelection')) {
                     action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [
                         ...this.rangeService.getCellRanges(),
                     ]);

@@ -36,9 +36,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 280,
     },
     rowModelType: 'serverSide',
-    rowSelection: 'multiple',
-    isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
-    getRowId: getRowId,
+    selection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
+    isServerSideGroupOpenByDefault,
+    getRowId,
 };
 
 function getRowId(params: GetRowIdParams) {

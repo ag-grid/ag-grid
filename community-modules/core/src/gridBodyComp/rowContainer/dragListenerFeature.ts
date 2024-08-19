@@ -33,18 +33,18 @@ export class DragListenerFeature extends BeanStub {
             onDragging: this.rangeService.onDragging.bind(this.rangeService),
         };
 
-        this.addManagedPropertyListener('enableRangeSelection', (props) => {
-            const isEnabled = props.currentValue;
+        this.addManagedPropertyListeners(['enableRangeSelection', 'selection'], () => {
+            const isEnabled = this.gos.getSelectionOption('enableRangeSelection');
             if (isEnabled) {
                 this.enableFeature();
-                return;
+            } else {
+                this.disableFeature();
             }
-            this.disableFeature();
         });
 
         this.addDestroyFunc(() => this.disableFeature());
 
-        const isRangeSelection = this.gos.get('enableRangeSelection');
+        const isRangeSelection = this.gos.getSelectionOption('enableRangeSelection');
         if (isRangeSelection) {
             this.enableFeature();
         }

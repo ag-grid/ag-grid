@@ -1,0 +1,49 @@
+---
+title: "Cell Selection API Reference"
+enterprise: true
+---
+
+## Configuration API 
+
+{% interfaceDocumentation interfaceName="CellSelectionOptions" config={"description":""} /%}
+
+## Selection Events
+
+{% apiDocumentation source="grid-events/events.json" section="selection" names=["fillStart", "fillEnd", "rangeSelectionChanged"] /%}
+
+As an example to illustrate the `rangeSelectionChanged` event, if selecting a range of 5 cells in a row, the user will click the first cell and drag to the last cell. 
+This will result in up to 7 events. The first and last cell in the range will cause two events each. 
+This is due to the first cell firing an event with `started=true, finished=true` upon mousedown with an additional event `started=true, finished=false` while in the range, and the last cell firing an event `started=false, finished=false` as soon as it is in the range and then again `started=false, finished=true` upon the end of cell selection. 
+All the intermediary events will have one event with both `started` and `finished` as `false`. This is illustrated in the table:
+
+| User action                       | `started` | `finished`  |
+|-----------------------------------|-----------|------------|
+| `mousedown` in first cell          | `true`    | `true`     |
+| `mousemove` in first cell          | `true`    | `false`    |
+| `mousemove` in intermediate cells | `false`   | `false`    |
+| `mousemove` in final cell          | `false`   | `false`    |
+| `mouseup` in final cell            | `false`   | `true`     |
+
+The example below also illustrates this by logging the event fields in the console:
+
+{% gridExampleRunner title="rangeSelectionChanged" name="range-selection-changed-event" /%}
+
+## Editing Events 
+
+{% apiDocumentation source="grid-events/events.json" section="editing" names=["rangeDeleteStart", "rangeDeleteEnd", "cellEditRequest"] /%}
+
+## Cell Selection API
+
+The following methods are available on the `GridApi` for managing cell selection.
+
+{% apiDocumentation source="grid-api/api.json" section="selection" names=["getCellRanges", "clearRangeSelection", "addCellRange"] /%}
+
+Cell ranges are normally bounded by a start and end row. However it is also possible to define a range unbounded by rows (i.e. to contain all rows). When adding an unbounded range via `gridApi.addCellRange`, do not provide start or end row positions.
+
+Row positions are defined by a row index and pinned. Row indexes are integers starting at zero. Pinned can be either `'top'` (row is in pinned top section), `'bottom'` (row is in pinned bottom section) or `null` (row is in the main body). See [Row Pinning](./row-pinning/) for information on row pinning.
+
+Ranges are defined by a list of columns. Pass in either a) a list of columns or b) a start and end column and let the grid work out the columns in between. Passing a list of columns instead of a start and end column has the advantage that the columns do not need to be contiguous.
+
+## Next up
+
+Continue to the next section to learn about [Cell Editing](./cell-editing).

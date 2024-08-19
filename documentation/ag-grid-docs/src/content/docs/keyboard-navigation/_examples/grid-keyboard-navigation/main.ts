@@ -16,22 +16,6 @@ ModuleRegistry.registerModules([
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
     {
-        headerName: ' ',
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
-        floatingFilter: false,
-        suppressHeaderMenuButton: true,
-        minWidth: 55,
-        maxWidth: 55,
-        width: 55,
-        flex: 0,
-        resizable: false,
-        sortable: false,
-        editable: false,
-        filter: false,
-        suppressColumnsToolPanel: true,
-    },
-    {
         headerName: 'Participant',
         children: [
             { field: 'athlete', minWidth: 170 },
@@ -79,9 +63,11 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
-    columnDefs: columnDefs,
-    rowSelection: 'multiple',
-    suppressRowClickSelection: true,
+    columnDefs,
+    selection: {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+    },
     defaultColDef: {
         editable: true,
         minWidth: 100,

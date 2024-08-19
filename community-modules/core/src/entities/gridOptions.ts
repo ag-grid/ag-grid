@@ -1097,6 +1097,7 @@ export interface GridOptions<TData = any> {
     /**
      * When `true`, if you select a group, the children of the group will also be selected.
      * @default false
+     * @deprecated v32.1 Use `selection.groupSelects` instead
      */
     groupSelectsChildren?: boolean;
     /**
@@ -1155,6 +1156,7 @@ export interface GridOptions<TData = any> {
     /**
      * If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
      * @default false
+     * @deprecated v32.1 Use `selection.groupSelects` instead
      */
     groupSelectsFiltered?: boolean;
     /**
@@ -1435,21 +1437,25 @@ export interface GridOptions<TData = any> {
     // *** Selection *** //
     /**
      * Type of Row Selection: `single`, `multiple`.
+     * @deprecated v32.1 Instead, set `selection.mode` to `'singleRow'` or `'multiRow'`
      */
     rowSelection?: 'single' | 'multiple';
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
+     * @deprecated v32.1 Use `selection.enableMultiSelectWithClick` instead
      */
     rowMultiSelectWithClick?: boolean;
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
+     * @deprecated v32.1 Use `selection.suppressDeselection` instead
      */
     suppressRowDeselection?: boolean;
     /**
      * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
+     * @deprecated v32.1 Use `selection.suppressClickSelection` instead
      */
     suppressRowClickSelection?: boolean;
     /**
@@ -1477,6 +1483,7 @@ export interface GridOptions<TData = any> {
     /**
      * If `true`, only a single range can be selected.
      * @default false
+     * @deprecated v32.1 Use `selection.suppressMultiRanges` instead
      */
     suppressMultiRangeSelection?: boolean;
     /**
@@ -1489,26 +1496,31 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Range Selection.
      * @default false
+     * @deprecated v32.1 Use `selection.mode = 'cell'` instead
      */
     enableRangeSelection?: boolean;
     /**
      * Set to `true` to enable the Range Handle.
      * @default false
+     * @deprecated v32.1 Use `selection.handle` instead
      */
     enableRangeHandle?: boolean;
     /**
      * Set to `true` to enable the Fill Handle.
      * @default false
+     * @deprecated v32.1 Use `selection.handle` instead
      */
     enableFillHandle?: boolean;
     /**
      * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
      * @default 'xy'
+     * @deprecated v32.1 Use `selection.handle.direction` instead
      */
     fillHandleDirection?: 'x' | 'y' | 'xy';
     /**
      * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
      * @default false
+     * @deprecated v32.1 Use `selection.suppressClearOnFillReduction` instead
      */
     suppressClearOnFillReduction?: boolean;
 
@@ -1826,6 +1838,7 @@ export interface GridOptions<TData = any> {
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     * @deprecated v32.1 Use `selection.isRowSelectable` instead
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
@@ -2259,7 +2272,7 @@ export interface GridOptions<TData = any> {
      */
     onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
     /**
-     * A change to range selection has occurred.
+     * A change to range selection has occurred. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing, respectively.
      */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>): void;
 
@@ -2524,7 +2537,7 @@ export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectio
      */
     groupSelects?: GroupSelectionMode;
     /**
-     * Determines how "select all" behaviour works. This controls both header checkbox selection and CTRL+A behaviour.
+     * Determines how "select all" behaviour works. This controls header checkbox selection.
      * @default 'all'
      */
     selectAll?: SelectAllMode;
@@ -2598,17 +2611,23 @@ export type ControlsColDef = Pick<
 /**
  * Determines the behaviour when selecting a group row.
  *
- * When `'self'`, selects only the group row itself.
- * When `'descendants'`, selecting a group row selects all its child rows.
- * When `'filteredDescendants'`, selecting a group row selects all child rows that satisfy the currently active filter.
+ * - When `'self'`, selects only the group row itself.
+ * - When `'descendants'`, selecting a group row selects all its child rows.
+ * - When `'filteredDescendants'`, selecting a group row selects all child rows that satisfy the currently active filter.
  */
 export type GroupSelectionMode = 'self' | 'descendants' | 'filteredDescendants';
 
 /**
  * Determines how "select all" behaviour works.
  *
- * When `'all'`, selects all rows, regardless of filter and pagination settings.
- * When `'filtered'`, selects all rows that satisfy the currently active filter.
- * When `'currentPage'`, selects all rows that satisfy the currently active filter on the current page.
+ * - When `'all'`, selects all rows, regardless of filter and pagination settings.
+ * - When `'filtered'`, selects all rows that satisfy the currently active filter.
+ * - When `'currentPage'`, selects all rows that satisfy the currently active filter on the current page.
  */
-export type SelectAllMode = 'all' | 'filtered' | 'currentPage';
+export type SelectAllMode =
+    /** selects all rows, regardless of filter and pagination settings */
+    | 'all'
+    /** selects all rows that satisfy the currently active filter */
+    | 'filtered'
+    /** selects all rows that satisfy the currently active filter on the current page */
+    | 'currentPage';

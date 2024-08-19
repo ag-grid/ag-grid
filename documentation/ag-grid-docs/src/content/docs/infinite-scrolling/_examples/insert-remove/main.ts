@@ -79,7 +79,6 @@ const gridOptions: GridOptions = {
         flex: 1,
         sortable: false,
     },
-    rowSelection: 'multiple',
     columnDefs: columnDefs,
     rowModelType: 'infinite',
     datasource: datasource,

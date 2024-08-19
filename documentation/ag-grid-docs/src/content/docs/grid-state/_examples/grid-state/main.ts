@@ -21,8 +21,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         {
             field: 'athlete',
             minWidth: 150,
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
         },
         { field: 'age', maxWidth: 90 },
         { field: 'country', minWidth: 150 },
@@ -45,8 +43,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     enableRangeSelection: true,
     sideBar: true,
     pagination: true,
-    rowSelection: 'multiple',
-    suppressRowClickSelection: true,
+    selection: { mode: 'multiRow', suppressClickSelection: true },
     suppressColumnMoveAnimation: true,
     onGridPreDestroyed: onGridPreDestroyed,
     onStateUpdated: onStateUpdated,

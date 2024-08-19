@@ -23,7 +23,7 @@ const TYPE_LINKS: Record<string, string> = {
     AgPieSeriesOptions: './integrated-charts-customisation/#pie-overrides',
     Blob: 'https://developer.mozilla.org/en-US/docs/Web/API/Blob',
     CellPosition: './keyboard-navigation/#cellposition',
-    CellRange: './range-selection/#range-selection-api',
+    CellRange: './cell-selection/#api-reference',
     ChartModel: './integrated-charts-api-save-restore-charts/#api-reference',
     ColDef: './column-properties/',
     ColGroupDef: './column-properties/#reference-columnGroups',
