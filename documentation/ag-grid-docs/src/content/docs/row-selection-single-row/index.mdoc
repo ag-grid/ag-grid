@@ -38,11 +38,11 @@ Rows for which the `selection.checkboxes` function returns `false` may still be 
 ### Hiding Disabled Checkboxes
 
 When `selection.checkboxes` is a function that returns `false`, or when [selection of a particular row is disabled](#configure-selectable-rows), by default the grid will display a disabled checkbox in that row. Alternatively, you may configure the grid to hide the checkbox in such rows.
-This can be done by setting `selection.hideDisabledCheckboxes` to `true`. In the example below, the rows where `year` does not fall between 2002 and 2010 have their checkboxes hidden..
+This can be done by setting `selection.hideDisabledCheckboxes` to `true`. In the example below, the rows where `year` does not fall between 2002 and 2010 have their checkboxes hidden.
 
 {% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="checkbox-selection-disabled-checkboxes" /%}
 
-Note that in this example we've also set `selection.suppressClickSelection = true` to force (de)selection to be done via the checkboxes.
+Note that in this example we've also set `selection.suppressClickSelection = true` to force selection to be done via the checkboxes.
 
 ### Disabling Checkboxes
 
@@ -58,7 +58,7 @@ This behaviour is enabled in the example below using the `selection.suppressClic
 
 {% gridExampleRunner title="Disable Click Selection" name="suppress-click-selection" /%}
 
-## Deselecting a Row without Checkboxes
+## Deselecting a Row
 When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
 When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
 This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
@@ -109,4 +109,4 @@ Row selection can be used when using row grouping, tree data and the server side
 
 ## Next up
 
-Continue to the next section to learn about [Multi Row Selection](./row-selection-multi-row).
+Continue to the next section to learn about [Multi-Row Selection](./row-selection-multi-row).
