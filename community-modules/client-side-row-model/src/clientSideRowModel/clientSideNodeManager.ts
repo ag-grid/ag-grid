@@ -20,15 +20,24 @@ import {
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;
 
+/**
+ * This is the type of any row in allLeafChildren and childrenAfterGroup of the ClientSideNodeManager rootNode.
+ * ClientSideNodeManager is allowed to update the sourceRowIndex property of the nodes.
+ */
 interface ClientSideRowNode extends RowNode {
-    indexInRowData: number;
+    sourceRowIndex: number;
 }
 
+/**
+ * This is the type of the root RowNode of the ClientSideNodeManager
+ * ClientSideNodeManager is allowed to update the allLeafChildren and childrenAfterGroup properties of the root node.
+ */
 interface ClientSideRootNode extends RowNode {
     allLeafChildren: ClientSideRowNode[] | null;
     childrenAfterGroup: ClientSideRowNode[] | null;
 }
 
+/** Result of ClientSideNodeManager.updateRowData method */
 export interface ClientSideNodeManagerUpdateRowDataResult {
     /** The RowNodeTransaction containing all the removals, updates and additions */
     rowNodeTransaction: RowNodeTransaction;
@@ -153,7 +162,7 @@ export class ClientSideNodeManager {
 
     /**
      * Used by the immutable service, after updateRowData, after updating with a generated transaction to
-     * apply the order as specified by the the new data. We use indexInRowData to determine the order of the rows.
+     * apply the order as specified by the the new data. We use sourceRowIndex to determine the order of the rows.
      * Time complexity is O(n) where n is the number of rows/rowData
      * @returns true if the order changed, otherwise false
      */
@@ -186,7 +195,7 @@ export class ClientSideNodeManager {
             const row = rowsOutOfOrder.get(rowData[i]);
             if (row !== undefined) {
                 rows![i] = row; // Out of order row found, overwrite it
-                row.indexInRowData = i; // Update its position
+                row.sourceRowIndex = i; // Update its position
             }
         }
         return true; // The order changed
@@ -270,7 +279,7 @@ export class ClientSideNodeManager {
             // update latter row indexes
             const nodesAfterIndexFirstIndex = nodesBeforeIndex.length + newNodes.length;
             for (let index = 0, length = nodesAfterIndex.length; index < length; ++index) {
-                nodesAfterIndex[index].indexInRowData = nodesAfterIndexFirstIndex + index;
+                nodesAfterIndex[index].sourceRowIndex = nodesAfterIndexFirstIndex + index;
             }
 
             this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
@@ -300,7 +309,7 @@ export class ClientSideNodeManager {
         // Ensure index is a whole number and not a floating point.
         // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
         // If the array has an odd number of elements, the addIndex need to be rounded up.
-        // Consider that array.slice does round up internally, but we are setting this value to node.indexInRowData.
+        // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
         return Math.ceil(addIndex);
     }
 
@@ -347,7 +356,7 @@ export class ClientSideNodeManager {
 
         // after rows have been removed, all following rows need the position index updated
         this.rootNode.allLeafChildren?.forEach((node, idx) => {
-            node.indexInRowData = idx;
+            node.sourceRowIndex = idx;
         });
 
         const sibling: ClientSideRootNode | null = this.rootNode.sibling;
@@ -409,9 +418,9 @@ export class ClientSideNodeManager {
         return rowNode || null;
     }
 
-    private createNode(dataItem: any, parent: RowNode, level: number, indexInRowData: number): RowNode {
+    private createNode(dataItem: any, parent: RowNode, level: number, sourceRowIndex: number): RowNode {
         const node: ClientSideRowNode = new RowNode(this.beans);
-        node.indexInRowData = indexInRowData;
+        node.sourceRowIndex = sourceRowIndex;
 
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);

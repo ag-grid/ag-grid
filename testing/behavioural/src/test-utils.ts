@@ -143,19 +143,19 @@ export function verifyPositionInRootChildren(rows: GridApi | IRowNode[]): RowNod
     const errors: string[] = [];
     for (let index = 0; index < rows.length; ++index) {
         const row = rows[index] as RowNode;
-        if (row.indexInRowData !== index) {
-            errors.push(`   row ${index} indexInRowData:${row.indexInRowData} id:'${row.id}'`);
+        if (row.sourceRowIndex !== index) {
+            errors.push(`   row ${index} sourceRowIndex:${row.sourceRowIndex} id:'${row.id}'`);
         }
     }
 
     const errorsCount = errors.length;
     if (errorsCount > 0) {
-        errors.push(JSON.stringify(rows.map((row) => (row as RowNode).indexInRowData)));
+        errors.push(JSON.stringify(rows.map((row) => (row as RowNode).sourceRowIndex)));
         if (errorsCount > 20) {
             errors.splice(20);
             errors.push(`And ${errorsCount - errors.length} more errors...`);
         }
-        const error = new Error('❌ indexInRowData incorrect:\n' + errors.join('\n'));
+        const error = new Error('❌ sourceRowIndex incorrect:\n' + errors.join('\n'));
         Error.captureStackTrace(error, verifyPositionInRootChildren);
         throw error;
     }

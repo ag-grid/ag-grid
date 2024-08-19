@@ -155,7 +155,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         if (rows) {
             for (let rowIdx = 0, rowsLen = rows.length; rowIdx < rowsLen; ++rowIdx) {
                 const node = rows[rowIdx].treeNode as TreeNode | null;
-                if (node && node.oldIndexInRowData !== rowIdx) {
+                if (node && node.oldSourceRowIndex !== rowIdx) {
                     node.invalidateOrder(); // Order might have changed
                 }
             }
@@ -347,7 +347,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             row = this.createFillerRow(node);
             node.setRow(row);
         } else if (node.duplicateRows) {
-            // If we have a list of duplicates we need to be sure that those are sorted by indexInRowData
+            // If we have a list of duplicates we need to be sure that those are sorted by sourceRowIndex
             row = node.sortFirstDuplicateRow()!;
         }
 
@@ -394,8 +394,8 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         const newRowPosition = node.getRowPosition();
-        if (node.oldIndexInRowData !== newRowPosition) {
-            node.oldIndexInRowData = newRowPosition;
+        if (node.oldSourceRowIndex !== newRowPosition) {
+            node.oldSourceRowIndex = newRowPosition;
             parent.childrenChanged = true; // The order of children in parent might have changed
         }
 

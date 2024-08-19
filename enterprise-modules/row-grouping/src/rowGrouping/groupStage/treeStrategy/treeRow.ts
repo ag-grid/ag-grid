@@ -1,5 +1,14 @@
 import type { ITreeNode, RowNode } from '@ag-grid-community/core';
 
+/**
+ * This is the type of any row processed by the TreeStrategy.
+ *
+ * TreeStrategy can modify:
+ * - allLeafChildren
+ * - childrenAfterGroup
+ * - treeNode
+ * - treeNodeFlags
+ */
 export interface TreeRow extends RowNode {
     allLeafChildren: TreeRow[] | null;
     childrenAfterGroup: TreeRow[] | null;

@@ -46,8 +46,8 @@ export interface ITreeNode {
     /** The key of this node */
     readonly key: string;
 
-    /** Updated during commit to be the same as row.indexInRowData */
-    readonly oldIndexInRowData: number;
+    /** Updated during commit to be the same as row.sourceRowIndex */
+    readonly oldSourceRowIndex: number;
 }
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
@@ -154,22 +154,36 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public __needsRefreshWhenVisible: boolean;
 
     /**
-     * This is the index of this row in rootNode.allLeafChildren. It need to be kept consistent.
-     * If is -1, the row is not in rootNode.allLeafChildren, for example, the root node or filler nodes for tree data.
+     * The index of the row in the source rowData array including any updates via transactions.
+     * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
+     * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value will be `-1`.
+     *
+     * Generally readonly. It is modified only by:
+     * - ClientSideRowNode, cast to ClientSideRowNode
      */
-    public readonly indexInRowData: number = -1;
+    public readonly sourceRowIndex: number = -1;
 
     /**
      * All lowest level nodes beneath this node, no groups.
      * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      * The array might also br frozen (immutable).
+     *
+     * Generally readonly. It is modified only by:
+     * - ClientSideNodeManager, cast to ClientSideRootNode
+     * - GroupStrategy, cast to GroupRow
+     * - TreeStrategy, cast to TreeRow
      */
     public readonly allLeafChildren: RowNode<TData>[] | null;
 
     /**
      * Children of this group. If multi levels of grouping, shows only immediate children.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
+     *
+     * Generally readonly. It is modified only by:
+     * - ClientSideNodeManager, cast to ClientSideRootNode
+     * - GroupStrategy, cast to GroupRow
+     * - TreeStrategy, cast to TreeRow
      */
     public readonly childrenAfterGroup: RowNode<TData>[] | null;
 

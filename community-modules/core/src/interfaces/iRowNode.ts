@@ -163,11 +163,11 @@ interface BaseRowNode<TData = any> {
     failedLoad: boolean | undefined;
 
     /**
-     * This is the index of the row in the source rowData array and it is kept consistent also during transactions.
-     * It does not change when sorting, filtering, grouping, pivoting or any other UI related operation.
-     * It is -1 if this node is a filler node in tree data or grouping.
+     * The index of the row in the source rowData array including any updates via transactions.
+     * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
+     * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value will be `-1`.
      */
-    readonly indexInRowData: number;
+    readonly sourceRowIndex: number;
 
     /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
     rowIndex: number | null;

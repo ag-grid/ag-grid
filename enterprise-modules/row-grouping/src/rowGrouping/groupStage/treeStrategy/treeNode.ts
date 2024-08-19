@@ -3,7 +3,7 @@ import type { ITreeNode, RowNode } from '@ag-grid-community/core';
 import type { TreeRow } from './treeRow';
 
 const treeNodePositionComparer = (a: RowNode, b: RowNode): number =>
-    a.treeNode!.oldIndexInRowData - b.treeNode!.oldIndexInRowData;
+    a.treeNode!.oldSourceRowIndex - b.treeNode!.oldSourceRowIndex;
 
 /**
  * An empty array, used to set an empty array to the childrenAfterGroup and allLeafChildren arrays without allocating a new one for each leaf.
@@ -101,7 +101,7 @@ export class TreeNode implements ITreeNode {
     public duplicateRowsWarned?: boolean;
 
     /** The ordering this node had in the previous commit. */
-    public oldIndexInRowData: number = -1;
+    public oldSourceRowIndex: number = -1;
 
     public constructor(
         /** The parent node of this node. Is null if destroyed or if is the root. */
@@ -240,7 +240,7 @@ export class TreeNode implements ITreeNode {
     }
 
     /**
-     * This is needed to be sure that the row is the duplicate row with the smallest indexInRowData, in O(n).
+     * This is needed to be sure that the row is the duplicate row with the smallest sourceRowIndex, in O(n).
      * @returns this.row
      */
     public sortFirstDuplicateRow(): TreeRow | null {
@@ -248,7 +248,7 @@ export class TreeNode implements ITreeNode {
         const oldRow = this.row!;
         let newRow = oldRow;
         for (const row of duplicateRows) {
-            if (row.indexInRowData < newRow.indexInRowData) {
+            if (row.sourceRowIndex < newRow.sourceRowIndex) {
                 newRow = row; // found a smaller one
             }
         }
@@ -327,10 +327,10 @@ export class TreeNode implements ITreeNode {
     public getRowPosition(): number {
         const row = this.row;
         if (row?.data) {
-            return row.indexInRowData;
+            return row.sourceRowIndex;
         }
         // This is a filler node, return the rowPosition of the first child
-        return this.childrenAfterGroup[0]?.treeNode?.oldIndexInRowData ?? this.oldIndexInRowData;
+        return this.childrenAfterGroup[0]?.treeNode?.oldSourceRowIndex ?? this.oldSourceRowIndex;
     }
 
     private clearChildrenAfterGroup(): void {
@@ -384,7 +384,7 @@ export class TreeNode implements ITreeNode {
                 needSort = true;
             }
             prevPosition = nextPosition;
-            child.oldIndexInRowData = nextPosition;
+            child.oldSourceRowIndex = nextPosition;
             const row = child.row;
             if (childrenAfterGroup[index] !== row) {
                 childrenAfterGroup[index] = row!;

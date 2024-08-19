@@ -53,12 +53,8 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
     }
 
     public setRowData<TData>(rowData: TData[]): void {
-        // convert the data into a transaction object by working out adds, removes and updates
+        // convert the setRowData data into a transaction object by working out adds, removes and updates
 
-        // If true, we will not apply the new order specified in the rowData, but keep the old order.
-        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
-
-        // converts the setRowData() command to a transaction.
         const rowDataTransaction = this.createTransactionForRowData(rowData);
         if (!rowDataTransaction) {
             return; // no transaction to apply
@@ -70,6 +66,9 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
         const { rowNodeTransaction, rowsInserted } = nodeManager.updateRowData(rowDataTransaction);
 
         let orderChanged = false;
+
+        // If true, we will not apply the new order specified in the rowData, but keep the old order.
+        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
         if (!suppressSortOrder) {
             // we need to reorder the nodes to match the new data order
             orderChanged = nodeManager.updateRowOrderFromRowData(rowData);
@@ -80,7 +79,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
 
     /** Converts the setRowData() command to a transaction */
     private createTransactionForRowData<TData>(rowData: TData[]): RowDataTransaction | null {
-        if (_missing(this.clientSideRowModel)) {
+        if (!_isClientSideRowModel(this.gos)) {
             _errorOnce('ImmutableService only works with ClientSideRowModel');
             return null;
         }

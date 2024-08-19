@@ -589,7 +589,7 @@ describe('ag-grid rows-ordering', () => {
             ]);
         });
 
-        test('duplicate IDs do not cause indexInRowData to be invalid', async () => {
+        test('duplicate IDs do not cause sourceRowIndex to be invalid', async () => {
             const rowData1 = [
                 { id: '1', x: 1 },
                 { id: '2', x: 2 },
