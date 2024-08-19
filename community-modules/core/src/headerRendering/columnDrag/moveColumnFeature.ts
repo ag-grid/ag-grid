@@ -195,7 +195,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private moveColumnsAfterHighlight(allMovingColumns: AgColumn[]): void {
         const isAttemptingToPin =
             this.needToMoveLeft ||
-            this.needToMoveLeft ||
+            this.needToMoveRight ||
             this.failedMoveAttempts > MOVE_FAIL_THRESHOLD ||
             allMovingColumns.some((col) => col.getPinned() !== this.pinned);
 
@@ -282,29 +282,34 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private highlightHoveredColumn(mouseX: number) {
         const { gos, ctrlsService, columnModel } = this;
         const isRtl = gos.get('enableRtl');
+        const consideredColumns = columnModel.getCols().filter((col) => col.getPinned() === this.pinned);
 
         let start: number | null = null;
         let width: number | null = null;
+        let targetColumn: AgColumn | null = null;
 
-        const targetColumn = columnModel
-            .getCols()
-            .filter((col) => col.getPinned() === this.pinned)
-            .find((col) => {
-                const left = col.getLeft()!;
-                width = col.getActualWidth();
+        for (const col of consideredColumns) {
+            const left = col.getLeft()!;
+            width = col.getActualWidth();
 
-                start = normaliseX({
-                    x: isRtl ? left + width : left,
-                    pinned: col.getPinned(),
-                    useScrollWidth: true,
-                    gos,
-                    ctrlsService,
-                });
-
-                const end = start + width;
-
-                return start <= mouseX && end >= mouseX;
+            start = normaliseX({
+                x: isRtl ? left + width : left,
+                pinned: col.getPinned(),
+                useScrollWidth: true,
+                gos,
+                ctrlsService,
             });
+
+            const end = start + width;
+
+            if (start <= mouseX && end >= mouseX) {
+                targetColumn = col;
+                break;
+            }
+
+            start = null;
+            width = null;
+        }
 
         if (this.lastHighlightedColumn?.column !== targetColumn) {
             this.clearHighlighted();
