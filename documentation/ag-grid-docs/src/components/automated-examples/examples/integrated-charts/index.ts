@@ -151,7 +151,7 @@ const gridOptions: GridOptions = {
     suppressAggFuncInHeader: true,
     rowGroupPanelShow: 'always',
     chartToolPanelsDef: {
-        defaultToolPanel: 'data',
+        defaultToolPanel: 'settings',
     },
 };
 
