@@ -95,7 +95,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'name',
         chartDataType: 'category',
-        minWidth: 280,
+        minWidth: 200,
         enableRowGroup: true,
     },
     {
@@ -113,7 +113,7 @@ const columnDefs: ColDef[] = [
             return `<div class='country'><span class='flag'><img border="0" width="24" height="16" alt="${params.value} flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value as CountryCodeKey]}.png"></span><span>${params.value}</span></div>`;
         },
     },
-    { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true, sort: 'desc' },
     { field: 'feb', type: ['measure', 'numericColumn'], enableRowGroup: true },
     { field: 'mar', type: ['measure', 'numericColumn'], enableRowGroup: true },
     { field: 'apr', type: ['measure', 'numericColumn'], enableRowGroup: true },
@@ -150,10 +150,15 @@ const gridOptions: GridOptions = {
     enableRangeSelection: true,
     suppressAggFuncInHeader: true,
     rowGroupPanelShow: 'always',
+    chartToolPanelsDef: {
+        defaultToolPanel: 'data',
+    },
 };
 
 function getDarkModeChartThemes(darkMode: boolean) {
-    return darkMode ? ['ag-default-dark'] : ['ag-default'];
+    return darkMode
+        ? ['ag-default-dark', 'ag-material-dark', 'ag-sheets-dark', 'ag-polychroma-dark', 'ag-vivid-dark']
+        : ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 }
 
 export function createAutomatedIntegratedCharts({

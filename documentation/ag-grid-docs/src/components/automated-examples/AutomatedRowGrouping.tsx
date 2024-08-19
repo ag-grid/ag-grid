@@ -4,7 +4,6 @@ import { UpdateSpeedSlider } from '@components/automated-examples/UpdateSpeedSli
 import { createAutomatedRowGrouping } from '@components/automated-examples/examples/row-grouping';
 import { ROW_GROUPING_ID } from '@components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
-import breakpoints from '@design-system/breakpoint.module.scss';
 import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '@utils/analytics';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -14,8 +13,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import automatedExamplesVars from './AutomatedExamplesVars.module.scss';
 import styles from './AutomatedRowGrouping.module.scss';
 import type { AutomatedExampleManager } from './lib/createAutomatedExampleManager';
+import { isMobile } from './lib/isMobile';
 
-const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = parseInt(breakpoints['automated-row-grouping-medium'], 10);
 const AUTOMATED_EXAMPLE_MOBILE_SCALE = parseFloat(automatedExamplesVars['mobile-grid-scale']);
 
 interface Props {
@@ -94,8 +93,7 @@ export function AutomatedRowGrouping({
                 return overlayRef.current;
             },
             getContainerScale: () => {
-                const isMobileWidth = window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
-                return isMobileWidth ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
+                return isMobile() ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
             },
             mouseMaskClassname: styles.mouseMask,
             scriptDebuggerManager: debuggerManager,

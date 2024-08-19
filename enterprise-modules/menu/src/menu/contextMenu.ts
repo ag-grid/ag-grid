@@ -40,6 +40,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
     private columnModel: ColumnModel;
     private menuUtils: MenuUtils;
     private rangeService?: IRangeService;
+    private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService;
@@ -47,6 +48,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
         this.columnModel = beans.columnModel;
         this.menuUtils = beans.menuUtils as MenuUtils;
         this.rangeService = beans.rangeService;
+        this.focusService = beans.focusService;
     }
 
     private activeMenu: ContextMenu | null;
@@ -152,6 +154,12 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
         this.createBean(menu);
 
         const eMenuGui = menu.getGui();
+
+        if (!column) {
+            // the context menu has been opened not on a cell, therefore we don't want to
+            // display the previous cell as focused, or return focus there after
+            this.focusService.clearFocusedCell();
+        }
 
         const positionParams = {
             column: column,

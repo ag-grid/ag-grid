@@ -3,7 +3,6 @@ import { ToggleAutomatedExampleButton } from '@components/automated-examples/Tog
 import { createAutomatedIntegratedCharts } from '@components/automated-examples/examples/integrated-charts';
 import { INTEGRATED_CHARTS_ID } from '@components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
-import breakpoints from '@design-system/breakpoint.module.scss';
 import { trackHomepageExampleIntegratedCharts, trackOnceHomepageExampleIntegratedCharts } from '@utils/analytics';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
@@ -13,8 +12,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import automatedExamplesVars from './AutomatedExamplesVars.module.scss';
 import styles from './AutomatedIntegratedCharts.module.scss';
+import { isMobile } from './lib/isMobile';
 
-const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = parseInt(breakpoints['automated-row-grouping-medium'], 10);
 const AUTOMATED_EXAMPLE_MOBILE_SCALE = parseFloat(automatedExamplesVars['mobile-grid-scale']);
 
 export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
@@ -28,7 +27,6 @@ export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticDa
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
     const [darkMode] = useDarkmode();
     const debuggerManager = automatedExampleManager?.getDebuggerManager();
-    const isMobile = () => window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
@@ -69,8 +67,7 @@ export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticDa
                 return overlayRef.current;
             },
             getContainerScale: () => {
-                const isMobileWidth = window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
-                return isMobileWidth ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
+                return isMobile() ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
             },
             mouseMaskClassname: styles.mouseMask,
             scriptDebuggerManager: debuggerManager,
