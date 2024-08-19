@@ -9,7 +9,7 @@ import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
-import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
+import type { ICellRendererComp } from '../cellRenderers/iCellRenderer';
 import type { IRowComp, RowCtrl } from './rowCtrl';
 
 export class RowComp extends Component {
@@ -42,7 +42,7 @@ export class RowComp extends Component {
             setDomOrder: (domOrder) => (this.domOrder = domOrder),
             setCellCtrls: (cellCtrls) => this.setCellCtrls(cellCtrls),
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
-            getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
+            getFullWidthCellRenderer: () => this.fullWidthCellRenderer,
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(eGui, styles),
             setTop: (top) => (style.top = top),
@@ -50,7 +50,7 @@ export class RowComp extends Component {
             setRowIndex: (rowIndex) => eGui.setAttribute('row-index', rowIndex),
             setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
             setRowBusinessKey: (businessKey) => eGui.setAttribute('row-business-key', businessKey),
-            refreshFullWidth: (getUpdatedParams) => this.refreshFullWidth(getUpdatedParams),
+            refreshFullWidth: (getUpdatedParams) => this.fullWidthCellRenderer?.refresh?.(getUpdatedParams()) ?? false,
         };
 
         ctrl.setComp(compProxy, this.getGui(), containerType);
@@ -90,7 +90,7 @@ export class RowComp extends Component {
         const cellsToRemove = Object.assign({}, this.cellComps);
 
         cellCtrls.forEach((cellCtrl) => {
-            const key = cellCtrl.getInstanceId();
+            const key = cellCtrl.instanceId;
             const existingCellComp = this.cellComps[key];
 
             if (existingCellComp == null) {
@@ -113,7 +113,7 @@ export class RowComp extends Component {
 
         const elementsInOrder: HTMLElement[] = [];
         cellCtrls.forEach((cellCtrl) => {
-            const cellComp = this.cellComps[cellCtrl.getInstanceId()];
+            const cellComp = this.cellComps[cellCtrl.instanceId];
             if (cellComp) {
                 elementsInOrder.push(cellComp.getGui());
             }
@@ -130,7 +130,7 @@ export class RowComp extends Component {
             this.getGui(),
             this.rowCtrl.isEditing()
         );
-        this.cellComps[cellCtrl.getInstanceId()] = cellComp;
+        this.cellComps[cellCtrl.instanceId] = cellComp;
         this.getGui().appendChild(cellComp.getGui());
     }
 
@@ -155,10 +155,6 @@ export class RowComp extends Component {
         });
     }
 
-    private getFullWidthCellRenderer(): ICellRendererComp | null | undefined {
-        return this.fullWidthCellRenderer;
-    }
-
     private destroyCells(cellComps: CellComp[]): void {
         cellComps.forEach((cellComp) => {
             // could be old reference, ie removed cell
@@ -167,7 +163,7 @@ export class RowComp extends Component {
             }
 
             // check cellComp belongs in this container
-            const instanceId = cellComp.getCtrl().getInstanceId();
+            const instanceId = cellComp.getCtrl().instanceId;
             if (this.cellComps[instanceId] !== cellComp) {
                 return;
             }
@@ -176,16 +172,5 @@ export class RowComp extends Component {
             cellComp.destroy();
             this.cellComps[instanceId] = null;
         });
-    }
-
-    private refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean {
-        const { fullWidthCellRenderer } = this;
-        if (!fullWidthCellRenderer || !fullWidthCellRenderer.refresh) {
-            return false;
-        }
-
-        const params = getUpdatedParams();
-
-        return fullWidthCellRenderer.refresh(params);
     }
 }
