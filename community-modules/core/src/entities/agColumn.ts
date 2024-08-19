@@ -441,10 +441,12 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public setHighlighted(highlighted: ColumnHighlightPosition | null): void {
-        if (this.highlighted !== highlighted) {
-            this.highlighted = highlighted;
-            this.columnEventService.dispatchEvent(this.createColumnEvent('headerHighlightChanged', 'uiColumnMoved'));
+        if (this.highlighted === highlighted) {
+            return;
         }
+
+        this.highlighted = highlighted;
+        this.columnEventService.dispatchEvent(this.createColumnEvent('headerHighlightChanged', 'uiColumnMoved'));
     }
 
     public setMoving(moving: boolean, source: ColumnEventType): void {

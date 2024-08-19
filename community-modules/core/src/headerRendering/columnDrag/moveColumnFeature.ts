@@ -163,34 +163,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
             if (lastMovedInfo) {
                 this.lastMovedInfo = lastMovedInfo;
-            } else if (finished) {
-                // only falls here when suppressMoveWhenColumnDragging is true
-
-                const isAttemptingToPin =
-                    this.needToMoveLeft ||
-                    this.needToMoveLeft ||
-                    this.failedMoveAttempts > 7 ||
-                    params.allMovingColumns.some((col) => col.getPinned() !== this.pinned);
-
-                const { column, position } = this.lastHighlightedColumn || {};
-
-                if (column && position != null) {
-                    const toIndex = this.columnMoveService.getMoveTargetIndex({
-                        currentColumns: params.allMovingColumns,
-                        lastHoveredColumn: column,
-                        isBefore: (position === ColumnHighlightPosition.Before) !== this.gos.get('enableRtl'),
-                        isAttemptingToPin,
-                    });
-
-                    if (toIndex != null) {
-                        this.lastMovedInfo = {
-                            columns: params.allMovingColumns,
-                            toIndex,
-                        };
-                    }
-                }
-
-                this.finishColumnMoving(isAttemptingToPin);
+            } else if (finished && isSuppressMoveWhenDragging) {
+                this.moveColumnsAfterHighlight(params.allMovingColumns);
             }
         }
     }
@@ -208,10 +182,40 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
-        if (columns) {
-            const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-            this.columnModel.setColsVisible(allowedCols, visible, source);
+        if (!columns) {
+            return;
         }
+
+        const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
+        this.columnModel.setColsVisible(allowedCols, visible, source);
+    }
+
+    private moveColumnsAfterHighlight(allMovingColumns: AgColumn[]): void {
+        const isAttemptingToPin =
+            this.needToMoveLeft ||
+            this.needToMoveLeft ||
+            this.failedMoveAttempts > 7 ||
+            allMovingColumns.some((col) => col.getPinned() !== this.pinned);
+
+        const { column, position } = this.lastHighlightedColumn || {};
+
+        if (column && position != null) {
+            const toIndex = this.columnMoveService.getMoveTargetIndex({
+                currentColumns: allMovingColumns,
+                lastHoveredColumn: column,
+                isBefore: (position === ColumnHighlightPosition.Before) !== this.gos.get('enableRtl'),
+                isAttemptingToPin,
+            });
+
+            if (toIndex != null) {
+                this.lastMovedInfo = {
+                    columns: allMovingColumns,
+                    toIndex,
+                };
+            }
+        }
+
+        this.finishColumnMoving(isAttemptingToPin);
     }
 
     private finishColumnMoving(attemptToPin: boolean = false): void {
