@@ -64,13 +64,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private rendererVersion = 0;
     private editorVersion = 0;
 
-    constructor(
-        beans: BeanCollection,
-        cellCtrl: CellCtrl,
-        printLayout: boolean,
-        eRow: HTMLElement,
-        editingRow: boolean
-    ) {
+    constructor(beans: BeanCollection, cellCtrl: CellCtrl, eRow: HTMLElement, editingRow: boolean) {
         super();
         this.beans = beans;
         this.column = cellCtrl.getColumn();
@@ -89,27 +83,21 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.refreshWrapper(false);
 
-        const setAttribute = (name: string, value: string | null | undefined) => {
-            if (value != null && value != '') {
-                eGui.setAttribute(name, value);
-            } else {
-                eGui.removeAttribute(name);
-            }
-        };
-
         _setAriaRole(eGui, cellCtrl.getCellAriaRole());
-        setAttribute('col-id', cellCtrl.getColumnIdSanitised());
+        const { colIdSanitised, includeDndSource, includeRowDrag, includeSelection } = cellCtrl;
+        eGui.setAttribute('col-id', colIdSanitised);
+        this.includeDndSource = includeDndSource;
+        this.includeRowDrag = includeRowDrag;
+        this.includeSelection = includeSelection;
 
-        cellCtrl.getStaticClasses().forEach((c) => this.addCssClass(c));
+        cellCtrl.staticCssClasses.forEach((c) => this.addCssClass(c));
 
         const compProxy: ICellComp = {
+            getGui: () => this.getGui(),
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            updateStyle: (styleName, value) => {},
             setUserStyles: (styles: CellStyle) => _addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
-
-            setIncludeSelection: (include) => (this.includeSelection = include),
-            setIncludeRowDrag: (include) => (this.includeRowDrag = include),
-            setIncludeDndSource: (include) => (this.includeDndSource = include),
 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
@@ -120,7 +108,7 @@ export class CellComp extends Component implements TooltipParentComp {
             getParentOfValue: () => this.getParentOfValue(),
         };
 
-        cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);
+        cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, editingRow);
     }
 
     private getParentOfValue(): HTMLElement {

@@ -23,7 +23,7 @@ export class CellRangeFeature {
     private selectionHandleFactory: ISelectionHandleFactory;
     private cellComp: ICellComp;
     private cellCtrl: CellCtrl;
-    private eGui: HTMLElement;
+    // private eGui: HTMLElement;
 
     private rangeCount: number;
     private hasChartRange: boolean;
@@ -38,9 +38,9 @@ export class CellRangeFeature {
         this.cellCtrl = ctrl;
     }
 
-    public setComp(cellComp: ICellComp, eGui: HTMLElement): void {
+    public setComp(cellComp: ICellComp): void {
         this.cellComp = cellComp;
-        this.eGui = eGui;
+        // this.eGui = eGui;
         this.onRangeSelectionChanged();
     }
 
@@ -60,7 +60,7 @@ export class CellRangeFeature {
         this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.rangeCount >= 4);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
 
-        _setAriaSelected(this.eGui, this.rangeCount > 0 ? true : undefined);
+        _setAriaSelected(this.cellComp.getGui()!, this.rangeCount > 0 ? true : undefined);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
 
         this.updateRangeBorders();

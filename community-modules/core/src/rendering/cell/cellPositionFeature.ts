@@ -5,7 +5,7 @@ import type { RowNode } from '../../entities/rowNode';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
 import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
-import type { CellCtrl } from './cellCtrl';
+import type { CellCtrl, ICellComp } from './cellCtrl';
 
 /**
  * Takes care of:
@@ -15,7 +15,7 @@ import type { CellCtrl } from './cellCtrl';
  */
 export class CellPositionFeature extends BeanStub {
     private cellCtrl: CellCtrl;
-    private eGui: HTMLElement;
+    private cellComp: ICellComp | undefined;
 
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
@@ -25,6 +25,8 @@ export class CellPositionFeature extends BeanStub {
 
     private beans: BeanCollection;
 
+    private currStyles: { [key: string]: string | null | undefined } = {};
+
     constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
 
@@ -33,6 +35,9 @@ export class CellPositionFeature extends BeanStub {
 
         this.column = ctrl.getColumn();
         this.rowNode = ctrl.getRowNode();
+
+        this.onLeftChanged();
+        this.onWidthChanged();
     }
 
     private setupRowSpan(): void {
@@ -41,8 +46,8 @@ export class CellPositionFeature extends BeanStub {
         this.addManagedListeners(this.beans.eventService, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
     }
 
-    public setComp(eGui: HTMLElement): void {
-        this.eGui = eGui;
+    public setComp(cellComp: ICellComp): void {
+        this.cellComp = cellComp;
 
         // add event handlers only after GUI is attached,
         // so we don't get events before we are ready
@@ -52,6 +57,10 @@ export class CellPositionFeature extends BeanStub {
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
+    }
+
+    public getStyles() {
+        return this.currStyles;
     }
 
     private onNewColumnsLoaded(): void {
@@ -94,11 +103,10 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        if (!this.eGui) {
-            return;
-        }
-        const width = this.getCellWidth();
-        this.eGui.style.width = `${width}px`;
+        const width = `${this.getCellWidth()}px`;
+        this.currStyles.width = width;
+
+        this.cellComp?.updateStyle('width', width);
     }
 
     private getCellWidth(): number {
@@ -136,11 +144,9 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.eGui) {
-            return;
-        }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.eGui.style.left = left + 'px';
+        this.currStyles.left = left ? `${left}px` : null;
+        this.cellComp?.updateStyle('left', this.currStyles.left);
     }
 
     private getCellLeft(): number | null {
@@ -156,7 +162,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
-        if (!this.cellCtrl.isPrintLayout() || this.column.getPinned() === 'left') {
+        if (!this.cellCtrl.printLayout || this.column.getPinned() === 'left') {
             return leftPosition;
         }
 
@@ -179,8 +185,11 @@ export class CellPositionFeature extends BeanStub {
         const singleRowHeight = _getRowHeightAsNumber(this.beans.gos);
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
-        this.eGui.style.height = `${totalRowHeight}px`;
-        this.eGui.style.zIndex = '1';
+        this.currStyles.height = `${totalRowHeight}px`;
+        this.currStyles.zIndex = '1';
+
+        this.cellComp?.updateStyle('height', this.currStyles.height);
+        this.cellComp?.updateStyle('zIndex', this.currStyles.zIndex);
     }
 
     // overriding to make public, as we don't dispose this bean via context

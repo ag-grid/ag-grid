@@ -15,9 +15,8 @@ import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
-const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
+const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
-    const { rowCtrl, containerType } = params;
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
@@ -169,25 +168,18 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
             reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
-    const showCellsJsx = () =>
-        cellCtrls?.map((cellCtrl) => (
-            <CellComp
-                cellCtrl={cellCtrl}
-                editingRow={rowCtrl.isEditing()}
-                printLayout={rowCtrl.isPrintLayout()}
-                key={cellCtrl.getInstanceId()}
-            />
+    const showCellsJsx = () => {
+        return cellCtrls?.map((cellCtrl) => (
+            <CellComp cellCtrl={cellCtrl} editingRow={rowCtrl.isEditing()} key={cellCtrl.instanceId} />
         ));
+    };
 
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails!.componentClass;
-        return (
-            <>
-                {reactFullWidthCellRendererStateless && <FullWidthComp {...fullWidthCompDetails!.params} />}
-                {!reactFullWidthCellRendererStateless && (
-                    <FullWidthComp {...fullWidthCompDetails!.params} ref={fullWidthCompRef} />
-                )}
-            </>
+        return reactFullWidthCellRendererStateless ? (
+            <FullWidthComp {...fullWidthCompDetails!.params} />
+        ) : (
+            <FullWidthComp {...fullWidthCompDetails!.params} ref={fullWidthCompRef} />
         );
     };
 

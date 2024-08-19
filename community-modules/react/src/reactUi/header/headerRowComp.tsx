@@ -69,13 +69,13 @@ const HeaderRowComp = (props: { ctrl: HeaderRowCtrl }) => {
     const createCellJsx = useCallback((cellCtrl: AbstractHeaderCellCtrl) => {
         switch (ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:
-                return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.getInstanceId()} />;
+                return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.instanceId} />;
 
             case HeaderRowType.FLOATING_FILTER:
-                return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.getInstanceId()} />;
+                return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.instanceId} />;
 
             default:
-                return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.getInstanceId()} />;
+                return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.instanceId} />;
         }
     }, []);
 

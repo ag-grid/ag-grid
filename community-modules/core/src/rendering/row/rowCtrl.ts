@@ -80,7 +80,7 @@ export type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
-    private instanceId: RowCtrlInstanceId;
+    public readonly instanceId: RowCtrlInstanceId;
 
     private readonly rowNode: RowNode;
     private readonly beans: BeanCollection;
@@ -141,6 +141,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private rowId: string | null = null;
     private businessKeySanitised: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
+    private containerType: RowContainerType;
 
     constructor(
         rowNode: RowNode,
@@ -197,10 +198,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowNode.sticky;
     }
 
-    public getInstanceId(): RowCtrlInstanceId {
-        return this.instanceId;
-    }
-
     private updateGui(containerType: RowContainerType, gui: RowGui | undefined) {
         if (containerType === 'left') {
             this.leftGui = gui;
@@ -214,6 +211,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
+        this.containerType = containerType;
         const gui: RowGui = { rowComp, element, containerType };
         this.allRowGuis.push(gui);
         this.updateGui(containerType, gui);
@@ -1551,6 +1549,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public destroyFirstPass(suppressAnimation: boolean = false): void {
         this.active = false;
 
+        this.allRowGuis.forEach((item) => {
+            item.rowComp.setCellCtrls([], false);
+        });
+
+        this.unsetComp(this.containerType);
+
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
@@ -1704,6 +1708,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         return rowTop + 'px';
+    }
+
+    public stop() {
+        this.gos.get('context').stop = true;
     }
 
     private setRowTopStyle(topPx: string): void {

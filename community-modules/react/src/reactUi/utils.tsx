@@ -6,6 +6,70 @@ export const classesList = (...list: (string | null | undefined)[]): string => {
     return filtered.join(' ');
 };
 
+export class StylesManager {
+    private stylesMap: { [name: string]: any } = {};
+
+    constructor(
+        private getGui: () => HTMLElement | undefined | null,
+        initialStyles: { [name: string]: any }
+    ) {
+        this.stylesMap = { ...initialStyles };
+    }
+
+    public setStyle(styleName: string, value: any): void {
+        // important to not make a copy if nothing has changed, so react
+        // won't trigger a render cycle on new object instance
+        const nothingHasChanged = !!this.stylesMap[styleName] == value;
+        if (nothingHasChanged) {
+            return;
+        }
+
+        if (value == null) {
+            delete this.stylesMap[styleName];
+            this.getGui()?.style.removeProperty(styleName);
+        } else {
+            this.stylesMap[styleName] = value;
+            this.getGui()?.style.setProperty(styleName, value);
+        }
+    }
+
+    public getStyles(): any {
+        return { ...this.stylesMap };
+    }
+}
+
+export class CssClassesStable {
+    private classesMap: { [name: string]: boolean } = {};
+
+    constructor(
+        private getGui: () => HTMLElement | undefined | null,
+        initialClasses: string[]
+    ) {
+        initialClasses.forEach((className) => {
+            this.classesMap[className] = true;
+        });
+    }
+
+    public setClass(className: string, on: boolean): void {
+        // important to not make a copy if nothing has changed, so react
+        // won't trigger a render cycle on new object instance
+        const nothingHasChanged = !!this.classesMap[className] == on;
+        if (nothingHasChanged) {
+            return;
+        }
+
+        this.classesMap[className] = on;
+        this.getGui()?.classList.toggle(className, on);
+    }
+
+    public toString(): string {
+        const res = Object.keys(this.classesMap)
+            .filter((key) => this.classesMap[key])
+            .join(' ');
+        return res;
+    }
+}
+
 export class CssClasses {
     private classesMap: { [name: string]: boolean } = {};
 
@@ -86,7 +150,7 @@ export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
  * @param maintainOrder If we want to maintain the order of the elements in the dom in line with the next array
  * @returns
  */
-export function getNextValueIfDifferent<T extends { getInstanceId: () => string }>(
+export function getNextValueIfDifferent<T extends { instanceId: string }>(
     prev: T[] | null,
     next: T[] | null,
     maintainOrder: boolean
@@ -117,20 +181,20 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
 
     for (let i = 0; i < next.length; i++) {
         const c = next[i];
-        nextMap.set(c.getInstanceId(), c);
+        nextMap.set(c.instanceId, c);
     }
 
     for (let i = 0; i < prev.length; i++) {
         const c = prev[i];
-        prevMap.set(c.getInstanceId(), c);
-        if (nextMap.has(c.getInstanceId())) {
+        prevMap.set(c.instanceId, c);
+        if (nextMap.has(c.instanceId)) {
             oldValues.push(c);
         }
     }
 
     for (let i = 0; i < next.length; i++) {
         const c = next[i];
-        const instanceId = c.getInstanceId();
+        const instanceId = c.instanceId;
 
         if (!prevMap.has(instanceId)) {
             newValues.push(c);

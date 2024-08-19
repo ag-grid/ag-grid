@@ -1316,10 +1316,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             rowCtrl.destroyFirstPass(!animate);
             if (animate) {
-                this.zombieRowCtrls[rowCtrl.getInstanceId()] = rowCtrl;
+                this.zombieRowCtrls[rowCtrl.instanceId] = rowCtrl;
                 executeInAWhileFuncs.push(() => {
                     rowCtrl.destroySecondPass();
-                    delete this.zombieRowCtrls[rowCtrl.getInstanceId()];
+                    delete this.zombieRowCtrls[rowCtrl.instanceId];
                 });
             } else {
                 rowCtrl.destroySecondPass();

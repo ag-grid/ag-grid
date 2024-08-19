@@ -361,13 +361,16 @@ export class ClientSideNodeManager {
             }
 
             if (setExpanded) {
-                const rowGroupColumns = this.funcColsService.getRowGroupColumns();
-                const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
+                if (rowNode.master) {
+                    const rowGroupColumns = this.funcColsService.getRowGroupColumns();
+                    const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
-                // need to take row group into account when determining level
-                const masterRowLevel = level + numRowGroupColumns;
-
-                rowNode.expanded = rowNode.master ? this.isExpanded(masterRowLevel) : false;
+                    // need to take row group into account when determining level
+                    const masterRowLevel = level + numRowGroupColumns;
+                    rowNode.expanded = this.isExpanded(masterRowLevel);
+                } else {
+                    rowNode.expanded = false;
+                }
             }
         }
     }

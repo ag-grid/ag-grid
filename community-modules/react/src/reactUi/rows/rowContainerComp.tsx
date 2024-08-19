@@ -118,17 +118,15 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
         [setRef]
     );
 
-    const buildContainer = () => (
-        <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
-            {rowCtrlsOrdered.map((rowCtrl) => (
-                <RowComp
-                    rowCtrl={rowCtrl}
-                    containerType={containerOptions.type}
-                    key={rowCtrl.getInstanceId()}
-                ></RowComp>
-            ))}
-        </div>
-    );
+    const buildContainer = () => {
+        return (
+            <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
+                {rowCtrlsOrdered.map((rowCtrl) => (
+                    <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
+                ))}
+            </div>
+        );
+    };
 
     return (
         <>

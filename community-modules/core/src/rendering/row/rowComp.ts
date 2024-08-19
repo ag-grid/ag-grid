@@ -90,7 +90,7 @@ export class RowComp extends Component {
         const cellsToRemove = Object.assign({}, this.cellComps);
 
         cellCtrls.forEach((cellCtrl) => {
-            const key = cellCtrl.getInstanceId();
+            const key = cellCtrl.instanceId;
             const existingCellComp = this.cellComps[key];
 
             if (existingCellComp == null) {
@@ -113,7 +113,7 @@ export class RowComp extends Component {
 
         const elementsInOrder: HTMLElement[] = [];
         cellCtrls.forEach((cellCtrl) => {
-            const cellComp = this.cellComps[cellCtrl.getInstanceId()];
+            const cellComp = this.cellComps[cellCtrl.instanceId];
             if (cellComp) {
                 elementsInOrder.push(cellComp.getGui());
             }
@@ -123,14 +123,8 @@ export class RowComp extends Component {
     }
 
     private newCellComp(cellCtrl: CellCtrl): void {
-        const cellComp = new CellComp(
-            this.beans,
-            cellCtrl,
-            this.rowCtrl.isPrintLayout(),
-            this.getGui(),
-            this.rowCtrl.isEditing()
-        );
-        this.cellComps[cellCtrl.getInstanceId()] = cellComp;
+        const cellComp = new CellComp(this.beans, cellCtrl, this.getGui(), this.rowCtrl.isEditing());
+        this.cellComps[cellCtrl.instanceId] = cellComp;
         this.getGui().appendChild(cellComp.getGui());
     }
 
@@ -167,7 +161,7 @@ export class RowComp extends Component {
             }
 
             // check cellComp belongs in this container
-            const instanceId = cellComp.getCtrl().getInstanceId();
+            const instanceId = cellComp.getCtrl().instanceId;
             if (this.cellComps[instanceId] !== cellComp) {
                 return;
             }

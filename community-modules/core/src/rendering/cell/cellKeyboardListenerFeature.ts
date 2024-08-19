@@ -6,7 +6,7 @@ import type { RowNode } from '../../entities/rowNode';
 import { _isRowSelection } from '../../gridOptionsUtils';
 import { _isDeleteKey } from '../../utils/keyboard';
 import type { RowCtrl } from '../row/rowCtrl';
-import type { CellCtrl } from './cellCtrl';
+import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellKeyboardListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
@@ -14,7 +14,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private readonly rowNode: RowNode;
     private readonly rowCtrl: RowCtrl;
 
-    private eGui: HTMLElement;
+    private cellComp: ICellComp | undefined;
 
     constructor(ctrl: CellCtrl, beans: BeanCollection, column: AgColumn, rowNode: RowNode, rowCtrl: RowCtrl) {
         super();
@@ -24,8 +24,8 @@ export class CellKeyboardListenerFeature extends BeanStub {
         this.rowCtrl = rowCtrl;
     }
 
-    public setComp(eGui: HTMLElement): void {
-        this.eGui = eGui;
+    public setComp(cellComp: ICellComp): void {
+        this.cellComp = cellComp;
     }
 
     public onKeyDown(event: KeyboardEvent): void {
@@ -157,7 +157,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         // check this, in case focus is on a (for example) a text field inside the cell,
         // in which cse we should not be listening for these key pressed
         const eventTarget = event.target;
-        const eventOnChildComponent = eventTarget !== this.eGui;
+        const eventOnChildComponent = eventTarget !== this.cellComp?.getGui();
 
         if (eventOnChildComponent || this.cellCtrl.isEditing()) {
             return;

@@ -17,7 +17,7 @@ import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
-import { isComponentStateless } from '../utils';
+import { CssClasses, CssClassesStable, isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 
@@ -236,11 +236,18 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         [setCellEditorRef]
     );
 
-    const cssClassManager = useRef<CssClassManager>();
-
-    if (!cssClassManager.current) {
-        cssClassManager.current = new CssClassManager(() => eGui.current);
+    // const cssClassManager = useRef<CssClassManager>();
+    const cssClasses = useRef<CssClassesStable>();
+    if (!cssClasses.current) {
+        cssClasses.current = new CssClassesStable(() => eGui.current, ...cellCtrl.getStaticClasses());
+        //cellCtrl.getStaticClasses().forEach((cssClass) => cssClasses.current!.setClass(cssClass, true));
     }
+    cssClasses.current.setClass('ag-cell-value', !showCellWrapper);
+
+    // if (!cssClassManager.current) {
+    //     cssClassManager.current = new CssClassManager(() => eGui.current, cellCtrl.getStaticClasses());
+    // }
+    // cssClassManager.current!.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
 
@@ -384,7 +391,10 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         }
 
         const compProxy: ICellComp = {
-            addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
+            addOrRemoveCssClass: (name, on) => {
+                cssClasses.current?.setClass(name, on);
+                //cssClassManager.current!.addOrRemoveCssClass(name, on)
+            },
             setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui.current!,
 
@@ -460,10 +470,9 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         if (!eGui.current) {
             return;
         }
-        cssClassManager.current!.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
-        cssClassManager.current!.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
-        cssClassManager.current!.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
-        cssClassManager.current!.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
+        cssClasses.current!.setClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
+        cssClasses.current!.setClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
+        cssClasses.current!.setClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
         cellCtrl.getRowCtrl()?.setInlineEditingCss();
 
         if (cellCtrl.shouldRestoreFocus() && !cellCtrl.isEditing()) {
@@ -500,7 +509,14 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
     const onBlur = useCallback(() => cellCtrl.onFocusOut(), []);
 
     return (
-        <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colId} onBlur={onBlur}>
+        <div
+            ref={setRef}
+            className={cssClasses.current!.toString()}
+            style={userStyles}
+            role={cellAriaRole}
+            col-id={colId}
+            onBlur={onBlur}
+        >
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
                     {showContents()}

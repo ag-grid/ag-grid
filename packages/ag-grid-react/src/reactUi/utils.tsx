@@ -6,6 +6,38 @@ export const classesList = (...list: (string | null | undefined)[]): string => {
     return filtered.join(' ');
 };
 
+export class CssClassesStable {
+    private classesMap: { [name: string]: boolean } = {};
+
+    constructor(
+        private getGui: () => HTMLElement | undefined | null,
+        ...initialClasses: string[]
+    ) {
+        initialClasses.forEach((className) => {
+            this.classesMap[className] = true;
+        });
+    }
+
+    public setClass(className: string, on: boolean): void {
+        // important to not make a copy if nothing has changed, so react
+        // won't trigger a render cycle on new object instance
+        const nothingHasChanged = !!this.classesMap[className] == on;
+        if (nothingHasChanged) {
+            return;
+        }
+
+        this.classesMap[className] = on;
+        this.getGui()?.classList.toggle(className, on);
+    }
+
+    public toString(): string {
+        const res = Object.keys(this.classesMap)
+            .filter((key) => this.classesMap[key])
+            .join(' ');
+        return res;
+    }
+}
+
 export class CssClasses {
     private classesMap: { [name: string]: boolean } = {};
 
