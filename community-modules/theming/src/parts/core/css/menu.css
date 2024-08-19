@@ -108,10 +108,7 @@
     }
 }
 
-/* TODO split into separate file?
-  ////////////////////////////////////////
-  // Column Filter
-  //////////////////////////////////////// */
+/* Column Filter */
 
 .ag-menu.ag-tabs {
     /* minimum width for the legacy tabbed column menu */
@@ -126,10 +123,8 @@
     /* Force picker to match width of sibling inputs. */
     width: 0;
 }
-/* TODO split into separate file?
-  ////////////////////////////////////////
-  // Value Set Filter
-  //////////////////////////////////////// */
+
+/* Value Set Filter */
 
 .ag-filter-condition-operator {
     height: 17px;
@@ -233,7 +228,6 @@
     color: var(--ag-header-text-color);
 
     &:focus-visible {
-        /* TODO check this works properly */
         box-shadow: var(--ag-focus-shadow);
     }
 }

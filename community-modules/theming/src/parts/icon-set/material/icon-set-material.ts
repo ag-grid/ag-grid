@@ -4,5 +4,5 @@ import { iconSetMaterialCSS } from './GENERATED-icon-set-material';
 // prettier-ignore
 export const iconSetMaterial =
     /*#__PURE__*/
-    createPart('iconSet', 'material')
+    createPart({feature: 'iconSet', variant: 'material'})
         .addCss(iconSetMaterialCSS);

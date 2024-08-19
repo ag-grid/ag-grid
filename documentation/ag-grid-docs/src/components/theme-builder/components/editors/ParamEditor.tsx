@@ -1,5 +1,6 @@
-import type { ParamType, ThemeParam } from '@ag-grid-community/theming';
+import type { ParamType } from '@ag-grid-community/theming';
 import { useSetAdvancedParamEnabled } from '@components/theme-builder/model/advanced-params';
+import type { ThemeParam } from '@components/theme-builder/model/utils';
 import type { FC, ReactNode } from 'react';
 
 import { ParamModel, useParamAtom } from '../../model/ParamModel';

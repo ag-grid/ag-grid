@@ -1,10 +1,10 @@
-import type { ThemeParams } from '@ag-grid-community/theming';
+import { type Part, iconSetAlpine, iconSetQuartzLight } from '@ag-grid-community/theming';
 import { allParamModels } from '@components/theme-builder/model/ParamModel';
-import { allGroupModels } from '@components/theme-builder/model/PartModel';
+import { allFeatureModels } from '@components/theme-builder/model/PartModel';
 import { enabledAdvancedParamsAtom } from '@components/theme-builder/model/advanced-params';
 import { getApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import { resetChangedModelItems } from '@components/theme-builder/model/changed-model-items';
-import { logErrorMessageOnce } from '@components/theme-builder/model/utils';
+import type { ThemeParams } from '@components/theme-builder/model/utils';
 
 import type { Store } from '../../model/store';
 import { gridConfigAtom } from '../grid-config/grid-config-atom';
@@ -15,7 +15,7 @@ export type Preset = {
     params?: Partial<ThemeParams>;
     additionalGridFeatures?: ProductionGridConfigField[];
     // e.g. {iconSet: "alpine"} or {iconSet: "quartzBold"}
-    parts?: Record<string, string>;
+    parts?: Part<any>[];
 };
 
 export const lightModePreset: Preset = {
@@ -23,13 +23,6 @@ export const lightModePreset: Preset = {
     params: {
         headerFontSize: 14,
         browserColorScheme: 'light',
-        menuShadow: {
-            color: 'red',
-            offsetX: 10,
-            offsetY: 10,
-            radius: 20,
-            spread: 5,
-        },
     },
 };
 
@@ -161,9 +154,7 @@ export const allPresets: Preset[] = [
             columnBorder: false,
             sidePanelBorder: false,
         },
-        parts: {
-            iconSet: 'quartzLight',
-        },
+        parts: [iconSetQuartzLight],
     },
 
     {
@@ -218,9 +209,7 @@ export const allPresets: Preset[] = [
             headerFontWeight: 700,
             rowVerticalPaddingScale: 1.2,
         },
-        parts: {
-            iconSet: 'alpine',
-        },
+        parts: [iconSetAlpine],
     },
 ];
 
@@ -229,7 +218,7 @@ export const applyPreset = (store: Store, preset: Preset) => {
     const advancedParams = new Set<string>();
     for (const { property, valueAtom, onlyEditableAsAdvancedParam } of allParamModels()) {
         if (store.get(valueAtom) != null || presetParams[property] != null) {
-            store.set(valueAtom, presetParams[property] ?? null);
+            store.set(valueAtom, presetParams[property] ?? undefined);
         }
         if (presetParams[property] != null && onlyEditableAsAdvancedParam) {
             advancedParams.add(property);
@@ -240,23 +229,9 @@ export const applyPreset = (store: Store, preset: Preset) => {
     const activeConfigFields = Array.from(new Set(defaultConfigFields.concat(preset.additionalGridFeatures || [])));
     store.set(gridConfigAtom, Object.fromEntries(activeConfigFields.map((field) => [field, true])));
 
-    const presetParts = preset.parts || {};
-    for (const group of allGroupModels()) {
-        const newVariant = presetParts[group.groupId];
-        if (store.get(group.selectedPartAtom) != null || newVariant != null) {
-            const newPart = newVariant == null ? group.defaultPart : group.parts.find((v) => v.variant === newVariant);
-            if (!newPart) {
-                throw new Error(
-                    `Invalid variant ${newVariant} for group ${group.groupId}, use one of: ${group.parts.map((v) => v.variant).join(', ')}`
-                );
-            }
-            store.set(group.selectedPartAtom, newPart);
-        }
-    }
-    const validPartIds = allGroupModels().map((pm) => pm.groupId);
-    const invalidParts = Object.keys(presetParts).filter((partId) => partId && !validPartIds.includes(partId));
-    if (invalidParts.length) {
-        logErrorMessageOnce(`Preset contains invalid part: ${invalidParts.join(', ')}`);
+    for (const feature of allFeatureModels()) {
+        const part = feature.parts.find((partModel) => preset.parts?.includes(partModel.part)) || feature.defaultPart;
+        store.set(feature.selectedPartAtom, part);
     }
     store.set(getApplicationConfigAtom('previewPaneBackgroundColor'), preset.pageBackgroundColor || null);
     resetChangedModelItems(store);
