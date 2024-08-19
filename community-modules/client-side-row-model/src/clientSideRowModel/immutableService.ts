@@ -14,7 +14,6 @@ import {
     _getRowIdCallback,
     _isClientSideRowModel,
     _iterateObject,
-    _missing,
 } from '@ag-grid-community/core';
 
 import type { ClientSideRowModel } from './clientSideRowModel';
