@@ -37,6 +37,18 @@ The move column animation transitions the column's position only, so when you mo
 
 The grid property `suppressDragLeaveHidesColumns` will stop columns getting removed from the grid if they are dragged outside of the grid. This is handy if the user moves a column outside of the grid by accident while moving a column but doesn't intend to make it hidden.
 
+## Suppress Move When Dragging
+
+By default, the columns are moved while you are dragging them. This effect might not be desirable due to your application design. To prevent this use the `suppressMoveWhenColumnDragging` in the `gridOptions`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    suppressMoveWhenColumnDragging: true
+}
+```
+
+{% gridExampleRunner title="Column Moving with SuppressMoveWhenColumnDragging" name="suppress-move-when-dragging" /%}
+
 ## Suppress Movable
 
 The column property `suppressMovable` changes whether the column can be dragged. The column header cannot be dragged by the user to move the columns when `suppressMovable=true`. However the column can be inadvertently moved by placing other columns around it thus only making it practical if all columns have this property.
@@ -57,6 +69,7 @@ The example below demonstrates these properties as follows:
 * The **Age** **Total** and **Athlete** columns have the user provided `locked-col` and `suppress-movable-col` CSS classes applied to them respectively to change the background colour.
 
 {% gridExampleRunner title="Column Suppress & Lock" name="suppress-and-lock" /%}
+
 
 ## Advanced Locked Position Example
 

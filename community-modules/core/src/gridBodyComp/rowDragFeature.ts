@@ -181,14 +181,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return dragSourceDomDataKey === this.gos.getDomDataKey();
     }
 
-    private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-        const gridGui = gridBodyCon.getGui();
-        const { dropZoneTarget } = draggingEvent;
-
-        return !gridGui.contains(dropZoneTarget);
-    }
-
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
         // this event is fired for enter and move
         this.dispatchGridEvent('rowDragMove', draggingEvent);
@@ -215,7 +207,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         if (this.gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
-            if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
+            if (this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
         } else {
@@ -442,7 +434,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (
             this.gos.get('rowDragManaged') &&
             (this.gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
-            !this.isDropZoneWithinThisGrid(draggingEvent)
+            this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);
         }
