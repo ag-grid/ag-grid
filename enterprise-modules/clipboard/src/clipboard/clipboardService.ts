@@ -35,6 +35,7 @@ import {
     _exists,
     _getActiveDomElement,
     _getDocument,
+    _getSuppressCopySingleCellRanges,
     _isClientSideRowModel,
     _last,
     _removeFromArray,
@@ -800,7 +801,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldSkipSingleCellRange(rangeService: IRangeService): boolean {
-        return this.gos.get('suppressCopySingleCellRanges') && !rangeService.isMoreThanOneCell();
+        return _getSuppressCopySingleCellRanges(this.gos) && !rangeService.isMoreThanOneCell();
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {

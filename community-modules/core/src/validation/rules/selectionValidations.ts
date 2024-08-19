@@ -23,6 +23,7 @@ const selectionPropertyMap: Record<KeysOfUnion<SelectionOptions>, undefined> = {
     selectAll: undefined,
     enableMultiSelectWithClick: undefined,
     handle: undefined,
+    copySelectedRows: undefined,
 };
 const ALL_PROPERTIES = Object.keys(selectionPropertyMap) as KeysOfUnion<SelectionOptions>[];
 

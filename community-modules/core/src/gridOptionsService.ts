@@ -430,3 +430,15 @@ export function getHeaderCheckbox(selection: SelectionOptions): boolean {
 export function getHideDisabledCheckboxes(selection: SelectionOptions): boolean {
     return (selection?.mode !== 'cell' && selection?.hideDisabledCheckboxes) ?? false;
 }
+
+/**
+ * Gets the new row copy behaviour flag, falling back to the deprecated flag
+ */
+export function _getSuppressCopySingleCellRanges(gos: GridOptionsService): boolean {
+    const so = gos.get('selection');
+    if (so) {
+        return !!(so.mode !== 'cell' && so.copySelectedRows);
+    } else {
+        return gos.get('suppressCopySingleCellRanges');
+    }
+}
