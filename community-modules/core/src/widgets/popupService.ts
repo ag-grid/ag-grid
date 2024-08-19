@@ -94,6 +94,15 @@ export interface AddPopupResult {
 }
 
 const WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
+
+interface Position {
+    initialDiff: number;
+    lastDiff: number;
+    initial: number;
+    last: number;
+    direction: DIRECTION;
+}
+
 export class PopupService extends BeanStub implements NamedBean {
     beanName = 'popupService' as const;
 
@@ -703,17 +712,22 @@ export class PopupService extends BeanStub implements NamedBean {
         const { element, ePopup } = params;
 
         const sourceRect = element.getBoundingClientRect();
-        const initialDiffTop = parentRect.top - sourceRect.top;
-        const initialDiffLeft = parentRect.left - sourceRect.left;
 
-        let lastDiffTop = initialDiffTop;
-        let lastDiffLeft = initialDiffLeft;
+        const extractFromPixelValue = (pxSize: string) => parseInt(pxSize.substring(0, pxSize.length - 1), 10);
+        const createPosition = (prop: 'top' | 'left', direction: DIRECTION) => {
+            const initialDiff = parentRect[prop] - sourceRect[prop];
+            const initial = extractFromPixelValue(ePopup.style[prop]);
+            return {
+                initialDiff,
+                lastDiff: initialDiff,
+                initial,
+                last: initial,
+                direction,
+            };
+        };
+        const topPosition = createPosition('top', DIRECTION.vertical);
+        const leftPosition = createPosition('left', DIRECTION.horizontal);
 
-        const topPx = ePopup.style.top;
-        const top = parseInt(topPx!.substring(0, topPx!.length - 1), 10);
-
-        const leftPx = ePopup.style.left;
-        const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
         const fwOverrides = this.getFrameworkOverrides();
         return new AgPromise<() => void>((resolve) => {
             fwOverrides.wrapIncoming(() => {
@@ -729,27 +743,28 @@ export class PopupService extends BeanStub implements NamedBean {
                             return;
                         }
 
-                        const currentDiffTop = pRect.top - sRect.top;
-                        if (currentDiffTop != lastDiffTop) {
-                            const newTop = this.keepXYWithinBounds(
-                                ePopup,
-                                top + initialDiffTop - currentDiffTop,
-                                DIRECTION.vertical
-                            );
-                            ePopup.style.top = `${newTop}px`;
-                        }
-                        lastDiffTop = currentDiffTop;
+                        const calculateNewPosition = (position: Position, prop: 'top' | 'left') => {
+                            const current = extractFromPixelValue(ePopup.style[prop]);
+                            if (position.last !== current) {
+                                // some other process has moved the popup
+                                position.initial = current;
+                                position.last = current;
+                            }
 
-                        const currentDiffLeft = pRect.left - sRect.left;
-                        if (currentDiffLeft != lastDiffLeft) {
-                            const newLeft = this.keepXYWithinBounds(
-                                ePopup,
-                                left + initialDiffLeft - currentDiffLeft,
-                                DIRECTION.horizontal
-                            );
-                            ePopup.style.left = `${newLeft}px`;
-                        }
-                        lastDiffLeft = currentDiffLeft;
+                            const currentDiff = pRect[prop] - sRect[prop];
+                            if (currentDiff != position.lastDiff) {
+                                const newValue = this.keepXYWithinBounds(
+                                    ePopup,
+                                    position.initial + position.initialDiff - currentDiff,
+                                    position.direction
+                                );
+                                ePopup.style[prop] = `${newValue}px`;
+                                position.last = newValue;
+                            }
+                            position.lastDiff = currentDiff;
+                        };
+                        calculateNewPosition(topPosition, 'top');
+                        calculateNewPosition(leftPosition, 'left');
                     }, 200)
                     .then((intervalId) => {
                         const result = () => {
