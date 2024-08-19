@@ -12,7 +12,7 @@ enterprise: true
 As an example to illustrate the `rangeSelectionChanged` event, if selecting a range of 5 cells in a row, the user will click the first cell and drag to the last cell. 
 This will result in up to 7 events. The first and last cell in the range will cause two events each. 
 This is due to the first cell firing an event with `started=true, finished=true` upon mousedown with an additional event `started=true, finished=false` while in the range, and the last cell firing an event `started=false, finished=false` as soon as it is in the range and then again `started=false, finished=true` upon the end of cell selection. 
-All the intermediary events will have one event with both `started` and `finished` as `false`. This is illustrated in the table below
+All the intermediary events will have one event with both `started` and `finished` as `false`. This is illustrated in the table and example below:
 
 | User action                       | `started` | `finished`  |
 |-----------------------------------|-----------|------------|
@@ -21,6 +21,8 @@ All the intermediary events will have one event with both `started` and `finishe
 | `mousemove` in intermediate cells | `false`   | `false`    |
 | `mousemove` in final cell          | `false`   | `false`    |
 | `mouseup` in final cell            | `false`   | `true`     |
+
+{% gridExampleRunner title="rangeSelectionChanged" name="range-selection-changed-event" /%}
 
 ### Editing Events 
 

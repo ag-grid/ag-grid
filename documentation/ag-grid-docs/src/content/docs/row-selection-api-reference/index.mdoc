@@ -5,9 +5,17 @@ description: "Configure row selection, checkbox selection, and group selection i
 
 Selection API Reference for Single and Multi-Row Selection
 
-## API Reference
+## Configuration API
 
-### Selection Events
+### Single Row Mode
+
+{% interfaceDocumentation interfaceName="SingleRowSelectionOptions" config={"description":""} /%}
+
+### Multi-Row Mode
+
+{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" config={"description":""} /%}
+
+## Selection Events
 
 There are two events with regards to selection, illustrated in the example below:
 
@@ -17,7 +25,7 @@ The example below has configured alerts to be displayed on both these events fir
 
 {% gridExampleRunner title="Selection Events" name="selection-events" /%}
 
-### Node Selection API
+## Node Selection API
 
 To select rows programmatically, use the `node.setSelected(params)` method.
 
@@ -39,7 +47,7 @@ const selected = node.isSelected();
 
 The `isSelected()` method returns `true` if the node is selected, or `false` if it is not selected. If the node is a group node and the group selection is set to `'children'`, this will return `true` if all child (and grandchild) nodes are selected, `false` if all unselected, or `undefined` if a mixture.
 
-### Grid Selection API
+## Grid Selection API
 
 The grid API has the following methods for selection:
 
