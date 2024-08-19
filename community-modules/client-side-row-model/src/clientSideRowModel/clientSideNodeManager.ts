@@ -24,12 +24,12 @@ interface ClientSideRowNode extends RowNode {
     indexInRowData: number;
 }
 
-interface RootNode extends RowNode {
+interface ClientSideRootNode extends RowNode {
     allLeafChildren: ClientSideRowNode[] | null;
     childrenAfterGroup: ClientSideRowNode[] | null;
 }
 
-export interface ClientSideUpdateRowDataResult {
+export interface ClientSideNodeManagerUpdateRowDataResult {
     /** The RowNodeTransaction containing all the removals, updates and additions */
     rowNodeTransaction: RowNodeTransaction;
 
@@ -38,7 +38,7 @@ export interface ClientSideUpdateRowDataResult {
 }
 
 export class ClientSideNodeManager {
-    private readonly rootNode: RootNode;
+    private readonly rootNode: ClientSideRootNode;
 
     private gos: GridOptionsService;
     private eventService: EventService;
@@ -97,7 +97,7 @@ export class ClientSideNodeManager {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
-        const sibling: RootNode = this.rootNode.sibling;
+        const sibling: ClientSideRootNode = this.rootNode.sibling;
 
         rootNode.childrenAfterFilter = null;
         rootNode.childrenAfterGroup = null;
@@ -131,11 +131,11 @@ export class ClientSideNodeManager {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction): ClientSideUpdateRowDataResult {
+    public updateRowData(rowDataTran: RowDataTransaction): ClientSideNodeManagerUpdateRowDataResult {
         this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 
-        const updateRowDataResult: ClientSideUpdateRowDataResult = {
+        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult = {
             rowNodeTransaction: { remove: [], update: [], add: [] },
             rowsInserted: false,
         };
@@ -228,7 +228,7 @@ export class ClientSideNodeManager {
         }
     }
 
-    private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideUpdateRowDataResult): void {
+    private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult): void {
         const add = rowDataTran.add;
         if (_missingOrEmpty(add)) {
             return;
@@ -282,7 +282,7 @@ export class ClientSideNodeManager {
             this.rootNode.allLeafChildren = allLeafChildren.concat(newNodes);
         }
 
-        const sibling: RootNode = this.rootNode.sibling;
+        const sibling: ClientSideRootNode = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = allLeafChildren;
         }
@@ -306,7 +306,7 @@ export class ClientSideNodeManager {
 
     private executeRemove(
         rowDataTran: RowDataTransaction,
-        { rowNodeTransaction }: ClientSideUpdateRowDataResult,
+        { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult,
         nodesToUnselect: RowNode[]
     ): void {
         const { remove } = rowDataTran;
@@ -350,7 +350,7 @@ export class ClientSideNodeManager {
             node.indexInRowData = idx;
         });
 
-        const sibling: RootNode | null = this.rootNode.sibling;
+        const sibling: ClientSideRootNode | null = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
@@ -358,7 +358,7 @@ export class ClientSideNodeManager {
 
     private executeUpdate(
         rowDataTran: RowDataTransaction,
-        { rowNodeTransaction }: ClientSideUpdateRowDataResult,
+        { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult,
         nodesToUnselect: RowNode[]
     ): void {
         const { update } = rowDataTran;

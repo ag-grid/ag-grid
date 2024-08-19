@@ -2,7 +2,12 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
-import { executeTransactionsAsync, getAllRowData, verifyPositionInRootChildren } from '../test-utils';
+import {
+    cachedJSONObjects,
+    executeTransactionsAsync,
+    getAllRowData,
+    verifyPositionInRootChildren,
+} from '../test-utils';
 
 describe('ag-grid rows-ordering', () => {
     let consoleWarnSpy: jest.SpyInstance;
@@ -21,6 +26,7 @@ describe('ag-grid rows-ordering', () => {
     });
 
     beforeEach(() => {
+        cachedJSONObjects.clear();
         consoleWarnSpy?.mockRestore();
         consoleErrorSpy?.mockRestore();
         resetGrids();
@@ -389,8 +395,68 @@ describe('ag-grid rows-ordering', () => {
         ]);
     });
 
+    test('can swap rows by updating row data', async () => {
+        const rowData1 = cachedJSONObjects.array([
+            { id: '0', x: 1 },
+            { id: '1', x: 1 },
+            { id: '2', x: 1 },
+            { id: '3', x: 1 },
+            { id: '4', x: 1 },
+            { id: '5', x: 1 },
+        ]);
+
+        const rowData2 = cachedJSONObjects.array([
+            { id: '0', x: 1 },
+            { id: '1', x: 1 },
+            { id: '3', x: 1 },
+            { id: '2', x: 1 },
+            { id: '4', x: 1 },
+            { id: '5', x: 1 },
+        ]);
+
+        const rowData3 = cachedJSONObjects.array([
+            { id: '4', x: 1 },
+            { id: '1', x: 1 },
+            { id: '3', x: 1 },
+            { id: '2', x: 1 },
+            { id: '0', x: 1 },
+            { id: '5', x: 1 },
+        ]);
+
+        const rowData4 = cachedJSONObjects.array([
+            { id: '5', x: 1 },
+            { id: '1', x: 1 },
+            { id: '3', x: 1 },
+            { id: '2', x: 1 },
+            { id: '0', x: 1 },
+            { id: '4', x: 1 },
+        ]);
+
+        const api = createMyGrid({
+            columnDefs: [{ field: 'x' }],
+            animateRows: false,
+            rowData: rowData1,
+            getRowId: (params) => params.data.id,
+        });
+
+        let allRowData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allRowData).toEqual(rowData1);
+
+        api.setGridOption('rowData', rowData2);
+        allRowData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allRowData).toEqual(rowData2);
+
+        api.setGridOption('rowData', rowData3);
+        allRowData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allRowData).toEqual(rowData3);
+
+        api.setGridOption('rowData', rowData4);
+        allRowData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allRowData).toEqual(rowData4);
+    });
+
     describe('complex transaction', () => {
-        test('ag-grid tree sync complex transaction', async () => {
+        test('ag-grid sync complex transaction', async () => {
             const row0 = { id: '0', x: '0' };
             const row1a = { id: '1', x: '1a' };
             const row2 = { id: '2', x: '2' };
@@ -448,7 +514,7 @@ describe('ag-grid rows-ordering', () => {
             expect(allData).toEqual([row0, row3, row4, row5b, row6b]);
         });
 
-        test('ag-grid tree async complex transaction', async () => {
+        test('ag-grid async complex transaction', async () => {
             const row0 = { id: '0', x: '0' };
             const row1a = { id: '1', x: '1a' };
             const row2 = { id: '2', x: '2' };
