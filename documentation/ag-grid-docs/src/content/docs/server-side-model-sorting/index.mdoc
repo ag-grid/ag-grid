@@ -66,17 +66,16 @@ The example below demonstrates client-side sorting using the SSRM. Note the foll
 
 ## Sorting All Levels
 
-By default, when using the SSRM and sorting columns which have row grouping enabled, the grid will only sort the groups which are impacted by the request. This results in better performance
-and less requests to the server. When sorting columns containing aggregated data all the nodes will be sorted but if additional data is provided without an aggregate then the sorting
-behaviour will not be completed as expected, eg. when using a `valueGetter` for each row.
+By default, the SSRM will attempt to reduce the number of requests it will make to your server when a column is sorted. It does this by attempting to preserve groups where the grid does not expect the rows to contain any data, for example see the following two scenarios:
+- If a sort is applied to a column with an aggregation, all of the cells in this column are expected to have data, and so everything will be refreshed
+- If a sort is applied to a column which is neither grouped, or aggregated, then the grid will only sort the leaf level groups. This is because it does not expect the group rows to have data for this column.
 
-If you wish to sort all the levels enable `serverSideSortAllLevels` to disable this feature.
+In the SSRM it is possible to provide the grid with additional group row data which you may wish to be sorted. To disable this caching behaviour and instead always refresh from the server when a sort is attempted, enable the property `serverSideSortAllLevels: true`
 
-The example below demonstrates sorting all levels. Note the following:
-
+The example below demonstrates this property. Note the following:
 * `serverSideSortAllLevels` is set to true
-* The Random Number column uses a `valueGetter` to generate a random number for each node
-* When any column is sorted, all the nodes are sorted and the data is reloaded
+* The Random Number column uses a `valueGetter` to generate a random number for every node
+* When the `Random Number` column is sorted, it correctly re-fetches from the server (even though the order is incorrect!)
 
 {% gridExampleRunner title="Sort All Levels" name="sort-all-levels" /%}
 
