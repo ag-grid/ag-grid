@@ -19,7 +19,6 @@ import {
     _getActiveDomElement,
     _includes,
     _insertArrayIntoArray,
-    _isVisible,
     _last,
     _setAriaHidden,
     _setAriaLabel,
