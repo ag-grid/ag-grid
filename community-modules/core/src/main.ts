@@ -592,7 +592,7 @@ export {
 export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
 export { AgEventType, AgPublicEventType } from './eventTypes';
 export { FocusService } from './focusService';
-export { GridOptionsService, PropertyChangedEvent, _getSuppressCopyRowsToClipboard } from './gridOptionsService';
+export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
 export {
     _getRowIdCallback,
     _getRowHeightForNode,

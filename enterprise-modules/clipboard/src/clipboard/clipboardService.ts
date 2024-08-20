@@ -25,6 +25,7 @@ import type {
     RowPosition,
     RowPositionUtils,
     RowRenderer,
+    SelectionOptions,
     ValueService,
     VisibleColsService,
     WithoutGridCommon,
@@ -35,7 +36,6 @@ import {
     _exists,
     _getActiveDomElement,
     _getDocument,
-    _getSuppressCopyRowsToClipboard,
     _isClientSideRowModel,
     _last,
     _removeFromArray,
@@ -740,15 +740,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const copyParams = { includeHeaders, includeGroupHeaders };
         const selection = this.gos.get('selection');
-        const shouldCopyRows = !_getSuppressCopyRowsToClipboard(this.gos);
-        const shouldCopyCells = selection ? selection.mode === 'cell' : true;
 
         let cellClearType: CellClearType | null = null;
         // Copy priority is Range > Row > Focus
-        if (shouldCopyCells && this.rangeService && !this.rangeService.isEmpty()) {
+        if (this.shouldCopyCells(selection)) {
             this.copySelectedRangeToClipboard(copyParams);
             cellClearType = CellClearType.CellRange;
-        } else if (shouldCopyRows && !this.selectionService.isEmpty()) {
+        } else if (this.shouldCopyRows(selection)) {
             this.copySelectedRowsToClipboard(copyParams);
             cellClearType = CellClearType.SelectedRows;
         } else if (this.focusService.isAnyCellFocused()) {
@@ -758,6 +756,29 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         if (cut && cellClearType !== null) {
             this.clearCellsAfterCopy(cellClearType);
+        }
+    }
+
+    private shouldCopyCells(selection?: SelectionOptions) {
+        const suppressCopySingleCellRanges = this.gos.get('suppressCopySingleCellRanges');
+
+        const hasSelection = this.rangeService && !this.rangeService.isEmpty();
+        const shouldSkip = this.rangeService && !this.rangeService.isMoreThanOneCell() && suppressCopySingleCellRanges;
+        if (selection) {
+            return selection.mode === 'cell' && hasSelection;
+        } else {
+            return hasSelection && !shouldSkip;
+        }
+    }
+
+    private shouldCopyRows(selection?: SelectionOptions) {
+        const suppressCopyRowsToClipboard = this.gos.get('suppressCopyRowsToClipboard');
+
+        const hasSelection = !this.selectionService.isEmpty();
+        if (selection) {
+            return selection.mode !== 'cell' && (selection.copySelectedRows ?? true) && hasSelection;
+        } else {
+            return hasSelection && !suppressCopyRowsToClipboard;
         }
     }
 
