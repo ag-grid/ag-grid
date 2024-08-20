@@ -167,9 +167,7 @@ const GridComp = ({ context }: GridCompProps) => {
         return () => {
             context.destroyBeans(beansToDestroy);
             additionalEls.forEach((el) => {
-                if (el.parentElement) {
-                    el.parentElement.removeChild(el);
-                }
+                el.parentElement?.removeChild(el);
             });
         };
     }, [tabGuardReady, eGridBodyParent, beans]);

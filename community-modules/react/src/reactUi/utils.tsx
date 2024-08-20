@@ -86,7 +86,7 @@ export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
  * @param maintainOrder If we want to maintain the order of the elements in the dom in line with the next array
  * @returns
  */
-export function getNextValueIfDifferent<T extends { getInstanceId: () => string }>(
+export function getNextValueIfDifferent<T extends { instanceId: string }>(
     prev: T[] | null,
     next: T[] | null,
     maintainOrder: boolean
@@ -117,20 +117,20 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
 
     for (let i = 0; i < next.length; i++) {
         const c = next[i];
-        nextMap.set(c.getInstanceId(), c);
+        nextMap.set(c.instanceId, c);
     }
 
     for (let i = 0; i < prev.length; i++) {
         const c = prev[i];
-        prevMap.set(c.getInstanceId(), c);
-        if (nextMap.has(c.getInstanceId())) {
+        prevMap.set(c.instanceId, c);
+        if (nextMap.has(c.instanceId)) {
             oldValues.push(c);
         }
     }
 
     for (let i = 0; i < next.length; i++) {
         const c = next[i];
-        const instanceId = c.getInstanceId();
+        const instanceId = c.instanceId;
 
         if (!prevMap.has(instanceId)) {
             newValues.push(c);

@@ -80,7 +80,7 @@ export class RowContainerComp extends Component {
         this.lastPlacedElement = null;
 
         const processRow = (rowCon: RowCtrl) => {
-            const instanceId = rowCon.getInstanceId();
+            const instanceId = rowCon.instanceId;
             const existingRowComp = oldRows[instanceId];
 
             if (existingRowComp) {
