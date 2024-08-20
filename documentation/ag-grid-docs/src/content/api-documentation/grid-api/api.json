@@ -321,10 +321,10 @@
                 "url": "./cell-selection/#reference--addCellRange"
             }
         },
-        "clearRangeSelection": {
+        "clearCellSelection": {
             "more": {
-                "name": "clearRangeSelection",
-                "url": "./cell-selection/#reference--clearRangeSelection"
+                "name": "clearCellSelection",
+                "url": "./cell-selection/#reference--clearCellSelection"
             }
         }
     },

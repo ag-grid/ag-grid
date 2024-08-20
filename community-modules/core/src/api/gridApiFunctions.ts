@@ -268,6 +268,7 @@ export const gridApiFunctionsMap = {
         getCellRanges: 0,
         addCellRange: 0,
         clearRangeSelection: 0,
+        clearCellSelection: 0,
     }),
 
     ...mod<_RowGroupingGridApi<any>>(ModuleNames.RowGroupingModule, {

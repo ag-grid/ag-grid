@@ -21,6 +21,7 @@ export const RangeSelectionApiModule = _defineModule<_RangeSelectionGridApi>({
         getCellRanges,
         addCellRange,
         clearRangeSelection,
+        clearCellSelection: clearRangeSelection,
     },
     dependantModules: [RangeSelectionCoreModule],
 });
