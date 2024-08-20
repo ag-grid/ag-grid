@@ -14,18 +14,15 @@ const DEV_MODE = process.argv.includes('--dev');
 const written = new Set<string>();
 
 const generateAllCSSEmbeds = async () => {
-    const cssEntryPoints = globSync(join(srcFolder, 'parts/*/*.css'));
-    console.log('CSS codegen: entry points: ' + cssEntryPoints.join('; '));
+    const cssEntryPoints = globSync(join(srcFolder, 'parts/**/*.css')).filter((path) => !path.includes('/css/'));
     for (const cssEntryPoint of cssEntryPoints) {
         await generateCSSEmbed(cssEntryPoint);
     }
 
     // remove any old generated files not written in this execution
     const generatedFiles = globSync(join(srcFolder, 'parts/*/GENERATED-*'));
-    console.log('CSS codegen: generated files (pre clean-up): ' + generatedFiles.join('; '));
     for (const generatedFile of generatedFiles) {
         if (!written.has(generatedFile)) {
-            console.log('DELETING', generatedFiles);
             fs.rmSync(generatedFile);
         }
     }
@@ -76,7 +73,6 @@ const writeTsFile = async (path: string, content: string) => {
     const fs = await import('fs');
     // write to a tmp file and rename over the existing file to provide atomic modification
     const tmpFile = path + '.tmp';
-    console.log('CSS codegen: writing: ' + path);
     fs.writeFileSync(tmpFile, content);
     fs.renameSync(tmpFile, path);
 };
