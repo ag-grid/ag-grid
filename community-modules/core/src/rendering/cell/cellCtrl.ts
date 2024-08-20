@@ -162,11 +162,12 @@ export class CellCtrl extends BeanStub {
         }
     }
     private removeFeatures(): void {
-        this.cellPositionFeature = this.destroyBean(this.cellPositionFeature);
-        this.cellCustomStyleFeature = this.destroyBean(this.cellCustomStyleFeature);
-        this.cellMouseListenerFeature = this.destroyBean(this.cellMouseListenerFeature);
-        this.cellKeyboardListenerFeature = this.destroyBean(this.cellKeyboardListenerFeature);
-        this.cellRangeFeature = this.destroyBean(this.cellRangeFeature);
+        const context = this.beans.context;
+        this.cellPositionFeature = context.destroyBean(this.cellPositionFeature);
+        this.cellCustomStyleFeature = context.destroyBean(this.cellCustomStyleFeature);
+        this.cellMouseListenerFeature = context.destroyBean(this.cellMouseListenerFeature);
+        this.cellKeyboardListenerFeature = context.destroyBean(this.cellKeyboardListenerFeature);
+        this.cellRangeFeature = context.destroyBean(this.cellRangeFeature);
 
         this.disableTooltipFeature();
     }
@@ -232,7 +233,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private disableTooltipFeature() {
-        this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
     }
 
     public setComp(
