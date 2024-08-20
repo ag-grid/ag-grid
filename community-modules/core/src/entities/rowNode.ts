@@ -159,7 +159,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value will be `-1`.
      *
      * Generally readonly. It is modified only by:
-     * - ClientSideRowNode, cast to ClientSideRowNode
+     * - ClientSideNodeManager, cast to ClientSideNodeManagerRowNode
+     * - ClientSideRowModel, cast to ClientSideRowModelRowNode
      */
     public readonly sourceRowIndex: number = -1;
 
@@ -170,7 +171,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * The array might also br frozen (immutable).
      *
      * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideRootNode
+     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
      * - GroupStrategy, cast to GroupRow
      * - TreeStrategy, cast to TreeRow
      */
@@ -181,7 +182,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      *
      * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideRootNode
+     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
      * - GroupStrategy, cast to GroupRow
      * - TreeStrategy, cast to TreeRow
      */

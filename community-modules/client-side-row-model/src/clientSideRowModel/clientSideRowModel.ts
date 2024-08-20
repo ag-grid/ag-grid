@@ -48,8 +48,12 @@ enum RecursionType {
     PivotNodes,
 }
 
-interface RootNode extends RowNode {
+interface ClientSideRowModelRootNode extends RowNode {
     childrenAfterGroup: RowNode[] | null;
+}
+
+interface ClientSideRowModelRowNode extends RowNode {
+    sourceRowIndex: number;
 }
 
 export interface BatchTransactionItem<TData = any> {
@@ -422,12 +426,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return false;
         }
 
+        const allLeafChildren = this.rootNode.allLeafChildren!;
+
+        // TODO: this implementation is currently quite inefficient and it could be optimized to run in O(n) in a single pass
+
         rowNodes.forEach((rowNode) => {
-            _removeFromArray(this.rootNode.allLeafChildren!, rowNode);
+            _removeFromArray(allLeafChildren, rowNode);
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _insertIntoArray(this.rootNode.allLeafChildren!, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+            _insertIntoArray(allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+        });
+
+        rowNodes.forEach((rowNode: ClientSideRowModelRowNode, index) => {
+            rowNode.sourceRowIndex = index; // Update all the sourceRowIndex to reflect the new positions
         });
 
         this.refreshModel({
@@ -1121,8 +1133,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 }
             }
         } else {
-            const rootNode: RootNode = this.rootNode;
-            const sibling: RootNode = rootNode.sibling;
+            const rootNode: ClientSideRowModelRootNode = this.rootNode;
+            const sibling: ClientSideRowModelRootNode = rootNode.sibling;
             rootNode.childrenAfterGroup = rootNode.allLeafChildren;
             if (sibling) {
                 sibling.childrenAfterGroup = rootNode.childrenAfterGroup;

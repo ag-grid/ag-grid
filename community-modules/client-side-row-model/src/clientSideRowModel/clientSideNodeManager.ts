@@ -24,7 +24,7 @@ const TOP_LEVEL = 0;
  * This is the type of any row in allLeafChildren and childrenAfterGroup of the ClientSideNodeManager rootNode.
  * ClientSideNodeManager is allowed to update the sourceRowIndex property of the nodes.
  */
-interface ClientSideRowNode extends RowNode {
+interface ClientSideNodeManagerRowNode extends RowNode {
     sourceRowIndex: number;
 }
 
@@ -32,9 +32,9 @@ interface ClientSideRowNode extends RowNode {
  * This is the type of the root RowNode of the ClientSideNodeManager
  * ClientSideNodeManager is allowed to update the allLeafChildren and childrenAfterGroup properties of the root node.
  */
-interface ClientSideRootNode extends RowNode {
-    allLeafChildren: ClientSideRowNode[] | null;
-    childrenAfterGroup: ClientSideRowNode[] | null;
+interface ClientSideNodeManagerRootNode extends RowNode {
+    allLeafChildren: ClientSideNodeManagerRowNode[] | null;
+    childrenAfterGroup: ClientSideNodeManagerRowNode[] | null;
 }
 
 /** Result of ClientSideNodeManager.updateRowData method */
@@ -47,7 +47,7 @@ export interface ClientSideNodeManagerUpdateRowDataResult {
 }
 
 export class ClientSideNodeManager {
-    private readonly rootNode: ClientSideRootNode;
+    private readonly rootNode: ClientSideNodeManagerRootNode;
 
     private gos: GridOptionsService;
     private eventService: EventService;
@@ -106,7 +106,7 @@ export class ClientSideNodeManager {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
-        const sibling: ClientSideRootNode = this.rootNode.sibling;
+        const sibling: ClientSideNodeManagerRootNode = this.rootNode.sibling;
 
         rootNode.childrenAfterFilter = null;
         rootNode.childrenAfterGroup = null;
@@ -169,7 +169,7 @@ export class ClientSideNodeManager {
     public updateRowOrderFromRowData<TData>(rowData: TData[]): boolean {
         const rows = this.rootNode.allLeafChildren;
         const rowsLength = rows?.length ?? 0;
-        const rowsOutOfOrder = new Map<TData, ClientSideRowNode>();
+        const rowsOutOfOrder = new Map<TData, ClientSideNodeManagerRowNode>();
         let firstIndexOutOfOrder = -1;
         let lastIndexOutOfOrder = -1;
 
@@ -291,7 +291,7 @@ export class ClientSideNodeManager {
             this.rootNode.allLeafChildren = allLeafChildren.concat(newNodes);
         }
 
-        const sibling: ClientSideRootNode = this.rootNode.sibling;
+        const sibling: ClientSideNodeManagerRootNode = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = allLeafChildren;
         }
@@ -359,7 +359,7 @@ export class ClientSideNodeManager {
             node.sourceRowIndex = idx;
         });
 
-        const sibling: ClientSideRootNode | null = this.rootNode.sibling;
+        const sibling: ClientSideNodeManagerRootNode | null = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
@@ -419,7 +419,7 @@ export class ClientSideNodeManager {
     }
 
     private createNode(dataItem: any, parent: RowNode, level: number, sourceRowIndex: number): RowNode {
-        const node: ClientSideRowNode = new RowNode(this.beans);
+        const node: ClientSideNodeManagerRowNode = new RowNode(this.beans);
         node.sourceRowIndex = sourceRowIndex;
 
         node.group = false;
