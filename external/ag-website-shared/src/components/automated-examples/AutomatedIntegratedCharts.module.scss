@@ -9,23 +9,13 @@ $z-index-splash: $z-index-debug-canvas + 10;
 $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
-:global(.automated-integrated-charts-grid.ag-theme-quartz),
-:global(.automated-integrated-charts-grid.ag-theme-quartz-dark) {
+.automatedExampleWrapper {
     position: relative;
     width: 100%;
     z-index: $z-index-grid;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-        width: 200% !important;
-        height: 550px !important;
-        margin-bottom: calc(450px / -2 + $spacing-size-4);
-        transform-origin: top left;
-        transform: scale(0.5);
-        overflow: hidden;
-
-        :global(.overlay-button) {
-            cursor: default;
-        }
+        height: 550px;
     }
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
@@ -45,6 +35,30 @@ $z-index-splash-contents: 10;
         left: 50%;
         transform: translate(-60px, -48px) scale(1.5);
         z-index: 1;
+    }
+}
+
+:global(.automated-integrated-charts-grid.ag-theme-quartz),
+:global(.automated-integrated-charts-grid.ag-theme-quartz-dark) {
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        width: 200% !important;
+        height: 550px !important;
+        margin-bottom: calc(450px / -2 + $spacing-size-4);
+        transform-origin: top left;
+        transform: scale(0.5);
+        overflow: hidden;
+
+        :global(.overlay-button) {
+            cursor: default;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
+        height: 450px;
+    }
+
+    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
+        height: 600px;
     }
 
     :global(.country) {
@@ -74,12 +88,14 @@ $z-index-splash-contents: 10;
     text-align: center;
     margin-bottom: $spacing-size-12;
 
-    h2 {
-        margin-bottom: $spacing-size-4;
-    }
+    &.defaultContent {
+        h2 {
+            margin-bottom: $spacing-size-4;
+        }
 
-    p {
-        max-width: 50em;
+        p {
+            max-width: 50em;
+        }
     }
 }
 
