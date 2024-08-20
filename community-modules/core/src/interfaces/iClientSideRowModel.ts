@@ -19,10 +19,7 @@ export enum ClientSideRowModelSteps {
 
 export interface IClientSideRowModel<TData = any> extends IRowModel {
     onRowGroupOpened(): void;
-    updateRowData(
-        rowDataTran: RowDataTransaction<TData>,
-        rowNodeOrder?: { [id: string]: number } | null
-    ): RowNodeTransaction<TData> | null;
+    updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     setRowData(rowData: any[]): void;
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
     expandOrCollapseAll(expand: boolean): void;
@@ -60,8 +57,9 @@ export interface RefreshModelParams<TData = any> {
     keepEditingRows?: boolean;
     // if doing delta updates, this has the changes that were done
     rowNodeTransactions?: RowNodeTransaction<TData>[];
-    // if doing delta updates, this has the order of the nodes
-    rowNodeOrder?: { [id: string]: number };
+    // true if the order of root.allLeafChildren has changed.
+    // This can happen if order of root.allLeafChildren is updated or rows are inserted (and not just appended at the end)
+    rowNodesOrderChanged?: boolean;
     // true user called setRowData() (or a new page in pagination). the grid scrolls
     // back to the top when this is true.
     newData?: boolean;

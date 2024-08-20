@@ -162,6 +162,13 @@ interface BaseRowNode<TData = any> {
     /** Used by server side row model, `true` if this row node failed a load. */
     failedLoad: boolean | undefined;
 
+    /**
+     * The index of the row in the source rowData array including any updates via transactions.
+     * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
+     * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value will be `-1`.
+     */
+    readonly sourceRowIndex: number;
+
     /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
     rowIndex: number | null;
 

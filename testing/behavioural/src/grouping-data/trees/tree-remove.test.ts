@@ -2,10 +2,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { setTimeout as asyncSetTimeout } from 'timers/promises';
 
-import { getAllRows } from '../../test-utils';
-import { TreeDiagram, executeTransactionsAsync } from './tree-test-utils';
+import { executeTransactionsAsync, flushJestTimers, getAllRows } from '../../test-utils';
+import { TreeDiagram } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -54,16 +53,16 @@ describe('ag-grid tree transactions', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            └─┬ A LEAF id:a
+            └─┬ A GROUP id:a
             · └─┬ B filler id:row-group-0-A-1-B
-            · · └─┬ C LEAF id:c
+            · · └─┬ C GROUP id:c
             · · · └── D LEAF id:d
         `);
 
         api.applyTransaction({ remove: [rowC] });
         api.applyTransaction({ remove: [rowD] });
 
-        await flushTimers();
+        await flushJestTimers();
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -74,6 +73,157 @@ describe('ag-grid tree transactions', () => {
 
         expect(rows.length).toBe(1);
         expect(rows[0].data).toEqual(rowA);
+    });
+
+    describe('remove re-insert filler', () => {
+        test('ag-grid tree sync remove re-insert filler', async () => {
+            // This is actually a very important test. This proves that the implementation is commutative,
+            // i.e. the grouping of the remove and insert operations does not matter.
+            // i.e. executing a remove-add in the same transaction, in multiple async transactions followed by a single commit,
+            // or in isolated transactions does not change the final resulting order of the rows.
+
+            const rowB = { id: 'b', orgHierarchy: ['A', 'B'] };
+            const rowC = { id: 'c', orgHierarchy: ['A', 'C'] };
+            const rowD = { id: 'd', orgHierarchy: ['D'] };
+
+            const rowData = [rowB, rowC, rowD];
+
+            const gridOptions: GridOptions = {
+                columnDefs: [],
+                autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+                treeData: true,
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+                getDataPath: (data: any) => data.orgHierarchy,
+            };
+
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = createMyGrid(gridOptions);
+
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├─┬ A filler id:row-group-0-A
+                │ ├── B LEAF id:b
+                │ └── C LEAF id:c
+                └── D LEAF id:d
+            `);
+
+            api.applyTransaction({ remove: [rowB, rowC] });
+
+            new TreeDiagram(api, 'Transaction[0]').check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                └── D LEAF id:d
+            `);
+
+            api.applyTransaction({ add: [rowC, rowB] });
+
+            await flushJestTimers();
+
+            new TreeDiagram(api, 'finalSync').check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├── D LEAF id:d
+                └─┬ A filler id:row-group-0-A
+                · ├── C LEAF id:c
+                · └── B LEAF id:b
+            `);
+        });
+
+        test('ag-grid tree same transaction remove re-insert filler', async () => {
+            const rowB = { id: 'b', orgHierarchy: ['A', 'B'] };
+            const rowC = { id: 'c', orgHierarchy: ['A', 'C'] };
+            const rowD = { id: 'd', orgHierarchy: ['D'] };
+
+            const rowData = [rowB, rowC, rowD];
+
+            const gridOptions: GridOptions = {
+                columnDefs: [],
+                autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+                treeData: true,
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+                getDataPath: (data: any) => data.orgHierarchy,
+            };
+
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = createMyGrid(gridOptions);
+
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├─┬ A filler id:row-group-0-A
+                │ ├── B LEAF id:b
+                │ └── C LEAF id:c
+                └── D LEAF id:d
+            `);
+
+            api.applyTransaction({
+                remove: [rowB, rowC],
+                add: [rowC, rowB],
+            });
+
+            await flushJestTimers();
+
+            new TreeDiagram(api, 'finalTogether').check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├── D LEAF id:d
+                └─┬ A filler id:row-group-0-A
+                · ├── C LEAF id:c
+                · └── B LEAF id:b
+            `);
+        });
+
+        test('ag-grid tree async remove re-insert filler', async () => {
+            // This is actually a very important test. This proves that the implementation is commutative,
+            // i.e. the grouping of the remove and insert operations does not matter.
+            // i.e. executing a remove-add in the same transaction, in multiple async transactions followed by a single commit,
+            // or in isolated transactions does not change the final resulting order of the rows.
+
+            const rowB = { id: 'b', orgHierarchy: ['A', 'B'] };
+            const rowC = { id: 'c', orgHierarchy: ['A', 'C'] };
+            const rowD = { id: 'd', orgHierarchy: ['D'] };
+
+            const rowData = [rowB, rowC, rowD];
+
+            const gridOptions: GridOptions = {
+                columnDefs: [],
+                autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
+                treeData: true,
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                rowData,
+                getRowId: (params) => params.data.id,
+                getDataPath: (data: any) => data.orgHierarchy,
+            };
+
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = createMyGrid(gridOptions);
+
+            new TreeDiagram(api).check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├─┬ A filler id:row-group-0-A
+                │ ├── B LEAF id:b
+                │ └── C LEAF id:c
+                └── D LEAF id:d
+            `);
+
+            await executeTransactionsAsync([{ remove: [rowB, rowC] }, { add: [rowC, rowB] }], api);
+
+            await flushJestTimers();
+
+            new TreeDiagram(api, 'finalAsync').check(`
+                ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+                ├── D LEAF id:d
+                └─┬ A filler id:row-group-0-A
+                · ├── C LEAF id:c
+                · └── B LEAF id:b
+            `);
+        });
     });
 
     test.each(['sync', 'async', 'together'] as const)('ag-grid tree %s remove re-insert filler', async (mode) => {
@@ -128,7 +278,7 @@ describe('ag-grid tree transactions', () => {
             api.applyTransaction(transactions[1]);
         }
 
-        await flushTimers();
+        await flushJestTimers();
 
         new TreeDiagram(api, 'final' + mode).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -227,7 +377,7 @@ describe('ag-grid tree transactions', () => {
             api.applyTransaction(transactions2[1]);
         }
 
-        await flushTimers();
+        await flushJestTimers();
 
         new TreeDiagram(api, 'Transactions2 ' + mode).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
@@ -242,9 +392,3 @@ describe('ag-grid tree transactions', () => {
         `);
     });
 });
-
-function flushTimers() {
-    jest.advanceTimersByTime(10000);
-    jest.useRealTimers();
-    return asyncSetTimeout(1);
-}

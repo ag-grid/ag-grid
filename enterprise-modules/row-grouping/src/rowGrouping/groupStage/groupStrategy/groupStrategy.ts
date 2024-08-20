@@ -22,11 +22,12 @@ import {
     _exists,
     _existsAndNotEmpty,
     _removeFromArray,
-    _sortRowNodesByOrder,
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import { BatchRemover } from '../batchRemover';
+import { BatchRemover } from './batchRemover';
+import type { GroupRow } from './groupRow';
+import { sortGroupChildren } from './sortGroupChildren';
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
@@ -43,7 +44,7 @@ interface GroupingDetails {
     groupedCols: AgColumn[];
     groupedColCount: number;
     transactions: RowNodeTransaction[];
-    rowNodeOrder: { [id: string]: number };
+    rowNodesOrderChanged: boolean;
 
     groupAllowUnbalanced: boolean;
     isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
@@ -94,7 +95,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
-        changedPath.forEachChangedNodeDepthFirst((group) => {
+        changedPath.forEachChangedNodeDepthFirst((group: GroupRow) => {
             if (group.childrenAfterGroup) {
                 const leafNodes: RowNode[] = [];
                 const groupNodes: RowNode[] = [];
@@ -122,7 +123,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
+        const { rowNode, changedPath, rowNodeTransactions, rowNodesOrderChanged } = params;
 
         const groupedCols = this.funcColsService.getRowGroupColumns();
 
@@ -132,8 +133,8 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),
             groupedColCount: groupedCols?.length ?? 0,
-            rowNodeOrder: rowNodeOrder!,
             transactions: rowNodeTransactions!,
+            rowNodesOrderChanged: !!rowNodesOrderChanged,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
             groupAllowUnbalanced: this.gos.get('groupAllowUnbalanced'),
@@ -170,7 +171,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             this.removeEmptyGroups(parentsWithChildrenRemoved, details);
         });
 
-        if (details.rowNodeOrder) {
+        if (details.rowNodesOrderChanged) {
             this.sortChildren(details);
         }
     }
@@ -179,7 +180,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     private sortChildren(details: GroupingDetails): void {
         details.changedPath.forEachChangedNodeDepthFirst(
             (node) => {
-                const didSort = _sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
+                const didSort = sortGroupChildren(node.childrenAfterGroup);
                 if (didSort) {
                     details.changedPath.addParentNode(node);
                 }
@@ -431,7 +432,8 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
         // groups are about to get disposed, so need to deselect any that are selected
         this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
 
-        const { rootNode, groupedCols } = details;
+        const { groupedCols } = details;
+        const rootNode: GroupRow = details.rootNode;
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         rootNode.leafGroup = groupedCols.length === 0;
@@ -441,7 +443,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
         rootNode.childrenMapped = {};
         rootNode.updateHasChildren();
 
-        const sibling = rootNode.sibling;
+        const sibling: GroupRow = rootNode.sibling;
         if (sibling) {
             sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             sibling.childrenMapped = rootNode.childrenMapped;
@@ -540,7 +542,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
-        const groupNode = new RowNode(this.beans);
+        const groupNode: GroupRow = new RowNode(this.beans);
 
         groupNode.group = true;
         groupNode.field = groupInfo.field;
