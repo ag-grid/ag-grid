@@ -443,7 +443,7 @@
         margin-bottom: 0;
     }
 
-    label {
+    & label {
         display: inline-block;
     }
 }

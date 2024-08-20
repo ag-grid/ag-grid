@@ -88,12 +88,12 @@ export class CellCtrl extends BeanStub {
     private value: any;
     private valueFormatted: any;
 
-    private cellRangeFeature: CellRangeFeature | null = null;
-    private cellPositionFeature: CellPositionFeature | null = null;
-    private cellCustomStyleFeature: CellCustomStyleFeature | null = null;
-    private tooltipFeature: TooltipFeature | null = null;
-    private cellMouseListenerFeature: CellMouseListenerFeature | null = null;
-    private cellKeyboardListenerFeature: CellKeyboardListenerFeature | null = null;
+    private cellRangeFeature: CellRangeFeature | undefined = undefined;
+    private cellPositionFeature: CellPositionFeature | undefined = undefined;
+    private cellCustomStyleFeature: CellCustomStyleFeature | undefined = undefined;
+    private tooltipFeature: TooltipFeature | undefined = undefined;
+    private cellMouseListenerFeature: CellMouseListenerFeature | undefined = undefined;
+    private cellKeyboardListenerFeature: CellKeyboardListenerFeature | undefined = undefined;
 
     private cellPosition: CellPosition;
     private editing: boolean;
@@ -163,21 +163,14 @@ export class CellCtrl extends BeanStub {
         }
     }
     private removeFeatures(): void {
-        this.cellPositionFeature?.destroy();
-        this.cellPositionFeature = null;
-
-        this.cellCustomStyleFeature?.destroy();
-        this.cellCustomStyleFeature = null;
-
-        this.cellMouseListenerFeature?.destroy();
-        this.cellMouseListenerFeature = null;
-        this.cellKeyboardListenerFeature?.destroy();
-        this.cellKeyboardListenerFeature = null;
+        const context = this.beans.context;
+        this.cellPositionFeature = context.destroyBean(this.cellPositionFeature);
+        this.cellCustomStyleFeature = context.destroyBean(this.cellCustomStyleFeature);
+        this.cellMouseListenerFeature = context.destroyBean(this.cellMouseListenerFeature);
+        this.cellKeyboardListenerFeature = context.destroyBean(this.cellKeyboardListenerFeature);
+        this.cellRangeFeature = context.destroyBean(this.cellRangeFeature);
 
         this.disableTooltipFeature();
-
-        this.cellRangeFeature?.destroy();
-        this.cellRangeFeature = null;
     }
 
     private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
@@ -241,12 +234,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private disableTooltipFeature() {
-        if (!this.tooltipFeature) {
-            return;
-        }
-
-        this.tooltipFeature.destroy();
-        this.tooltipFeature = null;
+        this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
     }
 
     public setComp(
@@ -302,7 +290,7 @@ export class CellCtrl extends BeanStub {
      * This enables React to run against a destroyed CellCtrl instance and still get sensible values
      * before React destroys the CellComp. This stops flickering in the UI when React is updating lots of cells.
      */
-    public unSetComp(): void {
+    public unsetComp(): void {
         this.removeFeatures();
     }
 
@@ -429,10 +417,10 @@ export class CellCtrl extends BeanStub {
         key: string | null = null,
         cellStartedEdit = false,
         event: KeyboardEvent | MouseEvent | null = null
-    ): void {
+    ): boolean {
         const { editService } = this.beans;
         if (!this.isCellEditable() || this.editing || !editService) {
-            return;
+            return true;
         }
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
@@ -441,10 +429,10 @@ export class CellCtrl extends BeanStub {
             this.onCellCompAttachedFuncs.push(() => {
                 this.startEditing(key, cellStartedEdit, event);
             });
-            return;
+            return true;
         }
 
-        editService.startEditing(this, key, cellStartedEdit, event);
+        return editService.startEditing(this, key, cellStartedEdit, event);
     }
 
     public setEditing(editing: boolean, compDetails: UserCompDetails | undefined): void {
@@ -833,20 +821,20 @@ export class CellCtrl extends BeanStub {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(key?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
+    public startRowOrCellEdit(key?: string | null, event: KeyboardEvent | MouseEvent | null = null): boolean {
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
             this.onCellCompAttachedFuncs.push(() => {
                 this.startRowOrCellEdit(key, event);
             });
-            return;
+            return true;
         }
 
         if (this.beans.gos.get('editType') === 'fullRow') {
-            this.rowCtrl.startRowEditing(key, this);
+            return this.rowCtrl.startRowEditing(key, this);
         } else {
-            this.startEditing(key, true, event);
+            return this.startEditing(key, true, event);
         }
     }
 

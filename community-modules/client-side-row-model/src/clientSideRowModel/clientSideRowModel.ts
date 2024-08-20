@@ -490,38 +490,51 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return 0;
     }
 
+    /**
+     * Returns the number of rows with level === 1
+     */
     public getTopLevelRowCount(): number {
-        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
+        if (this.rowsToDisplay.length === 0) {
+            return 0;
+        }
 
+        // exception to func comment, if showing root node, then we return that
+        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
         if (showingRootNode) {
             return 1;
         }
 
-        const totalFooterInc = this.rootNode.sibling ? 1 : 0;
-
         const filteredChildren = this.rootNode.childrenAfterAggFilter;
+        const totalFooterInc = this.rootNode.sibling ? 1 : 0;
         return (filteredChildren ? filteredChildren.length : 0) + totalFooterInc;
     }
 
+    /**
+     * Get the row display index by the top level index
+     * top level index is the index of rows with level === 1
+     */
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
         const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
 
+        // exception to function comment, if showing footer node (level === -1) return 0.
         if (showingRootNode) {
             return topLevelIndex;
         }
 
-        // if first row is footer, any following rows are pushed down by one
         let adjustedIndex = topLevelIndex;
         if (this.rowsToDisplay[0].footer) {
+            // if footer is first displayed row and looking for first row, return footer
             if (topLevelIndex === 0) {
                 return 0;
             }
+
+            // if first row is footer, offset index to check sorted rows by 1
             adjustedIndex -= 1;
         }
 
-        // if last row is footer, return this rows index.
         const lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
         const indexOutsideGroupBounds = adjustedIndex >= this.rootNode.childrenAfterSort!.length;
+        // if last row is footer, and attempting to retrieve row of too high index, return footer row index
         if (lastRow.footer && indexOutsideGroupBounds) {
             return lastRow.rowIndex!;
         }
@@ -529,7 +542,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let rowNode = this.rootNode.childrenAfterSort![adjustedIndex];
 
         if (this.gos.get('groupHideOpenParents')) {
-            // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
+            // if hideOpenParents, then get lowest displayed descendent
             while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
                 rowNode = rowNode.childrenAfterSort[0];
             }

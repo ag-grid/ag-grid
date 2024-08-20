@@ -7,6 +7,7 @@ import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
 import { _getActiveDomElement } from '../../../gridOptionsUtils';
+import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
@@ -109,6 +110,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.refresh.bind(this)
         );
         this.addManagedListeners(this.column, { colDefChanged: this.refresh.bind(this) });
+        this.addManagedListeners(this.column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
 
         this.addManagedEventListeners({
             columnValueChanged: this.onColumnValueChanged.bind(this),
@@ -145,7 +147,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const isRtl = gos.get('enableRtl');
         const isLeft = (hDirection === HorizontalDirection.Left) !== isRtl;
 
-        const xPosition = normaliseX(isLeft ? left - 20 : left + width + 20, pinned, true, gos, ctrlsService);
+        const xPosition = normaliseX({
+            x: isLeft ? left - 20 : left + width + 20,
+            pinned,
+            fromKeyboard: true,
+            gos,
+            ctrlsService,
+        });
         const headerPosition = this.focusService.getFocusedHeader();
 
         attemptMoveColumns({
@@ -568,6 +576,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         };
         listener();
         this.addRefreshFunction(listener);
+    }
+
+    private onHeaderHighlightChanged(): void {
+        const highlighted = this.column.getHighlighted();
+        const beforeOn = highlighted === ColumnHighlightPosition.Before;
+        const afterOn = highlighted === ColumnHighlightPosition.After;
+
+        this.comp.addOrRemoveCssClass('ag-header-highlight-before', beforeOn);
+        this.comp.addOrRemoveCssClass('ag-header-highlight-after', afterOn);
     }
 
     protected override onDisplayedColumnsChanged(): void {

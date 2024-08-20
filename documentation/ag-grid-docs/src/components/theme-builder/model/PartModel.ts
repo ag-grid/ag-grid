@@ -6,7 +6,7 @@ import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
 import { memoize, titleCase } from './utils';
 
-const partsByGroup: Record<string, Part<any>[] | undefined> = {
+const partsByFeatureName: Record<string, Part<any>[] | undefined> = {
     colorScheme: [
         themes.colorSchemeLightCold,
         themes.colorSchemeLightNeutral,
@@ -26,9 +26,9 @@ const partsByGroup: Record<string, Part<any>[] | undefined> = {
     inputStyle: [themes.inputStyleBordered, themes.inputStyleUnderlined],
 };
 
-export const getPartsByGroup = (group: string) => partsByGroup[group];
+export const getPartsByFeature = (featureName: string) => partsByFeatureName[featureName];
 
-const featureModels: Record<string, GroupModel> = {};
+const featureModels: Record<string, FeatureModel> = {};
 
 const partDocs: Record<string, string | undefined> = {
     tabStyle: 'The appearance of tabs in chart settings and legacy column menu',
@@ -37,56 +37,57 @@ const partDocs: Record<string, string | undefined> = {
 
 const defaultPartIds = new Set(themes.themeQuartz.dependencies.map((dep) => dep.id));
 
-export class GroupModel {
+export class FeatureModel {
     readonly label: string;
     readonly docs: string | null;
     readonly parts: PartModel[];
     readonly defaultPart: PartModel;
     readonly selectedPartAtom: PersistentAtom<PartModel>;
 
-    private constructor(readonly groupId: string) {
-        this.label = titleCase(groupId);
-        this.docs = partDocs[groupId] || null;
-        const parts = partsByGroup[groupId];
-        if (!parts) throw new Error(`Invalid groupId "${groupId}"`);
+    private constructor(readonly featureName: string) {
+        this.label = titleCase(featureName);
+        this.docs = partDocs[featureName] || null;
+        const parts = partsByFeatureName[featureName];
+        if (!parts) throw new Error(`Invalid feature "${featureName}"`);
         this.parts = parts.map((part) => new PartModel(this, part));
         this.defaultPart = this.parts.find((v) => defaultPartIds.has(v.id)) || this.parts[0];
         this.selectedPartAtom = createSelectedPartAtom(this);
     }
 
     static for(partID: string) {
-        return featureModels[partID] || (featureModels[partID] = new GroupModel(partID));
+        return featureModels[partID] || (featureModels[partID] = new FeatureModel(partID));
     }
 }
 
-export const useSelectedPart = (group: GroupModel) => useAtom(group.selectedPartAtom);
+export const useSelectedPart = (feature: FeatureModel) => useAtom(feature.selectedPartAtom);
 
-const createSelectedPartAtom = (group: GroupModel) => {
-    const backingAtom = atomWithJSONStorage<string | null>(`selected-part.${group.groupId}`, null);
+const createSelectedPartAtom = (feature: FeatureModel) => {
+    const backingAtom = atomWithJSONStorage<string | undefined>(`part.${feature.featureName}`, undefined);
     return atom(
         (get) => {
-            const variantId = get(backingAtom);
-            return group.parts.find((v) => v.id === variantId) || group.defaultPart;
+            const variantName = get(backingAtom);
+            return feature.parts.find((v) => v.id === variantName) || feature.defaultPart;
         },
-        (_get, set, newVariant: PartModel) => set(backingAtom, newVariant.id)
+        (_get, set, newVariant: PartModel) =>
+            set(backingAtom, newVariant.id === feature.defaultPart.id ? undefined : newVariant.id)
     );
 };
 
 export class PartModel {
     readonly label: string;
     readonly id: string;
-    readonly variant: string;
+    readonly variantName: string;
 
     constructor(
-        readonly group: GroupModel,
+        readonly feature: FeatureModel,
         readonly part: Part<any>
     ) {
         this.label = titleCase(part.variant);
-        this.variant = part.variant;
+        this.variantName = part.variant;
         this.id = part.id;
     }
 }
 
-const allPartIds = ['colorScheme', 'iconSet', 'tabStyle', 'inputStyle'];
+const allFeatureNames = ['colorScheme', 'iconSet', 'tabStyle', 'inputStyle'];
 
-export const allGroupModels = memoize(() => allPartIds.map((partId) => GroupModel.for(partId)));
+export const allFeatureModels = memoize(() => allFeatureNames.map(FeatureModel.for));

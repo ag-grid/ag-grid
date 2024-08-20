@@ -562,7 +562,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.destroyEditorAndRenderer();
         this.removeControls();
 
-        this.cellCtrl.unSetComp();
+        this.cellCtrl.unsetComp();
 
         super.destroy();
     }

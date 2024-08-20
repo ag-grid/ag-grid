@@ -33,7 +33,7 @@
     padding-left: calc(var(--ag-cell-horizontal-padding) / 2);
     user-select: none;
     cursor: default;
-    span {
+    & span {
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -41,7 +41,6 @@
 }
 
 .ag-list-item-hovered::after {
-    /* TODO use inset focus shadow? */
     content: '';
     position: absolute;
     left: 0;

@@ -1,4 +1,7 @@
-import type { ParamType } from '@ag-grid-community/theming';
+import type { ParamType, themeQuartz } from '@ag-grid-community/theming';
+
+export type ThemeParams = (typeof themeQuartz)['defaults'];
+export type ThemeParam = keyof ThemeParams;
 
 export const mapObjectValues = <T, U>(input: Record<string, T>, mapper: (value: T) => U): Record<string, U> =>
     Object.fromEntries(Object.entries(input).map(([key, value]) => [key, mapper(value)]));

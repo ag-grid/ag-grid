@@ -266,6 +266,12 @@
             }
         },
         "suppressMovableColumns": {},
+        "suppressMoveWhenColumnDragging": {
+            "more": {
+                "name": "Suppress Move When Dragging",
+                "url": "./column-moving/#suppress-move-when-dragging"
+            }
+        },
         "suppressColumnMoveAnimation": {
             "more": {
                 "name": "Moving Animation",

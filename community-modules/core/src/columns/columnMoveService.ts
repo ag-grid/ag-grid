@@ -79,6 +79,48 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         return this.doesOrderPassRules(proposedColumnOrder);
     }
 
+    public getMoveTargetIndex(params: {
+        currentColumns: AgColumn[] | null;
+        lastHoveredColumn: AgColumn;
+        isBefore: boolean;
+        isAttemptingToPin?: boolean;
+    }): number | null {
+        const { currentColumns, lastHoveredColumn, isBefore, isAttemptingToPin } = params;
+        if (!lastHoveredColumn || !currentColumns) {
+            return null;
+        }
+
+        // if the target col is in the cols to be moved, no index to move, unless we are trying to pin.
+        if (!isAttemptingToPin && currentColumns.indexOf(lastHoveredColumn) !== -1) {
+            return null;
+        }
+
+        const targetColumnIndex = this.columnModel.getCols().indexOf(lastHoveredColumn);
+        const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
+        const diff = this.getMoveDiff(currentColumns, adjustedTarget);
+
+        return adjustedTarget - diff;
+    }
+
+    private getMoveDiff(currentColumns: AgColumn[] | null, end: number): number {
+        const allColumns = this.columnModel.getCols();
+
+        if (!currentColumns) {
+            return 0;
+        }
+
+        const targetColumn = currentColumns[0];
+        const span = currentColumns.length;
+
+        const currentIndex = allColumns.indexOf(targetColumn);
+
+        if (currentIndex < end) {
+            return span;
+        }
+
+        return 0;
+    }
+
     public doesOrderPassRules(gridOrder: AgColumn[]) {
         if (!this.doesMovePassMarryChildren(gridOrder)) {
             return false;

@@ -1,66 +1,40 @@
-import { OverlayButton } from '@components/automated-examples/OverlayButton';
-import { ToggleAutomatedExampleButton } from '@components/automated-examples/ToggleAutomatedExampleButton';
-import { UpdateSpeedSlider } from '@components/automated-examples/UpdateSpeedSlider';
-import { createAutomatedRowGrouping } from '@components/automated-examples/examples/row-grouping';
-import { ROW_GROUPING_ID } from '@components/automated-examples/lib/constants';
+import { OverlayButton } from '@ag-website-shared/components/automated-examples/OverlayButton';
+import { ToggleAutomatedExampleButton } from '@ag-website-shared/components/automated-examples/ToggleAutomatedExampleButton';
+import { createAutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/examples/integrated-charts';
+import { INTEGRATED_CHARTS_ID } from '@ag-website-shared/components/automated-examples/lib/constants';
 import LogoMark from '@components/logo/LogoMark';
-import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '@utils/analytics';
+import { trackHomepageExampleIntegratedCharts, trackOnceHomepageExampleIntegratedCharts } from '@utils/analytics';
+import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import automatedExamplesVars from './AutomatedExamplesVars.module.scss';
-import styles from './AutomatedRowGrouping.module.scss';
-import type { AutomatedExampleManager } from './lib/createAutomatedExampleManager';
+import styles from './AutomatedIntegratedCharts.module.scss';
 import { isMobile } from './lib/isMobile';
 
 const AUTOMATED_EXAMPLE_MOBILE_SCALE = parseFloat(automatedExamplesVars['mobile-grid-scale']);
 
-interface Props {
-    automatedExampleManager: AutomatedExampleManager;
-    useStaticData: boolean;
-    runOnce: boolean;
-    visibilityThreshold: number;
-    darkMode: boolean;
-}
-
-export function AutomatedRowGrouping({
-    automatedExampleManager,
-    useStaticData,
-    runOnce,
-    visibilityThreshold,
-    darkMode,
-}: Props) {
-    const exampleId = ROW_GROUPING_ID;
-    const gridClassname = 'automated-row-grouping-grid';
+export function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
+    const exampleId = INTEGRATED_CHARTS_ID;
+    const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
-    const exampleRef = useRef(null);
     const overlayRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
+    const [automatedExample, setAutomatedExample] = useState();
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
-    const [frequency, setFrequency] = useState(1);
+    const [darkMode] = useDarkmode();
     const debuggerManager = automatedExampleManager?.getDebuggerManager();
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
         automatedExampleManager.setEnabled({ id: exampleId, isEnabled });
     };
-    const updateFrequency = useCallback((value) => {
-        if (!exampleRef.current) {
-            return;
-        }
-        exampleRef.current.setUpdateFrequency(value);
-        setFrequency(value);
-
-        trackOnceHomepageExampleRowGrouping({
-            type: 'updatedFrequency',
-        });
-    }, []);
     const gridInteraction = useCallback(() => {
         if (!scriptIsEnabled) {
-            trackOnceHomepageExampleRowGrouping({
+            trackOnceHomepageExampleIntegratedCharts({
                 type: 'interactedWithGrid',
             });
         }
@@ -73,7 +47,7 @@ export function AutomatedRowGrouping({
                 debuggerManager.log(`${exampleId} intersecting - start`);
                 automatedExampleManager.start(exampleId);
 
-                trackOnceHomepageExampleRowGrouping({
+                trackOnceHomepageExampleIntegratedCharts({
                     type: 'hasStarted',
                 });
             } else {
@@ -107,49 +81,49 @@ export function AutomatedRowGrouping({
                         setAllScriptEnabledVars(true);
                         automatedExampleManager.start(exampleId);
                     },
-                    icon: `<img src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon.svg')}" />`,
+                    icon: `<img class="context-replay-icon" src="${urlWithBaseUrl('/images/automated-examples/replay-demo-icon-dark.svg')}" />`,
                 },
             ],
             onStateChange(state) {
-                if (state === 'errored') {
+                if (state === 'errored' && !isMobile()) {
                     setAllScriptEnabledVars(false);
                     automatedExampleManager.errored(exampleId);
                 }
             },
-            onDataReady() {
+            onGridReady() {
                 setGridIsReady(true);
             },
             visibilityThreshold,
         };
 
-        exampleRef.current = createAutomatedRowGrouping(params);
+        const automatedExample = createAutomatedIntegratedCharts(params);
         automatedExampleManager.add({
             id: exampleId,
-            automatedExample: exampleRef.current,
+            automatedExample,
         });
+
+        setAutomatedExample(automatedExample);
     }, []);
 
     useEffect(() => {
-        if (!exampleRef.current) {
+        if (!automatedExample) {
             return;
         }
-        exampleRef.current.updateDarkMode(darkMode);
+        automatedExample.updateDarkMode(darkMode);
     }, [darkMode]);
 
     return (
         <>
             <header className={styles.sectionHeader}>
-                <h2 className="text-3xl">Feature Packed, Incredible Performance</h2>
+                <h2 className="text-3xl">Fully Integrated Charting</h2>
                 <p className="text-xl">
-                    Millions of rows, thousands of updates per second? No problem!
-                    <br />
-                    Out of the box performance that can handle any data you can throw at it.
+                    With a complete suite of integrated charting tools, your users can visualise their data any way they
+                    choose.
                 </p>
             </header>
-
             <div
                 ref={gridRef}
-                className={classNames('automated-row-grouping-grid', {
+                className={classNames('automated-integrated-charts-grid', {
                     'ag-theme-quartz': !darkMode,
                     'ag-theme-quartz-dark': darkMode,
                 })}
@@ -162,13 +136,15 @@ export function AutomatedRowGrouping({
                     onPointerEnter={() => setGridIsHoveredOver(true)}
                     onPointerOut={() => setGridIsHoveredOver(false)}
                     onClick={() => {
-                        setAllScriptEnabledVars(false);
-                        automatedExampleManager.stop(exampleId);
+                        if (!isMobile()) {
+                            setAllScriptEnabledVars(false);
+                            automatedExampleManager.stop(exampleId);
 
-                        trackHomepageExampleRowGrouping({
-                            type: 'controlGridClick',
-                            clickType: 'overlay',
-                        });
+                            trackHomepageExampleIntegratedCharts({
+                                type: 'controlGridClick',
+                                clickType: 'overlay',
+                            });
+                        }
                     }}
                 />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
@@ -187,7 +163,7 @@ export function AutomatedRowGrouping({
                                 automatedExampleManager.start(exampleId);
                             }
 
-                            trackHomepageExampleRowGrouping({
+                            trackHomepageExampleIntegratedCharts({
                                 type: 'controlGridClick',
                                 clickType: 'button',
                                 value: scriptIsEnabled ? 'stop' : 'start',
@@ -197,15 +173,6 @@ export function AutomatedRowGrouping({
                         scriptIsActive={scriptIsEnabled}
                     ></ToggleAutomatedExampleButton>
                 </div>
-
-                <UpdateSpeedSlider
-                    min={0}
-                    max={4}
-                    step={0.1}
-                    value={frequency}
-                    disabled={!gridIsReady}
-                    setValue={updateFrequency}
-                />
             </footer>
         </>
     );

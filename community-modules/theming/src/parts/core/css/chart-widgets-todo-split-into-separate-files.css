@@ -311,7 +311,7 @@
 }
 
 .ag-color-input {
-    input[class^='ag-'][type='text'].ag-input-field-input {
+    & input[class^='ag-'][type='text'].ag-input-field-input {
         padding-left: calc(var(--ag-icon-size) + (var(--ag-grid-size) * 2));
     }
 

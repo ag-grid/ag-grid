@@ -11,6 +11,7 @@ export default [
                     varsIgnorePattern: '^_',
                 },
             ],
+            'import-x/consistent-type-specifier-style': 'off',
         },
     },
 ];

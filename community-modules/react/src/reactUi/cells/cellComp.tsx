@@ -371,7 +371,7 @@ const CellComp = ({
             // can get behind our internal state and call this function after the cellCtrl has been destroyed.
             // If we were to shortcut here then cell values will flash in the first column of the grid as they will
             // not have the correct cell position / styles applied as that is set via setComp.
-            cellCtrl?.unSetComp();
+            cellCtrl?.unsetComp();
             return;
         }
 
