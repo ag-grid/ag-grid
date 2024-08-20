@@ -743,19 +743,15 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const shouldCopyRows = !_getSuppressCopyRowsToClipboard(this.gos);
         const shouldCopyCells = selection ? selection.mode === 'cell' : true;
 
-        console.log({ shouldCopyRows, shouldCopyCells });
         let cellClearType: CellClearType | null = null;
         // Copy priority is Range > Row > Focus
         if (shouldCopyCells && this.rangeService && !this.rangeService.isEmpty()) {
-            console.log('cell');
             this.copySelectedRangeToClipboard(copyParams);
             cellClearType = CellClearType.CellRange;
         } else if (shouldCopyRows && !this.selectionService.isEmpty()) {
-            console.log('row');
             this.copySelectedRowsToClipboard(copyParams);
             cellClearType = CellClearType.SelectedRows;
         } else if (this.focusService.isAnyCellFocused()) {
-            console.log('focus');
             this.copyFocusedCellToClipboard(copyParams);
             cellClearType = CellClearType.FocusedCell;
         }
