@@ -44,6 +44,34 @@ export function _isGetRowHeightFunction(gos: GridOptionsService): boolean {
     return typeof gos.get('getRowHeight') === 'function';
 }
 
+export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColumns: boolean): boolean {
+    let maintainColumnOrder = gos.get('maintainColumnOrder');
+
+    // boolean is deprecated setting, deprecated in v32.2.0
+    if (maintainColumnOrder === true) {
+        maintainColumnOrder = 'primaryAndPivotResultColumns';
+    } else if (maintainColumnOrder === false) {
+        maintainColumnOrder = 'pivotResultColumns';
+    }
+
+    if (maintainColumnOrder === 'none') {
+        return false;
+    }
+
+    if (maintainColumnOrder === 'primaryAndPivotResultColumns') {
+        return true;
+    }
+
+    if (maintainColumnOrder === 'pivotResultColumns') {
+        return isPivotColumns;
+    }
+
+    if (maintainColumnOrder === 'primaryColumns') {
+        return !isPivotColumns;
+    }
+    return false;
+}
+
 export function _getRowHeightForNode(
     gos: GridOptionsService,
     rowNode: IRowNode,

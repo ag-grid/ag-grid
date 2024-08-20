@@ -11,7 +11,13 @@ import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
-import { _isClientSideRowModel, _isDomLayout, _isGroupUseEntireRow, _isServerSideRowModel } from '../gridOptionsUtils';
+import {
+    _isClientSideRowModel,
+    _isDomLayout,
+    _isGroupUseEntireRow,
+    _isServerSideRowModel,
+    _shouldMaintainColumnOrder,
+} from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
@@ -231,19 +237,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.createAutoCols();
         this.addAutoCols();
 
-        let maintainColumnOrder = this.gos.get('maintainColumnOrder');
-
-        // boolean is deprecated setting, deprecated in v32.2.0
-        if (maintainColumnOrder === true) {
-            maintainColumnOrder = 'primaryAndPivotResultColumns';
-        } else if (maintainColumnOrder === false) {
-            maintainColumnOrder = 'pivotResultColumns';
-        }
-
-        const shouldSortNewColDefs =
-            maintainColumnOrder !== 'none' &&
-            (maintainColumnOrder === 'primaryAndPivotResultColumns' ||
-                maintainColumnOrder === (this.showingPivotResult ? 'pivotResultColumns' : 'primaryColumns'));
+        const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
             this.restoreColOrder();
         }

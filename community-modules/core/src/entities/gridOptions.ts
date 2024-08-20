@@ -335,6 +335,8 @@ export interface GridOptions<TData = any> {
     };
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
+     *
+     * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
      * @default 'pivotResultColumns'
      */
     maintainColumnOrder?: boolean | 'primaryAndPivotResultColumns' | 'primaryColumns' | 'pivotResultColumns' | 'none';
