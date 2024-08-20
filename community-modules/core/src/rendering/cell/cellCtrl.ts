@@ -88,12 +88,12 @@ export class CellCtrl extends BeanStub {
     private value: any;
     private valueFormatted: any;
 
-    private cellRangeFeature: CellRangeFeature | null = null;
-    private cellPositionFeature: CellPositionFeature | null = null;
-    private cellCustomStyleFeature: CellCustomStyleFeature | null = null;
-    private tooltipFeature: TooltipFeature | null = null;
-    private cellMouseListenerFeature: CellMouseListenerFeature | null = null;
-    private cellKeyboardListenerFeature: CellKeyboardListenerFeature | null = null;
+    private cellRangeFeature: CellRangeFeature | undefined = undefined;
+    private cellPositionFeature: CellPositionFeature | undefined = undefined;
+    private cellCustomStyleFeature: CellCustomStyleFeature | undefined = undefined;
+    private tooltipFeature: TooltipFeature | undefined = undefined;
+    private cellMouseListenerFeature: CellMouseListenerFeature | undefined = undefined;
+    private cellKeyboardListenerFeature: CellKeyboardListenerFeature | undefined = undefined;
 
     private cellPosition: CellPosition;
     private editing: boolean;
@@ -162,21 +162,13 @@ export class CellCtrl extends BeanStub {
         }
     }
     private removeFeatures(): void {
-        this.cellPositionFeature?.destroy();
-        this.cellPositionFeature = null;
-
-        this.cellCustomStyleFeature?.destroy();
-        this.cellCustomStyleFeature = null;
-
-        this.cellMouseListenerFeature?.destroy();
-        this.cellMouseListenerFeature = null;
-        this.cellKeyboardListenerFeature?.destroy();
-        this.cellKeyboardListenerFeature = null;
+        this.cellPositionFeature = this.destroyBean(this.cellPositionFeature);
+        this.cellCustomStyleFeature = this.destroyBean(this.cellCustomStyleFeature);
+        this.cellMouseListenerFeature = this.destroyBean(this.cellMouseListenerFeature);
+        this.cellKeyboardListenerFeature = this.destroyBean(this.cellKeyboardListenerFeature);
+        this.cellRangeFeature = this.destroyBean(this.cellRangeFeature);
 
         this.disableTooltipFeature();
-
-        this.cellRangeFeature?.destroy();
-        this.cellRangeFeature = null;
     }
 
     private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
@@ -240,12 +232,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private disableTooltipFeature() {
-        if (!this.tooltipFeature) {
-            return;
-        }
-
-        this.tooltipFeature.destroy();
-        this.tooltipFeature = null;
+        this.tooltipFeature = this.destroyBean(this.tooltipFeature);
     }
 
     public setComp(
