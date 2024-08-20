@@ -1287,10 +1287,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "maintainColumnOrder": {
-    "typeName": "boolean | 'primaryAndPivotResultColumns' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
-    "typesToInclude": []
-  },
   "groupMaintainOrder": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1381,6 +1377,10 @@
   },
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
+    "typesToInclude": []
+  },
+  "maintainColumnOrder": {
+    "typeName": "boolean | 'primaryAndPivotResultColumns' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
     "typesToInclude": []
   }
 }
