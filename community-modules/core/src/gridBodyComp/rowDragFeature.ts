@@ -322,6 +322,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     params.onDragStop!(this.draggingToRowDragEvent('rowDragEnd', e as any));
                 };
             }
+            if (params.onDragCancel) {
+                processedParams.onDragCancel = (e) => {
+                    params.onDragCancel!(this.draggingToRowDragEvent('rowDragCancel', e as any));
+                };
+            }
         }
 
         this.dragAndDropService.addDropTarget({
@@ -338,7 +343,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const onDragLeave = this.onDragLeave.bind(this);
         const onDragging = this.onDragging.bind(this);
         const onDragStop = this.onDragStop.bind(this);
-        const onDragCancel = this.onDragStop.bind(this);
+        const onDragCancel = this.onDragCancel.bind(this);
 
         if (!events) {
             return {
@@ -347,6 +352,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 onDragLeave,
                 onDragging,
                 onDragStop,
+                onDragCancel,
                 /* @private */ fromGrid: true,
             } as RowDropZoneParams;
         }
