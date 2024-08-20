@@ -435,6 +435,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             keepRenderedRows: true,
             keepEditingRows: true,
             animate,
+            rowNodesOrderChanged: true, // We assume the order changed and we don't need to check if it really did
         });
 
         return true;
