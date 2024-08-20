@@ -15,13 +15,14 @@ const written = new Set<string>();
 
 const generateAllCSSEmbeds = async () => {
     const cssEntryPoints = globSync(join(srcFolder, 'parts/*/*.css'));
+    console.log('CSS codegen: entry points: ' + cssEntryPoints.join('; '));
     for (const cssEntryPoint of cssEntryPoints) {
         await generateCSSEmbed(cssEntryPoint);
     }
 
     // remove any old generated files not written in this execution
     const generatedFiles = globSync(join(srcFolder, 'parts/*/GENERATED-*'));
-    console.log(join(srcFolder, 'parts/*/GENERATED-*'));
+    console.log('CSS codegen: generated files (pre clean-up): ' + generatedFiles.join('; '));
     for (const generatedFile of generatedFiles) {
         if (!written.has(generatedFile)) {
             console.log('DELETING', generatedFiles);
@@ -75,6 +76,7 @@ const writeTsFile = async (path: string, content: string) => {
     const fs = await import('fs');
     // write to a tmp file and rename over the existing file to provide atomic modification
     const tmpFile = path + '.tmp';
+    console.log('CSS codegen: writing: ' + path);
     fs.writeFileSync(tmpFile, content);
     fs.renameSync(tmpFile, path);
 };
