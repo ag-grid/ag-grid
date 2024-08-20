@@ -289,7 +289,7 @@ export class CellCtrl extends BeanStub {
      * This enables React to run against a destroyed CellCtrl instance and still get sensible values
      * before React destroys the CellComp. This stops flickering in the UI when React is updating lots of cells.
      */
-    public unSetComp(): void {
+    public unsetComp(): void {
         this.removeFeatures();
     }
 
