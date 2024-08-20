@@ -21,6 +21,14 @@ The following example illustrates a basic single row selection configuration.
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
 
+### Deselecting a Row
+When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
+When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
+This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
+Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
+
+{% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
+
 ## Checkbox Selection
 
 Note that in the example above, by default, the grid will display a selection checkbox for each row, which can be used to select and deselect that row and display its selection state. 
@@ -112,15 +120,6 @@ All of the configuration states for this option can be explored in the example b
 {% note %}
 Note that deselection is still possible when checkboxes are enabled by clicking a selected checkbox.
 {% /note %}
-
-
-## Deselecting a Row
-When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
-When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
-This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
-Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
-
-{% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
 
 ## Configure Selectable Rows
 

@@ -52,8 +52,16 @@ Use the example below to explore row range behaviour. For example, follow these 
 
 {% gridExampleRunner title="Row Range Selection" name="range-selection" /%}
 
+#### Deselecting a Row
+When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
+When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
+This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
+Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
+
+{% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
+
 #### Deselecting Ranges
-Typically, rows are deselected individually by holding {% kbd "^ Ctrl" /%} and clicking the row or unchecking the checkbox. Users may also deselect multiple rows at once by using holding {% kbd "⇧ Shift" /%} and clicking a row. 
+Users may deselect multiple rows at once by using holding {% kbd "⇧ Shift" /%} and clicking a row. 
 For example, deselecting a single row by holding {% kbd "^ Ctrl" /%} and clicking, then deselecting another row by holding {% kbd "⇧ Shift" /%} and clicking, will deselect all rows between the two. 
 Note that this deselection occurs whether or not the row is within the original range of selected rows.
 
@@ -192,14 +200,6 @@ All of the configuration states for this option can be explored in the example b
 {% note %}
 Note that deselection is still possible when checkboxes are enabled by clicking a selected checkbox.
 {% /note %}
-
-## Deselecting a Row
-When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
-When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
-This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
-Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
-
-{% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
 
 ## Configure Selectable Rows
 
