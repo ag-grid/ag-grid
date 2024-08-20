@@ -20,7 +20,7 @@ const generateAllCSSEmbeds = async () => {
     }
 
     // remove any old generated files not written in this execution
-    const generatedFiles = globSync(join(srcFolder, 'parts/*/GENERATED-*'));
+    const generatedFiles = globSync(join(srcFolder, 'parts/**/GENERATED-*'));
     for (const generatedFile of generatedFiles) {
         if (!written.has(generatedFile)) {
             fs.rmSync(generatedFile);
