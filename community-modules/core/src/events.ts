@@ -95,6 +95,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         firstDataRendered: FirstDataRenderedEvent<TData, TContext>;
         dragStarted: DragStartedEvent<TData, TContext>;
         dragStopped: DragStoppedEvent<TData, TContext>;
+        dragCancelled: DragCancelledEvent<TData, TContext>;
         rowEditingStarted: RowEditingStartedEvent<TData, TContext>;
         rowEditingStopped: RowEditingStoppedEvent<TData, TContext>;
         cellEditingStarted: CellEditingStartedEvent<TData, TContext>;
@@ -433,8 +434,12 @@ export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEve
     type: 'dragStarted';
 }
 
-export interface DragStoppedEvent<TData = any, TContext = any> extends AgDragEvent<`dragStopped`, TData, TContext> {
+export interface DragStoppedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStopped', TData, TContext> {
     type: 'dragStopped';
+}
+
+export interface DragCancelledEvent<TData = any, TContext = any> extends AgDragEvent<'dragCancelled', TData, TContext> {
+    type: 'dragCancelled';
 }
 
 // For internal use only.

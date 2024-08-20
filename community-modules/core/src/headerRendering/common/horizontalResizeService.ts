@@ -33,6 +33,7 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
             onDragStart: this.onDragStart.bind(this, params),
             onDragStop: this.onDragStop.bind(this, params),
             onDragging: this.onDragging.bind(this, params),
+            onDragCancel: this.onDragStop.bind(this, params),
             includeTouch: true,
             stopPropagationForTouch: true,
         };
@@ -63,7 +64,7 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
         ctrl.disableUserSelect(true);
     }
 
-    private onDragStop(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
+    private onDragStop(params: HorizontalResizeParams): void {
         params.onResizeEnd(this.resizeAmount);
         this.resetIcons();
     }

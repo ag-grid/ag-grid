@@ -98,4 +98,6 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
             this.funcColsService.addPivotColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
         }
     }
+
+    public onDragCancel(): void {}
 }

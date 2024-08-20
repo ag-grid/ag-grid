@@ -76,6 +76,7 @@ export const PUBLIC_EVENTS = [
     'firstDataRendered',
     'dragStarted',
     'dragStopped',
+    'dragCancelled',
     'rowEditingStarted',
     'rowEditingStopped',
     'cellEditingStarted',
