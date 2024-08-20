@@ -1288,7 +1288,7 @@
     "typesToInclude": []
   },
   "maintainColumnOrder": {
-    "typeName": "boolean",
+    "typeName": "boolean | 'primaryAndPivotResultColumns' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
     "typesToInclude": []
   },
   "groupMaintainOrder": {

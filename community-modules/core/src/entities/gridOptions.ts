@@ -335,9 +335,9 @@ export interface GridOptions<TData = any> {
     };
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
-     * @default false
+     * @default 'pivotResultColumns'
      */
-    maintainColumnOrder?: boolean;
+    maintainColumnOrder?: boolean | 'primaryAndPivotResultColumns' | 'primaryColumns' | 'pivotResultColumns' | 'none';
     /**
      * If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false

@@ -115,7 +115,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean {
             this.pivotResultCols = null;
         }
 
-        this.columnModel.refreshCols();
+        this.columnModel.refreshCols(true);
         this.visibleColsService.refresh(source);
     }
 

@@ -365,7 +365,6 @@ export class PropertyKeys {
         'suppressClipboardApi',
         'suppressModelUpdateAfterUpdateTransaction',
         'stopEditingWhenCellsLoseFocus',
-        'maintainColumnOrder',
         'groupMaintainOrder',
         'columnHoverHighlight',
         'readOnlyEdit',
@@ -391,7 +390,7 @@ export class PropertyKeys {
     ];
 
     // If property does not fit above, i.e union that should not be coerced.
-    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow'];
+    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow', 'maintainColumnOrder'];
 
     public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [
         'doesExternalFilterPass',

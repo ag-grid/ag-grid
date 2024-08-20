@@ -177,7 +177,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             );
             this.funcColsService.sortPivotColumns(comparatorByIndex.bind(this, pivotIndexes, previousPivotCols));
 
-            this.columnModel.refreshCols();
+            this.columnModel.refreshCols(false);
 
             // sync newly created auto group columns with ColumnState
             const autoCols = this.columnModel.getAutoCols() || [];

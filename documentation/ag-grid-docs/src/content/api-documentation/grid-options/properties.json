@@ -203,7 +203,8 @@
             "more": {
                 "name": "Maintain Column Order",
                 "url": "./column-updating-definitions/#maintain-column-order"
-            }
+            },
+            "type": "'primaryAndPivotResultColumns' | 'primaryColumns' | 'pivotResultColumns' | 'none'"
         },
         "suppressFieldDotNotation": {
             "more": {

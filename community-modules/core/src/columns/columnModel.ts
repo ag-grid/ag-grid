@@ -189,13 +189,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.ready = true;
 
-        this.refreshCols();
-
-        const maintainColOrder =
-            colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder');
-        if (maintainColOrder) {
-            this.orderColsLikeColDefCols();
-        }
+        this.refreshCols(true);
 
         this.visibleColsService.refresh(source);
         this.columnViewportService.checkViewportColumns();
@@ -223,7 +217,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // setPivotMode, applyColumnState,
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
     // pivotResultColsService.setPivotResultCols
-    public refreshCols(): void {
+    public refreshCols(newColDefs: boolean): void {
         if (!this.colDefCols) {
             return;
         }
@@ -237,7 +231,22 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.createAutoCols();
         this.addAutoCols();
 
-        this.restoreColOrder();
+        let maintainColumnOrder = this.gos.get('maintainColumnOrder');
+
+        // boolean is deprecated setting, deprecated in v32.2.0
+        if (maintainColumnOrder === true) {
+            maintainColumnOrder = 'primaryAndPivotResultColumns';
+        } else if (maintainColumnOrder === false) {
+            maintainColumnOrder = 'pivotResultColumns';
+        }
+
+        const shouldSortNewColDefs =
+            maintainColumnOrder !== 'none' &&
+            (maintainColumnOrder === 'primaryAndPivotResultColumns' ||
+                maintainColumnOrder === (this.showingPivotResult ? 'pivotResultColumns' : 'primaryColumns'));
+        if (!newColDefs || shouldSortNewColDefs) {
+            this.restoreColOrder();
+        }
 
         this.positionLockedCols();
         this.showRowGroupColsService?.refresh();
@@ -388,7 +397,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (!this.isReady()) {
             return;
         }
-        this.refreshCols();
+        this.refreshCols(false);
         this.visibleColsService.refresh(source);
     }
 
@@ -796,7 +805,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateCols() to check it autoGroupCol needs to be added / removed
-        this.refreshCols();
+        this.refreshCols(false);
         this.visibleColsService.refresh(source);
 
         this.eventDispatcher.pivotModeChanged();
