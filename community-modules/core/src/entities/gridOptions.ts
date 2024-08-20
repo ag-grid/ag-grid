@@ -19,6 +19,8 @@ import type {
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
+    CellRangeDeleteEndEvent,
+    CellRangeDeleteStartEvent,
     CellSelectionChangedEvent,
     CellValueChangedEvent,
     ChartCreatedEvent,
@@ -2058,9 +2060,21 @@ export interface GridOptions<TData = any> {
     /**
      * Range delete operation (cell clear) has started.
      */
+    onCellRangeDeleteStart?(event: CellRangeDeleteStartEvent<TData>): void;
+    /**
+     * Range delete operation (cell clear) has ended.
+     */
+    onCellRangeDeleteEnd?(event: CellRangeDeleteEndEvent<TData>): void;
+    /**
+     * Range delete operation (cell clear) has started.
+     *
+     * @deprecated v32.2 Use `onCellRangeDeleteStart` instead
+     */
     onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>): void;
     /**
      * Range delete operation (cell clear) has ended.
+     *
+     * @deprecated v32.2 Use `onCellRangeDeleteEnd` instead
      */
     onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>): void;
 

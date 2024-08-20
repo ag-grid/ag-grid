@@ -1018,7 +1018,7 @@ export interface _RangeSelectionGridApi {
      */
     clearRangeSelection(): void;
 
-    /** Clears the selected ranges. */
+    /** Clears the selected cell ranges. */
     clearCellSelection(): void;
 }
 

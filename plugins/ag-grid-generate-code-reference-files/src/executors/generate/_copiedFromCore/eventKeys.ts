@@ -41,6 +41,8 @@ export const PUBLIC_EVENTS = [
     'pasteEnd',
     'fillStart',
     'fillEnd',
+    'cellRangeDeleteStart',
+    'cellRangeDeleteEnd',
     'rangeDeleteStart',
     'rangeDeleteEnd',
     'undoStarted',

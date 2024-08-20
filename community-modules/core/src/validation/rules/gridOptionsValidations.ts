@@ -70,6 +70,8 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     suppressCopySingleCellRanges: { version: '32.2', message: 'Use `selection.copySelectedRows` instead.' },
     suppressCopyRowsToClipboard: { version: '32.2', message: 'Use `selection.copySelectedRows` instead.' },
     onRangeSelectionChanged: { version: '32.2', message: 'Use `onCellSelectionChanged` instead.' },
+    onRangeDeleteStart: { version: '32.2', message: 'Use `onCellRangeDeleteStart` instead.' },
+    onRangeDeleteEnd: { version: '32.2', message: 'Use `onCellRangeDeleteEnd` instead.' },
 });
 
 // Leave untyped. so it can be inferred.
