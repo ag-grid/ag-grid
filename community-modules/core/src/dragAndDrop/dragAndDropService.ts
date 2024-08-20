@@ -135,7 +135,7 @@ export interface DropTarget {
     /** Callback for when drag stops */
     onDragStop?(params: DraggingEvent): void;
     /** Callback for when the drag is cancelled */
-    onDragCancel?(): void;
+    onDragCancel?(params: DraggingEvent): void;
     external?: boolean;
 }
 
@@ -277,7 +277,9 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
     private onDragCancel(): void {
         if (this.lastDropTarget) {
-            this.lastDropTarget.onDragCancel?.();
+            this.lastDropTarget.onDragCancel?.(
+                this.createDropTargetEvent(this.lastDropTarget, this.eventLastTime!, null, null, false)
+            );
         }
         this.clearDragAndDropProperties();
     }

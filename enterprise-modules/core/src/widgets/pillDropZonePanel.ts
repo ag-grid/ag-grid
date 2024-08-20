@@ -19,6 +19,7 @@ import {
     _getActiveDomElement,
     _includes,
     _insertArrayIntoArray,
+    _isVisible,
     _last,
     _setAriaHidden,
     _setAriaLabel,
@@ -197,6 +198,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
             onDragStop: this.onDragStop.bind(this),
+            onDragCancel: this.onDragCancel.bind(this),
             isInterestedIn: this.isInterestedIn.bind(this),
         };
 
@@ -337,6 +339,19 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         if (this.isPotentialDndItems()) {
             this.handleDragLeaveEnd(draggingEvent);
+
+            this.potentialDndItems = [];
+            this.refreshGui();
+        }
+
+        this.state = 'notDragging';
+    }
+
+    private onDragCancel(draggingEvent: DraggingEvent): void {
+        if (this.isPotentialDndItems()) {
+            if (this.state === 'newItemsIn') {
+                this.handleDragLeaveEnd(draggingEvent);
+            }
 
             this.potentialDndItems = [];
             this.refreshGui();

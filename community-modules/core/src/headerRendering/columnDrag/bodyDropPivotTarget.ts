@@ -99,5 +99,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
         }
     }
 
-    public onDragCancel(): void {}
+    public onDragCancel(): void {
+        this.clearColumnsList();
+    }
 }
