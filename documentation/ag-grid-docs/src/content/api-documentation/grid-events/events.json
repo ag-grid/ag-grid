@@ -321,6 +321,12 @@
                 "name": "Row Drag Events",
                 "url": "./row-dragging/#row-drag-events"
             }
+        },
+        "rowDragCancel": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "./row-dragging/#row-drag-events"
+            }
         }
     },
     "columns": {

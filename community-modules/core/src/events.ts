@@ -112,6 +112,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDragMove: RowDragMoveEvent<TData, TContext>;
         rowDragLeave: RowDragLeaveEvent<TData, TContext>;
         rowDragEnd: RowDragEndEvent<TData, TContext>;
+        rowDragCancel: RowDragCancelEvent<TData, TContext>;
         // Internal events
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
         keyShortcutChangedCellStart: KeyShortcutChangedCellStartEvent<TData, TContext>;
@@ -493,6 +494,9 @@ export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType
 export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> {}
 
 export interface RowDragEndEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnd'> {}
+
+export interface RowDragCancelEvent<TData = any, TContext = any>
+    extends RowDragEvent<TData, TContext, 'rowDragCancel'> {}
 
 export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragMove'> {}
 
