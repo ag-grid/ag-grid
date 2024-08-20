@@ -370,16 +370,14 @@ const CellComp = (props: { cellCtrl: CellCtrl; printLayout: boolean; editingRow:
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]
     );
 
-    // we use layout effect here as we want to synchronously process setComp and it's side effects
-    // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
-
     const setRef = useCallback((ref: HTMLDivElement | null) => {
         eGui.current = ref;
-        if (!eGui.current) {
-            return;
-        }
-
-        if (!cellCtrl) {
+        if (!eGui.current || !cellCtrl) {
+            // We do NOT add a check for if the cellCtrl is destroyed as when there are lots of updates React
+            // can get behind our internal state and call this function after the cellCtrl has been destroyed.
+            // If we were to shortcut here then cell values will flash in the first column of the grid as they will
+            // not have the correct cell position / styles applied as that is set via setComp.
+            cellCtrl?.unsetComp();
             return;
         }
 

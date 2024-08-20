@@ -88,12 +88,12 @@ export class CellCtrl extends BeanStub {
     private value: any;
     private valueFormatted: any;
 
-    private cellRangeFeature: CellRangeFeature | null = null;
-    private cellPositionFeature: CellPositionFeature | null = null;
-    private cellCustomStyleFeature: CellCustomStyleFeature | null = null;
-    private tooltipFeature: TooltipFeature | null = null;
-    private cellMouseListenerFeature: CellMouseListenerFeature | null = null;
-    private cellKeyboardListenerFeature: CellKeyboardListenerFeature | null = null;
+    private cellRangeFeature: CellRangeFeature | undefined = undefined;
+    private cellPositionFeature: CellPositionFeature | undefined = undefined;
+    private cellCustomStyleFeature: CellCustomStyleFeature | undefined = undefined;
+    private tooltipFeature: TooltipFeature | undefined = undefined;
+    private cellMouseListenerFeature: CellMouseListenerFeature | undefined = undefined;
+    private cellKeyboardListenerFeature: CellKeyboardListenerFeature | undefined = undefined;
 
     private cellPosition: CellPosition;
     private editing: boolean;
@@ -141,22 +141,8 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
-        this.addDestroyFunc(() => {
-            this.cellPositionFeature?.destroy();
-            this.cellPositionFeature = null;
-        });
-
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
-        this.addDestroyFunc(() => {
-            this.cellCustomStyleFeature?.destroy();
-            this.cellCustomStyleFeature = null;
-        });
-
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
-        this.addDestroyFunc(() => {
-            this.cellMouseListenerFeature?.destroy();
-            this.cellMouseListenerFeature = null;
-        });
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(
             this,
@@ -165,26 +151,24 @@ export class CellCtrl extends BeanStub {
             this.rowNode,
             this.rowCtrl
         );
-        this.addDestroyFunc(() => {
-            this.cellKeyboardListenerFeature?.destroy();
-            this.cellKeyboardListenerFeature = null;
-        });
 
         if (this.column.isTooltipEnabled()) {
             this.enableTooltipFeature();
-            this.addDestroyFunc(() => {
-                this.disableTooltipFeature();
-            });
         }
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gos.get('enableRangeSelection');
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
-            this.addDestroyFunc(() => {
-                this.cellRangeFeature?.destroy();
-                this.cellRangeFeature = null;
-            });
         }
+    }
+    private removeFeatures(): void {
+        this.cellPositionFeature = this.destroyBean(this.cellPositionFeature);
+        this.cellCustomStyleFeature = this.destroyBean(this.cellCustomStyleFeature);
+        this.cellMouseListenerFeature = this.destroyBean(this.cellMouseListenerFeature);
+        this.cellKeyboardListenerFeature = this.destroyBean(this.cellKeyboardListenerFeature);
+        this.cellRangeFeature = this.destroyBean(this.cellRangeFeature);
+
+        this.disableTooltipFeature();
     }
 
     private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
@@ -248,12 +232,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private disableTooltipFeature() {
-        if (!this.tooltipFeature) {
-            return;
-        }
-
-        this.tooltipFeature.destroy();
-        this.tooltipFeature = null;
+        this.tooltipFeature = this.destroyBean(this.tooltipFeature);
     }
 
     public setComp(
@@ -304,6 +283,14 @@ export class CellCtrl extends BeanStub {
             this.onCellCompAttachedFuncs.forEach((func) => func());
             this.onCellCompAttachedFuncs = [];
         }
+    }
+
+    /** Called from the cellComp when it is being cleaned up.
+     * This enables React to run against a destroyed CellCtrl instance and still get sensible values
+     * before React destroys the CellComp. This stops flickering in the UI when React is updating lots of cells.
+     */
+    public unsetComp(): void {
+        this.removeFeatures();
     }
 
     private setupAutoHeight(eCellWrapper?: HTMLElement): void {
