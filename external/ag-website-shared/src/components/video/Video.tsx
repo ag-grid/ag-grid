@@ -55,11 +55,19 @@ export const Video = ({
 
             {showPlayPauseButtons && (
                 <span className={styles.buttonsOuter}>
-                    <button className={classnames(styles.playButton, 'button-style-none')} onClick={toggleVideo}>
+                    <button
+                        className={classnames(styles.playButton, 'button-style-none')}
+                        onClick={toggleVideo}
+                        aria-label="Play video"
+                    >
                         <Icon name="play" />
                     </button>
 
-                    <button className={classnames(styles.pauseButton, 'button-style-none')} onClick={toggleVideo}>
+                    <button
+                        className={classnames(styles.pauseButton, 'button-style-none')}
+                        onClick={toggleVideo}
+                        aria-label="Pause video"
+                    >
                         <Icon name="pause" />
                     </button>
                 </span>
