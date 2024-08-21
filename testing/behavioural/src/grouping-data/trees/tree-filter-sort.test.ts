@@ -184,7 +184,7 @@ describe('ag-grid tree filter', () => {
 
         await domMutationWaiter.wait();
 
-        new TreeDiagram(api, 'filter 5', treeDiagramOptions).check(`
+        new TreeDiagram(api, 'no filter', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · ├─┬ B GROUP name:"Alan Turing"
