@@ -82,7 +82,25 @@ describe('ag-grid tree filter', () => {
             · └── C LEAF name:"A. Church"
         `);
 
+        api.setGridOption('rowData', [
+            { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
+            { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
+            { id: '5', name: 'A. Church', orgHierarchy: ['A', 'B', 'E'] },
+            { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C'] },
+            { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
+        ]);
+
+        new TreeDiagram(api, 'filter 1 rowData 2', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT
+            └─┬ A GROUP name:"John Von Neumann"
+            · ├─┬ B GROUP name:"Alan Turing"
+            · │ └── E LEAF name:"A. Church"
+            · └── C LEAF name:"A. Church"
+        `);
+
         api.setFilterModel({ name: { type: 'equals', filter: 'Grace Hopper' } });
+
+        api.setGridOption('rowData', rowData);
 
         await domMutationWaiter.wait();
 
@@ -93,7 +111,36 @@ describe('ag-grid tree filter', () => {
             · · └── E LEAF name:"Grace Hopper"
         `);
 
+        api.setGridOption('rowData', [
+            { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
+            { id: '2', name: 'Grace Hopper', orgHierarchy: ['A', 'B'] },
+            { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C'] },
+            { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
+            { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
+        ]);
+
+        await domMutationWaiter.wait();
+
+        new TreeDiagram(api, 'filter 2 rowData 2', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT
+            └─┬ A GROUP name:"John Von Neumann"
+            · └─┬ B GROUP name:"Grace Hopper"
+            · · ├── D LEAF name:"Donald Knuth"
+            · · └── E LEAF name:"Grace Hopper"
+        `);
+
         api.setFilterModel({ name: { type: 'equals', filter: 'Donald Knuth' } });
+
+        await domMutationWaiter.wait();
+
+        new TreeDiagram(api, 'filter 3 rowData 2', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT
+            └─┬ A GROUP name:"John Von Neumann"
+            · └─┬ B GROUP name:"Grace Hopper"
+            · · └── D LEAF name:"Donald Knuth"
+        `);
+
+        api.setGridOption('rowData', rowData);
 
         await domMutationWaiter.wait();
 
@@ -104,7 +151,7 @@ describe('ag-grid tree filter', () => {
             · · └── D LEAF name:"Donald Knuth"
         `);
 
-        api.setFilterModel({ name: { type: 'equals', filter: 'not existing' } });
+        api.setFilterModel({ name: { type: 'equals', filter: 'Kurt Gödel' } });
 
         await domMutationWaiter.wait();
 
@@ -112,7 +159,28 @@ describe('ag-grid tree filter', () => {
             ROOT_NODE_ID ROOT
         `);
 
+        api.setGridOption('rowData', [
+            { id: '1', name: 'Kurt Gödel', orgHierarchy: ['A'] },
+            { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
+            { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C'] },
+            { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
+            { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
+        ]);
+
+        await domMutationWaiter.wait();
+
+        new TreeDiagram(api, 'filter 4 rowData 3', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT
+            └─┬ A GROUP name:"Kurt Gödel"
+            · ├─┬ B GROUP name:"Alan Turing"
+            · │ ├── D LEAF name:"Donald Knuth"
+            · │ └── E LEAF name:"Grace Hopper"
+            · └── C LEAF name:"A. Church"
+        `);
+
         api.setFilterModel({});
+
+        api.setGridOption('rowData', rowData);
 
         await domMutationWaiter.wait();
 

@@ -22,8 +22,10 @@ export function executeWithTimeout<TResult = void>(
     const timeoutError = new Error('❌ Timeout after ' + timeout + 'ms');
     Object.assign(timeoutError, { timeout, code: 'ETIMEDOUT' });
     Error.captureStackTrace(timeoutError, callerForStackTrace);
-    let abortController: AbortController | null = new AbortController();
+    let abortController: AbortController | null = null;
     let result: TResult;
+    let hasResult = false;
+    let startPromise: Promise<TResult> | null = null;
     const cancel = (): boolean => {
         if (abortController && !abortController.signal.aborted) {
             abortController.abort();
@@ -35,27 +37,36 @@ export function executeWithTimeout<TResult = void>(
     const start = async () => {
         try {
             result = await (typeof promise === 'function' ? promise() : promise);
+            hasResult = true;
             return result;
         } finally {
             cancel();
         }
     };
-    const startTimeout = async () => {
+    const startWithTimeout = async () => {
+        startPromise = start();
         try {
-            await asyncSetTimeout(timeout, abortController);
-            if (!cancel()) {
-                return result!;
+            abortController = new AbortController();
+            await asyncSetTimeout(timeout, null, { signal: abortController.signal });
+            if (!cancel() || hasResult) {
+                return startPromise;
             }
             onTimedOut?.();
             onTimedOut = undefined;
-        } catch {
+        } catch (e) {
             cancel();
+            if (e.name !== 'AbortError') {
+                throw e;
+            }
+        }
+        if (hasResult) {
+            return startPromise;
         }
         throw timeoutError;
     };
-    const promiseWithTimeout = Promise.race([startTimeout(), start()]) as PromiseWithCancel<TResult>;
-    promiseWithTimeout.cancel = cancel;
-    return promiseWithTimeout;
+    const timerPromise = startWithTimeout() as PromiseWithCancel<TResult>;
+    timerPromise.cancel = cancel;
+    return timerPromise;
 }
 
 /** Returns a function that when invoked sets the new result value and restart the throttle timer promise */
