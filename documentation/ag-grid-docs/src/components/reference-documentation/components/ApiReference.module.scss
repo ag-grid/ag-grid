@@ -158,6 +158,11 @@
         position: absolute;
         bottom: -0.125em;
     }
+    span {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
 }
 
 .parentProperties {
