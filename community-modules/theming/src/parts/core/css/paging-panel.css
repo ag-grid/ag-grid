@@ -5,7 +5,6 @@
     gap: calc(var(--ag-grid-size) * 4);
     padding: 0 var(--ag-cell-horizontal-padding);
 
-    /* TODO introduce --paging-panel-height */
     height: max(var(--ag-row-height), 22px);
     border-top: var(--ag-footer-row-border);
 }

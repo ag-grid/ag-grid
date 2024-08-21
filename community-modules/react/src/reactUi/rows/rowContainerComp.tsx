@@ -7,10 +7,9 @@ import useReactCommentEffect from '../reactComment';
 import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
-const RowContainerComp = (params: { name: RowContainerName }) => {
+const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const { context } = useContext(BeansContext);
 
-    const { name } = params;
     const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
     const eViewport = useRef<HTMLDivElement | null>(null);
@@ -121,11 +120,7 @@ const RowContainerComp = (params: { name: RowContainerName }) => {
     const buildContainer = () => (
         <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
             {rowCtrlsOrdered.map((rowCtrl) => (
-                <RowComp
-                    rowCtrl={rowCtrl}
-                    containerType={containerOptions.type}
-                    key={rowCtrl.getInstanceId()}
-                ></RowComp>
+                <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
             ))}
         </div>
     );

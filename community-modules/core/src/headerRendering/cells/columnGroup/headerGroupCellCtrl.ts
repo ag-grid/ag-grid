@@ -125,7 +125,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const left = rect.left;
         const width = rect.width;
 
-        const xPosition = normaliseX(isLeft !== isRtl ? left - 20 : left + width + 20, pinned, true, gos, ctrlsService);
+        const xPosition = normaliseX({
+            x: isLeft !== isRtl ? left - 20 : left + width + 20,
+            pinned,
+            fromKeyboard: true,
+            gos,
+            ctrlsService,
+        });
 
         const id = column.getGroupId();
         const headerPosition = this.focusService.getFocusedHeader();

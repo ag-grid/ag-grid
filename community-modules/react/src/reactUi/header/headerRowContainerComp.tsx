@@ -5,7 +5,7 @@ import React, { memo, useCallback, useContext, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import HeaderRowComp from './headerRowComp';
 
-const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
+const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
     const [displayed, setDisplayed] = useState<true | false>(true);
     const [headerRowCtrls, setHeaderRowCtrls] = useState<HeaderRowCtrl[]>([]);
 
@@ -14,8 +14,8 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
     const eCenterContainer = useRef<HTMLDivElement>(null);
     const headerRowCtrlRef = useRef<HeaderRowContainerCtrl | null>(null);
 
-    const pinnedLeft = props.pinned === 'left';
-    const pinnedRight = props.pinned === 'right';
+    const pinnedLeft = pinned === 'left';
+    const pinnedRight = pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
     const setRef = useCallback((e: HTMLDivElement) => {
@@ -52,13 +52,13 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
             },
         };
 
-        headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(props.pinned));
+        headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(pinned));
         headerRowCtrlRef.current.setComp(compProxy, eGui.current);
     }, []);
 
     const className = !displayed ? 'ag-hidden' : '';
 
-    const insertRowsJsx = () => headerRowCtrls.map((ctrl) => <HeaderRowComp ctrl={ctrl} key={ctrl.getInstanceId()} />);
+    const insertRowsJsx = () => headerRowCtrls.map((ctrl) => <HeaderRowComp ctrl={ctrl} key={ctrl.instanceId} />);
 
     return (
         <>

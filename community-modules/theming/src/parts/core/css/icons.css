@@ -9,17 +9,11 @@
 .ag-disabled,
 .ag-column-select-column-group-readonly,
 [disabled] {
-    /* TODO this is messy, should use the fact that icons now inherit color to do
-  this. Also some compoennts set the container opacity when disabled in which
-  case icons don't need special treatment */
     .ag-icon {
         opacity: 0.5;
     }
 }
 
-.ag-icon-grip {
-    opacity: 0.7;
-}
 .ag-column-select-column-readonly.ag-icon-grip,
 .ag-column-select-column-readonly .ag-icon-grip {
     opacity: 0.35;

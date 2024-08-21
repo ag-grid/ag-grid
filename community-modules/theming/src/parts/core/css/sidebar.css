@@ -1,3 +1,37 @@
+.ag-tool-panel-wrapper {
+    display: flex;
+    overflow-y: auto;
+    overflow-x: hidden;
+    cursor: default;
+    user-select: none;
+    width: var(--ag-side-bar-panel-width);
+}
+
+.ag-select-agg-func-item {
+    position: relative;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100%;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    > * {
+        flex: none;
+    }
+}
+
+.ag-tool-panel-horizontal-resize {
+    cursor: ew-resize;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 5px;
+    z-index: 1;
+}
+
 .ag-side-bar {
     position: relative;
 }
@@ -8,10 +42,6 @@
 
 .ag-side-bar-right .ag-tool-panel-horizontal-resize {
     left: -3px;
-}
-
-.ag-tool-panel-wrapper {
-    width: var(--ag-side-bar-panel-width);
 }
 
 .ag-side-bar {

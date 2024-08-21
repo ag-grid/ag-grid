@@ -1,18 +1,10 @@
-import {
-    type ParamType,
-    type ThemeParam,
-    getCoreDefaults,
-    getParamDocs,
-    getParamType,
-    inputStyleBase,
-    tabStyleBase,
-} from '@ag-grid-community/theming';
+import { type ParamType, getParamDocs, getParamType, themeQuartz } from '@ag-grid-community/theming';
 import { useAtom, useAtomValue } from 'jotai';
 
 import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
 import type { Store } from './store';
-import { memoize, titleCase } from './utils';
+import { type ThemeParam, memoize, titleCase } from './utils';
 
 const paramModels: Record<string, unknown> = {};
 
@@ -83,15 +75,11 @@ export const useParam = <T>(model: ParamModel<T>) => useAtomValue(model.valueAto
 // - sideButton*: set of properties is not well considered, needs rebuilding as a part like tabs
 // - panel*: shouldn't exist as its own element to style, instead style charts and advanced filter builder separately
 // - *Image: trying to edit a `url(data:svg image)` in a text editor doesn't work well
-// - *Shadow: we don't have a shadow editor, and reinterpretValue doesn't work for var() expressions in box-shadow values so editing in a text editor is clunky
 
 const suppressParamRegex = /^(sideButton.*|panel*|.*Image)$/;
 
 export const allParamModels = memoize(() => {
-    const coreParams = Object.keys(getCoreDefaults()) as ThemeParam[];
-    const allParams = Array.from(
-        new Set([...coreParams, ...inputStyleBase.availableParams, ...tabStyleBase.availableParams])
-    );
+    const allParams = Array.from(Object.keys(themeQuartz.getParams())) as ThemeParam[];
     return allParams
         .sort()
         .map(ParamModel.for)

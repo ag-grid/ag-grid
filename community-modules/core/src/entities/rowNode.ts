@@ -42,7 +42,13 @@ const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>(
  * This is used only when using tree data.
  * Implementation in enterprise-modules/row-grouping/src/rowGrouping/groupStage/treeStrategy/treeNode.ts
  */
-export interface ITreeNode {}
+export interface ITreeNode {
+    /** The key of this node */
+    readonly key: string;
+
+    /** Updated during commit to be the same as row.sourceRowIndex */
+    readonly oldSourceRowIndex: number;
+}
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -147,11 +153,40 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     /** Used by server side row model, true if this node needs refreshed by the server when in viewport */
     public __needsRefreshWhenVisible: boolean;
 
-    /** All lowest level nodes beneath this node, no groups. */
-    public allLeafChildren: RowNode<TData>[] | null;
+    /**
+     * The index of the row in the source rowData array including any updates via transactions.
+     * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
+     * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value will be `-1`.
+     *
+     * Generally readonly. It is modified only by:
+     * - ClientSideNodeManager, cast to ClientSideNodeManagerRowNode
+     * - ClientSideRowModel, cast to ClientSideRowModelRowNode
+     */
+    public readonly sourceRowIndex: number = -1;
 
-    /** Children of this group. If multi levels of grouping, shows only immediate children. */
-    public childrenAfterGroup: RowNode<TData>[] | null;
+    /**
+     * All lowest level nodes beneath this node, no groups.
+     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
+     * Do not modify this array directly. The grouping module relies on mutable references to the array.
+     * The array might also br frozen (immutable).
+     *
+     * Generally readonly. It is modified only by:
+     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
+     * - GroupStrategy, cast to GroupRow
+     * - TreeStrategy, cast to TreeRow
+     */
+    public readonly allLeafChildren: RowNode<TData>[] | null;
+
+    /**
+     * Children of this group. If multi levels of grouping, shows only immediate children.
+     * Do not modify this array directly. The grouping module relies on mutable references to the array.
+     *
+     * Generally readonly. It is modified only by:
+     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
+     * - GroupStrategy, cast to GroupRow
+     * - TreeStrategy, cast to TreeRow
+     */
+    public readonly childrenAfterGroup: RowNode<TData>[] | null;
 
     /** Filtered children of this group. */
     public childrenAfterFilter: RowNode<TData>[] | null;
@@ -169,10 +204,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public childrenMapped: { [key: string]: any } | null = null;
 
     /** The TreeNode associated to this row. Used only with tree data. */
-    public treeNode: ITreeNode | null = null;
+    public readonly treeNode: ITreeNode | null = null;
 
     /** The flags associated to this node. Used only with tree data. */
-    public treeNodeFlags: number = 0;
+    public readonly treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;

@@ -4,5 +4,5 @@ import { iconSetAlpineCSS } from './GENERATED-icon-set-alpine';
 // prettier-ignore
 export const iconSetAlpine =
     /*#__PURE__*/
-    createPart('iconSet', 'alpine')
+    createPart({feature: 'iconSet', variant: 'alpine'})
         .addCss(iconSetAlpineCSS);

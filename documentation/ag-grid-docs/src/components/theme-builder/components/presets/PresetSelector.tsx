@@ -1,4 +1,4 @@
-import { getCoreDefaults, paramValueToCss } from '@ag-grid-community/theming';
+import { paramValueToCss, themeQuartz } from '@ag-grid-community/theming';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import { paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
@@ -35,7 +35,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     useEffect(() => {
         const wrapper = wrapperRef.current;
         if (wrapper) {
-            const params = { ...getCoreDefaults(), ...preset.params };
+            const params = { ...themeQuartz.getParams(), ...preset.params };
             for (const [key, value] of Object.entries(params)) {
                 const rendered = paramValueToCss(key, value);
                 if (rendered !== false) {

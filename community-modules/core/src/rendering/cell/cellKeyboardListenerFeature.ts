@@ -167,13 +167,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (key === ' ') {
             this.onSpaceKeyDown(event);
         } else {
-            this.cellCtrl.startRowOrCellEdit(key, event);
-            // if we don't prevent default, then the event also gets applied to the text field
-            // (at least when doing the default editor), but we need to allow the editor to decide
-            // what it wants to do. we only do this IF editing was started - otherwise it messes
-            // up when the use is not doing editing, but using rendering with text fields in cellRenderer
-            // (as it would block the the user from typing into text fields).
-            event.preventDefault();
+            if (this.cellCtrl.startRowOrCellEdit(key, event)) {
+                // if we don't prevent default, then the event also gets applied to the text field
+                // (at least when doing the default editor), but we need to allow the editor to decide
+                // what it wants to do. we only do this IF editing was started - otherwise it messes
+                // up when the use is not doing editing, but using rendering with text fields in cellRenderer
+                // (as it would block the the user from typing into text fields).
+                event.preventDefault();
+            }
         }
     }
 

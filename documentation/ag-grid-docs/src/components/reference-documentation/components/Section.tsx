@@ -107,7 +107,6 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs = {
 };
 
 const SectionHeader = ({
-    title,
     description,
     page,
     framework,
@@ -118,7 +117,6 @@ const SectionHeader = ({
     showSnippets,
     properties,
 }: {
-    title: string;
     description?: string;
     page?: any;
     framework: Framework;
@@ -129,7 +127,6 @@ const SectionHeader = ({
     showSnippets?: boolean;
     properties: Properties;
 }) => {
-    breadcrumbs[title] = displayName;
     const breadcrumbKeys = Object.keys(breadcrumbs);
     const id = breadcrumbKeys.join('.');
     const headerTagLevel = headerLevel || breadcrumbKeys.length + 1;
@@ -170,19 +167,22 @@ export const Section: FunctionComponent<SectionProps> = ({
     meta,
 }) => {
     const showHeader = !config.isSubset;
-    const breadcrumbKeys = Object.keys(breadcrumbs);
-    const id = breadcrumbKeys.join('.');
     const displayName = meta?.displayName || title;
+    const newBreadcrumbs = {
+        [title]: displayName,
+        ...breadcrumbs,
+    };
+    const breadcrumbKeys = Object.keys(newBreadcrumbs);
+    const id = breadcrumbKeys.join('.');
 
     return (
         <div className={styles.apiReferenceOuter}>
             {showHeader && (
                 <SectionHeader
-                    title={title}
                     description={meta?.description}
                     page={meta?.page}
                     framework={framework}
-                    breadcrumbs={breadcrumbs}
+                    breadcrumbs={newBreadcrumbs}
                     displayName={displayName}
                     headerLevel={config.headerLevel}
                     hideHeader={config.hideHeader}

@@ -2,11 +2,15 @@ import { persistentAtom } from '@nanostores/persistent';
 
 const LOCALSTORAGE_PREFIX = 'documentation';
 
-export const $darkmode = persistentAtom<boolean | undefined>(`${LOCALSTORAGE_PREFIX}:darkmode`, undefined, {
-    listen: false,
-    encode: (value) => (value ? 'true' : 'false'),
-    decode: (value) => value === 'true',
-});
+export const $darkmode = persistentAtom<boolean | undefined>(
+    `${LOCALSTORAGE_PREFIX}:darkmode`,
+    globalThis.window?.matchMedia('(prefers-color-scheme: dark)')?.matches,
+    {
+        listen: false,
+        encode: (value) => (value ? 'true' : 'false'),
+        decode: (value) => value === 'true',
+    }
+);
 
 const updateHtml = (darkmode: boolean | undefined) => {
     if (typeof document === 'undefined') {

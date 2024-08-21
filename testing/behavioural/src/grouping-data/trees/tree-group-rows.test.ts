@@ -56,7 +56,7 @@ describe('ag-grid grouping tree data with groupRows', () => {
 
         new TreeDiagram(api).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ A LEAF id:0
+            ├─┬ A GROUP id:0
             │ └── B LEAF id:1
             ├─┬ C filler id:row-group-0-C
             │ └── D LEAF id:2

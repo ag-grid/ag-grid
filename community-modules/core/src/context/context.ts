@@ -167,7 +167,10 @@ export interface NamedClass<TName = string> {
     name: TName;
 }
 export type ControllerMeta = NamedClass<ControllerName>;
-export type ComponentMeta = NamedClass<UserComponentName>;
+export type ComponentMeta = NamedClass<UserComponentName> & {
+    /** Default params for provided components */
+    params?: any;
+};
 
 export interface CoreBeanCollection {
     context: Context;

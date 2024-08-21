@@ -102,7 +102,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     public afterGuiAttached(): void {
-        this.virtualList.focusRow(0);
+        this.virtualList.awaitStable(() => this.virtualList.focusRow(0));
     }
 
     private setupVirtualList(): void {

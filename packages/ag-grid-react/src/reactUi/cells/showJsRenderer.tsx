@@ -34,7 +34,7 @@ const useJsCellRenderer = (
     // create or refresh JS cell renderer
     useEffect(() => {
         const showValue = showDetails != null;
-        const jsCompDetails = showDetails && showDetails.compDetails && !showDetails.compDetails.componentFromFramework;
+        const jsCompDetails = showDetails?.compDetails && !showDetails.compDetails.componentFromFramework;
         const waitingForToolsSetup = showTools && eCellValue == null;
         const showComp = showValue && jsCompDetails && !waitingForToolsSetup;
 

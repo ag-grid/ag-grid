@@ -13,11 +13,6 @@ body {
     position: relative;
 }
 
-// Increase z-index, so gatsby errors show on top of the splash
-gatsby-fast-refresh {
-    --z-index-overlay: #{$z-index-gatsby-overlay};
-}
-
 .homepageHero {
     padding-top: $spacing-size-10;
     background-color: var(--color-bg-site-header);
@@ -315,6 +310,7 @@ gatsby-fast-refresh {
 
     img {
         width: 100%;
+        height: auto;
     }
 
     .chartsExampleDark {

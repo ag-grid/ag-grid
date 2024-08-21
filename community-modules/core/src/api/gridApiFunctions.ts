@@ -186,6 +186,7 @@ export const gridApiFunctionsMap = {
         onRowHeightChanged: 0,
         setRowCount: 0,
         getCacheBlockState: 0,
+        isLastRowIndexKnown: 0,
     }),
 
     ...mod<_ClientSideRowModelGridApi<any>>(ModuleNames.ClientSideRowModelModule, {
@@ -210,7 +211,6 @@ export const gridApiFunctionsMap = {
         refreshInfiniteCache: 0,
         purgeInfiniteCache: 0,
         getInfiniteRowCount: 0,
-        isLastRowIndexKnown: 0,
     }),
 
     ...mod<_AdvancedFilterGridApi>(ModuleNames.AdvancedFilterModule, {
