@@ -132,7 +132,7 @@ class GlobalGridOptions {
             mergedGridOps.context = GlobalGridOptions.gridOptions.context;
         }
         if (providedOptions.context) {
-            if (mergedGridOps.context) {
+            if (GlobalGridOptions.mergeStrategy === 'deep' && mergedGridOps.context) {
                 // Merge global context properties into the provided context whilst maintaining provided context reference
                 _mergeDeep(providedOptions.context, mergedGridOps.context, true, true);
             }

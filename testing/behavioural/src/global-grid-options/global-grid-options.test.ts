@@ -119,30 +119,6 @@ describe('Global Grid Options', () => {
                 expect(api.getGridOption('context')).toBe(context);
             });
 
-            test('favour local context reference', () => {
-                const context = { foo: 'bar' };
-                const contextGlobal = { globalProp: 'global' };
-
-                provideGlobalGridOptions(
-                    {
-                        context: contextGlobal,
-                    },
-                    strategy
-                );
-
-                const api = createMyGrid({
-                    context,
-                });
-
-                // local context reference is maintained
-                expect(api.getGridOption('context')).toBe(context);
-                // with global context properties merged into it
-                expect(api.getGridOption('context')).toEqual({ foo: 'bar', globalProp: 'global' });
-
-                // ensure global context reference is not mutated
-                expect(contextGlobal).toEqual({ globalProp: 'global' });
-            });
-
             test('global context reference', () => {
                 const contextGlobal = { foo: 'global' };
 
@@ -158,6 +134,53 @@ describe('Global Grid Options', () => {
                 });
 
                 expect(api.getGridOption('context')).toBe(contextGlobal);
+            });
+        });
+
+        describe('favour local context reference', () => {
+            test('strategy: deep', () => {
+                const context = { foo: 'bar' };
+                const contextGlobal = { globalProp: 'global' };
+
+                provideGlobalGridOptions(
+                    {
+                        context: contextGlobal,
+                    },
+                    'deep'
+                );
+
+                const api = createMyGrid({
+                    context,
+                });
+
+                // local context reference is maintained
+                expect(api.getGridOption('context')).toBe(context);
+                // with global context properties merged into it
+                expect(api.getGridOption('context')).toEqual({ foo: 'bar', globalProp: 'global' });
+
+                // ensure global context reference is not mutated
+                expect(contextGlobal).toEqual({ globalProp: 'global' });
+            });
+
+            test('strategy: shallow', () => {
+                const context = { foo: 'bar' };
+                const contextGlobal = { globalProp: 'global' };
+
+                provideGlobalGridOptions(
+                    {
+                        context: contextGlobal,
+                    },
+                    'shallow'
+                );
+
+                const api = createMyGrid({
+                    context,
+                });
+
+                // local context reference is maintained
+                expect(api.getGridOption('context')).toBe(context);
+                // with global context properties merged into it
+                expect(api.getGridOption('context')).toEqual({ foo: 'bar' });
             });
         });
     });
