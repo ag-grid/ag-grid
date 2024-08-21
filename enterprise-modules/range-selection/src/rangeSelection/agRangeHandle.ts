@@ -67,6 +67,10 @@ export class AgRangeHandle extends AbstractSelectionHandle {
         this.rangeFixed = false;
     }
 
+    protected onDragCancel(): void {
+        this.rangeFixed = false;
+    }
+
     private fixRangeStartEnd(cellRange: CellRange): void {
         const startRow = this.rangeService.getRangeStartRow(cellRange);
         const endRow = this.rangeService.getRangeEndRow(cellRange);

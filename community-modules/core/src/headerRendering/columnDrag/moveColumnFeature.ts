@@ -187,6 +187,12 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.lastMovedInfo = null;
     }
 
+    public onDragCancel(): void {
+        this.clearHighlighted();
+        this.ensureIntervalCleared();
+        this.lastMovedInfo = null;
+    }
+
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (!columns) {
             return;

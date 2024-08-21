@@ -69,6 +69,7 @@ export class VirtualListDragFeature<
             onDragging: (e) => this.onDragging(e),
             onDragStop: () => this.onDragStop(),
             onDragLeave: () => this.onDragLeave(),
+            onDragCancel: () => this.onDragCancel(),
         };
 
         this.dragAndDropService.addDropTarget(dropTarget);
@@ -136,12 +137,18 @@ export class VirtualListDragFeature<
         }
 
         this.params.moveItem(this.currentDragValue, this.lastHoveredListItem);
+        this.clearDragProperties();
+    }
 
-        this.clearHoveredItems();
-        this.autoScrollService.ensureCleared();
+    private onDragCancel() {
+        this.clearDragProperties();
     }
 
     private onDragLeave() {
+        this.clearDragProperties();
+    }
+
+    private clearDragProperties(): void {
         this.clearHoveredItems();
         this.autoScrollService.ensureCleared();
     }
