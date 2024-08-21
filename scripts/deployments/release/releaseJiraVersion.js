@@ -38,28 +38,29 @@ const retrieveData = async (url) => {
 };
 
 const releaseJiraVersion = async (versionNumber) => {
-    const data = await retrieveData("https://ag-grid.atlassian.net/rest/api/2/project/AG/version");
-    const versionToRelease = data.filter(version => !version.archived)
-        .filter(version => !version.released)
-        .filter(version => version.name === versionNumber)[0];
+    const data = await retrieveData('https://ag-grid.atlassian.net/rest/api/2/project/AG/version');
+    const versionToRelease = data
+        .filter((version) => !version.archived)
+        .filter((version) => !version.released)
+        .filter((version) => version.name === versionNumber)[0];
 
     if (versionToRelease) {
         const bodyData = `{
           "released": true,
-          "releaseDate": "${new Date().toISOString().substring(0,10)}"
+          "releaseDate": "${new Date().toISOString().substring(0, 10)}"
         }`;
 
         const response = await fetch(`https://ag-grid.atlassian.net/rest/api/2/version/${versionToRelease.id}`, {
             method: 'PUT',
             headers: {
                 Authorization: `Basic ${Buffer.from(JIRA_CREDENTIALS).toString('base64')}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
             },
-            body: bodyData
-        })
+            body: bodyData,
+        });
 
-        if(response.status !== 200) {
+        if (response.status !== 200) {
             console.error(`Error releasing version ${versionToRelease}: ${response.statusText}`);
             process.exit(1);
         }
@@ -71,8 +72,8 @@ const releaseJiraVersion = async (versionNumber) => {
 
 (async () => {
     const versionNumber = process.argv[2];
-    if(!versionNumber) {
-        console.error("No version specified!")
+    if (!versionNumber) {
+        console.error('No version specified!');
         process.exit(1);
     }
     await releaseJiraVersion(versionNumber);
