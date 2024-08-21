@@ -15,6 +15,7 @@ import { video } from '@ag-website-shared/markdoc/tags/video';
 import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { warning } from '@ag-website-shared/markdoc/tags/warning';
 import { Markdoc, component, defineMarkdocConfig } from '@astrojs/markdoc/config';
+import { getFrameworkCapitalised } from '@utils/markdoc/getFrameworkCapitalised';
 
 import { agGridVersion } from './src/constants';
 import { link } from './src/utils/markdoc/tags/link';
@@ -47,6 +48,7 @@ export default defineMarkdocConfig({
     functions: {
         isFramework,
         isNotJavascriptFramework,
+        getFrameworkCapitalised,
     },
     tags: {
         kbd,
