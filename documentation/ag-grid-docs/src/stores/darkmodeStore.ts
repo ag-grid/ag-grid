@@ -12,8 +12,6 @@ export const $darkmode = persistentAtom<boolean | undefined>(
     }
 );
 
-console.log('matches', globalThis.window?.matchMedia('(prefers-color-scheme: dark)')?.matches);
-
 const updateHtml = (darkmode: boolean | undefined) => {
     if (typeof document === 'undefined') {
         return;
