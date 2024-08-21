@@ -17,6 +17,7 @@ import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
     AggregationColumnState,
     AggregationState,
+    CellSelectionState,
     ColumnGroupState,
     ColumnOrderState,
     ColumnPinningState,
@@ -43,7 +44,7 @@ import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } fr
 import type { PaginationService } from '../../pagination/paginationService';
 import type { ColumnAnimationService } from '../../rendering/columnAnimationService';
 import type { SortModelItem } from '../../sortController';
-import { _debounce } from '../../utils/function';
+import { _debounce, _warnOnce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
 
 export class StateService extends BeanStub implements NamedBean {
@@ -248,6 +249,7 @@ export class StateService extends BeanStub implements NamedBean {
     private setupStateOnFirstDataRendered(): void {
         const {
             scroll: scrollState,
+            cellSelection: cellSelectionState,
             rangeSelection: rangeSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
@@ -255,8 +257,11 @@ export class StateService extends BeanStub implements NamedBean {
         if (focusedCellState) {
             this.setFocusedCellState(focusedCellState);
         }
-        if (rangeSelectionState) {
-            this.setRangeSelectionState(rangeSelectionState);
+        if (cellSelectionState) {
+            this.setCellSelectionState(cellSelectionState);
+        } else if (rangeSelectionState) {
+            _warnOnce('As of v32.2, `rangeSelection` is deprecated. Use `cellSelection` instead.');
+            this.setCellSelectionState(rangeSelectionState);
         }
         if (scrollState) {
             this.setScrollState(scrollState);
@@ -267,6 +272,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.updateCachedState('sideBar', this.getSideBarState());
         this.updateCachedState('focusedCell', this.getFocusedCellState());
         this.updateCachedState('rangeSelection', this.getRangeSelectionState());
+        this.updateCachedState('cellSelection', this.getRangeSelectionState());
         this.updateCachedState('scroll', this.getScrollState());
 
         this.addManagedEventListeners({
@@ -274,6 +280,7 @@ export class StateService extends BeanStub implements NamedBean {
             cellSelectionChanged: (event) => {
                 if (event.finished) {
                     this.updateCachedState('rangeSelection', this.getRangeSelectionState());
+                    this.updateCachedState('cellSelection', this.getRangeSelectionState());
                 }
             },
             bodyScrollEnd: () => this.updateCachedState('scroll', this.getScrollState()),
@@ -581,12 +588,12 @@ export class StateService extends BeanStub implements NamedBean {
         return cellRanges?.length ? { cellRanges } : undefined;
     }
 
-    private setRangeSelectionState(rangeSelectionState: RangeSelectionState): void {
+    private setCellSelectionState(cellSelectionState: CellSelectionState): void {
         if (!this.gos.getSelectionOption('enableRangeSelection') || !this.rangeService) {
             return;
         }
         const cellRanges: CellRange[] = [];
-        rangeSelectionState.cellRanges.forEach((cellRange) => {
+        cellSelectionState.cellRanges.forEach((cellRange) => {
             const columns: AgColumn[] = [];
             cellRange.colIds.forEach((colId) => {
                 const column = this.columnModel.getCol(colId);
