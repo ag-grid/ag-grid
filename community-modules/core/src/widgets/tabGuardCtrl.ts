@@ -1,6 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { FocusService } from '../focusService';
+import { _getDocument } from '../gridOptionsUtils';
 import { ManagedFocusFeature } from './managedFocusFeature';
 
 export enum TabGuardClassNames {
@@ -181,7 +182,7 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private findNextElementOutsideAndFocus(up: boolean) {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
         const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
 
@@ -221,7 +222,7 @@ export class TabGuardCtrl extends BeanStub {
             return indexA - indexB;
         });
 
-        focusableRange[up ? focusableRange.length - 1 : 0].focus();
+        focusableRange[up ? focusableRange.length - 1 : 0]?.focus();
     }
 
     private onFocusIn(e: FocusEvent): void {

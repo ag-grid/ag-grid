@@ -347,14 +347,14 @@ data() {
 
 The following example shows how you can configure individual grids using a combination of shared Global registrations as well as individual grid module registration. Note the following:
 
-* Globally registered modules:  `['ClientSideRowModelModule', 'MenuModule', 'GridChartsModule']`.
+* Globally registered modules:  `['ClientSideRowModelModule', 'MenuModule']`.
 * Left Grid individually registers: `['ClipboardModule', 'SetFilterModule']`
 * Right Grid individually registers: `['ExcelExportModule']`
 
 To see the difference in features open the ContextMenu and open the column filter:
 
-* The Left grid has options for charting, clipboard and CSV export.
-* The Right grid has options for charting and CSV and Excel export.
+* The Left grid has options for clipboard and CSV export.
+* The Right grid has options for CSV and Excel export.
 * The Left grid uses the Set Filter  while the Right grid uses the Text Filter or Number Filter depending on the cell data type.
 
 {% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" overrideImportType="modules" /%}

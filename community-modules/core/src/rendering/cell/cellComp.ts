@@ -4,6 +4,7 @@ import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapp
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
+import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
@@ -77,6 +78,9 @@ export class CellComp extends Component implements TooltipParentComp {
         this.rowCtrl = cellCtrl.getRowCtrl();
         this.eRow = eRow;
         this.cellCtrl = cellCtrl;
+        this.includeSelection = cellCtrl.includeSelection;
+        this.includeRowDrag = cellCtrl.includeRowDrag;
+        this.includeDndSource = cellCtrl.includeDndSource;
 
         const cellDiv = document.createElement('div');
         cellDiv.setAttribute('comp-id', `${this.getCompId()}`);
@@ -88,25 +92,13 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.refreshWrapper(false);
 
-        const setAttribute = (name: string, value: string | null | undefined) => {
-            if (value != null && value != '') {
-                eGui.setAttribute(name, value);
-            } else {
-                eGui.removeAttribute(name);
-            }
-        };
-
         _setAriaRole(eGui, cellCtrl.getCellAriaRole());
-        setAttribute('col-id', cellCtrl.getColumnIdSanitised());
+        eGui.setAttribute('col-id', cellCtrl.colIdSanitised);
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles: CellStyle) => _addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
-
-            setIncludeSelection: (include) => (this.includeSelection = include),
-            setIncludeRowDrag: (include) => (this.includeRowDrag = include),
-            setIncludeDndSource: (include) => (this.includeDndSource = include),
 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
@@ -482,7 +474,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(this.beans.gos.getActiveDomElement())) {
+        if (eGui.contains(_getActiveDomElement(this.beans.gos))) {
             eGui.focus();
         }
 
@@ -570,6 +562,8 @@ export class CellComp extends Component implements TooltipParentComp {
         this.destroyEditorAndRenderer();
         this.removeControls();
 
+        this.cellCtrl.unsetComp();
+
         super.destroy();
     }
 
@@ -578,7 +572,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(this.beans.gos.getActiveDomElement()) && _browserSupportsPreventScroll()) {
+        if (eGui.contains(_getActiveDomElement(this.beans.gos)) && _browserSupportsPreventScroll()) {
             eGui.focus({ preventScroll: true });
         }
 

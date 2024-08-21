@@ -5,8 +5,6 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type {
     CellSelectionOptions,
-    DomLayoutType,
-    GetRowIdFunc,
     GridOptions,
     MultiRowSelectionOptions,
     RowSelectionOptions,
@@ -17,20 +15,14 @@ import type { Environment } from './environment';
 import type { AgEventType } from './eventTypes';
 import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
-import type {
-    GetGroupAggFilteringParams,
-    GetGroupIncludeFooterParams,
-    RowHeightParams,
-} from './interfaces/iCallbackParams';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
-import type { RowModelType } from './interfaces/iRowModel';
-import type { IRowNode } from './interfaces/iRowNode';
 import { LocalEventService } from './localEventService';
+import type { ModuleNames } from './modules/moduleNames';
+import { ModuleRegistry } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
-import { _getScrollbarWidth } from './utils/browser';
 import { _log, _warnOnce } from './utils/function';
-import { _exists, _missing, toBoolean } from './utils/generic';
+import { _exists, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
 import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
@@ -50,8 +42,8 @@ type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
 
-type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
-type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT
+export type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
+export type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT
     ? RT
     : never;
 type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> =
@@ -132,10 +124,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     beanName = 'gos' as const;
 
     private gridOptions: GridOptions;
-    private eGridDiv: HTMLElement;
+    public eGridDiv: HTMLElement;
     private validationService?: ValidationService;
-    private environment: Environment;
+    public environment: Environment;
     private api: GridApi;
+    private gridId: string;
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
@@ -143,10 +136,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         this.validationService = beans.validationService;
         this.environment = beans.environment;
         this.api = beans.gridApi;
+        this.gridId = beans.context.getGridId();
     }
-
-    // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
-    private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
 
     // This is quicker then having code call gridOptionsService.get('context')
@@ -163,8 +154,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
         this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
-        // sets an initial calculation for the scrollbar width
-        this.getScrollbarWidth();
 
         this.addManagedEventListeners({
             gridOptionsChanged: ({ options }) => {
@@ -303,286 +292,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         };
     };
 
-    // *************** Helper methods ************************** //
-    // Methods to share common GridOptions related logic that goes above accessing a single property
-
-    // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
-    // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
-    // allow the user to provide the scroll width before we work it out.
-    public getScrollbarWidth() {
-        if (this.scrollbarWidth == null) {
-            const useGridOptions =
-                typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _getScrollbarWidth();
-
-            if (scrollbarWidth != null) {
-                this.scrollbarWidth = scrollbarWidth;
-
-                this.eventService.dispatchEvent({
-                    type: 'scrollbarWidthChanged',
-                });
-            }
-        }
-
-        return this.scrollbarWidth;
-    }
-
-    public isRowModelType(rowModelType: RowModelType): boolean {
-        return (
-            this.gridOptions.rowModelType === rowModelType ||
-            (rowModelType === 'clientSide' && _missing(this.gridOptions.rowModelType))
-        );
-    }
-
-    public isDomLayout(domLayout: DomLayoutType) {
-        const gridLayout = this.gridOptions.domLayout ?? 'normal';
-        return gridLayout === domLayout;
-    }
-
-    public isRowSelection() {
-        const rowSelection = this.getSelectionOption('rowSelection');
-        return rowSelection === 'single' || rowSelection === 'multiple';
-    }
-
-    public useAsyncEvents() {
-        return !this.get('suppressAsyncEvents');
-    }
-
-    public isGetRowHeightFunction(): boolean {
-        return typeof this.gridOptions.getRowHeight === 'function';
-    }
-
-    public getRowHeightForNode(
-        rowNode: IRowNode,
-        allowEstimate = false,
-        defaultRowHeight?: number
-    ): { height: number; estimated: boolean } {
-        if (defaultRowHeight == null) {
-            defaultRowHeight = this.environment.getDefaultRowHeight();
-        }
-
-        // check the function first, in case use set both function and
-        // number, when using virtual pagination then function can be
-        // used for pinned rows and the number for the body rows.
-
-        if (this.isGetRowHeightFunction()) {
-            if (allowEstimate) {
-                return { height: defaultRowHeight, estimated: true };
-            }
-
-            const params: WithoutGridCommon<RowHeightParams> = {
-                node: rowNode,
-                data: rowNode.data,
-            };
-
-            const height = this.getCallback('getRowHeight')!(params);
-
-            if (this.isNumeric(height)) {
-                if (height === 0) {
-                    _warnOnce(
-                        'The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'
-                    );
-                }
-                return { height: Math.max(1, height), estimated: false };
-            }
-        }
-
-        if (rowNode.detail && this.get('masterDetail')) {
-            return this.getMasterDetailRowHeight();
-        }
-
-        const rowHeight =
-            this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)
-                ? this.gridOptions.rowHeight
-                : defaultRowHeight;
-
-        return { height: rowHeight, estimated: false };
-    }
-
-    private getMasterDetailRowHeight(): { height: number; estimated: boolean } {
-        // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
-        // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
-        // (due to auto height) which looks bad, especially if doing row animation.
-        if (this.get('detailRowAutoHeight')) {
-            return { height: 1, estimated: false };
-        }
-
-        if (this.isNumeric(this.gridOptions.detailRowHeight)) {
-            return { height: this.gridOptions.detailRowHeight, estimated: false };
-        }
-
-        return { height: 300, estimated: false };
-    }
-
-    // we don't allow dynamic row height for virtual paging
-    public getRowHeightAsNumber(): number {
-        if (!this.gridOptions.rowHeight || _missing(this.gridOptions.rowHeight)) {
-            return this.environment.getDefaultRowHeight();
-        }
-
-        const rowHeight = this.environment.refreshRowHeightVariable();
-
-        if (rowHeight !== -1) {
-            return rowHeight;
-        }
-
-        _warnOnce('row height must be a number if not using standard row model');
-        return this.environment.getDefaultRowHeight();
-    }
-
-    private isNumeric(value: any): value is number {
-        return !isNaN(value) && typeof value === 'number' && isFinite(value);
-    }
-
     public getDomDataKey(): string {
         return this.domDataKey;
-    }
-
-    // returns the dom data, or undefined if not found
-    public getDomData(element: Node | null, key: string): any {
-        const domData = (element as any)[this.getDomDataKey()];
-
-        return domData ? domData[key] : undefined;
-    }
-
-    public setDomData(element: Element, key: string, value: any): any {
-        const domDataKey = this.getDomDataKey();
-        let domData = (element as any)[domDataKey];
-
-        if (_missing(domData)) {
-            domData = {};
-            (element as any)[domDataKey] = domData;
-        }
-        domData[key] = value;
-    }
-
-    public getDocument(): Document {
-        // if user is providing document, we use the users one,
-        // otherwise we use the document on the global namespace.
-        let result: Document | null = null;
-        if (this.gridOptions.getDocument && _exists(this.gridOptions.getDocument)) {
-            result = this.gridOptions.getDocument();
-        } else if (this.eGridDiv) {
-            result = this.eGridDiv.ownerDocument;
-        }
-
-        if (result && _exists(result)) {
-            return result;
-        }
-
-        return document;
-    }
-
-    public getWindow() {
-        const eDocument = this.getDocument();
-        return eDocument.defaultView || window;
-    }
-
-    public getRootNode(): Document | ShadowRoot {
-        return this.eGridDiv.getRootNode() as Document | ShadowRoot;
-    }
-
-    public getActiveDomElement(): Element | null {
-        return this.getRootNode().activeElement;
-    }
-
-    public isNothingFocused(): boolean {
-        const eDocument = this.getDocument();
-        const activeEl = this.getActiveDomElement();
-        return activeEl === null || activeEl === eDocument.body;
-    }
-
-    public getAsyncTransactionWaitMillis(): number | undefined {
-        return _exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
-    }
-
-    public isAnimateRows() {
-        // never allow animating if enforcing the row order
-        if (this.get('ensureDomOrder')) {
-            return false;
-        }
-
-        return this.get('animateRows');
-    }
-
-    public isGroupRowsSticky(): boolean {
-        if (this.get('paginateChildRows') || this.get('groupHideOpenParents') || this.isDomLayout('print')) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public isColumnsSortingCoupledToGroup(): boolean {
-        const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
-        return !autoGroupColumnDef?.comparator && !this.get('treeData');
-    }
-
-    public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
-        const userValue = this.gridOptions.groupAggFiltering;
-
-        if (typeof userValue === 'function') {
-            return this.getCallback('groupAggFiltering' as any) as any;
-        }
-
-        if (userValue === true) {
-            return () => true;
-        }
-
-        return undefined;
-    }
-
-    public getGrandTotalRow(): 'top' | 'bottom' | undefined {
-        const userValue = this.gridOptions.grandTotalRow;
-        if (userValue) {
-            return userValue;
-        }
-
-        const legacyValue = this.gridOptions.groupIncludeTotalFooter;
-        if (legacyValue) {
-            return 'bottom';
-        }
-        return undefined;
-    }
-
-    public getGroupTotalRowCallback(): (
-        params: WithoutGridCommon<GetGroupIncludeFooterParams>
-    ) => 'top' | 'bottom' | undefined {
-        const userValue = this.get('groupTotalRow');
-
-        if (typeof userValue === 'function') {
-            return this.getCallback('groupTotalRow' as any) as any;
-        }
-
-        if (userValue) {
-            return () => userValue;
-        }
-
-        const legacyValue = this.get('groupIncludeFooter');
-        if (typeof legacyValue === 'function') {
-            const legacyCallback = this.getCallback('groupIncludeFooter' as any) as any;
-            return (p: GetGroupIncludeFooterParams) => {
-                return legacyCallback(p) ? 'bottom' : undefined;
-            };
-        }
-        return () => (legacyValue ? 'bottom' : undefined);
-    }
-
-    public isGroupMultiAutoColumn() {
-        if (this.gridOptions.groupDisplayType) {
-            return this.gridOptions.groupDisplayType === 'multipleColumns';
-        }
-        // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
-        return this.get('groupHideOpenParents');
-    }
-
-    public isGroupUseEntireRow(pivotMode: boolean): boolean {
-        // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
-        if (pivotMode) {
-            return false;
-        }
-
-        return this.gridOptions.groupDisplayType === 'groupRows';
     }
 
     public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
@@ -601,28 +312,12 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return updatedParams;
     }
 
-    // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
-    public getRowIdCallback<TData = any>():
-        | ((
-              params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
-          ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
-        | undefined {
-        const getRowId = this.getCallback('getRowId');
+    public assertModuleRegistered(moduleName: ModuleNames, reason: string): boolean {
+        return ModuleRegistry.__assertRegistered(moduleName, reason, this.gridId);
+    }
 
-        if (getRowId === undefined) {
-            return getRowId;
-        }
-
-        return (params) => {
-            let id = getRowId(params);
-
-            if (typeof id !== 'string') {
-                _warnOnce(`The getRowId callback must return a string. The ID `, id, ` is being cast to a string.`);
-                id = String(id);
-            }
-
-            return id;
-        };
+    public isModuleRegistered(moduleName: ModuleNames): boolean {
+        return ModuleRegistry.__isRegistered(moduleName, this.gridId);
     }
 
     public getSelectionOption<T extends keyof GridOptions>(option: T): GridOptions[T] {

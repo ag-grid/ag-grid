@@ -59,7 +59,7 @@ export const SharedItem = styled('div')`
     justify-content: space-between;
 
     &[data-disabled] {
-        opacity: 0.5;
+        mix: 0.5;
         pointer-events: none;
     }
 

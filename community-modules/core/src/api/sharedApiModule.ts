@@ -2,7 +2,7 @@ import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { collapseAll, expandAll, onRowHeightChanged } from './csrmSsrmSharedApi';
 import type { _CsrmSsrmSharedGridApi, _SsrmInfiniteSharedGridApi } from './gridApi';
-import { getCacheBlockState, setRowCount } from './ssrmInfiniteSharedApi';
+import { getCacheBlockState, isLastRowIndexKnown, setRowCount } from './ssrmInfiniteSharedApi';
 
 // these modules are not used in core, but are shared between multiple other modules
 
@@ -22,5 +22,6 @@ export const SsrmInfiniteSharedApiModule = _defineModule<_SsrmInfiniteSharedGrid
     apiFunctions: {
         setRowCount,
         getCacheBlockState,
+        isLastRowIndexKnown,
     },
 });

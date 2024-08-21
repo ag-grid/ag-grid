@@ -70,6 +70,7 @@ export type ColumnEventName =
     | 'visibleChanged'
     | 'filterChanged'
     | 'filterActiveChanged'
+    | 'headerHighlightChanged'
     | 'sortChanged'
     | 'colDefChanged'
     | 'menuVisibleChanged'
@@ -79,6 +80,11 @@ export type ColumnEventName =
     | 'columnStateUpdated';
 
 export type ColumnInstanceId = BrandedType<number, 'ColumnInstanceId'>;
+
+export enum ColumnHighlightPosition {
+    Before,
+    After,
+}
 
 export interface Column<TValue = any>
     extends IHeaderColumn<TValue, ColumnEventName>,

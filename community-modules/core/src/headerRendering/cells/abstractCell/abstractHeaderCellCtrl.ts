@@ -10,6 +10,7 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { FocusService } from '../../../focusService';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
+import { _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { MenuService } from '../../../misc/menuService';
@@ -39,6 +40,8 @@ export abstract class AbstractHeaderCellCtrl<
 > extends BeanStub {
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
+    public readonly instanceId: HeaderCellCtrlInstanceId;
+
     private pinnedWidthService: PinnedWidthService;
     protected focusService: FocusService;
     protected userComponentFactory: UserComponentFactory;
@@ -56,7 +59,6 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected beans: BeanCollection;
-    private instanceId: HeaderCellCtrlInstanceId;
     private columnGroupChild: AgColumn | AgColumnGroup;
     private parentRowCtrl: HeaderRowCtrl;
 
@@ -102,7 +104,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected getWrapperHasFocus(): boolean {
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
 
         return activeEl === this.eGui;
     }
@@ -149,7 +151,7 @@ export abstract class AbstractHeaderCellCtrl<
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = gos.getDocument();
+                const doc = _getDocument(gos);
                 const notYetInDom = !doc || !doc.contains(wrapperElement);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
@@ -246,7 +248,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
 
         const isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
 
@@ -356,8 +358,8 @@ export abstract class AbstractHeaderCellCtrl<
 
     private addDomData(eGui: HTMLElement): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
-        this.gos.setDomData(eGui, key, this);
-        this.addDestroyFunc(() => this.gos.setDomData(eGui, key, null));
+        _setDomData(this.gos, eGui, key, this);
+        this.addDestroyFunc(() => _setDomData(this.gos, eGui, key, null));
     }
 
     public getGui(): HTMLElement {
@@ -384,10 +386,6 @@ export abstract class AbstractHeaderCellCtrl<
 
     public getPinned(): ColumnPinnedType {
         return this.parentRowCtrl.getPinned();
-    }
-
-    public getInstanceId(): HeaderCellCtrlInstanceId {
-        return this.instanceId;
     }
 
     public getColumnGroupChild(): AgColumn | AgColumnGroup {

@@ -22,3 +22,7 @@ export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound
 export function getCacheBlockState(beans: BeanCollection): any {
     return beans.rowNodeBlockLoader?.getBlockState() ?? {};
 }
+
+export function isLastRowIndexKnown(beans: BeanCollection): boolean | undefined {
+    return beans.rowModel.isLastRowIndexKnown();
+}

@@ -61,12 +61,9 @@ export interface IFrameworkOverrides {
      */
     getDocLink(path?: string): string;
 
-    /** Used by `RowRenderer` when getting lock. Allows React 17- async refreshes to work. */
+    /** Used by `RowRenderer` when getting lock. Allows React async refreshes to work. */
     getLockOnRefresh?(): void;
 
-    /** Used by `RowRenderer` when releasing lock. Allows React 17- async refreshes to work. */
+    /** Used by `RowRenderer` when releasing lock. Allows React async refreshes to work. */
     releaseLockOnRefresh?(): void;
-
-    /** Used by `RowRenderer` when a refresh happens whilst another refresh is ongoing. */
-    getLockOnRefreshError?(): string;
 }

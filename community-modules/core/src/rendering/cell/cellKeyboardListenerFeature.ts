@@ -3,6 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
+import { _isRowSelection } from '../../gridOptionsUtils';
 import { _isDeleteKey } from '../../utils/keyboard';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellCtrl } from './cellCtrl';
@@ -103,8 +104,12 @@ export class CellKeyboardListenerFeature extends BeanStub {
             } else if (cellCtrl.isCellEditable()) {
                 const column = cellCtrl.getColumn();
                 const emptyValue =
-                    this.beans.valueService.parseValue(column, rowNode, '', rowNode.getValueFromValueService(column)) ??
-                    null;
+                    this.beans.valueService.parseValue(
+                        column,
+                        rowNode,
+                        '',
+                        this.beans.valueService.getValueForDisplay(column, rowNode)
+                    ) ?? null;
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {
@@ -162,20 +167,21 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (key === ' ') {
             this.onSpaceKeyDown(event);
         } else {
-            this.cellCtrl.startRowOrCellEdit(key, event);
-            // if we don't prevent default, then the event also gets applied to the text field
-            // (at least when doing the default editor), but we need to allow the editor to decide
-            // what it wants to do. we only do this IF editing was started - otherwise it messes
-            // up when the use is not doing editing, but using rendering with text fields in cellRenderer
-            // (as it would block the the user from typing into text fields).
-            event.preventDefault();
+            if (this.cellCtrl.startRowOrCellEdit(key, event)) {
+                // if we don't prevent default, then the event also gets applied to the text field
+                // (at least when doing the default editor), but we need to allow the editor to decide
+                // what it wants to do. we only do this IF editing was started - otherwise it messes
+                // up when the use is not doing editing, but using rendering with text fields in cellRenderer
+                // (as it would block the the user from typing into text fields).
+                event.preventDefault();
+            }
         }
     }
 
     private onSpaceKeyDown(event: KeyboardEvent): void {
         const { gos } = this.beans;
 
-        if (!this.cellCtrl.isEditing() && gos.isRowSelection()) {
+        if (!this.cellCtrl.isEditing() && _isRowSelection(gos)) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
             if (newSelection || !gos.getSelectionOption('suppressRowDeselection')) {

@@ -1,8 +1,8 @@
-import { definePart } from '../../../theme-utils';
+import { createPart } from '../../../theme-types';
 import { iconSetAlpineCSS } from './GENERATED-icon-set-alpine';
 
-export const iconSetAlpine = definePart({
-    partId: 'iconSet',
-    variantId: 'alpine',
-    css: [iconSetAlpineCSS],
-});
+// prettier-ignore
+export const iconSetAlpine =
+    /*#__PURE__*/
+    createPart({feature: 'iconSet', variant: 'alpine'})
+        .addCss(iconSetAlpineCSS);

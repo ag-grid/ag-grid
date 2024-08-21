@@ -7,7 +7,14 @@ import type {
     RowDataTransaction,
     RowNode,
 } from '@ag-grid-community/core';
-import { BeanStub, _errorOnce, _exists, _iterateObject, _missing } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    _errorOnce,
+    _exists,
+    _getRowIdCallback,
+    _isClientSideRowModel,
+    _iterateObject,
+} from '@ag-grid-community/core';
 
 import type { ClientSideRowModel } from './clientSideRowModel';
 
@@ -25,7 +32,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
     private clientSideRowModel: ClientSideRowModel;
 
     public postConstruct(): void {
-        if (this.rowModel.getType() === 'clientSide') {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 
             this.addManagedPropertyListener('rowData', () => this.onRowDataUpdated());
@@ -44,67 +51,72 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
         return getRowIdProvided;
     }
 
-    public setRowData(rowData: any[]): void {
-        const transactionAndMap = this.createTransactionForRowData(rowData);
-        if (!transactionAndMap) {
-            return;
+    public setRowData<TData>(rowData: TData[]): void {
+        // convert the setRowData data into a transaction object by working out adds, removes and updates
+
+        const rowDataTransaction = this.createTransactionForRowData(rowData);
+        if (!rowDataTransaction) {
+            return; // no transaction to apply
         }
 
-        const [transaction, orderIdMap] = transactionAndMap;
-        this.clientSideRowModel.updateRowData(transaction, orderIdMap);
+        const nodeManager = this.clientSideRowModel.getNodeManager();
+
+        // Apply the transaction
+        const { rowNodeTransaction, rowsInserted } = nodeManager.updateRowData(rowDataTransaction);
+
+        let orderChanged = false;
+
+        // If true, we will not apply the new order specified in the rowData, but keep the old order.
+        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
+        if (!suppressSortOrder) {
+            // we need to reorder the nodes to match the new data order
+            orderChanged = nodeManager.updateRowOrderFromRowData(rowData);
+        }
+
+        this.clientSideRowModel.afterImmutableDataChange(rowNodeTransaction, orderChanged || rowsInserted);
     }
 
-    // converts the setRowData() command to a transaction
-    private createTransactionForRowData(
-        rowData: any[]
-    ): [RowDataTransaction, { [id: string]: number } | undefined] | undefined {
-        if (_missing(this.clientSideRowModel)) {
+    /** Converts the setRowData() command to a transaction */
+    private createTransactionForRowData<TData>(rowData: TData[]): RowDataTransaction | null {
+        if (!_isClientSideRowModel(this.gos)) {
             _errorOnce('ImmutableService only works with ClientSideRowModel');
-            return;
+            return null;
         }
 
-        const getRowIdFunc = this.gos.getRowIdCallback();
+        const getRowIdFunc = _getRowIdCallback(this.gos);
         if (getRowIdFunc == null) {
             _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
-            return;
+            return null;
         }
 
-        // convert the data into a transaction object by working out adds, removes and updates
-        const transaction: RowDataTransaction = {
-            remove: [],
-            update: [],
-            add: [],
-        };
+        // get a map of the existing data, that we are going to modify as we find rows to not delete
+        const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel
+            .getNodeManager()
+            .getCopyOfNodesMap();
 
-        const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
-
-        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
-        const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
+        const remove: TData[] = [];
+        const update: TData[] = [];
+        const add: TData[] = [];
 
         if (_exists(rowData)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
             // if not changed, do not include in the transaction
-            rowData.forEach((data: any, index: number) => {
+            rowData.forEach((data: TData) => {
                 const id = getRowIdFunc({ data, level: 0 });
                 const existingNode = existingNodesMap[id];
-
-                if (orderMap) {
-                    orderMap[id] = index;
-                }
 
                 if (existingNode) {
                     const dataHasChanged = existingNode.data !== data;
                     if (dataHasChanged) {
-                        transaction.update!.push(data);
+                        update.push(data);
                     }
                     // otherwise, if data not changed, we just don't include it anywhere, as it's not a delta
 
-                    // remove from list, so we know the item is not to be removed
-                    existingNodesMap[id] = undefined;
+                    existingNodesMap[id] = undefined; // remove from list, so we know the item is not to be removed
                 } else {
-                    transaction.add!.push(data);
+                    add.push(data);
                 }
             });
         }
@@ -112,11 +124,11 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
         // at this point, all rows that are left, should be removed
         _iterateObject(existingNodesMap, (id, rowNode) => {
             if (rowNode) {
-                transaction.remove!.push(rowNode.data);
+                remove.push(rowNode.data);
             }
         });
 
-        return [transaction, orderMap];
+        return { remove, update, add };
     }
 
     private onRowDataUpdated(): void {

@@ -69,19 +69,19 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
 
     headerCheckboxSelection: {
         supportedRowModels: ['clientSide', 'serverSide'],
-        dependencies: (_options, { rowSelection }) =>
+        validate: (_options, { rowSelection }) =>
             rowSelection === 'multiple' ? null : 'headerCheckboxSelection is only supported with rowSelection=multiple',
     },
     headerCheckboxSelectionFilteredOnly: {
         supportedRowModels: ['clientSide'],
-        dependencies: (_options, { rowSelection }) =>
+        validate: (_options, { rowSelection }) =>
             rowSelection === 'multiple'
                 ? null
                 : 'headerCheckboxSelectionFilteredOnly is only supported with rowSelection=multiple',
     },
     headerCheckboxSelectionCurrentPageOnly: {
         supportedRowModels: ['clientSide'],
-        dependencies: (_options, { rowSelection }) =>
+        validate: (_options, { rowSelection }) =>
             rowSelection === 'multiple'
                 ? null
                 : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple',

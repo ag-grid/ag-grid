@@ -10,6 +10,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
+import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -80,7 +81,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public postConstruct(): void {
-        if (this.gos.isRowModelType('clientSide')) {
+        if (_isClientSideRowModel(this.gos)) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
@@ -180,14 +181,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return dragSourceDomDataKey === this.gos.getDomDataKey();
     }
 
-    private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-        const gridGui = gridBodyCon.getGui();
-        const { dropZoneTarget } = draggingEvent;
-
-        return !gridGui.contains(dropZoneTarget);
-    }
-
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
         // this event is fired for enter and move
         this.dispatchGridEvent('rowDragMove', draggingEvent);
@@ -214,7 +207,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         if (this.gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
-            if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
+            if (this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
         } else {
@@ -244,7 +237,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             });
             this.moveRows(rowNodes!, pixel, increment);
         } else {
-            const getRowIdFunc = this.gos.getRowIdCallback();
+            const getRowIdFunc = _getRowIdCallback(this.gos);
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
@@ -441,7 +434,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (
             this.gos.get('rowDragManaged') &&
             (this.gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
-            !this.isDropZoneWithinThisGrid(draggingEvent)
+            this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);
         }

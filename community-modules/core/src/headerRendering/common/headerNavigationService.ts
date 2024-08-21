@@ -9,6 +9,7 @@ import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { isColumnGroup } from '../../entities/agColumnGroup';
 import type { FocusService } from '../../focusService';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
+import { _getDocument } from '../../gridOptionsUtils';
 import type { Column, ColumnGroup } from '../../interfaces/iColumn';
 import { _last } from '../../utils/array';
 import { HeaderRowType } from '../row/headerRowComp';
@@ -46,7 +47,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             this.gridBodyCon = p.gridBodyCtrl;
         });
 
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         this.addManagedElementListeners(eDocument, { mousedown: () => this.setCurrentHeaderRowWithoutSpan(-1) });
     }
 

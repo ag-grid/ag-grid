@@ -6,7 +6,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _areEqual, _includes, _last, _sortNumerically } from '../utils/array';
@@ -162,20 +161,7 @@ export function attemptMoveColumns(params: {
 
     // The best move is the move with least group fragmentation
     potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
-
-    return moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false, columnMoveService);
-}
-
-export function moveColumns(
-    columns: AgColumn[],
-    toIndex: number,
-    source: ColumnEventType,
-    finished: boolean,
-    columnMoveService: ColumnMoveService
-): { columns: AgColumn[]; toIndex: number } | null {
-    columnMoveService.moveColumns(columns, toIndex, source, finished);
-
-    return finished ? null : { columns, toIndex };
+    columnMoveService.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved');
 }
 
 // returns the index of the first column in the list ONLY if the cols are all beside
@@ -356,14 +342,18 @@ function calculateValidMoves(params: {
     return validMoves;
 }
 
-export function normaliseX(
-    x: number,
-    pinned: ColumnPinnedType,
-    fromKeyboard: boolean,
-    gos: GridOptionsService,
-    ctrlsService: CtrlsService
-): number {
+export function normaliseX(params: {
+    x: number;
+    pinned?: ColumnPinnedType;
+    fromKeyboard?: boolean;
+    useScrollWidth?: boolean;
+    gos: GridOptionsService;
+    ctrlsService: CtrlsService;
+}): number {
+    const { pinned, fromKeyboard, gos, ctrlsService, useScrollWidth } = params;
     const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
+
+    let { x } = params;
 
     if (!eViewport) {
         return 0;
@@ -375,12 +365,17 @@ export function normaliseX(
 
     // flip the coordinate if doing RTL
     if (gos.get('enableRtl')) {
-        const clientWidth = eViewport.clientWidth;
-        x = clientWidth - x;
+        let containerWidth: number;
+        if (useScrollWidth) {
+            containerWidth = eViewport.scrollWidth;
+        } else {
+            containerWidth = eViewport.clientWidth;
+        }
+        x = containerWidth - x;
     }
 
     // adjust for scroll only if centre container (the pinned containers don't scroll)
-    if (pinned == null) {
+    if (pinned == null && !useScrollWidth) {
         x += ctrlsService.get('center').getCenterViewportScrollLeft();
     }
 

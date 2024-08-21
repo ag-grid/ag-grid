@@ -41,23 +41,23 @@ The state is also passed in the [Grid Pre-Destroyed Event](./grid-lifecycle/#gri
 
 The following is captured in the grid state:
 
-* [Aggregation Functions](./aggregation/)
+* [Aggregation Functions](./aggregation/) (column state)
 * [Opened Column Groups](./column-groups/)
-* [Column Order](./column-moving/)
-* [Pinned Columns](./column-pinning/)
-* [Column Sizes](./column-sizing/)
-* [Hidden Columns](./column-properties/#reference-display-hide)
+* [Column Order](./column-moving/) (column state)
+* [Pinned Columns](./column-pinning/) (column state)
+* [Column Sizes](./column-sizing/) (column state)
+* [Hidden Columns](./column-properties/#reference-display-hide) (column state)
 * [Column Filter Model](./filtering/)
 * [Advanced Filter Model](./filter-advanced/#filter-model--api)
 * [Focused Cell](./keyboard-navigation/) ([Client-Side Row Model](./row-models/) only)
 * [Current Page](./row-pagination/)
-* [Pivot Mode and Columns](./pivoting/)
+* [Pivot Mode and Columns](./pivoting/) (column state)
 * [Cell Selection](./cell-selection/)
-* [Row Group Columns](./grouping/)
+* [Row Group Columns](./grouping/) (column state)
 * [Expanded Row Groups](./grouping-opening-groups/)
 * [Row Selection](./row-selection/)
 * [Side Bar](./side-bar/)
-* [Sort](./row-sorting/)
+* [Sort](./row-sorting/) (column state)
 
 {% note %}
 When restoring current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/)
@@ -69,5 +69,7 @@ additional configuration is required:
 {% /note %}
 
 All state properties are optional, so a property can be excluded if you do not want to restore it.
+
+If applying some but not all of the column state properties, then `initialState.partialColumnState` must be set to `true`.
 
 {% interfaceDocumentation interfaceName="GridState" /%}

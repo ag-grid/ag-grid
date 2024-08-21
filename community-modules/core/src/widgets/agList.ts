@@ -1,4 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
+import { _getDocument } from '../gridOptionsUtils';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _isVisible, _removeFromParent } from '../utils/dom';
 import { Component } from './component';
@@ -143,7 +144,7 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
     }
 
     private renderOption(value: TValue, text: string): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const itemEl = eDocument.createElement('div');
 
         _setAriaRole(itemEl, 'option');

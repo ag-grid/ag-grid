@@ -64,12 +64,10 @@ const PopupEditorComp = (props: {
 
         setPopupEditorWrapper(wrapper);
 
-        props.jsChildComp && props.jsChildComp.afterGuiAttached && props.jsChildComp.afterGuiAttached();
+        props.jsChildComp?.afterGuiAttached?.();
 
         return () => {
-            if (hideEditorPopup != null) {
-                hideEditorPopup();
-            }
+            hideEditorPopup?.();
             context.destroyBean(wrapper);
         };
     });

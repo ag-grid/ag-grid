@@ -3,7 +3,6 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -13,7 +12,7 @@ import { Component } from '@angular/core';
 import './styles.css';
 
 // Register shared Modules globally
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, GridChartsModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
 
 @Component({
     selector: 'my-app',
@@ -28,8 +27,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, GridCharts
                     [rowData]="leftRowData"
                     [modules]="leftModules"
                     [columnDefs]="columns"
-                    enableRangeSelection
-                    enableCharts
                 />
             </div>
 
@@ -40,8 +37,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, GridCharts
                     [rowData]="leftRowData"
                     [modules]="rightModules"
                     [columnDefs]="columns"
-                    enableRangeSelection
-                    enableCharts
                 />
             </div>
         </div>

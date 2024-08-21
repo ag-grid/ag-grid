@@ -4,6 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
@@ -269,7 +270,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             return false;
         }
         // also only do it if CSRM (code should never allow this anyway)
-        if (this.rowModel.getType() !== 'clientSide') {
+        if (!_isClientSideRowModel(this.gos)) {
             return false;
         }
 
@@ -390,7 +391,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection(): RowNode[] | undefined {
-        if (this.rowModel.getType() !== 'clientSide') {
+        if (!_isClientSideRowModel(this.gos)) {
             // Error logged as part of gridApi as that is only call point for this method.
             return;
         }
@@ -443,7 +444,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         justCurrentPage?: boolean;
     }) {
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(false, undefined, source);
-        const rowModelClientSide = this.rowModel.getType() === 'clientSide';
+        const rowModelClientSide = _isClientSideRowModel(this.gos);
 
         const { source, justFiltered, justCurrentPage } = params;
 
@@ -531,11 +532,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
      * @returns all nodes including unselectable nodes which are the target of this selection attempt
      */
     private getNodesToSelect(justFiltered = false, justCurrentPage = false) {
-        if (this.rowModel.getType() !== 'clientSide') {
-            throw new Error(
-                `selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`
-            );
-        }
+        this.validateSelectAllType();
 
         const nodes: RowNode[] = [];
         if (justCurrentPage) {
@@ -596,11 +593,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         justFiltered?: boolean;
         justCurrentPage?: boolean;
     }) {
-        if (this.rowModel.getType() !== 'clientSide') {
-            throw new Error(
-                `selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`
-            );
-        }
+        this.validateSelectAllType();
 
         const { source, justFiltered, justCurrentPage } = params;
 
@@ -611,7 +604,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         this.selectionCtx.setEndRange(_last(nodes) ?? null);
 
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType() === 'clientSide' && this.groupSelectsChildren) {
+        if (_isClientSideRowModel(this.gos) && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections(source);
         }
 
@@ -654,5 +647,13 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             type: 'selectionChanged',
             source,
         });
+    }
+
+    private validateSelectAllType(): void {
+        if (!_isClientSideRowModel(this.gos)) {
+            throw new Error(
+                `selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`
+            );
+        }
     }
 }

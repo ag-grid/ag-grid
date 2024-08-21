@@ -238,11 +238,15 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } =
             UserComponentFactory.getCompKeys(this.frameworkOverrides, defObject, type, params);
 
+        // for grid-provided comps only
+        let defaultCompParams: any;
+
         const lookupFromRegistry = (key: string) => {
             const item = this.userComponentRegistry.retrieve(propertyName, key);
             if (item) {
                 jsComp = !item.componentFromFramework ? item.component : undefined;
                 fwComp = item.componentFromFramework ? item.component : undefined;
+                defaultCompParams = item.params;
             }
         };
 
@@ -268,7 +272,13 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
             return;
         }
 
-        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(defObject, type, params, paramsFromSelector);
+        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(
+            defObject,
+            type,
+            params,
+            paramsFromSelector,
+            defaultCompParams
+        );
 
         const componentFromFramework = jsComp == null;
         const componentClass = jsComp ? jsComp : fwComp;
@@ -386,11 +396,16 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         defObject: TDefinition,
         type: ComponentType,
         paramsFromGrid: any,
-        paramsFromSelector: any = null
+        paramsFromSelector: any = null,
+        defaultCompParams?: any
     ): any {
         const params: AgGridCommon<any, any> = this.gos.getGridCommonParams();
 
         _mergeDeep(params, paramsFromGrid);
+
+        if (defaultCompParams) {
+            _mergeDeep(params, defaultCompParams);
+        }
 
         // pull user params from either the old prop name and new prop name
         // eg either cellRendererParams and cellCompParams

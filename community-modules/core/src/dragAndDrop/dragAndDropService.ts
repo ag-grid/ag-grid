@@ -2,10 +2,12 @@ import { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
 import type { IAggFunc } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
+import { _getDocument, _getRootNode } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -166,11 +168,13 @@ export type DragAndDropIcon =
 export class DragAndDropService extends BeanStub implements NamedBean {
     beanName = 'dragAndDropService' as const;
 
+    private ctrlsService: CtrlsService;
     private dragService: DragService;
     private mouseEventService: MouseEventService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
         this.dragService = beans.dragService;
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;
@@ -357,7 +361,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             return validDropTargets[0];
         }
 
-        const rootNode = this.gos.getRootNode();
+        const rootNode = _getRootNode(this.gos);
 
         // elementsFromPoint return a list of elements under
         // the mouseEvent sorted from topMost to bottomMost
@@ -447,6 +451,14 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         return externalTargets.find((zone) => zone.getContainer() === params.getContainer()) || null;
     }
 
+    public isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridGui = gridBodyCon.getGui();
+        const { dropZoneTarget } = draggingEvent;
+
+        return gridGui.contains(dropZoneTarget);
+    }
+
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection | null {
         const clientX = this.eventLastTime && this.eventLastTime.clientX;
         const eClientX = event.clientX;
@@ -516,7 +528,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         let top = clientY - offsetParentSize.top - ghostHeight / 2;
         let left = clientX - offsetParentSize.left - 10;
 
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const win = eDocument.defaultView || window;
         const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
         const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
@@ -568,11 +580,10 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
         eText.innerHTML = _escapeString(dragItemName as string) || '';
 
-        this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
 
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         let rootNode: Document | ShadowRoot | HTMLElement | null = null;
         let targetEl: HTMLElement | ShadowRoot | null = null;
 
@@ -583,7 +594,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             // simply by trying to read the fullscreenElement property
         } finally {
             if (!rootNode) {
-                rootNode = this.gos.getRootNode();
+                rootNode = _getRootNode(this.gos);
             }
             const body = rootNode.querySelector('body');
             if (body) {

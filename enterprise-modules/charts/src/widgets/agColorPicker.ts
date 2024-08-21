@@ -1,5 +1,5 @@
 import type { AgPickerFieldParams, ComponentSelector } from '@ag-grid-community/core';
-import { AgPickerField } from '@ag-grid-community/core';
+import { AgPickerField, _getDocument } from '@ag-grid-community/core';
 import { AgDialog } from '@ag-grid-enterprise/core';
 import { _Util } from 'ag-charts-community';
 
@@ -29,7 +29,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     }
 
     public override postConstruct() {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         this.eDisplayFieldColor = eDocument.createElement('span');
         this.eDisplayFieldColor.classList.add('ag-color-picker-color');
         this.eDisplayFieldText = eDocument.createElement('span');

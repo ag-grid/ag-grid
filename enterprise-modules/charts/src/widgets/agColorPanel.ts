@@ -129,6 +129,7 @@ export class AgColorPanel extends Component {
     }
 
     private onSpectrumDraggerDown(e: MouseEvent) {
+        e.preventDefault();
         this.refreshSpectrumRect();
         this.isSpectrumDragging = true;
 

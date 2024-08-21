@@ -62,14 +62,6 @@
         }
     }
 
-    h2 {
-        font-size: var(--font-size-large);
-
-        @media screen and (min-width: $breakpoint-videos-medium) {
-            font-size: var(--font-size-extra-large);
-        }
-    }
-
     img {
         width: auto;
         border-radius: var(--radius-sm);

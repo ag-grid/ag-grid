@@ -99,7 +99,7 @@ export class HeaderRowContainerComp extends Component {
         };
 
         ctrls.forEach((ctrl) => {
-            const ctrlId = ctrl.getInstanceId();
+            const ctrlId = ctrl.instanceId;
             const existingComp = oldRowComps[ctrlId];
             delete oldRowComps[ctrlId];
 

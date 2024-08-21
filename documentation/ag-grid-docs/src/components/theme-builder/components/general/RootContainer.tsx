@@ -42,6 +42,8 @@ const Container = styled('div')`
     min-height: 600px;
     margin-top: 16px;
     display: flex;
+    user-select: none;
+    cursor: default;
 
     font-family: -apple-system, BlinkMacSystemFont, 'IBM Plex Sans', sans-serif;
 

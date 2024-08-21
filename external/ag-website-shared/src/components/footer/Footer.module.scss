@@ -47,6 +47,12 @@
     margin-bottom: $spacing-size-10;
     width: var(--layout-width-4-4);
 
+    h2 {
+        font-size: var(--text-fs-base);
+        line-height: var(--text-lh-base);
+        font-weight: var(--text-semibold);
+    }
+
     &:first-child {
         width: 100%;
         text-align: center;

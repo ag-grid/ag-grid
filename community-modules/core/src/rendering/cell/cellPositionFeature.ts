@@ -2,6 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
+import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
 import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
 import type { CellCtrl } from './cellCtrl';
@@ -175,7 +176,7 @@ export class CellPositionFeature extends BeanStub {
             return;
         }
 
-        const singleRowHeight = this.beans.gos.getRowHeightAsNumber();
+        const singleRowHeight = _getRowHeightAsNumber(this.beans.gos);
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
         this.eGui.style.height = `${totalRowHeight}px`;

@@ -4,6 +4,7 @@ import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { DragService } from '../../dragAndDrop/dragService';
 import type { StickyTopOffsetChangedEvent } from '../../events';
+import { _isDomLayout } from '../../gridOptionsUtils';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -350,7 +351,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
         const listener = () => {
             const isEnsureDomOrder = this.gos.get('ensureDomOrder');
-            const isPrintLayout = this.gos.isDomLayout('print');
+            const isPrintLayout = _isDomLayout(this.gos, 'print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         };
 
@@ -458,7 +459,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             return;
         }
 
-        const printLayout = this.gos.isDomLayout('print');
+        const printLayout = _isDomLayout(this.gos, 'print');
         const embedFullWidthRows = this.gos.get('embedFullWidthRows');
         const embedFW = embedFullWidthRows || printLayout;
 

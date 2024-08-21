@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
@@ -40,7 +41,7 @@ export class SelectableService extends BeanStub implements NamedBean {
 
         const isGroupSelectsChildren = this.gos.getSelectionOption('groupSelectsChildren');
 
-        const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
+        const isCsrmGroupSelectsChildren = _isClientSideRowModel(this.gos) && isGroupSelectsChildren;
 
         const nodesToDeselect: RowNode[] = [];
 

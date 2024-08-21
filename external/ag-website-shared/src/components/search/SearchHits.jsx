@@ -1,4 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { ChevronRight } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useHits } from 'react-instantsearch';
@@ -74,7 +75,7 @@ export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query
                         return (
                             <a
                                 className={styles.hitLink}
-                                href={hit.path}
+                                href={urlWithBaseUrl(hit.path)}
                                 key={hit.objectID}
                                 tabIndex={-1}
                                 id={`hit-${idx}`}

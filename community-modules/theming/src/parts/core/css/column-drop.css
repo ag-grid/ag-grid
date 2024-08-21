@@ -115,7 +115,6 @@
 }
 
 .ag-column-drop-vertical-cell {
-    /* TODO use gap */
     margin-top: var(--ag-grid-size);
 }
 
@@ -135,7 +134,6 @@
 
 .ag-select-agg-func-popup {
     position: absolute;
-    /* TODO variable to controll this */
     border: solid 1px var(--ag-border-color);
     border-radius: var(--ag-border-radius);
     box-shadow: var(--ag-dropdown-shadow);

@@ -330,8 +330,8 @@ export class GridCoreCreator {
         );
 
         const registry = context.getBean('userComponentRegistry');
-        moduleUserComps.forEach((compMeta) => {
-            registry.registerDefaultComponent(compMeta.name, compMeta.classImp);
+        moduleUserComps.forEach(({ name, classImp, params }) => {
+            registry.registerDefaultComponent(name, classImp, params);
         });
     }
 

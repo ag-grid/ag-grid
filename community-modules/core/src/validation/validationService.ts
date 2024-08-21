@@ -3,13 +3,12 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import { ModuleRegistry } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
-import type { DependencyValidator, OptionsValidation, OptionsValidator } from './validationTypes';
+import type { OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validationService' as const;
@@ -102,7 +101,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                 rules = rulesOrGetter;
             }
 
-            const { module, dependencies, supportedRowModels } = rules;
+            const { module, dependencies, validate, supportedRowModels } = rules;
             if (supportedRowModels) {
                 const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
                 if (!supportedRowModels.includes(rowModel)) {
@@ -116,7 +115,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
                 let allRegistered = true;
                 modules.forEach((m) => {
-                    if (!ModuleRegistry.__assertRegistered(m, String(key), this.gridId)) {
+                    if (!this.gos.assertModuleRegistered(m, String(key))) {
                         allRegistered = false;
                         warnings.add(`${String(key)} is only available when ${m} is loaded.`);
                     }
@@ -128,7 +127,14 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
 
             if (dependencies) {
-                const warning = this.checkForWarning(key, dependencies, options);
+                const warning = this.checkForRequiredDependencies(key, dependencies, options);
+                if (warning) {
+                    warnings.add(warning);
+                    return;
+                }
+            }
+            if (validate) {
+                const warning = validate(options, this.gridOptions);
                 if (warning) {
                     warnings.add(warning);
                     return;
@@ -142,15 +148,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    private checkForWarning<T extends object>(
+    private checkForRequiredDependencies<T extends object>(
         key: keyof T,
-        validator: DependencyValidator<T>,
+        validator: RequiredOptions<T>,
         options: T
     ): string | null {
-        if (typeof validator === 'function') {
-            return validator(options, this.gridOptions);
-        }
-
         const optionEntries = Object.entries(validator) as [string, any][];
         const failed = optionEntries.find(([key, value]) => {
             const gridOptionValue = options[key as keyof T];

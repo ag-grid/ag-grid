@@ -1,4 +1,13 @@
-import { AgColumn, BeanStub, GROUP_AUTO_COLUMN_ID, _mergeDeep, _missing, _warnOnce } from '@ag-grid-community/core';
+import {
+    AgColumn,
+    BeanStub,
+    GROUP_AUTO_COLUMN_ID,
+    _isColumnsSortingCoupledToGroup,
+    _isGroupMultiAutoColumn,
+    _mergeDeep,
+    _missing,
+    _warnOnce,
+} from '@ag-grid-community/core';
 import type {
     BeanCollection,
     ColDef,
@@ -27,7 +36,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const autoCols: AgColumn[] = [];
 
         const doingTreeData = this.gos.get('treeData');
-        let doingMultiAutoColumn = this.gos.isGroupMultiAutoColumn();
+        let doingMultiAutoColumn = _isGroupMultiAutoColumn(this.gos);
 
         if (doingTreeData && doingMultiAutoColumn) {
             _warnOnce(
@@ -112,7 +121,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             res.headerCheckboxSelection = false;
         }
 
-        const isSortingCoupled = this.gos.isColumnsSortingCoupledToGroup();
+        const isSortingCoupled = _isColumnsSortingCoupledToGroup(this.gos);
         const hasOwnData = res.valueGetter || res.field != null;
         if (isSortingCoupled && !hasOwnData) {
             // if col is coupled sorting, and has sort attribute, we want to ignore this

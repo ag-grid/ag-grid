@@ -913,6 +913,10 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
+  "suppressMoveWhenColumnDragging": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
   "suppressMovableColumns": {
     "typeName": "boolean",
     "typesToInclude": []

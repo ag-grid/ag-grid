@@ -1,5 +1,11 @@
 import type { Component, RichSelectParams } from '@ag-grid-community/core';
-import { KeyCode, _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from '@ag-grid-community/core';
+import {
+    KeyCode,
+    _getDocument,
+    _setAriaActiveDescendant,
+    _setAriaControls,
+    _setAriaLabel,
+} from '@ag-grid-community/core';
 
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
@@ -103,12 +109,12 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
-    public selectValue(value?: TValue[] | TValue): void {
+    public selectValue(value?: TValue[] | TValue): boolean {
         if (!this.currentList) {
             if (this.eLoading) {
                 this.appendChild(this.eLoading);
             }
-            return;
+            return false;
         }
 
         if (this.eLoading?.offsetParent) {
@@ -116,13 +122,14 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
 
         if (value == null) {
-            return;
+            return false;
         }
 
         const selectedPositions = this.getIndicesForValues(value);
-        const len = selectedPositions.length;
 
-        if (len > 0) {
+        const refresh = selectedPositions.length > 0;
+
+        if (refresh) {
             // make sure the virtual list has been sized correctly
             this.refresh();
             this.ensureIndexVisible(selectedPositions[0]);
@@ -132,6 +139,8 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
 
         this.selectListItems(Array.isArray(value) ? value : [value]);
+
+        return refresh;
     }
 
     private selectListItems(values: TValue[], append = false): void {
@@ -248,7 +257,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private createLoadingElement(): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const translate = this.localeService.getLocaleTextFunc();
         const el = eDocument.createElement('div');
 

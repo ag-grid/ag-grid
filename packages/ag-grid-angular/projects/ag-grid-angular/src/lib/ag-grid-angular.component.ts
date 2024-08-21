@@ -501,6 +501,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressColumnMoveAnimation: boolean | undefined = undefined;
+    /** Set to `true` to suppress moving columns while dragging the Column Header. This option highlights the position where the column will be placed and it will only move it on mouse up.
+     * @default false
+     */
+    @Input() public suppressMoveWhenColumnDragging: boolean | undefined = undefined;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden.
      * @default false
      */
@@ -2058,6 +2062,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressAutoSize: boolean | null | '';
     static ngAcceptInputType_skipHeaderOnAutoSize: boolean | null | '';
     static ngAcceptInputType_suppressColumnMoveAnimation: boolean | null | '';
+    static ngAcceptInputType_suppressMoveWhenColumnDragging: boolean | null | '';
     static ngAcceptInputType_suppressMovableColumns: boolean | null | '';
     static ngAcceptInputType_suppressFieldDotNotation: boolean | null | '';
     static ngAcceptInputType_enableRangeSelection: boolean | null | '';

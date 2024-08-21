@@ -383,6 +383,11 @@ export interface GridOptions<TData = any> {
      */
     suppressColumnMoveAnimation?: boolean;
     /**
+     * Set to `true` to suppress moving columns while dragging the Column Header. This option highlights the position where the column will be placed and it will only move it on mouse up.
+     * @default false
+     */
+    suppressMoveWhenColumnDragging?: boolean;
+    /**
      * If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden.
      * @default false
      */

@@ -1193,6 +1193,7 @@
                 "name": "Cache Block State",
                 "url": "./server-side-model-configuration/#debug-info"
             }
-        }
+        },
+        "isLastRowIndexKnown": {}
     }
 }

@@ -271,6 +271,7 @@ export class PropertyKeys {
         'suppressAutoSize',
         'skipHeaderOnAutoSize',
         'suppressColumnMoveAnimation',
+        'suppressMoveWhenColumnDragging',
         'suppressMovableColumns',
         'suppressFieldDotNotation',
         'enableRangeSelection',

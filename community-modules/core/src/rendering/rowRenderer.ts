@@ -12,6 +12,16 @@ import type { Environment } from '../environment';
 import type { BodyScrollEvent, CellFocusedEvent, ModelUpdatedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import {
+    _getActiveDomElement,
+    _getDomData,
+    _getRowHeightAsNumber,
+    _isAnimateRows,
+    _isClientSideRowModel,
+    _isDomLayout,
+    _isGroupRowsSticky,
+    _isServerSideRowModel,
+} from '../gridOptionsUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
@@ -189,9 +199,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             () => this.redrawRows()
         );
 
-        if (this.gos.isGroupRowsSticky()) {
-            const rowModelType = this.rowModel.getType();
-            if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
+        if (_isGroupRowsSticky(this.gos)) {
+            if (_isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos)) {
                 this.stickyRowFeature = this.createManagedBean(
                     new StickyRowFeature(this.createRowCon.bind(this), this.destroyRowCtrls.bind(this))
                 );
@@ -201,7 +210,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.registerCellEventListeners();
 
         this.initialiseCache();
-        this.printLayout = this.gos.isDomLayout('print');
+        this.printLayout = _isDomLayout(this.gos, 'print');
         this.embedFullWidthRows = this.printLayout || this.gos.get('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
@@ -394,7 +403,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private onDomLayoutChanged(): void {
-        const printLayout = this.gos.isDomLayout('print');
+        const printLayout = _isDomLayout(this.gos, 'print');
         const embedFullWidthRows = printLayout || this.gos.get('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
@@ -586,9 +595,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
-        const activeElement = this.gos.getActiveDomElement();
-        const cellDomData = this.gos.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = this.gos.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const activeElement = _getActiveDomElement(this.gos);
+        const cellDomData = _getDomData(this.gos, activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowDomData = _getDomData(this.gos, activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
         const gridElementFocused = cellDomData || rowDomData;
 
@@ -612,7 +621,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // never recycle rows on layout change as rows could change from normal DOM layout
         // back to the grid's row positioning.
         const recycleRows = !params.domLayoutChanged && !!params.recycleRows;
-        const animate = params.animate && this.gos.isAnimateRows();
+        const animate = params.animate && _isAnimateRows(this.gos);
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
@@ -685,14 +694,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private getLockOnRefresh(): void {
         if (this.refreshInProgress) {
-            const frameworkMessage = this.frameworkOverrides.getLockOnRefreshError?.() ?? '';
             throw new Error(
                 'AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows. ' +
                     'Your code probably called a grid API method while the grid was in the render stage. To overcome ' +
                     'this, put the API call into a timeout, e.g. instead of api.redrawRows(), ' +
                     'call setTimeout(function() { api.redrawRows(); }, 0). To see what part of your code ' +
-                    'that caused the refresh check this stacktrace.' +
-                    frameworkMessage
+                    'that caused the refresh check this stacktrace.'
             );
         }
 
@@ -1308,10 +1315,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             rowCtrl.destroyFirstPass(!animate);
             if (animate) {
-                this.zombieRowCtrls[rowCtrl.getInstanceId()] = rowCtrl;
+                const instanceId = rowCtrl.instanceId;
+                this.zombieRowCtrls[instanceId] = rowCtrl;
                 executeInAWhileFuncs.push(() => {
                     rowCtrl.destroySecondPass();
-                    delete this.zombieRowCtrls[rowCtrl.getInstanceId()];
+                    delete this.zombieRowCtrls[instanceId];
                 });
             } else {
                 rowCtrl.destroySecondPass();
@@ -1334,7 +1342,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private getRowBufferInPixels() {
         const rowsToBuffer = this.getRowBuffer();
-        const defaultRowHeight = this.gos.getRowHeightAsNumber();
+        const defaultRowHeight = _getRowHeightAsNumber(this.gos);
 
         return rowsToBuffer * defaultRowHeight;
     }
@@ -1408,7 +1416,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
-        const rowLayoutNormal = this.gos.isDomLayout('normal');
+        const rowLayoutNormal = _isDomLayout(this.gos, 'normal');
         const suppressRowCountRestriction = this.gos.get('suppressMaxRenderedRowRestriction');
         const rowBufferMaxSize = Math.max(this.getRowBuffer(), 500);
 
