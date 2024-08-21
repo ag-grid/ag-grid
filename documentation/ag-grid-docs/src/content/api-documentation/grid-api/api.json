@@ -642,7 +642,13 @@
                 "url": "./row-dragging-to-external-dropzone/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
+                ],
                 "include": []
             }
         },
@@ -652,7 +658,13 @@
                 "url": "./row-dragging-to-external-dropzone/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
+                ],
                 "include": []
             }
         },
@@ -662,7 +674,13 @@
                 "url": "./row-dragging-to-grid/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
+                ],
                 "include": []
             }
         }

@@ -95,6 +95,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         firstDataRendered: FirstDataRenderedEvent<TData, TContext>;
         dragStarted: DragStartedEvent<TData, TContext>;
         dragStopped: DragStoppedEvent<TData, TContext>;
+        dragCancelled: DragCancelledEvent<TData, TContext>;
         rowEditingStarted: RowEditingStartedEvent<TData, TContext>;
         rowEditingStopped: RowEditingStoppedEvent<TData, TContext>;
         cellEditingStarted: CellEditingStartedEvent<TData, TContext>;
@@ -111,6 +112,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDragMove: RowDragMoveEvent<TData, TContext>;
         rowDragLeave: RowDragLeaveEvent<TData, TContext>;
         rowDragEnd: RowDragEndEvent<TData, TContext>;
+        rowDragCancel: RowDragCancelEvent<TData, TContext>;
         // Internal events
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
         keyShortcutChangedCellStart: KeyShortcutChangedCellStartEvent<TData, TContext>;
@@ -429,13 +431,12 @@ export interface AgDragEvent<T extends AgEventType, TData = any, TContext = any>
     target: Element;
 }
 
-export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStarted', TData, TContext> {
-    type: 'dragStarted';
-}
+export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStarted', TData, TContext> {}
 
-export interface DragStoppedEvent<TData = any, TContext = any> extends AgDragEvent<`dragStopped`, TData, TContext> {
-    type: 'dragStopped';
-}
+export interface DragStoppedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStopped', TData, TContext> {}
+
+export interface DragCancelledEvent<TData = any, TContext = any>
+    extends AgDragEvent<'dragCancelled', TData, TContext> {}
 
 // For internal use only.
 // This event allows us to detect when other inputs in the same named group are changed, so for example we can ensure
@@ -488,6 +489,9 @@ export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType
 export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> {}
 
 export interface RowDragEndEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnd'> {}
+
+export interface RowDragCancelEvent<TData = any, TContext = any>
+    extends RowDragEvent<TData, TContext, 'rowDragCancel'> {}
 
 export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragMove'> {}
 

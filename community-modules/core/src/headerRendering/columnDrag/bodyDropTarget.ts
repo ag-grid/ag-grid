@@ -19,6 +19,7 @@ export interface DropListener {
     onDragLeave(params: DraggingEvent): void;
     onDragging(params: DraggingEvent): void;
     onDragStop(params: DraggingEvent): void;
+    onDragCancel(): void;
 }
 
 export class BodyDropTarget extends BeanStub implements DropTarget {
@@ -130,5 +131,9 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     public onDragStop(params: DraggingEvent): void {
         this.currentDropListener.onDragStop(params);
+    }
+
+    public onDragCancel(): void {
+        this.currentDropListener.onDragCancel();
     }
 }

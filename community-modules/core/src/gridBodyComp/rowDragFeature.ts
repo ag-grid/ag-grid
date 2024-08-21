@@ -7,7 +7,14 @@ import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropIcon, DragAndDropService, DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { RowNode } from '../entities/rowNode';
-import type { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from '../events';
+import type {
+    RowDragCancelEvent,
+    RowDragEndEvent,
+    RowDragEnterEvent,
+    RowDragEvent,
+    RowDragLeaveEvent,
+    RowDragMoveEvent,
+} from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
@@ -34,6 +41,7 @@ export interface RowDropZoneEvents {
     onDragging?: (params: RowDragMoveEvent) => void;
     /** Callback function that will be executed when the rowDrag drops rows within the target. */
     onDragStop?: (params: RowDragEndEvent) => void;
+    onDragCancel?: (params: RowDragCancelEvent) => void;
 }
 
 export interface RowDropZoneParams extends RowDropZoneEvents {
@@ -41,7 +49,7 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
     getContainer: () => HTMLElement;
 }
 
-type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd';
+type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd' | 'rowDragCancel';
 
 export class RowDragFeature extends BeanStub implements DropTarget {
     private dragAndDropService: DragAndDropService;
@@ -314,6 +322,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     params.onDragStop!(this.draggingToRowDragEvent('rowDragEnd', e as any));
                 };
             }
+            if (params.onDragCancel) {
+                processedParams.onDragCancel = (e) => {
+                    params.onDragCancel!(this.draggingToRowDragEvent('rowDragCancel', e as any));
+                };
+            }
         }
 
         this.dragAndDropService.addDropTarget({
@@ -330,6 +343,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const onDragLeave = this.onDragLeave.bind(this);
         const onDragging = this.onDragging.bind(this);
         const onDragStop = this.onDragStop.bind(this);
+        const onDragCancel = this.onDragCancel.bind(this);
 
         if (!events) {
             return {
@@ -338,6 +352,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 onDragLeave,
                 onDragging,
                 onDragStop,
+                onDragCancel,
                 /* @private */ fromGrid: true,
             } as RowDropZoneParams;
         }
@@ -368,6 +383,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                       events.onDragStop!(this.draggingToRowDragEvent('rowDragEnd', e as any));
                   }
                 : onDragStop,
+            onDragCancel: events.onDragCancel
+                ? (e) => {
+                      onDragCancel(e);
+                      events.onDragCancel!(this.draggingToRowDragEvent('rowDragCancel', e as any));
+                  }
+                : onDragCancel,
             fromGrid: true /* @private */,
         } as RowDropZoneParams;
     }
@@ -437,6 +458,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);
+        }
+    }
+
+    public onDragCancel(draggingEvent: DraggingEvent): void {
+        this.dispatchGridEvent('rowDragCancel', draggingEvent);
+        this.stopDragging(draggingEvent);
+
+        if (
+            this.gos.get('rowDragManaged') &&
+            (this.gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
+            this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)
+        ) {
+            this.clearRowHighlight();
         }
     }
 
