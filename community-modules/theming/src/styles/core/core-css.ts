@@ -612,7 +612,7 @@ export const coreDefaults: CoreParams = {
     },
     wrapperBorder: true,
     rowBorder: true,
-    browserColorScheme: 'inherit',
+    browserColorScheme: 'light',
     headerRowBorder: {
         ref: 'rowBorder',
     },

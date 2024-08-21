@@ -1,4 +1,4 @@
-import { createPart } from '../../../theme-types';
+import { createPart } from '../../../../Part';
 import { getQuartzIconsCss } from './quartz-icon-data';
 
 // prettier-ignore

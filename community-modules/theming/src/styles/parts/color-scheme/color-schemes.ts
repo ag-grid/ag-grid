@@ -1,4 +1,4 @@
-import { createPart } from '../../theme-types';
+import { createPart } from '../../../Part';
 
 // prettier-ignore
 export const colorSchemeLightNeutral =
@@ -37,6 +37,7 @@ export const colorSchemeDarkNeutral =
                 mix: 0.05,
                 onto: 'backgroundColor',
             },
+            browserColorScheme: 'dark',
         });
 
 // prettier-ignore
@@ -51,6 +52,7 @@ export const colorSchemeDarkWarm =
                 mix: 0.05,
                 onto: 'backgroundColor',
             },
+            browserColorScheme: 'dark',
         });
 
 // prettier-ignore
@@ -65,4 +67,5 @@ export const colorSchemeDarkBlue =
                 mix: 0.07,
                 onto: 'backgroundColor',
             },
+            browserColorScheme: 'dark',
         });

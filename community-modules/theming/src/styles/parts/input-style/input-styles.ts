@@ -1,5 +1,5 @@
-import type { BorderValue, ColorValue, LengthValue, ShadowValue } from '../../theme-types';
-import { createPart } from '../../theme-types';
+import { createPart } from '../../../Part';
+import type { BorderValue, ColorValue, LengthValue, ShadowValue } from '../../../theme-types';
 import { inputStyleBaseCSS } from './GENERATED-input-style-base';
 import { inputStyleUnderlinedCSS } from './GENERATED-input-style-underlined';
 

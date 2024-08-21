@@ -1,4 +1,4 @@
-import { createTheme } from '../../theme-types';
+import { createTheme } from '../../../Theme';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import { colorSchemeLightCold, colorSchemeLightNeutral } from '../color-scheme/color-schemes';
 import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
@@ -9,12 +9,12 @@ const createThemeWithDefaultWidgets = (name: string) => createTheme(name).usePar
 
 // prettier-ignore
 export const themeQuartz =
-/*#__PURE__*/
-createThemeWithDefaultWidgets('quartz')
-.usePart(colorSchemeLightNeutral)
-.usePart(iconSetQuartzRegular)
-.usePart(tabStyleQuartz)
-.usePart(inputStyleBordered);
+    /*#__PURE__*/
+    createThemeWithDefaultWidgets('quartz')
+    .usePart(colorSchemeLightNeutral)
+    .usePart(iconSetQuartzRegular)
+    .usePart(tabStyleQuartz)
+    .usePart(inputStyleBordered);
 
 // prettier-ignore
 export const themeBalham =

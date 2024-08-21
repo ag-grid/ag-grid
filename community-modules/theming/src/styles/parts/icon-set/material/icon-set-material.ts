@@ -1,4 +1,4 @@
-import { createPart } from '../../../theme-types';
+import { createPart } from '../../../../Part';
 import { iconSetMaterialCSS } from './GENERATED-icon-set-material';
 
 // prettier-ignore

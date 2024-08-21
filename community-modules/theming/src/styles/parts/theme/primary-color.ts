@@ -1,4 +1,5 @@
-import { type ColorValue, createPart } from '../../theme-types';
+import { createPart } from '../../../Part';
+import { type ColorValue } from '../../../theme-types';
 
 export type PrimaryColorParams = {
     /**

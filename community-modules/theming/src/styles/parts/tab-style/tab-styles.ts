@@ -1,5 +1,5 @@
-import type { BorderValue, ColorValue, DurationValue, LengthValue } from '../../theme-types';
-import { createPart } from '../../theme-types';
+import { createPart } from '../../../Part';
+import type { BorderValue, ColorValue, DurationValue, LengthValue } from '../../../theme-types';
 import { primaryColor } from '../theme/primary-color';
 import { tabStyleBaseCSS } from './GENERATED-tab-style-base';
 import { tabStyleRolodexCSS } from './GENERATED-tab-style-rolodex';
