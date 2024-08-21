@@ -19,9 +19,9 @@ import type {
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
-    CellRangeDeleteEndEvent,
-    CellRangeDeleteStartEvent,
     CellSelectionChangedEvent,
+    CellSelectionDeleteEndEvent,
+    CellSelectionDeleteStartEvent,
     CellValueChangedEvent,
     ChartCreatedEvent,
     ChartDestroyedEvent,
@@ -2058,23 +2058,23 @@ export interface GridOptions<TData = any> {
      */
     onRedoEnded?(event: RedoEndedEvent<TData>): void;
     /**
-     * Range delete operation (cell clear) has started.
+     * Cell selection delete operation (cell clear) has started.
      */
-    onCellRangeDeleteStart?(event: CellRangeDeleteStartEvent<TData>): void;
+    onCellSelectionDeleteStart?(event: CellSelectionDeleteStartEvent<TData>): void;
     /**
-     * Range delete operation (cell clear) has ended.
+     * Cell selection delete operation (cell clear) has ended.
      */
-    onCellRangeDeleteEnd?(event: CellRangeDeleteEndEvent<TData>): void;
+    onCellSelectionDeleteEnd?(event: CellSelectionDeleteEndEvent<TData>): void;
     /**
      * Range delete operation (cell clear) has started.
      *
-     * @deprecated v32.2 Use `onCellRangeDeleteStart` instead
+     * @deprecated v32.2 Use `onCellSelectionDeleteStart` instead
      */
     onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>): void;
     /**
      * Range delete operation (cell clear) has ended.
      *
-     * @deprecated v32.2 Use `onCellRangeDeleteEnd` instead
+     * @deprecated v32.2 Use `onCellSelectionDeleteEnd` instead
      */
     onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>): void;
 

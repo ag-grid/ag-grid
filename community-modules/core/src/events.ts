@@ -59,8 +59,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         pasteEnd: PasteEndEvent<TData, TContext>;
         fillStart: FillStartEvent<TData, TContext>;
         fillEnd: FillEndEvent<TData, TContext>;
-        cellRangeDeleteStart: CellRangeDeleteStartEvent<TData, TContext>;
-        cellRangeDeleteEnd: CellRangeDeleteEndEvent<TData, TContext>;
+        cellSelectionDeleteStart: CellSelectionDeleteStartEvent<TData, TContext>;
+        cellSelectionDeleteEnd: CellSelectionDeleteEndEvent<TData, TContext>;
         rangeDeleteStart: RangeDeleteStartEvent<TData, TContext>;
         rangeDeleteEnd: RangeDeleteEndEvent<TData, TContext>;
         undoStarted: UndoStartedEvent<TData, TContext>;
@@ -523,13 +523,13 @@ export interface FillEndEvent<TData = any, TContext = any> extends AgGlobalEvent
     finalRange: CellRange;
 }
 
-export interface CellRangeDeleteStartEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'cellRangeDeleteStart', TData, TContext> {
+export interface CellSelectionDeleteStartEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'cellSelectionDeleteStart', TData, TContext> {
     source: 'deleteKey';
 }
 
-export interface CellRangeDeleteEndEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'cellRangeDeleteEnd', TData, TContext> {
+export interface CellSelectionDeleteEndEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'cellSelectionDeleteEnd', TData, TContext> {
     source: 'deleteKey';
 }
 

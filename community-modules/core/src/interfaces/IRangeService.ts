@@ -95,8 +95,8 @@ export interface ClearCellRangeParams {
     cellRanges?: CellRange[];
     /** Source passed to `cellValueChanged` event */
     cellEventSource?: string;
-    /** `true` to dispatch `cellRangeDeleteStart` and `cellRangeDeleteEnd` events */
+    /** `true` to dispatch `cellSelectionDeleteStart` and `cellSelectionDeleteEnd` events */
     dispatchWrapperEvents?: boolean;
-    /** Source passed to `cellRangeDeleteStart` and `cellRangeDeleteEnd` events */
+    /** Source passed to `cellSelectionDeleteStart` and `cellSelectionDeleteEnd` events */
     wrapperEventSource?: 'deleteKey';
 }

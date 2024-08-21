@@ -236,16 +236,16 @@
                 "url": "./undo-redo-edits/#undo--redo-events"
             }
         },
-        "cellRangeDeleteStart": {
+        "cellSelectionDeleteStart": {
             "more": {
-                "name": "Delete Range",
-                "url": "./cell-selection/#reference--cellRangeDeleteStart"
+                "name": "Delete Cell Selection",
+                "url": "./cell-selection/#reference--cellSelectionDeleteStart"
             }
         },
-        "cellRangeDeleteEnd": {
+        "cellSelectionDeleteEnd": {
             "more": {
-                "name": "Delete Range",
-                "url": "./cell-selection/#reference--cellRangeDeleteEnd"
+                "name": "Delete Cell Selection",
+                "url": "./cell-selection/#reference--cellSelectionDeleteEnd"
             }
         }
     },

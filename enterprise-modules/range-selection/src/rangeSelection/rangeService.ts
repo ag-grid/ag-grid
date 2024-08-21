@@ -391,7 +391,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (dispatchWrapperEvents) {
             this.eventService.dispatchEvent({
-                type: 'cellRangeDeleteStart',
+                type: 'cellSelectionDeleteStart',
                 source: wrapperEventSource,
             });
             this.eventService.dispatchEvent({
@@ -429,7 +429,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (dispatchWrapperEvents) {
             this.eventService.dispatchEvent({
-                type: 'cellRangeDeleteEnd',
+                type: 'cellSelectionDeleteEnd',
                 source: wrapperEventSource,
             });
             this.eventService.dispatchEvent({
