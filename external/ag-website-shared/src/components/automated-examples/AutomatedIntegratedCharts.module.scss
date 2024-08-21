@@ -87,16 +87,6 @@ $z-index-splash-contents: 10;
     align-items: center;
     text-align: center;
     margin-bottom: $spacing-size-12;
-
-    &.defaultContent {
-        h2 {
-            margin-bottom: $spacing-size-4;
-        }
-
-        p {
-            max-width: 50em;
-        }
-    }
 }
 
 .sectionFooter {

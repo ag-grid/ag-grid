@@ -55,7 +55,13 @@ export const AutomatedExamples: FunctionComponent = () => {
                             useStaticData={isCI}
                             runOnce={runOnce}
                             visibilityThreshold={0.8}
-                        />
+                        >
+                            <h2 className="text-3xl">Fully Integrated Charting</h2>
+                            <p className="text-xl">
+                                With a complete suite of integrated charting tools, your users can visualise their data
+                                any way they choose.
+                            </p>
+                        </AutomatedIntegratedCharts>
                     </div>
                 </div>
             </section>

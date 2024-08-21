@@ -54,7 +54,6 @@ export function AutomatedIntegratedCharts({
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
     const [darkMode] = useDarkmode();
     const debuggerManager = automatedExampleManager?.getDebuggerManager();
-    const hasChildren = Boolean(children);
 
     const setAllScriptEnabledVars = (isEnabled: boolean) => {
         setScriptIsEnabled(isEnabled);
@@ -146,23 +145,7 @@ export function AutomatedIntegratedCharts({
 
     return (
         <>
-            <header
-                className={classNames(styles.sectionHeader, {
-                    [styles.defaultContent]: !hasChildren,
-                })}
-            >
-                {hasChildren ? (
-                    children
-                ) : (
-                    <>
-                        <h2 className="text-3xl">Fully Integrated Charting</h2>
-                        <p className="text-xl">
-                            With a complete suite of integrated charting tools, your users can visualise their data any
-                            way they choose.
-                        </p>
-                    </>
-                )}
-            </header>
+            <header className={classNames(styles.sectionHeader)}>{children}</header>
 
             <div className={styles.automatedExampleWrapper}>
                 {clientIsReady && (
