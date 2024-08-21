@@ -431,17 +431,12 @@ export interface AgDragEvent<T extends AgEventType, TData = any, TContext = any>
     target: Element;
 }
 
-export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStarted', TData, TContext> {
-    type: 'dragStarted';
-}
+export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStarted', TData, TContext> {}
 
-export interface DragStoppedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStopped', TData, TContext> {
-    type: 'dragStopped';
-}
+export interface DragStoppedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStopped', TData, TContext> {}
 
-export interface DragCancelledEvent<TData = any, TContext = any> extends AgDragEvent<'dragCancelled', TData, TContext> {
-    type: 'dragCancelled';
-}
+export interface DragCancelledEvent<TData = any, TContext = any>
+    extends AgDragEvent<'dragCancelled', TData, TContext> {}
 
 // For internal use only.
 // This event allows us to detect when other inputs in the same named group are changed, so for example we can ensure
