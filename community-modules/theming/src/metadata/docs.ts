@@ -90,6 +90,7 @@ const docs: Record<string, string | undefined> = {
     dragGhostBackgroundColor: 'Background color of the ghost element when dragging columns',
     dragGhostBorder: 'Border color of the ghost element when dragging columns',
     dragGhostShadow: 'Shadow for the ghost element when dragging columns',
+    dragHandleColor: 'Color of the drag handle on draggable rows and column markers',
     focusShadow:
         'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
     sideBarPanelWidth: 'Default width of the sidebar that contains the columns and filters tool panels',

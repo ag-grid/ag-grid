@@ -15,9 +15,8 @@ import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
-const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
+const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
-    const { rowCtrl, containerType } = params;
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
@@ -153,7 +152,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         return res;
     }, [top, transform, userStyles]);
 
-    const showFullWidthFramework = isFullWidth && fullWidthCompDetails && fullWidthCompDetails.componentFromFramework;
+    const showFullWidthFramework = isFullWidth && fullWidthCompDetails?.componentFromFramework;
     const showCells = !isFullWidth && cellCtrls != null;
 
     const reactFullWidthCellRendererStateless = useMemo(() => {
@@ -175,7 +174,7 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
                 cellCtrl={cellCtrl}
                 editingRow={rowCtrl.isEditing()}
                 printLayout={rowCtrl.isPrintLayout()}
-                key={cellCtrl.getInstanceId()}
+                key={cellCtrl.instanceId}
             />
         ));
 
@@ -183,8 +182,9 @@ const RowComp = (params: { rowCtrl: RowCtrl; containerType: RowContainerType }) 
         const FullWidthComp = fullWidthCompDetails!.componentClass;
         return (
             <>
-                {reactFullWidthCellRendererStateless && <FullWidthComp {...fullWidthCompDetails!.params} />}
-                {!reactFullWidthCellRendererStateless && (
+                {reactFullWidthCellRendererStateless ? (
+                    <FullWidthComp {...fullWidthCompDetails!.params} />
+                ) : (
                     <FullWidthComp {...fullWidthCompDetails!.params} ref={fullWidthCompRef} />
                 )}
             </>

@@ -128,6 +128,33 @@ columnDefs: [
 ]
 ```
 
+### Complex Objects
+
+When working with objects as values, you need to specify a `keyCreator` function within the column definition to enable  more complex features of the rich select cell editor.
+
+The Key Creator generates a unique string key from the complex object which is used for grouping, Set filtering, and searching within the cell editor dropdown.
+
+{% gridExampleRunner title="Rich Select Editor" name="rich-select-complex-objects" exampleHeight=300 /%}
+
+```js
+const colors = [
+  { name: "Pink", code: "#FFC0CB" },
+  // ...other values
+];
+
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        keyCreator: params => params.value.name,
+        cellEditorParams: {
+            values: colors,
+            formatValue: value => value.toUpperCase()
+        }
+        // ...other props
+    }
+]
+```
+
 ## Multi Selection
 
 The editor can be configured to allow the selection of multiple values as shown below: 

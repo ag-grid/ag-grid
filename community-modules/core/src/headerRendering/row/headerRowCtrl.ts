@@ -28,14 +28,13 @@ export class HeaderRowCtrl extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
     }
+    public readonly instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
     private pinned: ColumnPinnedType;
     private type: HeaderRowType;
     private headerRowClass: string;
-
-    private instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private headerCellCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl> | undefined;
 
@@ -60,10 +59,6 @@ export class HeaderRowCtrl extends BeanStub {
     public postConstruct(): void {
         this.isPrintLayout = _isDomLayout(this.gos, 'print');
         this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
-    }
-
-    public getInstanceId(): HeaderRowCtrlInstanceId {
-        return this.instanceId;
     }
 
     /** Checks that every header cell that is currently visible has been rendered.

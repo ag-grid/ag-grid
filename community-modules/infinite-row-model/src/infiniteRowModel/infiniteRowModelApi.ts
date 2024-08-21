@@ -11,7 +11,3 @@ export function purgeInfiniteCache(beans: BeanCollection): void {
 export function getInfiniteRowCount(beans: BeanCollection): number | undefined {
     return beans.rowModelHelperService?.getInfiniteRowModel()?.getRowCount();
 }
-
-export function isLastRowIndexKnown(beans: BeanCollection): boolean | undefined {
-    return beans.rowModelHelperService?.getInfiniteRowModel()?.isLastRowIndexKnown();
-}

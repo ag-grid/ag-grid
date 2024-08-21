@@ -1,6 +1,6 @@
 import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
 
-import { isGridApi } from '../../test-utils';
+import { findRootNodes, isGridApi, verifyPositionInRootChildren } from '../../test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
 
 const log = console.log;
@@ -24,27 +24,6 @@ export async function executeTransactionsAsync(transactions: RowDataTransaction<
     await Promise.all(promises);
 }
 
-function findTreeRootNodes(gridApi: GridApi | IRowNode[]): IRowNode[] {
-    const set = new Set<IRowNode>();
-    const processNode = (row: IRowNode) => row.parent && !row.parent.parent && set.add(row.parent);
-    if (Array.isArray(gridApi)) {
-        gridApi.forEach(processNode);
-    } else {
-        gridApi.forEachNode(processNode);
-    }
-    return Array.from(set);
-}
-
-export function findTreeRootNode(gridApi: GridApi | IRowNode[]): IRowNode | null {
-    const rootNodes = findTreeRootNodes(gridApi);
-    if (rootNodes.length === 0) return null;
-    if (rootNodes.length !== 1)
-        throw new Error(
-            'Expected one root node, but found ' + rootNodes.length + '. ' + rootNodes.map((n) => n.key).join(', ')
-        );
-    return rootNodes[0];
-}
-
 export class TreeDiagram {
     public label: string;
     public root: IRowNode | null = null;
@@ -60,11 +39,10 @@ export class TreeDiagram {
     public constructor(root: IRowNode | IRowNode[] | GridApi, label: string = '') {
         this.label = label;
         this.diagram = '\n';
-        const rootNodes = isGridApi(root) || Array.isArray(root) ? findTreeRootNodes(root) : [root];
+        const rootNodes = isGridApi(root) || Array.isArray(root) ? findRootNodes(root) : [root];
         if (rootNodes.length === 0) {
-            this.diagram += '❌ No tree root in\n';
+            this.diagram += '❌ No tree root\n';
             this.errorsCount = 1;
-            return this;
         }
         for (const root of rootNodes) {
             this.root = root;
@@ -76,6 +54,9 @@ export class TreeDiagram {
         if (row.level === -1 && row === this.root) {
             return 'ROOT';
         } else if (row.data) {
+            if (row.childrenAfterGroup?.length) {
+                return 'GROUP';
+            }
             return 'LEAF';
         }
         return 'filler';
@@ -91,7 +72,7 @@ export class TreeDiagram {
         if (row.isSelected()) {
             rowInfo += 'selected ';
         }
-        if (row.level >= 0 && !row.expanded) {
+        if (row.level >= 0 && !row.expanded && row.group) {
             rowInfo += '!expanded ';
         }
         rowInfo += `id:${row.id} `;
@@ -261,9 +242,11 @@ export class TreeDiagram {
             this.uniqueChildrenAfterGroupArrays.set(row.childrenAfterGroup, rowKey(row));
         }
 
-        if (expectedUiLevel !== row.uiLevel) {
-            this.rowErrors.push('UI_LEVEL!=' + expectedUiLevel);
-            this.diagram += 'row.uiLevel:' + row.uiLevel + ' ';
+        if (expanded) {
+            if (expectedUiLevel !== row.uiLevel) {
+                this.rowErrors.push('UI_LEVEL!=' + expectedUiLevel);
+                this.diagram += 'row.uiLevel:' + row.uiLevel + ' ';
+            }
         }
     }
 
@@ -287,6 +270,8 @@ export class TreeDiagram {
 
     public check(diagramSnapshot?: string | string[] | true): void {
         try {
+            verifyPositionInRootChildren(this.root?.allLeafChildren ?? []);
+
             if (diagramSnapshot !== undefined && diagramSnapshot !== true) {
                 expect(normalizeDiagram(this.diagram)).toEqual(normalizeDiagram(diagramSnapshot));
             }
@@ -411,7 +396,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             childrenAfterSort: [],
             detail: undefined,
             displayed: true,
-            expanded: true,
+            expanded: false,
             firstChild: true,
             footer: undefined,
             group: false,
@@ -467,7 +452,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             childrenAfterSort: [],
             detail: undefined,
             displayed: true,
-            expanded: true,
+            expanded: false,
             firstChild: true,
             footer: undefined,
             group: false,
@@ -579,7 +564,7 @@ export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
             childrenAfterSort: [],
             detail: undefined,
             displayed: true,
-            expanded: true,
+            expanded: false,
             firstChild: true,
             footer: undefined,
             group: false,

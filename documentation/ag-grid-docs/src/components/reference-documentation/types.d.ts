@@ -176,8 +176,6 @@ export interface Config {
     /** A regular expression limiting the names that should appear */
     namePattern: string;
 
-    /** When properties defined as `initial`, the relative link to direct to */
-    initialLink?: string;
     /** Show the description of what an initial property is against initial properties */
     showInitialDescription?: boolean;
 }

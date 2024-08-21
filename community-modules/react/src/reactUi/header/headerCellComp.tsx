@@ -12,8 +12,7 @@ import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
 
-const HeaderCellComp = (props: { ctrl: HeaderCellCtrl }) => {
-    const { ctrl } = props;
+const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const isAlive = ctrl.isAlive();
 
     const { context } = useContext(BeansContext);

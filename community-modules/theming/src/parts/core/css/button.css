@@ -13,7 +13,6 @@
     cursor: pointer;
 
     &:hover {
-        /* TODO different variable */
         background-color: var(--ag-row-hover-color);
     }
 

@@ -422,7 +422,7 @@
         text-overflow: ellipsis;
         border: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         color: var(--ag-secondary-foreground-color);
-        height: var(--ag-header-height) !important;
+        height: var(--ag-header-height);
         line-height: var(--ag-header-height);
         margin: 0;
         padding: 0 calc(var(--ag-grid-size) * 2);

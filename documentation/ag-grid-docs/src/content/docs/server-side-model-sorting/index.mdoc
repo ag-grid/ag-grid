@@ -64,6 +64,21 @@ The example below demonstrates client-side sorting using the SSRM. Note the foll
 
 {% gridExampleRunner title="Client Side Sorting" name="client-side-sorting" /%}
 
+## Sorting All Levels
+
+By default, the SSRM will attempt to reduce the number of requests it will make to your server when a column is sorted. It does this by attempting to preserve groups where the grid does not expect the rows to contain any data, for example see the following two scenarios:
+- If a sort is applied to a column with an aggregation, all of the cells in this column are expected to have data, and so everything will be refreshed
+- If a sort is applied to a column which is neither grouped, or aggregated, then the grid will only sort the leaf level groups. This is because it does not expect the group rows to have data for this column.
+
+In the SSRM it is possible to provide the grid with additional group row data which you may wish to be sorted. To disable this caching behaviour and instead always refresh from the server when a sort is attempted, enable the property `serverSideSortAllLevels: true`
+
+The example below demonstrates this property. Note the following:
+* `serverSideSortAllLevels` is set to true
+* The Random Number column uses a `valueGetter` to generate a random number for every node
+* When the `Random Number` column is sorted, it correctly re-fetches from the server (even though the order is incorrect!)
+
+{% gridExampleRunner title="Sort All Levels" name="sort-all-levels" /%}
+
 ## Next Up
 
 Continue to the next section to learn about [SSRM Filtering](./server-side-model-filtering/).

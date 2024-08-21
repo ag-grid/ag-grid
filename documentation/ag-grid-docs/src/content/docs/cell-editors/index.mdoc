@@ -218,6 +218,10 @@ colDef = {
 }
 ```
 
+{% note %}
+If a custom cell editor creates its own popup that is anchored outside of the editor component (e.g. like a third-party date picker), then the popup element needs to have the `'ag-custom-component-popup'` CSS class. This allows the grid to determine correctly when to stop editing.
+{% /note %}
+
 ## Keyboard Navigation
 
 In Custom Editors, you may wish to disable some of the Grids keyboard navigation. For example, if you are providing a simple text editor, you may wish the grid to do nothing when you press the right and left arrows (the default is the grid will move to the next / previous cell) as you may want the right and left arrows to move the cursor inside your editor. In other cell editors, you may wish the grid to behave as normal.

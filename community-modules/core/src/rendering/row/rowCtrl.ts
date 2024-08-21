@@ -80,7 +80,7 @@ export type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
-    private instanceId: RowCtrlInstanceId;
+    public readonly instanceId: RowCtrlInstanceId;
 
     private readonly rowNode: RowNode;
     private readonly beans: BeanCollection;
@@ -195,10 +195,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private isSticky(): boolean {
         return this.rowNode.sticky;
-    }
-
-    public getInstanceId(): RowCtrlInstanceId {
-        return this.instanceId;
     }
 
     private updateGui(containerType: RowContainerType, gui: RowGui | undefined) {
@@ -533,14 +529,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
 
         prev.list.forEach((prevCellCtrl) => {
-            const cellInResult = res.map[prevCellCtrl.getColumn().getInstanceId()] != null;
+            const colInstanceId = prevCellCtrl.getColumn().getInstanceId();
+            const cellInResult = res.map[colInstanceId] != null;
             if (cellInResult) {
                 return;
             }
 
             const keepCell = !this.isCellEligibleToBeRemoved(prevCellCtrl, pinned);
             if (keepCell) {
-                addCell(prevCellCtrl.getColumn().getInstanceId(), prevCellCtrl);
+                addCell(colInstanceId, prevCellCtrl);
                 return;
             }
 
@@ -866,10 +863,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         };
     }
 
+    private findFullWidthRowGui(target: HTMLElement): RowGui | undefined {
+        return this.allRowGuis.find((c) => c.element.contains(target));
+    }
+
     public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
-        const currentFullWidthComp = this.allRowGuis.find((c) =>
-            c.element.contains(keyboardEvent.target as HTMLElement)
-        );
+        const currentFullWidthComp = this.findFullWidthRowGui(keyboardEvent.target as HTMLElement);
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
 
@@ -882,7 +881,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const cellPosition: CellPosition = {
             rowIndex: node.rowIndex!,
             rowPinned: node.rowPinned,
-            column: (lastFocusedCell && lastFocusedCell.column) as AgColumn,
+            column: (lastFocusedCell?.column as AgColumn) ?? this.getColumnForFullWidth(currentFullWidthComp),
         };
 
         this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
@@ -1034,6 +1033,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowDoubleClicked', mouseEvent));
     }
 
+    private getColumnForFullWidth(fullWidthRowGui?: RowGui): AgColumn {
+        const { visibleColsService } = this.beans;
+        switch (fullWidthRowGui?.containerType) {
+            case 'center':
+                return visibleColsService.getCenterCols()[0];
+            case 'left':
+                return visibleColsService.getLeftCols()[0];
+            case 'right':
+                return visibleColsService.getRightCols()[0];
+            default:
+                return visibleColsService.getAllCols()[0];
+        }
+    }
+
     private onRowMouseDown(mouseEvent: MouseEvent) {
         this.lastMouseDownOnDragger = _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
 
@@ -1042,13 +1055,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const node = this.rowNode;
-        const presentedColsService = this.beans.visibleColsService;
 
         if (this.beans.rangeService) {
             this.beans.rangeService.removeAllCellRanges();
         }
 
-        const element = this.getFullWidthElement();
+        const fullWidthRowGui = this.findFullWidthRowGui(mouseEvent.target as HTMLElement);
+        const element = fullWidthRowGui?.element;
         const target = mouseEvent.target as HTMLElement;
 
         let forceBrowserFocus = true;
@@ -1059,7 +1072,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.beans.focusService.setFocusedCell({
             rowIndex: node.rowIndex!,
-            column: presentedColsService.getAllCols()[0],
+            column: this.getColumnForFullWidth(fullWidthRowGui),
             rowPinned: node.rowPinned,
             forceBrowserFocus,
         });
@@ -1306,13 +1319,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         key: string | null = null,
         sourceRenderedCell: CellCtrl | null = null,
         event: KeyboardEvent | null = null
-    ): void {
+    ): boolean {
         // don't do it if already editing
         if (this.editingRow) {
-            return;
+            return true;
         }
 
-        this.beans.rowEditService?.startEditing(this, key, sourceRenderedCell, event);
+        return this.beans.rowEditService?.startEditing(this, key, sourceRenderedCell, event) ?? true;
     }
 
     public getAllCellCtrls(): CellCtrl[] {

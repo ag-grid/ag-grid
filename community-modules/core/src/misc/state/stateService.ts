@@ -364,6 +364,7 @@ export class StateService extends BeanStub implements NamedBean {
             columnVisibility: columnVisibilityState,
             columnSizing: columnSizingState,
             columnOrder: columnOrderState,
+            partialColumnState,
         } = initialState;
         const columnStateMap: { [colId: string]: ColumnState } = {};
         const getColumnState = (colId: string) => {
@@ -375,12 +376,29 @@ export class StateService extends BeanStub implements NamedBean {
             columnStateMap[colId] = columnState;
             return columnState;
         };
+        // for partial state we don't want to override default
+        const defaultState: ColumnStateParams = partialColumnState
+            ? {}
+            : {
+                  sort: null,
+                  sortIndex: null,
+                  rowGroup: null,
+                  rowGroupIndex: null,
+                  aggFunc: null,
+                  pivot: null,
+                  pivotIndex: null,
+                  pinned: null,
+                  hide: null,
+                  flex: null,
+              };
         if (sortState) {
             sortState.sortModel.forEach(({ colId, sort }, sortIndex) => {
                 const columnState = getColumnState(colId);
                 columnState.sort = sort;
                 columnState.sortIndex = sortIndex;
             });
+            defaultState.sort = null;
+            defaultState.sortIndex = null;
         }
         if (groupState) {
             groupState.groupColIds.forEach((colId, rowGroupIndex) => {
@@ -388,11 +406,14 @@ export class StateService extends BeanStub implements NamedBean {
                 columnState.rowGroup = true;
                 columnState.rowGroupIndex = rowGroupIndex;
             });
+            defaultState.rowGroup = null;
+            defaultState.rowGroupIndex = null;
         }
         if (aggregationState) {
             aggregationState.aggregationModel.forEach(({ colId, aggFunc }) => {
                 getColumnState(colId).aggFunc = aggFunc;
             });
+            defaultState.aggFunc = null;
         }
         if (pivotState) {
             pivotState.pivotColIds.forEach((colId, pivotIndex) => {
@@ -404,6 +425,8 @@ export class StateService extends BeanStub implements NamedBean {
                 options: { pivotMode: pivotState.pivotMode },
                 source: 'gridInitializing' as any,
             });
+            defaultState.pivot = null;
+            defaultState.pivotIndex = null;
         }
         if (columnPinningState) {
             columnPinningState.leftColIds.forEach((colId) => {
@@ -412,11 +435,13 @@ export class StateService extends BeanStub implements NamedBean {
             columnPinningState.rightColIds.forEach((colId) => {
                 getColumnState(colId).pinned = 'right';
             });
+            defaultState.pinned = null;
         }
         if (columnVisibilityState) {
             columnVisibilityState.hiddenColIds.forEach((colId) => {
                 getColumnState(colId).hide = true;
             });
+            defaultState.hide = null;
         }
         if (columnSizingState) {
             columnSizingState.columnSizingModel.forEach(({ colId, flex, width }) => {
@@ -424,6 +449,7 @@ export class StateService extends BeanStub implements NamedBean {
                 columnState.flex = flex ?? null;
                 columnState.width = width;
             });
+            defaultState.flex = null;
         }
         const columns = columnOrderState?.orderedColIds;
         const applyOrder = !!columns?.length;
@@ -431,18 +457,6 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (columnStates.length) {
             this.columnStates = columnStates;
-            const defaultState: ColumnStateParams = {
-                sort: null,
-                sortIndex: null,
-                rowGroup: null,
-                rowGroupIndex: null,
-                aggFunc: null,
-                pivot: null,
-                pivotIndex: null,
-                pinned: null,
-                hide: null,
-                flex: null,
-            };
             this.columnApplyStateService.applyColumnState(
                 {
                     state: columnStates,

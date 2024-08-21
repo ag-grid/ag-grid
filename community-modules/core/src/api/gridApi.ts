@@ -473,6 +473,9 @@ export interface _SsrmInfiniteSharedGridApi {
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
      */
     getCacheBlockState(): any;
+
+    /** Returns `false` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll. */
+    isLastRowIndexKnown(): boolean | undefined;
 }
 
 export interface _ColumnGridApi<TData> {
@@ -897,9 +900,6 @@ export interface _InfiniteRowModelGridApi {
 
     /** The row count defines how many rows the grid allows scrolling to. */
     getInfiniteRowCount(): number | undefined;
-
-    /** Returns `true` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll. */
-    isLastRowIndexKnown(): boolean | undefined;
 }
 
 export interface _CsvExportGridApi {

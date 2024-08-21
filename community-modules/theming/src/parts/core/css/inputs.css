@@ -29,7 +29,6 @@
 }
 
 /* icon for search inputs */
-/* TODO Allow this to be configurable in Theming API */
 .ag-column-select-header-filter-wrapper,
 .ag-filter-toolpanel-search,
 .ag-mini-filter,
@@ -48,8 +47,8 @@
         content: '';
     }
 
-    input.ag-text-field-input,
-    input.ag-number-field-input {
+    & input.ag-text-field-input,
+    & input.ag-number-field-input {
         padding-left: calc(var(--ag-grid-size) * 1.5 + 12px);
     }
 }

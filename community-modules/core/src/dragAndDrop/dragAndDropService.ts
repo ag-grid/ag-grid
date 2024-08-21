@@ -2,6 +2,7 @@ import { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
 import type { IAggFunc } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
@@ -167,11 +168,13 @@ export type DragAndDropIcon =
 export class DragAndDropService extends BeanStub implements NamedBean {
     beanName = 'dragAndDropService' as const;
 
+    private ctrlsService: CtrlsService;
     private dragService: DragService;
     private mouseEventService: MouseEventService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
+        this.ctrlsService = beans.ctrlsService;
         this.dragService = beans.dragService;
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;
@@ -448,6 +451,14 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         return externalTargets.find((zone) => zone.getContainer() === params.getContainer()) || null;
     }
 
+    public isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridGui = gridBodyCon.getGui();
+        const { dropZoneTarget } = draggingEvent;
+
+        return gridGui.contains(dropZoneTarget);
+    }
+
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection | null {
         const clientX = this.eventLastTime && this.eventLastTime.clientX;
         const eClientX = event.clientX;
@@ -569,7 +580,6 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
         eText.innerHTML = _escapeString(dragItemName as string) || '';
 
-        this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
 
