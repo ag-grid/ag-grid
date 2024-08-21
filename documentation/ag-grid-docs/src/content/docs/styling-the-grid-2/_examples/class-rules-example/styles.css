@@ -1,0 +1,56 @@
+:root {
+    --secondary-color: rgba(21, 111, 159, 0.2);
+    --header-text-color: rgb(115, 121, 122);
+    --grid-padding: 10px;
+    --font-size: 12px;
+}
+
+@media (min-width: 768px) {
+    :root {
+        --grid-padding: 20px;
+        --font-size: 14px;
+    }
+}
+
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+    --ag-header-foreground-color: var(--header-text-color);
+    --ag-selected-row-background-color: var(--secondary-color);
+    --ag-cell-horizontal-padding: var(--grid-padding);
+    --ag-font-size: var(--font-size);
+}
+
+.ag-header-cell {
+    font-weight: 600;
+    font-family: 'IBM Plex Sans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+}
+
+.high-sales {
+    background-color: rgba(76, 175, 80, 0.2);
+}
+
+.low-sales {
+    background-color: rgba(244, 67, 54, 0.2);
+}
+
+.profit-high {
+    color: green;
+}
+
+.profit-low {
+    color: red;
+}
+
+.status-delivered {
+    color: green;
+}
+
+.status-pending {
+    color: orange;
+}
+
+.status-cancelled {
+    color: red;
+}

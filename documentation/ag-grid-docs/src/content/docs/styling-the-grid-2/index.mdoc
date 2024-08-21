@@ -1,0 +1,183 @@
+---
+title: "Styling the Grid"
+description: "Learn how to apply and customise Data Grid Themes. and then conditionally apply styles to cells and rows based on their value."
+---
+
+This tutorial shows you how to customise your {% getFrameworkCapitalised() %} Data Grid theme using [CSS variables](./global-style-customisation-variables/) as well as how to conditionally apply styles to cells and rows with [Cell Class Rules]() & [Row Class Rules]().
+
+## Overview
+
+In this tutorial you will learn how to:
+
+1. [Choose & Apply A Theme]()
+2. [Customise the Theme using CSS Variables]()
+3. [Conditionally Apply Styles to Cells & Rows]()
+
+Once complete, you'll have a unique {% getFrameworkCapitalised() %} Data Grid with custom headers and conditional styles applied to individual Rows and Cells based on their values.
+
+See this in action by editing the values in the Status and Sales Revenue columns to see their styles update in real-time:
+
+{% gridExampleRunner title="Complete Example" name="complete-example"  exampleHeight=550 /%}
+
+{% note %}
+This tutorial assumes a basic knowledge of working with AG Grid. If you haven't already, we recommend reading our [Quick Start](./getting-started/) and [Introductory Tutorials](./deep-dive/).
+{% /note %}
+
+## Choosing a Data Grid Theme
+
+Our {% getFrameworkCapitalised() %} Data Grid comes with four themes out of the box, each available in both light and dark modes:
+
+- [Quartz](https://www.ag-grid.com/example)
+- [Alpine](https://www.ag-grid.com/example?theme=alpine)
+- [Balham](https://www.ag-grid.com/example?theme=balham)
+- [Material](https://www.ag-grid.com/example?theme=material)
+
+Each of these themes can be customised by overriding their CSS variables, or by targeting specific elements with CSS rules.
+
+For this tutorial, we'll be using [Quartz](https://www.ag-grid.com/example) as our base theme. Open the example below in CodeSandbox or Plunkr to follow along with each step.
+
+{% gridExampleRunner title="Base Example" name="base-example"  exampleHeight=550 /%}
+
+{% note %}
+For more information on how to apply a theme, refer to our [Quick Start](./getting-started#themes/).
+{% /note %}
+
+## Customising Data Grid Themes with CSS Variables
+
+AG Grid exposes over 100 [CSS Variables](./global-style-customisation-variables/) that allow you to control the look and feel of your {% getFrameworkCapitalised() %} Data Grid Theme. These variables control things like colours, fonts, borders and spacing. 
+
+To override the default values, create a new `.css` file and add the `.ag-theme-quartz` class with the following CSS Variables:
+
+```css
+.ag-theme-quartz {
+    /* colour of the checkbox-unchecked icon that is shown in an unchecked checkbox */
+    --ag-checkbox-unchecked-color: rgb(81, 145, 193);
+    /* Default font size for text in the grid */
+    --ag-font-size: 12px;
+    /* The main control for affecting how tightly data and UI elements are packed together */
+    --ag-grid-size: 10px;
+    /* Colour of text and icons in the header */
+    --ag-header-foreground-color: rgb(115, 121, 122);
+    /* Background colour of selected rows in the grid and in dropdown menus */
+    --ag-selected-row-background-color: rgba(187, 139, 76, 0.45);
+}
+```
+
+Once you import the `.css` file into your project, the Data Grid will apply the new styles automatically. Test this by selecting a row to see the new highlight colour:
+
+{% gridExampleRunner title="CSS Variables Example" name="css-variables-example"  exampleHeight=550 /%}
+
+{% note %}
+For a full list of CSS Variables and their default values, refer to our [Global Style Customisation Variables](./global-style-customisation-variables/) documentation.
+{% /note %}
+
+### Styling Individual Elements
+
+For more fine-grained control, you can also write CSS rules targeting the class names of individual elements.
+
+In this example, we're targeting the `.ag-header-cell` class to change the font weight, family, and letter spacing of the headers:
+
+```css
+.ag-header-cell {
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'IBM Plex Sans', sans-serif;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+}
+```
+
+Add the code above to your `.css` file and you should see that the headers have been updated with the new styles:
+
+{% gridExampleRunner title="Individual Elements Example" name="individual-elements-example"  exampleHeight=550 /%}
+
+{% idea %}
+Tip: Inspect your Data Grid using your browser's developer tools to find the class names of the elements you want to style
+{% /idea %}
+
+## Conditionally Applying Styles to Data Grid Cells & Rows
+
+CSS Variables are an easy way to apply global styles to your Data Grid, however, if you want to apply styles conditionally based on the data in your {% getFrameworkCapitalised() %} Data Grid you can use Cell & Row Class Rules.
+
+Cell / Row Class Rules are simply functions that return a CSS class based on the value of the cell or row. In this example, we'll apply a background colour to Rows based on the value of the `profitMargin`, and change the text colour of Cells based on the Status value.
+
+The first thing we need to do is create two functions which return the relevant CSS class by querying the params provided by the grid:
+
+```js 
+const statusCellClassRules: CellClassRules = {
+    'status-delivered': (params: CellClassParams) => params.data.status === 'Delivered',
+    'status-pending': (params: CellClassParams) => params.data.status === 'Pending',
+    'status-cancelled': (params: CellClassParams) => params.data.status === 'Cancelled',
+};
+
+const salesRevenueRowClassRules: RowClassRules = {
+    'high-sales': (params: RowClassParams) => params.data.salesRevenue > 10000,
+    'low-sales': (params: RowClassParams) => params.data.salesRevenue < 1000,
+};
+```
+
+Next, we need to apply these functions to the Data Grid by adding the `cellClassRules` and `rowClassRules` properties to the `columnDefs` and `rowData` properties, respectively:
+
+***Cell Class Rules:***
+
+```js
+const colDefs: ColDef[] = [
+    {
+        field: 'status',
+        headerName: 'Status',
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['Delivered', 'Pending', 'Cancelled'],
+        },
+        // Add the function to the colDef.status.cellClassRules property
+        cellClassRules: statusCellClassRules, 
+    },
+    // ...
+];
+```
+
+***Row Class Rules:***
+
+```js
+const gridOptions: GridOptions<IRow> = {
+    // Add the function gridOptions.rowClassRules property
+    rowClassRules: salesRevenueRowClassRules, 
+    // ...
+};
+```
+
+Now when we run the grid, we should see styles applied dynamically based on the Status and Sales Revenue values. Try changing the values in the Status and Sales Revenue columns to see the styles update in real-time:
+
+{% gridExampleRunner title="Class Rules Example" name="class-rules-example"  exampleHeight=550 /%}
+
+{% note %}
+Whilst we recommend using Class Rules, CSS classes can also be applied directly to all Cells & Rows using the [Cell Class]() and [Row Class]() properties. 
+{% /note %}
+
+## Test Your knowledge
+
+1. Change the colour of selected checkboxes to `rgb(99, 15, 93)`.
+
+    *Hint: `--ag-checkbox-checked-color` is a variable within the `ag-quartz-theme`.*
+
+2. Apply a class that sets `font-weight: 500` for all cells where `profitMargin > **0.2**`
+
+    *Hint: Add a function to the `profitMargin.cellClassRules` property that returns CSS classes based on the value of the cell.* 
+
+Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
+
+{% gridExampleRunner title="Complete Example" name="complete-example"  exampleHeight=550 /%}
+
+## Summary
+
+Congratulations! You've completed the tutorial and styled your {% getFrameworkCapitalised() %} Data Grid. By now, you should be familiar with the different ways you can style your Data Grid:
+
+- **Themes**: 
+
+- **CSS Variables**: 
+
+- **Cell Class Rules**: 
+
+- **Row Class Rules**: 
+
+## Next Steps
