@@ -343,7 +343,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             const value = options.maintainColumnOrder;
             if (typeof value === 'boolean') {
                 return `As of v32.2.0, the use of boolean values with 'maintainColumnOrder' is deprecated.
-                    Please use 'primaryColumns', 'pivotResultColumns', 'primaryAndPivotResultColumns' or 'none' instead.`;
+                    Please use 'primaryColumns', 'pivotResultColumns', 'all' or 'none' instead.`;
             }
             return null;
         },

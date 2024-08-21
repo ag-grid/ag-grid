@@ -465,11 +465,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
           }
         | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
+     *
+     * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
      * @default 'pivotResultColumns'
      */
     @Input() public maintainColumnOrder:
         | boolean
-        | 'primaryAndPivotResultColumns'
+        | 'all'
         | 'primaryColumns'
         | 'pivotResultColumns'
         | 'none'

@@ -49,7 +49,7 @@ export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColum
 
     // boolean is deprecated setting, deprecated in v32.2.0
     if (maintainColumnOrder === true) {
-        maintainColumnOrder = 'primaryAndPivotResultColumns';
+        maintainColumnOrder = 'all';
     } else if (maintainColumnOrder === false) {
         maintainColumnOrder = 'pivotResultColumns';
     }
@@ -58,7 +58,7 @@ export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColum
         return false;
     }
 
-    if (maintainColumnOrder === 'primaryAndPivotResultColumns') {
+    if (maintainColumnOrder === 'all') {
         return true;
     }
 

@@ -1380,7 +1380,7 @@
     "typesToInclude": []
   },
   "maintainColumnOrder": {
-    "typeName": "boolean | 'primaryAndPivotResultColumns' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
+    "typeName": "boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
     "typesToInclude": []
   }
 }

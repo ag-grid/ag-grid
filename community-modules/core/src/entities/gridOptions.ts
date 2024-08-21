@@ -339,7 +339,7 @@ export interface GridOptions<TData = any> {
      * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
      * @default 'pivotResultColumns'
      */
-    maintainColumnOrder?: boolean | 'primaryAndPivotResultColumns' | 'primaryColumns' | 'pivotResultColumns' | 'none';
+    maintainColumnOrder?: boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none';
     /**
      * If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false

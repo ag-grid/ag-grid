@@ -149,15 +149,15 @@ any columns moved by the user will have their position reset.
 
 If you instead want to prioritise the order of the columns as they appear in the grid, set the grid property `maintainColumnOrder`.
 
-This can be set to `'primaryAndPivotResultColumns'`, `'primaryColumns'`, `'pivotResultColumns'` or `'none'`.
+This can be set to `'all'`, `'primaryColumns'`, `'pivotResultColumns'` or `'none'`.
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    maintainColumnOrder: 'primaryAndPivotResultColumns',
+    maintainColumnOrder: 'all',
 }
 ```
 
 In the example below, note the following:
-- The grid is configured with `maintainColumnOrder='primaryAndPivotResultColumns'`.
+- The grid is configured with `maintainColumnOrder='all'`.
 - The columns can be reordered by dragging them.
 - Two buttons exist, **Column Set A** and **Column Set B**. Clicking these buttons will swap between two column definitions, each with a different order of columns.
 - Swapping between the column sets does not reset or change the column order, instead preserving the grid state.
