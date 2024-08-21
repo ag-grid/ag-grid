@@ -414,7 +414,13 @@ export class ColumnModel extends BeanStub implements NamedBean {
         function sortControlsColsFirst(a: AgColumn, b: AgColumn): number {
             const isAControl = isColumnControlsCol(a);
             const isBControl = isColumnControlsCol(b);
-            return isAControl && isBControl ? 0 : isAControl ? -1 : 1;
+            if (isAControl && !isBControl) {
+                return -1;
+            }
+            if (!isAControl && isBControl) {
+                return 1;
+            }
+            return 0;
         }
         this.lastOrder?.sort(sortControlsColsFirst);
         this.lastPivotOrder?.sort(sortControlsColsFirst);
