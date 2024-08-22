@@ -280,11 +280,13 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
      * @default false
+     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
      */
     suppressCopyRowsToClipboard?: boolean;
     /**
      * Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
      * @default false
+     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
      */
     suppressCopySingleCellRanges?: boolean;
     /**
@@ -2530,6 +2532,10 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
      */
     isRowSelectable?: IsRowSelectable<TData>;
+    /**
+     * When enabled and a row is selected, the copy action should copy the entire row, rather than just the focused cell
+     */
+    copySelectedRows?: boolean;
 }
 
 /**

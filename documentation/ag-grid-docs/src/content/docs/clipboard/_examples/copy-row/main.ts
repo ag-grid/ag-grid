@@ -32,6 +32,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,
+        copySelectedRows: false,
     },
 };
 
@@ -44,3 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
+
+function toggleCopyRows() {
+    gridApi.setGridOption('selection', {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+        copySelectedRows: document.querySelector<HTMLInputElement>('#toggle-copy-rows')?.checked ?? false,
+    });
+}
