@@ -760,25 +760,38 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldCopyCells(selection?: SelectionOptions) {
-        const suppressCopySingleCellRanges = this.gos.get('suppressCopySingleCellRanges');
+        if (!this.rangeService) {
+            return false;
+        }
 
-        const hasSelection = this.rangeService && !this.rangeService.isEmpty();
-        const shouldSkip = this.rangeService && !this.rangeService.isMoreThanOneCell() && suppressCopySingleCellRanges;
+        const suppressCopySingleCellRanges = this.gos.get('suppressCopySingleCellRanges');
+        const hasSelection = !this.rangeService.isEmpty();
+        const shouldSkip = !this.rangeService.isMoreThanOneCell() && suppressCopySingleCellRanges;
+
         if (selection) {
+            // If `selection` is defined, user is using the new selection API, so we only copy
+            // cells if we're in cell selection mode.
             return selection.mode === 'cell' && hasSelection;
         } else {
+            // If user is using the deprecated API, we preserve the previous behaviour
             return hasSelection && !shouldSkip;
         }
     }
 
     private shouldCopyRows(selection?: SelectionOptions) {
+        if (this.selectionService.isEmpty()) {
+            return false;
+        }
+
         const suppressCopyRowsToClipboard = this.gos.get('suppressCopyRowsToClipboard');
 
-        const hasSelection = !this.selectionService.isEmpty();
         if (selection) {
-            return selection.mode !== 'cell' && (selection.copySelectedRows ?? true) && hasSelection;
+            // If `selection` is defined, user is using the new selection API, so we determine
+            // behaviour based on `copySelectedRows`
+            return selection.mode !== 'cell' && (selection.copySelectedRows ?? true);
         } else {
-            return hasSelection && !suppressCopyRowsToClipboard;
+            // If user is using the deprecated API, we preserve the previous behaviour
+            return !suppressCopyRowsToClipboard;
         }
     }
 
