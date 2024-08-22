@@ -24,7 +24,7 @@ export interface CellSelectionCellState {
 }
 
 /** @deprecated v32.2 Use `CellSelectionCellState` instead. */
-export type RangeSelectionCellState = CellSelectionCellState;
+export interface RangeSelectionCellState extends CellSelectionCellState {}
 
 export interface CellSelectionState {
     cellRanges: CellSelectionCellState[];
@@ -130,6 +130,8 @@ export interface RowGroupExpansionState {
 }
 
 export interface GridState {
+    /** Grid version number */
+    version?: string;
     /** Includes aggregation functions (column state) */
     aggregation?: AggregationState;
     /** Includes opened groups */

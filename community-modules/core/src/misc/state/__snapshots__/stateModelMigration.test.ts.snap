@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Grid State Migration range-selection-state.json: should upgrade version undefined 1`] = `
+{
+  "cellSelection": {
+    "cellRanges": [],
+  },
+  "sort": {
+    "sortModel": [],
+  },
+  "version": "32.1.0",
+}
+`;
