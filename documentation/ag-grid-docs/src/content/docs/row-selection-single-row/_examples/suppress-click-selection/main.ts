@@ -48,6 +48,6 @@ function onSelectSupressClickSelection() {
 
     gridApi.setGridOption('selection', {
         mode: 'singleRow',
-        suppressClickSelection: value === 'true' ? true : (value as any),
+        suppressClickSelection: value === 'true' ? true : value === 'false' ? false : (value as any),
     });
 }

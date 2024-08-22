@@ -86,34 +86,24 @@ Note that we have enabled `suppressClickSelection` in this example, to prevent u
 
 ## Prevent Click Selection & Deselection
 
-The `selection.suppressClickSelection` configuration setting controls the suppression of the default selection behaviour when clicking.
+The `selection.suppressClickSelection` property configures whether a rows selection state will be impacted when the row is clicked, or when {% kbd "␣ Space" /%} is pressed while the row is focused.
 
 {% interfaceDocumentation interfaceName="SingleRowSelectionOptions" names=["suppressClickSelection"] config={"description": ""}/%}
 
-In some cases, such as when checkbox selection is enabled, it can make sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked. 
-This can be achieved by setting `suppressClickSelection` to `true` or `'suppressClick'`.
+In some scenarios, such as when using [Checkbox Selection](#checkbox-selection), it can be preferable to disable other methods of selection, 
+such as with the keyboard (via {% kbd "␣ Space" /%}), selection via row click, and [Deselection via Row Click](#deselecting-a-row). 
+Both selection and deselection can be disabled by setting `suppressClickSelection` to `true`, otherwise they may be disabled separately using the values `'suppressSelection'` and `'suppressDeselection'`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     selection: { 
         mode: 'singleRow',
-        suppressClickSelection: 'suppressClick',
+        suppressClickSelection: true,
     }
 }
 ```
 
-It may also be necessary to prevent users from deselecting rows via {% kbd "^ Ctrl" /%}+click. This can be achieved by setting `suppressClickSelection` to `true` or `'suppressDeselection'`.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    selection: { 
-        mode: 'singleRow',
-        suppressClickSelection: 'suppressDeselection',
-    }
-}
-```
-
-All of the configuration states for this option can be explored in the example below. Use the select element to switch between modes.
+The example below demonstrates the three possible configurations for this property, as well as the behaviour when it is disabled. Use the select element to switch between modes.
 
 {% gridExampleRunner title="Disable Click Selection" name="suppress-click-selection" /%}
 

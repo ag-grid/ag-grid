@@ -2499,9 +2499,7 @@ export type RowSelectionOptions<TData = any, TValue = any> =
 
 interface CommonRowSelectionOptions<TData = any, TValue = any> {
     /**
-     * If `true` or `'supressSelection'`, rows will not be selected when clicked.
-     *
-     * If `true` or `'suppressDeselection'`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
+     * Modifies the selection behaviour when clicking a row, or pressing `Space` while focusing a row.
      * @default false
      */
     suppressClickSelection?: boolean | 'suppressDeselection' | 'suppressSelection';
