@@ -10,7 +10,7 @@ import HeroSection from './sections/hero/HeroSection';
 import Showcase from './sections/showcase/Showcase';
 import Divider from './utils/Divider';
 
-export const ReactLandingPage = () => {
+export const ReactLandingPage = ({ versionsData }) => {
     let isOdd = false;
     const getIsOdd = () => {
         isOdd = !isOdd;
@@ -20,7 +20,7 @@ export const ReactLandingPage = () => {
     return (
         <div className={styles.container}>
             <div className={isOdd ? styles.sectionOdd : styles.sectionContent}>
-                <HeroSection />
+                <HeroSection versionsData={versionsData} />
             </div>
             <Divider odd={getIsOdd()} />
             <div className={isOdd ? styles.sectionOdd : styles.sectionOdd}>

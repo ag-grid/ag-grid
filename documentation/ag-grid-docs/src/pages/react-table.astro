@@ -1,9 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getEntry } from 'astro:content';
 
 import { ReactLandingPage } from '@components/framework-landing-pages/react/ReactLandingPage';
+const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
 ---
 
 <Layout title={'AG Grid React Table'} description={''} showDocsNav={false} showSearchBar={true}>
-    <ReactLandingPage client:only="react" />
+    <ReactLandingPage client:only="react" versionsData={versionsData} />
 </Layout>

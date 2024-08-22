@@ -9,7 +9,7 @@ type Props = {
     // Define your component props here
 };
 
-const MyComponent: React.FC<Props> = () => {
+const MyComponent: React.FC<Props> = ({ versionsData }) => {
     const handleClick = (path: string) => {
         window.open(path, '_blank');
     };
@@ -28,9 +28,9 @@ const MyComponent: React.FC<Props> = () => {
         <div className={styles.container}>
             <div className={styles.headingContainer}>
                 <div onClick={() => handleClick('/whats-new')} className={styles.versionTagContainer}>
-                    <span className={styles.version}>AG Grid v32.0.1</span>
+                    <span className={styles.version}>AG Grid v{versionsData[0].version}</span>
                     <span className={styles.featureHighlight}>
-                        New SSRM, Column Group & Excel Export Features
+                        {versionsData[0].landingPageHighlight}
                         <Icon svgClasses={styles.featureArrow} name="arrowRight" />
                     </span>
                 </div>
