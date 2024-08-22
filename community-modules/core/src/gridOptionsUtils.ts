@@ -32,7 +32,7 @@ export function _isDomLayout(gos: GridOptionsService, domLayout: DomLayoutType) 
 }
 
 export function _isRowSelection(gos: GridOptionsService) {
-    const rowSelection = gos.get('rowSelection');
+    const rowSelection = gos.getSelectionOption('rowSelection');
     return rowSelection === 'single' || rowSelection === 'multiple';
 }
 

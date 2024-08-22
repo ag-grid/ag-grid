@@ -39,3 +39,12 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
 });
+
+function onSelectSupressClickSelection() {
+    const value = document.querySelector<HTMLSelectElement>('#select-suppress')?.value;
+
+    gridApi.setGridOption('selection', {
+        mode: 'singleRow',
+        suppressClickSelection: value === 'true' ? true : value === 'false' ? false : (value as any),
+    });
+}

@@ -378,9 +378,17 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                     ({ handle }) => typeof handle !== 'boolean' && handle?.mode === 'fill' && handle?.setFillValue
                 );
             case 'suppressRowClickSelection':
-                return rowOptionWithFallback(option, (opts) => opts.suppressClickSelection);
+                return rowOptionWithFallback(
+                    option,
+                    (opts) =>
+                        opts.suppressClickSelection === true || opts.suppressClickSelection === 'suppressSelection'
+                );
             case 'suppressRowDeselection':
-                return rowOptionWithFallback(option, (opts) => opts.suppressDeselection);
+                return rowOptionWithFallback(
+                    option,
+                    (opts) =>
+                        opts.suppressClickSelection === true || opts.suppressClickSelection === 'suppressDeselection'
+                );
             case 'isRowSelectable':
                 return rowOptionWithFallback(option, (opts) => opts.isRowSelectable);
             case 'rowSelection':

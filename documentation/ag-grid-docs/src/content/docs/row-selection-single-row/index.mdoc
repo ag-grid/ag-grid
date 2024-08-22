@@ -21,6 +21,14 @@ The following example illustrates a basic single row selection configuration.
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
 
+### Deselecting a Row
+When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
+When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
+This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
+Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
+
+{% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
+
 ## Checkbox Selection
 
 Note that in the example above, by default, the grid will display a selection checkbox for each row, which can be used to select and deselect that row and display its selection state. 
@@ -76,47 +84,28 @@ const gridOptions = {
 
 Note that we have enabled `suppressClickSelection` in this example, to prevent users from affecting selection with row clicks.
 
-## Disabling Click Selection
+## Prevent Click Selection & Deselection
 
-When checkbox selection is enabled, in many cases it makes sense to only permit rows to be selected when its checkbox is clicked, rather than when the row itself is clicked.
+The `selection.suppressClickSelection` property configures whether a rows selection state will be impacted when the row is clicked, or when {% kbd "␣ Space" /%} is pressed while the row is focused.
 
-This behaviour is enabled in the example below using the `selection.suppressClickSelection` flag.
+{% interfaceDocumentation interfaceName="SingleRowSelectionOptions" names=["suppressClickSelection"] config={"description": ""}/%}
+
+In some scenarios, such as when using [Checkbox Selection](#checkbox-selection), it can be preferable to disable other methods of selection, 
+such as with the keyboard (via {% kbd "␣ Space" /%}), selection via row click, and [Deselection via Row Click](#deselecting-a-row). 
+Both selection and deselection can be disabled by setting `suppressClickSelection` to `true`, otherwise they may be disabled separately using the values `'suppressSelection'` and `'suppressDeselection'`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     selection: { 
         mode: 'singleRow',
-        suppressClickSelection: true
+        suppressClickSelection: true,
     }
 }
 ```
+
+The example below demonstrates the three possible configurations for this property, as well as the behaviour when it is disabled. Use the select element to switch between modes.
 
 {% gridExampleRunner title="Disable Click Selection" name="suppress-click-selection" /%}
-
-## Deselecting a Row
-When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
-When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
-This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
-Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
-
-{% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
-
-## Prevent Row Deselection
-
-In some circumstances you may want to prevent users from deselecting a selected row. This can be done using the `selection.suppressDeselection` flag.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    selection: { 
-        mode: 'singleRow',
-        suppressDeselection: true,
-    }
-}
-```
-
-Observe that in the example below, it is not possible to deselect a row. Only by selecting another row will the currently selected row be deselected. That is, there is always one selected row.
-
-{% gridExampleRunner title="Supress Deselection" name="suppress-deselection" /%}
 
 {% note %}
 Note that deselection is still possible when checkboxes are enabled by clicking a selected checkbox.
