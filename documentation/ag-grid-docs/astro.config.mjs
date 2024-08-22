@@ -109,6 +109,11 @@ const {
      * Charts sitemap index to merge
      */
     CHARTS_SITEMAP_INDEX_URL = 'https://ag-grid.com/charts/sitemap-index.xml',
+
+    /**
+     * Charts robots.txt disallow json url to merge
+     */
+    CHARTS_ROBOTS_DISALLOW_JSON_URL = 'https://ag-grid.com/charts/robots-disallow.json',
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -127,6 +132,7 @@ console.log(
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,
             CHARTS_SITEMAP_INDEX_URL,
+            CHARTS_ROBOTS_DISALLOW_JSON_URL,
         },
         null,
         2

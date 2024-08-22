@@ -107,6 +107,11 @@ export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).
  */
 export const FILES_BASE_PATH = '/files';
 
+/**
+ * Charts robots disallow json url for merging with grid
+ */
+export const CHARTS_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.CHARTS_ROBOTS_DISALLOW_JSON_URL;
+
 /*
  * Charts URL
  */
