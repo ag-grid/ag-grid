@@ -1,0 +1,108 @@
+---
+title: "Theming API"
+description: "The Theming API provides control over the styling of the grid and its components"
+---
+
+Control the look and feel of the grid
+
+### Simple example
+
+Every grid must have a theme. You can import one of the built-in themes and provide it as a grid option:
+
+```
+import { themeQuartz } from '@ag-grid-community/theming';
+
+{% if isFramework("js") %}
+const gridOptions = {
+    theme: themeQuartz,
+    ...
+}
+{% /if %}
+{% if isFramework("react") %}
+<AgGridReact
+    theme={theme}
+    ...
+/>
+{% /if %}
+{% if isFramework("vue") %}
+// TODO how to import in vue?
+{% /if %}
+{% if isFramework("angular") %}
+// TODO how to import in angular?
+{% /if %}
+```
+
+
+{% gridExampleRunner title="Theming API" name="basic" /%}
+
+### Combining parts of multiple themes
+
+To change the color scheme or mix and match different elements of built-in themes, import parts and call `theme.usePart(...)`:
+
+```
+import { themeQuartz, iconSetMaterial } from '@ag-grid-community/theming';
+
+// themes are immutable, usePart returns a new theme
+const quartzWithMaterialIcons = themeQuartz.usePart(iconSetMaterial);
+```
+
+{% gridExampleRunner title="Theming API" name="configuring-theme-parts" /%}
+
+### Setting parameters using CSS custom properties
+
+Themes have many parameters that can be changed using CSS custom properties (variables).
+
+To set a custom property from JavaScript, use `applyCustomProperties(params, el)`:
+
+```js
+import { applyCustomProperties } from '@ag-grid-community/theming';
+
+// change the accent color for all grids on the page
+applyCustomProperties({accentColor: 'red'}, document.body);
+```
+
+Under the hood, this sets a CSS custom property `--ag-accent-color` on the element.
+
+It's also possible to set the custom property directly using CSS, although this will not get the same validation as the JavaScript API:
+
+```css
+body {
+    /* CSS property names have the --ag- prefix and are kebab-case */
+    --ag-accent-color: red;
+}
+```
+
+CSS custom properties are inherited by all child elements, and so applying the custom properties to the body will affect every grid on the page. If you have multiple grids on the page and want to change params for a specific grid, apply the custom properties to the grid's parent element.
+
+If you need more control over how custom properties are set, the `getCustomProperties` function returns an array of 2-element [name, value] tuples.
+
+
+```js
+import { setCustomProperties } from '@ag-grid-community/theming';
+
+const properties = setCustomProperties({accentColor: 'red', gridSize: 4});
+// properties is now [['--ag-accent-color', 'red'], ['--ag-grid-size', '4px']]
+```
+
+### Adjusting the default values for theme parameters
+
+The `theme.overrideParams` method generates a new theme with different default values for its params.
+
+```js
+import { themeQuartz } from '@ag-grid-community/theming';
+
+const redQuartz = themeQuartz.overrideParams({ accentColor: 'red' });
+```
+
+It is recommended that this is done once when your application starts up and the generated theme saved in a variable for later use.
+
+Creating a new theme is slightly slower than setting custom properties, so it is recommended to use custom properties when you are making changes rapidly, e.g. animating a color change or changing appearance in response to user interaction.
+
+### Multiple grids
+
+Each grid on the page can have its own theme:
+
+(NOTE: the checkboxes are a temporary testing feature - a theme's CSS should be removed from the document head when no grids are using the theme)
+
+{% gridExampleRunner title="Theming API" name="multiple-grids" /%}
+
