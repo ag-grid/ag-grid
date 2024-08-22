@@ -1,124 +1,17 @@
 import { _errorOnce } from '@ag-grid-community/core';
 
-import { ThemeUnit } from './ThemeUnit';
-import { type CoreParams } from './parts/core/core-part';
+import type { Theme } from './Theme';
+import { type CoreParams } from './styles/core/core-css';
+import { type themeQuartz } from './styles/parts/theme/themes';
 import { clamp, memoize, paramToVariableExpression } from './theme-utils';
 
 export type CssFragment = string | (() => string);
 
+export type InferParams<T> = T extends Theme<infer P> ? P : never;
+
+export type AllParams = InferParams<typeof themeQuartz>;
+
 export type Feature = 'colorScheme' | 'iconSet' | 'checkboxStyle' | 'inputStyle' | 'tabStyle';
-
-export type Part<TParams = unknown> = {
-    readonly feature: string | undefined;
-    readonly variant: string;
-    readonly id: string;
-    readonly dependencies: readonly Part<unknown>[];
-    readonly defaults: Partial<TParams>;
-    readonly css: ReadonlyArray<CssFragment>;
-
-    /**
-     * Add one or more dependent part. The part will replace any existing part
-     * of the same feature
-     */
-    usePart<TPartParams>(part: Part<TPartParams>): Part<TParams & TPartParams>;
-
-    /**
-     * Provide new values for theme params. You may only provide values for
-     * params provided by the part's dependencies.
-     */
-    overrideParams(defaults: Partial<TParams>): Part<TParams>;
-
-    /**
-     * Provide a new fragment of CSS source code.
-     */
-    addCss(css: CssFragment): Part<TParams>;
-
-    /**
-     * Create a new part variant copying data from this part
-     */
-    createVariant(variant: string): Part<TParams>;
-
-    /**
-     * Create a new theme part with additional params. Unlike `overrideParams`,
-     * this can be used to declare that this param adds support for new params
-     * not already in the parts dependencies
-     */
-    addParams<TAdditionalParams>(defaults: TAdditionalParams): Part<TParams & TAdditionalParams>;
-};
-
-export type CreatePartArgs = {
-    feature?: Feature;
-    variant: string;
-};
-
-export const createPart = ({ feature, variant }: CreatePartArgs): Part => new ThemeUnit(feature, variant);
-
-export type Theme<TParams = unknown> = {
-    readonly id: string;
-    readonly dependencies: readonly Part<unknown>[];
-    readonly defaults: Partial<TParams>;
-    readonly css: ReadonlyArray<CssFragment>;
-
-    /**
-     * Add one or more dependent part. The part will replace any existing part
-     * of the same feature
-     */
-    usePart<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams>;
-
-    /**
-     * Provide new values for theme params. You may only provide values for
-     * params provided by the part's dependencies.
-     */
-    overrideParams(defaults: Partial<TParams>): Theme<TParams>;
-
-    /**
-     * Provide a new fragment of CSS source code.
-     */
-    addCss(css: CssFragment): Theme<TParams>;
-
-    /**
-     * Inject CSS for this theme into the current page. A promise is returned
-     * that resolves when all inserted stylesheets have loaded.
-     *
-     * Only one theme can be installed at a time. Calling this method will
-     * replace any previously installed theme.
-     */
-    install(args?: ThemeInstallArgs): Promise<void>;
-
-    /**
-     * Return the complete rendered CSS for this theme. This can be used at
-     * build time to generate CSS if your application requires that CSS be
-     * served from a static file.
-     */
-    getCSS(): string;
-
-    /**
-     * Return the params used to render the theme, taking into account default
-     * values and any overrides provided
-     */
-    getParams(): Record<string, unknown>;
-};
-
-export type ThemeInstallArgs = {
-    /**
-     * Whether to load supported fonts from the Google Fonts server.
-     *
-     * - `true` -> load fonts automatically if your theme uses them
-     * - `false` -> do not load fonts, you must either load them from Google Fonts
-     *   yourself or download them and serve them from your app
-     */
-    loadThemeGoogleFonts?: boolean;
-
-    /**
-     * The container that the grid is rendered within. If the grid is rendered
-     * inside a shadow DOM root, you must pass the grid's parent element to
-     * ensure that the styles are loaded into the shadow DOM rather than the
-     * containing document.
-     */
-    container?: HTMLElement;
-};
-
-export const createTheme = (name: string): Theme<CoreParams> => new ThemeUnit('theme', name, [], {}, []);
 
 export type ParamType =
     | 'color'

@@ -12,9 +12,6 @@ export const rerenderTheme = (store: Store) => {
     store.set(changeDetection, (n) => n + 1);
 };
 
-const previewGridContainer = atom<HTMLDivElement | null>(null);
-export const useSetPreviewGridContainer = () => useSetAtom(previewGridContainer);
-
 export const renderedThemeAtom = atom((get): Theme => {
     get(changeDetection);
     const enabledAdvancedParams = get(enabledAdvancedParamsAtom);
@@ -28,14 +25,6 @@ export const renderedThemeAtom = atom((get): Theme => {
     const iconSet = get(FeatureModel.for('iconSet').selectedPartAtom).part;
 
     const theme = themeQuartz.usePart(iconSet).overrideParams(params);
-
-    const container = get(previewGridContainer);
-    if (container) {
-        theme.install({ container, loadThemeGoogleFonts: true });
-    }
-
-    // also install the theme at the top level, as it is required for preset previews
-    theme.install({ loadThemeGoogleFonts: true });
 
     return theme as Theme;
 });
