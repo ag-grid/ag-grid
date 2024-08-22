@@ -744,6 +744,8 @@ export {
 export { DataTypeService } from './columns/dataTypeService';
 export {
     GridOptions,
+    GridTheme,
+    GridThemeUseArgs,
     IsApplyServerSideTransaction,
     GetContextMenuItems,
     GetDataPath,

@@ -182,6 +182,7 @@ export class PropertyKeys {
         'popupParent',
         'statusBar',
         'sideBar',
+        'theme',
         'chartThemeOverrides',
         'customChartThemes',
         'chartToolPanelsDef',
@@ -391,7 +392,7 @@ export class PropertyKeys {
     ];
 
     // If property does not fit above, i.e union that should not be coerced.
-    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow'];
+    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow', 'loadThemeGoogleFonts'];
 
     public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [
         'doesExternalFilterPass',
