@@ -200,8 +200,16 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     /** Number of children and grand children. */
     public allChildrenCount: number | null;
 
-    /** Children mapped by the pivot columns. */
-    public childrenMapped: { [key: string]: any } | null = null;
+    /**
+     * Children mapped by the pivot columns.
+     *
+     * TODO: this field is currently used only by the GroupStrategy.
+     * TreeStrategy does not use it, creating a new object for every row
+     * consumes memory unnecessarily if not using grouping.
+     * Setting it to null however breaks transactional updates in group,
+     * so this requires a deeper investigation when we rework on the GroupStrategy.
+     */
+    public childrenMapped: { [key: string]: any } | null = {};
 
     /** The TreeNode associated to this row. Used only with tree data. */
     public readonly treeNode: ITreeNode | null = null;
