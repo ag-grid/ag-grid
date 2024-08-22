@@ -3,9 +3,9 @@ import type { GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { DomMutationWaiter } from '../../test-utils';
-import { TreeDiagram } from './tree-test-utils';
-import type { TreeDiagramOptions } from './tree-test-utils';
+import { cachedJSONObjects } from '../../../test-utils';
+import { TreeDiagram } from '../tree-test-utils';
+import type { TreeDiagramOptions } from '../tree-test-utils';
 
 describe('ag-grid tree filter', () => {
     let consoleErrorSpy: jest.SpyInstance;
@@ -41,8 +41,6 @@ describe('ag-grid tree filter', () => {
             { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
         ];
 
-        const domMutationWaiter = new DomMutationWaiter({ element: 'myGrid' });
-
         const api = createMyGrid({
             columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
             autoGroupColumnDef: { headerName: 'Hierarchy' },
@@ -61,8 +59,6 @@ describe('ag-grid tree filter', () => {
             checkDom: 'myGrid',
         };
 
-        await domMutationWaiter.wait();
-
         new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP name:"John Von Neumann"
@@ -73,8 +69,6 @@ describe('ag-grid tree filter', () => {
         `);
 
         api.setFilterModel({ name: { type: 'equals', filter: 'A. Church' } });
-
-        await domMutationWaiter.wait();
 
         new TreeDiagram(api, 'filter 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
@@ -102,8 +96,6 @@ describe('ag-grid tree filter', () => {
 
         api.setGridOption('rowData', rowData);
 
-        await domMutationWaiter.wait();
-
         new TreeDiagram(api, 'filter 2', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP name:"John Von Neumann"
@@ -114,24 +106,22 @@ describe('ag-grid tree filter', () => {
         api.setGridOption('rowData', [
             { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
             { id: '2', name: 'Grace Hopper', orgHierarchy: ['A', 'B'] },
-            { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C'] },
+            { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C', 'J'] },
             { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
-            { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
+            { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E', 'W'] },
+            { id: '6', name: 'unknown', orgHierarchy: ['A', 'C', 'K'] },
         ]);
-
-        await domMutationWaiter.wait();
 
         new TreeDiagram(api, 'filter 2 rowData 2', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · └─┬ B GROUP name:"Grace Hopper"
             · · ├── D LEAF name:"Donald Knuth"
-            · · └── E LEAF name:"Grace Hopper"
+            · · └─┬ E filler
+            · · · └── W LEAF name:"Grace Hopper"
         `);
 
         api.setFilterModel({ name: { type: 'equals', filter: 'Donald Knuth' } });
-
-        await domMutationWaiter.wait();
 
         new TreeDiagram(api, 'filter 3 rowData 2', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
@@ -142,8 +132,6 @@ describe('ag-grid tree filter', () => {
 
         api.setGridOption('rowData', rowData);
 
-        await domMutationWaiter.wait();
-
         new TreeDiagram(api, 'filter 3', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP name:"John Von Neumann"
@@ -152,8 +140,6 @@ describe('ag-grid tree filter', () => {
         `);
 
         api.setFilterModel({ name: { type: 'equals', filter: 'Kurt Gödel' } });
-
-        await domMutationWaiter.wait();
 
         new TreeDiagram(api, 'filter 4', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
@@ -166,8 +152,6 @@ describe('ag-grid tree filter', () => {
             { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
             { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
         ]);
-
-        await domMutationWaiter.wait();
 
         new TreeDiagram(api, 'filter 4 rowData 3', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
@@ -182,8 +166,6 @@ describe('ag-grid tree filter', () => {
 
         api.setGridOption('rowData', rowData);
 
-        await domMutationWaiter.wait();
-
         new TreeDiagram(api, 'no filter', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP name:"John Von Neumann"
@@ -192,21 +174,18 @@ describe('ag-grid tree filter', () => {
             · │ └── E LEAF name:"Grace Hopper"
             · └── C LEAF name:"A. Church"
         `);
-
-        domMutationWaiter.stop();
     });
 
     test('tree with sort', async () => {
-        const rowData = [
+        const rowData = cachedJSONObjects.array([
             { id: '1', value: 12, x: 1, orgHierarchy: ['A'] },
             { id: '2', value: 17, x: 1, orgHierarchy: ['A', 'B'] },
             { id: '3', value: 15, x: 1, orgHierarchy: ['A', 'C'] },
             { id: '4', value: 13, x: 1, orgHierarchy: ['A', 'B', 'D'] },
             { id: '5', value: 11, x: 0, orgHierarchy: ['A', 'B', 'E'] },
-            { id: '6', value: 10, x: 0, orgHierarchy: ['A', 'F'] },
-        ];
-
-        const domMutationWaiter = new DomMutationWaiter({ element: 'myGrid' });
+            { id: '6', value: 10, x: 0, orgHierarchy: ['A', 'F', 'G'] },
+            { id: '7', value: 16, x: 1, orgHierarchy: ['A', 'F', 'H'] },
+        ]);
 
         const api = createMyGrid({
             columnDefs: [
@@ -229,8 +208,6 @@ describe('ag-grid tree filter', () => {
             checkDom: 'myGrid',
         };
 
-        await domMutationWaiter.wait();
-
         new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP value:12 x:1
@@ -238,30 +215,69 @@ describe('ag-grid tree filter', () => {
             · │ ├── D LEAF value:13 x:1
             · │ └── E LEAF value:11 x:0
             · ├── C LEAF value:15 x:1
-            · └── F LEAF value:10 x:0
+            · └─┬ F filler
+            · · ├── G LEAF value:10 x:0
+            · · └── H LEAF value:16 x:1
         `);
 
         api.applyColumnState({
             state: [{ colId: 'value', sort: 'asc' }],
         });
 
-        await domMutationWaiter.wait();
-
         new TreeDiagram(api, 'sort value asc', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP value:12 x:1
-            · ├── F LEAF value:10 x:0
+            · ├─┬ F filler
+            · │ ├── G LEAF value:10 x:0
+            · │ └── H LEAF value:16 x:1
             · ├── C LEAF value:15 x:1
             · └─┬ B GROUP value:17 x:1
             · · ├── E LEAF value:11 x:0
             · · └── D LEAF value:13 x:1
         `);
 
+        api.setGridOption(
+            'rowData',
+            cachedJSONObjects.array([
+                { id: '7', value: 16, x: 1, orgHierarchy: ['A', 'F', 'H'] },
+                { id: '1', value: 12, x: 1, orgHierarchy: ['A'] },
+                { id: '6', value: 10, x: 0, orgHierarchy: ['A', 'F', 'G'] },
+                { id: '3', value: 15, x: 1, orgHierarchy: ['A', 'C'] },
+                { id: '5', value: 11, x: 0, orgHierarchy: ['A', 'B', 'e'] },
+                { id: '4', value: 13, x: 1, orgHierarchy: ['A', 'B', 'd'] },
+                { id: '2', value: 17, x: 1, orgHierarchy: ['A', 'B'] },
+            ])
+        );
+
+        new TreeDiagram(api, 'sort value asc rowData 2', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT
+            └─┬ A GROUP value:12 x:1
+            · ├─┬ F filler
+            · │ ├── G LEAF value:10 x:0
+            · │ └── H LEAF value:16 x:1
+            · ├── C LEAF value:15 x:1
+            · └─┬ B GROUP value:17 x:1
+            · · ├── e LEAF value:11 x:0
+            · · └── d LEAF value:13 x:1
+        `);
+
         api.applyColumnState({
             state: [{ colId: 'value', sort: 'desc' }],
         });
 
-        await domMutationWaiter.wait();
+        new TreeDiagram(api, 'sort value desc  rowData 2', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT
+            └─┬ A GROUP value:12 x:1
+            · ├─┬ B GROUP value:17 x:1
+            · │ ├── d LEAF value:13 x:1
+            · │ └── e LEAF value:11 x:0
+            · ├── C LEAF value:15 x:1
+            · └─┬ F filler
+            · · ├── H LEAF value:16 x:1
+            · · └── G LEAF value:10 x:0
+        `);
+
+        api.setGridOption('rowData', rowData);
 
         new TreeDiagram(api, 'sort value desc', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
@@ -270,7 +286,9 @@ describe('ag-grid tree filter', () => {
             · │ ├── D LEAF value:13 x:1
             · │ └── E LEAF value:11 x:0
             · ├── C LEAF value:15 x:1
-            · └── F LEAF value:10 x:0
+            · └─┬ F filler
+            · · ├── H LEAF value:16 x:1
+            · · └── G LEAF value:10 x:0
         `);
 
         api.applyColumnState({
@@ -280,12 +298,12 @@ describe('ag-grid tree filter', () => {
             ],
         });
 
-        await domMutationWaiter.wait();
-
         new TreeDiagram(api, 'sort x asc', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP value:12 x:1
-            · ├── F LEAF value:10 x:0
+            · ├─┬ F filler
+            · │ ├── G LEAF value:10 x:0
+            · │ └── H LEAF value:16 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ ├── E LEAF value:11 x:0
             · │ └── D LEAF value:13 x:1
@@ -296,8 +314,6 @@ describe('ag-grid tree filter', () => {
             state: [{ colId: 'x', sort: 'desc' }],
         });
 
-        await domMutationWaiter.wait();
-
         new TreeDiagram(api, 'sort x desc', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP value:12 x:1
@@ -305,19 +321,55 @@ describe('ag-grid tree filter', () => {
             · │ ├── D LEAF value:13 x:1
             · │ └── E LEAF value:11 x:0
             · ├── C LEAF value:15 x:1
-            · └── F LEAF value:10 x:0
+            · └─┬ F filler
+            · · ├── H LEAF value:16 x:1
+            · · └── G LEAF value:10 x:0
+        `);
+
+        api.setGridOption(
+            'rowData',
+            cachedJSONObjects.array([
+                { id: '7', value: 16, x: 1, orgHierarchy: ['A', 'F', 'H'] },
+                { id: '1', value: 12, x: 1, orgHierarchy: ['A'] },
+                { id: '6', value: 10, x: 1, orgHierarchy: ['A', 'F', 'G'] },
+                { id: '3', value: 15, x: 0, orgHierarchy: ['A', 'C'] },
+                { id: '5', value: 11, x: 1, orgHierarchy: ['A', 'B', 'E'] },
+                { id: '4', value: 13, x: 0, orgHierarchy: ['A', 'B', 'D'] },
+                { id: '2', value: 17, x: 1, orgHierarchy: ['A', 'B'] },
+            ])
+        );
+
+        new TreeDiagram(api, 'sort x desc rowData 3', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT
+            └─┬ A GROUP value:12 x:1
+            · ├─┬ B GROUP value:17 x:1
+            · │ ├── E LEAF value:11 x:1
+            · │ └── D LEAF value:13 x:0
+            · ├── C LEAF value:15 x:0
+            · └─┬ F filler
+            · · ├── H LEAF value:16 x:1
+            · · └── G LEAF value:10 x:1
         `);
 
         api.setFilterModel({ x: { type: 'equals', filter: 0 } });
 
-        await domMutationWaiter.wait();
+        new TreeDiagram(api, 'sort x desc, filter x===0, rowData 3', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT
+            └─┬ A GROUP value:12 x:1
+            · ├─┬ B GROUP value:17 x:1
+            · │ └── D LEAF value:13 x:0
+            · └── C LEAF value:15 x:0
+        `);
 
-        new TreeDiagram(api, 'sort x desc, filter x===0', treeDiagramOptions).check(`
+        api.setGridOption('rowData', rowData);
+
+        new TreeDiagram(api, 'sort x desc, filter x===0, rowData 3', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ └── E LEAF value:11 x:0
-            · └── F LEAF value:10 x:0
+            · └─┬ F filler
+            · · └── G LEAF value:10 x:0
         `);
 
         api.applyColumnState({
@@ -327,11 +379,10 @@ describe('ag-grid tree filter', () => {
         new TreeDiagram(api, 'sort x desc, filter x===0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT
             └─┬ A GROUP value:12 x:1
-            · ├── F LEAF value:10 x:0
+            · ├─┬ F filler
+            · │ └── G LEAF value:10 x:0
             · └─┬ B GROUP value:17 x:1
             · · └── E LEAF value:11 x:0
         `);
-
-        domMutationWaiter.stop();
     });
 });

@@ -1,14 +1,13 @@
 import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
 
-import { findRootNode, verifyPositionInRootChildren } from '../../test-utils';
-import type { RowSnapshot } from '../row-snapshot-test-utils';
-
-const log = console.log;
-const info = console.info;
-
-function rowKey(row: IRowNode | null | undefined): string {
-    return row?.key ?? row?.id ?? 'null';
-}
+import {
+    checkGridSelectedNodes,
+    findRootNode,
+    info,
+    log,
+    rowKey,
+    verifyPositionInRootChildren,
+} from '../../test-utils';
 
 export async function executeTransactionsAsync(transactions: RowDataTransaction<any>[], api: GridApi<any>) {
     const promises: Promise<void>[] = [];
@@ -120,6 +119,9 @@ export interface TreeDiagramOptions extends TreeCheckerOptions {
 
     /** The DOM element to check. If undefined, the DOM will not be checked. */
     checkDom?: Element | string | undefined;
+
+    /** True if selected rows should be checked, default is true */
+    checkSelectedNodes?: boolean;
 }
 
 export class TreeDiagram extends TreeChecker {
@@ -277,7 +279,6 @@ export class TreeDiagram extends TreeChecker {
             this.diagram += `row.parent:${rowKey(row.parent)} `;
         }
 
-        // TODO: handle sorting properly for childIndex
         if (row.childIndex !== (level === -1 ? undefined : idx)) {
             this.rowErrors.push('CHILD_INDEX!');
             this.diagram += `row.childIndex:${row.childIndex} `;
@@ -322,7 +323,6 @@ export class TreeDiagram extends TreeChecker {
             this.diagram += `row.rowGroupIndex:${row.rowGroupIndex} `;
         }
 
-        // TODO: we need to handle the case for filters, collapsed groups and sorting
         const expectedRowIndex = level < 0 || !expanded ? null : this.rowIdxCounter >= 0 ? this.rowIdxCounter : null;
         if (row.rowIndex !== expectedRowIndex) {
             this.rowErrors.push('ROW_INDEX!=' + expectedRowIndex);
@@ -357,7 +357,9 @@ export class TreeDiagram extends TreeChecker {
         if (this.columns.size && parent) {
             for (const column of this.columns) {
                 const cellValue = this.api.getCellValue({ rowNode: row, colKey: column });
-                this.diagram += `${column}:${JSON.stringify(cellValue)} `;
+                if (cellValue !== undefined || row.data) {
+                    this.diagram += `${column}:${JSON.stringify(cellValue)} `;
+                }
             }
         }
     }
@@ -387,8 +389,17 @@ export class TreeDiagram extends TreeChecker {
             info(this.toString());
         }
 
-        if (this.options.checkDom) {
-            this.checkDom(this.options.checkDom);
+        try {
+            if (this.options.checkSelectedNodes ?? true) {
+                checkGridSelectedNodes(this.api);
+            }
+
+            if (this.options.checkDom) {
+                this.checkDom(this.options.checkDom);
+            }
+        } catch (e) {
+            e.message += '\n' + this.toString();
+            throw e;
         }
 
         return this;
@@ -396,7 +407,7 @@ export class TreeDiagram extends TreeChecker {
 
     public override toString(): string {
         return (
-            (this.label ? '\n🧪 ' + this.label + '\n' : '') +
+            (this.label ? '\n✱ ' + this.label + '\n' : '') +
             this.diagram +
             (this.errorsCount ? '\n❌ TREE HAS ' + this.errorsCount + ' ERRORS\n' : '')
         );
@@ -413,16 +424,26 @@ export function checkRowNodeDomStructure(gridElement: Element, api: GridApi, row
     const columns = api.getColumns() ?? [];
     for (const column of columns) {
         const columnId = column.getColId();
-        const cellValue = api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
         const cellElement = childElement.querySelector(`[col-id="${columnId}"]`);
         if (!cellElement) {
-            throw new Error(`Missing cell element for column ${columnId} in row ${rowKey(row)}`);
+            throw new Error(`Missing cell element for column ${columnId} in row id:${row.id} key:${row.key}`);
+        }
+        let cellValue = api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        if (cellValue === null) {
+            cellValue = '';
         }
         if (cellElement.textContent !== cellValue) {
             throw new Error(
-                `Cell value mismatch for column ${columnId} in row ${rowKey(row)}: ` +
+                `Cell value mismatch for column ${columnId} in row id:${row.id} key:${row.key} : ` +
                     `expected '${cellValue}', found '${cellElement.textContent}'`
             );
+        }
+        if (row.isSelected()) {
+            if (!childElement.classList.contains('ag-row-selected')) {
+                throw new Error(`Row id:${row.id} key:${row.key} should have ag-row-selected class`);
+            }
+        } else if (childElement.classList.contains('ag-row-selected')) {
+            throw new Error(`Row id:${row.id} key:${row.key} should not have ag-row-selected class`);
         }
     }
 }
@@ -478,242 +499,4 @@ function compareRowsSet(
     for (const row of expected) if (!actual.has(row)) errors.push('-' + rowKey(row));
     for (const row of actual) if (!expected.has(row)) errors.push('+' + rowKey(row));
     return errors.join(' ');
-}
-
-export function simpleHierarchyRowData() {
-    return [
-        { orgHierarchy: ['A'] },
-        { orgHierarchy: ['A', 'B'] },
-        { orgHierarchy: ['C', 'D'] },
-        { orgHierarchy: ['E', 'F', 'G', 'H'] },
-    ];
-}
-
-export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
-    return [
-        {
-            allChildrenCount: 1,
-            allLeafChildren: ['B'],
-            childIndex: 0,
-            childrenAfterFilter: ['B'],
-            childrenAfterGroup: ['B'],
-            childrenAfterSort: ['B'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: true,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'A' },
-            id: '0',
-            key: 'A',
-            lastChild: false,
-            leafGroup: undefined,
-            level: 0,
-            master: false,
-            parentKey: null,
-            rowGroupIndex: undefined,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 0,
-            rowIndex: 0,
-        },
-        {
-            allChildrenCount: null,
-            allLeafChildren: [],
-            childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
-            detail: undefined,
-            displayed: true,
-            expanded: false,
-            firstChild: true,
-            footer: undefined,
-            group: false,
-            groupData: { 'ag-Grid-AutoColumn': 'B' },
-            id: '1',
-            key: 'B',
-            lastChild: true,
-            leafGroup: undefined,
-            level: 1,
-            master: false,
-            parentKey: 'A',
-            rowGroupIndex: undefined,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 1,
-            rowIndex: 1,
-        },
-        {
-            allChildrenCount: 1,
-            allLeafChildren: ['D'],
-            childIndex: 1,
-            childrenAfterFilter: ['D'],
-            childrenAfterGroup: ['D'],
-            childrenAfterSort: ['D'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: false,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'C' },
-            id: 'row-group-0-C',
-            key: 'C',
-            lastChild: false,
-            leafGroup: false,
-            level: 0,
-            master: undefined,
-            parentKey: null,
-            rowGroupIndex: null,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 0,
-            rowIndex: 2,
-        },
-        {
-            allChildrenCount: null,
-            allLeafChildren: [],
-            childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
-            detail: undefined,
-            displayed: true,
-            expanded: false,
-            firstChild: true,
-            footer: undefined,
-            group: false,
-            groupData: { 'ag-Grid-AutoColumn': 'D' },
-            id: '2',
-            key: 'D',
-            lastChild: true,
-            leafGroup: undefined,
-            level: 1,
-            master: false,
-            parentKey: 'C',
-            rowGroupIndex: undefined,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 1,
-            rowIndex: 3,
-        },
-        {
-            allChildrenCount: 3,
-            allLeafChildren: ['H'],
-            childIndex: 2,
-            childrenAfterFilter: ['F'],
-            childrenAfterGroup: ['F'],
-            childrenAfterSort: ['F'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: false,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'E' },
-            id: 'row-group-0-E',
-            key: 'E',
-            lastChild: true,
-            leafGroup: false,
-            level: 0,
-            master: undefined,
-            parentKey: null,
-            rowGroupIndex: null,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 0,
-            rowIndex: 4,
-        },
-        {
-            allChildrenCount: 2,
-            allLeafChildren: ['H'],
-            childIndex: 0,
-            childrenAfterFilter: ['G'],
-            childrenAfterGroup: ['G'],
-            childrenAfterSort: ['G'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: true,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'F' },
-            id: 'row-group-0-E-1-F',
-            key: 'F',
-            lastChild: true,
-            leafGroup: false,
-            level: 1,
-            master: undefined,
-            parentKey: 'E',
-            rowGroupIndex: null,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 1,
-            rowIndex: 5,
-        },
-        {
-            allChildrenCount: 1,
-            allLeafChildren: ['H'],
-            childIndex: 0,
-            childrenAfterFilter: ['H'],
-            childrenAfterGroup: ['H'],
-            childrenAfterSort: ['H'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: true,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'G' },
-            id: 'row-group-0-E-1-F-2-G',
-            key: 'G',
-            lastChild: true,
-            leafGroup: false,
-            level: 2,
-            master: undefined,
-            parentKey: 'F',
-            rowGroupIndex: null,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 2,
-            rowIndex: 6,
-        },
-        {
-            allChildrenCount: null,
-            allLeafChildren: [],
-            childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
-            detail: undefined,
-            displayed: true,
-            expanded: false,
-            firstChild: true,
-            footer: undefined,
-            group: false,
-            groupData: { 'ag-Grid-AutoColumn': 'H' },
-            id: '3',
-            key: 'H',
-            lastChild: true,
-            leafGroup: undefined,
-            level: 3,
-            master: false,
-            parentKey: 'G',
-            rowGroupIndex: undefined,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 3,
-            rowIndex: 7,
-        },
-    ];
 }

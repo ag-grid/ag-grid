@@ -1,0 +1,145 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type { GridOptions } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+
+import { cachedJSONObjects } from '../../../test-utils';
+import { TreeDiagram } from '../tree-test-utils';
+import type { TreeDiagramOptions } from '../tree-test-utils';
+
+describe('ag-grid tree selection', () => {
+    let consoleErrorSpy: jest.SpyInstance;
+
+    function createMyGrid(gridOptions: GridOptions) {
+        return createGrid(document.getElementById('myGrid')!, gridOptions);
+    }
+
+    function resetGrids() {
+        document.body.innerHTML = '<div id="myGrid"></div>';
+    }
+
+    beforeAll(() => {
+        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+    });
+
+    beforeEach(() => {
+        jest.useRealTimers();
+        resetGrids();
+        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        consoleErrorSpy?.mockRestore();
+    });
+
+    test('tree selection and update', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
+            { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
+            { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C'] },
+            { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
+            { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
+            { id: '6', name: 'Linus Torvalds', orgHierarchy: ['A', 'C', 'F'] },
+            { id: '7', name: 'Brian Kernighan', orgHierarchy: ['A', 'C', 'G'] },
+            { id: '8', name: 'Claude Elwood Shannon', orgHierarchy: ['A', 'C', 'H', 'I'] },
+            { id: '9', name: 'E. Dijkstra', orgHierarchy: ['J'] },
+        ]);
+
+        const api = createMyGrid({
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy' },
+            treeData: true,
+            animateRows: false,
+            rowSelection: 'multiple',
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+            getDataPath: (data: any) => data.orgHierarchy,
+        });
+
+        const treeDiagramOptions: TreeDiagramOptions = {
+            stage: 'filter',
+            columns: ['name'],
+            checkDom: 'myGrid',
+            checkSelectedNodes: true,
+        };
+
+        api.setNodesSelected({
+            nodes: [
+                api.getRowNode('1')!,
+                api.getRowNode('3')!,
+                api.getRowNode('4')!,
+                api.getRowNode('row-group-0-A-1-C-2-H')!,
+                api.getRowNode('9')!,
+            ],
+            newValue: true,
+        });
+
+        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP selected id:1 name:"John Von Neumann"
+            │ ├─┬ B GROUP id:2 name:"Alan Turing"
+            │ │ ├── D LEAF selected id:4 name:"Donald Knuth"
+            │ │ └── E LEAF id:5 name:"Grace Hopper"
+            │ └─┬ C GROUP selected id:3 name:"A. Church"
+            │ · ├── F LEAF id:6 name:"Linus Torvalds"
+            │ · ├── G LEAF id:7 name:"Brian Kernighan"
+            │ · └─┬ H filler selected id:row-group-0-A-1-C-2-H
+            │ · · └── I LEAF id:8 name:"Claude Elwood Shannon"
+            └── J LEAF selected id:9 name:"E. Dijkstra"
+        `);
+
+        api.setNodesSelected({
+            nodes: [api.getRowNode('8')!],
+            newValue: true,
+        });
+
+        new TreeDiagram(api, 'select 8', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP selected id:1 name:"John Von Neumann"
+            │ ├─┬ B GROUP id:2 name:"Alan Turing"
+            │ │ ├── D LEAF selected id:4 name:"Donald Knuth"
+            │ │ └── E LEAF id:5 name:"Grace Hopper"
+            │ └─┬ C GROUP selected id:3 name:"A. Church"
+            │ · ├── F LEAF id:6 name:"Linus Torvalds"
+            │ · ├── G LEAF id:7 name:"Brian Kernighan"
+            │ · └─┬ H filler selected id:row-group-0-A-1-C-2-H
+            │ · · └── I LEAF selected id:8 name:"Claude Elwood Shannon"
+            └── J LEAF selected id:9 name:"E. Dijkstra"
+        `);
+
+        api.setGridOption(
+            'rowData',
+            cachedJSONObjects.array([
+                { id: '6', name: 'Linus Torvalds', orgHierarchy: ['A', 'Y', 'F'] },
+                { id: '7', name: 'Brian Kernighan', orgHierarchy: ['A', 'X', 'G'] },
+                { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
+                { id: '3', name: 'A. Church', orgHierarchy: ['A', 'X'] },
+                { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
+                { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'Y', 'E'] },
+                { id: '9', name: 'E. Dijkstra', orgHierarchy: ['J'] },
+            ])
+        );
+
+        new TreeDiagram(api, 'rowData 2', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP selected id:1 name:"John Von Neumann"
+            │ ├─┬ Y filler id:row-group-0-A-1-Y
+            │ │ ├── F LEAF id:6 name:"Linus Torvalds"
+            │ │ └── E LEAF id:5 name:"Grace Hopper"
+            │ ├── B LEAF id:2 name:"Alan Turing"
+            │ └─┬ X GROUP selected id:3 name:"A. Church"
+            │ · └── G LEAF id:7 name:"Brian Kernighan"
+            └── J LEAF selected id:9 name:"E. Dijkstra"
+        `);
+
+        api.setFilterModel({ name: { type: 'equals', filter: 'A. Church' } });
+
+        new TreeDiagram(api, 'filtered', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            └─┬ A GROUP selected id:1 name:"John Von Neumann"
+            · └─┬ X GROUP selected id:3 name:"A. Church"
+            · · └── G LEAF id:7 name:"Brian Kernighan"
+        `);
+    });
+});
