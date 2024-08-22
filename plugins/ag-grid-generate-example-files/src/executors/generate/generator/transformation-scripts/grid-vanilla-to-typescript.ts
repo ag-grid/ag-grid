@@ -26,13 +26,17 @@ function getPropertyInterfaces(properties) {
 function getModuleImports(bindings: ParsedBindings): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
+    const usesThemingApi = bindingImports.some((b) => b.module.includes('ag-grid-community/theming'));
+
     const imports = [];
-    imports.push("import '@ag-grid-community/styles/ag-grid.css';");
-    // to account for the (rare) example that has more than one class...just default to quartz if it does
-    // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-    // "source" non dark version
-    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-    imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
+    if (!usesThemingApi) {
+        imports.push("import '@ag-grid-community/styles/ag-grid.css';");
+        // to account for the (rare) example that has more than one class...just default to quartz if it does
+        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
+        // "source" non dark version
+        const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
+        imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
+    }
 
     const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];

@@ -1,7 +1,10 @@
+'use strict';
+
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, ColGroupDef, GridApi, GridOptions } from '@ag-grid-community/core';
-import { createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
+import type { ColDef, GridOptions } from '@ag-grid-community/core';
+import { createGrid } from '@ag-grid-community/core';
+import { themeQuartz } from '@ag-grid-community/theming';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
@@ -13,29 +16,30 @@ ModuleRegistry.registerModules([
     FiltersToolPanelModule,
 ]);
 
-const columnDefs: (ColDef | ColGroupDef)[] = [
-    {
-        headerName: 'A',
-        field: 'author',
-        width: 300,
-    },
-    {
-        headerName: 'B',
-        minWidth: 200,
-        maxWidth: 350,
-        flex: 2,
-    },
-];
+const columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
 
-let gridApi: GridApi;
+const rowData: any[] = (() => {
+    const rowData: any[] = [];
+    for (let i = 0; i < 10; i++) {
+        rowData.push({ make: 'Toyota', model: 'Celica', price: 35000 + i * 1000 });
+        rowData.push({ make: 'Ford', model: 'Mondeo', price: 32000 + i * 1000 });
+        rowData.push({ make: 'Porsche', model: 'Boxster', price: 72000 + i * 1000 });
+    }
+    return rowData;
+})();
 
-const gridOptions: GridOptions = {
-    columnDefs: columnDefs,
-    rowData: [1, 2],
+const defaultColDef = {
+    editable: true,
+    flex: 1,
+    minWidth: 100,
+    filter: true,
 };
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-});
+const gridOptions: GridOptions<IOlympicData> = {
+    theme: themeQuartz,
+    columnDefs,
+    rowData,
+    defaultColDef,
+};
+
+createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
