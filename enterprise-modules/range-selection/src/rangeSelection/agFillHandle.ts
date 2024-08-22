@@ -158,6 +158,15 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
     }
 
+    protected onDragCancel(): void {
+        this.initialXY = null;
+        if (!this.markedCells.length) {
+            return;
+        }
+
+        this.clearMarkedPath();
+    }
+
     private getFillHandleDirection(): 'x' | 'y' | 'xy' {
         const direction = this.gos.getSelectionOption('fillHandleDirection');
 

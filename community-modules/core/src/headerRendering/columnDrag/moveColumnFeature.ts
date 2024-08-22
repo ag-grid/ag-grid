@@ -187,6 +187,12 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.lastMovedInfo = null;
     }
 
+    public onDragCancel(): void {
+        this.clearHighlighted();
+        this.ensureIntervalCleared();
+        this.lastMovedInfo = null;
+    }
+
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (!columns) {
             return;
@@ -197,10 +203,10 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private moveColumnsAfterHighlight(allMovingColumns: AgColumn[]): void {
+        const isMovingHorizontally = this.needToMoveLeft || this.needToMoveRight;
+        const isFailedMoreThanThreshold = this.failedMoveAttempts > MOVE_FAIL_THRESHOLD;
         const isAttemptingToPin =
-            this.needToMoveLeft ||
-            this.needToMoveRight ||
-            this.failedMoveAttempts > MOVE_FAIL_THRESHOLD ||
+            (isMovingHorizontally && isFailedMoreThanThreshold) ||
             allMovingColumns.some((col) => col.getPinned() !== this.pinned);
 
         const { column, position } = this.lastHighlightedColumn || {};
@@ -286,7 +292,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private highlightHoveredColumn(mouseX: number) {
         const { gos, ctrlsService, columnModel } = this;
         const isRtl = gos.get('enableRtl');
-        const consideredColumns = columnModel.getCols().filter((col) => col.getPinned() === this.pinned);
+        const consideredColumns = columnModel
+            .getCols()
+            .filter((col) => col.isVisible() && col.getPinned() === this.pinned);
 
         let start: number | null = null;
         let width: number | null = null;

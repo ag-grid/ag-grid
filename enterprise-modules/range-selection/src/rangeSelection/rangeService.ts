@@ -857,6 +857,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        if (cellCtrl?.isEditing()) {
+            this.dragService.cancelDrag(eventTarget as HTMLElement);
+            return;
+        }
+
         if (this.lastCellHovered) {
             this.cellHasChanged = true;
         }

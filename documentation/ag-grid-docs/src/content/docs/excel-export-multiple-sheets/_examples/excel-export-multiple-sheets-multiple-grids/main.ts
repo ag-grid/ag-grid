@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
@@ -7,9 +7,8 @@ import {
     GridReadyEvent,
     ICellRendererComp,
     ICellRendererParams,
-    createGrid,
 } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 

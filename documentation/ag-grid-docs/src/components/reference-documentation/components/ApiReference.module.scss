@@ -145,6 +145,8 @@
     font-size: 15px;
     font-weight: 900;
     margin-bottom: 0;
+    display: flex;
+    flex-direction: row;
 
     @container (min-width: #{$breakpoint-table-small}) {
         font-size: 15px;
@@ -157,6 +159,12 @@
     .linkIcon {
         position: absolute;
         bottom: -0.125em;
+    }
+    span {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: fit-content;
     }
 }
 

@@ -656,7 +656,8 @@
                     "RowDragEnterEvent",
                     "RowDragLeaveEvent",
                     "RowDragMoveEvent",
-                    "RowDragEndEvent"
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
                 ],
                 "include": []
             }
@@ -671,7 +672,8 @@
                     "RowDragEnterEvent",
                     "RowDragLeaveEvent",
                     "RowDragMoveEvent",
-                    "RowDragEndEvent"
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
                 ],
                 "include": []
             }
@@ -686,7 +688,8 @@
                     "RowDragEnterEvent",
                     "RowDragLeaveEvent",
                     "RowDragMoveEvent",
-                    "RowDragEndEvent"
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
                 ],
                 "include": []
             }

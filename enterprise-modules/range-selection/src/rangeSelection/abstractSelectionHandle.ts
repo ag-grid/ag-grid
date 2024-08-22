@@ -63,16 +63,16 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             onDragStop: (e: MouseEvent | Touch) => {
                 this.dragging = false;
                 this.onDragEnd(e);
-                this.clearValues();
-                this.rangeService.autoScrollService.ensureCleared();
-
-                // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
-                // be affected by a drag on any. Move it to the root element.
-                document.body.classList.remove(this.getDraggingCssClass());
+                this.clearDragProperties();
 
                 if (this.shouldDestroyOnEndDragging) {
                     this.destroy();
                 }
+            },
+            onDragCancel: () => {
+                this.dragging = false;
+                this.onDragCancel();
+                this.clearDragProperties();
             },
         });
 
@@ -81,6 +81,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected abstract onDrag(e: MouseEvent | Touch): void;
     protected abstract onDragEnd(e: MouseEvent | Touch): void;
+    protected abstract onDragCancel(): void;
 
     protected isDragging(): boolean {
         return this.dragging;
@@ -147,6 +148,15 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
         this.lastCellHovered = cell;
         this.changedCalculatedValues = true;
+    }
+
+    private clearDragProperties(): void {
+        this.clearValues();
+        this.rangeService.autoScrollService.ensureCleared();
+
+        // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
+        // be affected by a drag on any. Move it to the root element.
+        document.body.classList.remove(this.getDraggingCssClass());
     }
 
     public getType(): SelectionHandleType {
