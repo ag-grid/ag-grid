@@ -11,6 +11,7 @@ import svgr from 'vite-plugin-svgr';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agLinkChecker from './plugins/agLinkChecker';
+import agMergeSitemap from './plugins/agMergeSitemap';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
 import { getSitemapConfig } from './src/utils/sitemap';
 import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
@@ -103,6 +104,11 @@ const {
      * Useful for visual regression testing
      */
     DISABLE_EXAMPLE_RUNNER,
+
+    /**
+     * Charts sitemap index to merge
+     */
+    CHARTS_SITEMAP_INDEX_URL = 'https://ag-grid.com/charts/sitemap-index.xml',
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -120,6 +126,7 @@ console.log(
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,
+            CHARTS_SITEMAP_INDEX_URL,
         },
         null,
         2
@@ -166,5 +173,9 @@ export default defineConfig({
             skip: CHECK_REDIRECTS !== 'true',
         }),
         agLinkChecker({ include: CHECK_LINKS === 'true' }),
+        agMergeSitemap({
+            // Merge charts sitemap
+            sitemapIndexUrl: CHARTS_SITEMAP_INDEX_URL,
+        }),
     ],
 });
