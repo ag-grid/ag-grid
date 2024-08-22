@@ -2,8 +2,16 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from '@ag-grid-community/core';
 import { createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    SideBarModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+]);
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
     {
