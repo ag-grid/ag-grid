@@ -95,9 +95,9 @@ const GridExample = () => {
 const rowData: any[] = (() => {
     const rowData: any[] = [];
     for (let i = 0; i < 10; i++) {
-        rowData.push({ make: 'Toyota', model: 'Celica', price: 34000 + i * 1000 });
-        rowData.push({ make: 'Ford', model: 'Mondeo', price: 31000 + i * 1000 });
-        rowData.push({ make: 'Porsche', model: 'Boxster', price: 71000 + i * 1000 });
+        rowData.push({ make: 'Toyota', model: 'Celica', price: 35000 + i * 1000 });
+        rowData.push({ make: 'Ford', model: 'Mondeo', price: 32000 + i * 1000 });
+        rowData.push({ make: 'Porsche', model: 'Boxster', price: 72000 + i * 1000 });
     }
     return rowData;
 })();
