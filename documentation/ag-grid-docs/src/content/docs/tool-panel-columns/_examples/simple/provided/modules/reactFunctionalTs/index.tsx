@@ -3,14 +3,93 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
-import { themeQuartz } from '@ag-grid-community/theming';
-import React, { StrictMode } from 'react';
+import { applyCustomProperties, themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
+import React, { StrictMode, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
-    return <AgGridReact theme={themeQuartz} columnDefs={columnDefs} rowData={rowData} defaultColDef={defaultColDef} />;
+    const [showGrid1, setShowGrid1] = React.useState(true);
+    const [showGrid2, setShowGrid2] = React.useState(true);
+    const [showGrid3, setShowGrid3] = React.useState(true);
+    const [showGrid4, setShowGrid4] = React.useState(true);
+
+    const grid4Ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (grid4Ref.current) {
+            applyCustomProperties({ accentColor: 'red' }, grid4Ref.current);
+        }
+    }, []);
+
+    return (
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', gap: 16 }}>
+                <p style={{ flex: 1 }}>
+                    Quartz theme:{' '}
+                    <input type="checkbox" checked={showGrid1} onChange={() => setShowGrid1(!showGrid1)} />
+                </p>
+                <p style={{ flex: 1 }}>
+                    Material theme:{' '}
+                    <input type="checkbox" checked={showGrid2} onChange={() => setShowGrid2(!showGrid2)} />
+                </p>
+            </div>
+            <div style={{ flex: 1, display: 'flex', gap: 16 }}>
+                <div style={{ flex: 1 }}>
+                    {showGrid1 && (
+                        <AgGridReact
+                            theme={themeQuartz}
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            defaultColDef={defaultColDef}
+                        />
+                    )}
+                </div>
+                <div style={{ flex: 1 }}>
+                    {showGrid2 && (
+                        <AgGridReact
+                            theme={themeMaterial}
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            defaultColDef={defaultColDef}
+                        />
+                    )}
+                </div>
+            </div>
+            <div style={{ display: 'flex', gap: 16 }}>
+                <p style={{ flex: 1 }}>
+                    Two grids using Balham theme:{' '}
+                    <input type="checkbox" checked={showGrid3} onChange={() => setShowGrid3(!showGrid3)} />
+                </p>
+                <p style={{ flex: 1 }}>
+                    <input type="checkbox" checked={showGrid4} onChange={() => setShowGrid4(!showGrid4)} />
+                </p>
+            </div>
+            <div style={{ flex: 1, display: 'flex', gap: 16 }}>
+                <div style={{ flex: 1 }}>
+                    {showGrid3 && (
+                        <AgGridReact
+                            theme={themeBalham}
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            defaultColDef={defaultColDef}
+                        />
+                    )}
+                </div>
+                <div style={{ flex: 1 }} ref={grid4Ref}>
+                    {showGrid4 && (
+                        <AgGridReact
+                            theme={themeBalham}
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            defaultColDef={defaultColDef}
+                        />
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 };
 
 const rowData: any[] = (() => {
