@@ -2533,7 +2533,7 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
-     * When enabled and a row is selected, the copy action should copy the entire row, rather than just the focussed cell
+     * When enabled and a row is selected, the copy action should copy the entire row, rather than just the focused cell
      */
     copySelectedRows?: boolean;
 }
