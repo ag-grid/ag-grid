@@ -57,7 +57,10 @@ const MyComponent: React.FC<Props> = ({ versionsData }) => {
             </div>
             <div className={styles.demoContainer}>
                 <FinanceExample isDarkMode={isDarkMode} gridHeight={600} />
-                <button className={styles.buttonAsLink}>View All Demos</button>
+                <button className={styles.viewAllDemosLink}>
+                    View All Demos
+                    <Icon svgClasses={styles.demosArrow} name="arrowRight" />
+                </button>
             </div>
         </div>
     );

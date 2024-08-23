@@ -100,14 +100,28 @@
     }
 }
 
-.buttonAsLink {
-    appearance: none;
-    padding: 0;
-    text-align: left;
-    font-weight: var(--text-regular);
-    color: var(--color-link);
-    transition: color 0.25s ease-in-out;
-    border: none;
-    background-color: transparent;
-    box-shadow: none;
+.demoContainer {
+    display: flex;
+    flex-direction: column;
+
+    .viewAllDemosLink {
+        appearance: none;
+        padding: 0;
+        text-align: left;
+        align-self: flex-end;
+        font-weight: var(--text-regular);
+        margin: $spacing-size-4 0px;
+        color: var(--color-link);
+        transition: color 0.25s ease-in-out;
+        border: none;
+        background-color: transparent;
+        box-shadow: none;
+    }
+
+    .demosArrow {
+        height: 16px;
+        width: 16px;
+        margin-left: $spacing-size-2 !important;
+        fill: var(--color-link) !important;
+    }
 }
