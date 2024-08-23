@@ -5,6 +5,9 @@ exports[`Grid State Migration range-selection-state.json: should upgrade version
   "cellSelection": {
     "cellRanges": [],
   },
+  "rangeSelection": {
+    "cellRanges": [],
+  },
   "sort": {
     "sortModel": [],
   },

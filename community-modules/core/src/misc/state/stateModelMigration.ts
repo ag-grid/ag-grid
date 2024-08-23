@@ -15,20 +15,17 @@ export function migrateGridStateModel(state: GridState): GridState {
     return state;
 }
 
+/**
+ * Copies `rangeSelection` (deprecated) to `cellSelection`, but doesn't remove the former
+ * for backwards compatibility
+ */
 function migrateV32_1(state: GridState): GridState {
     state.cellSelection = jsonGet(state, 'rangeSelection');
-    jsonDelete(state, 'rangeSelection');
     return state;
 }
 
 function jsonGet(json: unknown, key: string): any {
     if (json && typeof json === 'object') {
         return (json as any)[key];
-    }
-}
-
-function jsonDelete(json: unknown, key: string): void {
-    if (json && typeof json === 'object') {
-        delete (json as any)[key];
     }
 }
