@@ -40,7 +40,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         enablePivot: true,
         enableValue: true,
     },
-    enableRangeSelection: true,
     sideBar: true,
     pagination: true,
     selection: { mode: 'multiRow', suppressClickSelection: true },
