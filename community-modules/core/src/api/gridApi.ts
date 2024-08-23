@@ -1008,12 +1008,18 @@ export interface _RangeSelectionGridApi {
     /**
      * Adds the provided cell range to the selected ranges.
      *
-     * This keeps any previous ranges. If you wish to only have the new range selected, then call `clearRangeSelection()` first.
+     * This keeps any previous ranges. If you wish to only have the new range selected, then call `clearCellSelection()` first.
      */
     addCellRange(params: CellRangeParams): void;
 
-    /** Clears the selected ranges. */
+    /**
+     * Clears the selected ranges.
+     * @deprecated v32.2 Use `clearCellSelection` instead
+     */
     clearRangeSelection(): void;
+
+    /** Clears the selected cell ranges. */
+    clearCellSelection(): void;
 }
 
 export interface _ServerSideRowModelGridApi {

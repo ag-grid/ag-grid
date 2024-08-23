@@ -41,10 +41,10 @@ export class CellRangeFeature {
     public setComp(cellComp: ICellComp, eGui: HTMLElement): void {
         this.cellComp = cellComp;
         this.eGui = eGui;
-        this.onRangeSelectionChanged();
+        this.onCellSelectionChanged();
     }
 
-    public onRangeSelectionChanged(): void {
+    public onCellSelectionChanged(): void {
         // when using reactUi, given UI is async, it's possible this method is called before the comp is registered
         if (!this.cellComp) {
             return;

@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: {
         mode: 'cell',
     },
-    onRangeSelectionChanged(e) {
+    onCellSelectionChanged(e) {
         console.log(e);
     },
 };

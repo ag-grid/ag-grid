@@ -865,12 +865,12 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public onRangeSelectionChanged(): void {
+    public onCellSelectionChanged(): void {
         if (!this.cellComp) {
             return;
         }
         if (this.cellRangeFeature) {
-            this.cellRangeFeature.onRangeSelectionChanged();
+            this.cellRangeFeature.onCellSelectionChanged();
         }
     }
 
@@ -895,7 +895,7 @@ export class CellCtrl extends BeanStub {
         this.onCellFocused();
         // check range selection
         if (this.cellRangeFeature) {
-            this.cellRangeFeature.onRangeSelectionChanged();
+            this.cellRangeFeature.onCellSelectionChanged();
         }
     }
 

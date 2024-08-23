@@ -17,6 +17,7 @@ import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
     AggregationColumnState,
     AggregationState,
+    CellSelectionState,
     ColumnGroupState,
     ColumnOrderState,
     ColumnPinningState,
@@ -28,7 +29,6 @@ import type {
     GridState,
     PaginationState,
     PivotState,
-    RangeSelectionState,
     RowGroupExpansionState,
     RowGroupState,
     ScrollState,
@@ -45,6 +45,7 @@ import type { ColumnAnimationService } from '../../rendering/columnAnimationServ
 import type { SortModelItem } from '../../sortController';
 import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
+import { migrateGridStateModel } from './stateModelMigration';
 
 export class StateService extends BeanStub implements NamedBean {
     beanName = 'stateService' as const;
@@ -106,7 +107,7 @@ export class StateService extends BeanStub implements NamedBean {
     public postConstruct(): void {
         this.isClientSideRowModel = _isClientSideRowModel(this.gos);
 
-        this.cachedState = this.gos.get('initialState') ?? {};
+        this.cachedState = this.getInitialState();
 
         this.ctrlsService.whenReady(() => this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady()));
 
@@ -129,6 +130,10 @@ export class StateService extends BeanStub implements NamedBean {
             });
     }
 
+    private getInitialState(): GridState {
+        return migrateGridStateModel(this.gos.get('initialState') ?? {});
+    }
+
     public getState(): GridState {
         if (this.staleStateKeys.size) {
             this.refreshStaleState();
@@ -148,7 +153,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setupStateOnColumnsInitialised(): void {
-        const initialState = this.gos.get('initialState') ?? {};
+        const initialState = this.getInitialState();
         this.setColumnState(initialState);
         this.setColumnGroupState(initialState);
 
@@ -197,7 +202,7 @@ export class StateService extends BeanStub implements NamedBean {
             rowGroupExpansion: rowGroupExpansionState,
             rowSelection: rowSelectionState,
             pagination: paginationState,
-        } = this.gos.get('initialState') ?? {};
+        } = this.getInitialState();
         const advancedFilterModel = this.gos.get('advancedFilterModel');
         if (filterState || advancedFilterModel) {
             this.setFilterState(filterState, advancedFilterModel);
@@ -248,15 +253,15 @@ export class StateService extends BeanStub implements NamedBean {
     private setupStateOnFirstDataRendered(): void {
         const {
             scroll: scrollState,
-            rangeSelection: rangeSelectionState,
+            cellSelection: cellSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
-        } = this.gos.get('initialState') ?? {};
+        } = this.getInitialState();
         if (focusedCellState) {
             this.setFocusedCellState(focusedCellState);
         }
-        if (rangeSelectionState) {
-            this.setRangeSelectionState(rangeSelectionState);
+        if (cellSelectionState) {
+            this.setCellSelectionState(cellSelectionState);
         }
         if (scrollState) {
             this.setScrollState(scrollState);
@@ -266,14 +271,18 @@ export class StateService extends BeanStub implements NamedBean {
         // reset sidebar as it could have updated when columns changed
         this.updateCachedState('sideBar', this.getSideBarState());
         this.updateCachedState('focusedCell', this.getFocusedCellState());
-        this.updateCachedState('rangeSelection', this.getRangeSelectionState());
+        const cellSelection = this.getRangeSelectionState();
+        this.updateCachedState('rangeSelection', cellSelection);
+        this.updateCachedState('cellSelection', cellSelection);
         this.updateCachedState('scroll', this.getScrollState());
 
         this.addManagedEventListeners({
             cellFocused: () => this.updateCachedState('focusedCell', this.getFocusedCellState()),
-            rangeSelectionChanged: (event) => {
+            cellSelectionChanged: (event) => {
                 if (event.finished) {
-                    this.updateCachedState('rangeSelection', this.getRangeSelectionState());
+                    const cellSelection = this.getRangeSelectionState();
+                    this.updateCachedState('rangeSelection', cellSelection);
+                    this.updateCachedState('cellSelection', cellSelection);
                 }
             },
             bodyScrollEnd: () => this.updateCachedState('scroll', this.getScrollState()),
@@ -566,7 +575,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
     }
 
-    private getRangeSelectionState(): RangeSelectionState | undefined {
+    private getRangeSelectionState(): CellSelectionState | undefined {
         const cellRanges = this.rangeService?.getCellRanges().map((cellRange) => {
             const { id, type, startRow, endRow, columns, startColumn } = cellRange;
             return {
@@ -581,12 +590,12 @@ export class StateService extends BeanStub implements NamedBean {
         return cellRanges?.length ? { cellRanges } : undefined;
     }
 
-    private setRangeSelectionState(rangeSelectionState: RangeSelectionState): void {
+    private setCellSelectionState(cellSelectionState: CellSelectionState): void {
         if (!this.gos.getSelectionOption('enableRangeSelection') || !this.rangeService) {
             return;
         }
         const cellRanges: CellRange[] = [];
-        rangeSelectionState.cellRanges.forEach((cellRange) => {
+        cellSelectionState.cellRanges.forEach((cellRange) => {
             const columns: AgColumn[] = [];
             cellRange.colIds.forEach((colId) => {
                 const column = this.columnModel.getCol(colId);

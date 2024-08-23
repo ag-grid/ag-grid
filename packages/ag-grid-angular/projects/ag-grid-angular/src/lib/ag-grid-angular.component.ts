@@ -19,6 +19,9 @@ import type {
     CellMouseOutEvent,
     CellMouseOverEvent,
     CellPosition,
+    CellSelectionChangedEvent,
+    CellSelectionDeleteEndEvent,
+    CellSelectionDeleteStartEvent,
     CellValueChangedEvent,
     ChartCreatedEvent,
     ChartDestroyedEvent,
@@ -1806,12 +1809,26 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Redo operation has ended.
      */
     @Output() public redoEnded: EventEmitter<RedoEndedEvent<TData>> = new EventEmitter<RedoEndedEvent<TData>>();
+    /** Cell selection delete operation (cell clear) has started.
+     */
+    @Output() public cellSelectionDeleteStart: EventEmitter<CellSelectionDeleteStartEvent<TData>> = new EventEmitter<
+        CellSelectionDeleteStartEvent<TData>
+    >();
+    /** Cell selection delete operation (cell clear) has ended.
+     */
+    @Output() public cellSelectionDeleteEnd: EventEmitter<CellSelectionDeleteEndEvent<TData>> = new EventEmitter<
+        CellSelectionDeleteEndEvent<TData>
+    >();
     /** Range delete operation (cell clear) has started.
+     *
+     * @deprecated v32.2 Use `onCellSelectionDeleteStart` instead
      */
     @Output() public rangeDeleteStart: EventEmitter<RangeDeleteStartEvent<TData>> = new EventEmitter<
         RangeDeleteStartEvent<TData>
     >();
     /** Range delete operation (cell clear) has ended.
+     *
+     * @deprecated v32.2 Use `onCellSelectionDeleteEnd` instead
      */
     @Output() public rangeDeleteEnd: EventEmitter<RangeDeleteEndEvent<TData>> = new EventEmitter<
         RangeDeleteEndEvent<TData>
@@ -2037,10 +2054,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public cellContextMenu: EventEmitter<CellContextMenuEvent<TData>> = new EventEmitter<
         CellContextMenuEvent<TData>
     >();
-    /** A change to range selection has occurred. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing, respectively.
+    /** A change to range selection has occurred.
+     *
+     * @deprecated v32.2 Use `onCellSelectionChanged` instead
      */
     @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent<TData>> = new EventEmitter<
         RangeSelectionChangedEvent<TData>
+    >();
+    /** A change to cell selection has occurred.
+     */
+    @Output() public cellSelectionChanged: EventEmitter<CellSelectionChangedEvent<TData>> = new EventEmitter<
+        CellSelectionChangedEvent<TData>
     >();
     /** A tooltip has been displayed     */
     @Output() public tooltipShow: EventEmitter<TooltipShowEvent<TData>> = new EventEmitter<TooltipShowEvent<TData>>();

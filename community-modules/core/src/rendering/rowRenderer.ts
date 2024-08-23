@@ -310,8 +310,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private setupRangeSelectionListeners = () => {
-        const onRangeSelectionChanged = () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRangeSelectionChanged());
+        const onCellSelectionChanged = () => {
+            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellSelectionChanged());
         };
 
         const onColumnMovedPinnedVisible = () => {
@@ -319,14 +319,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         const addRangeSelectionListeners = () => {
-            this.eventService.addEventListener('rangeSelectionChanged', onRangeSelectionChanged);
+            this.eventService.addEventListener('cellSelectionChanged', onCellSelectionChanged);
             this.eventService.addEventListener('columnMoved', onColumnMovedPinnedVisible);
             this.eventService.addEventListener('columnPinned', onColumnMovedPinnedVisible);
             this.eventService.addEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
 
         const removeRangeSelectionListeners = () => {
-            this.eventService.removeEventListener('rangeSelectionChanged', onRangeSelectionChanged);
+            this.eventService.removeEventListener('cellSelectionChanged', onCellSelectionChanged);
             this.eventService.removeEventListener('columnMoved', onColumnMovedPinnedVisible);
             this.eventService.removeEventListener('columnPinned', onColumnMovedPinnedVisible);
             this.eventService.removeEventListener('columnVisible', onColumnMovedPinnedVisible);

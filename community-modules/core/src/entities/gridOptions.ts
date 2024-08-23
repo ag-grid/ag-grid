@@ -19,6 +19,9 @@ import type {
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
+    CellSelectionChangedEvent,
+    CellSelectionDeleteEndEvent,
+    CellSelectionDeleteStartEvent,
     CellValueChangedEvent,
     ChartCreatedEvent,
     ChartDestroyedEvent,
@@ -2055,11 +2058,23 @@ export interface GridOptions<TData = any> {
      */
     onRedoEnded?(event: RedoEndedEvent<TData>): void;
     /**
+     * Cell selection delete operation (cell clear) has started.
+     */
+    onCellSelectionDeleteStart?(event: CellSelectionDeleteStartEvent<TData>): void;
+    /**
+     * Cell selection delete operation (cell clear) has ended.
+     */
+    onCellSelectionDeleteEnd?(event: CellSelectionDeleteEndEvent<TData>): void;
+    /**
      * Range delete operation (cell clear) has started.
+     *
+     * @deprecated v32.2 Use `onCellSelectionDeleteStart` instead
      */
     onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>): void;
     /**
      * Range delete operation (cell clear) has ended.
+     *
+     * @deprecated v32.2 Use `onCellSelectionDeleteEnd` instead
      */
     onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>): void;
 
@@ -2292,9 +2307,15 @@ export interface GridOptions<TData = any> {
      */
     onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
     /**
-     * A change to range selection has occurred. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing, respectively.
+     * A change to range selection has occurred.
+     *
+     * @deprecated v32.2 Use `onCellSelectionChanged` instead
      */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>): void;
+    /**
+     * A change to cell selection has occurred.
+     */
+    onCellSelectionChanged?(event: CellSelectionChangedEvent<TData>): void;
 
     /**
      * A tooltip has been displayed */

@@ -81,8 +81,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.sumAggregationComp.setLabel('sum', 'Sum');
 
         this.addManagedEventListeners({
-            rangeSelectionChanged: this.onRangeSelectionChanged.bind(this),
-            modelUpdated: this.onRangeSelectionChanged.bind(this),
+            cellSelectionChanged: this.onCellSelectionChanged.bind(this),
+            modelUpdated: this.onCellSelectionChanged.bind(this),
         });
     }
 
@@ -92,7 +92,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     public refresh(params: AggregationStatusPanelParams): boolean {
         this.params = params;
-        this.onRangeSelectionChanged();
+        this.onCellSelectionChanged();
         return true;
     }
 
@@ -136,7 +136,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         return (this as any)[refComponentName];
     }
 
-    private onRangeSelectionChanged(): void {
+    private onCellSelectionChanged(): void {
         const cellRanges = this.rangeService?.getCellRanges();
 
         let sum = 0;
