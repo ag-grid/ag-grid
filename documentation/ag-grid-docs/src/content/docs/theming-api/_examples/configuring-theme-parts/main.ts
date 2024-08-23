@@ -4,7 +4,22 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from '@ag-grid-community/core';
 import type { ColDef, GridOptions } from '@ag-grid-community/core';
 import { createGrid } from '@ag-grid-community/core';
-import { themeQuartz } from '@ag-grid-community/theming';
+import {
+    colorSchemeDarkBlue,
+    colorSchemeDarkNeutral,
+    colorSchemeDarkWarm,
+    colorSchemeLightCold,
+    colorSchemeLightNeutral,
+    colorSchemeLightWarm,
+    iconSetAlpine,
+    iconSetMaterial,
+    iconSetQuartzBold,
+    iconSetQuartzLight,
+    iconSetQuartzRegular,
+    themeBalham,
+    themeMaterial,
+    themeQuartz,
+} from '@ag-grid-community/theming';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
@@ -15,6 +30,23 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
 ]);
+
+const baseThemes = [themeQuartz, themeBalham, themeMaterial];
+let baseTheme = baseThemes[0];
+
+const colorSchemes = [
+    null,
+    colorSchemeLightNeutral,
+    colorSchemeLightCold,
+    colorSchemeLightWarm,
+    colorSchemeDarkNeutral,
+    colorSchemeDarkWarm,
+    colorSchemeDarkBlue,
+];
+let colorScheme = colorSchemes[0];
+
+const iconSets = [null, iconSetQuartzLight, iconSetQuartzRegular, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
+let iconSet = iconSets[0];
 
 const columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
 
@@ -36,10 +68,37 @@ const defaultColDef = {
 };
 
 const gridOptions: GridOptions<IOlympicData> = {
-    theme: themeQuartz,
+    theme: buildTheme(),
     columnDefs,
     rowData,
     defaultColDef,
+    sideBar: true,
 };
 
-createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+const gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+
+function setBaseTheme(id: string) {
+    baseTheme = baseThemes.find((theme) => theme.id === id)!;
+    gridApi.setGridOption('theme', buildTheme());
+}
+
+function setIconSet(id: string) {
+    iconSet = iconSets.find((theme) => theme?.id === id) || null;
+    gridApi.setGridOption('theme', buildTheme());
+}
+
+function setColorScheme(id: string) {
+    colorScheme = colorSchemes.find((theme) => theme?.id === id) || null;
+    gridApi.setGridOption('theme', buildTheme());
+}
+
+function buildTheme() {
+    let theme = baseTheme;
+    if (iconSet) {
+        theme = baseTheme.usePart(iconSet);
+    }
+    if (colorScheme) {
+        theme = baseTheme.usePart(colorScheme);
+    }
+    return theme;
+}

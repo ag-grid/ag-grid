@@ -1,1 +1,30 @@
-<div id="myGrid" style="height: 100%"></div>
+<div style="height: 100%; display: flex; flex-direction: column">
+    <p style="flex: 0 1 0%">
+        Theme:
+        <select style="margin-right: 16px" id="themeSelect" onchange="setBaseTheme(this.value)">
+            <option value="quartz">quartz</option>
+            <option value="balham">balham</option>
+            <option value="material">material</option>
+        </select>
+        Icons:
+        <select style="margin-right: 16px" id="iconSetSelect" onchange="setIconSet(this.value)">
+            <option>(unchanged)</option>
+            <option value="iconSet/quartzLight">quartzLight</option>
+            <option value="iconSet/quartzRegular">quartzRegular</option>
+            <option value="iconSet/quartzBold">quartzBold</option>
+            <option value="iconSet/alpine">alpine</option>
+            <option value="iconSet/material">material</option>
+        </select>
+        Color scheme:
+        <select style="margin-right: 16px" id="colorSchemeSelect" onchange="setColorScheme(this.value)">
+            <option>(unchanged)</option>
+            <option value="colorScheme/lightNeutral">lightNeutral</option>
+            <option value="colorScheme/lightCold">lightCold</option>
+            <option value="colorScheme/lightWarm">lightWarm</option>
+            <option value="colorScheme/darkNeutral">darkNeutral</option>
+            <option value="colorScheme/darkWarm">darkWarm</option>
+            <option value="colorScheme/darkBlue">darkBlue</option>
+        </select>
+    </p>
+    <div style="flex: 1 1 0%"><div id="myGrid" style="height: 100%"></div></div>
+</div>

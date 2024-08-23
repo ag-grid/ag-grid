@@ -15,12 +15,12 @@ const GridExample = () => {
     const [showGrid3, setShowGrid3] = React.useState(true);
     const [showGrid4, setShowGrid4] = React.useState(true);
 
+    const grid3Ref = useRef<HTMLDivElement>(null);
     const grid4Ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (grid4Ref.current) {
-            applyCustomProperties({ accentColor: 'red' }, grid4Ref.current);
-        }
+        applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, grid3Ref.current!);
+        applyCustomProperties({ headerBackgroundColor: '#cc222244' }, grid4Ref.current!);
     }, []);
 
     return (
@@ -59,15 +59,16 @@ const GridExample = () => {
             </div>
             <div style={{ display: 'flex', gap: 16 }}>
                 <p style={{ flex: 1 }}>
-                    Two grids using Balham theme:{' '}
+                    {'Balham theme (green header): '}
                     <input type="checkbox" checked={showGrid3} onChange={() => setShowGrid3(!showGrid3)} />
                 </p>
                 <p style={{ flex: 1 }}>
+                    {'Balham theme (red header): '}
                     <input type="checkbox" checked={showGrid4} onChange={() => setShowGrid4(!showGrid4)} />
                 </p>
             </div>
             <div style={{ flex: 1, display: 'flex', gap: 16 }}>
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1 }} ref={grid3Ref}>
                     {showGrid3 && (
                         <AgGridReact
                             theme={themeBalham}

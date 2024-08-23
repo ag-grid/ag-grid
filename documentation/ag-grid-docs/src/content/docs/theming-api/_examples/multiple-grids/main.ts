@@ -42,4 +42,5 @@ createThemedGrid(themeMaterial, '#grid2');
 createThemedGrid(themeBalham, '#grid3');
 createThemedGrid(themeBalham, '#grid4');
 
-applyCustomProperties({ accentColor: 'red' }, document.getElementById('grid4')!);
+applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, document.getElementById('grid3')!);
+applyCustomProperties({ headerBackgroundColor: '#cc222244' }, document.getElementById('grid4')!);

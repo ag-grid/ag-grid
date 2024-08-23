@@ -61,7 +61,7 @@ import { applyCustomProperties } from '@ag-grid-community/theming';
 applyCustomProperties({accentColor: 'red'}, document.body);
 ```
 
-Under the hood, this sets a CSS custom property `--ag-accent-color` on the element.
+Under the hood, this sets a CSS custom property `--ag-accent-color: red` on the element. CSS custom properties are inherited by all child elements, so will affect every grid instance within the element.
 
 It's also possible to set the custom property directly using CSS, although this will not get the same validation as the JavaScript API:
 
@@ -72,15 +72,13 @@ body {
 }
 ```
 
-CSS custom properties are inherited by all child elements, and so applying the custom properties to the body will affect every grid on the page. If you have multiple grids on the page and want to change params for a specific grid, apply the custom properties to the grid's parent element.
-
 If you need more control over how custom properties are set, the `getCustomProperties` function returns an array of 2-element [name, value] tuples.
 
 
 ```js
-import { setCustomProperties } from '@ag-grid-community/theming';
+import { getCustomProperties } from '@ag-grid-community/theming';
 
-const properties = setCustomProperties({accentColor: 'red', gridSize: 4});
+const properties = getCustomProperties({accentColor: 'red', gridSize: 4});
 // properties is now [['--ag-accent-color', 'red'], ['--ag-grid-size', '4px']]
 ```
 
@@ -94,15 +92,15 @@ import { themeQuartz } from '@ag-grid-community/theming';
 const redQuartz = themeQuartz.overrideParams({ accentColor: 'red' });
 ```
 
-It is recommended that this is done once when your application starts up and the generated theme saved in a variable for later use.
-
-Creating a new theme is slightly slower than setting custom properties, so it is recommended to use custom properties when you are making changes rapidly, e.g. animating a color change or changing appearance in response to user interaction.
+{% note %}
+Changing the theme of a running grid is a slower operation than setting custom properties. Where possible, cache generated themes in global variables, and use custom properties when you are making changes rapidly e.g. animating a color change.
+{% /note %}
 
 ### Multiple grids
 
-Each grid on the page can have its own theme:
+Each grid on the page can have its own theme. In the example below, 3 themes are used by 4 grids. The bottom two grids share a theme (Balham) and use CSS custom properties to achieve different header colours:
 
-(NOTE: the checkboxes are a temporary testing feature - a theme's CSS should be removed from the document head when no grids are using the theme)
+_(NOTE: the checkboxes in the React version are a temporary testing feature - a theme's CSS should be removed from the document head when no grids are using the theme)_
 
 {% gridExampleRunner title="Theming API" name="multiple-grids" /%}
 
