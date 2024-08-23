@@ -288,11 +288,13 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             width = col.getActualWidth();
             start = this.getColumnNormalisedLeft(col, isRtl);
 
-            const end = start + width;
+            if (start != null) {
+                const end = start + width;
 
-            if (start <= mouseX && end >= mouseX) {
-                targetColumn = col;
-                break;
+                if (start <= mouseX && end >= mouseX) {
+                    targetColumn = col;
+                    break;
+                }
             }
 
             start = null;
@@ -326,6 +328,10 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         for (const col of columns) {
             const currentLeft = this.getColumnNormalisedLeft(col, isRtl);
 
+            if (currentLeft == null) {
+                continue;
+            }
+
             if (left == null || currentLeft < left) {
                 left = currentLeft;
             }
@@ -339,9 +345,14 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         return mouseX >= left && mouseX <= left + width;
     }
 
-    private getColumnNormalisedLeft(col: AgColumn, isRtl: boolean): number {
+    private getColumnNormalisedLeft(col: AgColumn, isRtl: boolean): number | null {
         const { gos, ctrlsService } = this;
-        const left = col.getLeft()!;
+        const left = col.getLeft();
+
+        if (left == null) {
+            return null;
+        }
+
         const width = col.getActualWidth();
 
         return normaliseX({

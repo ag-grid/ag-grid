@@ -161,7 +161,13 @@ export function attemptMoveColumns(params: {
 
     // The best move is the move with least group fragmentation
     potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
-    columnMoveService.moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved');
+    const toIndex = potentialMoves[0].move;
+
+    if (toIndex > columnModel.getCols().length - allMovingColumns.length) {
+        return;
+    }
+
+    columnMoveService.moveColumns(allMovingColumns, toIndex, 'uiColumnMoved');
 }
 
 // returns the index of the first column in the list ONLY if the cols are all beside
