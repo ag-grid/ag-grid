@@ -271,16 +271,18 @@ export class StateService extends BeanStub implements NamedBean {
         // reset sidebar as it could have updated when columns changed
         this.updateCachedState('sideBar', this.getSideBarState());
         this.updateCachedState('focusedCell', this.getFocusedCellState());
-        this.updateCachedState('rangeSelection', this.getRangeSelectionState());
-        this.updateCachedState('cellSelection', this.getRangeSelectionState());
+        const cellSelection = this.getRangeSelectionState();
+        this.updateCachedState('rangeSelection', cellSelection);
+        this.updateCachedState('cellSelection', cellSelection);
         this.updateCachedState('scroll', this.getScrollState());
 
         this.addManagedEventListeners({
             cellFocused: () => this.updateCachedState('focusedCell', this.getFocusedCellState()),
             cellSelectionChanged: (event) => {
                 if (event.finished) {
-                    this.updateCachedState('rangeSelection', this.getRangeSelectionState());
-                    this.updateCachedState('cellSelection', this.getRangeSelectionState());
+                    const cellSelection = this.getRangeSelectionState();
+                    this.updateCachedState('rangeSelection', cellSelection);
+                    this.updateCachedState('cellSelection', cellSelection);
                 }
             },
             bodyScrollEnd: () => this.updateCachedState('scroll', this.getScrollState()),
