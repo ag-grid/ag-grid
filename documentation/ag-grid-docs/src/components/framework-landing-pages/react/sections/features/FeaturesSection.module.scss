@@ -11,22 +11,29 @@
     display: flex;
     justify-content: space-between;
     gap: $spacing-size-4;
+    background: var(--color-brand-200);
+    border-radius: var(--radius-4xl);
+    padding: $spacing-size-1;
     margin-bottom: $spacing-size-12;
+    width: auto;
 
     .tab {
         width: 150px;
         height: 50px;
-        border-radius: var(--radius-4xl);
-        background: var(--color-button-secondary-bg);
         color: var(--color-fg-primary);
         border: none;
-        box-shadow: var(--shadow-lg);
+        appearance: none;
+        background-color: transparent;
+        box-shadow: none;
+        font-weight: var(--text-regular);
     }
 
     .activeTab {
         width: 150px;
         height: 50px;
         border-radius: var(--radius-4xl);
+        background: white;
+        color: var(--color-brand-600);
         border: none;
         box-shadow: var(--shadow-lg);
     }

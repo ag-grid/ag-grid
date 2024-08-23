@@ -31,6 +31,7 @@ import { getData } from './data';
 interface Props {
     gridTheme?: string;
     isDarkMode?: boolean;
+    gridHeight?: number | null;
 }
 
 ModuleRegistry.registerModules([
@@ -57,7 +58,11 @@ const numberFormatter: ValueFormatterFunc = ({ value }) => {
     return value == null ? '' : formatter.format(value);
 };
 
-export const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz', isDarkMode = false }) => {
+export const FinanceExample: React.FC<Props> = ({
+    gridTheme = 'ag-theme-quartz',
+    isDarkMode = false,
+    gridHeight = null,
+}) => {
     const [rowData, setRowData] = useState(getData());
     const gridRef = useRef<AgGridReact>(null);
 
@@ -176,25 +181,24 @@ export const FinanceExample: React.FC<Props> = ({ gridTheme = 'ag-theme-quartz',
     const themeClass = `${gridTheme}${isDarkMode ? '-dark' : ''}`;
 
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.container}>
-                <div className={`${themeClass} ${styles.grid}`}>
-                    <AgGridReact
-                        ref={gridRef}
-                        getRowId={getRowId}
-                        rowData={rowData}
-                        columnDefs={colDefs}
-                        defaultColDef={defaultColDef}
-                        enableRangeSelection
-                        enableCharts
-                        rowSelection={'multiple'}
-                        rowGroupPanelShow={'always'}
-                        suppressAggFuncInHeader
-                        groupDefaultExpanded={-1}
-                        statusBar={statusBar}
-                    />
-                </div>
-            </div>
+        <div
+            style={gridHeight ? { height: gridHeight } : {}}
+            className={`${themeClass} ${styles.grid} ${gridHeight ? '' : styles.gridHeight}`}
+        >
+            <AgGridReact
+                ref={gridRef}
+                getRowId={getRowId}
+                rowData={rowData}
+                columnDefs={colDefs}
+                defaultColDef={defaultColDef}
+                enableRangeSelection
+                enableCharts
+                rowSelection={'multiple'}
+                rowGroupPanelShow={'always'}
+                suppressAggFuncInHeader
+                groupDefaultExpanded={-1}
+                statusBar={statusBar}
+            />
         </div>
     );
 };

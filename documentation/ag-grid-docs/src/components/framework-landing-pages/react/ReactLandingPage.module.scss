@@ -10,8 +10,13 @@
     padding-bottom: $spacing-size-12;
 }
 
-.sectionContent {
+.sectionContent,
+.sectionOdd {
     padding: 0px $spacing-size-48;
+}
+
+.sectionOdd {
+    background-color: var(--color-bg-disabled_subtle);
 }
 
 .headingContainer {
@@ -32,6 +37,7 @@
     .heading {
         font-size: 48px;
         font-weight: var(--text-bold);
+        padding: 0px $spacing-size-24;
         margin: 0px $spacing-size-24;
         margin-bottom: 0px;
     }
@@ -43,11 +49,6 @@
         text-align: center;
         margin-bottom: 0px;
     }
-}
-
-.sectionOdd {
-    padding: 0px $spacing-size-48;
-    background-color: var(--color-bg-disabled_subtle);
 }
 
 .highlight a {

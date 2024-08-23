@@ -1,23 +1,25 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { FinanceExample } from '@components/demos/examples/finance/FinanceExample';
+import { useDarkmode } from '@utils/hooks/useDarkmode';
 import React, { useRef, useState } from 'react';
 
-import Example from '../../demos/kitchensink/KitchenSink';
-import CustomerLogos from '../../utils/CustomerLogos';
 import styles from './HeroSection.module.scss';
 
 type Props = {
-    // Define your component props here
+    versionsData: any[]; // Replace 'any[]' with the actual type of 'versionsData'
 };
 
 const MyComponent: React.FC<Props> = ({ versionsData }) => {
+    const [isDarkMode] = useDarkmode();
+
     const handleClick = (path: string) => {
         window.open(path, '_blank');
     };
 
     const [isCopied, setIsCopied] = useState(false);
-    const installTextRef = useRef(null);
+    const installTextRef = useRef<HTMLSpanElement>(null);
     const copyToClipboard = () => {
-        const text = installTextRef?.current.innerText.replace('$', '');
+        const text = installTextRef?.current?.innerText.replace('$', '') ?? '';
         navigator.clipboard.writeText(text).then(() => {
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 2000);
@@ -54,7 +56,8 @@ const MyComponent: React.FC<Props> = ({ versionsData }) => {
                 </div>
             </div>
             <div className={styles.demoContainer}>
-                <Example />
+                <FinanceExample isDarkMode={isDarkMode} gridHeight={600} />
+                <button className={styles.buttonAsLink}>View All Demos</button>
             </div>
         </div>
     );

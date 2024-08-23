@@ -16,10 +16,12 @@ const FeaturesSection: React.FC = () => {
 
     const handleTabClick = (index: number) => {
         if (index >= tabs.length) {
-            setActiveTab(tabs.length - 1);
-        } else if (index <= 0) {
-            setActiveTab(0);
-        } else setActiveTab(index);
+            setActiveTab(0); // Loop to the first tab if the index exceeds the last tab
+        } else if (index < 0) {
+            setActiveTab(tabs.length - 1); // Loop to the last tab if the index is below the first tab
+        } else {
+            setActiveTab(index);
+        }
     };
 
     return (
@@ -40,12 +42,12 @@ const FeaturesSection: React.FC = () => {
                 <div className={styles.buttonContainer}>
                     <Icon
                         onClick={() => handleTabClick(activeTab - 1)}
-                        svgClasses={`${activeTab === 0 ? styles.featureNavIconDisabled : styles.featureNavIcon}`}
+                        svgClasses={styles.featureNavIcon}
                         name="arrowLeft"
                     />
                     <Icon
                         onClick={() => handleTabClick(activeTab + 1)}
-                        svgClasses={`${activeTab === 2 ? styles.featureNavIconDisabled : styles.featureNavIcon}`}
+                        svgClasses={styles.featureNavIcon}
                         name="arrowRight"
                     />
                 </div>

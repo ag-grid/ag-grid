@@ -1,7 +1,4 @@
-import { useState } from 'react';
-
 import styles from './ReactLandingPage.module.scss';
-import Benchmarks from './sections/benchmarks/Benchmarks';
 import Customers from './sections/customers/Customers';
 import Examples from './sections/examples/Examples';
 import Faqs from './sections/faqs/Faqs';
@@ -35,20 +32,6 @@ export const ReactLandingPage = ({ versionsData }) => {
                 </div>
                 <FeaturesSection />
             </div>
-            {/* <Divider odd={getIsOdd()} />
-            <div className={isOdd ? styles.sectionOdd : styles.sectionContent}>
-                <div className={styles.headingContainer}>
-                    <h2 className={styles.tag}>What Can AG Grid Do?</h2>
-                    <h3 className={styles.heading}>
-                        Every Core Feature, For Free. Advanced Features, Found Nowhere Else.
-                    </h3>
-                    <h4 className={styles.subHeading}>
-                        100s of core features, all available for free, such as Sorting, Filtering, Grouping, and more.
-                        Upgrade to Enterprise for Integrated Charting, Pivoting,
-                    </h4>
-                </div>
-                <FeaturesSection />
-            </div> */}
             <Divider odd={getIsOdd()} />
             <div className={isOdd ? styles.sectionOdd : styles.sectionContent}>
                 <div className={styles.headingContainer}>

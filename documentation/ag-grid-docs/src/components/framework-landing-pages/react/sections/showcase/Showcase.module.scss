@@ -35,10 +35,11 @@
     gap: $spacing-size-4;
 
     .button {
-        background: var(--color-util-gray-200);
-        margin: 0px $spacing-size-12;
+        background: #fdfefe;
         padding: $spacing-size-4;
+        border: 1px solid #dde0e7;
         border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
     }
 
     .buttonTitleContainer {

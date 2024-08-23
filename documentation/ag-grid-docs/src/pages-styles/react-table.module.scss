@@ -3,6 +3,20 @@
 .container {
     display: flex;
     flex-direction: column;
+}
+
+.sectionContent:last-child,
+.sectionOdd:last-child {
+    padding-bottom: $spacing-size-12;
+}
+
+.sectionContent {
+    padding: 0px $spacing-size-32;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     gap: $spacing-size-8;
@@ -83,31 +97,54 @@
         color: var(--color-gray-900);
         font-family: 'SF Mono', Courier, monospace;
     }
+}
 
-    .installText {
-        font-size: var(--text-fs-base);
-        color: var(--color-fg-primary);
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: $spacing-size-12;
+    gap: $spacing-size-2;
+
+    .tag {
+        font-weight: var(--text-semibold);
+        color: var(--color-util-brand-600);
+        margin-bottom: 0px;
     }
 
-    .icon svg {
-        fill: var(--color-gray-900);
-        padding: 6px;
+    .heading {
+        font-size: 48px;
+        font-weight: var(--text-bold);
+        margin: 0px $spacing-size-24;
+        margin-bottom: 0px;
+    }
 
-        &:hover {
-            cursor: pointer;
-            fill: var(--color-util-brand-400);
-        }
+    .subHeading {
+        font-size: var(--text-fs-lg);
+        font-weight: var(--text-base);
+        margin: 0px $spacing-size-48;
+        text-align: center;
+        margin-bottom: 0px;
     }
 }
 
-.buttonAsLink {
-    appearance: none;
-    padding: 0;
-    text-align: left;
-    font-weight: var(--text-regular);
-    color: var(--color-link);
-    transition: color 0.25s ease-in-out;
-    border: none;
-    background-color: transparent;
-    box-shadow: none;
+.sectionOdd {
+    padding: 0px $spacing-size-48;
+    background-color: var(--color-bg-disabled_subtle);
+}
+
+.highlight a {
+    padding: 2px;
+    border-bottom: 2px solid var(--color-util-brand-500);
+    color: var(--color-fg-secondary);
+    padding: 0.2em;
+    border-radius: 0.2em;
+    transition: background-color 0.3s ease;
+    font-weight: var(--text-bold);
+}
+
+.highlight:hover {
+    cursor: pointer;
 }
