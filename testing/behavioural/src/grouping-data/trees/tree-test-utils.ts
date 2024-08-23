@@ -1,7 +1,8 @@
-import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
+import type { GridApi, IRowNode } from '@ag-grid-community/core';
 
 import {
     checkGridSelectedNodes,
+    checkRowNodeDom,
     findRootNode,
     info,
     log,
@@ -9,108 +10,17 @@ import {
     verifyPositionInRootChildren,
 } from '../../test-utils';
 
-export async function executeTransactionsAsync(transactions: RowDataTransaction<any>[], api: GridApi<any>) {
-    const promises: Promise<void>[] = [];
-    for (const transaction of transactions) {
-        promises.push(
-            new Promise((resolve) => {
-                api.applyTransactionAsync(transaction, () => resolve());
-            })
-        );
-    }
+export type TreeDiagramStage = 'childrenAfterGroup' | 'childrenAfterFilter' | 'childrenAfterSort';
 
-    api.flushAsyncTransactions();
-    await Promise.all(promises);
-}
-
-export type TreeDiagramStage = 'group' | 'filter' | 'sort';
-
-type TreeDiagramChildrenFieldName = 'childrenAfterGroup' | 'childrenAfterFilter' | 'childrenAfterSort';
-
-export interface TreeCheckerOptions {
-    /** The stage to use for children, group, filter, sort */
+export interface TreeDiagramOptions {
+    /**
+     * There are 3 possible stages to get children from:
+     * - 'childrenAfterGroup' - children after group stage
+     * - 'childrenAfterFilter' - children after filter stage
+     * - 'childrenAfterSort' - children after sort stage (last stage and default value)
+     */
     stage?: TreeDiagramStage;
-}
 
-export class TreeChecker {
-    public readonly api: GridApi;
-    public readonly label: string;
-    public readonly root: IRowNode | null = null;
-    public hasErrors = false;
-    public readonly stage: TreeDiagramStage;
-    public readonly childrenField: TreeDiagramChildrenFieldName;
-
-    public constructor(api: GridApi, label: string = '', options: TreeDiagramOptions = {}) {
-        this.api = api;
-        this.stage = options.stage ?? 'group';
-        this.label = label;
-        switch (this.stage) {
-            case 'group':
-                this.childrenField = 'childrenAfterGroup';
-                break;
-            case 'filter':
-                this.childrenField = 'childrenAfterFilter';
-                break;
-            case 'sort':
-                this.childrenField = 'childrenAfterSort';
-                break;
-        }
-        const root = findRootNode(api);
-        this.root = root!;
-    }
-
-    public checkEmpty(): void {
-        if (this.root?.[this.childrenField]?.length) {
-            const error = new Error(
-                'Expected empty tree, but found ' +
-                    this.root[this.childrenField]!.length +
-                    ' children.\n' +
-                    this.toString()
-            );
-            Error.captureStackTrace(error, this.checkEmpty);
-            throw error;
-        }
-    }
-
-    public toString(): string {
-        return this.label || this.constructor.name;
-    }
-
-    /** This verifies that the final DOM structure matches the tree data. */
-    public checkDom(element: Element | null | string) {
-        if (typeof element === 'string') {
-            element = document.getElementById(element) ?? document.querySelector(element);
-        }
-        if (!element) {
-            throw new Error('No grid HTMLElement found');
-        }
-
-        const expectedIds: string[] = [];
-        const recurse = (row: IRowNode, parentExpanded: boolean) => {
-            for (const child of row[this.childrenField] ?? []) {
-                if (parentExpanded) {
-                    expectedIds.push(child.id!);
-                    checkRowNodeDomStructure(element, this.api, child);
-                }
-                recurse(child, parentExpanded && child.expanded);
-            }
-        };
-
-        recurse(this.root!, true);
-
-        const allRowsIds: string[] = [];
-        element.querySelectorAll('[row-id]').forEach((el) => {
-            allRowsIds.push(el.getAttribute('row-id')!);
-        });
-
-        expectedIds.sort();
-        allRowsIds.sort();
-
-        expect(allRowsIds).toEqual(expectedIds);
-    }
-}
-
-export interface TreeDiagramOptions extends TreeCheckerOptions {
     /** The columns to include */
     columns?: string[];
 
@@ -118,27 +28,36 @@ export interface TreeDiagramOptions extends TreeCheckerOptions {
     includeId?: boolean;
 
     /** The DOM element to check. If undefined, the DOM will not be checked. */
-    checkDom?: Element | string | undefined;
+    checkDom?: Element | string | false | undefined;
 
     /** True if selected rows should be checked, default is true */
     checkSelectedNodes?: boolean;
 }
 
-export class TreeDiagram extends TreeChecker {
+export class TreeDiagram {
+    public readonly api: GridApi;
+    public readonly label: string;
+    public readonly root: IRowNode | null = null;
+    public readonly stage: TreeDiagramStage;
     public readonly options: TreeDiagramOptions;
     public readonly includeId: boolean = true;
     public readonly columns: ReadonlySet<string> = new Set<string>();
-    public diagram: string = '';
     public readonly uniqueNodeParents = new Map<IRowNode, IRowNode | null>();
+    public readonly uniqueChildrenAfterGroupArrays = new Map<IRowNode[], string>();
 
-    private readonly uniqueChildrenAfterGroupArrays = new Map<IRowNode[], string>();
+    public hasErrors = false;
+    public diagram: string = '';
 
     private rowErrors: string[];
     private errorsCount: number = 0;
     private rowIdxCounter: number = 0;
 
-    public constructor(api: GridApi, label: string = '', options: TreeDiagramOptions = {}) {
-        super(api, label, options);
+    public constructor(api: GridApi, label: string | null | undefined, options: TreeDiagramOptions) {
+        this.api = api;
+        this.stage = options.stage ?? 'childrenAfterSort';
+        this.label = label ?? '';
+        const root = findRootNode(api);
+        this.root = root!;
         this.options = options;
         this.columns = new Set(options.columns);
         this.includeId = options.includeId ?? true;
@@ -216,7 +135,7 @@ export class TreeDiagram extends TreeChecker {
         }
 
         const duplicateParent = this.uniqueNodeParents.get(row);
-        const children = row[this.childrenField];
+        const children = row[this.stage];
         const type = this.getNodeType(row);
         const branchPrefix = branch.length ? (children?.length ? '┬ ' : '─ ') : '';
         const rowInfo = this.buildRowInfo(row, type, duplicateParent);
@@ -264,8 +183,8 @@ export class TreeDiagram extends TreeChecker {
             if (row.id !== 'ROOT_NODE_ID') this.rowErrors.push('ROOT_NODE_ID!');
             if (row.key) this.rowErrors.push('ROOT_NODE_KEY!');
         }
-        if (!row[this.childrenField]) {
-            this.rowErrors.push([this.childrenField] + '=null');
+        if (!row[this.stage]) {
+            this.rowErrors.push([this.stage] + '=null');
         }
         if (!row.allLeafChildren) {
             this.rowErrors.push('allLeafChildren=null!');
@@ -287,7 +206,7 @@ export class TreeDiagram extends TreeChecker {
             this.rowErrors.push('FIRST_CHILD!');
             this.diagram += `row.firstChild:${row.firstChild} `;
         }
-        if (parent && row.lastChild !== (idx === (parent[this.childrenField]?.length ?? 0) - 1)) {
+        if (parent && row.lastChild !== (idx === (parent[this.stage]?.length ?? 0) - 1)) {
             this.rowErrors.push('LAST_CHILD!');
             this.diagram += `row.lastChild:${row.lastChild} `;
         }
@@ -298,7 +217,7 @@ export class TreeDiagram extends TreeChecker {
             this.diagram += 'row.leafGroup:' + row.leafGroup + ' ';
         }
 
-        const builtChildren = buildChildren(row, this.childrenField);
+        const builtChildren = buildChildren(row, this.stage);
 
         let expectedAllChildrenCount: number | null = builtChildren.allChildrenCount;
         if (level >= 0 && !expectedAllChildrenCount) {
@@ -339,12 +258,12 @@ export class TreeDiagram extends TreeChecker {
             this.rowErrors.push('ROOT_EXPANDED');
         }
 
-        if (row[this.childrenField]) {
-            const found = row[this.childrenField]!.find((child) => child.parent !== row);
+        if (row[this.stage]) {
+            const found = row[this.stage]!.find((child) => child.parent !== row);
             if (found !== undefined) {
                 this.rowErrors.push('DUPLICATE_CHILDREN_AFTER_GROUP_ARRAY_INSTANCE=' + rowKey(found));
             }
-            this.uniqueChildrenAfterGroupArrays.set(row[this.childrenField]!, rowKey(row));
+            this.uniqueChildrenAfterGroupArrays.set(row[this.stage]!, rowKey(row));
         }
 
         if (expanded) {
@@ -367,6 +286,49 @@ export class TreeDiagram extends TreeChecker {
     public print(): this {
         log(this.diagram);
         return this;
+    }
+
+    /** This verifies that the final DOM structure matches the tree data. */
+    public checkDom(element: Element | null | string) {
+        if (typeof element === 'string') {
+            element = document.getElementById(element) ?? document.querySelector(element);
+        }
+        if (!element) {
+            throw new Error('No grid HTMLElement found');
+        }
+
+        const expectedIds: string[] = [];
+        const recurse = (row: IRowNode, parentExpanded: boolean) => {
+            for (const child of row.childrenAfterSort ?? []) {
+                if (parentExpanded) {
+                    expectedIds.push(child.id!);
+                    checkRowNodeDom(element, this.api, child);
+                }
+                recurse(child, parentExpanded && child.expanded);
+            }
+        };
+
+        recurse(this.root!, true);
+
+        const allRowsIds: string[] = [];
+        element.querySelectorAll('[row-id]').forEach((el) => {
+            allRowsIds.push(el.getAttribute('row-id')!);
+        });
+
+        expectedIds.sort();
+        allRowsIds.sort();
+
+        expect(allRowsIds).toEqual(expectedIds);
+    }
+
+    public checkEmpty(): void {
+        if (this.root?.[this.stage]?.length) {
+            const error = new Error(
+                'Expected empty tree, but found ' + this.root[this.stage]!.length + ' children.\n' + this.toString()
+            );
+            Error.captureStackTrace(error, this.checkEmpty);
+            throw error;
+        }
     }
 
     public check(diagramSnapshot?: string | string[] | true): this {
@@ -405,46 +367,12 @@ export class TreeDiagram extends TreeChecker {
         return this;
     }
 
-    public override toString(): string {
+    public toString(): string {
         return (
             (this.label ? '\n✱ ' + this.label + '\n' : '') +
             this.diagram +
             (this.errorsCount ? '\n❌ TREE HAS ' + this.errorsCount + ' ERRORS\n' : '')
         );
-    }
-}
-
-export function checkRowNodeDomStructure(gridElement: Element, api: GridApi, row: IRowNode) {
-    const childElement = gridElement.querySelector(`[row-id="${row.id}"]`);
-    if (!childElement) {
-        throw new Error(`Missing element for row ${rowKey(row)}`);
-    }
-
-    // Check for cell values
-    const columns = api.getColumns() ?? [];
-    for (const column of columns) {
-        const columnId = column.getColId();
-        const cellElement = childElement.querySelector(`[col-id="${columnId}"]`);
-        if (!cellElement) {
-            throw new Error(`Missing cell element for column ${columnId} in row id:${row.id} key:${row.key}`);
-        }
-        let cellValue = api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
-        if (cellValue === null) {
-            cellValue = '';
-        }
-        if (cellElement.textContent !== cellValue) {
-            throw new Error(
-                `Cell value mismatch for column ${columnId} in row id:${row.id} key:${row.key} : ` +
-                    `expected '${cellValue}', found '${cellElement.textContent}'`
-            );
-        }
-        if (row.isSelected()) {
-            if (!childElement.classList.contains('ag-row-selected')) {
-                throw new Error(`Row id:${row.id} key:${row.key} should have ag-row-selected class`);
-            }
-        } else if (childElement.classList.contains('ag-row-selected')) {
-            throw new Error(`Row id:${row.id} key:${row.key} should not have ag-row-selected class`);
-        }
     }
 }
 
@@ -456,16 +384,16 @@ function normalizeDiagram(diagram: string | string[]) {
     return lines.join('\n');
 }
 
-function buildChildren(row: IRowNode, childrenFieldName: TreeDiagramChildrenFieldName) {
-    const allLeafs: IRowNode[] | null = childrenFieldName === 'childrenAfterGroup' ? [] : null;
+function buildChildren(row: IRowNode, stage: TreeDiagramStage) {
+    const allLeafs: IRowNode[] | null = stage === 'childrenAfterGroup' ? [] : null;
     let allChildrenCount = 0;
     const recurse = (row: IRowNode) => {
-        const children = row[childrenFieldName];
+        const children = row[stage];
         if (children) {
             allChildrenCount += children.length;
             for (const child of children) {
                 if (allLeafs !== null) {
-                    if (!child[childrenFieldName]?.length) {
+                    if (!child[stage]?.length) {
                         allLeafs.push(child);
                     }
                 }

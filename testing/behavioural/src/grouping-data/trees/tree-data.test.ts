@@ -1,38 +1,26 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { getAllRows } from '../../test-utils';
+import { TestGridsManager, getAllRows } from '../../test-utils';
 import { getRowsSnapshot, simpleHierarchyRowSnapshot } from '../row-snapshot-test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
+import type { TreeDiagramOptions } from './tree-test-utils';
 import { TreeDiagram } from './tree-test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
-    let consoleErrorSpy: jest.SpyInstance;
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+
     let consoleWarnSpy: jest.SpyInstance;
 
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
-
     beforeEach(() => {
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        gridsManager.reset();
         consoleWarnSpy?.mockRestore();
     });
 
@@ -62,9 +50,13 @@ describe('ag-grid tree data', () => {
             getDataPath,
         };
 
-        const api = createMyGrid(gridOptions);
+        const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        new TreeDiagram(api).check(`
+        const treeDiagramOptions: TreeDiagramOptions = {
+            checkDom: 'myGrid',
+        };
+
+        new TreeDiagram(api, 'data', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ └── B LEAF id:1
@@ -117,11 +109,15 @@ describe('ag-grid tree data', () => {
             getDataPath,
         };
 
-        const api = createMyGrid(gridOptions);
+        const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const rows = getAllRows(api);
 
-        new TreeDiagram(api).check(`
+        const treeDiagramOptions: TreeDiagramOptions = {
+            checkDom: 'myGrid',
+        };
+
+        new TreeDiagram(api, 'data', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:2
             │ └── B LEAF id:0

@@ -1,35 +1,20 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { cachedJSONObjects } from '../../../test-utils';
+import { TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 import { TreeDiagram } from '../tree-test-utils';
 import type { TreeDiagramOptions } from '../tree-test-utils';
 
 describe('ag-grid tree aggregation', () => {
-    let consoleErrorSpy: jest.SpyInstance;
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
         jest.useRealTimers();
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        gridsManager.reset();
     });
 
     test('tree aggregation and update', async () => {
@@ -45,7 +30,7 @@ describe('ag-grid tree aggregation', () => {
             { id: '9', name: 'E. Dijkstra', x: 2, path: ['J'] },
         ]);
 
-        const api = createMyGrid({
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'name', filter: 'agTextColumnFilter' },
                 { field: 'x', aggFunc: 'sum' },
@@ -61,7 +46,6 @@ describe('ag-grid tree aggregation', () => {
         });
 
         const treeDiagramOptions: TreeDiagramOptions = {
-            stage: 'filter',
             columns: ['name', 'x'],
             checkDom: 'myGrid',
         };
