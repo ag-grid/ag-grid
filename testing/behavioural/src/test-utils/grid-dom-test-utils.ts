@@ -2,7 +2,7 @@ import type { GridApi, IRowNode } from '@ag-grid-community/core';
 
 import { getAllRows } from './grid-test-utils';
 
-export function checkRowNodesDom(gridElement: Element | string, api: GridApi) {
+export function checkSimpleRowNodesDom(gridElement: Element | string, api: GridApi) {
     if (typeof gridElement === 'string') {
         const found = document.getElementById(gridElement);
         if (!found) {
@@ -12,11 +12,11 @@ export function checkRowNodesDom(gridElement: Element | string, api: GridApi) {
     }
 
     for (const row of getAllRows(api)) {
-        checkRowNodeDom(gridElement, api, row);
+        checkSimpleRowNodeDom(gridElement, api, row);
     }
 }
 
-export function checkRowNodeDom(gridElement: Element, api: GridApi, row: IRowNode) {
+export function checkSimpleRowNodeDom(gridElement: Element, api: GridApi, row: IRowNode) {
     const rowElement = gridElement.querySelector(`[row-id="${row.id}"]`);
 
     if (!rowElement) {

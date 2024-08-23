@@ -2,7 +2,7 @@ import type { GridApi, IRowNode } from '@ag-grid-community/core';
 
 import {
     checkGridSelectedNodes,
-    checkRowNodeDom,
+    checkSimpleRowNodeDom,
     findRootNode,
     info,
     log,
@@ -302,7 +302,7 @@ export class TreeDiagram {
             for (const child of row.childrenAfterSort ?? []) {
                 if (parentExpanded) {
                     expectedIds.push(child.id!);
-                    checkRowNodeDom(element, this.api, child);
+                    checkSimpleRowNodeDom(element, this.api, child);
                 }
                 recurse(child, parentExpanded && child.expanded);
             }
