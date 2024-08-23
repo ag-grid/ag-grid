@@ -11,9 +11,24 @@ export function checkSimpleRowNodesDom(gridElement: Element | string, api: GridA
         gridElement = found;
     }
 
+    const expectedIds: string[] = [];
+
     for (const row of getAllRows(api)) {
+        if (row.id !== undefined) {
+            expectedIds.push(row.id);
+        }
         checkSimpleRowNodeDom(gridElement, api, row);
     }
+
+    const allRowsIds: string[] = [];
+    gridElement.querySelectorAll('[row-id]').forEach((el) => {
+        allRowsIds.push(el.getAttribute('row-id')!);
+    });
+
+    expectedIds.sort();
+    allRowsIds.sort();
+
+    expect(allRowsIds).toEqual(expectedIds);
 }
 
 export function checkSimpleRowNodeDom(gridElement: Element, api: GridApi, row: IRowNode) {
