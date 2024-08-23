@@ -866,9 +866,13 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
         | 'columnChooser';
     /**
      * Column the menu is opened for. Will be `null` if not launched from a column
-     * (e.g. column chooser from the API, or column menu via right-click on an empty header).
+     * (e.g. column chooser from the API, or column menu via right-click on a column group or empty header).
      */
     column: Column | null;
+    /**
+     * Column group the menu is opened for if launched from right-click on a column group
+     */
+    columnGroup?: ProvidedColumnGroup | null;
 }
 
 /**------------*/

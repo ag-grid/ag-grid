@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
     FuncColsService,
@@ -31,6 +32,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     public createMenu(
         parent: BeanStub<any>,
+        menuItems: (string | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement
     ): AgMenuList {
@@ -42,7 +44,6 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             })
         );
 
-        const menuItems = this.getMenuItems(column);
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(
             menuItems,
             column ?? null,
@@ -55,7 +56,9 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         return menuList;
     }
 
-    private getMenuItems(column?: AgColumn): (string | MenuItemDef)[] {
+    // columnGroup to be added
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public getMenuItems(column?: AgColumn, columnGroup?: AgProvidedColumnGroup): (string | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
         let result: (string | MenuItemDef)[];
 
