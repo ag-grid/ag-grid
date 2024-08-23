@@ -77,9 +77,7 @@ function addTrailingSlash(path: string) {
 }
 
 export async function getSitemapIgnorePaths() {
-    const legacyArchiveVersions = LEGACY_ARCHIVE_VERSIONS.map((version) =>
-        addTrailingSlash(urlWithBaseUrl(`/archive/${version}`))
-    );
+    const legacyArchiveVersions = LEGACY_ARCHIVE_VERSIONS.map((version) => addTrailingSlash(`/archive/${version}`));
     const folderPaths = [urlWithBaseUrl('/debug'), urlWithBaseUrl('/examples'), ...legacyArchiveVersions];
 
     return folderPaths.concat(urlWithBaseUrl('/404'));
