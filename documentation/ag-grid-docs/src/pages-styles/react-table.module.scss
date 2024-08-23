@@ -10,93 +10,13 @@
     padding-bottom: $spacing-size-12;
 }
 
-.sectionContent {
-    padding: 0px $spacing-size-32;
+.sectionContent,
+.sectionOdd {
+    padding: 0px $spacing-size-48;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: $spacing-size-8;
-}
-
-.headingContainer {
-    display: flex;
-    flex-direction: column;
-    margin-top: $spacing-size-16;
-
-    .versionTagContainer {
-        display: flex;
-        border-radius: var(--radius-4xl);
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        align-self: center;
-        background-color: var(--color-brand-200);
-
-        .version {
-            border: 2px solid var(--color-util-brand-200);
-            background: var(--color-white);
-            border-radius: var(--radius-4xl);
-            margin: 2px;
-            padding: 0px $spacing-size-2;
-            font-size: var(--text-fs-sm);
-            font-weight: var(--text-base);
-            color: var(--color-brand-500);
-        }
-
-        .featureHighlight {
-            padding: 0px $spacing-size-2;
-            font-size: var(--text-fs-sm);
-            font-weight: var(--text-base);
-            color: var(--color-brand-500);
-        }
-
-        .featureArrow {
-            height: 16px;
-            width: 16px;
-            margin-left: $spacing-size-2;
-            fill: var(--color-brand-500);
-        }
-    }
-
-    .heading {
-        font-size: 72px;
-        text-align: center;
-        line-height: 77px;
-        margin: $spacing-size-8 0px;
-        padding: 0px $spacing-size-64;
-        font-weight: var(--text-bold);
-    }
-
-    .subHeading {
-        text-align: center;
-        font-size: var(--text-fs-xl);
-        padding: 0px $spacing-size-56;
-    }
-}
-
-.buttonContainer {
-    display: flex;
-    justify-content: center;
-    gap: $spacing-size-4;
-
-    .cta1 {
-        // TBC
-    }
-
-    .cta2 {
-        display: flex;
-        align-items: center;
-        gap: $spacing-size-2;
-        padding: $spacing-size-2;
-        border-radius: var(--radius-md);
-        background-color: var(--color-brand-200);
-        color: var(--color-gray-900);
-        font-family: 'SF Mono', Courier, monospace;
-    }
+.sectionOdd {
+    background-color: var(--color-bg-disabled_subtle);
 }
 
 .headingContainer {
@@ -117,6 +37,7 @@
     .heading {
         font-size: 48px;
         font-weight: var(--text-bold);
+        padding: 0px $spacing-size-24;
         margin: 0px $spacing-size-24;
         margin-bottom: 0px;
     }
@@ -128,11 +49,6 @@
         text-align: center;
         margin-bottom: 0px;
     }
-}
-
-.sectionOdd {
-    padding: 0px $spacing-size-48;
-    background-color: var(--color-bg-disabled_subtle);
 }
 
 .highlight a {
