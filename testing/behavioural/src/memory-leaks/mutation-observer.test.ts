@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions } from '@ag-grid-community/core';
 
-import { TestGridsManager, getAllRowData } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, getAllRowData } from '../test-utils';
 
 const mutationObserver = global.MutationObserver;
 
@@ -42,6 +42,8 @@ describe('Mutation Observers Disconnected', () => {
 
         const allRowData = getAllRowData(api);
         expect(allRowData).toBeDefined();
+
+        await asyncSetTimeout(15); // Just to make sure all async operations are done
 
         api.destroy();
 
