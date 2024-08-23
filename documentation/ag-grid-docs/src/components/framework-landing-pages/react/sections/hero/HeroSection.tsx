@@ -27,39 +27,42 @@ const MyComponent: React.FC<Props> = ({ versionsData }) => {
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.headingContainer}>
-                <div onClick={() => handleClick('/whats-new')} className={styles.versionTagContainer}>
-                    <span className={styles.version}>AG Grid v{versionsData[0].version}</span>
-                    <span className={styles.featureHighlight}>
+        <div className={styles.heroSectioncontainer}>
+            <div className={styles.heroSectionheadingContainer}>
+                <div onClick={() => handleClick('/whats-new')} className={styles.heroSectionversionTagContainer}>
+                    <span className={styles.heroSectionversion}>AG Grid v{versionsData[0].version}</span>
+                    <span className={styles.heroSectionfeatureHighlight}>
                         {versionsData[0].landingPageHighlight}
-                        <Icon svgClasses={styles.featureArrow} name="arrowRight" />
+                        <Icon svgClasses={styles.heroSectionfeatureArrow} name="arrowRight" />
                     </span>
                 </div>
-                <h1 className={styles.heading}>Fast, Powerful and Flexible React Table</h1>
-                <p className={styles.subHeading}>
+                <h1 className={styles.heroSectionheading}>Fast, Powerful and Flexible React Table</h1>
+                <p className={styles.heroSectionsubHeading}>
                     Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b> React Data Tables to
                     your application in <b>minutes</b>, all for <b>free</b>.
                 </p>
             </div>
-            <div className={styles.buttonContainer}>
-                <button className={styles.cta1} onClick={() => handleClick('/react-data-grid/getting-started/')}>
+            <div className={styles.heroSectionbuttonContainer}>
+                <button
+                    className={styles.heroSectioncta1}
+                    onClick={() => handleClick('/react-data-grid/getting-started/')}
+                >
                     Get Started
                 </button>
-                <div className={styles.cta2}>
-                    <span ref={installTextRef} className={styles.installText}>
+                <div className={styles.heroSectioncta2}>
+                    <span ref={installTextRef} className={styles.heroSectioninstallText}>
                         $ npm install ag-grid-react
                     </span>
-                    <span className={styles.icon} onClick={copyToClipboard}>
-                        <Icon svgClasses={styles.icon} name={isCopied ? 'tick' : 'copy'} />
+                    <span className={styles.heroSectionicon} onClick={copyToClipboard}>
+                        <Icon svgClasses={styles.heroSectionicon} name={isCopied ? 'tick' : 'copy'} />
                     </span>
                 </div>
             </div>
-            <div className={styles.demoContainer}>
+            <div className={styles.heroSectiondemoContainer}>
                 <FinanceExample isDarkMode={isDarkMode} gridHeight={600} />
-                <button className={styles.viewAllDemosLink}>
+                <button className={styles.heroSectionviewAllDemosLink}>
                     View All Demos
-                    <Icon svgClasses={styles.demosArrow} name="arrowRight" />
+                    <Icon svgClasses={styles.heroSectiondemosArrow} name="arrowRight" />
                 </button>
             </div>
         </div>

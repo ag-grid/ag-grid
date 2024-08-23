@@ -1,6 +1,6 @@
 @use 'design-system' as *;
 
-.container {
+.heroSectioncontainer {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -8,12 +8,12 @@
     gap: $spacing-size-8;
 }
 
-.headingContainer {
+.heroSectionheadingContainer {
     display: flex;
     flex-direction: column;
     margin-top: $spacing-size-16;
 
-    .versionTagContainer {
+    .heroSectionversionTagContainer {
         display: flex;
         border-radius: var(--radius-4xl);
         justify-content: center;
@@ -22,7 +22,7 @@
         align-self: center;
         background-color: var(--color-brand-200);
 
-        .version {
+        .heroSectionversion {
             border: 2px solid var(--color-util-brand-200);
             background: var(--color-white);
             border-radius: var(--radius-4xl);
@@ -33,14 +33,14 @@
             color: var(--color-brand-500);
         }
 
-        .featureHighlight {
+        .heroSectionfeatureHighlight {
             padding: 0px $spacing-size-2;
             font-size: var(--text-fs-sm);
             font-weight: var(--text-base);
             color: var(--color-brand-500);
         }
 
-        .featureArrow {
+        .heroSectionfeatureArrow {
             height: 16px;
             width: 16px;
             margin-left: $spacing-size-2;
@@ -48,7 +48,7 @@
         }
     }
 
-    .heading {
+    .heroSectionheading {
         font-size: 72px;
         text-align: center;
         line-height: 77px;
@@ -57,23 +57,23 @@
         font-weight: var(--text-bold);
     }
 
-    .subHeading {
+    .heroSectionsubHeading {
         text-align: center;
         font-size: var(--text-fs-xl);
         padding: 0px $spacing-size-56;
     }
 }
 
-.buttonContainer {
+.heroSectionbuttonContainer {
     display: flex;
     justify-content: center;
     gap: $spacing-size-4;
 
-    .cta1 {
+    .heroSectioncta1 {
         // TBC
     }
 
-    .cta2 {
+    .heroSectioncta2 {
         display: flex;
         align-items: center;
         gap: $spacing-size-2;
@@ -84,12 +84,12 @@
         font-family: 'SF Mono', Courier, monospace;
     }
 
-    .installText {
+    .heroSectioninstallText {
         font-size: var(--text-fs-base);
         color: var(--color-fg-primary);
     }
 
-    .icon svg {
+    .heroSectionicon svg {
         fill: var(--color-gray-900);
         padding: 6px;
 
@@ -100,11 +100,11 @@
     }
 }
 
-.demoContainer {
+.heroSectiondemoContainer {
     display: flex;
     flex-direction: column;
 
-    .viewAllDemosLink {
+    .heroSectionviewAllDemosLink {
         appearance: none;
         padding: 0;
         text-align: left;
@@ -112,13 +112,13 @@
         font-weight: var(--text-regular);
         margin: $spacing-size-4 0px;
         color: var(--color-link);
-        transition: color 0.25s ease-in-out;
+        transition: color 0heroSection25s ease-in-out;
         border: none;
         background-color: transparent;
         box-shadow: none;
     }
 
-    .demosArrow {
+    .heroSectiondemosArrow {
         height: 16px;
         width: 16px;
         margin-left: $spacing-size-2 !important;

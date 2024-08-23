@@ -9,6 +9,11 @@ import FeaturesSection from '../components/framework-landing-pages/react/section
 import HeroSection from '../components/framework-landing-pages/react/sections/hero/HeroSection';
 import Showcase from '../components/framework-landing-pages/react/sections/showcase/Showcase';
 import Divider from '../components/framework-landing-pages/react/utils/Divider';
+
+import InstallText from '@components/framework-landing-pages/InstallText';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { Finance } from 'src/components/demos/examples/finance';
+import { useDarkmode } from '@utils/hooks/useDarkmode';
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
 
 let isOdd = false;
@@ -21,7 +26,40 @@ const getIsOdd = () => {
 <Layout title={'AG Grid React Table'} description={''} showDocsNav={false} showSearchBar={true}>
     <div class={styles.container}>
         <div class={isOdd ? styles.sectionOdd : styles.sectionContent}>
-            <HeroSection client:only="react" versionsData={versionsData} />
+            <div class={styles.heroSectioncontainer}>
+                <div class={styles.heroSectionheadingContainer}>
+                    <div onClick={() => handleClick('/whats-new')} class={styles.heroSectionversionTagContainer}>
+                        <span class={styles.heroSectionversion}>AG Grid v{versionsData[0].version}</span>
+                        <span class={styles.heroSectionfeatureHighlight}>
+                            {versionsData[0].landingPageHighlight}
+                            <Icon svgClasses={styles.heroSectionfeatureArrow} name="arrowRight" />
+                        </span>
+                    </div>
+                    <h1 class={styles.heroSectionheading}>Fast, Powerful and Flexible React Table</h1>
+                    <p class={styles.heroSectionsubHeading}>
+                        Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b> React Data Tables
+                        to your application in <b>minutes</b>, all for <b>free</b>.
+                    </p>
+                </div>
+                <div class={styles.heroSectionbuttonContainer}>
+                    <button
+                        class={styles.heroSectioncta1}
+                        onClick={() => handleClick('/react-data-grid/getting-started/')}
+                    >
+                        Get Started
+                    </button>
+                    <div class={styles.heroSectioncta2}>
+                        <InstallText />
+                    </div>
+                </div>
+                <div class={styles.heroSectiondemoContainer}>
+                    <Finance client:only="react" gridHeight={600} />
+                    <button class={styles.heroSectionviewAllDemosLink}>
+                        View All Demos
+                        <Icon svgClasses={styles.heroSectiondemosArrow} name="arrowRight" />
+                    </button>
+                </div>
+            </div>
         </div>
         <Divider odd={getIsOdd()} />
         <div class={isOdd ? styles.sectionOdd : styles.sectionOdd}>
@@ -52,41 +90,43 @@ const getIsOdd = () => {
         <div class={isOdd ? styles.sectionOdd : styles.sectionContent}>
             <div class={styles.headingContainer}>
                 <h2 class={styles.tag}>Who Uses AG Grid?</h2>
-                <h3 class={styles.heading}>
-                    Loved By Developers<br />
-                </h3>Trusted By The Worlds Largest Enterprises
+                <h3 class={styles.heading}>Loved By Developers<br />Trusted By The Worlds Largest Enterprises</h3>
+                <h4 class={styles.subHeading}>
+                    Over <b>90% of the Fortune 500</b> build React Tables using AG Grid, with{' '}
+                    <span class={styles.highlight}>
+                        <a href="https://www.npmjs.com/package/ag-grid-community" target="_blank"> 1,000,000+</a>
+                    </span>{' '}
+                    npm downloads per week and over{' '}
+                    <span class={styles.highlight}>
+                        <a href="https://github.com/ag-grid/ag-grid/tree/latest" target="_blank"> 12,000</a>
+                    </span>{' '}
+                    Stars on Github.
+                </h4>
             </div>
-            <h4 class={styles.subHeading}>
-                Over <b>90% of the Fortune 500</b> build React Tables using AG Grid, with{' '}
-                <span class={styles.highlight}>
-                    <a href="https://www.npmjs.com/package/ag-grid-community" target="_blank"> 1,000,000+</a>
-                </span>{' '}
-                npm downloads per week and over{' '}
-                <span class={styles.highlight}>
-                    <a href="https://github.com/ag-grid/ag-grid/tree/latest" target="_blank"> 12,000</a>
-                </span>{' '}
-                Stars on Github.
-            </h4>
+            <Customers />
         </div>
-        <Customers />
-    </div>
-    <Divider odd={getIsOdd()} />
-    <div class={isOdd ? styles.sectionOdd : styles.sectionContent}>
-        <div class={styles.headingContainer}>
-            <h2 class={styles.tag}>How Do I Get Started?</h2>
-            <h3 class={styles.heading}>Get Started with Common Templates</h3>
-            <h4 class={styles.subHeading}>Sample apps to help you build your React Table with AG Grid in minutes.</h4>
+        <Divider odd={getIsOdd()} />
+        <div class={isOdd ? styles.sectionOdd : styles.sectionContent}>
+            <div class={styles.headingContainer}>
+                <h2 class={styles.tag}>How Do I Get Started?</h2>
+                <h3 class={styles.heading}>Get Started with Common Templates</h3>
+                <h4 class={styles.subHeading}>
+                    Sample apps to help you build your React Table with AG Grid in minutes.
+                </h4>
+            </div>
+            <Examples />
         </div>
-        <Examples />
-    </div>
-    <Divider odd={getIsOdd()} />
-    {/* FAQs - Community vs. Enterprise,  etc... */}
-    <div class={isOdd ? styles.sectionOdd : styles.sectionContent}>
-        <div class={styles.headingContainer}>
-            <h2 class={styles.tag}>How Does AG Grid Compare to Competition?</h2>
-            <h3 class={styles.heading}>Frequently Asked Questions</h3>
-            <h4 class={styles.subHeading}>Answers to some common questions when building React Tables with AG Grid</h4>
+        <Divider odd={getIsOdd()} />
+        {/* FAQs - Community vs. Enterprise,  etc... */}
+        <div class={isOdd ? styles.sectionOdd : styles.sectionContent}>
+            <div class={styles.headingContainer}>
+                <h2 class={styles.tag}>How Does AG Grid Compare to Competition?</h2>
+                <h3 class={styles.heading}>Frequently Asked Questions</h3>
+                <h4 class={styles.subHeading}>
+                    Answers to some common questions when building React Tables with AG Grid
+                </h4>
+            </div>
+            <Faqs />
         </div>
-        <Faqs />
     </div>
 </Layout>
