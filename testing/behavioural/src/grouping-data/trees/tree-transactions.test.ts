@@ -1,33 +1,30 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import type { RowDataTransaction } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { executeTransactionsAsync, getAllRowData, getAllRows, verifyPositionInRootChildren } from '../../test-utils';
+import {
+    TestGridsManager,
+    executeTransactionsAsync,
+    getAllRowData,
+    getAllRows,
+    verifyPositionInRootChildren,
+} from '../../test-utils';
+import type { TreeDiagramOptions } from './tree-test-utils';
 import { TreeDiagram } from './tree-test-utils';
 
+const treeDiagramOptions: TreeDiagramOptions = {
+    checkDom: 'myGrid',
+};
+
 describe('ag-grid tree transactions', () => {
-    let consoleErrorSpy: jest.SpyInstance;
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        gridsManager.reset();
     });
 
     test('ag-grid tree sync complex transaction', async () => {
@@ -49,7 +46,7 @@ describe('ag-grid tree transactions', () => {
             { remove: [row2], update: [row5b] },
         ];
 
-        const api = createMyGrid({
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'x' }],
             autoGroupColumnDef: {
                 headerName: 'Organisation Hierarchy',
@@ -66,7 +63,7 @@ describe('ag-grid tree transactions', () => {
         let allData = getAllRowData(verifyPositionInRootChildren(api));
         expect(allData).toEqual([row0, row1a]);
 
-        new TreeDiagram(api, 'rowData').check(`
+        new TreeDiagram(api, 'rowData', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0
             └─┬ X filler id:row-group-0-X
@@ -79,7 +76,7 @@ describe('ag-grid tree transactions', () => {
         allData = getAllRowData(verifyPositionInRootChildren(api));
         expect(allData).toEqual([row0, row1a, row2]);
 
-        new TreeDiagram(api, 'Transaction 0').check(`
+        new TreeDiagram(api, 'Transaction 0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0
             └─┬ X filler id:row-group-0-X
@@ -93,7 +90,7 @@ describe('ag-grid tree transactions', () => {
         allData = getAllRowData(verifyPositionInRootChildren(api));
         expect(allData).toEqual([row0, row1b, row2, row3, row4]);
 
-        new TreeDiagram(api, 'Transaction 1').check(`
+        new TreeDiagram(api, 'Transaction 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ ├─┬ Y filler id:row-group-0-A-1-Y
@@ -112,7 +109,7 @@ describe('ag-grid tree transactions', () => {
         allData = getAllRowData(verifyPositionInRootChildren(api));
         expect(allData).toEqual([row0, row2, row3, row4, row5a]);
 
-        new TreeDiagram(api, 'Transaction 2').check(`
+        new TreeDiagram(api, 'Transaction 2', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ └── B LEAF id:3
@@ -130,7 +127,7 @@ describe('ag-grid tree transactions', () => {
         allData = getAllRowData(verifyPositionInRootChildren(api));
         expect(allData).toEqual([row0, row3, row4, row5b]);
 
-        new TreeDiagram(api, 'final').check(`
+        new TreeDiagram(api, 'final', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ └── B LEAF id:3
@@ -159,7 +156,7 @@ describe('ag-grid tree transactions', () => {
             { remove: [row2], update: [row5b] },
         ];
 
-        const api = createMyGrid({
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: {
                 headerName: 'Organisation Hierarchy',
@@ -173,7 +170,7 @@ describe('ag-grid tree transactions', () => {
             getDataPath: (data) => data.path,
         });
 
-        new TreeDiagram(api, 'rowData').check(`
+        new TreeDiagram(api, 'rowData', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0
             └─┬ X filler id:row-group-0-X
@@ -185,7 +182,7 @@ describe('ag-grid tree transactions', () => {
 
         const rows = getAllRows(api);
 
-        new TreeDiagram(api, 'final').check(`
+        new TreeDiagram(api, 'final', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ └── B LEAF id:3

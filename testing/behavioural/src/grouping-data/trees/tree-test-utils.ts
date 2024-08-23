@@ -1,52 +1,72 @@
-import type { GridApi, IRowNode, RowDataTransaction } from '@ag-grid-community/core';
+import type { GridApi, IRowNode } from '@ag-grid-community/core';
 
-import { findRootNodes, isGridApi, verifyPositionInRootChildren } from '../../test-utils';
-import type { RowSnapshot } from '../row-snapshot-test-utils';
+import {
+    checkGridSelectedNodes,
+    checkSimpleRowNodeDom,
+    findRootNode,
+    info,
+    log,
+    rowKey,
+    verifyPositionInRootChildren,
+} from '../../test-utils';
 
-const log = console.log;
-const info = console.info;
+export type TreeDiagramStage = 'childrenAfterGroup' | 'childrenAfterFilter' | 'childrenAfterSort';
 
-function rowKey(row: IRowNode | null | undefined): string {
-    return row?.key ?? row?.id ?? 'null';
-}
+export interface TreeDiagramOptions {
+    /**
+     * There are 3 possible stages to get children from:
+     * - 'childrenAfterGroup' - children after group stage
+     * - 'childrenAfterFilter' - children after filter stage
+     * - 'childrenAfterSort' - children after sort stage (last stage and default value)
+     */
+    stage?: TreeDiagramStage;
 
-export async function executeTransactionsAsync(transactions: RowDataTransaction<any>[], api: GridApi<any>) {
-    const promises: Promise<void>[] = [];
-    for (const transaction of transactions) {
-        promises.push(
-            new Promise((resolve) => {
-                api.applyTransactionAsync(transaction, () => resolve());
-            })
-        );
-    }
+    /** The columns to include */
+    columns?: string[];
 
-    api.flushAsyncTransactions();
-    await Promise.all(promises);
+    /** If false, the id will not be shown in the output data */
+    includeId?: boolean;
+
+    /** The DOM element to check. If undefined, the DOM will not be checked. */
+    checkDom?: Element | string | false | undefined;
+
+    /** True if selected rows should be checked, default is true */
+    checkSelectedNodes?: boolean;
 }
 
 export class TreeDiagram {
-    public label: string;
-    public root: IRowNode | null = null;
-    public diagram: string = '';
-    public hasErrors = false;
+    public readonly api: GridApi;
+    public readonly label: string;
+    public readonly root: IRowNode | null = null;
+    public readonly stage: TreeDiagramStage;
+    public readonly options: TreeDiagramOptions;
+    public readonly includeId: boolean = true;
+    public readonly columns: ReadonlySet<string> = new Set<string>();
     public readonly uniqueNodeParents = new Map<IRowNode, IRowNode | null>();
-    private readonly uniqueChildrenAfterGroupArrays = new Map<IRowNode[], string>();
+    public readonly uniqueChildrenAfterGroupArrays = new Map<IRowNode[], string>();
+
+    public hasErrors = false;
+    public diagram: string = '';
 
     private rowErrors: string[];
     private errorsCount: number = 0;
     private rowIdxCounter: number = 0;
 
-    public constructor(root: IRowNode | IRowNode[] | GridApi, label: string = '') {
-        this.label = label;
+    public constructor(api: GridApi, label: string | null | undefined, options: TreeDiagramOptions) {
+        this.api = api;
+        this.stage = options.stage ?? 'childrenAfterSort';
+        this.label = label ?? '';
+        const root = findRootNode(api);
+        this.root = root!;
+        this.options = options;
+        this.columns = new Set(options.columns);
+        this.includeId = options.includeId ?? true;
         this.diagram = '\n';
-        const rootNodes = isGridApi(root) || Array.isArray(root) ? findRootNodes(root) : [root];
-        if (rootNodes.length === 0) {
+        if (!this.root) {
             this.diagram += '❌ No tree root\n';
             this.errorsCount = 1;
-        }
-        for (const root of rootNodes) {
-            this.root = root;
-            this.recurseRow(root, root.parent, '', -1, -1, true);
+        } else {
+            this.recurseRow(this.root, this.root.parent, '', -1, -1, true);
         }
     }
 
@@ -75,7 +95,9 @@ export class TreeDiagram {
         if (row.level >= 0 && !row.expanded && row.group) {
             rowInfo += '!expanded ';
         }
-        rowInfo += `id:${row.id} `;
+        if (this.includeId) {
+            rowInfo += `id:${row.id} `;
+        }
         if (row.data?._diagramLabel) {
             rowInfo += 'label:' + row.data._diagramLabel + ' ';
         }
@@ -113,7 +135,7 @@ export class TreeDiagram {
         }
 
         const duplicateParent = this.uniqueNodeParents.get(row);
-        const children = row.childrenAfterGroup;
+        const children = row[this.stage];
         const type = this.getNodeType(row);
         const branchPrefix = branch.length ? (children?.length ? '┬ ' : '─ ') : '';
         const rowInfo = this.buildRowInfo(row, type, duplicateParent);
@@ -161,8 +183,8 @@ export class TreeDiagram {
             if (row.id !== 'ROOT_NODE_ID') this.rowErrors.push('ROOT_NODE_ID!');
             if (row.key) this.rowErrors.push('ROOT_NODE_KEY!');
         }
-        if (!row.childrenAfterGroup) {
-            this.rowErrors.push('childrenAfterGroup=null');
+        if (!row[this.stage]) {
+            this.rowErrors.push([this.stage] + '=null');
         }
         if (!row.allLeafChildren) {
             this.rowErrors.push('allLeafChildren=null!');
@@ -176,7 +198,6 @@ export class TreeDiagram {
             this.diagram += `row.parent:${rowKey(row.parent)} `;
         }
 
-        // TODO: handle sorting properly for childIndex
         if (row.childIndex !== (level === -1 ? undefined : idx)) {
             this.rowErrors.push('CHILD_INDEX!');
             this.diagram += `row.childIndex:${row.childIndex} `;
@@ -185,7 +206,7 @@ export class TreeDiagram {
             this.rowErrors.push('FIRST_CHILD!');
             this.diagram += `row.firstChild:${row.firstChild} `;
         }
-        if (parent && row.lastChild !== (idx === (parent.childrenAfterGroup?.length ?? 0) - 1)) {
+        if (parent && row.lastChild !== (idx === (parent[this.stage]?.length ?? 0) - 1)) {
             this.rowErrors.push('LAST_CHILD!');
             this.diagram += `row.lastChild:${row.lastChild} `;
         }
@@ -196,15 +217,19 @@ export class TreeDiagram {
             this.diagram += 'row.leafGroup:' + row.leafGroup + ' ';
         }
 
-        const builtChildren = buildChildren(row);
+        const builtChildren = buildChildren(row, this.stage);
 
-        const expectedAllChildrenCount = builtChildren.allChildrenCount || null;
+        let expectedAllChildrenCount: number | null = builtChildren.allChildrenCount;
+        if (level >= 0 && !expectedAllChildrenCount) {
+            expectedAllChildrenCount = null;
+        }
         if (row.allChildrenCount !== expectedAllChildrenCount) {
             this.rowErrors.push('ALL_CHILDREN_COUNT!=' + expectedAllChildrenCount);
             this.diagram += 'row.allChildrenCount:' + row.allChildrenCount + ' ';
         }
 
-        const leafChildrenErrors = level >= 0 && compareRowsSet(builtChildren.allLeafs, row.allLeafChildren);
+        const leafChildrenErrors =
+            level >= 0 && builtChildren.allLeafs && compareRowsSet(builtChildren.allLeafs, row.allLeafChildren);
         if (leafChildrenErrors) {
             this.rowErrors.push('LEAF_CHILDREN[' + leafChildrenErrors + ']');
             this.diagram += 'row.allLeafChildren:' + row.allLeafChildren?.map(rowKey).join(',') + ' ';
@@ -217,7 +242,6 @@ export class TreeDiagram {
             this.diagram += `row.rowGroupIndex:${row.rowGroupIndex} `;
         }
 
-        // TODO: we need to handle the case for filters, collapsed groups and sorting
         const expectedRowIndex = level < 0 || !expanded ? null : this.rowIdxCounter >= 0 ? this.rowIdxCounter : null;
         if (row.rowIndex !== expectedRowIndex) {
             this.rowErrors.push('ROW_INDEX!=' + expectedRowIndex);
@@ -234,18 +258,27 @@ export class TreeDiagram {
             this.rowErrors.push('ROOT_EXPANDED');
         }
 
-        if (row.childrenAfterGroup) {
-            const found = row.childrenAfterGroup.find((child) => child.parent !== row);
+        if (row[this.stage]) {
+            const found = row[this.stage]!.find((child) => child.parent !== row);
             if (found !== undefined) {
                 this.rowErrors.push('DUPLICATE_CHILDREN_AFTER_GROUP_ARRAY_INSTANCE=' + rowKey(found));
             }
-            this.uniqueChildrenAfterGroupArrays.set(row.childrenAfterGroup, rowKey(row));
+            this.uniqueChildrenAfterGroupArrays.set(row[this.stage]!, rowKey(row));
         }
 
         if (expanded) {
             if (expectedUiLevel !== row.uiLevel) {
                 this.rowErrors.push('UI_LEVEL!=' + expectedUiLevel);
                 this.diagram += 'row.uiLevel:' + row.uiLevel + ' ';
+            }
+        }
+
+        if (this.columns.size && parent) {
+            for (const column of this.columns) {
+                const cellValue = this.api.getCellValue({ rowNode: row, colKey: column });
+                if (cellValue !== undefined || row.data) {
+                    this.diagram += `${column}:${JSON.stringify(cellValue)} `;
+                }
             }
         }
     }
@@ -255,20 +288,50 @@ export class TreeDiagram {
         return this;
     }
 
+    /** This verifies that the final DOM structure matches the tree data. */
+    public checkDom(element: Element | null | string) {
+        if (typeof element === 'string') {
+            element = document.getElementById(element) ?? document.querySelector(element);
+        }
+        if (!element) {
+            throw new Error('No grid HTMLElement found');
+        }
+
+        const expectedIds: string[] = [];
+        const recurse = (row: IRowNode, parentExpanded: boolean) => {
+            for (const child of row.childrenAfterSort ?? []) {
+                if (parentExpanded) {
+                    expectedIds.push(child.id!);
+                    checkSimpleRowNodeDom(element, this.api, child);
+                }
+                recurse(child, parentExpanded && child.expanded);
+            }
+        };
+
+        recurse(this.root!, true);
+
+        const allRowsIds: string[] = [];
+        element.querySelectorAll('[row-id]').forEach((el) => {
+            allRowsIds.push(el.getAttribute('row-id')!);
+        });
+
+        expectedIds.sort();
+        allRowsIds.sort();
+
+        expect(allRowsIds).toEqual(expectedIds);
+    }
+
     public checkEmpty(): void {
-        if (this.root?.childrenAfterGroup?.length) {
+        if (this.root?.[this.stage]?.length) {
             const error = new Error(
-                'Expected empty tree, but found ' +
-                    this.root.childrenAfterGroup.length +
-                    ' children.\n' +
-                    this.toString()
+                'Expected empty tree, but found ' + this.root[this.stage]!.length + ' children.\n' + this.toString()
             );
             Error.captureStackTrace(error, this.checkEmpty);
             throw error;
         }
     }
 
-    public check(diagramSnapshot?: string | string[] | true): void {
+    public check(diagramSnapshot?: string | string[] | true): this {
         try {
             verifyPositionInRootChildren(this.root?.allLeafChildren ?? []);
 
@@ -287,11 +350,26 @@ export class TreeDiagram {
         if (diagramSnapshot === true) {
             info(this.toString());
         }
+
+        try {
+            if (this.options.checkSelectedNodes ?? true) {
+                checkGridSelectedNodes(this.api);
+            }
+
+            if (this.options.checkDom) {
+                this.checkDom(this.options.checkDom);
+            }
+        } catch (e) {
+            e.message += '\n' + this.toString();
+            throw e;
+        }
+
+        return this;
     }
 
     public toString(): string {
         return (
-            (this.label ? '\n🧪 ' + this.label + '\n' : '') +
+            (this.label ? '\n✱ ' + this.label + '\n' : '') +
             this.diagram +
             (this.errorsCount ? '\n❌ TREE HAS ' + this.errorsCount + ' ERRORS\n' : '')
         );
@@ -306,15 +384,18 @@ function normalizeDiagram(diagram: string | string[]) {
     return lines.join('\n');
 }
 
-function buildChildren(row: IRowNode) {
-    const allLeafs: IRowNode[] = [];
+function buildChildren(row: IRowNode, stage: TreeDiagramStage) {
+    const allLeafs: IRowNode[] | null = stage === 'childrenAfterGroup' ? [] : null;
     let allChildrenCount = 0;
     const recurse = (row: IRowNode) => {
-        if (row.childrenAfterGroup) {
-            allChildrenCount += row.childrenAfterGroup.length;
-            for (const child of row.childrenAfterGroup) {
-                if (!child.childrenAfterGroup?.length) {
-                    allLeafs.push(child);
+        const children = row[stage];
+        if (children) {
+            allChildrenCount += children.length;
+            for (const child of children) {
+                if (allLeafs !== null) {
+                    if (!child[stage]?.length) {
+                        allLeafs.push(child);
+                    }
                 }
                 recurse(child);
             }
@@ -346,242 +427,4 @@ function compareRowsSet(
     for (const row of expected) if (!actual.has(row)) errors.push('-' + rowKey(row));
     for (const row of actual) if (!expected.has(row)) errors.push('+' + rowKey(row));
     return errors.join(' ');
-}
-
-export function simpleHierarchyRowData() {
-    return [
-        { orgHierarchy: ['A'] },
-        { orgHierarchy: ['A', 'B'] },
-        { orgHierarchy: ['C', 'D'] },
-        { orgHierarchy: ['E', 'F', 'G', 'H'] },
-    ];
-}
-
-export function simpleHierarchyRowSnapshot(): RowSnapshot[] {
-    return [
-        {
-            allChildrenCount: 1,
-            allLeafChildren: ['B'],
-            childIndex: 0,
-            childrenAfterFilter: ['B'],
-            childrenAfterGroup: ['B'],
-            childrenAfterSort: ['B'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: true,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'A' },
-            id: '0',
-            key: 'A',
-            lastChild: false,
-            leafGroup: undefined,
-            level: 0,
-            master: false,
-            parentKey: null,
-            rowGroupIndex: undefined,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 0,
-            rowIndex: 0,
-        },
-        {
-            allChildrenCount: null,
-            allLeafChildren: [],
-            childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
-            detail: undefined,
-            displayed: true,
-            expanded: false,
-            firstChild: true,
-            footer: undefined,
-            group: false,
-            groupData: { 'ag-Grid-AutoColumn': 'B' },
-            id: '1',
-            key: 'B',
-            lastChild: true,
-            leafGroup: undefined,
-            level: 1,
-            master: false,
-            parentKey: 'A',
-            rowGroupIndex: undefined,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 1,
-            rowIndex: 1,
-        },
-        {
-            allChildrenCount: 1,
-            allLeafChildren: ['D'],
-            childIndex: 1,
-            childrenAfterFilter: ['D'],
-            childrenAfterGroup: ['D'],
-            childrenAfterSort: ['D'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: false,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'C' },
-            id: 'row-group-0-C',
-            key: 'C',
-            lastChild: false,
-            leafGroup: false,
-            level: 0,
-            master: undefined,
-            parentKey: null,
-            rowGroupIndex: null,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 0,
-            rowIndex: 2,
-        },
-        {
-            allChildrenCount: null,
-            allLeafChildren: [],
-            childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
-            detail: undefined,
-            displayed: true,
-            expanded: false,
-            firstChild: true,
-            footer: undefined,
-            group: false,
-            groupData: { 'ag-Grid-AutoColumn': 'D' },
-            id: '2',
-            key: 'D',
-            lastChild: true,
-            leafGroup: undefined,
-            level: 1,
-            master: false,
-            parentKey: 'C',
-            rowGroupIndex: undefined,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 1,
-            rowIndex: 3,
-        },
-        {
-            allChildrenCount: 3,
-            allLeafChildren: ['H'],
-            childIndex: 2,
-            childrenAfterFilter: ['F'],
-            childrenAfterGroup: ['F'],
-            childrenAfterSort: ['F'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: false,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'E' },
-            id: 'row-group-0-E',
-            key: 'E',
-            lastChild: true,
-            leafGroup: false,
-            level: 0,
-            master: undefined,
-            parentKey: null,
-            rowGroupIndex: null,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 0,
-            rowIndex: 4,
-        },
-        {
-            allChildrenCount: 2,
-            allLeafChildren: ['H'],
-            childIndex: 0,
-            childrenAfterFilter: ['G'],
-            childrenAfterGroup: ['G'],
-            childrenAfterSort: ['G'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: true,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'F' },
-            id: 'row-group-0-E-1-F',
-            key: 'F',
-            lastChild: true,
-            leafGroup: false,
-            level: 1,
-            master: undefined,
-            parentKey: 'E',
-            rowGroupIndex: null,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 1,
-            rowIndex: 5,
-        },
-        {
-            allChildrenCount: 1,
-            allLeafChildren: ['H'],
-            childIndex: 0,
-            childrenAfterFilter: ['H'],
-            childrenAfterGroup: ['H'],
-            childrenAfterSort: ['H'],
-            detail: undefined,
-            displayed: true,
-            expanded: true,
-            firstChild: true,
-            footer: undefined,
-            group: true,
-            groupData: { 'ag-Grid-AutoColumn': 'G' },
-            id: 'row-group-0-E-1-F-2-G',
-            key: 'G',
-            lastChild: true,
-            leafGroup: false,
-            level: 2,
-            master: undefined,
-            parentKey: 'F',
-            rowGroupIndex: null,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 2,
-            rowIndex: 6,
-        },
-        {
-            allChildrenCount: null,
-            allLeafChildren: [],
-            childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
-            detail: undefined,
-            displayed: true,
-            expanded: false,
-            firstChild: true,
-            footer: undefined,
-            group: false,
-            groupData: { 'ag-Grid-AutoColumn': 'H' },
-            id: '3',
-            key: 'H',
-            lastChild: true,
-            leafGroup: undefined,
-            level: 3,
-            master: false,
-            parentKey: 'G',
-            rowGroupIndex: undefined,
-            rowPinned: undefined,
-            selectable: true,
-            siblingKey: undefined,
-            uiLevel: 3,
-            rowIndex: 7,
-        },
-    ];
 }

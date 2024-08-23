@@ -1,39 +1,30 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 
-import { cachedJSONObjects, getRootAllLeafChildrenData } from '../../test-utils';
+import { TestGridsManager, cachedJSONObjects, getRootAllLeafChildrenData } from '../../test-utils';
+import type { TreeDiagramOptions } from './tree-test-utils';
 import { TreeDiagram } from './tree-test-utils';
+
+const treeDiagramOptions: TreeDiagramOptions = {
+    checkDom: 'myGrid',
+};
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
-    let consoleErrorSpy: jest.SpyInstance;
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+
     let consoleWarnSpy: jest.SpyInstance;
 
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
-
     beforeEach(() => {
-        cachedJSONObjects.clear();
         jest.useRealTimers();
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        cachedJSONObjects.clear();
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        gridsManager.reset();
         consoleWarnSpy?.mockRestore();
     });
 
@@ -43,7 +34,7 @@ describe('ag-grid tree data', () => {
             { id: '3', orgHierarchy: ['C', 'D'] },
         ];
 
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -52,11 +43,9 @@ describe('ag-grid tree data', () => {
             rowData: rowData,
             getDataPath,
             getRowId: (params) => params.data.id,
-        };
+        });
 
-        const api = createMyGrid(gridOptions);
-
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ └── B LEAF id:1
@@ -66,7 +55,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ └── B LEAF id:1
@@ -77,7 +66,7 @@ describe('ag-grid tree data', () => {
         rowData.reverse();
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 2', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ C filler id:row-group-0-C
             │ └── D LEAF id:3
@@ -90,7 +79,7 @@ describe('ag-grid tree data', () => {
         const rowData1 = [{ id: '1', orgHierarchy: ['A', 'B'] }];
         const rowData2 = [{ id: '2', orgHierarchy: ['C', 'D'] }];
 
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -98,15 +87,13 @@ describe('ag-grid tree data', () => {
             groupDefaultExpanded: -1,
             getDataPath,
             getRowId: (params) => params.data.id,
-        };
-
-        const api = createMyGrid(gridOptions);
+        });
 
         await asyncSetTimeout(1); // Simulate async loading
 
         api.setGridOption('rowData', rowData1);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · └── B LEAF id:1
@@ -116,7 +103,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'updated', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             └─┬ C filler id:row-group-0-C
             · └── D LEAF id:2
@@ -124,13 +111,13 @@ describe('ag-grid tree data', () => {
     });
 
     test('setting rowData without id keeps the tree data structure correct', async () => {
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             treeData: true,
             animateRows: false,
             groupDefaultExpanded: -1,
             getDataPath,
-        };
+        });
 
         const rowData1 = cachedJSONObjects.array([
             { orgHierarchy: ['A', 'B'], x: 0 },
@@ -146,11 +133,9 @@ describe('ag-grid tree data', () => {
             { orgHierarchy: ['P', 'Q'], x: 7 },
         ]);
 
-        const api = createMyGrid(gridOptions);
-
         api.setGridOption('rowData', rowData1);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ └── B LEAF id:0
@@ -163,7 +148,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ D filler id:row-group-0-D
             │ └─┬ E GROUP id:1
@@ -175,7 +160,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', []);
 
-        new TreeDiagram(api).checkEmpty();
+        new TreeDiagram(api, 'empty', treeDiagramOptions).checkEmpty();
     });
 
     test('tree data with id ordering of fillers is consistent', async () => {
@@ -192,7 +177,7 @@ describe('ag-grid tree data', () => {
             { id: 'f', orgHierarchy: ['F'] },
         ]);
 
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -201,13 +186,11 @@ describe('ag-grid tree data', () => {
             rowData: [],
             getDataPath,
             getRowId: (params) => params.data.id,
-        };
-
-        const api = createMyGrid(gridOptions);
+        });
 
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── B LEAF id:b
             ├─┬ C filler id:row-group-0-C
@@ -217,7 +200,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── A LEAF id:a
             ├── B LEAF id:b
@@ -240,7 +223,7 @@ describe('ag-grid tree data', () => {
             { id: 't', orgHierarchy: ['S', 'T'] },
         ];
 
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -249,13 +232,11 @@ describe('ag-grid tree data', () => {
             rowData: [],
             getDataPath,
             getRowId: (params) => params.data.id,
-        };
-
-        const api = createMyGrid(gridOptions);
+        });
 
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ ├── C LEAF id:c
@@ -287,7 +268,7 @@ describe('ag-grid tree data', () => {
             { id: '3', orgHierarchy: ['3'] },
         ]);
 
-        const api = createMyGrid({
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'x' },
             treeData: true,
@@ -302,7 +283,7 @@ describe('ag-grid tree data', () => {
 
         expect(getRootAllLeafChildrenData(api)).toEqual(rowData1);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── 0 LEAF id:0
             ├── 1 LEAF id:1
@@ -316,7 +297,7 @@ describe('ag-grid tree data', () => {
 
         expect(getRootAllLeafChildrenData(api)).toEqual(rowData2);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── 1 LEAF id:1
             ├── 5 LEAF id:5
@@ -355,7 +336,7 @@ describe('ag-grid tree data', () => {
             { id: 'd', orgHierarchy: ['A', 'B', 'C', 'D'] },
         ]);
 
-        const api = createMyGrid({
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -371,7 +352,7 @@ describe('ag-grid tree data', () => {
 
         expect(getRootAllLeafChildrenData(api)).toEqual(rowData1);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── 0 LEAF id:0
             ├─┬ A filler id:row-group-0-A
@@ -388,7 +369,7 @@ describe('ag-grid tree data', () => {
 
         expect(getRootAllLeafChildrenData(api)).toEqual(rowData2);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 2', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── 0 LEAF id:0
             ├─┬ A filler id:row-group-0-A
@@ -406,7 +387,7 @@ describe('ag-grid tree data', () => {
 
         expect(getRootAllLeafChildrenData(api)).toEqual(rowData3);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 3', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── 0 LEAF id:0
             ├── G LEAF id:g
@@ -441,7 +422,7 @@ describe('ag-grid tree data', () => {
             { id: 't', orgHierarchy: ['S', 'T'], _diagramLabel: 't2' },
         ];
 
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -450,13 +431,11 @@ describe('ag-grid tree data', () => {
             rowData: [],
             getDataPath,
             getRowId: (params) => params.data.id,
-        };
-
-        const api = createMyGrid(gridOptions);
+        });
 
         api.setGridOption('rowData', rowData1);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ ├── B LEAF id:b label:b1
@@ -470,7 +449,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ ├── C LEAF id:c label:c2
@@ -508,7 +487,7 @@ describe('ag-grid tree data', () => {
             { id: '3', orgHierarchy: ['C', 'D'], _diagramLabel: '3-v3' },
         ];
 
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -518,11 +497,9 @@ describe('ag-grid tree data', () => {
             rowSelection: 'multiple',
             getDataPath,
             getRowId: (params) => params.data.id,
-        };
+        });
 
         jest.useFakeTimers({ advanceTimers: true });
-
-        const api = createMyGrid(gridOptions);
 
         api.setGridOption('rowData', rowData1);
 
@@ -542,7 +519,7 @@ describe('ag-grid tree data', () => {
         jest.advanceTimersByTime(10000);
         jest.useRealTimers();
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler selected id:row-group-0-A
             │ └─┬ B GROUP selected !expanded id:1 label:1-v1
@@ -561,7 +538,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── N LEAF selected id:7 label:7-v2
             ├─┬ R filler selected !expanded id:row-group-0-R
@@ -576,7 +553,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', rowData3);
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 2', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── a LEAF id:100 label:100-v3
             └─┬ C filler id:row-group-0-C
@@ -585,7 +562,7 @@ describe('ag-grid tree data', () => {
 
         api.setGridOption('rowData', []);
 
-        new TreeDiagram(api).checkEmpty();
+        new TreeDiagram(api, 'cleared', treeDiagramOptions).checkEmpty();
     });
 
     test('remove, update path and order, add', async () => {
@@ -602,7 +579,7 @@ describe('ag-grid tree data', () => {
             { id: '9', orgHierarchy: ['D'] },
         ]);
 
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             treeData: true,
             animateRows: false,
@@ -610,11 +587,9 @@ describe('ag-grid tree data', () => {
             rowData: rowData1,
             getDataPath,
             getRowId: (params) => params.data.id,
-        };
+        });
 
-        const api = createMyGrid(gridOptions);
-
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 0', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ └─┬ B GROUP id:0
@@ -648,7 +623,7 @@ describe('ag-grid tree data', () => {
             ])
         );
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'update 1', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── D LEAF id:9
             ├─┬ A filler id:row-group-0-A
