@@ -197,6 +197,7 @@
 
 .ag-right-aligned-cell {
     text-align: right;
+    font-variant-numeric: tabular-nums;
 }
 
 /* right-align numeric values in cells with wrappers */

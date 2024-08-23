@@ -1,18 +1,12 @@
-import type { GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 
+import { TestGridsManager } from '../test-utils';
+
 describe('ag-grid overlays infinite scrolling state', () => {
+    const gridsManager = new TestGridsManager({ modules: [InfiniteRowModelModule] });
+
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     let consoleWarnSpy: jest.SpyInstance | undefined;
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
 
     function hasLoadingOverlay() {
         return !!document.querySelector('.ag-overlay-loading-center');
@@ -22,22 +16,19 @@ describe('ag-grid overlays infinite scrolling state', () => {
         return !!document.querySelector('.ag-overlay-no-rows-center');
     }
 
-    beforeAll(() => {
-        ModuleRegistry.register(InfiniteRowModelModule);
-    });
-
     beforeEach(() => {
-        resetGrids();
+        gridsManager.reset();
     });
 
     afterEach(() => {
+        gridsManager.reset();
         consoleWarnSpy?.mockRestore();
     });
 
     test('does not shows no-rows when using InfiniteRowModelModule', () => {
         const pendingGetRows: (() => void)[] = [];
 
-        const api = createMyGrid({
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowModelType: 'infinite',
             datasource: { getRows: (params) => pendingGetRows.push(() => params.successCallback([], 0)) },
@@ -64,7 +55,7 @@ describe('ag-grid overlays infinite scrolling state', () => {
     });
 
     test('it does show loading if forced', () => {
-        createMyGrid({
+        gridsManager.createGrid('myGrid', {
             columnDefs,
             rowModelType: 'infinite',
             datasource: { getRows: () => {} },

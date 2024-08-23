@@ -1,44 +1,37 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { flushJestTimers } from '../../test-utils';
+import { TestGridsManager, flushJestTimers } from '../../test-utils';
+import type { TreeDiagramOptions } from './tree-test-utils';
 import { TreeDiagram } from './tree-test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree expanded state', () => {
-    let consoleErrorSpy: jest.SpyInstance;
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
+    const treeDiagramOptions: TreeDiagramOptions = {
+        checkDom: 'myGrid',
+    };
 
     beforeEach(() => {
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
         jest.clearAllTimers();
         jest.useRealTimers();
+        gridsManager.reset();
     });
 
     // Test for AG-12591
     test('When removing a group and so it gets replaced by a filler node, its expanded state is retained', async () => {
         const originalRowData = getOrgHierarchyData();
         let yooCounter = 0;
-        const gridOptions: GridOptions = {
+
+        jest.useFakeTimers({ advanceTimers: true });
+
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'jobTitle' }, { field: 'employmentType' }],
             autoGroupColumnDef: {
                 headerName: 'Organisation Hierarchy',
@@ -67,15 +60,11 @@ describe('ag-grid tree expanded state', () => {
                     api.setGridOption('rowData', newEntries);
                 }, 1);
             },
-        };
-
-        jest.useFakeTimers({ advanceTimers: true });
-
-        const api = createMyGrid(gridOptions);
+        });
 
         await flushJestTimers();
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, '', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             └─┬ Erica Rogers GROUP !expanded id:0
             · └─┬ Malcolm Barrett GROUP !expanded id:1
@@ -98,7 +87,7 @@ describe('ag-grid tree expanded state', () => {
 
         await flushJestTimers();
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, '', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             └─┬ Erica Rogers GROUP id:0
             · ├─┬ Malcolm Barrett GROUP id:1
@@ -123,7 +112,7 @@ describe('ag-grid tree expanded state', () => {
 
         await flushJestTimers();
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, '', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             └─┬ Erica Rogers GROUP id:0
             · ├─┬ Malcolm Barrett GROUP id:1
