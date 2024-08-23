@@ -183,12 +183,6 @@ export class TreeDiagram {
             if (row.id !== 'ROOT_NODE_ID') this.rowErrors.push('ROOT_NODE_ID!');
             if (row.key) this.rowErrors.push('ROOT_NODE_KEY!');
         }
-        if (!row[this.stage]) {
-            this.rowErrors.push([this.stage] + '=null');
-        }
-        if (!row.allLeafChildren) {
-            this.rowErrors.push('allLeafChildren=null!');
-        }
         if (level !== row.level) {
             this.diagram += `row.level:${row.level} `;
             this.rowErrors.push('LEVEL!');
@@ -278,6 +272,63 @@ export class TreeDiagram {
                 const cellValue = this.api.getCellValue({ rowNode: row, colKey: column });
                 if (cellValue !== undefined || row.data) {
                     this.diagram += `${column}:${JSON.stringify(cellValue)} `;
+                }
+            }
+        }
+
+        if (row.childrenAfterGroup === null) {
+            this.rowErrors.push('childrenAfterGroup=null');
+        }
+        if (row.childrenAfterFilter === null) {
+            this.rowErrors.push('childrenAfterFilter=null');
+        }
+        if (row.childrenAfterSort === null) {
+            this.rowErrors.push('childrenAfterSort=null');
+        }
+        if (!row.allLeafChildren) {
+            this.rowErrors.push('allLeafChildren=null!');
+        }
+
+        // Verify that childrenAfterGroup does not contains duplicates
+        if (row.childrenAfterGroup) {
+            const childrenAfterGroupSet = new Set(row.childrenAfterGroup);
+            if (childrenAfterGroupSet.size !== row.childrenAfterGroup.length) {
+                this.rowErrors.push('DUPLICATE_CHILDREN_AFTER_GROUP=' + row.childrenAfterGroup.map(rowKey).join(','));
+            }
+        }
+
+        // Verify that childrenAfterFilter does not contains duplicates
+        if (row.childrenAfterFilter) {
+            const childrenAfterFilterSet = new Set(row.childrenAfterFilter);
+            if (childrenAfterFilterSet.size !== row.childrenAfterFilter.length) {
+                this.rowErrors.push('DUPLICATE_CHILDREN_AFTER_FILTER=' + row.childrenAfterFilter.map(rowKey).join(','));
+            }
+        }
+
+        // Verify that childrenAfterSort does not contains duplicates
+        if (row.childrenAfterSort) {
+            const childrenAfterSortSet = new Set(row.childrenAfterSort);
+            if (childrenAfterSortSet.size !== row.childrenAfterSort.length) {
+                this.rowErrors.push('DUPLICATE_CHILDREN_AFTER_SORT=' + row.childrenAfterSort.map(rowKey).join(','));
+            }
+        }
+
+        // Verify that childrenAfterFilter is a subset or the same as childrenAfterGroup
+        if (row.childrenAfterGroup && row.childrenAfterFilter) {
+            const childrenAfterGroupSet = new Set(row.childrenAfterGroup);
+            for (const child of row.childrenAfterFilter) {
+                if (!childrenAfterGroupSet.has(child)) {
+                    this.rowErrors.push('childrenAfterFilterNotInGroup=' + rowKey(child));
+                }
+            }
+        }
+
+        // Verify that childrenAfterSort is a subset or the same as childrenAfterFilter
+        if (row.childrenAfterFilter && row.childrenAfterSort) {
+            const childrenAfterFilterSet = new Set(row.childrenAfterFilter);
+            for (const child of row.childrenAfterSort) {
+                if (!childrenAfterFilterSet.has(child)) {
+                    this.rowErrors.push('childrenAfterSortNotInFilter=' + rowKey(child));
                 }
             }
         }

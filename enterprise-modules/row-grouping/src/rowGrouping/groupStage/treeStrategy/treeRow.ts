@@ -22,6 +22,7 @@ const enum Flags {
     ExpandedInitialized = 0x02,
     RowUpdated = 0x04,
     KeyChanged = 0x08,
+    PathChanged = 0x10,
 }
 
 /** We set this on the first time the node is committed. We unset this if the row gets deleted. */
@@ -36,6 +37,9 @@ export const isTreeRowUpdated = (row: RowNode): boolean => (row.treeNodeFlags & 
 
 /** We use this to see if a row changed key during commit */
 export const isTreeRowKeyChanged = (row: RowNode): boolean => (row.treeNodeFlags & Flags.KeyChanged) !== 0;
+
+/** Returns true if markTreeRowPathChanged was called. Reset during commit.  */
+export const isTreeRowPathChanged = (row: TreeRow): boolean => (row.treeNodeFlags & Flags.PathChanged) !== 0;
 
 /** Changes the expanded initialized state, so it can be recomputed again. */
 export const setTreeRowExpandedInitialized = (row: TreeRow, value: boolean): void => {
@@ -68,9 +72,15 @@ export const setTreeRowKeyChanged = (row: TreeRow): void => {
     }
 };
 
+/** If this is true, commit stage must invoke changedPath.addParentNode */
+export const markTreeRowPathChanged = (row: TreeRow): void => {
+    row.treeNodeFlags |= Flags.PathChanged;
+};
+
 /** Called when the row is committed. */
 export const markTreeRowCommitted = (row: TreeRow): void => {
-    row.treeNodeFlags = Flags.Committed | (row.treeNodeFlags & ~(Flags.RowUpdated | Flags.KeyChanged));
+    row.treeNodeFlags =
+        Flags.Committed | (row.treeNodeFlags & ~(Flags.RowUpdated | Flags.KeyChanged | Flags.PathChanged));
 };
 
 /** Clears all the flags, called when the row is deleted from the tree */
