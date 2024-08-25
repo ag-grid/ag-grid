@@ -7,6 +7,7 @@ import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnEventType } from '../../../events';
+import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _last, _removeFromArray } from '../../../utils/array';
@@ -91,8 +92,43 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             })
         );
 
+        this.addHighlightListeners(leafCols);
+
         this.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(eGui);
+    }
+
+    private addHighlightListeners(columns: AgColumn[]): void {
+        if (!this.beans.gos.get('suppressMoveWhenColumnDragging')) {
+            return;
+        }
+
+        for (const column of columns) {
+            this.addManagedListeners(column, {
+                headerHighlightChanged: this.onLeafColumnHighlightChanged.bind(this, column),
+            });
+        }
+    }
+
+    private onLeafColumnHighlightChanged(column: AgColumn): void {
+        const displayedColumns = this.column.getDisplayedLeafColumns();
+        const isFirst = displayedColumns[0] === column;
+        const isLast = _last(displayedColumns) === column;
+
+        if (!isFirst && !isLast) {
+            return;
+        }
+
+        const highlighted = column.getHighlighted();
+        const isColumnMoveAtThisLevel = !!this.getParentRowCtrl().findHeaderCellCtrl((ctrl) => {
+            return ctrl.getColumnGroupChild().isMoving();
+        });
+
+        const beforeOn = isFirst && isColumnMoveAtThisLevel && highlighted === ColumnHighlightPosition.Before;
+        const afterOn = isLast && isColumnMoveAtThisLevel && highlighted === ColumnHighlightPosition.After;
+
+        this.comp.addOrRemoveCssClass('ag-header-highlight-before', beforeOn);
+        this.comp.addOrRemoveCssClass('ag-header-highlight-after', afterOn);
     }
 
     public getColumn(): AgColumnGroup {
