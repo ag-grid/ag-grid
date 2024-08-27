@@ -10,19 +10,6 @@
     padding-bottom: $spacing-size-12;
 }
 
-.sectionContent {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0px $spacing-size-48;
-    position: relative;
-
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
-        padding: $spacing-size-8 $spacing-size-12;
-    }
-}
-
 .smallRectangleLeft {
     position: absolute;
     top: 0;
@@ -85,8 +72,25 @@ div.sectionContent:nth-of-type(4n + 3) {
     background-color: var(--color-bg-disabled_subtle);
 }
 
+.sectionContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px $spacing-size-48;
+    position: relative;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        padding: $spacing-size-8 $spacing-size-8;
+    }
+}
+
 .sectionInner {
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        max-width: 100%;
+    }
 }
 
 .divider {
@@ -139,7 +143,8 @@ div.divider:nth-of-type(4n) {
         margin-bottom: 0px;
 
         @media screen and (max-width: $breakpoint-react-landing-page-small) {
-            padding: 0px $spacing-size-12;
+            padding: 0;
+            margin: 0;
         }
     }
 
@@ -151,7 +156,7 @@ div.divider:nth-of-type(4n) {
         margin-bottom: 0px;
 
         @media screen and (max-width: $breakpoint-react-landing-page-small) {
-            margin: 0px $spacing-size-40;
+            margin: 0;
         }
     }
 }
@@ -216,6 +221,10 @@ div.divider:nth-of-type(4n) {
             font-size: var(--text-fs-sm);
             font-weight: var(--text-base);
             color: var(--color-brand-500);
+
+            @media screen and (max-width: $breakpoint-react-landing-page-small) {
+                font-size: var(--text-fs-xs);
+            }
         }
 
         .heroSectionfeatureArrow {
@@ -236,7 +245,8 @@ div.divider:nth-of-type(4n) {
 
         @media screen and (max-width: $breakpoint-react-landing-page-small) {
             font-size: 52px;
-            padding: 0px $spacing-size-12;
+            padding: 0px $spacing-size-2;
+            line-height: 55px;
         }
     }
 
