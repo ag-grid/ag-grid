@@ -9,7 +9,7 @@ Control the look and feel of the grid
 
 Every grid must have a theme. You can import one of the built-in themes and provide it as a grid option:
 
-```
+```js
 import { themeQuartz } from '@ag-grid-community/theming';
 
 {% if isFramework("javascript") %}
@@ -28,7 +28,12 @@ const gridOptions = {
 // TODO show how to import in vue?
 {% /if %}
 {% if isFramework("angular") %}
-// TODO show how to import in angular?
+// in template
+<ag-grid-angular
+    [theme]="theme"
+/>
+// in component class
+public theme = themeQuartz;
 {% /if %}
 ```
 

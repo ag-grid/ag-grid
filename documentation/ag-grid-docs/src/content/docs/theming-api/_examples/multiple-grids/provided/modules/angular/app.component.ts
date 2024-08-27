@@ -28,7 +28,7 @@ ModuleRegistry.registerModules([
             <div style="flex: 1 1 0%; display: flex; gap: 16px">
                 <div style="flex: 1 1 0%">
                     <ag-grid-angular
-                        style="width: 100%; height: 100%;"
+                        style="height: 100%;"
                         [columnDefs]="columnDefs"
                         [defaultColDef]="defaultColDef"
                         [rowData]="rowData"
@@ -37,7 +37,7 @@ ModuleRegistry.registerModules([
                 </div>
                 <div style="flex: 1 1 0%">
                     <ag-grid-angular
-                        style="width: 100%; height: 100%;"
+                        style="height: 100%;"
                         [columnDefs]="columnDefs"
                         [defaultColDef]="defaultColDef"
                         [rowData]="rowData"
@@ -52,7 +52,7 @@ ModuleRegistry.registerModules([
             <div style="flex: 1 1 0%; display: flex; gap: 16px">
                 <div style="flex: 1 1 0%" #grid3>
                     <ag-grid-angular
-                        style="width: 100%; height: 100%;"
+                        style="height: 100%;"
                         [columnDefs]="columnDefs"
                         [defaultColDef]="defaultColDef"
                         [rowData]="rowData"
@@ -61,7 +61,7 @@ ModuleRegistry.registerModules([
                 </div>
                 <div style="flex: 1 1 0%" #grid4>
                     <ag-grid-angular
-                        style="width: 100%; height: 100%;"
+                        style="height: 100%;"
                         [columnDefs]="columnDefs"
                         [defaultColDef]="defaultColDef"
                         [rowData]="rowData"

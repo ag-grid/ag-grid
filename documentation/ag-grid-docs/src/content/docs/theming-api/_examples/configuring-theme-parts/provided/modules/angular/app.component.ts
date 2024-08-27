@@ -58,7 +58,7 @@ ModuleRegistry.registerModules([
             </p>
             <div style="flex: 1 1 0%">
                 <ag-grid-angular
-                    style="width: 100%; height: 100%;"
+                    style="height: 100%;"
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
                     [rowData]="rowData"
