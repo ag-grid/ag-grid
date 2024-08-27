@@ -12,6 +12,7 @@ import type { ColumnEventType } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../../interfaces/iColumn';
+import { _last } from '../../utils/array';
 import { _errorOnce } from '../../utils/function';
 import { _exists, _missing } from '../../utils/generic';
 import { attemptMoveColumns, normaliseX } from '../columnMoveHelper';
@@ -169,7 +170,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 if (!this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)) {
                     return;
                 }
-                this.highlightHoveredColumn(mouseX);
+                this.highlightHoveredColumn(allMovingColumns, mouseX);
             }
         } else {
             const lastMovedInfo = attemptMoveColumns({ ...params, finished });
@@ -271,7 +272,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         return hDirection;
     }
 
-    private highlightHoveredColumn(mouseX: number) {
+    private highlightHoveredColumn(movingColumns: AgColumn[], mouseX: number) {
         const { gos, columnModel } = this;
         const isRtl = gos.get('enableRtl');
         const consideredColumns = columnModel
@@ -299,11 +300,40 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             width = null;
         }
 
+        if (!targetColumn) {
+            // we fall into this condition if no columns are being hover
+            // (e.g. hovering an empty area of the column header beyond all columns)
+            for (let i = consideredColumns.length - 1; i >= 0; i--) {
+                const currentColumn = consideredColumns[i];
+                const parent = consideredColumns[i].getParent();
+                if (!parent) {
+                    targetColumn = currentColumn;
+                    break;
+                }
+
+                const leafDisplayedCols = parent?.getDisplayedLeafColumns();
+
+                if (leafDisplayedCols.length) {
+                    targetColumn = _last(leafDisplayedCols);
+                    break;
+                }
+            }
+
+            if (!targetColumn) {
+                return;
+            }
+
+            start = this.getColumnNormalisedLeft(targetColumn, isRtl);
+            width = targetColumn.getActualWidth();
+        } else if (movingColumns.indexOf(targetColumn) !== -1) {
+            targetColumn = null;
+        }
+
         if (this.lastHighlightedColumn?.column !== targetColumn) {
             this.clearHighlighted();
         }
 
-        if (!targetColumn || start == null || width == null) {
+        if (targetColumn == null || start == null || width == null) {
             return;
         }
 
@@ -355,7 +385,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 currentColumns: allMovingColumns,
                 lastHoveredColumn: column,
                 isBefore: (position === ColumnHighlightPosition.Before) !== this.gos.get('enableRtl'),
-                isAttemptingToPin,
+                considerHiddenColumns: true,
             });
 
             if (toIndex != null) {

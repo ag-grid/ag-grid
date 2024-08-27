@@ -6,7 +6,7 @@ import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { _moveInArray } from '../utils/array';
+import { _last, _moveInArray } from '../utils/array';
 import { _warnOnce } from '../utils/function';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
@@ -79,23 +79,57 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         currentColumns: AgColumn[] | null;
         lastHoveredColumn: AgColumn;
         isBefore: boolean;
-        isAttemptingToPin?: boolean;
+        considerHiddenColumns?: boolean;
     }): number | null {
-        const { currentColumns, lastHoveredColumn, isBefore, isAttemptingToPin } = params;
+        const { currentColumns, considerHiddenColumns, lastHoveredColumn, isBefore } = params;
         if (!lastHoveredColumn || !currentColumns) {
             return null;
         }
 
-        // if the target col is in the cols to be moved, no index to move, unless we are trying to pin.
-        if (!isAttemptingToPin && currentColumns.indexOf(lastHoveredColumn) !== -1) {
-            return null;
-        }
-
-        const targetColumnIndex = this.columnModel.getCols().indexOf(lastHoveredColumn);
+        const targetColumnIndex = considerHiddenColumns
+            ? this.getMoveIndexWithHiddenColumns(lastHoveredColumn, isBefore)
+            : this.columnModel.getCols().indexOf(lastHoveredColumn);
         const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
         const diff = this.getMoveDiff(currentColumns, adjustedTarget);
 
         return adjustedTarget - diff;
+    }
+
+    private getMoveIndexWithHiddenColumns(column: AgColumn, isBefore: boolean): number {
+        const cols = this.columnModel.getCols();
+        let parent = column.getParent();
+
+        const totalIndex = cols.indexOf(column);
+
+        if (!parent) {
+            return totalIndex;
+        }
+
+        // grab a reference the topmost parent to calculate the correct position of the new index.
+        while (parent) {
+            const nextParent = parent.getParent();
+
+            if (!nextParent) {
+                break;
+            }
+
+            parent = nextParent;
+        }
+
+        const leafCols = parent.getLeafColumns();
+        const visibleLeafCols = parent.getDisplayedLeafColumns();
+
+        const groupIndex = leafCols.indexOf(column);
+        let diff = 0;
+
+        if (isBefore && visibleLeafCols[0] === column) {
+            const groupVisibleIndex = visibleLeafCols.indexOf(column);
+            diff = groupVisibleIndex - groupIndex;
+        } else if (!isBefore && _last(visibleLeafCols) === column) {
+            diff = leafCols.length - 1 - groupIndex;
+        }
+
+        return totalIndex + diff;
     }
 
     private getMoveDiff(currentColumns: AgColumn[] | null, end: number): number {
