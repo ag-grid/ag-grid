@@ -122,7 +122,7 @@ export function provideGlobalGridOptions(gridOptions: GridOptions): void {
     GlobalGridOptions.gridOptions = gridOptions;
 }
 
-export function getGlobalGridOption<K extends keyof GridOptions>(gridOption: K): GridOptions[K] {
+export function _getGlobalGridOption<K extends keyof GridOptions>(gridOption: K): GridOptions[K] {
     return GlobalGridOptions.gridOptions?.[gridOption];
 }
 

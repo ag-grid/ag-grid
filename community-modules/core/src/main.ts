@@ -569,7 +569,7 @@ export {
     GridCoreCreator,
     createGrid,
     provideGlobalGridOptions,
-    getGlobalGridOption,
+    _getGlobalGridOption,
 } from './grid';
 export {
     GridApi,
