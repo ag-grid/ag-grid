@@ -253,6 +253,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
             processedKeyCreator !== (existingKeyCreator ?? existingColDef?.keyCreator) ||
             (!!this.dataTypeService &&
+                !!processedKeyCreator &&
                 this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
                 colDef.valueFormatter !== existingColDef?.valueFormatter)
         );
