@@ -22,11 +22,16 @@
 
 .columnContainer {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
 }
 
 .column {
     width: var(--layout-width-2-4);
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        width: 100%;
+    }
 }
 
 .buttonContainer {
@@ -83,6 +88,10 @@
     height: 100%;
     overflow-x: hidden;
     border-radius: var(--radius-xl);
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        display: none;
+    }
 
     a {
         width: 100%;
