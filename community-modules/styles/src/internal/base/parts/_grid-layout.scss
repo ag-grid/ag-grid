@@ -22,16 +22,16 @@
         padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
     }
 
-    .ag-pivot-leaf-group {
-        margin-left: var(--ag-row-group-indent-size);
-    }
-
     .ag-row-group-leaf-indent {
         @include ag.unthemed-rtl(
             (
                 margin-left: var(--ag-row-group-indent-size),
             )
         );
+    }
+
+    .ag-pivot-leaf-group {
+        margin-left: var(--ag-row-group-indent-size);
     }
 
     .ag-value-change-delta {
