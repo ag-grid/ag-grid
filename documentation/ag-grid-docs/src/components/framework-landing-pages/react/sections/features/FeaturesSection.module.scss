@@ -43,7 +43,6 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    cursor: pointer;
     gap: $spacing-size-2;
 
     .featureNavButton {
@@ -60,6 +59,7 @@
         fill: var(--color-fg-primary);
 
         &:hover {
+            cursor: pointer;
             fill: var(--color-util-brand-400);
         }
     }
