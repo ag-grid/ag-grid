@@ -362,6 +362,10 @@ div.divider:nth-of-type(4n) {
     gap: $spacing-size-4;
     padding-bottom: $spacing-size-6;
     width: 100%; /* Adjust based on your layout */
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        flex-direction: column;
+    }
 }
 
 .examplesSectioncard {

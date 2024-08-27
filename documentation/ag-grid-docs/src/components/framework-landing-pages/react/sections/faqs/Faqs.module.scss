@@ -7,6 +7,11 @@
     justify-content: space-between;
     padding: 20px;
     border-radius: 8px;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        flex-direction: column;
+        padding: 0;
+    }
 }
 
 .column {
@@ -14,6 +19,12 @@
     box-sizing: border-box;
     padding: 20px 0px;
     max-width: 48%;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+    }
 }
 
 .questionContainer {
