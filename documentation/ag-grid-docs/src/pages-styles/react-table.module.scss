@@ -24,7 +24,7 @@
 }
 
 .sectionInner {
-    max-width: 1500px;
+    max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
 }
 
 .headingContainer {

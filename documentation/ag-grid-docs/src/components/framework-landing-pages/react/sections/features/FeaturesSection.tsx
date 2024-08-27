@@ -50,16 +50,12 @@ const FeaturesSection: React.FC = () => {
                     </span>
 
                     <span
-                        onClick={() => handleTabClick(activeTab - 1)}
+                        onClick={() => handleTabClick(activeTab + 1)}
                         onMouseDown={(e) => e.preventDefault()}
                         role="button"
                         className="icon-button"
                     >
-                        <Icon
-                            onClick={() => handleTabClick(activeTab + 1)}
-                            svgClasses={styles.featureNavIcon}
-                            name="arrowRight"
-                        />
+                        <Icon svgClasses={styles.featureNavIcon} name="arrowRight" />
                     </span>
                 </div>
             </div>

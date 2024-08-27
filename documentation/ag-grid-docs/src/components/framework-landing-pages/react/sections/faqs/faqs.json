@@ -8,12 +8,12 @@
         "answer": "Yes, you can create a React Table for free using our open-source library, AG Grid Community."
     },
     {
-        "question": "Will my React Tables be compatible with AG Charts React Charts?",
+        "question": "Will my React Tables be compatible with AG Charts?",
         "answer": "Yes, AG Grid is designed to be compatible with AG Charts, allowing seamless integration between tables and charts."
     },
     {
         "question": "Can I customise the React Table?",
-        "answer": "Yes, AG Grid provides extensive customization options to tailor the React Table to your specific needs."
+        "answer": "Yes, you can customise AG Grid themes with CSS, create your own custom themes, and use our own components in cells."
     },
     {
         "question": "AG Grid vs. MUI",
@@ -25,7 +25,7 @@
     },
     {
         "question": "How Many Rows Can AG Grid Handle?",
-        "answer": "Additional FAQs will be added soon. Stay tuned for updates."
+        "answer": "AG Grid can easily handle millions of rows and thousands of columns, with no performance degradation."
     },
     {
         "question": "What is AG Grid Enterprise?",
@@ -37,6 +37,6 @@
     },
     {
         "question": "How much does AG Grid cost?",
-        "answer": ""
+        "answer": "AG Grid Community is free forever. AG Grid Enterprise costs $999 per licence. Visit the pricing page for more information."
     }
 ]
