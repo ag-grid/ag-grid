@@ -13,12 +13,6 @@ import InstallText from '@components/framework-landing-pages/InstallText';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Finance } from 'src/components/demos/examples/finance';
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
-
-let isOdd = false;
-const getIsOdd = () => {
-    isOdd = !isOdd;
-    return !isOdd;
-};
 ---
 
 <Layout title={'AG Grid React Table'} description={''} showDocsNav={false} showSearchBar={true}>
@@ -61,7 +55,18 @@ const getIsOdd = () => {
                 </div>
             </div>
         </div>
-        <Divider odd={getIsOdd()} />
+        <div class={styles.divider}>
+            <svg
+                data-name="Layer 1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1200 120"
+                preserveAspectRatio="none"
+            >
+                <path
+                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    class={styles.fill}></path>
+            </svg>
+        </div>
         <div class={styles.sectionContent}>
             <div class={styles.sectionInner}>
                 <div class={styles.headingContainer}>
@@ -76,7 +81,18 @@ const getIsOdd = () => {
                 <FeaturesSection client:only="react" />
             </div>
         </div>
-        <Divider odd={getIsOdd()} />
+        <div class={styles.divider}>
+            <svg
+                data-name="Layer 1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1200 120"
+                preserveAspectRatio="none"
+            >
+                <path
+                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    class={styles.fill}></path>
+            </svg>
+        </div>
         <div class={styles.sectionContent}>
             <div class={styles.sectionInner}>
                 <div class={styles.headingContainer}>
@@ -90,7 +106,18 @@ const getIsOdd = () => {
                 <Showcase client:only="react" />
             </div>
         </div>
-        <Divider odd={getIsOdd()} />
+        <div class={styles.divider}>
+            <svg
+                data-name="Layer 1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1200 120"
+                preserveAspectRatio="none"
+            >
+                <path
+                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    class={styles.fill}></path>
+            </svg>
+        </div>
         <div class={styles.sectionContent}>
             <div class={styles.sectionInner}>
                 <div class={styles.headingContainer}>
@@ -107,7 +134,18 @@ const getIsOdd = () => {
                 <Customers client:only="react" />
             </div>
         </div>
-        <Divider odd={getIsOdd()} />
+        <div class={styles.divider}>
+            <svg
+                data-name="Layer 1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1200 120"
+                preserveAspectRatio="none"
+            >
+                <path
+                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    class={styles.fill}></path>
+            </svg>
+        </div>
         <div class={styles.sectionContent}>
             <div class={styles.sectionInner}>
                 <div class={styles.headingContainer}>
@@ -120,8 +158,18 @@ const getIsOdd = () => {
                 <Examples client:only="react" />
             </div>
         </div>
-        <Divider odd={getIsOdd()} />
-        {/* FAQs - Community vs. Enterprise,  etc... */}
+        <div class={styles.divider}>
+            <svg
+                data-name="Layer 1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1200 120"
+                preserveAspectRatio="none"
+            >
+                <path
+                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    class={styles.fill}></path>
+            </svg>
+        </div>
         <div class={styles.sectionContent}>
             <div class={styles.headingContainer}>
                 <h2 class={styles.tag}>How Does AG Grid Compare to Competition?</h2>

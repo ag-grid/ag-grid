@@ -25,6 +25,28 @@ div.sectionContent:nth-of-type(4n + 3) {
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
 }
 
+.divider {
+    z-index: -1;
+}
+
+.divider svg {
+    position: relative;
+    width: calc(300% + 1.3px);
+    height: 175px;
+}
+
+div.divider .fill {
+    fill: var(--color-bg-disabled_subtle);
+}
+
+div.divider:nth-of-type(4n) {
+    background: var(--color-bg-disabled_subtle);
+
+    .fill {
+        fill: white;
+    }
+}
+
 .headingContainer {
     display: flex;
     flex-direction: column;
