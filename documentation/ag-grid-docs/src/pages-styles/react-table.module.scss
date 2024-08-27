@@ -54,7 +54,9 @@
     background: linear-gradient(0deg, #dde9f9 -61.34%, #ffffff 89.79%);
     z-index: -999;
     border-radius: 8px;
-    border: 1px solid #0e449126;
+    border-left: 1px solid linear-gradient(0deg, #dde9f9 -61.34%, #0e449126 89.79%);
+    border-right: 1px solid linear-gradient(0deg, #dde9f9 -61.34%, #0e449126 89.79%);
+    border-bottom: 1px solid #0e449126;
 
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         position: absolute;
