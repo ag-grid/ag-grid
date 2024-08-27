@@ -5,13 +5,11 @@
     flex-direction: column;
 }
 
-.sectionContent:last-child,
-.sectionOdd:last-child {
+.sectionContent:last-child {
     padding-bottom: $spacing-size-12;
 }
 
-.sectionContent,
-.sectionOdd {
+.sectionContent {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -19,7 +17,7 @@
     padding: 0px $spacing-size-48;
 }
 
-.sectionOdd {
+div.sectionContent:nth-of-type(4n + 3) {
     background-color: var(--color-bg-disabled_subtle);
 }
 
