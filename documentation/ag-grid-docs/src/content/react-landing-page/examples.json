@@ -1,6 +1,7 @@
 [
     {
         "img": "quick-start.png",
+        "img_alt": "Quick start guide for creating a React Table in minutes",
         "title": "Quick Start",
         "content": "Create your first React Table and learn the basics in just a few minutes.",
         "docs": "https://www.ag-grid.com/react-data-grid/getting-started",
@@ -8,6 +9,7 @@
     },
     {
         "img": "beginner-tutorial.png",
+        "img_alt": "Beginner tutorial for building a React Table with key functionality",
         "title": "Beginner Tutorial",
         "content": "Learn key concepts by building a react table with common functionality & customisations.",
         "docs": "https://www.ag-grid.com/react-data-grid/deep-dive/",
@@ -15,6 +17,7 @@
     },
     {
         "img": "custom-themes.png",
+        "img_alt": "Learn how to customise a React Table with unique CSS themes",
         "title": "Custom Styles",
         "content": "Customise your react table using CSS variables to create a unique theme for your brand.",
         "docs": "https://www.ag-grid.com/react-data-grid/global-style/",
@@ -22,6 +25,7 @@
     },
     {
         "img": "integrated-charts.png",
+        "img_alt": "Create and style integrated charts from your React Table",
         "title": "Integrated Charts",
         "content": "Build & style charts programatically, or let users create their own from the table.",
         "docs": "https://localhost:4610/react-data-grid/integrated-charts/",
