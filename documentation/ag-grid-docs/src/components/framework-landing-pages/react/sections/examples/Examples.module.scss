@@ -40,7 +40,7 @@
     min-width: 300px;
     margin: 0 10px;
     border-radius: var(--radius-md);
-    background: var(--color-util-gray-200);
+    background: var(--color-gray-50);
     flex-direction: column;
 }
 
@@ -56,13 +56,13 @@
     flex-grow: 1;
     font-size: 16px;
     flex-direction: column;
-    padding: $spacing-size-2 $spacing-size-4;
+    padding: $spacing-size-6 $spacing-size-4 0px $spacing-size-6;
 }
 
 .cardCta {
     display: flex;
     justify-content: flex-end;
     gap: $spacing-size-4;
-    padding: $spacing-size-2 $spacing-size-4 $spacing-size-4 $spacing-size-2;
+    padding: $spacing-size-4;
     border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
