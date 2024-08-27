@@ -140,6 +140,7 @@
 .heroSectionbuttonContainer {
     display: flex;
     justify-content: center;
+    min-height: 48px;
     gap: $spacing-size-4;
 
     .heroSectioncta1 {
@@ -148,6 +149,7 @@
 
     .heroSectioncta2 {
         display: flex;
+        min-width: 315px;
         align-items: center;
         gap: $spacing-size-2;
         padding: $spacing-size-2;
@@ -176,25 +178,25 @@
 .heroSectiondemoContainer {
     display: flex;
     flex-direction: column;
+    height: 600px;
+}
 
-    .heroSectionviewAllDemosLink {
-        appearance: none;
-        padding: 0;
-        text-align: left;
-        align-self: flex-end;
-        font-weight: var(--text-regular);
-        margin: $spacing-size-4 0px;
-        color: var(--color-link);
-        transition: color 0heroSection25s ease-in-out;
-        border: none;
-        background-color: transparent;
-        box-shadow: none;
-    }
+.heroSectionviewAllDemosLink {
+    appearance: none;
+    padding: 0;
+    text-align: left;
+    align-self: flex-end;
+    font-weight: var(--text-regular);
+    color: var(--color-link);
+    transition: color 0heroSection25s ease-in-out;
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}
 
-    .heroSectiondemosArrow {
-        height: 16px;
-        width: 16px;
-        margin-left: $spacing-size-2 !important;
-        fill: var(--color-link) !important;
-    }
+.heroSectiondemosArrow {
+    height: 16px;
+    width: 16px;
+    margin-left: $spacing-size-2 !important;
+    fill: var(--color-link) !important;
 }
