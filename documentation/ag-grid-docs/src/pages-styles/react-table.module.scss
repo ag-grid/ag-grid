@@ -22,7 +22,7 @@
     border-radius: 8px;
     border: 1px solid #0e449126;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         visibility: hidden;
     }
 }
@@ -39,7 +39,7 @@
     border-radius: 8px;
     border: 1px solid #0e449126;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         visibility: hidden;
     }
 }
@@ -56,7 +56,7 @@
     border-radius: 8px;
     border: 1px solid #0e449126;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         position: absolute;
         bottom: 0;
         width: 100%;
@@ -80,7 +80,7 @@ div.sectionContent:nth-of-type(4n + 3) {
     padding: 0px $spacing-size-48;
     position: relative;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         padding: $spacing-size-8 $spacing-size-8;
     }
 }
@@ -88,7 +88,7 @@ div.sectionContent:nth-of-type(4n + 3) {
 .sectionInner {
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         max-width: 100%;
     }
 }
@@ -96,7 +96,7 @@ div.sectionContent:nth-of-type(4n + 3) {
 .divider {
     z-index: -1;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         display: none;
     }
 }
@@ -142,7 +142,7 @@ div.divider:nth-of-type(4n) {
         margin: 0px $spacing-size-24;
         margin-bottom: 0px;
 
-        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             padding: 0;
             margin: 0;
         }
@@ -155,7 +155,7 @@ div.divider:nth-of-type(4n) {
         text-align: center;
         margin-bottom: 0px;
 
-        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             margin: 0;
         }
     }
@@ -188,7 +188,7 @@ div.divider:nth-of-type(4n) {
     flex-direction: column;
     margin-top: $spacing-size-16;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         margin-top: $spacing-size-4;
     }
 
@@ -201,7 +201,7 @@ div.divider:nth-of-type(4n) {
         align-self: center;
         background-color: var(--color-brand-200);
 
-        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             width: 100%;
         }
 
@@ -215,7 +215,7 @@ div.divider:nth-of-type(4n) {
             font-weight: var(--text-base);
             color: var(--color-brand-500);
 
-            @media screen and (max-width: $breakpoint-react-landing-page-small) {
+            @media screen and (max-width: $breakpoint-react-landing-page-medium) {
                 display: none;
             }
         }
@@ -226,7 +226,7 @@ div.divider:nth-of-type(4n) {
             font-weight: var(--text-base);
             color: var(--color-brand-500);
 
-            @media screen and (max-width: $breakpoint-react-landing-page-small) {
+            @media screen and (max-width: $breakpoint-react-landing-page-medium) {
                 font-size: var(--text-fs-sm);
             }
         }
@@ -237,7 +237,7 @@ div.divider:nth-of-type(4n) {
             margin-left: $spacing-size-2;
             fill: var(--color-brand-500);
 
-            @media screen and (max-width: $breakpoint-react-landing-page-small) {
+            @media screen and (max-width: $breakpoint-react-landing-page-medium) {
                 margin-left: 0;
             }
         }
@@ -251,7 +251,7 @@ div.divider:nth-of-type(4n) {
         padding: 0px $spacing-size-64;
         font-weight: var(--text-bold);
 
-        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             font-size: 52px;
             padding: 0px $spacing-size-2;
             line-height: 55px;
@@ -263,7 +263,7 @@ div.divider:nth-of-type(4n) {
         font-size: var(--text-fs-xl);
         padding: 0px $spacing-size-56;
 
-        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             padding: 0px;
         }
     }
@@ -275,7 +275,7 @@ div.divider:nth-of-type(4n) {
     min-height: 48px;
     gap: $spacing-size-4;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         flex-direction: column;
     }
 
@@ -371,7 +371,7 @@ div.divider:nth-of-type(4n) {
     padding-bottom: $spacing-size-6;
     width: 100%; /* Adjust based on your layout */
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         flex-direction: column;
     }
 }

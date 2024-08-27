@@ -24,7 +24,7 @@
     display: flex;
     justify-content: space-between;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         flex-direction: column;
     }
 }
@@ -32,7 +32,7 @@
 .column {
     width: var(--layout-width-2-4);
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         width: 100%;
     }
 }
@@ -92,7 +92,7 @@
     overflow-x: hidden;
     border-radius: var(--radius-xl);
 
-    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         display: none;
     }
 
