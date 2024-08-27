@@ -184,6 +184,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             columnModel: beans.columnModel,
             columnMoveService: beans.columnMoveService,
             presentedColsService: beans.visibleColsService,
+            finished: true,
         });
 
         const displayedLeafColumns = column.getDisplayedLeafColumns();

@@ -158,26 +158,24 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             this.checkCenterForScrolling(mouseX);
         }
 
-        if (!finished && isSuppressMoveWhenDragging) {
-            if (!this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)) {
-                return;
-            }
-            this.highlightHoveredColumn(mouseX);
-        } else {
-            const params = this.getMoveColumnParams(draggingEvent, mouseX, fromEnter, fakeEvent);
-            const { allMovingColumns } = params;
-            const isAttemptingToPin = this.isAttemptingToPin(allMovingColumns);
+        const params = this.getMoveColumnParams(draggingEvent, mouseX, fromEnter, fakeEvent);
+        const { allMovingColumns } = params;
+        const isAttemptingToPin = this.isAttemptingToPin(allMovingColumns);
 
-            if (!isAttemptingToPin && this.isCursorWithinMovingColumns(allMovingColumns, mouseX)) {
-                this.finishColumnMoving();
+        if (isSuppressMoveWhenDragging) {
+            if (finished) {
+                this.moveColumnsAfterHighlight(allMovingColumns, isAttemptingToPin);
             } else {
-                const lastMovedInfo = attemptMoveColumns(params);
-
-                if (lastMovedInfo) {
-                    this.lastMovedInfo = lastMovedInfo;
-                } else if (finished && isSuppressMoveWhenDragging) {
-                    this.moveColumnsAfterHighlight(allMovingColumns, isAttemptingToPin);
+                if (!this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)) {
+                    return;
                 }
+                this.highlightHoveredColumn(mouseX);
+            }
+        } else {
+            const lastMovedInfo = attemptMoveColumns({ ...params, finished });
+
+            if (lastMovedInfo) {
+                this.lastMovedInfo = lastMovedInfo;
             }
         }
     }
@@ -319,30 +317,6 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         targetColumn.setHighlighted(position);
         this.lastHighlightedColumn = { column: targetColumn, position };
-    }
-
-    private isCursorWithinMovingColumns(columns: AgColumn[], mouseX: number): boolean {
-        const isRtl = this.gos.get('enableRtl');
-        let left: number | null = null;
-        let width = 0;
-        for (const col of columns) {
-            const currentLeft = this.getColumnNormalisedLeft(col, isRtl);
-
-            if (currentLeft == null) {
-                continue;
-            }
-
-            if (left == null || currentLeft < left) {
-                left = currentLeft;
-            }
-            width += col.getActualWidth();
-        }
-
-        if (left == null) {
-            return true;
-        }
-
-        return mouseX >= left && mouseX <= left + width;
     }
 
     private getColumnNormalisedLeft(col: AgColumn, isRtl: boolean): number | null {

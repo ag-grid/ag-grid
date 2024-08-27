@@ -22,6 +22,7 @@ export function attemptMoveColumns(params: {
     columnModel: ColumnModel;
     columnMoveService: ColumnMoveService;
     presentedColsService: VisibleColsService;
+    finished: boolean;
 }): { columns: AgColumn[]; toIndex: number } | null | undefined {
     const {
         isFromHeader,
@@ -34,6 +35,7 @@ export function attemptMoveColumns(params: {
         columnModel,
         columnMoveService,
         presentedColsService,
+        finished,
     } = params;
 
     const draggingLeft = hDirection === HorizontalDirection.Left;
@@ -167,7 +169,9 @@ export function attemptMoveColumns(params: {
         return;
     }
 
-    columnMoveService.moveColumns(allMovingColumns, toIndex, 'uiColumnMoved');
+    columnMoveService.moveColumns(allMovingColumns, toIndex, 'uiColumnMoved', finished);
+
+    return finished ? null : { columns: allMovingColumns, toIndex };
 }
 
 // returns the index of the first column in the list ONLY if the cols are all beside
