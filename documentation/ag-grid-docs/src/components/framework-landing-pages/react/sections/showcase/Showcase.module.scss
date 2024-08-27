@@ -38,7 +38,6 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-size-4;
-    cursor: pointer;
 
     .button {
         background: #fdfefe;
@@ -46,6 +45,7 @@
         border: 1px solid #dde0e7;
         border-radius: var(--radius-xl);
         box-shadow: var(--shadow-sm);
+        cursor: pointer;
     }
 
     .buttonTitleContainer {

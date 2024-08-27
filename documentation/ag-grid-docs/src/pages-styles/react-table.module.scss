@@ -64,7 +64,7 @@
         background: linear-gradient(0deg, #dde9f9 -61.34%, #ffffff 89.79%);
         z-index: -999;
         border-radius: 8px;
-        border: 1px solid #0e449126;
+        border: none;
     }
 }
 
@@ -201,6 +201,10 @@ div.divider:nth-of-type(4n) {
         align-self: center;
         background-color: var(--color-brand-200);
 
+        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+            width: 100%;
+        }
+
         .heroSectionversion {
             border: 2px solid var(--color-util-brand-200);
             background: var(--color-white);
@@ -223,7 +227,7 @@ div.divider:nth-of-type(4n) {
             color: var(--color-brand-500);
 
             @media screen and (max-width: $breakpoint-react-landing-page-small) {
-                font-size: var(--text-fs-xs);
+                font-size: var(--text-fs-sm);
             }
         }
 
@@ -232,6 +236,10 @@ div.divider:nth-of-type(4n) {
             width: 16px;
             margin-left: $spacing-size-2;
             fill: var(--color-brand-500);
+
+            @media screen and (max-width: $breakpoint-react-landing-page-small) {
+                margin-left: 0;
+            }
         }
     }
 
