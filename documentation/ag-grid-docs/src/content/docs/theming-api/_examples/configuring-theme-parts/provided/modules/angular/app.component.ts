@@ -70,9 +70,6 @@ ModuleRegistry.registerModules([
     `,
 })
 export class AppComponent {
-    colorSchemeId = '';
-    iconSetId = '';
-
     baseThemes = [themeQuartz, themeBalham, themeMaterial];
     baseTheme = themeQuartz;
 

@@ -100,7 +100,9 @@ Changing the theme of a running grid is a slower operation than setting custom p
 
 Each grid on the page can have its own theme. In the example below, 3 themes are used by 4 grids. The bottom two grids share a theme (Balham) and use CSS custom properties to achieve different header colours:
 
-_(NOTE: the checkboxes in the React version are a temporary testing feature - a theme's CSS should be removed from the document head when no grids are using the theme)_
+{% if isFramework("react") %}
+_(NOTE: the checkboxes are a temporary testing feature - a theme's CSS should be removed from the document head when no grids are using the theme)_
+{% /if %}
 
 {% gridExampleRunner title="Theming API" name="multiple-grids" /%}
 
