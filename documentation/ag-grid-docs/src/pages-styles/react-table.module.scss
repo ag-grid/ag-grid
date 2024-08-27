@@ -17,6 +17,10 @@
     align-items: center;
     padding: 0px $spacing-size-48;
     position: relative;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        padding: $spacing-size-8 $spacing-size-12;
+    }
 }
 
 .smallRectangleLeft {
@@ -30,6 +34,10 @@
     z-index: -999;
     border-radius: 8px;
     border: 1px solid #0e449126;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        visibility: hidden;
+    }
 }
 
 .smallRectangleRight {
@@ -43,6 +51,10 @@
     z-index: -999;
     border-radius: 8px;
     border: 1px solid #0e449126;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        visibility: hidden;
+    }
 }
 
 .blueRectangle {
@@ -56,6 +68,17 @@
     z-index: -999;
     border-radius: 8px;
     border: 1px solid #0e449126;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(0deg, #dde9f9 -61.34%, #ffffff 89.79%);
+        z-index: -999;
+        border-radius: 8px;
+        border: 1px solid #0e449126;
+    }
 }
 
 div.sectionContent:nth-of-type(4n + 3) {
@@ -68,6 +91,10 @@ div.sectionContent:nth-of-type(4n + 3) {
 
 .divider {
     z-index: -1;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        display: none;
+    }
 }
 
 .divider svg {
@@ -110,6 +137,10 @@ div.divider:nth-of-type(4n) {
         padding: 0px $spacing-size-24;
         margin: 0px $spacing-size-24;
         margin-bottom: 0px;
+
+        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+            padding: 0px $spacing-size-12;
+        }
     }
 
     .subHeading {
@@ -118,6 +149,10 @@ div.divider:nth-of-type(4n) {
         margin: 0px $spacing-size-48;
         text-align: center;
         margin-bottom: 0px;
+
+        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+            margin: 0px $spacing-size-40;
+        }
     }
 }
 
@@ -148,6 +183,10 @@ div.divider:nth-of-type(4n) {
     flex-direction: column;
     margin-top: $spacing-size-16;
 
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        margin-top: $spacing-size-4;
+    }
+
     .heroSectionversionTagContainer {
         display: flex;
         border-radius: var(--radius-4xl);
@@ -166,6 +205,10 @@ div.divider:nth-of-type(4n) {
             font-size: var(--text-fs-sm);
             font-weight: var(--text-base);
             color: var(--color-brand-500);
+
+            @media screen and (max-width: $breakpoint-react-landing-page-small) {
+                display: none;
+            }
         }
 
         .heroSectionfeatureHighlight {
@@ -190,12 +233,21 @@ div.divider:nth-of-type(4n) {
         margin: $spacing-size-8 0px;
         padding: 0px $spacing-size-64;
         font-weight: var(--text-bold);
+
+        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+            font-size: 52px;
+            padding: 0px $spacing-size-12;
+        }
     }
 
     .heroSectionsubHeading {
         text-align: center;
         font-size: var(--text-fs-xl);
         padding: 0px $spacing-size-56;
+
+        @media screen and (max-width: $breakpoint-react-landing-page-small) {
+            padding: 0px;
+        }
     }
 }
 
@@ -204,6 +256,10 @@ div.divider:nth-of-type(4n) {
     justify-content: center;
     min-height: 48px;
     gap: $spacing-size-4;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        flex-direction: column;
+    }
 
     .heroSectioncta1 {
         // TBC
@@ -219,6 +275,7 @@ div.divider:nth-of-type(4n) {
         background-color: var(--color-brand-200);
         color: var(--color-gray-900);
         font-family: 'SF Mono', Courier, monospace;
+        justify-content: center;
     }
 
     .heroSectioninstallText {
@@ -312,6 +369,8 @@ div.divider:nth-of-type(4n) {
     height: 200px;
     object-fit: none;
     object-position: 0 0;
+    border-right: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .examplesSectioncardDetails {
