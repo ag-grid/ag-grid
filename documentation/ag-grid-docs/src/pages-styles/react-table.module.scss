@@ -1,6 +1,7 @@
 @use 'design-system' as *;
 
 .container {
+    position: relative;
     display: flex;
     flex-direction: column;
 }
@@ -15,6 +16,46 @@
     justify-content: center;
     align-items: center;
     padding: 0px $spacing-size-48;
+    position: relative; /* Ensure the content container is relative to position the absolute rectangle */
+}
+
+.smallRectangleLeft {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-85%, -65%);
+    width: 97.5%; /* Adjust width as needed */
+    height: 50%; /* Adjust height as needed */
+    background: linear-gradient(180deg, #dde9f9 -61.34%, #ffffff 89.79%);
+    z-index: -999; /* Ensure it sits behind the content */
+    border-radius: 8px; /* Optional: add rounded corners */
+    border: 1px solid #0e449126;
+}
+
+.smallRectangleRight {
+    position: absolute;
+    top: 0;
+    right: 0; /* Position the rectangle on the right */
+    transform: translate(85%, -65%);
+    width: 97.5%; /* Adjust width as needed */
+    height: 50%; /* Adjust height as needed */
+    background: linear-gradient(180deg, #dde9f9 -61.34%, #ffffff 89.79%);
+    z-index: -999; /* Ensure it sits behind the content */
+    border-radius: 8px; /* Optional: add rounded corners */
+    border: 1px solid #0e449126;
+}
+
+.blueRectangle {
+    position: absolute;
+    top: 56%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 97.5%; /* Adjust width as needed */
+    height: 62.5%; /* Adjust height as needed */
+    background: linear-gradient(0deg, #dde9f9 -61.34%, #ffffff 89.79%); /* Set the background color */
+    z-index: -999; /* Ensure it sits behind the content */
+    border-radius: 8px; /* Optional: add rounded corners */
+    border: 1px solid #0e449126;
 }
 
 div.sectionContent:nth-of-type(4n + 3) {
