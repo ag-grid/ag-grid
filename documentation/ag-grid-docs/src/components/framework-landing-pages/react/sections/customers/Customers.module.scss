@@ -38,7 +38,7 @@
 }
 
 .quotesContainer {
-    margin: $spacing-size-6 $spacing-size-6;
+    margin: $spacing-size-6 0px;
     blockquote {
         --quote-background-color: var(--color-util-gray-100);
     }

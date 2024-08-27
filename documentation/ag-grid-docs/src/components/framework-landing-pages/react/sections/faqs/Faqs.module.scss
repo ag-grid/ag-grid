@@ -2,6 +2,8 @@
 
 .container {
     display: flex;
+    width: 100%;
+    max-width: 1500px;
     justify-content: space-between;
     padding: 20px;
     border-radius: 8px;

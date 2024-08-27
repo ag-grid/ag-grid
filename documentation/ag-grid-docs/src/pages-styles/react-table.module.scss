@@ -12,11 +12,19 @@
 
 .sectionContent,
 .sectionOdd {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     padding: 0px $spacing-size-48;
 }
 
 .sectionOdd {
     background-color: var(--color-bg-disabled_subtle);
+}
+
+.sectionInner {
+    max-width: 1500px;
 }
 
 .headingContainer {
