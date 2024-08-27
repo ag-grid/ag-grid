@@ -1,19 +1,21 @@
 @use 'design-system' as *;
 
-.container {
-    display: flex;
-    flex-direction: column;
-}
-
 .columnContainer {
     display: flex;
     justify-content: space-between;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        flex-direction: column;
+    }
 }
 
 .column {
     width: var(--layout-width-2-4);
-}
 
+    @media screen and (max-width: $breakpoint-react-landing-page-small) {
+        width: 100%;
+    }
+}
 .featureContainer {
     display: flex;
     flex-direction: row;
