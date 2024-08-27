@@ -1,10 +1,18 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, IRichCellEditorParams, createGrid } from '@ag-grid-community/core';
+import {
+    ColDef,
+    GridApi,
+    GridOptions,
+    IRichCellEditorParams,
+    KeyCreatorParams,
+    ValueFormatterParams,
+    ValueParserParams,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 
 import { colors } from './colors';
-import { ColourCellRenderer } from './colourCellRenderer_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
 
@@ -12,8 +20,9 @@ const columnDefs: ColDef[] = [
     {
         headerName: 'Color',
         field: 'color',
-        cellRenderer: ColourCellRenderer,
-        keyCreator: (params) => params.value.name,
+        valueFormatter: (params: ValueFormatterParams) => params.value.name,
+        valueParser: (params: ValueParserParams) => colors.find((color) => color.name === params.newValue),
+        keyCreator: (params: KeyCreatorParams) => params.value.name,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: colors,
