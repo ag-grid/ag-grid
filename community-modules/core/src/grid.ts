@@ -122,6 +122,10 @@ export function provideGlobalGridOptions(gridOptions: GridOptions): void {
     GlobalGridOptions.gridOptions = gridOptions;
 }
 
+export function getGlobalGridOption<K extends keyof GridOptions>(gridOption: K): GridOptions[K] {
+    return GlobalGridOptions.gridOptions?.[gridOption];
+}
+
 /**
  * Creates a grid inside the provided HTML element.
  * @param eGridDiv Parent element to contain the grid.

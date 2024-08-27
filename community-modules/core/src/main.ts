@@ -562,7 +562,15 @@ export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export { CellNavigationService } from './cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
-export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from './grid';
+export {
+    Grid,
+    GridParams,
+    Params,
+    GridCoreCreator,
+    createGrid,
+    provideGlobalGridOptions,
+    getGlobalGridOption,
+} from './grid';
 export {
     GridApi,
     DetailGridInfo,

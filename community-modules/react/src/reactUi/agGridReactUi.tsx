@@ -23,6 +23,7 @@ import {
     _isServerSideRowModel,
     _processOnChange,
     _warnOnce,
+    getGlobalGridOption,
 } from '@ag-grid-community/core';
 import React, {
     forwardRef,
@@ -114,7 +115,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
                     portalManager.current,
-                    mergedGridOps.reactiveCustomComponents ?? true
+                    mergedGridOps.reactiveCustomComponents ?? getGlobalGridOption('reactiveCustomComponents') ?? true
                 ),
                 renderStatusService,
             },
