@@ -42,7 +42,8 @@
 .buttonContainer {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    cursor: pointer;
     gap: $spacing-size-2;
 
     .featureNavButton {
@@ -57,6 +58,10 @@
 
     .featureNavIcon {
         fill: var(--color-fg-primary);
+
+        &:hover {
+            fill: var(--color-util-brand-400);
+        }
     }
 
     .featureNavIconDisabled {

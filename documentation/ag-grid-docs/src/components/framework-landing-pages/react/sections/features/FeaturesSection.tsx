@@ -40,16 +40,27 @@ const FeaturesSection: React.FC = () => {
                 </div>
                 <div className={styles.contentContainer}>{tabs[activeTab]?.component}</div>
                 <div className={styles.buttonContainer}>
-                    <Icon
+                    <span
                         onClick={() => handleTabClick(activeTab - 1)}
-                        svgClasses={styles.featureNavIcon}
-                        name="arrowLeft"
-                    />
-                    <Icon
-                        onClick={() => handleTabClick(activeTab + 1)}
-                        svgClasses={styles.featureNavIcon}
-                        name="arrowRight"
-                    />
+                        onMouseDown={(e) => e.preventDefault()}
+                        role="button"
+                        className="icon-button"
+                    >
+                        <Icon svgClasses={styles.featureNavIcon} name="arrowLeft" />
+                    </span>
+
+                    <span
+                        onClick={() => handleTabClick(activeTab - 1)}
+                        onMouseDown={(e) => e.preventDefault()}
+                        role="button"
+                        className="icon-button"
+                    >
+                        <Icon
+                            onClick={() => handleTabClick(activeTab + 1)}
+                            svgClasses={styles.featureNavIcon}
+                            name="arrowRight"
+                        />
+                    </span>
                 </div>
             </div>
         </>
