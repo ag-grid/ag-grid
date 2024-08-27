@@ -3,16 +3,16 @@ import Layout from '../layouts/Layout.astro';
 import { getEntry } from 'astro:content';
 import styles from '../pages-styles/react-table.module.scss';
 import Customers from '../components/framework-landing-pages/react/sections/customers/Customers';
-import Examples from '../components/framework-landing-pages/react/sections/examples/Examples';
 import Faqs from '../components/framework-landing-pages/react/sections/faqs/Faqs';
 import FeaturesSection from '../components/framework-landing-pages/react/sections/features/FeaturesSection';
 import Showcase from '../components/framework-landing-pages/react/sections/showcase/Showcase';
-import Divider from '../components/framework-landing-pages/react/utils/Divider';
 
 import InstallText from '@components/framework-landing-pages/InstallText';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Finance } from 'src/components/demos/examples/finance';
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
+const { data: examples } = await getEntry('react-landing-page', 'examples');import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
 ---
 
 <Layout title={'AG Grid React Table'} description={''} showDocsNav={false} showSearchBar={true}>
@@ -155,7 +155,32 @@ const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
                         Sample apps to help you build your React Table with AG Grid in minutes.
                     </h4>
                 </div>
-                <Examples client:only="react" />
+                <div class={styles.examplesSectioncontainer}>
+                    <div class={styles.examplesSectionexamplesContainer}>
+                        <div class={styles.examplesSectioncardsContainer}>
+                            {examples.map((card, index) => (
+                                <div key={index} class={styles.examplesSectioncard}>
+                                    <img
+                                        class={styles.examplesSectioncardImage}
+                                        src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
+                                    ></img>
+                                    <div class={styles.examplesSectioncardDetails}>
+                                        <h3>{card.title}</h3>
+                                        <p>{card.content}</p>
+                                    </div>
+                                    <div class={styles.examplesSectioncardCta}>
+                                        <a href={card.demo} target="_blank">
+                                            Live Demo
+                                        </a>
+                                        <a href={card.docs} target="_blank">
+                                            Docs
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class={styles.divider}>

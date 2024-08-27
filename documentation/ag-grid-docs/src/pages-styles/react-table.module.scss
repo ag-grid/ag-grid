@@ -220,3 +220,70 @@ div.divider:nth-of-type(4n) {
     margin-left: $spacing-size-2 !important;
     fill: var(--color-link) !important;
 }
+
+.examplesSectionheadingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0px $spacing-size-32;
+    margin-bottom: $spacing-size-12;
+
+    .examplesSectionheading {
+        font-size: 48px;
+        font-weight: var(--text-bold);
+    }
+
+    .examplesSectionsubHeading {
+        font-size: var(--text-fs-lg);
+        text-align: center;
+    }
+}
+
+.examplesSectionexamplesContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.examplesSectioncardsContainer {
+    display: flex;
+    overflow-x: scroll !important;
+    gap: $spacing-size-4;
+    padding-bottom: $spacing-size-6;
+    width: 100%; /* Adjust based on your layout */
+}
+
+.examplesSectioncard {
+    flex: 1;
+    display: flex;
+    min-width: 300px;
+    margin: 0 10px;
+    border-radius: var(--radius-md);
+    background: var(--color-gray-50);
+    flex-direction: column;
+}
+
+.examplesSectioncardImage {
+    width: 100%;
+    height: 200px;
+    object-fit: none;
+    object-position: 0 0;
+}
+
+.examplesSectioncardDetails {
+    display: flex;
+    flex-grow: 1;
+    font-size: 16px;
+    flex-direction: column;
+    padding: $spacing-size-6 $spacing-size-4 0px $spacing-size-6;
+}
+
+.examplesSectioncardCta {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-size-4;
+    padding: $spacing-size-4;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
