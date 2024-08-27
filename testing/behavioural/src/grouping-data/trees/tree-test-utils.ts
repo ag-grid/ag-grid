@@ -1,4 +1,4 @@
-import type { GridApi, IRowNode } from '@ag-grid-community/core';
+import type { GridApi, IRowNode, RowNode } from '@ag-grid-community/core';
 
 import {
     checkGridSelectedNodes,
@@ -37,7 +37,7 @@ export interface TreeDiagramOptions {
 export class TreeDiagram {
     public readonly api: GridApi;
     public readonly label: string;
-    public readonly root: IRowNode | null = null;
+    public readonly root: RowNode | null = null;
     public readonly stage: TreeDiagramStage;
     public readonly options: TreeDiagramOptions;
     public readonly includeId: boolean = true;
@@ -108,7 +108,7 @@ export class TreeDiagram {
         return rowInfo;
     }
 
-    private recurseChildren(row: IRowNode, branch: string, level: number, expanded: boolean, children: IRowNode[]) {
+    private recurseChildren(row: RowNode, branch: string, level: number, expanded: boolean, children: RowNode[]) {
         for (let i = 0; i < children.length; i++) {
             const child = children[i];
             this.recurseRow(
@@ -123,7 +123,7 @@ export class TreeDiagram {
     }
 
     private recurseRow(
-        row: IRowNode,
+        row: RowNode,
         parent: IRowNode | null,
         branch: string,
         level: number,
@@ -172,7 +172,7 @@ export class TreeDiagram {
     }
 
     private checkRow(
-        row: IRowNode<any>,
+        row: RowNode,
         level: number,
         parent: IRowNode<any> | null,
         idx: number,
@@ -267,7 +267,7 @@ export class TreeDiagram {
             }
         }
 
-        if (this.columns.size && parent) {
+        if (this.columns.size) {
             for (const column of this.columns) {
                 const cellValue = this.api.getCellValue({ rowNode: row, colKey: column });
                 if (cellValue !== undefined || row.data) {
@@ -305,6 +305,16 @@ export class TreeDiagram {
             }
         }
 
+        // Verify that childrenAfterAggFilter does not contains duplicates
+        if (row.childrenAfterAggFilter) {
+            const childrenAfterAggFilterSet = new Set(row.childrenAfterAggFilter);
+            if (childrenAfterAggFilterSet.size !== row.childrenAfterAggFilter.length) {
+                this.rowErrors.push(
+                    'DUPLICATE_CHILDREN_AFTER_AGG_FILTER=' + row.childrenAfterAggFilter.map(rowKey).join(',')
+                );
+            }
+        }
+
         // Verify that childrenAfterSort does not contains duplicates
         if (row.childrenAfterSort) {
             const childrenAfterSortSet = new Set(row.childrenAfterSort);
@@ -323,10 +333,21 @@ export class TreeDiagram {
             }
         }
 
-        // Verify that childrenAfterSort is a subset or the same as childrenAfterFilter
-        if (row.childrenAfterFilter && row.childrenAfterSort) {
+        // Verify that childrenAfterAggFilter is a subset or the same as childrenAfterFilter
+        if (row.childrenAfterAggFilter && row.childrenAfterFilter) {
             const childrenAfterFilterSet = new Set(row.childrenAfterFilter);
-            for (const child of row.childrenAfterSort) {
+            for (const child of row.childrenAfterAggFilter) {
+                if (!childrenAfterFilterSet.has(child)) {
+                    this.rowErrors.push('childrenAfterAggFilterNotInFilter=' + rowKey(child));
+                }
+            }
+        }
+
+        // Verify that childrenAfterSort is a subset or the same as childrenAfterAggFilter
+        const childrenAfterAggFilter = row.childrenAfterAggFilter ?? row.childrenAfterFilter;
+        if (row.childrenAfterSort && childrenAfterAggFilter) {
+            const childrenAfterFilterSet = new Set(row.childrenAfterFilter);
+            for (const child of childrenAfterAggFilter) {
                 if (!childrenAfterFilterSet.has(child)) {
                     this.rowErrors.push('childrenAfterSortNotInFilter=' + rowKey(child));
                 }

@@ -24,9 +24,9 @@ export const getRootAllLeafChildrenData = (api: GridApi | null | undefined) => {
     return getRootAllLeafChildren(api).map((node) => node.data);
 };
 
-export function findRootNodes(gridApi: GridApi | IRowNode[]): IRowNode[] {
-    const set = new Set<IRowNode>();
-    const processNode = (row: IRowNode) => {
+export function findRootNodes(gridApi: GridApi | IRowNode[]): RowNode[] {
+    const set = new Set<RowNode>();
+    const processNode = (row: RowNode) => {
         if (row.parent && !row.parent.parent) {
             set.add(row.parent);
         }
@@ -39,7 +39,7 @@ export function findRootNodes(gridApi: GridApi | IRowNode[]): IRowNode[] {
     return Array.from(set);
 }
 
-export function findRootNode(gridApi: GridApi | IRowNode[]): IRowNode | null {
+export function findRootNode(gridApi: GridApi | IRowNode[]): RowNode | null {
     const rootNodes = findRootNodes(gridApi);
     if (rootNodes.length === 0) return null;
     if (rootNodes.length !== 1)

@@ -31,7 +31,7 @@ describe('ag-grid grouping tree data with groupRows', () => {
             columnDefs: [
                 {
                     field: 'type',
-                    valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
+                    valueGetter: (params) => (params.data ? 'Provided' : params.node?.parent ? 'Filler' : 'Root'),
                 },
             ],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
@@ -49,7 +49,7 @@ describe('ag-grid grouping tree data with groupRows', () => {
         };
 
         new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID type:"Root"
             ├─┬ A GROUP id:0 type:"Provided"
             │ └── B LEAF id:1 type:"Provided"
             ├─┬ C filler id:row-group-0-C type:"Filler"
