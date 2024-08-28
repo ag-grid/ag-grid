@@ -20,7 +20,7 @@ import styles from './ApiReference.module.scss';
 function getDisplayNameSplit({ name, definition }: { name: string; definition: ChildDocEntry }) {
     let displayName = name;
     if (definition.isRequired) {
-        displayName += `&nbsp;<span class="${styles.required}" title="Required">required</span>`;
+        displayName += `&nbsp;<span class="${styles.required}">required</span>`;
     }
 
     if (definition.strikeThrough) {
@@ -215,10 +215,7 @@ export const Property: FunctionComponent<{
                                         <Icon name="link" />
                                     </a>
                                 </div>
-                                <div
-                                    title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
-                                    className={styles.metaItem}
-                                >
+                                <div className={styles.metaItem}>
                                     {typeUrl && detailsCode ? (
                                         <>
                                             <button
