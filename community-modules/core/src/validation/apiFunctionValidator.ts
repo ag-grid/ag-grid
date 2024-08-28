@@ -142,6 +142,11 @@ const deprecatedFunctions: {
         message:
             '`showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).',
     },
+    getInfiniteRowCount: {
+        version: 'v32.2',
+        old: 'getInfiniteRowCount()',
+        new: 'getDisplayedRowCount()',
+    },
 };
 
 export function validateApiFunction<TFunctionName extends ApiFunctionName>(
