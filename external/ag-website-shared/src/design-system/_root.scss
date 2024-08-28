@@ -314,9 +314,11 @@ html[data-dark-mode='true'] {
     --color-link-hover: var(--color-brand-200); // TODO, review & replace color
 
     // Button colors
-    --color-button-primary-bg-hover: var(--color-brand-600);
+    --color-button-primary-bg: var(--color-brand-300);
+    --color-button-primary-bg-hover: var(--color-brand-200);
     --color-button-primary-bg-active: var(--color-brand-700);
     --color-button-primary-shadow-focus: var(--color-brand-900);
+    --color-button-primary-fg: var(--color-bg-primary);
 
     --color-button-secondary-bg-hover: var(--color-gray-700);
     --color-button-secondary-bg-active: var(--color-gray-600);

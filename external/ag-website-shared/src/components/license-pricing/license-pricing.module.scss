@@ -507,6 +507,11 @@
     background: var(--color-bg-brand-solid);
     transition: all 0.2s;
     transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 80%);
+        color: var(--color-fg-white);
+    }
 }
 
 .toggleContainer div {
@@ -579,6 +584,9 @@
     color: var(--color-button-primary-fg);
     transition: color 0.3s;
 
+    #{$selector-darkmode} & {
+        color: var(--color-text-secondary);
+    }
     .gridInactive {
         display: none;
     }
@@ -591,6 +599,9 @@
     border-radius: 32px;
     color: var(--color-text-secondary);
     transition: color 0.3s;
+    #{$selector-darkmode} & {
+        color: var(--color-text-secondary);
+    }
 
     .chartsInactive {
         display: inline;
