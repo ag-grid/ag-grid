@@ -1,0 +1,16 @@
+{
+    "folders": [
+        {
+            "path": "../testing"
+        },
+        {
+            "path": "../community-modules"
+        },
+        {
+            "path": "../enterprise-modules"
+        },
+        {
+            "path": "../documentation"
+        }
+    ]
+}

@@ -166,9 +166,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     // called from SyncService, when grid has finished initialising
-    private createColsFromColDefs(colsPreviouslyExisted: boolean, source: ColumnEventType): void {
+    private createColsFromColDefs(source: ColumnEventType): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
-        const dispatchEventsFunc = colsPreviouslyExisted
+        const dispatchEventsFunc = this.colDefs
             ? this.columnApplyStateService.compareColumnStatesAndDispatchEvents(source)
             : undefined;
 
@@ -590,18 +590,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.cols.list = res;
     }
 
-    private orderColsLikeColDefCols(): void {
-        if (!this.colDefCols || !this.cols) {
-            return;
-        }
-
-        const colsOrdered = this.colDefCols.list.filter((col) => this.cols.list.indexOf(col) >= 0);
-        const otherCols = this.cols.list.filter((col) => colsOrdered.indexOf(col) < 0);
-
-        this.cols.list = [...otherCols, ...colsOrdered];
-        this.cols.list = this.columnMoveService.placeLockedColumns(this.cols.list);
-    }
-
     public sortColsLikeKeys(colIds: string[]): void {
         if (this.cols == null) {
             return;
@@ -830,13 +818,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (this.autoCols) {
             this.autoColService!.updateAutoCols(this.autoCols.list, source);
         }
-        this.createColsFromColDefs(true, source);
+        this.createColsFromColDefs(source);
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
-        const colsPreviouslyExisted = !!this.colDefs;
         this.colDefs = columnDefs;
-        this.createColsFromColDefs(colsPreviouslyExisted, source);
+        this.createColsFromColDefs(source);
     }
 
     public override destroy(): void {
