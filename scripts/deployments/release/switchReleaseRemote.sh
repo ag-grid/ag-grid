@@ -16,34 +16,41 @@ fi
 
 TIMESTAMP=$1
 
-PUBLIC_HTML_PATH="@PUBLIC_HTML_PATH@"
-WORKING_DIR_ROOT="@WORKING_DIR_ROOT@"
+CHARTS_ROOT_DIR="@CHARTS_ROOT_DIR@"
+GRID_ROOT_DIR="@GRID_ROOT_DIR@"
+WWW_ROOT_DIR="@WWW_ROOT_DIR@"
 
 # create a backup of the html folder ONLY if it doesn't already exist - this handles the situation where multiple deployments are done on the same day
 # in that case we only want to backup the original html folder, not the subsequent attempts (for rollback)
-if [ -d "$WORKING_DIR_ROOT/public_html_$TIMESTAMP" ];
+if [ -d "$WWW_ROOT_DIR/public_html_$TIMESTAMP" ];
 then
   # if this block is run then it means that this is not the first deployment done today
-  echo "$WORKING_DIR_ROOT/public_html_$TIMESTAMP already exists - not backing up existing html folder"
+  echo "$WWW_ROOT_DIR/public_html_$TIMESTAMP already exists - not backing up existing html folder"
 
   # move archives from the previous "live" to the original html backup: public_html_$TIMESTAMP
   # this will in turn be moved to the new html folder down below
-  mv $PUBLIC_HTML_PATH/archive $WORKING_DIR_ROOT/public_html_$TIMESTAMP/archive
+  mv $GRID_ROOT_DIR/archive $WWW_ROOT_DIR/public_html_$TIMESTAMP/archive
+
+  # we don't copy the charts & associated archives - it's too big
+  mv $CHARTS_ROOT_DIR $WWW_ROOT_DIR/public_html_$TIMESTAMP/charts
 
   # it's unlikely we'd need the version we're replacing, but just in case
   CURRENT_BACKUP_DIR="public_html_`date '+%Y%m%d_%H%M'`"
-  mv $PUBLIC_HTML_PATH $WORKING_DIR_ROOT/$CURRENT_BACKUP_DIR
+  mv $GRID_ROOT_DIR $WWW_ROOT_DIR/$CURRENT_BACKUP_DIR
 else
-  mv $PUBLIC_HTML_PATH $WORKING_DIR_ROOT/public_html_$TIMESTAMP
+  mv $GRID_ROOT_DIR $WWW_ROOT_DIR/public_html_$TIMESTAMP
 fi
 
-mv $WORKING_DIR_ROOT/public_html_tmp $PUBLIC_HTML_PATH
+mv $WWW_ROOT_DIR/public_html_tmp $GRID_ROOT_DIR
 
 # we don't copy the archives - it's too big
-mv $WORKING_DIR_ROOT/public_html_$TIMESTAMP/archive $PUBLIC_HTML_PATH/
+mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/archive $GRID_ROOT_DIR/
 
-cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/eula $PUBLIC_HTML_PATH/
-cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/ecommerce $PUBLIC_HTML_PATH/
-cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/support $PUBLIC_HTML_PATH/
-cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/__shared $PUBLIC_HTML_PATH/
-cp -R $WORKING_DIR_ROOT/public_html_$TIMESTAMP/robots.txt $PUBLIC_HTML_PATH/
+# we don't copy the charts & associated archives - it's too big
+mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/charts $CHARTS_ROOT_DIR
+
+cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/eula $GRID_ROOT_DIR/
+cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/ecommerce $GRID_ROOT_DIR/
+cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/support $GRID_ROOT_DIR/
+cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/__shared $GRID_ROOT_DIR/
+cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/robots.txt $GRID_ROOT_DIR/
