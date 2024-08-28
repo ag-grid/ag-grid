@@ -2,6 +2,7 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
+    ColumnModel,
     ColumnMoveService,
     ColumnPanelItemDragStartEvent,
 } from '@ag-grid-community/core';
@@ -15,9 +16,11 @@ import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private columnMoveService: ColumnMoveService;
+    private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
         this.columnMoveService = beans.columnMoveService;
+        this.columnModel = beans.columnModel;
     }
 
     constructor(
@@ -88,7 +91,6 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             return;
         }
 
-        const { columnMoveService } = this;
         const { component } = lastHoveredListItem;
 
         let lastHoveredColumn: AgColumn | null = null;
@@ -106,7 +108,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             return;
         }
 
-        const targetIndex: number | null = columnMoveService.getMoveTargetIndex({
+        const targetIndex: number | null = this.getMoveTargetIndex({
             currentColumns,
             lastHoveredColumn,
             isBefore,
@@ -115,5 +117,41 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         if (targetIndex != null) {
             this.columnMoveService.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
         }
+    }
+
+    private getMoveTargetIndex(params: {
+        currentColumns: AgColumn[] | null;
+        lastHoveredColumn: AgColumn;
+        isBefore: boolean;
+    }): number | null {
+        const { currentColumns, lastHoveredColumn, isBefore } = params;
+        if (!lastHoveredColumn || !currentColumns) {
+            return null;
+        }
+
+        const targetColumnIndex = this.columnModel.getCols().indexOf(lastHoveredColumn);
+        const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
+        const diff = this.getMoveDiff(currentColumns, adjustedTarget);
+
+        return adjustedTarget - diff;
+    }
+
+    private getMoveDiff(currentColumns: AgColumn[] | null, end: number): number {
+        const allColumns = this.columnModel.getCols();
+
+        if (!currentColumns) {
+            return 0;
+        }
+
+        const targetColumn = currentColumns[0];
+        const span = currentColumns.length;
+
+        const currentIndex = allColumns.indexOf(targetColumn);
+
+        if (currentIndex < end) {
+            return span;
+        }
+
+        return 0;
     }
 }

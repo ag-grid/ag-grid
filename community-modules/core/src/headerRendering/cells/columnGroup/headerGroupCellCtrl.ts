@@ -152,7 +152,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { beans, eGui, column, gos, ctrlsService } = this;
+        const { beans, eGui, column, ctrlsService } = this;
+        const { gos, columnModel, columnMoveService, visibleColsService } = beans;
         const isRtl = gos.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left;
 
@@ -175,15 +176,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         attemptMoveColumns({
             allMovingColumns: this.column.getLeafColumns(),
             isFromHeader: true,
-            hDirection,
+            fromLeft: hDirection === HorizontalDirection.Right,
             xPosition,
             pinned,
             fromEnter: false,
             fakeEvent: false,
-            gos: gos,
-            columnModel: beans.columnModel,
-            columnMoveService: beans.columnMoveService,
-            presentedColsService: beans.visibleColsService,
+            gos,
+            columnModel,
+            columnMoveService,
+            visibleColsService,
             finished: true,
         });
 
@@ -494,9 +495,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         // we are left with non-visible columns, stick these in at the end
         allColumnsOriginalOrder.forEach((column) => allColumnsCurrentOrder.push(column));
 
+        const columnsInSplit: AgColumn[] = [];
+        const columnGroupColumns = columnGroup.getLeafColumns();
+
+        for (const col of allColumnsCurrentOrder) {
+            if (columnGroupColumns.indexOf(col) !== -1) {
+                columnsInSplit.push(col);
+            }
+        }
+
         // create and return dragItem
         return {
             columns: allColumnsCurrentOrder,
+            columnsInSplit,
             visibleState: visibleState,
         };
     }

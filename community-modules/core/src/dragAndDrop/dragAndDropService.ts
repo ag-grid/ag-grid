@@ -33,6 +33,9 @@ export interface DragItem<TValue = any> {
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
 
+    /** When dragging column groups, this contains the columns in the current group split. */
+    columnsInSplit?: Column[];
+
     /** When dragging columns, this contains the visible state of the columns */
     visibleState?: { [key: string]: boolean };
 

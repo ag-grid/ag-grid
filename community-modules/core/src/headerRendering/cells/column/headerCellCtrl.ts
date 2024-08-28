@@ -140,7 +140,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { eGui, column, gos, ctrlsService } = this;
+        const { eGui, beans, column, ctrlsService } = this;
+        const { gos, columnModel, columnMoveService, visibleColsService } = beans;
         const pinned = this.getPinned();
         const left = eGui.getBoundingClientRect().left;
         const width = column.getActualWidth();
@@ -159,15 +160,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         attemptMoveColumns({
             allMovingColumns: [column],
             isFromHeader: true,
-            hDirection,
+            fromLeft: hDirection === HorizontalDirection.Right,
             xPosition,
             pinned,
             fromEnter: false,
             fakeEvent: false,
             gos,
-            columnModel: this.beans.columnModel,
-            columnMoveService: this.beans.columnMoveService,
-            presentedColsService: this.beans.visibleColsService,
+            columnModel,
+            columnMoveService,
+            visibleColsService,
             finished: true,
         });
 
