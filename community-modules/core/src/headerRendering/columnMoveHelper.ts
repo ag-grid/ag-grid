@@ -391,3 +391,9 @@ export function normaliseX(params: {
 
     return x;
 }
+
+export function setColumnsMoving(columns: AgColumn[], isMoving: boolean): void {
+    for (const column of columns) {
+        column.setMoving(isMoving, 'uiColumnMoved');
+    }
+}

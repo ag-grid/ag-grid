@@ -14,7 +14,7 @@ import { _getAriaSortState } from '../../../utils/aria';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
-import { attemptMoveColumns, normaliseX } from '../../columnMoveHelper';
+import { attemptMoveColumns, normaliseX, setColumnsMoving } from '../../columnMoveHelper';
 import type { HeaderPosition } from '../../common/headerPosition';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -398,9 +398,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             dragItemName: displayName,
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-                column.setMoving(true, 'uiColumnMoved');
+                setColumnsMoving([column], true);
             },
-            onDragStopped: () => column.setMoving(false, 'uiColumnMoved'),
+            onDragStopped: () => setColumnsMoving([column], false),
+            onDragCancelled: () => setColumnsMoving([column], false),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];

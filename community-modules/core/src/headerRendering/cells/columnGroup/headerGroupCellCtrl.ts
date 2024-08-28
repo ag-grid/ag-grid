@@ -14,7 +14,7 @@ import { _last, _removeFromArray } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
-import { attemptMoveColumns, normaliseX } from '../../columnMoveHelper';
+import { attemptMoveColumns, normaliseX, setColumnsMoving } from '../../columnMoveHelper';
 import type { HeaderPosition } from '../../common/headerPosition';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -448,23 +448,25 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             getDragItem: () => this.getDragItemForGroup(column),
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-                allLeafColumns.forEach((col) => col.setMoving(true, 'uiColumnDragged'));
+                setColumnsMoving(allLeafColumns, true);
             },
-            onDragStopped: () => allLeafColumns.forEach((col) => col.setMoving(false, 'uiColumnDragged')),
+            onDragStopped: () => setColumnsMoving(allLeafColumns, false),
+            onDragCancelled: () => setColumnsMoving(allLeafColumns, false),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const { columns = [], visibleState } = dragItem ?? {};
                     // mimic behaviour of `MoveColumnFeature.onDragEnter`
-                    const unlockedColumns = columns.filter(
+                    const unlockedColumns: AgColumn[] = columns.filter(
                         (col) => !col.getColDef().lockVisible && (!visibleState || visibleState[col.getColId()])
-                    );
-                    columnModel.setColsVisible(unlockedColumns as AgColumn[], true, 'uiColumnMoved');
+                    ) as AgColumn[];
+                    columnModel.setColsVisible(unlockedColumns, true, 'uiColumnMoved');
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
-                    const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
-                    columnModel.setColsVisible(unlockedColumns as AgColumn[], false, 'uiColumnMoved');
+                    const unlockedColumns: AgColumn[] =
+                        (dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) as AgColumn[]) || [];
+                    columnModel.setColsVisible(unlockedColumns, false, 'uiColumnMoved');
                 }
             },
         });

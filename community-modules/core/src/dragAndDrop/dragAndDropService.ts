@@ -99,6 +99,10 @@ export interface DragSource {
      */
     onDragStopped?: () => void;
     /**
+     * Callback for drag cancelled
+     */
+    onDragCancelled?: () => void;
+    /**
      * Callback for entering the grid
      */
     onGridEnter?: (dragItem: DragItem | null) => void;
@@ -276,8 +280,10 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private onDragCancel(): void {
-        if (this.lastDropTarget) {
-            this.lastDropTarget.onDragCancel?.(
+        this.dragSource?.onDragCancelled?.();
+
+        if (this.lastDropTarget?.onDragCancel) {
+            this.lastDropTarget.onDragCancel(
                 this.createDropTargetEvent(this.lastDropTarget, this.eventLastTime!, null, null, false)
             );
         }
