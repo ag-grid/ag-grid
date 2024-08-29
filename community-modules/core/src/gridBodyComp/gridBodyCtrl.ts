@@ -185,6 +185,7 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
+            scrollOverflowChanged: this.updateScrollingClasses.bind(this),
             pinnedRowDataChanged: setFloatingHeights,
             pinnedHeightChanged: setFloatingHeights,
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
@@ -253,12 +254,12 @@ export class GridBodyCtrl extends BeanStub {
 
     private updateScrollingClasses(): void {
         this.eGridBody.classList.toggle(
-            'ag-body-vertical-content-overflow',
-            this.scrollVisibleService.isVerticalScrollShowing()
+            'ag-body-vertical-content-no-gap',
+            !this.scrollVisibleService.hasVerticalScrollGap()
         );
         this.eGridBody.classList.toggle(
-            'ag-body-horizontal-content-overflow',
-            this.scrollVisibleService.isHorizontalScrollShowing()
+            'ag-body-horizontal-content-no-gap',
+            !this.scrollVisibleService.hasHorizontalScrollGap()
         );
     }
 

@@ -27,6 +27,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
 
+    private horizontalScrollGap: boolean;
+    private verticalScrollGap: boolean;
+
     public postConstruct(): void {
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
@@ -74,6 +77,19 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         };
 
         this.setScrollsVisible(params);
+
+        const horizontalGap = centerRowCtrl.hasHorizontalScrollGap();
+        const verticalGap = centerRowCtrl.hasVerticalScrollGap();
+        const atLeastOneDifferent =
+            this.horizontalScrollGap !== horizontalGap || this.verticalScrollGap !== verticalGap;
+        if (atLeastOneDifferent) {
+            this.horizontalScrollGap = horizontalGap;
+            this.verticalScrollGap = verticalGap;
+
+            this.eventService.dispatchEvent({
+                type: 'scrollOverflowChanged',
+            });
+        }
     }
 
     public setScrollsVisible(params: SetScrollsVisibleParams): void {
@@ -99,6 +115,14 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     // used by header container
     public isVerticalScrollShowing(): boolean {
         return this.verticalScrollShowing;
+    }
+
+    public hasHorizontalScrollGap(): boolean {
+        return this.horizontalScrollGap;
+    }
+
+    public hasVerticalScrollGap(): boolean {
+        return this.verticalScrollGap;
     }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
