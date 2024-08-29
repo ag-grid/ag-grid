@@ -143,7 +143,7 @@ const GridExample = () => {
         // is not true, maybe the row count is constant and you just want to refresh the details.
         const maxRowFound = gridRef.current!.api.isLastRowIndexKnown();
         if (maxRowFound) {
-            const rowCount = gridRef.current!.api.getInfiniteRowCount() || 0;
+            const rowCount = gridRef.current!.api.getDisplayedRowCount() || 0;
             gridRef.current!.api.setRowCount(rowCount + count);
         }
         // get grid to refresh the data
@@ -171,7 +171,7 @@ const GridExample = () => {
     }, []);
 
     const rowsAndMaxFound = useCallback(() => {
-        console.log('getInfiniteRowCount() => ' + gridRef.current!.api.getInfiniteRowCount());
+        console.log('getDisplayedRowCount() => ' + gridRef.current!.api.getDisplayedRowCount());
         console.log('isLastRowIndexKnown() => ' + gridRef.current!.api.isLastRowIndexKnown());
     }, []);
 
@@ -190,7 +190,7 @@ const GridExample = () => {
 
     const jumpTo500 = useCallback(() => {
         // first up, need to make sure the grid is actually showing 500 or more rows
-        if ((gridRef.current!.api.getInfiniteRowCount() || 0) < 501) {
+        if ((gridRef.current!.api.getDisplayedRowCount() || 0) < 501) {
             gridRef.current!.api.setRowCount(501, false);
         }
         // next, we can jump to the row

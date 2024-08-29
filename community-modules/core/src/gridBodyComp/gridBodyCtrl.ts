@@ -169,6 +169,7 @@ export class GridBodyCtrl extends BeanStub {
         this.setFloatingHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
+        this.updateScrollingClasses();
 
         this.filterManager?.setupAdvancedFilterHeaderComp(eTop);
 
@@ -246,6 +247,16 @@ export class GridBodyCtrl extends BeanStub {
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
 
         this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
+
+        this.updateScrollingClasses();
+    }
+
+    private updateScrollingClasses(): void {
+        this.eGridBody.classList.toggle('ag-scrolling-vertical', this.scrollVisibleService.isVerticalScrollShowing());
+        this.eGridBody.classList.toggle(
+            'ag-scrolling-horizontal',
+            this.scrollVisibleService.isHorizontalScrollShowing()
+        );
     }
 
     private onGridColumnsChanged(): void {

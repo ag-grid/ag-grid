@@ -3,10 +3,7 @@
 }
 
 .ag-pivot-leaf-group {
-    margin-left: min(
-        var(--ag-row-group-indent-size),
-        calc(var(--ag-row-group-indent-size) * var(--ag-indentation-level))
-    );
+    margin-left: var(--ag-row-group-indent-size);
 }
 
 .ag-row-group-leaf-indent {
@@ -72,6 +69,10 @@
         content won't fit
         */
     --ag-internal-content-line-height: min(calc(var(--ag-row-height) - 1px), var(--ag-line-height, 1000px));
+}
+
+:where(.ag-scrolling-vertical) .ag-row-last {
+    border-bottom-color: transparent;
 }
 
 .ag-sticky-bottom {
@@ -197,6 +198,7 @@
 
 .ag-right-aligned-cell {
     text-align: right;
+    font-variant-numeric: tabular-nums;
 }
 
 /* right-align numeric values in cells with wrappers */

@@ -205,7 +205,7 @@ export const Property: FunctionComponent<{
                         <div className={styles.leftColumn}>
                             {' '}
                             <div className={styles.propertyMeta}>
-                                <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                                <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
                                     <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
                                     <a
                                         href={`#${idName}`}
@@ -214,7 +214,7 @@ export const Property: FunctionComponent<{
                                     >
                                         <Icon name="link" />
                                     </a>
-                                </h6>
+                                </div>
                                 <div
                                     title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
                                     className={styles.metaItem}

@@ -1,11 +1,13 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
-import { getAllRowData } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, getAllRowData } from '../test-utils';
 
 const mutationObserver = global.MutationObserver;
+
 describe('Mutation Observers Disconnected', () => {
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+
     const allMocks: any = [];
     const mutationObserverMock = jest.fn<MutationObserver, [MutationCallback]>().mockImplementation(() => {
         const mock = {
@@ -17,24 +19,13 @@ describe('Mutation Observers Disconnected', () => {
         return mock;
     });
 
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule]);
-    });
-
     beforeEach(() => {
         global.MutationObserver = mutationObserverMock;
-        resetGrids();
+        gridsManager.reset();
     });
 
     afterEach(() => {
+        gridsManager.reset();
         global.MutationObserver = mutationObserver;
     });
 
@@ -47,10 +38,12 @@ describe('Mutation Observers Disconnected', () => {
             rowData: rowData1,
         };
 
-        const api = createMyGrid(gridOptions);
+        const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const allRowData = getAllRowData(api);
         expect(allRowData).toBeDefined();
+
+        await asyncSetTimeout(15); // Just to make sure all async operations are done
 
         api.destroy();
 
