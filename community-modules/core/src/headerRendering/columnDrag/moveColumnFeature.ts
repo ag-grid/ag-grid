@@ -325,26 +325,29 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private getPositionInfoFromDragEvent(
         allMovingColumns: AgColumn[]
     ): { fromLeft: boolean; xPosition: number } | undefined {
-        if (!this.lastHighlightedColumn) {
+        const { gos, ctrlsService, visibleColsService, lastHighlightedColumn } = this;
+
+        if (!lastHighlightedColumn) {
             return;
         }
 
-        const { column, position } = this.lastHighlightedColumn;
+        const { column, position } = lastHighlightedColumn;
 
-        const visibleColumns = this.visibleColsService.getAllCols();
+        const visibleColumns = visibleColsService.getAllCols();
         const firstMovingCol = allMovingColumns.find((col) => col.getLeft() != null);
 
         if (!firstMovingCol) {
             return;
         }
 
+        const isRtl = gos.get('enableRtl');
         const movingColIndex = visibleColumns.indexOf(firstMovingCol);
         const targetIndex = visibleColumns.indexOf(column);
         const fromLeft = movingColIndex < targetIndex;
 
         let targetColumn: AgColumn;
 
-        if (position === ColumnHighlightPosition.Before) {
+        if ((position === ColumnHighlightPosition.Before) !== isRtl) {
             if (fromLeft) {
                 targetColumn = visibleColumns[targetIndex - 1];
             } else {
@@ -362,7 +365,18 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        return { fromLeft, xPosition: targetColumn.getLeft()! + 20 };
+        const left = targetColumn.getLeft()!;
+        const width = targetColumn.getActualWidth();
+
+        const xPosition = normaliseX({
+            x: isRtl ? left + width - 20 : left + 20,
+            pinned: targetColumn.getPinned(),
+            useScrollWidth: true,
+            gos,
+            ctrlsService,
+        });
+
+        return { fromLeft, xPosition };
     }
 
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection {
