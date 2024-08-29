@@ -108,12 +108,12 @@ const {
     /**
      * Charts sitemap index to merge
      */
-    CHARTS_SITEMAP_INDEX_URL = 'https://ag-grid.com/charts/sitemap-index.xml',
+    CHARTS_SITEMAP_INDEX_URL,
 
     /**
      * Charts robots.txt disallow json url to merge
      */
-    CHARTS_ROBOTS_DISALLOW_JSON_URL = 'https://ag-grid.com/charts/robots-disallow.json',
+    CHARTS_ROBOTS_DISALLOW_JSON_URL,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
