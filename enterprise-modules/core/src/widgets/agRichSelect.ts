@@ -626,6 +626,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         } else {
             this.setValue(listComponent.getLastItemHovered(), false, true);
         }
+        this.hidePicker();
     }
 
     private getValueFromSet(valueSet: Set<TValue>): TValue[] | TValue | null {
