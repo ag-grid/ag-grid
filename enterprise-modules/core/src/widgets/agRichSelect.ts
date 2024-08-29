@@ -365,9 +365,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private onWrapperFocusOut(e: FocusEvent): void {
         if (!this.eWrapper.contains(e.relatedTarget as Element)) {
-            this.suppressRestoreFocusOnClose = true;
             this.hidePicker();
-            this.suppressRestoreFocusOnClose = false;
         }
     }
 
@@ -628,6 +626,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         } else {
             this.setValue(listComponent.getLastItemHovered(), false, true);
         }
+        this.hidePicker();
     }
 
     private getValueFromSet(valueSet: Set<TValue>): TValue[] | TValue | null {

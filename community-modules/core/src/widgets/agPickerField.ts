@@ -28,7 +28,6 @@ export abstract class AgPickerField<
 
     protected pickerComponent: TComponent | undefined;
     protected isPickerDisplayed: boolean = false;
-    protected suppressRestoreFocusOnClose: boolean = false;
 
     protected maxPickerHeight: string | undefined;
     protected variableWidth: boolean;
@@ -222,7 +221,7 @@ export abstract class AgPickerField<
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
-                const shouldRestoreFocus = !this.suppressRestoreFocusOnClose && _isNothingFocused(this.gos);
+                const shouldRestoreFocus = _isNothingFocused(this.gos);
                 this.beforeHidePicker();
 
                 if (shouldRestoreFocus && this.isAlive()) {
