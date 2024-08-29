@@ -221,6 +221,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             const { fromLeft, xPosition } = this.getPositionInfoFromDragEvent(allMovingColumns) || {};
 
             if (fromLeft == null || xPosition == null) {
+                this.finishColumnMoving();
                 return;
             }
 
