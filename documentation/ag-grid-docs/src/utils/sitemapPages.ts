@@ -5,12 +5,9 @@ function addTrailingSlash(path: string) {
 }
 
 export async function getSitemapIgnorePaths() {
-    const folderPaths = [
-        urlWithBaseUrl('/debug'),
-        urlWithBaseUrl('/examples'),
-        urlWithBaseUrl('/archive'),
-        urlWithBaseUrl('/charts/archive'),
-    ].map(addTrailingSlash);
+    const folderPaths = [urlWithBaseUrl('/debug'), urlWithBaseUrl('/examples'), urlWithBaseUrl('/archive')].map(
+        addTrailingSlash
+    );
 
     return folderPaths.concat(urlWithBaseUrl('/404'));
 }
