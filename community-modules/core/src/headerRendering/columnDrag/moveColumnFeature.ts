@@ -463,7 +463,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             }
         }
 
-        if (targetIndex === movingColIndex) {
+        if (targetIndex + diff === movingColIndex) {
             return;
         }
 
@@ -537,6 +537,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             x: isRtl ? left + width - padding : left + padding,
             pinned: col.getPinned(),
             useHeaderRow: isRtl,
+            skipScrollPadding: true,
             gos,
             ctrlsService,
         });
