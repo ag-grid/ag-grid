@@ -36,5 +36,5 @@ ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "chmod +x $WWW_ROOT_DIR/prepareNewDeploy
 
 # backup the old html folder, unzip the new release and update permissions etc
 # we do this via a remote script as there are many steps and doing so one by one remotely times out occasionally
-#ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $WWW_ROOT_DIR && ./prepareNewDeploymentRemote.sh $VERSION"
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $WWW_ROOT_DIR && ./prepareNewDeploymentRemote.sh $VERSION"
 
