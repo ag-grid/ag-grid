@@ -53,4 +53,3 @@ cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/eula $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/ecommerce $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/support $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/__shared $GRID_ROOT_DIR/
-#cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/robots.txt $GRID_ROOT_DIR/
