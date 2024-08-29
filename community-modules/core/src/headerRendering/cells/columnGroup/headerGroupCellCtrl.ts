@@ -129,15 +129,22 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         if (isColumnMoveAtThisLevel) {
             const isRtl = this.beans.gos.get('enableRtl');
-            if (isFirst !== isRtl) {
-                if (highlighted === ColumnHighlightPosition.Before) {
-                    beforeOn = true;
+            const isHighlightAfter = highlighted === ColumnHighlightPosition.After;
+            const isHighlightBefore = highlighted === ColumnHighlightPosition.Before;
+
+            if (isFirst) {
+                if (isRtl) {
+                    afterOn = isHighlightAfter;
+                } else {
+                    beforeOn = isHighlightBefore;
                 }
             }
 
-            if (isLast !== isRtl) {
-                if (highlighted === ColumnHighlightPosition.After) {
-                    afterOn = true;
+            if (isLast) {
+                if (isRtl) {
+                    beforeOn = isHighlightBefore;
+                } else {
+                    afterOn = isHighlightAfter;
                 }
             }
         }

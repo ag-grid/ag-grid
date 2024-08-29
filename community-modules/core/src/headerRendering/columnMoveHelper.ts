@@ -367,12 +367,12 @@ export function normaliseX(params: {
     x: number;
     pinned?: ColumnPinnedType;
     fromKeyboard?: boolean;
-    useScrollWidth?: boolean;
+    useHeaderRow?: boolean;
     gos: GridOptionsService;
     ctrlsService: CtrlsService;
 }): number {
-    const { pinned, fromKeyboard, gos, ctrlsService, useScrollWidth } = params;
-    const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
+    const { pinned, fromKeyboard, gos, ctrlsService, useHeaderRow } = params;
+    let eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
 
     let { x } = params;
 
@@ -386,17 +386,14 @@ export function normaliseX(params: {
 
     // flip the coordinate if doing RTL
     if (gos.get('enableRtl')) {
-        let containerWidth: number;
-        if (useScrollWidth) {
-            containerWidth = eViewport.scrollWidth;
-        } else {
-            containerWidth = eViewport.clientWidth;
+        if (useHeaderRow) {
+            eViewport = eViewport.querySelector('.ag-header-row') as HTMLElement;
         }
-        x = containerWidth - x;
+        x = eViewport.clientWidth - x;
     }
 
     // adjust for scroll only if centre container (the pinned containers don't scroll)
-    if (pinned == null && !useScrollWidth) {
+    if (pinned == null && !useHeaderRow) {
         x += ctrlsService.get('center').getCenterViewportScrollLeft();
     }
 
