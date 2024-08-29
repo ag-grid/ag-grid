@@ -72,7 +72,7 @@
 }
 
 /* Remove bottom border from last row when scrolling to avoid double border */
-:where(.ag-scrolling-vertical) .ag-row-last {
+:where(.ag-body-vertical-scroll-visible) .ag-row-last {
     border-bottom-color: transparent;
 }
 
@@ -100,7 +100,7 @@
 }
 
 /* Remove right border from rightmost column when scrolling to avoid double border */
-:where(.ag-scrolling-horizontal) .ag-column-last {
+:where(.ag-body-horizontal-scroll-visible) .ag-column-last {
     border-right-color: transparent;
 }
 

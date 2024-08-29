@@ -252,9 +252,12 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private updateScrollingClasses(): void {
-        this.eGridBody.classList.toggle('ag-scrolling-vertical', this.scrollVisibleService.isVerticalScrollShowing());
         this.eGridBody.classList.toggle(
-            'ag-scrolling-horizontal',
+            'ag-body-vertical-scroll-visible',
+            this.scrollVisibleService.isVerticalScrollShowing()
+        );
+        this.eGridBody.classList.toggle(
+            'ag-body-horizontal-scroll-visible',
             this.scrollVisibleService.isHorizontalScrollShowing()
         );
     }
