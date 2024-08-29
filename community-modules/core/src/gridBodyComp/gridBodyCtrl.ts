@@ -253,11 +253,11 @@ export class GridBodyCtrl extends BeanStub {
 
     private updateScrollingClasses(): void {
         this.eGridBody.classList.toggle(
-            'ag-body-vertical-content-overflows',
+            'ag-body-vertical-content-overflow',
             this.scrollVisibleService.isVerticalScrollShowing()
         );
         this.eGridBody.classList.toggle(
-            'ag-body-horizontal-content-overflows',
+            'ag-body-horizontal-content-overflow',
             this.scrollVisibleService.isHorizontalScrollShowing()
         );
     }

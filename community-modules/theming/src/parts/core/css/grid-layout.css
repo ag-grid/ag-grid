@@ -72,7 +72,7 @@
 }
 
 /* Remove bottom border from last row when scrolling to avoid double border */
-:where(.ag-body-vertical-content-overflows) .ag-row-last {
+:where(.ag-body-vertical-content-overflow) .ag-row-last {
     border-bottom-color: transparent;
 }
 
@@ -100,7 +100,7 @@
 }
 
 /* Remove right border from rightmost column when scrolling to avoid double border */
-:where(.ag-body-horizontal-content-overflows) .ag-column-last {
+:where(.ag-body-horizontal-content-overflow) .ag-column-last {
     border-right-color: transparent;
 }
 
