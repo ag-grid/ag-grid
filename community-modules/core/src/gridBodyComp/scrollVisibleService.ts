@@ -87,7 +87,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             this.verticalScrollGap = verticalGap;
 
             this.eventService.dispatchEvent({
-                type: 'scrollOverflowChanged',
+                type: 'scrollGapChanged',
             });
         }
     }

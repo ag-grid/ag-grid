@@ -117,7 +117,7 @@ export const INTERNAL_EVENTS = [
     'columnContainerWidthChanged',
     'displayedColumnsWidthChanged',
     'scrollVisibilityChanged',
-    'scrollOverflowChanged',
+    'scrollGapChanged',
     'columnHoverChanged',
     'flashCells',
     'paginationPixelOffsetChanged',

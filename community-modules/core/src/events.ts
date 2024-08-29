@@ -131,7 +131,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnContainerWidthChanged: ColumnContainerWidthChangedEvent<TData, TContext>;
         displayedColumnsWidthChanged: DisplayedColumnsWidthChangedEvent<TData, TContext>;
         scrollVisibilityChanged: ScrollVisibilityChangedEvent<TData, TContext>;
-        scrollOverflowChanged: ScrollOverflowChangedEvent<TData, TContext>;
+        scrollGapChanged: ScrollOverflowChangedEvent<TData, TContext>;
         columnHoverChanged: ColumnHoverChangedEvent<TData, TContext>;
         flashCells: FlashCellsEvent<TData, TContext>;
         paginationPixelOffsetChanged: PaginationPixelOffsetChangedEvent<TData, TContext>;
@@ -1019,7 +1019,7 @@ export interface ScrollVisibilityChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'scrollVisibilityChanged', TData, TContext> {} // not documented
 
 export interface ScrollOverflowChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'scrollOverflowChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'scrollGapChanged', TData, TContext> {} // not documented
 
 export interface StoreUpdatedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'storeUpdated', TData, TContext> {} // not documented

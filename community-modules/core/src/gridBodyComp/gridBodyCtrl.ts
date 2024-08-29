@@ -185,7 +185,7 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
-            scrollOverflowChanged: this.updateScrollingClasses.bind(this),
+            scrollGapChanged: this.updateScrollingClasses.bind(this),
             pinnedRowDataChanged: setFloatingHeights,
             pinnedHeightChanged: setFloatingHeights,
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
