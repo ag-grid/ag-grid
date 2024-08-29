@@ -71,6 +71,7 @@
     --ag-internal-content-line-height: min(calc(var(--ag-row-height) - 1px), var(--ag-line-height, 1000px));
 }
 
+/* Remove bottom border from last row when scrolling to avoid double border */
 :where(.ag-scrolling-vertical) .ag-row-last {
     border-bottom-color: transparent;
 }
@@ -96,6 +97,11 @@
 
 .ag-cell {
     border-right: var(--ag-column-border);
+}
+
+/* Remove right border from rightmost column when scrolling to avoid double border */
+:where(.ag-scrolling-horizontal) .ag-column-last {
+    border-right-color: transparent;
 }
 
 .ag-cell-wrapper {
