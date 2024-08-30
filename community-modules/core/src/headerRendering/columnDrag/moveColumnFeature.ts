@@ -450,10 +450,11 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const visibleColumns = visibleColsService.getAllCols();
         const movingColIndex = visibleColumns.indexOf(firstMovingCol);
         const targetIndex = visibleColumns.indexOf(column!);
-        const fromLeft = movingColIndex < targetIndex;
+        const isBefore = (position === ColumnHighlightPosition.Before) !== isRtl;
+        const fromLeft = movingColIndex < targetIndex || (movingColIndex === targetIndex && !isBefore);
         let diff: number = 0;
 
-        if ((position === ColumnHighlightPosition.Before) !== isRtl) {
+        if (isBefore) {
             if (fromLeft) {
                 diff -= 1;
             }
