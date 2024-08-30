@@ -349,7 +349,7 @@ export const Property: FunctionComponent<{
                     </div>
                     {detailsCode && isExpanded && (
                         <div id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
-                            <div>{detailsCode && <Code code={detailsCode} keepMarkup={true} />}</div>
+                            {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
                         </div>
                     )}
                 </td>
