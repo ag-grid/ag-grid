@@ -233,7 +233,7 @@ export const Property: FunctionComponent<{
                                                         name,
                                                     });
                                                 }}
-                                                aria-label={`See more details about ${more?.name}`}
+                                                aria-label={`See more details about ${more?.name ?? name}`}
                                             >
                                                 <Icon
                                                     className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
@@ -269,7 +269,7 @@ export const Property: FunctionComponent<{
                                                             name,
                                                         });
                                                     }}
-                                                    aria-label={`See more details about ${more?.name}`}
+                                                    aria-label={`See more details about ${more?.name ?? name}`}
                                                 >
                                                     <Icon
                                                         className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
