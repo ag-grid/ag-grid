@@ -46,6 +46,7 @@ export const createTheme = (id: string): Theme<CoreParams> => /*#__PURE__*/ new 
 
 const IS_SSR = typeof window !== 'object' || !window || typeof document !== 'object' || window.document !== document;
 let themeClassCounter = 0;
+let uninstalledLegacyCSS = false;
 
 class ThemeImpl<TParams = unknown> implements Theme {
     constructor(
@@ -138,6 +139,11 @@ class ThemeImpl<TParams = unknown> implements Theme {
     private _installRoot: HTMLElement;
     private async _install({ container, loadThemeGoogleFonts }: GridThemeUseArgs) {
         if (IS_SSR) return;
+
+        if (!uninstalledLegacyCSS) {
+            uninstalledLegacyCSS = true;
+            uninstallThemeCSS('legacy', document.head);
+        }
 
         let root = container.getRootNode() as HTMLElement;
         if (!(root instanceof ShadowRoot)) {

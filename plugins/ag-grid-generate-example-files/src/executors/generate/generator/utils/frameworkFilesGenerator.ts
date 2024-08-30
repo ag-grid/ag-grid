@@ -105,11 +105,15 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const entryFileName = getEntryFileName(internalFramework)!;
         let mainJs = readAsJsFile(entryFile, 'vanilla');
 
-        // replace Typescript createGrid( with Javascript agGrid.createGrid(
-        mainJs = mainJs.replace(/createGrid\(/g, 'agGrid.createGrid(');
+        // Variables imported from ag grid packages to convert to agGrid.<variable> syntax
+        const convertedImportNames = [
+            'createGrid',
+            'LicenseManager.setLicenseKey',
+            ...(bindings.imports.find((i) => i.module.includes('@ag-grid-community/theming'))?.imports || []),
+        ];
 
-        // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
-        mainJs = mainJs.replace(/LicenseManager\.setLicenseKey\(/g, 'agGrid.LicenseManager.setLicenseKey(');
+        const importNamePattern = '\\b(' + convertedImportNames.map(regExpEscape).join('|') + ')\\b';
+        mainJs = mainJs.replace(new RegExp(importNamePattern, 'g'), 'agGrid.$&');
 
         // Javascript is packages only
         mainJs = removeModuleRegistration(mainJs);
@@ -285,4 +289,8 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
 
 function getComponentName(otherScriptFiles: FileContents) {
     return Object.keys(otherScriptFiles).map((file) => basename(file));
+}
+
+function regExpEscape(input: string) {
+    return input.replace(/[-[\]{}()*+!<=:?./\\^$|#\s,]/g, '\\$&');
 }

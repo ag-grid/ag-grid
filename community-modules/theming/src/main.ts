@@ -9,5 +9,3 @@ export * from './styles/parts/tab-style/tab-styles';
 export * from './styles/parts/theme/themes';
 export { Theme, createTheme } from './Theme';
 export * from './theme-types';
-
-export { VERSION } from './version';
