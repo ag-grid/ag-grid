@@ -1,11 +1,9 @@
 /**
  * Automated Integrated Charts demo
  */
-import { type AutomatedExample } from '../../types.d';
-import {
-    type CreateAutomatedIntegratedChartsParams,
-    createAutomatedIntegratedChartsWithCreateGrid,
-} from './createAutomatedIntegratedChartsWithCreateGrid';
+import type { AutomatedExample } from '../../types.d';
+import { createAutomatedIntegratedChartsWithCreateGrid } from './createAutomatedIntegratedChartsWithCreateGrid';
+import type { CreateAutomatedIntegratedChartsParams } from './createAutomatedIntegratedChartsWithCreateGrid';
 
 /**
  * Create automated integrated charts example using packages

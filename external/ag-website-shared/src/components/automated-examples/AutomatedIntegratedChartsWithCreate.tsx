@@ -7,7 +7,8 @@ import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
-import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 
 import automatedExamplesVars from './AutomatedExamplesVars.module.scss';
 import styles from './AutomatedIntegratedCharts.module.scss';

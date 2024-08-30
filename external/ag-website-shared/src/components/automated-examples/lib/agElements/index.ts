@@ -1,11 +1,12 @@
-import { type PositionLocation, findElementWithInnerText, getBoundingClientPosition } from '../dom';
-import { type Point } from '../geometry';
-import {
-    type AgElementByFindConfig,
-    type AgElementByInnerTextConfig,
-    type AgElementBySelectorConfig,
-    type AgElementName,
-    agElementsConfig,
+import { findElementWithInnerText, getBoundingClientPosition } from '../dom';
+import type { PositionLocation } from '../dom';
+import type { Point } from '../geometry';
+import { agElementsConfig } from './agElementsConfig';
+import type {
+    AgElementByFindConfig,
+    AgElementByInnerTextConfig,
+    AgElementBySelectorConfig,
+    AgElementName,
 } from './agElementsConfig';
 
 interface CreateAgElementFinderParams {

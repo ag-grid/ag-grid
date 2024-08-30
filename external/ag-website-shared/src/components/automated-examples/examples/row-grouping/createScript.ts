@@ -1,13 +1,13 @@
 import type { Group } from '@tweenjs/tween.js';
 
 import { createAgElementFinder } from '../../lib/agElements';
-import { type Mouse } from '../../lib/createMouse';
+import type { Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
 import { addPoints, scalePoint } from '../../lib/geometry';
 import { createGroupColumnScriptActions } from '../../lib/scriptActions/createGroupColumnScriptActions';
 import { moveTarget } from '../../lib/scriptActions/move';
-import { type ScriptDebugger } from '../../lib/scriptDebugger';
-import { type ScriptAction } from '../../lib/scriptRunner';
+import type { ScriptDebugger } from '../../lib/scriptDebugger';
+import type { ScriptAction } from '../../lib/scriptRunner';
 
 interface Params {
     containerEl: HTMLElement;

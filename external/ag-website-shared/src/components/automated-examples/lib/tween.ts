@@ -1,5 +1,5 @@
 import { DEFAULT_MOUSE_SPEED } from './constants';
-import { type Point } from './geometry';
+import type { Point } from './geometry';
 
 export type EasingFunction = (amount: number) => number;
 

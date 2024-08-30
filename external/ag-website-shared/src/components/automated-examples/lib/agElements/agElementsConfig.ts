@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import { type GetElement } from '.';
+import type { GetElement } from '.';
 import {
     AG_CHARTS_CANVAS,
     AG_CHART_MENU_TOOLBAR_BUTTON_SELECTOR,

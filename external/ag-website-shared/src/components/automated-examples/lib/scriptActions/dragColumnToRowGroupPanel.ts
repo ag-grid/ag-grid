@@ -1,12 +1,12 @@
 import type { Group } from '@tweenjs/tween.js';
 
-import { type AgElementFinder } from '../agElements';
+import type { AgElementFinder } from '../agElements';
 import { AG_DND_GHOST_SELECTOR, DRAG_COLUMN_GHOST_CLASS } from '../constants';
-import { type Mouse } from '../createMouse';
+import type { Mouse } from '../createMouse';
 import { getScrollOffset } from '../dom';
 import { addPoints, minusPoint } from '../geometry';
-import { type ScriptDebugger } from '../scriptDebugger';
-import { type EasingFunction } from '../tween';
+import type { ScriptDebugger } from '../scriptDebugger';
+import type { EasingFunction } from '../tween';
 import { createMoveMouse } from './createMoveMouse';
 import { moveTarget } from './move';
 import { removeDragAndDropHandles } from './removeDragAndDropHandles';

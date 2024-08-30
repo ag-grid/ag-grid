@@ -1,9 +1,7 @@
 import { createAutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/examples/integrated-charts';
 
-import {
-    type AutomatedIntegratedChartsProps,
-    AutomatedIntegratedChartsWithCreate,
-} from './AutomatedIntegratedChartsWithCreate';
+import { AutomatedIntegratedChartsWithCreate } from './AutomatedIntegratedChartsWithCreate';
+import type { AutomatedIntegratedChartsProps } from './AutomatedIntegratedChartsWithCreate';
 
 /**
  * Load automated integrated charts example using modules

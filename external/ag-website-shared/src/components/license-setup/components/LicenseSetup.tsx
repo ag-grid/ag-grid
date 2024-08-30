@@ -7,7 +7,8 @@ import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
 import classnames from 'classnames';
-import { type FunctionComponent, useMemo } from 'react';
+import { useMemo } from 'react';
+import type { FunctionComponent } from 'react';
 
 import { getBootstrapSnippet, getDependenciesSnippet, getNpmInstallSnippet } from '../utils/getSnippets';
 import { hasValue } from '../utils/hasValue';
