@@ -142,6 +142,8 @@ class ThemeImpl<TParams = unknown> implements Theme {
 
         if (!uninstalledLegacyCSS) {
             uninstalledLegacyCSS = true;
+            // Remove the CSS from @ag-grid-community/styles that is
+            // automatically injected by the UMD bundle
             uninstallThemeCSS('legacy', document.head);
         }
 

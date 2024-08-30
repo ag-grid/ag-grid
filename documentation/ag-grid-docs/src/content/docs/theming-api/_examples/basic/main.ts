@@ -32,7 +32,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     rowData,
     defaultColDef,
-    sideBar: true,
 };
 
 createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

@@ -270,7 +270,7 @@ async function convertModulesToPackages(fileContent: any, isDev: boolean, intern
     // Remove the original import statements that contain modules
     fileContent = fileContent
         // Don't match the HttpClientModule / FormsModule from Angular
-        .replace(/import ((.|\n)[^}{]*?\w(?<!(HttpClient|Forms))Module(.|\n)*?)from.*\n/g, '')
+        .replace(/import ((.|\n)[^}{]*?\wModule(.|\n)*?)from.*ag-grid.*\n/g, '')
         // Remove ModuleRegistry import if by itself
         .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
         // Remove if ModuleRegistry is with other imports
