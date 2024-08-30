@@ -3,7 +3,7 @@ import styles from '@pages-styles/homepage.module.scss';
 import classNames from 'classnames';
 import { type FunctionComponent, type ReactNode, useEffect, useMemo, useState } from 'react';
 
-import { AutomatedIntegratedCharts } from './AutomatedIntegratedCharts';
+import { AutomatedIntegratedChartsWithPackages } from './AutomatedIntegratedChartsPackages';
 import type { LogLevel } from './lib/scriptDebugger';
 
 interface Props {
@@ -38,14 +38,14 @@ export const AutomatedIntegratedChartsWrapper: FunctionComponent<Props> = ({ chi
         <section className={styles.automatedIntegratedChartsOuter}>
             <div className={classNames('layout-max-width-small', styles.homepageExample)}>
                 <div className={styles.automatedIntegratedCharts}>
-                    <AutomatedIntegratedCharts
+                    <AutomatedIntegratedChartsWithPackages
                         automatedExampleManager={automatedExampleManager}
                         useStaticData={isCI}
                         runOnce={runOnce}
                         visibilityThreshold={0.8}
                     >
                         {children}
-                    </AutomatedIntegratedCharts>
+                    </AutomatedIntegratedChartsWithPackages>
                 </div>
             </div>
         </section>

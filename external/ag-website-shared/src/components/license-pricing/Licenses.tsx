@@ -42,7 +42,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         subHeading: 'AG Charts Community',
         description: '',
         priceFullDollars: '0',
-        buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
+        buyLink: 'https://ag-grid.com/charts/javascript/quick-start/',
         tabGroup: 'charts',
     },
     {

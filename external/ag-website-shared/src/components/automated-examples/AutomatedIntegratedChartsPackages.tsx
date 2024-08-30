@@ -1,4 +1,4 @@
-import { createAutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/examples/integrated-charts';
+import { createAutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/examples/integrated-charts/indexPackages';
 
 import {
     type AutomatedIntegratedChartsProps,
@@ -6,9 +6,9 @@ import {
 } from './AutomatedIntegratedChartsWithCreate';
 
 /**
- * Load automated integrated charts example using modules
+ * Load automated integrated charts example using packages
  */
-export function AutomatedIntegratedCharts(props: AutomatedIntegratedChartsProps) {
+export function AutomatedIntegratedChartsWithPackages(props: AutomatedIntegratedChartsProps) {
     return (
         <AutomatedIntegratedChartsWithCreate
             createAutomatedIntegratedCharts={createAutomatedIntegratedCharts}
