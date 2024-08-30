@@ -3,7 +3,7 @@ import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
-import { Fragment, type FunctionComponent, useEffect, useRef, useState } from 'react';
+import { Fragment, type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
 import type { ChildDocEntry, Config, ICallSignature, InterfaceEntry } from '../types';
 import {
@@ -158,6 +158,20 @@ function getDetailsId(id: string) {
     return `${id}-details`;
 }
 
+function CollapsibleButton({ name, isExpanded, onClick }: { name: string; isExpanded?: boolean; onClick: () => void }) {
+    return (
+        <button
+            className={classnames(styles.seeMore, 'button-style-none', {
+                [styles.isExpanded]: isExpanded,
+            })}
+            onClick={onClick}
+            aria-label={`See more details about ${name}`}
+        >
+            <Icon className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`} name="chevronDown" />
+        </button>
+    );
+}
+
 export const Property: FunctionComponent<{
     id: string;
     name: string;
@@ -196,6 +210,12 @@ export const Property: FunctionComponent<{
     }, [idName]);
 
     const isExpandable = detailsCode;
+    const onCollapseClick = useCallback(() => {
+        setExpanded((prevIsExpanded) => {
+            return !prevIsExpanded;
+        });
+    }, []);
+
     return (
         <>
             <tr ref={propertyRef}>
@@ -215,24 +235,15 @@ export const Property: FunctionComponent<{
                                     </a>
                                 </div>
                                 <div className={styles.metaItem}>
-                                    {typeUrl ? (
-                                        <>
-                                            {detailsCode && (
-                                                <button
-                                                    className={classnames(styles.seeMore, 'button-style-none', {
-                                                        [styles.isExpanded]: isExpanded,
-                                                    })}
-                                                    onClick={() => {
-                                                        setExpanded(!isExpanded);
-                                                    }}
-                                                    aria-label={`See more details about ${more?.name ?? name}`}
-                                                >
-                                                    <Icon
-                                                        className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
-                                                        name="chevronDown"
-                                                    />
-                                                </button>
-                                            )}
+                                    <div className={styles.metaRow}>
+                                        {detailsCode && (
+                                            <CollapsibleButton
+                                                name={more?.name ?? name}
+                                                isExpanded={isExpanded}
+                                                onClick={onCollapseClick}
+                                            />
+                                        )}
+                                        {typeUrl ? (
                                             <a
                                                 className={classnames(styles.metaValue, {
                                                     [styles.isExpanded]: isExpanded,
@@ -243,35 +254,17 @@ export const Property: FunctionComponent<{
                                             >
                                                 {isObject ? getInterfaceName(name) : propertyType}
                                             </a>
-                                        </>
-                                    ) : (
-                                        <div className={styles.metaRow}>
-                                            {detailsCode && (
-                                                <button
-                                                    className={classnames(styles.seeMore, 'button-as-link', {
-                                                        [styles.isExpanded]: isExpanded,
-                                                    })}
-                                                    onClick={() => {
-                                                        setExpanded(!isExpanded);
-                                                    }}
-                                                    aria-label={`See more details about ${more?.name ?? name}`}
-                                                >
-                                                    <Icon
-                                                        className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
-                                                        name="chevronDown"
-                                                    />
-                                                </button>
-                                            )}
+                                        ) : (
                                             <span
-                                                onClick={() => setExpanded(!isExpanded)}
+                                                onClick={onCollapseClick}
                                                 className={classnames(styles.metaValue, {
                                                     [styles.isExpandable]: detailsCode,
                                                 })}
                                             >
                                                 {propertyType}
                                             </span>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
 
                                     {formattedDefaultValue != null && (
                                         <div className={styles.metaItem}>
