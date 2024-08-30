@@ -3,17 +3,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { ColDef } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { themeQuartz } from '@ag-grid-community/theming';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { Component } from '@angular/core';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    SideBarModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 @Component({
     standalone: true,

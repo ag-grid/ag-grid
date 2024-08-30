@@ -25,13 +25,26 @@ const gridOptions = {
 />
 {% /if %}
 {% if isFramework("vue") %}
-// TODO show how to import in vue?
+// in template
+<ag-grid-vue
+    :theme="theme"
+    ...
+></ag-grid-vue>
+
+// in component setup hook
+setup() {
+    return {
+        theme: themeQuartz,
+        ...
+    };
+}
 {% /if %}
 {% if isFramework("angular") %}
 // in template
 <ag-grid-angular
     [theme]="theme"
 />
+
 // in component class
 public theme = themeQuartz;
 {% /if %}
