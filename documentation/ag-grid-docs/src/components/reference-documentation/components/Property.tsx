@@ -1,7 +1,6 @@
 import type { Framework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { trackApiDocumentation } from '@utils/analytics';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, useEffect, useRef, useState } from 'react';
@@ -225,14 +224,6 @@ export const Property: FunctionComponent<{
                                                     })}
                                                     onClick={() => {
                                                         setExpanded(!isExpanded);
-                                                        trackApiDocumentation({
-                                                            type: isExpanded
-                                                                ? 'propertyHideDetails'
-                                                                : 'propertyShowDetails',
-                                                            framework,
-                                                            id,
-                                                            name,
-                                                        });
                                                     }}
                                                     aria-label={`See more details about ${more?.name ?? name}`}
                                                 >
@@ -262,14 +253,6 @@ export const Property: FunctionComponent<{
                                                     })}
                                                     onClick={() => {
                                                         setExpanded(!isExpanded);
-                                                        trackApiDocumentation({
-                                                            type: isExpanded
-                                                                ? 'propertyHideDetails'
-                                                                : 'propertyShowDetails',
-                                                            framework,
-                                                            id,
-                                                            name,
-                                                        });
                                                     }}
                                                     aria-label={`See more details about ${more?.name ?? name}`}
                                                 >
@@ -365,15 +348,6 @@ export const Property: FunctionComponent<{
                                             url: more.url,
                                             framework,
                                         })}
-                                        onClick={() => {
-                                            trackApiDocumentation({
-                                                type: 'seeMoreLink',
-                                                framework,
-                                                id,
-                                                name,
-                                                seeMoreName: more.name,
-                                            });
-                                        }}
                                     >
                                         {more.name}
                                         <Icon name="newTab"> </Icon>
