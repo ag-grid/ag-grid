@@ -136,7 +136,7 @@ export class ToolPanelColDefService extends BeanStub implements NamedBean {
         return allPrimaryGridColumns.map((col) => getLeafPathTree(col, col.getColDef()));
     }
 
-    private mergeLeafPathTrees(leafPathTrees: AbstractColDef[]) {
+    public mergeLeafPathTrees(leafPathTrees: AbstractColDef[]): AbstractColDef[] {
         const matchingRootGroupIds = (pathA: AbstractColDef, pathB: AbstractColDef) => {
             const bothPathsAreGroups = this.isColGroupDef(pathA) && this.isColGroupDef(pathB);
             return bothPathsAreGroups && this.getId(pathA) === this.getId(pathB);
@@ -211,7 +211,11 @@ export class ToolPanelColDefService extends BeanStub implements NamedBean {
         }
 
         // recurse until correct group is found to add children
-        currentGroup.children.forEach((subGroup) => this.addChildrenToGroup(subGroup, groupId, colDef));
+        for (let i = currentGroup.children.length - 1; i >= 0; i--) {
+            if (this.addChildrenToGroup(currentGroup.children[i], groupId, colDef)) {
+                break;
+            }
+        }
         return false;
     }
 
