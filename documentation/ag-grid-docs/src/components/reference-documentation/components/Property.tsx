@@ -245,9 +245,7 @@ export const Property: FunctionComponent<{
                                         )}
                                         {typeUrl ? (
                                             <a
-                                                className={classnames(styles.metaValue, {
-                                                    [styles.isExpanded]: isExpanded,
-                                                })}
+                                                className={styles.metaValue}
                                                 href={typeUrl}
                                                 target={typeUrl.startsWith('http') ? '_blank' : '_self'}
                                                 rel="noreferrer"
