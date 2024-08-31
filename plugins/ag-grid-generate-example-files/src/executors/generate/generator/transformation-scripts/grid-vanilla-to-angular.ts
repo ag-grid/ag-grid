@@ -112,9 +112,8 @@ function addPackageImports(
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
     addLicenseManager(imports, exampleConfig, true);
 
-    imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-
     if (!usesThemingApi(bindings)) {
+        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
         // to account for the (rare) example that has more than one class...just default to quartz if it does
         // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
         // "source" non dark version
