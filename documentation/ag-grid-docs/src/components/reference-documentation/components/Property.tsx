@@ -1,6 +1,7 @@
 import type { Framework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
@@ -14,7 +15,7 @@ import {
     removeDefaultValue,
 } from '../utils/documentation-helpers';
 import { formatJson, getInterfaceName } from '../utils/interface-helpers';
-import styles from './ApiReference.module.scss';
+import legacyStyles from './LegacyApiReference.module.scss';
 
 function getDisplayNameSplit({ name, definition }: { name: string; definition: ChildDocEntry }) {
     let displayName = name;
@@ -209,7 +210,6 @@ export const Property: FunctionComponent<{
         }
     }, [idName]);
 
-    const isExpandable = detailsCode;
     const onCollapseClick = useCallback(() => {
         setExpanded((prevIsExpanded) => {
             return !prevIsExpanded;
@@ -218,12 +218,11 @@ export const Property: FunctionComponent<{
 
     return (
         <>
-            <tr ref={propertyRef}>
-                <td className={styles.propertyNameDscription}>
-                    <div className={styles.columnWrapper}>
+            <tr ref={propertyRef} className={legacyStyles.tableRow}>
+                <td className={legacyStyles.propertyNameDescription}>
+                    <div className={classnames(styles.propertyRow, legacyStyles.propertyRow)}>
                         <div className={styles.leftColumn}>
-                            {' '}
-                            <div className={styles.propertyMeta}>
+                            <div className={legacyStyles.propertyMeta}>
                                 <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
                                     <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
                                     <a
@@ -290,47 +289,36 @@ export const Property: FunctionComponent<{
                             </div>
                         </div>
                         <div className={styles.rightColumn}>
-                            {' '}
-                            <div className={styles.contentDescription}>
-                                <div
-                                    className={classnames(styles.collapsedPropertyContent, {
-                                        [styles.expandable]: isExpandable,
-                                    })}
-                                >
-                                    <div className={styles.rightColumn}>
-                                        <div
-                                            role="presentation"
-                                            className={styles.description}
-                                            dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
-                                        ></div>
-                                        {isObject && (
-                                            <div>
-                                                See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
-                                            </div>
-                                        )}
-                                        {isInitial && config.showInitialDescription && (
-                                            <div
-                                                onClick={() => setExpanded(!isExpanded)}
-                                                className={styles.description}
-                                            >
-                                                This property will only be read on initialisation.
-                                            </div>
-                                        )}
-
-                                        {definition.options != null && (
-                                            <div>
-                                                Options:{' '}
-                                                {definition.options.map((o, i) => (
-                                                    <Fragment key={o}>
-                                                        {i > 0 ? ', ' : ''}
-                                                        <code>{formatJson(o)}</code>
-                                                    </Fragment>
-                                                ))}
-                                            </div>
-                                        )}
+                            <div
+                                role="presentation"
+                                className={styles.description}
+                                dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
+                            ></div>
+                            <div className={styles.actions}>
+                                {isObject && (
+                                    <div>
+                                        See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
                                     </div>
-                                </div>
+                                )}
+                                {isInitial && config.showInitialDescription && (
+                                    <div onClick={() => setExpanded(!isExpanded)} className={styles.description}>
+                                        This property will only be read on initialisation.
+                                    </div>
+                                )}
+
+                                {definition.options != null && (
+                                    <div>
+                                        Options:{' '}
+                                        {definition.options.map((o, i) => (
+                                            <Fragment key={o}>
+                                                {i > 0 ? ', ' : ''}
+                                                <code>{formatJson(o)}</code>
+                                            </Fragment>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
+
                             <div className={styles.actionsRow}>
                                 {more != null && more.url && !config.hideMore && (
                                     <a
@@ -346,12 +334,16 @@ export const Property: FunctionComponent<{
                                 )}
                             </div>
                         </div>
+
+                        {detailsCode && isExpanded && (
+                            <div
+                                id={getDetailsId(idName)}
+                                className={classnames(styles.expandedContent, legacyStyles.expandedContent)}
+                            >
+                                {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
+                            </div>
+                        )}
                     </div>
-                    {detailsCode && isExpanded && (
-                        <div id={getDetailsId(idName)} className={classnames(styles.expandedContent)}>
-                            {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
-                        </div>
-                    )}
                 </td>
             </tr>
         </>
