@@ -30,6 +30,12 @@ const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
     groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
+
+    onColumnEverythingChanged: {
+        version: '32.2',
+        message:
+            'Either use `onDisplayedColumnsChanged` which is fired at the same time, or use one of the more specific column events.',
+    },
 });
 
 // Leave untyped. so it can be inferred.

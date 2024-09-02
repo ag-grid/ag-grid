@@ -244,6 +244,10 @@ export interface VirtualColumnsChangedEvent<TData = any, TContext = any>
     afterScroll: boolean;
 }
 
+/**
+ * @deprecated v32.2 Either use `displayedColumnsChanged` which is fired at the same time,
+ * or use one of the more specific column events.
+ */
 export interface ColumnEverythingChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnEverythingChanged', TData, TContext> {
     source: string;
@@ -258,7 +262,9 @@ export interface GridColumnsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {}
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {}
+    extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {
+    source: ColumnEventType;
+}
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
