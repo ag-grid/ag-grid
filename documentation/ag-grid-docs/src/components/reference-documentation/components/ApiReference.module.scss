@@ -98,18 +98,14 @@
 }
 
 .leftColumn {
-    flex-shrink: 0;
-    width: 50%;
-    padding: $spacing-size-2 $spacing-size-4 $spacing-size-2 calc(var(--nested-path-depth, 0) * $spacing-size-2);
+    padding: $spacing-size-2 0 $spacing-size-2 calc(var(--nested-path-depth, 0) * $spacing-size-2);
 
     @container (max-width: #{$breakpoint-table-small}) {
-        width: 100%;
         padding-right: 0;
     }
 }
 
 .rightColumn {
-    width: 100%;
     margin-bottom: $spacing-size-3;
 
     &:not(td) {
@@ -118,7 +114,6 @@
     }
 
     @container (max-width: #{$breakpoint-table-small}) {
-        width: 100%;
         padding-left: calc(var(--nested-path-depth, 0) * $spacing-size-2);
     }
 }
@@ -415,6 +410,13 @@ button.seeMore {
     .columnWrapper {
         display: flex;
         flex-direction: row;
+        gap: $spacing-size-4;
+
+        > div {
+            flex: 1;
+            box-sizing: border-box;
+            min-width: calc(50% - $spacing-size-2);
+        }
 
         @container (max-width: #{$breakpoint-table-small}) {
             display: flex;
