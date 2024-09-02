@@ -98,16 +98,18 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public setFocusInOnEditor(cellCtrl: CellCtrl): void {
-        const cellEditor = cellCtrl.getComp().getCellEditor();
+        const cellComp = cellCtrl.getComp();
+        const cellEditor = cellComp.getCellEditor();
 
-        if (cellEditor && cellEditor.focusIn) {
+        if (cellEditor?.focusIn) {
             // if the editor is present, then we just focus it
             cellEditor.focusIn();
         } else {
-            // if the editor is not present, it means async cell editor (eg React fibre)
+            // if the editor is not present, it means async cell editor (e.g. React)
             // and we are trying to set focus before the cell editor is present, so we
             // focus the cell instead
             cellCtrl.focusCell(true);
+            cellCtrl.onCellEditorAttached(() => cellComp.getCellEditor()?.focusIn?.());
         }
     }
 
