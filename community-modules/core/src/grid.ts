@@ -113,11 +113,12 @@ class GlobalGridOptions {
     static gridOptions: GridOptions | undefined = undefined;
     static mergeStrategy: GlobalGridOptionsMergeStrategy = 'shallow';
 
-    static applyGlobalGridOptions(mergedGridOps: GridOptions, providedOptions: GridOptions): GridOptions {
+    static applyGlobalGridOptions(providedOptions: GridOptions): GridOptions {
         if (!GlobalGridOptions.gridOptions) {
             return providedOptions;
         }
 
+        let mergedGridOps: GridOptions = {};
         // Merge deep to avoid leaking changes to the global options
         _mergeDeep(mergedGridOps, GlobalGridOptions.gridOptions, true, true);
         if (GlobalGridOptions.mergeStrategy === 'deep') {
@@ -145,8 +146,8 @@ class GlobalGridOptions {
 
 /**
  * When providing global grid options, specify how they should be merged with the grid options provided to individual grids.
- * - `deep` will merge the global options into the provided options deeply
- * - `shallow` will merge the global options with the provided options shallowly.
+ * - `deep` will merge the global options into the provided options deeply, with provided options taking precedence.
+ * - `shallow` will merge the global options with the provided options shallowly, with provided options taking precedence.
  * @default 'shallow'
  * @param gridOptions - global grid options
  */
@@ -271,7 +272,7 @@ export class GridCoreCreator {
         acceptChanges?: (context: Context) => void,
         params?: GridParams
     ): GridApi {
-        const mergedGridOps = GlobalGridOptions.applyGlobalGridOptions({}, providedOptions);
+        const mergedGridOps = GlobalGridOptions.applyGlobalGridOptions(providedOptions);
 
         const gridOptions = getCoercedGridOptions(mergedGridOps);
 
