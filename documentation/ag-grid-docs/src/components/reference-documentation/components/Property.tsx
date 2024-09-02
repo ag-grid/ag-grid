@@ -216,30 +216,32 @@ export const Property: FunctionComponent<{
                                     </a>
                                 </div>
                                 <div className={styles.metaItem}>
-                                    {typeUrl && detailsCode ? (
+                                    {typeUrl ? (
                                         <>
-                                            <button
-                                                className={classnames(styles.seeMore, 'button-style-none', {
-                                                    [styles.isExpanded]: isExpanded,
-                                                })}
-                                                onClick={() => {
-                                                    setExpanded(!isExpanded);
-                                                    trackApiDocumentation({
-                                                        type: isExpanded
-                                                            ? 'propertyHideDetails'
-                                                            : 'propertyShowDetails',
-                                                        framework,
-                                                        id,
-                                                        name,
-                                                    });
-                                                }}
-                                                aria-label={`See more details about ${more?.name ?? name}`}
-                                            >
-                                                <Icon
-                                                    className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
-                                                    name="chevronDown"
-                                                />
-                                            </button>
+                                            {detailsCode && (
+                                                <button
+                                                    className={classnames(styles.seeMore, 'button-style-none', {
+                                                        [styles.isExpanded]: isExpanded,
+                                                    })}
+                                                    onClick={() => {
+                                                        setExpanded(!isExpanded);
+                                                        trackApiDocumentation({
+                                                            type: isExpanded
+                                                                ? 'propertyHideDetails'
+                                                                : 'propertyShowDetails',
+                                                            framework,
+                                                            id,
+                                                            name,
+                                                        });
+                                                    }}
+                                                    aria-label={`See more details about ${more?.name ?? name}`}
+                                                >
+                                                    <Icon
+                                                        className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
+                                                        name="chevronDown"
+                                                    />
+                                                </button>
+                                            )}
                                             <a
                                                 className={classnames(styles.metaValue, {
                                                     [styles.isExpanded]: isExpanded,
