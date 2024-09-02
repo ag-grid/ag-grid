@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { applyCustomProperties, themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
+import { themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
@@ -87,8 +87,8 @@ const VueExample = {
         };
     },
     mounted() {
-        applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, this.$refs.grid3);
-        applyCustomProperties({ headerBackgroundColor: '#cc222244' }, this.$refs.grid4);
+        themeQuartz.applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, this.$refs.grid3);
+        themeQuartz.applyCustomProperties({ headerBackgroundColor: '#cc222244' }, this.$refs.grid4);
     },
 };
 

@@ -1,15 +1,9 @@
 import { _errorOnce } from '@ag-grid-community/core';
 
-import type { Theme } from './Theme';
 import { type CoreParams } from './styles/core/core-css';
-import { type themeQuartz } from './styles/parts/theme/themes';
 import { clamp, memoize, paramToVariableExpression } from './theme-utils';
 
 export type CssFragment = string | (() => string);
-
-export type InferParams<T> = T extends Theme<infer P> ? P : never;
-
-export type AllParams = InferParams<typeof themeQuartz>;
 
 export type Feature = 'colorScheme' | 'iconSet' | 'checkboxStyle' | 'inputStyle' | 'tabStyle';
 

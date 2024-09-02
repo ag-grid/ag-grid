@@ -40,6 +40,18 @@ export type Theme<TParams = unknown> = GridTheme & {
      * values and any overrides provided
      */
     getParams(): Record<string, unknown>;
+
+    /**
+     * Set theme params as custom properties on an element.
+     *
+     * e.g. theme.applyCustomProperties({ gridSize: 4 }, document.body) is
+     * equivalent to document.body.style.setProperty('--ag-grid-size', '4px');
+     *
+     * This method is equivalent to the global applyCustomProperties function,
+     * except that it provides typescript validation of the params object, only
+     * permitting values that are supported by the current theme.
+     */
+    applyCustomProperties(params: Partial<TParams>, el: HTMLElement): void;
 };
 
 export const createTheme = (id: string): Theme<CoreParams> => /*#__PURE__*/ new ThemeImpl(id, [], {}, []);
@@ -87,6 +99,12 @@ class ThemeImpl<TParams = unknown> implements Theme {
         return this._getCSSChunks()
             .map((chunk) => chunk.css)
             .join('\n\n');
+    }
+
+    applyCustomProperties(params: Partial<TParams>, el: HTMLElement): void {
+        for (const [key, value] of getCustomProperties(params)) {
+            el.style.setProperty(key, value);
+        }
     }
 
     private useCount = 0;

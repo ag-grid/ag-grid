@@ -70,18 +70,12 @@ const quartzWithMaterialIcons = themeQuartz.usePart(iconSetMaterial);
 
 Themes have many parameters that can be changed using CSS custom properties (variables).
 
-To set a custom property from JavaScript, use `applyCustomProperties(params, el)`:
-
 ```js
-import { applyCustomProperties } from '@ag-grid-community/theming';
-
-// change the accent color for all grids on the page
-applyCustomProperties({accentColor: 'red'}, document.body);
+themeQuartz.applyCustomProperties({ accentColor: 'red' }, document.body);
+// equivalent to document.body.style.setProperty('--ag-accent-color', 'red');
 ```
 
-Under the hood, this sets a CSS custom property `--ag-accent-color: red` on the element. CSS custom properties are inherited by all child elements, so will affect every grid instance within the element.
-
-It's also possible to set the custom property directly using CSS, although this will not get the same validation as the JavaScript API:
+This utility method provides typescript type checking and validation of the parameters, but since it's just setting CSS custom properties, you can also do this directly in your application's CSS:
 
 ```css
 body {
@@ -91,7 +85,6 @@ body {
 ```
 
 If you need more control over how custom properties are set, the `getCustomProperties` function returns an array of 2-element [name, value] tuples.
-
 
 ```js
 import { getCustomProperties } from '@ag-grid-community/theming';

@@ -4,7 +4,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from '@ag-grid-community/core';
 import type { ColDef, GridOptions, GridTheme } from '@ag-grid-community/core';
 import { createGrid } from '@ag-grid-community/core';
-import { applyCustomProperties, themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
+import { themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -42,5 +42,5 @@ createThemedGrid(themeMaterial, '#grid2');
 createThemedGrid(themeBalham, '#grid3');
 createThemedGrid(themeBalham, '#grid4');
 
-applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, document.getElementById('grid3')!);
-applyCustomProperties({ headerBackgroundColor: '#cc222244' }, document.getElementById('grid4')!);
+themeQuartz.applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, document.getElementById('grid3')!);
+themeQuartz.applyCustomProperties({ headerBackgroundColor: '#cc222244' }, document.getElementById('grid4')!);

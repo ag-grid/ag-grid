@@ -2,18 +2,10 @@ import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { ColDef } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { applyCustomProperties, themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
+import { themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    SideBarModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 @Component({
     standalone: true,
@@ -81,8 +73,8 @@ export class AppComponent {
     @ViewChild('grid4', { static: false }) grid4!: ElementRef;
 
     ngAfterViewInit(): void {
-        applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, this.grid3.nativeElement);
-        applyCustomProperties({ headerBackgroundColor: '#cc222244' }, this.grid4.nativeElement);
+        themeQuartz.applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, this.grid3.nativeElement);
+        themeQuartz.applyCustomProperties({ headerBackgroundColor: '#cc222244' }, this.grid4.nativeElement);
     }
 
     columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
