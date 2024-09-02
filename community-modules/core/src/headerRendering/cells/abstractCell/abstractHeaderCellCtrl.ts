@@ -109,14 +109,14 @@ export abstract class AbstractHeaderCellCtrl<
         return activeEl === this.eGui;
     }
 
-    protected setGui(eGui: HTMLElement): void {
+    protected setGui(eGui: HTMLElement, compBean: BeanStub): void {
         this.eGui = eGui;
-        this.addDomData(eGui);
-        this.addManagedListeners(this.beans.eventService, {
+        this.addDomData(compBean);
+        compBean.addManagedListeners(this.beans.eventService, {
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
 
-        this.addManagedElementListeners(this.eGui, {
+        compBean.addManagedElementListeners(this.eGui, {
             focus: this.onGuiFocus.bind(this),
         });
 
@@ -134,11 +134,12 @@ export abstract class AbstractHeaderCellCtrl<
     protected setupAutoHeight(params: {
         wrapperElement: HTMLElement;
         checkMeasuringCallback?: (callback: () => void) => void;
+        compBean: BeanStub;
     }) {
-        const { wrapperElement, checkMeasuringCallback } = params;
+        const { wrapperElement, checkMeasuringCallback, compBean } = params;
         const { animationFrameService, resizeObserverService, columnModel, gos } = this.beans;
         const measureHeight = (timesCalled: number) => {
-            if (!this.isAlive()) {
+            if (!this.isAlive() || !compBean.isAlive()) {
                 return;
             }
 
@@ -199,14 +200,14 @@ export abstract class AbstractHeaderCellCtrl<
 
         checkMeasuring();
 
-        this.addDestroyFunc(() => stopMeasuring());
+        compBean.addDestroyFunc(() => stopMeasuring());
 
         // In theory we could rely on the resize observer for everything - but since it's debounced
         // it can be a little janky for smooth movement. in this case its better to react to our own events
         // And unfortunately we cant _just_ rely on our own events, since custom components can change whenever
-        this.addManagedListeners(this.column, { widthChanged: () => isMeasuring && measureHeight(0) });
+        compBean.addManagedListeners(this.column, { widthChanged: () => isMeasuring && measureHeight(0) });
         // Displaying the sort icon changes the available area for text, so sort changes can affect height
-        this.addManagedEventListeners({
+        compBean.addManagedEventListeners({
             sortChanged: () => {
                 // Rendering changes for sort, happen after the event... not ideal
                 if (isMeasuring) {
@@ -229,12 +230,12 @@ export abstract class AbstractHeaderCellCtrl<
         _setAriaColIndex(eGui, beans.visibleColsService.getAriaColIndex(column)); // for react, we don't use JSX, as it slowed down column moving
     }
 
-    protected addResizeAndMoveKeyboardListeners(eGui: HTMLElement): void {
+    protected addResizeAndMoveKeyboardListeners(compBean: BeanStub): void {
         if (!this.resizeFeature) {
             return;
         }
 
-        this.addManagedListeners(eGui, {
+        compBean.addManagedListeners(this.eGui, {
             keydown: this.onGuiKeyDown.bind(this),
             keyup: this.onGuiKeyUp.bind(this),
         });
@@ -356,10 +357,10 @@ export abstract class AbstractHeaderCellCtrl<
         }
     }
 
-    private addDomData(eGui: HTMLElement): void {
+    private addDomData(compBean: BeanStub): void {
         const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
-        _setDomData(this.gos, eGui, key, this);
-        this.addDestroyFunc(() => _setDomData(this.gos, eGui, key, null));
+        _setDomData(this.gos, this.eGui, key, this);
+        compBean.addDestroyFunc(() => _setDomData(this.gos, this.eGui, key, null));
     }
 
     public getGui(): HTMLElement {

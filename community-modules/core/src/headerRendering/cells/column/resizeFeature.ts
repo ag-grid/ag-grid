@@ -112,7 +112,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         refresh();
         this.addDestroyFunc(removeResize);
-        this.ctrl.addRefreshFunction(refresh);
+        this.ctrl.setRefreshFunction('resize', refresh);
     }
 
     private onResizing(finished: boolean, resizeAmount: number): void {

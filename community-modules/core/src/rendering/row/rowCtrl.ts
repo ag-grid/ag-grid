@@ -69,6 +69,7 @@ interface RowGui {
     rowComp: IRowComp;
     element: HTMLElement;
     containerType: RowContainerType;
+    compBean: BeanStub;
 }
 
 interface CellCtrlListAndMap {
@@ -209,8 +210,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
-        const gui: RowGui = { rowComp, element, containerType };
+    public setComp(
+        rowComp: IRowComp,
+        element: HTMLElement,
+        containerType: RowContainerType,
+        compBean: BeanStub<any> | undefined
+    ): void {
+        compBean ??= this;
+        const gui: RowGui = { rowComp, element, containerType, compBean };
         this.allRowGuis.push(gui);
         this.updateGui(containerType, gui);
 
@@ -275,18 +282,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         // DOM DATA
         _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
-        this.addDestroyFunc(() => _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
+        gui.compBean.addDestroyFunc(() => _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
         if (this.useAnimationFrameForCreate) {
             this.beans.animationFrameService.createTask(
-                this.addHoverFunctionality.bind(this, gui.element),
+                this.addHoverFunctionality.bind(this, gui),
                 this.rowNode.rowIndex!,
                 'createTasksP2'
             );
         } else {
-            this.addHoverFunctionality(gui.element);
+            this.addHoverFunctionality(gui);
         }
 
         if (this.isFullWidth()) {
@@ -372,6 +379,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
         const rowDragBean = this.createBean(rowDragComp, this.beans.context);
         this.rowDragComps.push(rowDragBean);
+        gui.compBean.addDestroyFunc(() => {
+            this.rowDragComps = this.rowDragComps.filter((r) => r !== rowDragBean);
+            this.destroyBean(rowDragBean, this.beans.context);
+        });
     }
 
     private setupFullWidth(gui: RowGui): void {
@@ -629,8 +640,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             gui.rowComp.setDomOrder(this.getDomOrder());
         };
 
-        this.addManagedPropertyListener('domLayout', listener);
-        this.addManagedPropertyListener('ensureDomOrder', listener);
+        gui.compBean.addManagedPropertyListeners(['domLayout', 'ensureDomOrder'], listener);
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -732,7 +742,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
 
         this.addDestroyFunc(() => {
-            this.destroyBeans(this.rowDragComps, this.beans.context);
+            this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
             if (this.tooltipFeature) {
                 this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
             }
@@ -1454,7 +1464,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.ariaAnnouncementService.announceValue(label, 'rowSelection');
     }
 
-    public addHoverFunctionality(eRow: HTMLElement): void {
+    public addHoverFunctionality(eGui: RowGui): void {
         // because we use animation frames to do this, it's possible the row no longer exists
         // by the time we get to add it
         if (!this.active) {
@@ -1469,26 +1479,27 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // mouse hover, it sets such in the rowNode, and then all three reflect the change as
         // all are listening for event on the row node.
 
+        const { element, compBean } = eGui;
         const { rowNode, beans, gos } = this;
         // step 1 - add listener, to set flag on row node
-        this.addManagedListeners(eRow, {
+        compBean.addManagedListeners(element, {
             mouseenter: () => rowNode.onMouseEnter(),
             mouseleave: () => rowNode.onMouseLeave(),
         });
 
-        // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addManagedListeners(rowNode, {
+        // step 2 - listen for changes on row node (which any element can trigger)
+        compBean.addManagedListeners(rowNode, {
             mouseEnter: () => {
                 // if hover turned off, we don't add the class. we do this here so that if the application
                 // toggles this property mid way, we remove the hover form the last row, but we stop
                 // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
                 if (!beans.dragService.isDragging() && !gos.get('suppressRowHoverHighlight')) {
-                    eRow.classList.add('ag-row-hover');
+                    element.classList.add('ag-row-hover');
                     rowNode.setHovered(true);
                 }
             },
             mouseLeave: () => {
-                eRow.classList.remove('ag-row-hover');
+                element.classList.remove('ag-row-hover');
                 rowNode.setHovered(false);
             },
         });

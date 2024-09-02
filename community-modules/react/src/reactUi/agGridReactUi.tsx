@@ -63,6 +63,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const whenReadyFuncs = useRef<(() => void)[]>([]);
     const prevProps = useRef<AgGridReactProps<any>>(props);
     const frameworkOverridesRef = useRef<ReactFrameworkOverrides>();
+    const gridIdRef = useRef<string | undefined>();
 
     const ready = useRef<boolean>(false);
 
@@ -71,12 +72,11 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!eGui.current) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        if (!eRef) {
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current.length = 0;
-
             return;
         }
 
@@ -140,9 +140,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
                 const api = apiRef.current;
                 if (api) {
-                    if (props.setGridApi) {
-                        props.setGridApi(api);
-                    }
+                    props.setGridApi?.(api);
                 }
             });
         };
@@ -160,13 +158,16 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         };
 
         const gridCoreCreator = new GridCoreCreator();
+        // We ensure that the gridId is stable even in StrictMode
+        mergedGridOps.gridId ??= gridIdRef.current;
         apiRef.current = gridCoreCreator.create(
-            eGui.current,
+            eRef,
             mergedGridOps,
             createUiCallback,
             acceptChangesCallback,
             gridParams
         );
+        gridIdRef.current = apiRef.current.getGridId();
     }, []);
 
     const style = useMemo(() => {
@@ -306,10 +307,10 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         );
     }
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGuiRef.current = e;
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGuiRef.current = eRef;
 
-        if (!eGuiRef.current) {
+        if (!eRef) {
             context.destroyBean(ctrlRef.current);
             if (resizeObserverDestroyFunc.current) {
                 resizeObserverDestroyFunc.current();
@@ -363,7 +364,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                 }
             };
 
-            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eGuiRef.current, checkRowSizeFunc);
+            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eRef, checkRowSizeFunc);
             checkRowSizeFunc();
         }
     }, []);

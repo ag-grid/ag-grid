@@ -1,6 +1,7 @@
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
+import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
@@ -34,9 +35,10 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 }
 
 type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
+type RefreshFunction = 'updateSortable' | 'tooltip' | 'headerClasses' | 'wrapText' | 'measuring' | 'resize';
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgColumn, ResizeFeature> {
-    private refreshFunctions: (() => void)[] = [];
+    private refreshFunctions: { [key in RefreshFunction]?: () => void } = {};
     private selectAllFeature: SelectAllFeature;
 
     private sortable: boolean | null | undefined;
@@ -61,39 +63,42 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         comp: IHeaderCellComp,
         eGui: HTMLElement,
         eResize: HTMLElement,
-        eHeaderCompWrapper: HTMLElement
+        eHeaderCompWrapper: HTMLElement,
+        compBean: BeanStub | undefined
     ): void {
         this.comp = comp;
+        compBean ??= this;
 
-        this.setGui(eGui);
+        this.setGui(eGui, compBean);
         this.updateState();
-        this.setupWidth();
-        this.setupMovingCss();
-        this.setupMenuClass();
-        this.setupSortableClass();
+        this.setupWidth(compBean);
+        this.setupMovingCss(compBean);
+        this.setupMenuClass(compBean);
+        this.setupSortableClass(compBean);
         this.setupWrapTextClass();
         this.refreshSpanHeaderHeight();
 
         this.setupAutoHeight({
             wrapperElement: eHeaderCompWrapper,
-            checkMeasuringCallback: (checkMeasuring) => this.addRefreshFunction(checkMeasuring),
+            checkMeasuringCallback: (checkMeasuring) => this.setRefreshFunction('measuring', checkMeasuring),
+            compBean,
         });
 
-        this.addColumnHoverListener();
-        this.setupFilterClass();
+        this.addColumnHoverListener(compBean);
+        this.setupFilterClass(compBean);
         this.setupClassesFromColDef();
-        this.setupTooltip();
-        this.addActiveHeaderMouseListeners();
-        this.setupSelectAll();
-        this.setupUserComp();
+        this.setupTooltip(compBean);
+        this.addActiveHeaderMouseListeners(compBean);
+        this.setupSelectAll(compBean);
+        this.setupUserComp(compBean);
         this.refreshAria();
 
-        this.resizeFeature = this.createManagedBean(
+        this.resizeFeature = compBean.createManagedBean(
             new ResizeFeature(this.getPinned(), this.column, eResize, comp, this)
         );
-        this.createManagedBean(new HoverFeature([this.column], eGui));
-        this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
-        this.createManagedBean(
+        compBean.createManagedBean(new HoverFeature([this.column], eGui));
+        compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
+        compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
                 shouldStopEventPropagation: (e) => this.shouldStopEventPropagation(e),
                 onTabKeyDown: () => null,
@@ -103,21 +108,24 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             })
         );
 
-        this.addResizeAndMoveKeyboardListeners(eGui);
+        this.addResizeAndMoveKeyboardListeners(compBean);
 
-        this.addManagedPropertyListeners(
+        compBean.addManagedPropertyListeners(
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'],
             this.refresh.bind(this)
         );
-        this.addManagedListeners(this.column, { colDefChanged: this.refresh.bind(this) });
-        this.addManagedListeners(this.column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
+        compBean.addManagedListeners(this.column, { colDefChanged: this.refresh.bind(this) });
+        compBean.addManagedListeners(this.column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
 
-        this.addManagedEventListeners({
-            columnValueChanged: this.onColumnValueChanged.bind(this),
-            columnRowGroupChanged: this.onColumnRowGroupChanged.bind(this),
-            columnPivotChanged: this.onColumnPivotChanged.bind(this),
+        const listener = () => this.checkDisplayName(compBean);
+        compBean.addManagedEventListeners({
+            columnValueChanged: listener,
+            columnRowGroupChanged: listener,
+            columnPivotChanged: listener,
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
         });
+
+        compBean.addDestroyFunc(() => (this.refreshFunctions = {}));
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
@@ -188,8 +196,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         });
     }
 
-    private setupUserComp(): void {
-        const compDetails = this.lookupUserCompDetails();
+    private setupUserComp(compBean: BeanStub): void {
+        const compDetails = this.lookupUserCompDetails(compBean);
         this.setCompDetails(compDetails);
     }
 
@@ -198,13 +206,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.comp.setUserCompDetails(compDetails);
     }
 
-    private lookupUserCompDetails(): UserCompDetails {
-        const params = this.createParams();
+    private lookupUserCompDetails(compBean: BeanStub): UserCompDetails {
+        const params = this.createParams(compBean);
         const colDef = this.column.getColDef();
         return this.userComponentFactory.getHeaderCompDetails(colDef, params)!;
     }
 
-    private createParams(): IHeaderParams {
+    private createParams(compBean: BeanStub): IHeaderParams {
         const params: IHeaderParams = this.gos.addGridCommonParams({
             column: this.column,
             displayName: this.displayName!,
@@ -242,15 +250,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             },
             eGridHeader: this.getGui(),
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setupTooltip(value, shouldDisplayTooltip);
+                this.setupTooltip(compBean, value, shouldDisplayTooltip);
             },
         });
 
         return params;
     }
 
-    private setupSelectAll(): void {
-        this.selectAllFeature = this.createManagedBean(new SelectAllFeature(this.column));
+    private setupSelectAll(compBean: BeanStub): void {
+        this.selectAllFeature = compBean.createManagedBean(new SelectAllFeature(this.column));
         this.selectAllFeature.setComp(this);
     }
 
@@ -313,7 +321,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setActiveHeader(false);
     }
 
-    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
+    private setupTooltip(compBean: BeanStub, value?: string, shouldDisplayTooltip?: () => boolean): void {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
@@ -349,8 +357,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             shouldDisplayTooltip,
         };
 
-        const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl));
-        this.refreshFunctions.push(() => tooltipFeature.refreshToolTip());
+        const tooltipFeature = compBean.createManagedBean(new TooltipFeature(tooltipCtrl));
+        this.setRefreshFunction('tooltip', () => tooltipFeature.refreshToolTip());
     }
 
     private setupClassesFromColDef(): void {
@@ -375,7 +383,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             oldClasses.forEach((c) => this.comp.addOrRemoveCssClass(c, false));
         };
 
-        this.refreshFunctions.push(refreshHeaderClasses);
+        this.setRefreshFunction('headerClasses', refreshHeaderClasses);
         refreshHeaderClasses();
     }
 
@@ -438,19 +446,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.draggable = this.workOutDraggable();
     }
 
-    public addRefreshFunction(func: () => void): void {
-        this.refreshFunctions.push(func);
+    public setRefreshFunction(name: RefreshFunction, func: () => void): void {
+        this.refreshFunctions[name] = func;
     }
 
-    private refresh(): void {
+    private refresh(compBean: BeanStub): void {
         this.updateState();
-        this.refreshHeaderComp();
+        this.refreshHeaderComp(compBean);
         this.refreshAria();
-        this.refreshFunctions.forEach((f) => f());
+        Object.values(this.refreshFunctions).forEach((f) => f());
     }
 
-    private refreshHeaderComp(): void {
-        const newCompDetails = this.lookupUserCompDetails();
+    private refreshHeaderComp(compBean: BeanStub): void {
+        const newCompDetails = this.lookupUserCompDetails(compBean);
 
         const compInstance = this.comp.getUserCompInstance();
 
@@ -490,10 +498,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         return this.beans.columnNameService.getDisplayNameForColumn(this.column, 'header', true);
     }
 
-    private checkDisplayName(): void {
+    private checkDisplayName(compBean: BeanStub): void {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
         if (this.displayName !== this.calculateDisplayName()) {
-            this.refresh();
+            this.refresh(compBean);
         }
     }
 
@@ -508,67 +516,55 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         return !!colCanMove || !!colDef.enableRowGroup || !!colDef.enablePivot;
     }
 
-    private onColumnRowGroupChanged(): void {
-        this.checkDisplayName();
-    }
-
-    private onColumnPivotChanged(): void {
-        this.checkDisplayName();
-    }
-
-    private onColumnValueChanged(): void {
-        this.checkDisplayName();
-    }
-
-    private setupWidth(): void {
+    private setupWidth(compBean: BeanStub): void {
         const listener = () => {
             const columnWidth = this.column.getActualWidth();
             this.comp.setWidth(`${columnWidth}px`);
         };
 
-        this.addManagedListeners(this.column, { widthChanged: listener });
+        compBean.addManagedListeners(this.column, { widthChanged: listener });
         listener();
     }
 
-    private setupMovingCss(): void {
+    private setupMovingCss(compBean: BeanStub): void {
         const listener = () => {
             // this is what makes the header go dark when it is been moved (gives impression to
             // user that the column was picked up).
             this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
         };
 
-        this.addManagedListeners(this.column, { movingChanged: listener });
+        compBean.addManagedListeners(this.column, { movingChanged: listener });
         listener();
     }
 
-    private setupMenuClass(): void {
+    private setupMenuClass(compBean: BeanStub): void {
         const listener = () => {
             this.comp.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
         };
 
-        this.addManagedListeners(this.column, { menuVisibleChanged: listener });
+        compBean.addManagedListeners(this.column, { menuVisibleChanged: listener });
         listener();
     }
 
-    private setupSortableClass(): void {
+    private setupSortableClass(compBean: BeanStub): void {
         const updateSortableCssClass = () => {
             this.comp.addOrRemoveCssClass('ag-header-cell-sortable', !!this.sortable);
         };
 
         updateSortableCssClass();
 
-        this.addRefreshFunction(updateSortableCssClass);
-        this.addManagedEventListeners({ sortChanged: this.refreshAriaSort.bind(this) });
+        this.setRefreshFunction('updateSortable', updateSortableCssClass);
+        compBean.addManagedEventListeners({ sortChanged: this.refreshAriaSort.bind(this) });
     }
 
-    private setupFilterClass(): void {
+    private setupFilterClass(compBean: BeanStub): void {
         const listener = () => {
             const isFilterActive = this.column.isFilterActive();
             this.comp.addOrRemoveCssClass('ag-header-cell-filtered', isFilterActive);
             this.refreshAria();
         };
 
-        this.addManagedListeners(this.column, { filterActiveChanged: listener });
+        compBean.addManagedListeners(this.column, { filterActiveChanged: listener });
         listener();
     }
 
@@ -578,7 +574,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.comp.addOrRemoveCssClass('ag-header-cell-wrap-text', wrapText);
         };
         listener();
-        this.addRefreshFunction(listener);
+        this.setRefreshFunction('wrapText', listener);
     }
 
     private onHeaderHighlightChanged(): void {
@@ -710,7 +706,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAriaFiltered();
     }
 
-    private addColumnHoverListener(): void {
+    private addColumnHoverListener(compBean: BeanStub): void {
         const listener = () => {
             if (!this.gos.get('columnHoverHighlight')) {
                 return;
@@ -719,7 +715,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };
 
-        this.addManagedEventListeners({ columnHoverChanged: listener });
+        compBean.addManagedEventListeners({ columnHoverChanged: listener });
         listener();
     }
 
@@ -727,13 +723,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         return this.column.getColId();
     }
 
-    private addActiveHeaderMouseListeners(): void {
+    private addActiveHeaderMouseListeners(compBean: BeanStub): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = () => this.dispatchColumnMouseEvent('columnHeaderClicked', this.column);
         const contextMenuListener = (event: MouseEvent) =>
             this.handleContextMenuMouseEvent(event, undefined, this.column);
 
-        this.addManagedListeners(this.getGui(), {
+        compBean.addManagedListeners(this.getGui(), {
             mouseenter: listener,
             mouseleave: listener,
             click: clickListener,
@@ -765,7 +761,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     public override destroy(): void {
         super.destroy();
 
-        (this.refreshFunctions as any) = null;
         (this.selectAllFeature as any) = null;
         (this.dragSourceElement as any) = null;
         (this.userCompDetails as any) = null;

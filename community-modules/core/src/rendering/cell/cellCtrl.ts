@@ -127,7 +127,6 @@ export class CellCtrl extends BeanStub {
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
         this.createCellPosition();
-        this.addFeatures();
         this.updateAndFormatValue(false);
     }
 
@@ -243,13 +242,17 @@ export class CellCtrl extends BeanStub {
         eGui: HTMLElement,
         eCellWrapper: HTMLElement | undefined,
         printLayout: boolean,
-        startEditing: boolean
+        startEditing: boolean,
+        compBean: BeanStub | undefined
     ): void {
         this.cellComp = comp;
         this.eGui = eGui;
         this.printLayout = printLayout;
+        compBean ??= this;
 
-        this.addDomData();
+        this.addDomData(compBean);
+        this.addFeatures();
+        compBean.addDestroyFunc(() => this.removeFeatures());
 
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
@@ -261,7 +264,7 @@ export class CellCtrl extends BeanStub {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
 
-        this.setupAutoHeight(eCellWrapper);
+        this.setupAutoHeight(eCellWrapper, compBean);
 
         this.refreshFirstAndLastStyles();
         this.refreshAriaColIndex();
@@ -287,15 +290,7 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    /** Called from the cellComp when it is being cleaned up.
-     * This enables React to run against a destroyed CellCtrl instance and still get sensible values
-     * before React destroys the CellComp. This stops flickering in the UI when React is updating lots of cells.
-     */
-    public unsetComp(): void {
-        this.removeFeatures();
-    }
-
-    private setupAutoHeight(eCellWrapper?: HTMLElement): void {
+    private setupAutoHeight(eCellWrapper: HTMLElement | undefined, compBean: BeanStub): void {
         this.isAutoHeight = this.column.isAutoHeight();
         if (!this.isAutoHeight || !eCellWrapper) {
             return;
@@ -312,7 +307,7 @@ export class CellCtrl extends BeanStub {
             }
             // because of the retry's below, it's possible the retry's go beyond
             // the rows life.
-            if (!this.isAlive()) {
+            if (!this.isAlive() || !compBean.isAlive()) {
                 return;
             }
 
@@ -349,7 +344,7 @@ export class CellCtrl extends BeanStub {
 
         const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
 
-        this.addDestroyFunc(() => {
+        compBean.addDestroyFunc(() => {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         });
@@ -726,11 +721,11 @@ export class CellCtrl extends BeanStub {
         return this.value;
     }
 
-    private addDomData(): void {
+    private addDomData(compBean: BeanStub): void {
         const element = this.getGui();
 
         _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
-        this.addDestroyFunc(() => _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
+        compBean.addDestroyFunc(() => _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
