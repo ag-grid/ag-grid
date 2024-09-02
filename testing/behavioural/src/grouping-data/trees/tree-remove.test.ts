@@ -1,34 +1,26 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import type { RowDataTransaction } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { executeTransactionsAsync, flushJestTimers, getAllRows } from '../../test-utils';
+import { TestGridsManager, executeTransactionsAsync, flushJestTimers, getAllRows } from '../../test-utils';
+import type { TreeDiagramOptions } from './tree-test-utils';
 import { TreeDiagram } from './tree-test-utils';
 
+const treeDiagramOptions: TreeDiagramOptions = {
+    checkDom: 'myGrid',
+};
+
 describe('ag-grid tree transactions', () => {
-    let consoleErrorSpy: jest.SpyInstance;
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
         jest.useRealTimers();
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        jest.useRealTimers();
+        gridsManager.reset();
     });
 
     test('tree transaction remove', async () => {
@@ -36,7 +28,9 @@ describe('ag-grid tree transactions', () => {
         const rowC = { id: 'c', orgHierarchy: ['A', 'B', 'C'] };
         const rowD = { id: 'd', orgHierarchy: ['A', 'B', 'C', 'D'] };
 
-        const gridOptions: GridOptions = {
+        jest.useFakeTimers({ advanceTimers: true });
+
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -45,13 +39,9 @@ describe('ag-grid tree transactions', () => {
             rowData: [rowA, rowC, rowD],
             getRowId: (params) => params.data.id,
             getDataPath: (data: any) => data.orgHierarchy,
-        };
+        });
 
-        jest.useFakeTimers({ advanceTimers: true });
-
-        const api = createMyGrid(gridOptions);
-
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, '', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             └─┬ A GROUP id:a
             · └─┬ B filler id:row-group-0-A-1-B
@@ -64,7 +54,7 @@ describe('ag-grid tree transactions', () => {
 
         await flushJestTimers();
 
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, '', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             └── A LEAF id:a
         `);
@@ -88,7 +78,9 @@ describe('ag-grid tree transactions', () => {
 
             const rowData = [rowB, rowC, rowD];
 
-            const gridOptions: GridOptions = {
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
                 treeData: true,
@@ -97,13 +89,9 @@ describe('ag-grid tree transactions', () => {
                 rowData,
                 getRowId: (params) => params.data.id,
                 getDataPath: (data: any) => data.orgHierarchy,
-            };
+            });
 
-            jest.useFakeTimers({ advanceTimers: true });
-
-            const api = createMyGrid(gridOptions);
-
-            new TreeDiagram(api).check(`
+            new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 ├─┬ A filler id:row-group-0-A
                 │ ├── B LEAF id:b
@@ -113,7 +101,7 @@ describe('ag-grid tree transactions', () => {
 
             api.applyTransaction({ remove: [rowB, rowC] });
 
-            new TreeDiagram(api, 'Transaction[0]').check(`
+            new TreeDiagram(api, 'Transaction[0]', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 └── D LEAF id:d
             `);
@@ -122,7 +110,7 @@ describe('ag-grid tree transactions', () => {
 
             await flushJestTimers();
 
-            new TreeDiagram(api, 'finalSync').check(`
+            new TreeDiagram(api, 'finalSync', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 ├── D LEAF id:d
                 └─┬ A filler id:row-group-0-A
@@ -138,7 +126,9 @@ describe('ag-grid tree transactions', () => {
 
             const rowData = [rowB, rowC, rowD];
 
-            const gridOptions: GridOptions = {
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
                 treeData: true,
@@ -147,13 +137,9 @@ describe('ag-grid tree transactions', () => {
                 rowData,
                 getRowId: (params) => params.data.id,
                 getDataPath: (data: any) => data.orgHierarchy,
-            };
+            });
 
-            jest.useFakeTimers({ advanceTimers: true });
-
-            const api = createMyGrid(gridOptions);
-
-            new TreeDiagram(api).check(`
+            new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 ├─┬ A filler id:row-group-0-A
                 │ ├── B LEAF id:b
@@ -168,7 +154,7 @@ describe('ag-grid tree transactions', () => {
 
             await flushJestTimers();
 
-            new TreeDiagram(api, 'finalTogether').check(`
+            new TreeDiagram(api, 'finalTogether', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 ├── D LEAF id:d
                 └─┬ A filler id:row-group-0-A
@@ -189,7 +175,9 @@ describe('ag-grid tree transactions', () => {
 
             const rowData = [rowB, rowC, rowD];
 
-            const gridOptions: GridOptions = {
+            jest.useFakeTimers({ advanceTimers: true });
+
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
                 treeData: true,
@@ -198,13 +186,9 @@ describe('ag-grid tree transactions', () => {
                 rowData,
                 getRowId: (params) => params.data.id,
                 getDataPath: (data: any) => data.orgHierarchy,
-            };
+            });
 
-            jest.useFakeTimers({ advanceTimers: true });
-
-            const api = createMyGrid(gridOptions);
-
-            new TreeDiagram(api).check(`
+            new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 ├─┬ A filler id:row-group-0-A
                 │ ├── B LEAF id:b
@@ -216,7 +200,7 @@ describe('ag-grid tree transactions', () => {
 
             await flushJestTimers();
 
-            new TreeDiagram(api, 'finalAsync').check(`
+            new TreeDiagram(api, 'finalAsync', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 ├── D LEAF id:d
                 └─┬ A filler id:row-group-0-A
@@ -238,7 +222,9 @@ describe('ag-grid tree transactions', () => {
 
         const rowData = [rowB, rowC, rowD];
 
-        const gridOptions: GridOptions = {
+        jest.useFakeTimers({ advanceTimers: true });
+
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -247,13 +233,9 @@ describe('ag-grid tree transactions', () => {
             rowData,
             getRowId: (params) => params.data.id,
             getDataPath: (data: any) => data.orgHierarchy,
-        };
+        });
 
-        jest.useFakeTimers({ advanceTimers: true });
-
-        const api = createMyGrid(gridOptions);
-
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ ├── B LEAF id:b
@@ -270,7 +252,7 @@ describe('ag-grid tree transactions', () => {
         } else {
             api.applyTransaction(transactions[0]);
 
-            new TreeDiagram(api, 'Transaction[0]').check(`
+            new TreeDiagram(api, 'Transaction[0]', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 └── D LEAF id:d
             `);
@@ -280,7 +262,7 @@ describe('ag-grid tree transactions', () => {
 
         await flushJestTimers();
 
-        new TreeDiagram(api, 'final' + mode).check(`
+        new TreeDiagram(api, 'final' + mode, treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── D LEAF id:d
             └─┬ A filler id:row-group-0-A
@@ -298,7 +280,9 @@ describe('ag-grid tree transactions', () => {
 
         const rowData = [rowB, rowC, rowD, rowE, rowF];
 
-        const gridOptions: GridOptions = {
+        jest.useFakeTimers({ advanceTimers: true });
+
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
@@ -307,13 +291,9 @@ describe('ag-grid tree transactions', () => {
             rowData,
             getRowId: (params) => params.data.id,
             getDataPath: (data: any) => data.orgHierarchy,
-        };
+        });
 
-        jest.useFakeTimers({ advanceTimers: true });
-
-        const api = createMyGrid(gridOptions);
-
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ ├─┬ B filler id:row-group-0-A-1-B
@@ -337,7 +317,7 @@ describe('ag-grid tree transactions', () => {
         } else {
             api.applyTransaction(transactions1[0]);
 
-            new TreeDiagram(api, 'Transaction1[0]').check(`
+            new TreeDiagram(api, 'Transaction1[0]', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 ├─┬ A filler id:row-group-0-A
                 │ └─┬ B filler id:row-group-0-A-1-B
@@ -348,7 +328,7 @@ describe('ag-grid tree transactions', () => {
             api.applyTransaction(transactions1[1]);
         }
 
-        new TreeDiagram(api, 'Transactions1 ' + mode).check(`
+        new TreeDiagram(api, 'Transactions1 ' + mode, treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ ├─┬ B filler id:row-group-0-A-1-B
@@ -369,7 +349,7 @@ describe('ag-grid tree transactions', () => {
         } else {
             api.applyTransaction(transactions2[0]);
 
-            new TreeDiagram(api, 'Transaction2[0]').check(`
+            new TreeDiagram(api, 'Transaction2[0]', treeDiagramOptions).check(`
                 ROOT_NODE_ID ROOT id:ROOT_NODE_ID
                 └── F LEAF id:f
             `);
@@ -379,7 +359,7 @@ describe('ag-grid tree transactions', () => {
 
         await flushJestTimers();
 
-        new TreeDiagram(api, 'Transactions2 ' + mode).check(`
+        new TreeDiagram(api, 'Transactions2 ' + mode, treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├── F LEAF id:f
             └─┬ A filler id:row-group-0-A

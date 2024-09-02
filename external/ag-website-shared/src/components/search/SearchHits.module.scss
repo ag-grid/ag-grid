@@ -58,6 +58,13 @@
     &[data-selected='true'] {
         background: rgba(4, 75, 147, 1);
         z-index: 1;
+        #{$selector-darkmode} & {
+            background-color: var(--color-brand-300);
+            span,
+            p {
+                color: var(--color-bg-primary);
+            }
+        }
     }
 }
 

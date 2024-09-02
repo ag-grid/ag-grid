@@ -165,6 +165,10 @@ export function provideGlobalGridOptions(
     GlobalGridOptions.mergeStrategy = mergeStrategy;
 }
 
+export function _getGlobalGridOption<K extends keyof GridOptions>(gridOption: K): GridOptions[K] {
+    return GlobalGridOptions.gridOptions?.[gridOption];
+}
+
 /**
  * Creates a grid inside the provided HTML element.
  * @param eGridDiv Parent element to contain the grid.

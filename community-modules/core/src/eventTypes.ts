@@ -76,6 +76,7 @@ export const PUBLIC_EVENTS = [
     'firstDataRendered',
     'dragStarted',
     'dragStopped',
+    'dragCancelled',
     'rowEditingStarted',
     'rowEditingStopped',
     'cellEditingStarted',
@@ -92,6 +93,7 @@ export const PUBLIC_EVENTS = [
     'rowDragMove',
     'rowDragLeave',
     'rowDragEnd',
+    'rowDragCancel',
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
@@ -115,6 +117,7 @@ export const INTERNAL_EVENTS = [
     'columnContainerWidthChanged',
     'displayedColumnsWidthChanged',
     'scrollVisibilityChanged',
+    'scrollGapChanged',
     'columnHoverChanged',
     'flashCells',
     'paginationPixelOffsetChanged',

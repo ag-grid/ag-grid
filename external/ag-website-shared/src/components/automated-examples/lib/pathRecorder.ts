@@ -114,7 +114,6 @@ export function initPathRecorderUI() {
 
     recorder.on('change', (isRecording) => {
         if (!isRecording) {
-            // eslint-disable-next-line no-console
             console.log(recorder.getRecording());
         }
     });

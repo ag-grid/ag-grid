@@ -1,32 +1,20 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions, IRowNode } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { TestGridsManager } from '../../test-utils';
+import type { TreeDiagramOptions } from './tree-test-utils';
 import { TreeDiagram } from './tree-test-utils';
 
 describe('ag-grid tree transactions', () => {
-    let consoleErrorSpy: jest.SpyInstance;
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        gridsManager.reset();
     });
 
     function getRowData() {
@@ -49,11 +37,18 @@ describe('ag-grid tree transactions', () => {
     }
 
     test('file manager', async () => {
-        const api = createMyGrid(getFileManagerGridOptions());
+        const api = gridsManager.createGrid('myGrid', getFileManagerGridOptions());
 
         api.getRowNode('2')!.setSelected(true);
 
-        new TreeDiagram(api, 'initial').check(`
+        const treeDiagramOptions: TreeDiagramOptions = {
+            // TODO: HACK: Setting checkDom to false here because AG-12650
+            // Aggregations do not update the UI with tree data fillers removed/renamed/moved
+            // Change this to 'myGrid' after AG-12650 is fixed
+            checkDom: false,
+        };
+
+        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ Documents GROUP id:1
             │ ├─┬ txt GROUP selected id:2
@@ -76,7 +71,7 @@ describe('ag-grid tree transactions', () => {
         // Move 'txt' into 'stuff'
         moveSelectedNodeToTarget('9');
 
-        new TreeDiagram(api, 'move Documents/txt to Documents/stuff/').check(`
+        new TreeDiagram(api, 'move Documents/txt to Documents/stuff/', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ Documents GROUP id:1
             │ ├─┬ pdf GROUP id:4
@@ -98,7 +93,7 @@ describe('ag-grid tree transactions', () => {
 
         api.applyTransaction({ update: [{ id: '7', filePath: ['Documents', 'stuff', 'var', 'xls-renamed'] }] });
 
-        new TreeDiagram(api, 'rename "Documents/xls" to "Documents/stuff/var/xls-renamed"').check(`
+        new TreeDiagram(api, 'rename "Documents/xls" to "Documents/stuff/var/xls-renamed"', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
             ├─┬ Documents GROUP id:1
             │ ├─┬ pdf GROUP id:4

@@ -400,7 +400,12 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
 
         let remainingSpace = spaceForFlexingColumns;
         flexingColumns.forEach((col, i) => {
-            col.setActualWidth(Math.min(flexingColumnSizes[i], remainingSpace), source);
+            const size =
+                i < flexingColumns.length - 1
+                    ? Math.min(flexingColumnSizes[i], remainingSpace)
+                    : // ensure flex columns fill available width by growing the last column to fit available space if there is more available
+                      Math.max(flexingColumnSizes[i], remainingSpace);
+            col.setActualWidth(size, source);
             changedColumns.push(col);
             remainingSpace -= flexingColumnSizes[i];
         });

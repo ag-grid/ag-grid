@@ -14,9 +14,10 @@ b) to remove plumbing code from ColumnModel, to help make ColumnModel more maint
 export class ColumnEventDispatcher extends BeanStub implements NamedBean {
     beanName = 'columnEventDispatcher' as const;
 
-    public visibleCols(): void {
+    public visibleCols(source: ColumnEventType): void {
         this.eventService.dispatchEvent({
             type: 'displayedColumnsChanged',
+            source,
         });
     }
 
@@ -93,6 +94,7 @@ export class ColumnEventDispatcher extends BeanStub implements NamedBean {
         });
     }
 
+    /** @deprecated v32.2 */
     public everythingChanged(source: ColumnEventType): void {
         this.eventService.dispatchEvent({
             type: 'columnEverythingChanged',

@@ -107,6 +107,14 @@ export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).
  */
 export const FILES_BASE_PATH = '/files';
 
+/**
+ * Charts robots disallow json url for merging with grid
+ */
+export const CHARTS_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.CHARTS_ROBOTS_DISALLOW_JSON_URL;
+
+export const PRODUCTION_CHARTS_SITE_URL = 'https://ag-grid.com/charts';
+export const LEGACY_CHARTS_SITE_URL = 'https://charts.ag-grid.com';
+
 /*
  * Charts URL
  */
@@ -118,10 +126,11 @@ function getChartsUrl() {
     } else if (SITE_URL?.includes(STAGING_SITE_URL)) {
         return 'https://charts-staging.ag-grid.com';
     }
-    return 'https://charts.ag-grid.com';
+    return PRODUCTION_CHARTS_SITE_URL;
 }
 export const CHARTS_SITE_URL = getChartsUrl();
 
+export const PRODUCTION_GRID_SITE_URL = 'https://ag-grid.com';
 function calculateGridUrl() {
     if (SITE_URL == null) return;
 
@@ -130,7 +139,7 @@ function calculateGridUrl() {
     } else if (SITE_URL?.includes(STAGING_SITE_URL)) {
         return 'https://grid-staging.ag-grid.com';
     }
-    return 'https://ag-grid.com';
+    return PRODUCTION_GRID_SITE_URL;
 }
 
 export const GRID_URL = calculateGridUrl();

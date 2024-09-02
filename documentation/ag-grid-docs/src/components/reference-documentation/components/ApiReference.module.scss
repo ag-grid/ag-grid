@@ -70,10 +70,6 @@
         margin-bottom: $spacing-size-2;
         margin-top: 0;
     }
-
-    .linkIcon {
-        font-size: var(--text-fs-lg);
-    }
 }
 
 .apiReference {
@@ -87,10 +83,6 @@
 
     &:where(:not(:first-child)) {
         border-top: 1px solid var(--color-border-secondary);
-    }
-
-    &:hover .linkIcon {
-        opacity: 0.5;
     }
 
     @container (max-width: #{$breakpoint-table-small}) {
@@ -137,26 +129,28 @@
     --parent-properties-color: var(--color-fg-secondary);
     --parent-properties-font-weight: var(--text-regular);
 
+    color: var(--color-fg-primary);
     position: relative;
     display: inline-block;
     margin-top: 0;
     padding-right: $spacing-size-2;
     font-family: var(--text-monospace-font-family);
     font-size: 15px;
-    font-weight: 900;
+    line-height: var(--text-lh-xs);
+    font-weight: 700;
     margin-bottom: 0;
+    display: flex;
+    flex-direction: row;
 
     @container (min-width: #{$breakpoint-table-small}) {
         font-size: 15px;
     }
 
-    :hover .linkIcon {
-        opacity: 0.5;
-    }
-
-    .linkIcon {
-        position: absolute;
-        bottom: -0.125em;
+    span {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: fit-content;
     }
 }
 
@@ -164,17 +158,6 @@
     font-weight: var(--parent-properties-font-weight);
     color: var(--parent-properties-color);
     line-break: anywhere;
-}
-
-.metaList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $spacing-size-2 $spacing-size-6;
-    padding-bottom: $spacing-size-3;
-
-    h1 + & {
-        margin-top: 16px;
-    }
 }
 
 .metaItem {

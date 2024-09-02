@@ -570,6 +570,7 @@ export {
     createGrid,
     provideGlobalGridOptions,
     GlobalGridOptionsMergeStrategy,
+    _getGlobalGridOption,
 } from './grid';
 export {
     GridApi,

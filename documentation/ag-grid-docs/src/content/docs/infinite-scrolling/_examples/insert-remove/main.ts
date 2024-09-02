@@ -139,7 +139,7 @@ function insertItemsAt2AndRefresh(count: number) {
     // is not true, maybe the row count is constant and you just want to refresh the details.
     const maxRowFound = gridApi!.isLastRowIndexKnown();
     if (maxRowFound) {
-        const rowCount = gridApi!.getInfiniteRowCount() || 0;
+        const rowCount = gridApi!.getDisplayedRowCount() || 0;
         gridApi!.setRowCount(rowCount + count);
     }
 
@@ -175,7 +175,7 @@ function setRowCountTo200() {
 }
 
 function rowsAndMaxFound() {
-    console.log('getInfiniteRowCount() => ' + gridApi!.getInfiniteRowCount());
+    console.log('getDisplayedRowCount() => ' + gridApi!.getDisplayedRowCount());
     console.log('isLastRowIndexKnown() => ' + gridApi!.isLastRowIndexKnown());
 }
 
@@ -194,7 +194,7 @@ function setPricesLow() {
 
 function jumpTo500() {
     // first up, need to make sure the grid is actually showing 500 or more rows
-    if ((gridApi!.getInfiniteRowCount() || 0) < 501) {
+    if ((gridApi!.getDisplayedRowCount() || 0) < 501) {
         gridApi!.setRowCount(501, false);
     }
     // next, we can jump to the row

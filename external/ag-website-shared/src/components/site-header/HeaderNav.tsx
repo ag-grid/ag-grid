@@ -6,7 +6,8 @@ import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
-import { type ReactElement, useState } from 'react';
+import { useState } from 'react';
+import type { ReactElement } from 'react';
 
 import { DarkModeToggle } from './DarkModeToggle';
 import styles from './SiteHeader.module.scss';

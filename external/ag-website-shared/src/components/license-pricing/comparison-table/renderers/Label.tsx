@@ -1,4 +1,5 @@
-import { Icon, type IconName } from '@ag-website-shared/components/icon/Icon';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 

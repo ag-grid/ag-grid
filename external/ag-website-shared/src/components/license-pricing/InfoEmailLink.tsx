@@ -1,6 +1,6 @@
 // import { trackInfoEmail } from '@utils/analytics';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { type FunctionComponent, type ReactElement } from 'react';
+import type { FunctionComponent, ReactElement } from 'react';
 
 interface Props {
     withIcon?: boolean;

@@ -17,9 +17,9 @@ import { ROW_GROUPING_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
-import { type ScriptDebugger, type ScriptDebuggerManager } from '../../lib/scriptDebugger';
-import { type RunScriptState, type ScriptRunner } from '../../lib/scriptRunner';
-import { type AutomatedExample } from '../../types.d';
+import type { ScriptDebugger, ScriptDebuggerManager } from '../../lib/scriptDebugger';
+import type { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
+import type { AutomatedExample } from '../../types.d';
 import { createScriptRunner } from './createScriptRunner';
 import { fixtureData } from './rowDataFixture';
 

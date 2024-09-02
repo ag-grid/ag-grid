@@ -127,7 +127,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
                 }
             })
         ).then((elements) => {
-            elements!.forEach((element) => {
+            (elements ?? []).forEach((element) => {
                 if (element?.eGui) {
                     this.appendChild(element.eGui);
                     if (element.comp) {

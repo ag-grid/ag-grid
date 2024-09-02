@@ -16,6 +16,8 @@ export interface IScalarFilterParams extends ISimpleFilterParams {
     inRangeInclusive?: boolean;
     /** If `true`, blank (`null` or `undefined`) values will pass the `'equals'` filter option. */
     includeBlanksInEquals?: boolean;
+    /** If `true`, blank (`null` or `undefined`) values will pass the `'notEqual'` filter option. */
+    includeBlanksInNotEqual?: boolean;
     /** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */
     includeBlanksInLessThan?: boolean;
     /** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */

@@ -44,6 +44,7 @@ import type {
     CutEndEvent,
     CutStartEvent,
     DisplayedColumnsChangedEvent,
+    DragCancelledEvent,
     DragStartedEvent,
     DragStoppedEvent,
     ExpandOrCollapseAllEvent,
@@ -74,6 +75,7 @@ import type {
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
+    RowDragCancelEvent,
     RowDragEndEvent,
     RowDragEnterEvent,
     RowDragLeaveEvent,
@@ -1946,7 +1948,8 @@ export interface GridOptions<TData = any> {
      */
     onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>): void;
     /**
-     * Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
+     * @deprecated v32.2 Either use `onDisplayedColumnsChanged` which is fired at the same time,
+     * or use one of the more specific column events.
      */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
 
@@ -2130,6 +2133,12 @@ export interface GridOptions<TData = any> {
      * When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.
      */
     onDragStopped?(event: DragStoppedEvent<TData>): void;
+
+    /**
+     * When dragging is cancelled stops. This is caused by pressing `Escape` while dragging elements within the grid that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.
+     */
+    onDragCancelled?(event: DragCancelledEvent<TData>): void;
+
     /**
      * Grid state has been updated.
      */
@@ -2162,6 +2171,11 @@ export interface GridOptions<TData = any> {
      * The drag has finished over the grid.
      */
     onRowDragEnd?(event: RowDragEndEvent<TData>): void;
+
+    /**
+     * The drag has been cancelled over the grid.
+     */
+    onRowDragCancel?(event: RowDragCancelEvent<TData>): void;
 
     // *** Row Grouping *** //
     /**

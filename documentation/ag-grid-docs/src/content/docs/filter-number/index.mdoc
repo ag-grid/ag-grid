@@ -162,11 +162,12 @@ Applying the Number Filter is described in more detail in the following sections
 
 ## Blank Cells
 
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
+If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
 
 ```js
 const filterParams = {
     includeBlanksInEquals: true,
+    includeBlanksInNotEqual: false,
     includeBlanksInLessThan: false,
     includeBlanksInGreaterThan: false,
     includeBlanksInRange: false,
@@ -176,9 +177,9 @@ const filterParams = {
 In the following example you can filter by age and see how blank values are included. Note the following:
 
 * Column **Age** has both `null` and `undefined` values resulting in blank cells.
-* Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
+* Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
 
-{% gridExampleRunner title="Number Null Filtering" name="number-null-filtering"  exampleHeight=310 typescriptOnly=true /%}
+{% gridExampleRunner title="Number Null Filtering" name="number-null-filtering"  exampleHeight=310 /%}
 
 ## Data Updates
 
