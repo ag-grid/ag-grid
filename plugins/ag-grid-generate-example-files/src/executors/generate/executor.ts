@@ -269,8 +269,8 @@ async function convertModulesToPackages(fileContent: any, isDev: boolean, intern
     fileContent = removeModuleRegistration(fileContent);
     // Remove the original import statements that contain modules
     fileContent = fileContent
-        // Don't match the HttpClientModule / FormsModule from Angular
-        .replace(/import ((.|\n)[^}{]*?\wModule(.|\n)*?)from.*ag-grid.*\n/g, '')
+        // Remove module import statements
+        .replace(/import[\s\n]*\{[^}]*\w+Module\b[^}]*\}[\s\n]*from\s*.*ag-grid.*\n/g, '')
         // Remove ModuleRegistry import if by itself
         .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
         // Remove if ModuleRegistry is with other imports
@@ -279,10 +279,12 @@ async function convertModulesToPackages(fileContent: any, isDev: boolean, intern
     fileContent = convertModuleToPackageImports(fileContent);
 
     if (isEnterprise) {
-        fileContent = fileContent.replace(
-            /import (['"])ag-grid-community/, // match single / double quotes
-            `import '${getEnterprisePackageName()}';\nimport $1ag-grid-community`
-        );
+        const communityImportRegex = /import ['"]ag-grid-community/;
+        if (communityImportRegex.test(fileContent)) {
+            fileContent = fileContent.replace(communityImportRegex, `import '${getEnterprisePackageName()}';\n$&`);
+        } else {
+            fileContent = `import '${getEnterprisePackageName()}';\n${fileContent}`;
+        }
     }
 
     if (!isDev) {
