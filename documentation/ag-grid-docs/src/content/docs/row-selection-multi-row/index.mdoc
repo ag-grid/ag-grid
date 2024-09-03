@@ -126,14 +126,14 @@ const gridOptions = {
 
 {% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="turn-off-checkboxes" /%}
 
-## Bulk Selection
+## Selecting All Rows
 
-Rows may be bulk selected by using the header checkbox, which is enabled by default in `'multiRow'` mode.
+All rows may be selected at once by using the header checkbox, which is enabled by default in `'multiRow'` mode.
 
-Bulk selection has three modes of operation which can be configured by setting the value of `selection.selectAll` to one of the following:
+The effect of the header checkbox on filtered and paginated grids can be configured using the `selection.selectAll` option, which has three possible values:
 - `'all'`: The default behaviour, selecting the header checkbox selects all [selectable](#configure-selectable-rows) rows in the grid.
-- `'filtered'`: Bulk selection will select all rows that satisfy the currently active filter.
-- `'currentPage'`: Bulk selection will select all rows that satisfy the currently active filter on the current page.
+- `'filtered'`: Selecting the header checkbox will select all rows that satisfy the currently active filter.
+- `'currentPage'`: Selecting the header checkbox will select all rows that satisfy the currently active filter on the current page.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -144,9 +144,14 @@ const gridOptions = {
 }
 ```
 
-The example below demonstrates the three different modes of bulk selection. Use the select element to control which mode is being used:
+The example below demonstrates the three different modes available for `selection.selectAll`. Use the select element to control which mode is being used:
 
 {% gridExampleRunner title="Header Checkbox Selection" name="header-checkbox" /%}
+
+{% note %}
+The value of `selection.selectAll` does not affect group selection behaviour, which is controlled by `selection.groupSelects`. 
+See [Row Grouping - Selecting Groups](./grouping-row-selection) for more on this.
+{% /note %}
 
 ### Disabling the Header Checkbox
 

@@ -60,6 +60,6 @@ function onSelectionModeChange() {
     });
 }
 
-function onQuickFilterChanged(e: any) {
-    gridApi.setGridOption('quickFilterText', e.target.value);
+function onQuickFilterChanged() {
+    gridApi.setGridOption('quickFilterText', document.querySelector<HTMLInputElement>('#input-quick-filter')?.value);
 }
