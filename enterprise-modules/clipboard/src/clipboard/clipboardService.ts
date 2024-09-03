@@ -779,7 +779,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         if (selection) {
             // If `selection` is defined, user is using the new selection API, so we determine
             // behaviour based on `copySelectedRows`
-            return selection.mode !== 'cell' && (selection.copySelectedRows ?? true);
+            return selection.mode !== 'cell' && (selection.copySelectedRows ?? false);
         } else {
             // If user is using the deprecated API, we preserve the previous behaviour
             return !this.gos.get('suppressCopyRowsToClipboard');
