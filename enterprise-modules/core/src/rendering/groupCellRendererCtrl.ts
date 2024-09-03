@@ -532,10 +532,12 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         if (eExpandedIcon) {
             this.eExpanded.appendChild(eExpandedIcon);
+            this.addDestroyFunc(() => this.eExpanded.removeChild(eExpandedIcon));
         }
 
         if (eContractedIcon) {
             this.eContracted.appendChild(eContractedIcon);
+            this.addDestroyFunc(() => this.eContracted.removeChild(eContractedIcon));
         }
 
         const eGroupCell = params.eGridCell;
@@ -743,7 +745,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 },
             });
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
-            this.addDestroyFunc(() => this.destroyBean(cbSelectionComponent));
+            this.addDestroyFunc(() => {
+                this.eCheckbox.removeChild(cbSelectionComponent.getGui());
+                this.destroyBean(cbSelectionComponent);
+            });
         }
 
         this.comp.setCheckboxVisible(checkboxNeeded);
