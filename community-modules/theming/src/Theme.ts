@@ -289,11 +289,6 @@ const getGoogleFontsUsed = (theme: Theme): string[] =>
         )
     ).sort();
 
-// <style data-ag-part="core">
-// <style data-ag-part="googleFont:Plex Sans">
-// <style data-ag-scope="ag-theme-1" data-ag-part="variables">
-// <style data-ag-scope="ag-theme-1" data-ag-part="iconSet/alpine">
-
 type InstallCSSArgs = {
     root: HTMLElement;
     css: string;
