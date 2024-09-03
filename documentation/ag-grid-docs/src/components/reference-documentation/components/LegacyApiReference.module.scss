@@ -19,13 +19,3 @@
     width: 100%;
     padding: 0;
 }
-
-/**
- * Add code border back in and reduce margin
- */
-.expandedContent {
-    pre {
-        border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
-        margin-top: 0;
-    }
-}

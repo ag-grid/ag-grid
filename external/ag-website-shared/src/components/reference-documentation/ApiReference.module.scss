@@ -33,11 +33,6 @@
         scroll-margin-top: var(--anchor-offset, 0);
     }
 
-    :global(.tabs-content) & table {
-        margin-bottom: -$spacing-size-2;
-        border-bottom: none;
-    }
-
     :global(.docPage) & {
         margin-bottom: $spacing-size-4;
     }
@@ -64,6 +59,7 @@
     }
 
     pre:global(.code) {
+        margin-top: 0;
         margin-bottom: $spacing-size-2;
     }
 }
@@ -363,14 +359,5 @@ button.seeMore {
 
     .level-3 .rightColumn {
         padding-left: $spacing-size-6;
-    }
-}
-
-.expandedContent {
-    border-top: 1px solid var(--color-bg-primary) !important;
-    width: 100%;
-
-    pre {
-        border: none;
     }
 }
