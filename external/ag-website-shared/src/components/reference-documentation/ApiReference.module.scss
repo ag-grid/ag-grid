@@ -288,6 +288,17 @@ button.seeMore {
     }
 }
 
+.docLink {
+    white-space: nowrap;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    svg {
+        --icon-size: 16px;
+    }
+}
+
 .highlightAnimate {
     animation: highlight-animation 3000ms ease-out;
 

@@ -317,7 +317,7 @@ export const Property: FunctionComponent<{
                                 )}
                                 {more != null && more.url && !config.hideMore && (
                                     <a
-                                        className={legacyStyles.docLink}
+                                        className={styles.docLink}
                                         href={urlWithPrefix({
                                             url: more.url,
                                             framework,

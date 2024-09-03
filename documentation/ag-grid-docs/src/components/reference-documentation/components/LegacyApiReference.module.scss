@@ -29,17 +29,3 @@
         margin-top: 0;
     }
 }
-
-/**
- * Documentation links
- */
-.docLink {
-    white-space: nowrap;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-
-    svg {
-        --icon-size: 16px;
-    }
-}
