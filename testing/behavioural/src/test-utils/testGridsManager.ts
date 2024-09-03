@@ -117,7 +117,7 @@ export class TestGridsManager {
 
         console.error = consoleErrorImpl;
         try {
-            api = createGrid(element, { ...TestGridsManager.defaultGridOptions, ...gridOptions }, params) as GridApi;
+            api = createGrid(element, { ...TestGridsManager.defaultGridOptions, ...gridOptions }, params);
         } finally {
             if (console.error === consoleErrorImpl) {
                 console.error = originalConsoleError;
