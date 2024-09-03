@@ -28,7 +28,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const eCheckboxRef = useRef<HTMLElement>(null);
     const eExpandedRef = useRef<HTMLElement>(null);
     const eContractedRef = useRef<HTMLElement>(null);
-    const ctrlRef = useRef<IGroupCellRendererCtrl | null>();
+    const ctrlRef = useRef<IGroupCellRendererCtrl>();
 
     const [innerCompDetails, setInnerCompDetails] = useState<UserCompDetails>();
     const [childCount, setChildCount] = useState<string>();
@@ -51,11 +51,10 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
         return showJsComp(innerCompDetails, context, eValueRef.current!);
     }, [innerCompDetails]);
 
-    const setRef = useCallback((ref: HTMLDivElement) => {
-        eGui.current = ref;
-        if (!eGui.current) {
-            context.destroyBean(ctrlRef.current);
-            ctrlRef.current = null;
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        if (!eRef) {
+            ctrlRef.current = context.destroyBean(ctrlRef.current);
             return;
         }
         const compProxy: IGroupCellRenderer = {
@@ -77,7 +76,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             ctrlRef.current = context.createBean(groupCellRendererCtrl);
             ctrlRef.current.init(
                 compProxy,
-                eGui.current,
+                eRef,
                 eCheckboxRef.current!,
                 eExpandedRef.current!,
                 eContractedRef.current!,
