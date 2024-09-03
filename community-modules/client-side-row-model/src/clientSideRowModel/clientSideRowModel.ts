@@ -638,7 +638,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
-        if (noTransactions || this.gos.get('treeData')) {
+        if (noTransactions) {
             changedPath.setInactive();
         }
 
