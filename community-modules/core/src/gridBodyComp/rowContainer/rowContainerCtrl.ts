@@ -391,6 +391,14 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.columnViewportService.setScrollPosition(scrollWidth, scrollPosition, afterScroll);
     }
 
+    public hasHorizontalScrollGap(): boolean {
+        return this.eContainer.clientWidth - this.eViewport.clientWidth < 0;
+    }
+
+    public hasVerticalScrollGap(): boolean {
+        return this.eContainer.clientHeight - this.eViewport.clientHeight < 0;
+    }
+
     public getCenterWidth(): number {
         return _getInnerWidth(this.eViewport);
     }

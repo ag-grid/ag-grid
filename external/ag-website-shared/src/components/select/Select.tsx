@@ -2,7 +2,8 @@ import { Checkmark, ChevronUp } from '@carbon/icons-react';
 import * as RadixSelect from '@radix-ui/react-select';
 import classnames from 'classnames';
 import { ChevronDown } from 'lucide-react';
-import { type ReactElement, type ReactNode, forwardRef, useCallback } from 'react';
+import { forwardRef, useCallback } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 import styles from './Select.module.scss';
 

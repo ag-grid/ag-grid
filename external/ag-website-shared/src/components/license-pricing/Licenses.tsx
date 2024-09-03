@@ -1,6 +1,7 @@
 // import { trackBuyButton } from '@utils/analytics';
 import classnames from 'classnames';
-import { type FunctionComponent, useState } from 'react';
+import { useState } from 'react';
+import type { FunctionComponent } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
@@ -42,7 +43,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         subHeading: 'AG Charts Community',
         description: '',
         priceFullDollars: '0',
-        buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
+        buyLink: 'https://ag-grid.com/charts/javascript/quick-start/',
         tabGroup: 'charts',
     },
     {

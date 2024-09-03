@@ -3,6 +3,8 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
+import { isColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
@@ -115,7 +117,11 @@ export class MenuService extends BeanStub implements NamedBean {
         this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
     }
 
-    public showHeaderContextMenu(column: AgColumn | undefined, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
+    public showHeaderContextMenu(
+        column: AgColumn | AgProvidedColumnGroup | undefined,
+        mouseEvent?: MouseEvent,
+        touchEvent?: TouchEvent
+    ): void {
         this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 
@@ -190,8 +196,9 @@ export class MenuService extends BeanStub implements NamedBean {
         return !column.getColDef().suppressHeaderFilterButton && !!this.filterManager?.isFilterAllowed(column);
     }
 
-    public isHeaderContextMenuEnabled(column?: AgColumn): boolean {
-        return !column?.getColDef().suppressHeaderContextMenu && this.getColumnMenuType() === 'new';
+    public isHeaderContextMenuEnabled(column?: AgColumn | AgProvidedColumnGroup): boolean {
+        const colDef = column && isColumn(column) ? column.getColDef() : column?.getColGroupDef();
+        return !colDef?.suppressHeaderContextMenu && this.getColumnMenuType() === 'new';
     }
 
     public isHeaderMenuButtonAlwaysShowEnabled(): boolean {

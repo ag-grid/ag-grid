@@ -1,4 +1,4 @@
-import { type Point } from './geometry';
+import type { Point } from './geometry';
 
 export interface CreatePenParams {
     canvas: HTMLCanvasElement;

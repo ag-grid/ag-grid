@@ -72,6 +72,12 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     onRangeSelectionChanged: { version: '32.2', message: 'Use `onCellSelectionChanged` instead.' },
     onRangeDeleteStart: { version: '32.2', message: 'Use `onCellSelectionDeleteStart` instead.' },
     onRangeDeleteEnd: { version: '32.2', message: 'Use `onCellSelectionDeleteEnd` instead.' },
+
+    onColumnEverythingChanged: {
+        version: '32.2',
+        message:
+            'Either use `onDisplayedColumnsChanged` which is fired at the same time, or use one of the more specific column events.',
+    },
 });
 
 // Leave untyped. so it can be inferred.

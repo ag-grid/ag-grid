@@ -33,6 +33,9 @@ export interface DragItem<TValue = any> {
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
 
+    /** When dragging column groups, this contains the columns in the current group split. */
+    columnsInSplit?: Column[];
+
     /** When dragging columns, this contains the visible state of the columns */
     visibleState?: { [key: string]: boolean };
 
@@ -98,6 +101,10 @@ export interface DragSource {
      * Callback for drag stopped
      */
     onDragStopped?: () => void;
+    /**
+     * Callback for drag cancelled
+     */
+    onDragCancelled?: () => void;
     /**
      * Callback for entering the grid
      */
@@ -276,8 +283,10 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private onDragCancel(): void {
-        if (this.lastDropTarget) {
-            this.lastDropTarget.onDragCancel?.(
+        this.dragSource?.onDragCancelled?.();
+
+        if (this.lastDropTarget?.onDragCancel) {
+            this.lastDropTarget.onDragCancel(
                 this.createDropTargetEvent(this.lastDropTarget, this.eventLastTime!, null, null, false)
             );
         }

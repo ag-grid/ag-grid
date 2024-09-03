@@ -1,4 +1,4 @@
-import { type GridApi } from 'ag-grid-community';
+import type { GridApi } from 'ag-grid-community';
 
 export function destoryAllCharts(gridApi: GridApi) {
     const chartModels = gridApi.getChartModels() || [];

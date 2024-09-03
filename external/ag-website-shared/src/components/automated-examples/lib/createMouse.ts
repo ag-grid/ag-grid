@@ -1,6 +1,6 @@
 import automatedExamplesVars from '../AutomatedExamplesVars.module.scss';
 import { getOffset } from './dom';
-import { type Point } from './geometry';
+import type { Point } from './geometry';
 
 export interface CreateMouseElementsParams {
     containerEl: HTMLElement;

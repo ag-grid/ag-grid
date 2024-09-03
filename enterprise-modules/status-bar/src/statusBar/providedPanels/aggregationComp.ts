@@ -87,7 +87,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     public init(params: AggregationStatusPanelParams) {
-        this.params = params;
+        this.refresh(params);
     }
 
     public refresh(params: AggregationStatusPanelParams): boolean {

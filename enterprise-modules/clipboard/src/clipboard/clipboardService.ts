@@ -680,11 +680,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        // if the cell is a group and the col is an aggregation, skip the cell.
-        if (rowNode.group && column.isValueActive()) {
-            return;
-        }
-
         const processedValue = this.processCell(
             rowNode,
             column,

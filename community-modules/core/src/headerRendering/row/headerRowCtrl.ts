@@ -347,13 +347,21 @@ export class HeaderRowCtrl extends BeanStub {
         return this.beans.columnViewportService.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public findHeaderCellCtrl(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
+    public findHeaderCellCtrl(
+        column: AgColumn | AgColumnGroup | ((cellCtrl: AbstractHeaderCellCtrl) => boolean)
+    ): AbstractHeaderCellCtrl | undefined {
         if (!this.headerCellCtrls) {
             return;
         }
 
         const allCtrls = this.getHeaderCellCtrls();
-        const ctrl: AbstractHeaderCellCtrl | undefined = allCtrls.find((ctrl) => ctrl.getColumnGroupChild() == column);
+        let ctrl: AbstractHeaderCellCtrl | undefined;
+
+        if (typeof column === 'function') {
+            ctrl = allCtrls.find(column);
+        } else {
+            ctrl = allCtrls.find((ctrl) => ctrl.getColumnGroupChild() == column);
+        }
 
         return ctrl;
     }

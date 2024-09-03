@@ -761,7 +761,6 @@
         },
         "refreshInfiniteCache": {},
         "purgeInfiniteCache": {},
-        "getInfiniteRowCount": {},
         "isLastRowIndexKnown": {},
         "setRowCount": {},
         "getCacheBlockState": {}

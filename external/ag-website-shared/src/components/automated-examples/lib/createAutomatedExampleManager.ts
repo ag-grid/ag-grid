@@ -1,6 +1,7 @@
-import { type AutomatedExample } from '../types.d';
+import type { AutomatedExample } from '../types.d';
 import { AUTOMATED_EXAMPLE_MANAGER_ID, INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
-import { type LogLevel, createScriptDebuggerManager } from './scriptDebugger';
+import { createScriptDebuggerManager } from './scriptDebugger';
+import type { LogLevel } from './scriptDebugger';
 
 export type AutomatedExampleManager = ReturnType<typeof createAutomatedExampleManager>;
 
@@ -47,7 +48,6 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
         const isEnabled = automatedExamplesEnabled[id];
 
         if (!automatedExample) {
-            // eslint-disable-next-line no-console
             console.error('Automated example not found:', id);
             return;
         } else if (!isEnabled) {

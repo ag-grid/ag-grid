@@ -1,4 +1,4 @@
-import { type GridApi } from 'ag-grid-community';
+import type { GridApi } from 'ag-grid-community';
 
 import { clearAllMenuOptionHighlights } from './clearAllMenuOptionHighlights';
 import { clearAllRowHighlights } from './clearAllRowHighlights';

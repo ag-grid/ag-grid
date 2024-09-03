@@ -1,4 +1,4 @@
-import { type AgElementFinder } from '../agElements';
+import type { AgElementFinder } from '../agElements';
 import { AG_CELL_RANGE_SINGLE_CELL_CLASSNAME } from '../constants';
 
 interface SingleCellParams {

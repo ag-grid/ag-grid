@@ -108,6 +108,7 @@ export class CellCtrl extends BeanStub {
     private customRowDragComp: RowDragComp;
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
+    private onCellEditorAttachedFuncs: (() => void)[] = [];
 
     constructor(
         private readonly column: AgColumn,
@@ -477,6 +478,7 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
+        this.onCellEditorAttachedFuncs = [];
         const { editService } = this.beans;
         if (!this.editing || !editService) {
             return false;
@@ -1054,6 +1056,7 @@ export class CellCtrl extends BeanStub {
 
     public override destroy(): void {
         this.onCellCompAttachedFuncs = [];
+        this.onCellEditorAttachedFuncs = [];
         super.destroy();
     }
 
@@ -1138,5 +1141,14 @@ export class CellCtrl extends BeanStub {
 
     public getEditCompDetails(): UserCompDetails | undefined {
         return this.editCompDetails;
+    }
+
+    public onCellEditorAttached(callback: () => void): void {
+        this.onCellEditorAttachedFuncs.push(callback);
+    }
+
+    public cellEditorAttached(): void {
+        this.onCellEditorAttachedFuncs.forEach((func) => func());
+        this.onCellEditorAttachedFuncs = [];
     }
 }

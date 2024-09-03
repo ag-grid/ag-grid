@@ -146,6 +146,11 @@ const deprecatedFunctions: {
         version: 'v32.2',
         message: 'Use `clearCellSelection` instead.',
     },
+    getInfiniteRowCount: {
+        version: 'v32.2',
+        old: 'getInfiniteRowCount()',
+        new: 'getDisplayedRowCount()',
+    },
 };
 
 export function validateApiFunction<TFunctionName extends ApiFunctionName>(
