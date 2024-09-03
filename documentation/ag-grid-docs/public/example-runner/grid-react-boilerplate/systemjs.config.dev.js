@@ -1,5 +1,7 @@
 (function (global) {
     var sjsPaths = {};
+    // eslint-disable-next-line no-global-assign
+    process = { env: {} };
     if (typeof systemJsPaths !== 'undefined') {
         sjsPaths = systemJsPaths;
     }
@@ -17,10 +19,11 @@
         map: {
             css: 'npm:systemjs-plugin-css@0.1.37/css.js',
 
-            // react
-            react: 'npm:react@18.2.0',
-            'react-dom': 'npm:react-dom@18.2.0',
-            'react-dom/client': 'npm:react-dom@18.2.0',
+            // react test
+            react: 'npm:react@19.0.0-rc-4f604941-20240830/cjs/react.development.js',
+            'react-dom': 'npm:react-dom@19.0.0-rc-4f604941-20240830/cjs/react-dom.development.js',
+            'react-dom/client': 'npm:react-dom@19.0.0-rc-4f604941-20240830/cjs/react-dom-client.development.js',
+            scheduler: 'npm:scheduler@0.23.2/cjs/scheduler.development.js',
 
             ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
             typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
@@ -33,13 +36,16 @@
         packages: {
             css: {},
             react: {
-                main: './umd/react.development.js',
+                format: 'cjs',
             },
             'react-dom': {
-                main: './umd/react-dom.development.js',
+                format: 'cjs',
             },
             'react-dom/server': {
-                main: '../umd/react-dom-server.browser.production.min.js',
+                format: 'cjs',
+            },
+            scheduler: {
+                format: 'cjs',
             },
             app: {
                 main: './index.jsx',
