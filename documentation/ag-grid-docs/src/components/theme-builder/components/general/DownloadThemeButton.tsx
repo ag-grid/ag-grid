@@ -1,6 +1,6 @@
-import { VERSION } from '@ag-grid-community/theming';
 import { convertProductionUrlsForStaging } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
+import { VERSION } from 'ag-charts-community';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { UIPopupButton } from './UIPopupButton';
