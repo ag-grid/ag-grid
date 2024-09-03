@@ -33,6 +33,9 @@ export interface DragItem<TValue = any> {
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
 
+    /** When dragging column groups, this contains the columns in the current group split. */
+    columnsInSplit?: Column[];
+
     /** When dragging columns, this contains the visible state of the columns */
     visibleState?: { [key: string]: boolean };
 
@@ -99,6 +102,10 @@ export interface DragSource {
      */
     onDragStopped?: () => void;
     /**
+     * Callback for drag cancelled
+     */
+    onDragCancelled?: () => void;
+    /**
      * Callback for entering the grid
      */
     onGridEnter?: (dragItem: DragItem | null) => void;
@@ -134,6 +141,8 @@ export interface DropTarget {
     onDragging?(params: DraggingEvent): void;
     /** Callback for when drag stops */
     onDragStop?(params: DraggingEvent): void;
+    /** Callback for when the drag is cancelled */
+    onDragCancel?(params: DraggingEvent): void;
     external?: boolean;
 }
 
@@ -184,7 +193,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
     private dragItem: DragItem | null;
     private eventLastTime: MouseEvent | null;
-    private dragSource: DragSource;
+    private dragSource: DragSource | null;
     private dragging: boolean;
 
     private eGhost: HTMLElement | null;
@@ -218,6 +227,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this),
+            onDragCancel: this.onDragCancel.bind(this),
             includeTouch: allowTouch,
         };
 
@@ -262,18 +272,33 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private onDragStop(mouseEvent: MouseEvent): void {
-        this.eventLastTime = null;
-        this.dragging = false;
-
-        this.dragSource.onDragStopped?.();
+        this.dragSource?.onDragStopped?.();
 
         if (this.lastDropTarget?.onDragStop) {
             const draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
         }
 
+        this.clearDragAndDropProperties();
+    }
+
+    private onDragCancel(): void {
+        this.dragSource?.onDragCancelled?.();
+
+        if (this.lastDropTarget?.onDragCancel) {
+            this.lastDropTarget.onDragCancel(
+                this.createDropTargetEvent(this.lastDropTarget, this.eventLastTime!, null, null, false)
+            );
+        }
+        this.clearDragAndDropProperties();
+    }
+
+    private clearDragAndDropProperties(): void {
+        this.eventLastTime = null;
+        this.dragging = false;
         this.lastDropTarget = undefined;
         this.dragItem = null;
+        this.dragSource = null;
         this.removeGhost();
     }
 
@@ -292,10 +317,10 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
 
             if (this.lastDropTarget !== null && dropTarget === null) {
-                this.dragSource.onGridExit?.(this.dragItem);
+                this.dragSource?.onGridExit?.(this.dragItem);
             }
             if (this.lastDropTarget === null && dropTarget !== null) {
-                this.dragSource.onGridEnter?.(this.dragItem);
+                this.dragSource?.onGridEnter?.(this.dragItem);
             }
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
 
@@ -343,7 +368,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
                 break;
             }
         }
-        const { eElement, type } = this.dragSource;
+        const { eElement, type } = this.dragSource!;
         if (dropTarget.targetContainsSource && !dropTarget.getContainer().contains(eElement)) {
             return false;
         }
@@ -501,7 +526,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             y,
             vDirection,
             hDirection,
-            dragSource,
+            dragSource: dragSource!,
             fromNudge,
             dragItem: dragItem as DragItem,
             dropZoneTarget,
@@ -572,7 +597,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.setGhostIcon(null);
 
         const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
-        let dragItemName = this.dragSource.dragItemName;
+        let dragItemName = this.dragSource?.dragItemName;
 
         if (_isFunction(dragItemName)) {
             dragItemName = (dragItemName as () => string)();
@@ -623,7 +648,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         let eIcon: Element | null = null;
 
         if (!iconName) {
-            iconName = this.dragSource.getDefaultIconName ? this.dragSource.getDefaultIconName() : 'notAllowed';
+            iconName = this.dragSource?.getDefaultIconName ? this.dragSource?.getDefaultIconName() : 'notAllowed';
         }
         eIcon = this.dropIconMap[iconName];
 

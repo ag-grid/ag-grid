@@ -20,7 +20,7 @@ import styles from './ApiReference.module.scss';
 function getDisplayNameSplit({ name, definition }: { name: string; definition: ChildDocEntry }) {
     let displayName = name;
     if (definition.isRequired) {
-        displayName += `&nbsp;<span class="${styles.required}" title="Required">required</span>`;
+        displayName += `&nbsp;<span class="${styles.required}">required</span>`;
     }
 
     if (definition.strikeThrough) {
@@ -205,7 +205,7 @@ export const Property: FunctionComponent<{
                         <div className={styles.leftColumn}>
                             {' '}
                             <div className={styles.propertyMeta}>
-                                <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                                <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
                                     <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
                                     <a
                                         href={`#${idName}`}
@@ -214,35 +214,34 @@ export const Property: FunctionComponent<{
                                     >
                                         <Icon name="link" />
                                     </a>
-                                </h6>
-                                <div
-                                    title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
-                                    className={styles.metaItem}
-                                >
-                                    {typeUrl && detailsCode ? (
+                                </div>
+                                <div className={styles.metaItem}>
+                                    {typeUrl ? (
                                         <>
-                                            <button
-                                                className={classnames(styles.seeMore, 'button-style-none', {
-                                                    [styles.isExpanded]: isExpanded,
-                                                })}
-                                                onClick={() => {
-                                                    setExpanded(!isExpanded);
-                                                    trackApiDocumentation({
-                                                        type: isExpanded
-                                                            ? 'propertyHideDetails'
-                                                            : 'propertyShowDetails',
-                                                        framework,
-                                                        id,
-                                                        name,
-                                                    });
-                                                }}
-                                                aria-label={`See more details about ${more?.name}`}
-                                            >
-                                                <Icon
-                                                    className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
-                                                    name="chevronDown"
-                                                />
-                                            </button>
+                                            {detailsCode && (
+                                                <button
+                                                    className={classnames(styles.seeMore, 'button-style-none', {
+                                                        [styles.isExpanded]: isExpanded,
+                                                    })}
+                                                    onClick={() => {
+                                                        setExpanded(!isExpanded);
+                                                        trackApiDocumentation({
+                                                            type: isExpanded
+                                                                ? 'propertyHideDetails'
+                                                                : 'propertyShowDetails',
+                                                            framework,
+                                                            id,
+                                                            name,
+                                                        });
+                                                    }}
+                                                    aria-label={`See more details about ${more?.name ?? name}`}
+                                                >
+                                                    <Icon
+                                                        className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}
+                                                        name="chevronDown"
+                                                    />
+                                                </button>
+                                            )}
                                             <a
                                                 className={classnames(styles.metaValue, {
                                                     [styles.isExpanded]: isExpanded,
@@ -272,7 +271,7 @@ export const Property: FunctionComponent<{
                                                             name,
                                                         });
                                                     }}
-                                                    aria-label={`See more details about ${more?.name}`}
+                                                    aria-label={`See more details about ${more?.name ?? name}`}
                                                 >
                                                     <Icon
                                                         className={`${styles.chevron} ${isExpanded ? 'expandedIcon' : ''}`}

@@ -1,45 +1,43 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, IDateFilterParams, createGrid } from '@ag-grid-community/core';
+import {
+    ColDef,
+    GridApi,
+    GridOptions,
+    IDateFilterParams,
+    ValueGetterParams,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var filterParams: IDateFilterParams = {
-    comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
-        var dateAsString = cellValue;
-        if (dateAsString == null) return -1;
-        var dateParts = dateAsString.split('/');
-        var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
-
-        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-            return 0;
-        }
-
-        if (cellDate < filterLocalDateAtMidnight) {
-            return -1;
-        }
-
-        if (cellDate > filterLocalDateAtMidnight) {
-            return 1;
-        }
-        return 0;
-    },
-    includeBlanksInEquals: false,
-    includeBlanksInLessThan: false,
-    includeBlanksInGreaterThan: false,
-    includeBlanksInRange: false,
-};
-
-const columnDefs: ColDef[] = [
+const originalColumnDefs: ColDef[] = [
     { field: 'athlete' },
     {
         field: 'date',
+        cellDataType: 'date',
         filter: 'agDateColumnFilter',
-        filterParams: filterParams,
+        filterParams: {
+            includeBlanksInEquals: false,
+            includeBlanksInNotEqual: false,
+            includeBlanksInLessThan: false,
+            includeBlanksInGreaterThan: false,
+            includeBlanksInRange: false,
+        } as IDateFilterParams,
     },
     {
         headerName: 'Description',
-        valueGetter: '"Date is " + data.date',
+        valueGetter: (params: ValueGetterParams) => {
+            let date = params.data.date;
+            if (date != null) {
+                date = params.api.getCellValue({
+                    rowNode: params.node!,
+                    colKey: 'date',
+                    useFormatter: true,
+                });
+            }
+            return `Date is ${date}`;
+        },
         minWidth: 340,
     },
 ];
@@ -47,43 +45,12 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: originalColumnDefs,
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
     },
-};
-
-function changeNull(toChange: string, value: boolean) {
-    switch (toChange) {
-        case 'equals':
-            columnDefs[1].filterParams.includeBlanksInEquals = value;
-            break;
-        case 'lessThan':
-            columnDefs[1].filterParams.includeBlanksInLessThan = value;
-            break;
-        case 'greaterThan':
-            columnDefs[1].filterParams.includeBlanksInGreaterThan = value;
-            break;
-        case 'inRange':
-            columnDefs[1].filterParams.includeBlanksInRange = value;
-            break;
-    }
-
-    var filterModel = gridApi!.getFilterModel();
-
-    gridApi!.setGridOption('columnDefs', columnDefs);
-    gridApi!.destroyFilter('date');
-    gridApi!.setFilterModel(filterModel);
-}
-
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-
-    gridApi!.setGridOption('rowData', [
+    rowData: [
         {
             athlete: 'Alberto Gutierrez',
             date: null,
@@ -94,11 +61,24 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             athlete: 'Sean Landsman',
-            date: '25/10/2016',
+            date: new Date(2016, 9, 25),
         },
         {
             athlete: 'Robert Clarke',
-            date: '25/10/2016',
+            date: new Date(2016, 9, 25),
         },
-    ]);
+    ],
+};
+
+function updateParams(toChange: string) {
+    const value: boolean = (document.getElementById(`checkbox${toChange}`) as HTMLInputElement).checked;
+    originalColumnDefs[1].filterParams[`includeBlanksIn${toChange}`] = value;
+
+    gridApi!.setGridOption('columnDefs', originalColumnDefs);
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function () {
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
 });

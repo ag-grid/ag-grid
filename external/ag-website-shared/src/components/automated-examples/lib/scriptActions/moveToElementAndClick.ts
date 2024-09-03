@@ -1,12 +1,12 @@
 import type { Group } from '@tweenjs/tween.js';
 
-import { type AgElementFinder } from '../agElements';
-import { type AgElementName } from '../agElements/agElementsConfig';
+import type { AgElementFinder } from '../agElements';
+import type { AgElementName } from '../agElements/agElementsConfig';
 import { AG_CHART_TAB, AG_SCROLLABLE_CONTAINER_SELECTOR } from '../constants';
-import { type Mouse } from '../createMouse';
+import type { Mouse } from '../createMouse';
 import { isInViewport } from '../dom';
-import { type ScriptDebugger } from '../scriptDebugger';
-import { type EasingFunction } from '../tween';
+import type { ScriptDebugger } from '../scriptDebugger';
+import type { EasingFunction } from '../tween';
 import { createMoveMouse } from './createMoveMouse';
 import { mouseClick } from './mouseClick';
 import { waitFor } from './waitFor';

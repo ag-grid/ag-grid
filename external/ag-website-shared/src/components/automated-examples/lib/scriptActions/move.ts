@@ -1,10 +1,11 @@
 import type { Group } from '@tweenjs/tween.js';
 
 import { AG_ROW_HOVER_CLASSNAME, AG_ROW_SELECTOR } from '../constants';
-import { type Mouse } from '../createMouse';
-import { type Point, addPoints } from '../geometry';
-import { type ScriptDebugger } from '../scriptDebugger';
-import { type EasingFunction } from '../tween';
+import type { Mouse } from '../createMouse';
+import { addPoints } from '../geometry';
+import type { Point } from '../geometry';
+import type { ScriptDebugger } from '../scriptDebugger';
+import type { EasingFunction } from '../tween';
 import { clearAllRowHighlights } from './clearAllRowHighlights';
 import { createMoveMouse } from './createMoveMouse';
 

@@ -88,6 +88,9 @@ export class PageSizeSelectorComp extends Component {
     public toggleSelectDisplay(show: boolean) {
         if (this.selectPageSizeComp && !show) {
             this.reset();
+        }
+
+        if (!show) {
             return;
         }
 

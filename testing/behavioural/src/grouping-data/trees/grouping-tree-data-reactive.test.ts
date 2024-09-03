@@ -1,17 +1,13 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { TestGridsManager } from '../../test-utils';
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
 
 describe('ag-grid grouping treeData is reactive', () => {
-    let consoleErrorSpy: jest.SpyInstance;
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     function getAllRows(api: GridApi) {
         const rows: IRowNode<any>[] = [];
@@ -21,21 +17,12 @@ describe('ag-grid grouping treeData is reactive', () => {
         return rows;
     }
 
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
-
     beforeEach(() => {
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        gridsManager.reset();
     });
 
     test('ag-grid grouping treeData is reactive', async () => {
@@ -67,7 +54,7 @@ describe('ag-grid grouping treeData is reactive', () => {
             getDataPath,
         };
 
-        const api = createMyGrid(gridOptions);
+        const api = gridsManager.createGrid('myGrid', gridOptions);
 
         for (let repeat = 0; repeat < 2; repeat++) {
             api.setGridOption('treeData', false);

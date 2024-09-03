@@ -1,45 +1,36 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { getAllRows } from '../../test-utils';
-import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { TreeDiagram, simpleHierarchyRowData, simpleHierarchyRowSnapshot } from './tree-test-utils';
+import { TestGridsManager, getAllRows } from '../../test-utils';
+import { getRowsSnapshot, simpleHierarchyRowSnapshot } from '../row-snapshot-test-utils';
+import type { TreeDiagramOptions } from './tree-test-utils';
+import { TreeDiagram } from './tree-test-utils';
 
 describe('ag-grid grouping tree data with groupRows', () => {
-    let consoleErrorSpy: jest.SpyInstance;
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        gridsManager.reset();
     });
 
     test('tree grouping rows snapshot', async () => {
-        const rowData = simpleHierarchyRowData();
+        const rowData = [
+            { orgHierarchy: ['A'] },
+            { orgHierarchy: ['A', 'B'] },
+            { orgHierarchy: ['C', 'D'] },
+            { orgHierarchy: ['E', 'F', 'G', 'H'] },
+        ];
 
         const getDataPath = (data: any) => data.orgHierarchy;
 
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 {
-                    field: 'groupType',
+                    field: 'type',
                     valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
                 },
             ],
@@ -50,20 +41,24 @@ describe('ag-grid grouping tree data with groupRows', () => {
             rowData,
             getDataPath,
             groupDisplayType: 'groupRows',
+        });
+
+        const treeDiagramOptions: TreeDiagramOptions = {
+            checkDom: false,
+            columns: ['type'],
         };
 
-        const api = createMyGrid(gridOptions);
-
-        new TreeDiagram(api).check(`
+        new TreeDiagram(api, '', treeDiagramOptions).check(`
             ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:0
-            │ └── B LEAF id:1
-            ├─┬ C filler id:row-group-0-C
-            │ └── D LEAF id:2
-            └─┬ E filler id:row-group-0-E
-            · └─┬ F filler id:row-group-0-E-1-F
-            · · └─┬ G filler id:row-group-0-E-1-F-2-G
-            · · · └── H LEAF id:3`);
+            ├─┬ A GROUP id:0 type:"Provided"
+            │ └── B LEAF id:1 type:"Provided"
+            ├─┬ C filler id:row-group-0-C type:"Filler"
+            │ └── D LEAF id:2 type:"Provided"
+            └─┬ E filler id:row-group-0-E type:"Filler"
+            · └─┬ F filler id:row-group-0-E-1-F type:"Filler"
+            · · └─┬ G filler id:row-group-0-E-1-F-2-G type:"Filler"
+            · · · └── H LEAF id:3 type:"Provided"
+        `);
 
         const rows = getAllRows(api);
 

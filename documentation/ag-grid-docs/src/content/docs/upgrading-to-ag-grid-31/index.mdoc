@@ -56,13 +56,14 @@ This release includes the following breaking changes:
 
 The `solar` and `pastel` integrated chart themes have been removed. Any saved chart models will be migrated to the new `polychroma` and `sheets` themes respectively. If you're using themeOverrides, see charts migration page as the structure and naming of options have changed.
 
-If you are using Standalone Charts, please see changes to charts in the [AG Charts Migration Guide](https://charts.ag-grid.com/react/upgrade-to-ag-charts-9/).
+If you are using Standalone Charts, please see changes to charts in the [AG Charts Migration Guide](https://ag-grid.com/charts/react/upgrade-to-ag-charts-9/).
 
 ### ColumnDefs
 
 * Grid columns are now sortable and resizable by default. Also, the grid animates rows by default. In order to avoid this, please set `defaultColDef.resizable = false`, `defaultColDef.sortable = false` and `gridOptions.animateRows = false`.
 * When not providing column definitions or setting `columnDefs = undefined`, a loading overlay will be displayed until column definitions are set. To go back to the earlier behavior of showing a grid without any columns, please set `columnDefs = []`.
 * Setting `columnDefs` to `null`/`undefined` via a call to `api.setColumnDefs` or via a state variable no longer clears the columns shown in the grid. Instead, set `columnDefs` to `[]` to clear the columns shown in the grid.
+* `useValueFormatterForExport` is now true by default. This means that cell values are formatted using the column's valueFormatter when exporting data from the grid. This applies to CSV and Excel export, as well as clipboard operations and the fill handle. 
 
 ### GridOptions
 
@@ -77,6 +78,10 @@ If you are using Standalone Charts, please see changes to charts in the [AG Char
 * `onRowDataChanged`: no longer fired, use `onRowDataUpdated` instead.
 * `getRowId` is now an initial property and can no longer be updated.
 * `rememberGroupStateWhenNewData` - removed. Provide getRowId to maintain group state when row data updated instead (see [Updating Row Data](./data-update-row-data/)).
+
+### Column Layout
+
+The total width of the pinned column sections (left and right) will be limited to the width of the grid - 50px. This ensures the unpinned columns area is always visible. If total width of the pinned column sections (left and right) exceeds the limit, the grid will automatically unpin columns from the pinned sections to make the unpinned columns visible again. To customise which columns get unpinned or to prevent automatic unpinning, see [Resizing Pinned Sections](./column-pinning/#resizing-pinned-sections).
 
 ### Column Filters
 

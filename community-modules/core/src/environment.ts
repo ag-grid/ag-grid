@@ -203,6 +203,7 @@ export class Environment extends BeanStub implements NamedBean {
             });
             node = node.parentElement;
         }
+        this.addDestroyFunc(() => observer.disconnect());
     }
 
     private getAncestorThemeClasses(): readonly string[] {

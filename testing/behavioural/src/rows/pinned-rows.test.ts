@@ -1,19 +1,13 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+
+import { TestGridsManager } from '../test-utils';
 
 describe('Pinned rows', () => {
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     const topData = [{ athlete: 'Top Athlete', sport: 'Top Sport', age: 11 }];
     const bottomData = [{ athlete: 'Bottom Athlete', sport: 'Bottom Sport', age: 22 }];
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
 
     function assertPinnedRowData(data: any[], location: 'top' | 'bottom', rowIndices?: string[]) {
         const pinnedRows = document.querySelectorAll(`.ag-floating-${location} .ag-row-pinned`);
@@ -39,23 +33,23 @@ describe('Pinned rows', () => {
             });
     }
 
-    beforeAll(() => {
-        ModuleRegistry.register(ClientSideRowModelModule);
+    beforeEach(() => {
+        gridsManager.reset();
     });
 
-    beforeEach(() => {
-        resetGrids();
+    afterEach(() => {
+        gridsManager.reset();
     });
 
     describe('top', () => {
         test('are shown', () => {
-            createMyGrid({ columnDefs, pinnedTopRowData: topData });
+            gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData });
 
             assertPinnedRowData(topData, 'top');
         });
 
         test('are shown then updated', () => {
-            const api = createMyGrid({ columnDefs, pinnedTopRowData: topData });
+            const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData });
 
             assertPinnedRowData(topData, 'top');
 
@@ -67,7 +61,7 @@ describe('Pinned rows', () => {
         test('are shown then updated with getRowId', () => {
             const getRowId = jest.fn((p) => p.data.athlete);
 
-            const api = createMyGrid({
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedTopRowData: topData,
                 getRowId,
@@ -89,7 +83,7 @@ describe('Pinned rows', () => {
             const getRowId = jest.fn((p) => p.data.id);
             const pinnedTopRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
-            const api = createMyGrid({
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedTopRowData,
                 getRowId,
@@ -117,7 +111,7 @@ describe('Pinned rows', () => {
             const getRowId = jest.fn((p) => p.data.id);
             const pinnedTopRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
-            const api = createMyGrid({
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedTopRowData,
                 getRowId,
@@ -149,7 +143,7 @@ describe('Pinned rows', () => {
                 { id: '5', athlete: 'Victor', sport: 'Top sport 2', age: 22 },
             ];
 
-            const api = createMyGrid({
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedTopRowData,
                 getRowId,
@@ -174,7 +168,7 @@ describe('Pinned rows', () => {
         });
 
         test('rows are cleared on setting undefined rowData', () => {
-            const api = createMyGrid({ columnDefs, pinnedTopRowData: topData });
+            const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData });
 
             assertPinnedRowData(topData, 'top');
 
@@ -185,7 +179,7 @@ describe('Pinned rows', () => {
         test('cannot render duplicate rows with getRowId', () => {
             const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             const getRowId = jest.fn((p) => JSON.stringify(p.data));
-            createMyGrid({ columnDefs, pinnedTopRowData: topData.concat(topData), getRowId });
+            gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData.concat(topData), getRowId });
 
             assertPinnedRowData(topData, 'top', ['t-0']);
             expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
@@ -202,13 +196,13 @@ describe('Pinned rows', () => {
 
     describe('bottom', () => {
         test('are shown', () => {
-            createMyGrid({ columnDefs, pinnedBottomRowData: bottomData });
+            gridsManager.createGrid('myGrid', { columnDefs, pinnedBottomRowData: bottomData });
 
             assertPinnedRowData(bottomData, 'bottom');
         });
 
         test('are shown then updated', () => {
-            const api = createMyGrid({ columnDefs, pinnedBottomRowData: bottomData });
+            const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedBottomRowData: bottomData });
 
             assertPinnedRowData(bottomData, 'bottom');
 
@@ -220,7 +214,7 @@ describe('Pinned rows', () => {
         test('are shown then updated with getRowId', () => {
             const getRowId = jest.fn((p) => p.data.athlete);
 
-            const api = createMyGrid({
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedBottomRowData: bottomData,
                 getRowId,
@@ -245,7 +239,7 @@ describe('Pinned rows', () => {
             const getRowId = jest.fn((p) => p.data.id);
             const pinnedBottomRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
-            const api = createMyGrid({
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedBottomRowData,
                 getRowId,
@@ -273,7 +267,7 @@ describe('Pinned rows', () => {
             const getRowId = jest.fn((p) => p.data.id);
             const pinnedBottomRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
-            const api = createMyGrid({
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedBottomRowData,
                 getRowId,
@@ -305,7 +299,7 @@ describe('Pinned rows', () => {
                 { id: '5', athlete: 'Victor', sport: 'Bottom sport 2', age: 22 },
             ];
 
-            const api = createMyGrid({
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedBottomRowData,
                 getRowId,
@@ -330,7 +324,7 @@ describe('Pinned rows', () => {
         });
 
         test('rows are cleared on setting undefined rowData', () => {
-            const api = createMyGrid({ columnDefs, pinnedBottomRowData: bottomData });
+            const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedBottomRowData: bottomData });
 
             assertPinnedRowData(bottomData, 'bottom');
 
@@ -341,7 +335,11 @@ describe('Pinned rows', () => {
         test('cannot render duplicate rows with getRowId', () => {
             const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             const getRowId = jest.fn((p) => JSON.stringify(p.data));
-            createMyGrid({ columnDefs, pinnedBottomRowData: bottomData.concat(bottomData), getRowId });
+            gridsManager.createGrid('myGrid', {
+                columnDefs,
+                pinnedBottomRowData: bottomData.concat(bottomData),
+                getRowId,
+            });
 
             assertPinnedRowData(bottomData, 'bottom', ['b-0']);
             expect(consoleWarnSpy).toHaveBeenCalledTimes(1);

@@ -2,10 +2,11 @@ import type { Group } from '@tweenjs/tween.js';
 
 import type { GridApi } from 'ag-grid-community';
 
-import { type Mouse } from '../../lib/createMouse';
-import { type ScriptDebugger } from '../../lib/scriptDebugger';
-import { type RunScriptState, createScriptRunner as createScriptRunnerCore } from '../../lib/scriptRunner';
-import { type EasingFunction } from '../../lib/tween';
+import type { Mouse } from '../../lib/createMouse';
+import type { ScriptDebugger } from '../../lib/scriptDebugger';
+import { createScriptRunner as createScriptRunnerCore } from '../../lib/scriptRunner';
+import type { RunScriptState } from '../../lib/scriptRunner';
+import type { EasingFunction } from '../../lib/tween';
 import { createScript } from './createScript';
 
 interface Params {

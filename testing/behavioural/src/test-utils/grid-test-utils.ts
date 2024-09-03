@@ -1,9 +1,4 @@
 import type { GridApi, IRowNode, RowDataTransaction, RowNode } from '@ag-grid-community/core';
-import { setTimeout as asyncSetTimeout } from 'timers/promises';
-import util from 'util';
-
-export const isGridApi = (node: unknown): node is GridApi =>
-    typeof node === 'object' && node !== null && typeof (node as GridApi).setGridOption === 'function';
 
 export const getAllRows = (api: GridApi | null | undefined) => {
     const rows: RowNode<any>[] = [];
@@ -73,68 +68,6 @@ export async function executeTransactionsAsync(
     await Promise.all(promises);
 }
 
-export const printDataSnapshot = (data: any, pretty = false) => {
-    if (typeof data === 'string') {
-        console.log('\nsnapshot:\n' + JSON.stringify(data) + '\n');
-    }
-    console.log(
-        '\nsnapshot:\n' +
-            util.inspect(data, {
-                colors: false,
-                depth: 0xfffff,
-                breakLength: pretty ? 120 : 0xfffff,
-                maxArrayLength: 0xfffff,
-                compact: true,
-                getters: false,
-                maxStringLength: 0xfffff,
-                showHidden: false,
-                showProxy: false,
-                sorted: false,
-                customInspect: false,
-                numericSeparator: false,
-            }) +
-            '\n'
-    );
-};
-
-export async function flushJestTimers() {
-    jest.advanceTimersByTime(10000);
-    jest.useRealTimers();
-    await asyncSetTimeout(1);
-}
-
-const cachedJSONObjectsMap = new Map<string, any>();
-
-export const cachedJSONObjects = {
-    /** Clears the cache of JSON objects. */
-    clear() {
-        cachedJSONObjectsMap.clear();
-    },
-
-    /**
-     * This is useful for writing test code without having to store in variables the objects that are created.
-     * This JSON stringify the object to use as a key in a global map, and if the object is already in the map, it returns the cached object.
-     * You can call cachedJSONObjects.clear() to clear the cache on beforeEach() call.
-     */
-    object<T>(obj: T): T {
-        if (typeof obj !== 'object' || obj === null) {
-            return obj;
-        }
-        const key = JSON.stringify(obj);
-        const found = cachedJSONObjectsMap.get(key);
-        if (found !== undefined) {
-            return found;
-        }
-        cachedJSONObjectsMap.set(key, obj);
-        return obj;
-    },
-
-    /** return array.map(cachedJSONObjects.object) */
-    array<T>(array: T[]): T[] {
-        return array.map(cachedJSONObjects.object);
-    },
-};
-
 export function verifyPositionInRootChildren(rows: GridApi | IRowNode[]): RowNode[] {
     if (!Array.isArray(rows)) {
         const root = findRootNode(rows);
@@ -161,4 +94,25 @@ export function verifyPositionInRootChildren(rows: GridApi | IRowNode[]): RowNod
     }
 
     return rows as RowNode[];
+}
+
+export function rowKey(row: IRowNode | null | undefined): string {
+    return row?.key ?? row?.id ?? 'null';
+}
+
+export function checkGridSelectedNodes(api: GridApi) {
+    const allRows = new Set<IRowNode>(getAllRows(api));
+    const selectedNodes = api.getSelectedNodes();
+
+    for (const node of selectedNodes) {
+        if (!allRows.has(node)) {
+            throw new Error(`❌ Selected node ${rowKey(node)} does not exist in the grid`);
+        }
+    }
+
+    for (const node of allRows) {
+        if (node.isSelected() && !selectedNodes.includes(node)) {
+            throw new Error(`❌ Node ${rowKey(node)} is selected but not in the selected nodes list`);
+        }
+    }
 }
