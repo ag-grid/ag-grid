@@ -461,11 +461,14 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 details.changedPath.addParentNode(row);
             }
         } else if (!isTreeRowCommitted(row)) {
-            // If this is a new row and path is not changed because this is a leaf,
+            // If this is a new row that was never committed
+            // and path is not changed because this is a leaf,
             // we still need to be sure arrays are not null
-
+            if (!row.childrenAfterFilter) {
+                row.childrenAfterFilter = row.childrenAfterGroup!.slice();
+            }
             if (!row.childrenAfterAggFilter) {
-                row.childrenAfterAggFilter = row.childrenAfterGroup!.slice();
+                row.childrenAfterAggFilter = row.childrenAfterFilter!.slice();
             }
             if (!row.childrenAfterSort) {
                 row.childrenAfterSort = row.childrenAfterAggFilter!.slice();
