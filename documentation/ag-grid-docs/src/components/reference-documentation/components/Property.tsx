@@ -222,70 +222,68 @@ export const Property: FunctionComponent<{
                 <td className={legacyStyles.propertyNameDescription}>
                     <div className={classnames(styles.propertyRow, legacyStyles.propertyRow)}>
                         <div className={styles.leftColumn}>
-                            <div className={legacyStyles.propertyMeta}>
-                                <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
-                                    <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
-                                    <a
-                                        href={`#${idName}`}
-                                        className="docs-header-icon"
-                                        aria-label={`Link to '${name}' property`}
-                                    >
-                                        <Icon name="link" />
-                                    </a>
+                            <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                                <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
+                                <a
+                                    href={`#${idName}`}
+                                    className="docs-header-icon"
+                                    aria-label={`Link to '${name}' property`}
+                                >
+                                    <Icon name="link" />
+                                </a>
+                            </div>
+                            <div className={styles.metaItem}>
+                                <div className={styles.metaRow}>
+                                    {detailsCode && (
+                                        <CollapsibleButton
+                                            name={more?.name ?? name}
+                                            isExpanded={isExpanded}
+                                            onClick={onCollapseClick}
+                                        />
+                                    )}
+                                    {typeUrl ? (
+                                        <a
+                                            className={styles.metaValue}
+                                            href={typeUrl}
+                                            target={typeUrl.startsWith('http') ? '_blank' : '_self'}
+                                            rel="noreferrer"
+                                        >
+                                            {isObject ? getInterfaceName(name) : propertyType}
+                                        </a>
+                                    ) : (
+                                        <span
+                                            onClick={onCollapseClick}
+                                            className={classnames(styles.metaValue, {
+                                                [styles.isExpandable]: detailsCode,
+                                            })}
+                                        >
+                                            {propertyType}
+                                        </span>
+                                    )}
                                 </div>
-                                <div className={styles.metaItem}>
-                                    <div className={styles.metaRow}>
-                                        {detailsCode && (
-                                            <CollapsibleButton
-                                                name={more?.name ?? name}
-                                                isExpanded={isExpanded}
-                                                onClick={onCollapseClick}
-                                            />
-                                        )}
-                                        {typeUrl ? (
-                                            <a
-                                                className={styles.metaValue}
-                                                href={typeUrl}
-                                                target={typeUrl.startsWith('http') ? '_blank' : '_self'}
-                                                rel="noreferrer"
-                                            >
-                                                {isObject ? getInterfaceName(name) : propertyType}
-                                            </a>
-                                        ) : (
-                                            <span
-                                                onClick={onCollapseClick}
-                                                className={classnames(styles.metaValue, {
-                                                    [styles.isExpandable]: detailsCode,
-                                                })}
-                                            >
-                                                {propertyType}
-                                            </span>
-                                        )}
+
+                                {formattedDefaultValue != null && (
+                                    <div className={styles.metaItem}>
+                                        <span className={classnames(styles.metaValue, styles.defaultValue)}>
+                                            <span>default: </span>
+                                            {formattedDefaultValue}
+                                        </span>
                                     </div>
+                                )}
 
-                                    {formattedDefaultValue != null && (
-                                        <div className={styles.metaItem}>
-                                            <span className={classnames(styles.metaValue, styles.defaultValue)}>
-                                                <span>default: </span>
-                                                {formattedDefaultValue}
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {isInitial && (
-                                        <div className={classnames(styles.metaItem, styles.initialItem)}>
-                                            <a
-                                                className={styles.initialLabel}
-                                                href={urlWithPrefix({
-                                                    url: './grid-interface/#initial-grid-options',
-                                                    framework,
-                                                })}
-                                            >
-                                                Initial
-                                            </a>
-                                        </div>
-                                    )}
-                                </div>
+                                {isInitial && (
+                                    <div className={classnames(styles.metaItem, styles.initialItem)}>
+                                        <a
+                                            className={styles.initialLabel}
+                                            href={urlWithPrefix({
+                                                url: './grid-interface/#initial-grid-options',
+                                                framework,
+                                            })}
+                                        >
+                                            Initial
+                                        </a>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className={styles.rightColumn}>

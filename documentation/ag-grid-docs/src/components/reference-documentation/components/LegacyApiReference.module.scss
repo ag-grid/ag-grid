@@ -31,17 +31,6 @@
 }
 
 /**
- * Add spacing between property name rows
- */
-.propertyMeta {
-    display: flex;
-    justify-content: left;
-    flex-wrap: wrap;
-    gap: $spacing-size-2;
-    flex-direction: column;
-}
-
-/**
  * Documentation links
  */
 .docLink {
