@@ -275,9 +275,9 @@ export const Property: FunctionComponent<{
                                 )}
 
                                 {isInitial && (
-                                    <div className={classnames(styles.metaItem, styles.initialItem)}>
+                                    <div className={classnames(styles.metaItem)}>
                                         <a
-                                            className={styles.initialLabel}
+                                            className={classnames(styles.metaValue)}
                                             href={urlWithPrefix({
                                                 url: './grid-interface/#initial-grid-options',
                                                 framework,
