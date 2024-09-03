@@ -11,11 +11,10 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "dependsOn": ["^build"],
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@nx/vite:test",
       "options": {
-        "jestConfig": "testing/behavioural/jest.config.js"
+        "config": "{projectRoot}/vitest.config.js",
+        "reporters": ["default"]
       }
     }
   },

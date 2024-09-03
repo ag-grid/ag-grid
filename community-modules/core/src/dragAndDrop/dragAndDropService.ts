@@ -611,6 +611,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         }
         const eGui = dragAndDropCoverComp.getGui();
 
+        eGui.style.setProperty('position', 'absolute');
         mouseEventService.stampTopLevelGridCompWithGridInstance(eGui);
         environment.applyThemeClasses(eGui);
         dragAndDropCoverComp.setIcon(null);

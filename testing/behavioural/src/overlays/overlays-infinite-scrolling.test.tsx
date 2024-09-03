@@ -1,4 +1,5 @@
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import type { MockInstance } from 'vitest';
 
 import { TestGridsManager } from '../test-utils';
 
@@ -6,7 +7,7 @@ describe('ag-grid overlays infinite scrolling state', () => {
     const gridsManager = new TestGridsManager({ modules: [InfiniteRowModelModule] });
 
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
-    let consoleWarnSpy: jest.SpyInstance | undefined;
+    let consoleWarnSpy: MockInstance | undefined;
 
     function hasLoadingOverlay() {
         return !!document.querySelector('.ag-overlay-loading-center');
@@ -44,7 +45,7 @@ describe('ag-grid overlays infinite scrolling state', () => {
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         api.setGridOption('rowData', []);
 

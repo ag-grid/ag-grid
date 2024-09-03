@@ -8,6 +8,7 @@ import type { SparklineTooltip, SparklineTooltipMeta } from './tooltip/sparkline
 
 const { extent, isNumber, isString, isStringObject, isDate, createId, Padding } = _Util;
 const { LinearScale, BandScale, TimeScale } = _Scale;
+const { Transformable } = _Scene;
 
 /**
  * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
@@ -56,8 +57,7 @@ export abstract class Sparkline {
 
     readonly scene: _Scene.Scene;
     readonly canvasElement: HTMLCanvasElement;
-    readonly rootGroup: _Scene.Group;
-
+    readonly rootGroup: _Scene.TranslatableGroup;
     // Only one tooltip instance for all sparkline instances.
     tooltip!: SparklineTooltip;
     private static tooltipDocuments: Document[] = [];
@@ -141,7 +141,7 @@ export abstract class Sparkline {
     };
 
     protected constructor() {
-        const root = new _Scene.Group();
+        const root = new _Scene.TranslatableGroup();
         this.rootGroup = root;
 
         const element = document.createElement('div');
@@ -585,7 +585,7 @@ export abstract class Sparkline {
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
-        const hitPoint = this.rootGroup.transformPoint(x, y);
+        const hitPoint = Transformable.fromCanvasPoint(this.rootGroup, x, y);
         const nodeData = this.getNodeData();
 
         for (let i = 0; i < nodeData.length; i++) {

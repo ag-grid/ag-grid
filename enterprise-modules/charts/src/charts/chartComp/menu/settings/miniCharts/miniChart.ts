@@ -28,17 +28,11 @@ export abstract class MiniChart extends Component {
         const scene = new _Scene.Scene({
             width: this.size,
             height: this.size,
-            domManager: {
-                addChild(type, _, child) {
-                    const newEl = child ?? container.ownerDocument.createElement(type);
-                    container.appendChild(newEl);
-                    return newEl;
-                },
-            },
         });
 
         scene.canvas.element.classList.add(CANVAS_CLASS);
         scene.setRoot(this.root);
+        scene.setContainer(container);
 
         this.scene = scene;
     }
