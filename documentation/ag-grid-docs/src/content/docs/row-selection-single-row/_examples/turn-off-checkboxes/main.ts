@@ -17,7 +17,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     selection: {
         mode: 'singleRow',
-        suppressClickSelection: true,
     },
     onFirstDataRendered: (params) => {
         const nodesToSelect: IRowNode[] = [];
@@ -33,7 +32,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 function toggleCheckbox() {
     gridApi.setGridOption('selection', {
         mode: 'singleRow',
-        suppressClickSelection: true,
         isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
         checkboxes: getCheckboxValue('#toggle-checkbox'),
     });

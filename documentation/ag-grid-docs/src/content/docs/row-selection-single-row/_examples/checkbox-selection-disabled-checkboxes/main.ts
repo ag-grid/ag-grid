@@ -17,7 +17,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     selection: {
         mode: 'singleRow',
-        suppressClickSelection: true,
         hideDisabledCheckboxes: true,
         isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
     },
@@ -35,7 +34,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 function toggleHideCheckbox() {
     gridApi.setGridOption('selection', {
         mode: 'singleRow',
-        suppressClickSelection: true,
         isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
         hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
     });

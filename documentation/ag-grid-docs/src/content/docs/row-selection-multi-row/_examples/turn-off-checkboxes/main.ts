@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: {
         mode: 'multiRow',
         headerCheckbox: false,
-        suppressClickSelection: true,
     },
     onFirstDataRendered: (params) => {
         const nodesToSelect: IRowNode[] = [];
@@ -35,7 +34,6 @@ function toggleCheckbox() {
     gridApi.setGridOption('selection', {
         mode: 'multiRow',
         headerCheckbox: false,
-        suppressClickSelection: true,
         isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
         checkboxes: getCheckboxValue('#toggle-checkbox'),
     });

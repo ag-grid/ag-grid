@@ -23,7 +23,6 @@ const GridExample = () => {
         () => ({
             mode: 'singleRow',
             headerCheckbox: false,
-            suppressClickSelection: true,
         }),
         []
     );
@@ -48,7 +47,6 @@ const GridExample = () => {
     function toggleCheckbox() {
         grid.current.api.setGridOption('selection', {
             mode: 'singleRow',
-            suppressClickSelection: true,
             headerCheckbox: false,
             isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
             checkboxes: getCheckboxValue('#toggle-checkbox'),

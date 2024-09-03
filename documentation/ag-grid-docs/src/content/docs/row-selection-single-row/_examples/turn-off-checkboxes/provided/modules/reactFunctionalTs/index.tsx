@@ -34,7 +34,6 @@ const GridExample = () => {
     const selection = useMemo<SelectionOptions>(
         () => ({
             mode: 'singleRow',
-            suppressClickSelection: true,
         }),
         []
     );
@@ -59,7 +58,6 @@ const GridExample = () => {
     function toggleCheckbox() {
         grid.current?.api.setGridOption('selection', {
             mode: 'singleRow',
-            suppressClickSelection: true,
             isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
             checkboxes: getCheckboxValue('#toggle-checkbox'),
         });

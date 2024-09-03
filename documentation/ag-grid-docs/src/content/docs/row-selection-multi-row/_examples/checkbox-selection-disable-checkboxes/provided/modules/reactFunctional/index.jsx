@@ -22,7 +22,6 @@ const GridExample = () => {
     const selection = useMemo(
         () => ({
             mode: 'multiRow',
-            suppressClickSelection: true,
             hideDisabledCheckboxes: true,
             isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
         }),
@@ -39,7 +38,6 @@ const GridExample = () => {
     function toggleHideCheckbox() {
         grid.current?.api.setGridOption('selection', {
             mode: 'multiRow',
-            suppressClickSelection: true,
             isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
             hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
         });
