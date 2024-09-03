@@ -31,6 +31,11 @@ const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 
+    suppressBrowserResizeObserver: {
+        version: '32.2',
+        message: "The grid always uses the browser's ResizeObserver, this grid option has no effect.",
+    },
+
     onColumnEverythingChanged: {
         version: '32.2',
         message:

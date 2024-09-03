@@ -194,7 +194,7 @@ class VisibilityStrategy extends BeanStub {
 
             if (this.column) {
                 shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui();
-                isShownSometimes = _isFunction(this.column.getColDef().rowDrag);
+                isShownSometimes = _isFunction<boolean>(this.column.getColDef().rowDrag);
             }
 
             // if shown sometimes, them some rows can have drag handle while other don't,
