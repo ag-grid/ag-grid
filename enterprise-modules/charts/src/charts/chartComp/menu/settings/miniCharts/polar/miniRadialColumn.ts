@@ -42,7 +42,7 @@ export class MiniRadialColumn extends MiniChartWithPolarAxes {
             const firstSeries = seriesIndex === 0;
             const previousSeries = firstSeries ? undefined : processedData[seriesIndex - 1];
 
-            const seriesGroup = new _Scene.Group({ zIndex: 1000_000 });
+            const seriesGroup = new _Scene.TranslatableGroup({ zIndex: 1000_000 });
             const seriesColumns = series.map((datum: number, i: number) => {
                 const previousDatum = previousSeries?.[i];
                 const outerRadius = radiusScale.convert(datum);
@@ -54,8 +54,6 @@ export class MiniRadialColumn extends MiniChartWithPolarAxes {
 
                 const column = new _Scene.RadialColumnShape();
 
-                column.scalingCenterX = center;
-                column.scalingCenterY = center;
                 column.columnWidth = columnWidth;
                 column.innerRadius = innerRadius;
                 column.outerRadius = outerRadius;

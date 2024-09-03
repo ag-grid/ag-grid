@@ -151,7 +151,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         let yMin = 0;
         let yMax = 1;
 
-        if (yMinMax !== undefined) {
+        if (yMinMax != null) {
             yMin = this.min = yMinMax[0] as number;
             yMax = this.max = yMinMax[1] as number;
         }
@@ -220,16 +220,11 @@ export abstract class BarColumnSparkline extends Sparkline {
             node.stroke = (nodeFormat && nodeFormat.stroke) || nodeStroke;
             node.strokeWidth = (nodeFormat && nodeFormat.strokeWidth) || nodeStrokeWidth;
 
-            node.x = node.y = 0;
+            node.x = x;
+            node.y = y;
             node.width = width;
             node.height = height;
             node.visible = node.height > 0;
-
-            node.translationX = x;
-            node.translationY = y;
-
-            // shifts bars upwards?
-            // node.crisp = true;
         });
     }
 
