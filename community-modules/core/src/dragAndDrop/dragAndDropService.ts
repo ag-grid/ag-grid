@@ -617,7 +617,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
         let { dragItemName } = dragSource;
 
-        if (_isFunction(dragItemName)) {
+        if (_isFunction<string>(dragItemName)) {
             dragItemName = dragItemName();
         }
 
