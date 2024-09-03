@@ -106,8 +106,8 @@ export function createPolarPaths(
             const angle = angleScale.convert(i);
             const r = radius + innerRadius - radiusScale.convert(datum);
 
-            const x = r * Math.cos(angle);
-            const y = r * Math.sin(angle);
+            const x = r * Math.cos(angle) + center;
+            const y = r * Math.sin(angle) + center;
 
             path.path[i > 0 ? 'lineTo' : 'moveTo'](x, y);
 
@@ -127,8 +127,6 @@ export function createPolarPaths(
     const group = new _Scene.Group();
 
     const center = size / 2;
-    group.translationX = center;
-    group.translationY = center;
 
     group.append([...paths, ...markers]);
     root.append(group);

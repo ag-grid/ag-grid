@@ -124,7 +124,7 @@ export class AreaSparkline extends Sparkline {
         let yMin = 0;
         let yMax = 1;
 
-        if (yMinMax !== undefined) {
+        if (yMinMax != null) {
             yMin = this.min = yMinMax[0] as number;
             yMax = this.max = yMinMax[1] as number;
         }
@@ -217,16 +217,19 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected override updateAxisLine() {
-        const { xScale, yScale, axis, xAxisLine } = this;
+        const {
+            xScale,
+            yScale,
+            axis: { stroke, strokeWidth },
+            xAxisLine,
+        } = this;
+        const yZero: number = yScale.convert(0);
 
         xAxisLine.x1 = xScale.range[0];
         xAxisLine.x2 = xScale.range[1];
-        xAxisLine.y1 = xAxisLine.y2 = 0;
-        xAxisLine.stroke = axis.stroke;
-        xAxisLine.strokeWidth = axis.strokeWidth;
-
-        const yZero: number = yScale.convert(0);
-        xAxisLine.translationY = yZero;
+        xAxisLine.y1 = xAxisLine.y2 = yZero;
+        xAxisLine.stroke = stroke;
+        xAxisLine.strokeWidth = strokeWidth;
     }
 
     private updateSelection(selectionData: AreaNodeDatum[]): void {
@@ -380,7 +383,7 @@ export class AreaSparkline extends Sparkline {
 
         xCrosshairLine.y1 = yScale.range[0];
         xCrosshairLine.y2 = yScale.range[1];
-        xCrosshairLine.x1 = xCrosshairLine.x2 = 0;
+        xCrosshairLine.x1 = xCrosshairLine.x2 = highlightedDatum.point!.x;
         xCrosshairLine.stroke = xLine.stroke;
         xCrosshairLine.strokeWidth = xLine.strokeWidth ?? 1;
 
@@ -390,8 +393,6 @@ export class AreaSparkline extends Sparkline {
         xCrosshairLine.lineDash = Array.isArray(lineDash)
             ? lineDash
             : getLineDash(xCrosshairLine.lineCap, xLine.lineDash as string);
-
-        xCrosshairLine.translationX = highlightedDatum.point!.x;
     }
 
     protected override updateYCrosshairLine() {
@@ -409,7 +410,7 @@ export class AreaSparkline extends Sparkline {
 
         yCrosshairLine.x1 = xScale.range[0];
         yCrosshairLine.x2 = xScale.range[1];
-        yCrosshairLine.y1 = yCrosshairLine.y2 = 0;
+        yCrosshairLine.y1 = yCrosshairLine.y2 = highlightedDatum.point!.y;
         yCrosshairLine.stroke = yLine.stroke;
         yCrosshairLine.strokeWidth = yLine.strokeWidth ?? 1;
 
@@ -419,8 +420,6 @@ export class AreaSparkline extends Sparkline {
         yCrosshairLine.lineDash = Array.isArray(lineDash)
             ? lineDash
             : getLineDash(yCrosshairLine.lineCap, yLine.lineDash as string);
-
-        yCrosshairLine.translationY = highlightedDatum.point!.y;
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {
