@@ -102,6 +102,6 @@
     "ag-charts-vue3": "10.1.0-beta.20240903",
     "prettier-plugin-astro": "^0.12.3",
     "vite-plugin-mkcert": "^1.17.2",
-    "vitest": "^1.1.3"
+    "vitest": "^2.0.5"
   }
 }
