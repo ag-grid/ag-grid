@@ -4,8 +4,9 @@
     "jsx": "react",
     "emitDecoratorMetadata": false,
     "noImplicitAny": false,
-    "module": "commonjs",
-    "types": ["jest", "node"]
+    "module": "ES2022",
+    "moduleResolution": "Node",
+    "types": ["vitest", "node"]
   },
   "references": [
     {
