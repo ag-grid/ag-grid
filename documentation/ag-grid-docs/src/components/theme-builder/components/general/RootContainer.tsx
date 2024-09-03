@@ -1,7 +1,11 @@
 import type { Theme } from '@ag-grid-community/theming';
-import { logErrorMessageOnce, paramToVariableName } from '@components/theme-builder/model/utils';
+import {
+    logErrorMessageOnce,
+    paramToVariableName,
+    setCurrentThemeCssClass,
+} from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
@@ -11,6 +15,17 @@ import { GridPreview } from './GridPreview';
 
 export const RootContainer = () => {
     const theme = useRenderedTheme();
+    const themeRef = useRef<Theme | null>(null);
+
+    // NOTE: this is done in the render phase rather than a useLayoutEffect because
+    // components within the menu need a current theme for their initial render
+    if (theme !== themeRef.current) {
+        setCurrentThemeCssClass(theme.getCssClass());
+        const stylesheet = new CSSStyleSheet();
+        stylesheet.replaceSync(theme.getCSS());
+        document.adoptedStyleSheets = [stylesheet];
+        themeRef.current = theme;
+    }
 
     useEffect(() => {
         warnOfUnknownCssVariables(theme);
@@ -18,7 +33,7 @@ export const RootContainer = () => {
 
     return (
         <Container>
-            <Menu className="ag-apply-theme-variables">
+            <Menu className={theme.getCssClass()}>
                 <EditorScroller>
                     <EditorPanel />
                 </EditorScroller>

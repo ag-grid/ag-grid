@@ -1,10 +1,11 @@
 import { type Theme, themeQuartz } from '@ag-grid-community/theming';
-import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { atom, useAtomValue } from 'jotai';
 
 import { allParamModels } from './ParamModel';
 import { FeatureModel } from './PartModel';
 import { enabledAdvancedParamsAtom } from './advanced-params';
 import type { Store } from './store';
+import { setCurrentThemeCssClass } from './utils';
 
 const changeDetection = atom(0);
 

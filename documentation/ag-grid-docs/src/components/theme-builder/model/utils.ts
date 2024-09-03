@@ -60,18 +60,16 @@ export const stripFloatingPointErrors = (value: number) => value.toFixed(10).rep
 export const paramToVariableName = (param: string) => `--ag-${kebabCase(param)}`;
 const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();
 
-let reinterpretationElement: HTMLElement | null = null;
-
 export const cssValueIsValid = (value: string, type: ParamType): boolean => reinterpretCSSValue(value, type) != null;
+
+export const setCurrentThemeCssClass = (themeClass: string) => {
+    getReinterpretationElement().className = themeClass;
+};
 
 export const reinterpretCSSValue = (value: string, type: ParamType): string | null => {
     value = value.trim();
     if (value === '') return '';
-    if (!reinterpretationElement) {
-        reinterpretationElement = document.createElement('span');
-        reinterpretationElement.className = 'ag-apply-theme-variables';
-        document.body.appendChild(reinterpretationElement);
-    }
+    const reinterpretationElement = getReinterpretationElement();
     const cssProperty = cssPropertyForParamType[type];
     try {
         reinterpretationElement.style[cssProperty] = ''; // clear first otherwise setting an invalid value fails and keeps old value
@@ -83,6 +81,16 @@ export const reinterpretCSSValue = (value: string, type: ParamType): string | nu
     } finally {
         reinterpretationElement.style[cssProperty as any] = '';
     }
+};
+
+let _reinterpretationElement: HTMLElement | null = null;
+
+const getReinterpretationElement = () => {
+    if (!_reinterpretationElement) {
+        _reinterpretationElement = document.createElement('span');
+        document.body.appendChild(_reinterpretationElement);
+    }
+    return _reinterpretationElement;
 };
 
 const cssPropertyForParamType = {
