@@ -311,10 +311,8 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         eGuiRef.current = eRef;
 
         if (!eRef) {
-            context.destroyBean(ctrlRef.current);
-            if (resizeObserverDestroyFunc.current) {
-                resizeObserverDestroyFunc.current();
-            }
+            ctrlRef.current = context.destroyBean(ctrlRef.current);
+            resizeObserverDestroyFunc.current?.();
             return;
         }
 

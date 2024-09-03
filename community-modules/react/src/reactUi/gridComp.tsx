@@ -28,7 +28,7 @@ const GridComp = ({ context }: GridCompProps) => {
     const [initialised, setInitialised] = useState<boolean>(false);
     const [tabGuardReady, setTabGuardReady] = useState<any>();
 
-    const gridCtrlRef = useRef<GridCtrl | null>(null);
+    const gridCtrlRef = useRef<GridCtrl>();
     const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
     const tabGuardRef = useRef<TabGuardCompCallback>();
     // eGridBodyParent is state as we use it in render
@@ -49,21 +49,15 @@ const GridComp = ({ context }: GridCompProps) => {
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eRootWrapperRef.current = e;
+    const setRef = useCallback((eRef: HTMLDivElement) => {
+        eRootWrapperRef.current = eRef;
+        gridCtrlRef.current = eRef ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
 
-        if (!eRootWrapperRef.current) {
-            context.destroyBean(gridCtrlRef.current);
-            gridCtrlRef.current = null;
+        if (!eRef || context.isDestroyed()) {
             return;
         }
 
-        if (context.isDestroyed()) {
-            return;
-        }
-
-        gridCtrlRef.current = context.createBean(new GridCtrl());
-        const gridCtrl = gridCtrlRef.current;
+        const gridCtrl = gridCtrlRef.current!;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
@@ -95,18 +89,19 @@ const GridComp = ({ context }: GridCompProps) => {
             setUserSelect,
         };
 
-        gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
+        gridCtrl.setComp(compProxy, eRef, eRef);
 
         setInitialised(true);
     }, []);
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent || !eRootWrapperRef.current) {
+        const gridCtrl = gridCtrlRef.current;
+        const eRootWrapper = eRootWrapperRef.current;
+        if (!tabGuardReady || !beans || !gridCtrl || !eGridBodyParent || !eRootWrapper) {
             return;
         }
 
-        const gridCtrl = gridCtrlRef.current;
         const beansToDestroy: any[] = [];
 
         // these components are optional, so we check if they are registered before creating them
@@ -118,7 +113,6 @@ const GridComp = ({ context }: GridCompProps) => {
             gridHeaderDropZonesSelector,
         } = gridCtrl.getOptionalSelectors();
         const additionalEls: HTMLElement[] = [];
-        const eRootWrapper = eRootWrapperRef.current;
 
         if (gridHeaderDropZonesSelector) {
             const headerDropZonesComp = context.createBean(new gridHeaderDropZonesSelector.component());

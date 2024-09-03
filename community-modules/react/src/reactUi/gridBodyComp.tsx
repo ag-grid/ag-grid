@@ -70,13 +70,11 @@ const GridBodyComp = () => {
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eRoot.current = e;
-        if (!eRoot.current) {
-            context.destroyBeans(beansToDestroy.current);
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eRoot.current = eRef;
+        if (!eRef) {
+            beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
             destroyFuncs.current.forEach((f) => f());
-
-            beansToDestroy.current = [];
             destroyFuncs.current = [];
 
             return;
@@ -100,8 +98,8 @@ const GridBodyComp = () => {
             attachToDom(eParent, newComp(compClass).getGui());
         };
 
-        addComp(eRoot.current, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
-        addComp(eRoot.current, OverlayWrapperComponent, ' AG Overlay Wrapper ');
+        addComp(eRef, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
+        addComp(eRef, OverlayWrapperComponent, ' AG Overlay Wrapper ');
 
         if (eBody.current) {
             addComp(eBody.current, FakeVScrollComp, ' AG Fake Vertical Scroll ');
@@ -151,7 +149,7 @@ const GridBodyComp = () => {
         beansToDestroy.current.push(ctrl);
         ctrl.setComp(
             compProxy,
-            eRoot.current,
+            eRef,
             eBodyViewport.current!,
             eTop.current!,
             eBottom.current!,
