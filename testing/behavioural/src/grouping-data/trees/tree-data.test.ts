@@ -2,11 +2,10 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridOptions } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { TestGridsManager, getAllRows } from '../../test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
+import type { GridRowsOptions } from '../../test-utils';
 import { getRowsSnapshot, simpleHierarchyRowSnapshot } from '../row-snapshot-test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
-import type { TreeDiagramOptions } from './tree-test-utils';
-import { TreeDiagram } from './tree-test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
@@ -52,12 +51,13 @@ describe('ag-grid tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const treeDiagramOptions: TreeDiagramOptions = {
+        const gridRowsOptions: GridRowsOptions = {
             checkDom: 'myGrid',
         };
 
-        new TreeDiagram(api, 'data', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ └── B LEAF id:1
             ├─┬ C filler id:row-group-0-C
@@ -68,8 +68,7 @@ describe('ag-grid tree data', () => {
             · · · └── H LEAF id:3
         `);
 
-        const rows = getAllRows(api);
-
+        const rows = gridRows.rowNodes;
         expect(rows[0].data).toEqual(rowData[0]);
         expect(rows[1].data).toEqual(rowData[1]);
         expect(rows[2].data).toEqual(undefined);
@@ -111,20 +110,21 @@ describe('ag-grid tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const rows = getAllRows(api);
-
-        const treeDiagramOptions: TreeDiagramOptions = {
+        const gridRowsOptions: GridRowsOptions = {
             checkDom: 'myGrid',
         };
 
-        new TreeDiagram(api, 'data', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:2
             │ └── B LEAF id:0
             └─┬ C filler id:row-group-0-C
             · └─┬ D GROUP id:3
-            · · └── E LEAF id:1`);
+            · · └── E LEAF id:1
+        `);
 
+        const rows = gridRows.rowNodes;
         const rowsSnapshot = getRowsSnapshot(rows);
 
         expect(rows[0].data).toEqual(rowData[2]);

@@ -1,15 +1,14 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { TestGridsManager } from '../../test-utils';
-import { TreeDiagram } from './tree-test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree duplicate keys', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
-    const treeDiagramOptions = {
+    const gridRowsOptions = {
         checkDom: 'myGrid',
     };
 
@@ -48,8 +47,8 @@ describe('ag-grid tree duplicate keys', () => {
         );
         consoleWarnSpy?.mockRestore();
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └── A LEAF id:KtTkR5g-0
         `);
 
@@ -63,8 +62,8 @@ describe('ag-grid tree duplicate keys', () => {
         expect(consoleWarnSpy).not.toHaveBeenCalled();
         consoleWarnSpy?.mockRestore();
 
-        new TreeDiagram(api, 'after update', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'after update', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├── A LEAF id:KtTkR5g-0
             └── B LEAF id:X80CJzw-1
         `);
@@ -94,8 +93,8 @@ describe('ag-grid tree duplicate keys', () => {
         );
         consoleWarnSpy?.mockRestore();
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · └── B LEAF id:j4SDrJw-0
         `);
@@ -109,8 +108,8 @@ describe('ag-grid tree duplicate keys', () => {
         expect(consoleWarnSpy).not.toHaveBeenCalled();
         consoleWarnSpy?.mockRestore();
 
-        new TreeDiagram(api, 'updated', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'updated', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · └─┬ B GROUP id:j4SDrJw-0
             · · └── C LEAF id:BexVZIg-1
@@ -144,8 +143,8 @@ describe('ag-grid tree duplicate keys', () => {
 
         consoleWarnSpy?.mockRestore();
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · └─┬ B GROUP id:UzWrPgX-0
             · · ├── C LEAF id:q7lpQ9A-1
@@ -164,8 +163,8 @@ describe('ag-grid tree duplicate keys', () => {
         expect(consoleWarnSpy).not.toHaveBeenCalled();
         consoleWarnSpy?.mockRestore();
 
-        new TreeDiagram(api, 'updated', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'updated', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · ├── X LEAF id:UzWrPgX-0
             · └─┬ B GROUP id:zIJkvFA-2
@@ -174,10 +173,10 @@ describe('ag-grid tree duplicate keys', () => {
         `);
     });
 
-    test('allow swapping two nodes, without warning', () => {
+    test('allow swapping two nodes, without warning', async () => {
         const rowData = [
             { id: 'B5XPAQx-0', orgHierarchy: ['A', 'B'] },
-            { id: '7KmRgOg-2', orgHierarchy: ['A', 'C'] },
+            { id: 'K7mRgOg-2', orgHierarchy: ['A', 'C'] },
         ];
 
         const api = gridsManager.createGrid('myGrid', {
@@ -190,11 +189,11 @@ describe('ag-grid tree duplicate keys', () => {
             getRowId: (params) => params.data.id,
         });
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · ├── B LEAF id:B5XPAQx-0
-            · └── C LEAF id:7KmRgOg-2
+            · └── C LEAF id:K7mRgOg-2
         `);
 
         consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -209,11 +208,11 @@ describe('ag-grid tree duplicate keys', () => {
         expect(consoleWarnSpy).not.toHaveBeenCalled();
         consoleWarnSpy?.mockRestore();
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · ├── C LEAF id:B5XPAQx-0
-            · └── B LEAF id:7KmRgOg-2
+            · └── B LEAF id:K7mRgOg-2
         `);
     });
 
@@ -238,8 +237,8 @@ describe('ag-grid tree duplicate keys', () => {
             getRowId: (params) => params.data.id,
         });
 
-        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · └── B LEAF id:xRow-0
         `);
@@ -254,8 +253,8 @@ describe('ag-grid tree duplicate keys', () => {
             { id: 'xRow-4', orgHierarchy: ['A', 'B'] },
         ]);
 
-        new TreeDiagram(api, 'update 1', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'update 1', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · └── B LEAF id:xRow-2
         `);
@@ -268,8 +267,8 @@ describe('ag-grid tree duplicate keys', () => {
             { id: 'xRow-1', orgHierarchy: ['A', 'C'] },
         ]);
 
-        new TreeDiagram(api, 'update 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'update 2', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · ├── B LEAF id:xRow-3
             · └── C LEAF id:xRow-2
@@ -284,8 +283,8 @@ describe('ag-grid tree duplicate keys', () => {
             { id: 'xRow-5', orgHierarchy: ['A', 'B'] },
         ]);
 
-        new TreeDiagram(api, 'update 3', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'update 3', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A filler id:row-group-0-A
             · ├── C LEAF id:xRow-2
             · └── B LEAF id:xRow-0

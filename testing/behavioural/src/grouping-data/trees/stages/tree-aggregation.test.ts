@@ -1,9 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../../test-utils';
-import { TreeDiagram } from '../tree-test-utils';
-import type { TreeDiagramOptions } from '../tree-test-utils';
+import type { GridRowsOptions } from '../../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../../test-utils';
 
 describe('ag-grid tree aggregation', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
@@ -42,13 +41,13 @@ describe('ag-grid tree aggregation', () => {
             getDataPath: (data: any) => data.path,
         });
 
-        const treeDiagramOptions: TreeDiagramOptions = {
+        const gridRowsOptions: GridRowsOptions = {
             columns: ['name', 'x'],
             checkDom: 'myGrid',
         };
 
-        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:1 name:"John Von Neumann" x:9
             │ ├─┬ B GROUP id:2 name:"Alan Turing" x:3
             │ │ ├── D LEAF id:4 name:"Donald Knuth" x:1
@@ -76,8 +75,8 @@ describe('ag-grid tree aggregation', () => {
             ])
         );
 
-        new TreeDiagram(api, 'update x', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'update x', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:1 name:"John Von Neumann" x:26
             │ ├─┬ B GROUP id:2 name:"Alan Turing" x:12
             │ │ ├── E LEAF id:5 name:"Grace Hopper" x:2
@@ -104,8 +103,8 @@ describe('ag-grid tree aggregation', () => {
             ])
         );
 
-        new TreeDiagram(api, 'delete', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'delete', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:1 name:"John Von Neumann" x:24
             │ ├─┬ B GROUP id:2 name:"Alan Turing" x:12
             │ │ ├── E LEAF id:5 name:"Grace Hopper" x:2
@@ -135,8 +134,8 @@ describe('ag-grid tree aggregation', () => {
         // Remove this line after AG-12650 is fixed
         api.setGridOption('rowData', JSON.parse(JSON.stringify(movedRowData)));
 
-        new TreeDiagram(api, 'move', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'move', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:1 name:"John Von Neumann" x:25
             │ ├─┬ B GROUP id:2 name:"Alan Turing" x:24
             │ │ ├── E LEAF id:5 name:"Grace Hopper" x:2
@@ -180,13 +179,13 @@ describe('ag-grid tree aggregation', () => {
             getDataPath: (data: any) => data.path,
         });
 
-        const treeDiagramOptions: TreeDiagramOptions = {
+        const gridRowsOptions: GridRowsOptions = {
             columns: ['x', 'y'],
             checkDom: 'myGrid',
         };
 
-        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A GROUP id:0 x:12 y:28
             · ├─┬ B GROUP id:1 x:2 y:3
             · │ ├── D LEAF id:2 x:1 y:1
@@ -203,8 +202,8 @@ describe('ag-grid tree aggregation', () => {
 
         api.applyTransaction({ remove: [rowData[3], rowData[8]] });
 
-        new TreeDiagram(api, 'transaction 0 (remove)', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'transaction 0 (remove)', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A GROUP id:0 x:9 y:19
             · ├─┬ B GROUP id:1 x:1 y:1
             · │ └── D LEAF id:2 x:1 y:1
@@ -227,8 +226,8 @@ describe('ag-grid tree aggregation', () => {
             api
         );
 
-        new TreeDiagram(api, 'transaction 1 (re-add, update)', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'transaction 1 (re-add, update)', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A GROUP id:0 x:110 y:1022
             · ├─┬ B GROUP id:1 x:2 y:3
             · │ ├── D LEAF id:2 x:1 y:1
@@ -251,8 +250,8 @@ describe('ag-grid tree aggregation', () => {
             ],
         });
 
-        new TreeDiagram(api, 'transaction 2 (change path)', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'transaction 2 (change path)', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0 x:6 y:13
             │ ├─┬ B GROUP id:1 x:2 y:3
             │ │ ├── D LEAF id:2 x:1 y:1
@@ -273,8 +272,8 @@ describe('ag-grid tree aggregation', () => {
             { field: 'y', aggFunc: 'avg' },
         ]);
 
-        new TreeDiagram(api, 'change aggFunc', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'change aggFunc', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0 x:6 y:{"count":4,"value":3.25}
             │ ├─┬ B GROUP id:1 x:2 y:{"count":2,"value":1.5}
             │ │ ├── D LEAF id:2 x:1 y:1
@@ -300,8 +299,8 @@ describe('ag-grid tree aggregation', () => {
             ],
         });
 
-        new TreeDiagram(api, 'transaction 4 (update and change path)', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'transaction 4 (update and change path)', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0 x:102 y:{"count":2,"value":51.5}
             │ ├─┬ B GROUP id:1 x:100 y:{"count":1,"value":100}
             │ │ └── R LEAF id:8 x:100 y:100
@@ -340,13 +339,13 @@ describe('ag-grid tree aggregation', () => {
             getDataPath: (data: any) => data.path,
         });
 
-        const treeDiagramOptions: TreeDiagramOptions = {
+        const gridRowsOptions: GridRowsOptions = {
             columns: ['x', 'y'],
             checkDom: 'myGrid',
         };
 
-        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID x:6 y:10
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID x:6 y:10
             └─┬ A GROUP id:0 x:6 y:10
             · ├─┬ B GROUP id:1 x:2 y:3
             · │ ├── D LEAF id:2 x:1 y:1
@@ -358,8 +357,8 @@ describe('ag-grid tree aggregation', () => {
 
         api.applyTransaction({ remove: [rowData[3]] });
 
-        new TreeDiagram(api, 'transaction 1', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID x:5 y:8
+        await new GridRows(api, 'transaction 1', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID x:5 y:8
             └─┬ A GROUP id:0 x:5 y:8
             · ├─┬ B GROUP id:1 x:1 y:1
             · │ └── D LEAF id:2 x:1 y:1
@@ -370,8 +369,8 @@ describe('ag-grid tree aggregation', () => {
 
         api.applyTransaction({ update: [{ ...rowData[4], x: 100, y: 100 }] });
 
-        new TreeDiagram(api, 'transaction 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID x:103 y:105
+        await new GridRows(api, 'transaction 2', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID x:103 y:105
             └─┬ A GROUP id:0 x:103 y:105
             · ├─┬ B GROUP id:1 x:1 y:1
             · │ └── D LEAF id:2 x:1 y:1
@@ -382,8 +381,8 @@ describe('ag-grid tree aggregation', () => {
 
         api.setGridOption('alwaysAggregateAtRootLevel', false);
 
-        new TreeDiagram(api, 'alwaysAggregateAtRootLevel=false', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'alwaysAggregateAtRootLevel=false', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A GROUP id:0 x:103 y:105
             · ├─┬ B GROUP id:1 x:1 y:1
             · │ └── D LEAF id:2 x:1 y:1
@@ -394,8 +393,8 @@ describe('ag-grid tree aggregation', () => {
 
         api.setGridOption('alwaysAggregateAtRootLevel', true);
 
-        new TreeDiagram(api, 'alwaysAggregateAtRootLevel=true', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID x:103 y:105
+        await new GridRows(api, 'alwaysAggregateAtRootLevel=true', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID x:103 y:105
             └─┬ A GROUP id:0 x:103 y:105
             · ├─┬ B GROUP id:1 x:1 y:1
             · │ └── D LEAF id:2 x:1 y:1

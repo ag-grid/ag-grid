@@ -1,0 +1,250 @@
+import type { Column, GridApi, IRowNode } from '@ag-grid-community/core';
+import type { RowNode } from '@ag-grid-community/core';
+import util from 'util';
+
+import { TestGridsManager } from '../testGridsManager';
+import { log, unindentText } from '../utils';
+import { GridRowsDiagramTree } from './gridRowsDiagramTree';
+import { GridRowsErrors } from './gridRowsErrors';
+import { GridRowsDomValidator } from './validation/gridRowsDomValidator';
+import { GridRowsValidator } from './validation/gridRowsValidator';
+
+export interface GridRowsOptions {
+    /** If true, selected nodes will be tested. Default is true */
+    checkSelectedNodes?: boolean;
+
+    /** If true, the DOM will be checked as well. Default is true. */
+    checkDom?: boolean | string;
+
+    /**
+     * Columns to include when making the diagram. If true, all columns will be included.
+     * If an array, it must contain the id of the columns to include. Default is false, no columns.
+     */
+    columns?: (string | Column)[] | boolean;
+
+    /** If false, the id will not be shown in the diagram. Default is true */
+    printIds?: boolean;
+
+    /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
+    printHiddenRows?: boolean;
+}
+
+export class GridRows<TData = any> {
+    public readonly treeData: boolean;
+    public readonly rowNodes: RowNode<TData>[];
+    public readonly displayedRows: RowNode<TData>[];
+    public readonly rootRowNodes: RowNode<TData>[];
+    public readonly rootRowNode: RowNode<TData> | null;
+    public readonly rootAllLeafChildren: RowNode<TData>[];
+    public readonly errors = new GridRowsErrors<TData>();
+
+    #gridHtmlElement: HTMLElement | null | undefined = undefined;
+    #byIdMap: Map<string, RowNode<TData>> | null = null;
+    #indexMap: Map<IRowNode<TData>, number> | null = null;
+    #displayedRowsSet: Set<RowNode<TData>> | null = null;
+    #rowsHtmlElements: HTMLElement[] | null = null;
+    #rowsHtmlElementsMap: Map<string, HTMLElement> | null = null;
+
+    public constructor(
+        public readonly api: GridApi<TData>,
+        public readonly label: string = '',
+        public readonly options: GridRowsOptions = {}
+    ) {
+        this.treeData = !!api.getGridOption('treeData');
+        const rowNodes: RowNode<TData>[] = [];
+        const displayedRows: RowNode<TData>[] = [];
+        const rootNodesSet = new Set<RowNode<TData>>();
+        api.forEachNode((row: RowNode) => {
+            rowNodes.push(row);
+            const parent = row.parent;
+            if (parent && !parent.parent) {
+                rootNodesSet.add(parent);
+            }
+        });
+        this.rowNodes = rowNodes;
+        this.displayedRows = displayedRows;
+        for (let i = 0, len = api.getDisplayedRowCount(); i < len; ++i) {
+            const row = api.getDisplayedRowAtIndex(i) as RowNode<TData> | undefined;
+            if (row) {
+                displayedRows.push(row);
+                const parent = row.parent;
+                if (parent && !parent.parent) {
+                    rootNodesSet.add(parent);
+                }
+            }
+        }
+        this.rootRowNodes = Array.from(rootNodesSet);
+        this.rootRowNode = this.rootRowNodes[0] ?? null;
+        this.rootAllLeafChildren = this.rootRowNode?.allLeafChildren ?? [];
+    }
+
+    public get gridHtmlElement(): HTMLElement | null {
+        let element = this.#gridHtmlElement;
+        if (element === undefined) {
+            element = TestGridsManager.getHTMLElement(this.api);
+            if (!element) {
+                // hack: we are accessing the beans here to obtain the html element
+                element = ((this.rootRowNode ?? this.rowNodes[0]) as any)?.beans?.eGridDiv ?? null;
+                if (element) {
+                    TestGridsManager.registerHTMLElement(this.api, element);
+                }
+            }
+            this.#gridHtmlElement = element;
+        }
+        return element ?? null;
+    }
+
+    public get rowsHtmlElements(): HTMLElement[] {
+        return (this.#rowsHtmlElements ??= Array.from(this.gridHtmlElement?.querySelectorAll('[row-id]') ?? []));
+    }
+
+    public getAllRowNodesData(): (TData | undefined)[] {
+        return this.rowNodes.map((node) => node.data);
+    }
+
+    public getAllDisplayedRowsData(): (TData | undefined)[] {
+        return this.displayedRows.map((node) => node.data);
+    }
+
+    public getById(id: string | null | undefined): RowNode<TData> | undefined {
+        return (this.#byIdMap ??= this.#makeByIdMap()).get(String(id));
+    }
+
+    public getIndexInRowNodes(row: IRowNode<TData> | null | undefined): number {
+        return row ? (this.#indexMap ??= this.#makeIndexMap()).get(row) ?? -1 : -1;
+    }
+
+    public isDuplicateIdRow(row: IRowNode<TData> | null | undefined): boolean {
+        if (!row || !('id' in row)) return false;
+        const found = this.getById(String(row.id));
+        return !found || found !== row;
+    }
+
+    public isInRowNodes(row: IRowNode<TData> | null | undefined): boolean {
+        return (this.#indexMap ??= this.#makeIndexMap()).has(row as RowNode<TData>);
+    }
+
+    public isRowDisplayed(row: IRowNode<TData> | null | undefined): boolean {
+        return (this.#displayedRowsSet ??= new Set(this.displayedRows)).has(row as RowNode<TData>);
+    }
+
+    public getRowHtmlElement(id: string | { readonly id: string | null } | null | undefined): HTMLElement | null {
+        if (typeof id === 'object') {
+            id = id?.id ?? null;
+            if (id === null) {
+                return null;
+            }
+        }
+        id = String(id);
+        let map = this.#rowsHtmlElementsMap;
+        if (!map) {
+            map = new Map<string, HTMLElement>();
+            for (const rowElement of this.rowsHtmlElements) {
+                const rowId = rowElement.getAttribute('row-id');
+                if (rowId !== null) {
+                    map.set(rowId, rowElement);
+                }
+            }
+            this.#rowsHtmlElementsMap = map;
+        }
+        return map.get(id) ?? null;
+    }
+
+    public loadErrors(): this {
+        if (!this.errors.validated) {
+            this.errors.validated = true;
+            new GridRowsValidator(this).validate();
+
+            if (this.options.checkDom ?? true) {
+                new GridRowsDomValidator(this).validate();
+            }
+        }
+        return this;
+    }
+
+    public makeDiagram(printErrors = false): string {
+        let columns: Column[] | null = null;
+        if (this.options.columns) {
+            columns = this.api.getAllGridColumns();
+            if (Array.isArray(this.options.columns)) {
+                const set = new Set(this.options.columns);
+                columns = columns.filter((column) => set.has(column) || set.has(column.getColId()));
+            }
+        }
+        if (printErrors) {
+            this.loadErrors();
+        }
+        return new GridRowsDiagramTree(this).diagramToString(printErrors, columns);
+    }
+
+    [util.inspect.custom](): string {
+        return this.makeDiagram(true);
+    }
+
+    public printDiagram(): this {
+        log(this.makeDiagram(true));
+        return this;
+    }
+
+    public async check(diagramSnapshot?: string | string[] | 'empty' | true): Promise<this> {
+        this.loadErrors();
+        if (this.errors.totalErrorsCount > 0) {
+            throw this.#makeError(this.check);
+        }
+        if (diagramSnapshot === true) {
+            this.printDiagram();
+        } else if (diagramSnapshot !== undefined) {
+            const diagram = this.makeDiagram(false);
+            try {
+                if (diagramSnapshot === 'empty') {
+                    expect(this.displayedRows.length).toBe(0);
+                } else {
+                    expect(unindentText(diagram)).toEqual(unindentText(diagramSnapshot));
+                }
+            } catch (e) {
+                e.message += '\n\n' + diagram;
+                Error.captureStackTrace(e, this.check);
+                throw e;
+            }
+        }
+        return this;
+    }
+
+    #makeByIdMap(): Map<string, RowNode<TData>> {
+        const map = new Map<string, RowNode<TData>>();
+        const addRow = (row: RowNode<TData>) => {
+            if (row && 'id' in row) {
+                const id = String(row.id);
+                if (!map.has(id)) {
+                    map.set(id, row);
+                }
+            }
+        };
+        this.rowNodes.forEach(addRow);
+        this.displayedRows.forEach(addRow);
+        return map;
+    }
+
+    #makeIndexMap(): Map<IRowNode<TData>, number> {
+        const map = new Map<IRowNode<TData>, number>();
+        const rowNodes = this.rowNodes;
+        for (let index = 0; index < rowNodes.length; ++index) {
+            map.set(rowNodes[index], index);
+        }
+        return map;
+    }
+
+    #makeError(callerFn: Function, message = ''): Error {
+        try {
+            const diagram = this.makeDiagram(true);
+            message = message ? message + '\n' + diagram : diagram;
+        } catch (error) {
+            this.errors.default.add('Error making diagram: ' + error.message);
+            this.errors.throwIfAny(callerFn);
+            return error;
+        }
+        const error = new Error(message);
+        Error.captureStackTrace(error, callerFn);
+        return error;
+    }
+}

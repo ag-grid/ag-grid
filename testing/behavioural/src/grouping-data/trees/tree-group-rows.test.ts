@@ -1,10 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { TestGridsManager, getAllRows } from '../../test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
+import type { GridRowsOptions } from '../../test-utils';
 import { getRowsSnapshot, simpleHierarchyRowSnapshot } from '../row-snapshot-test-utils';
-import type { TreeDiagramOptions } from './tree-test-utils';
-import { TreeDiagram } from './tree-test-utils';
 
 describe('ag-grid grouping tree data with groupRows', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
@@ -43,13 +42,14 @@ describe('ag-grid grouping tree data with groupRows', () => {
             groupDisplayType: 'groupRows',
         });
 
-        const treeDiagramOptions: TreeDiagramOptions = {
+        const gridRowsOptions: GridRowsOptions = {
             checkDom: false,
             columns: ['type'],
         };
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID type:"Root"
+        const gridRows = new GridRows(api, '', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID type:"Root"
             ├─┬ A GROUP id:0 type:"Provided"
             │ └── B LEAF id:1 type:"Provided"
             ├─┬ C filler id:row-group-0-C type:"Filler"
@@ -60,10 +60,8 @@ describe('ag-grid grouping tree data with groupRows', () => {
             · · · └── H LEAF id:3 type:"Provided"
         `);
 
-        const rows = getAllRows(api);
-
+        const rows = gridRows.rootAllLeafChildren;
         expect(rows.length).toBe(8);
-
         const rowsSnapshot = getRowsSnapshot(rows);
 
         expect(rows[0].data).toEqual(rowData[0]);

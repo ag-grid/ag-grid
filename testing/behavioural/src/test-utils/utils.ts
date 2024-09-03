@@ -1,4 +1,18 @@
+import { setTimeout as __asyncSetTimeout } from 'timers/promises';
 import util from 'util';
+
+const log = console.log;
+const info = console.info;
+
+export { log, info };
+
+export const asyncSetTimeout = __asyncSetTimeout;
+
+export async function flushJestTimers() {
+    jest.advanceTimersByTime(10000);
+    jest.useRealTimers();
+    await asyncSetTimeout(1);
+}
 
 const cachedJSONObjectsMap = new Map<string, any>();
 
@@ -55,3 +69,11 @@ export const printDataSnapshot = (data: any, pretty = false) => {
             '\n'
     );
 };
+
+export function unindentText(text: string | string[]) {
+    let lines = Array.isArray(text) ? text : text.split('\n');
+    lines = lines.filter((line) => line.trim().length > 0).map((line) => line.trimEnd());
+    const minIndent = Math.min(...lines.map((line) => line.match(/^\s*/)?.[0].length ?? 0));
+    if (minIndent > 0) lines = lines.map((line) => line.slice(minIndent));
+    return lines.join('\n');
+}

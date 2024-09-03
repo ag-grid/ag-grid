@@ -1,9 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { TestGridsManager, cachedJSONObjects } from '../../../test-utils';
-import { TreeDiagram } from '../tree-test-utils';
-import type { TreeDiagramOptions } from '../tree-test-utils';
+import type { GridRowsOptions } from '../../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid tree filter', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
@@ -37,14 +36,14 @@ describe('ag-grid tree filter', () => {
             getDataPath: (data: any) => data.orgHierarchy,
         });
 
-        const treeDiagramOptions: TreeDiagramOptions = {
-            includeId: false,
+        const gridRowsOptions: GridRowsOptions = {
+            printIds: false,
             columns: ['name'],
             checkDom: 'myGrid',
         };
 
-        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · ├─┬ B GROUP name:"Alan Turing"
             · │ ├── D LEAF name:"Donald Knuth"
@@ -54,8 +53,8 @@ describe('ag-grid tree filter', () => {
 
         api.setFilterModel({ name: { type: 'equals', filter: 'A. Church' } });
 
-        new TreeDiagram(api, 'filter 1', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'filter 1', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · └── C LEAF name:"A. Church"
         `);
@@ -68,8 +67,8 @@ describe('ag-grid tree filter', () => {
             { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
         ]);
 
-        new TreeDiagram(api, 'filter 1 rowData 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'filter 1 rowData 2', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · ├─┬ B GROUP name:"Alan Turing"
             · │ └── E LEAF name:"A. Church"
@@ -80,8 +79,8 @@ describe('ag-grid tree filter', () => {
 
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api, 'filter 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'filter 2', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · └─┬ B GROUP name:"Alan Turing"
             · · └── E LEAF name:"Grace Hopper"
@@ -96,8 +95,8 @@ describe('ag-grid tree filter', () => {
             { id: '6', name: 'unknown', orgHierarchy: ['A', 'C', 'K'] },
         ]);
 
-        new TreeDiagram(api, 'filter 2 rowData 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'filter 2 rowData 2', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · └─┬ B GROUP name:"Grace Hopper"
             · · ├── D LEAF name:"Donald Knuth"
@@ -107,8 +106,8 @@ describe('ag-grid tree filter', () => {
 
         api.setFilterModel({ name: { type: 'equals', filter: 'Donald Knuth' } });
 
-        new TreeDiagram(api, 'filter 3 rowData 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'filter 3 rowData 2', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · └─┬ B GROUP name:"Grace Hopper"
             · · └── D LEAF name:"Donald Knuth"
@@ -116,8 +115,8 @@ describe('ag-grid tree filter', () => {
 
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api, 'filter 3', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'filter 3', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · └─┬ B GROUP name:"Alan Turing"
             · · └── D LEAF name:"Donald Knuth"
@@ -125,8 +124,8 @@ describe('ag-grid tree filter', () => {
 
         api.setFilterModel({ name: { type: 'equals', filter: 'Kurt Gödel' } });
 
-        new TreeDiagram(api, 'filter 4', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'filter 4', gridRowsOptions).check(`
+            ROOT
         `);
 
         api.setGridOption('rowData', [
@@ -137,8 +136,8 @@ describe('ag-grid tree filter', () => {
             { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
         ]);
 
-        new TreeDiagram(api, 'filter 4 rowData 3', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'filter 4 rowData 3', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"Kurt Gödel"
             · ├─┬ B GROUP name:"Alan Turing"
             · │ ├── D LEAF name:"Donald Knuth"
@@ -150,8 +149,8 @@ describe('ag-grid tree filter', () => {
 
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api, 'no filter', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'no filter', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP name:"John Von Neumann"
             · ├─┬ B GROUP name:"Alan Turing"
             · │ ├── D LEAF name:"Donald Knuth"
@@ -185,14 +184,14 @@ describe('ag-grid tree filter', () => {
             getDataPath: (data: any) => data.orgHierarchy,
         });
 
-        const treeDiagramOptions: TreeDiagramOptions = {
-            includeId: false,
+        const gridRowsOptions: GridRowsOptions = {
+            printIds: false,
             columns: ['value', 'x'],
             checkDom: 'myGrid',
         };
 
-        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ ├── D LEAF value:13 x:1
@@ -207,8 +206,8 @@ describe('ag-grid tree filter', () => {
             state: [{ colId: 'value', sort: 'asc' }],
         });
 
-        new TreeDiagram(api, 'sort value asc', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort value asc', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ F filler
             · │ ├── G LEAF value:10 x:0
@@ -232,8 +231,8 @@ describe('ag-grid tree filter', () => {
             ])
         );
 
-        new TreeDiagram(api, 'sort value asc rowData 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort value asc rowData 2', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ F filler
             · │ ├── G LEAF value:10 x:0
@@ -248,8 +247,8 @@ describe('ag-grid tree filter', () => {
             state: [{ colId: 'value', sort: 'desc' }],
         });
 
-        new TreeDiagram(api, 'sort value desc  rowData 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort value desc  rowData 2', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ ├── d LEAF value:13 x:1
@@ -262,8 +261,8 @@ describe('ag-grid tree filter', () => {
 
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api, 'sort value desc', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort value desc', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ ├── D LEAF value:13 x:1
@@ -281,8 +280,8 @@ describe('ag-grid tree filter', () => {
             ],
         });
 
-        new TreeDiagram(api, 'sort x asc', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort x asc', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ F filler
             · │ ├── G LEAF value:10 x:0
@@ -297,8 +296,8 @@ describe('ag-grid tree filter', () => {
             state: [{ colId: 'x', sort: 'desc' }],
         });
 
-        new TreeDiagram(api, 'sort x desc', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort x desc', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ ├── D LEAF value:13 x:1
@@ -322,8 +321,8 @@ describe('ag-grid tree filter', () => {
             ])
         );
 
-        new TreeDiagram(api, 'sort x desc rowData 3', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort x desc rowData 3', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ ├── E LEAF value:11 x:1
@@ -336,8 +335,8 @@ describe('ag-grid tree filter', () => {
 
         api.setFilterModel({ x: { type: 'equals', filter: 0 } });
 
-        new TreeDiagram(api, 'sort x desc, filter x===0, rowData 3', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort x desc, filter x===0, rowData 3', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ └── D LEAF value:13 x:0
@@ -346,8 +345,8 @@ describe('ag-grid tree filter', () => {
 
         api.setGridOption('rowData', rowData);
 
-        new TreeDiagram(api, 'sort x desc, filter x===0, rowData 3', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort x desc, filter x===0, rowData 3', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ B GROUP value:17 x:1
             · │ └── E LEAF value:11 x:0
@@ -359,8 +358,8 @@ describe('ag-grid tree filter', () => {
             state: [{ colId: 'x', sort: 'asc' }],
         });
 
-        new TreeDiagram(api, 'sort x desc, filter x===0', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT
+        await new GridRows(api, 'sort x desc, filter x===0', gridRowsOptions).check(`
+            ROOT
             └─┬ A GROUP value:12 x:1
             · ├─┬ F filler
             · │ └── G LEAF value:10 x:0

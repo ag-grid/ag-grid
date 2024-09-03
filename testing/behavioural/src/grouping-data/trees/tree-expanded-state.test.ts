@@ -1,16 +1,15 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { TestGridsManager, flushJestTimers } from '../../test-utils';
-import type { TreeDiagramOptions } from './tree-test-utils';
-import { TreeDiagram } from './tree-test-utils';
+import { GridRows, TestGridsManager, flushJestTimers } from '../../test-utils';
+import type { GridRowsOptions } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree expanded state', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
-    const treeDiagramOptions: TreeDiagramOptions = {
+    const gridRowsOptions: GridRowsOptions = {
         checkDom: 'myGrid',
     };
 
@@ -64,20 +63,20 @@ describe('ag-grid tree expanded state', () => {
 
         await flushJestTimers();
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            └─┬ Erica Rogers GROUP !expanded id:0
-            · └─┬ Malcolm Barrett GROUP !expanded id:1
-            · · ├─┬ Esther Baker GROUP !expanded id:2
-            · · │ ├─┬ Brittany Hanson GROUP !expanded id:3
-            · · │ │ ├── Leah Flowers LEAF id:4
-            · · │ │ └── Tammy Sutton LEAF id:5
-            · · │ └── Derek Paul LEAF id:6
-            · · └─┬ Francis Strickland GROUP !expanded id:7
-            · · · ├── Morris Hanson LEAF id:8
-            · · · ├── Todd Tyler LEAF id:9
-            · · · ├── Bennie Wise LEAF id:10
-            · · · └── Joel Cooper LEAF id:11
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ "Erica Rogers" GROUP collapsed id:0
+            · └─┬ "Malcolm Barrett" GROUP collapsed hidden id:1
+            · · ├─┬ "Esther Baker" GROUP collapsed hidden id:2
+            · · │ ├─┬ "Brittany Hanson" GROUP collapsed hidden id:3
+            · · │ │ ├── "Leah Flowers" LEAF hidden id:4
+            · · │ │ └── "Tammy Sutton" LEAF hidden id:5
+            · · │ └── "Derek Paul" LEAF hidden id:6
+            · · └─┬ "Francis Strickland" GROUP collapsed hidden id:7
+            · · · ├── "Morris Hanson" LEAF hidden id:8
+            · · · ├── "Todd Tyler" LEAF hidden id:9
+            · · · ├── "Bennie Wise" LEAF hidden id:10
+            · · · └── "Joel Cooper" LEAF hidden id:11
         `);
 
         jest.useFakeTimers({ advanceTimers: true });
@@ -87,20 +86,20 @@ describe('ag-grid tree expanded state', () => {
 
         await flushJestTimers();
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            └─┬ Erica Rogers GROUP id:0
-            · ├─┬ Malcolm Barrett GROUP id:1
-            · │ ├─┬ Esther Baker GROUP !expanded id:2
-            · │ │ ├─┬ Brittany Hanson GROUP !expanded id:3
-            · │ │ │ ├── Leah Flowers LEAF id:4
-            · │ │ │ └── Tammy Sutton LEAF id:5
-            · │ │ └── Derek Paul LEAF id:6
-            · │ ├─┬ Francis Strickland GROUP !expanded id:7
-            · │ │ ├── Morris Hanson LEAF id:8
-            · │ │ ├── Todd Tyler LEAF id:9
-            · │ │ ├── Bennie Wise LEAF id:10
-            · │ │ └── Joel Cooper LEAF id:11
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ "Erica Rogers" GROUP id:0
+            · ├─┬ "Malcolm Barrett" GROUP id:1
+            · │ ├─┬ "Esther Baker" GROUP collapsed id:2
+            · │ │ ├─┬ "Brittany Hanson" GROUP collapsed hidden id:3
+            · │ │ │ ├── "Leah Flowers" LEAF hidden id:4
+            · │ │ │ └── "Tammy Sutton" LEAF hidden id:5
+            · │ │ └── "Derek Paul" LEAF hidden id:6
+            · │ ├─┬ "Francis Strickland" GROUP collapsed id:7
+            · │ │ ├── "Morris Hanson" LEAF hidden id:8
+            · │ │ ├── "Todd Tyler" LEAF hidden id:9
+            · │ │ ├── "Bennie Wise" LEAF hidden id:10
+            · │ │ └── "Joel Cooper" LEAF hidden id:11
             · │ └── yoo-2 LEAF id:yoo-2
             · └── yoo-1 LEAF id:yoo-1
         `);
@@ -112,21 +111,21 @@ describe('ag-grid tree expanded state', () => {
 
         await flushJestTimers();
 
-        new TreeDiagram(api, '', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
-            └─┬ Erica Rogers GROUP id:0
-            · ├─┬ Malcolm Barrett GROUP id:1
-            · │ ├─┬ Esther Baker filler id:row-group-0-Erica Rogers-1-Malcolm Barrett-2-Esther Baker
-            · │ │ ├─┬ Brittany Hanson GROUP !expanded id:3
-            · │ │ │ ├── Leah Flowers LEAF id:4
-            · │ │ │ └── Tammy Sutton LEAF id:5
-            · │ │ ├── Derek Paul LEAF id:6
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ "Erica Rogers" GROUP id:0
+            · ├─┬ "Malcolm Barrett" GROUP id:1
+            · │ ├─┬ "Esther Baker" filler id:"row-group-0-Erica Rogers-1-Malcolm Barrett-2-Esther Baker"
+            · │ │ ├─┬ "Brittany Hanson" GROUP collapsed id:3
+            · │ │ │ ├── "Leah Flowers" LEAF hidden id:4
+            · │ │ │ └── "Tammy Sutton" LEAF hidden id:5
+            · │ │ ├── "Derek Paul" LEAF id:6
             · │ │ └── yoo-4 LEAF id:yoo-4
-            · │ ├─┬ Francis Strickland filler id:row-group-0-Erica Rogers-1-Malcolm Barrett-2-Francis Strickland
-            · │ │ ├── Morris Hanson LEAF id:8
-            · │ │ ├── Todd Tyler LEAF id:9
-            · │ │ ├── Bennie Wise LEAF id:10
-            · │ │ ├── Joel Cooper LEAF id:11
+            · │ ├─┬ "Francis Strickland" filler id:"row-group-0-Erica Rogers-1-Malcolm Barrett-2-Francis Strickland"
+            · │ │ ├── "Morris Hanson" LEAF id:8
+            · │ │ ├── "Todd Tyler" LEAF id:9
+            · │ │ ├── "Bennie Wise" LEAF id:10
+            · │ │ ├── "Joel Cooper" LEAF id:11
             · │ │ └── yoo-3 LEAF id:yoo-3
             · │ └── yoo-2 LEAF id:yoo-2
             · └── yoo-1 LEAF id:yoo-1
