@@ -12,9 +12,9 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "dependsOn": ["^build"],
       "options": {
-        "config": "testing/behavioural/vitest.config.js"
+        "config": "{projectRoot}/vitest.config.js",
+        "reporters": ["default"]
       }
     }
   },
