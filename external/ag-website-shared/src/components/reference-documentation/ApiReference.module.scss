@@ -203,6 +203,9 @@
     font-variant-ligatures: none;
     font-optical-sizing: auto;
     font-weight: 400;
+    span {
+        opacity: 0.7;
+    }
 }
 
 a.metaValue {
