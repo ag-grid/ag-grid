@@ -20,10 +20,8 @@ import {
     isTreeRowCommitted,
     isTreeRowExpandedInitialized,
     isTreeRowKeyChanged,
-    isTreeRowPathChanged,
     isTreeRowUpdated,
     markTreeRowCommitted,
-    markTreeRowPathChanged,
     setTreeRowExpandedInitialized,
     setTreeRowKeyChanged,
     setTreeRowUpdated,
@@ -127,7 +125,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             this.oldGroupDisplayColIds = newGroupDisplayColIds;
         }
 
-        this.clearTree(root);
+        this.clearTree(root, details.changedPath);
 
         this.addOrUpdateRows(details, rootRow.allLeafChildren, false);
 
@@ -297,23 +295,20 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         this.commitInvalidatedChildren(details, root);
 
-        const rootRow = root.row!;
-
         if (root.childrenChanged) {
-            if (root.updateChildrenAfterGroup()) {
-                markTreeRowPathChanged(rootRow);
-            }
+            root.updateChildrenAfterGroup();
         }
 
+        const rootRow = root.row!;
         rootRow.updateHasChildren();
 
-        if (isTreeRowPathChanged(rootRow)) {
+        if (root.pathChanged || root.childrenChanged) {
+            root.pathChanged = false;
+            root.childrenChanged = false;
             if (details.changedPath?.isActive()) {
                 details.changedPath.addParentNode(rootRow);
             }
         }
-
-        markTreeRowCommitted(rootRow);
 
         this.commitDestroyedRows();
     }
@@ -334,7 +329,10 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     /** Commit the changes performed to a node and its children */
     private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
         if (node.isEmptyFillerNode()) {
-            this.clearTree(node);
+            if (node.oldRow !== null) {
+                parent.childrenChanged = true;
+            }
+            this.clearTree(node, details.changedPath);
             return; // Removed. No need to process children.
         }
 
@@ -345,20 +343,18 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
     private commitNodePreOrder(parent: TreeNode, node: TreeNode): void {
         let row = node.row;
-
         if (row === null) {
             row = this.createFillerRow(node);
             node.setRow(row);
-        } else {
-            row = node.sortFirstDuplicateRow()!; // The main row must have the smallest sourceRowIndex of duplicates
-
-            if (row.allChildrenCount === undefined) {
-                row.allChildrenCount = null; // initialize to null if this field wasn't initialized yet
-            }
+        } else if (node.duplicateRows) {
+            // If we have a list of duplicates we need to be sure that those are sorted by sourceRowIndex
+            row = node.sortFirstDuplicateRow()!;
         }
 
         row.parent = parent.row;
         if (node.oldRow !== row) {
+            parent.pathChanged = true;
+            parent.childrenChanged = true;
             // We need to update children rows parents, as the row changed
             for (const child of node.enumChildren()) {
                 const childRow = child.row;
@@ -367,7 +363,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
                 }
             }
         }
-
         const key = node.key;
         if (row.key !== key) {
             row.key = key;
@@ -383,14 +378,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const oldRow = node.oldRow;
 
         if (node.isEmptyFillerNode()) {
-            this.clearTree(node);
+            if (node.oldRow !== null) {
+                parent.childrenChanged = true;
+            }
+            this.clearTree(node, details.changedPath);
             return; // Removed. No need to process further
         }
 
         if (node.childrenChanged) {
-            if (node.updateChildrenAfterGroup()) {
-                markTreeRowPathChanged(row);
-            }
+            node.updateChildrenAfterGroup();
         }
 
         if (node.leafChildrenChanged) {
@@ -405,15 +401,12 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
 
         const hasChildren = !!row.childrenAfterGroup?.length;
         const group = hasChildren || !row.data;
-        const oldGroup = row.group;
-        if (oldGroup !== group) {
-            markTreeRowPathChanged(row);
+        if (row.group !== group) {
             row.setGroup(group); // Internally calls updateHasChildren
             if (!group && !row.expanded) {
                 setTreeRowExpandedInitialized(row, false);
             }
         } else if (row.hasChildren() !== hasChildren) {
-            markTreeRowPathChanged(row);
             row.updateHasChildren();
         }
 
@@ -435,7 +428,7 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         }
 
         if (isTreeRowUpdated(row)) {
-            markTreeRowPathChanged(parent.row!);
+            parent.pathChanged = true;
 
             if (isTreeRowKeyChanged(row)) {
                 // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
@@ -447,22 +440,15 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
 
-        if (oldRow !== row) {
-            node.oldRow = row;
-            if (oldRow !== null && (oldGroup || node.hasChildren())) {
-                markTreeRowPathChanged(row);
-            }
-            parent.childrenChanged = true;
-            markTreeRowPathChanged(parent.row!);
-        }
+        node.oldRow = row;
+        markTreeRowCommitted(row);
 
-        if (isTreeRowPathChanged(row)) {
+        if (node.pathChanged) {
+            node.pathChanged = false;
             if (details.changedPath?.isActive()) {
                 details.changedPath.addParentNode(row);
             }
         }
-
-        markTreeRowCommitted(row);
 
         if (node.duplicateRows?.size && !node.duplicateRowsWarned) {
             node.duplicateRowsWarned = true;
@@ -481,7 +467,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         row.field = null;
         row.leafGroup = false;
         row.rowGroupIndex = null;
-        row.allChildrenCount = null;
 
         // Generate a unique id for the filler row
         let id = node.level + '-' + node.key;
@@ -526,15 +511,11 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
     }
 
     /** Called to clear a subtree. */
-    private clearTree(node: TreeNode): void {
-        const { parent, oldRow, row, level } = node;
-        if (parent !== null && oldRow !== null) {
-            parent.childrenChanged = true;
-            if (parent.row !== null) {
-                markTreeRowPathChanged(parent.row);
-            }
-        }
+    private clearTree(node: TreeNode, changedPath: ChangedPath | null | undefined): void {
+        const { row, level } = node;
+        let shouldNotify = false;
         if (row !== null) {
+            shouldNotify = isTreeRowCommitted(row);
             if (level >= 0) {
                 let row = node.row;
                 while (row !== null && node.removeRow(row)) {
@@ -544,7 +525,13 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
             }
         }
         for (const child of node.enumChildren()) {
-            this.clearTree(child);
+            if (shouldNotify && child.row !== null && isTreeRowCommitted(child.row)) {
+                shouldNotify = false;
+                if (changedPath?.isActive()) {
+                    changedPath.addParentNode(row);
+                }
+            }
+            this.clearTree(child, changedPath);
         }
         node.destroy();
     }

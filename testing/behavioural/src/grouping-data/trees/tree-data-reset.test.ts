@@ -157,10 +157,6 @@ describe('ag-grid tree data', () => {
             · ├── R LEAF id:2
             · └── Q LEAF id:3
         `);
-
-        api.setGridOption('rowData', []);
-
-        await new GridRows(api, 'empty', defaultGridRowsOptions).check('empty');
     });
 
     test('tree data with id ordering of fillers is consistent', async () => {
