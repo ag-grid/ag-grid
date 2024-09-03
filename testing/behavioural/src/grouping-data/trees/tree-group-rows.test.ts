@@ -60,7 +60,7 @@ describe('ag-grid grouping tree data with groupRows', () => {
             · · · └── H LEAF id:3 type:"Provided"
         `);
 
-        const rows = gridRows.rootAllLeafChildren;
+        const rows = gridRows.rowNodes;
         expect(rows.length).toBe(8);
         const rowsSnapshot = getRowsSnapshot(rows);
 

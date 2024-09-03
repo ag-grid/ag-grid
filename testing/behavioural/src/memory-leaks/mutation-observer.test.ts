@@ -10,11 +10,11 @@ describe('Mutation Observers Disconnected', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
 
     const allMocks: any = [];
-    const mutationObserverMock = jest.fn<MutationObserver, [MutationCallback]>().mockImplementation(() => {
+    const mutationObserverMock = vitest.fn<MutationObserver, [MutationCallback]>().mockImplementation(() => {
         const mock = {
-            observe: jest.fn(),
-            disconnect: jest.fn(),
-            takeRecords: jest.fn(),
+            observe: vitest.fn(),
+            disconnect: vitest.fn(),
+            takeRecords: vitest.fn(),
         };
         allMocks.push(mock);
         return mock;

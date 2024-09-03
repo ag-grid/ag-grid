@@ -1,8 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
+import type { MockInstance } from 'vitest';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, flushFakeTimers } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const defaultGridRowsOptions: GridRowsOptions = {
@@ -14,10 +15,10 @@ const getDataPath = (data: any) => data.orgHierarchy;
 describe('ag-grid tree data', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
-    let consoleWarnSpy: jest.SpyInstance;
+    let consoleWarnSpy: MockInstance;
 
     beforeEach(() => {
-        jest.useRealTimers();
+        vitest.useRealTimers();
         cachedJSONObjects.clear();
         gridsManager.reset();
     });
@@ -502,7 +503,7 @@ describe('ag-grid tree data', () => {
 
         const gridRowsOptions = { ...defaultGridRowsOptions, columns: ['label'] };
 
-        jest.useFakeTimers({ advanceTimers: true });
+        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         api.setGridOption('rowData', rowData1);
 
@@ -518,9 +519,7 @@ describe('ag-grid tree data', () => {
         // Select all nodes
         api.selectAll();
 
-        // We need to be sure all timers are flushed, as expanded state is throttled
-        jest.advanceTimersByTime(10000);
-        jest.useRealTimers();
+        await flushFakeTimers();
 
         await new GridRows(api, 'update 0', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID

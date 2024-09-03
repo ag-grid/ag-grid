@@ -8,7 +8,7 @@ describe('ag-grid tree aggregation', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
-        jest.useRealTimers();
+        vitest.useRealTimers();
         gridsManager.reset();
     });
 

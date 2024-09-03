@@ -1,6 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import type { MockInstance } from 'vitest';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
@@ -12,7 +13,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 describe('ag-grid tree data', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
-    let consoleWarnSpy: jest.SpyInstance;
+    let consoleWarnSpy: MockInstance;
 
     beforeEach(() => {
         gridsManager.reset();

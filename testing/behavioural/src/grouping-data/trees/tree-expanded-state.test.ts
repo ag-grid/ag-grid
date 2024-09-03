@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { GridRows, TestGridsManager, flushJestTimers } from '../../test-utils';
+import { GridRows, TestGridsManager, flushFakeTimers } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
@@ -18,8 +18,8 @@ describe('ag-grid tree expanded state', () => {
     });
 
     afterEach(() => {
-        jest.clearAllTimers();
-        jest.useRealTimers();
+        vitest.clearAllTimers();
+        vitest.useRealTimers();
         gridsManager.reset();
     });
 
@@ -28,7 +28,7 @@ describe('ag-grid tree expanded state', () => {
         const originalRowData = getOrgHierarchyData();
         let yooCounter = 0;
 
-        jest.useFakeTimers({ advanceTimers: true });
+        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'jobTitle' }, { field: 'employmentType' }],
@@ -61,7 +61,7 @@ describe('ag-grid tree expanded state', () => {
             },
         });
 
-        await flushJestTimers();
+        await flushFakeTimers();
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -79,12 +79,12 @@ describe('ag-grid tree expanded state', () => {
             · · · └── "Joel Cooper" LEAF hidden id:11
         `);
 
-        jest.useFakeTimers({ advanceTimers: true });
+        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         api.getRowNode('0')!.setExpanded(true);
         api.getRowNode('1')!.setExpanded(true);
 
-        await flushJestTimers();
+        await flushFakeTimers();
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -104,12 +104,12 @@ describe('ag-grid tree expanded state', () => {
             · └── yoo-1 LEAF id:yoo-1
         `);
 
-        jest.useFakeTimers({ advanceTimers: true });
+        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         api.getRowNode('7')!.setExpanded(true);
         api.getRowNode('2')!.setExpanded(true);
 
-        await flushJestTimers();
+        await flushFakeTimers();
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID

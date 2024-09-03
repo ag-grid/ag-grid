@@ -8,10 +8,10 @@ export { log, info };
 
 export const asyncSetTimeout = __asyncSetTimeout;
 
-export async function flushJestTimers() {
-    jest.advanceTimersByTime(10000);
-    jest.useRealTimers();
-    await asyncSetTimeout(1);
+export async function flushFakeTimers() {
+    vitest.advanceTimersByTime(10000);
+    vitest.useRealTimers();
+    await asyncSetTimeout(2);
 }
 
 const cachedJSONObjectsMap = new Map<string, any>();

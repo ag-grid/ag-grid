@@ -201,8 +201,8 @@ export class GridRows<TData = any> {
                 } else {
                     expect(unindentText(diagram)).toEqual(unindentText(diagramSnapshot));
                 }
-            } catch (e) {
-                e.message += '\n\n' + diagram;
+            } catch (e: any) {
+                addDiagramToError(e, diagram, this.label);
                 Error.captureStackTrace(e, this.check);
                 throw e;
             }
@@ -234,17 +234,55 @@ export class GridRows<TData = any> {
         return map;
     }
 
-    #makeError(callerFn: Function, message = ''): Error {
+    #makeError(callerFn: Function, message = 'Grid errors:'): Error {
+        let diagram: string | undefined;
         try {
-            const diagram = this.makeDiagram(true);
-            message = message ? message + '\n' + diagram : diagram;
+            diagram = this.makeDiagram(true);
         } catch (error) {
             this.errors.default.add('Error making diagram: ' + error.message);
             this.errors.throwIfAny(callerFn);
             return error;
         }
         const error = new Error(message);
+        addDiagramToError(error, diagram, this.label);
         Error.captureStackTrace(error, callerFn);
         return error;
+    }
+}
+
+/** This is used to add the diagram to print to a vitest assertion error. */
+function addDiagramToError(error: any, diagram: string | null | undefined, label: string | null | undefined): void {
+    if (typeof error !== 'object' || error === null) {
+        return;
+    }
+    if (diagram) {
+        diagram = '\n' + diagram;
+    }
+    let diagramText = '';
+    if (label) {
+        diagramText += '\n⬢ ' + label;
+    }
+    diagramText += diagram;
+
+    error.message = (error.message ?? '') + diagramText;
+
+    if (typeof error.toJSON === 'function') {
+        const oldToJSON = error.toJSON;
+
+        Reflect.defineProperty(error, 'toJSON', {
+            value: function (this: any, ...args: any[]) {
+                const json = oldToJSON.call(this, ...args);
+                if (typeof json !== 'object' || json === null) {
+                    return json;
+                }
+                if (typeof json.diff === 'string') {
+                    json.diff = json.diff + diagramText;
+                }
+                return json;
+            },
+            configurable: true,
+            writable: true,
+            enumerable: false,
+        });
     }
 }

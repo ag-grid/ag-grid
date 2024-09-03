@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import type { MockInstance } from 'vitest';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
 
@@ -12,7 +13,7 @@ describe('ag-grid tree duplicate keys', () => {
         checkDom: 'myGrid',
     };
 
-    let consoleWarnSpy: jest.SpyInstance;
+    let consoleWarnSpy: MockInstance;
 
     beforeEach(() => {
         gridsManager.reset();
@@ -29,7 +30,7 @@ describe('ag-grid tree duplicate keys', () => {
             { id: 'X80CJzw-1', orgHierarchy: ['A'] },
         ];
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
@@ -52,7 +53,7 @@ describe('ag-grid tree duplicate keys', () => {
             └── A LEAF id:KtTkR5g-0
         `);
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         api.setGridOption('rowData', [
             { id: 'KtTkR5g-0', orgHierarchy: ['A'] },
@@ -75,7 +76,7 @@ describe('ag-grid tree duplicate keys', () => {
             { id: 'BexVZIg-1', orgHierarchy: ['A', 'B'] },
         ];
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
@@ -99,7 +100,7 @@ describe('ag-grid tree duplicate keys', () => {
             · └── B LEAF id:j4SDrJw-0
         `);
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         api.applyTransaction({
             update: [{ id: rowData[1].id, orgHierarchy: ['A', 'B', 'C'] }],
@@ -124,7 +125,7 @@ describe('ag-grid tree duplicate keys', () => {
             { id: 'NXtKeUA-3', orgHierarchy: ['A', 'B', 'D'] },
         ];
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
@@ -151,7 +152,7 @@ describe('ag-grid tree duplicate keys', () => {
             · · └── D LEAF id:NXtKeUA-3
         `);
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         api.setGridOption('rowData', [
             { id: 'UzWrPgX-0', orgHierarchy: ['A', 'X'] },
@@ -196,7 +197,7 @@ describe('ag-grid tree duplicate keys', () => {
             · └── C LEAF id:K7mRgOg-2
         `);
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         api.applyTransaction({
             update: [
@@ -225,7 +226,7 @@ describe('ag-grid tree duplicate keys', () => {
             { id: 'xRow-4', orgHierarchy: ['A', 'B'] },
         ];
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],

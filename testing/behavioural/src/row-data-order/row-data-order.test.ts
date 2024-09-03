@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
+import type { MockInstance } from 'vitest';
 
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../test-utils';
@@ -11,8 +12,8 @@ const defaultGridRowsOptions: GridRowsOptions = {
 
 describe('ag-grid rows-ordering', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
-    let consoleWarnSpy: jest.SpyInstance | undefined;
-    let consoleErrorSpy: jest.SpyInstance | undefined;
+    let consoleWarnSpy: MockInstance | undefined;
+    let consoleErrorSpy: MockInstance | undefined;
 
     beforeEach(() => {
         cachedJSONObjects.clear();
@@ -148,7 +149,7 @@ describe('ag-grid rows-ordering', () => {
             └── LEAF id:5 x:5
         `);
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         await executeTransactionsAsync(
             [
@@ -632,7 +633,7 @@ describe('ag-grid rows-ordering', () => {
                 getRowId: (params) => params.data.id,
             });
 
-            consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             api.applyTransaction({ update: [{ id: 'jhDjSi3Ec-3', x: 3 }] });
 
@@ -670,7 +671,7 @@ describe('ag-grid rows-ordering', () => {
                 checkDom: false,
             };
 
-            consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'x' }],

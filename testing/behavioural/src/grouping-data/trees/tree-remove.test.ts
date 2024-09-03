@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { RowDataTransaction } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { GridRows, TestGridsManager, executeTransactionsAsync, flushJestTimers } from '../../test-utils';
+import { GridRows, TestGridsManager, executeTransactionsAsync, flushFakeTimers } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const gridRowsOptions: GridRowsOptions = {
@@ -13,12 +13,12 @@ describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
-        jest.useRealTimers();
+        vitest.useRealTimers();
         gridsManager.reset();
     });
 
     afterEach(() => {
-        jest.useRealTimers();
+        vitest.useRealTimers();
         gridsManager.reset();
     });
 
@@ -27,7 +27,7 @@ describe('ag-grid tree transactions', () => {
         const rowC = { id: 'c', orgHierarchy: ['A', 'B', 'C'] };
         const rowD = { id: 'd', orgHierarchy: ['A', 'B', 'C', 'D'] };
 
-        jest.useFakeTimers({ advanceTimers: true });
+        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
@@ -51,7 +51,7 @@ describe('ag-grid tree transactions', () => {
         api.applyTransaction({ remove: [rowC] });
         api.applyTransaction({ remove: [rowD] });
 
-        await flushJestTimers();
+        await flushFakeTimers();
 
         const gridRows = new GridRows(api, '', gridRowsOptions);
         await gridRows.check(`
@@ -77,7 +77,7 @@ describe('ag-grid tree transactions', () => {
 
             const rowData = [rowB, rowC, rowD];
 
-            jest.useFakeTimers({ advanceTimers: true });
+            vitest.useFakeTimers({ shouldAdvanceTime: true });
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
@@ -107,7 +107,7 @@ describe('ag-grid tree transactions', () => {
 
             api.applyTransaction({ add: [rowC, rowB] });
 
-            await flushJestTimers();
+            await flushFakeTimers();
 
             await new GridRows(api, 'finalSync', gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
@@ -125,7 +125,7 @@ describe('ag-grid tree transactions', () => {
 
             const rowData = [rowB, rowC, rowD];
 
-            jest.useFakeTimers({ advanceTimers: true });
+            vitest.useFakeTimers({ shouldAdvanceTime: true });
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
@@ -151,7 +151,7 @@ describe('ag-grid tree transactions', () => {
                 add: [rowC, rowB],
             });
 
-            await flushJestTimers();
+            await flushFakeTimers();
 
             await new GridRows(api, 'finalTogether', gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
@@ -174,7 +174,7 @@ describe('ag-grid tree transactions', () => {
 
             const rowData = [rowB, rowC, rowD];
 
-            jest.useFakeTimers({ advanceTimers: true });
+            vitest.useFakeTimers({ shouldAdvanceTime: true });
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
@@ -197,7 +197,7 @@ describe('ag-grid tree transactions', () => {
 
             await executeTransactionsAsync([{ remove: [rowB, rowC] }, { add: [rowC, rowB] }], api);
 
-            await flushJestTimers();
+            await flushFakeTimers();
 
             await new GridRows(api, 'finalAsync', gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
@@ -221,7 +221,7 @@ describe('ag-grid tree transactions', () => {
 
         const rowData = [rowB, rowC, rowD];
 
-        jest.useFakeTimers({ advanceTimers: true });
+        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
@@ -259,7 +259,7 @@ describe('ag-grid tree transactions', () => {
             api.applyTransaction(transactions[1]);
         }
 
-        await flushJestTimers();
+        await flushFakeTimers();
 
         await new GridRows(api, 'final' + mode, gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -279,7 +279,7 @@ describe('ag-grid tree transactions', () => {
 
         const rowData = [rowB, rowC, rowD, rowE, rowF];
 
-        jest.useFakeTimers({ advanceTimers: true });
+        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
@@ -356,7 +356,7 @@ describe('ag-grid tree transactions', () => {
             api.applyTransaction(transactions2[1]);
         }
 
-        await flushJestTimers();
+        await flushFakeTimers();
 
         await new GridRows(api, 'Transactions2 ' + mode, gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
