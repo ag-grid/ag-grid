@@ -21,12 +21,15 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected evaluateNullValue(filterType?: ISimpleFilterModelType | null) {
         switch (filterType) {
             case 'equals':
-            case 'notEqual':
                 if (this.scalarFilterParams.includeBlanksInEquals) {
                     return true;
                 }
                 break;
-
+            case 'notEqual':
+                if (this.scalarFilterParams.includeBlanksInNotEqual) {
+                    return true;
+                }
+                break;
             case 'greaterThan':
             case 'greaterThanOrEqual':
                 if (this.scalarFilterParams.includeBlanksInGreaterThan) {

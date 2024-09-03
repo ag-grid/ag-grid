@@ -19,6 +19,7 @@ import {
     ModuleRegistry,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
+    _getGlobalGridOption,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _processOnChange,
@@ -114,7 +115,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
                     portalManager.current,
-                    mergedGridOps.reactiveCustomComponents ?? true
+                    mergedGridOps.reactiveCustomComponents ?? _getGlobalGridOption('reactiveCustomComponents') ?? true
                 ),
                 renderStatusService,
             },

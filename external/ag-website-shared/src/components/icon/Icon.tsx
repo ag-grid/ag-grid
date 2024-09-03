@@ -20,6 +20,7 @@ import PageResult from '@ag-website-shared/images/inline-svgs/page-result.svg?re
 import PlunkerIcon from '@ag-website-shared/images/inline-svgs/plunker.svg?react';
 import RadarArea from '@ag-website-shared/images/inline-svgs/radar-area.svg?react';
 import RadialColumn from '@ag-website-shared/images/inline-svgs/radial-column.svg?react';
+import RadialGauge from '@ag-website-shared/images/inline-svgs/radial-gauge.svg?react';
 import ReplayDemoIcon from '@ag-website-shared/images/inline-svgs/replay-demo-icon.svg?react';
 import RowsIcon from '@ag-website-shared/images/inline-svgs/rows.svg?react';
 import Sankey from '@ag-website-shared/images/inline-svgs/sankey.svg?react';
@@ -113,6 +114,7 @@ const CHARTS_ICON_MAP = {
     chartsWaterfall: CarbonIcon.ChartWaterfall,
     chartsRadar: CarbonIcon.ChartRadar,
     chartsRadarArea: RadarArea,
+    chartsRadialGauge: RadialGauge,
     chartsSankey: Sankey,
     chartsChord: Chord,
     chartsNightingale: CarbonIcon.ChartRose,

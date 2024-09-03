@@ -131,6 +131,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnContainerWidthChanged: ColumnContainerWidthChangedEvent<TData, TContext>;
         displayedColumnsWidthChanged: DisplayedColumnsWidthChangedEvent<TData, TContext>;
         scrollVisibilityChanged: ScrollVisibilityChangedEvent<TData, TContext>;
+        scrollGapChanged: ScrollOverflowChangedEvent<TData, TContext>;
         columnHoverChanged: ColumnHoverChangedEvent<TData, TContext>;
         flashCells: FlashCellsEvent<TData, TContext>;
         paginationPixelOffsetChanged: PaginationPixelOffsetChangedEvent<TData, TContext>;
@@ -243,6 +244,10 @@ export interface VirtualColumnsChangedEvent<TData = any, TContext = any>
     afterScroll: boolean;
 }
 
+/**
+ * @deprecated v32.2 Either use `displayedColumnsChanged` which is fired at the same time,
+ * or use one of the more specific column events.
+ */
 export interface ColumnEverythingChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnEverythingChanged', TData, TContext> {
     source: string;
@@ -257,7 +262,9 @@ export interface GridColumnsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {}
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {}
+    extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {
+    source: ColumnEventType;
+}
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
@@ -866,9 +873,13 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
         | 'columnChooser';
     /**
      * Column the menu is opened for. Will be `null` if not launched from a column
-     * (e.g. column chooser from the API, or column menu via right-click on an empty header).
+     * (e.g. column chooser from the API, or column menu via right-click on a column group or empty header).
      */
     column: Column | null;
+    /**
+     * Column group the menu is opened for if launched from right-click on a column group
+     */
+    columnGroup?: ProvidedColumnGroup | null;
 }
 
 /**------------*/
@@ -1016,6 +1027,9 @@ export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGlobal
 
 export interface ScrollVisibilityChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'scrollVisibilityChanged', TData, TContext> {} // not documented
+
+export interface ScrollOverflowChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'scrollGapChanged', TData, TContext> {} // not documented
 
 export interface StoreUpdatedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'storeUpdated', TData, TContext> {} // not documented

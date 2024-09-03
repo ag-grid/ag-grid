@@ -1,8 +1,9 @@
 import type { Group } from '@tweenjs/tween.js';
 import { Tween } from '@tweenjs/tween.js';
 
-import { type Point } from '../geometry';
-import { type EasingFunction, getTweenDuration } from '../tween';
+import type { Point } from '../geometry';
+import { getTweenDuration } from '../tween';
+import type { EasingFunction } from '../tween';
 
 interface CreateTweenParams {
     group: Group;

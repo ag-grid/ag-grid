@@ -1,5 +1,5 @@
-import { type ScriptDebugger } from './lib/scriptDebugger';
-import { type RunScriptState } from './lib/scriptRunner';
+import type { ScriptDebugger } from './lib/scriptDebugger';
+import type { RunScriptState } from './lib/scriptRunner';
 
 export interface AutomatedExample {
     start: () => void;

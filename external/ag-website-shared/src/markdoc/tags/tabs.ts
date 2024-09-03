@@ -1,5 +1,6 @@
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
-import { type Render, component } from '@astrojs/markdoc/config';
+import { component } from '@astrojs/markdoc/config';
+import type { Render } from '@astrojs/markdoc/config';
 import type { Config, Schema } from '@markdoc/markdoc';
 
 export const tabs: Schema<Config, Render> = {

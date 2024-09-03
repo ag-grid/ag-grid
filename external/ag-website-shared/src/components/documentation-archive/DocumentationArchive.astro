@@ -2,6 +2,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from './DocumentationArchive.module.scss';
 import type { Library } from '@ag-grid-types';
+import { pathJoin } from '@utils/pathJoin';
+import { PRODUCTION_GRID_SITE_URL, LEGACY_CHARTS_SITE_URL, PRODUCTION_CHARTS_SITE_URL } from '@constants';
 
 interface Props {
     site: Library;
@@ -10,9 +12,7 @@ interface Props {
 
 const { site, versionsData } = Astro.props as Props;
 
-const baseUrl = site === 'Grid' ? 'https://www.ag-grid.com/' : 'https://charts.ag-grid.com/';
-
-const removeDay = (date) => {
+const removeDay = (date: string) => {
     const splitDate = date.split(' ');
 
     if (splitDate.length < 3) return date;
@@ -20,7 +20,7 @@ const removeDay = (date) => {
     return `${splitDate[0]} ${splitDate[2]}`;
 };
 
-const getVersionType = (version) => {
+const getVersionType = (version: string) => {
     const [_, minor, patch] = version.split('.');
 
     if (patch !== '0') {
@@ -32,8 +32,30 @@ const getVersionType = (version) => {
     }
 };
 
-const isMajor = (version) => {
+const isMajor = (version: string) => {
     return getVersionType(version) === 'Major';
+};
+
+const getArchiveUrl = (version: string) => {
+    const archiveBaseUrl = '/archive';
+    const [versionMajor, versionMinor] = version.split('.');
+    const major = parseInt(versionMajor, 10);
+    const minor = parseInt(versionMinor, 10);
+
+    let baseUrl = 'https://www.ag-grid.com';
+    if (site === 'charts') {
+        baseUrl = (major === 10 && minor >= 1) || major > 10 ? PRODUCTION_CHARTS_SITE_URL : LEGACY_CHARTS_SITE_URL;
+    }
+
+    return pathJoin(baseUrl, archiveBaseUrl, version);
+};
+
+const getChangelogUrl = (version: string) => {
+    const changelogBaseUrl = `/changelog/?fixVersion=${version}`;
+
+    const baseUrl = site === 'charts' ? PRODUCTION_CHARTS_SITE_URL : PRODUCTION_GRID_SITE_URL;
+
+    return pathJoin(baseUrl, changelogBaseUrl);
 };
 ---
 
@@ -43,29 +65,29 @@ const isMajor = (version) => {
 
     <table class={styles.archiveTable}>
         {
-            versionsData.slice(1).map((versionInfo) => {
-                if (versionInfo.noArchive) return;
+            versionsData.slice(1).map(({ noArchive, version, versionType, date }) => {
+                if (noArchive) return;
 
                 return (
                     <tr>
-                        <td class="text-base text-monospace text-semibold">{versionInfo.version}</td>
+                        <td class="text-base text-monospace text-semibold">{version}</td>
 
-                        <td>{removeDay(versionInfo.date)}</td>
+                        <td>{removeDay(date)}</td>
 
                         <td>
-                            <span class={isMajor(versionInfo.version) ? styles.major : undefined}>
-                                {versionInfo.versionType || getVersionType(versionInfo.version)}
+                            <span class={isMajor(version) ? styles.major : undefined}>
+                                {versionType || getVersionType(version)}
                             </span>
                         </td>
 
                         <td>
-                            <a href={`${baseUrl}changelog/?fixVersion=${versionInfo.version}`}>
+                            <a href={getChangelogUrl(version)}>
                                 Changelog <Icon name="arrowRight" />
                             </a>
                         </td>
 
                         <td>
-                            <a href={`${baseUrl}archive/${versionInfo.version}/`}>
+                            <a href={getArchiveUrl(version)}>
                                 Documentation <Icon name="arrowRight" />
                             </a>
                         </td>

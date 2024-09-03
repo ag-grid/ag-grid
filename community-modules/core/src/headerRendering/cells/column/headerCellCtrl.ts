@@ -14,7 +14,7 @@ import { _getAriaSortState } from '../../../utils/aria';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
-import { attemptMoveColumns, normaliseX } from '../../columnMoveHelper';
+import { attemptMoveColumns, normaliseX, setColumnsMoving } from '../../columnMoveHelper';
 import type { HeaderPosition } from '../../common/headerPosition';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -140,7 +140,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { eGui, column, gos, ctrlsService } = this;
+        const { eGui, beans, column, ctrlsService } = this;
+        const { gos, columnModel, columnMoveService, visibleColsService } = beans;
         const pinned = this.getPinned();
         const left = eGui.getBoundingClientRect().left;
         const width = column.getActualWidth();
@@ -159,15 +160,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         attemptMoveColumns({
             allMovingColumns: [column],
             isFromHeader: true,
-            hDirection,
+            fromLeft: hDirection === HorizontalDirection.Right,
             xPosition,
             pinned,
             fromEnter: false,
             fakeEvent: false,
             gos,
-            columnModel: this.beans.columnModel,
-            columnMoveService: this.beans.columnMoveService,
-            presentedColsService: this.beans.visibleColsService,
+            columnModel,
+            columnMoveService,
+            visibleColsService,
+            finished: true,
         });
 
         ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
@@ -397,9 +399,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             dragItemName: displayName,
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-                column.setMoving(true, 'uiColumnMoved');
+                setColumnsMoving([column], true);
             },
-            onDragStopped: () => column.setMoving(false, 'uiColumnMoved'),
+            onDragStopped: () => setColumnsMoving([column], false),
+            onDragCancelled: () => setColumnsMoving([column], false),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];

@@ -51,25 +51,21 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnAnimationService.start();
-
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
             _warnOnce('tried to insert columns in invalid location, toIndex = ', toIndex);
             _warnOnce('remember that you should not count the moving columns when calculating the new index');
             return;
         }
 
+        this.columnAnimationService.start();
         // we want to pull all the columns out first and put them into an ordered list
         const movedColumns = this.columnModel.getColsForKeys(columnsToMoveKeys);
-        const failedRules = !this.doesMovePassRules(movedColumns, toIndex);
 
-        if (failedRules) {
-            return;
+        if (this.doesMovePassRules(movedColumns, toIndex)) {
+            this.columnModel.moveInCols(movedColumns, toIndex, source);
+            this.eventDispatcher.columnMoved({ movedColumns, source, toIndex, finished });
         }
 
-        this.columnModel.moveInCols(movedColumns, toIndex, source);
-
-        this.eventDispatcher.columnMoved({ movedColumns, source, toIndex, finished });
         this.columnAnimationService.finish();
     }
 
@@ -77,48 +73,6 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         // make a copy of what the grid columns would look like after the move
         const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
         return this.doesOrderPassRules(proposedColumnOrder);
-    }
-
-    public getMoveTargetIndex(params: {
-        currentColumns: AgColumn[] | null;
-        lastHoveredColumn: AgColumn;
-        isBefore: boolean;
-        isAttemptingToPin?: boolean;
-    }): number | null {
-        const { currentColumns, lastHoveredColumn, isBefore, isAttemptingToPin } = params;
-        if (!lastHoveredColumn || !currentColumns) {
-            return null;
-        }
-
-        // if the target col is in the cols to be moved, no index to move, unless we are trying to pin.
-        if (!isAttemptingToPin && currentColumns.indexOf(lastHoveredColumn) !== -1) {
-            return null;
-        }
-
-        const targetColumnIndex = this.columnModel.getCols().indexOf(lastHoveredColumn);
-        const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
-        const diff = this.getMoveDiff(currentColumns, adjustedTarget);
-
-        return adjustedTarget - diff;
-    }
-
-    private getMoveDiff(currentColumns: AgColumn[] | null, end: number): number {
-        const allColumns = this.columnModel.getCols();
-
-        if (!currentColumns) {
-            return 0;
-        }
-
-        const targetColumn = currentColumns[0];
-        const span = currentColumns.length;
-
-        const currentIndex = allColumns.indexOf(targetColumn);
-
-        if (currentIndex < end) {
-            return span;
-        }
-
-        return 0;
     }
 
     public doesOrderPassRules(gridOrder: AgColumn[]) {

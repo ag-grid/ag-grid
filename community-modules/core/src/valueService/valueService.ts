@@ -273,8 +273,7 @@ export class ValueService extends BeanStub implements NamedBean {
         if (!rowNode || !column) {
             return false;
         }
-        // this will only happen if user is trying to paste into a group row, which doesn't make sense
-        // the user should not be trying to paste into group rows
+        // this happens when enableGroupEdit is turned on and editing is performed on group rows
         if (_missing(rowNode.data)) {
             rowNode.data = {};
         }
