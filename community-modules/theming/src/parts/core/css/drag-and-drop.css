@@ -3,7 +3,6 @@
     align-items: center;
     cursor: move;
     white-space: nowrap;
-    z-index: 9999;
 
     height: var(--ag-header-height);
     max-width: 200px;
