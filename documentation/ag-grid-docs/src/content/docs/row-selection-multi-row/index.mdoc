@@ -126,6 +126,28 @@ const gridOptions = {
 
 {% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="turn-off-checkboxes" /%}
 
+### Customising the Checkbox Column
+The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `controlsColDef` grid option.
+
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["controlsColDef"] /%}
+
+The `ControlsColDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
+The example below demonstrates allowing sorting using the default sort order (selected first) via the header menu, changing the default width of the column, and adding some header tooltip text.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    controlsColDef: {
+        sortable: true,
+        width: 100,
+        maxWidth: 100,
+        suppressHeaderMenuButton: false,
+        headerTooltip: 'Click checkbox to select all rows',
+    }
+}
+```
+
+{% gridExampleRunner title="Customising Checkbox Column" name="customise-checkbox-column" /%}
+
 ## Selecting All Rows
 
 All rows may be selected at once by using the header checkbox, which is enabled by default in `'multiRow'` mode.
