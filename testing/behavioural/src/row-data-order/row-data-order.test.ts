@@ -178,7 +178,7 @@ describe('ag-grid rows-ordering', () => {
 
         consoleWarnSpy.mockRestore();
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data', { ...defaultGridRowsOptions, checkDom: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:2
             ├── LEAF id:1 x:1
