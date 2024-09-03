@@ -124,6 +124,7 @@ describe('ag-grid tree data', () => {
             { orgHierarchy: ['P', 'Q'], x: 1 },
             { orgHierarchy: ['C', 'D'], x: 2 },
             { orgHierarchy: ['P', 'R'], x: 3 },
+            { orgHierarchy: ['X', 'Y'], x: 4 },
         ]);
 
         const rowData2 = cachedJSONObjects.array([
@@ -142,8 +143,10 @@ describe('ag-grid tree data', () => {
             ├─┬ P filler id:row-group-0-P
             │ ├── Q LEAF id:1
             │ └── R LEAF id:3
-            └─┬ C filler id:row-group-0-C
-            · └── D LEAF id:2
+            ├─┬ C filler id:row-group-0-C
+            │ └── D LEAF id:2
+            └─┬ X filler id:row-group-0-X
+            · └── Y LEAF id:4
         `);
 
         api.setGridOption('rowData', rowData2);
@@ -157,6 +160,10 @@ describe('ag-grid tree data', () => {
             · ├── R LEAF id:2
             · └── Q LEAF id:3
         `);
+
+        api.setGridOption('rowData', []);
+
+        await new GridRows(api, 'empty', defaultGridRowsOptions).check('empty');
     });
 
     test('tree data with id ordering of fillers is consistent', async () => {
