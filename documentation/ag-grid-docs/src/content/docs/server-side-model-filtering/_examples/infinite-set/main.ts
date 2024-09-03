@@ -12,12 +12,13 @@ import {
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { MenuModule } from '@ag-grid-enterprise/menu';
+import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([MenuModule, ServerSideRowModelModule, SetFilterModule]);
+ModuleRegistry.registerModules([MenuModule, ServerSideRowModelModule, SetFilterModule, MultiFilterModule]);
 
 const columnDefs: ColDef[] = [
     {
@@ -136,7 +137,7 @@ function areEqual(a: null | string[], b: null | string[]) {
 }
 
 function getCountryValuesAsync(params: SetFilterValuesFuncParams) {
-    var sportFilterModel = gridApi!.getFilterModel()['sport'];
+    var sportFilterModel = params.api.getFilterModel()['sport'];
     var countries = fakeServer.getCountries(sportFilterModel);
 
     // simulating real server call with a 500ms delay
@@ -146,7 +147,7 @@ function getCountryValuesAsync(params: SetFilterValuesFuncParams) {
 }
 
 function getSportValuesAsync(params: SetFilterValuesFuncParams) {
-    var sportFilterModel = gridApi!.getFilterModel()['sport'];
+    var sportFilterModel = params.api.getFilterModel()['sport'];
     var sports = fakeServer.getSports(selectedCountries, sportFilterModel);
 
     // simulating real server call with a 500ms delay

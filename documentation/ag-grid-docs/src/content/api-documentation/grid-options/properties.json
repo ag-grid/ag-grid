@@ -266,6 +266,12 @@
             }
         },
         "suppressMovableColumns": {},
+        "suppressMoveWhenColumnDragging": {
+            "more": {
+                "name": "Suppress Move When Dragging",
+                "url": "./column-moving/#suppress-move-when-dragging"
+            }
+        },
         "suppressColumnMoveAnimation": {
             "more": {
                 "name": "Moving Animation",
@@ -808,7 +814,7 @@
         "overlayLoadingTemplate": {
             "more": {
                 "name": "Custom Overlays",
-                "url": "./overlays/#custom-overlays"
+                "url": "./overlays/#customisation"
             }
         },
         "loadingOverlayComponent": {
@@ -833,7 +839,7 @@
         "overlayNoRowsTemplate": {
             "more": {
                 "name": "Custom Overlays",
-                "url": "./overlays/#custom-overlays"
+                "url": "./overlays/#customisation"
             }
         },
         "noRowsOverlayComponent": {
@@ -1848,12 +1854,6 @@
             "more": {
                 "name": "Row Class Rules",
                 "url": "./row-styles/#row-class-rules"
-            }
-        },
-        "isFullWidthRow": {
-            "more": {
-                "name": "Full Width Rows",
-                "url": "./full-width-rows/"
             }
         },
         "suppressRowHoverHighlight": {

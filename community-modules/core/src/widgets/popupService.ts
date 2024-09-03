@@ -7,6 +7,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
+import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -93,6 +94,15 @@ export interface AddPopupResult {
 }
 
 const WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
+
+interface Position {
+    initialDiff: number;
+    lastDiff: number;
+    initial: number;
+    last: number;
+    direction: DIRECTION;
+}
+
 export class PopupService extends BeanStub implements NamedBean {
     beanName = 'popupService' as const;
 
@@ -421,7 +431,7 @@ export class PopupService extends BeanStub implements NamedBean {
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
         // positioning is inside the border, leading the popup to be off by the width
         // of the border
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         let popupParent = this.getPopupParent();
 
         if (popupParent === eDocument.body) {
@@ -440,7 +450,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const offsetProperty = isVertical ? 'height' : 'width';
         const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
 
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const popupRect = ePopup.getBoundingClientRect();
@@ -465,7 +475,7 @@ export class PopupService extends BeanStub implements NamedBean {
     }
 
     public addPopup(params: AddPopupParams): AddPopupResult {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
@@ -548,7 +558,7 @@ export class PopupService extends BeanStub implements NamedBean {
     private addEventListenersToPopup(
         params: AddPopupParams & { wrapperEl: HTMLElement }
     ): (popupParams?: PopupEventParams) => void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const ePopupParent = this.getPopupParent();
 
         const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
@@ -556,7 +566,7 @@ export class PopupService extends BeanStub implements NamedBean {
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            if (!wrapperEl.contains(this.gos.getActiveDomElement())) {
+            if (!wrapperEl.contains(_getActiveDomElement(this.gos))) {
                 return;
             }
 
@@ -702,17 +712,22 @@ export class PopupService extends BeanStub implements NamedBean {
         const { element, ePopup } = params;
 
         const sourceRect = element.getBoundingClientRect();
-        const initialDiffTop = parentRect.top - sourceRect.top;
-        const initialDiffLeft = parentRect.left - sourceRect.left;
 
-        let lastDiffTop = initialDiffTop;
-        let lastDiffLeft = initialDiffLeft;
+        const extractFromPixelValue = (pxSize: string) => parseInt(pxSize.substring(0, pxSize.length - 1), 10);
+        const createPosition = (prop: 'top' | 'left', direction: DIRECTION) => {
+            const initialDiff = parentRect[prop] - sourceRect[prop];
+            const initial = extractFromPixelValue(ePopup.style[prop]);
+            return {
+                initialDiff,
+                lastDiff: initialDiff,
+                initial,
+                last: initial,
+                direction,
+            };
+        };
+        const topPosition = createPosition('top', DIRECTION.vertical);
+        const leftPosition = createPosition('left', DIRECTION.horizontal);
 
-        const topPx = ePopup.style.top;
-        const top = parseInt(topPx!.substring(0, topPx!.length - 1), 10);
-
-        const leftPx = ePopup.style.left;
-        const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
         const fwOverrides = this.getFrameworkOverrides();
         return new AgPromise<() => void>((resolve) => {
             fwOverrides.wrapIncoming(() => {
@@ -728,27 +743,28 @@ export class PopupService extends BeanStub implements NamedBean {
                             return;
                         }
 
-                        const currentDiffTop = pRect.top - sRect.top;
-                        if (currentDiffTop != lastDiffTop) {
-                            const newTop = this.keepXYWithinBounds(
-                                ePopup,
-                                top + initialDiffTop - currentDiffTop,
-                                DIRECTION.vertical
-                            );
-                            ePopup.style.top = `${newTop}px`;
-                        }
-                        lastDiffTop = currentDiffTop;
+                        const calculateNewPosition = (position: Position, prop: 'top' | 'left') => {
+                            const current = extractFromPixelValue(ePopup.style[prop]);
+                            if (position.last !== current) {
+                                // some other process has moved the popup
+                                position.initial = current;
+                                position.last = current;
+                            }
 
-                        const currentDiffLeft = pRect.left - sRect.left;
-                        if (currentDiffLeft != lastDiffLeft) {
-                            const newLeft = this.keepXYWithinBounds(
-                                ePopup,
-                                left + initialDiffLeft - currentDiffLeft,
-                                DIRECTION.horizontal
-                            );
-                            ePopup.style.left = `${newLeft}px`;
-                        }
-                        lastDiffLeft = currentDiffLeft;
+                            const currentDiff = pRect[prop] - sRect[prop];
+                            if (currentDiff != position.lastDiff) {
+                                const newValue = this.keepXYWithinBounds(
+                                    ePopup,
+                                    position.initial + position.initialDiff - currentDiff,
+                                    position.direction
+                                );
+                                ePopup.style[prop] = `${newValue}px`;
+                                position.last = newValue;
+                            }
+                            position.lastDiff = currentDiff;
+                        };
+                        calculateNewPosition(topPosition, 'top');
+                        calculateNewPosition(leftPosition, 'left');
                     }, 200)
                     .then((intervalId) => {
                         const result = () => {
@@ -796,7 +812,7 @@ export class PopupService extends BeanStub implements NamedBean {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         while (el && el !== eDocument.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                 return true;

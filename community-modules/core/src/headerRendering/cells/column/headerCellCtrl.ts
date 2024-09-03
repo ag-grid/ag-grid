@@ -6,13 +6,16 @@ import type { DragItem } from '../../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
+import { _getActiveDomElement } from '../../../gridOptionsUtils';
+import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
-import { attemptMoveColumns, normaliseX } from '../../columnMoveHelper';
+import { attemptMoveColumns, normaliseX, setColumnsMoving } from '../../columnMoveHelper';
+import type { HeaderPosition } from '../../common/headerPosition';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
@@ -107,6 +110,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.refresh.bind(this)
         );
         this.addManagedListeners(this.column, { colDefChanged: this.refresh.bind(this) });
+        this.addManagedListeners(this.column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
 
         this.addManagedEventListeners({
             columnValueChanged: this.onColumnValueChanged.bind(this),
@@ -136,30 +140,52 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { eGui, column, gos, ctrlsService } = this;
+        const { eGui, beans, column, ctrlsService } = this;
+        const { gos, columnModel, columnMoveService, visibleColsService } = beans;
         const pinned = this.getPinned();
         const left = eGui.getBoundingClientRect().left;
         const width = column.getActualWidth();
         const isRtl = gos.get('enableRtl');
         const isLeft = (hDirection === HorizontalDirection.Left) !== isRtl;
 
-        const xPosition = normaliseX(isLeft ? left - 20 : left + width + 20, pinned, true, gos, ctrlsService);
+        const xPosition = normaliseX({
+            x: isLeft ? left - 20 : left + width + 20,
+            pinned,
+            fromKeyboard: true,
+            gos,
+            ctrlsService,
+        });
+        const headerPosition = this.focusService.getFocusedHeader();
 
         attemptMoveColumns({
             allMovingColumns: [column],
             isFromHeader: true,
-            hDirection,
+            fromLeft: hDirection === HorizontalDirection.Right,
             xPosition,
             pinned,
             fromEnter: false,
             fakeEvent: false,
             gos,
-            columnModel: this.beans.columnModel,
-            columnMoveService: this.beans.columnMoveService,
-            presentedColsService: this.beans.visibleColsService,
+            columnModel,
+            columnMoveService,
+            visibleColsService,
+            finished: true,
         });
 
         ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
+
+        if ((!this.isAlive() || this.beans.gos.get('ensureDomOrder')) && headerPosition) {
+            this.restoreFocus(headerPosition);
+        }
+    }
+
+    protected restoreFocus(previousPosition: HeaderPosition): void {
+        this.focusService.focusHeaderPosition({
+            headerPosition: {
+                ...previousPosition,
+                column: this.column,
+            },
+        });
     }
 
     private setupUserComp(): void {
@@ -373,9 +399,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             dragItemName: displayName,
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-                column.setMoving(true, 'uiColumnMoved');
+                setColumnsMoving([column], true);
             },
-            onDragStopped: () => column.setMoving(false, 'uiColumnMoved'),
+            onDragStopped: () => setColumnsMoving([column], false),
+            onDragCancelled: () => setColumnsMoving([column], false),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
@@ -554,6 +581,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.addRefreshFunction(listener);
     }
 
+    private onHeaderHighlightChanged(): void {
+        const highlighted = this.column.getHighlighted();
+        const beforeOn = highlighted === ColumnHighlightPosition.Before;
+        const afterOn = highlighted === ColumnHighlightPosition.After;
+
+        this.comp.addOrRemoveCssClass('ag-header-highlight-before', beforeOn);
+        this.comp.addOrRemoveCssClass('ag-header-highlight-after', afterOn);
+    }
+
     protected override onDisplayedColumnsChanged(): void {
         super.onDisplayedColumnsChanged();
         if (!this.isAlive()) {
@@ -594,10 +630,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
         const groupHeaderHeight = this.beans.columnModel.getGroupRowsHeight();
 
-        const numHeaders = groupHeaderHeight.length - 1;
         let extraHeight = 0;
-        for (let i = numHeaders - numberOfParents; i < numHeaders; i++) {
-            extraHeight += groupHeaderHeight[i];
+        for (let i = 0; i < numberOfParents; i++) {
+            extraHeight += groupHeaderHeight[groupHeaderHeight.length - 1 - i];
         }
 
         eGui.style.setProperty('top', `${-extraHeight}px`);
@@ -656,7 +691,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     public announceAriaDescription(): void {
-        if (!this.eGui.contains(this.beans.gos.getActiveDomElement())) {
+        if (!this.eGui.contains(_getActiveDomElement(this.beans.gos))) {
             return;
         }
         const ariaDescription = Array.from(this.ariaDescriptionProperties.keys())

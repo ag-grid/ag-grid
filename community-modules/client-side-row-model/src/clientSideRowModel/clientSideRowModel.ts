@@ -27,7 +27,12 @@ import {
     _debounce,
     _errorOnce,
     _exists,
+    _getGrandTotalRow,
+    _getGroupTotalRowCallback,
+    _getRowHeightForNode,
     _insertIntoArray,
+    _isAnimateRows,
+    _isDomLayout,
     _last,
     _missing,
     _missingOrEmpty,
@@ -41,6 +46,14 @@ enum RecursionType {
     AfterFilter,
     AfterFilterAndSort,
     PivotNodes,
+}
+
+interface ClientSideRowModelRootNode extends RowNode {
+    childrenAfterGroup: RowNode[] | null;
+}
+
+interface ClientSideRowModelRowNode extends RowNode {
+    sourceRowIndex: number;
 }
 
 export interface BatchTransactionItem<TData = any> {
@@ -320,7 +333,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
                 const rowNode = this.getRow(rowIndex);
                 if (rowNode.rowHeightEstimated) {
-                    const rowHeight = this.gos.getRowHeightForNode(rowNode);
+                    const rowHeight = _getRowHeightForNode(this.gos, rowNode);
                     rowNode.setRowHeight(rowHeight.height);
                     atLeastOneChange = true;
                     res = true;
@@ -347,7 +360,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
         // with these two layouts.
-        const allowEstimate = this.gos.isDomLayout('normal');
+        const allowEstimate = _isDomLayout(this.gos, 'normal');
 
         for (let i = 0; i < this.rowsToDisplay.length; i++) {
             const rowNode = this.rowsToDisplay[i];
@@ -357,7 +370,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (rowNode.rowHeight == null) {
-                const rowHeight = this.gos.getRowHeightForNode(rowNode, allowEstimate, defaultRowHeight);
+                const rowHeight = _getRowHeightForNode(this.gos, rowNode, allowEstimate, defaultRowHeight);
                 rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
             }
 
@@ -413,12 +426,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return false;
         }
 
+        const allLeafChildren = this.rootNode.allLeafChildren!;
+
+        // TODO: this implementation is currently quite inefficient and it could be optimized to run in O(n) in a single pass
+
         rowNodes.forEach((rowNode) => {
-            _removeFromArray(this.rootNode.allLeafChildren!, rowNode);
+            _removeFromArray(allLeafChildren, rowNode);
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _insertIntoArray(this.rootNode.allLeafChildren!, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+            _insertIntoArray(allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+        });
+
+        rowNodes.forEach((rowNode: ClientSideRowModelRowNode, index) => {
+            rowNode.sourceRowIndex = index; // Update all the sourceRowIndex to reflect the new positions
         });
 
         this.refreshModel({
@@ -426,6 +447,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             keepRenderedRows: true,
             keepEditingRows: true,
             animate,
+            rowNodesOrderChanged: true, // We assume the order changed and we don't need to check if it really did
         });
 
         return true;
@@ -485,38 +507,51 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return 0;
     }
 
+    /**
+     * Returns the number of rows with level === 1
+     */
     public getTopLevelRowCount(): number {
-        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
+        if (this.rowsToDisplay.length === 0) {
+            return 0;
+        }
 
+        // exception to func comment, if showing root node, then we return that
+        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
         if (showingRootNode) {
             return 1;
         }
 
-        const totalFooterInc = this.rootNode.sibling ? 1 : 0;
-
         const filteredChildren = this.rootNode.childrenAfterAggFilter;
+        const totalFooterInc = this.rootNode.sibling ? 1 : 0;
         return (filteredChildren ? filteredChildren.length : 0) + totalFooterInc;
     }
 
+    /**
+     * Get the row display index by the top level index
+     * top level index is the index of rows with level === 1
+     */
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
         const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
 
+        // exception to function comment, if showing footer node (level === -1) return 0.
         if (showingRootNode) {
             return topLevelIndex;
         }
 
-        // if first row is footer, any following rows are pushed down by one
         let adjustedIndex = topLevelIndex;
         if (this.rowsToDisplay[0].footer) {
+            // if footer is first displayed row and looking for first row, return footer
             if (topLevelIndex === 0) {
                 return 0;
             }
+
+            // if first row is footer, offset index to check sorted rows by 1
             adjustedIndex -= 1;
         }
 
-        // if last row is footer, return this rows index.
         const lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
         const indexOutsideGroupBounds = adjustedIndex >= this.rootNode.childrenAfterSort!.length;
+        // if last row is footer, and attempting to retrieve row of too high index, return footer row index
         if (lastRow.footer && indexOutsideGroupBounds) {
             return lastRow.rowIndex!;
         }
@@ -524,7 +559,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let rowNode = this.rootNode.childrenAfterSort![adjustedIndex];
 
         if (this.gos.get('groupHideOpenParents')) {
-            // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
+            // if hideOpenParents, then get lowest displayed descendent
             while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
                 rowNode = rowNode.childrenAfterSort[0];
             }
@@ -551,7 +586,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public onRowGroupOpened(): void {
-        const animate = this.gos.isAnimateRows();
+        const animate = _isAnimateRows(this.gos);
         this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
     }
 
@@ -559,7 +594,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (event.afterDataChange) {
             return;
         }
-        const animate = this.gos.isAnimateRows();
+        const animate = _isAnimateRows(this.gos);
 
         const primaryOrQuickFilterChanged = event.columns.length === 0 || event.columns.some((col) => col.isPrimary());
         const step: ClientSideRowModelSteps = primaryOrQuickFilterChanged
@@ -569,7 +604,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onSortChanged(): void {
-        const animate = this.gos.isAnimateRows();
+        const animate = _isAnimateRows(this.gos);
         this.refreshModel({
             step: ClientSideRowModelSteps.SORT,
             keepRenderedRows: true,
@@ -696,8 +731,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             case ClientSideRowModelSteps.EVERYTHING:
                 this.doRowGrouping(
                     params.rowNodeTransactions,
-                    params.rowNodeOrder,
                     changedPath,
+                    !!params.rowNodesOrderChanged,
                     !!params.afterColumnsChanged
                 );
             /* eslint-disable no-fallthrough */
@@ -943,8 +978,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
             if (!parentNode) return;
 
-            const grandTotal = includeFooterNodes && this.gos.getGrandTotalRow();
-            const isGroupIncludeFooter = this.gos.getGroupTotalRowCallback();
+            const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
+            const isGroupIncludeFooter = _getGroupTotalRowCallback(this.gos);
             const groupTotal = includeFooterNodes && isGroupIncludeFooter({ node: parentNode });
 
             const isRootNode = parentNode === this.rootNode;
@@ -1077,16 +1112,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private doRowGrouping(
         rowNodeTransactions: RowNodeTransaction[] | undefined,
-        rowNodeOrder: { [id: string]: number } | undefined,
         changedPath: ChangedPath,
+        rowNodesOrderChanged: boolean,
         afterColumnsChanged: boolean
     ) {
         if (this.groupStage) {
             if (rowNodeTransactions) {
                 this.groupStage.execute({
                     rowNode: this.rootNode,
-                    rowNodeTransactions: rowNodeTransactions,
-                    rowNodeOrder: rowNodeOrder,
+                    rowNodeTransactions,
+                    rowNodesOrderChanged,
                     changedPath: changedPath,
                 });
             } else {
@@ -1111,9 +1146,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 }
             }
         } else {
-            this.rootNode.childrenAfterGroup = this.rootNode.allLeafChildren;
-            if (this.rootNode.sibling) {
-                this.rootNode.sibling.childrenAfterGroup = this.rootNode.childrenAfterGroup;
+            const rootNode: ClientSideRowModelRootNode = this.rootNode;
+            const sibling: ClientSideRowModelRootNode = rootNode.sibling;
+            rootNode.childrenAfterGroup = rootNode.allLeafChildren;
+            if (sibling) {
+                sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             }
             this.rootNode.updateHasChildren();
         }
@@ -1135,8 +1172,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.pivotStage?.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
-    public getCopyOfNodesMap(): { [id: string]: RowNode } {
-        return this.nodeManager.getCopyOfNodesMap();
+    public getNodeManager(): ClientSideNodeManager {
+        return this.nodeManager;
     }
 
     public getRowNode(id: string): RowNode | undefined {
@@ -1194,7 +1231,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     ): void {
         if (this.applyAsyncTransactionsTimeout == null) {
             this.rowDataTransactionBatch = [];
-            const waitMillis = this.gos.getAsyncTransactionWaitMillis();
+            const waitMillis = this.gos.get('asyncTransactionWaitMillis');
             this.applyAsyncTransactionsTimeout = window.setTimeout(() => {
                 this.executeBatchUpdateRowData();
             }, waitMillis);
@@ -1215,24 +1252,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
-        // The rowGroup stage uses rowNodeOrder if order was provided. if we didn't pass 'true' to
-        // commonUpdateRowData, using addIndex would have no effect when grouping.
-        let forceRowNodeOrder = false;
+        let orderChanged = false;
+        this.rowDataTransactionBatch?.forEach((tranItem) => {
+            const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(tranItem.rowDataTransaction);
+            if (rowsInserted) {
+                orderChanged = true;
+            }
+            rowNodeTrans.push(rowNodeTransaction);
+            if (tranItem.callback) {
+                callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTransaction));
+            }
+        });
 
-        if (this.rowDataTransactionBatch) {
-            this.rowDataTransactionBatch.forEach((tranItem) => {
-                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, undefined);
-                rowNodeTrans.push(rowNodeTran);
-                if (tranItem.callback) {
-                    callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
-                }
-                if (typeof tranItem.rowDataTransaction.addIndex === 'number') {
-                    forceRowNodeOrder = true;
-                }
-            });
-        }
-
-        this.commonUpdateRowData(rowNodeTrans, undefined, forceRowNodeOrder);
+        this.commonUpdateRowData(rowNodeTrans, orderChanged);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1252,57 +1284,42 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.applyAsyncTransactionsTimeout = undefined;
     }
 
-    public updateRowData(
-        rowDataTran: RowDataTransaction,
-        rowNodeOrder?: { [id: string]: number }
-    ): RowNodeTransaction | null {
+    /**
+     * Used to apply transaction changes.
+     * Called by gridApi & rowDragFeature
+     */
+    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
         this.valueCache.onDataChanged();
 
-        const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
+        const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 
-        // if doing immutableData, addIndex is never present. however if doing standard transaction, and user
-        // provided addIndex, then this is used in updateRowData. However if doing Enterprise, then the rowGroup
-        // stage also uses the
-        const forceRowNodeOrder = typeof rowDataTran.addIndex === 'number';
+        this.commonUpdateRowData([rowNodeTransaction], rowsInserted);
 
-        this.commonUpdateRowData([rowNodeTran], rowNodeOrder, forceRowNodeOrder);
-
-        return rowNodeTran;
+        return rowNodeTransaction;
     }
 
-    private createRowNodeOrder(): { [id: string]: number } | undefined {
-        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
-        if (suppressSortOrder) {
-            return;
-        }
-
-        const orderMap: { [id: string]: number } = {};
-
-        if (this.rootNode && this.rootNode.allLeafChildren) {
-            for (let index = 0; index < this.rootNode.allLeafChildren.length; index++) {
-                const node = this.rootNode.allLeafChildren[index];
-                orderMap[node.id!] = index;
-            }
-        }
-
-        return orderMap;
+    /**
+     * Used to apply generated transaction
+     */
+    public afterImmutableDataChange(rowNodeTransaction: RowNodeTransaction, rowNodesOrderChanged: boolean): void {
+        this.commonUpdateRowData([rowNodeTransaction], rowNodesOrderChanged);
     }
 
-    // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(
-        rowNodeTrans: RowNodeTransaction[],
-        rowNodeOrder: { [id: string]: number } | undefined,
-        forceRowNodeOrder: boolean
-    ): void {
+    /**
+     * Common to:
+     * - executeBatchUpdateRowData (batch transactions)
+     * - updateRowData (single transaction)
+     * - afterImmutableDataChange (generated transaction)
+     *
+     * @param rowNodeTrans - the transactions to apply
+     * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
+     */
+    private commonUpdateRowData(rowNodeTransactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
         if (!this.hasStarted) {
             return;
         }
 
         const animate = !this.gos.get('suppressAnimationFrame');
-
-        if (forceRowNodeOrder) {
-            rowNodeOrder = this.createRowNodeOrder();
-        }
 
         this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
@@ -1310,8 +1327,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
-            rowNodeTransactions: rowNodeTrans,
-            rowNodeOrder: rowNodeOrder,
+            rowNodeTransactions,
+            rowNodesOrderChanged,
             keepRenderedRows: true,
             keepEditingRows: true,
             animate,

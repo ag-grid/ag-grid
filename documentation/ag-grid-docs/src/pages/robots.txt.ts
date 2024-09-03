@@ -1,4 +1,4 @@
-import { SITE_URL } from '@constants';
+import { CHARTS_ROBOTS_DISALLOW_JSON_URL, SITE_URL } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import { pathJoin } from '@utils/pathJoin';
 import { getSitemapIgnorePaths } from '@utils/sitemapPages';
@@ -20,7 +20,11 @@ export async function GET() {
     // NOTE: /archive is ignored in `ignorePaths` on production
     const disallowAll = !getIsDev() && !getIsProduction();
 
-    const ignorePaths = await getSitemapIgnorePaths();
+    const gridIgnorePaths = await getSitemapIgnorePaths();
+
+    const chartsIgnorePaths = await fetch(CHARTS_ROBOTS_DISALLOW_JSON_URL).then((resp) => resp.json());
+    const ignorePaths = gridIgnorePaths.concat(chartsIgnorePaths);
+
     const output = disallowAll ? disallowAllRobotsTxt() : productionRobotsTxt(ignorePaths);
 
     return new Response(output, {

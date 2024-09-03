@@ -118,7 +118,7 @@ function MenuGroup({
                     [styles.active]: isActive,
                 })}
                 aria-expanded={isActive}
-                aria-controls={`#${toElementId(title)}`}
+                aria-controls={toElementId(title)}
             >
                 <Icon
                     name="chevronRight"
@@ -153,6 +153,7 @@ function MenuGroup({
             {heading}
             {items && (
                 <CollapsibleNav
+                    id={toElementId(title)}
                     items={items}
                     framework={framework}
                     isOpen={isActive}

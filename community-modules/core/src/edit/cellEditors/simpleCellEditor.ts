@@ -1,12 +1,16 @@
 import { KeyCode } from '../../constants/keyCode';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { DefaultProvidedCellEditorParams, ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 import type { CellEditorInput } from './iCellEditorInput';
 
-export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgInputTextField>
+export class SimpleCellEditor<
+        TValue,
+        P extends ICellEditorParams & DefaultProvidedCellEditorParams,
+        I extends AgInputTextField,
+    >
     extends PopupComponent
     implements ICellEditorComp
 {
@@ -27,20 +31,25 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
 
     public init(params: P): void {
         this.params = params;
+        const { cellStartedEdit, eventKey, suppressPreventDefault } = params;
 
         const eInput = this.eInput;
         this.cellEditorInput.init(eInput, params);
         let startValue: string | null | undefined;
+        let shouldSetStartValue = true;
 
         // cellStartedEdit is only false if we are doing fullRow editing
-        if (params.cellStartedEdit) {
+        if (cellStartedEdit) {
             this.focusAfterAttached = true;
-            const eventKey = params.eventKey;
 
-            if (eventKey === KeyCode.BACKSPACE || params.eventKey === KeyCode.DELETE) {
+            if (eventKey === KeyCode.BACKSPACE || eventKey === KeyCode.DELETE) {
                 startValue = '';
             } else if (eventKey && eventKey.length === 1) {
-                startValue = eventKey;
+                if (suppressPreventDefault) {
+                    shouldSetStartValue = false;
+                } else {
+                    startValue = eventKey;
+                }
             } else {
                 startValue = this.cellEditorInput.getStartValue();
 
@@ -53,7 +62,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
             startValue = this.cellEditorInput.getStartValue();
         }
 
-        if (startValue != null) {
+        if (shouldSetStartValue && startValue != null) {
             eInput.setStartValue(startValue);
         }
 

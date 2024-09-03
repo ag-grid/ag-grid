@@ -33,8 +33,7 @@ let virtualList: jest.Mocked<VirtualList>;
 let setValueModel: jest.Mocked<SetValueModel<string>>;
 
 beforeEach(() => {
-    rowModel = mock<IClientSideRowModel>('getType', 'forEachLeafNode', 'isRowDataLoaded');
-    rowModel.getType.mockReturnValue('clientSide');
+    rowModel = mock<IClientSideRowModel>('forEachLeafNode', 'isRowDataLoaded');
 
     eventService = mock<EventService>('addEventListener');
 
@@ -66,6 +65,7 @@ beforeEach(() => {
     eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
     gridOptionsService = mock<GridOptionsService>('get', 'addPropertyEventListener');
+    gridOptionsService.get.mockImplementation((prop) => (prop === 'rowModelType' ? 'clientSide' : undefined));
 
     funcColsService = mock<FuncColsService>('getRowGroupColumns');
     funcColsService.getRowGroupColumns.mockImplementation(() => []);

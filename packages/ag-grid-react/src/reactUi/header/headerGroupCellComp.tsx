@@ -10,9 +10,8 @@ import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
 import { CssClasses, isComponentStateless } from '../utils';
 
-const HeaderGroupCellComp = (props: { ctrl: HeaderGroupCellCtrl }) => {
+const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const { context } = useContext(BeansContext);
-    const { ctrl } = props;
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [cssResizableClasses, setResizableCssClasses] = useState<CssClasses>(() => new CssClasses());

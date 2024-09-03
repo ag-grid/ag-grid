@@ -15,7 +15,7 @@ import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
 import { CssClasses, isComponentStateless } from '../utils';
 
-const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
+const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     const { context, gos } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(
@@ -45,8 +45,6 @@ const HeaderFilterCellComp = (props: { ctrl: HeaderFilterCellCtrl }) => {
 
         userCompResolve.current && userCompResolve.current(value);
     };
-
-    const { ctrl } = props;
 
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;

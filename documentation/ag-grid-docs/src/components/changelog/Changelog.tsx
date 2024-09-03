@@ -1,11 +1,10 @@
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
-import Grid from '@components/grid/Grid';
+import { Grid } from '@components/grid/Grid';
 import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
 import styles from '@pages-styles/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
-import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -48,7 +47,7 @@ function useSearchQuery() {
 export const Changelog = () => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
-    const [versions, setVersions] = useState([]);
+    const [versions, setVersions] = useState<string[]>([]);
     const [allReleaseNotes, setAllReleaseNotes] = useState(null);
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
     const [markdownContent, setMarkdownContent] = useState(undefined);
@@ -56,7 +55,6 @@ export const Changelog = () => {
     const [hideExpander, setHideExpander] = useState(fixVersion === ALL_FIX_VERSIONS);
     const { searchQuery, handleSearchQueryChange } = useSearchQuery();
     const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
-    const [darkMode] = useDarkmode();
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
@@ -75,7 +73,20 @@ export const Changelog = () => {
             .then((response) => response.json())
             .then((data) => {
                 const gridVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.versions[0])];
-                setVersions([...new Set(gridVersions)]);
+                const allVersions = Array.from(new Set<string>(gridVersions)).sort((v1, v2) => {
+                    const [v1Major, v1Minor, v1Patch] = v1.split('.').map((num: string) => parseInt(num, 10));
+                    const [v2Major, v2Minor, v2Patch] = v2.split('.').map((num: string) => parseInt(num, 10));
+
+                    if (v1Major !== v2Major) {
+                        return v2Major - v1Major;
+                    } else if (v1Minor !== v2Minor) {
+                        return v2Minor - v1Minor;
+                    }
+
+                    return v2Patch - v1Patch;
+                });
+                setVersions(allVersions);
+
                 data.forEach((row) => {
                     // Only one version per row
                     row.version = row.versions[0];
@@ -157,9 +168,15 @@ export const Changelog = () => {
     const switchDisplayedFixVersion = useCallback(
         (fixVersion) => {
             setFixVersion(fixVersion);
-            const url = new URL(window.location);
+            const url = new URL(window.location.href);
+
+            // Remove trailing slash when adding search params (SEO)
+            if (url.pathname.endsWith('/')) {
+                url.pathname = url.pathname.slice(0, -1);
+            }
+
             url.searchParams.set('fixVersion', fixVersion);
-            window.history.pushState({}, '', url);
+            window.history.replaceState({}, '', url);
         },
         [setFixVersion]
     );
@@ -327,7 +344,8 @@ export const Changelog = () => {
                 onFirstDataRendered={() => {
                     applyFixVersionFilter();
                 }}
-                theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
+                theme="ag-theme-quartz"
+                darkModeTheme="ag-theme-quartz-dark"
             ></Grid>
         </div>
     );

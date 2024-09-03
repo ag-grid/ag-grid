@@ -11,7 +11,7 @@ import type {
     RowNodeBlock,
     StoreRefreshAfterParams,
 } from '@ag-grid-community/core';
-import { BeanStub, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _isServerSideRowModel, _missingOrEmpty, _warnOnce } from '@ag-grid-community/core';
 
 import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from './storeFactory';
@@ -39,7 +39,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
         endRow?: number;
     }): void {
         const { storeParams, parentBlock, parentNode } = p;
-        const groupKeys = parentNode.getGroupKeys();
+        const groupKeys = parentNode.getRoute() ?? [];
 
         if (!storeParams.datasource) {
             return;
@@ -142,7 +142,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
     }
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {
-        if (!this.gos.isRowModelType('serverSide')) {
+        if (!_isServerSideRowModel(this.gos)) {
             _warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
             return false;
         }

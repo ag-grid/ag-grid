@@ -7,8 +7,7 @@
     }
 }
 
-/* TODO check range inputs */
-input[class^='ag-'][type='range'] {
+& input[class^='ag-'][type='range'] {
     padding: 0;
     -webkit-appearance: none;
     width: 100%;

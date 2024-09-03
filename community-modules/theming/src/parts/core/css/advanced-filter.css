@@ -43,7 +43,6 @@
 }
 
 .ag-advanced-filter-builder-button-label {
-    /* TODO RTL style? */
     margin-left: var(--ag-grid-size);
 }
 
@@ -70,7 +69,6 @@
 .ag-advanced-filter-builder .ag-advanced-filter-builder-button-panel {
     .ag-advanced-filter-builder-apply-button,
     .ag-advanced-filter-builder-cancel-button {
-        /* TODO RTL style? */
         margin-left: calc(var(--ag-grid-size) * 2);
     }
 }

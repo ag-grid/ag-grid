@@ -3,7 +3,6 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -14,7 +13,7 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 
 // Register shared Modules globally
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, GridChartsModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
 
 const leftModules = [SetFilterModule, ClipboardModule];
 const rightModules = [ExcelExportModule];
@@ -60,8 +59,6 @@ const GridExample = () => {
                     rowData={leftRowData}
                     modules={leftModules}
                     columnDefs={columns}
-                    enableRangeSelection
-                    enableCharts
                 />
             </div>
 
@@ -71,8 +68,6 @@ const GridExample = () => {
                     rowData={rightRowData}
                     modules={rightModules}
                     columnDefs={columns}
-                    enableRangeSelection
-                    enableCharts
                 />
             </div>
         </div>

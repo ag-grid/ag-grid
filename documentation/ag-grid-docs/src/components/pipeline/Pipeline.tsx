@@ -1,10 +1,9 @@
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
-import Grid from '@components/grid/Grid';
+import { Grid } from '@components/grid/Grid';
 import styles from '@pages-styles/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
-import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -120,10 +119,9 @@ export const Pipeline = ({ location }) => {
     const [gridApi, setGridApi] = useState(null);
     const URLFilterSearchQuery = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
-    const [darkMode] = useDarkmode();
 
     useEffect(() => {
-        fetch('/pipeline/pipeline.json')
+        fetch(urlWithBaseUrl('/pipeline/pipeline.json'))
             .then((response) => response.json())
             .then((data) => {
                 setRowData(data);
@@ -182,7 +180,8 @@ export const Pipeline = ({ location }) => {
                 masterDetail={true}
                 rowData={rowData}
                 onGridReady={gridReady}
-                theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
+                theme="ag-theme-quartz"
+                darkModeTheme="ag-theme-quartz-dark"
             ></Grid>
         </div>
     );

@@ -19,6 +19,8 @@ import {
     ModuleRegistry,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
     _processOnChange,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -50,7 +52,7 @@ import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
-import { CssClasses, isReact17Minus, runWithoutFlushSync } from './utils';
+import { CssClasses, runWithoutFlushSync } from './utils';
 
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -105,9 +107,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             }
         };
 
-        const frameworkOverrides = isReact17Minus()
-            ? new React17MinusFrameworkOverrides(processQueuedUpdates)
-            : new ReactFrameworkOverrides();
+        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
         frameworkOverridesRef.current = frameworkOverrides;
         const renderStatusService = new RenderStatusService();
         const gridParams: GridParams = {
@@ -224,7 +224,7 @@ class ReactFrameworkComponentWrapper
         super();
     }
 
-    createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
+    protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
         if (this.reactiveCustomComponents) {
             const getComponentClass = (propertyName: string) => {
                 switch (propertyName) {
@@ -354,10 +354,8 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                     // doing another update
                     const updateRowHeightFunc = () => {
                         props.node.setRowHeight(clientHeight);
-                        if (rowModel.getType() === 'clientSide') {
-                            (rowModel as unknown as IClientSideRowModel).onRowHeightChanged();
-                        } else if (rowModel.getType() === 'serverSide') {
-                            (rowModel as unknown as IServerSideRowModel).onRowHeightChanged();
+                        if (_isClientSideRowModel(gos) || _isServerSideRowModel(gos)) {
+                            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged();
                         }
                     };
                     setTimeout(updateRowHeightFunc, 0);
@@ -389,7 +387,9 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 });
 
 class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
-    constructor() {
+    private queueUpdates = false;
+
+    constructor(private readonly processQueuedUpdates: () => void) {
         super('react');
         this.renderingEngine = 'react';
     }
@@ -427,22 +427,6 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         return callback();
     };
 
-    shouldQueueUpdates(): boolean {
-        return false;
-    }
-
-    getLockOnRefreshError(): string {
-        return ` This error can also occur if using 'ReactDOM.render' instead of 'createRoot'. If so, please upgrade to 'createRoot'.`;
-    }
-}
-
-class React17MinusFrameworkOverrides extends ReactFrameworkOverrides {
-    private queueUpdates = false;
-
-    constructor(private readonly processQueuedUpdates: () => void) {
-        super();
-    }
-
     getLockOnRefresh(): void {
         this.queueUpdates = true;
     }
@@ -452,11 +436,7 @@ class React17MinusFrameworkOverrides extends ReactFrameworkOverrides {
         this.processQueuedUpdates();
     }
 
-    override shouldQueueUpdates(): boolean {
+    shouldQueueUpdates(): boolean {
         return this.queueUpdates;
-    }
-
-    override getLockOnRefreshError(): string {
-        return '';
     }
 }

@@ -1,6 +1,6 @@
 import { type Framework } from '@ag-grid-types';
-import { getPropertiesFromSource } from '@components/reference-documentation/getPropertiesFromSource';
-import { getAllSectionHeadingLinks } from '@components/reference-documentation/interface-helpers';
+import { getPropertiesFromSource } from '@components/reference-documentation/utils/getPropertiesFromSource';
+import { getAllSectionHeadingLinks } from '@components/reference-documentation/utils/interface-helpers';
 import { getPagePath } from '@features/docs/utils/filesData';
 import Markdoc, { type Node, type RenderableTreeNode } from '@markdoc/markdoc';
 import { type MarkdownHeading } from 'astro';

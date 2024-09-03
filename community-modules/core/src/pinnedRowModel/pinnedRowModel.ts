@@ -3,7 +3,9 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged } from '../events';
+import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
 import type { RowPinnedType } from '../interfaces/iRowNode';
+import { _warnOnce } from '../utils/function';
 
 export class PinnedRowModel extends BeanStub implements NamedBean {
     beanName = 'pinnedRowModel' as const;
@@ -50,7 +52,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         let rowTop = 0;
         const updateRowHeight = (rowNode: RowNode) => {
             if (rowNode.rowHeightEstimated) {
-                const rowHeight = this.gos.getRowHeightForNode(rowNode);
+                const rowHeight = _getRowHeightForNode(this.gos, rowNode);
                 rowNode.setRowTop(rowTop);
                 rowNode.setRowHeight(rowHeight.height);
                 rowTop += rowHeight.height;
@@ -88,7 +90,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
             return;
         }
 
-        const getRowId = this.gos.getRowIdCallback();
+        const getRowId = _getRowIdCallback(this.gos);
         const idPrefix = floating === 'top' ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
 
         // We'll want to remove all nodes that aren't matched to data
@@ -97,10 +99,27 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         // Data that matches based on ID can nonetheless still appear in a different order than before
         const newOrder: string[] = [];
 
+        // Used for catching duplicate IDs/rows within `allData` itself
+        const dataIds = new Set<string>();
+
         let nextRowTop = 0;
-        for (const [i, data] of allData.entries()) {
+        let i = -1;
+        for (const data of allData) {
             const id = getRowId?.({ data, level: 0, rowPinned: floating }) ?? idPrefix + this.nextId++;
 
+            if (dataIds.has(id)) {
+                _warnOnce(
+                    'Duplicate ID',
+                    id,
+                    'found for pinned row with data',
+                    data,
+                    'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.'
+                );
+                continue;
+            }
+
+            i++;
+            dataIds.add(id);
             newOrder.push(id);
 
             const existingNode = nodes.getById(id);
@@ -133,7 +152,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
 
     private setRowTopAndRowIndex(rowNode: RowNode, rowTop: number, rowIndex: number): number {
         rowNode.setRowTop(rowTop);
-        rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode).height);
+        rowNode.setRowHeight(_getRowHeightForNode(this.gos, rowNode).height);
         rowNode.setRowIndex(rowIndex);
         return rowNode.rowHeight!;
     }

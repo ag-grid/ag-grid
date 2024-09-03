@@ -1,4 +1,5 @@
 import type { _EditGridApi } from '../api/gridApi';
+import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor';
 import { _defineModule } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
@@ -28,7 +29,7 @@ export const EditCoreModule = _defineModule({
     beans: [EditService],
 });
 
-export const EditApiModule = _defineModule<_EditGridApi>({
+export const EditApiModule = _defineModule<_EditGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/edit-api',
     apiFunctions: {
@@ -70,7 +71,13 @@ export const DataTypeEditorsModule = _defineModule({
     moduleName: '@ag-grid-community/data-type-editors',
     userComponents: [
         { name: 'agTextCellEditor', classImp: TextCellEditor },
-        { name: 'agNumberCellEditor', classImp: NumberCellEditor },
+        {
+            name: 'agNumberCellEditor',
+            classImp: NumberCellEditor,
+            params: {
+                suppressPreventDefault: true,
+            } as DefaultProvidedCellEditorParams,
+        },
         { name: 'agDateCellEditor', classImp: DateCellEditor },
         { name: 'agDateStringCellEditor', classImp: DateStringCellEditor },
         { name: 'agCheckboxCellEditor', classImp: CheckboxCellEditor },

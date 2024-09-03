@@ -7,7 +7,7 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
-import { GroupStrategy } from './groupStrategy';
+import { GroupStrategy } from './groupStrategy/groupStrategy';
 import { TreeStrategy } from './treeStrategy/treeStrategy';
 
 export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {

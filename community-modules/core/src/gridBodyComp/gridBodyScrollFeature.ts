@@ -4,7 +4,8 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { BodyScrollEndEvent, BodyScrollEvent } from '../events';
+import type { BodyScrollEvent } from '../events';
+import { _isDomLayout } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
@@ -499,7 +500,7 @@ export class GridBodyScrollFeature extends BeanStub {
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
         // if for print or auto height, everything is always visible
-        if (this.gos.isDomLayout('print')) {
+        if (_isDomLayout(this.gos, 'print')) {
             return;
         }
 

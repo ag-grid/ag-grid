@@ -18,9 +18,9 @@ import {
     BeanStub,
     Component,
     ModuleNames,
-    ModuleRegistry,
     _exists,
     _isIOSUserAgent,
+    _isNothingFocused,
     _missingOrEmpty,
 } from '@ag-grid-community/core';
 import type { CloseMenuEvent } from '@ag-grid-enterprise/core';
@@ -40,6 +40,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
     private columnModel: ColumnModel;
     private menuUtils: MenuUtils;
     private rangeService?: IRangeService;
+    private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService;
@@ -47,6 +48,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
         this.columnModel = beans.columnModel;
         this.menuUtils = beans.menuUtils as MenuUtils;
         this.rangeService = beans.rangeService;
+        this.focusService = beans.focusService;
     }
 
     private activeMenu: ContextMenu | null;
@@ -62,7 +64,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
     ): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.gridId)) {
+        if (_exists(node) && this.gos.isModuleRegistered(ModuleNames.ClipboardModule)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gos.get('suppressCutToClipboard')) {
@@ -72,7 +74,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
             }
         }
 
-        if (this.gos.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.gridId)) {
+        if (this.gos.get('enableCharts') && this.gos.isModuleRegistered(ModuleNames.GridChartsModule)) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -84,8 +86,8 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
 
         if (_exists(node)) {
             // if user clicks a cell
-            const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.gridId);
-            const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.gridId);
+            const csvModuleMissing = !this.gos.isModuleRegistered(ModuleNames.CsvExportModule);
+            const excelModuleMissing = !this.gos.isModuleRegistered(ModuleNames.ExcelExportModule);
             const suppressExcel = this.gos.get('suppressExcelExport') || excelModuleMissing;
             const suppressCsv = this.gos.get('suppressCsvExport') || csvModuleMissing;
             const onIPad = _isIOSUserAgent();
@@ -152,6 +154,12 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
         this.createBean(menu);
 
         const eMenuGui = menu.getGui();
+
+        if (!column) {
+            // the context menu has been opened not on a cell, therefore we don't want to
+            // display the previous cell as focused, or return focus there after
+            this.focusService.clearFocusedCell();
+        }
 
         const positionParams = {
             column: column,
@@ -308,7 +316,7 @@ class ContextMenu extends Component<ContextMenuEvent> {
         ) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
 
-            if (this.gos.isNothingFocused()) {
+            if (_isNothingFocused(this.gos)) {
                 this.focusService.setFocusedCell({
                     rowIndex,
                     column,

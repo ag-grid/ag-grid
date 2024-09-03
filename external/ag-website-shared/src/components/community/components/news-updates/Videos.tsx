@@ -3,10 +3,20 @@ import { useState } from 'react';
 
 import styles from './Videos.module.scss';
 
-const Videos = ({ videos }) => {
-    const [currentVideo, setCurrentVideo] = useState(videos[0]);
+interface Video {
+    title: string;
+    link: string;
+    description: string;
+    author: string;
+    type: 'Video' | 'Workshop';
+    published: string;
+    thumbnail?: string;
+    id?: string;
+}
 
-    const handleVideoSelect = (video) => {
+const Videos = ({ videos }: { videos: Video[] }) => {
+    const [currentVideo, setCurrentVideo] = useState(videos[0]);
+    const handleVideoSelect = (video: Video) => {
         setCurrentVideo(video);
     };
 
@@ -19,12 +29,21 @@ const Videos = ({ videos }) => {
                 </div>
                 <div className={styles.rightColumn}>
                     {/* TODO: GitNation Portal Support */}
-                    <iframe
-                        className={styles.videoFrame}
-                        src={currentVideo.link}
-                        frameBorder="0"
-                        allowFullScreen
-                    ></iframe>
+                    {currentVideo.thumbnail ? (
+                        <img
+                            className={styles.videoImage}
+                            src={urlWithBaseUrl(currentVideo.thumbnail)}
+                            alt="Video thumbnail"
+                            onClick={() => window.open(currentVideo.link, '_blank')}
+                        />
+                    ) : (
+                        <iframe
+                            className={styles.videoFrame}
+                            src={currentVideo.link}
+                            frameBorder="0"
+                            allowFullScreen
+                        ></iframe>
+                    )}
                 </div>
             </div>
             <div className={styles.videoContainer}>

@@ -49,7 +49,7 @@ function CellValue({
     field?: string;
     cellRenderer?: CellRendererDef;
 }) {
-    const renderer = cellRenderer[field] as CellRenderer;
+    const renderer = cellRenderer && (cellRenderer[field] as CellRenderer);
 
     if (renderer === 'tickCross') {
         return <TickCross value={value} />;
@@ -126,7 +126,7 @@ function TableRows({
     framework: Framework;
     data: Data;
     columns: Columns;
-    cellRenderer: CellRendererDef;
+    cellRenderer?: CellRendererDef;
 }) {
     return data.map((datum: any) => {
         const { [LEVEL_FIELD]: level } = datum;
@@ -232,7 +232,7 @@ export function MatrixTable({
         const filteredData = filter ? normalizedData.filter(createRowDataFilter(filter)) : normalizedData;
 
         return filteredData;
-    }, [data, filter]);
+    }, [data, filter, columns, cellRenderer]);
 
     return (
         <div className={styles.outer}>
@@ -241,14 +241,7 @@ export function MatrixTable({
                     <HeaderRow framework={framework} columns={columns} />
                 </thead>
                 <tbody>
-                    {cellRenderer && (
-                        <TableRows
-                            framework={framework}
-                            data={tableData}
-                            columns={columns}
-                            cellRenderer={cellRenderer}
-                        />
-                    )}
+                    <TableRows framework={framework} data={tableData} columns={columns} cellRenderer={cellRenderer} />
                 </tbody>
             </table>
         </div>

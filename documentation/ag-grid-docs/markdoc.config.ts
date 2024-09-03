@@ -15,6 +15,7 @@ import { video } from '@ag-website-shared/markdoc/tags/video';
 import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { warning } from '@ag-website-shared/markdoc/tags/warning';
 import { Markdoc, component, defineMarkdocConfig } from '@astrojs/markdoc/config';
+import { getFrameworkCapitalised } from '@utils/markdoc/getFrameworkCapitalised';
 
 import { agGridVersion } from './src/constants';
 import { link } from './src/utils/markdoc/tags/link';
@@ -47,6 +48,7 @@ export default defineMarkdocConfig({
     functions: {
         isFramework,
         isNotJavascriptFramework,
+        getFrameworkCapitalised,
     },
     tags: {
         kbd,
@@ -77,7 +79,7 @@ export default defineMarkdocConfig({
             },
         },
         apiDocumentation: {
-            render: component('./src/components/reference-documentation/ApiDocumentation.astro'),
+            render: component('./src/components/reference-documentation/components/ApiDocumentation.astro'),
             attributes: {
                 source: { type: String },
                 sources: { type: Array },
@@ -90,13 +92,12 @@ export default defineMarkdocConfig({
             },
         },
         interfaceDocumentation: {
-            render: component('./src/components/reference-documentation/InterfaceDocumentation.astro'),
+            render: component('./src/components/reference-documentation/components/InterfaceDocumentation.astro'),
             attributes: {
                 interfaceName: { type: String, required: true },
                 overrideSrc: { type: String },
                 names: { type: Array },
                 exclude: { type: Array },
-                wrapNamesAt: { type: Number },
                 config: { type: Object },
             },
         },

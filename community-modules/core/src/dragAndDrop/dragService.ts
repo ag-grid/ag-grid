@@ -1,7 +1,9 @@
+import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import { _getDocument, _getRootNode } from '../gridOptionsUtils';
 import { _removeFromArray } from '../utils/array';
 import { _isBrowserSafari } from '../utils/browser';
 import { _isFocusableFormField } from '../utils/dom';
@@ -123,7 +125,7 @@ export class DragService extends BeanStub implements NamedBean {
             // preventDefault needs to be called in the touchmove listener and never inside the
             // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
             {
-                target: this.gos.getRootNode(),
+                target: _getRootNode(this.gos),
                 type: 'touchmove',
                 listener: documentTouchMove,
                 options: { passive: false },
@@ -176,12 +178,18 @@ export class DragService extends BeanStub implements NamedBean {
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event, params.eElement);
         const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);
         const contextEvent = (event: MouseEvent) => event.preventDefault();
+        const keydownEvent = (event: KeyboardEvent) => {
+            if (event.key === KeyCode.ESCAPE) {
+                this.cancelDrag(params.eElement);
+            }
+        };
 
-        const target = this.gos.getRootNode();
+        const target = _getRootNode(this.gos);
         const events = [
             { target, type: 'mousemove', listener: mouseMoveEvent },
             { target, type: 'mouseup', listener: mouseUpEvent },
             { target, type: 'contextmenu', listener: contextEvent },
+            { target, type: 'keydown', listener: keydownEvent },
         ];
         // temporally add these listeners, for the duration of the drag
         this.addTemporaryEvents(events);
@@ -196,7 +204,7 @@ export class DragService extends BeanStub implements NamedBean {
         events: {
             target: Document | ShadowRoot | EventTarget;
             type: string;
-            listener: (e: MouseEvent | TouchEvent, el: HTMLElement) => void;
+            listener: (e: MouseEvent | TouchEvent | KeyboardEvent, el: HTMLElement) => void;
             options?: any;
         }[]
     ): void {
@@ -234,7 +242,7 @@ export class DragService extends BeanStub implements NamedBean {
     private onCommonMove(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch, el: Element): void {
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
-            if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) {
+            if (this.isEventNearStartEvent(currentEvent, startEvent)) {
                 return;
             }
 
@@ -272,7 +280,7 @@ export class DragService extends BeanStub implements NamedBean {
     // and is removed when mouseUp happens
     private onMouseMove(mouseEvent: MouseEvent, el: Element): void {
         if (_isBrowserSafari()) {
-            const eDocument = this.gos.getDocument();
+            const eDocument = _getDocument(this.gos);
             eDocument.getSelection()?.removeAllRanges();
         }
 
@@ -344,7 +352,20 @@ export class DragService extends BeanStub implements NamedBean {
                 target: el,
             });
         }
+        this.resetDragProperties();
+    }
 
+    public cancelDrag(el: Element): void {
+        this.eventService.dispatchEvent({
+            type: 'dragCancelled',
+            target: el,
+        });
+
+        this.currentDragParams?.onDragCancel?.();
+        this.resetDragProperties();
+    }
+
+    private resetDragProperties(): void {
         this.mouseStartEvent = null;
         this.startTarget = null;
         this.touchStart = null;
@@ -374,6 +395,8 @@ export interface DragListenerParams {
     onDragStart: (mouseEvent: MouseEvent | Touch) => void;
     /** Callback for drag stopping */
     onDragStop: (mouseEvent: MouseEvent | Touch) => void;
+    /** Callback for drag cancel */
+    onDragCancel?: () => void;
     /** Callback for mouse move while dragging */
     onDragging: (mouseEvent: MouseEvent | Touch) => void;
     /** Include touch events for this Drag Listener */

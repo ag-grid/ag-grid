@@ -2,6 +2,7 @@ import { paramValueToCss } from '@ag-grid-community/theming';
 import { Checkmark, ChevronDown } from '@carbon/icons-react';
 import { ParamModel, useParamAtom } from '@components/theme-builder/model/ParamModel';
 import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
+import type { ThemeParam } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 
@@ -9,18 +10,16 @@ import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
 import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';
 
-const borders = {
-    wrapperBorder: 'Around grid',
-    rowBorder: 'Between rows',
-    columnBorder: 'Between columns',
-    sidePanelBorder: 'Around side panel',
-};
+const borders: [ThemeParam, string][] = [
+    ['wrapperBorder', 'Around grid'],
+    ['rowBorder', 'Between rows'],
+    ['columnBorder', 'Between columns'],
+    ['sidePanelBorder', 'Around side panel'],
+];
 
 export const BordersEditor = withErrorBoundary(() => {
-    const theme = useRenderedTheme();
-    const selectedBorders = Object.entries(borders)
-        .filter(([param]) => borderIsEnabled(param, theme.getRenderedParams()[param]))
-        .map(([, label]) => label);
+    const params = useRenderedTheme().getParams();
+    const selectedBorders = borders.filter(([param]) => !!params[param]).map(([, label]) => label);
 
     return (
         <FormField label="Borders">
@@ -31,7 +30,7 @@ export const BordersEditor = withErrorBoundary(() => {
 
                 <RadixDropdown.Portal>
                     <StyledContent align="start" sideOffset={3}>
-                        {Object.entries(borders).map(([param, label]) => (
+                        {borders.map(([param, label]) => (
                             <BorderItem key={param} param={param} label={label} />
                         ))}
                     </StyledContent>
@@ -42,7 +41,7 @@ export const BordersEditor = withErrorBoundary(() => {
 });
 
 type BorderProps = {
-    param: string;
+    param: ThemeParam;
     label: string;
 };
 
@@ -60,15 +59,16 @@ const BorderItem = (props: BorderProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        const params = theme.getRenderedParams();
+        const params = theme.getParams();
         if (param.property in params) {
             editorValue = params[param.property];
         } else {
-            throw new Error(`Param "${param.property}" does not exist.`);
+            throw new Error(`ThemeParam "${param.property}" does not exist.`);
         }
     }
 
-    const checked = borderIsEnabled(props.param, editorValue);
+    const rendered = paramValueToCss(props.param, editorValue);
+    const checked = !!rendered && rendered !== 'none' && !rendered.includes('transparent');
 
     return (
         <StyledItem
@@ -85,9 +85,6 @@ const BorderItem = (props: BorderProps) => {
         </StyledItem>
     );
 };
-
-const borderIsEnabled = (param: string, value: string) =>
-    typeof value === 'boolean' ? value : paramValueToCss(param, false) !== value;
 
 const StyledTrigger = SharedTrigger.withComponent(RadixDropdown.Trigger);
 const StyledContent = SharedContent.withComponent(RadixDropdown.Content);

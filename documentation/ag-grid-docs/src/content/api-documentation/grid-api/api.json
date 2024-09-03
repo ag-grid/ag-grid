@@ -236,25 +236,25 @@
         "getDisplayedRowAtIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "./rendering-api/"
+                "url": "./dom-virtualisation/"
             }
         },
         "getDisplayedRowCount": {
             "more": {
                 "name": "Rendering API",
-                "url": "./rendering-api/"
+                "url": "./dom-virtualisation/"
             }
         },
         "getFirstDisplayedRowIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "./rendering-api/"
+                "url": "./dom-virtualisation/"
             }
         },
         "getLastDisplayedRowIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "./rendering-api/"
+                "url": "./dom-virtualisation/"
             }
         }
     },
@@ -642,7 +642,13 @@
                 "url": "./row-dragging-to-external-dropzone/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
+                ],
                 "include": []
             }
         },
@@ -652,7 +658,13 @@
                 "url": "./row-dragging-to-external-dropzone/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
+                ],
                 "include": []
             }
         },
@@ -662,7 +674,13 @@
                 "url": "./row-dragging-to-grid/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent",
+                    "RowDragCancelEvent"
+                ],
                 "include": []
             }
         }
@@ -731,7 +749,6 @@
         },
         "refreshInfiniteCache": {},
         "purgeInfiniteCache": {},
-        "getInfiniteRowCount": {},
         "isLastRowIndexKnown": {},
         "setRowCount": {},
         "getCacheBlockState": {}
@@ -1147,6 +1164,7 @@
                 "name": "Cache Block State",
                 "url": "./server-side-model-configuration/#debug-info"
             }
-        }
+        },
+        "isLastRowIndexKnown": {}
     }
 }

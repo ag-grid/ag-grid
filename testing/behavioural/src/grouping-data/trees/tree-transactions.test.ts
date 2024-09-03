@@ -1,122 +1,202 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import type { RowDataTransaction } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { getRowsSnapshot } from '../row-snapshot-test-utils';
-import { checkTreeDiagram, simpleHierarchyRowSnapshot } from './tree-test-utils';
+import {
+    TestGridsManager,
+    executeTransactionsAsync,
+    getAllRowData,
+    getAllRows,
+    verifyPositionInRootChildren,
+} from '../../test-utils';
+import type { TreeDiagramOptions } from './tree-test-utils';
+import { TreeDiagram } from './tree-test-utils';
+
+const treeDiagramOptions: TreeDiagramOptions = {
+    checkDom: 'myGrid',
+};
 
 describe('ag-grid tree transactions', () => {
-    let consoleErrorSpy: jest.SpyInstance;
-
-    function createMyGrid(gridOptions: GridOptions) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
-    }
-
-    function getAllRows(api: GridApi) {
-        const rows: IRowNode<any>[] = [];
-        api.forEachNode((node) => {
-            rows.push(node);
-        });
-        return rows;
-    }
-
-    function resetGrids() {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
-        resetGrids();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
     });
 
     afterEach(() => {
-        consoleErrorSpy?.mockRestore();
+        gridsManager.reset();
     });
 
-    test('ag-grid tree transactions', async () => {
-        const rowA = { id: '0', orgHierarchy: ['A'] };
+    test('ag-grid tree sync complex transaction', async () => {
+        const row0 = { id: '0', x: '0', path: ['A'] };
+        const row1a = { id: '1', x: '1a', path: ['X', 'Y', 'Z'] };
+        const row2 = { id: '2', x: '2', path: ['X', 'Y', 'Z', 'W'] };
+        const row3 = { id: '3', x: '3', path: ['A', 'B'] };
+        const row4 = { id: '4', x: '4', path: ['C', 'D'] };
+        const row5a = { id: '5', x: '5a', path: ['X', 'Y', 'Z', 'H'] };
 
-        const rowZ1 = { id: '88', orgHierarchy: ['X', 'Y', 'Z'] };
-        const rowW = { id: '99', orgHierarchy: ['X', 'Y', 'Z', 'W'] };
+        const row1b = { id: '1', x: '1b', path: ['A', 'Y', 'Z'] };
+        const row5b = { id: '5', x: '5b', path: ['C', 'E'] };
 
-        const rowZ2 = { id: '88', orgHierarchy: ['A', 'Y', 'Z'] };
+        const rowData = [row0, row1a];
+        const transactions: RowDataTransaction[] = [
+            { add: [row2] },
+            { update: [row1b], add: [row3, row4] },
+            { remove: [row1b], add: [row5a] },
+            { remove: [row2], update: [row5b] },
+        ];
 
-        const rowB = { id: '1', orgHierarchy: ['A', 'B'] };
-        const rowD = { id: '2', orgHierarchy: ['C', 'D'] };
-
-        const rowH1 = { id: '3', orgHierarchy: ['X', 'Y', 'Z', 'H'] };
-        const rowH2 = { id: '3', orgHierarchy: ['E', 'F', 'G', 'H'] };
-
-        const getDataPath = (data: any) => data.orgHierarchy;
-
-        const gridOptions: GridOptions = {
-            columnDefs: [
-                { field: 'x' },
-                {
-                    field: 'groupType',
-                    valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
-                },
-            ],
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'x' }],
             autoGroupColumnDef: {
                 headerName: 'Organisation Hierarchy',
                 cellRendererParams: { suppressCount: true },
             },
             treeData: true,
-            animateRows: true,
+            animateRows: false,
             groupDefaultExpanded: -1,
-            rowData: [rowA, rowZ1],
+            rowData: rowData,
             getRowId: (params) => params.data.id,
-            getDataPath,
-        };
-
-        const api = createMyGrid(gridOptions);
-
-        api.applyTransaction({
-            add: [rowW],
+            getDataPath: (data) => data.path,
         });
 
-        expect(checkTreeDiagram(api)).toBe(true);
+        let allData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allData).toEqual([row0, row1a]);
 
-        api.applyTransaction({
-            update: [rowZ2],
-            add: [rowB, rowD],
+        new TreeDiagram(api, 'rowData', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── A LEAF id:0
+            └─┬ X filler id:row-group-0-X
+            · └─┬ Y filler id:row-group-0-X-1-Y
+            · · └── Z LEAF id:1
+        `);
+
+        api.applyTransaction(transactions[0]);
+
+        allData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allData).toEqual([row0, row1a, row2]);
+
+        new TreeDiagram(api, 'Transaction 0', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── A LEAF id:0
+            └─┬ X filler id:row-group-0-X
+            · └─┬ Y filler id:row-group-0-X-1-Y
+            · · └─┬ Z GROUP id:1
+            · · · └── W LEAF id:2
+        `);
+
+        api.applyTransaction(transactions[1]);
+
+        allData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allData).toEqual([row0, row1b, row2, row3, row4]);
+
+        new TreeDiagram(api, 'Transaction 1', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:0
+            │ ├─┬ Y filler id:row-group-0-A-1-Y
+            │ │ └── Z LEAF id:1
+            │ └── B LEAF id:3
+            ├─┬ X filler id:row-group-0-X
+            │ └─┬ Y filler id:row-group-0-X-1-Y
+            │ · └─┬ Z filler id:row-group-0-X-1-Y-2-Z
+            │ · · └── W LEAF id:2
+            └─┬ C filler id:row-group-0-C
+            · └── D LEAF id:4
+        `);
+
+        api.applyTransaction(transactions[2]);
+
+        allData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allData).toEqual([row0, row2, row3, row4, row5a]);
+
+        new TreeDiagram(api, 'Transaction 2', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:0
+            │ └── B LEAF id:3
+            ├─┬ X filler id:row-group-0-X
+            │ └─┬ Y filler id:row-group-0-X-1-Y
+            │ · └─┬ Z filler id:row-group-0-X-1-Y-2-Z
+            │ · · ├── W LEAF id:2
+            │ · · └── H LEAF id:5
+            └─┬ C filler id:row-group-0-C
+            · └── D LEAF id:4
+        `);
+
+        api.applyTransaction(transactions[3]);
+
+        allData = getAllRowData(verifyPositionInRootChildren(api));
+        expect(allData).toEqual([row0, row3, row4, row5b]);
+
+        new TreeDiagram(api, 'final', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:0
+            │ └── B LEAF id:3
+            └─┬ C filler id:row-group-0-C
+            · ├── D LEAF id:4
+            · └── E LEAF id:5
+        `);
+    });
+
+    test('ag-grid tree async complex transaction', async () => {
+        const row0 = { id: '0', path: ['A'] };
+        const row1a = { id: '1', path: ['X', 'Y', 'Z'] };
+        const row2 = { id: '2', path: ['X', 'Y', 'Z', 'W'] };
+        const row3 = { id: '3', path: ['A', 'B'] };
+        const row4 = { id: '4', path: ['C', 'D'] };
+        const row5a = { id: '5', path: ['X', 'Y', 'Z', 'H'] };
+
+        const row1b = { id: '1', path: ['A', 'Y', 'Z'] };
+        const row5b = { id: '5', path: ['C', 'E'] };
+
+        const rowData = [row0, row1a];
+        const transactions: RowDataTransaction[] = [
+            { add: [row2] },
+            { update: [row1b], add: [row3, row4] },
+            { remove: [row1b], add: [row5a] },
+            { remove: [row2], update: [row5b] },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            autoGroupColumnDef: {
+                headerName: 'Organisation Hierarchy',
+                cellRendererParams: { suppressCount: true },
+            },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: rowData,
+            getRowId: (params) => params.data.id,
+            getDataPath: (data) => data.path,
         });
 
-        expect(checkTreeDiagram(api)).toBe(true);
+        new TreeDiagram(api, 'rowData', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├── A LEAF id:0
+            └─┬ X filler id:row-group-0-X
+            · └─┬ Y filler id:row-group-0-X-1-Y
+            · · └── Z LEAF id:1
+        `);
 
-        api.applyTransaction({
-            remove: [rowZ2],
-            add: [rowH1],
-        });
-
-        expect(checkTreeDiagram(api)).toBe(true);
-
-        api.applyTransaction({
-            update: [rowH2],
-        });
-
-        expect(checkTreeDiagram(api)).toBe(true);
+        await executeTransactionsAsync(transactions, api);
 
         const rows = getAllRows(api);
 
-        expect(rows.length).toBe(8);
+        new TreeDiagram(api, 'final', treeDiagramOptions).check(`
+            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:0
+            │ └── B LEAF id:3
+            └─┬ C filler id:row-group-0-C
+            · ├── D LEAF id:4
+            · └── E LEAF id:5
+        `);
 
-        const rowsSnapshot = getRowsSnapshot(rows);
+        expect(rows.length).toBe(5);
 
-        expect(rows[0].data).toEqual(rowA);
-        expect(rows[1].data).toEqual(rowB);
+        expect(rows[0].data).toEqual(row0);
+        expect(rows[1].data).toEqual(row3);
         expect(rows[2].data).toEqual(undefined);
-        expect(rows[3].data).toEqual(rowD);
-        expect(rows[4].data).toEqual(undefined);
-        expect(rows[5].data).toEqual(undefined);
-        expect(rows[6].data).toEqual(undefined);
-        expect(rows[7].data).toEqual(rowH2);
-
-        expect(rowsSnapshot).toMatchObject(simpleHierarchyRowSnapshot());
+        expect(rows[3].data).toEqual(row4);
+        expect(rows[4].data).toEqual(row5b);
     });
 });

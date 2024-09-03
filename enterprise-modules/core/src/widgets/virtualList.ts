@@ -66,6 +66,7 @@ export class VirtualList<
     private lastFocusedRowIndex: number | null;
     private isHeightFromTheme: boolean = true;
     private readonly eContainer: HTMLElement = RefPlaceholder;
+    private awaitStableCallbacks: (() => void)[] = [];
 
     constructor(params?: VirtualListParams) {
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
@@ -326,19 +327,32 @@ export class VirtualList<
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
 
         // ensure height is applied before attempting to redraw rows
+        this.awaitStable(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+
+            if (this.canSoftRefresh(softRefresh)) {
+                this.drawVirtualRows(true);
+            } else {
+                this.clearVirtualRows();
+                this.drawVirtualRows();
+            }
+        });
+    }
+
+    public awaitStable(callback: () => void): void {
+        this.awaitStableCallbacks.push(callback);
+        if (this.awaitStableCallbacks.length > 1) {
+            return;
+        }
+        const rowCount = this.model.getRowCount();
         _waitUntil(
             () => this.eContainer.clientHeight >= rowCount * this.rowHeight,
             () => {
-                if (!this.isAlive()) {
-                    return;
-                }
-
-                if (this.canSoftRefresh(softRefresh)) {
-                    this.drawVirtualRows(true);
-                } else {
-                    this.clearVirtualRows();
-                    this.drawVirtualRows();
-                }
+                const callbacks = this.awaitStableCallbacks;
+                this.awaitStableCallbacks = [];
+                callbacks.forEach((c) => c());
             }
         );
     }
@@ -471,6 +485,7 @@ export class VirtualList<
         }
 
         this.clearVirtualRows();
+        this.awaitStableCallbacks.length = 0;
         super.destroy();
     }
 }

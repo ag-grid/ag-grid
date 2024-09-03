@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
+import { _getScrollbarWidth } from '../utils/browser';
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -15,6 +16,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
     private columnAnimationService: ColumnAnimationService;
 
+    // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
+    private scrollbarWidth: number;
+
     public wireBeans(beans: BeanCollection) {
         this.ctrlsService = beans.ctrlsService;
         this.columnAnimationService = beans.columnAnimationService;
@@ -23,7 +27,13 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
 
+    private horizontalScrollGap: boolean;
+    private verticalScrollGap: boolean;
+
     public postConstruct(): void {
+        // sets an initial calculation for the scrollbar width
+        this.getScrollbarWidth();
+
         this.addManagedEventListeners({
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
@@ -67,6 +77,19 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         };
 
         this.setScrollsVisible(params);
+
+        const horizontalGap = centerRowCtrl.hasHorizontalScrollGap();
+        const verticalGap = centerRowCtrl.hasVerticalScrollGap();
+        const atLeastOneDifferent =
+            this.horizontalScrollGap !== horizontalGap || this.verticalScrollGap !== verticalGap;
+        if (atLeastOneDifferent) {
+            this.horizontalScrollGap = horizontalGap;
+            this.verticalScrollGap = verticalGap;
+
+            this.eventService.dispatchEvent({
+                type: 'scrollGapChanged',
+            });
+        }
     }
 
     public setScrollsVisible(params: SetScrollsVisibleParams): void {
@@ -92,5 +115,34 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     // used by header container
     public isVerticalScrollShowing(): boolean {
         return this.verticalScrollShowing;
+    }
+
+    public hasHorizontalScrollGap(): boolean {
+        return this.horizontalScrollGap;
+    }
+
+    public hasVerticalScrollGap(): boolean {
+        return this.verticalScrollGap;
+    }
+
+    // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
+    // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
+    // allow the user to provide the scroll width before we work it out.
+    public getScrollbarWidth() {
+        if (this.scrollbarWidth == null) {
+            const gridOptionsScrollbarWidth = this.gos.get('scrollbarWidth');
+            const useGridOptions = typeof gridOptionsScrollbarWidth === 'number' && gridOptionsScrollbarWidth >= 0;
+            const scrollbarWidth = useGridOptions ? gridOptionsScrollbarWidth : _getScrollbarWidth();
+
+            if (scrollbarWidth != null) {
+                this.scrollbarWidth = scrollbarWidth;
+
+                this.eventService.dispatchEvent({
+                    type: 'scrollbarWidthChanged',
+                });
+            }
+        }
+
+        return this.scrollbarWidth;
     }
 }

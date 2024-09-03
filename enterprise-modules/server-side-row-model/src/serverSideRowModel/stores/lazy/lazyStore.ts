@@ -16,7 +16,15 @@ import type {
     StoreRefreshAfterParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { BeanStub, NumberSequence, ServerSideTransactionResultStatus, _warnOnce } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    NumberSequence,
+    ServerSideTransactionResultStatus,
+    _getGroupTotalRowCallback,
+    _getRowHeightAsNumber,
+    _getRowIdCallback,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
@@ -114,7 +122,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = this.gos.getRowIdCallback();
+        const idFunc = _getRowIdCallback(this.gos);
         if (!idFunc) {
             _warnOnce('getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
@@ -156,7 +164,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         let removedNodes: RowNode[] | undefined = undefined;
         if (transaction.remove?.length) {
             const allIdsToRemove = transaction.remove.map((data) =>
-                idFunc({ level: this.level, parentKeys: this.parentRowNode.getGroupKeys(), data })
+                idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
@@ -274,7 +282,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.topPx = nextRowTop.value;
 
         const footerNode =
-            this.parentRowNode.level > -1 && this.gos.getGroupTotalRowCallback()({ node: this.parentRowNode });
+            this.parentRowNode.level > -1 && _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode });
         if (!footerNode) {
             this.parentRowNode.destroyFooter();
         }
@@ -340,7 +348,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         includeFooterNodes = false
     ): void {
         const footerNode =
-            this.parentRowNode.level > -1 && this.gos.getGroupTotalRowCallback()({ node: this.parentRowNode });
+            this.parentRowNode.level > -1 && _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode });
         if (footerNode === 'top') {
             callback(this.parentRowNode.sibling, sequence.next());
         }
@@ -417,7 +425,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        const defaultRowHeight = this.gos.getRowHeightAsNumber();
+        const defaultRowHeight = _getRowHeightAsNumber(this.gos);
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
             const numberOfRowDiff = (nextNode.node.rowIndex! - displayIndex) * defaultRowHeight;
@@ -504,7 +512,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        const defaultRowHeight = this.gos.getRowHeightAsNumber();
+        const defaultRowHeight = _getRowHeightAsNumber(this.gos);
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
             const nextTop = nextNode.rowTop!;
@@ -665,7 +673,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     addStoreStates(result: ServerSideGroupLevelState[]) {
         result.push({
             suppressInfiniteScroll: false,
-            route: this.parentRowNode.getGroupKeys(),
+            route: this.parentRowNode.getRoute() ?? [],
             rowCount: this.getRowCount(),
             lastRowIndexKnown: this.isLastRowIndexKnown(),
             info: this.info,

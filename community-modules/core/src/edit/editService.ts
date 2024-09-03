@@ -7,7 +7,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { NavigationService } from '../gridBodyComp/navigationService';
-import type { ICellEditorParams } from '../interfaces/iCellEditor';
+import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
 import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
@@ -30,7 +30,7 @@ export class EditService extends BeanStub implements NamedBean {
         key: string | null = null,
         cellStartedEdit = false,
         event: KeyboardEvent | MouseEvent | null = null
-    ): void {
+    ): boolean {
         const editorParams = this.createCellEditorParams(cellCtrl, key, cellStartedEdit);
         const colDef = cellCtrl.getColumn().getColDef();
         const compDetails = this.userComponentFactory.getCellEditorDetails(colDef, editorParams);
@@ -46,6 +46,8 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl.getComp().setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
 
         this.eventService.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
+
+        return !(compDetails?.params as DefaultProvidedCellEditorParams)?.suppressPreventDefault;
     }
 
     public stopEditing(cellCtrl: CellCtrl, cancel: boolean): boolean {
@@ -53,7 +55,7 @@ export class EditService extends BeanStub implements NamedBean {
         const { newValue, newValueExists } = this.takeValueFromCellEditor(cancel, cellComp);
         const rowNode = cellCtrl.getRowNode();
         const column = cellCtrl.getColumn();
-        const oldValue = rowNode.getValueFromValueService(column);
+        const oldValue = this.valueService.getValueForDisplay(column, rowNode);
         let valueChanged = false;
 
         if (newValueExists) {
@@ -182,7 +184,7 @@ export class EditService extends BeanStub implements NamedBean {
         const column = cellCtrl.getColumn();
         const rowNode = cellCtrl.getRowNode();
         return this.gos.addGridCommonParams({
-            value: rowNode.getValueFromValueService(column),
+            value: this.valueService.getValueForDisplay(column, rowNode),
             eventKey: key,
             column: column,
             colDef: column.getColDef(),

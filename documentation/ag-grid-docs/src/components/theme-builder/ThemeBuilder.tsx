@@ -1,12 +1,12 @@
 import { Provider } from 'jotai';
 import { useLayoutEffect, useMemo, useState } from 'react';
 
-import { PreloadFontSelection } from './components/editors/FontFamilyValueEditor';
+import { LoadFontFamilyMenuFonts } from './components/editors/FontFamilyValueEditor';
 import { RootContainer } from './components/general/RootContainer';
 import { WelcomeModal } from './components/general/WelcomeModal';
 import { applyPreset, darkModePreset, lightModePreset } from './components/presets/presets';
 import { allParamModels } from './model/ParamModel';
-import { allPartModels } from './model/PartModel';
+import { allFeatureModels } from './model/PartModel';
 import { addChangedModelItem, getChangedModelItemCount } from './model/changed-model-items';
 import { rerenderTheme } from './model/rendered-theme';
 import { initialiseStore } from './model/store';
@@ -32,7 +32,9 @@ export const ThemeBuilder = () => {
         };
         const listeners = [
             ...allParamModels().map((param) => store.sub(param.valueAtom, () => detectChange(param.property))),
-            ...allPartModels().map((part) => store.sub(part.variantAtom, () => detectChange(part.partId))),
+            ...allFeatureModels().map((feature) =>
+                store.sub(feature.selectedPartAtom, () => detectChange(feature.featureName))
+            ),
         ];
 
         if (!initialised) {
@@ -43,7 +45,7 @@ export const ThemeBuilder = () => {
 
     return (
         <Provider store={store}>
-            <PreloadFontSelection />
+            <LoadFontFamilyMenuFonts />
             {initialised && <RootContainer />}
             <WelcomeModal />
         </Provider>

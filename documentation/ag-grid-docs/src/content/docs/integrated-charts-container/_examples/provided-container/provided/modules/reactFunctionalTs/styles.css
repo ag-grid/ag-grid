@@ -1,0 +1,28 @@
+.chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 410px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+    border: 1px solid var(--ag-border-color);
+}
+
+.chart-wrapper-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.chart-wrapper-body {
+    border-top: 1px solid var(--ag-border-color);
+    height: 100%;
+}
+
+.chart-placeholder {
+    background-color: var(--ag-background-color);
+    color: var(--ag-foreground-color);
+    height: 100%;
+    text-align: center;
+    align-content: center;
+}

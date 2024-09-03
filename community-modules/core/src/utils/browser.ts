@@ -10,6 +10,7 @@ let isMacOs: boolean;
 let isIOS: boolean;
 let invisibleScrollbar: boolean;
 let browserScrollbarWidth: number;
+let maxDivHeight: number;
 
 export function _isBrowserSafari(): boolean {
     if (isSafari === undefined) {
@@ -95,13 +96,17 @@ export function _getTabIndex(el: HTMLElement | null): string | null {
 }
 
 export function _getMaxDivHeight(): number {
+    if (maxDivHeight !== undefined) {
+        return maxDivHeight;
+    }
+
     if (!document.body) {
         return -1;
     }
 
     let res = 1000000;
     // FF reports the height back but still renders blank after ~6M px
-    const testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
+    const testUpTo = _isBrowserFirefox() ? 6000000 : 1000000000;
     const div = document.createElement('div');
     document.body.appendChild(div);
 
@@ -117,7 +122,7 @@ export function _getMaxDivHeight(): number {
     }
 
     document.body.removeChild(div);
-
+    maxDivHeight = res;
     return res;
 }
 

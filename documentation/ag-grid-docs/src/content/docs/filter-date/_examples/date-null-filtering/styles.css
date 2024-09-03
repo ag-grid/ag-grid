@@ -5,22 +5,18 @@
 }
 
 .test-header {
+    align-items: center;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    margin-bottom: 5px;
+    padding-bottom: 8px;
     display: flex;
+
+    & > :not(:first-child) {
+        margin-left: 16px;
+        display: flex;
+    }
 }
 
-.configuration-option {
-    flex-grow: 1;
-    border: 1px solid black;
-    border-radius: 5px;
-    padding: 2px;
-    text-align: center;
-    margin-left: 5px;
-}
-
-.configuration-option div {
-    flex-grow: 1;
-    margin-bottom: 3px;
+.test-label {
+    margin-right: 8px;
 }

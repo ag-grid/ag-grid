@@ -9,8 +9,8 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
-import type { FullWidthRowFocusedEvent } from '../events';
 import type { FocusService } from '../focusService';
+import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
@@ -26,6 +26,7 @@ import { _throttle, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import type { GridBodyCtrl } from './gridBodyCtrl';
 import type { MouseEventService } from './mouseEventService';
+import type { ScrollVisibleService } from './scrollVisibleService';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -55,6 +56,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private rowPositionUtils: RowPositionUtils;
     private cellNavigationService: CellNavigationService;
     private pinnedRowModel: PinnedRowModel;
+    private scrollVisibleService: ScrollVisibleService;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -70,6 +72,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.rowPositionUtils = beans.rowPositionUtils;
         this.cellNavigationService = beans.cellNavigationService;
         this.pinnedRowModel = beans.pinnedRowModel;
+        this.scrollVisibleService = beans.scrollVisibleService;
         this.rangeService = beans.rangeService;
     }
 
@@ -335,7 +338,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private getViewportHeight(): number {
         const { gridBodyCtrl, center } = this.ctrlsService.getParams();
         const scrollPosition = gridBodyCtrl.getScrollFeature().getVScrollPosition();
-        const scrollbarWidth = this.gos.getScrollbarWidth();
+        const scrollbarWidth = this.scrollVisibleService.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (center.isHorizontalScrollShowing()) {
@@ -862,7 +865,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         return cellPosition;
     }
 
-    private tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards: boolean = false): boolean {
+    public tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards?: boolean): boolean {
         const displayedColumns = this.visibleColsService.getAllCols();
         const rowComp = this.rowRenderer.getRowByPosition(position);
         if (!rowComp || !rowComp.isFullWidth()) {
@@ -880,7 +883,9 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.focusPosition(cellPosition);
 
         const fromBelow =
-            currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
+            backwards == null
+                ? currentCellFocused != null && this.rowPositionUtils.before(cellPosition, currentCellFocused)
+                : backwards;
 
         this.eventService.dispatchEvent({
             type: 'fullWidthRowFocused',
@@ -933,7 +938,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     public ensureCellVisible(gridCell: CellPosition): void {
-        const isGroupStickyEnabled = this.gos.isGroupRowsSticky();
+        const isGroupStickyEnabled = _isGroupRowsSticky(this.gos);
 
         const rowNode = this.rowModel.getRow(gridCell.rowIndex);
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.

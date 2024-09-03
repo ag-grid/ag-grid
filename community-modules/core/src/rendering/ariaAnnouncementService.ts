@@ -1,6 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import { _getDocument } from '../gridOptionsUtils';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
 import { _clearElement } from '../utils/dom';
 import { _debounce } from '../utils/function';
@@ -25,7 +26,7 @@ export class AriaAnnouncementService extends BeanStub implements NamedBean {
     }
 
     public postConstruct(): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const div = (this.descriptionContainer = eDocument.createElement('div'));
         div.classList.add('ag-aria-description-container');
 

@@ -1,4 +1,4 @@
-import { BeanStub, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warnOnce } from '@ag-grid-community/core';
 import type {
     BeanCollection,
     FocusService,
@@ -122,7 +122,7 @@ export class LazyCache extends BeanStub {
         this.nodesToRefresh = new Set();
 
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
-        this.getRowIdFunc = this.gos.getRowIdCallback();
+        this.getRowIdFunc = _getRowIdCallback(this.gos);
         this.isMasterDetail = this.gos.get('masterDetail');
     }
 
@@ -275,7 +275,7 @@ export class LazyCache extends BeanStub {
         if (numberOfRowsToSkip === 0) {
             return;
         }
-        const defaultRowHeight = this.gos.getRowHeightAsNumber();
+        const defaultRowHeight = _getRowHeightAsNumber(this.gos);
 
         displayIndexSeq.skip(numberOfRowsToSkip);
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
@@ -1010,7 +1010,7 @@ export class LazyCache extends BeanStub {
 
         // find rowNode using id
         const { level } = this.store.getRowDetails();
-        const parentKeys = this.store.getParentNode().getGroupKeys();
+        const parentKeys = this.store.getParentNode().getRoute() ?? [];
         return this.getRowIdFunc({
             data,
             parentKeys: parentKeys.length > 0 ? parentKeys : undefined,

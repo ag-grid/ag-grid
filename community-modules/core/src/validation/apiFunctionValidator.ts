@@ -30,7 +30,7 @@ const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
     refreshInfiniteCache: [infinite],
     purgeInfiniteCache: [infinite],
     getInfiniteRowCount: [infinite],
-    isLastRowIndexKnown: [infinite],
+    isLastRowIndexKnown: [infinite, serverSide],
     expandAll: [clientSide, serverSide],
     collapseAll: [clientSide, serverSide],
     onRowHeightChanged: [clientSide, serverSide],
@@ -141,6 +141,11 @@ const deprecatedFunctions: {
         version: 'v32',
         message:
             '`showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).',
+    },
+    getInfiniteRowCount: {
+        version: 'v32.2',
+        old: 'getInfiniteRowCount()',
+        new: 'getDisplayedRowCount()',
     },
 };
 

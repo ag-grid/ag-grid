@@ -3,6 +3,7 @@ import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
 import type { CellPosition } from '../entities/cellPositionUtils';
+import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { GetCellEditorInstancesParams } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
@@ -54,8 +55,19 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     if (!cell) {
         return;
     }
-    if (!beans.focusService.isCellFocused(cellPosition)) {
-        beans.focusService.setFocusedCell(cellPosition);
+    const { focusService, gos } = beans;
+    const isFocusWithinCell = () => {
+        const activeElement = _getActiveDomElement(gos);
+        const eCell = cell.getGui();
+        return activeElement !== eCell && eCell.contains(activeElement);
+    };
+    const forceBrowserFocus = gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell();
+    if (forceBrowserFocus || !focusService.isCellFocused(cellPosition)) {
+        focusService.setFocusedCell({
+            ...cellPosition,
+            forceBrowserFocus,
+            preventScrollOnBrowserFocus: true,
+        });
     }
     cell.startRowOrCellEdit(params.key);
 }

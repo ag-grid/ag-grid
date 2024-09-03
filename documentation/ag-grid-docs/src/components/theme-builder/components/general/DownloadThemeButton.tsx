@@ -1,4 +1,4 @@
-import { installDocsUrl } from '@ag-grid-community/theming';
+import { VERSION } from '@ag-grid-community/theming';
 import { convertProductionUrlsForStaging } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 
@@ -13,11 +13,21 @@ export const DownloadThemeButton = () => (
     </ButtonWrapper>
 );
 
+export const installDocsUrl = 'https://www.ag-grid.com/javascript-data-grid/applying-theme-builder-styling-grid/';
+
+const fileHeader = `/*
+ * This file is a theme downloaded from the AG Grid Theme Builder for AG Grid ${VERSION}.
+ *
+ * See installation docs at ${installDocsUrl}
+ */
+
+`;
+
 const localInstallDocsUrl = convertProductionUrlsForStaging(installDocsUrl);
 
 const DownloadThemeDialog = () => {
     const theme = useRenderedTheme();
-    const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(convertProductionUrlsForStaging(theme.getCSS()))}`;
+    const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(convertProductionUrlsForStaging(fileHeader + theme.getCSS()))}`;
 
     return (
         <DownloadThemeWrapper>

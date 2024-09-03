@@ -8,7 +8,7 @@ import type {
     RowModelType,
     RowRenderer,
 } from '@ag-grid-community/core';
-import { BeanStub, RowNode, _iterateObject, _missing, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, RowNode, _getRowHeightAsNumber, _iterateObject, _missing, _warnOnce } from '@ag-grid-community/core';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -44,11 +44,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     public postConstruct(): void {
-        this.rowHeight = this.gos.getRowHeightAsNumber();
+        this.rowHeight = _getRowHeightAsNumber(this.gos);
         this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
         this.addManagedPropertyListener('rowHeight', () => {
-            this.rowHeight = this.gos.getRowHeightAsNumber();
+            this.rowHeight = _getRowHeightAsNumber(this.gos);
             this.updateRowHeights();
         });
     }

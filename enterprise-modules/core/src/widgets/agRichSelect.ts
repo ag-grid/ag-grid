@@ -23,6 +23,7 @@ import {
     _escapeString,
     _exists,
     _fuzzySuggestions,
+    _getActiveDomElement,
     _isEventFromPrintableCharacter,
     _isVisible,
     _setAriaActiveDescendant,
@@ -276,11 +277,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (!this.values) {
                 this.values = valueList;
                 if (this.isPickerDisplayed) {
-                    this.listComponent.selectValue(this.value);
+                    const hasRefreshed = this.listComponent.selectValue(this.value);
+                    if (!hasRefreshed) {
+                        this.listComponent.refresh();
+                    }
                 }
             } else {
                 this.listComponent.refresh(true);
             }
+
+            this.alignPickerToComponent();
         }
     }
 
@@ -422,7 +428,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         this.setValueList({ valueList: filteredValues, refresh: true });
-        this.alignPickerToComponent();
     }
 
     private runSearch() {
@@ -596,7 +601,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private onDeleteKeyDown(e: KeyboardEvent): void {
         const { eWrapper, gos } = this;
-        const activeEl = gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(gos);
 
         if (activeEl === eWrapper) {
             e.preventDefault();
@@ -621,6 +626,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         } else {
             this.setValue(listComponent.getLastItemHovered(), false, true);
         }
+        this.hidePicker();
     }
 
     private getValueFromSet(valueSet: Set<TValue>): TValue[] | TValue | null {

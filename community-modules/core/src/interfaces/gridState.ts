@@ -122,17 +122,17 @@ export interface RowGroupExpansionState {
 }
 
 export interface GridState {
-    /** Includes aggregation functions */
+    /** Includes aggregation functions (column state) */
     aggregation?: AggregationState;
     /** Includes opened groups */
     columnGroup?: ColumnGroupState;
-    /** Includes column ordering */
+    /** Includes column ordering (column state) */
     columnOrder?: ColumnOrderState;
-    /** Includes left/right pinned columns */
+    /** Includes left/right pinned columns (column state) */
     columnPinning?: ColumnPinningState;
-    /** Includes column width/flex */
+    /** Includes column width/flex (column state) */
     columnSizing?: ColumnSizingState;
-    /** Includes hidden columns */
+    /** Includes hidden columns (column state) */
     columnVisibility?: ColumnVisibilityState;
     /** Includes Column Filters and Advanced Filter */
     filter?: FilterState;
@@ -140,11 +140,11 @@ export interface GridState {
     focusedCell?: FocusedCellState;
     /** Includes current page */
     pagination?: PaginationState;
-    /** Includes current pivot mode and pivot columns */
+    /** Includes current pivot mode and pivot columns (column state) */
     pivot?: PivotState;
     /** Includes currently selected cell ranges */
     rangeSelection?: RangeSelectionState;
-    /** Includes current row group columns */
+    /** Includes current row group columns (column state) */
     rowGroup?: RowGroupState;
     /** Includes currently expanded group rows */
     rowGroupExpansion?: RowGroupExpansionState;
@@ -158,6 +158,11 @@ export interface GridState {
     scroll?: ScrollState;
     /** Includes current Side Bar positioning and opened tool panel */
     sideBar?: SideBarState;
-    /** Includes current sort columns and direction */
+    /** Includes current sort columns and direction (column state) */
     sort?: SortState;
+    /**
+     * When providing a partial `initialState` with some but not all column state properties, set this to `true`.
+     * Not required if passing the whole state object retrieved from the grid.
+     */
+    partialColumnState?: boolean;
 }

@@ -1,67 +1,68 @@
-import { opaqueForeground } from '../../css-helpers';
-import { definePart } from '../../theme-utils';
+import { createPart } from '../../theme-types';
 
-export const colorSchemeLightNeutral = definePart({
-    partId: 'colorScheme',
-    variantId: 'lightNeutral',
-    overrideParams: {},
-});
+// prettier-ignore
+export const colorSchemeLightNeutral =
+    /*#__PURE__*/
+    createPart({feature: 'colorScheme', variant: 'lightNeutral'});
 
-export const colorSchemeLightWarm = definePart({
-    partId: 'colorScheme',
-    variantId: 'lightWarm',
-    overrideParams: {
-        foregroundColor: '#000000de',
-        borderColor: '#60300026',
-        chromeBackgroundColor: '#60300005',
-    },
-});
+// prettier-ignore
+export const colorSchemeLightWarm =
+    /*#__PURE__*/
+    createPart({feature: 'colorScheme', variant: 'lightWarm'})
+        .overrideParams({
+            foregroundColor: '#000000de',
+            borderColor: '#60300026',
+            chromeBackgroundColor: '#60300005',
+        });
 
-export const colorSchemeLightCold = definePart({
-    partId: 'colorScheme',
-    variantId: 'lightCold',
-    overrideParams: {
-        foregroundColor: '#000',
-        backgroundColor: '#fff',
-        chromeBackgroundColor: '#f3f8f8',
-    },
-});
+// prettier-ignore
+export const colorSchemeLightCold =
+    /*#__PURE__*/
+    createPart({feature: 'colorScheme', variant: 'lightCold'})
+        .overrideParams({
+            foregroundColor: '#000',
+            backgroundColor: '#fff',
+            chromeBackgroundColor: '#f3f8f8',
+        });
 
-export const colorSchemeDarkNeutral = definePart({
-    partId: 'colorScheme',
-    variantId: 'darkNeutral',
-    overrideParams: {
-        backgroundColor: 'hsl(217, 0%, 17%)',
-        foregroundColor: '#FFF',
-        chromeBackgroundColor: opaqueForeground(0.05),
-    },
-});
+// prettier-ignore
+export const colorSchemeDarkNeutral =
+    /*#__PURE__*/
+    createPart({feature: 'colorScheme', variant: 'darkNeutral'})
+        .overrideParams({
+            backgroundColor: 'hsl(217, 0%, 17%)',
+            foregroundColor: '#FFF',
+            chromeBackgroundColor: {
+                ref: 'foregroundColor',
+                mix: 0.05,
+                onto: 'backgroundColor',
+            },
+        });
 
-export const colorSchemeDarkWarm = definePart({
-    partId: 'colorScheme',
-    variantId: 'darkWarm',
-    overrideParams: {
-        backgroundColor: 'hsl(29, 10%, 17%)',
-        foregroundColor: '#FFF',
-        chromeBackgroundColor: opaqueForeground(0.05),
-    },
-});
+// prettier-ignore
+export const colorSchemeDarkWarm =
+    /*#__PURE__*/
+    createPart({feature: 'colorScheme', variant: 'darkWarm'})
+        .overrideParams({
+            backgroundColor: 'hsl(29, 10%, 17%)',
+            foregroundColor: '#FFF',
+            chromeBackgroundColor: {
+                ref: 'foregroundColor',
+                mix: 0.05,
+                onto: 'backgroundColor',
+            },
+        });
 
-export const colorSchemeDarkBlue = definePart({
-    partId: 'colorScheme',
-    variantId: 'darkBlue',
-    overrideParams: {
-        backgroundColor: '#1f2836',
-        foregroundColor: '#FFF',
-        chromeBackgroundColor: opaqueForeground(0.07),
-    },
-});
-
-export const allColorSchemes = [
-    colorSchemeLightNeutral,
-    colorSchemeLightWarm,
-    colorSchemeLightCold,
-    colorSchemeDarkNeutral,
-    colorSchemeDarkWarm,
-    colorSchemeDarkBlue,
-];
+// prettier-ignore
+export const colorSchemeDarkBlue =
+    /*#__PURE__*/
+    createPart({feature: 'colorScheme', variant: 'darkBlue'})
+        .overrideParams({
+            backgroundColor: '#1f2836',
+            foregroundColor: '#FFF',
+            chromeBackgroundColor: {
+                ref: 'foregroundColor',
+                mix: 0.07,
+                onto: 'backgroundColor',
+            },
+        });

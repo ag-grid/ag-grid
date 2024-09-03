@@ -1,3 +1,18 @@
-.ag-popup-child:not(.ag-tooltip-custom) {
-    box-shadow: var(--ag-popup-shadow);
+.ag-popup-child {
+    z-index: 5;
+    top: 0;
+
+    /* use :where to avoid increasing specificity */
+    &:where(:not(.ag-tooltip-custom)) {
+        box-shadow: var(--ag-popup-shadow);
+    }
+}
+
+.ag-popup-editor {
+    position: absolute;
+    user-select: none;
+}
+
+.ag-large-text-input {
+    display: block;
 }

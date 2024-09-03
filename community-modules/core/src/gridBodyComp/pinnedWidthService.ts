@@ -2,6 +2,7 @@ import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import { _isDomLayout } from '../gridOptionsUtils';
 
 export class PinnedWidthService extends BeanStub implements NamedBean {
     beanName = 'pinnedWidthService' as const;
@@ -25,7 +26,7 @@ export class PinnedWidthService extends BeanStub implements NamedBean {
     }
 
     private checkContainerWidths() {
-        const printLayout = this.gos.isDomLayout('print');
+        const printLayout = _isDomLayout(this.gos, 'print');
 
         const newLeftWidth = printLayout ? 0 : this.visibleColsService.getColsLeftWidth();
         const newRightWidth = printLayout ? 0 : this.visibleColsService.getDisplayedColumnsRightWidth();

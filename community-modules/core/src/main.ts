@@ -113,7 +113,7 @@ export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroup
 export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
-export { RowNode } from './entities/rowNode';
+export { type ITreeNode, RowNode } from './entities/rowNode';
 export {
     RowHighlightPosition,
     RowPinnedType,
@@ -593,6 +593,26 @@ export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModu
 export { AgEventType, AgPublicEventType } from './eventTypes';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
+export {
+    _getRowIdCallback,
+    _getRowHeightForNode,
+    _isDomLayout,
+    _isAnimateRows,
+    _getGrandTotalRow,
+    _getGroupTotalRowCallback,
+    _isGroupMultiAutoColumn,
+    _isColumnsSortingCoupledToGroup,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
+    _isGroupUseEntireRow,
+    _getRowHeightAsNumber,
+    _getActiveDomElement,
+    _isNothingFocused,
+    _getDocument,
+    _getGroupAggFiltering,
+    _isRowSelection,
+    _isGetRowHeightFunction,
+} from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export { EventService } from './eventService';
 export { SelectableService } from './rowNodes/selectableService';
@@ -911,7 +931,6 @@ export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { NumberSequence } from './utils/numberSequence';
 export { _formatNumberTwoDecimalPlacesAndCommas, _formatNumberCommas } from './utils/number';
 export { _iterateObject, _cloneObject, _getAllValuesInObject, _mergeDeep } from './utils/object';
-export { _sortRowNodesByOrder } from './utils/rowNode';
 export { _capitalise, _escapeString, _utf8_encode } from './utils/string';
 export { AgPromise } from './utils/promise';
 export { _addFocusableContainerListener } from './utils/focus';

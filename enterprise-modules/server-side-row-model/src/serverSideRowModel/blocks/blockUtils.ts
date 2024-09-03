@@ -8,7 +8,17 @@ import type {
     RowBounds,
     ValueService,
 } from '@ag-grid-community/core';
-import { BeanStub, RowNode, _doOnce, _exists, _missing, _warnOnce } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    RowNode,
+    _doOnce,
+    _exists,
+    _getGroupTotalRowCallback,
+    _getRowHeightAsNumber,
+    _getRowHeightForNode,
+    _missing,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -49,7 +59,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }): RowNode {
         const rowNode = new RowNode(this.beans);
 
-        const rowHeight = params.rowHeight != null ? params.rowHeight : this.gos.getRowHeightAsNumber();
+        const rowHeight = params.rowHeight != null ? params.rowHeight : _getRowHeightAsNumber(this.gos);
         rowNode.setRowHeight(rowHeight);
 
         rowNode.group = params.group;
@@ -131,7 +141,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
         }
 
-        const getGroupIncludeFooter = this.beans.gos.getGroupTotalRowCallback();
+        const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
             rowNode.createFooter();
@@ -160,7 +170,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             this.setChildCountIntoRowNode(rowNode);
 
             if (!rowNode.footer) {
-                const getGroupIncludeFooter = this.beans.gos.getGroupTotalRowCallback();
+                const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
                 const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
                 if (doesRowShowFooter) {
                     if (rowNode.sibling) {
@@ -215,8 +225,10 @@ export class BlockUtils extends BeanStub implements NamedBean {
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
         if (_exists(data)) {
-            rowNode.setRowHeight(this.gos.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
-            rowNode.sibling?.setRowHeight(this.gos.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
+            rowNode.setRowHeight(_getRowHeightForNode(this.gos, rowNode, false, cachedRowHeight).height);
+            rowNode.sibling?.setRowHeight(
+                _getRowHeightForNode(this.gos, rowNode.sibling, false, cachedRowHeight).height
+            );
         }
     }
 
@@ -376,9 +388,16 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
+    private isPixelInNodeRange(node: RowNode, pixel: number): boolean {
+        if (!_exists(node.rowTop) || !_exists(node.rowHeight)) {
+            return false;
+        }
+        return pixel >= node.rowTop && pixel < node.rowTop + node.rowHeight;
+    }
+
     public getIndexAtPixel(rowNode: RowNode, pixel: number): number | null {
         // first check if pixel is in range of current row
-        if (rowNode.isPixelInRange(pixel)) {
+        if (this.isPixelInNodeRange(rowNode, pixel)) {
             return rowNode.rowIndex;
         }
 
@@ -386,7 +405,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const expandedMasterRow = rowNode.master && rowNode.expanded;
         const detailNode = rowNode.detailNode;
 
-        if (expandedMasterRow && detailNode && detailNode.isPixelInRange(pixel)) {
+        if (expandedMasterRow && detailNode && this.isPixelInNodeRange(detailNode, pixel)) {
             return rowNode.detailNode.rowIndex;
         }
 

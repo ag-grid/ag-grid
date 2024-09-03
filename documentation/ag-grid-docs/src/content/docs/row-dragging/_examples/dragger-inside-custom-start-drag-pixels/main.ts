@@ -1,6 +1,13 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, RowDragEndEvent, RowDragEnterEvent, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type {
+    ColDef,
+    GridApi,
+    GridOptions,
+    RowDragCancelEvent,
+    RowDragEndEvent,
+    RowDragEnterEvent,
+} from '@ag-grid-community/core';
+import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 import { CustomCellRenderer } from './customCellRenderer_typescript';
 
@@ -32,6 +39,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     onRowDragEnter: onRowDragEnter,
     onRowDragEnd: onRowDragEnd,
+    onRowDragCancel: onRowDragCancel,
 };
 
 function onRowDragEnter(e: RowDragEnterEvent) {
@@ -40,6 +48,10 @@ function onRowDragEnter(e: RowDragEnterEvent) {
 
 function onRowDragEnd(e: RowDragEndEvent) {
     console.log('onRowDragEnd', e);
+}
+
+function onRowDragCancel(e: RowDragCancelEvent) {
+    console.log('onRowDragCancel', e);
 }
 
 // setup the grid after the page has finished loading

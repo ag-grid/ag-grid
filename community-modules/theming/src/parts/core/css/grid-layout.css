@@ -3,10 +3,7 @@
 }
 
 .ag-pivot-leaf-group {
-    margin-left: min(
-        var(--ag-row-group-indent-size),
-        calc(var(--ag-row-group-indent-size) * var(--ag-indentation-level))
-    );
+    margin-left: var(--ag-row-group-indent-size);
 }
 
 .ag-row-group-leaf-indent {
@@ -74,6 +71,11 @@
     --ag-internal-content-line-height: min(calc(var(--ag-row-height) - 1px), var(--ag-line-height, 1000px));
 }
 
+/* Only display the bottom border of the last row when there is a gap between the row and grid edge */
+:where(.ag-body-vertical-content-no-gap) .ag-row-last {
+    border-bottom-color: transparent;
+}
+
 .ag-sticky-bottom {
     border-top: var(--ag-row-border);
     box-sizing: content-box !important;
@@ -95,6 +97,11 @@
 
 .ag-cell {
     border-right: var(--ag-column-border);
+}
+
+/* Only display the right border of the rightmost column when there is a gap between the column and grid edge */
+:where(.ag-body-horizontal-content-no-gap) .ag-column-last {
+    border-right-color: transparent;
 }
 
 .ag-cell-wrapper {
@@ -197,6 +204,7 @@
 
 .ag-right-aligned-cell {
     text-align: right;
+    font-variant-numeric: tabular-nums;
 }
 
 /* right-align numeric values in cells with wrappers */
@@ -206,7 +214,7 @@
     margin-left: auto;
 }
 
-.ag-cell,
+.ag-cell:not(.ag-cell-inline-editing),
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)

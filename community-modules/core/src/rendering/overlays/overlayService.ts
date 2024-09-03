@@ -5,6 +5,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
 import type { GridOptions } from '../../entities/gridOptions';
+import { _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import { _warnOnce } from '../../utils/function';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
@@ -39,7 +40,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private overlayWrapperComp: OverlayWrapperComponent;
 
     public postConstruct(): void {
-        this.isClientSide = this.gos.isRowModelType('clientSide');
+        this.isClientSide = _isClientSideRowModel(this.gos);
         const updateOverlayVisibility = () => this.updateOverlayVisibility();
 
         this.addManagedEventListeners({

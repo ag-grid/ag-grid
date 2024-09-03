@@ -2,6 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
 import { _values } from '../../utils/generic';
@@ -27,14 +28,13 @@ export class HeaderRowCtrl extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
     }
+    public readonly instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
     private pinned: ColumnPinnedType;
     private type: HeaderRowType;
     private headerRowClass: string;
-
-    private instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private headerCellCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl> | undefined;
 
@@ -57,12 +57,8 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.isPrintLayout = this.gos.isDomLayout('print');
+        this.isPrintLayout = _isDomLayout(this.gos, 'print');
         this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
-    }
-
-    public getInstanceId(): HeaderRowCtrlInstanceId {
-        return this.instanceId;
     }
 
     /** Checks that every header cell that is currently visible has been rendered.
@@ -138,7 +134,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        this.isPrintLayout = this.gos.isDomLayout('print');
+        this.isPrintLayout = _isDomLayout(this.gos, 'print');
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.onRowHeightChanged();
@@ -353,13 +349,21 @@ export class HeaderRowCtrl extends BeanStub {
         return this.beans.columnViewportService.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public findHeaderCellCtrl(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
+    public findHeaderCellCtrl(
+        column: AgColumn | AgColumnGroup | ((cellCtrl: AbstractHeaderCellCtrl) => boolean)
+    ): AbstractHeaderCellCtrl | undefined {
         if (!this.headerCellCtrls) {
             return;
         }
 
         const allCtrls = this.getHeaderCellCtrls();
-        const ctrl: AbstractHeaderCellCtrl | undefined = allCtrls.find((ctrl) => ctrl.getColumnGroupChild() == column);
+        let ctrl: AbstractHeaderCellCtrl | undefined;
+
+        if (typeof column === 'function') {
+            ctrl = allCtrls.find(column);
+        } else {
+            ctrl = allCtrls.find((ctrl) => ctrl.getColumnGroupChild() == column);
+        }
 
         return ctrl;
     }

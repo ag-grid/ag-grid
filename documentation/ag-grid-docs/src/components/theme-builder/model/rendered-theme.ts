@@ -1,8 +1,8 @@
-import { Theme, inputStyleBordered, tabStyleQuartz } from '@ag-grid-community/theming';
+import { type Theme, themeQuartz } from '@ag-grid-community/theming';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 
 import { allParamModels } from './ParamModel';
-import { PartModel } from './PartModel';
+import { FeatureModel } from './PartModel';
 import { enabledAdvancedParamsAtom } from './advanced-params';
 import type { Store } from './store';
 
@@ -25,22 +25,19 @@ export const renderedThemeAtom = atom((get): Theme => {
             .map((param) => [param.property, get(param.valueAtom)])
     );
 
-    const iconSet = get(PartModel.for('iconSet').variantAtom).variant;
+    const iconSet = get(FeatureModel.for('iconSet').selectedPartAtom).part;
 
-    const theme = new Theme({
-        parts: [iconSet, tabStyleQuartz, inputStyleBordered],
-        params,
-    });
+    const theme = themeQuartz.usePart(iconSet).overrideParams(params);
 
     const container = get(previewGridContainer);
     if (container) {
-        theme.install({ container });
+        theme.install({ container, loadThemeGoogleFonts: true });
     }
 
     // also install the theme at the top level, as it is required for preset previews
-    theme.install();
+    theme.install({ loadThemeGoogleFonts: true });
 
-    return theme;
+    return theme as Theme;
 });
 
 export const useRenderedTheme = () => useAtomValue(renderedThemeAtom);

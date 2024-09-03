@@ -2,7 +2,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { DEFAULT_COLUMN_MIN_WIDTH } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
@@ -386,7 +385,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = column.getColDef().minWidth ?? DEFAULT_COLUMN_MIN_WIDTH;
+        const minColWidth = column.getColDef().minWidth ?? this.gos.environment.getDefaultColumnMinWidth();
 
         // flex
         const flex = getValue('flex').value1;

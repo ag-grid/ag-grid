@@ -25,6 +25,7 @@ import {
     ProvidedFilter,
     RefPlaceholder,
     _areEqual,
+    _getActiveDomElement,
     _last,
     _makeNull,
     _setDisplayed,
@@ -163,7 +164,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private getComponentForKeyEvent(e: KeyboardEvent): SetFilterListItem<V> | undefined {
-        if (!this.eSetFilterList.contains(this.gos.getActiveDomElement()) || !this.virtualList) {
+        if (!this.eSetFilterList.contains(_getActiveDomElement(this.gos)) || !this.virtualList) {
             return;
         }
 
@@ -252,6 +253,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
             processedKeyCreator !== (existingKeyCreator ?? existingColDef?.keyCreator) ||
             (!!this.dataTypeService &&
+                !!processedKeyCreator &&
                 this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
                 colDef.valueFormatter !== existingColDef?.valueFormatter)
         );
@@ -474,7 +476,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         return promise.then(() => {
             this.checkAndRefreshVirtualList();
-            this.onBtApply(false, true);
+            if (!this.applyActive || this.areModelsEqual(this.getModel()!, this.getModelFromUi()!)) {
+                this.onBtApply(false, true);
+            }
         });
     }
 

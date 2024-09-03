@@ -7,6 +7,7 @@ import type { AgColumn } from './entities/agColumn';
 import type { CellPosition } from './entities/cellPositionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { RowPosition } from './entities/rowPositionUtils';
+import { _isGroupRowsSticky } from './gridOptionsUtils';
 import type { IRowModel } from './interfaces/iRowModel';
 import type { PageBoundsService } from './pagination/pageBoundsService';
 import type { PaginationService } from './pagination/paginationService';
@@ -184,6 +185,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         // if already on top row, do nothing
         const index = rowPosition.rowIndex;
         const pinned = rowPosition.rowPinned;
+        let ignoreSticky = false;
         if (this.isLastRowInContainer(rowPosition)) {
             switch (pinned) {
                 case 'bottom':
@@ -208,10 +210,13 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     }
                     return null;
             }
+        } else if (pinned) {
+            // if more pinned rows, should always navigate there
+            ignoreSticky = true;
         }
 
         const rowNode = this.rowModel.getRow(rowPosition.rowIndex);
-        const nextStickyPosition = this.getNextStickyPosition(rowNode);
+        const nextStickyPosition = ignoreSticky ? undefined : this.getNextStickyPosition(rowNode);
 
         if (nextStickyPosition) {
             return nextStickyPosition;
@@ -221,7 +226,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
-        if (!this.gos.isGroupRowsSticky() || !rowNode || !rowNode.sticky) {
+        if (!_isGroupRowsSticky(this.gos) || !rowNode || !rowNode.sticky) {
             return;
         }
 
@@ -289,6 +294,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         const index = rowPosition.rowIndex;
         const pinned = rowPosition.rowPinned;
         const isFirstRow = pinned ? index === 0 : index === this.pageBoundsService.getFirstRow();
+        let ignoreSticky = false;
 
         // if already on top row, do nothing
         if (isFirstRow) {
@@ -313,10 +319,13 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             }
 
             return null;
+        } else if (pinned) {
+            // if more pinned rows, should always navigate there
+            ignoreSticky = true;
         }
 
         const rowNode = this.rowModel.getRow(rowPosition.rowIndex);
-        const nextStickyPosition = this.getNextStickyPosition(rowNode, true);
+        const nextStickyPosition = ignoreSticky ? undefined : this.getNextStickyPosition(rowNode, true);
 
         if (nextStickyPosition) {
             return nextStickyPosition;

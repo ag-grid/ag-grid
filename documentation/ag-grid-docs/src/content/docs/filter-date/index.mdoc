@@ -38,7 +38,7 @@ The example below shows the Date Filter in action:
 
 Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
 
-{% interfaceDocumentation interfaceName="IDateFilterParams" overrideSrc="filter-date/date-filter-params.json" config={"description":"", "sortAlphabetically":"true"} /%}
+{% interfaceDocumentation interfaceName="IDateFilterParams" overrideSrc="filter-date/date-filter-params.json" config={"description":"", "sortAlphabetically":true} /%}
 
 ## Date Range
 
@@ -218,11 +218,12 @@ Applying the Date Filter is described in more detail in the following sections:
 
 ## Blank Cells
 
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
+If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInNotEqual`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
 
 ```js
 const filterParams = {
     includeBlanksInEquals: true,
+    includeBlanksInNotEqual: false,
     includeBlanksInLessThan: false,
     includeBlanksInGreaterThan: false,
     includeBlanksInRange: false,
@@ -232,9 +233,9 @@ const filterParams = {
 In the following example you can filter by date and see how blank values are included. Note the following:
 
 * Column **Date** has both `null` and `undefined` values resulting in blank cells.
-* Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
+* Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInNotEqual`,  `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
 
-{% gridExampleRunner title="Date Null Filtering" name="date-null-filtering" exampleHeight=310 typescriptOnly=true /%}
+{% gridExampleRunner title="Date Null Filtering" name="date-null-filtering" exampleHeight=310 /%}
 
 ## Data Updates
 

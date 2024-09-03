@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColumnPinnedEvent, ColumnState, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ColDef, ColumnPinnedEvent, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
 import { ControlsCellRenderer } from './controlsCellRenderer_typescript';
@@ -47,31 +47,20 @@ const gridOptions: GridOptions<IOlympicData> = {
 function onColumnPinned(event: ColumnPinnedEvent) {
     const allCols = event.api.getAllGridColumns();
 
-    const allFixedCols = allCols.filter((col) => col.getColDef().lockPosition);
-    const allNonFixedCols = allCols.filter((col) => !col.getColDef().lockPosition);
-
-    const pinnedCount = allNonFixedCols.filter((col) => col.getPinned() === 'left').length;
-
-    const pinFixed = pinnedCount > 0;
-
-    const columnStates: ColumnState[] = [];
-    allFixedCols.forEach((col) => {
-        if (pinFixed !== col.isPinned()) {
-            columnStates.push({
-                colId: col.getId(),
-                pinned: pinFixed ? 'left' : null,
-            });
-        }
-    });
-
-    if (columnStates.length > 0) {
-        event.api.applyColumnState({ state: columnStates });
+    if (event.pinned !== 'right') {
+        const allFixedCols = allCols.filter((col) => col.getColDef().lockPosition);
+        event.api.setColumnsPinned(allFixedCols, event.pinned);
     }
 }
 
-function onPinAthlete() {
+function onPinAthleteLeft() {
     gridApi!.applyColumnState({
         state: [{ colId: 'athlete', pinned: 'left' }],
+    });
+}
+function onPinAthleteRight() {
+    gridApi!.applyColumnState({
+        state: [{ colId: 'athlete', pinned: 'right' }],
     });
 }
 

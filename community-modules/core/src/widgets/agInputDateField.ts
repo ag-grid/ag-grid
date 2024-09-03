@@ -1,3 +1,4 @@
+import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _isBrowserSafari } from '../utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _addOrRemoveAttribute } from '../utils/dom';
@@ -34,7 +35,7 @@ export class AgInputDateField extends AgInputTextField {
 
     private onWheel(e: WheelEvent) {
         // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
-        if (this.gos.getActiveDomElement() === this.eInput) {
+        if (_getActiveDomElement(this.gos) === this.eInput) {
             e.preventDefault();
         }
     }

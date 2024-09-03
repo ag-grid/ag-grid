@@ -5,7 +5,6 @@ import { HeaderComp } from '../../headerRendering/cells/column/headerComp';
 import { SortIndicatorComp } from '../../headerRendering/cells/column/sortIndicatorComp';
 import { HeaderGroupComp } from '../../headerRendering/cells/columnGroup/headerGroupComp';
 import { ModuleNames } from '../../modules/moduleNames';
-import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { AnimateShowChangeCellRenderer } from '../../rendering/cellRenderers/animateShowChangeCellRenderer';
 import { AnimateSlideCellRenderer } from '../../rendering/cellRenderers/animateSlideCellRenderer';
 import { CheckboxCellRenderer } from '../../rendering/cellRenderers/checkboxCellRenderer';
@@ -43,6 +42,8 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         agTooltipComponent: TooltipComponent,
     };
 
+    private agGridDefaultParams: { [key in UserComponentName]?: any } = {};
+
     /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
     private enterpriseAgDefaultCompsModule: Record<string, ModuleNames> = {
         agSetColumnFilter: ModuleNames.SetFilterModule,
@@ -68,18 +69,25 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         }
     }
 
-    public registerDefaultComponent(name: UserComponentName, component: any) {
+    public registerDefaultComponent(name: UserComponentName, component: any, params?: any) {
         this.agGridDefaults[name] = component;
+        if (params) {
+            this.agGridDefaultParams[name] = params;
+        }
     }
 
     private registerJsComponent(name: string, component: any) {
         this.jsComps[name] = component;
     }
 
-    public retrieve(propertyName: string, name: string): { componentFromFramework: boolean; component: any } | null {
-        const createResult = (component: any, componentFromFramework: boolean) => ({
+    public retrieve(
+        propertyName: string,
+        name: string
+    ): { componentFromFramework: boolean; component: any; params?: any } | null {
+        const createResult = (component: any, componentFromFramework: boolean, params?: any) => ({
             componentFromFramework,
             component,
+            params,
         });
 
         // FrameworkOverrides.frameworkComponent() is used in two locations:
@@ -101,16 +109,12 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
 
         const defaultComponent = this.agGridDefaults[name as UserComponentName];
         if (defaultComponent) {
-            return createResult(defaultComponent, false);
+            return createResult(defaultComponent, false, this.agGridDefaultParams[name as UserComponentName]);
         }
 
         const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            ModuleRegistry.__assertRegistered(
-                moduleForComponent,
-                `AG Grid '${propertyName}' component: ${name}`,
-                this.gridId
-            );
+            this.gos.assertModuleRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`);
         } else {
             _doOnce(() => {
                 this.warnAboutMissingComponent(propertyName, name);

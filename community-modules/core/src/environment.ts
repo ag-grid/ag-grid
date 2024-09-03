@@ -55,6 +55,15 @@ export class Environment extends BeanStub implements NamedBean {
         return this.getCSSVariablePixelValue(HEADER_HEIGHT);
     }
 
+    public getDefaultColumnMinWidth(): number {
+        // This replaces a table of hard-coded defaults for each theme, and is a
+        // reasonable default that somewhat approximates the old table. This
+        // value only needs to be a non-insane default - Applications are
+        // expected to set column-specific defaults based on the icons and
+        // header cell text they need to display
+        return Math.min(36, this.getDefaultRowHeight());
+    }
+
     public getDefaultListItemHeight() {
         return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
     }
@@ -194,6 +203,7 @@ export class Environment extends BeanStub implements NamedBean {
             });
             node = node.parentElement;
         }
+        this.addDestroyFunc(() => observer.disconnect());
     }
 
     private getAncestorThemeClasses(): readonly string[] {

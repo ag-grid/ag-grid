@@ -51,25 +51,21 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnAnimationService.start();
-
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
             _warnOnce('tried to insert columns in invalid location, toIndex = ', toIndex);
             _warnOnce('remember that you should not count the moving columns when calculating the new index');
             return;
         }
 
+        this.columnAnimationService.start();
         // we want to pull all the columns out first and put them into an ordered list
         const movedColumns = this.columnModel.getColsForKeys(columnsToMoveKeys);
-        const failedRules = !this.doesMovePassRules(movedColumns, toIndex);
 
-        if (failedRules) {
-            return;
+        if (this.doesMovePassRules(movedColumns, toIndex)) {
+            this.columnModel.moveInCols(movedColumns, toIndex, source);
+            this.eventDispatcher.columnMoved({ movedColumns, source, toIndex, finished });
         }
 
-        this.columnModel.moveInCols(movedColumns, toIndex, source);
-
-        this.eventDispatcher.columnMoved({ movedColumns, source, toIndex, finished });
         this.columnAnimationService.finish();
     }
 

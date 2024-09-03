@@ -1,3 +1,4 @@
+import { _getDocument } from '../../gridOptionsUtils';
 import { _setAriaLabel, _setAriaLabelledBy } from '../../utils/aria';
 import { Component } from '../../widgets/component';
 import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
@@ -25,7 +26,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
     }
 
     private setupLoading(params: ILoadingCellRendererParams): void {
-        const eDocument = this.gos.getDocument();
+        const eDocument = _getDocument(this.gos);
         const skeletonEffect = eDocument.createElement('div');
         skeletonEffect.classList.add('ag-skeleton-effect');
 

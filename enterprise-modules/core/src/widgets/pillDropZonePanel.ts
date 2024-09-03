@@ -16,6 +16,7 @@ import {
     _clearElement,
     _createIconNoSpan,
     _existsAndNotEmpty,
+    _getActiveDomElement,
     _includes,
     _insertArrayIntoArray,
     _last,
@@ -146,7 +147,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
 
         const { shiftKey } = e;
-        const activeEl = this.gos.getActiveDomElement();
+        const activeEl = _getActiveDomElement(this.gos);
 
         const isFirstFocused = activeEl === focusableElements[0];
         const isLastFocused = activeEl === _last(focusableElements);
@@ -196,6 +197,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
             onDragStop: this.onDragStop.bind(this),
+            onDragCancel: this.onDragCancel.bind(this),
             isInterestedIn: this.isInterestedIn.bind(this),
         };
 
@@ -344,6 +346,19 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.state = 'notDragging';
     }
 
+    private onDragCancel(draggingEvent: DraggingEvent): void {
+        if (this.isPotentialDndItems()) {
+            if (this.state === 'newItemsIn') {
+                this.handleDragLeaveEnd(draggingEvent);
+            }
+
+            this.potentialDndItems = [];
+            this.refreshGui();
+        }
+
+        this.state = 'notDragging';
+    }
+
     private onDragStop(): void {
         if (this.isPotentialDndItems()) {
             if (this.state === 'newItemsIn') {
@@ -434,7 +449,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private getFocusedItem(): number {
         const eGui = this.getGui();
-        const activeElement = this.gos.getActiveDomElement();
+        const activeElement = _getActiveDomElement(this.gos);
 
         if (!eGui.contains(activeElement)) {
             return -1;

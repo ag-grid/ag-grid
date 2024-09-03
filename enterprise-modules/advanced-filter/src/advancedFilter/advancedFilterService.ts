@@ -4,13 +4,12 @@ import type {
     ColumnModel,
     DataTypeService,
     IAdvancedFilterService,
-    IRowModel,
     IRowNode,
     NamedBean,
     NewColumnsLoadedEvent,
     ValueService,
 } from '@ag-grid-community/core';
-import { BeanStub, _exists, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _exists, _isClientSideRowModel, _isServerSideRowModel, _warnOnce } from '@ag-grid-community/core';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -28,14 +27,12 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private valueService: ValueService;
     private columnModel: ColumnModel;
     private dataTypeService?: DataTypeService;
-    private rowModel: IRowModel;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.dataTypeService = beans.dataTypeService;
-        this.rowModel = beans.rowModel;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
     }
 
@@ -156,9 +153,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     private setEnabled(enabled: boolean, silent?: boolean): void {
         const previousValue = this.enabled;
-        const rowModelType = this.rowModel.getType();
-        const isValidRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
-        if (enabled && !rowModelType) {
+        const isValidRowModel = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
+        if (enabled && !isValidRowModel) {
             _warnOnce('Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.');
         }
         this.enabled = enabled && isValidRowModel;

@@ -53,6 +53,7 @@ import type {
     DataTypeDefinition,
     DisplayedColumnsChangedEvent,
     DomLayoutType,
+    DragCancelledEvent,
     DragStartedEvent,
     DragStoppedEvent,
     ExcelExportParams,
@@ -131,6 +132,7 @@ import type {
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
+    RowDragCancelEvent,
     RowDragEndEvent,
     RowDragEnterEvent,
     RowDragLeaveEvent,
@@ -499,6 +501,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressColumnMoveAnimation: boolean | undefined = undefined;
+    /** Set to `true` to suppress moving columns while dragging the Column Header. This option highlights the position where the column will be placed and it will only move it on mouse up.
+     * @default false
+     */
+    @Input() public suppressMoveWhenColumnDragging: boolean | undefined = undefined;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden.
      * @default false
      */
@@ -1879,6 +1885,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.
      */
     @Output() public dragStopped: EventEmitter<DragStoppedEvent<TData>> = new EventEmitter<DragStoppedEvent<TData>>();
+    /** When dragging is cancelled stops. This is caused by pressing `Escape` while dragging elements within the grid that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.
+     */
+    @Output() public dragCancelled: EventEmitter<DragCancelledEvent<TData>> = new EventEmitter<
+        DragCancelledEvent<TData>
+    >();
     /** Grid state has been updated.
      */
     @Output() public stateUpdated: EventEmitter<StateUpdatedEvent<TData>> = new EventEmitter<
@@ -1909,6 +1920,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The drag has finished over the grid.
      */
     @Output() public rowDragEnd: EventEmitter<RowDragEndEvent<TData>> = new EventEmitter<RowDragEndEvent<TData>>();
+    /** The drag has been cancelled over the grid.
+     */
+    @Output() public rowDragCancel: EventEmitter<RowDragCancelEvent<TData>> = new EventEmitter<
+        RowDragCancelEvent<TData>
+    >();
     /** A row group column was added, removed or reordered.
      */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<
@@ -2040,6 +2056,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressAutoSize: boolean | null | '';
     static ngAcceptInputType_skipHeaderOnAutoSize: boolean | null | '';
     static ngAcceptInputType_suppressColumnMoveAnimation: boolean | null | '';
+    static ngAcceptInputType_suppressMoveWhenColumnDragging: boolean | null | '';
     static ngAcceptInputType_suppressMovableColumns: boolean | null | '';
     static ngAcceptInputType_suppressFieldDotNotation: boolean | null | '';
     static ngAcceptInputType_enableRangeSelection: boolean | null | '';

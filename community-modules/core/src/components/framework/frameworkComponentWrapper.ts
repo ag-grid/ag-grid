@@ -43,11 +43,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
         return wrapper as any as A;
     }
 
-    public unwrap(comp: any): any {
-        return comp;
-    }
-
-    abstract createWrapper(OriginalConstructor: { new (): any }, componentType: ComponentType): F;
+    protected abstract createWrapper(OriginalConstructor: { new (): any }, componentType: ComponentType): F;
 
     private createMethod(wrapper: F, methodName: string, mandatory: boolean): void {
         wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));

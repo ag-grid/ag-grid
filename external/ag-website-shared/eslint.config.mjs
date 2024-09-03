@@ -4,7 +4,7 @@ export default [
     ...rootESLint,
     {
         rules: {
-            'import-x/consistent-type-specifier-style': 'off',
+            // 'import-x/consistent-type-specifier-style': 'off',
         },
     },
 ];

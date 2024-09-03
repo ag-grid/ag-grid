@@ -1,20 +1,18 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnMoveService } from '../columns/columnMoveService';
 import type { VisibleColsService } from '../columns/visibleColsService';
-import { HorizontalDirection } from '../constants/direction';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _areEqual, _includes, _last, _sortNumerically } from '../utils/array';
 
-export function attemptMoveColumns(params: {
+export interface ColumnMoveParams {
     allMovingColumns: AgColumn[];
     isFromHeader: boolean;
-    hDirection?: HorizontalDirection;
+    fromLeft: boolean;
     xPosition: number;
     fromEnter: boolean;
     fakeEvent: boolean;
@@ -22,11 +20,15 @@ export function attemptMoveColumns(params: {
     gos: GridOptionsService;
     columnModel: ColumnModel;
     columnMoveService: ColumnMoveService;
-    presentedColsService: VisibleColsService;
-}): { columns: AgColumn[]; toIndex: number } | null | undefined {
+    visibleColsService: VisibleColsService;
+}
+
+export function getBestColumnMoveIndexFromXPosition(
+    params: ColumnMoveParams
+): { columns: AgColumn[]; toIndex: number } | undefined {
     const {
         isFromHeader,
-        hDirection,
+        fromLeft,
         xPosition,
         fromEnter,
         fakeEvent,
@@ -34,11 +36,8 @@ export function attemptMoveColumns(params: {
         gos,
         columnModel,
         columnMoveService,
-        presentedColsService,
+        visibleColsService,
     } = params;
-
-    const draggingLeft = hDirection === HorizontalDirection.Left;
-    const draggingRight = hDirection === HorizontalDirection.Right;
 
     let { allMovingColumns } = params;
     if (isFromHeader) {
@@ -80,12 +79,12 @@ export function attemptMoveColumns(params: {
 
     const validMoves = calculateValidMoves({
         movingCols: allMovingColumnsOrdered,
-        draggingRight,
+        draggingRight: fromLeft,
         xPosition,
         pinned,
         gos,
         columnModel,
-        presentedColsService,
+        visibleColsService,
     });
 
     // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
@@ -119,12 +118,12 @@ export function attemptMoveColumns(params: {
     // is not reliable for dictating where the column may now be placed.
     if (constrainDirection && !fakeEvent) {
         // only allow left drag if this column is moving left
-        if (draggingLeft && firstValidMove >= (oldIndex as number)) {
+        if (!fromLeft && firstValidMove >= (oldIndex as number)) {
             return;
         }
 
         // only allow right drag if this column is moving right
-        if (draggingRight && firstValidMove <= (oldIndex as number)) {
+        if (fromLeft && firstValidMove <= (oldIndex as number)) {
             return;
         }
     }
@@ -133,7 +132,7 @@ export function attemptMoveColumns(params: {
     // Remember what that move would look like in terms of displayed cols
     // keep going with further moves until we find a different result in displayed output
     // In this way potentialMoves contains all potential moves over 'hidden' columns
-    const displayedCols = presentedColsService.getAllCols();
+    const displayedCols = visibleColsService.getAllCols();
 
     const potentialMoves: { move: number; fragCount: number }[] = [];
     let targetOrder: AgColumn[] | null = null;
@@ -162,18 +161,26 @@ export function attemptMoveColumns(params: {
 
     // The best move is the move with least group fragmentation
     potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
+    const toIndex = potentialMoves[0].move;
 
-    return moveColumns(allMovingColumns, potentialMoves[0].move, 'uiColumnMoved', false, columnMoveService);
+    if (toIndex > columnModel.getCols().length - allMovingColumns.length) {
+        return;
+    }
+
+    return { columns: allMovingColumns, toIndex };
 }
 
-export function moveColumns(
-    columns: AgColumn[],
-    toIndex: number,
-    source: ColumnEventType,
-    finished: boolean,
-    columnMoveService: ColumnMoveService
-): { columns: AgColumn[]; toIndex: number } | null {
-    columnMoveService.moveColumns(columns, toIndex, source, finished);
+export function attemptMoveColumns(
+    params: ColumnMoveParams & { finished: boolean }
+): { columns: AgColumn[]; toIndex: number } | null | undefined {
+    const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(params) || {};
+    const { finished, columnMoveService } = params;
+
+    if (!columns || toIndex == null) {
+        return null;
+    }
+
+    columnMoveService.moveColumns(columns, toIndex, 'uiColumnMoved', finished);
 
     return finished ? null : { columns, toIndex };
 }
@@ -217,14 +224,14 @@ function groupFragCount(columns: AgColumn[]): number {
     return count;
 }
 
-function getDisplayedColumns(presentedColsService: VisibleColsService, type: ColumnPinnedType): AgColumn[] {
+function getDisplayedColumns(visibleColsService: VisibleColsService, type: ColumnPinnedType): AgColumn[] {
     switch (type) {
         case 'left':
-            return presentedColsService.getLeftCols();
+            return visibleColsService.getLeftCols();
         case 'right':
-            return presentedColsService.getRightCols();
+            return visibleColsService.getRightCols();
         default:
-            return presentedColsService.getCenterCols();
+            return visibleColsService.getCenterCols();
     }
 }
 
@@ -235,9 +242,9 @@ function calculateValidMoves(params: {
     pinned: ColumnPinnedType;
     gos: GridOptionsService;
     columnModel: ColumnModel;
-    presentedColsService: VisibleColsService;
+    visibleColsService: VisibleColsService;
 }): number[] {
-    const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, presentedColsService } = params;
+    const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, visibleColsService } = params;
     const isMoveBlocked =
         gos.get('suppressMovableColumns') || movingCols.some((col) => col.getColDef().suppressMovable);
 
@@ -245,7 +252,7 @@ function calculateValidMoves(params: {
         return [];
     }
     // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
-    const allDisplayedCols = getDisplayedColumns(presentedColsService, pinned);
+    const allDisplayedCols = getDisplayedColumns(visibleColsService, pinned);
     // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
     // so the result we return has to be and index location for this list
     const allGridCols = columnModel.getCols();
@@ -356,14 +363,19 @@ function calculateValidMoves(params: {
     return validMoves;
 }
 
-export function normaliseX(
-    x: number,
-    pinned: ColumnPinnedType,
-    fromKeyboard: boolean,
-    gos: GridOptionsService,
-    ctrlsService: CtrlsService
-): number {
-    const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
+export function normaliseX(params: {
+    x: number;
+    pinned?: ColumnPinnedType;
+    fromKeyboard?: boolean;
+    useHeaderRow?: boolean;
+    skipScrollPadding?: boolean;
+    gos: GridOptionsService;
+    ctrlsService: CtrlsService;
+}): number {
+    const { pinned, fromKeyboard, gos, ctrlsService, useHeaderRow, skipScrollPadding } = params;
+    let eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
+
+    let { x } = params;
 
     if (!eViewport) {
         return 0;
@@ -375,14 +387,22 @@ export function normaliseX(
 
     // flip the coordinate if doing RTL
     if (gos.get('enableRtl')) {
-        const clientWidth = eViewport.clientWidth;
-        x = clientWidth - x;
+        if (useHeaderRow) {
+            eViewport = eViewport.querySelector('.ag-header-row') as HTMLElement;
+        }
+        x = eViewport.clientWidth - x;
     }
 
     // adjust for scroll only if centre container (the pinned containers don't scroll)
-    if (pinned == null) {
+    if (pinned == null && !skipScrollPadding) {
         x += ctrlsService.get('center').getCenterViewportScrollLeft();
     }
 
     return x;
+}
+
+export function setColumnsMoving(columns: AgColumn[], isMoving: boolean): void {
+    for (const column of columns) {
+        column.setMoving(isMoving, 'uiColumnMoved');
+    }
 }

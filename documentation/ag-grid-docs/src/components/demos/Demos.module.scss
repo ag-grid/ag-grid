@@ -1,140 +1,90 @@
 @use 'design-system' as *;
 
-.container {
-    height: calc(100vh - var(--layout-site-header-height) - 2px);
-    box-sizing: border-box;
-}
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
 
-.grid {
-    height: 100%;
-}
-
-#{$selector-darkmode} .tabWrapper {
-    background-color: var(--color-bg-secondary);
-
-    &:hover {
-        background-color: var(--color-bg-secondary);
-        transition: all 0.5s ease-in-out;
+    @media screen and (min-width: 720px) {
+        flex-wrap: nowrap;
     }
 }
 
-.tabWrapper {
-    background-color: #e5e9ed;
+.tabItem {
+    position: relative;
     width: 100%;
-    max-width: 200px;
+    max-width: calc(50% - #{$spacing-size-2});
     aspect-ratio: 16 / 9;
     border-radius: var(--radius-lg);
-    overflow: hidden;
-    transition: all 0.5s ease-in-out;
+    background-color: #e5e9ed;
     border: 1px solid var(--color-border-primary);
+    overflow: hidden;
+
+    transition:
+        background-color 0.5s ease-in-out,
+        outline 0.5s ease-in-out;
 
     &:hover {
         background-color: #c8cfd8;
-        transition: all 0.5s ease-in-out;
+    }
+
+    &.activeTab {
+        outline: 2px solid #044b93;
+        #{$selector-darkmode} & {
+            outline: 2px solid var(--color-brand-300);
+        }
+    }
+
+    a {
+        display: block;
+        height: 100%;
     }
 
     @media screen and (min-width: 720px) {
-        max-height: 140px;
+        max-width: max(#{calc(25% - #{$spacing-size-3})}, 200px);
+    }
+
+    @media screen and (min-width: 1024px) {
+        max-height: 116px;
     }
 
     @media screen and (max-height: 728px) {
         height: 80px;
     }
-}
 
-.tabs {
-    display: flex;
-    flex-wrap: wrap;
-    height: 100%;
-    gap: $spacing-size-4;
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-secondary);
 
-    > div {
-        max-width: calc(50% - #{$spacing-size-2});
-    }
-
-    @media screen and (min-width: 720px) {
-        flex-wrap: nowrap;
-
-        > div {
-            max-width: unset;
+        &:hover {
+            background-color: var(--color-bg-secondary);
         }
-    }
 
-    span {
-        position: relative;
-        bottom: 56px;
-        background: linear-gradient(358deg, #e5e9ed 40%, transparent);
-        border-bottom-right-radius: 10px;
-        border-bottom-left-radius: 10px;
-        height: 40px;
-        margin-top: 16px;
-        display: flex;
-        justify-content: left;
-        align-items: flex-end;
-        padding-bottom: 8px;
-        color: #044b93;
-        padding-left: 12px;
-        pointer-events: none;
-
-        #{$selector-darkmode} & {
-            background: linear-gradient(358deg, var(--color-bg-secondary) 30%, transparent);
+        &.tabActive {
+            outline: 2px solid var(--color-link);
         }
     }
 }
 
-.showcaseItemTab {
-    cursor: pointer;
-    -webkit-user-drag: none;
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    max-width: 100%;
+.showcaseImg {
     position: relative;
+    max-width: 100%;
     left: 24px;
     top: 20px;
-    transition: all 0.3s ease-in-out;
-    border-radius: var(--radius-md);
+    pointer-events: none;
+    transition: transform 0.3s ease-in-out;
 
-    &:hover {
+    .tabItem:hover & {
         transform: scale(1.1);
-        opacity: 1;
-        transition: all 0.4s ease-in-out;
     }
+}
 
+.showcaseImgLight {
     #{$selector-darkmode} & {
         display: none;
     }
 }
 
-.tabActive {
-    outline: 2px solid #044b93;
-    border-radius: var(--radius-lg);
-
-    span {
-        color: #044b93;
-    }
-
-    #{$selector-darkmode} & {
-        outline: 2px solid var(--color-link);
-    }
-}
-
-.tabs a div {
-    display: flex;
-    padding-top: 12px;
-}
-
-.tabItem span {
-    transition: all 0.3s;
-}
-
-.tabItem:hover span {
-    color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 10%);
-    transition: all 0.3s;
-}
-
-.showcaseItemTab.darkTab {
+.showcaseImgDark {
     display: none;
 
     #{$selector-darkmode} & {
@@ -142,21 +92,40 @@
     }
 }
 
-.tabs span {
-    font-weight: 600;
+.label {
+    position: absolute;
     display: flex;
+    justify-content: left;
+    align-items: flex-end;
+    height: 40px;
+    width: 100%;
+    bottom: 0;
     padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-2;
+    padding-left: $spacing-size-3;
+    font-weight: 600;
+    background: linear-gradient(358deg, #e5e9ed 40%, transparent);
+    color: #044b93;
+    pointer-events: none;
+    transition:
+        color 0.3s ease-in-out,
+        background-color 0.3s ease-in-out;
     color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 100%);
 
-    #{$selector-darkmode} & {
-        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 50%);
+    .tabItem:hover & {
+        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 10%);
     }
-}
 
-.tabs .spanActive {
-    color: #044b93;
+    .activeTab & {
+        color: #044b93;
+
+        #{$selector-darkmode} & {
+            color: var(--color-link);
+        }
+    }
 
     #{$selector-darkmode} & {
-        color: var(--color-link);
+        background: linear-gradient(358deg, var(--color-bg-secondary) 30%, transparent);
+        color: color-mix(in srgb, var(--color-fg-primary), var(--color-text-tertiary) 50%);
     }
 }

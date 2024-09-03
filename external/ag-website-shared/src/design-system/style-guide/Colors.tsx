@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
 
 import styles from './StyleGuide.module.scss';
@@ -81,6 +81,11 @@ const colors = {
 
 const Color: FunctionComponent = ({ colorName, showValue = false }) => {
     const cssVar = `--color-${colorName}`;
+    const [displayCssVar, setDisplayCssVar] = useState<string>();
+
+    useEffect(() => {
+        setDisplayCssVar(getCssVarValue(cssVar) ?? undefined);
+    }, [cssVar]);
 
     return (
         <div className={styles.swatch}>
@@ -88,7 +93,7 @@ const Color: FunctionComponent = ({ colorName, showValue = false }) => {
             <div className={styles.swatchBottom}>
                 {showValue && (
                     <span>
-                        <b>{getCssVarValue(cssVar)}</b>
+                        <b>{displayCssVar}</b>
                     </span>
                 )}
 

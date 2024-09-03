@@ -1,6 +1,9 @@
 import { type Framework } from '@ag-grid-types';
 
-export type Overrides = Record<string, any>;
+export type Overrides = {
+    meta: MetaTag;
+    [key: string]: any;
+};
 
 interface MetaTag {
     displayName: string;
@@ -14,13 +17,8 @@ interface MetaTag {
     /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
     suppressMissingPropCheck?: true;
 }
-export type DocEntryMap = {
-    meta?: MetaTag;
-} & {
-    [key in string]: DocEntry | ChildDocEntry;
-};
+export type DocEntryMap = Record<string, DocEntry | ChildDocEntry>;
 type DocEntry = {
-    meta?: MetaTag;
     options?: never;
     more?: never;
     type?: never;
@@ -39,6 +37,10 @@ export interface PropertyType {
     /** True if property is defined with ? i.e pinned?: boolean Currently only applied to doc-interfaces.AUTO */
     optional?: boolean;
 }
+export interface InterfaceHierarchyOverrides {
+    exclude?: string[];
+    include?: string[];
+}
 export interface ChildDocEntry {
     meta?: never;
     more?: {
@@ -51,22 +53,17 @@ export interface ChildDocEntry {
     options?: string[];
     default?: string;
     type: PropertyType | string;
-    interfaceHierarchyOverrides: {
-        exclude?: string[];
-        include?: string[];
-    };
+    interfaceHierarchyOverrides: InterfaceHierarchyOverrides;
     /** We check for properties that are not present in the source code. Set this to true to allow this property to be include
      * even though there is no matching code property for it.
      */
     overrideMissingPropCheck?: true;
 }
 export interface ObjectCode {
-    framework?: string;
-    id?: string;
-    breadcrumbs?: {
-        [key in string]: string;
-    };
-    properties: DocEntryMap;
+    framework: Framework;
+    id: string;
+    breadcrumbs?: Record<string, string>;
+    properties: Properties;
 }
 interface CodeEntry {
     description?: string;
@@ -141,12 +138,8 @@ export interface Config {
     showSnippets?: boolean;
     lookupRoot?: string;
     lookups?: {
-        codeLookup: {
-            [key: string]: CodeEntry;
-        };
-        interfaces: {
-            [key: string]: InterfaceEntry;
-        };
+        codeLookup: Record<string, CodeEntry>;
+        interfaces: Record<string, InterfaceEntry>;
     };
     codeSrcProvided: string[];
     gridOpProp?: InterfaceEntry;
@@ -180,28 +173,22 @@ export interface Config {
     /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
     suppressMissingPropCheck?: true;
 
-    /** The width of the left column in characters. Names will wrap if there are any longer names. */
-    maxLeftColumnWidth: number;
-
     /** A regular expression limiting the names that should appear */
     namePattern: string;
 
-    /** A list of types to suppress from generated documentation. */
-    suppressTypes?: string[];
-    /** When properties defined as `initial`, the relative link to direct to */
-    initialLink?: string;
     /** Show the description of what an initial property is against initial properties */
     showInitialDescription?: boolean;
 }
+
+export type Properties = DocEntryMap | DocEntry | ChildDocEntry;
 export type SectionProps = {
-    framework: Framework;
     title: string;
-    properties: DocEntryMap | DocEntry | ChildDocEntry;
-    config: Config;
-    breadcrumbs?: {
-        [key in string]: string;
-    };
+    framework: Framework;
     names?: string[];
+    properties: Properties;
+    config: Config;
+    breadcrumbs?: Record<string, string>;
+    meta?: MetaTag;
 };
 export type PropertyCall = {
     framework: Framework;
@@ -216,3 +203,37 @@ export type FunctionCode = {
     type: PropertyType | string;
     config: Config;
 };
+
+export interface DocProperties {
+    type: 'properties';
+    properties: Properties;
+    meta: MetaTag;
+}
+export interface DocCode {
+    type: 'code';
+    code: string;
+}
+
+export type InterfaceDocumentationModel = DocProperties | DocCode;
+
+export interface SingleApiModel {
+    type: 'single';
+    title: string;
+    properties: Properties;
+    config: Config;
+    meta: MetaTag;
+}
+
+export interface MultipleApiModel {
+    type: 'multiple';
+    entries: [
+        string,
+        {
+            properties: ChildDocEntry | DocEntry;
+            meta: MetaTag;
+        },
+    ][];
+    config: Config;
+}
+
+export type ApiDocumentationModel = SingleApiModel | MultipleApiModel;

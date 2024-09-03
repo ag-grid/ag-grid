@@ -5,7 +5,12 @@ import prettier from 'prettier';
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import { SOURCE_ENTRY_FILE_NAME, getEnterprisePackageName } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
-import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
+import {
+    DARK_INTEGRATED_START,
+    getIntegratedDarkModeCode,
+    getInterfaceFileContents,
+    removeModuleRegistration,
+} from './generator/transformation-scripts/parser-utils';
 import type { ExampleConfig, GeneratedContents, ImportType, InternalFramework } from './generator/types';
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
 import {
@@ -207,6 +212,28 @@ export async function generateFiles(options: ExecutorOptions) {
                                 internalFramework
                             );
                         }
+                    }
+
+                    // Add Dark Mode code to the provided files if they are an integrated example
+                    if (isIntegratedCharts && fileName === mainFileName) {
+                        const code = getIntegratedDarkModeCode(
+                            folderPath,
+                            TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)
+                        );
+                        const fileContent = provideFrameworkFiles[fileName];
+                        const providedPlaceholder = '/** PROVIDED EXAMPLE DARK INTEGRATED **/';
+                        if (
+                            !fileContent.includes(providedPlaceholder) &&
+                            !fileContent.includes(DARK_INTEGRATED_START) // might have already been replaced
+                        ) {
+                            throw new Error(
+                                `Provided example ${folderPath}/provided/modules/${internalFramework}/${fileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
+                            );
+                        }
+                        provideFrameworkFiles[fileName] = provideFrameworkFiles[fileName].replace(
+                            providedPlaceholder,
+                            code
+                        );
                     }
                 }
             }

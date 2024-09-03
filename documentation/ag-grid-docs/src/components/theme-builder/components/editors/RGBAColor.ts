@@ -52,10 +52,10 @@ export class RGBAColor {
         }
         if (/^#[0-9a-f]{3}([0-9a-f]{4})?$/.test(css)) {
             const hex = css.slice(1);
-            const r = parseInt(hex.slice(0, 1), 16) / 255;
-            const g = parseInt(hex.slice(1, 2), 16) / 255;
-            const b = parseInt(hex.slice(2, 3), 16) / 255;
-            const a = hex.length === 4 ? parseInt(hex.slice(3, 4), 16) / 255 : 1;
+            const r = parseInt(hex.slice(0, 1), 16) / 15;
+            const g = parseInt(hex.slice(1, 2), 16) / 15;
+            const b = parseInt(hex.slice(2, 3), 16) / 15;
+            const a = hex.length === 4 ? parseInt(hex.slice(3, 4), 16) / 15 : 1;
             return new RGBAColor(r, g, b, a);
         }
         const numbers = Array.from(css.matchAll(/[\d.%-]+/g)).map(([m]) =>
