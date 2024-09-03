@@ -1,5 +1,4 @@
 .ag-dnd-ghost {
-    position: absolute;
     display: flex;
     align-items: center;
     cursor: move;
