@@ -205,7 +205,7 @@
     font-optical-sizing: auto;
     font-weight: 400;
     span {
-        opacity: 0.7;
+        opacity: 0.6;
     }
 }
 
@@ -376,11 +376,5 @@ button.seeMore {
 
     pre {
         border: none;
-    }
-}
-
-.initialItem {
-    .metaValue {
-        background-color: var(--color-bg-primary);
     }
 }
