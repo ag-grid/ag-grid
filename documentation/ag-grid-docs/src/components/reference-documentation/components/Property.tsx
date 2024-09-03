@@ -301,7 +301,7 @@ export const Property: FunctionComponent<{
                                     </div>
                                 )}
                                 {isInitial && config.showInitialDescription && (
-                                    <div onClick={() => setExpanded(!isExpanded)} className={styles.description}>
+                                    <div className={styles.description}>
                                         This property will only be read on initialisation.
                                     </div>
                                 )}
@@ -317,19 +317,16 @@ export const Property: FunctionComponent<{
                                         ))}
                                     </div>
                                 )}
-                            </div>
-
-                            <div className={styles.actionsRow}>
                                 {more != null && more.url && !config.hideMore && (
                                     <a
-                                        className={styles.docLink}
+                                        className={legacyStyles.docLink}
                                         href={urlWithPrefix({
                                             url: more.url,
                                             framework,
                                         })}
                                     >
                                         {more.name}
-                                        <Icon name="newTab"> </Icon>
+                                        <Icon name="newTab" />
                                     </a>
                                 )}
                             </div>

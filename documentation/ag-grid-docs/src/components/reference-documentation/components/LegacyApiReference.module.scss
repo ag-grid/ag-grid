@@ -40,3 +40,17 @@
     gap: $spacing-size-2;
     flex-direction: column;
 }
+
+/**
+ * Documentation links
+ */
+.docLink {
+    white-space: nowrap;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    svg {
+        --icon-size: 16px;
+    }
+}
