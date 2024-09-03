@@ -182,12 +182,15 @@ export class GridRowsValidator {
             this.errors.get(parentRow).add(`${name} is not an array`);
             children = [];
         }
-        if (
-            !children &&
-            (parentRow.group || this.gridRows.treeData) &&
-            (name === 'childrenAfterGroup' || name === 'allLeafChildren')
-        ) {
-            this.errors.get(parentRow).add(`${name} is missing`);
+
+        if (!children) {
+            if (this.gridRows.treeData) {
+                if (!this.gridRows.isDuplicateIdRow(parentRow)) {
+                    this.errors.get(parentRow).add(`${name} is missing`);
+                }
+            } else if (parentRow.group && (name === 'childrenAfterGroup' || name === 'allLeafChildren')) {
+                this.errors.get(parentRow).add(`${name} is missing`);
+            }
         }
         children ??= [];
         const parentErrors = this.errors.get(parentRow);
