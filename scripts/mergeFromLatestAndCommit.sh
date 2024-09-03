@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./scripts/release/git-merge-one-way.sh latest
+git merge latest
 
 CONFLICTS=$(git ls-files -u | wc -l)
 if [ "$CONFLICTS" -gt 0 ] ; then
