@@ -36,7 +36,7 @@ export function _getFunctionName(funcConstructor: any) {
     return matches && matches.length === 2 ? matches[1].trim() : null;
 }
 
-export function _isFunction(val: any): boolean {
+export function _isFunction(val: any): val is () => string {
     return !!(val && val.constructor && val.call && val.apply);
 }
 

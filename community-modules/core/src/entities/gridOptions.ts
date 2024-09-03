@@ -695,6 +695,11 @@ export interface GridOptions<TData = any> {
      */
     context?: any;
     /**
+     * Provide a custom drag and drop cover component.
+     * @initial
+     */
+    dragAndDropCoverComponent?: any;
+    /**
      *
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.

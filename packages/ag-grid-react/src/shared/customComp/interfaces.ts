@@ -8,9 +8,11 @@ import type {
     BaseMenuItem,
     BaseMenuItemParams,
     BaseToolPanelParams,
+    DragAndDropIcon,
     ICellEditorParams,
     ICellRendererParams,
     IDetailCellRendererParams,
+    IDragAndDropCoverParams,
     IFilter,
     IFloatingFilterParams,
     IGroupCellRendererParams,
@@ -94,6 +96,13 @@ export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMe
     expanded: boolean;
     /** Callback that should be called every time the active status is updated (if providing custom behaviour). */
     onActiveChange: (active: boolean) => void;
+}
+
+export interface CustomDragAndDropCoverProps<TData = any, TContext = any>
+    extends IDragAndDropCoverParams<TData, TContext> {
+    label: string;
+    icon: DragAndDropIcon | null;
+    shake: boolean;
 }
 
 /** Props provided to custom loading overlay component */

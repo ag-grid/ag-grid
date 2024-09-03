@@ -786,6 +786,7 @@
                 "url": "./touch/"
             }
         },
+        "dragAndDropCoverComponent": {},
         "suppressFocusAfterRefresh": {},
         "suppressPropertyNamesCheck": {},
         "suppressChangeDetection": {
