@@ -1,11 +1,12 @@
 import type { Group } from '@tweenjs/tween.js';
 import { Tween } from '@tweenjs/tween.js';
 
-import { type Mouse } from '../createMouse';
+import type { Mouse } from '../createMouse';
 import { getOffset } from '../dom';
-import { type Point } from '../geometry';
-import { type ScriptDebugger } from '../scriptDebugger';
-import { type EasingFunction, getTweenDuration } from '../tween';
+import type { Point } from '../geometry';
+import type { ScriptDebugger } from '../scriptDebugger';
+import { getTweenDuration } from '../tween';
+import type { EasingFunction } from '../tween';
 import { moveMouse } from './move';
 
 interface CreateMoveMouseParams {

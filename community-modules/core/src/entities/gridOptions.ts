@@ -1962,7 +1962,8 @@ export interface GridOptions<TData = any> {
      */
     onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>): void;
     /**
-     * Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
+     * @deprecated v32.2 Either use `onDisplayedColumnsChanged` which is fired at the same time,
+     * or use one of the more specific column events.
      */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
 

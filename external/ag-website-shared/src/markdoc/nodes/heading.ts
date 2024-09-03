@@ -1,4 +1,5 @@
-import { type Render, component, nodes } from '@astrojs/markdoc/config';
+import { component, nodes } from '@astrojs/markdoc/config';
+import type { Render } from '@astrojs/markdoc/config';
 import type { Config, Schema } from '@markdoc/markdoc';
 
 export const heading: Schema<Config, Render> = {

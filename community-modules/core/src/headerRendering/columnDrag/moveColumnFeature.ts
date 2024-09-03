@@ -193,7 +193,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.columnModel.setColsVisible(allowedCols, visible, source);
     }
 
-    private finishColumnMoving(attemptToPin: boolean = false): void {
+    private finishColumnMoving(): void {
         this.clearHighlighted();
 
         if (!this.lastMovedInfo) {
@@ -202,9 +202,6 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         const { columns, toIndex } = this.lastMovedInfo;
 
-        if (attemptToPin) {
-            this.attemptToPinColumns(columns, undefined, true);
-        }
         this.columnMoveService.moveColumns(columns, toIndex, 'uiColumnMoved', true);
     }
 
@@ -218,23 +215,26 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const allMovingColumns = this.getAllMovingColumns(draggingEvent, true);
 
         if (finished) {
-            const { fromLeft, xPosition } = this.getPositionInfoFromDragEvent(allMovingColumns) || {};
+            // first we handle pinning, then move columns
+            const isAttemptingToPin = this.isAttemptingToPin(allMovingColumns);
+            if (isAttemptingToPin) {
+                this.attemptToPinColumns(allMovingColumns, undefined, true);
+            }
+
+            const { fromLeft, xPosition } = this.getNormalisedXPositionInfo(allMovingColumns, isAttemptingToPin) || {};
 
             if (fromLeft == null || xPosition == null) {
+                this.finishColumnMoving();
                 return;
             }
 
-            const params = this.getMoveColumnParams({
+            this.moveColumnsAfterHighlight({
                 allMovingColumns,
-                isFromHeader: true,
                 xPosition,
-                fromLeft,
                 fromEnter,
                 fakeEvent,
+                fromLeft,
             });
-
-            const isAttemptingToPin = this.isAttemptingToPin(allMovingColumns);
-            this.moveColumnsAfterHighlight(params, isAttemptingToPin);
         } else {
             if (!this.dragAndDropService.isDropZoneWithinThisGrid(draggingEvent)) {
                 return;
@@ -321,60 +321,36 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         };
     }
 
-    private getPositionInfoFromDragEvent(
-        allMovingColumns: AgColumn[]
-    ): { fromLeft: boolean; xPosition: number } | undefined {
-        if (!this.lastHighlightedColumn) {
-            return;
-        }
+    private findFirstAndLastMovingColumns(allMovingColumns: AgColumn[]): {
+        firstMovingCol?: AgColumn;
+        lastMovingCol?: AgColumn;
+    } {
+        const moveLen = allMovingColumns.length;
 
-        const { column, position } = this.lastHighlightedColumn;
+        let firstMovingCol: AgColumn | undefined;
+        let lastMovingCol: AgColumn | undefined;
 
-        const visibleColumns = this.visibleColsService.getAllCols();
-        const firstMovingCol = allMovingColumns.find((col) => col.getLeft() != null);
-
-        if (!firstMovingCol) {
-            return;
-        }
-
-        const movingColIndex = visibleColumns.indexOf(firstMovingCol);
-        const targetIndex = visibleColumns.indexOf(column);
-        const fromLeft = movingColIndex < targetIndex;
-
-        let targetColumn: AgColumn;
-
-        if (position === ColumnHighlightPosition.Before) {
-            if (fromLeft) {
-                targetColumn = visibleColumns[targetIndex - 1];
-            } else {
-                targetColumn = visibleColumns[targetIndex];
+        for (let i = 0; i <= moveLen; i++) {
+            if (!firstMovingCol) {
+                const leftCol = allMovingColumns[i];
+                if (leftCol.getLeft() != null) {
+                    firstMovingCol = leftCol;
+                }
             }
-        } else {
-            if (fromLeft) {
-                targetColumn = visibleColumns[targetIndex];
-            } else {
-                targetColumn = visibleColumns[targetIndex + 1];
+
+            if (!lastMovingCol) {
+                const rightCol = allMovingColumns[moveLen - 1 - i];
+                if (rightCol.getLeft() != null) {
+                    lastMovingCol = rightCol;
+                }
+            }
+
+            if (firstMovingCol && lastMovingCol) {
+                break;
             }
         }
 
-        if (!targetColumn) {
-            return;
-        }
-
-        return { fromLeft, xPosition: targetColumn.getLeft()! + 20 };
-    }
-
-    private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection {
-        if (this.gos.get('enableRtl')) {
-            switch (hDirection) {
-                case HorizontalDirection.Left:
-                    return HorizontalDirection.Right;
-                case HorizontalDirection.Right:
-                    return HorizontalDirection.Left;
-            }
-        }
-
-        return hDirection;
+        return { firstMovingCol, lastMovingCol };
     }
 
     private highlightHoveredColumn(movingColumns: AgColumn[], mouseX: number) {
@@ -390,7 +366,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         for (const col of consideredColumns) {
             width = col.getActualWidth();
-            start = this.getColumnNormalisedLeft(col, isRtl);
+            start = this.getNormalisedColumnLeft(col, 0, isRtl);
 
             if (start != null) {
                 const end = start + width;
@@ -428,7 +404,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 return;
             }
 
-            start = this.getColumnNormalisedLeft(targetColumn, isRtl);
+            start = this.getNormalisedColumnLeft(targetColumn, 0, isRtl);
             width = targetColumn.getActualWidth();
         } else if (movingColumns.indexOf(targetColumn) !== -1) {
             targetColumn = null;
@@ -454,7 +430,101 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.lastHighlightedColumn = { column: targetColumn, position };
     }
 
-    private getColumnNormalisedLeft(col: AgColumn, isRtl: boolean): number | null {
+    private getNormalisedXPositionInfo(
+        allMovingColumns: AgColumn[],
+        isAttemptingToPin: boolean
+    ): { fromLeft: boolean; xPosition: number } | undefined {
+        const { gos, visibleColsService } = this;
+        const isRtl = gos.get('enableRtl');
+
+        const { firstMovingCol, column, position } = this.getColumnMoveAndTargetInfo(
+            allMovingColumns,
+            isAttemptingToPin,
+            isRtl
+        );
+
+        if (!firstMovingCol || !column || position == null) {
+            return;
+        }
+
+        const visibleColumns = visibleColsService.getAllCols();
+        const movingColIndex = visibleColumns.indexOf(firstMovingCol);
+        const targetIndex = visibleColumns.indexOf(column!);
+        const isBefore = (position === ColumnHighlightPosition.Before) !== isRtl;
+        const fromLeft = movingColIndex < targetIndex || (movingColIndex === targetIndex && !isBefore);
+        let diff: number = 0;
+
+        if (isBefore) {
+            if (fromLeft) {
+                diff -= 1;
+            }
+        } else {
+            if (!fromLeft) {
+                diff += 1;
+            }
+        }
+
+        if (targetIndex + diff === movingColIndex) {
+            return;
+        }
+
+        const targetColumn = visibleColumns[targetIndex + diff];
+
+        if (!targetColumn) {
+            return;
+        }
+
+        const xPosition = this.getNormalisedColumnLeft(targetColumn, 20, isRtl)!;
+
+        return { fromLeft, xPosition };
+    }
+
+    private getColumnMoveAndTargetInfo(
+        allMovingColumns: AgColumn[],
+        isAttemptingToPin: boolean,
+        isRtl: boolean
+    ): {
+        firstMovingCol?: AgColumn;
+        column?: AgColumn;
+        position?: ColumnHighlightPosition;
+    } {
+        const lastHighlightedColumn: {
+            column?: AgColumn;
+            position?: ColumnHighlightPosition;
+        } = this.lastHighlightedColumn || {};
+        const { firstMovingCol, lastMovingCol } = this.findFirstAndLastMovingColumns(allMovingColumns);
+
+        if (!firstMovingCol || !lastMovingCol || lastHighlightedColumn.column || !isAttemptingToPin) {
+            return {
+                firstMovingCol,
+                ...lastHighlightedColumn,
+            };
+        }
+
+        const pinned = this.getPinDirection();
+        const isLeft = pinned === 'left';
+
+        return {
+            firstMovingCol,
+            position: isLeft ? ColumnHighlightPosition.After : ColumnHighlightPosition.Before,
+            column: isLeft !== isRtl ? firstMovingCol : lastMovingCol,
+        };
+    }
+
+    private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection {
+        if (this.gos.get('enableRtl')) {
+            switch (hDirection) {
+                case HorizontalDirection.Left:
+                    return HorizontalDirection.Right;
+                case HorizontalDirection.Right:
+                    return HorizontalDirection.Left;
+            }
+        }
+
+        return hDirection;
+    }
+
+    private getNormalisedColumnLeft(col: AgColumn, padding: number, isRtl: boolean): number | null {
         const { gos, ctrlsService } = this;
         const left = col.getLeft();
 
@@ -465,9 +535,10 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const width = col.getActualWidth();
 
         return normaliseX({
-            x: isRtl ? left + width : left,
+            x: isRtl ? left + width - padding : left + padding,
             pinned: col.getPinned(),
-            useScrollWidth: true,
+            useHeaderRow: isRtl,
+            skipScrollPadding: true,
             gos,
             ctrlsService,
         });
@@ -482,8 +553,24 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         );
     }
 
-    private moveColumnsAfterHighlight(params: ColumnMoveParams, isAttemptingToPin: boolean): void {
-        const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(params) || {};
+    private moveColumnsAfterHighlight(params: {
+        allMovingColumns: AgColumn[];
+        xPosition: number;
+        fromEnter: boolean;
+        fakeEvent: boolean;
+        fromLeft: boolean;
+    }): void {
+        const { allMovingColumns, xPosition, fromEnter, fakeEvent, fromLeft } = params;
+
+        const columnMoveParams = this.getMoveColumnParams({
+            allMovingColumns,
+            isFromHeader: true,
+            xPosition,
+            fromLeft,
+            fromEnter,
+            fakeEvent,
+        });
+        const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(columnMoveParams) || {};
 
         if (columns && toIndex != null) {
             this.lastMovedInfo = {
@@ -492,7 +579,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             };
         }
 
-        this.finishColumnMoving(isAttemptingToPin);
+        this.finishColumnMoving();
     }
 
     private clearHighlighted(): void {
@@ -592,23 +679,29 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
     }
 
+    private getPinDirection(): 'left' | 'right' | undefined {
+        if (this.needToMoveLeft || this.pinned === 'left') {
+            return 'left';
+        }
+
+        if (this.needToMoveRight || this.pinned === 'right') {
+            return 'right';
+        }
+    }
+
     private attemptToPinColumns(
         columns: AgColumn[] | undefined,
         pinned?: ColumnPinnedType,
         fromMoving: boolean = false
-    ) {
+    ): number {
         const allowedCols = (columns || []).filter((c) => !c.getColDef().lockPinned);
 
         if (!allowedCols.length) {
-            return;
+            return 0;
         }
 
         if (fromMoving) {
-            if (this.needToMoveLeft || this.pinned === 'left') {
-                pinned = 'left';
-            } else if (this.needToMoveRight || this.pinned === 'right') {
-                pinned = 'right';
-            }
+            pinned = this.getPinDirection();
         }
 
         this.columnModel.setColsPinned(allowedCols, pinned, 'uiColumnDragged');
@@ -616,6 +709,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         if (fromMoving) {
             this.dragAndDropService.nudge();
         }
+
+        return allowedCols.length;
     }
 
     public override destroy(): void {

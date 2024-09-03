@@ -223,4 +223,17 @@
     .ag-filter-active .ag-icon-filter {
         color: var(--ag-material-accent-color);
     }
+
+    .ag-list-item-hovered::after {
+        background-color: var(--ag-material-primary-color);
+    }
+
+    .ag-pill .ag-pill-button:hover {
+        color: var(--ag-material-primary-color);
+    }
+
+    .ag-header-highlight-before::after,
+    .ag-header-highlight-after::after {
+        background-color: var(--ag-material-primary-color);
+    }
 }

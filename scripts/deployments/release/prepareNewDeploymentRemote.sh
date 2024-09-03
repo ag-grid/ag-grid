@@ -19,15 +19,15 @@ VERSION=""${RAW_VERSION//./}""
 TIMESTAMP=`date +%Y%m%d`
 FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
-PUBLIC_HTML_FOLDER="@HTML_FOLDER_NAME@"
-WORKING_DIR_ROOT="@WORKING_DIR_ROOT@"
+GRID_ROOT_DIR="@GRID_ROOT_DIR@"
+WWW_ROOT_DIR="@WWW_ROOT_DIR@"
 
-cd $WORKING_DIR_ROOT
+cd $WWW_ROOT_DIR
 
 # delete old temp folder if it exists
 rm -rf public_html_tmp > /dev/null
 
-# create a new folder - this will become $HTML_FOLDER_NAME
+# create a new folder - this will become $GRID_ROOT_DIR
 mkdir public_html_tmp
 
 # unzip release
@@ -38,14 +38,11 @@ cd ..
 
 # copy non versioned files & directories over
 echo "Copying non-versioned directories"
-cp -R ./$PUBLIC_HTML_FOLDER/support public_html_tmp/
-cp -R ./$PUBLIC_HTML_FOLDER/example-assets public_html_tmp/
-cp -R ./$PUBLIC_HTML_FOLDER/ecommerce public_html_tmp/
-cp -R ./$PUBLIC_HTML_FOLDER/zendesk public_html_tmp/
-cp -R ./$PUBLIC_HTML_FOLDER/services public_html_tmp/
-cp -R ./$PUBLIC_HTML_FOLDER/robots.txt public_html_tmp/
-cp -R ./$PUBLIC_HTML_FOLDER/__shared public_html_tmp/
+cp -R $GRID_ROOT_DIR/support public_html_tmp/
+cp -R $GRID_ROOT_DIR/example-assets public_html_tmp/
+cp -R $GRID_ROOT_DIR/ecommerce public_html_tmp/
+cp -R $GRID_ROOT_DIR/__shared public_html_tmp/
 
 #update folder permissions (default is 777 - change to 755)
 echo "Updating folder permissions"
-find public_html_tmp -maxdepth 1 -not \( -path public_html_tmp/ecommerce -prune \) -not \( -path public_html_tmp/ecommerce-uat -prune \) -not \( -path public_html_tmp/services -prune \) -not \( -path public_html_tmp/archive -prune \) -type d -exec chmod -R 755 {} \;
+find public_html_tmp -maxdepth 1 -not \( -path public_html_tmp/ecommerce -prune \) -not \( -path public_html_tmp/ecommerce-uat -prune \) -not \( -path public_html_tmp/services -prune \) -not \( -path public_html_tmp/charts -prune \) -not \( -path public_html_tmp/archive -prune \) -type d -exec chmod -R 755 {} \;

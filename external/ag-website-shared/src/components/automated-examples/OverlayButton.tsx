@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import { type FunctionComponent, forwardRef, useEffect } from 'react';
+import { forwardRef, useEffect } from 'react';
+import type { FunctionComponent } from 'react';
 
 import styles from './OverlayButton.module.scss';
 import { initForwardMouseEventsThroughElement } from './lib/initForwardMouseEventsThroughElement';

@@ -1,5 +1,6 @@
 import type { Framework } from '@ag-grid-types';
-import Code, { type Language } from '@ag-website-shared/components/code/Code';
+import Code from '@ag-website-shared/components/code/Code';
+import type { Language } from '@ag-website-shared/components/code/Code';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 import * as snippetTransformer from '@components/snippet/snippetTransformer';
 

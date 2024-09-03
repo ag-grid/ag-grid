@@ -149,4 +149,17 @@
     .ag-color-input input[class^='ag-'][type='text'].ag-input-field-input {
         min-height: calc(var(--ag-icon-size) + 4px);
     }
+
+    .ag-list-item-hovered::after {
+        background-color: var(--ag-balham-active-color);
+    }
+
+    .ag-pill .ag-pill-button:hover {
+        color: var(--ag-balham-active-color);
+    }
+
+    .ag-header-highlight-before::after,
+    .ag-header-highlight-after::after {
+        background-color: var(--ag-balham-active-color);
+    }
 }

@@ -1,4 +1,5 @@
 import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ContainerType } from './iAfterGuiAttachedParams';
 
 export interface IMenuFactory {
@@ -15,7 +16,7 @@ export interface IMenuFactory {
         filtersOnly?: boolean
     ): void;
     showMenuAfterContextMenuEvent(
-        column: AgColumn | undefined,
+        column: AgColumn | AgProvidedColumnGroup | undefined,
         mouseEvent?: MouseEvent | null,
         touchEvent?: TouchEvent | null
     ): void;

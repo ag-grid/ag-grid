@@ -226,6 +226,8 @@ const CellComp = ({
                         cellCtrl.stopEditing(true);
                         cellCtrl.focusCell(true);
                     });
+                } else {
+                    cellCtrl.cellEditorAttached();
                 }
             }
         },

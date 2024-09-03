@@ -459,6 +459,8 @@ export class CellComp extends Component implements TooltipParentComp {
         if (cellEditor.afterGuiAttached) {
             cellEditor.afterGuiAttached();
         }
+
+        this.cellCtrl.cellEditorAttached();
     }
 
     private refreshEditStyles(editing: boolean, isPopup?: boolean): void {

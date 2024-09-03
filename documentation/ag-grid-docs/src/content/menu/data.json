@@ -441,7 +441,7 @@
                         "items": [
                             {
                                 "title": "See AG Charts",
-                                "url": "https://charts.ag-grid.com",
+                                "url": "https://ag-grid.com/charts",
                                 "newWindow": true
                             }
                         ]

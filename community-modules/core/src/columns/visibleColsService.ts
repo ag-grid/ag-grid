@@ -80,7 +80,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.columnViewportService.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(source);
 
-        this.eventDispatcher.visibleCols();
+        this.eventDispatcher.visibleCols(source);
     }
 
     // after setColumnWidth or updateGroupsAndPresentedCols

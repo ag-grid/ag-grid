@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { type FunctionComponent } from 'react';
+import type { FunctionComponent } from 'react';
 
 import styles from './UpdateSpeedSlider.module.scss';
 

@@ -1,11 +1,11 @@
 import type { Group } from '@tweenjs/tween.js';
 
-import { type AgElementFinder } from '../agElements';
-import { type Mouse } from '../createMouse';
+import type { AgElementFinder } from '../agElements';
+import type { Mouse } from '../createMouse';
 import { getScrollOffset } from '../dom';
 import { addPoints, minusPoint } from '../geometry';
-import { type ScriptDebugger } from '../scriptDebugger';
-import { type EasingFunction } from '../tween';
+import type { ScriptDebugger } from '../scriptDebugger';
+import type { EasingFunction } from '../tween';
 import { createTween } from './createTween';
 import { moveMouse } from './move';
 

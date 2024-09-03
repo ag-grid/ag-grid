@@ -3,7 +3,8 @@ import prompts from 'prompts';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-import { type Command, type SubrepoCommandParams, runSubRepoCommand } from './lib/runSubRepoCommand';
+import { runSubRepoCommand } from './lib/runSubRepoCommand';
+import type { Command, SubrepoCommandParams } from './lib/runSubRepoCommand';
 import { TERMINAL_COLORS as tc } from './lib/terminal-colors';
 
 const SUBREPO_FOLDER = 'external';

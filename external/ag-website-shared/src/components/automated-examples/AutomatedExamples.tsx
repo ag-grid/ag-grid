@@ -1,7 +1,8 @@
 import { createAutomatedExampleManager } from '@ag-website-shared/components/automated-examples/lib/createAutomatedExampleManager';
 import styles from '@pages-styles/homepage.module.scss';
 import classNames from 'classnames';
-import { type FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { FunctionComponent } from 'react';
 
 import { AutomatedIntegratedCharts } from './AutomatedIntegratedCharts';
 import { AutomatedRowGrouping } from './AutomatedRowGrouping';

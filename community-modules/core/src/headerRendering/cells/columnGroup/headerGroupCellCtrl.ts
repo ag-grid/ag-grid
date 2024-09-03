@@ -124,8 +124,30 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             return ctrl.getColumnGroupChild().isMoving();
         });
 
-        const beforeOn = isFirst && isColumnMoveAtThisLevel && highlighted === ColumnHighlightPosition.Before;
-        const afterOn = isLast && isColumnMoveAtThisLevel && highlighted === ColumnHighlightPosition.After;
+        let beforeOn = false;
+        let afterOn = false;
+
+        if (isColumnMoveAtThisLevel) {
+            const isRtl = this.beans.gos.get('enableRtl');
+            const isHighlightAfter = highlighted === ColumnHighlightPosition.After;
+            const isHighlightBefore = highlighted === ColumnHighlightPosition.Before;
+
+            if (isFirst) {
+                if (isRtl) {
+                    afterOn = isHighlightAfter;
+                } else {
+                    beforeOn = isHighlightBefore;
+                }
+            }
+
+            if (isLast) {
+                if (isRtl) {
+                    beforeOn = isHighlightBefore;
+                } else {
+                    afterOn = isHighlightAfter;
+                }
+            }
+        }
 
         this.comp.addOrRemoveCssClass('ag-header-highlight-before', beforeOn);
         this.comp.addOrRemoveCssClass('ag-header-highlight-after', afterOn);
