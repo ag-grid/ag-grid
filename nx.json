@@ -1,6 +1,18 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "plugins": ["./plugins/ag-grid-task-autogen"],
+  "plugins": [
+    "./plugins/ag-grid-task-autogen",
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "testTargetName": "vite:test",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  ],
   "affected": {
     "defaultBase": "latest"
   },
@@ -15,7 +27,12 @@
       "!{projectRoot}/jest.config.[jt]s"
     ],
     "buildOutputExcludes": ["!{projectRoot}/dist/**"],
-    "production": ["default", "defaultExcludes"],
+    "production": [
+      "default",
+      "defaultExcludes",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json"
+    ],
     "tsDeclarations": [
       {
         "dependentTasksOutputFiles": "**/*.d.ts",

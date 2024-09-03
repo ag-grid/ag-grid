@@ -59,7 +59,7 @@ describe('Pinned rows', () => {
         });
 
         test('are shown then updated with getRowId', () => {
-            const getRowId = jest.fn((p) => p.data.athlete);
+            const getRowId = vitest.fn((p) => p.data.athlete);
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
@@ -80,7 +80,7 @@ describe('Pinned rows', () => {
         });
 
         test('row data with matching ID is correctly updated', () => {
-            const getRowId = jest.fn((p) => p.data.id);
+            const getRowId = vitest.fn((p) => p.data.id);
             const pinnedTopRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
             const api = gridsManager.createGrid('myGrid', {
@@ -108,7 +108,7 @@ describe('Pinned rows', () => {
         });
 
         test('row data with matching ID is correctly updated with a new row order', () => {
-            const getRowId = jest.fn((p) => p.data.id);
+            const getRowId = vitest.fn((p) => p.data.id);
             const pinnedTopRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
             const api = gridsManager.createGrid('myGrid', {
@@ -136,7 +136,7 @@ describe('Pinned rows', () => {
         });
 
         test('remove and re-order rows', () => {
-            const getRowId = jest.fn((p) => p.data.id);
+            const getRowId = vitest.fn((p) => p.data.id);
             const pinnedTopRowData = [
                 { id: '3', athlete: 'Jake', sport: 'Top sport 0', age: 11 },
                 { id: '4', athlete: 'Peter', sport: 'Top sport 1', age: 12 },
@@ -177,8 +177,8 @@ describe('Pinned rows', () => {
         });
 
         test('cannot render duplicate rows with getRowId', () => {
-            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-            const getRowId = jest.fn((p) => JSON.stringify(p.data));
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            const getRowId = vitest.fn((p) => JSON.stringify(p.data));
             gridsManager.createGrid('myGrid', { columnDefs, pinnedTopRowData: topData.concat(topData), getRowId });
 
             assertPinnedRowData(topData, 'top', ['t-0']);
@@ -212,7 +212,7 @@ describe('Pinned rows', () => {
         });
 
         test('are shown then updated with getRowId', () => {
-            const getRowId = jest.fn((p) => p.data.athlete);
+            const getRowId = vitest.fn((p) => p.data.athlete);
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
@@ -236,7 +236,7 @@ describe('Pinned rows', () => {
         });
 
         test('row data with matching ID is correctly updated', () => {
-            const getRowId = jest.fn((p) => p.data.id);
+            const getRowId = vitest.fn((p) => p.data.id);
             const pinnedBottomRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
             const api = gridsManager.createGrid('myGrid', {
@@ -264,7 +264,7 @@ describe('Pinned rows', () => {
         });
 
         test('row data with matching ID is correctly updated with a new row order', () => {
-            const getRowId = jest.fn((p) => p.data.id);
+            const getRowId = vitest.fn((p) => p.data.id);
             const pinnedBottomRowData = [{ id: '3', athlete: 'Jake', sport: 'Top sport', age: 11 }];
 
             const api = gridsManager.createGrid('myGrid', {
@@ -292,7 +292,7 @@ describe('Pinned rows', () => {
         });
 
         test('remove and re-order rows', () => {
-            const getRowId = jest.fn((p) => p.data.id);
+            const getRowId = vitest.fn((p) => p.data.id);
             const pinnedBottomRowData = [
                 { id: '3', athlete: 'Jake', sport: 'Bottom sport 0', age: 11 },
                 { id: '4', athlete: 'Peter', sport: 'Bottom sport 1', age: 12 },
@@ -333,8 +333,8 @@ describe('Pinned rows', () => {
         });
 
         test('cannot render duplicate rows with getRowId', () => {
-            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-            const getRowId = jest.fn((p) => JSON.stringify(p.data));
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            const getRowId = vitest.fn((p) => JSON.stringify(p.data));
             gridsManager.createGrid('myGrid', {
                 columnDefs,
                 pinnedBottomRowData: bottomData.concat(bottomData),
