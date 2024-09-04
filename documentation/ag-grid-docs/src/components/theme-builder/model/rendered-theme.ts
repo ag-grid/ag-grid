@@ -27,6 +27,13 @@ export const renderedThemeAtom = atom((get): Theme => {
 
     const theme = themeQuartz.usePart(iconSet).overrideParams(params);
 
+    // globally install the theme CSS, because form widgets use reinterpretCSSValue
+    // which requires that the CSS variable values are available
+    setCurrentThemeCssClass(theme.getCssClass());
+    const stylesheet = new CSSStyleSheet();
+    stylesheet.replaceSync(theme.getCSS());
+    document.adoptedStyleSheets = [stylesheet];
+
     return theme as Theme;
 });
 
