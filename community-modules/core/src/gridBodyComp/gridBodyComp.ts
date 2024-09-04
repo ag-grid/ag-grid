@@ -1,4 +1,5 @@
 import type { BeanCollection } from '../context/context';
+import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
@@ -137,10 +138,7 @@ export class GridBodyComp extends Component {
             this.eStickyBottom
         );
 
-        if (
-            (this.rangeService && this.gos.getSelectionOption('enableRangeSelection')) ||
-            this.gos.getSelectionOption('rowSelection') === 'multiple'
-        ) {
+        if ((this.rangeService && _isCellSelectionEnabled(this.gos)) || _isMultiRowSelection(this.gos)) {
             _setAriaMultiSelectable(this.getGui(), true);
         }
     }

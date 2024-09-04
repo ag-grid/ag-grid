@@ -9,6 +9,7 @@ import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils
 import type { CellValueChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import { _isCellSelectionEnabled } from '../gridOptionsUtils';
 import type { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
 import type { CellValueChange, LastFocusedCell } from './iUndoRedo';
 import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
@@ -325,7 +326,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             },
             keyShortcutChangedCellEnd: () => {
                 let action: UndoRedoAction;
-                if (this.rangeService && this.gos.getSelectionOption('enableRangeSelection')) {
+                if (this.rangeService && _isCellSelectionEnabled(this.gos)) {
                     action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [
                         ...this.rangeService.getCellRanges(),
                     ]);

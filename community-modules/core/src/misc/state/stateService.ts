@@ -11,7 +11,7 @@ import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
-import { _isClientSideRowModel } from '../../gridOptionsUtils';
+import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
 import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
@@ -591,7 +591,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setCellSelectionState(cellSelectionState: CellSelectionState): void {
-        if (!this.gos.getSelectionOption('enableRangeSelection') || !this.rangeService) {
+        if (!_isCellSelectionEnabled(this.gos) || !this.rangeService) {
             return;
         }
         const cellRanges: CellRange[] = [];

@@ -4,7 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
+import { _getGroupSelectsDescendants, _isClientSideRowModel, _isMultiRowSelection } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
@@ -31,34 +31,31 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     private selectionCtx: RowRangeSelectionContext = new RowRangeSelectionContext();
 
     private groupSelectsChildren: boolean;
-    private rowSelection?: 'single' | 'multiple';
+    private isMultiSelect: boolean = false;
 
     public postConstruct(): void {
-        this.selectionCtx.init(this.rowModel);
-        this.rowSelection = this.gos.getSelectionOption('rowSelection');
-        this.groupSelectsChildren = !!this.gos.getSelectionOption('groupSelectsChildren');
+        const { gos, rowModel, onRowSelected } = this;
+        this.selectionCtx.init(rowModel);
+        this.isMultiSelect = _isMultiRowSelection(gos);
+        this.groupSelectsChildren = _getGroupSelectsDescendants(gos);
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection', 'selection'], () => {
-            const groupSelectsChildren = !!this.gos.getSelectionOption('groupSelectsChildren');
-            const rowSelection = this.gos.getSelectionOption('rowSelection');
+            const groupSelectsChildren = _getGroupSelectsDescendants(gos);
+            const multiSelect = _isMultiRowSelection(gos);
 
-            if (groupSelectsChildren !== this.groupSelectsChildren || rowSelection !== this.rowSelection) {
+            if (groupSelectsChildren !== this.groupSelectsChildren || multiSelect !== this.isMultiSelect) {
                 this.groupSelectsChildren = groupSelectsChildren;
-                this.rowSelection = rowSelection;
+                this.isMultiSelect = multiSelect;
                 this.deselectAllRowNodes({ source: 'api' });
             }
         });
 
-        this.addManagedEventListeners({ rowSelected: this.onRowSelected.bind(this) });
+        this.addManagedEventListeners({ rowSelected: onRowSelected.bind(this) });
     }
 
     public override destroy(): void {
         super.destroy();
         this.resetNodes();
         this.selectionCtx.reset();
-    }
-
-    private isMultiselect() {
-        return this.rowSelection === 'multiple';
     }
 
     /**
@@ -82,7 +79,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         if (nodes.length === 0) return 0;
 
-        if (nodes.length > 1 && !this.isMultiselect()) {
+        if (nodes.length > 1 && !this.isMultiSelect) {
             _warnOnce(`cannot multi select while rowSelection='single'`);
             return 0;
         }
@@ -103,7 +100,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             const node = filteredNodes[0];
             const newSelectionValue = this.overrideSelectionValue(newValue, source);
 
-            if (!this.isMultiselect()) {
+            if (!this.isMultiSelect) {
                 // let the normal selection logic handle this
             } else if (this.selectionCtx.isInRange(node)) {
                 const partition = this.selectionCtx.truncate(node);
@@ -159,7 +156,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
-            const clearOtherNodes = newValue && (clearSelection || !this.isMultiselect());
+            const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect);
             if (clearOtherNodes) {
                 updatedCount += this.clearOtherNodes(filteredNodes[0], source);
             }

@@ -4,8 +4,13 @@ import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SelectionOptions } from '../../../entities/gridOptions';
 import type { SelectionEventSourceType } from '../../../events';
-import { getHeaderCheckbox } from '../../../gridOptionsService';
-import { _getActiveDomElement, _isClientSideRowModel, _isServerSideRowModel } from '../../../gridOptionsUtils';
+import {
+    _getActiveDomElement,
+    _getHeaderCheckbox,
+    _isClientSideRowModel,
+    _isMultiRowSelection,
+    _isServerSideRowModel,
+} from '../../../gridOptionsUtils';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
@@ -150,10 +155,10 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkSelectionType(feature: string): boolean {
-        const isMultiSelect = this.gos.getSelectionOption('rowSelection') === 'multiple';
+        const isMultiSelect = _isMultiRowSelection(this.gos);
 
         if (!isMultiSelect) {
-            _warnOnce(`${feature} is only available if using 'multiple' rowSelection.`);
+            _warnOnce(`${feature} is only available if using 'multiRow' selection mode.`);
             return false;
         }
         return true;
@@ -208,7 +213,7 @@ export class SelectAllFeature extends BeanStub {
      */
     private isCheckboxSelection(): boolean {
         const so = this.selectionOptions;
-        const newHeaderCheckbox = so && getHeaderCheckbox(so) && isColumnControlsCol(this.column);
+        const newHeaderCheckbox = so && _getHeaderCheckbox(so) && isColumnControlsCol(this.column);
         const headerCheckboxSelection = this.column.getColDef().headerCheckboxSelection;
 
         let result = false;

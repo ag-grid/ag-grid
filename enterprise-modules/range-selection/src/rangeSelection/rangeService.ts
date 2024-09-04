@@ -29,7 +29,9 @@ import {
     _exists,
     _existsAndNotEmpty,
     _getCtrlForEventTarget,
+    _getSuppressMultiRanges,
     _includes,
+    _isCellSelectionEnabled,
     _isDomLayout,
     _last,
     _makeNull,
@@ -206,7 +208,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        if (!this.gos.getSelectionOption('enableRangeSelection')) {
+        if (!_isCellSelectionEnabled(this.gos)) {
             return;
         }
 
@@ -216,7 +218,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const suppressMultiRangeSelections = this.gos.getSelectionOption('suppressMultiRangeSelection');
+        const suppressMultiRangeSelections = _getSuppressMultiRanges(this.gos);
 
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _missing(this.cellRanges)) {
@@ -351,7 +353,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setCellRange(params: CellRangeParams): void {
-        if (!this.gos.getSelectionOption('enableRangeSelection')) {
+        if (!_isCellSelectionEnabled(this.gos)) {
             return;
         }
 
@@ -497,7 +499,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.gos.getSelectionOption('enableRangeSelection')) {
+        if (!_isCellSelectionEnabled(this.gos)) {
             return;
         }
 
@@ -690,7 +692,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gos.getSelectionOption('enableRangeSelection')) {
+        if (!_isCellSelectionEnabled(this.gos)) {
             return;
         }
 
@@ -698,7 +700,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !this.gos.getSelectionOption('suppressMultiRangeSelection');
+        const allowMulti = !_getSuppressMultiRanges(this.gos);
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && _existsAndNotEmpty(this.cellRanges);
 
@@ -759,7 +761,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (fromMouseClick && this.dragging) {
             return;
         }
-        if (this.gos.getSelectionOption('suppressMultiRangeSelection')) {
+        if (_getSuppressMultiRanges(this.gos)) {
             return;
         }
         if (this.isEmpty()) {

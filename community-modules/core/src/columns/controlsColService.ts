@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
-import { getCheckboxes, getHeaderCheckbox } from '../gridOptionsService';
+import { _getCheckboxes, _getHeaderCheckbox } from '../gridOptionsUtils';
 
 export interface IControlsColService {
     createControlsCols(): AgColumn[];
@@ -23,8 +23,8 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
             return [];
         }
 
-        const checkboxes = getCheckboxes(so);
-        const headerCheckbox = getHeaderCheckbox(so);
+        const checkboxes = _getCheckboxes(so);
+        const headerCheckbox = _getHeaderCheckbox(so);
 
         if (checkboxes || headerCheckbox) {
             const controlsColDef = this.gos.get('controlsColDef');

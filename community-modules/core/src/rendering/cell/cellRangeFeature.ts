@@ -1,5 +1,6 @@
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import { _isFillHandleEnabled, _isRangeHandleEnabled } from '../../gridOptionsUtils';
 import type { IRangeService, ISelectionHandle, ISelectionHandleFactory } from '../../interfaces/IRangeService';
 import { CellRangeType, SelectionHandleType } from '../../interfaces/IRangeService';
 import { _setAriaSelected } from '../../utils/aria';
@@ -209,9 +210,8 @@ export class CellRangeFeature {
 
         const cellRange = _last(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
-        const isFillHandleAvailable =
-            !!gos.getSelectionOption('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
-        const isRangeHandleAvailable = !!gos.getSelectionOption('enableRangeHandle');
+        const isFillHandleAvailable = _isFillHandleEnabled(gos) && !this.cellCtrl.isSuppressFillHandle();
+        const isRangeHandleAvailable = _isRangeHandleEnabled(gos);
 
         let handleIsAvailable =
             rangesLen === 1 && !this.cellCtrl.isEditing() && (isFillHandleAvailable || isRangeHandleAvailable);
@@ -234,9 +234,8 @@ export class CellRangeFeature {
     }
 
     private addSelectionHandle() {
-        const gos = this.beans.gos;
         const cellRangeType = _last(this.rangeService.getCellRanges()).type;
-        const selectionHandleFill = gos.getSelectionOption('enableFillHandle') && _missing(cellRangeType);
+        const selectionHandleFill = _isFillHandleEnabled(this.beans.gos) && _missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {

@@ -2,7 +2,13 @@ import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { AgEventType } from '../eventTypes';
 import type { RowEvent, SelectionEventSourceType } from '../events';
-import { _getRowHeightForNode, _getRowIdCallback, _isServerSideRowModel } from '../gridOptionsUtils';
+import {
+    _getGroupSelectsDescendants,
+    _getIsRowSelectable,
+    _getRowHeightForNode,
+    _getRowIdCallback,
+    _isServerSideRowModel,
+} from '../gridOptionsUtils';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -400,7 +406,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     private checkRowSelectable() {
-        const isRowSelectableFunc = this.beans.gos.getSelectionOption('isRowSelectable');
+        const isRowSelectableFunc = _getIsRowSelectable(this.beans.gos);
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
@@ -413,7 +419,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 return;
             }
 
-            const isGroupSelectsChildren = this.beans.gos.getSelectionOption('groupSelectsChildren');
+            const isGroupSelectsChildren = _getGroupSelectsDescendants(this.beans.gos);
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
                 this.setSelectedParams({

@@ -622,6 +622,15 @@ export {
     _getGroupAggFiltering,
     _isRowSelection,
     _isGetRowHeightFunction,
+    _getGroupSelection,
+    _getGroupSelectsDescendants,
+    _getIsRowSelectable,
+    _getHeaderCheckbox,
+    _isMultiRowSelection,
+    _getFillHandle,
+    _isCellSelectionEnabled,
+    _getSuppressMultiRanges,
+    _getRowSelectionMode,
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export { EventService } from './eventService';

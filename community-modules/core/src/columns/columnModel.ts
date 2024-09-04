@@ -12,8 +12,14 @@ import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { PropertyChangedSource } from '../gridOptionsService';
-import { getCheckboxes, getHeaderCheckbox } from '../gridOptionsService';
-import { _isClientSideRowModel, _isDomLayout, _isGroupUseEntireRow, _isServerSideRowModel } from '../gridOptionsUtils';
+import {
+    _getCheckboxes,
+    _getHeaderCheckbox,
+    _isClientSideRowModel,
+    _isDomLayout,
+    _isGroupUseEntireRow,
+    _isServerSideRowModel,
+} from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
@@ -1099,12 +1105,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
         prev: SelectionOptions | undefined,
         source: ColumnEventType
     ) {
-        const prevCheckbox = prev ? getCheckboxes(prev) : undefined;
-        const currCheckbox = current ? getCheckboxes(current) : undefined;
+        const prevCheckbox = prev ? _getCheckboxes(prev) : undefined;
+        const currCheckbox = current ? _getCheckboxes(current) : undefined;
         const checkboxHasChanged = prevCheckbox !== currCheckbox;
 
-        const prevHeaderCheckbox = prev ? getHeaderCheckbox(prev) : undefined;
-        const currHeaderCheckbox = current ? getHeaderCheckbox(current) : undefined;
+        const prevHeaderCheckbox = prev ? _getHeaderCheckbox(prev) : undefined;
+        const currHeaderCheckbox = current ? _getHeaderCheckbox(current) : undefined;
         const headerCheckboxHasChanged = prevHeaderCheckbox !== currHeaderCheckbox;
 
         if (checkboxHasChanged || headerCheckboxHasChanged) {

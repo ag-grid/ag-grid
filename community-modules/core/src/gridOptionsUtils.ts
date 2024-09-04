@@ -1,4 +1,14 @@
-import type { DomLayoutType, GetRowIdFunc } from './entities/gridOptions';
+import type {
+    DomLayoutType,
+    FillHandleOptions,
+    GetRowIdFunc,
+    GroupSelectionMode,
+    IsRowSelectable,
+    MultiRowSelectionOptions,
+    RowSelectionOptions,
+    SelectionOptions,
+    SingleRowSelectionOptions,
+} from './entities/gridOptions';
 import type {
     ExtractParamsFromCallback,
     ExtractReturnTypeFromCallback,
@@ -31,9 +41,8 @@ export function _isDomLayout(gos: GridOptionsService, domLayout: DomLayoutType) 
     return gos.get('domLayout') === domLayout;
 }
 
-export function _isRowSelection(gos: GridOptionsService) {
-    const rowSelection = gos.getSelectionOption('rowSelection');
-    return rowSelection === 'single' || rowSelection === 'multiple';
+export function _isRowSelection(gos: GridOptionsService): boolean {
+    return _getRowSelectionMode(gos) !== undefined;
 }
 
 export function _useAsyncEvents(gos: GridOptionsService) {
@@ -300,4 +309,181 @@ export function _getRowIdCallback<TData = any>(
 
         return id;
     };
+}
+
+/** Get the selection checkbox configuration. Defaults to enabled. */
+export function _getCheckboxes(
+    selection: SelectionOptions
+): NonNullable<SingleRowSelectionOptions['checkboxes']> | NonNullable<MultiRowSelectionOptions['checkboxes']> {
+    return (selection?.mode !== 'cell' && selection?.checkboxes) ?? true;
+}
+
+/** Get the header checkbox configuration. Defaults to enabled in `multiRow`, otherwise disabled. */
+export function _getHeaderCheckbox(selection: SelectionOptions): boolean {
+    return selection?.mode === 'multiRow' && (selection.headerCheckbox ?? true);
+}
+
+/** Get the display configuration for disabled checkboxes. Defaults to displaying disabled checkboxes. */
+export function _getHideDisabledCheckboxes(selection: SelectionOptions): boolean {
+    return (selection?.mode !== 'cell' && selection?.hideDisabledCheckboxes) ?? false;
+}
+
+export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return gos.get('suppressMultiRangeSelection');
+    }
+
+    return selection.mode === 'cell' ? selection.suppressMultiRanges ?? false : false;
+}
+
+export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    return useNewAPI ? selection.mode === 'cell' : gos.get('enableRangeSelection');
+}
+
+export function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return gos.get('enableRangeHandle');
+    }
+
+    return selection.mode === 'cell'
+        ? selection.handle === true || (selection.handle ? selection.handle.mode === 'range' : false)
+        : false;
+}
+
+export function _isFillHandleEnabled(gos: GridOptionsService): boolean {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return gos.get('enableFillHandle');
+    }
+
+    return selection.mode === 'cell'
+        ? typeof selection.handle === 'object'
+            ? selection.handle.mode === 'fill'
+            : false
+        : false;
+}
+
+export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return {
+            mode: 'fill',
+            setFillValue: gos.get('fillOperation'),
+            direction: gos.get('fillHandleDirection'),
+            suppressClearOnFillReduction: gos.get('suppressClearOnFillReduction'),
+        };
+    }
+
+    return selection.mode === 'cell' && typeof selection.handle === 'object' && selection.handle.mode === 'fill'
+        ? selection.handle
+        : undefined;
+}
+
+function _getSuppressClickSelection(
+    gos: GridOptionsService
+): NonNullable<RowSelectionOptions['suppressClickSelection']> {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        const suppressRowClickSelection = gos.get('suppressRowClickSelection');
+        const suppressRowDeselection = gos.get('suppressRowDeselection');
+
+        if (suppressRowClickSelection && suppressRowDeselection) {
+            return true;
+        } else if (suppressRowClickSelection) {
+            return 'suppressSelection';
+        } else if (suppressRowDeselection) {
+            return 'suppressDeselection';
+        } else {
+            return false;
+        }
+    }
+
+    return selection?.mode !== 'cell' ? selection?.suppressClickSelection ?? false : false;
+}
+
+export function _getSuppressSelection(gos: GridOptionsService): boolean {
+    const suppressClickSelection = _getSuppressClickSelection(gos);
+    return suppressClickSelection === true || suppressClickSelection === 'suppressSelection';
+}
+
+export function _getSuppressDeselection(gos: GridOptionsService): boolean {
+    const suppressClickSelection = _getSuppressClickSelection(gos);
+    return suppressClickSelection === true || suppressClickSelection === 'suppressDeselection';
+}
+
+export function _getIsRowSelectable(gos: GridOptionsService): IsRowSelectable | undefined {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return gos.get('isRowSelectable');
+    }
+
+    return selection.mode !== 'cell' ? selection.isRowSelectable : undefined;
+}
+
+export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionOptions['mode'] | undefined {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return gos.get('rowSelection') === 'multiple' ? 'multiRow' : 'singleRow';
+    }
+
+    return selection.mode !== 'cell' ? selection.mode : undefined;
+}
+
+export function _isMultiRowSelection(gos: GridOptionsService): boolean {
+    return _getRowSelectionMode(gos) === 'multiRow';
+}
+
+export function _getEnableMultiSelectWithClick(gos: GridOptionsService): boolean {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return gos.get('rowMultiSelectWithClick');
+    }
+
+    return selection.mode === 'multiRow' ? selection.enableMultiSelectWithClick ?? false : false;
+}
+
+export function _getGroupSelection(gos: GridOptionsService): GroupSelectionMode | undefined {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        const groupSelectsChildren = gos.get('groupSelectsChildren');
+        const groupSelectsFiltered = gos.get('groupSelectsFiltered');
+
+        if (groupSelectsChildren && groupSelectsFiltered) {
+            return 'filteredDescendants';
+        } else if (groupSelectsChildren) {
+            return 'descendants';
+        } else {
+            return 'self';
+        }
+    }
+
+    return selection.mode === 'multiRow' ? selection.groupSelects : undefined;
+}
+
+export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
+    const groupSelection = _getGroupSelection(gos);
+    return groupSelection === 'descendants' || groupSelection === 'filteredDescendants';
 }

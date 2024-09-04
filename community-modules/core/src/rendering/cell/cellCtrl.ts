@@ -9,8 +9,14 @@ import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
-import { getCheckboxes } from '../../gridOptionsService';
-import { _getDocument, _getRowHeightForNode, _isClientSideRowModel, _setDomData } from '../../gridOptionsUtils';
+import {
+    _getCheckboxes,
+    _getDocument,
+    _getRowHeightForNode,
+    _isCellSelectionEnabled,
+    _isClientSideRowModel,
+    _setDomData,
+} from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -127,7 +133,7 @@ export class CellCtrl extends BeanStub {
 
         const { selection } = this.beans.gridOptions;
         this.includeSelection = this.isIncludeControl(
-            colDef.checkboxSelection || (isColumnControlsCol(this.column) && selection && getCheckboxes(selection))
+            colDef.checkboxSelection || (isColumnControlsCol(this.column) && selection && _getCheckboxes(selection))
         );
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
@@ -164,9 +170,8 @@ export class CellCtrl extends BeanStub {
             this.enableTooltipFeature();
         }
 
-        const rangeSelectionEnabled =
-            this.beans.rangeService && this.beans.gos.getSelectionOption('enableRangeSelection');
-        if (rangeSelectionEnabled) {
+        const cellSelectionEnabled = this.beans.rangeService && _isCellSelectionEnabled(this.beans.gos);
+        if (cellSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
         }
     }

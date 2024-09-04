@@ -11,7 +11,14 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import { BeanStub, _errorOnce, _last, _warnOnce, isSelectionUIEvent } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    _errorOnce,
+    _isMultiRowSelection,
+    _last,
+    _warnOnce,
+    isSelectionUIEvent,
+} from '@ag-grid-community/core';
 
 import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
 import type { ISelectionStrategy } from './iSelectionStrategy';
@@ -207,7 +214,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         const onlyThisNode = clearSelection && newValue && !rangeSelect;
-        if (this.gos.getSelectionOption('rowSelection') !== 'multiple' || onlyThisNode) {
+        if (!_isMultiRowSelection(this.gos) || onlyThisNode) {
             if (nodes.length > 1) {
                 throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
             }

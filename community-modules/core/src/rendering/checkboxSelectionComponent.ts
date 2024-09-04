@@ -1,8 +1,13 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { getCheckboxes, getHideDisabledCheckboxes } from '../gridOptionsService';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
+import {
+    _getCheckboxes,
+    _getGroupSelection,
+    _getHideDisabledCheckboxes,
+    _getIsRowSelectable,
+    _isClientSideRowModel,
+} from '../gridOptionsUtils';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _stopPropagationForAgGrid } from '../utils/event';
@@ -95,7 +100,7 @@ export class CheckboxSelectionComponent extends Component {
                 // would possibly get selected twice
                 _stopPropagationForAgGrid(event);
 
-                const groupSelectsFiltered = !!this.gos.getSelectionOption('groupSelectsFiltered');
+                const groupSelectsFiltered = _getGroupSelection(this.gos) === 'filteredDescendants';
                 const isSelected = this.eCheckbox.getValue();
 
                 if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
@@ -118,7 +123,7 @@ export class CheckboxSelectionComponent extends Component {
             selectableChanged: this.onSelectableChanged.bind(this),
         });
 
-        const isRowSelectableFunc = this.gos.getSelectionOption('isRowSelectable');
+        const isRowSelectableFunc = _getIsRowSelectable(this.gos);
         const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {
@@ -172,7 +177,7 @@ export class CheckboxSelectionComponent extends Component {
 
         const so = this.gos.get('selection');
         const disableInsteadOfHide = so
-            ? !getHideDisabledCheckboxes(so)
+            ? !_getHideDisabledCheckboxes(so)
             : this.column?.getColDef().showDisabledCheckboxes;
         if (disableInsteadOfHide) {
             this.eCheckbox.setDisabled(!selectable);
@@ -196,7 +201,7 @@ export class CheckboxSelectionComponent extends Component {
 
         const so = this.gos.get('selection');
         if (so) {
-            return getCheckboxes(so);
+            return _getCheckboxes(so);
         }
 
         // column will be missing if groupDisplayType = 'groupRows'

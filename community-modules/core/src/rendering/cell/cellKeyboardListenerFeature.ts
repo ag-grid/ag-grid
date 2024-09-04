@@ -3,7 +3,12 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import { _isRowSelection } from '../../gridOptionsUtils';
+import {
+    _getGroupSelection,
+    _getSuppressDeselection,
+    _isCellSelectionEnabled,
+    _isRowSelection,
+} from '../../gridOptionsUtils';
 import { _isDeleteKey } from '../../utils/keyboard';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellCtrl } from './cellCtrl';
@@ -99,7 +104,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         eventService.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
         if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
-            if (rangeService && gos.getSelectionOption('enableRangeSelection')) {
+            if (rangeService && _isCellSelectionEnabled(gos)) {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
                 const column = cellCtrl.getColumn();
@@ -184,8 +189,8 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (!this.cellCtrl.isEditing() && _isRowSelection(gos)) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
-            if (newSelection || !gos.getSelectionOption('suppressRowDeselection')) {
-                const groupSelectsFiltered = this.beans.gos.getSelectionOption('groupSelectsFiltered');
+            if (newSelection || !_getSuppressDeselection(gos)) {
+                const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
                 const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,
