@@ -1,12 +1,20 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
+import type { MockInstance } from 'vitest';
 
+import { TestGridsManager } from '../test-utils';
 import { GROUP_ROW_DATA } from './data';
+import {
+    assertSelectedRowsByIndex,
+    clickRowByIndex,
+    selectRowsByIndex,
+    toggleCheckboxByIndex,
+    toggleHeaderCheckboxByIndex,
+} from './utils';
 
 describe('ag-grid Selection State', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -19,92 +27,43 @@ describe('ag-grid Selection State', () => {
         { sport: 'swimming' },
         { sport: 'rowing' },
     ];
-    let consoleErrorSpy: jest.SpyInstance;
-    let consoleWarnSpy: jest.SpyInstance;
+    let consoleErrorSpy: MockInstance;
+    let consoleWarnSpy: MockInstance;
 
     function wait(ms: number): Promise<void> {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    function createMyGrid(gridOptions: GridOptions): GridApi {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
+    function createGrid(gridOptions: GridOptions): GridApi {
+        return gridMgr.createGrid('myGrid', gridOptions);
     }
 
-    async function createMyGridAndWait(gridOptions: GridOptions, waitMs = 60): Promise<GridApi> {
-        const api = createMyGrid(gridOptions);
+    async function createGridAndWait(gridOptions: GridOptions, waitMs = 60): Promise<GridApi> {
+        const api = createGrid(gridOptions);
         await wait(waitMs);
         return api;
     }
 
-    function resetGrid(): void {
-        document.body.innerHTML = '<div id="myGrid"></div>';
-    }
-
-    function getRow(index: number): HTMLElement | null {
-        return document.getElementById('myGrid')!.querySelector(`[row-index=${index}]`);
-    }
-
-    function getCheckbox(index: number): HTMLElement | null {
-        return document
-            .getElementById('myGrid')!
-            .querySelectorAll<HTMLElement>('.ag-selection-checkbox')
-            .item(index)
-            .querySelector('input[type=checkbox]');
-    }
-
-    function getHeaderCheckbox(index: number): HTMLElement | null {
-        return document
-            .getElementById('myGrid')!
-            .querySelectorAll<HTMLElement>('.ag-header-select-all')
-            .item(index)
-            .querySelector('input[type=checkbox]');
-    }
-
-    function selectRows(indices: number[], api?: GridApi): void {
-        for (const i of indices) {
-            clickRow(i, { ctrlKey: true });
-        }
-        if (api !== undefined) {
-            assertSelectedRows(indices, api);
-        }
-    }
-
-    function clickRow(index: number, opts?: MouseEventInit): void {
-        getRow(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-    }
-
-    function toggleCheckbox(index: number, opts?: MouseEventInit): void {
-        getCheckbox(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-    }
-
-    function toggleHeaderCheckbox(index: number, opts?: MouseEventInit): void {
-        getHeaderCheckbox(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-    }
-
-    function assertSelectedRows(indices: number[], api: GridApi) {
-        const actual = new Set(api.getSelectedNodes().map((n) => n.rowIndex));
-        const expected = new Set(indices);
-        expect(actual).toEqual(expected);
-    }
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([
+    const gridMgr = new TestGridsManager({
+        modules: [
             ClientSideRowModelModule,
             ServerSideRowModelModule,
             ViewportRowModelModule,
             InfiniteRowModelModule,
             RowGroupingModule,
-        ]);
+        ],
     });
 
     beforeEach(() => {
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        gridMgr.reset();
 
-        resetGrid();
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
     });
 
     afterEach(() => {
+        gridMgr.reset();
+
         consoleErrorSpy.mockRestore();
         consoleWarnSpy.mockRestore();
     });
@@ -112,58 +71,58 @@ describe('ag-grid Selection State', () => {
     describe('User Interactions', () => {
         describe('Single Row Selection', () => {
             test('Select single row', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
                 });
 
-                clickRow(2);
+                clickRowByIndex(2);
 
-                assertSelectedRows([2], api);
+                assertSelectedRowsByIndex([2], api);
             });
 
             test('Clicking two rows selects only the last clicked row', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
                 });
 
-                clickRow(2);
-                clickRow(5);
+                clickRowByIndex(2);
+                clickRowByIndex(5);
 
-                assertSelectedRows([5], api);
+                assertSelectedRowsByIndex([5], api);
             });
 
             test("SHIFT-click doesn't select multiple rows in single row selection mode", () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
                 });
 
-                clickRow(2);
-                clickRow(5, { shiftKey: true });
+                clickRowByIndex(2);
+                clickRowByIndex(5, { shiftKey: true });
 
-                assertSelectedRows([5], api);
+                assertSelectedRowsByIndex([5], api);
             });
 
             test("CTRL-click doesn't select multiple rows in single row selection mode", () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
                 });
 
-                clickRow(2);
-                clickRow(5, { metaKey: true });
+                clickRowByIndex(2);
+                clickRowByIndex(5, { metaKey: true });
 
-                assertSelectedRows([5], api);
+                assertSelectedRowsByIndex([5], api);
             });
 
             test('suppressClickSelection prevents row from being selected when clicked', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: {
@@ -172,13 +131,13 @@ describe('ag-grid Selection State', () => {
                     },
                 });
 
-                clickRow(2);
+                clickRowByIndex(2);
 
-                assertSelectedRows([], api);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('un-selectable row cannot be selected', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: {
@@ -187,360 +146,361 @@ describe('ag-grid Selection State', () => {
                     },
                 });
 
-                clickRow(0);
-                assertSelectedRows([], api);
+                clickRowByIndex(0);
+                assertSelectedRowsByIndex([], api);
             });
         });
 
         describe('Multiple Row Selection', () => {
             test('un-selectable row cannot be selected', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'multiRow', isRowSelectable: (node) => node.data.sport !== 'football' },
                 });
 
-                clickRow(0);
-                assertSelectedRows([], api);
+                clickRowByIndex(0);
+                assertSelectedRowsByIndex([], api);
 
-                clickRow(0, { metaKey: true });
-                assertSelectedRows([], api);
+                clickRowByIndex(0, { metaKey: true });
+                assertSelectedRowsByIndex([], api);
 
-                clickRow(0, { ctrlKey: true });
-                assertSelectedRows([], api);
+                clickRowByIndex(0, { ctrlKey: true });
+                assertSelectedRowsByIndex([], api);
 
-                clickRow(0, { shiftKey: true });
-                assertSelectedRows([], api);
+                clickRowByIndex(0, { shiftKey: true });
+                assertSelectedRowsByIndex([], api);
             });
 
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click selects multiple rows', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(5, { metaKey: true });
-                    clickRow(3, { ctrlKey: true });
+                    clickRowByIndex(2);
+                    clickRowByIndex(5, { metaKey: true });
+                    clickRowByIndex(3, { ctrlKey: true });
 
-                    assertSelectedRows([2, 5, 3], api);
+                    assertSelectedRowsByIndex([2, 5, 3], api);
                 });
 
                 test('Single click after multiple selection clears previous selection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    selectRows([1, 3, 5], api);
+                    selectRowsByIndex([1, 3, 5], api);
 
-                    clickRow(2);
+                    clickRowByIndex(2);
 
-                    assertSelectedRows([2], api);
+                    assertSelectedRowsByIndex([2], api);
                 });
 
                 test('SHIFT-click selects range of rows', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(5, { shiftKey: true });
+                    clickRowByIndex(2);
+                    clickRowByIndex(5, { shiftKey: true });
 
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
                 });
 
                 test('SHIFT-click extends range downwards from from last selected row', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    selectRows([1, 3], api);
+                    selectRowsByIndex([1, 3], api);
 
-                    clickRow(5, { shiftKey: true });
+                    clickRowByIndex(5, { shiftKey: true });
 
-                    assertSelectedRows([1, 3, 4, 5], api);
+                    assertSelectedRowsByIndex([1, 3, 4, 5], api);
                 });
 
                 test('SHIFT-click extends range upwards from from last selected row', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    selectRows([2, 4], api);
+                    selectRowsByIndex([2, 4], api);
 
-                    clickRow(1, { shiftKey: true });
+                    clickRowByIndex(1, { shiftKey: true });
 
-                    assertSelectedRows([2, 4, 1, 3], api);
+                    assertSelectedRowsByIndex([2, 4, 1, 3], api);
                 });
 
                 test('SHIFT-click on un-selected table selects only clicked row', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(4, { shiftKey: true });
-                    assertSelectedRows([4], api);
+                    clickRowByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([4], api);
 
-                    clickRow(6, { shiftKey: true });
-                    assertSelectedRows([4, 5, 6], api);
+                    clickRowByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([4, 5, 6], api);
                 });
 
                 test('Range selection is preserved on CTRL-click and CMD-click', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(1);
-                    clickRow(3, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3], api);
+                    clickRowByIndex(1);
+                    clickRowByIndex(3, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3], api);
 
-                    clickRow(5, { metaKey: true });
-                    assertSelectedRows([1, 2, 3, 5], api);
+                    clickRowByIndex(5, { metaKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 5], api);
                 });
 
                 test('Range members can be un-selected with CTRL-click or CMD-click', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(1);
-                    clickRow(4, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3, 4], api);
+                    clickRowByIndex(1);
+                    clickRowByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 4], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([1, 2, 4], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([1, 2, 4], api);
 
-                    clickRow(2, { ctrlKey: true });
-                    assertSelectedRows([1, 4], api);
+                    clickRowByIndex(2, { ctrlKey: true });
+                    assertSelectedRowsByIndex([1, 4], api);
                 });
 
                 test('Range is extended downwards from selection root', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(4, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4], api);
 
-                    clickRow(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    clickRowByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
                 });
 
                 test('Range is extended upwards from selection root', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(6);
-                    clickRow(4, { shiftKey: true });
-                    assertSelectedRows([6, 4, 5], api);
+                    clickRowByIndex(6);
+                    clickRowByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([6, 4, 5], api);
 
-                    clickRow(2, { shiftKey: true });
-                    assertSelectedRows([6, 4, 5, 2, 3], api);
+                    clickRowByIndex(2, { shiftKey: true });
+                    assertSelectedRowsByIndex([6, 4, 5, 2, 3], api);
                 });
 
                 test('Range can be inverted', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(4);
-                    clickRow(6, { shiftKey: true });
-                    assertSelectedRows([4, 5, 6], api);
+                    clickRowByIndex(4);
+                    clickRowByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([4, 5, 6], api);
 
-                    clickRow(2, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4], api);
+                    clickRowByIndex(2, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4], api);
                 });
 
                 test.skip('SHIFT-click within range after de-selection resets root and clears previous selection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5, 6], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5, 6], api);
 
-                    clickRow(5, { shiftKey: true });
-                    assertSelectedRows([3, 4, 5], api);
+                    clickRowByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([3, 4, 5], api);
                 });
 
                 test.skip('SHIFT-click below range after de-selection resets root and clears previous selection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    clickRow(6, { shiftKey: true });
-                    assertSelectedRows([3, 4, 5, 6], api);
+                    clickRowByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([3, 4, 5, 6], api);
                 });
 
                 test.skip('SHIFT-click above range after de-selection resets root and clears previous selection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    clickRow(1, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3], api);
+                    clickRowByIndex(1, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3], api);
                 });
 
                 test.skip('META+SHIFT-click within range allows batch deselection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5, 6], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5, 6], api);
 
-                    clickRow(5, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([2, 6], api);
+                    clickRowByIndex(5, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([2, 6], api);
                 });
 
                 test.skip('META+SHIFT-click below range allows batch deselection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    clickRow(6, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([2], api);
+                    clickRowByIndex(6, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([2], api);
                 });
 
                 test.skip('META+SHIFT-click above range allows batch deselection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    clickRow(1, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([4, 5], api);
+                    clickRowByIndex(1, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([4, 5], api);
                 });
 
                 test.skip('CTRL+SHIFT-click within range allows batch deselection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5, 6], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5, 6], api);
 
-                    clickRow(5, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([2, 6], api);
+                    clickRowByIndex(5, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([2, 6], api);
                 });
 
                 test.skip('CTRL+SHIFT-click below range allows batch deselection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    clickRow(6, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([2], api);
+                    clickRowByIndex(6, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([2], api);
                 });
 
                 test.skip('CTRL+SHIFT-click above range allows batch deselection', () => {
-                    const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
-                    clickRow(2);
-                    clickRow(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    clickRowByIndex(2);
+                    clickRowByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    clickRow(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    clickRowByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    clickRow(1, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([4, 5], api);
+                    clickRowByIndex(1, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([4, 5], api);
                 });
             });
         });
 
         describe('Multiple Row Selection with Click', () => {
             test('Select multiple rows without modifier keys', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'multiRow', enableMultiSelectWithClick: true },
                 });
 
-                clickRow(2);
-                clickRow(5);
-                clickRow(3);
+                clickRowByIndex(2);
+                clickRowByIndex(5);
+                clickRowByIndex(3);
 
-                assertSelectedRows([2, 5, 3], api);
+                assertSelectedRowsByIndex([2, 5, 3], api);
             });
 
             test('De-select row with click', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'multiRow', enableMultiSelectWithClick: true },
                 });
 
-                selectRows([1, 2, 3], api);
+                selectRowsByIndex([1, 2, 3], api);
 
-                clickRow(2);
+                clickRowByIndex(2);
 
-                assertSelectedRows([1, 3], api);
+                assertSelectedRowsByIndex([1, 3], api);
             });
         });
 
         // TODO: Re-enable once checkbox settings are used/ported in the new API
         describe.skip('Checkbox selection', () => {
             test('Checkbox can be toggled on and off', async () => {
-                const api = await createMyGridAndWait({
+                const api = await createGridAndWait({
                     columnDefs,
                     rowData,
-                    selection: { mode: 'multiRow', checkboxes: true },
+                    selection: { mode: 'multiRow', checkboxes: true, suppressClickSelection: true },
                 });
 
-                toggleCheckbox(1);
-                assertSelectedRows([1], api);
+                toggleCheckboxByIndex(1);
+                assertSelectedRowsByIndex([1], api);
 
-                toggleCheckbox(1);
-                assertSelectedRows([], api);
+                toggleCheckboxByIndex(1);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('Multiple rows can be selected without modifier keys nor rowMultiSelectWithClick', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
-                    selection: { mode: 'multiRow', checkboxes: true },
+                    selection: { mode: 'multiRow', checkboxes: true, suppressClickSelection: true },
                 });
 
-                toggleCheckbox(1);
-                assertSelectedRows([1], api);
+                toggleCheckboxByIndex(1);
+                assertSelectedRowsByIndex([1], api);
 
-                toggleCheckbox(2);
-                assertSelectedRows([1, 2], api);
+                toggleCheckboxByIndex(2);
+                assertSelectedRowsByIndex([1, 2], api);
             });
 
             test('Clicking a row still selects it when `suppressClickSelection` is false', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: {
                         mode: 'multiRow',
-                        hideDisabledCheckboxes: false,
                         checkboxes: true,
+                        hideDisabledCheckboxes: false,
+                        suppressClickSelection: false,
                     },
                 });
 
                 // click, not toggle
-                clickRow(1);
-                assertSelectedRows([1], api);
+                clickRowByIndex(1);
+                assertSelectedRowsByIndex([1], api);
 
                 // toggle, not click, to assert inter-op
-                toggleCheckbox(1);
-                assertSelectedRows([], api);
+                toggleCheckboxByIndex(1);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('Clicking a row does nothing when `suppressClickSelection` is true', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: {
@@ -551,12 +511,12 @@ describe('ag-grid Selection State', () => {
                 });
 
                 // click, not toggle
-                clickRow(1);
-                assertSelectedRows([], api);
+                clickRowByIndex(1);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('Un-selectable checkboxes cannot be toggled', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: {
@@ -566,316 +526,316 @@ describe('ag-grid Selection State', () => {
                     },
                 });
 
-                toggleCheckbox(4);
+                toggleCheckboxByIndex(4);
 
-                assertSelectedRows([], api);
+                assertSelectedRowsByIndex([], api);
 
-                toggleCheckbox(5);
-                assertSelectedRows([5], api);
+                toggleCheckboxByIndex(5);
+                assertSelectedRowsByIndex([5], api);
             });
 
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click does not affect ability to select multiple rows', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { metaKey: true });
-                    toggleCheckbox(3, { ctrlKey: true });
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { metaKey: true });
+                    toggleCheckboxByIndex(3, { ctrlKey: true });
 
-                    assertSelectedRows([2, 5, 3], api);
+                    assertSelectedRowsByIndex([2, 5, 3], api);
                 });
 
                 test('SHIFT-click selects range of rows', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
 
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
                 });
 
                 test('SHIFT-click extends range downwards from from last selected row', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    selectRows([1, 3], api);
+                    selectRowsByIndex([1, 3], api);
 
-                    toggleCheckbox(5, { shiftKey: true });
+                    toggleCheckboxByIndex(5, { shiftKey: true });
 
-                    assertSelectedRows([1, 3, 4, 5], api);
+                    assertSelectedRowsByIndex([1, 3, 4, 5], api);
                 });
 
                 test('SHIFT-click extends range upwards from from last selected row', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    selectRows([2, 4], api);
+                    selectRowsByIndex([2, 4], api);
 
-                    toggleCheckbox(1, { shiftKey: true });
+                    toggleCheckboxByIndex(1, { shiftKey: true });
 
-                    assertSelectedRows([2, 4, 1, 3], api);
+                    assertSelectedRowsByIndex([2, 4, 1, 3], api);
                 });
 
                 test('SHIFT-click on un-selected table selects only clicked row', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([4], api);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([4], api);
 
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([4, 5, 6], api);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([4, 5, 6], api);
                 });
 
                 test('Range selection is preserved on CTRL-click and CMD-click', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(3, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(3, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3], api);
 
-                    toggleCheckbox(5, { metaKey: true });
-                    assertSelectedRows([1, 2, 3, 5], api);
+                    toggleCheckboxByIndex(5, { metaKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 5], api);
                 });
 
                 test('Range selection is preserved on checkbox toggle', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(3, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(3, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3], api);
 
-                    toggleCheckbox(5);
-                    assertSelectedRows([1, 2, 3, 5], api);
+                    toggleCheckboxByIndex(5);
+                    assertSelectedRowsByIndex([1, 2, 3, 5], api);
                 });
 
                 test('Range members can be un-selected with CTRL-click or CMD-click', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3, 4], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 4], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([1, 2, 4], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([1, 2, 4], api);
 
-                    toggleCheckbox(2, { ctrlKey: true });
-                    assertSelectedRows([1, 4], api);
+                    toggleCheckboxByIndex(2, { ctrlKey: true });
+                    assertSelectedRowsByIndex([1, 4], api);
                 });
 
                 test('Range members can be un-selected with toggle', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3, 4], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 4], api);
 
-                    toggleCheckbox(3);
-                    assertSelectedRows([1, 2, 4], api);
+                    toggleCheckboxByIndex(3);
+                    assertSelectedRowsByIndex([1, 2, 4], api);
                 });
 
                 test('Range is extended downwards from selection root', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4], api);
 
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
                 });
 
                 test('Range is extended upwards from selection root', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(6);
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([6, 4, 5], api);
+                    toggleCheckboxByIndex(6);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([6, 4, 5], api);
 
-                    toggleCheckbox(2, { shiftKey: true });
-                    assertSelectedRows([6, 4, 5, 2, 3], api);
+                    toggleCheckboxByIndex(2, { shiftKey: true });
+                    assertSelectedRowsByIndex([6, 4, 5, 2, 3], api);
                 });
 
                 test('Range can be inverted', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(4);
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([4, 5, 6], api);
+                    toggleCheckboxByIndex(4);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([4, 5, 6], api);
 
-                    toggleCheckbox(2, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4], api);
+                    toggleCheckboxByIndex(2, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4], api);
                 });
 
                 test('SHIFT can be used for range de-selection (Checkbox selection ONLY)', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 4, 5], api);
 
-                    toggleCheckbox(2);
-                    assertSelectedRows([1, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    assertSelectedRowsByIndex([1, 3, 4, 5], api);
 
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([1, 5], api);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 5], api);
                 });
 
                 test.skip('META+SHIFT-click within range allows batch deselection', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5, 6], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5, 6], api);
 
-                    toggleCheckbox(5, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([2, 6], api);
+                    toggleCheckboxByIndex(5, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([2, 6], api);
                 });
 
                 test.skip('META+SHIFT-click below range allows batch deselection', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    toggleCheckbox(6, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([2], api);
+                    toggleCheckboxByIndex(6, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([2], api);
                 });
 
                 test.skip('META+SHIFT-click above range allows batch deselection', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    toggleCheckbox(1, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([4, 5], api);
+                    toggleCheckboxByIndex(1, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([4, 5], api);
                 });
 
                 test.skip('CTRL+SHIFT-click within range allows batch deselection', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5, 6], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5, 6], api);
 
-                    toggleCheckbox(5, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([2, 6], api);
+                    toggleCheckboxByIndex(5, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([2, 6], api);
                 });
 
                 test.skip('CTRL+SHIFT-click below range allows batch deselection', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    toggleCheckbox(6, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([2], api);
+                    toggleCheckboxByIndex(6, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([2], api);
                 });
 
                 test.skip('CTRL+SHIFT-click above range allows batch deselection', () => {
-                    const api = createMyGrid({
+                    const api = createGrid({
                         columnDefs,
                         rowData,
                         selection: { mode: 'multiRow', checkboxes: true },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    toggleCheckbox(1, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([4, 5], api);
+                    toggleCheckboxByIndex(1, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([4, 5], api);
                 });
             });
         });
@@ -883,21 +843,21 @@ describe('ag-grid Selection State', () => {
         // TODO: Re-enable once checkbox settings are used/ported in the new API
         describe.skip('Header checkbox selection', () => {
             test('can be used to select and deselect all rows', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'multiRow', headerCheckbox: true },
                 });
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([0, 1, 2, 3, 4, 5, 6], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('can select multiple pages of data', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'multiRow', headerCheckbox: true },
@@ -905,15 +865,15 @@ describe('ag-grid Selection State', () => {
                     paginationPageSize: 5,
                 });
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([0, 1, 2, 3, 4, 5, 6], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('can select only current page of data', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: {
@@ -925,15 +885,15 @@ describe('ag-grid Selection State', () => {
                     paginationPageSize: 5,
                 });
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([0, 1, 2, 3, 4], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([0, 1, 2, 3, 4], api);
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([], api);
             });
 
             test('can select only filtered data', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: {
@@ -947,29 +907,29 @@ describe('ag-grid Selection State', () => {
 
                 api.setGridOption('quickFilterText', 'ing');
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([0, 1], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([0, 1], api);
 
                 api.setGridOption('quickFilterText', '');
 
-                assertSelectedRows([5, 6], api);
+                assertSelectedRowsByIndex([5, 6], api);
             });
 
             test('indeterminate selection state transitions to select all', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'multiRow', headerCheckbox: true },
                 });
 
-                selectRows([3], api);
+                selectRowsByIndex([3], api);
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([3, 0, 1, 2, 4, 5, 6], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([3, 0, 1, 2, 4, 5, 6], api);
             });
 
             test('un-selectable rows are not part of the selection', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: {
@@ -979,8 +939,8 @@ describe('ag-grid Selection State', () => {
                     },
                 });
 
-                toggleHeaderCheckbox(0);
-                assertSelectedRows([1, 2, 3, 4, 5, 6], api);
+                toggleHeaderCheckboxByIndex(0);
+                assertSelectedRowsByIndex([1, 2, 3, 4, 5, 6], api);
             });
         });
 
@@ -1007,321 +967,321 @@ describe('ag-grid Selection State', () => {
             };
 
             test('clicking group row selects only that row', async () => {
-                const api = await createMyGridAndWait({
+                const api = await createGridAndWait({
                     ...groupGridOptions,
                     selection: { mode: 'multiRow' },
                 });
 
-                toggleCheckbox(0);
-                assertSelectedRows([0], api);
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([0], api);
             });
 
             test('clicking group row with `groupSelectsChildren` enabled selects that row and all its children', async () => {
-                const api = await createMyGridAndWait({
+                const api = await createGridAndWait({
                     ...groupGridOptions,
                     selection: { mode: 'multiRow', groupSelects: 'descendants' },
                 });
 
                 // Group selects children
-                toggleCheckbox(0);
-                assertSelectedRows([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13], api);
 
                 // Can un-select child row
-                toggleCheckbox(4);
-                assertSelectedRows([2, 3, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                toggleCheckboxByIndex(4);
+                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13], api);
 
                 // Toggling group row from indeterminate state selects all children
-                toggleCheckbox(0);
-                assertSelectedRows([2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 4], api);
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 4], api);
 
                 // Toggle group row again de-selects all children
-                toggleCheckbox(0);
-                assertSelectedRows([], api);
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([], api);
             });
 
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click does not affect ability to select multiple rows', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { metaKey: true });
-                    toggleCheckbox(3, { ctrlKey: true });
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { metaKey: true });
+                    toggleCheckboxByIndex(3, { ctrlKey: true });
 
-                    assertSelectedRows([2, 5, 3], api);
+                    assertSelectedRowsByIndex([2, 5, 3], api);
                 });
 
                 test('SHIFT-click selects range of rows', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
 
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
                 });
 
                 test('SHIFT-click extends range downwards from from last selected row', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    selectRows([1, 3], api);
+                    selectRowsByIndex([1, 3], api);
 
-                    toggleCheckbox(5, { shiftKey: true });
+                    toggleCheckboxByIndex(5, { shiftKey: true });
 
-                    assertSelectedRows([1, 3, 4, 5], api);
+                    assertSelectedRowsByIndex([1, 3, 4, 5], api);
                 });
 
                 test('SHIFT-click extends range upwards from from last selected row', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    selectRows([2, 4], api);
+                    selectRowsByIndex([2, 4], api);
 
-                    toggleCheckbox(1, { shiftKey: true });
+                    toggleCheckboxByIndex(1, { shiftKey: true });
 
-                    assertSelectedRows([2, 4, 1, 3], api);
+                    assertSelectedRowsByIndex([2, 4, 1, 3], api);
                 });
 
                 test('SHIFT-click on un-selected table selects only clicked row', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([4], api);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([4], api);
 
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([4, 5, 6], api);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([4, 5, 6], api);
                 });
 
                 test('Range selection is preserved on CTRL-click and CMD-click', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(3, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(3, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3], api);
 
-                    toggleCheckbox(5, { metaKey: true });
-                    assertSelectedRows([1, 2, 3, 5], api);
+                    toggleCheckboxByIndex(5, { metaKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 5], api);
                 });
 
                 test('Range selection is preserved on checkbox toggle', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(3, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(3, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3], api);
 
-                    toggleCheckbox(5);
-                    assertSelectedRows([1, 2, 3, 5], api);
+                    toggleCheckboxByIndex(5);
+                    assertSelectedRowsByIndex([1, 2, 3, 5], api);
                 });
 
                 test('Range members can be un-selected with CTRL-click or CMD-click', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3, 4], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 4], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([1, 2, 4], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([1, 2, 4], api);
 
-                    toggleCheckbox(2, { ctrlKey: true });
-                    assertSelectedRows([1, 4], api);
+                    toggleCheckboxByIndex(2, { ctrlKey: true });
+                    assertSelectedRowsByIndex([1, 4], api);
                 });
 
                 test('Range members can be un-selected with toggle', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3, 4], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 4], api);
 
-                    toggleCheckbox(3);
-                    assertSelectedRows([1, 2, 4], api);
+                    toggleCheckboxByIndex(3);
+                    assertSelectedRowsByIndex([1, 2, 4], api);
                 });
 
                 test('Range is extended downwards from selection root', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4], api);
 
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
                 });
 
                 test('Range is extended upwards from selection root', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(6);
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([6, 4, 5], api);
+                    toggleCheckboxByIndex(6);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([6, 4, 5], api);
 
-                    toggleCheckbox(2, { shiftKey: true });
-                    assertSelectedRows([6, 4, 5, 2, 3], api);
+                    toggleCheckboxByIndex(2, { shiftKey: true });
+                    assertSelectedRowsByIndex([6, 4, 5, 2, 3], api);
                 });
 
                 test('Range can be inverted', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(4);
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([4, 5, 6], api);
+                    toggleCheckboxByIndex(4);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([4, 5, 6], api);
 
-                    toggleCheckbox(2, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4], api);
+                    toggleCheckboxByIndex(2, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4], api);
                 });
 
                 test('SHIFT can be used for range de-selection (Checkbox selection ONLY)', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(1);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([1, 2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(1);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 2, 3, 4, 5], api);
 
-                    toggleCheckbox(2);
-                    assertSelectedRows([1, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    assertSelectedRowsByIndex([1, 3, 4, 5], api);
 
-                    toggleCheckbox(4, { shiftKey: true });
-                    assertSelectedRows([1, 5], api);
+                    toggleCheckboxByIndex(4, { shiftKey: true });
+                    assertSelectedRowsByIndex([1, 5], api);
                 });
 
                 test.skip('META+SHIFT-click within range allows batch deselection', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5, 6], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5, 6], api);
 
-                    toggleCheckbox(5, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([2, 6], api);
+                    toggleCheckboxByIndex(5, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([2, 6], api);
                 });
 
                 test.skip('META+SHIFT-click below range allows batch deselection', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    toggleCheckbox(6, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([2], api);
+                    toggleCheckboxByIndex(6, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([2], api);
                 });
 
                 test.skip('META+SHIFT-click above range allows batch deselection', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    toggleCheckbox(1, { shiftKey: true, metaKey: true });
-                    assertSelectedRows([4, 5], api);
+                    toggleCheckboxByIndex(1, { shiftKey: true, metaKey: true });
+                    assertSelectedRowsByIndex([4, 5], api);
                 });
 
                 test.skip('CTRL+SHIFT-click within range allows batch deselection', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(6, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5, 6], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(6, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5, 6], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5, 6], api);
 
-                    toggleCheckbox(5, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([2, 6], api);
+                    toggleCheckboxByIndex(5, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([2, 6], api);
                 });
 
                 test.skip('CTRL+SHIFT-click below range allows batch deselection', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    toggleCheckbox(6, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([2], api);
+                    toggleCheckboxByIndex(6, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([2], api);
                 });
 
                 test.skip('CTRL+SHIFT-click above range allows batch deselection', async () => {
-                    const api = await createMyGridAndWait({
+                    const api = await createGridAndWait({
                         ...groupGridOptions,
                         selection: { mode: 'multiRow' },
                     });
 
-                    toggleCheckbox(2);
-                    toggleCheckbox(5, { shiftKey: true });
-                    assertSelectedRows([2, 3, 4, 5], api);
+                    toggleCheckboxByIndex(2);
+                    toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
 
-                    toggleCheckbox(3, { metaKey: true });
-                    assertSelectedRows([2, 4, 5], api);
+                    toggleCheckboxByIndex(3, { metaKey: true });
+                    assertSelectedRowsByIndex([2, 4, 5], api);
 
-                    toggleCheckbox(1, { shiftKey: true, ctrlKey: true });
-                    assertSelectedRows([4, 5], api);
+                    toggleCheckboxByIndex(1, { shiftKey: true, ctrlKey: true });
+                    assertSelectedRowsByIndex([4, 5], api);
                 });
             });
         });
@@ -1330,7 +1290,7 @@ describe('ag-grid Selection State', () => {
     describe('Selection API', () => {
         describe('setNodesSelected', () => {
             test('Select single row in single selection mode', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
@@ -1347,7 +1307,7 @@ describe('ag-grid Selection State', () => {
             });
 
             test('Select single row in multiple selection mode', () => {
-                const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[3]];
@@ -1359,7 +1319,7 @@ describe('ag-grid Selection State', () => {
             });
 
             test('Cannot select multiple rows in single selection mode', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
@@ -1376,7 +1336,7 @@ describe('ag-grid Selection State', () => {
             });
 
             test('Can select multiple rows in multiple selection mode', () => {
-                const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
                 const nodes = api.getRenderedNodes();
                 const toSelect = [nodes[5], nodes[4], nodes[2]];
@@ -1389,7 +1349,7 @@ describe('ag-grid Selection State', () => {
 
         describe('selectAll', () => {
             test('Can select all rows in single selection mode', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
@@ -1405,7 +1365,7 @@ describe('ag-grid Selection State', () => {
             });
 
             test('Can select all rows in multiple selection mode', () => {
-                const api = createMyGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
 
                 api.selectAll();
 
@@ -1418,7 +1378,7 @@ describe('ag-grid Selection State', () => {
 
         describe('selectAllOnCurrentPage', () => {
             test('Can select all rows on current page in single selection mode', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
@@ -1428,11 +1388,11 @@ describe('ag-grid Selection State', () => {
 
                 api.selectAllOnCurrentPage();
 
-                assertSelectedRows([0, 1, 2, 3, 4], api);
+                assertSelectedRowsByIndex([0, 1, 2, 3, 4], api);
             });
 
             test('Can deselect only rows on current page in single selection mode', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
@@ -1443,13 +1403,13 @@ describe('ag-grid Selection State', () => {
                 api.selectAll();
                 api.deselectAllOnCurrentPage();
 
-                assertSelectedRows([5, 6], api);
+                assertSelectedRowsByIndex([5, 6], api);
             });
         });
 
         describe('selectAllFiltered', () => {
             test('Can select all filtered rows in single selection mode', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
@@ -1464,7 +1424,7 @@ describe('ag-grid Selection State', () => {
             });
 
             test('Can deselect filtered rows only in single selection mode', () => {
-                const api = createMyGrid({
+                const api = createGrid({
                     columnDefs,
                     rowData,
                     selection: { mode: 'singleRow' },
@@ -1478,7 +1438,7 @@ describe('ag-grid Selection State', () => {
 
                 api.setGridOption('quickFilterText', '');
 
-                assertSelectedRows([0, 1, 2, 3, 4], api);
+                assertSelectedRowsByIndex([0, 1, 2, 3, 4], api);
             });
         });
     });
