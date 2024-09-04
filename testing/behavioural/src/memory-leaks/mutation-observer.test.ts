@@ -1,7 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowNode } from '@ag-grid-community/core';
 import type { GridOptions } from '@ag-grid-community/core';
 
-import { TestGridsManager, asyncSetTimeout, getAllRowData } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const mutationObserver = global.MutationObserver;
 
@@ -9,11 +10,11 @@ describe('Mutation Observers Disconnected', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
 
     const allMocks: any = [];
-    const mutationObserverMock = jest.fn<MutationObserver, [MutationCallback]>().mockImplementation(() => {
+    const mutationObserverMock = vitest.fn<MutationObserver, [MutationCallback]>().mockImplementation(() => {
         const mock = {
-            observe: jest.fn(),
-            disconnect: jest.fn(),
-            takeRecords: jest.fn(),
+            observe: vitest.fn(),
+            disconnect: vitest.fn(),
+            takeRecords: vitest.fn(),
         };
         allMocks.push(mock);
         return mock;
@@ -40,10 +41,10 @@ describe('Mutation Observers Disconnected', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const allRowData = getAllRowData(api);
-        expect(allRowData).toBeDefined();
+        const gridRows = new GridRows(api);
+        expect(gridRows.rootRowNode).toBeInstanceOf(RowNode);
 
-        await asyncSetTimeout(15); // Just to make sure all async operations are done
+        await asyncSetTimeout(5); // Just to make sure all async operations are done
 
         api.destroy();
 

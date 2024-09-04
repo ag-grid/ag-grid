@@ -292,4 +292,17 @@
         padding: var(--ag-grid-size);
         font-weight: 600;
     }
+
+    .ag-list-item-hovered::after {
+        background-color: var(--ag-alpine-active-color);
+    }
+
+    .ag-pill .ag-pill-button:hover {
+        color: var(--ag-alpine-active-color);
+    }
+
+    .ag-header-highlight-before::after,
+    .ag-header-highlight-after::after {
+        background-color: var(--ag-alpine-active-color);
+    }
 }

@@ -385,6 +385,7 @@ export {
     ILoadingOverlay,
 } from './rendering/overlays/loadingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
+export { IDragAndDropCoverComp, IDragAndDropCoverParams } from './dragAndDrop/dragAndDropCoverComponent';
 export { OverlayWrapperComponent } from './rendering/overlays/overlayWrapperComponent';
 
 // features
@@ -570,6 +571,7 @@ export {
     GridCoreCreator,
     createGrid,
     provideGlobalGridOptions,
+    GlobalGridOptionsMergeStrategy,
     _getGlobalGridOption,
 } from './grid';
 export {

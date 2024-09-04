@@ -79,20 +79,27 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
         changedPath!.forEachChangedNodeDepthFirst(isAggFilterActive ? filterChildren : preserveChildren, true);
     }
 
-    private setAllChildrenCountTreeData(rowNode: RowNode) {
-        // for tree data, we include all children, groups and leafs
+    /** for tree data, we include all children, groups and leafs */
+    private setAllChildrenCountTreeData(rowNode: RowNode): void {
+        const childrenAfterAggFilter = rowNode.childrenAfterAggFilter;
         let allChildrenCount = 0;
-        rowNode.childrenAfterAggFilter!.forEach((child: RowNode) => {
-            // include child itself
-            allChildrenCount++;
-            // include children of children
-            allChildrenCount += child.allChildrenCount as any;
-        });
-        rowNode.setAllChildrenCount(allChildrenCount);
+        if (childrenAfterAggFilter) {
+            const length = childrenAfterAggFilter.length;
+            allChildrenCount = length; // include direct children too
+            for (let i = 0; i < length; ++i) {
+                allChildrenCount += childrenAfterAggFilter[i].allChildrenCount ?? 0; // include children of children
+            }
+        }
+        rowNode.setAllChildrenCount(
+            // Maintain the historical behaviour:
+            // - allChildrenCount is 0 in the root if there are no children
+            // - allChildrenCount is null in any non-root row if there are no children
+            allChildrenCount === 0 && rowNode.level >= 0 ? null : allChildrenCount
+        );
     }
 
+    /* for grid data, we only count the leafs */
     private setAllChildrenCountGridGrouping(rowNode: RowNode) {
-        // for grid data, we only count the leafs
         let allChildrenCount = 0;
         rowNode.childrenAfterAggFilter!.forEach((child: RowNode) => {
             if (child.group) {

@@ -99,6 +99,8 @@ provideGlobalGridOptions({
 });
 ```
 
+The `provideGlobalGridOptions` function takes an optional second parameter (`deep` / `shallow`) to control the behaviour when object configurations exists on both global and local grid options. With `shallow` an object property on the local grid options will completely replace the global object property. With `deep` the global object properties are merged with the local object properties. Default is `shallow`. 
+
 ## Grid Events
 
 As a user interacts with the grid events will be fired to enable your application to respond to specific actions.

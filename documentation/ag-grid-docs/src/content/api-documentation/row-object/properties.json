@@ -75,6 +75,7 @@
             "displayName": "Data"
         },
         "id": {},
+        "sourceRowIndex": {},
         "data": {},
         "updateData": {},
         "setData": {

@@ -186,7 +186,7 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
-            scrollGapChanged: this.updateScrollingClasses.bind(this),
+            scrollGapChanged: this.onScrollGapChanged.bind(this),
             pinnedRowDataChanged: setFloatingHeights,
             pinnedHeightChanged: setFloatingHeights,
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
@@ -250,6 +250,10 @@ export class GridBodyCtrl extends BeanStub {
 
         this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
 
+        this.updateScrollingClasses();
+    }
+
+    private onScrollGapChanged(): void {
         this.updateScrollingClasses();
     }
 
