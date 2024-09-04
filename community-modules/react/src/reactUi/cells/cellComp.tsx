@@ -178,7 +178,7 @@ const CellComp = ({
     editingRow: boolean;
 }) => {
     const { context } = useContext(BeansContext);
-    const { colIdSanitised, instanceId, includeSelection, includeRowDrag, includeDndSource } = cellCtrl;
+    const { colIdSanitised, instanceId } = cellCtrl;
 
     // Only provide an initial state when not using a Cell Renderer so that we do not display a raw value before the cell renderer is created.
     const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>(() =>
@@ -190,6 +190,10 @@ const CellComp = ({
     const [renderKey, setRenderKey] = useState<number>(1);
 
     const [userStyles, setUserStyles] = useState<CellStyle>();
+
+    const [includeSelection, setIncludeSelection] = useState<boolean>(false);
+    const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
+    const [includeDndSource, setIncludeDndSource] = useState<boolean>(false);
 
     const [jsEditorComp, setJsEditorComp] = useState<ICellEditorComp>();
 
@@ -381,6 +385,10 @@ const CellComp = ({
             addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
             setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui.current!,
+
+            setIncludeSelection: (include) => setIncludeSelection(include),
+            setIncludeRowDrag: (include) => setIncludeRowDrag(include),
+            setIncludeDndSource: (include) => setIncludeDndSource(include),
 
             getCellEditor: () => cellEditorRef.current || null,
             getCellRenderer: () => cellRendererRef.current ?? jsCellRendererRef.current,
