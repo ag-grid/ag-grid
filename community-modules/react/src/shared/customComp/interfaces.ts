@@ -12,7 +12,7 @@ import type {
     ICellEditorParams,
     ICellRendererParams,
     IDetailCellRendererParams,
-    IDragAndDropCoverParams,
+    IDragAndDropImageParams,
     IFilter,
     IFloatingFilterParams,
     IGroupCellRendererParams,
@@ -98,8 +98,8 @@ export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMe
     onActiveChange: (active: boolean) => void;
 }
 
-export interface CustomDragAndDropCoverProps<TData = any, TContext = any>
-    extends IDragAndDropCoverParams<TData, TContext> {
+export interface CustomDragAndDropImageProps<TData = any, TContext = any>
+    extends IDragAndDropImageParams<TData, TContext> {
     label: string;
     icon: DragAndDropIcon | null;
     shake: boolean;

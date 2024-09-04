@@ -87,9 +87,9 @@ const docs: Record<string, string | undefined> = {
         'Height of header rows. NOTE: by default this value is calculated to leave enough room for text, icons and padding. Most applications should leave it as is and use rowVerticalPaddingScale to change padding.',
     popupShadow: 'Default shadow for elements that float above the grid e.g. dialogs and menus',
     dropdownShadow: 'Default shadow for dropdown menus',
-    dragAndDropCoverBackgroundColor: 'Background color of the cover element when dragging grid parts',
-    dragAndDropCoverBorder: 'Border color of the cover element when dragging grid parts',
-    dragAndDropCoverShadow: 'Shadow for the drag cover element when dragging grid parts',
+    dragAndDropImageBackgroundColor: 'Background color of the cover element when dragging grid parts',
+    dragAndDropImageBorder: 'Border color of the cover element when dragging grid parts',
+    dragAndDropImageShadow: 'Shadow for the drag cover element when dragging grid parts',
     dragHandleColor: 'Color of the drag handle on draggable rows and column markers',
     focusShadow:
         'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
