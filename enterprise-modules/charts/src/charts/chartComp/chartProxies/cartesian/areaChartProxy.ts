@@ -44,10 +44,10 @@ export class AreaChartProxy extends CartesianChartProxy<'area'> {
                 }) as AgAreaSeriesOptions
         );
 
-        return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
+        return series;
     }
 
     private isNormalised() {
-        return !this.crossFiltering && this.chartType === 'normalizedArea';
+        return this.chartType === 'normalizedArea';
     }
 }
