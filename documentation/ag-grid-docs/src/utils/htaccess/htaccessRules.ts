@@ -68,6 +68,9 @@ export const modRewriteRules = `
     RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
 
+    RewriteCond %{HTTP_HOST} !^www\\. [NC]
+    RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+    
     # Redirect angulargrid.com to ag-grid.com
     RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
