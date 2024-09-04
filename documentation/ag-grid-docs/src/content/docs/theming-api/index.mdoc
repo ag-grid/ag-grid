@@ -84,15 +84,6 @@ body {
 }
 ```
 
-If you need more control over how custom properties are set, the `getCustomProperties` function returns an array of 2-element [name, value] tuples.
-
-```js
-import { getCustomProperties } from '@ag-grid-community/theming';
-
-const properties = getCustomProperties({accentColor: 'red', gridSize: 4});
-// properties is now [['--ag-accent-color', 'red'], ['--ag-grid-size', '4px']]
-```
-
 ### Adjusting the default values for theme parameters
 
 The `theme.overrideParams` method generates a new theme with different default values for its params.

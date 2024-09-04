@@ -1,9 +1,11 @@
 import { type GridTheme, type GridThemeUseArgs, _warnOnce } from '@ag-grid-community/core';
+import { _errorOnce } from '@ag-grid-community/core';
 
 import type { Part } from './Part';
-import { getCustomProperties } from './custom-properties';
 import { type CoreParams, coreCSS, coreDefaults } from './styles/core/core-css';
+import { paramValueToCss } from './theme-types';
 import { type CssFragment } from './theme-types';
+import { paramToVariableName } from './theme-utils';
 
 export type Theme<TParams = unknown> = GridTheme & {
     readonly id: string;
@@ -362,4 +364,22 @@ type ThemeCssChunk = {
 
 type AnnotatedStyleElement = HTMLStyleElement & {
     _agTextContent?: string;
+};
+
+const getCustomProperties = (params: Record<string, unknown>): Array<[string, string]> => {
+    const result: Array<[string, string]> = [];
+    for (const [key, value] of Object.entries(params)) {
+        const rendered = paramValueToCss(key, value);
+        if (rendered === false) {
+            _errorOnce(`Invalid value for param ${key} - ${describeValue(value)}`);
+        } else {
+            result.push([paramToVariableName(key), rendered]);
+        }
+    }
+    return result;
+};
+
+const describeValue = (value: any): string => {
+    if (value == null) return String(value);
+    return `${typeof value} ${value}`;
 };

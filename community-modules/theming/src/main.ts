@@ -1,4 +1,3 @@
-export { getCustomProperties } from './custom-properties';
 export * from './metadata/docs';
 export { Part, createPart } from './Part';
 export * from './styles/parts/checkbox-style/checkbox-styles';

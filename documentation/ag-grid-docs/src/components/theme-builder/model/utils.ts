@@ -1,4 +1,4 @@
-import type { ParamType, themeQuartz } from '@ag-grid-community/theming';
+import type { ParamType, Part, Theme, themeQuartz } from '@ag-grid-community/theming';
 
 export type ThemeParams = (typeof themeQuartz)['defaults'];
 export type ThemeParam = keyof ThemeParams;
@@ -47,12 +47,6 @@ export const memoize = <R, A = void>(fn: (arg: A) => R): ((arg: A) => R) => {
         }
         return values.get(key)!;
     };
-};
-
-export const convertProductionUrlsForStaging = (url: string) => {
-    const host = typeof window !== 'undefined' ? window.location.host : '';
-    if (!host) return url;
-    return url.replace(/:\/\/(www\.)?ag-grid.com/, `://${host}`);
 };
 
 export const stripFloatingPointErrors = (value: number) => value.toFixed(10).replace(/\.?0+$/, '');
