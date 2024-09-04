@@ -1,5 +1,6 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
+import type { BeanCollection } from './context/context';
 import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
@@ -47,13 +48,36 @@ interface ReadyParams {
 
 type CtrlType = keyof ReadyParams;
 
-export class CtrlsService extends BeanStub implements NamedBean {
+export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsService' as const;
 
     private params: ReadyParams = {} as ReadyParams;
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
+    private localEventsAsync = false;
+
+    public wireBeans(beans: BeanCollection) {
+        // React could be running in StrictMode, which results in the ctrlService being ready twice.
+        // The first time after the first render cycle, and the second time after the second render cycle which is only done in StrictMode.
+        // By making the local events async, we effectively debounce the first ready event until after the second render cycle has completed.
+        // This means that the ready logic across the grid will run against the currently rendered components and controllers.
+        // TODO: Do we make this async only for React 19?
+        this.localEventsAsync = beans.frameworkOverrides.renderingEngine === 'react';
+    }
+
+    public postConstruct() {
+        this.addEventListener(
+            'ready',
+            () => {
+                if (this.ready) {
+                    this.readyCallbacks.forEach((c) => c(this.params));
+                    this.readyCallbacks.length = 0;
+                }
+            },
+            this.localEventsAsync
+        );
+    }
     private checkReady(): void {
         const params = this.params;
         this.ready =
@@ -82,8 +106,7 @@ export class CtrlsService extends BeanStub implements NamedBean {
             params.gridHeaderCtrl != null;
 
         if (this.ready) {
-            this.readyCallbacks.forEach((c) => c(params));
-            this.readyCallbacks.length = 0;
+            this.dispatchLocalEvent({ type: 'ready' });
         }
     }
 
@@ -98,6 +121,12 @@ export class CtrlsService extends BeanStub implements NamedBean {
     public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {
         this.params[ctrlType] = ctrl;
         this.checkReady();
+
+        ctrl.addDestroyFunc(() => {
+            // Enables going back into waiting state during extra React StrictMode render.
+            this.params[ctrlType] = null!;
+            this.checkReady();
+        });
     }
 
     public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {
