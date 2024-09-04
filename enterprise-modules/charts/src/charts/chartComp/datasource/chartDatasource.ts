@@ -211,20 +211,15 @@ export class ChartDatasource extends BeanStub {
             valueCols.forEach((col) => {
                 const colId = col.getColId();
                 if (crossFiltering) {
-                    const filteredOutColId = colId + '-filtered-out';
+                    const filteredOutColId = colId + 'Filter';
 
                     // add data value to value column
                     const value = this.valueService.getValue(col, rowNode);
                     const actualValue =
                         value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
 
-                    if (filteredNodes[rowNode.id as string]) {
-                        data[colId] = actualValue;
-                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
-                    } else {
-                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
-                        data[filteredOutColId] = actualValue;
-                    }
+                    data[colId] = actualValue ?? 0;
+                    data[filteredOutColId] = filteredNodes[rowNode.id as string] ? actualValue : 0;
                 } else {
                     // add data value to value column
                     let value = this.valueService.getValue(col, rowNode);
@@ -320,7 +315,7 @@ export class ChartDatasource extends BeanStub {
                                 aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
                             // filtered out data
-                            const filteredOutColId = `${colId}-filtered-out`;
+                            const filteredOutColId = `${colId}Filter`;
                             const dataToAggFiltered = groupItem.__children
                                 .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                                 .map((child: any) => child[filteredOutColId]);
