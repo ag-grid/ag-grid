@@ -1343,6 +1343,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
      */
     @Input() public selection: SelectionOptions | undefined = undefined;
+    /** Configure the control column, used for displaying checkboxes.
+     *
+     * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
+     */
+    @Input() public controlsColDef: ControlsColDef | undefined = undefined;
     /** If `true`, only a single range can be selected.
      * @default false
      * @deprecated v32.1 Use `selection.suppressMultiRanges` instead

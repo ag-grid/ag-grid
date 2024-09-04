@@ -192,6 +192,7 @@ export class PropertyKeys {
         'initialState',
         'autoSizeStrategy',
         'selection',
+        'controlsColDef',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
