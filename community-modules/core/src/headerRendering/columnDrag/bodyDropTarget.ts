@@ -80,6 +80,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(this.pinned));
 
         this.dragAndDropService.addDropTarget(this);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(this));
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
