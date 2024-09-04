@@ -34,18 +34,19 @@ export class ColumnSparkline extends BarColumnSparkline {
     }
 
     protected override updateAxisLine() {
-        const { yScale, axis, axisLine, seriesRect } = this;
-        const { strokeWidth } = axis;
+        const {
+            yScale,
+            axis: { stroke, strokeWidth },
+            axisLine,
+            seriesRect,
+        } = this;
+        const yZero: number = yScale.convert(0);
 
         axisLine.x1 = 0;
         axisLine.x2 = seriesRect.width;
-        axisLine.y1 = 0;
-        axisLine.y2 = 0;
-        axisLine.stroke = axis.stroke;
+        axisLine.y1 = axisLine.y2 = yZero;
+        axisLine.stroke = stroke;
         axisLine.strokeWidth = strokeWidth + (strokeWidth % 2 === 1 ? 1 : 0);
-
-        const yZero: number = yScale.convert(0);
-        axisLine.translationY = yZero;
     }
 
     protected generateNodeData(): ColumnNodeDatum[] | undefined {

@@ -24,7 +24,7 @@ describe('ag-grid custom overlay react unmount', () => {
     });
 
     afterEach(() => {
-        jest.resetAllMocks();
+        vitest.resetAllMocks();
     });
 
     class CustomLoadingOverlay extends React.Component {
@@ -139,7 +139,7 @@ describe('ag-grid custom overlay react unmount', () => {
         for (let i = 0; i < 20; ++i) {
             // We need to randomize timer resolution to simulate potential race conditions
             const originalSetTimeout = global.setTimeout;
-            const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation((cb, ms, ...args) => {
+            const setTimeoutSpy = vitest.spyOn(global, 'setTimeout').mockImplementation((cb, ms, ...args) => {
                 ms = randomTimeouts[randomTimeoutsIndex++ % randomTimeouts.length];
                 if (typeof cb === 'function') {
                     const originalCb = cb;

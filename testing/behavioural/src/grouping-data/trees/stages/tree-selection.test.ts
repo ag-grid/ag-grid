@@ -1,15 +1,14 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { TestGridsManager, cachedJSONObjects } from '../../../test-utils';
-import { TreeDiagram } from '../tree-test-utils';
-import type { TreeDiagramOptions } from '../tree-test-utils';
+import type { GridRowsOptions } from '../../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid tree selection', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     beforeEach(() => {
-        jest.useRealTimers();
+        vitest.useRealTimers();
         gridsManager.reset();
     });
 
@@ -42,7 +41,7 @@ describe('ag-grid tree selection', () => {
             getDataPath: (data: any) => data.orgHierarchy,
         });
 
-        const treeDiagramOptions: TreeDiagramOptions = {
+        const gridRowsOptions: GridRowsOptions = {
             columns: ['name'],
             checkDom: 'myGrid',
             checkSelectedNodes: true,
@@ -59,8 +58,8 @@ describe('ag-grid tree selection', () => {
             newValue: true,
         });
 
-        new TreeDiagram(api, 'initial', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP selected id:1 name:"John Von Neumann"
             │ ├─┬ B GROUP id:2 name:"Alan Turing"
             │ │ ├── D LEAF selected id:4 name:"Donald Knuth"
@@ -78,8 +77,8 @@ describe('ag-grid tree selection', () => {
             newValue: true,
         });
 
-        new TreeDiagram(api, 'select 8', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'select 8', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP selected id:1 name:"John Von Neumann"
             │ ├─┬ B GROUP id:2 name:"Alan Turing"
             │ │ ├── D LEAF selected id:4 name:"Donald Knuth"
@@ -105,8 +104,8 @@ describe('ag-grid tree selection', () => {
             ])
         );
 
-        new TreeDiagram(api, 'rowData 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'rowData 2', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP selected id:1 name:"John Von Neumann"
             │ ├─┬ Y filler id:row-group-0-A-1-Y
             │ │ ├── F LEAF id:6 name:"Linus Torvalds"
@@ -119,8 +118,8 @@ describe('ag-grid tree selection', () => {
 
         api.setFilterModel({ name: { type: 'equals', filter: 'A. Church' } });
 
-        new TreeDiagram(api, 'filtered', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'filtered', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             └─┬ A GROUP selected id:1 name:"John Von Neumann"
             · └─┬ X GROUP selected id:3 name:"A. Church"
             · · └── G LEAF id:7 name:"Brian Kernighan"

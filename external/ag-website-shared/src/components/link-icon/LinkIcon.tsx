@@ -6,7 +6,7 @@ import styles from './LinkIcon.module.scss';
 
 export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorElement> & { children?: never }) {
     return (
-        <a {...props} className={classnames(styles.docsHeaderIcon, className)} aria-label="Heading link">
+        <a aria-label="Heading link" {...props} className={classnames(styles.docsHeaderIcon, className)}>
             <Icon name="link" />
         </a>
     );

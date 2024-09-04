@@ -700,6 +700,11 @@ export interface GridOptions<TData = any> {
      */
     context?: any;
     /**
+     * Provide a custom drag and drop cover component.
+     * @initial
+     */
+    dragAndDropCoverComponent?: any;
+    /**
      *
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
@@ -755,7 +760,7 @@ export interface GridOptions<TData = any> {
      */
     suppressAsyncEvents?: boolean;
     /**
-     * The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist.
+     * @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
      * @default false
      * @initial
      */

@@ -1,6 +1,7 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import type { IDragAndDropCoverParams } from '../../dragAndDrop/dragAndDropCoverComponent';
 import type {
     CellEditorSelectorFunc,
     CellEditorSelectorResult,
@@ -38,6 +39,7 @@ import {
     CellEditorComponent,
     CellRendererComponent,
     DateComponent,
+    DragAndDropCoverComponent,
     EditorRendererComponent,
     FilterComponent,
     FloatingFilterComponent,
@@ -95,6 +97,10 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         this.userComponentRegistry = beans.userComponentRegistry;
         this.frameworkComponentWrapper = beans.frameworkComponentWrapper;
         this.gridOptions = beans.gridOptions;
+    }
+
+    public getDragAndDropCoverCompDetails(params: WithoutGridCommon<IDragAndDropCoverParams>): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, DragAndDropCoverComponent, 'agDragAndDropCover', params, true)!;
     }
 
     public getHeaderCompDetails(colDef: ColDef, params: WithoutGridCommon<IHeaderParams>): UserCompDetails | undefined {

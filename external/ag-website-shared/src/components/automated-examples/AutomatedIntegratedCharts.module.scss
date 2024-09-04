@@ -3,7 +3,7 @@
 @use './AutomatedExamplesVars.module' as *;
 
 $z-index-grid: 0;
-$z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
+$z-index-mouse-mask: 10000;
 $z-index-debug-canvas: $z-index-mouse-mask + 10;
 $z-index-splash: $z-index-debug-canvas + 10;
 $z-index-debug-panel: $z-index-splash + 10;

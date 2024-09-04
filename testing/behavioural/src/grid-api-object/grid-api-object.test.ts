@@ -1,10 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import type { MockInstance } from 'vitest';
 
 describe('ag-grid overlays state', () => {
-    let consoleWarnSpy: jest.SpyInstance | undefined;
-    let consoleErrorSpy: jest.SpyInstance | undefined;
+    let consoleWarnSpy: MockInstance | undefined;
+    let consoleErrorSpy: MockInstance | undefined;
 
     function createMyGrid(gridOptions: GridOptions = {}) {
         return createGrid(document.getElementById('myGrid')!, gridOptions);
@@ -28,8 +29,8 @@ describe('ag-grid overlays state', () => {
     });
 
     test('grid api is a simple JS object and has core methods', () => {
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
         const api = createMyGrid();
 
@@ -120,7 +121,7 @@ describe('ag-grid overlays state', () => {
     });
 
     test('destruction warnings', () => {
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = createMyGrid();
         expect(api.isDestroyed()).toBe(false);
@@ -147,8 +148,8 @@ describe('ag-grid overlays state', () => {
     });
 
     test('missing module warning', () => {
-        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = createMyGrid();
 
