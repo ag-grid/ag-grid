@@ -10,6 +10,7 @@ const infinite = 'infinite';
 const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
     onGroupExpandedOrCollapsed: [clientSide],
     refreshClientSideRowModel: [clientSide],
+    isRowDataEmpty: [clientSide],
     forEachLeafNode: [clientSide],
     forEachNodeAfterFilter: [clientSide],
     forEachNodeAfterFilterAndSort: [clientSide],

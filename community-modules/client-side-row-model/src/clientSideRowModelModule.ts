@@ -11,6 +11,7 @@ import {
     forEachNodeAfterFilter,
     forEachNodeAfterFilterAndSort,
     getBestCostNodeSelection,
+    isRowDataEmpty,
     onGroupExpandedOrCollapsed,
     refreshClientSideRowModel,
     resetRowHeights,
@@ -36,6 +37,7 @@ export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGrid
     apiFunctions: {
         onGroupExpandedOrCollapsed,
         refreshClientSideRowModel,
+        isRowDataEmpty,
         forEachLeafNode,
         forEachNodeAfterFilter,
         forEachNodeAfterFilterAndSort,
