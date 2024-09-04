@@ -126,6 +126,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         });
 
         compBean.addDestroyFunc(() => (this.refreshFunctions = {}));
+        // Make sure this is the last destroy func as it clears the gui and comp
+        compBean.addDestroyFunc(() => this.clearComponent());
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {

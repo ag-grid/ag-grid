@@ -95,6 +95,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
+        // Make sure this is the last destroy func as it clears the gui and comp
+        compBean.addDestroyFunc(() => this.clearComponent());
     }
 
     private addHighlightListeners(compBean: BeanStub, columns: AgColumn[]): void {

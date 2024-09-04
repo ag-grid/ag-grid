@@ -5,7 +5,6 @@ import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
 import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
-import { isColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { FocusService } from '../../../focusService';
@@ -426,16 +425,19 @@ export abstract class AbstractHeaderCellCtrl<
         });
     }
 
+    protected clearComponent(): void {
+        this.removeDragSource();
+        (this.resizeFeature as any) = null;
+        (this.comp as any) = null;
+        (this.eGui as any) = null;
+    }
+
     public override destroy(): void {
         super.destroy();
 
-        this.removeDragSource();
-        (this.comp as any) = null;
         (this.column as any) = null;
-        (this.resizeFeature as any) = null;
         (this.lastFocusEvent as any) = null;
         (this.columnGroupChild as any) = null;
         (this.parentRowCtrl as any) = null;
-        (this.eGui as any) = null;
     }
 }
