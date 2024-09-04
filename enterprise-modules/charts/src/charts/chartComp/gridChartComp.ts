@@ -74,6 +74,8 @@ export interface GridChartParams {
     crossFilteringResetCallback?: () => void;
 }
 
+export const CROSS_FILTERING_CHARTS = ['bar', 'column', 'pie', 'donut', 'doughnut'];
+
 export class GridChartComp extends Component {
     private crossFilterService: ChartCrossFilterService;
     private chartTranslationService: ChartTranslationService;
@@ -122,10 +124,13 @@ export class GridChartComp extends Component {
     }
 
     public postConstruct(): void {
+        const chartType = getCanonicalChartType(this.params.chartType);
+
         const modelParams: ChartModelParams = {
             ...this.params,
-            chartType: getCanonicalChartType(this.params.chartType),
+            chartType,
             chartThemeName: this.getThemeName(),
+            showFilteredDataOnly: !_includes(CROSS_FILTERING_CHARTS, chartType),
         };
 
         const isRtl = this.gos.get('enableRtl');
@@ -188,6 +193,7 @@ export class GridChartComp extends Component {
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering ?? false,
             crossFilterCallback,
+            crossFilterService: this.crossFilterService,
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),
             chartThemeToRestore: this.params.chartThemeName,

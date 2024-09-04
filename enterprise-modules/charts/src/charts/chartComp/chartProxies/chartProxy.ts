@@ -1,5 +1,6 @@
 import type { ChartType, SeriesChartType, SeriesGroupType } from '@ag-grid-community/core';
 import type {
+    AgCartesianSeriesOptions,
     AgChartInstance,
     AgChartOptions,
     AgChartTheme,
@@ -7,10 +8,16 @@ import type {
     AgChartThemePalette,
     AgCommonThemeableChartOptions,
     AgCrosshairOptions,
+    AgFlowProportionSeriesOptions,
+    AgHierarchySeriesOptions,
+    AgPolarSeriesOptions,
+    AgSeriesListeners,
+    AgTopologySeriesOptions,
 } from 'ag-charts-community';
 import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
 
 import type { CrossFilteringContext } from '../../chartService';
+import type { ChartCrossFilterService } from '../services/chartCrossFilterService';
 import { deproxy } from '../utils/integration';
 import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
@@ -34,10 +41,18 @@ export interface ChartProxyParams {
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
+    crossFilterService: ChartCrossFilterService;
     translate: (toTranslate: string, defaultText?: string) => string;
 }
 
 export type ExtraPaddingDirection = 'top' | 'right' | 'bottom' | 'left';
+
+export type AgChartSeriesOptions =
+    | AgCartesianSeriesOptions
+    | AgPolarSeriesOptions
+    | AgHierarchySeriesOptions
+    | AgTopologySeriesOptions
+    | AgFlowProportionSeriesOptions;
 
 export interface FieldDefinition {
     colId: string;
@@ -74,6 +89,7 @@ export abstract class ChartProxy<
     protected readonly crossFilterCallback: (event: any, reset?: boolean) => void;
 
     protected clearThemeOverrides = false;
+    protected crossFilterService: ChartCrossFilterService;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.isEnterpriseCharts = _ModuleSupport.enterpriseModule.isEnterprise;
@@ -81,6 +97,7 @@ export abstract class ChartProxy<
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
+        this.crossFilterService = chartProxyParams.crossFilterService;
         this.standaloneChartType = getSeriesType(this.chartType) as TSeries;
 
         if (this.chart == null) {
@@ -98,7 +115,15 @@ export abstract class ChartProxy<
     }
 
     public update(params: UpdateParams): void {
-        this.getChartRef().update(this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides)));
+        const updatedOptions: AgChartOptions = this.getUpdateOptions(
+            params,
+            this.getCommonChartOptions(params.updatedOverrides)
+        );
+
+        this.getChartRef().update({
+            ...updatedOptions,
+            series: this.addSeriesListeners(updatedOptions.series as AgChartSeriesOptions[]),
+        } as AgChartOptions);
     }
 
     public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {
@@ -111,6 +136,17 @@ export abstract class ChartProxy<
 
     public getChartRef() {
         return this.chart;
+    }
+
+    private addSeriesListeners(series: AgChartSeriesOptions[]): AgChartSeriesOptions[] {
+        return series.map((s: any) => ({
+            ...s,
+            listeners: {
+                nodeClick: (params) => {
+                    console.warn(params);
+                },
+            } as AgSeriesListeners<any>,
+        }));
     }
 
     public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string) {
@@ -225,6 +261,11 @@ export abstract class ChartProxy<
                       category: { crosshair },
                       log: { crosshair },
                       time: { crosshair },
+                  },
+                  listeners: {
+                      seriesNodeClick: (event) => {
+                          console.warn(event);
+                      },
                   },
               }
             : {};
