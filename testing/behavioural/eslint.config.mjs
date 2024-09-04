@@ -2,11 +2,16 @@ import rootESLint from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
-
     {
-        files: ['*.js'],
+        languageOptions: {
+            parserOptions: {
+                project: './tsconfig.spec.json',
+            },
+        },
         rules: {
             '@typescript-eslint/no-var-requires': 0,
+            '@typescript-eslint/ban-types': 0,
+            '@typescript-eslint/no-floating-promises': 2,
         },
     },
 ];

@@ -7,6 +7,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "search.exclude": {
+    "**/vitest.config.js.timestamp*": true,
     "**/ag-grid-docs/_dev/**": true,
     "**/ag-grid-docs/.cache/**": true,
     "**/build": true,
@@ -14,9 +15,7 @@
     "**/node_modules": true,
     "**/typings": true
   },
-  "typescript.preferences.autoImportFileExcludePatterns": [
-    "**/main",
-  ],
+  "typescript.preferences.autoImportFileExcludePatterns": ["**/main"],
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.experimental.useFlatConfig": true,
   "[typescript]": {
@@ -43,6 +42,7 @@
   ],
   "git.detectSubmodulesLimit": 20,
   "files.exclude": {
+    "**/vitest.config.*.timestamp*": true,
     "**/.git": true,
     "**/.DS_Store": true,
     "**/node_modules": true

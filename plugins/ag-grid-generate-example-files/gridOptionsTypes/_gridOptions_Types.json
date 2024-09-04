@@ -513,6 +513,10 @@
     "typeName": "any",
     "typesToInclude": []
   },
+  "dragAndDropCoverComponent": {
+    "typeName": "any",
+    "typesToInclude": []
+  },
   "fullWidthCellRenderer": {
     "typeName": "any",
     "typesToInclude": []
