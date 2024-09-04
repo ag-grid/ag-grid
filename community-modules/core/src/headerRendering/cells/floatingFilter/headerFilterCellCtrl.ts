@@ -1,3 +1,4 @@
+import { setupCompBean } from '../../../components/emptyBean';
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
@@ -42,7 +43,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         compBean: BeanStub | undefined
     ): void {
         this.comp = comp;
-        compBean ??= this;
+        compBean = setupCompBean(this, this.beans.context, compBean);
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
 
@@ -63,7 +64,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupFilterChangedListener(compBean);
         compBean.addManagedListeners(this.column, { colDefChanged: () => this.onColDefChanged(compBean) });
         // Make sure this is the last destroy func as it clears the gui and comp
-        compBean.addDestroyFunc(() => this.clearComponent());
+        compBean.addDestroyFunc(() => {
+            (this.eButtonShowMainFilter as any) = null;
+            (this.eFloatingFilterBody as any) = null;
+            (this.userCompDetails as any) = null;
+            this.clearComponent();
+        });
     }
 
     // empty abstract method
@@ -429,9 +435,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     public override destroy(): void {
         super.destroy();
 
-        (this.eButtonShowMainFilter as any) = null;
-        (this.eFloatingFilterBody as any) = null;
-        (this.userCompDetails as any) = null;
         (this.destroySyncListener as any) = null;
         (this.destroyFilterChangedListener as any) = null;
     }

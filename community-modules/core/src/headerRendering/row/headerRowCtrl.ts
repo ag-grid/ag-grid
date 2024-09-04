@@ -1,3 +1,4 @@
+import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -78,7 +79,7 @@ export class HeaderRowCtrl extends BeanStub {
      */
     public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
-        compBean ??= this;
+        compBean = setupCompBean(this, this.beans.context, compBean);
 
         if (initCompState) {
             this.onRowHeightChanged();

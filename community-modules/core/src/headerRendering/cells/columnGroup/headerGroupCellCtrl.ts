@@ -1,3 +1,4 @@
+import { setupCompBean } from '../../../components/emptyBean';
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
@@ -56,7 +57,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean: BeanStub<any> | undefined
     ): void {
         this.comp = comp;
-        compBean ??= this;
+        compBean = setupCompBean(this, this.beans.context, compBean);
         this.setGui(eGui, compBean);
 
         this.displayName = this.beans.columnNameService.getDisplayNameForColumnGroup(this.column, 'header');
@@ -547,5 +548,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const result = childSuppressesMoving || this.gos.get('suppressMovableColumns');
 
         return result;
+    }
+
+    public override destroy(): void {
+        super.destroy();
     }
 }

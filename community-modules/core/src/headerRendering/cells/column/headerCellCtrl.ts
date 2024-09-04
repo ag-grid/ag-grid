@@ -1,3 +1,4 @@
+import { setupCompBean } from '../../../components/emptyBean';
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
 import { KeyCode } from '../../../constants/keyCode';
@@ -67,7 +68,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         compBean: BeanStub | undefined
     ): void {
         this.comp = comp;
-        compBean ??= this;
+        compBean = setupCompBean(this, this.beans.context, compBean);
 
         this.setGui(eGui, compBean);
         this.updateState();
@@ -125,9 +126,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
         });
 
-        compBean.addDestroyFunc(() => (this.refreshFunctions = {}));
-        // Make sure this is the last destroy func as it clears the gui and comp
-        compBean.addDestroyFunc(() => this.clearComponent());
+        compBean.addDestroyFunc(() => {
+            this.refreshFunctions = {};
+            (this.selectAllFeature as any) = null;
+            this.dragSourceElement = undefined;
+            (this.userCompDetails as any) = null;
+            this.userHeaderClasses.clear();
+            this.ariaDescriptionProperties.clear();
+            // Make sure this is the last destroy func as it clears the gui and comp
+            this.clearComponent();
+        });
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
@@ -762,11 +770,5 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     public override destroy(): void {
         super.destroy();
-
-        (this.selectAllFeature as any) = null;
-        (this.dragSourceElement as any) = null;
-        (this.userCompDetails as any) = null;
-        (this.userHeaderClasses as any) = null;
-        (this.ariaDescriptionProperties as any) = null;
     }
 }
