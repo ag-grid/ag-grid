@@ -4,7 +4,7 @@ import { type CssFragment } from './theme-types';
 
 export type Part<TParams = unknown> = {
     readonly id: string;
-    readonly feature: string;
+    readonly feature: string | undefined;
     readonly variant: string;
     readonly dependencies: readonly Part<unknown>[];
     readonly defaults: Partial<TParams>;
