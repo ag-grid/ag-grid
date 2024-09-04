@@ -18,9 +18,10 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     let theme = themeQuartz;
 
     const usedParts: Part[] = [];
-    for (const feature of ['iconSet'] as const) {
-        const part = get(FeatureModel.for(feature).selectedPartAtom).part;
-        if (part) {
+    for (const featureName of ['iconSet'] as const) {
+        const feature = FeatureModel.for(featureName);
+        const part = get(feature.selectedPartAtom).part;
+        if (part !== feature.defaultPart.part) {
             usedParts.push(part);
             theme = theme.usePart(part);
         }

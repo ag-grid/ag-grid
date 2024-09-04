@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
 import { PresetSelector } from '../presets/PresetSelector';
-import { DownloadThemeButton } from './DownloadThemeButton';
+import { GetThemeButton } from './GetTheme';
 import { GridPreview } from './GridPreview';
 
 export const RootContainer = () => {
@@ -23,7 +23,7 @@ export const RootContainer = () => {
                     <EditorPanel />
                 </EditorScroller>
                 <MenuBottom>
-                    <DownloadThemeButton />
+                    <GetThemeButton />
                 </MenuBottom>
             </Menu>
             <Main>

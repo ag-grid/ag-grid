@@ -1,30 +1,31 @@
-import type { Theme } from '@ag-grid-community/theming';
 import Code from '@ag-website-shared/components/code/Code';
+import { Checkmark, Copy } from '@carbon/icons-react';
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { camelCase } from '../../../../../../../community-modules/theming/src/theme-utils';
 import { type RenderedThemeInfo, useRenderedThemeInfo } from '../../model/rendered-theme';
 import { UIPopupButton } from './UIPopupButton';
 
-export const DownloadThemeButton = () => (
+export const GetThemeButton = () => (
     <ButtonWrapper>
-        <UIPopupButton allowedPlacements={['right-end']} dropdownContent={<DownloadThemeDialog />} variant="primary">
-            {downloadIcon} Get Theme
+        <UIPopupButton allowedPlacements={['right-end']} dropdownContent={<GetThemeDialog />} variant="primary">
+            {downloadIcon} Use Theme
         </UIPopupButton>
     </ButtonWrapper>
 );
 
 export const installDocsUrl = 'https://www.ag-grid.com/javascript-data-grid/applying-theme-builder-styling-grid/';
 
-const DownloadThemeDialog = () => {
+const GetThemeDialog = () => {
     const theme = useRenderedThemeInfo();
     const codeSample = useMemo(() => renderThemeCodeSample(theme), [theme]);
     const downloadLink = `data:text/css;charset=utf-8,${encodeURIComponent(codeSample)}`;
 
+    const [copyButtonClicked, setCopyButtonClicked] = useState(false);
+
     return (
         <DownloadThemeWrapper>
-            <Header>Apply this theme in your application</Header>
             <Paragraph>
                 Copy the code below into your application to use this theme. See the{' '}
                 <a href="/react-data-grid/theming-api/" target="_blank">
@@ -32,12 +33,38 @@ const DownloadThemeDialog = () => {
                 </a>{' '}
                 for more information.
             </Paragraph>
-            <Selectable>
+            <Links>
+                <DownloadLink className="button-tertiary" href={downloadLink} download="ag-grid-theme-builder.js">
+                    <LinkContent>{downloadIcon} Download</LinkContent>
+                </DownloadLink>
+                <CopyLink
+                    className="button-tertiary"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        if (!copyButtonClicked) {
+                            setTimeout(() => {
+                                setCopyButtonClicked(false);
+                            }, 200000);
+                        }
+                        setCopyButtonClicked(true);
+                        navigator.clipboard.writeText(codeSample);
+                    }}
+                >
+                    <LinkContent
+                        className={`copy-state-ready ${!copyButtonClicked ? 'copy-state-visible' : 'copy-state-hidden'}`}
+                    >
+                        {<Copy />} Copy
+                    </LinkContent>
+                    <LinkContent
+                        className={`copy-state-clicked ${copyButtonClicked ? 'copy-state-visible' : 'copy-state-hidden'}`}
+                    >
+                        {<Checkmark />} Copied
+                    </LinkContent>
+                </CopyLink>
+            </Links>
+            <CodeWrapper>
                 <Code code={codeSample} language="js" />
-            </Selectable>
-            <DownloadLink href={downloadLink} download="ag-grid-theme-builder.css">
-                {downloadIcon} Download CSS File
-            </DownloadLink>
+            </CodeWrapper>
         </DownloadThemeWrapper>
     );
 };
@@ -60,21 +87,22 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
     return code;
 };
 
-const Header = styled('div')`
-    font-size: 1.2em;
-    font-weight: 600;
-`;
-
-const Selectable = styled('div')`
+const CodeWrapper = styled('div')`
     user-select: all;
 
     .code {
         max-height: 500px;
         overflow: auto;
+        margin-top: 0;
     }
 `;
 
 const Paragraph = styled('div')``;
+
+const Links = styled('div')`
+    display: flex;
+    gap: 40px;
+`;
 
 const DownloadThemeWrapper = styled('div')`
     display: flex;
@@ -83,6 +111,10 @@ const DownloadThemeWrapper = styled('div')`
     max-height: 700px;
     width: 1060px;
     max-width: calc(100vw - 100px);
+
+    > * {
+        flex: 0;
+    }
 `;
 
 const ButtonWrapper = styled('div')`
@@ -91,9 +123,35 @@ const ButtonWrapper = styled('div')`
 `;
 
 const DownloadLink = styled('a')`
+    & span {
+        padding-right: 4px;
+    }
+`;
+
+const CopyLink = styled('button')`
+    position: relative;
+
+    .copy-state-ready {
+        position: absolute;
+        inset: 0;
+    }
+    .copy-state-clicked {
+        margin-right: 4px;
+    }
+    .copy-state-visible {
+        opacity: 1;
+    }
+    .copy-state-hidden {
+        opacity: 0;
+    }
+`;
+
+const LinkContent = styled('span')`
     display: flex;
-    gap: 10px;
-    margin: 0 auto;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
 `;
 
 const downloadIcon = (
