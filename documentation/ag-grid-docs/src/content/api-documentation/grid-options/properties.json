@@ -782,7 +782,7 @@
                 "url": "./touch/"
             }
         },
-        "dragAndDropCoverComponent": {},
+        "dragAndDropImageComponent": {},
         "suppressFocusAfterRefresh": {},
         "suppressPropertyNamesCheck": {},
         "suppressChangeDetection": {

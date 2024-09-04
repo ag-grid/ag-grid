@@ -25,6 +25,16 @@
     container-type: inline-size;
     width: 100%;
 
+    &.isInline {
+        margin-top: $spacing-size-5;
+        margin-bottom: $spacing-size-5;
+    }
+
+    :global(.tabs-outer) &.isInline {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
     + .apiReferenceOuter {
         margin-top: -1px;
     }

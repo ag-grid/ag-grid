@@ -94,6 +94,7 @@ export function createPolarPaths(
     radiusScale.range = [radius, innerRadius];
 
     const markers: _Scene.Circle[] = [];
+    const center = size / 2;
 
     const paths: _Scene.Path[] = data.map((series) => {
         const path = new _Scene.Path();
@@ -102,6 +103,7 @@ export function createPolarPaths(
         path.lineCap = 'round';
         path.fill = undefined;
         path.fillOpacity = 0.8;
+
         series.forEach((datum: number, i: number) => {
             const angle = angleScale.convert(i);
             const r = radius + innerRadius - radiusScale.convert(datum);
@@ -125,8 +127,6 @@ export function createPolarPaths(
     });
 
     const group = new _Scene.Group();
-
-    const center = size / 2;
 
     group.append([...paths, ...markers]);
     root.append(group);

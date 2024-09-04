@@ -136,6 +136,15 @@ export const About = () => {
                             </p>
                         </div>
                         <div>
+                            <img src={urlWithBaseUrl('/images/team/steph.jpg')} alt="Steph Meslin-Weber, Developer" />
+                            <h3>Steph Meslin-Weber</h3>
+                            <p>
+                                Developer,
+                                <br />
+                                Grid Core
+                            </p>
+                        </div>
+                        <div>
                             <img src={urlWithBaseUrl('/images/team/alanT.jpg')} alt="Alan Treadway, Developer" />
                             <h3>Alan Treadway</h3>
                             <p>

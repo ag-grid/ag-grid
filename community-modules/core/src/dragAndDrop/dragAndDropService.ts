@@ -17,7 +17,7 @@ import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
 import { _getElementRectWithOffset } from '../utils/dom';
 import { _isFunction, _warnOnce } from '../utils/function';
 import type { AgPromise } from '../utils/promise';
-import type { DragAndDropCoverComp } from './dragAndDropCoverComponent';
+import type { DragAndDropImageComp } from './dragAndDropImageComponent';
 import type { DragListenerParams, DragService } from './dragService';
 
 export interface DragItem<TValue = any> {
@@ -77,7 +77,7 @@ export interface DragSource {
      */
     getDragItem: () => DragItem;
     /**
-     * This name appears in the drag and drop cover component when dragging.
+     * This name appears in the drag and drop image component when dragging.
      */
     dragItemName: string | (() => string) | null;
     /**
@@ -193,8 +193,8 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dragSource: DragSource | null;
     private dragging: boolean;
 
-    private dragAndDropCoverComp: DragAndDropCoverComp | null;
-    private dragAndDropCoverParent: HTMLElement | ShadowRoot;
+    private dragAndDropImageComp: DragAndDropImageComp | null;
+    private dragAndDropImageParent: HTMLElement | ShadowRoot;
 
     private dropTargets: DropTarget[] = [];
     private lastDropTarget: DropTarget | null | undefined;
@@ -214,8 +214,8 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.dragService.addDragSource(params);
     }
 
-    public getDragAndDropCoverComponent(): DragAndDropCoverComp | null {
-        return this.dragAndDropCoverComp;
+    public getDragAndDropImageComponent(): DragAndDropImageComp | null {
+        return this.dragAndDropImageComp;
     }
 
     public removeDragSource(dragSource: DragSource): void {
@@ -250,7 +250,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.dragItem = this.dragSource.getDragItem();
 
         this.dragSource.onDragStarted?.();
-        this.createDragAndDropCoverComponent();
+        this.createDragAndDropImageComponent();
     }
 
     private onDragStop(mouseEvent: MouseEvent): void {
@@ -281,7 +281,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.lastDropTarget = undefined;
         this.dragItem = null;
         this.dragSource = null;
-        this.removeDragAndDropCoverComponent();
+        this.removeDragAndDropImageComponent();
     }
 
     private onDragging(mouseEvent: MouseEvent, fromNudge: boolean): void {
@@ -289,7 +289,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         const vDirection = this.getVerticalDirection(mouseEvent);
 
         this.eventLastTime = mouseEvent;
-        this.positionDragAndDropCoverComp(mouseEvent);
+        this.positionDragAndDropImageComp(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
         const validDropTargets = this.dropTargets.filter((target) => this.isMouseOnDropTarget(mouseEvent, target));
@@ -412,7 +412,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             dropTarget.onDragEnter(dragEnterEvent);
         }
 
-        this.dragAndDropCoverComp?.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
+        this.dragAndDropImageComp?.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     }
 
     private leaveLastTargetIfExists(
@@ -437,7 +437,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             this.lastDropTarget.onDragLeave(dragLeaveEvent);
         }
 
-        this.dragAndDropCoverComp?.setIcon(null);
+        this.dragAndDropImageComp?.setIcon(null);
     }
 
     public addDropTarget(dropTarget: DropTarget) {
@@ -515,14 +515,14 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         });
     }
 
-    private positionDragAndDropCoverComp(event: MouseEvent): void {
-        const dragAndDropCoverComp = this.dragAndDropCoverComp;
+    private positionDragAndDropImageComp(event: MouseEvent): void {
+        const dragAndDropImageComp = this.dragAndDropImageComp;
 
-        if (!dragAndDropCoverComp) {
+        if (!dragAndDropImageComp) {
             return;
         }
 
-        const eGui = dragAndDropCoverComp.getGui();
+        const eGui = dragAndDropImageComp.getGui();
         const eRect = eGui.getBoundingClientRect();
         const height = eRect.height;
 
@@ -547,7 +547,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
         const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
 
-        // check if the drag and drop cover component is not positioned outside of the browser
+        // check if the drag and drop image component is not positioned outside of the browser
         if (browserWidth > 0 && left + eGui.clientWidth > browserWidth + windowScrollX) {
             left = browserWidth + windowScrollX - eGui.clientWidth;
         }
@@ -568,55 +568,55 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         eGui.style.top = `${top}px`;
     }
 
-    private removeDragAndDropCoverComponent(): void {
-        if (this.dragAndDropCoverComp) {
-            const eGui = this.dragAndDropCoverComp.getGui();
-            if (this.dragAndDropCoverParent) {
-                this.dragAndDropCoverParent.removeChild(eGui);
+    private removeDragAndDropImageComponent(): void {
+        if (this.dragAndDropImageComp) {
+            const eGui = this.dragAndDropImageComp.getGui();
+            if (this.dragAndDropImageParent) {
+                this.dragAndDropImageParent.removeChild(eGui);
             }
-            this.destroyBean(this.dragAndDropCoverComp);
+            this.destroyBean(this.dragAndDropImageComp);
         }
 
-        this.dragAndDropCoverComp = null;
+        this.dragAndDropImageComp = null;
     }
 
-    private createDragAndDropCoverComponent(): void {
+    private createDragAndDropImageComponent(): void {
         const { dragSource } = this;
 
         if (!dragSource) {
             return;
         }
 
-        const userCompDetails = this.userComponentFactory.getDragAndDropCoverCompDetails({
+        const userCompDetails = this.userComponentFactory.getDragAndDropImageCompDetails({
             dragSource,
         });
 
-        const promise: AgPromise<DragAndDropCoverComp> = userCompDetails.newAgStackInstance();
+        const promise: AgPromise<DragAndDropImageComp> = userCompDetails.newAgStackInstance();
 
         promise.then((comp) => {
             if (!comp || !this.isAlive()) {
                 return;
             }
 
-            this.dragAndDropCoverComp = comp;
-            this.processDragAndDropCoverComponent();
+            this.dragAndDropImageComp = comp;
+            this.processDragAndDropImageComponent();
         });
     }
 
-    private processDragAndDropCoverComponent(): void {
-        const { dragAndDropCoverComp, dragSource, mouseEventService, environment } = this;
+    private processDragAndDropImageComponent(): void {
+        const { dragAndDropImageComp, dragSource, mouseEventService, environment } = this;
 
-        if (!dragAndDropCoverComp || !dragSource) {
+        if (!dragAndDropImageComp || !dragSource) {
             return;
         }
-        const eGui = dragAndDropCoverComp.getGui();
+        const eGui = dragAndDropImageComp.getGui();
 
         eGui.style.setProperty('position', 'absolute');
         eGui.style.setProperty('z-index', '9999');
 
         mouseEventService.stampTopLevelGridCompWithGridInstance(eGui);
         environment.applyThemeClasses(eGui);
-        dragAndDropCoverComp.setIcon(null);
+        dragAndDropImageComp.setIcon(null);
 
         let { dragItemName } = dragSource;
 
@@ -624,7 +624,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             dragItemName = dragItemName();
         }
 
-        dragAndDropCoverComp.setLabel(dragItemName || '');
+        dragAndDropImageComp.setLabel(dragItemName || '');
 
         eGui.style.top = '20px';
         eGui.style.left = '20px';
@@ -654,7 +654,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             }
         }
 
-        this.dragAndDropCoverParent = targetEl;
+        this.dragAndDropImageParent = targetEl;
 
         if (!targetEl) {
             _warnOnce('Could not find document body, it is needed for drag and drop.');

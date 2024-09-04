@@ -143,19 +143,19 @@ export type CoreParams = {
     dialogShadow: ShadowValue;
 
     /**
-     * Background color of the drag and drop cover component element when dragging columns
+     * Background color of the drag and drop image component element when dragging columns
      */
-    dragAndDropCoverBackgroundColor: ColorValue;
+    dragAndDropImageBackgroundColor: ColorValue;
 
     /**
-     * Border color of the drag and drop cover component element when dragging columns
+     * Border color of the drag and drop image component element when dragging columns
      */
-    dragAndDropCoverBorder: BorderValue;
+    dragAndDropImageBorder: BorderValue;
 
     /**
-     * Shadow for the drag and drop cover component element when dragging columns
+     * Shadow for the drag and drop image component element when dragging columns
      */
-    dragAndDropCoverShadow: ShadowValue;
+    dragAndDropImageShadow: ShadowValue;
 
     /**
      * Color of the drag handle on draggable rows and column markers
@@ -733,11 +733,11 @@ export const coreDefaults: CoreParams = {
         offsetY: 1,
         color: '#babfc766',
     },
-    dragAndDropCoverBackgroundColor: {
+    dragAndDropImageBackgroundColor: {
         ref: 'backgroundColor',
     },
-    dragAndDropCoverBorder: true,
-    dragAndDropCoverShadow: {
+    dragAndDropImageBorder: true,
+    dragAndDropImageShadow: {
         ref: 'popupShadow',
     },
     dragHandleColor: {
