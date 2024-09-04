@@ -2,17 +2,10 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { RowDataTransaction } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import {
-    TestGridsManager,
-    executeTransactionsAsync,
-    getAllRowData,
-    getAllRows,
-    verifyPositionInRootChildren,
-} from '../../test-utils';
-import type { TreeDiagramOptions } from './tree-test-utils';
-import { TreeDiagram } from './tree-test-utils';
+import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
+import type { GridRowsOptions } from '../../test-utils';
 
-const treeDiagramOptions: TreeDiagramOptions = {
+const gridRowsOptions: GridRowsOptions = {
     checkDom: 'myGrid',
 };
 
@@ -60,38 +53,34 @@ describe('ag-grid tree transactions', () => {
             getDataPath: (data) => data.path,
         });
 
-        let allData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allData).toEqual([row0, row1a]);
-
-        new TreeDiagram(api, 'rowData', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        let gridRows = new GridRows(api, 'rowData', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0
             └─┬ X filler id:row-group-0-X
             · └─┬ Y filler id:row-group-0-X-1-Y
             · · └── Z LEAF id:1
         `);
+        expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1a]);
 
         api.applyTransaction(transactions[0]);
 
-        allData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allData).toEqual([row0, row1a, row2]);
-
-        new TreeDiagram(api, 'Transaction 0', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        gridRows = new GridRows(api, 'Transaction 0', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0
             └─┬ X filler id:row-group-0-X
             · └─┬ Y filler id:row-group-0-X-1-Y
             · · └─┬ Z GROUP id:1
             · · · └── W LEAF id:2
         `);
+        expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1a, row2]);
 
         api.applyTransaction(transactions[1]);
 
-        allData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allData).toEqual([row0, row1b, row2, row3, row4]);
-
-        new TreeDiagram(api, 'Transaction 1', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        gridRows = new GridRows(api, 'Transaction 1', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ ├─┬ Y filler id:row-group-0-A-1-Y
             │ │ └── Z LEAF id:1
@@ -103,14 +92,13 @@ describe('ag-grid tree transactions', () => {
             └─┬ C filler id:row-group-0-C
             · └── D LEAF id:4
         `);
+        expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1b, row2, row3, row4]);
 
         api.applyTransaction(transactions[2]);
 
-        allData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allData).toEqual([row0, row2, row3, row4, row5a]);
-
-        new TreeDiagram(api, 'Transaction 2', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        gridRows = new GridRows(api, 'Transaction 2', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ └── B LEAF id:3
             ├─┬ X filler id:row-group-0-X
@@ -121,20 +109,20 @@ describe('ag-grid tree transactions', () => {
             └─┬ C filler id:row-group-0-C
             · └── D LEAF id:4
         `);
+        expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row2, row3, row4, row5a]);
 
         api.applyTransaction(transactions[3]);
 
-        allData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allData).toEqual([row0, row3, row4, row5b]);
-
-        new TreeDiagram(api, 'final', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        gridRows = new GridRows(api, 'final', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ └── B LEAF id:3
             └─┬ C filler id:row-group-0-C
             · ├── D LEAF id:4
             · └── E LEAF id:5
         `);
+        expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row3, row4, row5b]);
     });
 
     test('ag-grid tree async complex transaction', async () => {
@@ -170,8 +158,8 @@ describe('ag-grid tree transactions', () => {
             getDataPath: (data) => data.path,
         });
 
-        new TreeDiagram(api, 'rowData', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        await new GridRows(api, 'rowData', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0
             └─┬ X filler id:row-group-0-X
             · └─┬ Y filler id:row-group-0-X-1-Y
@@ -180,10 +168,9 @@ describe('ag-grid tree transactions', () => {
 
         await executeTransactionsAsync(transactions, api);
 
-        const rows = getAllRows(api);
-
-        new TreeDiagram(api, 'final', treeDiagramOptions).check(`
-            ROOT_NODE_ID ROOT id:ROOT_NODE_ID
+        const gridRows = new GridRows(api, 'final', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0
             │ └── B LEAF id:3
             └─┬ C filler id:row-group-0-C
@@ -191,12 +178,6 @@ describe('ag-grid tree transactions', () => {
             · └── E LEAF id:5
         `);
 
-        expect(rows.length).toBe(5);
-
-        expect(rows[0].data).toEqual(row0);
-        expect(rows[1].data).toEqual(row3);
-        expect(rows[2].data).toEqual(undefined);
-        expect(rows[3].data).toEqual(row4);
-        expect(rows[4].data).toEqual(row5b);
+        expect(gridRows.rowNodes.map((row) => row.data)).toEqual([row0, row3, undefined, row4, row5b]);
     });
 });

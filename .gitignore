@@ -20,6 +20,7 @@ archive*.zip
 .nx
 .angular
 tmp
+vitest.config.*.timestamp*
 
 plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/modules.ts
 plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts

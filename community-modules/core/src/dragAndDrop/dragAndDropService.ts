@@ -611,13 +611,16 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         }
         const eGui = dragAndDropCoverComp.getGui();
 
+        eGui.style.setProperty('position', 'absolute');
+        eGui.style.setProperty('z-index', '9999');
+
         mouseEventService.stampTopLevelGridCompWithGridInstance(eGui);
         environment.applyThemeClasses(eGui);
         dragAndDropCoverComp.setIcon(null);
 
         let { dragItemName } = dragSource;
 
-        if (_isFunction(dragItemName)) {
+        if (_isFunction<string>(dragItemName)) {
             dragItemName = dragItemName();
         }
 

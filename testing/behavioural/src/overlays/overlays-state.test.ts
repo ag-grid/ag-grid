@@ -1,11 +1,12 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import type { MockInstance } from 'vitest';
 
 import { TestGridsManager } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
-    let consoleWarnSpy: jest.SpyInstance;
+    let consoleWarnSpy: MockInstance;
 
     function hasLoadingOverlay() {
         return !!document.querySelector('.ag-overlay-loading-center');
@@ -16,7 +17,7 @@ describe('ag-grid overlays state', () => {
     }
 
     beforeEach(() => {
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         gridsManager.reset();
     });
 

@@ -94,9 +94,6 @@ export class TreeNode implements ITreeNode {
     /** Indicates whether allLeafChildren should be recomputed. Reset to false during commit. */
     public leafChildrenChanged: boolean = false;
 
-    /**  True if changedPath.addParentNode(row) should be called on this node. Reset to false during commit. */
-    public pathChanged: boolean = false;
-
     /** This is set if the duplicate key warning was already raised for this node, to reduce the performance hit */
     public duplicateRowsWarned?: boolean;
 
@@ -117,6 +114,12 @@ export class TreeNode implements ITreeNode {
     public isEmptyFillerNode(): boolean {
         return !this.row?.data && !this.children?.size;
     }
+
+    /** Returns true if this tree node has children */
+    public hasChildren(): boolean {
+        return !!this.children?.size;
+    }
+
     /** Returns an iterator able to iterate all children in this node, in order of insertion */
     public enumChildren(): IterableIterator<TreeNode> {
         return this.children?.values() ?? EMPTY_CHILDREN;
@@ -244,8 +247,11 @@ export class TreeNode implements ITreeNode {
      * @returns this.row
      */
     public sortFirstDuplicateRow(): TreeRow | null {
-        const duplicateRows = this.duplicateRows!;
-        const oldRow = this.row!;
+        const duplicateRows = this.duplicateRows;
+        const oldRow = this.row;
+        if (!oldRow || !duplicateRows) {
+            return oldRow;
+        }
         let newRow = oldRow;
         for (const row of duplicateRows) {
             if (row.sourceRowIndex < newRow.sourceRowIndex) {
@@ -333,16 +339,6 @@ export class TreeNode implements ITreeNode {
         return this.childrenAfterGroup[0]?.treeNode?.oldSourceRowIndex ?? this.oldSourceRowIndex;
     }
 
-    private clearChildrenAfterGroup(): void {
-        // No children
-        if (this.childrenAfterGroup.length > 0) {
-            this.leafChildrenChanged = true;
-            this.pathChanged = true;
-            this.childrenAfterGroup = EMPTY_ARRAY;
-            this.row!.childrenAfterGroup = EMPTY_ARRAY;
-        }
-    }
-
     /**
      * This is called in post order during commit to update the childrenAfterGroup array.
      * It uses the rowNodeOrder map to sort the children in the right order, if is passed.
@@ -354,12 +350,18 @@ export class TreeNode implements ITreeNode {
      * If the order changes, also the order in the children map will be updated,
      * so the next call to enumChildren() will return the children in the right order.
      */
-    public updateChildrenAfterGroup(): void {
+    public updateChildrenAfterGroup(): boolean {
         this.childrenChanged = false; // Reset the flag for this node
         const childrenCount = this.children?.size ?? 0;
         if (childrenCount === 0) {
-            this.clearChildrenAfterGroup();
-            return;
+            if (this.childrenAfterGroup.length === 0) {
+                return false; // No children
+            }
+
+            this.leafChildrenChanged = true;
+            this.childrenAfterGroup = EMPTY_ARRAY;
+            this.row!.childrenAfterGroup = EMPTY_ARRAY;
+            return true; // Children cleared
         }
 
         let nodesChanged = false;
@@ -394,14 +396,14 @@ export class TreeNode implements ITreeNode {
         }
 
         if (nodesChanged) {
-            this.pathChanged = true;
             this.leafChildrenChanged = true; // Note: we are not invalidating this if order only changes
         }
 
         if (needSort) {
-            this.pathChanged = true;
             this.reorderChildrenList(childrenAfterGroup);
         }
+
+        return nodesChanged || needSort;
     }
 
     /** This reorders the given array and rebuild the children map. */
