@@ -1,6 +1,7 @@
 // import { trackBuyButton } from '@utils/analytics';
 import classnames from 'classnames';
-import { type FunctionComponent, useState } from 'react';
+import { useState } from 'react';
+import type { FunctionComponent } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';

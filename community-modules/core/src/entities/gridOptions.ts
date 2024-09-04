@@ -695,6 +695,11 @@ export interface GridOptions<TData = any> {
      */
     context?: any;
     /**
+     * Provide a custom drag and drop cover component.
+     * @initial
+     */
+    dragAndDropCoverComponent?: any;
+    /**
      *
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
@@ -750,7 +755,7 @@ export interface GridOptions<TData = any> {
      */
     suppressAsyncEvents?: boolean;
     /**
-     * The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist.
+     * @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
      * @default false
      * @initial
      */
@@ -1948,7 +1953,8 @@ export interface GridOptions<TData = any> {
      */
     onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>): void;
     /**
-     * Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
+     * @deprecated v32.2 Either use `onDisplayedColumnsChanged` which is fired at the same time,
+     * or use one of the more specific column events.
      */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
 

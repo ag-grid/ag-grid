@@ -1,21 +1,23 @@
 import type { Group } from '@tweenjs/tween.js';
 
 import type { GridApi } from 'ag-grid-community';
-import { type ColumnState } from 'ag-grid-community';
+import type { ColumnState } from 'ag-grid-community';
 
 import { createAgElementFinder } from './agElements';
-import { type AGCreatorAction, createAGActionCreator } from './createAGActionCreator';
-import { type Mouse } from './createMouse';
-import { type RowExpandedState, createRowExpandedState } from './createRowExpandedState';
-import { type Point } from './geometry';
-import { type PathItem } from './pathRecorder';
+import { createAGActionCreator } from './createAGActionCreator';
+import type { AGCreatorAction } from './createAGActionCreator';
+import type { Mouse } from './createMouse';
+import { createRowExpandedState } from './createRowExpandedState';
+import type { RowExpandedState } from './createRowExpandedState';
+import type { Point } from './geometry';
+import type { PathItem } from './pathRecorder';
 import { moveTo } from './scriptActions/move';
 import { playPath } from './scriptActions/playPath';
 import { removeFocus } from './scriptActions/removeFocus';
 import { clearAllSingleCellSelections } from './scriptActions/singleCell';
 import { waitFor } from './scriptActions/waitFor';
-import { type ScriptDebugger } from './scriptDebugger';
-import { type EasingFunction } from './tween';
+import type { ScriptDebugger } from './scriptDebugger';
+import type { EasingFunction } from './tween';
 
 export interface Action {
     name?: string;

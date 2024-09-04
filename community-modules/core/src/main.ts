@@ -384,6 +384,7 @@ export {
     ILoadingOverlay,
 } from './rendering/overlays/loadingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
+export { IDragAndDropCoverComp, IDragAndDropCoverParams } from './dragAndDrop/dragAndDropCoverComponent';
 export { OverlayWrapperComponent } from './rendering/overlays/overlayWrapperComponent';
 
 // features
@@ -562,7 +563,16 @@ export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export { CellNavigationService } from './cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
-export { Grid, GridParams, Params, GridCoreCreator, createGrid, provideGlobalGridOptions } from './grid';
+export {
+    Grid,
+    GridParams,
+    Params,
+    GridCoreCreator,
+    createGrid,
+    provideGlobalGridOptions,
+    GlobalGridOptionsMergeStrategy,
+    _getGlobalGridOption,
+} from './grid';
 export {
     GridApi,
     DetailGridInfo,

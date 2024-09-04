@@ -450,10 +450,11 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const visibleColumns = visibleColsService.getAllCols();
         const movingColIndex = visibleColumns.indexOf(firstMovingCol);
         const targetIndex = visibleColumns.indexOf(column!);
-        const fromLeft = movingColIndex < targetIndex;
+        const isBefore = (position === ColumnHighlightPosition.Before) !== isRtl;
+        const fromLeft = movingColIndex < targetIndex || (movingColIndex === targetIndex && !isBefore);
         let diff: number = 0;
 
-        if ((position === ColumnHighlightPosition.Before) !== isRtl) {
+        if (isBefore) {
             if (fromLeft) {
                 diff -= 1;
             }
@@ -624,7 +625,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.intervalCount = 0;
         this.failedMoveAttempts = 0;
         this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), SCROLL_TIME_INTERVAL);
-        this.dragAndDropService.setGhostIcon(this.needToMoveLeft ? 'left' : 'right', true);
+        this.dragAndDropService.getDragAndDropCoverComponent()?.setIcon(this.needToMoveLeft ? 'left' : 'right', true);
     }
 
     private ensureIntervalCleared(): void {
@@ -635,7 +636,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         window.clearInterval(this.movingIntervalId);
         this.movingIntervalId = null;
         this.failedMoveAttempts = 0;
-        this.dragAndDropService.setGhostIcon(this.getIconName());
+        this.dragAndDropService.getDragAndDropCoverComponent()?.setIcon(this.getIconName());
     }
 
     private moveInterval(): void {
@@ -669,7 +670,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 return;
             }
 
-            this.dragAndDropService.setGhostIcon('pinned');
+            this.dragAndDropService.getDragAndDropCoverComponent()?.setIcon('pinned');
 
             if (!this.gos.get('suppressMoveWhenColumnDragging')) {
                 const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;

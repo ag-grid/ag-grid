@@ -9,11 +9,9 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 
-import { type AutomatedExample } from '../../types.d';
-import {
-    type CreateAutomatedIntegratedChartsParams,
-    createAutomatedIntegratedChartsWithCreateGrid,
-} from './createAutomatedIntegratedChartsWithCreateGrid';
+import type { AutomatedExample } from '../../types.d';
+import { createAutomatedIntegratedChartsWithCreateGrid } from './createAutomatedIntegratedChartsWithCreateGrid';
+import type { CreateAutomatedIntegratedChartsParams } from './createAutomatedIntegratedChartsWithCreateGrid';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

@@ -115,7 +115,7 @@ The minimum version of Angular you can use with AG Grid is now Angular 16.
 {% /if %}
 
 {% if isFramework("react") %}
-`reactiveCustomComponents` now defaults to true. If custom components have been declared imperatively, they should be migrated as the imperative behaviour was deprecated in v31.1. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
+`reactiveCustomComponents` now defaults to true. If your React custom components have been declared imperatively, you can continue using them by setting `reactiveCustomComponents` to false. Please plan to migrate to the new React custom component format as the imperative behaviour was deprecated in v31.1. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
 {% /if %}
 
 ### Events
@@ -231,7 +231,7 @@ The Grid API methods listed below have been removed. Please use Grid API methods
 
 ### Integrated Charts
 
-- Refer to [Upgrade to AG Charts 10](https://charts.ag-grid.com/javascript/upgrade-to-ag-charts-10/) for behaviour and breaking changes. 
+- Refer to [Upgrade to AG Charts 10](https://ag-grid.com/charts/javascript/upgrade-to-ag-charts-10/) for behaviour and breaking changes. 
 
 - The Integrated Charts Tool Panels button has been replaced with the new Chart Menu, from which the Chart Tool Panels can be launched (via the "Edit Chart" menu item).
 

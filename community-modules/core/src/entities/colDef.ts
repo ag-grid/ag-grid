@@ -68,6 +68,13 @@ export interface AbstractColDef<TData = any, TValue = any> {
      * @default false
      */
     autoHeaderHeight?: boolean;
+
+    /**
+     * Set to `true` to not display the column menu when the column header is right-clicked.
+     * Doesn't apply when `columnMenu = 'legacy'`.
+     * @default false
+     */
+    suppressHeaderContextMenu?: boolean;
 }
 
 /** Configuration options for column groups in AG Grid.  */
@@ -402,12 +409,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      */
     suppressHeaderFilterButton?: boolean;
-    /**
-     * Set to `true` to not display the column menu when the column header is right-clicked.
-     * Doesn't apply when `columnMenu = 'legacy'`.
-     * @default false
-     */
-    suppressHeaderContextMenu?: boolean;
     /**
      * Customise the list of menu items available in the column menu.
      */

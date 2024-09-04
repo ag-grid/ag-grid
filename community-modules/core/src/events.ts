@@ -244,6 +244,10 @@ export interface VirtualColumnsChangedEvent<TData = any, TContext = any>
     afterScroll: boolean;
 }
 
+/**
+ * @deprecated v32.2 Either use `displayedColumnsChanged` which is fired at the same time,
+ * or use one of the more specific column events.
+ */
 export interface ColumnEverythingChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnEverythingChanged', TData, TContext> {
     source: string;
@@ -258,7 +262,9 @@ export interface GridColumnsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {}
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {}
+    extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {
+    source: ColumnEventType;
+}
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
@@ -867,9 +873,13 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
         | 'columnChooser';
     /**
      * Column the menu is opened for. Will be `null` if not launched from a column
-     * (e.g. column chooser from the API, or column menu via right-click on an empty header).
+     * (e.g. column chooser from the API, or column menu via right-click on a column group or empty header).
      */
     column: Column | null;
+    /**
+     * Column group the menu is opened for if launched from right-click on a column group
+     */
+    columnGroup?: ProvidedColumnGroup | null;
 }
 
 /**------------*/

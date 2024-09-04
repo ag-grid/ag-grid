@@ -1,4 +1,5 @@
-import { Markdoc, type Render } from '@astrojs/markdoc/config';
+import { Markdoc } from '@astrojs/markdoc/config';
+import type { Render } from '@astrojs/markdoc/config';
 import type { Config, Schema } from '@markdoc/markdoc';
 
 export const kbd: Schema<Config, Render> = {

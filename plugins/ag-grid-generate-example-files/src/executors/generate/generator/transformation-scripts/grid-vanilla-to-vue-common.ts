@@ -37,6 +37,7 @@ export const GRID_COMPONENTS = [
 export const PARAMS_PROPERTIES = ['cellEditorParams', 'filterParams'];
 
 export const OVERRIDABLE_AG_COMPONENTS = [
+    'agDragAndDropCover',
     'agDateInput',
     'agColumnHeader',
     'agColumnGroupHeader',

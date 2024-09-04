@@ -5,15 +5,17 @@ import type { Group } from '@tweenjs/tween.js';
 
 import type { GridApi } from 'ag-grid-community';
 
-import { type AgElement, createAgElementFinder } from '../../lib/agElements';
-import { type Mouse } from '../../lib/createMouse';
+import { createAgElementFinder } from '../../lib/agElements';
+import type { AgElement } from '../../lib/agElements';
+import type { Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
-import { type Point, addPoints, scalePoint } from '../../lib/geometry';
+import { addPoints, scalePoint } from '../../lib/geometry';
+import type { Point } from '../../lib/geometry';
 import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { dragRange } from '../../lib/scriptActions/dragRange';
 import { moveTarget, moveTo } from '../../lib/scriptActions/move';
-import { type ScriptDebugger } from '../../lib/scriptDebugger';
-import { type ScriptAction } from '../../lib/scriptRunner';
+import type { ScriptDebugger } from '../../lib/scriptDebugger';
+import type { ScriptAction } from '../../lib/scriptRunner';
 
 interface Params {
     containerEl: HTMLElement;

@@ -52,12 +52,6 @@
     pre.code {
         margin-bottom: 0;
     }
-
-    // If the only item in a tab is a code snippet ignore padding & remove border
-    div[tab-label] pre.code:only-child {
-        margin: -$spacing-size-4;
-        border: none;
-    }
 }
 
 .tabs-nav-list {
@@ -133,11 +127,8 @@
     border-bottom: 1px solid var(--color-border-secondary);
     border-left: 1px solid var(--color-border-secondary);
     padding: $spacing-size-4;
-
-    pre {
-        border-radius: var(--radius-none);
-    }
 }
+
 img[alt='Quality Badge'] {
     #{$selector-darkmode} & {
         filter: invert(1) hue-rotate(180deg) saturate(1.25);

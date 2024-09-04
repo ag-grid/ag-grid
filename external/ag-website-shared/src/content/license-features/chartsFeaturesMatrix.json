@@ -123,7 +123,7 @@
                 "label": {
                     "name": "Radial Gauge",
                     "icon": "chartsRadialGauge",
-                    "link": "https://charts.ag-grid.com/react/radial-gague/"
+                    "link": "https://ag-grid.com/charts/react/radial-gague/"
                 },
                 "community": false,
                 "enterprise": true,

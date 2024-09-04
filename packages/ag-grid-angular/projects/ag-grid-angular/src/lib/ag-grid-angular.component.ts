@@ -733,6 +733,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public context: any = undefined;
+    /** Provide a custom drag and drop cover component.
+     * @initial
+     */
+    @Input() public dragAndDropCoverComponent: any = undefined;
     /**
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
@@ -1706,7 +1710,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent<TData>> = new EventEmitter<
         VirtualColumnsChangedEvent<TData>
     >();
-    /** Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
+    /** @deprecated v32.2 Either use `onDisplayedColumnsChanged` which is fired at the same time,
+     * or use one of the more specific column events.
      */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<
         ColumnEverythingChangedEvent<TData>

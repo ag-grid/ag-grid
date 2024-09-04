@@ -1,4 +1,5 @@
-import { type Render, component } from '@astrojs/markdoc/config';
+import { component } from '@astrojs/markdoc/config';
+import type { Render } from '@astrojs/markdoc/config';
 import type { Config, Schema } from '@markdoc/markdoc';
 
 export const openInCTA: Schema<Config, Render> = {

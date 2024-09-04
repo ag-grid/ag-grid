@@ -1,6 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classnames from 'classnames';
-import { type FunctionComponent } from 'react';
+import type { FunctionComponent } from 'react';
 
 import styles from './ToggleAutomatedExampleButton.module.scss';
 
