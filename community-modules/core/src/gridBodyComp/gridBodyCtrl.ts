@@ -171,7 +171,8 @@ export class GridBodyCtrl extends BeanStub {
         this.addStopEditingWhenGridLosesFocus();
         this.updateScrollingClasses();
 
-        this.filterManager?.setupAdvancedFilterHeaderComp(eTop);
+        const cleanup = this.filterManager?.setupAdvancedFilterHeaderComp(eTop);
+        this.addDestroyFunc(() => cleanup?.());
 
         this.ctrlsService.register('gridBodyCtrl', this);
     }
@@ -503,6 +504,7 @@ export class GridBodyCtrl extends BeanStub {
     private addRowDragListener(): void {
         this.rowDragFeature = this.createManagedBean(new RowDragFeature(this.eBodyViewport));
         this.dragAndDropService.addDropTarget(this.rowDragFeature);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(this.rowDragFeature));
     }
 
     public getRowDragFeature(): RowDragFeature {

@@ -394,8 +394,8 @@ export class FilterManager extends BeanStub implements NamedBean {
         _warnOnce('Column Filter API methods have been disabled as Advanced Filters are enabled.');
     }
 
-    public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
-        this.advancedFilterService?.getCtrl().setupHeaderComp(eCompToInsertBefore);
+    public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): () => void {
+        return this.advancedFilterService?.getCtrl().setupHeaderComp(eCompToInsertBefore);
     }
 
     public getHeaderRowCount(): number {

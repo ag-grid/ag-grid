@@ -58,11 +58,15 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         });
     }
 
-    public setupHeaderComp(eCompToInsertBefore: HTMLElement): void {
+    public setupHeaderComp(eCompToInsertBefore: HTMLElement): () => void {
         this.eHeaderComp = this.createManagedBean(
             new AdvancedFilterHeaderComp(this.enabled && !this.hasAdvancedFilterParent)
         );
         eCompToInsertBefore.insertAdjacentElement('beforebegin', this.eHeaderComp.getGui());
+        return () => {
+            // destroy the header comp
+            this.eHeaderComp?.getGui().remove();
+        };
     }
 
     public focusHeaderComp(): boolean {
