@@ -48,6 +48,8 @@ interface ReadyParams {
 
 type CtrlType = keyof ReadyParams;
 
+type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
+
 export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsService' as const;
 
@@ -110,12 +112,19 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         }
     }
 
-    public whenReady(callback: (p: ReadyParams) => void): void {
+    public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {
         if (this.ready) {
             callback(this.params);
         } else {
             this.readyCallbacks.push(callback);
         }
+        caller.addDestroyFunc(() => {
+            // remove the callback if the caller is destroyed so that we don't call it against a destroyed component
+            const index = this.readyCallbacks.indexOf(callback);
+            if (index >= 0) {
+                this.readyCallbacks.splice(index, 1);
+            }
+        });
     }
 
     public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {

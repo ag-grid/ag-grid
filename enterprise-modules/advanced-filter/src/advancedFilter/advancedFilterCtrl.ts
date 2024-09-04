@@ -41,7 +41,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     public postConstruct(): void {
         this.hasAdvancedFilterParent = !!this.gos.get('advancedFilterParent');
 
-        this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());
+        this.ctrlsService.whenReady(this, () => this.setAdvancedFilterComp());
 
         this.addManagedEventListeners({
             advancedFilterEnabledChanged: ({ enabled }) => this.onEnabledChanged(enabled),

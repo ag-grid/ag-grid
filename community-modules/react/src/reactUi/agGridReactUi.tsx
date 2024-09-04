@@ -133,16 +133,23 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
             const ctrlsService = context.getBean('ctrlsService');
-            ctrlsService.whenReady(() => {
-                if (context.isDestroyed()) {
-                    return;
-                }
+            ctrlsService.whenReady(
+                {
+                    addDestroyFunc: (func) => {
+                        destroyFuncs.current.push(func);
+                    },
+                },
+                () => {
+                    if (context.isDestroyed()) {
+                        return;
+                    }
 
-                const api = apiRef.current;
-                if (api) {
-                    props.setGridApi?.(api);
+                    const api = apiRef.current;
+                    if (api) {
+                        props.setGridApi?.(api);
+                    }
                 }
-            });
+            );
         };
 
         // this callback adds to ctrlsService.whenReady(), just like above, however because whenReady() executes
@@ -150,11 +157,18 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
         const acceptChangesCallback = (context: Context) => {
             const ctrlsService = context.getBean('ctrlsService');
-            ctrlsService.whenReady(() => {
-                whenReadyFuncs.current.forEach((f) => f());
-                whenReadyFuncs.current.length = 0;
-                ready.current = true;
-            });
+            ctrlsService.whenReady(
+                {
+                    addDestroyFunc: (func) => {
+                        destroyFuncs.current.push(func);
+                    },
+                },
+                () => {
+                    whenReadyFuncs.current.forEach((f) => f());
+                    whenReadyFuncs.current.length = 0;
+                    ready.current = true;
+                }
+            );
         };
 
         const gridCoreCreator = new GridCoreCreator();
@@ -167,6 +181,9 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             acceptChangesCallback,
             gridParams
         );
+        destroyFuncs.current.push(() => {
+            apiRef.current = undefined;
+        });
         gridIdRef.current = apiRef.current.getGridId();
     }, []);
 

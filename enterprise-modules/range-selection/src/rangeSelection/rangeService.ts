@@ -100,7 +100,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             columnPinned: refreshLastRangeStart,
         });
 
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             const gridBodyCtrl = p.gridBodyCtrl;
             this.autoScrollService = new AutoScrollService({
                 scrollContainer: gridBodyCtrl.getBodyViewportElement()!,

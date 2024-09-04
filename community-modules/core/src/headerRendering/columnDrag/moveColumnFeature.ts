@@ -65,7 +65,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
     }

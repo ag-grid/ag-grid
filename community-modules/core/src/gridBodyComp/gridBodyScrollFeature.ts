@@ -110,7 +110,7 @@ export class GridBodyScrollFeature extends BeanStub {
             displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
         });
 
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             this.centerRowsCtrl = p.center;
             this.onDisplayedColumnsWidthChanged();
             this.addScrollListener();
