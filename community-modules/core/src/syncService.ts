@@ -48,17 +48,13 @@ export class SyncService extends BeanStub implements NamedBean {
     }
 
     private gridReady(): void {
-        this.dispatchGridReadyEvent();
+        this.eventService.dispatchEvent({
+            type: 'gridReady',
+        });
         const isEnterprise = this.gos.isModuleRegistered(ModuleNames.EnterpriseCoreModule);
         if (this.gos.get('debug')) {
             _log(`initialised successfully, enterprise = ${isEnterprise}`);
         }
-    }
-
-    private dispatchGridReadyEvent(): void {
-        this.eventService.dispatchEvent({
-            type: 'gridReady',
-        });
     }
 
     private setColumnDefs(event: PropertyValueChangedEvent<'columnDefs'>): void {
