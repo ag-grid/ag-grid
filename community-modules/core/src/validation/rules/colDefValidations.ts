@@ -22,7 +22,7 @@ const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
     },
     showDisabledCheckboxes: {
         version: '32.2',
-        message: 'Use `selection.hideDisabledCheckboxes = false` in `GridOptions` instead.',
+        message: 'Use `selection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
     },
 };
 
