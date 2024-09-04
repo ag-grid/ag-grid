@@ -31,6 +31,7 @@ export default defineConfig({
     resolve: {
         alias: resolveAlias,
     },
+    clearScreen: false,
 });
 
 async function loadSourceCodeAliases(modulesDirectories) {
