@@ -39,7 +39,7 @@ export class ComponentMetadataProvider extends BeanStub implements NamedBean {
                 optionalMethodList: ['refresh'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
             },
-            dragAndDropCoverComponent: {
+            dragAndDropImageComponent: {
                 mandatoryMethodList: ['setIcon', 'setLabel'],
                 optionalMethodList: [],
             },

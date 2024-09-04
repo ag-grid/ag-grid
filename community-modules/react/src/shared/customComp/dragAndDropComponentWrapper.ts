@@ -1,11 +1,11 @@
-import type { DragAndDropIcon, IDragAndDropCoverComp, IDragAndDropCoverParams } from '@ag-grid-community/core';
+import type { DragAndDropIcon, IDragAndDropImageComp, IDragAndDropImageParams } from '@ag-grid-community/core';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
-import type { CustomDragAndDropCoverProps } from './interfaces';
+import type { CustomDragAndDropImageProps } from './interfaces';
 
-export class DragAndDropCoverComponentWrapper
-    extends CustomComponentWrapper<IDragAndDropCoverParams, CustomDragAndDropCoverProps, object>
-    implements IDragAndDropCoverComp
+export class DragAndDropImageComponentWrapper
+    extends CustomComponentWrapper<IDragAndDropImageParams, CustomDragAndDropImageProps, object>
+    implements IDragAndDropImageComp
 {
     private label: string = '';
     private icon: DragAndDropIcon | null = null;
@@ -23,7 +23,7 @@ export class DragAndDropCoverComponentWrapper
         this.refreshProps();
     }
 
-    protected override getProps(): CustomDragAndDropCoverProps {
+    protected override getProps(): CustomDragAndDropImageProps {
         const props = super.getProps();
         const { label, icon, shake } = this;
 
