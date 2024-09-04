@@ -41,11 +41,6 @@ describe('ag-grid tree transactions', () => {
         api.getRowNode('2')!.setSelected(true);
 
         const gridRowsOptions: GridRowsOptions = {
-            // TODO: HACK: Setting checkDom to false here because AG-12650
-            // Aggregations do not update the UI with tree data fillers removed/renamed/moved
-            // Change this to 'myGrid' after AG-12650 is fixed
-            checkDom: false,
-
             columns: ['dateModified'],
         };
 
