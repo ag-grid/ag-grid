@@ -165,6 +165,7 @@ export const Section: FunctionComponent<SectionProps> = ({
     config = {} as Config,
     breadcrumbs = {},
     meta,
+    isInline,
 }) => {
     const showHeader = !config.isSubset;
     const displayName = meta?.displayName || title;
@@ -176,7 +177,11 @@ export const Section: FunctionComponent<SectionProps> = ({
     const id = breadcrumbKeys.join('.');
 
     return (
-        <div className={styles.apiReferenceOuter}>
+        <div
+            className={classnames(styles.apiReferenceOuter, {
+                [styles.isInline]: isInline,
+            })}
+        >
             {showHeader && (
                 <SectionHeader
                     description={meta?.description}
