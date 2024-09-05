@@ -28,18 +28,6 @@ describe('ag-grid tree expanded state', () => {
         const originalRowData = getOrgHierarchyData();
         let yooCounter = 0;
 
-        let promises: Promise<void>[] = [];
-
-        const flushPromises = async () => {
-            await asyncSetTimeout(2);
-            while (promises.length) {
-                const oldPromises = promises;
-                promises = [];
-                await Promise.all(oldPromises);
-                await asyncSetTimeout(1);
-            }
-        };
-
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'jobTitle' }, { field: 'employmentType' }],
             autoGroupColumnDef: {
@@ -54,26 +42,22 @@ describe('ag-grid tree expanded state', () => {
             getDataPath,
             onRowGroupOpened: ({ data }) => {
                 if (!data) return;
-                promises.push(
-                    asyncSetTimeout(1).then(() => {
-                        const oldEntries = api.getGridOption('rowData') ?? [];
-                        const yoo = `yoo-${++yooCounter}`;
-                        const newEntries = [
-                            ...(data.orgHierarchy.length < 3 ? oldEntries : oldEntries.filter((b) => b.id !== data.id)),
-                            {
-                                ...data,
-                                id: yoo,
-                                orgHierarchy: [...(data?.orgHierarchy ?? []), yoo],
-                            },
-                        ];
+                const oldEntries = api.getGridOption('rowData') ?? [];
+                const yoo = `yoo-${++yooCounter}`;
+                const newEntries = [
+                    ...(data.orgHierarchy.length < 3 ? oldEntries : oldEntries.filter((b) => b.id !== data.id)),
+                    {
+                        ...data,
+                        id: yoo,
+                        orgHierarchy: [...(data?.orgHierarchy ?? []), yoo],
+                    },
+                ];
 
-                        api.setGridOption('rowData', newEntries);
-                    })
-                );
+                api.setGridOption('rowData', newEntries);
             },
         });
 
-        await flushPromises();
+        await asyncSetTimeout(1);
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -94,7 +78,7 @@ describe('ag-grid tree expanded state', () => {
         api.getRowNode('0')!.setExpanded(true, undefined, true);
         api.getRowNode('1')!.setExpanded(true, undefined, true);
 
-        await flushPromises();
+        await asyncSetTimeout(1);
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -117,7 +101,7 @@ describe('ag-grid tree expanded state', () => {
         api.getRowNode('7')!.setExpanded(true, undefined, true);
         api.getRowNode('2')!.setExpanded(true, undefined, true);
 
-        await flushPromises();
+        await asyncSetTimeout(1);
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID

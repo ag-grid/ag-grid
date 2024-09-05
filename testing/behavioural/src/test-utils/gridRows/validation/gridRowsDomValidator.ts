@@ -12,19 +12,42 @@ export class GridRowsDomValidator {
             return;
         }
 
-        const domOrderIsConsistent =
-            !!this.gridRows.api.getGridOption('ensureDomOrder') ||
-            this.gridRows.api.getGridOption('domLayout') === 'print';
-
         const rowElements = this.gridRows.rowsHtmlElements;
         const displayedRows = this.gridRows.displayedRows;
-        const rowElementsIds = rowElements.map((rowElement) => rowElement.getAttribute('row-id') ?? '');
+
+        let duplicates = false;
+        for (let index = 0; index < displayedRows.length; index++) {
+            if (this.gridRows.isDuplicateIdRow(displayedRows[index])) {
+                duplicates = true;
+                break;
+            }
+        }
+
+        const domOrderIsConsistent =
+            !duplicates &&
+            (!!this.gridRows.api.getGridOption('ensureDomOrder') ||
+                this.gridRows.api.getGridOption('domLayout') === 'print');
+
+        const rowElementsIdsInOrder = !domOrderIsConsistent
+            ? rowElements
+                  .map((rowElement) => rowElement.getAttribute('row-id') ?? '')
+                  .filter((x) => {
+                      const row = this.gridRows.getById(x);
+                      if (row && row.sticky) {
+                          return false; // Let's ignore sticky rows as they might not be in order
+                      }
+                      return true;
+                  })
+            : null;
+
+        let rowElementsIdsInOrderIdx = 0;
 
         if (rowElements.length !== displayedRows.length) {
             this.gridRows.errors.default.add(
                 'Found ' + rowElements.length + ' row HTML elements, displayedRows.length is ' + displayedRows.length
             );
         }
+
         for (let index = 0; index < displayedRows.length; index++) {
             const row = displayedRows[index];
             if (this.gridRows.isDuplicateIdRow(row)) {
@@ -38,15 +61,22 @@ export class GridRowsDomValidator {
                 continue;
             }
 
-            if (domOrderIsConsistent && index < rowElementsIds.length && rowElementsIds[index] !== id) {
-                this.gridRows.errors
-                    .get(row)
-                    .add(
-                        'HTMLElement row.id=' +
-                            JSON.stringify(rowElementsIds[index]) +
-                            ' found instead, for row index ' +
-                            index
-                    );
+            if (!row.sticky) {
+                if (
+                    rowElementsIdsInOrder &&
+                    rowElementsIdsInOrderIdx < rowElementsIdsInOrder.length &&
+                    rowElementsIdsInOrder[rowElementsIdsInOrderIdx] !== id
+                ) {
+                    this.gridRows.errors
+                        .get(row)
+                        .add(
+                            'HTMLElement row.id=' +
+                                JSON.stringify(rowElementsIdsInOrder[index]) +
+                                ' found instead, for row index ' +
+                                index
+                        );
+                }
+                ++rowElementsIdsInOrderIdx;
             }
             this.checkRowDom(row, rowElement);
         }
