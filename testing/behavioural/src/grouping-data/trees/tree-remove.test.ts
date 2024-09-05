@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { RowDataTransaction } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { GridRows, TestGridsManager, executeTransactionsAsync, flushFakeTimers } from '../../test-utils';
+import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const gridRowsOptions: GridRowsOptions = {
@@ -27,8 +27,6 @@ describe('ag-grid tree transactions', () => {
         const rowC = { id: 'c', orgHierarchy: ['A', 'B', 'C'] };
         const rowD = { id: 'd', orgHierarchy: ['A', 'B', 'C', 'D'] };
 
-        vitest.useFakeTimers({ shouldAdvanceTime: true });
-
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
@@ -50,8 +48,6 @@ describe('ag-grid tree transactions', () => {
 
         api.applyTransaction({ remove: [rowC] });
         api.applyTransaction({ remove: [rowD] });
-
-        await flushFakeTimers();
 
         const gridRows = new GridRows(api, '', gridRowsOptions);
         await gridRows.check(`
@@ -76,8 +72,6 @@ describe('ag-grid tree transactions', () => {
             const rowD = { id: 'd', orgHierarchy: ['D'] };
 
             const rowData = [rowB, rowC, rowD];
-
-            vitest.useFakeTimers({ shouldAdvanceTime: true });
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
@@ -107,8 +101,6 @@ describe('ag-grid tree transactions', () => {
 
             api.applyTransaction({ add: [rowC, rowB] });
 
-            await flushFakeTimers();
-
             await new GridRows(api, 'finalSync', gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── D LEAF id:d
@@ -124,8 +116,6 @@ describe('ag-grid tree transactions', () => {
             const rowD = { id: 'd', orgHierarchy: ['D'] };
 
             const rowData = [rowB, rowC, rowD];
-
-            vitest.useFakeTimers({ shouldAdvanceTime: true });
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
@@ -151,8 +141,6 @@ describe('ag-grid tree transactions', () => {
                 add: [rowC, rowB],
             });
 
-            await flushFakeTimers();
-
             await new GridRows(api, 'finalTogether', gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── D LEAF id:d
@@ -173,8 +161,6 @@ describe('ag-grid tree transactions', () => {
             const rowD = { id: 'd', orgHierarchy: ['D'] };
 
             const rowData = [rowB, rowC, rowD];
-
-            vitest.useFakeTimers({ shouldAdvanceTime: true });
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
@@ -197,8 +183,6 @@ describe('ag-grid tree transactions', () => {
 
             await executeTransactionsAsync([{ remove: [rowB, rowC] }, { add: [rowC, rowB] }], api);
 
-            await flushFakeTimers();
-
             await new GridRows(api, 'finalAsync', gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── D LEAF id:d
@@ -220,8 +204,6 @@ describe('ag-grid tree transactions', () => {
         const rowD = { id: 'd', orgHierarchy: ['D'] };
 
         const rowData = [rowB, rowC, rowD];
-
-        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
@@ -259,8 +241,6 @@ describe('ag-grid tree transactions', () => {
             api.applyTransaction(transactions[1]);
         }
 
-        await flushFakeTimers();
-
         await new GridRows(api, 'final' + mode, gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├── D LEAF id:d
@@ -278,8 +258,6 @@ describe('ag-grid tree transactions', () => {
         const rowF = { id: 'f', orgHierarchy: ['F'] };
 
         const rowData = [rowB, rowC, rowD, rowE, rowF];
-
-        vitest.useFakeTimers({ shouldAdvanceTime: true });
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [],
@@ -355,8 +333,6 @@ describe('ag-grid tree transactions', () => {
 
             api.applyTransaction(transactions2[1]);
         }
-
-        await flushFakeTimers();
 
         await new GridRows(api, 'Transactions2 ' + mode, gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
