@@ -19,6 +19,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'silver' },
         { field: 'bronze' },
     ],
+
     defaultColDef: {
         width: 170,
         filter: true,

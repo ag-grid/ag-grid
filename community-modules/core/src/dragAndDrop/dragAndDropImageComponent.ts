@@ -23,7 +23,7 @@ export interface IDragAndDropImageComp<
 > extends IComponent<TParams>,
         IDragAndDropImage {}
 
-export class DragAndDropImageComp extends Component implements IDragAndDropImageComp<any, any> {
+export class DragAndDropImageComponent extends Component implements IDragAndDropImageComp<any, any> {
     private dragSource: DragSource | null = null;
 
     private readonly eIcon: HTMLElement = RefPlaceholder;
