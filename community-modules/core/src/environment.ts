@@ -226,21 +226,22 @@ export class Environment extends BeanStub implements NamedBean {
     }
 
     private handleThemeGridOptionChange(): void {
-        const theme = this.gos.get('theme') || null;
-        if (theme !== this.gridTheme) {
-            this.gridTheme?.stopUse();
-            this.gridTheme = theme;
-            this.gridTheme?.startUse({
-                loadThemeGoogleFonts: !!this.gos.get('loadThemeGoogleFonts'),
+        const { gos, eMeasurementContainer, gridTheme: oldGridTheme, ancestorThemeClasses } = this;
+        const newGridTheme = gos.get('theme') || null;
+        if (newGridTheme !== oldGridTheme) {
+            oldGridTheme?.stopUse();
+            this.gridTheme = newGridTheme;
+            newGridTheme?.startUse({
+                loadThemeGoogleFonts: !!gos.get('loadThemeGoogleFonts'),
                 container: this.eGridDiv,
             });
-            if (this.eMeasurementContainer) {
-                this.applyThemeClasses(this.eMeasurementContainer);
+            if (eMeasurementContainer) {
+                this.applyThemeClasses(eMeasurementContainer);
             }
             this.fireGridStylesChangedEvent('themeChanged');
         }
-        const [legacyClass] = this.ancestorThemeClasses;
-        if (this.gridTheme && legacyClass) {
+        const [legacyClass] = ancestorThemeClasses;
+        if (newGridTheme && legacyClass) {
             _errorOnce(
                 `a theme grid option has been provided in addition to setting class="${legacyClass}" on a parent element. Do not use both methods to set the theme.`
             );
