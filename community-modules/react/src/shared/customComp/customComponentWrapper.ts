@@ -49,8 +49,8 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
         return this;
     }
 
-    protected override createElement(reactComponent: any, props: TOutputParams): any {
-        return super.createElement(this.wrapperComponent, {
+    protected override createElement(reactComponent: any, key: string, props: TOutputParams): any {
+        return super.createElement(this.wrapperComponent, key, {
             initialProps: props,
             CustomComponentClass: reactComponent,
             setMethods: (methods: TMethods) => this.setMethods(methods),
