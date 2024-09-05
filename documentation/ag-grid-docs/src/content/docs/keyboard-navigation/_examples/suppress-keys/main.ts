@@ -52,7 +52,7 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
-    columnDefs: columnDefs,
+    columnDefs,
     defaultColDef: {
         editable: true,
         flex: 1,
@@ -61,8 +61,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         suppressKeyboardEvent: suppressNavigation,
         suppressHeaderKeyboardEvent: suppressUpDownNavigation,
     },
-    rowSelection: 'multiple',
-    suppressRowClickSelection: true,
+    selection: {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        checkboxes: false,
+        headerCheckbox: false,
+    },
 };
 
 function suppressEnter(params: SuppressKeyboardEventParams) {

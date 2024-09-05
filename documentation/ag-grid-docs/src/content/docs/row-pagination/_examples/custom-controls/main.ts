@@ -32,11 +32,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         filter: true,
     },
-    // debug: true,
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        checkboxes: true,
+        headerCheckbox: true,
+    },
     paginationPageSize: 500,
     paginationPageSizeSelector: [100, 500, 1000],
-    columnDefs: columnDefs,
+    columnDefs,
     pagination: true,
     suppressPaginationPanel: true,
     suppressScrollOnNewData: true,

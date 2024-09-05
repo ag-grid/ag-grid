@@ -8,8 +8,6 @@ const columnDefs: ColDef[] = [
     {
         field: 'athlete',
         minWidth: 170,
-        checkboxSelection: true,
-        headerCheckboxSelection: true,
     },
     { field: 'age' },
     { field: 'country' },
@@ -31,10 +29,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    suppressRowClickSelection: true,
-    groupSelectsChildren: true,
-    rowSelection: 'multiple',
-    columnDefs: columnDefs,
+    selection: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+        suppressClickSelection: true,
+    },
+    columnDefs,
     paginationAutoPageSize: true,
     pagination: true,
 };

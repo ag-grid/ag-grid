@@ -68,10 +68,12 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     // we don't want the auto column here, as we are providing our own cols
     groupDisplayType: 'custom',
-    suppressRowClickSelection: true,
     groupDefaultExpanded: 1,
-    rowSelection: 'multiple',
-    groupSelectsChildren: true,
+    selection: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+        suppressClickSelection: true,
+    },
 };
 
 // setup the grid after the page has finished loading

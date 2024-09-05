@@ -47,8 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         cellDataType: false,
     },
 
-    enableRangeSelection: true,
-    rowSelection: 'multiple',
+    selection: { mode: 'cell' },
 
     processCellForClipboard: processCellForClipboard,
     processHeaderForClipboard: processHeaderForClipboard,

@@ -49,9 +49,13 @@ const gridOptions: GridOptions = {
     },
     groupDefaultExpanded: 1,
     rowData: getData(),
-    suppressRowClickSelection: true,
-    rowSelection: 'multiple',
-    groupSelectsChildren: true,
+    selection: {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        groupSelects: 'descendants',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
     suppressAggFuncInHeader: true,
     // this allows the different colors per group, by assigning a different
     // css class to each group level based on the key

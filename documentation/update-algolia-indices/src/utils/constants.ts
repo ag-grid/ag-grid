@@ -7,3 +7,5 @@ export const API_REFERENCE_DIR = `${DIST_DIR}/files/reference`;
 export const MENU_FILE_PATH = `${WORKING_DIR}/src/content/menu/data.json`;
 
 export const SUPPORTED_FRAMEWORKS = ['react', 'angular', 'vue', 'javascript'] as const;
+
+export type SupportedFrameworks = (typeof SUPPORTED_FRAMEWORKS)[number];

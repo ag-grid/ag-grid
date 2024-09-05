@@ -12,7 +12,9 @@
                 "url": "./status-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IStatusPanelComp"],
+                "exclude": [
+                    "IStatusPanelComp"
+                ],
                 "include": []
             }
         },
@@ -22,7 +24,9 @@
                 "url": "./side-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IToolPanelComp"],
+                "exclude": [
+                    "IToolPanelComp"
+                ],
                 "include": []
             }
         },
@@ -105,18 +109,6 @@
             "more": {
                 "name": "Disabling Cut",
                 "url": "./clipboard/#disabling-cut"
-            }
-        },
-        "suppressCopyRowsToClipboard": {
-            "more": {
-                "name": "Copying Rows",
-                "url": "./clipboard/#copying-rows"
-            }
-        },
-        "suppressCopySingleCellRanges": {
-            "more": {
-                "name": "Mixed Copying Cell Ranges & Rows",
-                "url": "./clipboard/#mixed-copying-cell-ranges--rows"
             }
         },
         "suppressLastEmptyLineOnPaste": {},
@@ -593,7 +585,9 @@
                 "url": "./integrated-charts-customisation/#custom-chart-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeDefinition"]
+                "exclude": [
+                    "AgChartThemeDefinition"
+                ]
             }
         },
         "chartThemeOverrides": {
@@ -602,7 +596,9 @@
                 "url": "./integrated-charts-customisation/#overriding-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeOverrides"]
+                "exclude": [
+                    "AgChartThemeOverrides"
+                ]
             }
         },
         "chartToolPanelsDef": {
@@ -1227,12 +1223,6 @@
                 "url": "./grouping-sorting/#maintain-group-order"
             }
         },
-        "groupSelectsChildren": {
-            "more": {
-                "name": "Group Selection",
-                "url": "./row-selection/#group-selection"
-            }
-        },
         "groupLockGroupColumns": {
             "more": {
                 "name": "Group Lock Group Columns",
@@ -1256,12 +1246,6 @@
             "more": {
                 "name": "Showing Values in Group and Total Rows",
                 "url": "./total-rows/#showing-values-in-group-and-total-rows"
-            }
-        },
-        "groupSelectsFiltered": {
-            "more": {
-                "name": "Group Selection",
-                "url": "./row-selection/#group-selection"
             }
         },
         "showOpenedGroup": {
@@ -1595,7 +1579,9 @@
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": ["IViewportDatasourceParams"]
+                "include": [
+                    "IViewportDatasourceParams"
+                ]
             }
         },
         "viewportRowModelPageSize": {
@@ -1648,37 +1634,16 @@
                 "url": "./selection-overview/"
             }
         },
-        "rowSelection": {
+        "selection": {
             "more": {
                 "name": "Row Selection",
                 "url": "./row-selection"
             },
-            "description": "Type of Row Selection."
+            "addNestedFields": true
         },
-        "rowMultiSelectWithClick": {
-            "more": {
-                "name": "Multi Select Single Click",
-                "url": "./row-selection/#multi-select-with-click"
-            }
-        },
-        "isRowSelectable": {
-            "more": {
-                "name": "Specify Selectable Rows",
-                "url": "./row-selection/#specify-selectable-rows"
-            }
-        },
-        "suppressRowDeselection": {
-            "more": {
-                "name": "Row Selection",
-                "url": "./row-selection"
-            },
-            "description": "If `true`, rows will not be deselected if you hold down <kbd>^ Ctrl</kbd> and click the row or press <kbd>␣ Space</kbd>. Default: `false`"
-        },
-        "suppressRowClickSelection": {
-            "more": {
-                "name": "Row Selection",
-                "url": "./row-selection"
-            }
+        "controlsColDef": {
+            "name": "Controls Column Definition",
+            "url": "./row-selection-single-row/#customising-the-checkbox-column"
         },
         "suppressCellFocus": {
             "more": {
@@ -1692,52 +1657,10 @@
                 "url": "./keyboard-navigation/#suppress-header-focus"
             }
         },
-        "suppressMultiRangeSelection": {
-            "more": {
-                "name": "Suppress Multi Range Selection",
-                "url": "./range-selection/#suppress-multi-range-selection"
-            }
-        },
         "enableCellTextSelection": {
             "more": {
                 "name": "Using Cell Text Selection",
                 "url": "./clipboard/#using-the-browsers-text-selection"
-            }
-        },
-        "enableRangeSelection": {
-            "more": {
-                "name": "Range Selection",
-                "url": "./range-selection"
-            }
-        },
-        "enableRangeHandle": {
-            "more": {
-                "name": "Range Handle",
-                "url": "./range-selection-handle"
-            }
-        },
-        "enableFillHandle": {
-            "more": {
-                "name": "Fill Handle",
-                "url": "./range-selection-fill-handle/"
-            }
-        },
-        "fillHandleDirection": {
-            "more": {
-                "name": "Fill Handle Axis",
-                "url": "./range-selection-fill-handle/#fill-handle-axis"
-            }
-        },
-        "fillOperation": {
-            "more": {
-                "name": "Custom User Function",
-                "url": "./range-selection-fill-handle/#custom-user-function"
-            }
-        },
-        "suppressClearOnFillReduction": {
-            "more": {
-                "name": "Preventing Range Reduction",
-                "url": "./range-selection-fill-handle/#preventing-range-reduction"
             }
         }
     },

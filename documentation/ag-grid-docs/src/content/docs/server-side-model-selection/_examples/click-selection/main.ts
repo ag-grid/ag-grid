@@ -1,4 +1,4 @@
-import { GetRowIdParams, GridApi, GridOptions, IServerSideDatasource, createGrid } from '@ag-grid-community/core';
+import { GridApi, GridOptions, IServerSideDatasource, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
@@ -7,8 +7,8 @@ import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-let gridApi: GridApi<IOlympicData>;
-const gridOptions: GridOptions<IOlympicData> = {
+let gridApi: GridApi<IOlympicDataWithId>;
+const gridOptions: GridOptions<IOlympicDataWithId> = {
     columnDefs: [
         { field: 'athlete', filter: 'agTextColumnFilter' },
         { field: 'country', filter: 'agTextColumnFilter' },
@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 180,
     },
-    getRowId: (params: GetRowIdParams) => {
+    getRowId: (params) => {
         if (params.data.id != null) {
             return 'leaf-' + params.data.id;
         }
@@ -38,15 +38,16 @@ const gridOptions: GridOptions<IOlympicData> = {
             rowGroupColIds +
             '-' +
             (params.parentKeys || []).join('-') +
-            params.data[thisGroupCol.getColDef().field!]
+            params.data[thisGroupCol.getColDef().field as keyof IOlympicDataWithId]
         );
     },
 
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    // allow multiple leaf row selections
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+    },
 
     suppressAggFuncInHeader: true,
 };

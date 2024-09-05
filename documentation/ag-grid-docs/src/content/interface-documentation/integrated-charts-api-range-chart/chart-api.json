@@ -8,12 +8,14 @@
             "isRequired": true,
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": ["ChartType"]
+                "include": [
+                    "ChartType"
+                ]
             }
         },
         "cellRange": {
             "isRequired": true,
-            "description": "Defines the range of cells to be charted. A range is normally defined with start and end rows and a list of columns. If the start and end rows are omitted, the range covers all rows (i.e. entire column contents are selected). The columns can either be defined using a start and end column (the range will cover the start and end columns and all columns in between), or columns can be supplied specifically in cases where the required columns are not adjacent to each other. See [Add Cell Range](./range-selection/#addcellrangerangeselection) for more information."
+            "description": "Defines the range of cells to be charted. A range is normally defined with start and end rows and a list of columns. If the start and end rows are omitted, the range covers all rows (i.e. entire column contents are selected). The columns can either be defined using a start and end column (the range will cover the start and end columns and all columns in between), or columns can be supplied specifically in cases where the required columns are not adjacent to each other. See [Add Cell Range](./cell-selection/#reference--addCellRange) for more information."
         },
         "chartThemeName": {
             "options": [

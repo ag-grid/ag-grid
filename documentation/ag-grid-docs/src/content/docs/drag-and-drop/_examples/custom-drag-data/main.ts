@@ -13,8 +13,12 @@ const gridOptions: GridOptions = {
         width: 80,
         filter: true,
     },
-    rowSelection: 'multiple',
-    suppressRowClickSelection: true,
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+        suppressClickSelection: true,
+    },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
         'green-row': 'data.color == "Green"',

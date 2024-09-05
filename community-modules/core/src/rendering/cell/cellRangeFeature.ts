@@ -1,5 +1,6 @@
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import { _isFillHandleEnabled, _isRangeHandleEnabled } from '../../gridOptionsUtils';
 import type { IRangeService, ISelectionHandle, ISelectionHandleFactory } from '../../interfaces/IRangeService';
 import { CellRangeType, SelectionHandleType } from '../../interfaces/IRangeService';
 import { _setAriaSelected } from '../../utils/aria';
@@ -41,10 +42,10 @@ export class CellRangeFeature {
     public setComp(cellComp: ICellComp, eGui: HTMLElement): void {
         this.cellComp = cellComp;
         this.eGui = eGui;
-        this.onRangeSelectionChanged();
+        this.onCellSelectionChanged();
     }
 
-    public onRangeSelectionChanged(): void {
+    public onCellSelectionChanged(): void {
         // when using reactUi, given UI is async, it's possible this method is called before the comp is registered
         if (!this.cellComp) {
             return;
@@ -209,8 +210,8 @@ export class CellRangeFeature {
 
         const cellRange = _last(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
-        const isFillHandleAvailable = gos.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
-        const isRangeHandleAvailable = gos.get('enableRangeHandle');
+        const isFillHandleAvailable = _isFillHandleEnabled(gos) && !this.cellCtrl.isSuppressFillHandle();
+        const isRangeHandleAvailable = _isRangeHandleEnabled(gos);
 
         let handleIsAvailable =
             rangesLen === 1 && !this.cellCtrl.isEditing() && (isFillHandleAvailable || isRangeHandleAvailable);
@@ -233,9 +234,8 @@ export class CellRangeFeature {
     }
 
     private addSelectionHandle() {
-        const gos = this.beans.gos;
         const cellRangeType = _last(this.rangeService.getCellRanges()).type;
-        const selectionHandleFill = gos.get('enableFillHandle') && _missing(cellRangeType);
+        const selectionHandleFill = _isFillHandleEnabled(this.beans.gos) && _missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
