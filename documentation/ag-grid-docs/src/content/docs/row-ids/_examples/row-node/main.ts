@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GetRowIdParams, GridApi, GridOptions, RowNode, createGrid } from '@ag-grid-community/core';
+import { ColDef, GetRowIdParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -21,7 +21,7 @@ const rowData = [
 ];
 
 function getAllRows() {
-    gridApi!.forEachNode((rowNode: RowNode) => {
+    gridApi!.forEachNode((rowNode) => {
         console.log(`=============== ROW ${rowNode.rowIndex}`);
         console.log(`id = ${rowNode.id}`);
         console.log(`rowIndex = ${rowNode.rowIndex}`);
@@ -46,12 +46,16 @@ let gridApi: GridApi;
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
-    columnDefs: columnDefs,
+    columnDefs,
     defaultColDef: {
         flex: 1,
     },
-    rowData: rowData,
-    rowSelection: 'multiple',
+    rowData,
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
     getRowId: (params: GetRowIdParams) => String(params.data.id),
 };
 

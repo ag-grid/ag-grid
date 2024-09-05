@@ -111,7 +111,7 @@ const GridPreview = () => {
                                 onSelectionChanged={({ api }) => {
                                     stateRef.current.rowSelection = api.getState().rowSelection || [];
                                 }}
-                                onRangeSelectionChanged={({ api }) => {
+                                onCellSelectionChanged={({ api }) => {
                                     stateRef.current.rangeSelection = config.showIntegratedChartPopup
                                         ? undefined
                                         : api.getState().rangeSelection;

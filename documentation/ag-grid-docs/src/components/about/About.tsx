@@ -235,9 +235,9 @@ export const About = () => {
                         <div>
                             <img
                                 src={urlWithBaseUrl('/images/team/ava.jpg')}
-                                alt="Ava Uutting, Technical Product Analyst"
+                                alt="Ava Utting, Technical Product Analyst"
                             />
-                            <h3>Ava Uutting</h3>
+                            <h3>Ava Utting</h3>
                             <p>Technical Product Analyst</p>
                         </div>
                         <div>

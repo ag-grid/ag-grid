@@ -7,7 +7,7 @@ import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
+import { createApp, ref, shallowRef } from 'vue';
 
 import './styles.css';
 
@@ -36,11 +36,9 @@ const VueExample = {
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
-                    :enableRangeSelection="true"
                     :sideBar="true"
                     :pagination="true"
-                    :rowSelection="rowSelection"
-                    :suppressRowClickSelection="true"
+                    :selection="selection"
                     :suppressColumnMoveAnimation="true"
                     :rowData="rowData"
                     :initialState="initialState"
@@ -55,12 +53,7 @@ const VueExample = {
     },
     setup(props) {
         const columnDefs = ref([
-            {
-                field: 'athlete',
-                minWidth: 150,
-                headerCheckboxSelection: true,
-                checkboxSelection: true,
-            },
+            { field: 'athlete', minWidth: 150 },
             { field: 'age', maxWidth: 90 },
             { field: 'country', minWidth: 150 },
             { field: 'year', maxWidth: 90 },
@@ -80,14 +73,13 @@ const VueExample = {
             enablePivot: true,
             enableValue: true,
         });
-        const rowSelection = ref(null);
+        const selection = ref({
+            mode: 'multiRow',
+            suppressClickSelection: true,
+        });
         const rowData = ref(null);
         const gridVisible = ref(true);
         const initialState = ref(undefined);
-
-        onBeforeMount(() => {
-            rowSelection.value = 'multiple';
-        });
 
         const reloadGrid = () => {
             const state = gridApi.value.getState();
@@ -121,7 +113,7 @@ const VueExample = {
             columnDefs,
             gridApi,
             defaultColDef,
-            rowSelection,
+            selection,
             rowData,
             gridVisible,
             initialState,

@@ -76,7 +76,7 @@
         "suppressFillHandle": {
             "more": {
                 "name": "Suppressing the Fill Handle",
-                "url": "./range-selection-fill-handle/#suppressing-the-fill-handle"
+                "url": "./cell-selection-fill-handle/#suppressing-the-fill-handle"
             }
         },
         "contextMenuItems": {
@@ -192,19 +192,19 @@
         "headerCheckboxSelection": {
             "more": {
                 "name": "Header Checkbox Selection",
-                "url": "./row-selection/#header-checkbox-selection"
+                "url": "./row-selection-multi-row/#bulk-selection"
             }
         },
         "headerCheckboxSelectionFilteredOnly": {
             "more": {
                 "name": "Select Everything or Just Filtered",
-                "url": "./row-selection/#select-everything-or-just-filtered"
+                "url": "./row-selection-multi-row/#bulk-selection"
             }
         },
         "headerCheckboxSelectionCurrentPageOnly": {
             "more": {
                 "name": "Select Everything on the Current Page",
-                "url": "./row-selection/#select-only-the-current-page"
+                "url": "./row-selection-multi-row/#bulk-selection"
             }
         },
         "suppressFloatingFilterButton": {

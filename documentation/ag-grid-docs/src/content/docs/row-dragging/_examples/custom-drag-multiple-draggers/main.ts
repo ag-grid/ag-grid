@@ -40,10 +40,10 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     rowDragManaged: true,
-    columnDefs: columnDefs,
+    columnDefs,
     rowDragText: rowDragTextCallback,
     rowDragMultiRow: true,
-    rowSelection: 'multiple',
+    selection: { mode: 'multiRow' },
 };
 
 // setup the grid after the page has finished loading

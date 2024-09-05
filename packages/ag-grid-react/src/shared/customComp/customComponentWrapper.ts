@@ -3,7 +3,7 @@ import { AgPromise } from 'ag-grid-community';
 import customWrapperComp from '../../reactUi/customComp/customWrapperComp';
 import { ReactComponent } from '../reactComponent';
 
-export type WrapperParams<P, M> = {
+export type WrapperParams<P extends { key?: string }, M> = {
     initialProps: P;
     CustomComponentClass: any;
     setMethods: (methods: M) => void;

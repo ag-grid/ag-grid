@@ -233,6 +233,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
     /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     *
      * Set to `true` (or return `true` from function) to render a selection checkbox in the column.
      * @default false
      */
@@ -417,14 +419,22 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Customise the list of menu items available in the context menu.
      */
     contextMenuItems?: (string | MenuItemDef<TData>)[] | GetContextMenuItems<TData>;
-    /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
+    /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     *
+     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     */
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
     /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     *
      * If `true`, the header checkbox selection will only select filtered items.
      * @default false
      */
     headerCheckboxSelectionFilteredOnly?: boolean;
     /**
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     *
      * If `true`, the header checkbox selection will only select nodes on the current page.
      * @default false
      */

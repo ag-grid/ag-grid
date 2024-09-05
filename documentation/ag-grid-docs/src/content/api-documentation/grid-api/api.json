@@ -312,19 +312,19 @@
         "getCellRanges": {
             "more": {
                 "name": "getCellRanges",
-                "url": "./range-selection/#getcellranges"
+                "url": "./cell-selection/#reference--getCellRanges"
             }
         },
         "addCellRange": {
             "more": {
                 "name": "addCellRange",
-                "url": "./range-selection/#addcellrangerangeselection"
+                "url": "./cell-selection/#reference--addCellRange"
             }
         },
-        "clearRangeSelection": {
+        "clearCellSelection": {
             "more": {
-                "name": "clearRangeSelection",
-                "url": "./range-selection/#clearrangeselection"
+                "name": "clearCellSelection",
+                "url": "./cell-selection/#reference--clearCellSelection"
             }
         }
     },
@@ -1151,13 +1151,13 @@
         "getServerSideSelectionState": {
             "more": {
                 "name": "Selection",
-                "url": "./server-side-model-selection/#api-selection"
+                "url": "./server-side-model-selection/#api-reference"
             }
         },
         "setServerSideSelectionState": {
             "more": {
                 "name": "Selection",
-                "url": "./server-side-model-selection/#api-selection"
+                "url": "./server-side-model-selection/#api-reference"
             }
         },
         "getCacheBlockState": {

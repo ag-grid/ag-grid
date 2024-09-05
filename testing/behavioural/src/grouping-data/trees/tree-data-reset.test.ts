@@ -499,7 +499,9 @@ describe('ag-grid tree data', () => {
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: [],
-            rowSelection: 'multiple',
+            selection: {
+                mode: 'multiRow',
+            },
             getDataPath,
             getRowId: (params) => params.data.id,
         });
