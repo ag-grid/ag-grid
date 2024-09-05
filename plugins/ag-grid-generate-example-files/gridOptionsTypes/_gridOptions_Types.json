@@ -177,6 +177,12 @@
       "SideBarDef"
     ]
   },
+  "theme": {
+    "typeName": "GridTheme",
+    "typesToInclude": [
+      "GridTheme"
+    ]
+  },
   "chartThemeOverrides": {
     "typeName": "AgChartThemeOverrides",
     "typesToInclude": [
@@ -504,6 +510,10 @@
     ]
   },
   "groupRowRenderer": {
+    "typeName": "any",
+    "typesToInclude": []
+  },
+  "dragAndDropImageComponent": {
     "typeName": "any",
     "typesToInclude": []
   },
@@ -1287,10 +1297,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "maintainColumnOrder": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "groupMaintainOrder": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1379,8 +1385,16 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
+  "loadThemeGoogleFonts": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
+    "typesToInclude": []
+  },
+  "maintainColumnOrder": {
+    "typeName": "boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
     "typesToInclude": []
   }
 }

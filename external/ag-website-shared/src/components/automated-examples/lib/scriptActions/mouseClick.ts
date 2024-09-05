@@ -1,6 +1,6 @@
-import { type Mouse } from '../createMouse';
-import { type Point } from '../geometry';
-import { type ScriptDebugger } from '../scriptDebugger';
+import type { Mouse } from '../createMouse';
+import type { Point } from '../geometry';
+import type { ScriptDebugger } from '../scriptDebugger';
 import { waitFor } from './waitFor';
 
 export type ClickType = 'left' | 'middle' | 'right';

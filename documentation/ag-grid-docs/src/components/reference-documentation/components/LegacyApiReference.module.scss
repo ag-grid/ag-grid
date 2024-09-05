@@ -1,0 +1,39 @@
+@use 'sass:map';
+@use 'design-system' as *;
+
+/**
+ * Fix borders for table
+ */
+.tableRow {
+    border-top: 1px solid var(--color-border-secondary);
+
+    &:last-child {
+        border-bottom: 1px solid var(--color-border-secondary);
+    }
+
+    #{$selector-darkmode} & {
+        border-top-color: var(--color-util-gray-400);
+        border-bottom-color: var(--color-util-gray-400);
+    }
+}
+
+/**
+ * Remove border bottom
+ */
+.apiReference {
+    border-bottom: none;
+}
+
+/**
+ * Make `td` full width
+ */
+.propertyNameDescription {
+    width: 100%;
+    padding: 0;
+
+    // .propertyRow - borders moved to `.tableRow`
+    > div,
+    > div:last-child {
+        border: none;
+    }
+}

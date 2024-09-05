@@ -408,9 +408,8 @@ export abstract class AbstractHeaderCellCtrl<
         if (this.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
-        const columnToUse = isColumn(column) ? column : undefined;
-        if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
-            this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
+        if (this.menuService.isHeaderContextMenuEnabled(column)) {
+            this.menuService.showHeaderContextMenu(column, mouseEvent, touchEvent);
         }
 
         this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);

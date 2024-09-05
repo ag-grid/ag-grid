@@ -8,6 +8,11 @@ export const DateComponent: ComponentType = {
     cellRenderer: false,
 };
 
+export const DragAndDropImageComponent: ComponentType = {
+    propertyName: 'dragAndDropImageComponent',
+    cellRenderer: false,
+};
+
 export const HeaderComponent: ComponentType = {
     propertyName: 'headerComponent',
     cellRenderer: false,

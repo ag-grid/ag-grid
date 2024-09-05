@@ -206,6 +206,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
             switchingTab: false,
             key: containerType as 'columnMenu' | 'columnFilter' | 'floatingFilter',
             column: column ?? null,
+            columnGroup: null,
         });
     }
 

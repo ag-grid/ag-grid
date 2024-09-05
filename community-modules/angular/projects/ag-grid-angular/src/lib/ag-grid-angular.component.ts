@@ -83,6 +83,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     GridState,
+    GridTheme,
     HeaderFocusedEvent,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
@@ -467,9 +468,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
           }
         | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
-     * @default false
+     *
+     * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
+     * @default 'pivotResultColumns'
      */
-    @Input() public maintainColumnOrder: boolean | undefined = undefined;
+    @Input() public maintainColumnOrder:
+        | boolean
+        | 'all'
+        | 'primaryColumns'
+        | 'pivotResultColumns'
+        | 'none'
+        | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false
      */
@@ -733,6 +742,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public context: any = undefined;
+    /** Provide a custom drag and drop image component.
+     * @initial
+     */
+    @Input() public dragAndDropImageComponent: any = undefined;
     /**
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
@@ -779,7 +792,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public suppressAsyncEvents: boolean | undefined = undefined;
-    /** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist.
+    /** @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
      * @default false
      * @initial
      */
@@ -1431,6 +1444,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public initialState: GridState | undefined = undefined;
+    /** Theme to apply to the grid.
+     */
+    @Input() public theme: GridTheme | undefined = undefined;
+    /** Whether to load supported theme fonts from the Google Fonts server.
+     *
+     * - `true` -> load fonts automatically if your theme uses them
+     * - `false` -> do not load fonts, you must either load them from Google Fonts
+     *   yourself or download them and serve them from your app
+     */
+    @Input() public loadThemeGoogleFonts: boolean | undefined = undefined;
     /** For customising the context menu.
      */
     @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;
@@ -1706,7 +1729,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent<TData>> = new EventEmitter<
         VirtualColumnsChangedEvent<TData>
     >();
-    /** Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
+    /** @deprecated v32.2 Either use `onDisplayedColumnsChanged` which is fired at the same time,
+     * or use one of the more specific column events.
      */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<
         ColumnEverythingChangedEvent<TData>
@@ -2151,7 +2175,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressClipboardApi: boolean | null | '';
     static ngAcceptInputType_suppressModelUpdateAfterUpdateTransaction: boolean | null | '';
     static ngAcceptInputType_stopEditingWhenCellsLoseFocus: boolean | null | '';
-    static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
@@ -2173,5 +2196,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';
     static ngAcceptInputType_loading: boolean | null | '';
+    static ngAcceptInputType_loadThemeGoogleFonts: boolean | null | '';
     // @END@
 }

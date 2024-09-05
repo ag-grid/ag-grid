@@ -749,7 +749,6 @@
         },
         "refreshInfiniteCache": {},
         "purgeInfiniteCache": {},
-        "getInfiniteRowCount": {},
         "isLastRowIndexKnown": {},
         "setRowCount": {},
         "getCacheBlockState": {}
@@ -1106,7 +1105,8 @@
                 "name": "Sort / Filter / Group Refresh",
                 "url": "./data-update-single-row-cell/#sort--filter--group-refresh"
             }
-        }
+        },
+        "isRowDataEmpty": {}
     },
     "serverSideRowModel": {
         "meta": {

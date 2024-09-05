@@ -104,13 +104,6 @@ export const trackExampleRunner = (props: object) => {
 
 export const trackOnceExampleRunner = createTrackPlausibleOnce(EVENT_NAME.exampleRunner, trackExampleRunner);
 
-export const trackApiDocumentation = (props: object) => {
-    trackPlausible({
-        eventName: EVENT_NAME.apiDocumentation,
-        props,
-    });
-};
-
 export const trackDemoToolbar = (props: object) => {
     trackPlausible({
         eventName: EVENT_NAME.demoToolbar,

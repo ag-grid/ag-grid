@@ -14,7 +14,7 @@ import { _last, _removeFromArray } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
-import { attemptMoveColumns, normaliseX } from '../../columnMoveHelper';
+import { attemptMoveColumns, normaliseX, setColumnsMoving } from '../../columnMoveHelper';
 import type { HeaderPosition } from '../../common/headerPosition';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -124,8 +124,30 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             return ctrl.getColumnGroupChild().isMoving();
         });
 
-        const beforeOn = isFirst && isColumnMoveAtThisLevel && highlighted === ColumnHighlightPosition.Before;
-        const afterOn = isLast && isColumnMoveAtThisLevel && highlighted === ColumnHighlightPosition.After;
+        let beforeOn = false;
+        let afterOn = false;
+
+        if (isColumnMoveAtThisLevel) {
+            const isRtl = this.beans.gos.get('enableRtl');
+            const isHighlightAfter = highlighted === ColumnHighlightPosition.After;
+            const isHighlightBefore = highlighted === ColumnHighlightPosition.Before;
+
+            if (isFirst) {
+                if (isRtl) {
+                    afterOn = isHighlightAfter;
+                } else {
+                    beforeOn = isHighlightBefore;
+                }
+            }
+
+            if (isLast) {
+                if (isRtl) {
+                    beforeOn = isHighlightBefore;
+                } else {
+                    afterOn = isHighlightAfter;
+                }
+            }
+        }
 
         this.comp.addOrRemoveCssClass('ag-header-highlight-before', beforeOn);
         this.comp.addOrRemoveCssClass('ag-header-highlight-after', afterOn);
@@ -152,7 +174,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { beans, eGui, column, gos, ctrlsService } = this;
+        const { beans, eGui, column, ctrlsService } = this;
+        const { gos, columnModel, columnMoveService, visibleColsService } = beans;
         const isRtl = gos.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left;
 
@@ -175,15 +198,16 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         attemptMoveColumns({
             allMovingColumns: this.column.getLeafColumns(),
             isFromHeader: true,
-            hDirection,
+            fromLeft: hDirection === HorizontalDirection.Right,
             xPosition,
             pinned,
             fromEnter: false,
             fakeEvent: false,
-            gos: gos,
-            columnModel: beans.columnModel,
-            columnMoveService: beans.columnMoveService,
-            presentedColsService: beans.visibleColsService,
+            gos,
+            columnModel,
+            columnMoveService,
+            visibleColsService,
+            finished: true,
         });
 
         const displayedLeafColumns = column.getDisplayedLeafColumns();
@@ -447,23 +471,25 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             getDragItem: () => this.getDragItemForGroup(column),
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-                allLeafColumns.forEach((col) => col.setMoving(true, 'uiColumnDragged'));
+                setColumnsMoving(allLeafColumns, true);
             },
-            onDragStopped: () => allLeafColumns.forEach((col) => col.setMoving(false, 'uiColumnDragged')),
+            onDragStopped: () => setColumnsMoving(allLeafColumns, false),
+            onDragCancelled: () => setColumnsMoving(allLeafColumns, false),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const { columns = [], visibleState } = dragItem ?? {};
                     // mimic behaviour of `MoveColumnFeature.onDragEnter`
-                    const unlockedColumns = columns.filter(
+                    const unlockedColumns: AgColumn[] = columns.filter(
                         (col) => !col.getColDef().lockVisible && (!visibleState || visibleState[col.getColId()])
-                    );
-                    columnModel.setColsVisible(unlockedColumns as AgColumn[], true, 'uiColumnMoved');
+                    ) as AgColumn[];
+                    columnModel.setColsVisible(unlockedColumns, true, 'uiColumnMoved');
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
-                    const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
-                    columnModel.setColsVisible(unlockedColumns as AgColumn[], false, 'uiColumnMoved');
+                    const unlockedColumns: AgColumn[] =
+                        (dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) as AgColumn[]) || [];
+                    columnModel.setColsVisible(unlockedColumns, false, 'uiColumnMoved');
                 }
             },
         });
@@ -491,9 +517,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         // we are left with non-visible columns, stick these in at the end
         allColumnsOriginalOrder.forEach((column) => allColumnsCurrentOrder.push(column));
 
+        const columnsInSplit: AgColumn[] = [];
+        const columnGroupColumns = columnGroup.getLeafColumns();
+
+        for (const col of allColumnsCurrentOrder) {
+            if (columnGroupColumns.indexOf(col) !== -1) {
+                columnsInSplit.push(col);
+            }
+        }
+
         // create and return dragItem
         return {
             columns: allColumnsCurrentOrder,
+            columnsInSplit,
             visibleState: visibleState,
         };
     }

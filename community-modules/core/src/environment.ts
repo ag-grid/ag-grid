@@ -1,8 +1,9 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
+import type { GridTheme } from './entities/gridOptions';
 import type { ResizeObserverService } from './misc/resizeObserverService';
-import { _warnOnce } from './utils/function';
+import { _errorOnce, _warnOnce } from './utils/function';
 
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
@@ -33,14 +34,19 @@ export class Environment extends BeanStub implements NamedBean {
 
     private sizeEls = new Map<Variable, HTMLElement>();
     private lastKnownValues = new Map<Variable, number>();
-    private themeClasses: readonly string[] = [];
-    private eThemeAncestor: HTMLElement | null = null;
-    private eMeasurementContainer: HTMLElement | null = null;
+    private ancestorThemeClasses: readonly string[] = [];
+    private eMeasurementContainer: HTMLElement | undefined;
     private sizesMeasured = false;
 
+    private gridTheme: GridTheme | null = null;
+
     public postConstruct(): void {
+        this.addManagedPropertyListener('theme', () => this.handleThemeGridOptionChange());
+        this.handleThemeGridOptionChange();
+        this.addDestroyFunc(() => this.stopUsingTheme());
+
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
-        this.themeClasses = this.getAncestorThemeClasses();
+        this.ancestorThemeClasses = this.readAncestorThemeClasses();
         this.setUpThemeClassObservers();
         this.getSizeEl(ROW_HEIGHT);
         this.getSizeEl(HEADER_HEIGHT);
@@ -72,25 +78,22 @@ export class Environment extends BeanStub implements NamedBean {
         return this.sizesMeasured;
     }
 
+    public getGridThemeClass(): string | null {
+        return this.gridTheme?.getCssClass() || null;
+    }
+
     public getThemeClasses(): readonly string[] {
-        return this.themeClasses;
+        return this.gridTheme ? [this.gridTheme.getCssClass()] : this.ancestorThemeClasses;
     }
 
     public applyThemeClasses(el: HTMLElement) {
+        const themeClasses = this.getThemeClasses();
         for (const className of Array.from(el.classList)) {
-            if (className.startsWith('ag-theme-') && !this.themeClasses.includes(className)) {
+            if (className.startsWith('ag-theme-') && !themeClasses.includes(className)) {
                 el.classList.remove(className);
             }
         }
-        for (const className of this.themeClasses) {
-            if (!el.classList.contains(className)) {
-                el.classList.add(className);
-            }
-        }
-    }
-
-    public getThemeAncestorElement(): HTMLElement | null {
-        return this.eThemeAncestor;
+        el.classList.add(...themeClasses);
     }
 
     public refreshRowHeightVariable(): number {
@@ -147,6 +150,7 @@ export class Environment extends BeanStub implements NamedBean {
         if (!container) {
             container = this.eMeasurementContainer = document.createElement('div');
             container.className = 'ag-measurement-container';
+            this.applyThemeClasses(container);
             this.eGridDiv.appendChild(container);
         }
 
@@ -188,9 +192,9 @@ export class Environment extends BeanStub implements NamedBean {
 
     private setUpThemeClassObservers() {
         const observer = new MutationObserver(() => {
-            const newThemeClasses = this.getAncestorThemeClasses();
-            if (!arraysEqual(newThemeClasses, this.themeClasses)) {
-                this.themeClasses = newThemeClasses;
+            const newThemeClasses = this.readAncestorThemeClasses();
+            if (!arraysEqual(newThemeClasses, this.ancestorThemeClasses)) {
+                this.ancestorThemeClasses = newThemeClasses;
                 this.fireGridStylesChangedEvent('themeChanged');
             }
         });
@@ -206,14 +210,12 @@ export class Environment extends BeanStub implements NamedBean {
         this.addDestroyFunc(() => observer.disconnect());
     }
 
-    private getAncestorThemeClasses(): readonly string[] {
+    private readAncestorThemeClasses(): readonly string[] {
         let el: HTMLElement | null = this.eGridDiv;
         const allThemeClasses: string[] = [];
-        this.eThemeAncestor = null;
         while (el) {
             const themeClasses = Array.from(el.classList).filter((c) => c.startsWith('ag-theme-'));
             for (const themeClass of themeClasses) {
-                this.eThemeAncestor = el;
                 if (!allThemeClasses.includes(themeClass)) {
                     allThemeClasses.unshift(themeClass);
                 }
@@ -221,6 +223,34 @@ export class Environment extends BeanStub implements NamedBean {
             el = el.parentElement;
         }
         return Object.freeze(allThemeClasses);
+    }
+
+    private handleThemeGridOptionChange(): void {
+        const { gos, eMeasurementContainer, gridTheme: oldGridTheme, ancestorThemeClasses } = this;
+        const newGridTheme = gos.get('theme') || null;
+        if (newGridTheme !== oldGridTheme) {
+            oldGridTheme?.stopUse();
+            this.gridTheme = newGridTheme;
+            newGridTheme?.startUse({
+                loadThemeGoogleFonts: !!gos.get('loadThemeGoogleFonts'),
+                container: this.eGridDiv,
+            });
+            if (eMeasurementContainer) {
+                this.applyThemeClasses(eMeasurementContainer);
+            }
+            this.fireGridStylesChangedEvent('themeChanged');
+        }
+        const [legacyClass] = ancestorThemeClasses;
+        if (newGridTheme && legacyClass) {
+            _errorOnce(
+                `a theme grid option has been provided in addition to setting class="${legacyClass}" on a parent element. Do not use both methods to set the theme.`
+            );
+        }
+    }
+
+    private stopUsingTheme(): void {
+        this.gridTheme?.stopUse();
+        this.gridTheme = null;
     }
 }
 

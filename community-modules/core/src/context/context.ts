@@ -115,6 +115,7 @@ export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollec
 
 export type ControllerName = 'headerFilterCell' | 'detailCellRenderer' | 'groupCellRendererCtrl';
 export type UserComponentName =
+    | 'agDragAndDropImage'
     | 'agColumnHeader'
     | 'agColumnGroupHeader'
     | 'agSortIndicator'

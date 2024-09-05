@@ -446,6 +446,9 @@ export interface _ClientSideRowModelGridApi<TData> {
      * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally.
      */
     getBestCostNodeSelection(): IRowNode<TData>[] | undefined;
+
+    /** Returns `true` if the Client-Side row model has no rows. It is not impacted by filtering and does not include pinned rows. */
+    isRowDataEmpty(): boolean;
 }
 
 export interface _CsrmSsrmSharedGridApi {
@@ -772,10 +775,14 @@ export interface _PaginationGridApi {
     /** Returns the 0-based index of the page which is showing. */
     paginationGetCurrentPage(): number;
 
-    /** Returns the total number of pages. Returns `null` if `paginationIsLastPageFound() === false`. */
+    /** Returns the total number of pages. */
     paginationGetTotalPages(): number;
 
-    /** The total number of rows. Returns `null` if `paginationIsLastPageFound() === false`. */
+    /**
+     * Returns the total number of pageable rows, as impacted by `gridOptions.paginateChildRows: true`.
+     *
+     * It is recommended to instead use `gridApi.getDisplayedRowCount()` if not using pagination, or if `gridOption.paginateChildRows=true`.
+     **/
     paginationGetRowCount(): number;
 
     /** Navigates to the next page. */
@@ -899,6 +906,8 @@ export interface _InfiniteRowModelGridApi {
     purgeInfiniteCache(): void;
 
     /** The row count defines how many rows the grid allows scrolling to. */
+
+    /** @deprecated v32.2 gridApi.getInfiniteRowCount() deprecated, please use gridApi.getDisplayedRowCount() instead. */
     getInfiniteRowCount(): number | undefined;
 }
 

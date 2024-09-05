@@ -1,15 +1,15 @@
 import type { Group } from '@tweenjs/tween.js';
 
-import { type AgElementFinder } from '../agElements';
+import type { AgElementFinder } from '../agElements';
 import {
     AG_MENU_OPTION_ACTIVE_CLASSNAME,
     AG_MENU_OPTION_DISABLED_CLASSNAME,
     AG_MENU_OPTION_SELECTOR,
 } from '../constants';
-import { type Mouse } from '../createMouse';
+import type { Mouse } from '../createMouse';
 import { findElementWithInnerText } from '../dom';
-import { type ScriptDebugger } from '../scriptDebugger';
-import { type EasingFunction } from '../tween';
+import type { ScriptDebugger } from '../scriptDebugger';
+import type { EasingFunction } from '../tween';
 import { clearAllMenuOptionHighlights } from './clearAllMenuOptionHighlights';
 import { createMoveMouse } from './createMoveMouse';
 import { mouseClick } from './mouseClick';

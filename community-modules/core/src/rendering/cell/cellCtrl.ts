@@ -48,6 +48,10 @@ export interface ICellComp {
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
+    setIncludeSelection(include: boolean): void;
+    setIncludeRowDrag(include: boolean): void;
+    setIncludeDndSource(include: boolean): void;
+
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
@@ -73,9 +77,6 @@ export class CellCtrl extends BeanStub {
 
     public readonly instanceId: CellCtrlInstanceId;
     public readonly colIdSanitised: string;
-    public readonly includeSelection: boolean;
-    public readonly includeDndSource: boolean;
-    public readonly includeRowDrag: boolean;
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
@@ -98,6 +99,9 @@ export class CellCtrl extends BeanStub {
     private cellPosition: CellPosition;
     private editing: boolean;
 
+    private includeSelection: boolean;
+    private includeDndSource: boolean;
+    private includeRowDrag: boolean;
     private isAutoHeight: boolean;
 
     private suppressRefreshCell = false;
@@ -106,6 +110,7 @@ export class CellCtrl extends BeanStub {
     private customRowDragComp: RowDragComp;
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
+    private onCellEditorAttachedFuncs: (() => void)[] = [];
 
     constructor(
         private readonly column: AgColumn,
@@ -119,11 +124,6 @@ export class CellCtrl extends BeanStub {
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
 
         this.colIdSanitised = _escapeString(this.column.getId())!;
-
-        const colDef = column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
-        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
-        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
         this.createCellPosition();
         this.addFeatures();
@@ -259,6 +259,7 @@ export class CellCtrl extends BeanStub {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
+        this.setupControlComps();
 
         this.setupAutoHeight(eCellWrapper);
 
@@ -386,6 +387,17 @@ export class CellCtrl extends BeanStub {
         this.cellRangeFeature?.refreshHandle();
     }
 
+    private setupControlComps(): void {
+        const colDef = this.column.getColDef();
+        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
+
+        this.cellComp.setIncludeSelection(this.includeSelection);
+        this.cellComp.setIncludeDndSource(this.includeDndSource);
+        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
+    }
+
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
         const forceWrapper = this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
@@ -470,6 +482,7 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
+        this.onCellEditorAttachedFuncs = [];
         const { editService } = this.beans;
         if (!this.editing || !editService) {
             return false;
@@ -1047,6 +1060,7 @@ export class CellCtrl extends BeanStub {
 
     public override destroy(): void {
         this.onCellCompAttachedFuncs = [];
+        this.onCellEditorAttachedFuncs = [];
         super.destroy();
     }
 
@@ -1131,5 +1145,14 @@ export class CellCtrl extends BeanStub {
 
     public getEditCompDetails(): UserCompDetails | undefined {
         return this.editCompDetails;
+    }
+
+    public onCellEditorAttached(callback: () => void): void {
+        this.onCellEditorAttachedFuncs.push(callback);
+    }
+
+    public cellEditorAttached(): void {
+        this.onCellEditorAttachedFuncs.forEach((func) => func());
+        this.onCellEditorAttachedFuncs = [];
     }
 }
