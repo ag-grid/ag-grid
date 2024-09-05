@@ -183,6 +183,7 @@ export class PropertyKeys {
         'popupParent',
         'statusBar',
         'sideBar',
+        'theme',
         'chartThemeOverrides',
         'customChartThemes',
         'chartToolPanelsDef',
@@ -388,6 +389,7 @@ export class PropertyKeys {
         'suppressServerSideFullWidthLoadingRow',
         'suppressAdvancedFilterEval',
         'loading',
+        'loadThemeGoogleFonts',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.

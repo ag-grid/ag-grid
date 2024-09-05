@@ -30,8 +30,18 @@ module.exports = ({ production = false, minify = false, styles = true, entry = '
         // styles if styles included..and post process css if minify is enabled
         rules.push({
             test: /\.css$/,
-            use: ['style-loader', 'css-loader'].concat(
-                !!minify
+            use: [
+                {
+                    loader: 'style-loader',
+                    options: {
+                        attributes: {
+                            'data-ag-scope': 'legacy',
+                        }
+                    }
+                },
+                'css-loader',
+            ].concat(
+                minify
                     ? {
                           loader: 'postcss-loader',
                           options: {

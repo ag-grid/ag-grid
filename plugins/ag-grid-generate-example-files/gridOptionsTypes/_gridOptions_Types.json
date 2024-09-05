@@ -177,6 +177,12 @@
       "SideBarDef"
     ]
   },
+  "theme": {
+    "typeName": "GridTheme",
+    "typesToInclude": [
+      "GridTheme"
+    ]
+  },
   "chartThemeOverrides": {
     "typeName": "AgChartThemeOverrides",
     "typesToInclude": [
@@ -1376,6 +1382,10 @@
     "typesToInclude": []
   },
   "loading": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "loadThemeGoogleFonts": {
     "typeName": "boolean",
     "typesToInclude": []
   },
