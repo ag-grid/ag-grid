@@ -17,7 +17,13 @@ nx test ag-behavioural-testing
 To execute a single test file
 
 ```sh
-nx test ag-behavioural-testing --testFile=src/folder/filename.test.ts
+nx test ag-behavioural-testing -- --testFile=src/folder/filename.test.ts
+```
+
+To run in watch mode
+
+```sh
+nx test ag-behavioural-testing -- -w
 ```
 
 ## References:

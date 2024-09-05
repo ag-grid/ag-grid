@@ -734,10 +734,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public context: any = undefined;
-    /** Provide a custom drag and drop cover component.
+    /** Provide a custom drag and drop image component.
      * @initial
      */
-    @Input() public dragAndDropCoverComponent: any = undefined;
+    @Input() public dragAndDropImageComponent: any = undefined;
     /**
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.

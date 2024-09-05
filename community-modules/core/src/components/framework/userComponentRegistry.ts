@@ -1,7 +1,7 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { UserComponentName } from '../../context/context';
-import { DragAndDropCoverComp } from '../../dragAndDrop/dragAndDropCoverComponent';
+import { DragAndDropImageComp } from '../../dragAndDrop/dragAndDropImageComponent';
 import { HeaderComp } from '../../headerRendering/cells/column/headerComp';
 import { SortIndicatorComp } from '../../headerRendering/cells/column/sortIndicatorComp';
 import { HeaderGroupComp } from '../../headerRendering/cells/columnGroup/headerGroupComp';
@@ -23,7 +23,7 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
 
     private agGridDefaults: { [key in UserComponentName]?: any } = {
         // drag and drop
-        agDragAndDropCover: DragAndDropCoverComp,
+        agDragAndDropImage: DragAndDropImageComp,
 
         //header
         agColumnHeader: HeaderComp,

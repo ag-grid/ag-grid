@@ -21,23 +21,23 @@ export const iconNameClassMap = {
     // column tool panel header expand/collapse all button, shown when some children are expanded and
     //     others are collapsed
     columnSelectIndeterminate: 'tree-indeterminate',
-    // shown on drag and drop cover component icon while dragging column to the side of the grid to pin
+    // shown on drag and drop image component icon while dragging column to the side of the grid to pin
     columnMovePin: 'pin',
-    // shown on drag and drop cover component icon while dragging over part of the page that is not a drop zone
+    // shown on drag and drop image component icon while dragging over part of the page that is not a drop zone
     columnMoveHide: 'eye-slash',
-    // shown on drag and drop cover component icon while dragging columns to reorder
+    // shown on drag and drop image component icon while dragging columns to reorder
     columnMoveMove: 'arrows',
     // animating icon shown when dragging a column to the right of the grid causes horizontal scrolling
     columnMoveLeft: 'left',
     // animating icon shown when dragging a column to the left of the grid causes horizontal scrolling
     columnMoveRight: 'right',
-    // shown on drag and drop cover component icon while dragging over Row Groups drop zone
+    // shown on drag and drop image component icon while dragging over Row Groups drop zone
     columnMoveGroup: 'group',
-    // shown on drag and drop cover component icon while dragging over Values drop zone
+    // shown on drag and drop image component icon while dragging over Values drop zone
     columnMoveValue: 'aggregation',
-    // shown on drag and drop cover component icon while dragging over pivot drop zone
+    // shown on drag and drop image component icon while dragging over pivot drop zone
     columnMovePivot: 'pivot',
-    // shown on drag and drop cover component icon while dragging over drop zone that doesn't support it, e.g.
+    // shown on drag and drop image component icon while dragging over drop zone that doesn't support it, e.g.
     //     string column over aggregation drop zone
     dropNotAllowed: 'not-allowed',
     // shown on row group when contracted (click to expand)

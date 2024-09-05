@@ -7,20 +7,20 @@ import { _escapeString } from '../utils/string';
 import { Component, RefPlaceholder } from '../widgets/component';
 import type { DragAndDropIcon, DragSource } from './dragAndDropService';
 
-export interface IDragAndDropCoverParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+export interface IDragAndDropImageParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     dragSource: DragSource;
 }
 
-export interface IDragAndDropCoverComp<
+export interface IDragAndDropImageComp<
     TData = any,
     TContext = any,
-    TParams extends Readonly<IDragAndDropCoverParams<TData, TContext>> = IDragAndDropCoverParams<TData, TContext>,
+    TParams extends Readonly<IDragAndDropImageParams<TData, TContext>> = IDragAndDropImageParams<TData, TContext>,
 > extends IComponent<TParams> {
     setIcon(iconName: DragAndDropIcon | null, shake: boolean): void;
     setLabel(label: string): void;
 }
 
-export class DragAndDropCoverComp extends Component implements IDragAndDropCoverComp<any, any> {
+export class DragAndDropImageComp extends Component implements IDragAndDropImageComp<any, any> {
     private dragSource: DragSource | null = null;
 
     private readonly eIcon: HTMLElement = RefPlaceholder;
@@ -43,7 +43,7 @@ export class DragAndDropCoverComp extends Component implements IDragAndDropCover
         };
     }
 
-    public init(params: IDragAndDropCoverParams): void {
+    public init(params: IDragAndDropImageParams): void {
         this.dragSource = params.dragSource;
 
         this.setTemplate(

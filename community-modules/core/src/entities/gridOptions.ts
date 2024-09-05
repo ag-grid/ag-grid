@@ -695,10 +695,10 @@ export interface GridOptions<TData = any> {
      */
     context?: any;
     /**
-     * Provide a custom drag and drop cover component.
+     * Provide a custom drag and drop image component.
      * @initial
      */
-    dragAndDropCoverComponent?: any;
+    dragAndDropImageComponent?: any;
     /**
      *
      * A list of grids to treat as Aligned Grids.
