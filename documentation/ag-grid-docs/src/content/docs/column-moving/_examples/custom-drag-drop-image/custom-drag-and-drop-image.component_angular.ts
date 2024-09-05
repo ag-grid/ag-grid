@@ -1,5 +1,5 @@
-import type { IDragAndDropImageAngularComp } from '@ag-grid-community/angular';
-import type { DragAndDropIcon, IDragAndDropImageParams } from '@ag-grid-community/core';
+import type { IDragAndDropImageAngularComponent } from '@ag-grid-community/angular';
+import type { IDragAndDropImageParams } from '@ag-grid-community/core';
 import { NgClass } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
@@ -27,7 +27,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
         `,
     ],
 })
-export class CustomDragAndDropImage implements IDragAndDropImageAngularComp {
+export class CustomDragAndDropImage implements IDragAndDropImageAngularComponent {
     public params!: IDragAndDropImageParams;
 
     @ViewChild('eIcon', { read: ElementRef }) public eIcon!: ElementRef;
@@ -41,7 +41,7 @@ export class CustomDragAndDropImage implements IDragAndDropImageAngularComp {
         this.eLabel.nativeElement.innerHTML = label;
     }
 
-    setIcon(icon: DragAndDropIcon) {
+    setIcon(icon: string) {
         const { nativeElement } = this.eIcon;
 
         nativeElement.classList.toggle('fa-hand-point-left', icon === 'left');

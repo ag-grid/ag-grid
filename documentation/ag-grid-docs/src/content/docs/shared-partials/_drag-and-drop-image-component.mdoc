@@ -11,15 +11,59 @@ Any valid Vue component can be a drag and drop image component, however it is al
 {% /if %}
 
 {% if isFramework("angular") %}
-{% interfaceDocumentation interfaceName="IDragAndDropImageAngularComp" config={"asCode":true } /%}
+### IDragAndDropImageAngularComponent
+{% interfaceDocumentation interfaceName="IDragAndDropImageAngularComponent" config={"asCode":true } /%}
 {% /if %}
 
-{% if isFramework("javascript") %}
-{% interfaceDocumentation interfaceName="IDragAndDropImageComp" config={"asCode":true } /%}
+
+{% if isFramework("javascript", "angular", "vue") %}
+```ts
+interface IDragAndDropImageComponent {
+   // Optional - props for rendering.
+   init?(params: IDragAndDropImageParams): void;
+
+   // Mandatory - Return the DOM element of the component, this is what the grid will display while dragging
+   getGui(): HTMLElement;
+
+   // Optional - Gets called once by grid after rendering is finished - if your renderer needs to do any cleanup,
+   // do it here
+   destroy?(): void;
+
+   // Mandatory - Gets called every time the grid needs to updated the label of the Drag Image.
+   setLabel(label: string): void;
+
+    // Mandatory - Gets called every time the grid needs to updated the icon of the Drag Image.
+   setIcon(icon: string | null, shake: boolean): void;
+}
+```
+### IDragAndDropImageParams
+{% interfaceDocumentation interfaceName="IDragAndDropImageParams" exclude=["template"] config={ "description": "" } /%}
 {% /if %}
 
 {% if isFramework("vue") %}
+```ts
+interface IDragAndDropImage {
+   // Mandatory - Gets called every time the grid needs to updated the label of the Drag Image.
+   setLabel(label: string): void;
+
+    // Mandatory - Gets called every time the grid needs to updated the icon of the Drag Image.
+   setIcon(icon: string | null, shake: boolean): void;
+}
+```
+### IDragAndDropImage
 {% interfaceDocumentation interfaceName="IDragAndDropImage" config={"asCode":true } /%}
+
+{% /if %}
+
+{% if isFramework("react") %}
+```ts
+const CustomDragAndDropImage = props => {
+    return <div>{props.label}</div>;
+};
+```
+The following props are passed to the Custom Component (`CustomDragAndDropImageProps` interface).
+### CustomDragAndDropImageProps
+{% interfaceDocumentation interfaceName="CustomDragAndDropImageProps" config={ "description": "" } /%}
 {% /if %}
 
 

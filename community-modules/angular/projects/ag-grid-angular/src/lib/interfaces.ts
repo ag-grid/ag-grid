@@ -45,7 +45,7 @@ export interface IFloatingFilterAngularComp<P = any>
 
 export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDate {}
 
-export interface IDragAndDropImageAngularComp
+export interface IDragAndDropImageAngularComponent
     extends AgFrameworkComponent<IDragAndDropImageParams>,
         IDragAndDropImage {}
 

@@ -1,4 +1,4 @@
-import type { DragAndDropIcon, IDragAndDropImageParams } from '@ag-grid-community/core';
+import type { IDragAndDropImageParams } from '@ag-grid-community/core';
 
 export interface ICustomHeaderParams {
     menuIcon: string;
@@ -32,7 +32,7 @@ export class CustomDragAndDropImage {
         this.eLabel.innerHTML = label;
     }
 
-    setIcon(icon: DragAndDropIcon) {
+    setIcon(icon: string) {
         const { eIcon } = this;
 
         if (!eIcon) {
