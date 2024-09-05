@@ -1,5 +1,10 @@
 <div style="display: flex; height: 100%; flex-direction: column">
     <div style="padding-bottom: 5px">
+        <label for="select-mode">Selection mode: </label>
+        <select onchange="onModeChange()" id="select-mode" style="margin-right: 5px">
+            <option>cell</option>
+            <option>multiRow</option>
+        </select>
         <button onclick="onBtCopyRows()">Copy Selected Rows to Clipboard</button>
         <button onclick="onBtCopyRange()">Copy Selected Range to Clipboard</button>
     </div>

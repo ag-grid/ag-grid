@@ -1,9 +1,16 @@
+import { isColumnControlsCol } from '../../../columns/columnUtils';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
-import type { HeaderCheckboxSelectionCallbackParams } from '../../../entities/colDef';
+import type { SelectionOptions } from '../../../entities/gridOptions';
 import type { SelectionEventSourceType } from '../../../events';
-import { _getActiveDomElement, _isClientSideRowModel, _isServerSideRowModel } from '../../../gridOptionsUtils';
+import {
+    _getActiveDomElement,
+    _getHeaderCheckbox,
+    _isClientSideRowModel,
+    _isMultiRowSelection,
+    _isServerSideRowModel,
+} from '../../../gridOptionsUtils';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
@@ -22,6 +29,7 @@ export class SelectAllFeature extends BeanStub {
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
+    private selectionOptions: SelectionOptions | undefined;
     private column: AgColumn;
     private headerCellCtrl: HeaderCellCtrl;
 
@@ -30,6 +38,11 @@ export class SelectAllFeature extends BeanStub {
     constructor(column: AgColumn) {
         super();
         this.column = column;
+    }
+
+    public postConstruct() {
+        this.selectionOptions = this.gos.get('selection');
+        this.addManagedPropertyListener('selection', (e) => (this.selectionOptions = e.currentValue));
     }
 
     public onSpaceKeyDown(e: KeyboardEvent): void {
@@ -142,10 +155,10 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkSelectionType(feature: string): boolean {
-        const isMultiSelect = this.gos.get('rowSelection') === 'multiple';
+        const isMultiSelect = _isMultiRowSelection(this.gos);
 
         if (!isMultiSelect) {
-            _warnOnce(`${feature} is only available if using 'multiple' rowSelection.`);
+            _warnOnce(`${feature} is only available if using 'multiRow' selection mode.`);
             return false;
         }
         return true;
@@ -194,33 +207,47 @@ export class SelectAllFeature extends BeanStub {
         }
     }
 
+    /**
+     * Checkbox is enabled when either the `headerCheckbox` option is enabled in the new selection API
+     * or `headerCheckboxSelection` is enabled in the legacy API.
+     */
     private isCheckboxSelection(): boolean {
-        let result = this.column.getColDef().headerCheckboxSelection;
+        const so = this.selectionOptions;
+        const newHeaderCheckbox = so && _getHeaderCheckbox(so) && isColumnControlsCol(this.column);
+        const headerCheckboxSelection = this.column.getColDef().headerCheckboxSelection;
 
-        if (typeof result === 'function') {
-            const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
-            const params: HeaderCheckboxSelectionCallbackParams = this.gos.addGridCommonParams({
-                column: this.column,
-                colDef: this.column.getColDef(),
-            });
-            result = func(params);
-        }
-
-        if (result) {
-            return (
-                this.checkRightRowModelType('headerCheckboxSelection') &&
-                this.checkSelectionType('headerCheckboxSelection')
+        let result = false;
+        if (newHeaderCheckbox) {
+            result = true;
+        } else if (typeof headerCheckboxSelection === 'function') {
+            result = headerCheckboxSelection(
+                this.gos.addGridCommonParams({
+                    column: this.column,
+                    colDef: this.column.getColDef(),
+                })
             );
+        } else {
+            result = !!headerCheckboxSelection;
         }
 
-        return false;
+        return (
+            result &&
+            this.checkRightRowModelType('headerCheckboxSelection') &&
+            this.checkSelectionType('headerCheckboxSelection')
+        );
     }
 
     private isFilteredOnly(): boolean {
-        return !!this.column.getColDef().headerCheckboxSelectionFilteredOnly;
+        const so = this.selectionOptions;
+        return so !== undefined
+            ? so.mode === 'multiRow' && so.selectAll === 'filtered'
+            : !!this.column.getColDef().headerCheckboxSelectionFilteredOnly;
     }
 
     private isCurrentPageOnly(): boolean {
-        return !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
+        const so = this.selectionOptions;
+        return so !== undefined
+            ? so.mode === 'multiRow' && so.selectAll === 'currentPage'
+            : !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
     }
 }

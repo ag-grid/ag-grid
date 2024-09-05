@@ -7,7 +7,14 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
-import { BeanStub, _errorOnce, _last, _warnOnce, isSelectionUIEvent } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    _errorOnce,
+    _isMultiRowSelection,
+    _last,
+    _warnOnce,
+    isSelectionUIEvent,
+} from '@ag-grid-community/core';
 
 import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
 import type { ISelectionStrategy } from './iSelectionStrategy';
@@ -31,14 +38,8 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     // this is to prevent regressions, default selectionService retains reference of clicked nodes.
     private selectedNodes: { [key: string]: RowNode } = {};
 
-    private rowSelection?: 'single' | 'multiple';
-
     public postConstruct(): void {
         this.selectionCtx.init(this.rowModel);
-        this.rowSelection = this.gos.get('rowSelection');
-        this.addManagedPropertyListener('rowSelection', (propChange) => {
-            this.rowSelection = propChange.currentValue;
-        });
     }
 
     public getSelectedState(): IServerSideSelectionState {
@@ -116,7 +117,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         if (nodes.length === 0) return 0;
 
         const onlyThisNode = clearSelection && newValue && !rangeSelect;
-        if (this.rowSelection !== 'multiple' || onlyThisNode) {
+        if (!_isMultiRowSelection(this.gos) || onlyThisNode) {
             if (nodes.length > 1) {
                 throw new Error("AG Grid: cannot select multiple rows when rowSelection is set to 'single'");
             }

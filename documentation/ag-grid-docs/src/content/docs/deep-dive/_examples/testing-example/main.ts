@@ -104,7 +104,6 @@ const gridOptions: GridOptions = {
         {
             field: 'mission',
             width: 150,
-            checkboxSelection: true,
         },
         {
             field: 'company',
@@ -140,7 +139,7 @@ const gridOptions: GridOptions = {
     } as ColDef,
     // Grid Options & Callbacks
     pagination: true,
-    rowSelection: 'multiple',
+    selection: { mode: 'multiRow', headerCheckbox: false },
     onSelectionChanged: (event: SelectionChangedEvent) => {
         console.log('Row Selection Event!');
     },

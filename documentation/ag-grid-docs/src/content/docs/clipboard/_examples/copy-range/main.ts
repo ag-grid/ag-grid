@@ -1,12 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    CellValueChangedEvent,
-    GridApi,
-    GridOptions,
-    PasteEndEvent,
-    PasteStartEvent,
-    createGrid,
-} from '@ag-grid-community/core';
+import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -36,7 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
 
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     copyHeadersToClipboard: true,
 };
 

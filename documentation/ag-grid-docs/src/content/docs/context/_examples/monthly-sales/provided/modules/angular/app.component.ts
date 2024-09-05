@@ -7,7 +7,7 @@ import {
     GridApi,
     GridReadyEvent,
     ICellRendererParams,
-    IGroupCellRendererParams,
+    SelectionOptions,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -62,8 +62,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, Set
             [context]="context"
             [defaultColDef]="defaultColDef"
             [autoGroupColumnDef]="autoGroupColumnDef"
-            [rowSelection]="rowSelection"
-            [groupSelectsChildren]="true"
+            [selection]="selection"
             [rowData]="rowData"
             [class]="themeClass"
             (gridReady)="onGridReady($event)"
@@ -153,11 +152,12 @@ export class AppComponent {
         field: 'city',
         minWidth: 260,
         cellRenderer: 'agGroupCellRenderer',
-        cellRendererParams: {
-            checkbox: true,
-        } as IGroupCellRendererParams,
     };
-    public rowSelection: 'single' | 'multiple' = 'multiple';
+    public selection: SelectionOptions = {
+        mode: 'multiRow',
+        headerCheckbox: false,
+        groupSelects: 'descendants',
+    };
     public rowData!: any[];
     public themeClass: string =
         /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||

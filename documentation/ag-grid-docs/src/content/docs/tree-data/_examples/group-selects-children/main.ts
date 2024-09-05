@@ -23,18 +23,17 @@ const gridOptions: GridOptions = {
         minWidth: 300,
         cellRendererParams: {
             suppressCount: true,
-            checkbox: true,
         },
     },
     rowData: getData(),
     treeData: true, // enable Tree Data mode
     groupDefaultExpanded: -1, // expand all groups by default
-    rowSelection: 'multiple',
-    groupSelectsChildren: true,
-    suppressRowClickSelection: true,
-    getDataPath: (data: any) => {
-        return data.orgHierarchy;
+    selection: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+        suppressClickSelection: true,
     },
+    getDataPath: (data) => data.orgHierarchy,
 };
 
 // wait for the document to be loaded, otherwise

@@ -42,7 +42,7 @@ const gridOptions: GridOptions = {
         // register the datasource with the grid
         params.api.setGridOption('serverSideDatasource', datasource);
     },
-    rowSelection: 'single',
+    selection: { mode: 'singleRow', checkboxes: false },
     rowModelType: 'serverSide',
 };
 

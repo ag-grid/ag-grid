@@ -37,7 +37,7 @@ function getTypeLookupFunc(fileName) {
             if (gridOptionsInterface && ts.isInterfaceDeclaration(gridOptionsInterface)) {
                 const pop = gridOptionsInterface.members.find(
                     (m) => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName
-                ) as ts.PropertySignature | ts.MethodSignature;
+                ) as ts.PropertySignature | ts.MethodSignature | undefined;
                 if (pop && pop.type) {
                     return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
                 }

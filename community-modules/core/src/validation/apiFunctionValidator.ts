@@ -143,6 +143,10 @@ const deprecatedFunctions: {
         message:
             '`showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).',
     },
+    clearRangeSelection: {
+        version: 'v32.2',
+        message: 'Use `clearCellSelection` instead.',
+    },
     getInfiniteRowCount: {
         version: 'v32.2',
         old: 'getInfiniteRowCount()',

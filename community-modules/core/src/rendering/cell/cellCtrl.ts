@@ -1,14 +1,22 @@
+import { isColumnControlsCol } from '../../columns/columnUtils';
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
-import type { CellStyle } from '../../entities/colDef';
+import type { CellStyle, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
-import { _getDocument, _getRowHeightForNode, _isClientSideRowModel, _setDomData } from '../../gridOptionsUtils';
+import {
+    _getCheckboxes,
+    _getDocument,
+    _getRowHeightForNode,
+    _isCellSelectionEnabled,
+    _isClientSideRowModel,
+    _setDomData,
+} from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -157,8 +165,8 @@ export class CellCtrl extends BeanStub {
             this.enableTooltipFeature();
         }
 
-        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gos.get('enableRangeSelection');
-        if (rangeSelectionEnabled) {
+        const cellSelectionEnabled = this.beans.rangeService && _isCellSelectionEnabled(this.beans.gos);
+        if (cellSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
         }
     }
@@ -389,7 +397,7 @@ export class CellCtrl extends BeanStub {
 
     private setupControlComps(): void {
         const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
+        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef));
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
@@ -413,9 +421,14 @@ export class CellCtrl extends BeanStub {
         return res;
     }
 
+    private isCheckboxSelection(colDef: ColDef): boolean | Function | undefined {
+        const { selection } = this.beans.gridOptions;
+        return colDef.checkboxSelection || (isColumnControlsCol(this.column) && selection && _getCheckboxes(selection));
+    }
+
     private refreshShouldDestroy(): boolean {
         const colDef = this.column.getColDef();
-        const selectionChanged = this.includeSelection != this.isIncludeControl(colDef.checkboxSelection);
+        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef));
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
         // auto height uses wrappers, so need to destroy
@@ -871,12 +884,12 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public onRangeSelectionChanged(): void {
+    public onCellSelectionChanged(): void {
         if (!this.cellComp) {
             return;
         }
         if (this.cellRangeFeature) {
-            this.cellRangeFeature.onRangeSelectionChanged();
+            this.cellRangeFeature.onCellSelectionChanged();
         }
     }
 
@@ -901,7 +914,7 @@ export class CellCtrl extends BeanStub {
         this.onCellFocused();
         // check range selection
         if (this.cellRangeFeature) {
-            this.cellRangeFeature.onRangeSelectionChanged();
+            this.cellRangeFeature.onCellSelectionChanged();
         }
     }
 

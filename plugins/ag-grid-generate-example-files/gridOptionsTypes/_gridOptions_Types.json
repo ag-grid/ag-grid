@@ -237,6 +237,18 @@
       "SizeColumnsToContentStrategy"
     ]
   },
+  "selection": {
+    "typeName": "SelectionOptions",
+    "typesToInclude": [
+      "SelectionOptions"
+    ]
+  },
+  "controlsColDef": {
+    "typeName": "ControlsColDef",
+    "typesToInclude": [
+      "ControlsColDef"
+    ]
+  },
   "rowSelection": {
     "typeName": "'single' | 'multiple'",
     "typesToInclude": []

@@ -73,7 +73,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 150,
         floatingFilter: true,
     },
-    rowSelection: 'multiple',
     rowModelType: 'infinite',
     cacheBlockSize: 100,
     cacheOverflowSize: 2,
@@ -82,7 +81,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     maxBlocksInCache: 2,
     pagination: true,
     paginationAutoPageSize: true,
-    // debug: true,
     getRowId: (params: GetRowIdParams) => {
         return params.data.id;
     },

@@ -7,6 +7,7 @@ import {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridState,
+    SelectionOptions,
     StateUpdatedEvent,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -49,11 +50,9 @@ ModuleRegistry.registerModules([
                     [class]="themeClass"
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
-                    [enableRangeSelection]="true"
                     [sideBar]="true"
                     [pagination]="true"
-                    [rowSelection]="rowSelection"
-                    [suppressRowClickSelection]="true"
+                    [selection]="selection"
                     [suppressColumnMoveAnimation]="true"
                     [rowData]="rowData"
                     [initialState]="initialState"
@@ -72,12 +71,7 @@ export class AppComponent {
     private gridApi!: GridApi<IOlympicData>;
 
     public columnDefs: ColDef[] = [
-        {
-            field: 'athlete',
-            minWidth: 150,
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
-        },
+        { field: 'athlete', minWidth: 150 },
         { field: 'age', maxWidth: 90 },
         { field: 'country', minWidth: 150 },
         { field: 'year', maxWidth: 90 },
@@ -96,7 +90,10 @@ export class AppComponent {
         enablePivot: true,
         enableValue: true,
     };
-    public rowSelection: 'single' | 'multiple' = 'multiple';
+    public selection: SelectionOptions = {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+    };
     public rowData?: IOlympicData[];
     public gridVisible = true;
     public initialState?: GridState;

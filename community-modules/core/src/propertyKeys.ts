@@ -193,6 +193,8 @@ export class PropertyKeys {
         'advancedFilterBuilderParams',
         'initialState',
         'autoSizeStrategy',
+        'selection',
+        'controlsColDef',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
