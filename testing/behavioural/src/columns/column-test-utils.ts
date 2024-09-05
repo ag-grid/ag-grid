@@ -1,12 +1,4 @@
-import { createGrid } from '@ag-grid-community/core';
-import type {
-    ColDef,
-    ColGroupDef,
-    Column,
-    GridApi,
-    GridOptions,
-    RowGroupingDisplayType,
-} from '@ag-grid-community/core';
+import type { ColDef, ColGroupDef, Column, GridApi, RowGroupingDisplayType } from '@ag-grid-community/core';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 
@@ -61,9 +53,4 @@ export function getColumnOrder(gridApi: GridApi, viewport: 'all' | 'left' | 'cen
             columns = gridApi.getDisplayedCenterColumns();
     }
     return columns.map((col) => col.getColId());
-}
-
-export function createMyGrid(gridOptions: GridOptions) {
-    document.body.innerHTML = '<div id="myGrid"></div>';
-    return createGrid(document.getElementById('myGrid')!, gridOptions);
 }

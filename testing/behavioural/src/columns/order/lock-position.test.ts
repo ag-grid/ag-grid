@@ -1,19 +1,18 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, ColGroupDef, GridApi } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { ColDef, ColGroupDef } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import type { MockInstance } from 'vitest';
 
-import { createMyGrid, getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
+import { TestGridsManager } from '../../test-utils';
+import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('lockPosition Column Order', () => {
-    let gridApi: GridApi;
-
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    let consoleWarnSpy: MockInstance | undefined;
 
     afterEach(() => {
-        gridApi.destroy();
+        consoleWarnSpy?.mockRestore();
+        gridsManager.reset();
     });
 
     describe.each([true, false])('when enableRTL=%s', (enableRtl: boolean) => {
@@ -27,7 +26,7 @@ describe('lockPosition Column Order', () => {
                         { colId: 'c', pinned },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, enableRtl });
+                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, enableRtl });
 
                     // enableRtl -> lockPosition
                     const expectedResultMatrix = {
@@ -64,7 +63,7 @@ describe('lockPosition Column Order', () => {
                     { colId: 'b', lockPosition },
                     { colId: 'c' },
                 ];
-                gridApi = createMyGrid({ columnDefs });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
                 // lockPosition
                 const expectedResultMatrix = {
@@ -90,7 +89,7 @@ describe('lockPosition Column Order', () => {
                     { colId: 'c' },
                     { colId: 'd' },
                 ];
-                gridApi = createMyGrid({ columnDefs });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
                 const expected = ['a', 'b', 'c', 'd'];
                 expect(getColumnOrderFromState(gridApi)).toEqual(expected);
@@ -107,7 +106,7 @@ describe('lockPosition Column Order', () => {
 
             test.each([-1, 0])('cannot move columns before lockPosition=left column using index=%i', (idx: number) => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a', lockPosition: 'left' }, { colId: 'b' }];
-                gridApi = createMyGrid({ columnDefs });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
                 const expected = ['a', 'b'];
                 expect(getColumnOrderFromState(gridApi)).toEqual(expected);
@@ -123,7 +122,9 @@ describe('lockPosition Column Order', () => {
 
             test.each([1, 2])('cannot move columns after lockPosition=right column using index=%i', (idx: number) => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b', lockPosition: 'right' }];
-                gridApi = createMyGrid({ columnDefs });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
+
+                consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
                 const expected = ['a', 'b'];
                 expect(getColumnOrderFromState(gridApi)).toEqual(expected);
@@ -135,6 +136,15 @@ describe('lockPosition Column Order', () => {
                 expect(getColumnOrderFromState(gridApi)).toEqual(expected);
                 expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
                 expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+                if (idx === 2) {
+                    expect(consoleWarnSpy).toHaveBeenCalledWith(
+                        expect.stringContaining('AG Grid: tried to insert columns in invalid location, toIndex ='),
+                        idx
+                    );
+                }
+
+                consoleWarnSpy?.mockRestore();
             });
         });
     });
@@ -144,7 +154,7 @@ describe('lockPosition Column Order', () => {
             'lockPosition is reactive when changed from undefined to %s',
             (lockPosition) => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
-                gridApi = createMyGrid({ columnDefs });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
                 const expected = ['a', 'b', 'c'];
                 expect(getColumnOrderFromState(gridApi)).toEqual(expected);
@@ -172,7 +182,7 @@ describe('lockPosition Column Order', () => {
                 { colId: 'b', lockPosition: 'left' },
                 { colId: 'c' },
             ];
-            gridApi = createMyGrid({ columnDefs });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
             const expected = ['b', 'a', 'c'];
             expect(getColumnOrderFromState(gridApi)).toEqual(expected);
