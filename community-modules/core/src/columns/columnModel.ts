@@ -19,6 +19,7 @@ import {
     _isDomLayout,
     _isGroupUseEntireRow,
     _isServerSideRowModel,
+    _shouldMaintainColumnOrder,
 } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
@@ -177,9 +178,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     // called from SyncService, when grid has finished initialising
-    private createColsFromColDefs(colsPreviouslyExisted: boolean, source: ColumnEventType): void {
+    private createColsFromColDefs(source: ColumnEventType): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
-        const dispatchEventsFunc = colsPreviouslyExisted
+        const dispatchEventsFunc = this.colDefs
             ? this.columnApplyStateService.compareColumnStatesAndDispatchEvents(source)
             : undefined;
 
@@ -206,13 +207,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.ready = true;
 
-        this.refreshCols();
-
-        const maintainColOrder =
-            colsPreviouslyExisted && !this.showingPivotResult && !this.gos.get('maintainColumnOrder');
-        if (maintainColOrder) {
-            this.orderColsLikeColDefCols();
-        }
+        this.refreshCols(true);
 
         this.visibleColsService.refresh(source);
         this.columnViewportService.checkViewportColumns();
@@ -240,7 +235,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // setPivotMode, applyColumnState,
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
     // pivotResultColsService.setPivotResultCols
-    public refreshCols(): void {
+    public refreshCols(newColDefs: boolean): void {
         if (!this.colDefCols) {
             return;
         }
@@ -257,7 +252,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.createControlsCols();
         this.addControlsCols();
 
-        this.restoreColOrder();
+        const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
+        if (!newColDefs || shouldSortNewColDefs) {
+            this.restoreColOrder();
+        }
 
         this.positionLockedCols();
         this.showRowGroupColsService?.refresh();
@@ -446,7 +444,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (!this.isReady()) {
             return;
         }
-        this.refreshCols();
+        this.refreshCols(false);
         this.visibleColsService.refresh(source);
     }
 
@@ -643,18 +641,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         });
 
         this.cols.list = res;
-    }
-
-    private orderColsLikeColDefCols(): void {
-        if (!this.colDefCols || !this.cols) {
-            return;
-        }
-
-        const colsOrdered = this.colDefCols.list.filter((col) => this.cols.list.indexOf(col) >= 0);
-        const otherCols = this.cols.list.filter((col) => colsOrdered.indexOf(col) < 0);
-
-        this.cols.list = [...otherCols, ...colsOrdered];
-        this.cols.list = this.columnMoveService.placeLockedColumns(this.cols.list);
     }
 
     public sortColsLikeKeys(colIds: string[]): void {
@@ -854,7 +840,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateCols() to check it autoGroupCol needs to be added / removed
-        this.refreshCols();
+        this.refreshCols(false);
         this.visibleColsService.refresh(source);
 
         this.eventDispatcher.pivotModeChanged();
@@ -885,13 +871,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (this.autoCols) {
             this.autoColService!.updateAutoCols(this.autoCols.list, source);
         }
-        this.createColsFromColDefs(true, source);
+        this.createColsFromColDefs(source);
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
-        const colsPreviouslyExisted = !!this.colDefs;
         this.colDefs = columnDefs;
-        this.createColsFromColDefs(colsPreviouslyExisted, source);
+        this.createColsFromColDefs(source);
     }
 
     public override destroy(): void {

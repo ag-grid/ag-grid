@@ -87,6 +87,7 @@ import type {
     GridReadyEvent,
     GridSizeChangedEvent,
     GridState,
+    GridTheme,
     HeaderFocusedEvent,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
@@ -474,9 +475,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
           }
         | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
-     * @default false
+     *
+     * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
+     * @default 'pivotResultColumns'
      */
-    @Input() public maintainColumnOrder: boolean | undefined = undefined;
+    @Input() public maintainColumnOrder:
+        | boolean
+        | 'all'
+        | 'primaryColumns'
+        | 'pivotResultColumns'
+        | 'none'
+        | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false
      */
@@ -1462,6 +1471,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public initialState: GridState | undefined = undefined;
+    /** Theme to apply to the grid.
+     */
+    @Input() public theme: GridTheme | undefined = undefined;
+    /** Whether to load supported theme fonts from the Google Fonts server.
+     *
+     * - `true` -> load fonts automatically if your theme uses them
+     * - `false` -> do not load fonts, you must either load them from Google Fonts
+     *   yourself or download them and serve them from your app
+     */
+    @Input() public loadThemeGoogleFonts: boolean | undefined = undefined;
     /** For customising the context menu.
      */
     @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;
@@ -2205,7 +2224,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressClipboardApi: boolean | null | '';
     static ngAcceptInputType_suppressModelUpdateAfterUpdateTransaction: boolean | null | '';
     static ngAcceptInputType_stopEditingWhenCellsLoseFocus: boolean | null | '';
-    static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
@@ -2227,5 +2245,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';
     static ngAcceptInputType_loading: boolean | null | '';
+    static ngAcceptInputType_loadThemeGoogleFonts: boolean | null | '';
     // @END@
 }

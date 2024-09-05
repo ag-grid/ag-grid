@@ -342,9 +342,11 @@ export interface GridOptions<TData = any> {
     };
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
-     * @default false
+     *
+     * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
+     * @default 'pivotResultColumns'
      */
-    maintainColumnOrder?: boolean;
+    maintainColumnOrder?: boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none';
     /**
      * If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false
@@ -1653,6 +1655,20 @@ export interface GridOptions<TData = any> {
      */
     reactiveCustomComponents?: boolean;
 
+    /**
+     * Theme to apply to the grid.
+     */
+    theme?: GridTheme;
+
+    /**
+     * Whether to load supported theme fonts from the Google Fonts server.
+     *
+     * - `true` -> load fonts automatically if your theme uses them
+     * - `false` -> do not load fonts, you must either load them from Google Fonts
+     *   yourself or download them and serve them from your app
+     */
+    loadThemeGoogleFonts?: boolean;
+
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
     // *****************************************************************************************************
@@ -2398,6 +2414,28 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
     /**
      * The index of the row */
     rowIndex: number;
+}
+
+export type GridThemeUseArgs = {
+    loadThemeGoogleFonts: boolean | undefined;
+    container: HTMLElement;
+};
+
+export interface GridTheme {
+    /**
+     * Called by a grid instance when it starts using the theme.
+     */
+    startUse(args: GridThemeUseArgs): void;
+
+    /**
+     * Called by a grid instance when it stops using the theme.
+     */
+    stopUse(): void;
+
+    /**
+     * CSS class to be applied to the grid wrapper element in order to apply the theme.
+     */
+    getCssClass(): string;
 }
 
 export interface GetContextMenuItems<TData = any, TContext = any> {

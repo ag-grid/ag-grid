@@ -39,6 +39,11 @@ const moduleMapping = [
     },
     {
         title: 'Grid Styles',
+        module: '@ag-grid-community/theming',
+        exported: 'Grid Themes',
+    },
+    {
+        title: 'Grid Styles',
         module: '@ag-grid-community/styles',
         exported: 'Core Grid Styles and Themes',
     },

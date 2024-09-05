@@ -195,7 +195,8 @@
             "more": {
                 "name": "Maintain Column Order",
                 "url": "./column-updating-definitions/#maintain-column-order"
-            }
+            },
+            "type": "'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'"
         },
         "suppressFieldDotNotation": {
             "more": {

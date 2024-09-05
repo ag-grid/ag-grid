@@ -1,6 +1,5 @@
-import { paramValueToCss, themeQuartz } from '@ag-grid-community/theming';
+import { themeQuartz } from '@ag-grid-community/theming';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
-import { paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
 import { type RefObject, memo, useCallback, useEffect, useRef, useState } from 'react';
@@ -31,18 +30,23 @@ type SelectButtonProps = {
 const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     const [showDialog, setShowDialog] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const [themeClass, setThemeClass] = useState<string | undefined>();
 
     useEffect(() => {
         const wrapper = wrapperRef.current;
         if (wrapper) {
-            const params = { ...themeQuartz.getParams(), ...preset.params };
-            for (const [key, value] of Object.entries(params)) {
-                const rendered = paramValueToCss(key, value);
-                if (rendered !== false) {
-                    wrapper.style.setProperty(paramToVariableName(key), rendered);
-                }
+            let theme = themeQuartz;
+            if (preset.params) {
+                theme = theme.overrideParams(preset.params);
+            }
+            for (const part of preset.parts || []) {
+                theme = theme.usePart(part);
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
+            theme.startUse({ container: wrapper, loadThemeGoogleFonts: true });
+            setThemeClass(theme.getCssClass());
+
+            return () => theme.stopUse();
         }
     }, [preset]);
 
@@ -59,7 +63,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
                 behavior: 'smooth',
             });
         }
-    }, [store, preset, wrapperRef.current, scrollerRef.current]);
+    }, [store, preset, scrollerRef]);
 
     return (
         <>
@@ -72,6 +76,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
                     }
                     selectNewPreset();
                 }}
+                className={themeClass}
             >
                 <PresetRender />
             </SelectButtonWrapper>

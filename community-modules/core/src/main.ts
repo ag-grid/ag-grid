@@ -769,6 +769,8 @@ export {
     ControlsColDef,
     CellSelectionOptions,
     RowSelectionOptions,
+    GridTheme,
+    GridThemeUseArgs,
     IsApplyServerSideTransaction,
     GetContextMenuItems,
     GetDataPath,

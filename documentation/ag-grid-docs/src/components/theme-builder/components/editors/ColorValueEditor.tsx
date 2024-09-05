@@ -94,7 +94,7 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
                     }}
                 />
                 <ColorSwatch onClick={() => setShowPicker(!showPicker)}>
-                    <ColorSwatchColor style={{ backgroundColor: value }} />
+                    <ColorSwatchColor style={{ backgroundColor: hexValue }} />
                 </ColorSwatch>
             </Wrapper>
             {showPicker && (
