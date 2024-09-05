@@ -18,6 +18,18 @@ export default (props) => {
             return 'fa-thumbtack';
         }
 
+        if (name === 'group') {
+            return 'fa-layer-group';
+        }
+
+        if (name === 'aggregate') {
+            return 'fa-table';
+        }
+
+        if (name === 'pivot') {
+            return 'fa-ruler-combined';
+        }
+
         return 'fa-walking';
     };
 

@@ -49,5 +49,8 @@ export class CustomDragAndDropImage implements IDragAndDropImageAngularComponent
         nativeElement.classList.toggle('fa-ban', icon === 'notAllowed');
         nativeElement.classList.toggle('fa-thumbtack', icon === 'pinned');
         nativeElement.classList.toggle('fa-walking', icon === 'move');
+        nativeElement.classList.toggle('fa-layer-group', icon === 'group');
+        nativeElement.classList.toggle('fa-table', icon === 'aggregate');
+        nativeElement.classList.toggle('fa-ruler-combined', icon === 'pivot');
     }
 }

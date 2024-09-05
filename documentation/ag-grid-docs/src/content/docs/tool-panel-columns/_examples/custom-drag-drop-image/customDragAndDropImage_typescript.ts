@@ -44,5 +44,8 @@ export class CustomDragAndDropImage {
         eIcon.classList.toggle('fa-ban', icon === 'notAllowed');
         eIcon.classList.toggle('fa-thumbtack', icon === 'pinned');
         eIcon.classList.toggle('fa-walking', icon === 'move');
+        eIcon.classList.toggle('fa-layer-group', icon === 'group');
+        eIcon.classList.toggle('fa-table', icon === 'aggregate');
+        eIcon.classList.toggle('fa-ruler-combined', icon === 'pivot');
     }
 }

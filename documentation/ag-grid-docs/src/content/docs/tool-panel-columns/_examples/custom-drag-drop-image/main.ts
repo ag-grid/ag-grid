@@ -33,8 +33,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         width: 170,
         filter: true,
+        // allow every column to be aggregated
+        enableValue: true,
+        // allow every column to be grouped
+        enableRowGroup: true,
+        // allow every column to be pivoted
+        enablePivot: true,
     },
     sideBar: true,
+    rowGroupPanelShow: 'always',
     dragAndDropImageComponent: CustomDragAndDropImage,
 };
 
