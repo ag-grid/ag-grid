@@ -25,6 +25,11 @@
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         visibility: hidden;
     }
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(180deg, #29384b -61.34%, #141d2c 89.79%);
+        border: 1px solid #f1bbde26;
+    }
 }
 
 .smallRectangleRight {
@@ -41,6 +46,11 @@
 
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         visibility: hidden;
+    }
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(180deg, #29384b -61.34%, #141d2c 89.79%);
+        border: 1px solid #f1bbde26;
     }
 }
 
@@ -67,6 +77,18 @@
         z-index: -999;
         border-radius: 8px;
         border: none;
+    }
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(0deg, #29384b -61.34%, #141d2c 89.79%);
+        border-left: 1px solid linear-gradient(0deg, #29384b -61.34%, #f1bbde26 89.79%);
+        border-right: 1px solid linear-gradient(0deg, #29384b -61.34%, #f1bbde26 89.79%);
+        border-bottom: 1px solid #f1bbde26;
+
+        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+            background: linear-gradient(0deg, #29384b -61.34%, #141d2c 89.79%);
+            border: none;
+        }
     }
 }
 
