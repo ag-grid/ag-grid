@@ -5,18 +5,7 @@ The drag and drop image can be customised via the grid property `dragAndDropImag
 {% if isFramework("javascript", "angular") %}
 Implement this interface to provide a custom drag and drop image component when dragging parts of the grid.
 {% /if %}
-
-{% if isFramework("vue") %}
-Any valid Vue component can be a drag and drop image component, however it is also possible to implement the following optional methods:
-{% /if %}
-
-{% if isFramework("angular") %}
-### IDragAndDropImageAngularComponent
-{% interfaceDocumentation interfaceName="IDragAndDropImageAngularComponent" config={"asCode":true } /%}
-{% /if %}
-
-
-{% if isFramework("javascript", "angular", "vue") %}
+{% if isFramework("javascript") %}
 ```ts
 interface IDragAndDropImageComponent {
    // Optional - props for rendering.
@@ -36,25 +25,15 @@ interface IDragAndDropImageComponent {
    setIcon(icon: string | null, shake: boolean): void;
 }
 ```
+{% /if %}
+{% if isFramework("angular") %}
+### IDragAndDropImageAngularComponent
+{% interfaceDocumentation interfaceName="IDragAndDropImageAngularComponent" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("javascript", "angular") %}
 ### IDragAndDropImageParams
 {% interfaceDocumentation interfaceName="IDragAndDropImageParams" exclude=["template"] config={ "description": "" } /%}
 {% /if %}
-
-{% if isFramework("vue") %}
-```ts
-interface IDragAndDropImage {
-   // Mandatory - Gets called every time the grid needs to updated the label of the Drag Image.
-   setLabel(label: string): void;
-
-    // Mandatory - Gets called every time the grid needs to updated the icon of the Drag Image.
-   setIcon(icon: string | null, shake: boolean): void;
-}
-```
-### IDragAndDropImage
-{% interfaceDocumentation interfaceName="IDragAndDropImage" config={"asCode":true } /%}
-
-{% /if %}
-
 {% if isFramework("react") %}
 ```ts
 const CustomDragAndDropImage = props => {
@@ -65,7 +44,13 @@ The following props are passed to the Custom Component (`CustomDragAndDropImageP
 ### CustomDragAndDropImageProps
 {% interfaceDocumentation interfaceName="CustomDragAndDropImageProps" config={ "description": "" } /%}
 {% /if %}
+{% if isFramework("vue") %}
+Any valid Vue component can be a drag and drop image component, however it must implement the `IDragAndDropImage` interface:
 
+### IDragAndDropImage
+{% interfaceDocumentation interfaceName="IDragAndDropImage" config={"asCode":true } /%}
+
+{% /if %}
 
 
 {% gridExampleRunner title="Custom Drag and Drop Image" name="custom-drag-drop-image" /%}

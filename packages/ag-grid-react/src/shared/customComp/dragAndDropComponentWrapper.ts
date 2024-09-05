@@ -1,4 +1,4 @@
-import type { DragAndDropIcon, IDragAndDropImageComponent, IDragAndDropImageParams } from 'ag-grid-community';
+import type { IDragAndDropImageComponent, IDragAndDropImageParams } from 'ag-grid-community';
 
 import { CustomComponentWrapper } from './customComponentWrapper';
 import type { CustomDragAndDropImageProps } from './interfaces';
@@ -8,10 +8,10 @@ export class DragAndDropImageComponentWrapper
     implements IDragAndDropImageComponent
 {
     private label: string = '';
-    private icon: DragAndDropIcon | null = null;
+    private icon: string | null = null;
     private shake: boolean = false;
 
-    public setIcon(iconName: DragAndDropIcon, shake: boolean): void {
+    public setIcon(iconName: string, shake: boolean): void {
         this.icon = iconName;
         this.shake = shake;
 
