@@ -21,6 +21,10 @@
     margin-bottom: $spacing-size-12;
     width: auto;
 
+    #{$selector-darkmode} & {
+        background: var(--color-bg-secondary);
+    }
+
     .tab {
         width: 150px;
         height: 50px;
@@ -41,6 +45,10 @@
         color: var(--color-brand-600);
         border: none;
         box-shadow: var(--shadow-lg);
+
+        #{$selector-darkmode} & {
+            background-color: var(--color-fg-secondary);
+        }
     }
 }
 

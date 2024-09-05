@@ -49,6 +49,11 @@
         border-radius: var(--radius-xl);
         box-shadow: var(--shadow-sm);
         cursor: pointer;
+
+        #{$selector-darkmode} & {
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-bg-disabled_subtle);
+        }
     }
 
     .buttonTitleContainer {
@@ -122,6 +127,10 @@
     .newTabIcon {
         padding: $spacing-size-2;
         fill: var(--color-brand-500);
+
+        #{$selector-darkmode} & {
+            fill: var(--color-brand-200);
+        }
     }
 }
 

@@ -454,6 +454,10 @@ div.divider:nth-of-type(4n) {
     border-radius: var(--radius-md);
     background: var(--color-gray-50);
     flex-direction: column;
+
+    #{$selector-darkmode} & {
+        background: var(--color-gray-800);
+    }
 }
 
 .examplesSectioncardImage {
