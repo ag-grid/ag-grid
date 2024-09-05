@@ -8,9 +8,7 @@
             "isRequired": true,
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": [
-                    "ChartType"
-                ]
+                "include": ["ChartType"]
             }
         },
         "cellRange": {

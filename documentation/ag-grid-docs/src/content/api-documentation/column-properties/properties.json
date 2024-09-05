@@ -8,9 +8,7 @@
         },
         "field": {
             "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ColDefField"
-                ]
+                "exclude": ["ColDefField"]
             },
             "more": {
                 "name": "Accessing Row Data Values",
@@ -102,9 +100,7 @@
         },
         "tooltipField": {
             "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "NestedFieldPaths"
-                ]
+                "exclude": ["NestedFieldPaths"]
             }
         },
         "tooltipValueGetter": {

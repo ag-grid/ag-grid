@@ -161,9 +161,7 @@
                             {
                                 "title": "React Best Practices",
                                 "path": "react-hooks",
-                                "frameworks": [
-                                    "react"
-                                ]
+                                "frameworks": ["react"]
                             }
                         ]
                     },
@@ -181,9 +179,7 @@
                             {
                                 "title": "Testing Async",
                                 "path": "testing-async",
-                                "frameworks": [
-                                    "angular"
-                                ]
+                                "frameworks": ["angular"]
                             },
                             {
                                 "title": "Compatibility",
@@ -200,9 +196,7 @@
                             {
                                 "title": "Installation",
                                 "path": "installation",
-                                "frameworks": [
-                                    "javascript"
-                                ]
+                                "frameworks": ["javascript"]
                             }
                         ]
                     }
@@ -1416,9 +1410,7 @@
                             {
                                 "title": "NgZone",
                                 "path": "angular-ngzone",
-                                "frameworks": [
-                                    "angular"
-                                ]
+                                "frameworks": ["angular"]
                             }
                         ]
                     }
@@ -1482,16 +1474,12 @@
                             {
                                 "title": "Best Practices",
                                 "path": "framework-data-flow",
-                                "frameworks": [
-                                    "vue"
-                                ]
+                                "frameworks": ["vue"]
                             },
                             {
                                 "title": "Vue2 Tutorial",
                                 "path": "vue2",
-                                "frameworks": [
-                                    "vue"
-                                ]
+                                "frameworks": ["vue"]
                             },
                             {
                                 "title": "Aligned Grids",

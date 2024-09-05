@@ -149,9 +149,7 @@
                 "url": "./integrated-charts-events/#chartoptionschanged"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ChartOptions"
-                ],
+                "exclude": ["ChartOptions"],
                 "include": []
             }
         },
