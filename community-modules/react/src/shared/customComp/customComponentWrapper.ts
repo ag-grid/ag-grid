@@ -19,7 +19,11 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
     });
 }
 
-export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> extends ReactComponent {
+export class CustomComponentWrapper<
+    TInputParams,
+    TOutputParams extends { key?: string },
+    TMethods,
+> extends ReactComponent {
     private updateCallback?: () => AgPromise<void>;
     private resolveUpdateCallback!: () => void;
     private awaitUpdateCallback = new AgPromise<void>((resolve) => {
@@ -49,8 +53,9 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
         return this;
     }
 
-    protected override createElement(reactComponent: any, key: string, props: TOutputParams): any {
-        return super.createElement(this.wrapperComponent, key, {
+    protected override createElement(reactComponent: any, { key, ...props }: TOutputParams): any {
+        return super.createElement(this.wrapperComponent, {
+            key,
             initialProps: props,
             CustomComponentClass: reactComponent,
             setMethods: (methods: TMethods) => this.setMethods(methods),

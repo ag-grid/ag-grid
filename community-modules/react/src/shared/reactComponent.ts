@@ -189,7 +189,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             params.ref = this.ref;
         }
 
-        this.reactElement = this.createElement(this.reactComponent, this.key, params);
+        this.reactElement = this.createElement(this.reactComponent, { ...params, key: this.key });
 
         this.portal = createPortal(
             this.reactElement,
@@ -198,8 +198,8 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         );
     }
 
-    protected createElement(reactComponent: any, key: string, props: any): any {
-        return createElement(reactComponent, { ...props, key });
+    protected createElement(reactComponent: any, props: any): any {
+        return createElement(reactComponent, props);
     }
 
     private createReactComponent(resolve: (value: any) => void) {
