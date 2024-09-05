@@ -6,8 +6,21 @@
     flex-direction: column;
 }
 
-.sectionContent:last-child {
-    padding-bottom: $spacing-size-12;
+.sectionContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 $spacing-size-48;
+    position: relative;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        padding: $spacing-size-8;
+    }
+
+    &:last-child {
+        padding-bottom: $spacing-size-12;
+    }
 }
 
 .smallRectangleLeft {
@@ -96,19 +109,6 @@ div.sectionContent:nth-of-type(4n + 3) {
     background-color: var(--color-bg-disabled_subtle);
 }
 
-.sectionContent {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0px $spacing-size-48;
-    position: relative;
-
-    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-        padding: $spacing-size-8 $spacing-size-8;
-    }
-}
-
 .sectionInner {
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
 
@@ -152,32 +152,32 @@ div.divider:nth-of-type(4n) {
     margin-bottom: $spacing-size-12;
     gap: $spacing-size-2;
 
+    .tag,
+    .heading,
+    .subHeading {
+        margin: 0;
+    }
+
     .tag {
         font-size: var(--text-fs-xl);
         font-weight: var(--text-semibold);
         color: var(--color-util-brand-600);
-        margin-bottom: 0px;
     }
 
     .heading {
         font-size: 48px;
         font-weight: var(--text-bold);
-        padding: 0px $spacing-size-24;
-        margin: 0px $spacing-size-24;
-        margin-bottom: 0px;
+        padding: 0 $spacing-size-24;
 
         @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             padding: 0;
-            margin: 0;
         }
     }
 
     .subHeading {
         font-size: var(--text-fs-lg);
         font-weight: var(--text-base);
-        margin: 0px $spacing-size-48;
         text-align: center;
-        margin-bottom: 0px;
 
         @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             margin: 0;
@@ -365,8 +365,8 @@ div.divider:nth-of-type(4n) {
         }
 
         @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-            min-width: auto; /* Remove fixed min-width for smaller screens */
-            width: 100%; /* Allow it to take the full width of its container */
+            min-width: auto;
+            width: 100%;
         }
     }
 
@@ -455,7 +455,7 @@ div.divider:nth-of-type(4n) {
     overflow-x: scroll !important;
     gap: $spacing-size-4;
     padding-bottom: $spacing-size-6;
-    width: 100%; /* Adjust based on your layout */
+    width: 100%;
 
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         flex-direction: column;
