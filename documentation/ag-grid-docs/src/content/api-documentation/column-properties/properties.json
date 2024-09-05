@@ -192,19 +192,19 @@
         "headerCheckboxSelection": {
             "more": {
                 "name": "Header Checkbox Selection",
-                "url": "./row-selection-multi-row/#bulk-selection"
+                "url": "./row-selection-multi-row/#selecting-all-rows"
             }
         },
         "headerCheckboxSelectionFilteredOnly": {
             "more": {
                 "name": "Select Everything or Just Filtered",
-                "url": "./row-selection-multi-row/#bulk-selection"
+                "url": "./row-selection-multi-row/#selecting-all-rows"
             }
         },
         "headerCheckboxSelectionCurrentPageOnly": {
             "more": {
                 "name": "Select Everything on the Current Page",
-                "url": "./row-selection-multi-row/#bulk-selection"
+                "url": "./row-selection-multi-row/#selecting-all-rows"
             }
         },
         "suppressFloatingFilterButton": {
