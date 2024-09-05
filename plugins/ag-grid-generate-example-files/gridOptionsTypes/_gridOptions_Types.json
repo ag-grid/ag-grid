@@ -1297,10 +1297,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "maintainColumnOrder": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "groupMaintainOrder": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1394,7 +1390,10 @@
     "typesToInclude": []
   },
   "loadThemeGoogleFonts": {
-    "typeName": "boolean",
+    "typeName": "boolean"
+  },
+  "maintainColumnOrder": {
+    "typeName": "boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
     "typesToInclude": []
   }
 }
