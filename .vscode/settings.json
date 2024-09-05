@@ -101,5 +101,7 @@
         }
       }
     }
-  ]
+  ],
+  "jest.rootPath": "testing/behavioural",
+  "jest.runMode": "watch"
 }

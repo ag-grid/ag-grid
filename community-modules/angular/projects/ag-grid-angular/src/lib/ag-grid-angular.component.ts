@@ -467,9 +467,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
           }
         | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
-     * @default false
+     *
+     * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
+     * @default 'pivotResultColumns'
      */
-    @Input() public maintainColumnOrder: boolean | undefined = undefined;
+    @Input() public maintainColumnOrder:
+        | boolean
+        | 'all'
+        | 'primaryColumns'
+        | 'pivotResultColumns'
+        | 'none'
+        | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false
      */
@@ -2156,7 +2164,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressClipboardApi: boolean | null | '';
     static ngAcceptInputType_suppressModelUpdateAfterUpdateTransaction: boolean | null | '';
     static ngAcceptInputType_stopEditingWhenCellsLoseFocus: boolean | null | '';
-    static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
