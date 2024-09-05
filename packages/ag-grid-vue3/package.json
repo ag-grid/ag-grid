@@ -35,8 +35,7 @@
     "test:e2ex": "vue-cli-service test:e2e"
   },
   "dependencies": {
-    "ag-grid-community": "32.1.0",
-    "vue": "^3.0.0"
+    "ag-grid-community": "32.1.0"
   },
   "devDependencies": {
     "gulp": "^4.0.0",
@@ -50,7 +49,11 @@
     "@vue/test-utils": "^2.0.0-0",
     "typescript": "~5.1.6",
     "vue-jest": "^3.0.7",
-    "rimraf": "3.0.2"
+    "rimraf": "3.0.2",
+    "vue": "^3.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"
