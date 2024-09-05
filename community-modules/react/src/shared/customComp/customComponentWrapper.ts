@@ -3,7 +3,7 @@ import { AgPromise } from '@ag-grid-community/core';
 import customWrapperComp from '../../reactUi/customComp/customWrapperComp';
 import { ReactComponent } from '../reactComponent';
 
-export type WrapperParams<P, M> = {
+export type WrapperParams<P extends { key?: string }, M> = {
     initialProps: P;
     CustomComponentClass: any;
     setMethods: (methods: M) => void;
@@ -19,11 +19,7 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
     });
 }
 
-export class CustomComponentWrapper<
-    TInputParams,
-    TOutputParams extends { key?: string },
-    TMethods,
-> extends ReactComponent {
+export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> extends ReactComponent {
     private updateCallback?: () => AgPromise<void>;
     private resolveUpdateCallback!: () => void;
     private awaitUpdateCallback = new AgPromise<void>((resolve) => {
@@ -53,9 +49,8 @@ export class CustomComponentWrapper<
         return this;
     }
 
-    protected override createElement(reactComponent: any, { key, ...props }: TOutputParams): any {
+    protected override createElement(reactComponent: any, props: TOutputParams): any {
         return super.createElement(this.wrapperComponent, {
-            key,
             initialProps: props,
             CustomComponentClass: reactComponent,
             setMethods: (methods: TMethods) => this.setMethods(methods),
