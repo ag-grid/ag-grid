@@ -34,7 +34,7 @@ let gridApi: GridApi<ICar>;
 const gridOptions: GridOptions<ICar> = {
     columnDefs: columnDefs,
     rowData: rowDataA,
-    rowSelection: 'single',
+    selection: { mode: 'singleRow', checkboxes: false },
     getRowId: (params: GetRowIdParams<ICar>) => params.data.id,
 };
 

@@ -40,7 +40,7 @@ const GridExample = () => {
         return {
             refreshStrategy: 'everything',
             detailGridOptions: {
-                rowSelection: 'multiple',
+                selection: { mode: 'multiRow', headerCheckbox: false, checkboxes: false },
                 getRowId: (params) => String(params.data.callId),
                 columnDefs: [
                     { field: 'callId', checkboxSelection: true },

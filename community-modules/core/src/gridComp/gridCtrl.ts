@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../dragAndDrop/dragAndDropService';
+import type { CssVariablesChanged } from '../events';
 import type { FocusService } from '../focusService';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
@@ -14,6 +15,7 @@ import type { ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
+    setGridThemeClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
     getFocusableContainers(): FocusableContainer[];
@@ -68,7 +70,10 @@ export class GridCtrl extends BeanStub {
 
         this.createManagedBean(new LayoutFeature(this.view));
 
-        this.addRtlSupport();
+        this.view.setRtlClass(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
+
+        this.updateGridThemeClass();
+        this.addManagedEventListeners({ gridStylesChanged: this.handleThemeChange.bind(this) });
 
         const unsubscribeFromResize = resizeObserverService.observeResize(
             this.eGridHostDiv,
@@ -102,11 +107,6 @@ export class GridCtrl extends BeanStub {
             clientWidth: this.eGridHostDiv.clientWidth,
             clientHeight: this.eGridHostDiv.clientHeight,
         });
-    }
-
-    private addRtlSupport(): void {
-        const cssClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
-        this.view.setRtlClass(cssClass);
     }
 
     public destroyGridUi(): void {
@@ -235,6 +235,19 @@ export class GridCtrl extends BeanStub {
 
     private getFocusableContainers(): FocusableContainer[] {
         return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
+    }
+
+    private updateGridThemeClass(): void {
+        const gridThemeClass = this.beans.environment.getGridThemeClass();
+        if (gridThemeClass) {
+            this.view.setGridThemeClass(gridThemeClass);
+        }
+    }
+
+    private handleThemeChange(e: CssVariablesChanged) {
+        if (e.themeChanged) {
+            this.updateGridThemeClass();
+        }
     }
 
     public override destroy(): void {

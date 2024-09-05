@@ -446,6 +446,9 @@ export interface _ClientSideRowModelGridApi<TData> {
      * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally.
      */
     getBestCostNodeSelection(): IRowNode<TData>[] | undefined;
+
+    /** Returns `true` if the Client-Side row model has no rows. It is not impacted by filtering and does not include pinned rows. */
+    isRowDataEmpty(): boolean;
 }
 
 export interface _CsrmSsrmSharedGridApi {
@@ -1003,30 +1006,45 @@ export interface _RowGroupingGridApi<TData> {
 }
 
 export interface _RangeSelectionGridApi {
-    /** Returns the list of selected cell ranges. */
+    /**
+     * Returns the list of selected cell ranges.
+     *
+     * The start is the first cell the user clicked on and the end is the cell where the user stopped dragging.
+     * Do not assume that the start cell's index is numerically before the end cell, as the user could have dragged up.
+     */
     getCellRanges(): CellRange[] | null;
 
-    /** Adds the provided cell range to the selected ranges. */
+    /**
+     * Adds the provided cell range to the selected ranges.
+     *
+     * This keeps any previous ranges. If you wish to only have the new range selected, then call `clearCellSelection()` first.
+     */
     addCellRange(params: CellRangeParams): void;
 
-    /** Clears the selected ranges. */
+    /**
+     * Clears the selected ranges.
+     * @deprecated v32.2 Use `clearCellSelection` instead
+     */
     clearRangeSelection(): void;
+
+    /** Clears the selected cell ranges. */
+    clearCellSelection(): void;
 }
 
 export interface _ServerSideRowModelGridApi {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
-     * If `groupSelectsChildren=false` the returned object will be flat, and will conform to `IServerSideSelectionState`.
-     * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to `IServerSideGroupSelectionState`.
+     * If `selection.groupSelects` is `'self'` the returned object will be flat, and will conform to `IServerSideSelectionState`.
+     * If `selection.groupSelects` is `'descendants'` or `'filteredDescendants'` the returned object will be hierarchical, and will conform to `IServerSideGroupSelectionState`.
      */
     getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null;
 
     /**
      * Set the rules matching the selected rows in the SSRM.
      *
-     * If `groupSelectsChildren=false` the param will be flat, and should conform to `IServerSideSelectionState`.
-     * If `groupSelectsChildren=true` the param will be hierarchical, and should conform to `IServerSideGroupSelectionState`.
+     * If `selection.groupSelects` is `'self'` the param will be flat, and should conform to `IServerSideSelectionState`.
+     * If `selection.groupSelects` is `'descendants'` or `'filteredDescendants'` the param will be hierarchical, and should conform to `IServerSideGroupSelectionState`.
      */
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
 

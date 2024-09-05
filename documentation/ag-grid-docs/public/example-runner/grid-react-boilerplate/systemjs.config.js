@@ -66,6 +66,9 @@
             '@ag-grid-community/locale': {
                 format: 'cjs',
             },
+            '@ag-grid-community/theming': {
+                format: 'cjs',
+            },
             '@ag-grid-enterprise/advanced-filter': {
                 format: 'cjs',
             },

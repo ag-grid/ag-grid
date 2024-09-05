@@ -51,11 +51,6 @@ export const About = () => {
 
                     <article className={styles.team}>
                         <div>
-                            <img src={urlWithBaseUrl('/images/team/niall.jpg')} alt="Niall Crosby, CEO / Founder" />
-                            <h3>Niall Crosby</h3>
-                            <p>CEO / Founder</p>
-                        </div>
-                        <div>
                             <img src={urlWithBaseUrl('/images/team/rob.jpg')} alt="Rob Clarke, VP Engineering" />
                             <h3>Rob Clarke</h3>
                             <p>CTO</p>
@@ -240,9 +235,9 @@ export const About = () => {
                         <div>
                             <img
                                 src={urlWithBaseUrl('/images/team/ava.jpg')}
-                                alt="Ava Uutting, Technical Product Analyst"
+                                alt="Ava Utting, Technical Product Analyst"
                             />
-                            <h3>Ava Uutting</h3>
+                            <h3>Ava Utting</h3>
                             <p>Technical Product Analyst</p>
                         </div>
                         <div>
@@ -472,13 +467,10 @@ export const About = () => {
                         <div>
                             <img
                                 src={urlWithBaseUrl('/images/team/kathryn.png')}
-                                alt="Kathryn Knapman, Customer Experience Manager"
+                                alt="Kathryn Knapman, Board Executive Assistant"
                             />
                             <h3>Kathryn Knapman</h3>
-                            <p>
-                                PA to CEO,
-                                <br />& Office Manager
-                            </p>
+                            <p>Board Executive Assistant</p>
                         </div>
                     </article>
                 </section>

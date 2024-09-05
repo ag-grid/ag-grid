@@ -40,7 +40,7 @@ const GridExample = () => {
         return {
             refreshStrategy: 'rows',
             detailGridOptions: {
-                rowSelection: 'multiple',
+                selection: { mode: 'multiple' },
                 getRowId: (params) => {
                     return String(params.data.callId);
                 },
@@ -57,7 +57,6 @@ const GridExample = () => {
                 },
             },
             getDetailRowData: (params) => {
-                // params.successCallback([]);
                 params.successCallback(params.data.callRecords);
             },
         };

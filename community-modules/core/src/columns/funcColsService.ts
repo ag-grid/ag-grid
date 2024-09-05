@@ -307,7 +307,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             columnCallback(added, column);
         });
 
-        autoGroupsNeedBuilding && this.columnModel.refreshCols();
+        autoGroupsNeedBuilding && this.columnModel.refreshCols(false);
 
         this.visibleColsService.refresh(source);
 
@@ -366,7 +366,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         }
 
         if (autoGroupsNeedBuilding) {
-            this.columnModel.refreshCols();
+            this.columnModel.refreshCols(false);
         }
 
         this.visibleColsService.refresh(source);

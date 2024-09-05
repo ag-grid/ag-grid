@@ -18,8 +18,8 @@ const gridOptions: GridOptions = {
         sortable: false,
         enableCellChangeFlash: true,
     },
-    columnDefs: columnDefs,
-    rowSelection: 'multiple',
+    columnDefs,
+    selection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
     // use the enterprise row model
     rowModelType: 'serverSide',
     cacheBlockSize: 75,

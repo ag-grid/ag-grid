@@ -28,12 +28,7 @@ const GridExample = () => {
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
     const [columnDefs, setColumnDefs] = useState([
-        {
-            field: 'athlete',
-            minWidth: 150,
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
-        },
+        { field: 'athlete', minWidth: 150 },
         { field: 'age', maxWidth: 90 },
         { field: 'country', minWidth: 150 },
         { field: 'year', maxWidth: 90 },
@@ -54,6 +49,10 @@ const GridExample = () => {
             enableValue: true,
         };
     }, []);
+    const selection = useMemo(() => ({
+        mode: 'multiRow',
+        suppressClickSelection: true,
+    }));
     const [initialState, setInitialState] = useState();
     const [currentState, setCurrentState] = useState();
     const [gridVisible, setGridVisible] = useState(true);
@@ -109,11 +108,9 @@ const GridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            enableRangeSelection={true}
                             sideBar={true}
                             pagination={true}
-                            rowSelection={'multiple'}
-                            suppressRowClickSelection={true}
+                            selection={selection}
                             suppressColumnMoveAnimation={true}
                             initialState={initialState}
                             onGridReady={onGridReady}

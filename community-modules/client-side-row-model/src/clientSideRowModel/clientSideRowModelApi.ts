@@ -15,6 +15,10 @@ export function refreshClientSideRowModel(beans: BeanCollection, step?: ClientSi
     beans.rowModelHelperService?.getClientSideRowModel()?.refreshModel(step);
 }
 
+export function isRowDataEmpty(beans: BeanCollection): boolean {
+    return beans.rowModelHelperService?.getClientSideRowModel()?.isEmpty() ?? true;
+}
+
 export function forEachLeafNode<TData = any>(
     beans: BeanCollection,
     callback: (rowNode: IRowNode<TData>) => void

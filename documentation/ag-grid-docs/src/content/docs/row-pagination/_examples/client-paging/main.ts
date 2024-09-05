@@ -31,10 +31,14 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    suppressRowClickSelection: true,
-    groupSelectsChildren: true,
-    rowSelection: 'multiple',
-    columnDefs: columnDefs,
+    selection: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+        suppressClickSelection: true,
+        checkboxes: false,
+        headerCheckbox: false,
+    },
+    columnDefs,
     pagination: true,
 };
 

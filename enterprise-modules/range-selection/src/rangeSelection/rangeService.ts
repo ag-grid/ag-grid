@@ -29,7 +29,9 @@ import {
     _exists,
     _existsAndNotEmpty,
     _getCtrlForEventTarget,
+    _getSuppressMultiRanges,
     _includes,
+    _isCellSelectionEnabled,
     _isDomLayout,
     _last,
     _makeNull,
@@ -206,7 +208,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!_isCellSelectionEnabled(this.gos)) {
             return;
         }
 
@@ -216,7 +218,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const suppressMultiRangeSelections = this.gos.get('suppressMultiRangeSelection');
+        const suppressMultiRangeSelections = _getSuppressMultiRanges(this.gos);
 
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _missing(this.cellRanges)) {
@@ -351,7 +353,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setCellRange(params: CellRangeParams): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!_isCellSelectionEnabled(this.gos)) {
             return;
         }
 
@@ -391,6 +393,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (dispatchWrapperEvents) {
             this.eventService.dispatchEvent({
+                type: 'cellSelectionDeleteStart',
+                source: wrapperEventSource,
+            });
+            this.eventService.dispatchEvent({
                 type: 'rangeDeleteStart',
                 source: wrapperEventSource,
             });
@@ -424,6 +430,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         });
 
         if (dispatchWrapperEvents) {
+            this.eventService.dispatchEvent({
+                type: 'cellSelectionDeleteEnd',
+                source: wrapperEventSource,
+            });
             this.eventService.dispatchEvent({
                 type: 'rangeDeleteEnd',
                 source: wrapperEventSource,
@@ -489,7 +499,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!_isCellSelectionEnabled(this.gos)) {
             return;
         }
 
@@ -682,7 +692,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gos.get('enableRangeSelection')) {
+        if (!_isCellSelectionEnabled(this.gos)) {
             return;
         }
 
@@ -690,7 +700,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !this.gos.get('suppressMultiRangeSelection');
+        const allowMulti = !_getSuppressMultiRanges(this.gos);
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && _existsAndNotEmpty(this.cellRanges);
 
@@ -751,7 +761,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (fromMouseClick && this.dragging) {
             return;
         }
-        if (this.gos.get('suppressMultiRangeSelection')) {
+        if (_getSuppressMultiRanges(this.gos)) {
             return;
         }
         if (this.isEmpty()) {
@@ -933,6 +943,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
+        this.eventService.dispatchEvent({
+            type: 'cellSelectionChanged',
+            started,
+            finished,
+            id,
+        });
         this.eventService.dispatchEvent({
             type: 'rangeSelectionChanged',
             started,

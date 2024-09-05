@@ -224,7 +224,7 @@ export const Property: FunctionComponent<{
         <>
             <tr ref={propertyRef} className={legacyStyles.tableRow}>
                 <td className={legacyStyles.propertyNameDescription}>
-                    <div className={classnames(styles.propertyRow, legacyStyles.propertyRow)}>
+                    <div className={classnames(styles.propertyRow)}>
                         <div className={styles.leftColumn}>
                             <div id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
                                 <span dangerouslySetInnerHTML={{ __html: displayNameSplit }}></span>
@@ -334,10 +334,7 @@ export const Property: FunctionComponent<{
                         </div>
 
                         {detailsCode && isExpanded && (
-                            <div
-                                id={getDetailsId(idName)}
-                                className={classnames(styles.expandedContent, legacyStyles.expandedContent)}
-                            >
+                            <div id={getDetailsId(idName)} className={styles.expandedContent}>
                                 {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
                             </div>
                         )}

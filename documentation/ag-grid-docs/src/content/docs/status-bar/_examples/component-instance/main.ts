@@ -53,8 +53,11 @@ const gridOptions: GridOptions = {
         { row: 'Row 13', name: 'Jane Jack' },
         { row: 'Row 14', name: 'Tina Wills' },
     ],
-    enableRangeSelection: true,
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
     statusBar: {
         statusPanels: [
             {

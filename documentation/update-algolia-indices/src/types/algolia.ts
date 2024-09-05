@@ -3,9 +3,12 @@ export interface AlgoliaRecord {
 
     objectID: string;
     title: string;
-    heading: string;
+    heading?: string;
+    subHeading?: string;
     text: string;
     breadcrumb: string;
     path: string;
     rank: number;
+    metaTag?: string;
+    positionInPage?: number;
 }

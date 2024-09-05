@@ -1,12 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    CellValueChangedEvent,
-    GridApi,
-    GridOptions,
-    PasteEndEvent,
-    PasteStartEvent,
-    createGrid,
-} from '@ag-grid-community/core';
+import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -35,7 +28,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
 
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+        copySelectedRows: false,
+    },
 };
 
 // setup the grid after the page has finished loading
@@ -47,3 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
+
+function toggleCopyRows() {
+    gridApi.setGridOption('selection', {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+        copySelectedRows: document.querySelector<HTMLInputElement>('#toggle-copy-rows')?.checked ?? false,
+    });
+}

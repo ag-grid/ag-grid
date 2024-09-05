@@ -18,7 +18,6 @@ const gridOptions: GridOptions = {
         { field: 'medals.bronze', headerName: 'Bronze Medals' },
     ],
     rowData: getData(),
-    rowSelection: 'multiple',
     onGridReady: (params: GridReadyEvent<TAthlete>) => {
         const checkbox = document.querySelector<HTMLInputElement>('#pinFirstColumnOnLoad')!;
         const shouldPinFirstColumn = checkbox && checkbox.checked;

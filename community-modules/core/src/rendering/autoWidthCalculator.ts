@@ -94,11 +94,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         return this.gos.get('autoSizePadding');
     }
 
-    /* tslint:disable */
-    private getHeaderCellForColumn(column: AgColumnGroup): HTMLElement | null;
-    private getHeaderCellForColumn(column: AgColumn): HTMLElement | null;
-    private getHeaderCellForColumn(column: any): any {
-        /* tslint:enable */
+    private getHeaderCellForColumn(column: AgColumnGroup | AgColumn): HTMLElement | null {
         let element: HTMLElement | null = null;
 
         this.ctrlsService.getHeaderRowContainerCtrls().forEach((container) => {

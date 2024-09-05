@@ -177,6 +177,12 @@
       "SideBarDef"
     ]
   },
+  "theme": {
+    "typeName": "GridTheme",
+    "typesToInclude": [
+      "GridTheme"
+    ]
+  },
   "chartThemeOverrides": {
     "typeName": "AgChartThemeOverrides",
     "typesToInclude": [
@@ -229,6 +235,18 @@
       "SizeColumnsToFitGridStrategy",
       "SizeColumnsToFitProvidedWidthStrategy",
       "SizeColumnsToContentStrategy"
+    ]
+  },
+  "selection": {
+    "typeName": "SelectionOptions",
+    "typesToInclude": [
+      "SelectionOptions"
+    ]
+  },
+  "controlsColDef": {
+    "typeName": "ControlsColDef",
+    "typesToInclude": [
+      "ControlsColDef"
     ]
   },
   "rowSelection": {
@@ -1291,10 +1309,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "maintainColumnOrder": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "groupMaintainOrder": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1383,8 +1397,16 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
+  "loadThemeGoogleFonts": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
+    "typesToInclude": []
+  },
+  "maintainColumnOrder": {
+    "typeName": "boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
     "typesToInclude": []
   }
 }

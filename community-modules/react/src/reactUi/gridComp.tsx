@@ -22,6 +22,7 @@ interface GridCompProps {
 
 const GridComp = ({ context }: GridCompProps) => {
     const [rtlClass, setRtlClass] = useState<string>('');
+    const [gridThemeClass, setGridThemeClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
     const [cursor, setCursor] = useState<string | null>(null);
     const [userSelect, setUserSelect] = useState<string | null>(null);
@@ -63,7 +64,8 @@ const GridComp = ({ context }: GridCompProps) => {
 
         const compProxy: IGridComp = {
             destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
-            setRtlClass: setRtlClass,
+            setRtlClass,
+            setGridThemeClass,
             forceFocusOutOfContainer: (up?: boolean) => {
                 if (!up && paginationCompRef.current?.isDisplayed()) {
                     paginationCompRef.current.forceFocusOutOfContainer(up);
@@ -167,8 +169,8 @@ const GridComp = ({ context }: GridCompProps) => {
     }, [tabGuardReady, eGridBodyParent, beans]);
 
     const rootWrapperClasses = useMemo(
-        () => classesList('ag-root-wrapper', rtlClass, layoutClass),
-        [rtlClass, layoutClass]
+        () => classesList('ag-root-wrapper', rtlClass, gridThemeClass, layoutClass),
+        [rtlClass, gridThemeClass, layoutClass]
     );
     const rootWrapperBodyClasses = useMemo(
         () => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass),

@@ -8,7 +8,6 @@ import {
     GridApi,
     GridOptions,
     ICellRendererParams,
-    IGroupCellRendererParams,
     MenuItemDef,
     RowSelectedEvent,
     SelectionChangedEvent,
@@ -226,11 +225,6 @@ const autoGroupColumnDef: ColDef = {
         }
     },
     cellRenderer: 'agGroupCellRenderer',
-    headerCheckboxSelection: true,
-    headerCheckboxSelectionFilteredOnly: true,
-    cellRendererParams: {
-        checkbox: true,
-    } as IGroupCellRendererParams,
 };
 
 let gridApi: GridApi;
@@ -249,11 +243,13 @@ const gridOptions: GridOptions = {
     statusBar: {
         statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     },
-    enableRangeSelection: true,
-    rowSelection: 'multiple', // one of ['single','multiple'], leave blank for no selection
+    selection: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+        suppressClickSelection: true,
+        selectAll: 'filtered',
+    },
     quickFilterText: undefined,
-    groupSelectsChildren: true, // one of [true, false]
-    suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     autoGroupColumnDef: autoGroupColumnDef,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
@@ -288,17 +284,7 @@ const firstColumn: ColDef = {
     width: 200,
     editable: true,
     enableRowGroup: true,
-    // enablePivot: true,
     filter: PersonFilter,
-    checkboxSelection: (params) => {
-        // we put checkbox on the name if we are not doing no grouping
-        return params.api.getRowGroupColumns().length === 0;
-    },
-    headerCheckboxSelection: (params) => {
-        // we put checkbox on the name if we are not doing grouping
-        return params.api.getRowGroupColumns().length === 0;
-    },
-    headerCheckboxSelectionFilteredOnly: true,
     icons: {
         sortAscending: '<i class="fa fa-sort-alpha-up"/>',
         sortDescending: '<i class="fa fa-sort-alpha-down"/>',
@@ -309,7 +295,6 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
     {
         // column group 'Participant
         headerName: 'Participant',
-        // marryChildren: true,
         children: [
             firstColumn,
             {
@@ -321,8 +306,6 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 cellEditor: 'agSelectCellEditor',
                 enableRowGroup: true,
                 enablePivot: true,
-                // rowGroupIndex: 0,
-                // pivotIndex: 0,
                 cellEditorParams: {
                     values: [
                         'English',
@@ -347,8 +330,6 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 width: 150,
                 editable: true,
                 cellRenderer: CountryCellRenderer,
-                // pivotIndex: 1,
-                // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
                 cellEditor: 'agRichSelectCellEditor',
@@ -377,7 +358,6 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                         'Luxembourg',
                     ],
                 },
-                // pinned: 'left',
                 filterParams: {
                     cellRenderer: CountryCellRenderer,
                 },
@@ -401,7 +381,6 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 enableRowGroup: true,
                 enablePivot: true,
                 pinned: 'left',
-                // rowGroupIndex: 1,
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-up"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-down"/>',
@@ -413,9 +392,6 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 filter: 'agSetColumnFilter',
                 editable: true,
                 width: 100,
-                // pinned: 'right',
-                // rowGroupIndex: 2,
-                // pivotIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
@@ -439,9 +415,6 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 cellStyle: currencyCssFunc,
                 filterParams: { cellRenderer: currencyRenderer },
                 enableValue: true,
-                // colId: 'sf',
-                // valueGetter: '55',
-                // aggFunc: 'sum',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-amount-up"/>',
                     sortDescending: '<i class="fa fa-sort-amount-down"/>',
@@ -489,7 +462,6 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
         editable: true,
         valueSetter: numberValueSetter,
         width: 150,
-        // aggFunc: 'sum',
         enableValue: true,
         cellRenderer: currencyRenderer,
         cellStyle: currencyCssFunc,
@@ -513,8 +485,6 @@ months.forEach((month) => {
         filter: 'agNumberColumnFilter',
         editable: true,
         enableValue: true,
-        // aggFunc: 'sum',
-        //hide: true,
         cellClassRules: {
             'good-score': 'typeof x === "number" && x > 50000',
             'bad-score': 'typeof x === "number" && x < 10000',

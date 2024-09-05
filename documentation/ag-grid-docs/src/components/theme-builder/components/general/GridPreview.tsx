@@ -13,11 +13,11 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
+import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
 import styled from '@emotion/styled';
 import { memo, useRef, useState } from 'react';
 import root from 'react-shadow';
 
-import { useSetPreviewGridContainer } from '../../model/rendered-theme';
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { LoadFontFamilyMenuFonts } from '../editors/FontFamilyValueEditor';
 import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
@@ -44,13 +44,14 @@ ModuleRegistry.registerModules([
 const GridPreview = () => {
     const { config, gridOptions, updateCount } = useGridOptions();
 
-    const setPreviewGridContainer = useSetPreviewGridContainer();
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     const [backgroundValue, setBackground] = useApplicationConfigAtom('previewPaneBackgroundColor');
     const backgroundColor = backgroundValue || allPresets[0].pageBackgroundColor;
 
     const stateRef = useRef<GridState>({});
+
+    const theme = useRenderedTheme();
 
     return (
         <Wrapper style={{ backgroundColor }}>
@@ -65,12 +66,13 @@ const GridPreview = () => {
                     <div
                         ref={(el) => {
                             setContainer(el);
-                            setPreviewGridContainer(el);
                         }}
                         style={{ height: '100%' }}
                     >
                         {container && (
                             <AgGridReact
+                                theme={theme}
+                                loadThemeGoogleFonts={true}
                                 onGridReady={({ api }) => {
                                     if (config.showIntegratedChartPopup) {
                                         api.createRangeChart({
@@ -109,7 +111,7 @@ const GridPreview = () => {
                                 onSelectionChanged={({ api }) => {
                                     stateRef.current.rowSelection = api.getState().rowSelection || [];
                                 }}
-                                onRangeSelectionChanged={({ api }) => {
+                                onCellSelectionChanged={({ api }) => {
                                     stateRef.current.rangeSelection = config.showIntegratedChartPopup
                                         ? undefined
                                         : api.getState().rangeSelection;

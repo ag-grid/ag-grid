@@ -109,13 +109,15 @@ export class PivotResultColsService extends BeanStub implements NamedBean {
 
             this.pivotResultCols = { tree, treeDepth, list, map };
             this.pivotResultCols.list.forEach((col) => (this.pivotResultCols!.map[col.getId()] = col));
+            const hasPreviousCols = !!this.previousPivotResultCols;
             this.previousPivotResultCols = null;
+            this.columnModel.refreshCols(!hasPreviousCols);
         } else {
             this.previousPivotResultCols = this.pivotResultCols ? this.pivotResultCols.tree : null;
             this.pivotResultCols = null;
-        }
 
-        this.columnModel.refreshCols();
+            this.columnModel.refreshCols(false);
+        }
         this.visibleColsService.refresh(source);
     }
 

@@ -17,6 +17,7 @@ import {
     _getDomData,
     _getRowHeightAsNumber,
     _isAnimateRows,
+    _isCellSelectionEnabled,
     _isClientSideRowModel,
     _isDomLayout,
     _isGroupRowsSticky,
@@ -194,6 +195,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 'detailCellRendererParams',
                 'enableRangeSelection',
                 'enableCellTextSelection',
+                'selection',
             ],
             () => this.redrawRows()
         );
@@ -309,39 +311,39 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private setupRangeSelectionListeners = () => {
-        const onRangeSelectionChanged = () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRangeSelectionChanged());
+        const onCellSelectionChanged = () => {
+            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellSelectionChanged());
         };
 
         const onColumnMovedPinnedVisible = () => {
             this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.updateRangeBordersIfRangeCount());
         };
 
-        const addRangeSelectionListeners = () => {
-            this.eventService.addEventListener('rangeSelectionChanged', onRangeSelectionChanged);
+        const addCellSelectionListeners = () => {
+            this.eventService.addEventListener('cellSelectionChanged', onCellSelectionChanged);
             this.eventService.addEventListener('columnMoved', onColumnMovedPinnedVisible);
             this.eventService.addEventListener('columnPinned', onColumnMovedPinnedVisible);
             this.eventService.addEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
 
-        const removeRangeSelectionListeners = () => {
-            this.eventService.removeEventListener('rangeSelectionChanged', onRangeSelectionChanged);
+        const removeCellSelectionListeners = () => {
+            this.eventService.removeEventListener('cellSelectionChanged', onCellSelectionChanged);
             this.eventService.removeEventListener('columnMoved', onColumnMovedPinnedVisible);
             this.eventService.removeEventListener('columnPinned', onColumnMovedPinnedVisible);
             this.eventService.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
-        this.addDestroyFunc(() => removeRangeSelectionListeners());
-        this.addManagedPropertyListener('enableRangeSelection', (params) => {
-            const isEnabled = params.currentValue;
+        this.addDestroyFunc(() => removeCellSelectionListeners());
+        this.addManagedPropertyListeners(['enableRangeSelection', 'selection'], () => {
+            const isEnabled = _isCellSelectionEnabled(this.gos);
             if (isEnabled) {
-                addRangeSelectionListeners();
+                addCellSelectionListeners();
             } else {
-                removeRangeSelectionListeners();
+                removeCellSelectionListeners();
             }
         });
-        const rangeSelectionEnabled = this.gos.get('enableRangeSelection');
-        if (rangeSelectionEnabled) {
-            addRangeSelectionListeners();
+        const cellSelectionEnabled = _isCellSelectionEnabled(this.gos);
+        if (cellSelectionEnabled) {
+            addCellSelectionListeners();
         }
     };
 
