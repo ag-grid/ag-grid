@@ -1,26 +1,22 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, ColGroupDef, GridApi } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { ColDef, ColGroupDef } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { createMyGrid, getAutoGroupColumnIds, getColumnOrder } from '../column-test-utils';
+import { TestGridsManager } from '../../test-utils';
+import { getAutoGroupColumnIds, getColumnOrder } from '../column-test-utils';
 
 describe('pivotMode=true', () => {
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
-
-    let gridApi: GridApi;
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     afterEach(() => {
-        gridApi.destroy();
+        gridsManager.reset();
     });
 
     describe('without a pivoted column', () => {
         test('hides primary cols that do not have aggregations', () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }];
 
-            gridApi = createMyGrid({ columnDefs, pivotMode: true });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, pivotMode: true });
 
             const expected = [];
             expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
@@ -30,7 +26,7 @@ describe('pivotMode=true', () => {
         test('displays aggFunc primary columns when no pivot columns', () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a', aggFunc: 'sum' }];
 
-            gridApi = createMyGrid({ columnDefs, pivotMode: true });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, pivotMode: true });
 
             const expected = ['a'];
             expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
@@ -45,7 +41,7 @@ describe('pivotMode=true', () => {
                     { colId: 'b', rowGroup: true },
                 ];
 
-                gridApi = createMyGrid({ columnDefs, groupDisplayType, pivotMode: true });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, pivotMode: true });
 
                 const expected = getAutoGroupColumnIds(columnDefs, groupDisplayType, true);
                 expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
@@ -71,7 +67,7 @@ describe('pivotMode=true', () => {
                 { colId: 'c', pivot: true, rowGroup: true },
             ];
 
-            gridApi = createMyGrid({ columnDefs, rowData, pivotMode: true });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, rowData, pivotMode: true });
 
             const expected = ['ag-Grid-AutoColumn', 'pivot_c__b'];
             expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
@@ -84,7 +80,7 @@ describe('pivotMode=true', () => {
                 { field: 'c', aggFunc: 'sum' },
             ];
 
-            gridApi = createMyGrid({ columnDefs, rowData, pivotMode: true });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, rowData, pivotMode: true });
 
             const expected = ['pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'];
             expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
@@ -98,15 +94,15 @@ describe('pivotMode=true', () => {
             ];
 
             const rowData = [
-                    { a: 1, b: 'aa' },
-                    { a: 1, b: '5' },
-                    { a: 1, b: '51' },
-                    { a: 1, b: 'an' },
-                    { a: 1, b: '1' },
-                    { a: 1, b: 'd' },
-                    { a: 1, b: 'a' },
-                ],
-                gridApi = createMyGrid({ columnDefs, rowData, pivotMode: true });
+                { a: 1, b: 'aa' },
+                { a: 1, b: '5' },
+                { a: 1, b: '51' },
+                { a: 1, b: 'an' },
+                { a: 1, b: '1' },
+                { a: 1, b: 'd' },
+                { a: 1, b: 'a' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, rowData, pivotMode: true });
 
             const expected = [
                 'ag-Grid-AutoColumn',
@@ -137,7 +133,7 @@ describe('pivotMode=true', () => {
                 { a: 1, b: 'd' },
                 { a: 1, b: 'a' },
             ];
-            gridApi = createMyGrid({ columnDefs, rowData, pivotMode: true });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, rowData, pivotMode: true });
 
             const expected = [
                 'ag-Grid-AutoColumn',
@@ -159,7 +155,7 @@ describe('pivotMode=true', () => {
                 { field: 'c', aggFunc: 'sum' },
             ];
 
-            gridApi = createMyGrid({ columnDefs, rowData, pivotMode: true });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, rowData, pivotMode: true });
 
             const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
             const expected = [...groupColIds, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'];
@@ -173,7 +169,7 @@ describe('pivotMode=true', () => {
                 { field: 'c', aggFunc: 'sum' },
             ];
 
-            gridApi = createMyGrid({
+            const gridApi = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 rowData,
                 pivotMode: true,
@@ -194,7 +190,7 @@ describe('pivotMode=true', () => {
                 { field: 'c', aggFunc: 'sum' },
             ];
 
-            gridApi = createMyGrid({
+            const gridApi = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 rowData,
                 pivotMode: true,
@@ -220,7 +216,7 @@ describe('pivotMode=true', () => {
                         { field: 'c', aggFunc: 'sum' },
                     ];
 
-                    gridApi = createMyGrid({
+                    const gridApi = gridsManager.createGrid('myGrid', {
                         columnDefs,
                         rowData,
                         pivotMode: true,
@@ -250,7 +246,7 @@ describe('pivotMode=true', () => {
                         { field: 'c', aggFunc: 'sum' },
                     ];
 
-                    gridApi = createMyGrid({
+                    const gridApi = gridsManager.createGrid('myGrid', {
                         columnDefs,
                         rowData,
                         pivotMode: false,
@@ -280,7 +276,7 @@ describe('pivotMode=true', () => {
                         { field: 'c', aggFunc: 'sum' },
                     ];
 
-                    gridApi = createMyGrid({
+                    const gridApi = gridsManager.createGrid('myGrid', {
                         columnDefs,
                         rowData,
                         pivotMode: true,
@@ -309,7 +305,7 @@ describe('pivotMode=true', () => {
                         { field: 'c', aggFunc: 'sum' },
                     ];
 
-                    gridApi = createMyGrid({
+                    const gridApi = gridsManager.createGrid('myGrid', {
                         columnDefs,
                         rowData,
                         maintainColumnOrder,
@@ -345,7 +341,7 @@ describe('pivotMode=true', () => {
                     { field: 'c', aggFunc: 'sum' },
                 ];
 
-                gridApi = createMyGrid({
+                const gridApi = gridsManager.createGrid('myGrid', {
                     columnDefs,
                     defaultColDef: {
                         filter: true,
@@ -376,7 +372,7 @@ describe('pivotMode=true', () => {
                     { field: 'c', aggFunc: 'sum' },
                 ];
 
-                gridApi = createMyGrid({
+                const gridApi = gridsManager.createGrid('myGrid', {
                     columnDefs,
                     rowData,
                     pivotMode: true,
@@ -402,7 +398,7 @@ describe('pivotMode=true', () => {
                     { field: 'c', aggFunc: 'sum' },
                 ];
 
-                gridApi = createMyGrid({
+                const gridApi = gridsManager.createGrid('myGrid', {
                     columnDefs,
                     defaultColDef: {
                         filter: true,
@@ -432,7 +428,7 @@ describe('pivotMode=true', () => {
                     { field: 'c', aggFunc: 'sum' },
                 ];
 
-                gridApi = createMyGrid({
+                const gridApi = gridsManager.createGrid('myGrid', {
                     columnDefs,
                     rowData,
                     pivotMode: true,
