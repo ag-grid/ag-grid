@@ -2189,5 +2189,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';
     static ngAcceptInputType_loading: boolean | null | '';
+    static ngAcceptInputType_loadThemeGoogleFonts: boolean | null | '';
     // @END@
 }

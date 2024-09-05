@@ -390,10 +390,11 @@ export class PropertyKeys {
         'suppressServerSideFullWidthLoadingRow',
         'suppressAdvancedFilterEval',
         'loading',
+        'loadThemeGoogleFonts',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.
-    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow', 'loadThemeGoogleFonts'];
+    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow'];
 
     public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [
         'doesExternalFilterPass',
