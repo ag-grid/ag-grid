@@ -39,7 +39,7 @@ export const getParamType = memoize((param: string): ParamType => {
     if (/Weight$/.test(param)) return 'fontWeight';
     if (/Duration$/.test(param)) return 'duration';
     if (/ColorScheme$/.test(param)) return 'colorScheme';
-    throw new Error(`ThemeParam "${param}" does not have a recognised suffix.`);
+    throw new Error(`"${param}" is not a valid theme parameter.`);
 });
 
 type ColorParam = CoreParamWithSuffix<'Color'>;
