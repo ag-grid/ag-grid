@@ -15,6 +15,7 @@ import {
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
+    usesThemingApi,
 } from './parser-utils';
 import {
     EventAndCallbackNames,
@@ -37,14 +38,16 @@ function getModuleImports(
         "import { AgGridReact } from '@ag-grid-community/react';",
     ];
 
-    imports.push("import '@ag-grid-community/styles/ag-grid.css';");
-    // to account for the (rare) example that has more than one class...just default to quartz if it does
-    // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-    // "source" non dark version
-    const theme = bindings.inlineGridStyles.theme
-        ? bindings.inlineGridStyles.theme.replace('-dark', '')
-        : 'ag-theme-quartz';
-    imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
+    if (!usesThemingApi(bindings)) {
+        imports.push("import '@ag-grid-community/styles/ag-grid.css';");
+        // to account for the (rare) example that has more than one class...just default to quartz if it does
+        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
+        // "source" non dark version
+        const theme = bindings.inlineGridStyles.theme
+            ? bindings.inlineGridStyles.theme.replace('-dark', '')
+            : 'ag-theme-quartz';
+        imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
+    }
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
@@ -94,13 +97,15 @@ function getPackageImports(
 
     addLicenseManager(imports, exampleConfig, true);
 
-    imports.push("import 'ag-grid-community/styles/ag-grid.css';");
+    if (!usesThemingApi(bindings)) {
+        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
-    // to account for the (rare) example that has more than one class...just default to quartz if it does
-    // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-    // "source" non dark version
-    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-    imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
+        // to account for the (rare) example that has more than one class...just default to quartz if it does
+        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
+        // "source" non dark version
+        const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
+        imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
+    }
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));

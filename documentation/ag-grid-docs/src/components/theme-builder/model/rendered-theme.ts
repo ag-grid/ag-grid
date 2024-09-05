@@ -1,43 +1,53 @@
-import { type Theme, themeQuartz } from '@ag-grid-community/theming';
-import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { type Part, type Theme, themeQuartz } from '@ag-grid-community/theming';
+import { atom, useAtomValue } from 'jotai';
 
 import { allParamModels } from './ParamModel';
 import { FeatureModel } from './PartModel';
 import { enabledAdvancedParamsAtom } from './advanced-params';
-import type { Store } from './store';
+import { setCurrentThemeCssClass } from './utils';
 
-const changeDetection = atom(0);
-
-export const rerenderTheme = (store: Store) => {
-    store.set(changeDetection, (n) => n + 1);
+export type RenderedThemeInfo = {
+    theme: Theme;
+    overriddenParams: Record<string, unknown>;
+    usedParts: Part[];
 };
 
-const previewGridContainer = atom<HTMLDivElement | null>(null);
-export const useSetPreviewGridContainer = () => useSetAtom(previewGridContainer);
-
-export const renderedThemeAtom = atom((get): Theme => {
-    get(changeDetection);
+const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     const enabledAdvancedParams = get(enabledAdvancedParamsAtom);
 
-    const params = Object.fromEntries(
+    let theme = themeQuartz;
+
+    const usedParts: Part[] = [];
+    for (const featureName of ['iconSet'] as const) {
+        const feature = FeatureModel.for(featureName);
+        const part = get(feature.selectedPartAtom).part;
+        if (part !== feature.defaultPart.part) {
+            usedParts.push(part);
+            theme = theme.usePart(part);
+        }
+    }
+
+    const overriddenParams = Object.fromEntries(
         allParamModels()
             .filter((param) => enabledAdvancedParams.has(param.property) || !param.onlyEditableAsAdvancedParam)
             .map((param) => [param.property, get(param.valueAtom)])
     );
+    theme = theme.overrideParams(overriddenParams);
 
-    const iconSet = get(FeatureModel.for('iconSet').selectedPartAtom).part;
+    // globally install the theme CSS, because form widgets use reinterpretCSSValue
+    // which requires that the CSS variable values are available
+    setCurrentThemeCssClass(theme.getCssClass());
+    const stylesheet = new CSSStyleSheet();
+    stylesheet.replaceSync(theme.getCSS());
+    document.adoptedStyleSheets = [stylesheet];
 
-    const theme = themeQuartz.usePart(iconSet).overrideParams(params);
-
-    const container = get(previewGridContainer);
-    if (container) {
-        theme.install({ container, loadThemeGoogleFonts: true });
-    }
-
-    // also install the theme at the top level, as it is required for preset previews
-    theme.install({ loadThemeGoogleFonts: true });
-
-    return theme as Theme;
+    return {
+        theme,
+        overriddenParams,
+        usedParts,
+    };
 });
 
-export const useRenderedTheme = () => useAtomValue(renderedThemeAtom);
+export const useRenderedTheme = () => useAtomValue(renderedThemeInfoAtom).theme;
+
+export const useRenderedThemeInfo = () => useAtomValue(renderedThemeInfoAtom);
