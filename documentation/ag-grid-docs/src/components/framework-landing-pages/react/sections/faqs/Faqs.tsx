@@ -52,7 +52,10 @@ const Faqs: React.FC = () => {
             <div className={styles.column}>
                 {firstColumnFaqs.map((faq, index) => (
                     <React.Fragment key={index}>
-                        <div className={styles.questionContainer} onClick={() => handleToggle(index)}>
+                        <div
+                            className={`${styles.questionContainer} plausible-event-name=react-table-expand-faq`}
+                            onClick={() => handleToggle(index)}
+                        >
                             <div className={styles.titleContainer}>
                                 <span className={styles.question}>{faq.question}</span>
                                 <Icon
@@ -71,7 +74,10 @@ const Faqs: React.FC = () => {
             <div className={styles.column}>
                 {secondColumnFaqs.map((faq, index) => (
                     <React.Fragment key={index + midIndex}>
-                        <div className={styles.questionContainer} onClick={() => handleToggle(index + midIndex)}>
+                        <div
+                            className={`${styles.questionContainer} plausible-event-name=react-table-expand-faq`}
+                            onClick={() => handleToggle(index + midIndex)}
+                        >
                             <div className={styles.titleContainer}>
                                 <span className={styles.question}>{faq.question}</span>
                                 <Icon

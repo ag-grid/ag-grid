@@ -84,7 +84,12 @@ const Showcase: React.FC = () => {
                 </div>
             </div>
             <div className={styles.communityCta}>
-                <button onClick={() => (window.location.href = './community/showcase')}>View More</button>
+                <button
+                    className="plausible-event-name=react-table-visit-showcase"
+                    onClick={() => (window.location.href = './community/showcase')}
+                >
+                    View More
+                </button>
             </div>
         </div>
     );

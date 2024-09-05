@@ -26,7 +26,7 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
             <div class={styles.sectionInner}>
                 <div class={styles.heroSectioncontainer}>
                     <div class={styles.heroSectionheadingContainer}>
-                        <a href={urlWithBaseUrl('./whats-new')} class={styles.heroSectionversionTagContainer}>
+                        <a href={urlWithBaseUrl('./whats-new')} class:list={[styles.heroSectionversionTagContainer, 'plausible-event-name=react-table-whats-new']}>
                             <span class={styles.heroSectionversion}>AG Grid v{versionsData[0].version}</span>
                             <span class={styles.heroSectionfeatureHighlight}>
                                 {versionsData[0].landingPageHighlight}
@@ -41,7 +41,7 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
                         </h3>
                     </div>
                     <div class={styles.heroSectionbuttonContainer}>
-                        <a class:list={["button-secondary", styles.heroSectioncta1]} href={urlWithBaseUrl('./react-data-grid/getting-started/')}>Get Started</a>
+                        <a class:list={["button-secondary", styles.heroSectioncta1, 'plausible-event-name=react-table-get-started']} href={urlWithBaseUrl('./react-data-grid/getting-started/')}>Get Started</a>
                         <div class={styles.heroSectioncta2}>
                             <InstallText client:load />
                         </div>
@@ -49,7 +49,7 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
                     <div class={styles.heroSectiondemoContainer}>
                         <Finance client:only="react" gridHeight={600} />
                     </div>
-                    <a class:list={["button", styles.heroSectionviewAllDemosLink]} href={urlWithBaseUrl('./example')}>View All Demos 
+                    <a class:list={["button", styles.heroSectionviewAllDemosLink, 'plausible-event-name=react-table-view-demos']} href={urlWithBaseUrl('./example')}>View All Demos 
                         <Icon svgClasses={styles.heroSectiondemosArrow} name="arrowRight" /></a>
                 </div>
             </div>
