@@ -72,6 +72,7 @@ const GridPreview = () => {
                         {container && (
                             <AgGridReact
                                 theme={theme}
+                                loadThemeGoogleFonts={true}
                                 onGridReady={({ api }) => {
                                     if (config.showIntegratedChartPopup) {
                                         api.createRangeChart({

@@ -1,4 +1,4 @@
-import type { ParamType, Part, Theme, themeQuartz } from '@ag-grid-community/theming';
+import type { ParamType, themeQuartz } from '@ag-grid-community/theming';
 
 export type ThemeParams = (typeof themeQuartz)['defaults'];
 export type ThemeParam = keyof ThemeParams;
