@@ -138,12 +138,19 @@ export abstract class ChartProxy<
         return this.chart;
     }
 
+    protected getCrossFilterKey() {
+        return 'xKey';
+    }
+
     private addSeriesListeners(series: AgChartSeriesOptions[]): AgChartSeriesOptions[] {
         return series.map((s: any) => ({
             ...s,
             listeners: {
-                nodeClick: (params) => {
-                    console.warn(params);
+                nodeClick: (params: any) => {
+                    if (!(params.event.metaKey || params.event.ctrlKey)) {
+                        this.crossFilterService.reset();
+                    }
+                    this.crossFilterService.filter(params);
                 },
             } as AgSeriesListeners<any>,
         }));
@@ -263,9 +270,13 @@ export abstract class ChartProxy<
                       time: { crosshair },
                   },
                   listeners: {
-                      seriesNodeClick: (event) => {
-                          console.warn(event);
-                      },
+                      // XXX: restore once we figure out why this gets two calls instead of one.
+                      //   seriesNodeClick: (params: any) => {
+                      //       if (!(params.event.metaKey || params.event.ctrlKey)) {
+                      //           this.crossFilterService.reset();
+                      //       }
+                      //       this.crossFilterService.filter(params);
+                      //   },
                   },
               }
             : {};

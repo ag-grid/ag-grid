@@ -28,13 +28,13 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     }
 
     public filter(event: any, reset: boolean = false): void {
-        const filterModel = this.filterManager?.getFilterModel() ?? {};
-
         // filters should be reset when user clicks on canvas background
         if (reset) {
-            this.resetFilters(filterModel);
+            this.reset();
             return;
         }
+
+        const filterModel = this.filterManager?.getFilterModel() ?? {};
 
         const colId = ChartCrossFilterService.extractFilterColId(event);
         if (this.isValidColumnFilter(colId)) {
@@ -48,6 +48,10 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
                     "'"
             );
         }
+    }
+
+    public reset() {
+        this.resetFilters(this.filterManager?.getFilterModel() ?? {});
     }
 
     private resetFilters(filterModel: any) {
@@ -116,8 +120,8 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     }
 
     private isValidColumnFilter(colId: any) {
-        if (colId.indexOf('-filtered-out')) {
-            colId = colId.replace('-filtered-out', '');
+        if (colId.indexOf('Filter')) {
+            colId = colId.replace('Filter', '');
         }
 
         const filterType = this.getColumnFilterType(colId);

@@ -36,6 +36,10 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         };
     }
 
+    protected override getCrossFilterKey() {
+        return 'calloutLabelKey';
+    }
+
     private getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
         const [category] = params.categories;
         const numFields = params.fields.length;
