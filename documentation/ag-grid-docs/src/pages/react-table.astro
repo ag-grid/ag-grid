@@ -156,8 +156,8 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
                 <div class={styles.examplesSectioncontainer}>
                     <div class={styles.examplesSectionexamplesContainer}>
                         <div class={styles.examplesSectioncardsContainer}>
-                            {examples.map((card, index) => (
-                                <div key={index} class={styles.examplesSectioncard}>
+                            {examples.map((card) => (
+                                <div class={styles.examplesSectioncard}>
                                     <img
                                         class={styles.examplesSectioncardImage}
                                         src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
