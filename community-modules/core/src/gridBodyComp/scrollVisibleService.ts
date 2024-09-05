@@ -37,7 +37,6 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
-            bodyHeightChanged: this.onBodyHeightChanged.bind(this),
         });
     }
 
@@ -49,7 +48,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         this.updateScrollVisible();
     }
 
-    private onBodyHeightChanged(): void {
+    public onCentreViewportResized(): void {
         this.updateScrollGap();
     }
 
