@@ -15,6 +15,38 @@ const Faqs: React.FC = () => {
     const firstColumnFaqs = faqs.slice(0, midIndex);
     const secondColumnFaqs = faqs.slice(midIndex);
 
+    const linkMap = {
+        'AG Grid Community': 'https://www.ag-grid.com/react-data-grid/getting-started/',
+        'AG Grid Enterprise': 'https://www.ag-grid.com/license-pricing/',
+        'React Charts': 'https://www.ag-grid.com/charts/react/quick-start/',
+        'AG Charts': 'https://www.ag-grid.com/charts/',
+        'AG Grid licence': 'https://www.ag-grid.com/license-pricing/',
+        'Pricing page': 'https://www.ag-grid.com/license-pricing/',
+        themes: 'https://www.ag-grid.com/react-data-grid/themes/',
+        'Theme Builder': 'https://www.ag-grid.com/theme-builder/',
+    };
+
+    // Function to update FAQ json with links
+    const createLinkedText = (text: string, linkMap: Record<string, string>) => {
+        const elements: React.ReactNode[] = [];
+        let remainingText = text;
+        Object.keys(linkMap).forEach((term) => {
+            const url = linkMap[term];
+            const parts = remainingText.split(term);
+            if (parts.length > 1) {
+                elements.push(parts.shift());
+                elements.push(
+                    <a href={url} target="_blank" rel="noopener noreferrer" key={url}>
+                        {term}
+                    </a>
+                );
+                remainingText = parts.join(term);
+            }
+        });
+        elements.push(remainingText);
+        return elements;
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.column}>
@@ -28,7 +60,9 @@ const Faqs: React.FC = () => {
                                     name={activeIndex === index ? 'chevronDown' : 'chevronRight'}
                                 />
                             </div>
-                            {activeIndex === index && <div className={styles.answerContainer}>{faq.answer}</div>}
+                            {activeIndex === index && (
+                                <div className={styles.answerContainer}>{createLinkedText(faq.answer, linkMap)}</div>
+                            )}
                         </div>
                         <hr />
                     </React.Fragment>
@@ -46,7 +80,7 @@ const Faqs: React.FC = () => {
                                 />
                             </div>
                             {activeIndex === index + midIndex && (
-                                <div className={styles.answerContainer}>{faq.answer}</div>
+                                <div className={styles.answerContainer}>{createLinkedText(faq.answer, linkMap)}</div>
                             )}
                         </div>
                         <hr />

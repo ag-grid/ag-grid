@@ -9,23 +9,23 @@
     },
     {
         "question": "Will my React Tables be compatible with AG Charts?",
-        "answer": "Yes, AG Grid is designed to be compatible with AG Charts, allowing seamless integration between tables and charts."
+        "answer": "Yes, AG Grid is designed to be compatible with AG Charts, allowing seamless integration between React Tables and React Charts."
     },
     {
         "question": "Can I customise the React Table?",
-        "answer": "Yes, you can customise AG Grid themes with CSS, create your own custom themes, and use our own components in cells."
+        "answer": "Yes, you can customise AG Grid themes with CSS, create your own custom themes, and use our own components in cells. Visit our Theme Builder to start customising themes."
     },
     {
         "question": "AG Grid vs. MUI",
         "answer": "AG Grid is a feature-rich data grid offering advanced capabilities, while MUI (Material-UI) provides a simpler table component as part of its UI library."
     },
     {
-        "question": "Why use AG Grid over React Table?",
-        "answer": "AG Grid offers more features, better performance, and comprehensive support compared to the React Table."
+        "question": "Why use AG Grid over TanStack React Table?",
+        "answer": "TanStack React Table is for building bespoke data grids from scratch, whereas AG Grid comes with a UI and broader feature set, which just requires configuration."
     },
     {
         "question": "How Many Rows Can AG Grid Handle?",
-        "answer": "AG Grid can easily handle millions of rows and thousands of columns, with no performance degradation."
+        "answer": "AG Grid can easily handle millions of rows and thousands of columns, with no performance degradation, by using row & column virtualisation."
     },
     {
         "question": "What is AG Grid Enterprise?",
@@ -37,6 +37,6 @@
     },
     {
         "question": "How much does AG Grid cost?",
-        "answer": "AG Grid Community is free forever. AG Grid Enterprise costs $999 per licence. Visit the pricing page for more information."
+        "answer": "AG Grid Community is free forever. AG Grid Enterprise costs $999 per licence. Visit the Pricing page for more information."
     }
 ]
