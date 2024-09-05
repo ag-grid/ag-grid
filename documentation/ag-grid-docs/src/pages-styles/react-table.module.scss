@@ -188,7 +188,7 @@ div.divider:nth-of-type(4n) {
 .heroSectionheadingContainer {
     display: flex;
     flex-direction: column;
-    margin-top: $spacing-size-16;
+    margin-top: $spacing-size-12;
 
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         margin-top: $spacing-size-4;
@@ -202,6 +202,7 @@ div.divider:nth-of-type(4n) {
         cursor: pointer;
         align-self: center;
         background-color: var(--color-brand-200);
+        font-weight: var(--text-base);
 
         @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             width: 100%;
@@ -245,11 +246,21 @@ div.divider:nth-of-type(4n) {
         }
     }
 
+    .heroSectionTag {
+        color: var(--color-brand-400);
+        font-size: 24px;
+        text-align: center;
+        line-height: 24px;
+        font-weight: var(--text-bold);
+        margin-top: $spacing-size-8;
+        margin-bottom: 0;
+    }
+
     .heroSectionheading {
         font-size: 72px;
         text-align: center;
         line-height: 77px;
-        margin: $spacing-size-8 0px;
+        margin-bottom: $spacing-size-8;
         padding: 0px $spacing-size-64;
         font-weight: var(--text-bold);
 
@@ -261,9 +272,12 @@ div.divider:nth-of-type(4n) {
     }
 
     .heroSectionsubHeading {
+        font-size: var(--text-fs-lg);
+        font-weight: var(--text-base);
+        color: var(--color-text-primary);
+        margin: 0px $spacing-size-48;
         text-align: center;
-        font-size: var(--text-fs-xl);
-        padding: 0px $spacing-size-56;
+        margin-bottom: 0px;
 
         @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             padding: 0px;
@@ -282,7 +296,13 @@ div.divider:nth-of-type(4n) {
     }
 
     .heroSectioncta1 {
-        // TBC
+        color: var(--color-white);
+        background: var(--color-brand-700);
+        align-content: center;
+
+        &:hover {
+            color: var(--color-white);
+        }
     }
 
     .heroSectioncta2 {
@@ -327,10 +347,15 @@ div.divider:nth-of-type(4n) {
     align-self: flex-end;
     font-weight: var(--text-regular);
     color: var(--color-link);
-    transition: color 0heroSection25s ease-in-out;
+    transition: color 0.25s ease-in-out;
     border: none;
     background-color: transparent;
     box-shadow: none;
+
+    &:hover {
+        background: transparent;
+        color: var(--color-link) !important;
+    }
 }
 
 .heroSectiondemosArrow {

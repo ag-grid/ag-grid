@@ -11,7 +11,8 @@ import InstallText from '@components/framework-landing-pages/InstallText';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Finance } from 'src/components/demos/examples/finance';
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
-const { data: examples } = await getEntry('react-landing-page', 'examples');import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+const { data: examples } = await getEntry('react-landing-page', 'examples');
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 ---
 
@@ -24,26 +25,22 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');impo
             <div class={styles.sectionInner}>
                 <div class={styles.heroSectioncontainer}>
                     <div class={styles.heroSectionheadingContainer}>
-                        <div onClick={() => handleClick('/whats-new')} class={styles.heroSectionversionTagContainer}>
+                        <a href={urlWithBaseUrl('./whats-new')} class={styles.heroSectionversionTagContainer}>
                             <span class={styles.heroSectionversion}>AG Grid v{versionsData[0].version}</span>
                             <span class={styles.heroSectionfeatureHighlight}>
                                 {versionsData[0].landingPageHighlight}
                                 <Icon svgClasses={styles.heroSectionfeatureArrow} name="arrowRight" />
                             </span>
-                        </div>
-                        <h1 class={styles.heroSectionheading}>Fast, Powerful and Flexible React Table</h1>
-                        <p class={styles.heroSectionsubHeading}>
+                        </a>
+                        <h1 class={styles.heroSectionTag}>React Table</h1>
+                        <h2 class={styles.heroSectionheading}>Fast, Powerful and Flexible React Table</h2>
+                        <h3 class={styles.heroSectionsubHeading}>
                             Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b> React Data Tables
                             to your application in <b>minutes</b>, all for <b>free</b>.
-                        </p>
+                        </h3>
                     </div>
                     <div class={styles.heroSectionbuttonContainer}>
-                        <button
-                            class={styles.heroSectioncta1}
-                            onClick={() => handleClick('/react-data-grid/getting-started/')}
-                        >
-                            Get Started
-                        </button>
+                        <a class:list={["button-secondary", styles.heroSectioncta1]} href={urlWithBaseUrl('./react-data-grid/getting-started/')}>Get Started</a>
                         <div class={styles.heroSectioncta2}>
                             <InstallText client:load />
                         </div>
@@ -51,10 +48,8 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');impo
                     <div class={styles.heroSectiondemoContainer}>
                         <Finance client:only="react" gridHeight={600} />
                     </div>
-                    <button class={styles.heroSectionviewAllDemosLink}>
-                        View All Demos
-                        <Icon svgClasses={styles.heroSectiondemosArrow} name="arrowRight" />
-                    </button>
+                    <a class:list={["button", styles.heroSectionviewAllDemosLink]} href={urlWithBaseUrl('./example')}>View All Demos 
+                        <Icon svgClasses={styles.heroSectiondemosArrow} name="arrowRight" /></a>
                 </div>
             </div>
         </div>

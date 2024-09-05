@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React from 'react';
 
 import styles from './CustomFeatures.module.scss';
@@ -29,21 +30,31 @@ const CustomFeatures: React.FC = () => {
                     <div className={styles.feature}>
                         <h5 className={styles.featureHeading}>100+ CSS Variables</h5>
                         <span className={styles.featureDetail}>
-                            Customise every part of your react table with over <a>100 CSS variables</a>. Customise
-                            colours, spacing, fonts, and component styles.
+                            Customise every part of your react table with over{' '}
+                            <a href={urlWithBaseUrl('./react-data-grid/global-style-customisation-variables/')}>
+                                100 CSS variables
+                            </a>
+                            . Customise colours, spacing, fonts, and component styles.
                         </span>
                     </div>
                     <div className={styles.feature}>
                         <h5 className={styles.featureHeading}>4 Default Themes</h5>
                         <span className={styles.featureDetail}>
-                            Choose from four themes including our new <a>Quartz</a> and <a>Material Dark</a> themes or
-                            design your own theme with our <a>Theme Builder</a> or <a>Figma Design System</a>.
+                            Choose from four themes including our new{' '}
+                            <a href={urlWithBaseUrl('./example?theme=ag-theme-quartz')}>Quartz</a> and{' '}
+                            <a href={urlWithBaseUrl('./example?theme=ag-theme-material/')}>Material</a> themes or design
+                            your own theme with our <a href={urlWithBaseUrl('./theme-builder/')}>Theme Builder</a> or{' '}
+                            <a href={urlWithBaseUrl('./react-data-grid/ag-grid-design-system/')}>Figma Design System</a>
+                            .
                         </span>
                     </div>
                     <div className={styles.feature}>
                         <h5 className={styles.featureHeading}>Custom Components</h5>
                         <span className={styles.featureDetail}>
-                            Override the default rendering of any part of the grid with your own <a>React Components</a>
+                            Override the default rendering of any part of the grid with your own{' '}
+                            <a href={urlWithBaseUrl('./react-data-grid/component-cell-renderer/')}>
+                                Custom React Components
+                            </a>
                             . Add buttons to cells, define your own filtering logic, and add custom functionality.
                         </span>
                     </div>
