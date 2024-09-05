@@ -33,7 +33,14 @@ const Showcase: React.FC = () => {
                                         <span className={styles.buttonDetail}>{item.detail}</span>
                                         <div className={styles.buttonFooter}>
                                             {item.links.map((link, linkIndex) => (
-                                                <a key={linkIndex}>{link}</a>
+                                                <a
+                                                    key={linkIndex}
+                                                    href={link.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    {link.name}
+                                                </a>
                                             ))}
                                         </div>
                                     </div>

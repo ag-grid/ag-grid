@@ -247,7 +247,8 @@ div.divider:nth-of-type(4n) {
             color: var(--color-brand-500);
 
             #{$selector-darkmode} & {
-                background: var(--color-fg-secondary);
+                color: var(--color-brand-400);
+                background: var(--color-bg-primary);
                 border: 2px solid var(--color-bg-secondary);
             }
 

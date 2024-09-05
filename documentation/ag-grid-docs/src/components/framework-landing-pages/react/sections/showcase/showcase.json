@@ -6,7 +6,10 @@
         "site": "openbb.co",
         "image": "/landing-pages/showcase/openbb.png",
         "alt": "OpenBB Terminal Pro Landing Page with React Table",
-        "links": ["Preview", "Source Code"]
+        "links": [
+            { "name": "Preview", "url": "https://openbb.co/products/pro" },
+            { "name": "Source Code", "url": "https://github.com/openbb-finance" }
+        ]
     },
     {
         "title": "ML/AI",
@@ -15,7 +18,10 @@
         "site": "mlflow.org",
         "image": "/landing-pages/showcase/mlflow.png",
         "alt": "MLFlow Landing Page with React Table",
-        "links": ["Preview", "Source Code"]
+        "links": [
+            { "name": "Preview", "url": "https://mlflow.org" },
+            { "name": "Source Code", "url": "https://github.com/mlflow/mlflow" }
+        ]
     },
     {
         "title": "Developer Platforms",
@@ -25,7 +31,10 @@
         "image": "/landing-pages/showcase/windmill.png",
         "imageLight": "/landing-pages/showcase/windmill-light.png",
         "alt": "Windmill Landing Page with React Table",
-        "links": ["Preview", "Source Code"]
+        "links": [
+            { "name": "Preview", "url": "https://windmill.dev" },
+            { "name": "Source Code", "url": "https://github.com/windmill-labs/windmill" }
+        ]
     },
     {
         "title": "Data Modelling",
@@ -35,7 +44,10 @@
         "image": "/landing-pages/showcase/nasa-aerie.png",
         "imageLight": "/landing-pages/showcase/nasa-aerie-light.png",
         "alt": "NASA Aerie Admin Landing Page with React Table",
-        "links": ["Preview", "Source Code"]
+        "links": [
+            { "name": "Preview", "url": "https://nasa-ammos.github.io/aerie-docs/" },
+            { "name": "Source Code", "url": "https://github.com/NASA-AMMOS/aerie" }
+        ]
     },
     {
         "title": "Dashboards",
@@ -44,6 +56,9 @@
         "site": "marmelab.com/react-admin",
         "image": "/landing-pages/showcase/react-admin.png",
         "alt": "React Admin Landing Page with React Table",
-        "links": ["Preview", "Source Code"]
+        "links": [
+            { "name": "Preview", "url": "https://marmelab.com/react-admin" },
+            { "name": "Source Code", "url": "https://github.com/marmelab/react-admin" }
+        ]
     }
 ]
