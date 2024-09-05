@@ -37,18 +37,23 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
+            bodyHeightChanged: this.onBodyHeightChanged.bind(this),
         });
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.update();
+        this.updateScrollVisible();
     }
 
     private onDisplayedColumnsWidthChanged(): void {
-        this.update();
+        this.updateScrollVisible();
     }
 
-    private update(): void {
+    private onBodyHeightChanged(): void {
+        this.updateScrollGap();
+    }
+
+    private updateScrollVisible(): void {
         // Because of column animation, if user removes cols anywhere except at the RHS,
         // then the cols on the RHS will animate to the left to fill the gap. This animation
         // means just after the cols are removed, the remaining cols are still in the original
@@ -57,14 +62,14 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         // after the animation has ended.
         if (this.columnAnimationService.isActive()) {
             this.columnAnimationService.executeLaterVMTurn(() => {
-                this.columnAnimationService.executeLaterVMTurn(() => this.updateImpl());
+                this.columnAnimationService.executeLaterVMTurn(() => this.updateScrollVisibleImpl());
             });
         } else {
-            this.updateImpl();
+            this.updateScrollVisibleImpl();
         }
     }
 
-    private updateImpl(): void {
+    private updateScrollVisibleImpl(): void {
         const centerRowCtrl = this.ctrlsService.get('center');
 
         if (!centerRowCtrl || this.columnAnimationService.isActive()) {
@@ -77,7 +82,11 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         };
 
         this.setScrollsVisible(params);
+        this.updateScrollGap();
+    }
 
+    private updateScrollGap(): void {
+        const centerRowCtrl = this.ctrlsService.get('center');
         const horizontalGap = centerRowCtrl.hasHorizontalScrollGap();
         const verticalGap = centerRowCtrl.hasVerticalScrollGap();
         const atLeastOneDifferent =
