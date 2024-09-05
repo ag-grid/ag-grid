@@ -948,26 +948,20 @@
         },
         "pivotPanelShow": {
             "more": {
-                "name": "Enabling Pivot Panel",
-                "url": "./pivoting/#enabling-pivot-panel"
+                "name": "Enabling the Pivot Panel",
+                "url": "./pivoting/#enabling-the-pivot-panel"
             }
         },
         "pivotDefaultExpanded": {
             "more": {
-                "name": "Opening Pivot Group Levels by Default",
-                "url": "./pivoting/#opening-pivot-group-levels-by-default"
-            }
-        },
-        "pivotColumnGroupTotals": {
-            "more": {
-                "name": "Pivot Column Group Totals",
-                "url": "./pivoting/#pivot-column-group-totals"
+                "name": "Expand Pivot Column Groups by Default",
+                "url": "./pivoting/#expanded-by-default"
             }
         },
         "pivotRowTotals": {
             "more": {
                 "name": "Pivot Row Totals",
-                "url": "./pivoting/#pivot-row-totals"
+                "url": "./pivoting/#row-totals"
             }
         },
         "pivotSuppressAutoColumn": {
@@ -976,25 +970,25 @@
         "pivotMaxGeneratedColumns": {
             "more": {
                 "name": "Pivot Max Generated Columns",
-                "url": "./pivoting/#pivoting-extreme-amounts-of-data"
+                "url": "./pivoting/#prevent-extreme-column-generation"
             }
         },
         "processPivotResultColDef": {
             "more": {
                 "name": "Pivot Result Column Definitions",
-                "url": "./pivoting/#pivot-result-column-definitions"
+                "url": "./pivoting/#column-definitions"
             }
         },
         "processPivotResultColGroupDef": {
             "more": {
-                "name": "Pivot Result Column Definitions",
-                "url": "./pivoting/#pivot-result-column-definitions"
+                "name": "Pivot Result Column Group Definitions",
+                "url": "./pivoting/#customising-group-definitions"
             }
         },
         "suppressExpandablePivotGroups": {
             "more": {
-                "name": "Fixed Pivot Column Groups",
-                "url": "./pivoting/#fixed-pivot-column-groups"
+                "name": "Prevent Expanding Pivot Column Groups",
+                "url": "./pivoting/#prevent-expanding-groups"
             }
         },
         "functionsReadOnly": {
@@ -1043,7 +1037,7 @@
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
                 "name": "Hiding Repeated Value Column Labels",
-                "url": "./pivoting/#hiding-repeated-value-column-labels"
+                "url": "./pivoting/#hide-group-with-single-value-column"
             }
         }
     },

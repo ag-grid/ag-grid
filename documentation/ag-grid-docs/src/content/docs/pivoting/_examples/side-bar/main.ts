@@ -1,31 +1,19 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColumnGroup, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true, enableRowGroup: true },
-        { field: 'athlete' },
-        { field: 'sport', pivot: true, enablePivot: true },
-        { field: 'year', pivot: true, enablePivot: true },
-        { field: 'date', pivot: true, enablePivot: true },
+        { field: 'country', rowGroup: true },
         { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'sport', enablePivot: true },
     ],
     defaultColDef: {
         flex: 1,
@@ -34,9 +22,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
+    sideBar: true,
     pivotMode: true,
-    // first (sport) row group will be open by default
-    pivotDefaultExpanded: 1,
 };
 
 // setup the grid after the page has finished loading

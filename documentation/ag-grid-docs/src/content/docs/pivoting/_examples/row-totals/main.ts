@@ -1,37 +1,24 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true, enableRowGroup: true },
-        { field: 'athlete' },
-        { field: 'sport', pivot: true, enablePivot: true },
-        { field: 'year', pivot: true, enablePivot: true },
+        { field: 'country', rowGroup: true },
+        { field: 'year', pivot: true },
         { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
     ],
     defaultColDef: {
-        maxWidth: 140,
-        filter: true,
+        flex: 1,
+        minWidth: 130,
     },
     autoGroupColumnDef: {
-        minWidth: 180,
+        minWidth: 200,
     },
     pivotMode: true,
     pivotRowTotals: 'before',
