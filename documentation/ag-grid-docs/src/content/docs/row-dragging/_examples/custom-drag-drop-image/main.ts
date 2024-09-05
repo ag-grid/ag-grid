@@ -10,7 +10,7 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'athlete' },
+        { field: 'athlete', rowDrag: true },
         { field: 'country' },
         { field: 'year', width: 100 },
         { field: 'date' },
@@ -24,6 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         width: 170,
         filter: true,
     },
+    rowDragManaged: true,
     dragAndDropImageComponent: CustomDragAndDropImage,
 };
 

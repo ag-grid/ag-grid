@@ -1,10 +1,20 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 import { CustomDragAndDropImage } from './customDragAndDropImage_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    MenuModule,
+    RowGroupingModule,
+    SetFilterModule,
+]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -24,6 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         width: 170,
         filter: true,
     },
+    sideBar: true,
     dragAndDropImageComponent: CustomDragAndDropImage,
 };
 
