@@ -118,7 +118,47 @@ export abstract class ChartProxy<
         this.getChartRef().update({
             ...updatedOptions,
             series: this.addSeriesListeners(updatedOptions.series as AgChartSeriesOptions[]),
+            legend: {
+                toggleSeries: true,
+                listeners: {
+                    legendItemClick: (event: any) => {
+                        this.dispatchCrossFilterEvent(this.mapLegendEventToSeriesEvent(event));
+                    },
+                },
+            },
+            listeners: {
+                // XXX: restore once we figure out why this gets two calls instead of one.
+                // seriesNodeClick: (params: any) => {
+                //     this.dispatchCrossFilterEvent(params);
+                // },
+            },
         } as AgChartOptions);
+    }
+
+    private mapLegendEventToSeriesEvent(event: any) {
+        const { seriesId, itemId } = event;
+        const chart = (this.getChartRef() as any).chart;
+
+        const series = (chart?.series as any[]).find((s) => s.id === seriesId);
+        const node = series?.nodeData.find((node: any) => node.itemId === itemId);
+        const datum = node?.datum ?? {};
+        const crossFilteringKey = this.getCrossFilterKey();
+
+        const params = {
+            event,
+            datum,
+            seriesId,
+            ...{ [crossFilteringKey]: series.properties[crossFilteringKey] },
+        };
+
+        return params;
+    }
+
+    private dispatchCrossFilterEvent(params: any) {
+        if (!(params.event.metaKey || params.event.ctrlKey)) {
+            this.crossFilterService.reset();
+        }
+        this.crossFilterService.filter(params);
     }
 
     public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {
@@ -142,10 +182,7 @@ export abstract class ChartProxy<
             ...s,
             listeners: {
                 nodeClick: (params: any) => {
-                    if (!(params.event.metaKey || params.event.ctrlKey)) {
-                        this.crossFilterService.reset();
-                    }
-                    this.crossFilterService.filter(params);
+                    this.dispatchCrossFilterEvent(params);
                 },
             } as AgSeriesListeners<any>,
         }));
@@ -263,15 +300,6 @@ export abstract class ChartProxy<
                       category: { crosshair },
                       log: { crosshair },
                       time: { crosshair },
-                  },
-                  listeners: {
-                      // XXX: restore once we figure out why this gets two calls instead of one.
-                      //   seriesNodeClick: (params: any) => {
-                      //       if (!(params.event.metaKey || params.event.ctrlKey)) {
-                      //           this.crossFilterService.reset();
-                      //       }
-                      //       this.crossFilterService.filter(params);
-                      //   },
                   },
               }
             : {};
