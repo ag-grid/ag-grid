@@ -48,9 +48,13 @@ async function loadSourceCodeAliases(modulesDirectories) {
                     if (existsSync(packageJsonPath)) {
                         const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf-8'));
                         if (!(packageJson.name in resolveAlias)) {
-                            const mainTsPath = path.resolve(modulePath, dir.name, 'src/main.ts');
-                            if (existsSync(mainTsPath)) {
-                                resolveAlias[packageJson.name] = mainTsPath;
+                            const mainFiles = ['src/index.ts', 'src/index.tsx', 'src/main.ts', 'src/main.tsx'];
+                            for (const mainFile of mainFiles) {
+                                let mainTsPath = path.resolve(modulePath, dir.name, mainFile);
+                                if (existsSync(mainTsPath)) {
+                                    resolveAlias[packageJson.name] = mainTsPath;
+                                    break;
+                                }
                             }
                         }
                     } else if (level < 2) {
