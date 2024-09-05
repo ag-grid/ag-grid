@@ -1385,12 +1385,13 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
+  "loadThemeGoogleFonts": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []
-  },
-  "loadThemeGoogleFonts": {
-    "typeName": "boolean"
   },
   "maintainColumnOrder": {
     "typeName": "boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'",

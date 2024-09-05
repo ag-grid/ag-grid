@@ -1,4 +1,9 @@
-const docs: Record<string, string | undefined> = {
+import type { Theme, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
+
+type ThemeParams<T> = T extends Theme<infer U> ? keyof U : never;
+type AllThemeParams = ThemeParams<typeof themeQuartz> | ThemeParams<typeof themeMaterial>;
+
+const docs: Record<AllThemeParams, string> = {
     backgroundColor:
         'Background color of the grid. Many UI elements are semi-transparent, so their color blends with the background color.',
     foregroundColor:
@@ -229,7 +234,5 @@ const docs: Record<string, string | undefined> = {
 };
 
 export const getParamDocs = (param: string): string | undefined => {
-    return docs[param];
+    return (docs as any)[param];
 };
-
-export const getParamDocsKeys = () => Object.keys(docs);
