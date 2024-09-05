@@ -1,4 +1,3 @@
-import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React from 'react';
