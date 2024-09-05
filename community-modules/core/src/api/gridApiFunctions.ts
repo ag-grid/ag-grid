@@ -192,6 +192,7 @@ export const gridApiFunctionsMap = {
     ...mod<_ClientSideRowModelGridApi<any>>(ModuleNames.ClientSideRowModelModule, {
         onGroupExpandedOrCollapsed: 0,
         refreshClientSideRowModel: 0,
+        isRowDataEmpty: 0,
         forEachLeafNode: 0,
         forEachNodeAfterFilter: 0,
         forEachNodeAfterFilterAndSort: 0,

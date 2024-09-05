@@ -759,14 +759,13 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 this.dispatchCellChangedEvent(column, value, oldValue);
             };
 
-            for (const key in this.aggData) {
-                eventFunc(key);
+            for (const key in oldAggData) {
+                eventFunc(key); // raise for old keys
             }
             for (const key in newAggData) {
-                if (key in this.aggData) {
-                    continue;
-                } // skip if already fired an event.
-                eventFunc(key);
+                if (!oldAggData || !(key in oldAggData)) {
+                    eventFunc(key); // new key, event not yet raised
+                }
             }
         }
     }

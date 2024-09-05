@@ -5,7 +5,7 @@ import path from 'path';
 import { defineConfig } from 'vitest/config';
 
 /** Resolve aliases */
-const aliases = {};
+const resolveAlias = {};
 
 /**
  * This behavioural test project can both use the source code and the bundles of the modules.
@@ -28,7 +28,10 @@ export default defineConfig({
         environment: 'jsdom',
         setupFiles: './vitest.setup.js',
     },
-    aliases,
+    resolve: {
+        alias: resolveAlias,
+    },
+    clearScreen: false,
 });
 
 async function loadSourceCodeAliases(modulesDirectories) {
@@ -44,10 +47,10 @@ async function loadSourceCodeAliases(modulesDirectories) {
                     const packageJsonPath = path.resolve(modulePath, dir.name, 'package.json');
                     if (existsSync(packageJsonPath)) {
                         const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf-8'));
-                        if (!(packageJson.name in aliases)) {
+                        if (!(packageJson.name in resolveAlias)) {
                             const mainTsPath = path.resolve(modulePath, dir.name, 'src/main.ts');
                             if (existsSync(mainTsPath)) {
-                                aliases[packageJson.name] = mainTsPath;
+                                resolveAlias[packageJson.name] = mainTsPath;
                             }
                         }
                     } else if (level < 2) {

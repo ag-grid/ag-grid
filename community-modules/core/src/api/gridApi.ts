@@ -446,6 +446,9 @@ export interface _ClientSideRowModelGridApi<TData> {
      * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally.
      */
     getBestCostNodeSelection(): IRowNode<TData>[] | undefined;
+
+    /** Returns `true` if the Client-Side row model has no rows. It is not impacted by filtering and does not include pinned rows. */
+    isRowDataEmpty(): boolean;
 }
 
 export interface _CsrmSsrmSharedGridApi {

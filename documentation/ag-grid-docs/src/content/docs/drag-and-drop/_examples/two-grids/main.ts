@@ -50,7 +50,7 @@ var rightGridOptions: GridOptions = {
         'blue-row': 'data.color == "Blue"',
     },
     getRowId: (params: GetRowIdParams) => {
-        return params.data.id;
+        return String(params.data.id);
     },
     rowData: [],
     rowDragManaged: true,
