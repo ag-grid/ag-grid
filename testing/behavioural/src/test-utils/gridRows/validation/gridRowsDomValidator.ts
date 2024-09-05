@@ -12,6 +12,10 @@ export class GridRowsDomValidator {
             return;
         }
 
+        const domOrderIsConsistent =
+            !!this.gridRows.api.getGridOption('ensureDomOrder') ||
+            this.gridRows.api.getGridOption('domLayout') === 'print';
+
         const rowElements = this.gridRows.rowsHtmlElements;
         const displayedRows = this.gridRows.displayedRows;
         const rowElementsIds = rowElements.map((rowElement) => rowElement.getAttribute('row-id') ?? '');
@@ -33,7 +37,8 @@ export class GridRowsDomValidator {
                 this.gridRows.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(id) + ' not found');
                 continue;
             }
-            if (index < rowElementsIds.length && rowElementsIds[index] !== id) {
+
+            if (domOrderIsConsistent && index < rowElementsIds.length && rowElementsIds[index] !== id) {
                 this.gridRows.errors
                     .get(row)
                     .add(

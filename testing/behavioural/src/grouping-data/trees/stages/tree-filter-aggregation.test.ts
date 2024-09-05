@@ -35,6 +35,13 @@ describe('ag-grid tree aggregation and filter', () => {
                 { field: 'x', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
                 { field: 'y', filter: 'agNumberColumnFilter' },
             ],
+
+            // TODO: HACK: Due to AG-12756, we need to use 'print' dom layout to avoid the issue
+            // of the DOM not being in order with footer nodes.
+            // Print layout seems to maintain the order correctly, but, ensureDomOrder is not respected with footer nodes.
+            domLayout: 'print',
+            ensureDomOrder: true,
+
             autoGroupColumnDef: { headerName: 'Path' },
             treeData: true,
             animateRows: false,
