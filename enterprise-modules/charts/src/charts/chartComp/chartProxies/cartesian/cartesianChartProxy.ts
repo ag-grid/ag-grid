@@ -24,9 +24,6 @@ export abstract class CartesianChartProxy<
         | 'range-area'
         | 'range-bar',
 > extends ChartProxy<AgCartesianChartOptions, TSeries> {
-    protected crossFilteringAllPoints = new Set<string>();
-    protected crossFilteringSelectedPoints: string[] = [];
-
     protected constructor(params: ChartProxyParams) {
         super(params);
     }

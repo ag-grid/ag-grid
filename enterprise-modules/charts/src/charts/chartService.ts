@@ -35,10 +35,6 @@ import { ChartParamsValidator } from './chartComp/utils/chartParamsValidator';
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from './chartModelMigration';
 
-export interface CrossFilteringContext {
-    lastSelectedChartId: string;
-}
-
 export interface CommonCreateChartParams extends BaseCreateChartParams {
     cellRange: PartialCellRange;
     pivotChart?: boolean;
@@ -74,11 +70,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     // those in developer provided containers.
     private activeCharts = new Set<ChartRef>();
     private activeChartComps = new Set<GridChartComp>();
-
-    // this shared (singleton) context is used by cross filtering in line and area charts
-    private crossFilteringContext: CrossFilteringContext = {
-        lastSelectedChartId: '',
-    };
 
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
@@ -273,8 +264,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             chartId: this.generateId(),
             chartType: getCanonicalChartType(chartType),
             insideDialog: !(chartContainer || createChartContainerFunc),
-            crossFilteringContext: this.crossFilteringContext,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach((c) => c.crossFilteringReset()),
         };
 
         const chartComp = new GridChartComp(gridChartParams);

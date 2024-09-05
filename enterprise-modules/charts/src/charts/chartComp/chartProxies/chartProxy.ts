@@ -16,7 +16,6 @@ import type {
 } from 'ag-charts-community';
 import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
 
-import type { CrossFilteringContext } from '../../chartService';
 import type { ChartCrossFilterService } from '../services/chartCrossFilterService';
 import { deproxy } from '../utils/integration';
 import { get } from '../utils/object';
@@ -36,7 +35,6 @@ export interface ChartProxyParams {
     getExtraPaddingDirections: () => ExtraPaddingDirection[];
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
-    crossFilterCallback: (event: any, reset?: boolean) => void;
     chartThemeToRestore?: string;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
@@ -70,7 +68,6 @@ export interface UpdateParams {
     }[];
     fields: FieldDefinition[];
     chartId?: string;
-    getCrossFilteringContext: () => CrossFilteringContext;
     seriesChartTypes: SeriesChartType[];
     updatedOverrides?: AgChartThemeOverrides;
     seriesGroupType?: SeriesGroupType;
@@ -86,17 +83,15 @@ export abstract class ChartProxy<
 
     protected readonly chart: AgChartInstance;
     protected readonly crossFiltering: boolean;
-    protected readonly crossFilterCallback: (event: any, reset?: boolean) => void;
+    protected readonly crossFilterService: ChartCrossFilterService;
 
     protected clearThemeOverrides = false;
-    protected crossFilterService: ChartCrossFilterService;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.isEnterpriseCharts = _ModuleSupport.enterpriseModule.isEnterprise;
         this.chart = chartProxyParams.chartInstance!;
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
-        this.crossFilterCallback = chartProxyParams.crossFilterCallback;
         this.crossFilterService = chartProxyParams.crossFilterService;
         this.standaloneChartType = getSeriesType(this.chartType) as TSeries;
 
