@@ -139,7 +139,7 @@ div.divider:nth-of-type(4n) {
     background: var(--color-bg-disabled_subtle);
 
     .fill {
-        fill: white;
+        fill: var(--color-bg-primary);
     }
 }
 
